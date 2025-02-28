@@ -57,7 +57,7 @@ public class TurHttpUtils {
 
         removeParameterFromQueryByValue(query, value);
 
-        // setParameters subscreve toda a query anterior
+        // setParameters overwrite all the past query
         newUri.setParameters(query);
 
         try {

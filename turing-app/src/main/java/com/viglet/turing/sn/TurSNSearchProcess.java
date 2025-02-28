@@ -206,7 +206,7 @@ public class TurSNSearchProcess {
 
         // Facet Item Loop
         facet.getTurSEFacetResultAttr().values().forEach(facetItem -> {
-            // Junta o facet com facet-item: <facet>:<facet-item>
+            // Merges the facet with the facet-item: <facet>:<facet-item>
             final String fq = facet.getFacet() + ":" + facetItem.getAttribute();
             if (facetItem.getCount() > 0 ||
                     usedFacetItems.contains(fq) && facetTypeAndFacetItemTypeValues.equals(AND_OR)) {
@@ -224,31 +224,26 @@ public class TurSNSearchProcess {
                     turSNSiteSearchFacetItemBeans));
         }
     }
-    // Métod para gerar os links para o widget facets
+    // Method to generate links for the facets widget
     private static String getFacetLink(TurSNSiteSearchContext context, boolean selected, String fq) {
         URI initialUri = context.getUri();
-        // var query recebe a query string original
+        // query receives the original query string
         List<NameValuePair> query = new URIBuilder(initialUri).getQueryParams();
-        // Exemplo de uma query string -> ?fq[]=tipo:educacao&fq[]=nivel:avancado
-        // fq está no formato "<facet>:<facet element>"
+        // Query string example -> ?fq[]=tipo:educacao&fq[]=nivel:avancado
+        // fq format is "<facet>:<facet element>"
 
         if (selected) {
-            // Se o filtro já estiver selecionado, retire-o.
+            // If the filter is already selected, remove it.
             TurHttpUtils.removeParameterFromQueryByValue(query, fq);
         } else {
-            // Se não estiver adicionado, adicione-o.
+            // If it is not added, add it.
             TurHttpUtils.addFacetFilterOnQuery(query, fq);
         }
 
-        // Vamos armazenar o path para usar na nova URI
+        // Lets store the path to use in the new URI
         var finalUri = new URIBuilder().setPath(initialUri.getPath()).setParameters(query);
 
         return finalUri.toString();
-//        try {
-//            return finalUri.build().toString();
-//        } catch (URISyntaxException e) {
-//            throw new IllegalStateException("Failed to build URI", e);
-//        }
     }
 
     public List<String> latestSearches(String siteName, String locale, String userId, int rows) {
@@ -499,9 +494,6 @@ public class TurSNSearchProcess {
                             .setLocale(turSNSiteLocale.getLanguage())
                             .setLink(link));
                 });
-
-        //.addOrReplaceParameter(uri, TurSNParamType.LOCALE,
-        //                                        turSNSiteLocale.getLanguage(), true).toString())));
         return turSNSiteLocaleBeans;
     }
 
@@ -565,7 +557,7 @@ public class TurSNSearchProcess {
                                     .setLink(TurHttpUtils.removeParameterFromQueryByValue(context.getUri(), facetToRemove).toString())
                                     .setSelected(true));
                         }
-                        // VERIFICAR SE ALTERAÇÃO NÃO CAUSOU NENHUM PROBLEMA
+                        // TODO Check if modification caused any problem
                         //.setLink(TurSNUtils.removeFilterQuery(context.getUri(), facetToRemove).toString())
                     }));
             if (!turSNSiteSearchFacetToRemoveItemBeans.isEmpty()) {
@@ -688,7 +680,7 @@ public class TurSNSearchProcess {
     private URI changeGroupURIForPagination(URI uri, String fieldName) {
         //        return TurCommonsUtils.addOrReplaceParameter(TurSNUtils.removeQueryStringParameter(uri, GROUP),
         //        TurSNParamType.FILTER_QUERIES_DEFAULT, fieldName, true);
-        // TODO Validar modificação! Não sei quando essa função é usada.
+        // TODO to validate
         // TO-FIX
         var modifiedUri = TurHttpUtils.removeParameterFromQueryByKey(uri, GROUP);
         return TurHttpUtils.setParam(modifiedUri, TurSNParamType.FILTER_QUERIES_DEFAULT, fieldName);
