@@ -171,8 +171,9 @@ public class TurSNSearchProcess {
                 .setType(turSNSiteFieldExtDto.getType())
                 .setFacets(turSNSiteSearchFacetItemBeans)
                 .setMultiValued(isTrue(turSNSiteFieldExtDto.getMultiValued()))
-                .setCleanUpLink(TurSNUtils.removeFilterQueryByFieldName(context.getUri(),
-                        turSNSiteFieldExtDto.getName()).toString());
+                .setCleanUpLink(TurHttpUtils.removeFilterQueryByFacet(context.getUri(), turSNSiteFieldExtDto.getName()).toString());
+//                .setCleanUpLink(TurSNUtils.removeFilterQueryByFieldName(context.getUri(),
+//                        turSNSiteFieldExtDto.getName()).toString());
     }
 
     @NotNull
@@ -191,6 +192,63 @@ public class TurSNSearchProcess {
 
     private static boolean isNotLastPage(TurSEGenericResults turSEResults) {
         return turSEResults.getCurrentPage() != turSEResults.getPageCount() && turSEResults.getPageCount() > 1;
+    }
+
+    private static boolean facetIsEnabled(TurSNSite turSNSite, TurSEResults turSEResults) {
+        return turSNSite.getFacet() == 1 && Optional.ofNullable(turSEResults.getFacetResults()).isPresent();
+    }
+
+    private static void getFacetResponse(TurSNSiteSearchContext context, Map<String, TurSNSiteFieldExtDto> facetMap,
+                                         TurSEFacetResult facet, List<String> usedFacetItems,
+                                         String facetTypeAndFacetItemTypeValues,
+                                         List<TurSNSiteSearchFacetBean> turSNSiteSearchFacetBeans) {
+        List<TurSNSiteSearchFacetItemBean> turSNSiteSearchFacetItemBeans = new ArrayList<>();
+
+        // Facet Item Loop
+        facet.getTurSEFacetResultAttr().values().forEach(facetItem -> {
+            // Junta o facet com facet-item: <facet>:<facet-item>
+            final String fq = facet.getFacet() + ":" + facetItem.getAttribute();
+            if (facetItem.getCount() > 0 ||
+                    usedFacetItems.contains(fq) && facetTypeAndFacetItemTypeValues.equals(AND_OR)) {
+                boolean selected = usedFacetItems.contains(fq);
+                turSNSiteSearchFacetItemBeans.add(new TurSNSiteSearchFacetItemBean()
+                        .setCount(facetItem.getCount())
+                        .setLabel(facetItem.getAttribute())
+                        .setSelected(selected)
+                        .setLink(getFacetLink(context, selected, fq)));
+            }
+        });
+        if (!turSNSiteSearchFacetItemBeans.isEmpty()) {
+            turSNSiteSearchFacetBeans.add(getTurSNSiteSearchFacetBean(context,
+                    facetMap.get(facet.getFacet()),
+                    turSNSiteSearchFacetItemBeans));
+        }
+    }
+    // Métod para gerar os links para o widget facets
+    private static String getFacetLink(TurSNSiteSearchContext context, boolean selected, String fq) {
+        URI initialUri = context.getUri();
+        // var query recebe a query string original
+        List<NameValuePair> query = new URIBuilder(initialUri).getQueryParams();
+        // Exemplo de uma query string -> ?fq[]=tipo:educacao&fq[]=nivel:avancado
+        // fq está no formato "<facet>:<facet element>"
+
+        if (selected) {
+            // Se o filtro já estiver selecionado, retire-o.
+            TurHttpUtils.removeParameterFromQueryByValue(query, fq);
+        } else {
+            // Se não estiver adicionado, adicione-o.
+            TurHttpUtils.addFacetFilterOnQuery(query, fq);
+        }
+
+        // Vamos armazenar o path para usar na nova URI
+        var finalUri = new URIBuilder().setPath(initialUri.getPath()).setParameters(query);
+
+        return finalUri.toString();
+//        try {
+//            return finalUri.build().toString();
+//        } catch (URISyntaxException e) {
+//            throw new IllegalStateException("Failed to build URI", e);
+//        }
     }
 
     public List<String> latestSearches(String siteName, String locale, String userId, int rows) {
@@ -435,12 +493,15 @@ public class TurSNSearchProcess {
     public List<TurSNSiteLocaleBean> responseLocales(TurSNSite turSNSite, URI uri) {
         List<TurSNSiteLocaleBean> turSNSiteLocaleBeans = new ArrayList<>();
         turSNSiteLocaleRepository.findByTurSNSite(Sort.by(Sort.Order.asc(LANGUAGE).ignoreCase()), turSNSite)
-                .forEach(turSNSiteLocale -> turSNSiteLocaleBeans.add(new TurSNSiteLocaleBean()
-                        .setLocale(turSNSiteLocale.getLanguage())
-                        .setLink(TurCommonsUtils
-                                .addOrReplaceParameter(uri, TurSNParamType.LOCALE,
-                                        turSNSiteLocale.getLanguage(), true).toString())));
+                .forEach(turSNSiteLocale -> {
+                    String link = TurHttpUtils.setParam(uri, TurSNParamType.LOCALE, turSNSiteLocale.getLanguage().toLanguageTag()).toString();
+                    turSNSiteLocaleBeans.add(new TurSNSiteLocaleBean()
+                            .setLocale(turSNSiteLocale.getLanguage())
+                            .setLink(link));
+                });
 
+        //.addOrReplaceParameter(uri, TurSNParamType.LOCALE,
+        //                                        turSNSiteLocale.getLanguage(), true).toString())));
         return turSNSiteLocaleBeans;
     }
 
@@ -501,7 +562,7 @@ public class TurSNSearchProcess {
                         if (turSolr.getFacetsInFilterQuery(turSNFacetTypeContext).contains(f.getKey())) {
                             turSNSiteSearchFacetToRemoveItemBeans.add(new TurSNSiteSearchFacetItemBean()
                                     .setLabel(f.getValue().replace("\"", ""))
-                                    .setLink(TurHttpUtils.removeParameterFromQueryByValue(context.getUri(),facetToRemove).toString())
+                                    .setLink(TurHttpUtils.removeParameterFromQueryByValue(context.getUri(), facetToRemove).toString())
                                     .setSelected(true));
                         }
                         // VERIFICAR SE ALTERAÇÃO NÃO CAUSOU NENHUM PROBLEMA
@@ -516,7 +577,7 @@ public class TurSNSearchProcess {
 
     private String responseCleanUpFacet(TurSNSiteSearchContext context,
                                         TurSNSite turSNSite) {
-        return TurSNUtils.removeFilterQueryByFieldNames(context.getUri(),
+        return TurHttpUtils.removeFilterQueryByFacet(context.getUri(),
                 turSolr.getFacetsInFilterQuery(new TurSNFacetTypeContext(null, turSNSite,
                         context.getTurSEParameters().getFilterQueries()))).toString();
     }
@@ -542,11 +603,6 @@ public class TurSNSearchProcess {
         }
         return Collections.emptyList();
     }
-
-    private static boolean facetIsEnabled(TurSNSite turSNSite, TurSEResults turSEResults) {
-        return turSNSite.getFacet() == 1 && Optional.ofNullable(turSEResults.getFacetResults()).isPresent();
-    }
-
 
     private List<TurSNSiteSearchFacetBean> responseSecondaryFacet(TurSNSiteSearchContext context,
                                                                   TurSolrInstance turSolrInstance,
@@ -609,60 +665,6 @@ public class TurSNSearchProcess {
         return new FacetResult(usedFacetItems, facetTypeAndFacetItemTypeValues);
     }
 
-    private record FacetResult(List<String> usedFacetItems, String facetTypeAndFacetItemTypeValues) {
-    }
-
-    private static void getFacetResponse(TurSNSiteSearchContext context, Map<String, TurSNSiteFieldExtDto> facetMap,
-                                         TurSEFacetResult facet, List<String> usedFacetItems,
-                                         String facetTypeAndFacetItemTypeValues,
-                                         List<TurSNSiteSearchFacetBean> turSNSiteSearchFacetBeans) {
-        List<TurSNSiteSearchFacetItemBean> turSNSiteSearchFacetItemBeans = new ArrayList<>();
-
-        // Facet Item Loop
-        facet.getTurSEFacetResultAttr().values().forEach(facetItem -> {
-            // Junta o facet com facet-item: <facet>:<facet-item>
-            final String fq = facet.getFacet() + ":" + facetItem.getAttribute();
-            if (facetItem.getCount() > 0 ||
-                    usedFacetItems.contains(fq) && facetTypeAndFacetItemTypeValues.equals(AND_OR)) {
-                boolean selected = usedFacetItems.contains(fq);
-                turSNSiteSearchFacetItemBeans.add(new TurSNSiteSearchFacetItemBean()
-                        .setCount(facetItem.getCount())
-                        .setLabel(facetItem.getAttribute())
-                        .setSelected(selected)
-                        .setLink(getFacetLink(context, selected, fq)));
-            }
-        });
-        if (!turSNSiteSearchFacetItemBeans.isEmpty()) {
-            turSNSiteSearchFacetBeans.add(getTurSNSiteSearchFacetBean(context,
-                    facetMap.get(facet.getFacet()),
-                    turSNSiteSearchFacetItemBeans));
-        }
-    }
-
-    private static String getFacetLink(TurSNSiteSearchContext context, boolean selected, String fq) {
-        URI initialUri = context.getUri();
-        // var query recebe a query string original
-        List<NameValuePair> query = new URIBuilder(initialUri).getQueryParams();
-        // Exemplo de uma query string -> ?fq[]=tipo:educacao&fq[]=nivel:avancado
-        // fq está no formato "<facet>:<facet element>"
-
-        if (selected) {
-            // Se o filtro já estiver selecionado, retire-o.
-            TurHttpUtils.removeParameterFromQueryByValue(query, fq);
-        } else {
-            // Se não estiver adicionado, adicione-o.
-            TurHttpUtils.addFacetFilterOnQuery(query, fq);
-        }
-
-        // Vamos armazenar o path para usar na nova URI
-        var finalUri = new URIBuilder().setPath(initialUri.getPath()).setParameters(query);
-        try {
-            return finalUri.build().toString();
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Failed to build URI", e);
-        }
-    }
-
     private List<TurSNSiteSearchPaginationBean> responsePagination(URI uri, TurSEGenericResults turSEResults) {
         List<TurSNSiteSearchPaginationBean> pagination = new ArrayList<>();
         if (turSEResults.getCurrentPage() > 1) {
@@ -684,42 +686,51 @@ public class TurSNSearchProcess {
     }
 
     private URI changeGroupURIForPagination(URI uri, String fieldName) {
-        return TurCommonsUtils.addOrReplaceParameter(TurSNUtils.removeQueryStringParameter(uri, GROUP),
-                TurSNParamType.FILTER_QUERIES_DEFAULT, fieldName, true);
+        //        return TurCommonsUtils.addOrReplaceParameter(TurSNUtils.removeQueryStringParameter(uri, GROUP),
+        //        TurSNParamType.FILTER_QUERIES_DEFAULT, fieldName, true);
+        // TODO Validar modificação! Não sei quando essa função é usada.
+        // TO-FIX
+        var modifiedUri = TurHttpUtils.removeParameterFromQueryByKey(uri, GROUP);
+        return TurHttpUtils.setParam(modifiedUri, TurSNParamType.FILTER_QUERIES_DEFAULT, fieldName);
+
     }
 
     private TurSNSiteSearchPaginationBean setPreviousPage(URI uri, TurSEGenericResults turSEResults) {
+        // TODO - Test the replaced function TurCommonsUtils.addOrReplaceParameter -> TurHttpUtils.setParam
         return new TurSNSiteSearchPaginationBean()
                 .setType(TurSNPaginationType.PREVIOUS)
-                .setHref(TurCommonsUtils.addOrReplaceParameter(uri, TurSNParamType.PAGE,
-                        Integer.toString(turSEResults.getCurrentPage() - 1), true).toString())
+                .setHref(TurHttpUtils.setParam(uri, TurSNParamType.PAGE,
+                        Integer.toString(turSEResults.getCurrentPage() - 1)).toString())
                 .setText(PREVIOUS)
                 .setPage(turSEResults.getCurrentPage() - 1);
     }
 
     private TurSNSiteSearchPaginationBean setFirstPage(URI uri) {
+        // TODO - Test the replaced function TurCommonsUtils.addOrReplaceParameter -> TurHttpUtils.setParam
         return new TurSNSiteSearchPaginationBean()
                 .setType(TurSNPaginationType.FIRST)
-                .setHref(TurCommonsUtils.addOrReplaceParameter(uri, TurSNParamType.PAGE, Integer.toString(1), true)
+                .setHref(TurHttpUtils.setParam(uri, TurSNParamType.PAGE, Integer.toString(1))
                         .toString())
                 .setText(FIRST)
                 .setPage(1);
     }
 
     private TurSNSiteSearchPaginationBean setLastPage(URI uri, TurSEGenericResults turSEResults) {
+        // TODO - Test the replaced function TurCommonsUtils.addOrReplaceParameter -> TurHttpUtils.setParam
         return new TurSNSiteSearchPaginationBean()
                 .setType(TurSNPaginationType.LAST)
-                .setHref(TurCommonsUtils.addOrReplaceParameter(uri, TurSNParamType.PAGE,
-                        Integer.toString(turSEResults.getPageCount()), true).toString())
+                .setHref(TurHttpUtils.setParam(uri, TurSNParamType.PAGE,
+                        Integer.toString(turSEResults.getPageCount())).toString())
                 .setText(LAST)
                 .setPage(turSEResults.getPageCount());
     }
 
     private TurSNSiteSearchPaginationBean setNextPage(URI uri, TurSEGenericResults turSEResults) {
+        // TODO - Test the replaced function TurCommonsUtils.addOrReplaceParameter -> TurHttpUtils.setParam
         return new TurSNSiteSearchPaginationBean()
                 .setType(TurSNPaginationType.NEXT)
-                .setHref(TurCommonsUtils.addOrReplaceParameter(uri, TurSNParamType.PAGE,
-                        Integer.toString(turSEResults.getCurrentPage() + 1), true).toString())
+                .setHref(TurHttpUtils.setParam(uri, TurSNParamType.PAGE,
+                        Integer.toString(turSEResults.getCurrentPage() + 1)).toString())
                 .setText(NEXT)
                 .setPage(turSEResults.getCurrentPage() + 1);
 
@@ -727,8 +738,9 @@ public class TurSNSearchProcess {
 
     private TurSNSiteSearchPaginationBean setGenericPages(URI uri, int page,
                                                           TurSNPaginationType type) {
+        // TODO - Test the replaced function TurCommonsUtils.addOrReplaceParameter -> TurHttpUtils.setParam
         return new TurSNSiteSearchPaginationBean()
-                .setHref(TurCommonsUtils.addOrReplaceParameter(uri, TurSNParamType.PAGE, Integer.toString(page), true)
+                .setHref(TurHttpUtils.setParam(uri, TurSNParamType.PAGE, Integer.toString(page))
                         .toString())
                 .setText(Integer.toString(page))
                 .setType(type)
@@ -749,5 +761,8 @@ public class TurSNSearchProcess {
 
     private int getFirstPagination(TurSEGenericResults turSEResults) {
         return turSEResults.getCurrentPage() - 3 > 0 ? turSEResults.getCurrentPage() - 3 : 1;
+    }
+
+    private record FacetResult(List<String> usedFacetItems, String facetTypeAndFacetItemTypeValues) {
     }
 }

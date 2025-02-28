@@ -20,6 +20,7 @@ import java.net.URI;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.commons.utils.TurHttpUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,10 +41,14 @@ public class TurSNSiteSpellCheckText {
 	private String link;
 
 	public TurSNSiteSpellCheckText(URI uri, String text, boolean isOriginal) {
+		// TODO - Test the replaced function TurCommonsUtils.addOrReplaceParameter -> TurHttpUtils.setParam
+		// I tested and it seems to be working
 		super();
-		URI uriModified = TurCommonsUtils.addOrReplaceParameter(uri, TurSNParamType.QUERY, text, true);
+		// URI uriModified = TurCommonsUtils.addOrReplaceParameter(uri, TurSNParamType.QUERY, text, true);
+		URI uriModified = TurHttpUtils.setParam(uri, TurSNParamType.QUERY, text);
 		if (isOriginal) {
-			uriModified = TurCommonsUtils.addOrReplaceParameter(uriModified, TurSNParamType.AUTO_CORRECTION_DISABLED, TRUE, false);
+		//	uriModified = TurCommonsUtils.addOrReplaceParameter(uriModified, TurSNParamType.AUTO_CORRECTION_DISABLED, TRUE, false);
+			uriModified = TurHttpUtils.setParam(uriModified, TurSNParamType.AUTO_CORRECTION_DISABLED, TRUE);
 		}
 		this.text = text;
 		this.link = uriModified.toString();

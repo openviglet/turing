@@ -31,6 +31,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.commons.utils.TurHttpUtils;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
@@ -326,13 +327,15 @@ public class TurSolr {
         if (TurSNUtils.isAutoCorrectionEnabled(turSNSiteSearchContext, turSNSite)) {
             turSESpellCheckResult.setUsingCorrected(true);
             if (TurSNUtils.hasCorrectedText(turSESpellCheckResult)) {
-                turSNSiteSearchContext.setUri(TurCommonsUtils.addOrReplaceParameter(turSNSiteSearchContext.getUri(),
-                        QUERY, turSESpellCheckResult.getCorrectedText(), true));
+                var correctedUri = TurHttpUtils.setParam(turSNSiteSearchContext.getUri(), QUERY, turSESpellCheckResult.getCorrectedText());
+                turSNSiteSearchContext.setUri(correctedUri);
             }
         } else {
             turSESpellCheckResult.setUsingCorrected(false);
         }
         return turSESpellCheckResult;
+        //turSNSiteSearchContext.setUri(TurCommonsUtils.addOrReplaceParameter(turSNSiteSearchContext.getUri(),
+        //                        QUERY, turSESpellCheckResult.getCorrectedText(), true));
     }
 
     public Optional<TurSEResults> retrieveSolrFromSN(TurSolrInstance turSolrInstance,

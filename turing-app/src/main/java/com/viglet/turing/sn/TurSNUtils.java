@@ -80,6 +80,7 @@ public class TurSNUtils {
         UriComponentsBuilder uriComponentsBuilder = ForwardedHeaderUtils.adaptFromForwardedHeaders(uriBuilder.build().toUri(),
                 servletServerHttpRequest.getHeaders());
 
+
         // Como já foi encodado anteriormente, precisamos passar true no argumento do .build(), para não encodar uma segunda vez.
         return uriComponentsBuilder.build(true).toUri();
     }
@@ -144,27 +145,48 @@ public class TurSNUtils {
         return TurCommonsUtils.modifiedURI(uri, sbQueryString);
     }
 
+    // TODO - Refactor into new function
+    // Se receber facetB, vai excluir da uri todos os parametros que tenham o valor que comecem com facetB
+    /**
+     * @deprecated  Prefer to use {TurHttpUtils.removeFilterQueryByFacet}
+     */
+    @Deprecated
     public static URI removeFilterQueryByFieldNames(URI uri, List<String> fieldNames) {
+        // Armazena os parâmetros atuais.
         List<NameValuePair> params = new URIBuilder(uri).getQueryParams();
         StringBuilder sbQueryString = new StringBuilder();
+
+
         for (NameValuePair nameValuePair : params) {
+            // Para todos os parâmetros com a key "fq[]"
             if (nameValuePair.getName().equals(TurSNParamType.FILTER_QUERIES_DEFAULT)) {
                 TurSolrUtils.getQueryKeyValue(nameValuePair.getValue()).ifPresent(kv -> {
+                    // Só não adiciona na queryString aqueles parâmetros que não são desejados
                     if (!(fieldNames.contains(java.net.URLDecoder.decode(kv.getKey(), StandardCharsets.UTF_8)))) {
                         TurCommonsUtils.addParameterToQueryString(sbQueryString, nameValuePair.getName(), nameValuePair.getValue());
                     }
                 });
-            } else {
+            } else { // Para todos os outros Parâmetros, os adicionem de volta.
                 TurCommonsUtils.addParameterToQueryString(sbQueryString, nameValuePair.getName(), nameValuePair.getValue());
             }
         }
         return TurCommonsUtils.modifiedURI(uri, sbQueryString);
     }
 
+    /**
+     * @deprecated  Prefer to use {TurHttpUtils.removeFilterQueryByFacet}
+     */
     public static URI removeFilterQueryByFieldName(URI uri, String fieldName) {
         return removeFilterQueryByFieldNames(uri, Collections.singletonList(fieldName));
     }
 
+    /**
+     * @deprecated Prefer using {@link TurHttpUtils} removeParameterFromQueryByKey().
+     * @param uri
+     * @param field
+     * @return
+     */
+    @Deprecated(since = "0.3.9")
     public static URI removeQueryStringParameter(URI uri, String field) {
         List<NameValuePair> params = new URIBuilder(uri).getQueryParams();
         StringBuilder sbQueryString = new StringBuilder();
@@ -178,7 +200,10 @@ public class TurSNUtils {
         return TurCommonsUtils.modifiedURI(uri, sbQueryString);
     }
 
-
+    /**
+     * @deprecated Used by deprecated functions.
+     */
+    @Deprecated
     private static void resetPaginationOrAddParameter(StringBuilder sbQueryString, String paramName, String paramValue) {
         if ((paramName.equals(TurSNParamType.PAGE))) {
             TurCommonsUtils.addParameterToQueryString(sbQueryString, paramName, "1");
