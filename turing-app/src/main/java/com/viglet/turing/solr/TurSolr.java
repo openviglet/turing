@@ -1069,7 +1069,7 @@ public class TurSolr {
     private static String setFilterQueryByRangeType(String fq, KeyValue<String, String> facetKv,
                                                     TurSNSiteFacetRangeEnum facetRange) {
         try {
-            if (queryWithoutExpression(facetKv.getValue())) {
+            if (withoutExpression(facetKv.getValue())) {
                 Date date = solrDateFormatter().parse(facetKv.getValue());
                 return switch (facetRange) {
                     case DAY -> setFilterQueryRangeDay(date, facetKv);
@@ -1182,11 +1182,14 @@ public class TurSolr {
 
     private static boolean queryWithoutExpression(String q) {
         String value = TurSolrUtils.getValueFromQuery(q);
-        return !q.startsWith("(") && !value.startsWith("[") && !value.startsWith("(") && !value.endsWith("*");
+        return !q.startsWith("(") && withoutExpression(value);
 
     }
 
+    private static boolean withoutExpression(String value) {
+        return !value.startsWith("[") && !value.startsWith("(") && !value.endsWith("*");
 
+    }
     private List<TurSNSiteFieldExt> prepareQueryMLT(TurSNSite turSNSite, SolrQuery query) {
         List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList = turSNSiteFieldExtRepository
                 .findByTurSNSiteAndMltAndEnabled(turSNSite, 1, 1);
