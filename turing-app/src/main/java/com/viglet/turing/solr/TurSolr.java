@@ -1069,13 +1069,15 @@ public class TurSolr {
     private static String setFilterQueryByRangeType(String fq, KeyValue<String, String> facetKv,
                                                     TurSNSiteFacetRangeEnum facetRange) {
         try {
-            Date date = solrDateFormatter().parse(facetKv.getValue());
-            return switch (facetRange) {
-                case DAY -> setFilterQueryRangeDay(date, facetKv);
-                case MONTH -> setFilterQueryRangeMonth(date, facetKv);
-                case YEAR -> setFilterQueryRangeYear(date, facetKv);
-                case DISABLED -> fq;
-            };
+            if (queryWithoutExpression(facetKv.getValue())) {
+                Date date = solrDateFormatter().parse(facetKv.getValue());
+                return switch (facetRange) {
+                    case DAY -> setFilterQueryRangeDay(date, facetKv);
+                    case MONTH -> setFilterQueryRangeMonth(date, facetKv);
+                    case YEAR -> setFilterQueryRangeYear(date, facetKv);
+                    case DISABLED -> fq;
+                };
+            }
         } catch (ParseException e) {
             log.error(e.getMessage(), e);
         }
