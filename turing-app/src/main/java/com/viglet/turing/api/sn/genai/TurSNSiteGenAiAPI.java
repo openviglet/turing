@@ -53,7 +53,11 @@ public class TurSNSiteGenAiAPI {
 		Locale locale = LocaleUtils.toLocale(localeRequest);
 		if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
 			return turSNSearchProcess.getSNSite(siteName).map( site -> {
-				TurGenAiContext turGenAiContext = new TurGenAiContext(site.getTurSNSiteGenAi());
+				var turSNSiteGenAI = site.getTurSNSiteGenAi();
+				if (!turSNSiteGenAI.isEnabled()) {
+					return TurChatMessage.builder().build();
+				}
+				TurGenAiContext turGenAiContext = new TurGenAiContext(turSNSiteGenAI);
 				return turGenAi.assistant(turGenAiContext, q);
 			}).orElse(TurChatMessage.builder().build());
 		}
