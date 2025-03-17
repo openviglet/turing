@@ -54,12 +54,14 @@ public class TurSNSiteGenAiAPI {
 		if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
 			return turSNSearchProcess.getSNSite(siteName).map( site -> {
 				var turSNSiteGenAI = site.getTurSNSiteGenAi();
-				if (!turSNSiteGenAI.isEnabled()) {
-					return TurChatMessage.builder().build();
+				if (turSNSiteGenAI == null || !turSNSiteGenAI.isEnabled()) {
+					return TurChatMessage.builder()
+							.text("Language Model is not enabled for this site.")
+							.build();
 				}
 				TurGenAiContext turGenAiContext = new TurGenAiContext(turSNSiteGenAI);
 				return turGenAi.assistant(turGenAiContext, q);
-			}).orElse(TurChatMessage.builder().build());
+			}).orElse(TurChatMessage.builder().text("Couldn't find site name.").build());
 		}
 		return TurChatMessage.builder().build();
 	}
