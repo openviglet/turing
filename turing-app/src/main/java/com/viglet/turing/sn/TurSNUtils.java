@@ -20,6 +20,11 @@
  */
 package com.viglet.turing.sn;
 
+import com.viglet.turing.commons.se.TurSEFilterQueryParameters;
+import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.sn.TurSNConfig;
+import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
+import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
@@ -32,9 +37,9 @@ import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.solr.TurSolrField;
-import com.viglet.turing.solr.TurSolrUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tika.utils.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.util.ForwardedHeaderUtils;
 
@@ -53,6 +58,69 @@ public class TurSNUtils {
         throw new IllegalStateException("SN Utility class");
     }
 
+    @NotNull
+    public static String getCacheKey(String siteName, HttpServletRequest request) {
+        return "%s_%s".formatted(siteName, request.getQueryString());
+    }
+
+    @NotNull
+    public static TurSNSiteSearchContext getTurSNSiteSearchContext(
+            TurSNConfig turSNConfig,
+            String siteName,
+            String q,
+            Integer currentPage,
+            List<String> fq,
+            List<String> fqAnd,
+            List<String> fqOr,
+            TurSNFilterQueryOperator fqOperator,
+            String sort,
+            Integer rows,
+            String group,
+            Integer autoCorrectionDisabled,
+            HttpServletRequest request,
+            Locale locale) {
+
+        return getTurSNSiteSearchContext(
+                turSNConfig,
+                siteName,
+                q,
+                currentPage,
+                fq,
+                fqAnd,
+                fqOr,
+                fqOperator,
+                sort,
+                rows,
+                group,
+                autoCorrectionDisabled,
+                new TurSNSitePostParamsBean(),
+                request,
+                locale);
+    }
+
+    @NotNull
+    public static TurSNSiteSearchContext getTurSNSiteSearchContext(
+            TurSNConfig turSNConfig,
+            String siteName,
+            String q,
+            Integer currentPage,
+            List<String> fq,
+            List<String> fqAnd,
+            List<String> fqOr,
+            TurSNFilterQueryOperator fqOperator,
+            String sort,
+            Integer rows,
+            String group,
+            Integer autoCorrectionDisabled,
+            TurSNSitePostParamsBean turSNSitePostParamsBean,
+            HttpServletRequest request,
+            Locale locale) {
+        return new TurSNSiteSearchContext(siteName, turSNConfig,
+                new TurSEParameters(q, new TurSEFilterQueryParameters(fq, fqAnd,
+                        fqOr, fqOperator), currentPage, sort, rows, group, autoCorrectionDisabled,
+                        turSNSitePostParamsBean), locale,
+                TurSNUtils.requestToURI(request), turSNSitePostParamsBean);
+    }
 
     public static boolean hasCorrectedText(TurSESpellCheckResult turSESpellCheckResult) {
         return turSESpellCheckResult.isCorrected() && !StringUtils.isEmpty(turSESpellCheckResult.getCorrectedText());
@@ -98,9 +166,9 @@ public class TurSNUtils {
         for (NameValuePair nameValuePair : params) {
             String decodedValue = URLDecoder.decode(nameValuePair.getValue(), StandardCharsets.UTF_8);
             if (!(decodedValue.equals(fq)
-                        && nameValuePair.getName().equals(TurSNParamType.FILTER_QUERIES_DEFAULT))) {
-                    resetPaginationOrAddParameter(sbQueryString, nameValuePair.getName(), decodedValue);
-                }
+                    && nameValuePair.getName().equals(TurSNParamType.FILTER_QUERIES_DEFAULT))) {
+                resetPaginationOrAddParameter(sbQueryString, nameValuePair.getName(), decodedValue);
+            }
         }
         return TurCommonsUtils.modifiedURI(uri, sbQueryString);
     }

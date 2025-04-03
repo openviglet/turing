@@ -28,6 +28,7 @@ import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.bean.*;
 import com.viglet.turing.commons.sn.bean.spellcheck.TurSNSiteSpellCheckBean;
 import com.viglet.turing.commons.sn.pagination.TurSNPaginationType;
+import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
@@ -53,6 +54,7 @@ import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
@@ -111,10 +113,12 @@ public class TurSNSearchProcess {
         return turSNSiteRepository.findByName(siteName);
 
     }
+
     public boolean existsByTurSNSiteAndLanguage(String siteName, Locale locale) {
         return turSNSiteRepository.findByName(siteName).map(turSNSite ->
                 turSNSiteLocaleRepository.existsByTurSNSiteAndLanguage(turSNSite, locale)).orElse(false);
     }
+
     private static boolean istTuringEntity(TurSNFieldType snType) {
         return Collections.unmodifiableSet(EnumSet.of(TurSNFieldType.NER, TurSNFieldType.THESAURUS)).contains(snType);
     }

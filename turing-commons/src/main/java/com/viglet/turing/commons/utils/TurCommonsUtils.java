@@ -139,7 +139,7 @@ public class TurCommonsUtils {
 
     public static URI modifiedURI(URI uri, StringBuilder sbQueryString) {
         try {
-            return new URI(uri.getRawPath() + "?" + removeAmpersand(sbQueryString).replace(" ", "%20"));
+            return new URI(uri.getRawPath() + "?" + removeAmpersand(sbQueryString).replaceAll("[\\t\\n\\r]+","%20").replace(" ", "%20"));
         } catch (URISyntaxException e) {
             log.error(e.getMessage(), e);
         }

@@ -18,24 +18,14 @@
 
 package com.viglet.turing.api.sn.search;
 
-import com.viglet.turing.commons.se.TurSEFilterQueryParameters;
-import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
-import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.TurSNSearchProcess;
-import com.viglet.turing.sn.TurSNUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -54,6 +44,7 @@ public class TurSNSiteSearchCachedAPI {
     @Cacheable(value = "searchAPI", key = "#cacheKey")
     public TurSNSiteSearchBean searchCached(String cacheKey,
                                             TurSNSiteSearchContext turSNSiteSearchContext) {
+        log.info("Search cache key: {}", cacheKey);
         return turSNSearchProcess.search(turSNSiteSearchContext);
     }
 }

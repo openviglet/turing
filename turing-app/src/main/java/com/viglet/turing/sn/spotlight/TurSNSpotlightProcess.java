@@ -238,7 +238,7 @@ public class TurSNSpotlightProcess {
 				List<TurSNSiteSpotlightDocument> turSNSiteSpotlightDocuments = turSNSiteSpotlightDocumentMap
 						.get(currentPositionFromCurrentPage);
 				for (TurSNSiteSpotlightDocument document : turSNSiteSpotlightDocuments) {
-					TurSEResult turSEResult = turSolr.findById(turSolrInstance, turSNSite, document.getReferenceId());
+					TurSEResult turSEResult = turSolr.findById(turSolrInstance, turSNSite, document.getReferenceId(), context);
 					if (turSEResult != null) {
 						TurSNUtils.addSNDocumentWithPosition(context.getUri(), fieldExtMap, facetMap,
 								turSNSiteSearchDocumentsBean, turSEResult, true, currentPositionFromList);
