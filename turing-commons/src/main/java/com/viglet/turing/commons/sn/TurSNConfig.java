@@ -21,8 +21,10 @@ package com.viglet.turing.commons.sn;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class TurSNConfig {
+public class TurSNConfig implements Serializable {
     private boolean hlEnabled;
 }
