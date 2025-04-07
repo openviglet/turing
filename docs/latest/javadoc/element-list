@@ -40,6 +40,7 @@ com.viglet.turing.commons.se
 com.viglet.turing.commons.se.field
 com.viglet.turing.commons.se.result.spellcheck
 com.viglet.turing.commons.se.similar
+com.viglet.turing.commons.sn
 com.viglet.turing.commons.sn.bean
 com.viglet.turing.commons.sn.bean.spellcheck
 com.viglet.turing.commons.sn.field
