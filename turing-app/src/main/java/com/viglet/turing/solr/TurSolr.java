@@ -310,12 +310,12 @@ public class TurSolr {
                 .orElse(new TurSESpellCheckResult());
     }
 
-    public TurSEResult findById(TurSolrInstance turSolrInstance, TurSNSite turSNSite, String id) {
+    public TurSEResult findById(TurSolrInstance turSolrInstance, TurSNSite turSNSite, String id, TurSNSiteSearchContext context) {
         SolrQuery query = new SolrQuery().setQuery(ID + ": \"" + id + "\"");
         return executeSolrQuery(turSolrInstance, query).map(queryResponse ->
                         queryResponse.getResults().stream().findFirst().map(solrDocument ->
                                 createTurSEResult(getFieldExtMap(turSNSite), getRequiredFields(turSNSite),
-                                        solrDocument, getHL(turSNSite, prepareQueryHL(turSNSite, query), queryResponse,
+                                        solrDocument, getHL(turSNSite, prepareQueryHL(turSNSite, query, context), queryResponse,
                                                 solrDocument))).orElse(TurSEResult.builder().build()))
                 .orElse(TurSEResult.builder().build());
     }
@@ -346,7 +346,7 @@ public class TurSolr {
             return executeSolrQueryFromSN(turSolrInstance, turSNSite, turSEParameters, query,
                     prepareQueryMLT(turSNSite, query),
                     prepareQueryFacet(turSNSite, query, turSEParameters.getFilterQueries()),
-                    prepareQueryHL(turSNSite, query),
+                    prepareQueryHL(turSNSite, query, context),
                     turSESpellCheckResult, false);
         }).orElse(Optional.empty());
 
@@ -631,9 +631,9 @@ public class TurSolr {
      */
     private void setRows(TurSNSite turSNSite, TurSEParameters turSEParameters) {
         // If user didn't input a parameter through query string. Then, use the site configuration
-        if (turSEParameters.getRows() < 0){
+        if (turSEParameters.getRows() < 0) {
             // But only uses if the entered value is greater than 0. If not, then uses the default value = 10
-            turSEParameters.setRows((turSNSite.getRowsPerPage() > 0)? turSNSite.getRowsPerPage() : 10 );
+            turSEParameters.setRows((turSNSite.getRowsPerPage() > 0) ? turSNSite.getRowsPerPage() : 10);
         }
         // Else, it will use the query parameter
     }
@@ -1069,13 +1069,15 @@ public class TurSolr {
     private static String setFilterQueryByRangeType(String fq, KeyValue<String, String> facetKv,
                                                     TurSNSiteFacetRangeEnum facetRange) {
         try {
-            Date date = solrDateFormatter().parse(facetKv.getValue());
-            return switch (facetRange) {
-                case DAY -> setFilterQueryRangeDay(date, facetKv);
-                case MONTH -> setFilterQueryRangeMonth(date, facetKv);
-                case YEAR -> setFilterQueryRangeYear(date, facetKv);
-                case DISABLED -> fq;
-            };
+            if (withoutExpression(facetKv.getValue())) {
+                Date date = solrDateFormatter().parse(facetKv.getValue());
+                return switch (facetRange) {
+                    case DAY -> setFilterQueryRangeDay(date, facetKv);
+                    case MONTH -> setFilterQueryRangeMonth(date, facetKv);
+                    case YEAR -> setFilterQueryRangeYear(date, facetKv);
+                    case DISABLED -> fq;
+                };
+            }
         } catch (ParseException e) {
             log.error(e.getMessage(), e);
         }
@@ -1180,10 +1182,14 @@ public class TurSolr {
 
     private static boolean queryWithoutExpression(String q) {
         String value = TurSolrUtils.getValueFromQuery(q);
-        return !q.startsWith("(") && !value.startsWith("[") && !value.startsWith("(") && !value.endsWith("*");
+        return !q.startsWith("(") && withoutExpression(value);
 
     }
 
+    private static boolean withoutExpression(String value) {
+        return !value.startsWith("[") && !value.startsWith("(") && !value.endsWith("*");
+
+    }
 
     private List<TurSNSiteFieldExt> prepareQueryMLT(TurSNSite turSNSite, SolrQuery query) {
         List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList = turSNSiteFieldExtRepository
@@ -1397,9 +1403,9 @@ public class TurSolr {
         });
     }
 
-    private List<TurSNSiteFieldExt> prepareQueryHL(TurSNSite turSNSite, SolrQuery query) {
+    private List<TurSNSiteFieldExt> prepareQueryHL(TurSNSite turSNSite, SolrQuery query, TurSNSiteSearchContext context) {
         List<TurSNSiteFieldExt> turSNSiteHlFieldExtList = getHLFields(turSNSite);
-        if (isHL(turSNSite, turSNSiteHlFieldExtList)) {
+        if (context.getTurSNConfig().isHlEnabled()) {
             StringBuilder hlFields = new StringBuilder();
             turSNSiteHlFieldExtList.forEach(turSNSiteHlFieldExt -> {
                 if (!hlFields.isEmpty()) {

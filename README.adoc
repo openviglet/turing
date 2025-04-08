@@ -15,4 +15,4 @@ image:https://img.shields.io/badge/Javadoc-Release%20{viglet-version}-brightgree
 
 == Preface
 
-Viglet Turing ES (https://openviglet.github.io/turing/) is an open source solution (https://github.com/openturing), which has Semantic Navigation and Chat bot as its main features. All content is indexed in Solr as search engine.
+Viglet Turing ES (https://www.viglet.com/turing/) is an open source solution (https://github.com/openviglet/turing), which has Semantic Navigation and Chat bot as its main features. All content is indexed in Solr as search engine.

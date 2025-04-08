@@ -21,18 +21,25 @@
 package com.viglet.turing.sn.ac;
 
 import com.google.inject.Inject;
+import com.viglet.turing.api.sn.search.TurSNSiteSearchCachedAPI;
+import com.viglet.turing.commons.sn.TurSNConfig;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchResultsBean;
+import com.viglet.turing.commons.sn.field.TurSNFieldName;
+import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.se.TurSEStopWord;
+import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -41,12 +48,57 @@ public class TurSNAutoComplete {
     private final TurSolr turSolr;
     private final TurSEStopWord turSEStopword;
     private final TurSolrInstanceProcess turSolrInstanceProcess;
+    private final TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI;
 
     @Inject
-    public TurSNAutoComplete(TurSolr turSolr, TurSEStopWord turSEStopword, TurSolrInstanceProcess turSolrInstanceProcess) {
+    public TurSNAutoComplete(TurSolr turSolr, TurSEStopWord turSEStopword,
+                             TurSolrInstanceProcess turSolrInstanceProcess,
+                             TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI) {
         this.turSolr = turSolr;
         this.turSEStopword = turSEStopword;
         this.turSolrInstanceProcess = turSolrInstanceProcess;
+        this.turSNSiteSearchCachedAPI = turSNSiteSearchCachedAPI;
+    }
+
+    @NotNull
+    public List<String> autoCompleteWithRegularSearch(String siteName, String q, Integer rows,
+                                                      List<String> filterQueriesDefault,
+                                                      List<String> filterQueriesAnd,
+                                                      List<String> filterQueriesOr,
+                                                      TurSNFilterQueryOperator fqOperator, String sort,
+                                                      String localeRequest,
+                                                      HttpServletRequest request) {
+        TurSNConfig turSNConfig = new TurSNConfig();
+        turSNConfig.setHlEnabled(false);
+        return Optional.ofNullable( turSNSiteSearchCachedAPI.searchCached(
+                        TurSNUtils.getCacheKey(siteName, request),
+                        TurSNUtils.getTurSNSiteSearchContext(
+                                turSNConfig,
+                                siteName,
+                                String.format("%s:%s*", TurSNFieldName.TITLE, q),
+                                1,
+                                filterQueriesDefault,
+                                filterQueriesAnd,
+                                filterQueriesOr,
+                                fqOperator,
+                                sort,
+                                rows,
+                                null,
+                                0,
+                                request,
+                                LocaleUtils.toLocale(localeRequest))))
+                .map(TurSNSiteSearchBean::getResults)
+                .map(TurSNSiteSearchResultsBean::getDocument)
+                .map(documents -> {
+                    List<String> termList = new ArrayList<>();
+                    documents.forEach(document ->
+                            Optional.ofNullable(document.getFields())
+                                    .filter(fields -> fields.containsKey(TurSNFieldName.TITLE))
+                                    .map(fields ->
+                                            termList.add(fields.get(TurSNFieldName.TITLE).toString())));
+                    return termList;
+                })
+                .orElse(Collections.emptyList());
     }
 
     public List<String> autoComplete(String siteName, String q, Locale locale, long rows) {
@@ -57,8 +109,8 @@ public class TurSNAutoComplete {
                 // Execute AutoComplete Solr API
                 SpellCheckResponse turSEResults = executeAutoCompleteFromSE(instance, q);
                 int numberOfWordsFromQuery = q.split(SPACE_CHAR).length;
-                // Daria para inferir se há espaço no final da query se fizermos um split mantendo os delimitadores e vendo
-                // se o tamanho do array é par.
+                // It would be possible to infer whether there is space at the end of the query if we do a
+                // split keeping the delimiters and seeing if the array size is even.
                 if (q.endsWith(SPACE_CHAR)) {
                     numberOfWordsFromQuery++;
                 }

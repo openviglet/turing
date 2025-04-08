@@ -22,6 +22,7 @@ package com.viglet.turing.api.sn.search;
 
 import com.google.inject.Inject;
 import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.spellcheck.TurSNSiteSpellCheckBean;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
@@ -55,7 +56,9 @@ public class TurSNSiteSpellCheckAPI {
                                                        String q, HttpServletRequest request) {
         Locale locale = LocaleUtils.toLocale(localeRequest);
         return turSolrInstanceProcess.initSolrInstance(siteName, locale).map(turSolrInstance -> {
-            TurSNSiteSearchContext turSNSiteSearchContext = new TurSNSiteSearchContext(siteName,
+            TurSNConfig turSNConfig = new TurSNConfig();
+            turSNConfig.setHlEnabled(false);
+            TurSNSiteSearchContext turSNSiteSearchContext = new TurSNSiteSearchContext(siteName, turSNConfig,
                     new TurSEParameters(q, null,
                             1, "relevance", 10, null, 0), locale,
                     TurSNUtils.requestToURI(request));

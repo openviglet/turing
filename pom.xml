@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>3.4.3</spring-boot.version>
+        <spring-boot.version>3.4.4</spring-boot.version>
         <sonar.organization>viglet</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
@@ -79,7 +79,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
+                <version>0.8.13</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -175,7 +175,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.17</version>
+                <version>1.5.18</version>
             </dependency>
             <dependency>
                 <groupId>com.viglet.turing</groupId>
@@ -230,7 +230,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.17</version>
+                <version>1.5.18</version>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>
@@ -255,7 +255,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.4.0-jre</version>
+                <version>33.4.6-jre</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -290,7 +290,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
-                <version>5.4.2</version>
+                <version>5.4.3</version>
             </dependency>
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
@@ -305,7 +305,7 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.36</version>
+                <version>1.18.38</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -319,7 +319,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/openturing/turing</url>
+            <url>https://maven.pkg.github.com/openviglet/turing</url>
         </repository>
     </distributionManagement>
 </project>
