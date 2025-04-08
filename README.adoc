@@ -15,4 +15,14 @@ image:https://img.shields.io/badge/Javadoc-Release%20{viglet-version}-brightgree
 
 == Preface
 
-Viglet Turing ES (https://www.viglet.com/turing/) is an open source solution (https://github.com/openviglet/turing), which has Semantic Navigation and Chat bot as its main features. All content is indexed in Solr as search engine.
+Viglet Turing (https://viglet.com/turing/) is an enterprise search platform that combines semantic navigation, chatbots, and generative artificial intelligence.
+
+It has several integrations to facilitate enterprise search and interaction with external systems. Some of the main ones include:
+
+- **Authentication APIs**: Allows integration with login and security systems.
+- **OCR (Optical Character Recognition)**: Integration to extract text from images and scanned documents.
+- **Content Indexing**: Connectors to store and retrieve data from different sources.
+- **CMS Connectors**: Support for platforms such as **AEM**, facilitating indexing of managed content.
+- **Web Crawler**: Allows indexing of websites and online content.
+- **Database**: Connectors for storing and retrieving structured data.
+- **File System**: Indexing of local documents and files.
