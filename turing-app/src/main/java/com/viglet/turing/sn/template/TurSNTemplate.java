@@ -22,7 +22,6 @@
 package com.viglet.turing.sn.template;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
@@ -46,6 +45,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.*;
 
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.*;
+
 /**
  * @author Alexandre Oliveira
  * @since 0.3.4
@@ -55,7 +56,6 @@ import java.util.*;
 @Component
 public class TurSNTemplate {
     public static final String PT_BR = "pt_BR";
-    public static final String TITLE = "title";
     private final ResourceLoader resourceloader;
     private final TurSNSiteFieldRepository turSNSiteFieldRepository;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
@@ -106,14 +106,14 @@ public class TurSNTemplate {
         turSNSite.setSpellCheckFixes(1);
         turSNSite.setThesaurus(0);
         turSNSite.setExactMatch(1);
-        turSNSite.setExactMatchField(TurSNFieldName.EXACT_MATCH);
-        turSNSite.setDefaultField(TurSNFieldName.DEFAULT);
-        turSNSite.setDefaultTitleField(TurSNFieldName.TITLE);
-        turSNSite.setDefaultTextField(TurSNFieldName.TEXT);
-        turSNSite.setDefaultDescriptionField(TurSNFieldName.ABSTRACT);
-        turSNSite.setDefaultDateField(TurSNFieldName.PUBLICATION_DATE);
-        turSNSite.setDefaultImageField(TurSNFieldName.IMAGE);
-        turSNSite.setDefaultURLField(TurSNFieldName.URL);
+        turSNSite.setExactMatchField(EXACT_MATCH);
+        turSNSite.setDefaultField(DEFAULT);
+        turSNSite.setDefaultTitleField(TITLE);
+        turSNSite.setDefaultTextField(TEXT);
+        turSNSite.setDefaultDescriptionField(ABSTRACT);
+        turSNSite.setDefaultDateField(PUBLICATION_DATE);
+        turSNSite.setDefaultImageField(IMAGE);
+        turSNSite.setDefaultURLField(URL);
     }
 
     public String createSolrCore(TurSNSiteLocale turSNSiteLocale, String username) {
@@ -202,29 +202,29 @@ public class TurSNTemplate {
     public void createSEFields(TurSNSite turSNSite) {
         createSNSiteField(turSNSite, TITLE, "Title Field", TurSEFieldType.TEXT, 0,
                 "Titles", getFacetLocales("Titulos"), 1);
-        createSNSiteField(turSNSite, TurSNFieldName.TEXT, "Text Field", TurSEFieldType.TEXT, 0,
+        createSNSiteField(turSNSite, TEXT, "Text Field", TurSEFieldType.TEXT, 0,
                 "Texts", getFacetLocales("Textos"), 1);
-        createSNSiteField(turSNSite, TurSNFieldName.ABSTRACT, "Short Description Field", TurSEFieldType.TEXT,
+        createSNSiteField(turSNSite, ABSTRACT, "Short Description Field", TurSEFieldType.TEXT,
                 0, "Abstracts", getFacetLocales("Resumos"), 1);
-        createSNSiteField(turSNSite, TurSNFieldName.TYPE, "Content Type Field", TurSEFieldType.STRING, 0,
+        createSNSiteField(turSNSite, TYPE, "Content Type Field", TurSEFieldType.STRING, 0,
                 "Types", getFacetLocales("Tipos"), 1);
-        createSNSiteField(turSNSite, TurSNFieldName.IMAGE, "Image Field", TurSEFieldType.STRING, 0,
+        createSNSiteField(turSNSite, IMAGE, "Image Field", TurSEFieldType.STRING, 0,
                 "Images", getFacetLocales("Images"), 0);
-        createSNSiteField(turSNSite, TurSNFieldName.URL, "URL Field", TurSEFieldType.STRING, 0,
+        createSNSiteField(turSNSite, URL, "URL Field", TurSEFieldType.STRING, 0,
                 "URLs", getFacetLocales("URLs"), 0);
-        createSNSiteField(turSNSite, TurSNFieldName.MODIFICATION_DATE, "Publication Date", TurSEFieldType.DATE,
+        createSNSiteField(turSNSite, MODIFICATION_DATE, "Publication Date", TurSEFieldType.DATE,
                 0, "Publication Dates",
                 getFacetLocales("Datas de Publicação"), 0);
-        createSNSiteField(turSNSite, TurSNFieldName.MODIFICATION_DATE, "Modification Date", TurSEFieldType.DATE,
+        createSNSiteField(turSNSite, MODIFICATION_DATE, "Modification Date", TurSEFieldType.DATE,
                 0, "Modification Dates",
                 getFacetLocales("Datas de Modificação"), 0);
-        createSNSiteField(turSNSite, TurSNFieldName.SITE, "Site Name", TurSEFieldType.TEXT, 0,
+        createSNSiteField(turSNSite, SITE, "Site Name", TurSEFieldType.TEXT, 0,
                 "Sites", getFacetLocales("Nome dos Sites"), 0);
-        createSNSiteField(turSNSite, TurSNFieldName.AUTHOR, "Author", TurSEFieldType.STRING, 0,
+        createSNSiteField(turSNSite, AUTHOR, "Author", TurSEFieldType.STRING, 0,
                 "Authors", getFacetLocales("Autores"), 0);
-        createSNSiteField(turSNSite, TurSNFieldName.SECTION, "Section", TurSEFieldType.STRING, 1,
+        createSNSiteField(turSNSite, SECTION, "Section", TurSEFieldType.STRING, 1,
                 "Sections", getFacetLocales("Sessões"), 0);
-        createSNSiteField(turSNSite, TurSNFieldName.SOURCE_APPS, "Source Apps", TurSEFieldType.STRING, 1,
+        createSNSiteField(turSNSite, SOURCE_APPS, "Source Apps", TurSEFieldType.STRING, 1,
                 "Source Apps", getFacetLocales("Apps de Origem"), 0);
     }
 
