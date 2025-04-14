@@ -31,6 +31,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -82,13 +83,14 @@ public class TurGenAi {
     }
 
     private TurChatMessage getTurChatMessage(TurGenAiContext context, String q) {
-        int maxResults = 10;
-        double minScore = 0.7;
-        Embedding questionEmbedding =  context.getEmbeddingModel().embed(q).content();
-        List<EmbeddingMatch<TextSegment>> relevantEmbeddings
-                = context.getChromaEmbeddingStore().findRelevant(questionEmbedding, maxResults, minScore);
+        EmbeddingSearchRequest embeddingSearchRequest = EmbeddingSearchRequest.builder()
+                .queryEmbedding(context.getEmbeddingModel().embed(q).content())
+                .maxResults(10)
+                .minScore(0.7)
+                .build();
+        List<EmbeddingMatch<TextSegment>> relevantEmbeddings = context.getChromaEmbeddingStore()
+                .search(embeddingSearchRequest).matches();
         PromptTemplate promptTemplate = PromptTemplate.from(context.getSystemPrompt());
-
         String information = relevantEmbeddings.stream()
                 .map(match -> match.embedded().text())
                 .collect(joining("\n\n"));
@@ -96,11 +98,9 @@ public class TurGenAi {
         Map<String, Object> variables = new HashMap<>();
         variables.put(QUESTION, q);
         variables.put(INFORMATION, information);
-
         Prompt prompt = promptTemplate.apply(variables);
-        AiMessage aiMessage =  context.getChatLanguageModel().chat(prompt.toUserMessage()).aiMessage();
         return TurChatMessage.builder()
-                .text(aiMessage.text())
+                .text(context.getChatLanguageModel().chat(prompt.toUserMessage()).aiMessage().text())
                 .enabled(true)
                 .build();
     }
