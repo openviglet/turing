@@ -25,8 +25,6 @@ import dev.langchain4j.data.document.DefaultDocument;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.splitter.DocumentByCharacterSplitter;
-import dev.langchain4j.data.embedding.Embedding;
-import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
@@ -40,21 +38,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.*;
 import static org.apache.commons.lang3.stream.LangCollectors.joining;
 
 @Slf4j
 @Component
 public class TurGenAi {
-    public static final String MODIFICATION_DATE = "modification_date";
-    public static final String PUBLICATION_DATE = "publication_date";
-    public static final String URL = "url";
-    public static final String ID = "id";
-    public static final String LOCALE = "locale";
-    public static final String SOURCE_APPS = "sourceApps";
     public static final String SITES = "sites";
-    public static final String TITLE = "title";
-    public static final String ABSTRACT = "abstract";
-    public static final String TEXT = "text";
+    public static final String LOCALE = "locale";
     public static final String QUESTION = "question";
     public static final String INFORMATION = "information";
     private final TurSNSearchProcess turSNSearchProcess;
