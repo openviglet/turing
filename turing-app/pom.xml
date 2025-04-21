@@ -38,7 +38,7 @@
         <dependency>
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
-            <version>8.17.4</version>
+            <version>9.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -247,7 +247,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.4.7-jre</version>
+            <version>33.4.8-jre</version>
         </dependency>
         <dependency>
             <groupId>org.languagetool</groupId>
