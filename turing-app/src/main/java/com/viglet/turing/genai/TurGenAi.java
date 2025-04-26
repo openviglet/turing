@@ -25,12 +25,11 @@ import dev.langchain4j.data.document.DefaultDocument;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.splitter.DocumentByCharacterSplitter;
-import dev.langchain4j.data.embedding.Embedding;
-import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -39,21 +38,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.*;
 import static org.apache.commons.lang3.stream.LangCollectors.joining;
 
 @Slf4j
 @Component
 public class TurGenAi {
-    public static final String MODIFICATION_DATE = "modification_date";
-    public static final String PUBLICATION_DATE = "publication_date";
-    public static final String URL = "url";
-    public static final String ID = "id";
-    public static final String LOCALE = "locale";
-    public static final String SOURCE_APPS = "sourceApps";
     public static final String SITES = "sites";
-    public static final String TITLE = "title";
-    public static final String ABSTRACT = "abstract";
-    public static final String TEXT = "text";
+    public static final String LOCALE = "locale";
     public static final String QUESTION = "question";
     public static final String INFORMATION = "information";
     private final TurSNSearchProcess turSNSearchProcess;
@@ -82,13 +74,14 @@ public class TurGenAi {
     }
 
     private TurChatMessage getTurChatMessage(TurGenAiContext context, String q) {
-        int maxResults = 10;
-        double minScore = 0.7;
-        Embedding questionEmbedding =  context.getEmbeddingModel().embed(q).content();
-        List<EmbeddingMatch<TextSegment>> relevantEmbeddings
-                = context.getChromaEmbeddingStore().findRelevant(questionEmbedding, maxResults, minScore);
+        EmbeddingSearchRequest embeddingSearchRequest = EmbeddingSearchRequest.builder()
+                .queryEmbedding(context.getEmbeddingModel().embed(q).content())
+                .maxResults(10)
+                .minScore(0.7)
+                .build();
+        List<EmbeddingMatch<TextSegment>> relevantEmbeddings = context.getChromaEmbeddingStore()
+                .search(embeddingSearchRequest).matches();
         PromptTemplate promptTemplate = PromptTemplate.from(context.getSystemPrompt());
-
         String information = relevantEmbeddings.stream()
                 .map(match -> match.embedded().text())
                 .collect(joining("\n\n"));
@@ -96,11 +89,9 @@ public class TurGenAi {
         Map<String, Object> variables = new HashMap<>();
         variables.put(QUESTION, q);
         variables.put(INFORMATION, information);
-
         Prompt prompt = promptTemplate.apply(variables);
-        AiMessage aiMessage =  context.getChatLanguageModel().chat(prompt.toUserMessage()).aiMessage();
         return TurChatMessage.builder()
-                .text(aiMessage.text())
+                .text(context.getChatLanguageModel().chat(prompt.toUserMessage()).aiMessage().text())
                 .enabled(true)
                 .build();
     }
