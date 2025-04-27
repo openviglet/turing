@@ -1,0 +1,14 @@
+<project>
+    <target name="distribution">
+      <!--  <exec executable="mvnw.cmd">
+            <arg value="package"/>
+        </exec> -->
+        <delete dir="dist/"/>
+        <mkdir dir="dist/server"/>
+        <copy file="turing-app/target/viglet-turing.jar" todir="dist/server/"/>
+
+        <ant antfile="turing-aem/aem-cli-indexer/src/ant/build.xml" target="distribution"/>
+        <mkdir dir="dist/connectors/aem"/>
+        <copy file="turing-connector/connector-app/target/turing-connector.jar" todir="dist/connectors/"/>
+    </target>
+</project>
