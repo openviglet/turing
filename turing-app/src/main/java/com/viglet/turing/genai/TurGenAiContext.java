@@ -21,7 +21,7 @@ package com.viglet.turing.genai;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
@@ -32,7 +32,7 @@ import lombok.Getter;
 public class TurGenAiContext {
     private final ChromaEmbeddingStore chromaEmbeddingStore;
     private final EmbeddingModel embeddingModel;
-    private final ChatLanguageModel chatLanguageModel;
+    private final ChatModel chatLanguageModel;
     private final boolean enabled;
     private final String systemPrompt;
     public static final String COLLECTION_NAME = "turing";
