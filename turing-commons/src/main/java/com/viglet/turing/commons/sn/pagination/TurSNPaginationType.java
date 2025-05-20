@@ -1,8 +1,10 @@
 package com.viglet.turing.commons.sn.pagination;
 
-import java.io.Serializable;
-
-public enum TurSNPaginationType implements Serializable {
+/**
+ * @author Alexandre Oliveira
+ * @since 0.3.5
+ */
+public enum TurSNPaginationType {
 
 	FIRST {
 		@Override

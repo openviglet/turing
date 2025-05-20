@@ -33,7 +33,6 @@ import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.solr.bean.TurSolrFieldBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.KeyValue;
-import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
 import org.apache.http.HttpHeaders;
 import org.apache.solr.common.SolrDocument;
 import org.jetbrains.annotations.NotNull;
@@ -47,9 +46,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class TurSolrUtils {

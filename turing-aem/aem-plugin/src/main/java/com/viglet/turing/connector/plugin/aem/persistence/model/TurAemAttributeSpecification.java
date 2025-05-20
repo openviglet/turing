@@ -8,7 +8,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ import java.util.Map;
 @Entity
 @Table(name = "aem_attribute_specification")
 @JsonIgnoreProperties({ "turAemSource" })
-public class TurAemAttributeSpecification extends TurSNAttributeSpec implements Serializable {
+public class TurAemAttributeSpecification extends TurSNAttributeSpec {
 
     @Serial
     private static final long serialVersionUID = 1L;

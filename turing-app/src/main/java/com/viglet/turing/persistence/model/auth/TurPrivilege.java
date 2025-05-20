@@ -4,13 +4,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
-import org.jetbrains.annotations.NotNull;
 
 @Setter
 @Getter
