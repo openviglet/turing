@@ -1,5 +1,5 @@
 #! /bin/bash
-# Insper Prod - Publish
+# Prod - Publish
 if [ "$(whoami)" != "turing" ]; then
     echo "Script must be run as user: turing"
     exit 1

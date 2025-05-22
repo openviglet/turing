@@ -11,7 +11,7 @@ else
 
 cd /appl/viglet/turing/aem || exit
 
-## INSPER
+## Prod
 prod-author/run.sh &
 prod-publish/run.sh &
 
