@@ -40,7 +40,6 @@ import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightD
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightTermRepository;
 import com.viglet.turing.se.result.TurSEResult;
-import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;

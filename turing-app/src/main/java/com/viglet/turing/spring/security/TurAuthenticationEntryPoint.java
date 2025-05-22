@@ -20,11 +20,7 @@
  */
 package com.viglet.turing.spring.security;
 
-import java.lang.invoke.MethodHandles;
-
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 

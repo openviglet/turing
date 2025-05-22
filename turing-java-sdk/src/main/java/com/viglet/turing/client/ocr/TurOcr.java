@@ -24,7 +24,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 
 @Slf4j
 public class TurOcr {

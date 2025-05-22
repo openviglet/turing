@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface TurAemPluginIndexingRepository extends JpaRepository<TurAemPluginIndexing, String> {
+public interface TurAemPluginIndexingRepository extends JpaRepository<TurAemPluginIndexing, Integer> {
 
     Optional<List<TurAemPluginIndexing>> findByIndexGroupAndDeltaIdNotAndOnceFalse(String indexGroup, String deltaId);
 

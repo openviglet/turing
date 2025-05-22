@@ -27,8 +27,6 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * The persistent class for the TurLLMInstance database table.

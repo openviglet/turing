@@ -17,9 +17,7 @@
 
 package com.viglet.turing.commons.se.field;
 
-import java.io.Serializable;
-
-public enum TurSEFieldType implements Serializable  {
+public enum TurSEFieldType  {
 	INT(1),
 	LONG(2),
 	STRING(3),

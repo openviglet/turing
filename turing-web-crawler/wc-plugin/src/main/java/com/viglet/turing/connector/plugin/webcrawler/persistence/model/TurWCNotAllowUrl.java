@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -20,7 +19,7 @@ import java.io.Serializable;
 @Setter
 @Entity
 @JsonIgnoreProperties({ "turWCSource" })
-public class TurWCNotAllowUrl extends TurWCUrl implements Serializable {
+public class TurWCNotAllowUrl extends TurWCUrl{
 
     @Serial
     private static final long serialVersionUID = 1L;
