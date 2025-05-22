@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-color-mode="dark" data-dark-theme="dark_dimmed">
+
+<head>
+	<meta charset="utf-8">
+	<title>Semantic Navigation | Turing ES</title>
+	<base href="/">
+  <script>
+    (function() {
+      window['_app_base'] = "/sn/" + window.location.pathname.split('/')[2];
+      //console.log(window.location.pathname.split('/')[2]);
+    })();
+  </script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/x-icon" href="/sn/templates/favicon.ico">
+	<link href="/sn/templates/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+	<script>
+
+		// Custom identicon style
+		// https://jdenticon.com/icon-designer.html?config=8644440010c4330a24461852
+		window.jdenticon_config = {
+			hues: [196],
+			lightness: {
+				color: [0.36, 0.70],
+				grayscale: [0.24, 0.82]
+			},
+			saturation: {
+				color: 0.51,
+				grayscale: 0.10
+			},
+			backColor: "#86444400"
+		};
+
+		</script>
+</head>
+
+<body>
+	<app-root></app-root>
+</body>
+
+</html>

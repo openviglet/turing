@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappingDefinitions>
+    <common-index-attrs>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurCTDName" mandatory="true">
+            <tag>type</tag>
+        </srcAttr>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurAEMCreationDate" mandatory="true">
+            <tag>publication_date</tag>
+        </srcAttr>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurAEMModificationDate" mandatory="true">
+            <tag>modification_date</tag>
+        </srcAttr>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurSiteName" mandatory="true">
+            <tag>site</tag>
+        </srcAttr>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurHTML2Text">
+            <tag>text</tag>
+        </srcAttr>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurHTML2Text">
+            <tag>description</tag>
+        </srcAttr>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurContentUrl" mandatory="true">
+            <tag>url</tag>
+        </srcAttr>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurContentId" mandatory="true">
+            <tag>id</tag>
+        </srcAttr>
+        <srcAttr className="com.viglet.turing.connector.aem.commons.ext.TurSourceApps" mandatory="true">
+            <tag>source_apps</tag>
+        </srcAttr>
+    </common-index-attrs>
+    <mappingDefinition contentType="cq:Page">
+        <index-attrs>
+            <srcAttr xmlName="jcr:title">
+                <tag>title</tag>
+            </srcAttr>
+            <srcAttr xmlName="jcr:description">
+                <tag>abstract</tag>
+            </srcAttr>
+            <srcAttr xmlName="cq:tags">
+                <tag>tags</tag>
+            </srcAttr>
+            <srcAttr xmlName="text" className="com.viglet.turing.connector.aem.commons.ext.TurPageComponents">
+                <tag>text</tag>
+            </srcAttr>
+        </index-attrs>
+    </mappingDefinition>
+    <mappingDefinition contentType="dam:Asset" subType="content-fragment">
+        <index-attrs>
+            <srcAttr xmlName="jcr:title">
+                <tag>title</tag>
+            </srcAttr>
+            <srcAttr xmlName="content" className="com.viglet.turing.connector.aem.commons.ext.TurHTML2Text">
+                <tag>abstract</tag>
+            </srcAttr>
+            <srcAttr xmlName="group">
+                <tag>group</tag>
+            </srcAttr>
+            <srcAttr xmlName="theme">
+                <tag>theme</tag>
+            </srcAttr>
+        </index-attrs>
+    </mappingDefinition>
+
+</mappingDefinitions>

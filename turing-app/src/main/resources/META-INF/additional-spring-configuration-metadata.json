@@ -1,0 +1,37 @@
+{"properties": [
+  {
+    "name": "turing.allowedOrigins",
+    "type": "java.lang.String",
+    "description": "A description for 'turing.allowedOrigins'."
+  },
+  {
+    "name": "turing.solr.timeout",
+    "type": "java.lang.Integer",
+    "description": "A description for 'turing.solr.timeout'."
+  },
+  {
+    "name": "turing.solr.cloud",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'turing.solr.cloud'."
+  },
+  {
+    "name": "turing.multi-tenant",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'turing.multi-tenant'."
+  },
+  {
+    "name": "turing.keycloak",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'turing.keycloak'."
+  },
+  {
+    "name": "turing.openai.key",
+    "type": "java.lang.String",
+    "description": "A description for 'turing.openai.key'."
+  },
+  {
+    "name": "turing.ai.enabled",
+    "type": "java.lang.Boolean",
+    "description": "turing.ai.enabled."
+  }
+]}
