@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/locale")
@@ -50,13 +51,13 @@ public class TurLocaleAPI {
 
 	@Operation(summary = "Show a Locale")
 	@GetMapping("/{id}")
-	public TurLocale turLocaleGet(@PathVariable String id) {
+	public TurLocale turLocaleGet(@PathVariable Locale id) {
 		return this.turLocaleRepository.findById(id).orElse(new TurLocale());
 	}
 
 	@Operation(summary = "Update a Locle")
 	@PutMapping("/{id}")
-	public TurLocale turLocaleUpdate(@PathVariable String id, @RequestBody TurLocale turLocale) {
+	public TurLocale turLocaleUpdate(@PathVariable Locale id, @RequestBody TurLocale turLocale) {
 		return this.turLocaleRepository.findById(id).map(turLocaleEdit -> {
 			turLocaleEdit.setEn(turLocale.getEn());
 			turLocaleEdit.setPt(turLocale.getPt());
