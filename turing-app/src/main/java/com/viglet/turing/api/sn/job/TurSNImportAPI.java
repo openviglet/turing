@@ -56,6 +56,7 @@ public class TurSNImportAPI {
     private final JmsMessagingTemplate jmsMessagingTemplate;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurGenAi turGenAi;
+
     @Inject
     public TurSNImportAPI(JmsMessagingTemplate jmsMessagingTemplate, TurSNSiteRepository turSNSiteRepository,
                           TurGenAi turGenAi) {
@@ -131,7 +132,16 @@ public class TurSNImportAPI {
     }
 
     private void sendToGenAi(TurSNJobItems turSNJobItems) {
-        turGenAi.addDocuments(turSNJobItems);
+        turSNJobItems.forEach(turJobItem -> {
+            if (isValidJobItem(turJobItem)) {
+                turJobItem.getSiteNames().forEach(siteName ->
+                        turSNSiteRepository.findByName(siteName)
+                                .filter(turSNSite -> turSNSite.getTurSNSiteGenAi() != null
+                                        && turSNSite.getTurSNSiteGenAi().isEnabled())
+                                .ifPresent(turSNSite -> turGenAi.addDocuments(turSNJobItems)
+                                ));
+            }
+        });
     }
 
     private void sentQueueInfo(TurSNJobItems turSNJobItems) {
