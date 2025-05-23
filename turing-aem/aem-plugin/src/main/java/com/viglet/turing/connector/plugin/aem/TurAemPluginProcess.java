@@ -226,15 +226,12 @@ public class TurAemPluginProcess {
     }
 
     private void getNodesFromJson(TurAemSourceContext turAemSourceContext) {
-        System.out.println("getNodesFromJson");
-        System.out.println(turAemSourceContext);
         if (TurAemCommonsUtils.usingContentTypeParameter(turAemSourceContext)) {
             byContentTypeList(turAemSourceContext);
         }
     }
 
     private void byContentTypeList(TurAemSourceContext turAemSourceContext) {
-        System.out.println("byContentTypeList");
         turAemContentDefinitionProcess.findByNameFromModelWithDefinition(turAemSourceContext.getContentType())
                 .ifPresentOrElse(turAemModel -> byContentType(turAemSourceContext),
                         () -> log.info("{} type is not configured in CTD Mapping file.",
@@ -242,10 +239,8 @@ public class TurAemPluginProcess {
     }
 
     private void byContentType(TurAemSourceContext turAemSourceContext) {
-        System.out.println("byContentType");
         TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext, false)
                 .ifPresent(infinityJson -> {
-                    System.out.println("byContentType infinityJson");
                     TurAemCommonsUtils.getSiteName(turAemSourceContext, infinityJson).ifPresent(s -> siteName = s);
                     getNodeFromJson(turAemSourceContext.getRootPath(), infinityJson, turAemSourceContext);
                 });
@@ -253,7 +248,6 @@ public class TurAemPluginProcess {
 
 
     private void getNodeFromJson(String nodePath, JSONObject jsonObject, TurAemSourceContext turAemSourceContext) {
-        System.out.println("getNodeFromJson");
         TurAemObject aemObject = new TurAemObject(nodePath, jsonObject);
         Optional.of(aemObject).ifPresentOrElse(o -> {
             if (TurAemCommonsUtils.isTypeEqualContentType(jsonObject, turAemSourceContext)) {
@@ -269,7 +263,6 @@ public class TurAemPluginProcess {
     }
 
     private void getChildrenFromJson(String nodePath, JSONObject jsonObject, TurAemSourceContext turAemSourceContext) {
-        System.out.println("getChildrenFromJson");
         jsonObject.toMap().forEach((key, value) -> {
             if (!key.startsWith(JCR) && !key.startsWith(REP) && !key.startsWith(CQ)
                     && (turAemSourceContext.getSubType() != null && turAemSourceContext.getSubType().equals(STATIC_FILE_SUB_TYPE)
@@ -293,7 +286,6 @@ public class TurAemPluginProcess {
     private void prepareIndexObject(TurAemModel turAemModel, TurAemObject aemObject,
                                     List<TurSNAttributeSpec> targetAttrDefinitions,
                                     TurAemSourceContext turAemSourceContext) {
-        System.out.println("prepareIndexObject");
         String type = Objects.requireNonNull(turAemSourceContext.getContentType());
         if (type.equals(CQ_PAGE)) {
             indexObject(aemObject, turAemModel, targetAttrDefinitions, turAemSourceContext);
@@ -329,13 +321,11 @@ public class TurAemPluginProcess {
     }
 
     private boolean objectNeedBeIndexed(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
-        System.out.println("objectNeedBeIndexed");
         return !StringUtils.isEmpty(aemObject.getPath()) &&
                 !turAemIndexingRepository.existsByAemIdAndIndexGroup(aemObject.getPath(), turAemSourceContext.getId());
     }
 
     private boolean objectNeedBeReIndexed(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
-        System.out.println("objectNeedBeReIndexed");
         return ddlNeedBeReIndexed(aemObject, turAemSourceContext, TurAemCommonsUtils.getDeltaDate(aemObject,
                 turAemSourceContext, turAemContentDefinitionProcess));
     }
@@ -343,7 +333,6 @@ public class TurAemPluginProcess {
 
     private boolean ddlNeedBeReIndexed(TurAemObject aemObject, TurAemSourceContext turAemSourceContext,
                                        Date deltaDate) {
-        System.out.println("ddlNeedBeReIndexed");
         return !StringUtils.isEmpty(aemObject.getPath()) &&
                 turAemIndexingRepository.existsByAemIdAndIndexGroupAndDateNot(aemObject.getPath(),
                         turAemSourceContext.getId(), deltaDate);
@@ -352,9 +341,7 @@ public class TurAemPluginProcess {
     private void indexObject(@NotNull TurAemObject aemObject, TurAemModel turAemModel,
                              List<TurSNAttributeSpec> turSNAttributeSpecList,
                              TurAemSourceContext turAemSourceContext) {
-        System.out.println("indexObject");
         if (!DELIVERED || aemObject.isDelivered()) {
-            System.out.println("indexObject isDelivered" );
             final Locale locale = TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext, aemObject);
             if (objectNeedBeIndexed(aemObject, turAemSourceContext)) {
                 sendIndex(aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext, locale);
@@ -375,7 +362,6 @@ public class TurAemPluginProcess {
     private void sendReindex(TurAemObject aemObject, TurAemModel turAemModel,
                              List<TurSNAttributeSpec> turSNAttributeSpecList,
                              TurAemSourceContext turAemSourceContext, Locale locale) {
-        System.out.println("sendReindex" );
         if (!DRY_RUN) {
             turAemIndexingRepository.findByAemIdAndIndexGroup(aemObject.getPath(), turAemSourceContext.getId())
                     .ifPresent(turAemIndexingsList ->
@@ -392,7 +378,6 @@ public class TurAemPluginProcess {
     private void sendIndex(TurAemObject aemObject, TurAemModel turAemModel,
                            List<TurSNAttributeSpec> turSNAttributeSpecList, TurAemSourceContext turAemSourceContext,
                            Locale locale) {
-        System.out.println("sendIndex" );
         if (!DRY_RUN) {
             createIndexingStatus(aemObject, locale, turAemSourceContext);
         }
@@ -401,14 +386,12 @@ public class TurAemPluginProcess {
     }
 
     private void createIndexingStatus(TurAemObject aemObject, Locale locale, TurAemSourceContext turAemSourceContext) {
-        System.out.println("createIndexingStatus" );
         turAemIndexingRepository.save(createTurAemIndexing(aemObject, locale, turAemSourceContext));
         log.info("Created status: {} object ({}) and deltaId = {}", aemObject.getPath(),
                 turAemSourceContext.getId(), deltaId);
     }
 
     private void updateIndexingStatus(TurAemObject aemObject, Locale locale, TurAemSourceContext turAemSourceContext) {
-        System.out.println("updateIndexingStatus" );
         turAemIndexingRepository.findByAemIdAndIndexGroup(aemObject.getPath(), turAemSourceContext.getId())
                 .filter(turAemIndexingList -> !turAemIndexingList.isEmpty())
                 .ifPresent(turAemIndexingList -> {
@@ -433,7 +416,6 @@ public class TurAemPluginProcess {
 
     private TurAemPluginIndexing createTurAemIndexing(TurAemObject aemObject, Locale locale,
                                                       TurAemSourceContext turAemSourceContext) {
-        System.out.println("createTurAemIndexing" );
         return new TurAemPluginIndexing()
                 .setAemId(aemObject.getPath())
                 .setIndexGroup(turAemSourceContext.getId())
@@ -447,7 +429,6 @@ public class TurAemPluginProcess {
     private void sendToTuringToBeIndexed(TurAemObject aemObject, TurAemModel turAemModel,
                                          List<TurSNAttributeSpec> turSNAttributeSpecList, Locale locale,
                                          TurAemSourceContext turAemSourceContext) {
-        System.out.println("sendToTuringToBeIndexed" );
         TurAemAttrProcess turAEMAttrProcess = new TurAemAttrProcess();
         TurAemTargetAttrValueMap turAemTargetAttrValueMap = turAEMAttrProcess
                 .prepareAttributeDefs(aemObject, turAemContentDefinitionProcess, turSNAttributeSpecList,

@@ -148,7 +148,6 @@ public class TurConnectorContextImpl implements TurConnectorContext {
         turConnectorIndexingRepository.findByObjectIdAndIndexGroup(turSNJobItem.getId(),
                         turConnectorSource.getSystemId())
                 .ifPresent(turAemIndexingsList -> {
-                    System.out.println(turSNJobItem);
                     log.info("No Modification {} object ({}) and transactionId = {}",
                             turSNJobItem.getId(), turConnectorSource.getSystemId(),
                             turConnectorSource.getTransactionId());
