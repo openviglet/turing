@@ -264,36 +264,9 @@ public class TurAemIndexerTool {
         };
     }
 
-    private void getNodeFromJson(String nodePath, JSONObject jsonObject, TurAemSourceContext turAemSourceContext,
-                                 long start) {
-        TurAemObject aemObject = new TurAemObject(nodePath, jsonObject);
-        Optional.of(aemObject).ifPresentOrElse(o -> {
-            if (TurAemCommonsUtils.isTypeEqualContentType(jsonObject, turAemSourceContext)) {
-                turAemContentDefinitionProcess.findByNameFromModelWithDefinition(turAemSourceContext.getContentType())
-                        .ifPresent(model ->
-                                prepareIndexObject(model, new TurAemObject(nodePath, jsonObject),
-                                        turAemContentDefinitionProcess.getTargetAttrDefinitions(), turAemSourceContext, start));
-            }
-        }, () -> log.info("AEM object ({}) is null deltaId = {}",
-                turAemSourceContext.getId(), deltaId));
-        getChildrenFromJson(nodePath, jsonObject, turAemSourceContext, start);
-    }
 
-    private void getChildrenFromJson(String nodePath, JSONObject jsonObject, TurAemSourceContext turAemSourceContext,
-                                     long start) {
-        jsonObject.toMap().forEach((key, value) -> {
-            if (!key.startsWith(JCR) && !key.startsWith(REP) && !key.startsWith(CQ)
-                    && (turAemSourceContext.getSubType().equals(STATIC_FILE_SUB_TYPE)
-                    || TurAemCommonsUtils.checkIfFileHasNotImageExtension(key))) {
-                String nodePathChild = "%s/%s".formatted(nodePath, key);
-                if (!isOnce(turAemSourceContext) || !TurAemCommonsUtils.isOnceConfig(nodePathChild, config)) {
-                    TurAemCommonsUtils.getInfinityJson(nodePathChild, turAemSourceContext, false)
-                            .ifPresent(infinityJson ->
-                                    getNodeFromJson(nodePathChild, infinityJson, turAemSourceContext, start));
-                }
-            }
-        });
-    }
+
+
 
     private boolean isOnce(TurAemSourceContext turAemSourceContext) {
         return turAemSystemDAO.findByConfig(TurAemCommonsUtils.configOnce(turAemSourceContext))
@@ -301,23 +274,7 @@ public class TurAemIndexerTool {
                 .orElse(false);
     }
 
-    private void prepareIndexObject(TurAemModel turAemModel, TurAemObject aemObject,
-                                    List<TurSNAttributeSpec> targetAttrDefinitions,
-                                    TurAemSourceContext turAemSourceContext,
-                                    long start) {
-        String type = Objects.requireNonNull(turAemSourceContext.getContentType());
-        if (type.equals(CQ_PAGE)) {
-            indexObject(aemObject, turAemModel, targetAttrDefinitions, turAemSourceContext, start);
-        } else if (type.equals(DAM_ASSET) && !StringUtils.isEmpty(turAemModel.getSubType())) {
-            if (turAemModel.getSubType().equals(CONTENT_FRAGMENT) && aemObject.isContentFragment()) {
-                aemObject.setDataPath(DATA_MASTER);
-                indexObject(aemObject, turAemModel, targetAttrDefinitions, turAemSourceContext, start);
-            } else if (turAemModel.getSubType().equals(STATIC_FILE)) {
-                aemObject.setDataPath(METADATA);
-                indexObject(aemObject, turAemModel, targetAttrDefinitions, turAemSourceContext, start);
-            }
-        }
-    }
+
 
     private void itemsProcessedStatus(long start) {
         if (processed.get() == 0) {
@@ -369,6 +326,55 @@ public class TurAemIndexerTool {
         return !StringUtils.isEmpty(aemObject.getPath()) &&
                 turAemIndexingDAO.existsByAemIdAndGroupAndDateNotEqual(aemObject.getPath(),
                         turAemSourceContext.getId(), deltaDate);
+    }
+
+    private void getNodeFromJson(String nodePath, JSONObject jsonObject, TurAemSourceContext turAemSourceContext,
+                                 long start) {
+        TurAemObject aemObject = new TurAemObject(nodePath, jsonObject);
+        Optional.of(aemObject).ifPresentOrElse(o -> {
+            if (TurAemCommonsUtils.isTypeEqualContentType(jsonObject, turAemSourceContext)) {
+                turAemContentDefinitionProcess.findByNameFromModelWithDefinition(turAemSourceContext.getContentType())
+                        .ifPresent(model ->
+                                prepareIndexObject(model, new TurAemObject(nodePath, jsonObject),
+                                        turAemContentDefinitionProcess.getTargetAttrDefinitions(), turAemSourceContext, start));
+            }
+        }, () -> log.info("AEM object ({}) is null deltaId = {}",
+                turAemSourceContext.getId(), deltaId));
+        getChildrenFromJson(nodePath, jsonObject, turAemSourceContext, start);
+    }
+
+    private void getChildrenFromJson(String nodePath, JSONObject jsonObject, TurAemSourceContext turAemSourceContext,
+                                     long start) {
+        jsonObject.toMap().forEach((key, value) -> {
+            if (!key.startsWith(JCR) && !key.startsWith(REP) && !key.startsWith(CQ)
+                    && (turAemSourceContext.getSubType().equals(STATIC_FILE_SUB_TYPE)
+                    || TurAemCommonsUtils.checkIfFileHasNotImageExtension(key))) {
+                String nodePathChild = "%s/%s".formatted(nodePath, key);
+                if (!isOnce(turAemSourceContext) || !TurAemCommonsUtils.isOnceConfig(nodePathChild, config)) {
+                    TurAemCommonsUtils.getInfinityJson(nodePathChild, turAemSourceContext, false)
+                            .ifPresent(infinityJson ->
+                                    getNodeFromJson(nodePathChild, infinityJson, turAemSourceContext, start));
+                }
+            }
+        });
+    }
+
+    private void prepareIndexObject(TurAemModel turAemModel, TurAemObject aemObject,
+                                    List<TurSNAttributeSpec> targetAttrDefinitions,
+                                    TurAemSourceContext turAemSourceContext,
+                                    long start) {
+        String type = Objects.requireNonNull(turAemSourceContext.getContentType());
+        if (type.equals(CQ_PAGE)) {
+            indexObject(aemObject, turAemModel, targetAttrDefinitions, turAemSourceContext, start);
+        } else if (type.equals(DAM_ASSET) && !StringUtils.isEmpty(turAemModel.getSubType())) {
+            if (turAemModel.getSubType().equals(CONTENT_FRAGMENT) && aemObject.isContentFragment()) {
+                aemObject.setDataPath(DATA_MASTER);
+                indexObject(aemObject, turAemModel, targetAttrDefinitions, turAemSourceContext, start);
+            } else if (turAemModel.getSubType().equals(STATIC_FILE)) {
+                aemObject.setDataPath(METADATA);
+                indexObject(aemObject, turAemModel, targetAttrDefinitions, turAemSourceContext, start);
+            }
+        }
     }
 
     private void indexObject(@NotNull TurAemObject aemObject, TurAemModel turAemModel,

@@ -44,6 +44,8 @@ public class TurAemSourceLocalePath implements Serializable {
     @UuidGenerator
     private String id;
     @Column
+    private String snSite;
+    @Column
     private Locale locale;
     @Column
     private String path;

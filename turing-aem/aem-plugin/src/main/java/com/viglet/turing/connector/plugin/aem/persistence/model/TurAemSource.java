@@ -58,25 +58,25 @@ public class TurAemSource implements Serializable {
     @Column
     private String contentType;
     @Column
+    private String subType;
+    @Column
     private String group;
     @Column
     private String urlPrefix;
     @Column
     private String oncePattern;
     @Column
-    private Locale locale;
+    private Locale defaultLocale;
     @Column
     private String localeClass;
     @Column
     private String deltaClass;
     @Column
-    private String turingUrl;
-    @Column
-    private String turingApiKey;
-    @Column
     private boolean author;
     @Column
     private boolean publish;
+    @Column
+    private String defaultSNSite;
 
     @Builder.Default
     @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
@@ -96,20 +96,6 @@ public class TurAemSource implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Collection<TurAemPluginModel> models = new HashSet<>();
 
-    @Builder.Default
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "aem_sn_site", joinColumns = @JoinColumn(name = "source_id"))
-    @Column(name = "sn_site", nullable = false)
-    private Collection<String> turSNSites = new HashSet<>();
-
-
-    public void setLocalePaths(Collection<TurAemSourceLocalePath> localePaths) {
-        this.localePaths.clear();
-        if (localePaths != null) {
-            this.localePaths.addAll(localePaths);
-        }
-    }
-
     @Override
     public String toString() {
         return "TurAemSource{" +
@@ -122,17 +108,15 @@ public class TurAemSource implements Serializable {
                 ", group='" + group + '\'' +
                 ", urlPrefix='" + urlPrefix + '\'' +
                 ", oncePattern='" + oncePattern + '\'' +
-                ", locale=" + locale +
+                ", defaultLocale=" + defaultLocale +
                 ", localeClass='" + localeClass + '\'' +
                 ", deltaClass='" + deltaClass + '\'' +
-                ", turingUrl='" + turingUrl + '\'' +
-                ", turingApiKey='" + turingApiKey + '\'' +
                 ", author=" + author +
                 ", publish=" + publish +
                 ", localePaths=" + localePaths +
                 ", attributeSpecifications=" + attributeSpecifications +
                 ", models=" + models +
-                ", turSNSites=" + turSNSites +
+                ", defaultSNSite=" + defaultSNSite +
                 '}';
     }
 }

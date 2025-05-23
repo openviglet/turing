@@ -46,16 +46,16 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
     private final String cmsSubType;
     private final String cmsRootPath;
 
-    public AemPluginHandlerConfiguration(TurAemSource turAemSource) {
+    public AemPluginHandlerConfiguration(TurAemSource turAemSource, String turingURL, String apiKey) {
         this.turAemSource = turAemSource;
-        turingURL = URI.create(turAemSource.getTuringUrl());
+        this.turingURL = URI.create(turingURL);
 
-        apiKey = turAemSource.getTuringApiKey();
+        this.apiKey = apiKey;
         mappingFile = null;
         providerName = DEFAULT_PROVIDER;
         // DPS
-        snSite = DEFAULT_SN_SITE;
-        snLocale = Locale.of(DEFAULT_SN_LOCALE);
+        snSite = turAemSource.getDefaultSNSite();
+        snLocale = turAemSource.getDefaultLocale();
         cdaURLPrefix =   turAemSource.getUrlPrefix();
         oncePatternPath = turAemSource.getOncePattern();
 
@@ -64,7 +64,7 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
         cmsPassword = turAemSource.getPassword();
         cmsGroup = turAemSource.getGroup();
         cmsContentType = turAemSource.getContentType();
-        cmsSubType = null;
+        cmsSubType = turAemSource.getSubType();
         cmsRootPath = turAemSource.getRootPath();
     }
 
@@ -126,7 +126,7 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
         Collection<TurAemLocalePathContext> turAemLocalePathContexts = new HashSet<>();
      turAemSource.getLocalePaths().forEach(localePath ->
              turAemLocalePathContexts.add(TurAemLocalePathContext.builder()
-             .snSite(localePath.getTurAemSource().getTurSNSites().stream().findFirst().get())
+             .snSite(localePath.getTurAemSource().getDefaultSNSite())
              .path(localePath.getPath())
              .locale(localePath.getLocale())
              .build()));

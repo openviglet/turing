@@ -72,7 +72,6 @@ public class TurAemCommonsUtils {
         }
     };
 
-
     public static boolean isTypeEqualContentType(JSONObject jsonObject, TurAemSourceContext turAemSourceContext) {
         return jsonObject.has(JCR_PRIMARY_TYPE) &&
                 jsonObject.getString(JCR_PRIMARY_TYPE)

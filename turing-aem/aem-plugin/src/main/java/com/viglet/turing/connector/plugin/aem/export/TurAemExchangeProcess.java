@@ -56,18 +56,21 @@ public class TurAemExchangeProcess {
     private final TurAemPluginModelRepository turAemModelRepository;
     private final TurAemTargetAttributeRepository turAemTargetAttributeRepository;
     private final TurAemSourceAttributeRepository turAemSourceAttributeRepository;
+    private final TurAemSourceLocalePathRepository turAemSourceLocalePathRepository;
 
     @Inject
     public TurAemExchangeProcess(TurAemSourceRepository turAemSourceRepository,
                                  TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository,
                                  TurAemPluginModelRepository turAemModelRepository,
                                  TurAemTargetAttributeRepository turAemTargetAttributeRepository,
-                                 TurAemSourceAttributeRepository turAemSourceAttributeRepository) {
+                                 TurAemSourceAttributeRepository turAemSourceAttributeRepository,
+                                 TurAemSourceLocalePathRepository turAemSourceLocalePathRepository) {
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemAttributeSpecificationRepository = turAemAttributeSpecificationRepository;
         this.turAemModelRepository = turAemModelRepository;
         this.turAemTargetAttributeRepository = turAemTargetAttributeRepository;
         this.turAemSourceAttributeRepository = turAemSourceAttributeRepository;
+        this.turAemSourceLocalePathRepository = turAemSourceLocalePathRepository;
     }
 
     private Collection<TurAemAttribExchange> attributeExchange(Collection<TurAemAttributeSpecification> attributeSpecifications) {
@@ -117,9 +120,9 @@ public class TurAemExchangeProcess {
                                         .id(turAemSource.getId())
                                         .url(turAemSource.getUrl())
                                         .attributes(attributeExchange(turAemSource.getAttributeSpecifications()))
-                                        .locale(turAemSource.getLocale())
+                                        .defaultLocale(turAemSource.getDefaultLocale())
                                         .localeClass(turAemSource.getLocaleClass())
-                                        .turSNSites(turAemSource.getTurSNSites())
+                                        .defaultSNSite(turAemSource.getDefaultSNSite())
                                         .build()).toList()));
 
                 File zipFile = new File(tmpDir.getAbsolutePath().concat(File.separator + folderName + ".zip"));
@@ -263,6 +266,11 @@ public class TurAemExchangeProcess {
                 .name(attribute.getName())
                 .className(attribute.getClassName())
                 .text(attribute.getText())
+                .name(attribute.getName())
+                .type(attribute.getType())
+                .mandatory(attribute.isMandatory())
+                .multiValued(attribute.isMultiValued())
+                .description(attribute.getDescription())
                 .turAemSource(turAemSource)
                 .build());
     }
@@ -270,12 +278,10 @@ public class TurAemExchangeProcess {
     private @NotNull TurAemSource setSource(TurAemSourceExchange turAemSourceExchange) {
         TurAemSource turAemSource = TurAemSource.builder()
                 .url(turAemSourceExchange.getUrl())
-                .turSNSites(turAemSourceExchange.getTurSNSites())
-                .locale(turAemSourceExchange.getLocale())
+                .defaultSNSite(turAemSourceExchange.getDefaultSNSite())
+                .defaultLocale(turAemSourceExchange.getDefaultLocale())
                 .localeClass(turAemSourceExchange.getLocaleClass())
                 .deltaClass(turAemSourceExchange.getDeltaClass())
-                .turingUrl(turAemSourceExchange.getTuringUrl())
-                .turingApiKey(turAemSourceExchange.getTuringApiKey())
                 .urlPrefix(turAemSourceExchange.getUrlPrefix())
                 .oncePattern(turAemSourceExchange.getOncePattern())
                 .username(turAemSourceExchange.getUsername())
@@ -284,9 +290,15 @@ public class TurAemExchangeProcess {
                 .author(turAemSourceExchange.isAuthor())
                 .publish(turAemSourceExchange.isPublish())
                 .contentType(turAemSourceExchange.getContentType())
+                .group(turAemSourceExchange.getGroup())
                 .build();
         turAemSourceRepository.save(turAemSource);
-        System.out.println("Source salvo: " + turAemSource);
+        turAemSourceExchange.getLocalePaths().forEach(localePath ->
+                turAemSourceLocalePathRepository.save(TurAemSourceLocalePath.builder()
+                        .snSite(localePath.getSnSite())
+                        .locale(localePath.getLocale())
+                        .path(localePath.getPath())
+                        .turAemSource(turAemSource).build()));
         return turAemSource;
     }
 }

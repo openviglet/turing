@@ -18,6 +18,7 @@
 
 package com.viglet.turing.connector.plugin.aem.export.bean;
 
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSourceLocalePath;
 import lombok.*;
 
 import java.util.Collection;
@@ -31,11 +32,9 @@ import java.util.Locale;
 @Setter
 public class TurAemSourceExchange {
     private String id;
-    private Locale locale;
+    private Locale defaultLocale;
     private String localeClass;
     private String deltaClass;
-    private String turingUrl;
-    private String turingApiKey;
     private String url;
     private String urlPrefix;
     private String oncePattern;
@@ -43,12 +42,14 @@ public class TurAemSourceExchange {
     private String password;
     private String rootPath;
     private String contentType;
+    private String defaultSNSite;
+    private String group;
     private boolean author;
     private boolean publish;
-    @Builder.Default
-    private Collection<String> turSNSites = new HashSet<>();
     @Builder.Default
     private Collection<TurAemAttribExchange> attributes = new HashSet<>();
     @Builder.Default
     private Collection<TurAemModelExchange> models = new HashSet<>();
+    @Builder.Default
+    private Collection<TurAemSourceLocalePathExchange> localePaths = new HashSet<>();
 }

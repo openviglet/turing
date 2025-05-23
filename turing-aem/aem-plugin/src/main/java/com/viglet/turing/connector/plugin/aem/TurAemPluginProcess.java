@@ -41,6 +41,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -83,6 +84,8 @@ public class TurAemPluginProcess {
     private TurConnectorContext turConnectorContext;
     private IAemConfiguration config = null;
     private TurAemContentDefinitionProcess turAemContentDefinitionProcess;
+    private final String turingUrl;
+    private final String turingApiKey;
     // Legacy
     private static final boolean REINDEX = false;
     private static final boolean REINDEX_ONCE = false;
@@ -97,7 +100,9 @@ public class TurAemPluginProcess {
                                TurAemPluginModelRepository turAemPluginModelRepository,
                                TurAemSourceRepository turAemSourceRepository,
                                TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository,
-                               TurAemTargetAttributeRepository turAemTargetAttributeRepository) {
+                               TurAemTargetAttributeRepository turAemTargetAttributeRepository,
+                               @Value("${turing.url}") String turingUrl,
+                               @Value("${turing.apiKey}") String turingApiKey ) {
         this.turAemIndexingRepository = turAemPluginIndexingRepository;
         this.turAemSystemRepository = turAemPluginSystemRepository;
         this.turAemConfigVarRepository = turAemConfigVarRepository;
@@ -106,13 +111,15 @@ public class TurAemPluginProcess {
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemAttributeSpecificationRepository = turAemAttributeSpecificationRepository;
         this.turAemTargetAttributeRepository = turAemTargetAttributeRepository;
+        this.turingUrl = turingUrl;
+        this.turingApiKey = turingApiKey;
     }
 
     public void run(TurAemSource turAemSource, TurConnectorContext turConnectorContext) {
         this.turConnectorContext = turConnectorContext;
         this.turConnectorContext.startIndexing(new TurConnectorSource(turAemSource.getId(),
-                turAemSource.getTurSNSites(), AEM, turAemSource.getLocale()));
-        config = new AemPluginHandlerConfiguration(turAemSource);
+                Collections.singletonList(turAemSource.getDefaultSNSite()), AEM, turAemSource.getDefaultLocale()));
+        config = new AemPluginHandlerConfiguration(turAemSource, turingUrl, turingApiKey);
 
         turAemContentDefinitionProcess = new TurAemContentDefinitionProcess(getTurAemContentMapping(turAemSource));
         TurAemSourceContext turAemSourceContext = getTurAemSourceContext(config);
@@ -252,7 +259,7 @@ public class TurAemPluginProcess {
             if (TurAemCommonsUtils.isTypeEqualContentType(jsonObject, turAemSourceContext)) {
                 turAemContentDefinitionProcess.findByNameFromModelWithDefinition(turAemSourceContext.getContentType())
                         .ifPresent(model ->
-                                prepareIndexObject(model, new TurAemObject(nodePath, jsonObject),
+                                prepareIndexObject(model, aemObject,
                                         turAemContentDefinitionProcess.getTargetAttrDefinitions(), turAemSourceContext));
             }
         }, () -> log.info("AEM object ({}) is null deltaId = {}",
