@@ -42,6 +42,7 @@ public class TurAemSourceExchange {
     private String username;
     private String password;
     private String rootPath;
+    private String contentType;
     private boolean author;
     private boolean publish;
     @Builder.Default

@@ -109,4 +109,30 @@ public class TurAemSource implements Serializable {
             this.localePaths.addAll(localePaths);
         }
     }
+
+    @Override
+    public String toString() {
+        return "TurAemSource{" +
+                "id='" + id + '\'' +
+                ", url='" + url + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", rootPath='" + rootPath + '\'' +
+                ", contentType='" + contentType + '\'' +
+                ", group='" + group + '\'' +
+                ", urlPrefix='" + urlPrefix + '\'' +
+                ", oncePattern='" + oncePattern + '\'' +
+                ", locale=" + locale +
+                ", localeClass='" + localeClass + '\'' +
+                ", deltaClass='" + deltaClass + '\'' +
+                ", turingUrl='" + turingUrl + '\'' +
+                ", turingApiKey='" + turingApiKey + '\'' +
+                ", author=" + author +
+                ", publish=" + publish +
+                ", localePaths=" + localePaths +
+                ", attributeSpecifications=" + attributeSpecifications +
+                ", models=" + models +
+                ", turSNSites=" + turSNSites +
+                '}';
+    }
 }

@@ -200,23 +200,27 @@ public class TurAemExchangeProcess {
     }
 
     private void setSources(TurAemExchange turAemExchange) {
-        turAemExchange.getSources().stream().filter(turAemSourceExchange ->
+        turAemExchange.getSources()
+                .stream().filter(turAemSourceExchange ->
                         turAemSourceRepository.findById(turAemSourceExchange.getId()).isEmpty())
-                .forEach(turAemSourceExchange -> {
-                    setFacetNames(turAemSourceExchange, setSource(turAemSourceExchange));
-                    setModels(turAemSourceExchange);
+                .forEach(turAemSourceExchange ->
+                {
+                    TurAemSource source = setSource(turAemSourceExchange);
+                    setFacetNames(turAemSourceExchange, source);
+                    setModels(turAemSourceExchange, source);
                 });
     }
 
-    private void setModels(TurAemSourceExchange turAemSourceExchange) {
+    private void setModels(TurAemSourceExchange turAemSourceExchange, TurAemSource turAemSource) {
         turAemSourceExchange.getModels().forEach(model ->
-                setTargetAttributes(model, setModel(model)));
+                setTargetAttributes(model, setModel(model, turAemSource)));
     }
 
-    private @NotNull TurAemPluginModel setModel(TurAemModelExchange model) {
+    private @NotNull TurAemPluginModel setModel(TurAemModelExchange model, TurAemSource turAemSource) {
         return turAemModelRepository.save(TurAemPluginModel.builder()
                 .type(model.getType())
                 .className(model.getClassName())
+                .turAemSource(turAemSource)
                 .build());
     }
 
@@ -250,7 +254,7 @@ public class TurAemExchangeProcess {
     }
 
     private void setFacetName(TurAemAttribExchange attribute,
-                               TurAemAttributeSpecification turAemAttributeSpecification) {
+                              TurAemAttributeSpecification turAemAttributeSpecification) {
         turAemAttributeSpecification.setFacetNames(attribute.getFacetName());
     }
 
@@ -265,7 +269,6 @@ public class TurAemExchangeProcess {
 
     private @NotNull TurAemSource setSource(TurAemSourceExchange turAemSourceExchange) {
         TurAemSource turAemSource = TurAemSource.builder()
-                .id(turAemSourceExchange.getId())
                 .url(turAemSourceExchange.getUrl())
                 .turSNSites(turAemSourceExchange.getTurSNSites())
                 .locale(turAemSourceExchange.getLocale())
@@ -280,8 +283,10 @@ public class TurAemExchangeProcess {
                 .rootPath(turAemSourceExchange.getRootPath())
                 .author(turAemSourceExchange.isAuthor())
                 .publish(turAemSourceExchange.isPublish())
+                .contentType(turAemSourceExchange.getContentType())
                 .build();
         turAemSourceRepository.save(turAemSource);
+        System.out.println("Source salvo: " + turAemSource);
         return turAemSource;
     }
 }

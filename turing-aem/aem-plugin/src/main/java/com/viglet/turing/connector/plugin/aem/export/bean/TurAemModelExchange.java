@@ -18,6 +18,7 @@
 
 package com.viglet.turing.connector.plugin.aem.export.bean;
 
+import jakarta.persistence.ManyToMany;
 import lombok.*;
 
 import java.util.Collection;
