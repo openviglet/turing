@@ -47,6 +47,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
+import static com.viglet.turing.connector.aem.commons.TurAemConstants.JCR_PRIMARY_TYPE;
 
 
 /**
@@ -102,7 +103,7 @@ public class TurAemPluginProcess {
                                TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository,
                                TurAemTargetAttributeRepository turAemTargetAttributeRepository,
                                @Value("${turing.url}") String turingUrl,
-                               @Value("${turing.apiKey}") String turingApiKey ) {
+                               @Value("${turing.apiKey}") String turingApiKey) {
         this.turAemIndexingRepository = turAemPluginIndexingRepository;
         this.turAemSystemRepository = turAemPluginSystemRepository;
         this.turAemConfigVarRepository = turAemConfigVarRepository;
@@ -229,6 +230,20 @@ public class TurAemPluginProcess {
         if (TurAemCommonsUtils.usingContentTypeParameter(turAemSourceContext)) {
             byContentTypeList(turAemSourceContext);
         }
+    }
+
+    public void indexGuid(TurAemSource turAemSource, String guid) {
+        config = new AemPluginHandlerConfiguration(turAemSource, turingUrl, turingApiKey);
+        turAemContentDefinitionProcess = new TurAemContentDefinitionProcess(getTurAemContentMapping(turAemSource));
+        TurAemSourceContext turAemSourceContext = getTurAemSourceContext(config);
+        TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext, false)
+                .flatMap(infinityJson -> TurAemCommonsUtils
+                        .getSiteName(turAemSourceContext, infinityJson)).ifPresent(s -> siteName = s);
+        TurAemCommonsUtils.getInfinityJson(guid, turAemSourceContext, false)
+                .ifPresent(infinityJson -> {
+                    turAemSourceContext.setContentType(infinityJson.getString(JCR_PRIMARY_TYPE));
+                    getNodeFromJson(guid, infinityJson, turAemSourceContext);
+                });
     }
 
     private void byContentTypeList(TurAemSourceContext turAemSourceContext) {

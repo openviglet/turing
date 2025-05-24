@@ -6,10 +6,9 @@
     <parent>
         <groupId>com.viglet.turing.connector</groupId>
         <artifactId>turing-aem</artifactId>
-        <version>2025.2.7</version>
+        <version>2025.2.25</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <artifactId>aem-plugin-sample</artifactId>
     <name>Turing AEM - Sample Plugin</name>
     <description>Turing AEM Connector - Sample Plugin</description>

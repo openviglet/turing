@@ -21,5 +21,8 @@ package com.viglet.turing.connector.plugin.aem.persistence.repository;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface TurAemSourceRepository extends JpaRepository<TurAemSource, String> {
+    Optional<TurAemSource> findByGroup(String group);
 }

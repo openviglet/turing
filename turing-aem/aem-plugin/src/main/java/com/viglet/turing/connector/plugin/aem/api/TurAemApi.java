@@ -19,13 +19,13 @@
 package com.viglet.turing.connector.plugin.aem.api;
 
 import com.google.inject.Inject;
+import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemPluginIndexingRepository;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +35,16 @@ import java.util.Map;
 @Tag(name = "Heartbeat", description = "Heartbeat")
 public class TurAemApi {
     private final TurAemPluginIndexingRepository turAemIndexingRepository;
+    private final TurAemSourceRepository turAemSourceRepository;
+    private final TurAemPluginProcess turAemPluginProcess;
 
     @Inject
-    public TurAemApi(TurAemPluginIndexingRepository turAemIndexingRepository) {
+    public TurAemApi(TurAemPluginIndexingRepository turAemIndexingRepository,
+                     TurAemSourceRepository turAemSourceRepository,
+                     TurAemPluginProcess turAemPluginProcess) {
         this.turAemIndexingRepository = turAemIndexingRepository;
+        this.turAemSourceRepository = turAemSourceRepository;
+        this.turAemPluginProcess = turAemPluginProcess;
     }
 
     @GetMapping
@@ -61,10 +67,16 @@ public class TurAemApi {
     }
 
     @Transactional
-    @GetMapping("reindex/{group}/{guid}")
-    public Map<String, String> reindexGuid(@PathVariable String group, @PathVariable String guid) {
-        turAemIndexingRepository.deleteByAemIdAndIndexGroup(guid, group);
-        return statusOk();
+    @PostMapping("reindex/{group}")
+    public ResponseEntity<Object> reindexGuid(@PathVariable String group, @RequestBody TurAEMPathList turAEMPathList) {
+        return turAemSourceRepository.findByGroup(group).map(turAemSource -> {
+            turAEMPathList.paths.forEach(path -> {
+                turAemIndexingRepository.deleteByAemIdAndIndexGroup(path, group);
+                turAemPluginProcess.indexGuid(turAemSource, path);
+            });
+            return ResponseEntity.ok().build();
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+
     }
 
     private static Map<String, String> statusOk() {

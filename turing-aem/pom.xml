@@ -31,6 +31,7 @@
                 <module>aem-commons</module>
                 <module>aem-cli-indexer</module>
                 <module>aem-plugin</module>
+                <module>aem-plugin-sample</module>
             </modules>
         </profile>
         <profile>

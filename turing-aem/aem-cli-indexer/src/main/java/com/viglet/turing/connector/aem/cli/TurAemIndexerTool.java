@@ -241,19 +241,23 @@ public class TurAemIndexerTool {
     private void indexGuidList(List<String> guids, TurAemSourceContext turAemSourceContext) {
         jCommander.getConsole().println("Processing a total of %d GUID Strings".formatted(guids.size()));
         guids.stream().filter(guid -> !StringUtils.isEmpty(guid)).forEach(guid -> {
-            long start = System.currentTimeMillis();
-            TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext, false)
-                    .flatMap(infinityJson -> TurAemCommonsUtils
-                            .getSiteName(turAemSourceContext, infinityJson)).ifPresent(s -> siteName = s);
-            TurAemCommonsUtils.getInfinityJson(guid, turAemSourceContext, false)
-                    .ifPresent(infinityJson -> {
-                        turAemSourceContext.setContentType(infinityJson.getString(JCR_PRIMARY_TYPE));
-                        getNodeFromJson(guid, infinityJson, turAemSourceContext, start);
-                        long elapsed = System.currentTimeMillis() - start;
-                        jCommander.getConsole().println(ITEMS_PROCESSED_MESSAGE.formatted(processed.get(), elapsed));
-                    });
+            indexGuid(turAemSourceContext, guid);
 
         });
+    }
+
+    private void indexGuid(TurAemSourceContext turAemSourceContext, String guid) {
+        long start = System.currentTimeMillis();
+        TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext, false)
+                .flatMap(infinityJson -> TurAemCommonsUtils
+                        .getSiteName(turAemSourceContext, infinityJson)).ifPresent(s -> siteName = s);
+        TurAemCommonsUtils.getInfinityJson(guid, turAemSourceContext, false)
+                .ifPresent(infinityJson -> {
+                    turAemSourceContext.setContentType(infinityJson.getString(JCR_PRIMARY_TYPE));
+                    getNodeFromJson(guid, infinityJson, turAemSourceContext, start);
+                    long elapsed = System.currentTimeMillis() - start;
+                    jCommander.getConsole().println(ITEMS_PROCESSED_MESSAGE.formatted(processed.get(), elapsed));
+                });
     }
 
     public static String ordinal(int i) {
@@ -265,15 +269,11 @@ public class TurAemIndexerTool {
     }
 
 
-
-
-
     private boolean isOnce(TurAemSourceContext turAemSourceContext) {
         return turAemSystemDAO.findByConfig(TurAemCommonsUtils.configOnce(turAemSourceContext))
                 .map(TurAemSystem::isBooleanValue)
                 .orElse(false);
     }
-
 
 
     private void itemsProcessedStatus(long start) {

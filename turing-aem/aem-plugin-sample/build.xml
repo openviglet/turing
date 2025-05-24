@@ -1,7 +1,10 @@
 <project>
     <target name="prod">
         <exec executable="mvnw.cmd">
+            <arg value="clean"/>
+            <arg value="install"/>
             <arg value="package"/>
+            <arg value="-am"/>
         </exec>
         <delete dir="dist/prod"/>
         <mkdir dir="dist/prod/libs"/>
@@ -9,7 +12,7 @@
             <fileset dir="scripts/prod/"/>
         </copy>
         <copy file="target/aem-plugin-sample.jar" todir="dist/prod/libs/"/>
-        <get src="https://github.com/openturing/turing/releases/download/v0.3.10/aem-plugin.jar" dest="dist/prod/libs/"/>
-        <get src="https://github.com/openturing/turing/releases/download/v0.3.10/turing-connector.jar" dest="dist/prod/"/>
+        <copy file="../aem-plugin/target/aem-plugin.jar" todir="dist/prod/libs/"/>
+        <copy file="../../turing-connector/connector-app/target/turing-connector.jar" todir="dist/prod/"/>
     </target>
 </project>
