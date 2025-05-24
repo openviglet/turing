@@ -20,5 +20,8 @@ package com.viglet.turing.connector.commons.plugin;
 
 
 public interface TurConnectorPlugin {
-    void init(TurConnectorContext turConnectorContext);
+    void crawl();
+    default void hello() {
+        System.out.println("Hello3");
+    }
 }

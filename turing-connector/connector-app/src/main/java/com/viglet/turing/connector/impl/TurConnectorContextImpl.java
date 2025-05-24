@@ -45,7 +45,6 @@ import static com.viglet.turing.connector.TurConnectorConstants.CONNECTOR_INDEXI
 @Slf4j
 @Component
 public class TurConnectorContextImpl implements TurConnectorContext {
-    private TurConnectorSource source;
     private TurSNJobItems turSNJobItems = new TurSNJobItems();
     private final Queue<TurSNJobItem> queueLinks = new LinkedList<>();
     private final JmsMessagingTemplate jmsMessagingTemplate;
@@ -54,6 +53,9 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     private final String turingApiKey;
     private final int jobSize;
 
+    public void hello() {
+        System.out.println("Hello2");
+    }
     public TurConnectorContextImpl(@Value("${turing.url}") String turingUrl,
                                    @Value("${turing.apiKey}") String turingApiKey,
                                    @Value("${turing.connector.job.size:50}") int jobSize,
@@ -73,12 +75,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     @Override
-    public void startIndexing(TurConnectorSource turConnectorSource) {
-        source = turConnectorSource;
-    }
-
-    @Override
-    public void addJobItem(TurSNJobItem turSNJobItem) {
+    public void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSource source) {
         if (turSNJobItem != null) {
             queueLinks.offer(turSNJobItem);
             processRemainingJobs(source);
@@ -86,7 +83,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     @Override
-    public void finishIndexing() {
+    public void finishIndexing(TurConnectorSource source) {
         if (turSNJobItems.size() > 0) {
             sendToMessageQueue();
             getInfoQueue();
@@ -147,11 +144,10 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                                    TurConnectorSource turConnectorSource) {
         turConnectorIndexingRepository.findByObjectIdAndIndexGroup(turSNJobItem.getId(),
                         turConnectorSource.getSystemId())
-                .ifPresent(turAemIndexingsList -> {
-                    log.info("No Modification {} object ({}) and transactionId = {}",
-                            turSNJobItem.getId(), turConnectorSource.getSystemId(),
-                            turConnectorSource.getTransactionId());
-                });
+                .ifPresent(turAemIndexingsList ->
+                        log.info("No Modification {} object ({}) and transactionId = {}",
+                        turSNJobItem.getId(), turConnectorSource.getSystemId(),
+                        turConnectorSource.getTransactionId()));
     }
 
     private void reindexLog(TurSNJobItem turSNJobItem,
@@ -199,15 +195,15 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                 });
     }
 
-    private void recreateDuplicatedStatus(TurSNJobItem turSNJobItem, TurConnectorSource turConnectorSource) {
+    private void recreateDuplicatedStatus(TurSNJobItem turSNJobItem, TurConnectorSource source) {
         turConnectorIndexingRepository.deleteByObjectIdAndIndexGroup(turSNJobItem.getId(),
                 source.getSystemId());
         log.info("Removed duplicated status {} object ({})",
-                turSNJobItem.getId(), turConnectorSource.getSystemId());
-        turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, turConnectorSource,
+                turSNJobItem.getId(), source.getSystemId());
+        turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, source,
                 TurConnectorStatus.RECREATE));
         log.info("Recreated status {} object ({}) and transactionId() = {}",
-                turSNJobItem.getId(), turConnectorSource.getSystemId(), turConnectorSource.getTransactionId());
+                turSNJobItem.getId(), source.getSystemId(), source.getTransactionId());
     }
 
     private void updateStatus(TurSNJobItem turSNJobItem, TurConnectorSource turConnectorSource,
@@ -220,8 +216,8 @@ public class TurConnectorContextImpl implements TurConnectorContext {
 
 
     private void createStatus(TurSNJobItem turSNJobItem,
-                              TurConnectorSource turConnectorSource) {
-        turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, turConnectorSource,
+                              TurConnectorSource source) {
+        turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, source,
                 TurConnectorStatus.NEW));
         log.info("Created status {} object ({})", turSNJobItem.getId(), source.getSystemId());
     }

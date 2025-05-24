@@ -15,6 +15,7 @@
       "rootPath": "/content/wknd",
       "contentType": "cq:Page",
       "defaultSNSite": "wknd-author",
+      "group": "WKND-AUTHOR",
       "localePaths": [
         {
           "snSite": "wknd-author",

@@ -19,6 +19,8 @@
 package com.viglet.turing.connector.plugin.aem.api;
 
 import com.google.inject.Inject;
+import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemPluginIndexingRepository;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
@@ -37,18 +39,26 @@ public class TurAemApi {
     private final TurAemPluginIndexingRepository turAemIndexingRepository;
     private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemPluginProcess turAemPluginProcess;
-
+    private final TurConnectorContext turConnectorContext;
+    private final TurConnectorPlugin turConnectorPlugin;
     @Inject
     public TurAemApi(TurAemPluginIndexingRepository turAemIndexingRepository,
                      TurAemSourceRepository turAemSourceRepository,
-                     TurAemPluginProcess turAemPluginProcess) {
+                     TurAemPluginProcess turAemPluginProcess,
+                     TurConnectorContext turConnectorContext,
+                     TurConnectorPlugin turConnectorPlugin) {
         this.turAemIndexingRepository = turAemIndexingRepository;
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemPluginProcess = turAemPluginProcess;
+        this.turConnectorContext = turConnectorContext;
+        this.turConnectorPlugin = turConnectorPlugin;
     }
 
     @GetMapping
     public Map<String, String> info() {
+
+        turConnectorContext.hello();
+        turConnectorPlugin.hello();
         return statusOk();
     }
 
@@ -68,11 +78,13 @@ public class TurAemApi {
 
     @Transactional
     @PostMapping("reindex/{group}")
-    public ResponseEntity<Object> reindexGuid(@PathVariable String group, @RequestBody TurAEMPathList turAEMPathList) {
+    public ResponseEntity<Object> reindexContentId(@PathVariable String group,
+                                                   @RequestBody TurAEMPathList turAEMPathList) {
+
         return turAemSourceRepository.findByGroup(group).map(turAemSource -> {
             turAEMPathList.paths.forEach(path -> {
                 turAemIndexingRepository.deleteByAemIdAndIndexGroup(path, group);
-                turAemPluginProcess.indexGuid(turAemSource, path);
+                turAemPluginProcess.indexContentId(turAemSource, path);
             });
             return ResponseEntity.ok().build();
         }).orElseGet(() -> ResponseEntity.notFound().build());

@@ -16,18 +16,21 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.connector.commons.plugin;
+package com.viglet.turing.connector.impl;
 
-import com.viglet.turing.client.auth.TurServer;
-import com.viglet.turing.client.sn.job.TurSNJobItem;
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
-public interface TurConnectorContext {
-    TurServer getTurServer();
-    void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSource source);
-    void finishIndexing(TurConnectorSource source);
-    default void hello() {
-        System.out.println("Hello1");
+@Slf4j
+@Component("default")
+public class TurDefaultPluginImpl implements TurConnectorPlugin {
+
+    @Override
+    public void crawl() {
     }
 
-
+    public void hello() {
+        System.out.println("Hello5");
+    }
 }

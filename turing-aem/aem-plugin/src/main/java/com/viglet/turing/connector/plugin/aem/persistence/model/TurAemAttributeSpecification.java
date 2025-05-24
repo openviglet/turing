@@ -20,7 +20,7 @@ import java.util.Map;
 @Setter
 @Entity
 @Table(name = "aem_attribute_specification")
-@JsonIgnoreProperties({ "turAemSource" })
+@JsonIgnoreProperties({"turAemSource"})
 public class TurAemAttributeSpecification extends TurSNAttributeSpec {
 
     @Serial
@@ -40,10 +40,10 @@ public class TurAemAttributeSpecification extends TurSNAttributeSpec {
     private String description;
 
     @Builder.Default
-    @ElementCollection
-    @MapKeyColumn(name="language")
-    @Column(name="facet_name")
-    @CollectionTable(name="aem_attritbute_facet", joinColumns=@JoinColumn(name="spec_id"))
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name = "language")
+    @Column(name = "facet_name")
+    @CollectionTable(name = "aem_attritbute_facet", joinColumns = @JoinColumn(name = "spec_id"))
     private Map<String, String> facetNames = new HashMap<>();
 
     @ManyToOne
