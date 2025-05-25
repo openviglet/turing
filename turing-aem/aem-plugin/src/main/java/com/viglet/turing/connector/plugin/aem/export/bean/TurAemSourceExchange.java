@@ -18,7 +18,6 @@
 
 package com.viglet.turing.connector.plugin.aem.export.bean;
 
-import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSourceLocalePath;
 import lombok.*;
 
 import java.util.Collection;

@@ -56,9 +56,6 @@ public class TurAemApi {
 
     @GetMapping
     public Map<String, String> info() {
-
-        turConnectorContext.hello();
-        turConnectorPlugin.hello();
         return statusOk();
     }
 

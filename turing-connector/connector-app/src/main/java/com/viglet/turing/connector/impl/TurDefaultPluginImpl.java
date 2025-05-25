@@ -25,12 +25,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component("default")
 public class TurDefaultPluginImpl implements TurConnectorPlugin {
-
     @Override
     public void crawl() {
-    }
-
-    public void hello() {
-        System.out.println("Hello5");
+        throw new UnsupportedOperationException("This method is only a placeholder");
     }
 }

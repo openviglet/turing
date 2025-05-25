@@ -240,10 +240,10 @@ public class TurAemIndexerTool {
 
     private void indexGuidList(List<String> guids, TurAemSourceContext turAemSourceContext) {
         jCommander.getConsole().println("Processing a total of %d GUID Strings".formatted(guids.size()));
-        guids.stream().filter(guid -> !StringUtils.isEmpty(guid)).forEach(guid -> {
-            indexGuid(turAemSourceContext, guid);
-
-        });
+        guids.stream()
+                .filter(guid -> !StringUtils.isEmpty(guid))
+                .forEach(guid ->
+                        indexGuid(turAemSourceContext, guid));
     }
 
     private void indexGuid(TurAemSourceContext turAemSourceContext, String guid) {

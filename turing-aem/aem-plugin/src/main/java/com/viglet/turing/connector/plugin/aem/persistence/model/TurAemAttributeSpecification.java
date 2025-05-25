@@ -33,11 +33,6 @@ public class TurAemAttributeSpecification extends TurSNAttributeSpec {
 
     private String className;
     private String text;
-    private String name;
-    private TurSEFieldType type;
-    private boolean mandatory;
-    private boolean multiValued;
-    private String description;
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)

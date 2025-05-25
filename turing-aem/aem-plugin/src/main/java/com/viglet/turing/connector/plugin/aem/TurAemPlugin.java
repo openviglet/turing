@@ -46,7 +46,4 @@ public class TurAemPlugin implements TurConnectorPlugin {
             TurAemCommonsUtils.cleanCache();
         });
     }
-    public void hello() {
-        System.out.println("Hello4");
-    }
 }
