@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository.FIND_BY_TUR_SN_SITE_FIELD_EXT;
+import static com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository.FIND_BY_TUR_SN_SITE_FIELD_EXT_AND_LOCALE;
 
 public interface TurSNSiteFieldExtRepository extends JpaRepository<TurSNSiteFieldExt, String> {
 
@@ -93,7 +94,8 @@ public interface TurSNSiteFieldExtRepository extends JpaRepository<TurSNSiteFiel
 			FIND_BY_TUR_SN_SITE_AND_NLP_AND_ENABLED, FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED_AND_TYPE,
 			FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED_ORDER_BY_FACET_POSITION,
 			FIND_BY_TUR_SN_SITE_AND_NAME_AND_FACET_AND_ENABLED,
-			FIND_BY_TUR_SN_SITE_FIELD_EXT}, allEntries = true)
+			FIND_BY_TUR_SN_SITE_FIELD_EXT,
+			FIND_BY_TUR_SN_SITE_FIELD_EXT_AND_LOCALE}, allEntries = true)
 	@NotNull
 	TurSNSiteFieldExt save(@NotNull TurSNSiteFieldExt turSNSiteFieldExt);
 
@@ -103,7 +105,8 @@ public interface TurSNSiteFieldExtRepository extends JpaRepository<TurSNSiteFiel
 			FIND_BY_TUR_SN_SITE_AND_NLP_AND_ENABLED, FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED_AND_TYPE,
 			FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED_ORDER_BY_FACET_POSITION,
 			FIND_BY_TUR_SN_SITE_AND_NAME_AND_FACET_AND_ENABLED,
-			FIND_BY_TUR_SN_SITE_FIELD_EXT}, allEntries = true)
+			FIND_BY_TUR_SN_SITE_FIELD_EXT,
+			FIND_BY_TUR_SN_SITE_FIELD_EXT_AND_LOCALE}, allEntries = true)
 	void delete(@NotNull TurSNSiteFieldExt turSNSiteFieldExt);
 
 	@Modifying
@@ -114,7 +117,8 @@ public interface TurSNSiteFieldExtRepository extends JpaRepository<TurSNSiteFiel
 			FIND_BY_TUR_SN_SITE_AND_NLP_AND_ENABLED, FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED_AND_TYPE,
 			FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED_ORDER_BY_FACET_POSITION,
 			FIND_BY_TUR_SN_SITE_AND_NAME_AND_FACET_AND_ENABLED,
-			FIND_BY_TUR_SN_SITE_FIELD_EXT}, allEntries = true)
+			FIND_BY_TUR_SN_SITE_FIELD_EXT,
+			FIND_BY_TUR_SN_SITE_FIELD_EXT_AND_LOCALE}, allEntries = true)
 	void delete(String turSnSiteFieldId);
 
 	@Modifying
@@ -125,6 +129,7 @@ public interface TurSNSiteFieldExtRepository extends JpaRepository<TurSNSiteFiel
 			FIND_BY_TUR_SN_SITE_AND_NLP_AND_ENABLED, FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED_AND_TYPE,
 			FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED_ORDER_BY_FACET_POSITION,
 			FIND_BY_TUR_SN_SITE_AND_NAME_AND_FACET_AND_ENABLED,
-			FIND_BY_TUR_SN_SITE_FIELD_EXT}, allEntries = true)
+			FIND_BY_TUR_SN_SITE_FIELD_EXT,
+			FIND_BY_TUR_SN_SITE_FIELD_EXT_AND_LOCALE}, allEntries = true)
 	void deleteByTurSNSiteAndSnType(TurSNSite turSNSite, TurSNFieldType turSNFieldType);
 }
