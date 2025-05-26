@@ -29,12 +29,12 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.github.openturing.turing</groupId>
+      <groupId>com.github.openviglet.turing</groupId>
       <artifactId>cms-mapping</artifactId>
       <version>${turing.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.github.openturing.turing</groupId>
+      <groupId>com.github.openviglet.turing</groupId>
       <artifactId>aem-commons</artifactId>
       <version>${turing.version}</version>
     </dependency>

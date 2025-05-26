@@ -18,7 +18,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.openturing.turing</groupId>
+            <groupId>com.github.openviglet.turing</groupId>
             <artifactId>sprinklr-commons</artifactId>
             <version>${turing.version}</version>
         </dependency>

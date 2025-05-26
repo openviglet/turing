@@ -1,6 +1,6 @@
-[![Build](https://github.com/openturing/turing-wem/actions/workflows/build.yml/badge.svg)](https://github.com/openturing/turing-wem/actions/workflows/build.yml)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=openturing_turing-wem&metric=security_rating)](https://sonarcloud.io/dashboard?id=openturing_turing-wem)
-[![viglet_logo.png](https://openturing.github.io/turing/img/banner/viglet_turing.png)](http://viglet.com/turing)
+[![Build](https://github.com/openviglet/turing-wem/actions/workflows/build.yml/badge.svg)](https://github.com/openturing/turing-wem/actions/workflows/build.yml)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=viglet_turing-wem&metric=security_rating)](https://sonarcloud.io/dashboard?id=openturing_turing-wem)
+[![viglet_logo.png](https://openviglet.github.io/turing/img/banner/viglet_turing.png)](http://viglet.com/turing)
 
 # Listener WEM for Viglet Turing 
 Open Text Web Experience Management (WEM) Listener to publish content to Viglet Turing

@@ -17,7 +17,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.github.openturing.turing</groupId>
+            <groupId>com.github.openviglet.turing</groupId>
             <artifactId>wc-commons</artifactId>
             <version>${turing.version}</version>
         </dependency>
