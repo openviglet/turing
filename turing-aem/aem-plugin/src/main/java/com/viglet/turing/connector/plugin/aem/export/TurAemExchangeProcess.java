@@ -122,7 +122,11 @@ public class TurAemExchangeProcess {
                                         .attributes(attributeExchange(turAemSource.getAttributeSpecifications()))
                                         .defaultLocale(turAemSource.getDefaultLocale())
                                         .localeClass(turAemSource.getLocaleClass())
-                                        .defaultSNSite(turAemSource.getDefaultSNSite())
+                                        .authorSNSite(turAemSource.getAuthorSNSite())
+                                        .publishSNSite(turAemSource.getPublishSNSite())
+                                        .author(turAemSource.isAuthor())
+                                        .publish(turAemSource.isPublish())
+                                        .name(turAemSource.getName())
                                         .build()).toList()));
 
                 File zipFile = new File(tmpDir.getAbsolutePath().concat(File.separator + folderName + ".zip"));
@@ -278,7 +282,8 @@ public class TurAemExchangeProcess {
     private @NotNull TurAemSource setSource(TurAemSourceExchange turAemSourceExchange) {
         TurAemSource turAemSource = TurAemSource.builder()
                 .url(turAemSourceExchange.getUrl())
-                .defaultSNSite(turAemSourceExchange.getDefaultSNSite())
+                .authorSNSite(turAemSourceExchange.getAuthorSNSite())
+                .publishSNSite(turAemSourceExchange.getPublishSNSite())
                 .defaultLocale(turAemSourceExchange.getDefaultLocale())
                 .localeClass(turAemSourceExchange.getLocaleClass())
                 .deltaClass(turAemSourceExchange.getDeltaClass())
@@ -290,12 +295,11 @@ public class TurAemExchangeProcess {
                 .author(turAemSourceExchange.isAuthor())
                 .publish(turAemSourceExchange.isPublish())
                 .contentType(turAemSourceExchange.getContentType())
-                .group(turAemSourceExchange.getGroup())
+                .name(turAemSourceExchange.getName())
                 .build();
         turAemSourceRepository.save(turAemSource);
         turAemSourceExchange.getLocalePaths().forEach(localePath ->
                 turAemSourceLocalePathRepository.save(TurAemSourceLocalePath.builder()
-                        .snSite(localePath.getSnSite())
                         .locale(localePath.getLocale())
                         .path(localePath.getPath())
                         .turAemSource(turAemSource).build()));

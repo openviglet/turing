@@ -73,7 +73,7 @@ public class TurAemSourceApi {
     @PutMapping("/{id}")
     public TurAemSource turAemSourceUpdate(@PathVariable String id, @RequestBody TurAemSource turAemSource) {
         return turAemSourceRepository.findById(id).map(turAemSourceEdit -> {
-            turAemSourceEdit.setGroup(turAemSource.getGroup());
+            turAemSourceEdit.setName(turAemSource.getName());
             turAemSourceEdit.setUrl(turAemSource.getUrl());
             turAemSourceEdit.setUsername(turAemSource.getUsername());
             turAemSourceEdit.setPassword(turAemSource.getPassword());

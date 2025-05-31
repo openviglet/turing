@@ -31,6 +31,7 @@ import java.util.Locale;
 @Setter
 public class TurAemSourceExchange {
     private String id;
+    private String name;
     private Locale defaultLocale;
     private String localeClass;
     private String deltaClass;
@@ -41,8 +42,8 @@ public class TurAemSourceExchange {
     private String password;
     private String rootPath;
     private String contentType;
-    private String defaultSNSite;
-    private String group;
+    private String authorSNSite;
+    private String publishSNSite;
     private boolean author;
     private boolean publish;
     @Builder.Default

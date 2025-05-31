@@ -10,7 +10,6 @@ import java.util.Locale;
 @Getter
 @Setter
 public class TurAemSourceLocalePathExchange {
-    private String snSite;
     private Locale locale;
     private String path;
 }

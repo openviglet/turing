@@ -57,7 +57,9 @@ public interface IAemConfiguration {
 
     String getCmsRootPath();
 
-    TurAemSNSiteConfig getDefaultSNSiteConfig();
+    TurAemSNSiteConfig getDefaultSNSiteConfig(boolean isPublishSite);
+
+    Locale getDefaultLocale();
 
     Collection<TurAemLocalePathContext> getLocales();
 }

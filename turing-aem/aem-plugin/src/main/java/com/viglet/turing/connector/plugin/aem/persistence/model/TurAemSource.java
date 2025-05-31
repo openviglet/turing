@@ -48,6 +48,8 @@ public class TurAemSource implements Serializable {
     @TurUuid
     private String id;
     @Column
+    private String name;
+    @Column
     private String url;
     @Column
     private String username;
@@ -59,8 +61,6 @@ public class TurAemSource implements Serializable {
     private String contentType;
     @Column
     private String subType;
-    @Column
-    private String group;
     @Column
     private String urlPrefix;
     @Column
@@ -76,7 +76,9 @@ public class TurAemSource implements Serializable {
     @Column
     private boolean publish;
     @Column
-    private String defaultSNSite;
+    private String authorSNSite;
+    @Column
+    private String publishSNSite;
 
     @Builder.Default
     @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
@@ -105,7 +107,7 @@ public class TurAemSource implements Serializable {
                 ", password='" + password + '\'' +
                 ", rootPath='" + rootPath + '\'' +
                 ", contentType='" + contentType + '\'' +
-                ", group='" + group + '\'' +
+                ", name='" + name + '\'' +
                 ", urlPrefix='" + urlPrefix + '\'' +
                 ", oncePattern='" + oncePattern + '\'' +
                 ", defaultLocale=" + defaultLocale +
@@ -116,7 +118,8 @@ public class TurAemSource implements Serializable {
                 ", localePaths=" + localePaths +
                 ", attributeSpecifications=" + attributeSpecifications +
                 ", models=" + models +
-                ", defaultSNSite=" + defaultSNSite +
+                ", authorSNSite=" + authorSNSite +
+                ", publishSNSite=" + publishSNSite +
                 '}';
     }
 }

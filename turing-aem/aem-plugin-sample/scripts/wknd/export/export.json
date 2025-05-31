@@ -2,28 +2,27 @@
   "sources": [
     {
       "id": "",
+      "name": "WKND",
       "defaultLocale": "en_US",
       "localeClass": "com.viglet.turing.connector.aem.commons.ext.TurAemExtLocale",
       "deltaClass":  "com.viglet.turing.connector.aem.sample.ext.TurAemExtSampleDeltaDate",
       "url": "http://localhost:4502",
       "urlPrefix": "https://wknd.site",
       "oncePattern": "^/content/wknd/us/en/faqs",
-      "author": false,
+      "author": true,
       "publish": true,
+      "authorSNSite": "wknd-author",
+      "publishSNSite": "wknd-publish",
       "username": "admin",
       "password": "admin",
       "rootPath": "/content/wknd",
       "contentType": "cq:Page",
-      "defaultSNSite": "wknd-author",
-      "group": "WKND-AUTHOR",
       "localePaths": [
         {
-          "snSite": "wknd-author",
           "locale": "es",
           "path": "/content/wknd/es/es"
         },
         {
-          "snSite": "wknd-author",
           "locale": "en_US",
           "path": "/content/wknd/us/en"
         }
