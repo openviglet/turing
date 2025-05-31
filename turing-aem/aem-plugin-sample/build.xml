@@ -1,18 +1,18 @@
 <project>
-    <target name="prod">
+    <target name="wknd">
         <exec executable="mvnw.cmd">
             <arg value="clean"/>
             <arg value="install"/>
             <arg value="package"/>
             <arg value="-am"/>
         </exec>
-        <delete dir="dist/prod"/>
-        <mkdir dir="dist/prod/libs"/>
-        <copy todir="dist/prod/">
-            <fileset dir="scripts/prod/"/>
+        <delete dir="dist/wknd"/>
+        <mkdir dir="dist/wknd/libs"/>
+        <copy todir="dist/wknd/">
+            <fileset dir="scripts/wknd/"/>
         </copy>
-        <copy file="target/aem-plugin-sample.jar" todir="dist/prod/libs/"/>
-        <copy file="../aem-plugin/target/aem-plugin.jar" todir="dist/prod/libs/"/>
-        <copy file="../../turing-connector/connector-app/target/turing-connector.jar" todir="dist/prod/"/>
+        <copy file="target/aem-plugin-sample.jar" todir="dist/wknd/libs/"/>
+        <copy file="../aem-plugin/target/aem-plugin.jar" todir="dist/wknd/libs/"/>
+        <copy file="../../turing-connector/connector-app/target/turing-connector.jar" todir="dist/wknd/"/>
     </target>
 </project>
