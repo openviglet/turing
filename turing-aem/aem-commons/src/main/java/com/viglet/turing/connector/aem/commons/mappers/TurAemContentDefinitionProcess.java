@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Getter
@@ -42,15 +41,6 @@ public class TurAemContentDefinitionProcess {
     private Path workingDirectory;
     private Path jsonFile;
     private TurAemContentMapping turAemContentMapping;
-
-
-    public TurAemContentDefinitionProcess(IAemConfiguration config, Path workingDirectory) {
-        this.config = config;
-        this.workingDirectory = workingDirectory;
-        this.jsonFile = getContentMappingPath(workingDirectory);
-        this.turAemContentMapping = null;
-
-    }
 
     public TurAemContentDefinitionProcess(TurAemContentMapping turAemContentMapping) {
         this.config = null;
@@ -158,22 +148,5 @@ public class TurAemContentDefinitionProcess {
             log.error("Can not read mapping file, because is not valid: {}", path.toFile().getAbsolutePath(), e);
             return Optional.empty();
         }
-    }
-
-    private Path getContentMappingPath(Path workingDirectory) {
-        String contentMappingFile = config.getMappingFile();
-        if (workingDirectory != null) {
-            Path path = Paths.get(workingDirectory.toAbsolutePath().toString(),
-                    contentMappingFile);
-            if (path.toFile().isFile() && path.toFile().canRead()) {
-                return path;
-            } else {
-                log.error("Can not read mapping file, because not exist: {}", path.toFile().getAbsolutePath());
-            }
-        } else {
-            log.error("Can not read mapping file, because WorkDirectory is empty: {}", contentMappingFile);
-        }
-        log.error("Mapping definitions are not loaded properly from mappingsXML: {}", contentMappingFile);
-        return null;
     }
 }

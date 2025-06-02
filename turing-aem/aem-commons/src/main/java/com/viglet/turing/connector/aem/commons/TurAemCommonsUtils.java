@@ -222,11 +222,6 @@ public class TurAemCommonsUtils {
         return getLocaleByPath(turAemSourceContext, aemObject.getPath());
     }
 
-    public static Optional<TurAemObject> getAemObject(String url, TurAemSourceContext turAemSourceContext,
-                                                      boolean cached) {
-        return getInfinityJson(url, turAemSourceContext, cached).map(infinityJson -> new TurAemObject(url, infinityJson));
-    }
-
     public static Optional<JSONObject> getInfinityJson(String url, TurAemSourceContext turAemSourceContext,
                                                        boolean cached) {
         String infinityJsonUrl = String.format(url.endsWith(JSON) ? "%s%s" : "%s%s.infinity.json",

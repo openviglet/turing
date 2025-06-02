@@ -19,8 +19,6 @@
 package com.viglet.turing.connector.plugin.aem.api;
 
 import com.google.inject.Inject;
-import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
-import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemPluginIndexingRepository;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
@@ -39,19 +37,15 @@ public class TurAemApi {
     private final TurAemPluginIndexingRepository turAemIndexingRepository;
     private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemPluginProcess turAemPluginProcess;
-    private final TurConnectorContext turConnectorContext;
-    private final TurConnectorPlugin turConnectorPlugin;
+
     @Inject
     public TurAemApi(TurAemPluginIndexingRepository turAemIndexingRepository,
                      TurAemSourceRepository turAemSourceRepository,
-                     TurAemPluginProcess turAemPluginProcess,
-                     TurConnectorContext turConnectorContext,
-                     TurConnectorPlugin turConnectorPlugin) {
+                     TurAemPluginProcess turAemPluginProcess) {
         this.turAemIndexingRepository = turAemIndexingRepository;
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemPluginProcess = turAemPluginProcess;
-        this.turConnectorContext = turConnectorContext;
-        this.turConnectorPlugin = turConnectorPlugin;
+
     }
 
     @GetMapping

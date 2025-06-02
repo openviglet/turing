@@ -20,26 +20,15 @@ package com.viglet.turing.connector.aem.commons.config;
 
 import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Locale;
 
 public interface IAemConfiguration {
     String DEFAULT_PROVIDER = "AEM";
-    String DEFAULT_TURING_URL = "http://localhost:2700";
-    String DEFAULT_CTD_MAPPING_FILE = "/CTD-Turing-Mappings.xml";
-    String DEFAULT_SN_SITE = "Sample";
-    String DEFAULT_SN_LOCALE = Locale.US.toString();
-
-    URI getTuringURL();
 
     String getProviderName();
 
-    String getMappingFile();
-
     String getCDAURLPrefix();
-
-    String getApiKey();
 
     String getOncePatternPath();
 
@@ -56,8 +45,6 @@ public interface IAemConfiguration {
     String getCmsSubType();
 
     String getCmsRootPath();
-
-    TurAemSNSiteConfig getDefaultSNSiteConfig(boolean isPublishSite);
 
     Locale getDefaultLocale();
 

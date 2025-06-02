@@ -118,7 +118,7 @@ public class TurAemPluginProcess {
 
     public void run(TurAemSource turAemSource) {
         TurConnectorSource turConnectorSource = getTurConnectorSource(turAemSource);
-        config = new AemPluginHandlerConfiguration(turAemSource, turingUrl, turingApiKey);
+        config = new AemPluginHandlerConfiguration(turAemSource);
 
         turAemContentDefinitionProcess = new TurAemContentDefinitionProcess(getTurAemContentMapping(turAemSource));
         TurAemSourceContext turAemSourceContext = getTurAemSourceContext(config);
@@ -236,7 +236,7 @@ public class TurAemPluginProcess {
     }
 
     public void indexContentId(TurAemSource turAemSource, String guid) {
-        config = new AemPluginHandlerConfiguration(turAemSource, turingUrl, turingApiKey);
+        config = new AemPluginHandlerConfiguration(turAemSource);
         turAemContentDefinitionProcess = new TurAemContentDefinitionProcess(getTurAemContentMapping(turAemSource));
         TurAemSourceContext turAemSourceContext = getTurAemSourceContext(config);
         getSiteName(turAemSourceContext);

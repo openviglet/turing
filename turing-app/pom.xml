@@ -404,8 +404,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <nodeVersion>v20.13.1</nodeVersion>
-                    <npmVersion>10.8.0</npmVersion>
+                    <nodeVersion>v20.19.1</nodeVersion>
+                    <npmVersion>10.8.2</npmVersion>
                     <workingDirectory>../turing-ui</workingDirectory>
                 </configuration>
             </plugin>
