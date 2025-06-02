@@ -21,7 +21,7 @@
     "@angular/platform-browser": "20.0.0",
     "@angular/platform-browser-dynamic": "20.0.0",
     "@angular/router": "20.0.0",
-    "@primer/css": "22.0.0",
+    "@primer/css": "21.4.0",
     "@primer/octicons": "19.15.2",
     "@primer/styled-octicons": "19.15.2",
     "@primer/view-components": "^0.43.1",
