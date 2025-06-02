@@ -22,12 +22,6 @@ import com.viglet.turing.client.auth.TurServer;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 
 public interface TurConnectorContext {
-    TurServer getTurServer();
     void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSource source);
     void finishIndexing(TurConnectorSource source);
-    default void hello() {
-        System.out.println("Hello1");
-    }
-
-
 }

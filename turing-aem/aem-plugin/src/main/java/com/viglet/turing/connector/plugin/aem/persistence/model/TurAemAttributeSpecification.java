@@ -1,7 +1,6 @@
 package com.viglet.turing.connector.plugin.aem.persistence.model;
 
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
-import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.spring.jpa.TurUuid;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
