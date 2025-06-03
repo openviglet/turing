@@ -45,10 +45,14 @@ public class TurSNJobItem implements Serializable{
     private List<TurSNJobAttributeSpec> specs = new ArrayList<>();
     private Map<String, Object> attributes = new HashMap<>();
 	private String checksum;
+	private String environment;
 	public TurSNJobItem() {
 		super();
 	}
 
+	public Object getAttribute(String attributeName) {
+		return attributes.containsKey(attributeName);
+	}
 	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames) {
 		super();
 		this.turSNJobAction = turSNJobAction;

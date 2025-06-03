@@ -183,7 +183,7 @@ public class TurSNProcessQueue {
                 .map(turSolrInstance -> {
                     if (turSNJobItem.getAttributes().containsKey(TurSNFieldName.ID)) {
                         turSolr.deIndexing(turSolrInstance,
-                                (String) turSNJobItem.getAttributes().get(TurSNFieldName.ID));
+                                turSNJobItem.getId());
                     } else if (turSNJobItem.getAttributes().containsKey(TurSNFieldName.TYPE)) {
                         turSolr.deIndexingByType(turSolrInstance,
                                 (String) turSNJobItem.getAttributes().get(TurSNFieldName.TYPE));

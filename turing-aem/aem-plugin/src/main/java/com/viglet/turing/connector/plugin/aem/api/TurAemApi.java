@@ -19,8 +19,8 @@
 package com.viglet.turing.connector.plugin.aem.api;
 
 import com.google.inject.Inject;
+import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
-import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemPluginIndexingRepository;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -34,15 +34,12 @@ import java.util.Map;
 @RequestMapping("/api/v2/aem")
 @Tag(name = "Heartbeat", description = "Heartbeat")
 public class TurAemApi {
-    private final TurAemPluginIndexingRepository turAemIndexingRepository;
     private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemPluginProcess turAemPluginProcess;
 
     @Inject
-    public TurAemApi(TurAemPluginIndexingRepository turAemIndexingRepository,
-                     TurAemSourceRepository turAemSourceRepository,
+    public TurAemApi(TurAemSourceRepository turAemSourceRepository,
                      TurAemPluginProcess turAemPluginProcess) {
-        this.turAemIndexingRepository = turAemIndexingRepository;
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemPluginProcess = turAemPluginProcess;
 
@@ -54,30 +51,17 @@ public class TurAemApi {
     }
 
     @Transactional
-    @GetMapping("reindex/{group}")
-    public Map<String, String> reindex(@PathVariable String group) {
-        turAemIndexingRepository.deleteByIndexGroupAndOnceFalse(group);
-        return statusOk();
-    }
+    @PostMapping("reindex/{name}")
+    public ResponseEntity<Object> reindexContentId(@PathVariable String name,
+                                                   @RequestBody TurAemPathList turAemPathList) {
 
-    @Transactional
-    @GetMapping("reindex/once/{group}")
-    public Map<String, String> reIndexOnce(@PathVariable String group) {
-        turAemIndexingRepository.deleteByIndexGroupAndOnceTrue(group);
-        return statusOk();
-    }
-
-    @Transactional
-    @PostMapping("reindex/{group}")
-    public ResponseEntity<Object> reindexContentId(@PathVariable String group,
-                                                   @RequestBody TurAEMPathList turAEMPathList) {
-
-        return turAemSourceRepository.findByGroup(group).map(turAemSource -> {
-            turAEMPathList.paths.forEach(path -> {
-                turAemIndexingRepository.deleteByAemIdAndIndexGroup(path, group);
-                turAemPluginProcess.indexContentId(turAemSource, path);
-            });
+        return turAemSourceRepository.findByName(name).map(turAemSource -> {
+            TurConnectorSession turConnectorSession = TurAemPluginProcess.getTurConnectorSession(turAemSource);
+            turAemPathList.paths.forEach(path ->
+                    turAemPluginProcess.indexContentId(turConnectorSession, turAemSource, path));
+            turAemPluginProcess.finished(turConnectorSession);
             return ResponseEntity.ok().build();
+
         }).orElseGet(() -> ResponseEntity.notFound().build());
 
     }

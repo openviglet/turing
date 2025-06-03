@@ -6,7 +6,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
 import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSource;
+import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.*;
 import com.viglet.turing.connector.webcrawler.commons.TurWCContext;
 import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtInterface;
@@ -86,7 +86,7 @@ public class TurWCPluginProcess {
     }
 
     public void start(TurWCSource turWCSource) {
-        TurConnectorSource turConnectorSource = getSource(turWCSource);
+        TurConnectorSession turConnectorSession = getSource(turWCSource);
         turWCFileExtensionRepository.findByTurWCSource(turWCSource).ifPresent(source ->
                 source.forEach(turWCFileExtension ->
                         this.notAllowExtensions.add(turWCFileExtension.getExtension())));
@@ -119,29 +119,29 @@ public class TurWCPluginProcess {
         log.info("User Agent: {}", userAgent);
         startingPoints.forEach(url -> {
             queueLinks.offer(this.website + url);
-            getPagesFromQueue(turWCSource, turConnectorSource);
+            getPagesFromQueue(turWCSource, turConnectorSession);
         });
-        finished(turConnectorContext, turConnectorSource);
+        finished(turConnectorContext, turConnectorSession);
     }
 
-    private static TurConnectorSource getSource(TurWCSource turWCSource) {
-        return new TurConnectorSource(turWCSource.getId(), turWCSource.getTurSNSites(),
+    private static TurConnectorSession getSource(TurWCSource turWCSource) {
+        return new TurConnectorSession(turWCSource.getId(), turWCSource.getTurSNSites(),
                 WEB_CRAWLER, turWCSource.getLocale());
     }
 
-    private static void finished(TurConnectorContext turConnectorContext,  TurConnectorSource source) {
+    private static void finished(TurConnectorContext turConnectorContext,  TurConnectorSession source) {
         turConnectorContext.finishIndexing(source);
     }
 
 
-    private void getPagesFromQueue(TurWCSource turWCSource, TurConnectorSource source) {
+    private void getPagesFromQueue(TurWCSource turWCSource, TurConnectorSession source) {
         while (!queueLinks.isEmpty()) {
             String url = queueLinks.poll();
             getPage(turWCSource, url, source);
         }
     }
 
-    private void getPage(TurWCSource turWCSource, String url, TurConnectorSource source) {
+    private void getPage(TurWCSource turWCSource, String url, TurConnectorSession source) {
         try {
             log.info("{}: {}", url, turWCSource.getTurSNSites());
             Document document = getHTML(url);
@@ -188,7 +188,7 @@ public class TurWCPluginProcess {
     }
 
     private void addTurSNJobItem(TurWCSource turWCSource, Document document, String url, String checksum,
-                                 TurConnectorSource source) {
+                                 TurConnectorSession source) {
         turConnectorContext.addJobItem(new TurSNJobItem(TurSNJobAction.CREATE, new ArrayList<>(snSites),
                 getLocale(turWCSource, document, url),
                 getJobItemAttributes(turWCSource, document, url), null, checksum), source);

@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-public class TurAEMPathList {
+public class TurAemPathList {
     List<String> paths;
 }

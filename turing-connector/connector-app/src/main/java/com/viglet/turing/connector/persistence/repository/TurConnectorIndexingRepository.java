@@ -27,20 +27,26 @@ import java.util.Optional;
 
 public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexing, String> {
 
-    Optional<List<TurConnectorIndexing>> findByIndexGroupAndTransactionIdNot(String indexGroup, String transactionId);
-    default Optional<List<TurConnectorIndexing>> findContentsShouldBeDeIndexed(String indexGroup, String transactionId) {
-        return findByIndexGroupAndTransactionIdNot(indexGroup, transactionId);
-    }
-    boolean existsByObjectIdAndIndexGroup(String objectId, String indexGroup);
-    boolean existsByObjectIdAndIndexGroupAndChecksumNot(String objectId, String indexGroup, String checksum);
-    Optional<List<TurConnectorIndexing>> findByObjectIdAndIndexGroup(String objectId, String indexGroup);
-    void deleteByObjectIdAndIndexGroup(String objectId, String indexGroup);
+    Optional<List<TurConnectorIndexing>> findByNameAndTransactionIdNot(String name, String transactionId);
 
-    void deleteByIndexGroupAndTransactionIdNot(String indexGroup,
-                                                     String transactionId);
+    default Optional<List<TurConnectorIndexing>> findContentsShouldBeDeIndexed(String name, String transactionId) {
+        return findByNameAndTransactionIdNot(name, transactionId);
+    }
+
+    boolean existsByObjectIdAndNameAndEnvironment(String objectId, String name, String environment);
+
+    boolean existsByObjectIdAndNameAndEnvironmentAndChecksumNot(String objectId, String name, String environment,
+                                                                String checksum);
+
+    Optional<List<TurConnectorIndexing>> findByObjectIdAndNameAndEnvironment(String objectId, String name,
+                                                                             String environment);
+
+    void deleteByObjectIdAndNameAndEnvironment(String objectId, String name, String environment);
+
+    void deleteByNameAndTransactionIdNot(String name, String transactionId);
+
     @Transactional
-    default void deleteContentsWereDeIndexed(String indexGroup,
-                                             String deltaId) {
-        deleteByIndexGroupAndTransactionIdNot(indexGroup, deltaId);
+    default void deleteContentsWereDeIndexed(String name, String deltaId) {
+        deleteByNameAndTransactionIdNot(name, deltaId);
     }
 }

@@ -45,9 +45,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -66,13 +64,15 @@ public class TurSecurityConfigProduction {
     private String clientId;
     @Value("${turing.url:'http://localhost:2700'}")
     private String turingUrl;
+    PathPatternRequestMatcher.Builder mvc = PathPatternRequestMatcher.withDefaults();
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc,
+    SecurityFilterChain filterChain(HttpSecurity http,
                                     TurAuthTokenHeaderFilter turAuthTokenHeaderFilter,
                                     TurLogoutHandler turLogoutHandler,
                                     TurConfigProperties turConfigProperties,
                                     TurAuthenticationEntryPoint turAuthenticationEntryPoint) throws Exception {
+
         http.headers(header -> header.frameOptions(
                 frameOptions -> frameOptions.disable().cacheControl(HeadersConfigurer.CacheControlConfig::disable)));
         http.cors(Customizer.withDefaults());
@@ -82,14 +82,14 @@ public class TurSecurityConfigProduction {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new TurSpaCsrfTokenRequestHandler())
                         .ignoringRequestMatchers(
-                                mvc.pattern("/api/genai/chat"),
-                                mvc.pattern("/api/sn/**"),
-                                mvc.pattern(ERROR_PATH),
-                                mvc.pattern("/logout"),
-                                mvc.pattern("/api/ocr/**"),
-                                mvc.pattern("/api/genai/**"),
-                                mvc.pattern("/api/v2/guest/**"),
-                                AntPathRequestMatcher.antMatcher("/h2/**")))
+                                mvc.matcher("/api/genai/chat"),
+                                mvc.matcher("/api/sn/**"),
+                                mvc.matcher(ERROR_PATH),
+                                mvc.matcher("/logout"),
+                                mvc.matcher("/api/ocr/**"),
+                                mvc.matcher("/api/genai/**"),
+                                mvc.matcher("/api/v2/guest/**"),
+                                mvc.matcher("/h2/**")))
                 .addFilterAfter(new TurCsrfCookieFilter(), BasicAuthenticationFilter.class);
         if (turConfigProperties.isKeycloak()) {
             String keycloakUrlFormat =
@@ -98,20 +98,20 @@ public class TurSecurityConfigProduction {
             http.oauth2Login(withDefaults());
             http.authorizeHttpRequests(authorizeRequests -> {
                 authorizeRequests.requestMatchers(
-                        mvc.pattern(ERROR_PATH),
-                        mvc.pattern("/api/discovery"),
-                        mvc.pattern("/assets/**"),
-                        mvc.pattern("/favicon.ico"),
-                        mvc.pattern("/*.png"),
-                        mvc.pattern("/manifest.json"),
-                        mvc.pattern("/swagger-resources/**"),
-                        mvc.pattern("/browserconfig.xml"),
-                        AntPathRequestMatcher.antMatcher("/api/sn/**/ac"),
-                        AntPathRequestMatcher.antMatcher("/api/sn/**/search"),
-                        AntPathRequestMatcher.antMatcher("/api/sn/**/search/**"),
-                        AntPathRequestMatcher.antMatcher("/api/sn/**/chat"),
-                        AntPathRequestMatcher.antMatcher("/api/sn/**/chat/**"),
-                        AntPathRequestMatcher.antMatcher("/api/sn/**/**/spell-check")).permitAll();
+                        mvc.matcher(ERROR_PATH),
+                        mvc.matcher("/api/discovery"),
+                        mvc.matcher("/assets/**"),
+                        mvc.matcher("/favicon.ico"),
+                        mvc.matcher("/*.png"),
+                        mvc.matcher("/manifest.json"),
+                        mvc.matcher("/swagger-resources/**"),
+                        mvc.matcher("/browserconfig.xml"),
+                        mvc.matcher("/api/sn/*/ac"),
+                        mvc.matcher("/api/sn/*/search"),
+                        mvc.matcher("/api/sn/*/search/**"),
+                        mvc.matcher("/api/sn/*/chat"),
+                        mvc.matcher("/api/sn/*/chat/**"),
+                        mvc.matcher("/api/sn/*/*/spell-check")).permitAll();
                 authorizeRequests.anyRequest().authenticated();
             });
             http.logout(logout -> logout.addLogoutHandler(turLogoutHandler)
@@ -120,28 +120,28 @@ public class TurSecurityConfigProduction {
             http.httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(turAuthenticationEntryPoint))
                     .authorizeHttpRequests(authorizeRequests -> {
                         authorizeRequests.requestMatchers(
-                                mvc.pattern(ERROR_PATH),
-                                mvc.pattern("/api/discovery"),
-                                mvc.pattern("/logout"),
-                                mvc.pattern("/index.html"),
-                                mvc.pattern("/welcome/**"),
-                                mvc.pattern("/"),
-                                AntPathRequestMatcher.antMatcher("/assets/**"),
-                                mvc.pattern("/swagger-resources/**"),
-                                mvc.pattern("/sn/**"),
-                                mvc.pattern("/fonts/**"),
-                                AntPathRequestMatcher.antMatcher("/api/sn/**/ac"),
-                                AntPathRequestMatcher.antMatcher("/api/sn/**/search"),
-                                AntPathRequestMatcher.antMatcher("/api/sn/**/search/**"),
-                                AntPathRequestMatcher.antMatcher("/api/sn/**/chat"),
-                                AntPathRequestMatcher.antMatcher("/api/sn/**/chat/**"),
-                                AntPathRequestMatcher.antMatcher("/api/sn/**/**/spell-check"),
-                                AntPathRequestMatcher.antMatcher("/favicon.ico"),
-                                AntPathRequestMatcher.antMatcher("/*.png"),
-                                AntPathRequestMatcher.antMatcher("/manifest.json"),
-                                mvc.pattern("/browserconfig.xml"),
-                                mvc.pattern("/console/**"),
-                                mvc.pattern("/api/v2/guest/**")).permitAll();
+                                mvc.matcher(ERROR_PATH),
+                                mvc.matcher("/api/discovery"),
+                                mvc.matcher("/logout"),
+                                mvc.matcher("/index.html"),
+                                mvc.matcher("/welcome/**"),
+                                mvc.matcher("/"),
+                                mvc.matcher("/assets/**"),
+                                mvc.matcher("/swagger-resources/**"),
+                                mvc.matcher("/sn/**"),
+                                mvc.matcher("/fonts/**"),
+                                mvc.matcher("/api/sn/*/ac"),
+                                mvc.matcher("/api/sn/*/search"),
+                                mvc.matcher("/api/sn/*/search/**"),
+                                mvc.matcher("/api/sn/*/chat"),
+                                mvc.matcher("/api/sn/*/chat/**"),
+                                mvc.matcher("/api/sn/*/*/spell-check"),
+                                mvc.matcher("/favicon.ico"),
+                                mvc.matcher("/*.png"),
+                                mvc.matcher("/manifest.json"),
+                                mvc.matcher("/browserconfig.xml"),
+                                mvc.matcher("/console/**"),
+                                mvc.matcher("/api/v2/guest/**")).permitAll();
                         authorizeRequests.anyRequest().authenticated();
 
                     });
@@ -151,15 +151,9 @@ public class TurSecurityConfigProduction {
     }
 
     @Bean
-    WebSecurityCustomizer webSecurityCustomizer(MvcRequestMatcher.Builder mvc) {
+    WebSecurityCustomizer webSecurityCustomizer() {
         return web ->
-            web.httpFirewall(allowUrlEncodedSlaturHttpFirewall()).ignoring().requestMatchers(mvc.pattern("/h2/**"));
-    }
-
-    @Scope("prototype")
-    @Bean
-    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector handlerMappingIntrospector) {
-        return new MvcRequestMatcher.Builder(handlerMappingIntrospector);
+            web.httpFirewall(allowUrlEncodedSlaturHttpFirewall()).ignoring().requestMatchers(mvc.matcher("/h2/**"));
     }
 
     @Autowired

@@ -19,22 +19,21 @@
 package com.viglet.turing.connector.persistence.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
+@Builder
 @RequiredArgsConstructor
 @Accessors(chain = true)
 @Setter
 @Getter
 @Entity
 @Table(name = "con_indexing", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@AllArgsConstructor
 public class TurConnectorIndexing implements Serializable {
 
     @Serial
@@ -47,7 +46,9 @@ public class TurConnectorIndexing implements Serializable {
     @Column(length = 500)
     private String objectId;
     @Column
-    private String indexGroup;
+    private String name;
+    @Column
+    private String environment;
     @Column
     private String transactionId;
     @Column
@@ -61,4 +62,6 @@ public class TurConnectorIndexing implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column
     private TurConnectorStatus status;
+    @Convert(converter = TurStringListConverter.class)
+    private List<String> sites = new ArrayList<>();
 }

@@ -22,16 +22,15 @@ import com.google.inject.Inject;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
-import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.connector.aem.commons.TurAemAttrProcess;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
+import com.viglet.turing.connector.aem.commons.bean.TurAemEnv;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
 import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
 import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
 import com.viglet.turing.connector.aem.commons.mappers.*;
 import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSource;
+import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.plugin.aem.conf.AemPluginHandlerConfiguration;
 import com.viglet.turing.connector.plugin.aem.persistence.model.*;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.*;
@@ -46,7 +45,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.JCR_PRIMARY_TYPE;
 
 
@@ -75,7 +73,6 @@ public class TurAemPluginProcess {
     private final TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository;
     private String siteName;
     public static final String REP = "rep:";
-    private final TurAemPluginIndexingRepository turAemIndexingRepository;
     private final TurAemPluginSystemRepository turAemSystemRepository;
     private final TurAemConfigVarRepository turAemConfigVarRepository;
     private final TurAemSourceLocalePathRepository turAemSourceLocalePathRepository;
@@ -87,14 +84,9 @@ public class TurAemPluginProcess {
     private TurAemContentDefinitionProcess turAemContentDefinitionProcess;
     private final String turingUrl;
     private final String turingApiKey;
-    // Legacy
-    private static final boolean REINDEX = false;
-    private static final boolean REINDEX_ONCE = false;
-    private static final boolean DRY_RUN = false;
 
     @Inject
-    public TurAemPluginProcess(TurAemPluginIndexingRepository turAemPluginIndexingRepository,
-                               TurAemPluginSystemRepository turAemPluginSystemRepository,
+    public TurAemPluginProcess(TurAemPluginSystemRepository turAemPluginSystemRepository,
                                TurAemConfigVarRepository turAemConfigVarRepository,
                                TurAemSourceLocalePathRepository turAemSourceLocalePathRepository,
                                TurAemPluginModelRepository turAemPluginModelRepository,
@@ -103,7 +95,6 @@ public class TurAemPluginProcess {
                                TurAemTargetAttributeRepository turAemTargetAttributeRepository, TurConnectorContext turConnectorContext,
                                @Value("${turing.url}") String turingUrl,
                                @Value("${turing.apiKey}") String turingApiKey) {
-        this.turAemIndexingRepository = turAemPluginIndexingRepository;
         this.turAemSystemRepository = turAemPluginSystemRepository;
         this.turAemConfigVarRepository = turAemConfigVarRepository;
         this.turAemSourceLocalePathRepository = turAemSourceLocalePathRepository;
@@ -117,37 +108,28 @@ public class TurAemPluginProcess {
     }
 
     public void run(TurAemSource turAemSource) {
-        TurConnectorSource turConnectorSource = getTurConnectorSource(turAemSource);
+        TurConnectorSession turConnectorSession = getTurConnectorSession(turAemSource);
         config = new AemPluginHandlerConfiguration(turAemSource);
 
         turAemContentDefinitionProcess = new TurAemContentDefinitionProcess(getTurAemContentMapping(turAemSource));
         TurAemSourceContext turAemSourceContext = getTurAemSourceContext(config);
         try {
-            if (REINDEX) {
-                turAemIndexingRepository.deleteContentsToReindex(turAemSourceContext.getId());
-            }
-            if (REINDEX_ONCE) {
-                turAemIndexingRepository.deleteContentsToReindexOnce(turAemSourceContext.getId());
-            }
-            this.getNodesFromJson(turAemSourceContext, turConnectorSource, turAemSource);
-            if (!DRY_RUN) {
-                deIndexObjects(turAemSourceContext, turConnectorSource);
-                updateSystemOnce(turAemSourceContext);
-            }
+            this.getNodesFromJson(turAemSourceContext, turConnectorSession, turAemSource);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        finished(turConnectorContext, turConnectorSource);
+        finished(turConnectorSession);
     }
 
-    public static @NotNull TurConnectorSource getTurConnectorSource(TurAemSource turAemSource) {
+    public static @NotNull TurConnectorSession getTurConnectorSession(TurAemSource turAemSource) {
         // sites parameter is null, because in next step need check if author our publishing.
-        return new TurConnectorSource(turAemSource.getId(), null, AEM, turAemSource.getDefaultLocale());
+        return new TurConnectorSession(turAemSource.getName(), null, AEM, turAemSource.getDefaultLocale());
     }
 
-    private void finished(TurConnectorContext turConnectorContext, TurConnectorSource turConnectorSource) {
-        turConnectorContext.finishIndexing(turConnectorSource);
+    public void finished(TurConnectorSession turConnectorSession) {
+        turConnectorContext.finishIndexing(turConnectorSession);
     }
+
 
     private @NotNull TurAemContentMapping getTurAemContentMapping(TurAemSource turAemSource) {
         List<TurAemModel> turAemModels = new ArrayList<>();
@@ -218,35 +200,23 @@ public class TurAemPluginProcess {
         return turAemSourceContext;
     }
 
-    private void updateSystemOnce(TurAemSourceContext turAemSourceContext) {
-        turAemSystemRepository.findByConfig(TurAemCommonsUtils.configOnce(turAemSourceContext))
-                .ifPresentOrElse(turAemSystem -> {
-                            turAemSystem.setBooleanValue(true);
-                            turAemSystemRepository.save(turAemSystem);
-                        },
-                        () -> turAemSystemRepository.save(new TurAemPluginSystem(TurAemCommonsUtils
-                                .configOnce(turAemSourceContext), true)));
-    }
-
-    private void getNodesFromJson(TurAemSourceContext turAemSourceContext, TurConnectorSource turConnectorSource,
+    private void getNodesFromJson(TurAemSourceContext turAemSourceContext, TurConnectorSession turConnectorSession,
                                   TurAemSource turAemSource) {
         if (TurAemCommonsUtils.usingContentTypeParameter(turAemSourceContext)) {
-            byContentTypeList(turAemSourceContext, turConnectorSource, turAemSource);
+            byContentTypeList(turAemSourceContext, turConnectorSession, turAemSource);
         }
     }
 
-    public void indexContentId(TurAemSource turAemSource, String guid) {
+    public void indexContentId(TurConnectorSession turConnectorSession, TurAemSource turAemSource, String guid) {
         config = new AemPluginHandlerConfiguration(turAemSource);
         turAemContentDefinitionProcess = new TurAemContentDefinitionProcess(getTurAemContentMapping(turAemSource));
         TurAemSourceContext turAemSourceContext = getTurAemSourceContext(config);
         getSiteName(turAemSourceContext);
-        TurConnectorSource turConnectorSource = getTurConnectorSource(turAemSource);
         TurAemCommonsUtils.getInfinityJson(guid, turAemSourceContext, false)
                 .ifPresent(infinityJson -> {
                     turAemSourceContext.setContentType(infinityJson.getString(JCR_PRIMARY_TYPE));
-                    getNodeFromJson(guid, infinityJson, turAemSourceContext, turConnectorSource, turAemSource);
+                    getNodeFromJson(guid, infinityJson, turAemSourceContext, turConnectorSession, turAemSource);
                 });
-        finished(turConnectorContext, turConnectorSource);
     }
 
     private void getSiteName(TurAemSourceContext turAemSourceContext) {
@@ -256,29 +226,29 @@ public class TurAemPluginProcess {
     }
 
     private void byContentTypeList(TurAemSourceContext turAemSourceContext,
-                                   TurConnectorSource turConnectorSource,
+                                   TurConnectorSession turConnectorSession,
                                    TurAemSource turAemSource) {
         turAemContentDefinitionProcess.findByNameFromModelWithDefinition(turAemSourceContext.getContentType())
                 .ifPresentOrElse(turAemModel ->
-                                byContentType(turAemSourceContext, turConnectorSource, turAemSource),
+                                byContentType(turAemSourceContext, turConnectorSession, turAemSource),
                         () -> log.info("{} type is not configured in CTD Mapping file.",
                                 turAemSourceContext.getContentType()));
     }
 
     private void byContentType(TurAemSourceContext turAemSourceContext,
-                               TurConnectorSource turConnectorSource,
+                               TurConnectorSession turConnectorSession,
                                TurAemSource turAemSource) {
         TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext, false)
                 .ifPresent(infinityJson -> {
                     TurAemCommonsUtils.getSiteName(turAemSourceContext, infinityJson).ifPresent(s -> siteName = s);
                     getNodeFromJson(turAemSourceContext.getRootPath(), infinityJson, turAemSourceContext,
-                            turConnectorSource, turAemSource);
+                            turConnectorSession, turAemSource);
                 });
     }
 
     private void getNodeFromJson(String nodePath, JSONObject jsonObject,
                                  TurAemSourceContext turAemSourceContext,
-                                 TurConnectorSource turConnectorSource,
+                                 TurConnectorSession turConnectorSession,
                                  TurAemSource turAemSource) {
         TurAemObject aemObject = new TurAemObject(nodePath, jsonObject);
         Optional.of(aemObject).ifPresentOrElse(o -> {
@@ -287,16 +257,16 @@ public class TurAemPluginProcess {
                         .ifPresent(model ->
                                 prepareIndexObject(model, aemObject,
                                         turAemContentDefinitionProcess.getTargetAttrDefinitions(),
-                                        turAemSourceContext, turConnectorSource, turAemSource));
+                                        turAemSourceContext, turConnectorSession, turAemSource));
             }
         }, () -> log.info("AEM object ({}) is null deltaId = {}",
                 turAemSourceContext.getId(), deltaId));
-        getChildrenFromJson(nodePath, jsonObject, turAemSourceContext, turConnectorSource, turAemSource);
+        getChildrenFromJson(nodePath, jsonObject, turAemSourceContext, turConnectorSession, turAemSource);
     }
 
     private void getChildrenFromJson(String nodePath, JSONObject jsonObject,
                                      TurAemSourceContext turAemSourceContext,
-                                     TurConnectorSource turConnectorSource,
+                                     TurConnectorSession turConnectorSession,
                                      TurAemSource turAemSource) {
         jsonObject.toMap().forEach((key, value) -> {
             if (!key.startsWith(JCR) && !key.startsWith(REP) && !key.startsWith(CQ)
@@ -308,7 +278,7 @@ public class TurAemPluginProcess {
                     TurAemCommonsUtils.getInfinityJson(nodePathChild, turAemSourceContext, false)
                             .ifPresent(infinityJson ->
                                     getNodeFromJson(nodePathChild, infinityJson, turAemSourceContext,
-                                            turConnectorSource, turAemSource));
+                                            turConnectorSession, turAemSource));
                 }
             }
         });
@@ -323,7 +293,7 @@ public class TurAemPluginProcess {
     private void prepareIndexObject(TurAemModel turAemModel, TurAemObject aemObject,
                                     List<TurSNAttributeSpec> targetAttrDefinitions,
                                     TurAemSourceContext turAemSourceContext,
-                                    TurConnectorSource turConnectorSource,
+                                    TurConnectorSession turConnectorSession,
                                     TurAemSource turAemSource) {
         String type = Objects.requireNonNull(turAemSourceContext.getContentType());
         if (!isPage(type) &&
@@ -337,7 +307,7 @@ public class TurAemPluginProcess {
             aemObject.setDataPath(METADATA);
         }
         indexObjectByPublication(aemObject, turAemModel, targetAttrDefinitions, turAemSourceContext,
-                turConnectorSource, turAemSource);
+                turConnectorSession, turAemSource);
     }
 
     private static boolean isPage(String type) {
@@ -360,59 +330,27 @@ public class TurAemPluginProcess {
                 StringUtils.isNotEmpty(turAemModel.getSubType());
     }
 
-    private void deIndexObjects(TurAemSourceContext turAemSourceContext, TurConnectorSource turConnectorSource) {
-        turAemIndexingRepository.findContentsShouldBeDeIndexed(turAemSourceContext.getId(), deltaId)
-                .ifPresent(contents -> {
-                            log.info("DeIndex Content that were removed...");
-                            contents.forEach(content -> {
-                                log.info("DeIndex {} object from {} group and {} delta",
-                                        content.getAemId(), turAemSourceContext.getId(), deltaId);
-                                Map<String, Object> attributes = new HashMap<>();
-                                attributes.put(ID, content.getAemId());
-                                attributes.put(TurSNFieldName.SOURCE_APPS,
-                                        IAemConfiguration.DEFAULT_PROVIDER);
-                                turConnectorContext.addJobItem(new TurSNJobItem(TurSNJobAction.DELETE,
-                                        turConnectorSource.getSites().stream().toList(),
-                                        content.getLocale(), attributes), turConnectorSource);
-                            });
-                            turAemIndexingRepository.deleteContentsWereDeIndexed(turAemSourceContext.getId(), deltaId);
-                        }
-                );
-    }
-
-    private boolean objectNeedBeIndexed(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
-        return !StringUtils.isEmpty(aemObject.getPath()) &&
-                !turAemIndexingRepository.existsByAemIdAndIndexGroup(aemObject.getPath(), turAemSourceContext.getId());
-    }
-
-    private boolean objectNeedBeReIndexed(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
-        return ddlNeedBeReIndexed(aemObject, turAemSourceContext, TurAemCommonsUtils.getDeltaDate(aemObject,
-                turAemSourceContext, turAemContentDefinitionProcess));
-    }
-
-    private boolean ddlNeedBeReIndexed(TurAemObject aemObject, TurAemSourceContext turAemSourceContext,
-                                       Date deltaDate) {
-        return StringUtils.isNotEmpty(aemObject.getPath()) &&
-                turAemIndexingRepository.existsByAemIdAndIndexGroupAndDateNot(aemObject.getPath(),
-                        turAemSourceContext.getId(), deltaDate);
-    }
-
     private void indexObjectByPublication(@NotNull TurAemObject aemObject, TurAemModel turAemModel,
                                           List<TurSNAttributeSpec> turSNAttributeSpecList,
                                           TurAemSourceContext turAemSourceContext,
-                                          TurConnectorSource turConnectorSource,
+                                          TurConnectorSession turConnectorSession,
                                           TurAemSource turAemSource) {
         if (isAuthor(turAemSource)) {
-            turConnectorSource.setSites(Collections.singletonList(turAemSource.getAuthorSNSite()));
-            this.indexObject(aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext, turConnectorSource);
+            turAemSourceContext.setEnvironment(TurAemEnv.AUTHOR);
+            turConnectorSession.setSites(Collections.singletonList(turAemSource.getAuthorSNSite()));
+            sendToTuringToBeIndexed(aemObject, turAemModel, turSNAttributeSpecList,
+                    TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext, aemObject),
+                    turAemSourceContext, turConnectorSession);
         }
         if (isPublish(turAemSource)) {
             if (aemObject.isDelivered()) {
-                turConnectorSource.setSites(Collections.singletonList(turAemSource.getPublishSNSite()));
-                this.indexObject(aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext,
-                        turConnectorSource);
+                turAemSourceContext.setEnvironment(TurAemEnv.PUBLISHING);
+                turConnectorSession.setSites(Collections.singletonList(turAemSource.getPublishSNSite()));
+                sendToTuringToBeIndexed(aemObject, turAemModel, turSNAttributeSpecList,
+                        TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext, aemObject),
+                        turAemSourceContext, turConnectorSession);
             } else {
-                log.info("Unpublished {} object ({}) deltaId = {}",
+                log.info("Ignoring: This {} object ({}) is not publishing. deltaId = {}",
                         aemObject.getPath(), turAemSourceContext.getId(), deltaId);
             }
         }
@@ -428,102 +366,10 @@ public class TurAemPluginProcess {
                 StringUtils.isNotEmpty(turAemSource.getAuthorSNSite());
     }
 
-    private void indexObject(@NotNull TurAemObject aemObject, TurAemModel turAemModel,
-                             List<TurSNAttributeSpec> turSNAttributeSpecList,
-                             TurAemSourceContext turAemSourceContext,
-                             TurConnectorSource turConnectorSource) {
-
-        final Locale locale = TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext, aemObject);
-        if (objectNeedBeIndexed(aemObject, turAemSourceContext)) {
-            sendIndex(aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext, locale,
-                    turConnectorSource);
-        } else {
-            if (objectNeedBeReIndexed(aemObject, turAemSourceContext)) {
-                sendReindex(aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext, locale,
-                        turConnectorSource);
-            }
-            if (!DRY_RUN) {
-                updateIndexingStatus(aemObject, locale, turAemSourceContext);
-            }
-        }
-    }
-
-    private void sendReindex(TurAemObject aemObject, TurAemModel turAemModel,
-                             List<TurSNAttributeSpec> turSNAttributeSpecList,
-                             TurAemSourceContext turAemSourceContext,
-                             Locale locale,
-                             TurConnectorSource turConnectorSource) {
-        if (!DRY_RUN) {
-            turAemIndexingRepository.findByAemIdAndIndexGroup(aemObject.getPath(), turAemSourceContext.getId())
-                    .ifPresent(turAemIndexingsList ->
-                            log.info("ReIndexed {} object ({}) from {} to {} and deltaId = {}",
-                                    aemObject.getPath(), turAemSourceContext.getId(),
-                                    turAemIndexingsList.getFirst().getDate(),
-                                    TurAemCommonsUtils.getDeltaDate(aemObject, turAemSourceContext,
-                                            turAemContentDefinitionProcess), deltaId));
-        }
-        sendToTuringToBeIndexed(aemObject, turAemModel, turSNAttributeSpecList, locale,
-                turAemSourceContext, turConnectorSource);
-    }
-
-    private void sendIndex(TurAemObject aemObject,
-                           TurAemModel turAemModel,
-                           List<TurSNAttributeSpec> turSNAttributeSpecList,
-                           TurAemSourceContext turAemSourceContext,
-                           Locale locale,
-                           TurConnectorSource turConnectorSource) {
-        if (!DRY_RUN) {
-            createIndexingStatus(aemObject, locale, turAemSourceContext);
-        }
-        sendToTuringToBeIndexed(aemObject, turAemModel, turSNAttributeSpecList, locale,
-                turAemSourceContext, turConnectorSource);
-    }
-
-    private void createIndexingStatus(TurAemObject aemObject, Locale locale, TurAemSourceContext turAemSourceContext) {
-        turAemIndexingRepository.save(createTurAemIndexing(aemObject, locale, turAemSourceContext));
-        log.info("Created status: {} object ({}) and deltaId = {}", aemObject.getPath(),
-                turAemSourceContext.getId(), deltaId);
-    }
-
-    private void updateIndexingStatus(TurAemObject aemObject, Locale locale, TurAemSourceContext turAemSourceContext) {
-        turAemIndexingRepository.findByAemIdAndIndexGroup(aemObject.getPath(), turAemSourceContext.getId())
-                .filter(turAemIndexingList -> !turAemIndexingList.isEmpty())
-                .ifPresent(turAemIndexingList -> {
-                    if (turAemIndexingList.size() > 1) {
-                        turAemIndexingRepository.deleteByAemIdAndIndexGroup(aemObject.getPath(),
-                                turAemSourceContext.getId());
-                        log.info("Removed duplicated status {} object ({})",
-                                aemObject.getPath(), turAemSourceContext.getId());
-                        turAemIndexingRepository.save(createTurAemIndexing(aemObject, locale, turAemSourceContext));
-                        log.info("Recreated status {} object ({}) and deltaId = {}",
-                                aemObject.getPath(), turAemSourceContext.getId(), deltaId);
-                    } else {
-                        turAemIndexingRepository.save(turAemIndexingList.getFirst()
-                                .setDate(TurAemCommonsUtils.getDeltaDate(aemObject, turAemSourceContext,
-                                        turAemContentDefinitionProcess))
-                                .setDeltaId(deltaId));
-                        log.info("Updated status {} object ({}) deltaId = {}",
-                                aemObject.getPath(), turAemSourceContext.getId(), deltaId);
-                    }
-                });
-    }
-
-    private TurAemPluginIndexing createTurAemIndexing(TurAemObject aemObject, Locale locale,
-                                                      TurAemSourceContext turAemSourceContext) {
-        return new TurAemPluginIndexing()
-                .setAemId(aemObject.getPath())
-                .setIndexGroup(turAemSourceContext.getId())
-                .setDate(TurAemCommonsUtils.getDeltaDate(aemObject, turAemSourceContext,
-                        turAemContentDefinitionProcess))
-                .setDeltaId(deltaId)
-                .setOnce(TurAemCommonsUtils.isOnceConfig(aemObject.getPath(), config))
-                .setLocale(locale);
-    }
-
     private void sendToTuringToBeIndexed(TurAemObject aemObject, TurAemModel turAemModel,
                                          List<TurSNAttributeSpec> turSNAttributeSpecList, Locale locale,
                                          TurAemSourceContext turAemSourceContext,
-                                         TurConnectorSource turConnectorSource) {
+                                         TurConnectorSession turConnectorSession) {
         TurAemAttrProcess turAEMAttrProcess = new TurAemAttrProcess();
         TurAemTargetAttrValueMap turAemTargetAttrValueMap = turAEMAttrProcess
                 .prepareAttributeDefs(aemObject, turAemContentDefinitionProcess, turSNAttributeSpecList,
@@ -537,7 +383,7 @@ public class TurAemPluginProcess {
                 .forEach(entry -> {
                     String attributeName = entry.getKey();
                     entry.getValue().forEach(attributeValue -> {
-                        if (!StringUtils.isBlank(attributeValue)) {
+                        if (StringUtils.isNotBlank(attributeValue)) {
                             if (attributes.containsKey(attributeName)) {
                                 TurAemCommonsUtils.addItemInExistingAttribute(attributeValue, attributes, attributeName);
                             } else {
@@ -546,12 +392,15 @@ public class TurAemPluginProcess {
                         }
                     });
                 });
-        turConnectorContext.addJobItem(new TurSNJobItem(TurSNJobAction.CREATE,
-                turConnectorSource.getSites().stream().toList(),
+        TurSNJobItem jobItem = new TurSNJobItem(TurSNJobAction.CREATE,
+                turConnectorSession.getSites().stream().toList(),
                 locale,
                 attributes,
                 TurAemCommonsUtils.castSpecToJobSpec(
-                        TurAemCommonsUtils.getDefinitionFromModel(turSNAttributeSpecList, attributes))
-        ), turConnectorSource);
+                        TurAemCommonsUtils.getDefinitionFromModel(turSNAttributeSpecList, attributes)));
+        jobItem.setChecksum(String.valueOf(TurAemCommonsUtils
+                .getDeltaDate(aemObject, turAemSourceContext, turAemContentDefinitionProcess).getTime()));
+        jobItem.setEnvironment(turAemSourceContext.getEnvironment().toString());
+        turConnectorContext.addJobItem(jobItem, turConnectorSession);
     }
 }

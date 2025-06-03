@@ -25,15 +25,15 @@ import java.util.Locale;
 import java.util.UUID;
 
 @Data
-public class TurConnectorSource {
+public class TurConnectorSession {
     private String systemId;
     private String transactionId;
     private Collection<String> sites;
     private String providerName;
     private Locale locale;
 
-    public TurConnectorSource(String systemId, Collection<String> sites, String providerName,
-                              Locale locale) {
+    public TurConnectorSession(String systemId, Collection<String> sites, String providerName,
+                               Locale locale) {
         this.systemId = systemId;
         this.transactionId = UUID.randomUUID().toString();
         this.sites = sites;

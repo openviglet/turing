@@ -126,7 +126,7 @@ public class TurAemCommonsUtils {
     public static TurAemTargetAttrValueMap runCustomClassFromContentType(TurAemModel turAemModel,
                                                                          TurAemObject aemObject,
                                                                          TurAemSourceContext turAemSourceContext) {
-        return !StringUtils.isEmpty(turAemModel.getClassName()) ?
+        return StringUtils.isNotEmpty(turAemModel.getClassName()) ?
                 TurCustomClassCache.getCustomClassMap(turAemModel.getClassName())
                         .map(customClassMap -> ((TurAemExtContentInterface) customClassMap)
                                 .consume(aemObject, turAemSourceContext))

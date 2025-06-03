@@ -20,7 +20,7 @@ package com.viglet.turing.connector.persistence.model;
 
 public enum TurConnectorStatus {
     NEW,
-    KEEP,
+    UNCHANGED,
     REINDEX,
     RECREATE
 }

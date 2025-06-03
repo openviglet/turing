@@ -18,10 +18,9 @@
 
 package com.viglet.turing.connector.commons.plugin;
 
-import com.viglet.turing.client.auth.TurServer;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 
 public interface TurConnectorContext {
-    void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSource source);
-    void finishIndexing(TurConnectorSource source);
+    void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSession source);
+    void finishIndexing(TurConnectorSession source);
 }

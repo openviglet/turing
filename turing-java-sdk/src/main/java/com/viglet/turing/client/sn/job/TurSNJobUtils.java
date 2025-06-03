@@ -69,15 +69,23 @@ public class TurSNJobUtils {
             httpPost.setHeader("Accept-Encoding", StandardCharsets.UTF_8.name());
 
             TurSNClientUtils.authentication(httpPost, turSNServer.getCredentials(), turSNServer.getApiKey());
-            client.execute(httpPost, response -> importItemsLog(response, httpPost, jsonResult));
-            return true;
+            int statusCode = client.execute(httpPost, response ->
+                    importItemsLog(response, httpPost, jsonResult));
+            if (statusCode == 200) {
+                log.info("Successfully imported the Job into Turing.");
+                return true;
+            } else {
+                log.error("Failed imported the Job into Turing. Status code: {}", statusCode);
+                return false;
+            }
+
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             return false;
         }
     }
 
-    private static String importItemsLog(ClassicHttpResponse response, HttpPost httpPost, String jsonResult) {
+    private static int importItemsLog(ClassicHttpResponse response, HttpPost httpPost, String jsonResult) {
         if (log.isDebugEnabled()) {
             try {
                 log.debug("Viglet Turing Index Request URI: {}", httpPost.getUri());
@@ -89,7 +97,7 @@ public class TurSNJobUtils {
             }
             log.debug("Viglet Turing indexer response HTTP result is: {}", httpPost.getEntity().toString());
         }
-        return null;
+        return response.getCode();
     }
 
     public static void deleteItemsByType(TurSNServer turSNServer, String typeName) {
@@ -101,6 +109,8 @@ public class TurSNJobUtils {
         attributes.put(PROVIDER_ATTRIBUTE, turSNServer.getProviderName());
         turSNJobItem.setAttributes(attributes);
         turSNJobItems.add(turSNJobItem);
-        importItems(turSNJobItems, turSNServer, false);
+        if (importItems(turSNJobItems, turSNServer, false)) {
+            log.info ("Successfully deleted");
+        };
     }
 }

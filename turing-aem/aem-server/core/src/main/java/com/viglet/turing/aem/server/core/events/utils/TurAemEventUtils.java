@@ -32,12 +32,9 @@ public class TurAemEventUtils {
         }
     }
     public static void indexContent(String payload) {
-
-        System.out.println("Payload5: " + payload);
         HttpPost post = Optional.of("http://localhost:30130/api/v2/aem/reindex/WKND-AUTHOR")
                 .map(HttpPost::new)
                 .orElse(null);
-
         StringEntity entity = new StringEntity(payload, "UTF-8");
         post.setEntity(entity);
         post.setHeader("Content-Type", "application/json");

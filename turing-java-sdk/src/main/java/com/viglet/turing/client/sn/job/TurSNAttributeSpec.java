@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Setter
 @Getter
-public class TurSNAttributeSpec  extends TurSNJobAttributeSpec {
+public class TurSNAttributeSpec extends TurSNJobAttributeSpec {
     private static final long serialVersionUID = 1L;
     private String className;
 

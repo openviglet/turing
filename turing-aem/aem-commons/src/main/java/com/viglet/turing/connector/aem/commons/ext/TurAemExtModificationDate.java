@@ -39,6 +39,7 @@ public class TurAemExtModificationDate implements TurAemExtAttributeInterface {
 
 	public static Date getLastModifiedDate(TurAemObject aemObject) {
 		return Optional.ofNullable(aemObject.getLastModified())
-				.map(Calendar::getTime).orElse(null);
+				.map(Calendar::getTime)
+				.orElse(aemObject.getCreatedDate().getTime());
 	}
 }

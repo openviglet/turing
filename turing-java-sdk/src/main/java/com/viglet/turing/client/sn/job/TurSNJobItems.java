@@ -53,6 +53,10 @@ public class TurSNJobItems implements Iterable<TurSNJobItem>, Serializable {
 		return snJobItems;
 	}
 
+	public void clear() {
+		snJobItems.clear();
+	}
+
 	public void setTuringDocuments(List<TurSNJobItem> jobItems) {
 		this.snJobItems = jobItems;
 	}
