@@ -1,0 +1,208 @@
+{
+  "sources": [
+    {
+      "id": "",
+      "name": "WKND2",
+      "defaultLocale": "en_US",
+      "localeClass": "com.viglet.turing.connector.aem.commons.ext.TurAemExtLocale",
+      "deltaClass":  "com.viglet.turing.connector.aem.sample.ext.TurAemExtSampleDeltaDate",
+      "url": "http://localhost:4502",
+      "urlPrefix": "https://wknd2.site",
+      "oncePattern": "^/content/wknd/us/en/faqs",
+      "author": true,
+      "publish": true,
+      "authorSNSite": "wknd2-author",
+      "publishSNSite": "wknd2-publish",
+      "username": "admin",
+      "password": "admin",
+      "rootPath": "/content/wknd",
+      "contentType": "cq:Page",
+      "localePaths": [
+        {
+          "locale": "es",
+          "path": "/content/wknd/es/es"
+        },
+        {
+          "locale": "en_US",
+          "path": "/content/wknd/us/en"
+        }
+      ],
+      "attributes": [
+        {
+          "name": "id",
+          "type": "TEXT",
+          "mandatory": true,
+          "multiValued": false,
+          "description": "Id",
+          "facet": false,
+          "facetName": {
+            "default": "Ids"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtContentId"
+        },
+        {
+          "name": "title",
+          "type": "TEXT",
+          "mandatory": true,
+          "multiValued": false,
+          "description": "Title",
+          "facet": false,
+          "facetName": {
+            "default": "Titles",
+            "pt_BR": "Títulos",
+            "en_US": "Titles"
+          }
+        },
+        {
+          "name": "tags",
+          "type": "STRING",
+          "mandatory": true,
+          "multiValued": true,
+          "description": "Tags",
+          "facet": true,
+          "facetName": {
+            "default": "Tags"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtContentTags"
+        },
+        {
+          "name": "type",
+          "type": "STRING",
+          "mandatory": true,
+          "multiValued": false,
+          "description": "Content Type",
+          "facet": false,
+          "facetName": {
+            "default": "Content Types"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtTypeName"
+        },
+        {
+          "name": "publicationDate",
+          "type": "DATE",
+          "mandatory": true,
+          "multiValued": false,
+          "description": "Publication Date",
+          "facet": false,
+          "facetName": {
+            "default": "Publication Dates"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtCreationDate"
+        },
+        {
+          "name": "modificationDate",
+          "type": "DATE",
+          "mandatory": true,
+          "multiValued": false,
+          "description": "Modification Date",
+          "facet": false,
+          "facetName": {
+            "default": "Modification Dates"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtModificationDate"
+        },
+        {
+          "name": "site",
+          "type": "STRING",
+          "mandatory": true,
+          "multiValued": false,
+          "description": "Site Name",
+          "facet": false,
+          "facetName": {
+            "default": "Sites"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtSiteName"
+        },
+        {
+          "name": "text",
+          "type": "TEXT",
+          "multiValued": false,
+          "description": "Generic Text",
+          "facet": false,
+          "facetName": {
+            "default": "Texts"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtHtml2Text"
+        },
+        {
+          "name": "abstract",
+          "type": "TEXT",
+          "multiValued": false,
+          "description": "Short resume",
+          "facet": false,
+          "facetName": {
+            "default": "Abstracts"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtHtml2Text"
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "multiValued": false,
+          "description": "Description",
+          "facet": false,
+          "facetName": {
+            "default": "Descriptions"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtHtml2Text"
+        },
+        {
+          "name": "url",
+          "type": "STRING",
+          "mandatory": true,
+          "multiValued": false,
+          "description": "URL",
+          "facet": false,
+          "facetName": {
+            "default": "URLs"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtContentUrl"
+        },
+        {
+          "name": "source_apps",
+          "type": "STRING",
+          "mandatory": true,
+          "multiValued": true,
+          "description": "Source Apps",
+          "facet": true,
+          "facetName": {
+            "default": "Source Apps"
+          },
+          "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtSourceApps"
+        }
+      ],
+      "models": [
+        {
+          "type": "cq:Page",
+          "className": "com.viglet.turing.connector.aem.sample.ext.TurAemExtSampleModelJson",
+          "targetAttrs": [
+            {
+              "name": "title",
+              "sourceAttrs": [
+                {
+                  "name": "jcr:title"
+                }
+              ]
+            },
+            {
+              "name": "tags",
+              "sourceAttrs": [
+                {
+                  "name": "cq:tags"
+                }
+              ]
+            },
+            {
+              "name": "text",
+              "sourceAttrs": [
+                {
+                  "className": "com.viglet.turing.connector.aem.commons.ext.TurAemExtPageComponents"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

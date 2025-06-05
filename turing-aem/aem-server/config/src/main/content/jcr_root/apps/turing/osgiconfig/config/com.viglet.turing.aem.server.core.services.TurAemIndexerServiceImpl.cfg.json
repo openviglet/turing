@@ -1,0 +1,5 @@
+{
+  "enabled": false,
+  "host": "$[env:TURING_HOST;http://localhost:30130]",
+  "configName": "$[env:TURING_CONFIG_NAME;WKND]"
+}

@@ -52,7 +52,10 @@ public class TurSNJobUtils {
     }
 
     public static boolean importItems(TurSNJobItems turSNJobItems, TurSNServer turSNServer, boolean showOutput) {
-
+        if (turSNJobItems == null || turSNJobItems.getTuringDocuments().isEmpty()) {
+            log.info("Job is empty, no action.");
+            return false;
+        }
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             String jsonResult = new ObjectMapper().registerModule(new Jdk8Module()).writeValueAsString(turSNJobItems);
             ByteBuffer buffer = StandardCharsets.UTF_8.encode(jsonResult);

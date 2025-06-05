@@ -47,6 +47,10 @@ public class TurConnectorProcessQueue {
     @JmsListener(destination = CONNECTOR_INDEXING_QUEUE)
     @Transactional
     public void receiveAndSendToTuring(TurSNJobItems turSNJobItems) {
+        if (turSNJobItems == null || turSNJobItems.getTuringDocuments().isEmpty()) {
+            log.info("Job is empty, no action.");
+            return;
+        }
         log.info("Processing job from queue");
         if (log.isDebugEnabled()) {
             for (TurSNJobItem turSNJobItem : turSNJobItems) {

@@ -24,7 +24,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>aem-turing.core</artifactId>
-    <name>Turing AEM Project - Core</name>
+    <name>Turing AEM - Core</name>
     <description>Core bundle for Turing AEM Project</description>
     <build>
         <plugins>

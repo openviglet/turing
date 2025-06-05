@@ -105,6 +105,9 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     private void sendToMessageQueue() {
+        if (turSNJobItems.getTuringDocuments().isEmpty()) {
+            return;
+        }
         if (log.isDebugEnabled()) {
             for (TurSNJobItem turSNJobItem : turSNJobItems) {
                 log.debug("TurSNJobItem Id: {}", turSNJobItem.getAttributes().get(ID));

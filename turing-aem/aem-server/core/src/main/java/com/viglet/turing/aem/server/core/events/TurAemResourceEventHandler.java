@@ -1,10 +1,12 @@
 package com.viglet.turing.aem.server.core.events;
 
 import com.viglet.turing.aem.server.core.events.utils.TurAemEventUtils;
+import com.viglet.turing.aem.server.core.services.TurAemIndexerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.SlingConstants;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
@@ -17,10 +19,14 @@ import java.util.*;
         EventConstants.EVENT_TOPIC + "=org/apache/sling/api/resource/Resource/*"
 })
 public class TurAemResourceEventHandler implements EventHandler {
+    @Reference
+    private TurAemIndexerService turAemIndexerService;
+
     @Override
     public void handleEvent(Event event) {
         if (!isAssetEvent(event)) return;
-        TurAemEventUtils.index(event.getProperty(SlingConstants.PROPERTY_PATH).toString());
+        TurAemEventUtils.index(turAemIndexerService.getConfig(),
+                event.getProperty(SlingConstants.PROPERTY_PATH).toString());
     }
 
     protected boolean isAssetEvent(Event event) {
