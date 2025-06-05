@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -107,7 +108,8 @@ public class TurAemPluginProcess {
         this.turingApiKey = turingApiKey;
     }
 
-    public void run(TurAemSource turAemSource) {
+    @Async
+    public void indexAll(TurAemSource turAemSource) {
         TurConnectorSession turConnectorSession = getTurConnectorSession(turAemSource);
         config = new AemPluginHandlerConfiguration(turAemSource);
 

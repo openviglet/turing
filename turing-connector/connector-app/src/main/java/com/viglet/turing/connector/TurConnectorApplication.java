@@ -9,12 +9,14 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 @Slf4j
 @SpringBootApplication
 @EnableJms
 @EnableCaching
+@EnableAsync
 public class TurConnectorApplication {
     public static final String UTF_8 = "UTF-8";
 

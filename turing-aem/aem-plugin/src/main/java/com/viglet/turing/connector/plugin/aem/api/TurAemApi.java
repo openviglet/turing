@@ -51,10 +51,9 @@ public class TurAemApi {
     }
 
     @Transactional
-    @PostMapping("reindex/{name}")
-    public ResponseEntity<Object> reindexContentId(@PathVariable String name,
+    @PostMapping("index/{name}")
+    public ResponseEntity<Object> indexContentId(@PathVariable String name,
                                                    @RequestBody TurAemPathList turAemPathList) {
-
         return turAemSourceRepository.findByName(name).map(turAemSource -> {
             TurConnectorSession turConnectorSession = TurAemPluginProcess.getTurConnectorSession(turAemSource);
             turAemPathList.paths.forEach(path ->
@@ -62,6 +61,16 @@ public class TurAemApi {
             turAemPluginProcess.finished(turConnectorSession);
             return ResponseEntity.ok().build();
 
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+
+    }
+
+    @Transactional
+    @GetMapping("index/{name}/all")
+    public ResponseEntity<Object> indexAll(@PathVariable String name) {
+        return turAemSourceRepository.findByName(name).map(turAemSource -> {
+            turAemPluginProcess.indexAll(turAemSource);
+            return ResponseEntity.ok().build();
         }).orElseGet(() -> ResponseEntity.notFound().build());
 
     }

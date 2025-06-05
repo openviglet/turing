@@ -42,7 +42,7 @@ public class TurAemPlugin implements TurConnectorPlugin {
     @Override
     public void crawl() {
         turAemSourceRepository.findAll().forEach(turAemSource -> {
-            turAemPluginProcess.run(turAemSource);
+            turAemPluginProcess.indexAll(turAemSource);
             TurAemCommonsUtils.cleanCache();
         });
     }
