@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 @Slf4j
@@ -17,6 +18,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @EnableJms
 @EnableCaching
 @EnableAsync
+@EnableScheduling
 public class TurConnectorApplication {
     public static final String UTF_8 = "UTF-8";
 

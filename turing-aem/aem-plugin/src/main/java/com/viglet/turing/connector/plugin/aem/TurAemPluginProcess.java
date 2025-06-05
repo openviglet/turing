@@ -109,6 +109,10 @@ public class TurAemPluginProcess {
     }
 
     @Async
+    public void indexAllAsync(TurAemSource turAemSource) {
+        indexAll(turAemSource);
+    }
+
     public void indexAll(TurAemSource turAemSource) {
         TurConnectorSession turConnectorSession = getTurConnectorSession(turAemSource);
         config = new AemPluginHandlerConfiguration(turAemSource);

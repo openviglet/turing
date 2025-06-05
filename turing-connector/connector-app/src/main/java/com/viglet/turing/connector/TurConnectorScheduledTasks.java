@@ -22,10 +22,9 @@ import com.google.inject.Inject;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.persistence.repository.TurConnectorConfigVarRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -33,7 +32,6 @@ public class TurConnectorScheduledTasks {
     private final TurConnectorPlugin turConnectorPlugin;
     private final TurConnectorConfigVarRepository turConnectorConfigVarRepository;
     public static final String FIRST_TIME = "FIRST_TIME";
-
     @Inject
     public TurConnectorScheduledTasks(TurConnectorPlugin turConnectorPlugin,
                                       TurConnectorConfigVarRepository turConnectorConfigVarRepository) {
@@ -41,7 +39,8 @@ public class TurConnectorScheduledTasks {
         this.turConnectorConfigVarRepository = turConnectorConfigVarRepository;
     }
 
-    @Scheduled(fixedDelay = 60, timeUnit = TimeUnit.MINUTES)
+    @Async
+    @Scheduled(cron = "${turing.connector.cron:-}", zone="${turing.connector.cron.zone:UTC}")
     public void executeWebCrawler() {
         if (turConnectorConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
             log.info("This is the first time, waiting next schedule.");

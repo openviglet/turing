@@ -18,10 +18,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-
 public class TurAemEventUtils {
 
-    public static final String API_TURING_AEM_REINDEX = "/api/v2/aem/reindex/";
+    public static final String API_TURING_AEM_REINDEX = "/api/v2/aem/index/";
     public static final String CONTENT_TYPE = "Content-Type";
 
     public static void index(TurAemIndexerConfig config, String path) {
