@@ -54,7 +54,6 @@ jobs:
           mvn install package
           export TAG_NAME=v$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           gh release create ${TAG_NAME} --generate-notes
-          gh release upload ${TAG_NAME} turing-aem/aem-cli-indexer/target/turing-aem-cli.jar --clobber
           gh release upload ${TAG_NAME} turing-aem/aem-plugin/target/aem-plugin.jar --clobber
           gh release upload ${TAG_NAME} turing-app/target/viglet-turing.jar --clobber
           gh release upload ${TAG_NAME} turing-connector/connector-app/target/turing-connector.jar --clobber
