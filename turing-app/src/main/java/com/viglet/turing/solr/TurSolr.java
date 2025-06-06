@@ -182,7 +182,6 @@ public class TurSolr {
     public void deleteDocument(TurSolrInstance turSolrInstance, String id) {
         try {
             turSolrInstance.getSolrClient().deleteById(id);
-            turSolrInstance.getSolrClient().commit();
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -191,7 +190,6 @@ public class TurSolr {
     public void deleteDocumentByType(TurSolrInstance turSolrInstance, String type) {
         try {
             turSolrInstance.getSolrClient().deleteByQuery(TYPE + ":" + type);
-            turSolrInstance.getSolrClient().commit();
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -1498,5 +1496,13 @@ public class TurSolr {
         Arrays.stream(requiredFields.keySet().toArray()).map(String.class::cast).filter(requiredField ->
                         !document.containsKey(requiredField))
                 .forEach(requiredField -> document.addField(requiredField, requiredFields.get(requiredField)));
+    }
+
+    public void commit(TurSolrInstance turSolrInstance) {
+        try {
+            turSolrInstance.getSolrClient().commit();
+        } catch (SolrServerException | IOException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

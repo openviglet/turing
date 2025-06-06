@@ -20,6 +20,7 @@ package com.viglet.turing.connector.queue;
 
 import com.viglet.turing.client.auth.credentials.TurApiKeyCredentials;
 import com.viglet.turing.client.sn.TurSNServer;
+import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.client.sn.job.TurSNJobUtils;
@@ -30,6 +31,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static com.viglet.turing.connector.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
 
@@ -38,6 +42,7 @@ import static com.viglet.turing.connector.TurConnectorConstants.CONNECTOR_INDEXI
 public class TurConnectorProcessQueue {
     private final String turingUrl;
     private final String turingApiKey;
+
     public TurConnectorProcessQueue(@Value("${turing.url}") String turingUrl,
                                     @Value("${turing.apiKey}") String turingApiKey) {
         this.turingUrl = turingUrl;
@@ -47,15 +52,29 @@ public class TurConnectorProcessQueue {
     @JmsListener(destination = CONNECTOR_INDEXING_QUEUE)
     @Transactional
     public void receiveAndSendToTuring(TurSNJobItems turSNJobItems) {
+        List<String> sites = new ArrayList<>();
+        List<Locale> locales = new ArrayList<>();
         if (turSNJobItems == null || turSNJobItems.getTuringDocuments().isEmpty()) {
             log.info("Job is empty, no action.");
             return;
         }
         log.info("Processing job from queue");
-        if (log.isDebugEnabled()) {
-            for (TurSNJobItem turSNJobItem : turSNJobItems) {
-                log.info("Processing {} job item", turSNJobItem.getId());
+        for (TurSNJobItem turSNJobItem : turSNJobItems) {
+            if (!locales.contains(turSNJobItem.getLocale())) {
+                locales.add(turSNJobItem.getLocale());
             }
+            turSNJobItem.getSiteNames().forEach(site -> {
+                if (!sites.contains(site)) {
+                    sites.add(site);
+                }
+            });
+            log.debug("Processing {} job item", turSNJobItem.getId());
+        }
+        if (locales.isEmpty()) {
+            turSNJobItems.add(new TurSNJobItem(TurSNJobAction.COMMIT, sites));
+        } else {
+            locales.forEach(locale ->
+                    turSNJobItems.add(new TurSNJobItem(TurSNJobAction.COMMIT, sites, locale)));
         }
         TurSNJobUtils.importItems(turSNJobItems, getTurSNServer(), false);
     }

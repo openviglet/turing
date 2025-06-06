@@ -169,6 +169,7 @@ public class TurSNImportAPI {
         return switch (turJobItem.getTurSNJobAction()) {
             case CREATE -> "index";
             case DELETE -> "deIndex";
+            case COMMIT -> "commit";
         };
     }
 }
