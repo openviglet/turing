@@ -73,11 +73,14 @@ public class TurAemSourceApi {
     @PutMapping("/{id}")
     public TurAemSource turAemSourceUpdate(@PathVariable String id, @RequestBody TurAemSource turAemSource) {
         return turAemSourceRepository.findById(id).map(turAemSourceEdit -> {
-            turAemSourceEdit.setGroup(turAemSource.getGroup());
-            turAemSourceEdit.setUrl(turAemSource.getUrl());
+            turAemSourceEdit.setName(turAemSource.getName());
+            turAemSourceEdit.setEndpoint(turAemSource.getEndpoint());
             turAemSourceEdit.setUsername(turAemSource.getUsername());
             turAemSourceEdit.setPassword(turAemSource.getPassword());
-            turAemSourceEdit.setUrlPrefix(turAemSource.getUrlPrefix());
+            turAemSourceEdit.setAuthorURLPrefix(turAemSource.getAuthorURLPrefix());
+            turAemSourceEdit.setPublishURLPrefix(turAemSource.getPublishURLPrefix());
+            turAemSourceEdit.setAuthor(turAemSource.isAuthor());
+            turAemSourceEdit.setPublish(turAemSource.isPublish());
             turAemSourceEdit.setOncePattern(turAemSource.getOncePattern());
             turAemSourceEdit.setRootPath(turAemSource.getRootPath());
             turAemSourceEdit.setLocalePaths(turAemSource.getLocalePaths()

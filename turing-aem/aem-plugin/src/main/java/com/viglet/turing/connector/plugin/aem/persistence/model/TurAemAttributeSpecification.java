@@ -1,6 +1,7 @@
 package com.viglet.turing.connector.plugin.aem.persistence.model;
 
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
+import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.spring.jpa.TurUuid;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -19,7 +20,7 @@ import java.util.Map;
 @Setter
 @Entity
 @Table(name = "aem_attribute_specification")
-@JsonIgnoreProperties({ "turAemSource" })
+@JsonIgnoreProperties({"turAemSource"})
 public class TurAemAttributeSpecification extends TurSNAttributeSpec {
 
     @Serial
@@ -32,12 +33,18 @@ public class TurAemAttributeSpecification extends TurSNAttributeSpec {
 
     private String className;
     private String text;
+    private String name;
+    private TurSEFieldType type;
+    private boolean mandatory;
+    private boolean multiValued;
+    private String description;
+    private boolean facet;
 
     @Builder.Default
-    @ElementCollection
-    @MapKeyColumn(name="language")
-    @Column(name="facet_name")
-    @CollectionTable(name="aem_attritbute_facet", joinColumns=@JoinColumn(name="spec_id"))
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name = "language")
+    @Column(name = "facet_name")
+    @CollectionTable(name = "aem_attritbute_facet", joinColumns = @JoinColumn(name = "spec_id"))
     private Map<String, String> facetNames = new HashMap<>();
 
     @ManyToOne

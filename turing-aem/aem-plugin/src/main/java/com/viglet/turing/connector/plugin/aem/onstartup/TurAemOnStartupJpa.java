@@ -28,6 +28,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -42,22 +45,29 @@ public class TurAemOnStartupJpa implements ApplicationRunner {
 
     @Inject
     public TurAemOnStartupJpa(TurAemConfigVarRepository turAemConfigVarRepository,
-                                   TurAemExchangeProcess turAemExchangeProcess) {
+                              TurAemExchangeProcess turAemExchangeProcess) {
         this.turAemConfigVarRepository = turAemConfigVarRepository;
         this.turAemExchangeProcess = turAemExchangeProcess;
     }
 
     @Override
     public void run(ApplicationArguments arg0) {
-        if (this.turAemConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
-            log.info("First Time Configuration ...");
-            Path exportFile = Paths.get("export/export.json");
-            if (exportFile.toFile().exists()) {
+        if (this.turAemConfigVarRepository.findById(FIRST_TIME).isPresent()) return;
+
+        log.info("First Time Configuration ...");
+        Path dir = Paths.get("export");
+        String pattern = "*.json";
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, pattern)) {
+            for (Path exportFile : stream) {
+                if (!exportFile.toFile().exists()) continue;
+
                 turAemExchangeProcess.importFromFile(exportFile.toFile());
             }
-            setFirstTIme();
-            log.info("Configuration finished.");
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
         }
+        setFirstTIme();
+        log.info("Configuration finished.");
     }
 
     private void setFirstTIme() {

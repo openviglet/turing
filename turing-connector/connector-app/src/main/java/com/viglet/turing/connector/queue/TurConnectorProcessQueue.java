@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 
-import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
 import static com.viglet.turing.connector.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
 
 @Component
@@ -47,21 +46,22 @@ public class TurConnectorProcessQueue {
 
     @JmsListener(destination = CONNECTOR_INDEXING_QUEUE)
     @Transactional
-    public void receiveIndexingQueue(TurSNJobItems turSNJobItems) {
-        log.info("receiveIndexingQueue");
-        sendToTuring(turSNJobItems);
-    }
-
-    private void sendToTuring(TurSNJobItems turSNJobItems) {
+    public void receiveAndSendToTuring(TurSNJobItems turSNJobItems) {
+        if (turSNJobItems == null || turSNJobItems.getTuringDocuments().isEmpty()) {
+            log.info("Job is empty, no action.");
+            return;
+        }
+        log.info("Processing job from queue");
         if (log.isDebugEnabled()) {
             for (TurSNJobItem turSNJobItem : turSNJobItems) {
-                log.info("TurSNJobItem Id: {}", turSNJobItem.getAttributes().get(ID));
+                log.info("Processing {} job item", turSNJobItem.getId());
             }
         }
-        TurSNJobUtils.importItems(turSNJobItems,
-                new TurSNServer(URI.create(turingUrl), null,
-                        new TurApiKeyCredentials(turingApiKey)),
-                false);
+        TurSNJobUtils.importItems(turSNJobItems, getTurSNServer(), false);
+    }
 
+    private TurSNServer getTurSNServer() {
+        return new TurSNServer(URI.create(turingUrl), null,
+                new TurApiKeyCredentials(turingApiKey));
     }
 }

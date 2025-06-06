@@ -38,6 +38,7 @@ import java.util.Locale;
 @NoArgsConstructor
 @Setter
 @Getter
+@ToString
 @Table(name = "aem_source")
 public class TurAemSource implements Serializable {
 
@@ -48,7 +49,9 @@ public class TurAemSource implements Serializable {
     @TurUuid
     private String id;
     @Column
-    private String url;
+    private String name;
+    @Column
+    private String endpoint;
     @Column
     private String username;
     @Column
@@ -58,25 +61,27 @@ public class TurAemSource implements Serializable {
     @Column
     private String contentType;
     @Column
-    private String group;
-    @Column
-    private String urlPrefix;
+    private String subType;
     @Column
     private String oncePattern;
     @Column
-    private Locale locale;
+    private Locale defaultLocale;
     @Column
     private String localeClass;
     @Column
     private String deltaClass;
     @Column
-    private String turingUrl;
-    @Column
-    private String turingApiKey;
-    @Column
     private boolean author;
     @Column
     private boolean publish;
+    @Column
+    private String authorSNSite;
+    @Column
+    private String publishSNSite;
+    @Column
+    private String authorURLPrefix;
+    @Column
+    private String publishURLPrefix;
 
     @Builder.Default
     @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
@@ -95,18 +100,4 @@ public class TurAemSource implements Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Collection<TurAemPluginModel> models = new HashSet<>();
-
-    @Builder.Default
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "aem_sn_site", joinColumns = @JoinColumn(name = "source_id"))
-    @Column(name = "sn_site", nullable = false)
-    private Collection<String> turSNSites = new HashSet<>();
-
-
-    public void setLocalePaths(Collection<TurAemSourceLocalePath> localePaths) {
-        this.localePaths.clear();
-        if (localePaths != null) {
-            this.localePaths.addAll(localePaths);
-        }
-    }
 }

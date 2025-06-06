@@ -18,6 +18,7 @@ package com.viglet.turing.client.sn.job;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.*;
@@ -34,6 +35,7 @@ import static com.viglet.turing.commons.sn.field.TurSNFieldName.SOURCE_APPS;
  */
 @Getter
 @Setter
+@ToString
 public class TurSNJobItem implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -43,10 +45,14 @@ public class TurSNJobItem implements Serializable{
     private List<TurSNJobAttributeSpec> specs = new ArrayList<>();
     private Map<String, Object> attributes = new HashMap<>();
 	private String checksum;
+	private String environment;
 	public TurSNJobItem() {
 		super();
 	}
 
+	public Object getAttribute(String attributeName) {
+		return attributes.containsKey(attributeName);
+	}
 	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames) {
 		super();
 		this.turSNJobAction = turSNJobAction;
@@ -82,11 +88,6 @@ public class TurSNJobItem implements Serializable{
 						Map<String, Object> attributes, List<TurSNJobAttributeSpec> specs, String checksum) {
 		this(turSNJobAction, siteNames, locale, attributes, specs);
 		this.checksum = checksum;
-	}
-
-
-    public String toString() {
-		return String.format("action: %s, attributes %s", this.getTurSNJobAction(), this.getAttributes().toString());
 	}
 
 	public String getId() {

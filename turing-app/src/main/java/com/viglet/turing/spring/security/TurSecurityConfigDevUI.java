@@ -34,8 +34,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+
+import static org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -44,32 +45,33 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class TurSecurityConfigDevUI extends TurSecurityConfigProduction {
 	@Override
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc,
+	public SecurityFilterChain filterChain(HttpSecurity http,
 										   TurAuthTokenHeaderFilter turAuthTokenHeaderFilter,
 										   TurLogoutHandler turLogoutHandler,
 										   TurConfigProperties turConfigProperties,
 										   TurAuthenticationEntryPoint turAuthenticationEntryPoint) throws Exception {
+		PathPatternRequestMatcher.Builder mvc = withDefaults();
 		http.headers(header -> header.frameOptions(
 				frameOptions -> frameOptions.disable().cacheControl(HeadersConfigurer.CacheControlConfig::disable)));
 		http.httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(turAuthenticationEntryPoint))
 				.authorizeHttpRequests(authorizeRequests -> {
 					authorizeRequests.requestMatchers(
-							mvc.pattern("/index.html"),
-							mvc.pattern("/welcome/**"),
-							mvc.pattern("/"),
-							mvc.pattern("/assets/**"),
-							mvc.pattern("/swagger-resources/**"),
-							AntPathRequestMatcher.antMatcher("/api/sn/**"),
-							AntPathRequestMatcher.antMatcher("/api/genai/**"),
-							mvc.pattern("/fonts/**"),
-							mvc.pattern("/api/sn/**"),
-							mvc.pattern("/api/genai/**"),
-							mvc.pattern("/favicon.ico"),
-							mvc.pattern("/*.png"),
-							mvc.pattern("/manifest.json"),
-							mvc.pattern("/browserconfig.xml"),
-							mvc.pattern("/console/**"),
-							mvc.pattern("/api/v2/guest/**")).permitAll();
+							mvc.matcher("/index.html"),
+							mvc.matcher("/welcome/**"),
+							mvc.matcher("/"),
+							mvc.matcher("/assets/**"),
+							mvc.matcher("/swagger-resources/**"),
+							mvc.matcher("/api/sn/**"),
+							mvc.matcher("/api/genai/**"),
+							mvc.matcher("/fonts/**"),
+							mvc.matcher("/api/sn/**"),
+							mvc.matcher("/api/genai/**"),
+							mvc.matcher("/favicon.ico"),
+							mvc.matcher("/*.png"),
+							mvc.matcher("/manifest.json"),
+							mvc.matcher("/browserconfig.xml"),
+							mvc.matcher("/console/**"),
+							mvc.matcher("/api/v2/guest/**")).permitAll();
 					authorizeRequests.anyRequest().authenticated();
 				}).csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults());
 		return http.build();

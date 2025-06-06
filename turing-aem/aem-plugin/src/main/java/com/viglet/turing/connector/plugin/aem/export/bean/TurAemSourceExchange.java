@@ -31,23 +31,27 @@ import java.util.Locale;
 @Setter
 public class TurAemSourceExchange {
     private String id;
-    private Locale locale;
+    private String name;
+    private Locale defaultLocale;
     private String localeClass;
     private String deltaClass;
-    private String turingUrl;
-    private String turingApiKey;
-    private String url;
-    private String urlPrefix;
+    private String endpoint;
     private String oncePattern;
     private String username;
     private String password;
     private String rootPath;
+    private String contentType;
     private boolean author;
     private boolean publish;
-    @Builder.Default
-    private Collection<String> turSNSites = new HashSet<>();
+    private String authorSNSite;
+    private String publishSNSite;
+    private String authorURLPrefix;
+    private String publishURLPrefix;
+
     @Builder.Default
     private Collection<TurAemAttribExchange> attributes = new HashSet<>();
     @Builder.Default
     private Collection<TurAemModelExchange> models = new HashSet<>();
+    @Builder.Default
+    private Collection<TurAemSourceLocalePathExchange> localePaths = new HashSet<>();
 }

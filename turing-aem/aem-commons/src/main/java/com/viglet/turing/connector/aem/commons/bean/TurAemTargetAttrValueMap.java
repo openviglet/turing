@@ -32,16 +32,6 @@ public class TurAemTargetAttrValueMap extends HashMap<String, TurMultiValue> {
         });
     }
 
-    public void addWithSingleValue(TurAemTargetAttrValue targetAttrValue) {
-        Optional.ofNullable(targetAttrValue).ifPresent(target -> {
-            if (this.containsKey(target.getTargetAttrName())) {
-                this.get(target.getTargetAttrName()).addAll(target.getMultiValue());
-            } else {
-                this.put(target.getTargetAttrName(), target.getMultiValue());
-            }
-        });
-    }
-
     public void merge(TurAemTargetAttrValueMap fromMap) {
         fromMap.keySet().forEach(fromKey -> {
             if (this.containsKey(fromKey)) {

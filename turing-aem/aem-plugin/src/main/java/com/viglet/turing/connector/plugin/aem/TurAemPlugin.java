@@ -19,25 +19,30 @@
 package com.viglet.turing.connector.plugin.aem;
 
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
-import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
+@Primary
+@Component("aem")
 public class TurAemPlugin implements TurConnectorPlugin {
+    private final TurAemPluginProcess turAemPluginProcess;
+    private final TurAemSourceRepository turAemSourceRepository;
+
     @Autowired
-    private TurAemPluginProcess turAemPluginProcess;
-    @Autowired
-    private TurAemSourceRepository turAemSourceRepository;
+    public TurAemPlugin(TurAemPluginProcess turAemPluginProcess, TurAemSourceRepository turAemSourceRepository) {
+        this.turAemPluginProcess = turAemPluginProcess;
+        this.turAemSourceRepository = turAemSourceRepository;
+    }
 
     @Override
-    public void init(TurConnectorContext turConnectorContext) {
+    public void crawl() {
         turAemSourceRepository.findAll().forEach(turAemSource -> {
-            turAemPluginProcess.run(turAemSource, turConnectorContext);
+            turAemPluginProcess.indexAll(turAemSource);
             TurAemCommonsUtils.cleanCache();
         });
     }

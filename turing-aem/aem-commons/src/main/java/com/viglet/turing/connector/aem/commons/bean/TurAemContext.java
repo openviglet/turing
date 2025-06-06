@@ -42,13 +42,6 @@ public class TurAemContext {
 		this.configuration = configuration;
 	}
 
-	public TurAemContext(Object cmsObjectInstance) {
-		this.cmsObjectInstance = cmsObjectInstance;
-		this.turAemTargetAttr = null;
-		this.turAemSourceAttr = null;
-		this.configuration = null;
-	}
-
 	@Override
 	public String toString() {
 		return "TurAemContext{" +

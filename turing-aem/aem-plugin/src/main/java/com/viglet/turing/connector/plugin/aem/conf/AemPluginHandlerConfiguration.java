@@ -18,26 +18,20 @@
 package com.viglet.turing.connector.plugin.aem.conf;
 
 import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
-import com.viglet.turing.connector.aem.commons.config.TurAemSNSiteConfig;
 import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.URI;
 import java.util.*;
 
 @Slf4j
 public class AemPluginHandlerConfiguration implements IAemConfiguration {
     private final TurAemSource turAemSource;
-    private final URI turingURL;
-    private final String snSite;
-    private final Locale snLocale;
-    private final String mappingFile;
-    private final String cdaURLPrefix;
-    private final String apiKey;
+     private final Locale snLocale;
+    private final String authorURLPrefix;
+    private final String publishURLPrefix;
     private final String providerName;
     private final String oncePatternPath;
-
     private final String cmsHost;
     private final String cmsUsername;
     private final String cmsPassword;
@@ -48,25 +42,20 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
 
     public AemPluginHandlerConfiguration(TurAemSource turAemSource) {
         this.turAemSource = turAemSource;
-        turingURL = URI.create(turAemSource.getTuringUrl());
-
-        apiKey = turAemSource.getTuringApiKey();
-        mappingFile = null;
         providerName = DEFAULT_PROVIDER;
-        // DPS
-        snSite = DEFAULT_SN_SITE;
-        snLocale = Locale.of(DEFAULT_SN_LOCALE);
-        cdaURLPrefix =   turAemSource.getUrlPrefix();
+        snLocale = turAemSource.getDefaultLocale();
+        authorURLPrefix =   turAemSource.getAuthorURLPrefix();
+        publishURLPrefix =   turAemSource.getPublishURLPrefix();
         oncePatternPath = turAemSource.getOncePattern();
-
-        cmsHost =   turAemSource.getUrl();
+        cmsHost =   turAemSource.getEndpoint();
         cmsUsername = turAemSource.getUsername();
         cmsPassword = turAemSource.getPassword();
-        cmsGroup = turAemSource.getGroup();
+        cmsGroup = turAemSource.getName();
         cmsContentType = turAemSource.getContentType();
-        cmsSubType = null;
+        cmsSubType = turAemSource.getSubType();
         cmsRootPath = turAemSource.getRootPath();
     }
+
 
     @Override
     public String getCmsHost() {
@@ -104,44 +93,33 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
     }
 
     @Override
-    public URI getTuringURL() {
-        return turingURL;
+    public String getAuthorURLPrefix() {
+        return authorURLPrefix;
     }
 
     @Override
-    public String getMappingFile() {
-        return mappingFile;
+    public String getPublishURLPrefix() {
+        return publishURLPrefix;
     }
 
-    @Override
-    public String getCDAURLPrefix() {
-        return cdaURLPrefix;
-    }
     @Override
     public String getOncePatternPath() {
         return oncePatternPath;
     }
 
+    @Override
+    public Locale getDefaultLocale() {
+        return snLocale;
+    }
     public Collection<TurAemLocalePathContext> getLocales() {
         Collection<TurAemLocalePathContext> turAemLocalePathContexts = new HashSet<>();
      turAemSource.getLocalePaths().forEach(localePath ->
              turAemLocalePathContexts.add(TurAemLocalePathContext.builder()
-             .snSite(localePath.getTurAemSource().getTurSNSites().stream().findFirst().get())
              .path(localePath.getPath())
              .locale(localePath.getLocale())
              .build()));
 
         return turAemLocalePathContexts;
-    }
-
-    @Override
-    public TurAemSNSiteConfig getDefaultSNSiteConfig() {
-        return new TurAemSNSiteConfig(snSite, snLocale);
-    }
-
-    @Override
-    public String getApiKey() {
-        return apiKey;
     }
 
     @Override

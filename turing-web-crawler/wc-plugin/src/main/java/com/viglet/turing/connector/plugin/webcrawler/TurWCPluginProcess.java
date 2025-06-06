@@ -6,7 +6,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
 import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSource;
+import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.*;
 import com.viglet.turing.connector.webcrawler.commons.TurWCContext;
 import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtInterface;
@@ -64,7 +64,7 @@ public class TurWCPluginProcess {
     private final TurWCNotAllowUrlRepository turWCNotAllowUrlRepository;
     private final TurWCFileExtensionRepository turWCFileExtensionRepository;
     private final TurWCAttributeMappingRepository turWCAttributeMappingRepository;
-    private TurConnectorContext turConnectorContext;
+    private final TurConnectorContext turConnectorContext;
 
     @Inject
     public TurWCPluginProcess(@Value("${turing.wc.timeout:5000}") int timeout,
@@ -73,7 +73,8 @@ public class TurWCPluginProcess {
                               TurWCNotAllowUrlRepository turWCNotAllowUrlRepository,
                               TurWCFileExtensionRepository turWCFileExtensionRepository,
                               TurWCAttributeMappingRepository turWCAttributeMappingRepository,
-                              TurWCStartingPointRepository turWCStartingPointsRepository) {
+                              TurWCStartingPointRepository turWCStartingPointsRepository,
+                              TurConnectorContext turConnectorContext) {
         this.timeout = timeout;
         this.referrer = referrer;
         this.turWCAllowUrlRepository = turWCAllowUrlRepository;
@@ -81,12 +82,11 @@ public class TurWCPluginProcess {
         this.turWCFileExtensionRepository = turWCFileExtensionRepository;
         this.turWCAttributeMappingRepository = turWCAttributeMappingRepository;
         this.turWCStartingPointsRepository = turWCStartingPointsRepository;
+        this.turConnectorContext = turConnectorContext;
     }
 
-    public void start(TurWCSource turWCSource, TurConnectorContext turConnectorContext) {
-        this.turConnectorContext = turConnectorContext;
-        this.turConnectorContext.startIndexing(new TurConnectorSource(turWCSource.getId(), turWCSource.getTurSNSites(),
-                WEB_CRAWLER, turWCSource.getLocale()));
+    public void start(TurWCSource turWCSource) {
+        TurConnectorSession turConnectorSession = getSource(turWCSource);
         turWCFileExtensionRepository.findByTurWCSource(turWCSource).ifPresent(source ->
                 source.forEach(turWCFileExtension ->
                         this.notAllowExtensions.add(turWCFileExtension.getExtension())));
@@ -119,24 +119,29 @@ public class TurWCPluginProcess {
         log.info("User Agent: {}", userAgent);
         startingPoints.forEach(url -> {
             queueLinks.offer(this.website + url);
-            getPagesFromQueue(turWCSource);
+            getPagesFromQueue(turWCSource, turConnectorSession);
         });
-        finished(turConnectorContext);
+        finished(turConnectorContext, turConnectorSession);
     }
 
-    private static void finished(TurConnectorContext turConnectorContext) {
-        turConnectorContext.finishIndexing();
+    private static TurConnectorSession getSource(TurWCSource turWCSource) {
+        return new TurConnectorSession(turWCSource.getId(), turWCSource.getTurSNSites(),
+                WEB_CRAWLER, turWCSource.getLocale());
+    }
+
+    private static void finished(TurConnectorContext turConnectorContext,  TurConnectorSession source) {
+        turConnectorContext.finishIndexing(source);
     }
 
 
-    private void getPagesFromQueue(TurWCSource turWCSource) {
+    private void getPagesFromQueue(TurWCSource turWCSource, TurConnectorSession source) {
         while (!queueLinks.isEmpty()) {
             String url = queueLinks.poll();
-            getPage(turWCSource, url);
+            getPage(turWCSource, url, source);
         }
     }
 
-    private void getPage(TurWCSource turWCSource, String url) {
+    private void getPage(TurWCSource turWCSource, String url, TurConnectorSession source) {
         try {
             log.info("{}: {}", url, turWCSource.getTurSNSites());
             Document document = getHTML(url);
@@ -146,7 +151,7 @@ public class TurWCPluginProcess {
             if (canBeIndexed(pageUrl)) {
                 indexedLinks.add(pageUrl);
                 log.info("WC is creating a Job Item: {}", url);
-                addTurSNJobItem(turWCSource, document, url, checksum);
+                addTurSNJobItem(turWCSource, document, url, checksum, source);
                 return;
             } else {
                 log.debug("Ignored: {}", url);
@@ -182,10 +187,11 @@ public class TurWCPluginProcess {
                 && !StringUtils.endsWithAny(pageUrl, notAllowExtensions.toArray(new String[0]));
     }
 
-    private void addTurSNJobItem(TurWCSource turWCSource, Document document, String url, String checksum) {
+    private void addTurSNJobItem(TurWCSource turWCSource, Document document, String url, String checksum,
+                                 TurConnectorSession source) {
         turConnectorContext.addJobItem(new TurSNJobItem(TurSNJobAction.CREATE, new ArrayList<>(snSites),
                 getLocale(turWCSource, document, url),
-                getJobItemAttributes(turWCSource, document, url), null, checksum));
+                getJobItemAttributes(turWCSource, document, url), null, checksum), source);
     }
 
     public static String getCRC32Checksum(byte[] bytes) {

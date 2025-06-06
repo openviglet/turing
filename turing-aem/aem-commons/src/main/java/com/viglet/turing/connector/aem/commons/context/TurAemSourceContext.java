@@ -18,6 +18,7 @@
 
 package com.viglet.turing.connector.aem.commons.context;
 
+import com.viglet.turing.connector.aem.commons.bean.TurAemEnv;
 import lombok.*;
 
 import java.util.Collection;
@@ -43,8 +44,15 @@ public class TurAemSourceContext {
     private String siteName;
     private Locale defaultLocale;
     private String providerName;
-    private String urlPrefix;
+    private String authorURLPrefix;
+    private String publishURLPrefix;
     private String oncePattern;
+    private TurAemEnv environment;
     @Builder.Default
     private Collection<TurAemLocalePathContext> localePaths = new HashSet<>();
+
+    public String getUrlPrefix() {
+        return getEnvironment().equals(TurAemEnv.AUTHOR)?
+                getAuthorURLPrefix():getPublishURLPrefix();
+    }
 }

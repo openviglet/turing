@@ -72,7 +72,6 @@ public class TurAemCommonsUtils {
         }
     };
 
-
     public static boolean isTypeEqualContentType(JSONObject jsonObject, TurAemSourceContext turAemSourceContext) {
         return jsonObject.has(JCR_PRIMARY_TYPE) &&
                 jsonObject.getString(JCR_PRIMARY_TYPE)
@@ -127,7 +126,7 @@ public class TurAemCommonsUtils {
     public static TurAemTargetAttrValueMap runCustomClassFromContentType(TurAemModel turAemModel,
                                                                          TurAemObject aemObject,
                                                                          TurAemSourceContext turAemSourceContext) {
-        return !StringUtils.isEmpty(turAemModel.getClassName()) ?
+        return StringUtils.isNotEmpty(turAemModel.getClassName()) ?
                 TurCustomClassCache.getCustomClassMap(turAemModel.getClassName())
                         .map(customClassMap -> ((TurAemExtContentInterface) customClassMap)
                                 .consume(aemObject, turAemSourceContext))
@@ -221,11 +220,6 @@ public class TurAemCommonsUtils {
     public static Locale getLocaleFromAemObject(TurAemSourceContext turAemSourceContext,
                                                 TurAemObject aemObject) {
         return getLocaleByPath(turAemSourceContext, aemObject.getPath());
-    }
-
-    public static Optional<TurAemObject> getAemObject(String url, TurAemSourceContext turAemSourceContext,
-                                                      boolean cached) {
-        return getInfinityJson(url, turAemSourceContext, cached).map(infinityJson -> new TurAemObject(url, infinityJson));
     }
 
     public static Optional<JSONObject> getInfinityJson(String url, TurAemSourceContext turAemSourceContext,
