@@ -28,6 +28,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -55,7 +56,9 @@ public class TurAemOnStartupJpa implements ApplicationRunner {
         if (this.turAemConfigVarRepository.findById(FIRST_TIME).isPresent()) return;
 
         log.info("First Time Configuration ...");
-        Path dir = Paths.get("export");
+        String exportPath = System.getProperty("user.dir") + File.separator + "export";
+        log.info("Reading export directory: {}", exportPath);
+        Path dir = Paths.get(exportPath);
         String pattern = "*.json";
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, pattern)) {
             for (Path exportFile : stream) {

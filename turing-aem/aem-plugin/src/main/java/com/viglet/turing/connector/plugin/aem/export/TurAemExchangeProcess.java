@@ -187,6 +187,7 @@ public class TurAemExchangeProcess {
     }
 
     public void importFromFile(File exportFile) {
+        log.info("Importing {} file", exportFile);
         ObjectMapper mapper = new ObjectMapper();
         try {
             TurAemExchange turAemExchange = mapper.readValue(exportFile, TurAemExchange.class);
