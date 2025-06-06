@@ -39,7 +39,6 @@ public class TurConnectorScheduledTasks {
         this.turConnectorConfigVarRepository = turConnectorConfigVarRepository;
     }
 
-    @Async
     @Scheduled(cron = "${turing.connector.cron:-}", zone="${turing.connector.cron.zone:UTC}")
     public void executeWebCrawler() {
         if (turConnectorConfigVarRepository.findById(FIRST_TIME).isEmpty()) {

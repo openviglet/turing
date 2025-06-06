@@ -28,7 +28,8 @@ import java.util.*;
 public class AemPluginHandlerConfiguration implements IAemConfiguration {
     private final TurAemSource turAemSource;
      private final Locale snLocale;
-    private final String cdaURLPrefix;
+    private final String authorURLPrefix;
+    private final String publishURLPrefix;
     private final String providerName;
     private final String oncePatternPath;
     private final String cmsHost;
@@ -43,9 +44,10 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
         this.turAemSource = turAemSource;
         providerName = DEFAULT_PROVIDER;
         snLocale = turAemSource.getDefaultLocale();
-        cdaURLPrefix =   turAemSource.getUrlPrefix();
+        authorURLPrefix =   turAemSource.getAuthorURLPrefix();
+        publishURLPrefix =   turAemSource.getPublishURLPrefix();
         oncePatternPath = turAemSource.getOncePattern();
-        cmsHost =   turAemSource.getUrl();
+        cmsHost =   turAemSource.getEndpoint();
         cmsUsername = turAemSource.getUsername();
         cmsPassword = turAemSource.getPassword();
         cmsGroup = turAemSource.getName();
@@ -91,9 +93,15 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
     }
 
     @Override
-    public String getCDAURLPrefix() {
-        return cdaURLPrefix;
+    public String getAuthorURLPrefix() {
+        return authorURLPrefix;
     }
+
+    @Override
+    public String getPublishURLPrefix() {
+        return publishURLPrefix;
+    }
+
     @Override
     public String getOncePatternPath() {
         return oncePatternPath;

@@ -69,7 +69,7 @@ public class TurAemApi {
     @GetMapping("index/{name}/all")
     public ResponseEntity<Object> indexAll(@PathVariable String name) {
         return turAemSourceRepository.findByName(name).map(turAemSource -> {
-            turAemPluginProcess.indexAll(turAemSource);
+            turAemPluginProcess.indexAllAsync(turAemSource);
             return ResponseEntity.ok().build();
         }).orElseGet(() -> ResponseEntity.notFound().build());
 

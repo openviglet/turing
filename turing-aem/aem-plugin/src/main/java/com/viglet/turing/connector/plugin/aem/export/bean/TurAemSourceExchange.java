@@ -35,17 +35,19 @@ public class TurAemSourceExchange {
     private Locale defaultLocale;
     private String localeClass;
     private String deltaClass;
-    private String url;
-    private String urlPrefix;
+    private String endpoint;
     private String oncePattern;
     private String username;
     private String password;
     private String rootPath;
     private String contentType;
-    private String authorSNSite;
-    private String publishSNSite;
     private boolean author;
     private boolean publish;
+    private String authorSNSite;
+    private String publishSNSite;
+    private String authorURLPrefix;
+    private String publishURLPrefix;
+
     @Builder.Default
     private Collection<TurAemAttribExchange> attributes = new HashSet<>();
     @Builder.Default

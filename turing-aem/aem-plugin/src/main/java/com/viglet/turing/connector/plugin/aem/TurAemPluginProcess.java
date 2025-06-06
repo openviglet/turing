@@ -196,7 +196,8 @@ public class TurAemPluginProcess {
                 .oncePattern(config.getOncePatternPath())
                 .providerName(config.getProviderName())
                 .password(config.getCmsPassword())
-                .urlPrefix(config.getCDAURLPrefix())
+                .authorURLPrefix(config.getAuthorURLPrefix())
+                .publishURLPrefix(config.getPublishURLPrefix())
                 .username(config.getCmsUsername())
                 .localePaths(config.getLocales())
                 .build();

@@ -28,7 +28,9 @@ public interface IAemConfiguration {
 
     String getProviderName();
 
-    String getCDAURLPrefix();
+    String getAuthorURLPrefix();
+
+    String getPublishURLPrefix();
 
     String getOncePatternPath();
 

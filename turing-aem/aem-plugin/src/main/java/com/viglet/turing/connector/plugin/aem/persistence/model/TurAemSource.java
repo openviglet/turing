@@ -38,6 +38,7 @@ import java.util.Locale;
 @NoArgsConstructor
 @Setter
 @Getter
+@ToString
 @Table(name = "aem_source")
 public class TurAemSource implements Serializable {
 
@@ -50,7 +51,7 @@ public class TurAemSource implements Serializable {
     @Column
     private String name;
     @Column
-    private String url;
+    private String endpoint;
     @Column
     private String username;
     @Column
@@ -61,8 +62,6 @@ public class TurAemSource implements Serializable {
     private String contentType;
     @Column
     private String subType;
-    @Column
-    private String urlPrefix;
     @Column
     private String oncePattern;
     @Column
@@ -79,6 +78,10 @@ public class TurAemSource implements Serializable {
     private String authorSNSite;
     @Column
     private String publishSNSite;
+    @Column
+    private String authorURLPrefix;
+    @Column
+    private String publishURLPrefix;
 
     @Builder.Default
     @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
@@ -97,29 +100,4 @@ public class TurAemSource implements Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Collection<TurAemPluginModel> models = new HashSet<>();
-
-    @Override
-    public String toString() {
-        return "TurAemSource{" +
-                "id='" + id + '\'' +
-                ", url='" + url + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", rootPath='" + rootPath + '\'' +
-                ", contentType='" + contentType + '\'' +
-                ", name='" + name + '\'' +
-                ", urlPrefix='" + urlPrefix + '\'' +
-                ", oncePattern='" + oncePattern + '\'' +
-                ", defaultLocale=" + defaultLocale +
-                ", localeClass='" + localeClass + '\'' +
-                ", deltaClass='" + deltaClass + '\'' +
-                ", author=" + author +
-                ", publish=" + publish +
-                ", localePaths=" + localePaths +
-                ", attributeSpecifications=" + attributeSpecifications +
-                ", models=" + models +
-                ", authorSNSite=" + authorSNSite +
-                ", publishSNSite=" + publishSNSite +
-                '}';
-    }
 }
