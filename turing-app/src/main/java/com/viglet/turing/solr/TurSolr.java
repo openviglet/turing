@@ -1539,4 +1539,12 @@ public class TurSolr {
                         !document.containsKey(requiredField))
                 .forEach(requiredField -> document.addField(requiredField, requiredFields.get(requiredField)));
     }
+
+    public void commit(TurSolrInstance turSolrInstance) {
+        try {
+            turSolrInstance.getSolrClient().commit();
+        } catch (SolrServerException | IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 }

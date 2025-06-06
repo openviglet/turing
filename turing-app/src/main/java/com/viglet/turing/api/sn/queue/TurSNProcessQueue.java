@@ -145,9 +145,16 @@ public class TurSNProcessQueue {
         return switch (turSNJobItem.getTurSNJobAction()) {
             case CREATE -> createJob(turSNSite, turSNJobItem);
             case DELETE -> deleteJob(turSNSite, turSNJobItem);
+            case COMMIT -> commitJob(turSNSite, turSNJobItem);
         };
     }
-
+    private boolean commitJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
+        return turSolrInstanceProcess.initSolrInstance(turSNSite.getName(), turSNJobItem.getLocale())
+                .map(turSolrInstance -> {
+                    turSolr.commit(turSolrInstance);
+                    return true;
+                }).orElse(false);
+    }
     private boolean deleteJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
         return (turSNSpotlightProcess.isSpotlightJob(turSNJobItem))
                 ? turSNSpotlightProcess.deleteUnmanagedSpotlight(turSNJobItem, turSNSite)
