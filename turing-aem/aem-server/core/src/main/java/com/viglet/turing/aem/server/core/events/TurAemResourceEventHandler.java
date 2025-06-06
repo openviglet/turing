@@ -19,23 +19,24 @@ import java.util.*;
         EventConstants.EVENT_TOPIC + "=org/apache/sling/api/resource/Resource/*"
 })
 public class TurAemResourceEventHandler implements EventHandler {
+    public static final String DAM_ASSET = "dam:Asset";
+    public static final String CONTENT = "/content";
+    public static final String JCR_CONTENT = "jcr:content";
     @Reference
     private TurAemIndexerService turAemIndexerService;
 
     @Override
     public void handleEvent(Event event) {
-        if (!isAssetEvent(event)) return;
-        TurAemEventUtils.index(turAemIndexerService.getConfig(),
-                event.getProperty(SlingConstants.PROPERTY_PATH).toString());
+        Object path = event.getProperty(SlingConstants.PROPERTY_PATH);
+        Object resourceType = event.getProperty(SlingConstants.PROPERTY_RESOURCE_TYPE);
+        if ( path == null || resourceType == null || !isAssetEvent((String) path, (String) resourceType)) return;
+        TurAemEventUtils.index(turAemIndexerService.getConfig(), (String) path);
     }
 
-    protected boolean isAssetEvent(Event event) {
-        String path = event.getProperty(SlingConstants.PROPERTY_PATH).toString();
-        String resourceType = event.getProperty(SlingConstants.PROPERTY_RESOURCE_TYPE).toString();
-        return (Objects.equals(resourceType, "dam:Asset") &&
-                path.startsWith("/content") &&
-                !path.contains("jcr:content"));
+    protected boolean isAssetEvent(String path, String resourceType) {
+        return (Objects.equals(resourceType, DAM_ASSET) &&
+                path.startsWith(CONTENT) &&
+                !path.contains(JCR_CONTENT));
     }
-
 
 }
