@@ -48,9 +48,6 @@ com.viglet.turing.commons.sn.pagination
 com.viglet.turing.commons.sn.search
 com.viglet.turing.commons.utils
 com.viglet.turing.connector
-com.viglet.turing.connector.aem.cli
-com.viglet.turing.connector.aem.cli.conf
-com.viglet.turing.connector.aem.cli.persistence
 com.viglet.turing.connector.aem.commons
 com.viglet.turing.connector.aem.commons.bean
 com.viglet.turing.connector.aem.commons.config
@@ -58,6 +55,8 @@ com.viglet.turing.connector.aem.commons.context
 com.viglet.turing.connector.aem.commons.deserializer
 com.viglet.turing.connector.aem.commons.ext
 com.viglet.turing.connector.aem.commons.mappers
+com.viglet.turing.connector.aem.sample.beans
+com.viglet.turing.connector.aem.sample.ext
 com.viglet.turing.connector.commons.plugin
 com.viglet.turing.connector.db
 com.viglet.turing.connector.db.ext
@@ -77,7 +76,6 @@ com.viglet.turing.connector.plugin.aem.export.bean
 com.viglet.turing.connector.plugin.aem.onstartup
 com.viglet.turing.connector.plugin.aem.persistence.model
 com.viglet.turing.connector.plugin.aem.persistence.repository
-com.viglet.turing.connector.plugin.aem.spring.security
 com.viglet.turing.connector.plugin.webcrawler
 com.viglet.turing.connector.plugin.webcrawler.export
 com.viglet.turing.connector.plugin.webcrawler.export.bean
