@@ -21,6 +21,7 @@ package com.viglet.turing.connector.plugin.aem.api;
 import com.google.inject.Inject;
 import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,18 +44,17 @@ public class TurAemApi {
                      TurAemPluginProcess turAemPluginProcess) {
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemPluginProcess = turAemPluginProcess;
-
     }
 
-    @GetMapping
-    public Map<String, String> info() {
+    @GetMapping("status")
+    public Map<String, String> status() {
         return statusOk();
     }
 
     @Transactional
     @PostMapping("index/{name}")
     public ResponseEntity<Object> indexContentId(@PathVariable String name,
-                                                   @RequestBody TurAemPathList turAemPathList) {
+                                                 @RequestBody TurAemPathList turAemPathList) {
         return turAemSourceRepository.findByName(name).map(turAemSource -> {
             TurConnectorSession turConnectorSession = TurAemPluginProcess.getTurConnectorSession(turAemSource);
             turAemPathList.paths.forEach(path ->

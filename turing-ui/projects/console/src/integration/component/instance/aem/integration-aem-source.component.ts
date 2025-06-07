@@ -21,11 +21,11 @@ import {TurLocaleService} from "../../../../locale/service/locale.service";
 
 @Component({
     selector: 'integration-aem-page',
-    templateUrl: './integration-aem-page.component.html',
+    templateUrl: './integration-aem-source.component.html',
     standalone: false
 })
 
-export class TurIntegrationAemPageComponent implements OnInit {
+export class TurIntegrationAemSourceComponent implements OnInit {
   public config: AceConfigInterface = {
     mode: 'ace/mode/json',
     theme: 'github',
@@ -55,7 +55,7 @@ export class TurIntegrationAemPageComponent implements OnInit {
     this.config.wrap = true;
     this.turLocales = turLocaleService.query();
     let id: string = this.activatedRoute.snapshot.paramMap.get('aemId') || "";
-    this.integrationId = this.activatedRoute.parent?.parent?.snapshot.paramMap.get('id') || "";
+    this.integrationId = this.activatedRoute.parent?.snapshot.paramMap.get('id') || "";
     turIntegrationAemSourceService.setIntegrationId(this.integrationId);
     this.newObject = (id != null && id.toLowerCase() === 'new');
 
@@ -63,9 +63,6 @@ export class TurIntegrationAemPageComponent implements OnInit {
       this.turIntegrationAemSourceService.get(id);
   }
 
-  public toggleMode(_turIntegrationAemSource: TurIntegrationAemSource): void {
-    _turIntegrationAemSource.mappingJson = _turIntegrationAemSource.mappingJson.replace(/,/g, ',\n');
-  }
   getIntegrationId(): string {
     return this.integrationId;
   }
@@ -108,7 +105,7 @@ export class TurIntegrationAemPageComponent implements OnInit {
 
         _turIntegrationAemSource = turIntegrationAemSource;
 
-        this.notifier.notify("success", turIntegrationAemSource.group.concat(message));
+        this.notifier.notify("success", turIntegrationAemSource.name.concat(message));
 
         this.router.navigate(['/integration/instance', this.getIntegrationId(), 'aem']);
       },
@@ -123,7 +120,7 @@ export class TurIntegrationAemPageComponent implements OnInit {
   public delete(_turIntegrationAemSource: TurIntegrationAemSource) {
     this.turIntegrationAemSourceService.delete(_turIntegrationAemSource).subscribe(
       () => {
-        this.notifier.notify("success", _turIntegrationAemSource.group.concat(" Integration AEM source was deleted."));
+        this.notifier.notify("success", _turIntegrationAemSource.name.concat(" Integration AEM source was deleted."));
         this.modalDelete.nativeElement.removeAttribute("open");
         this.router.navigate(['/integration/instance', this.getIntegrationId(), 'aem']);
       },
@@ -133,4 +130,17 @@ export class TurIntegrationAemPageComponent implements OnInit {
   }
 
   protected readonly JSON = JSON;
+
+  indexAll(_turIntegrationAemSource: TurIntegrationAemSource) {
+    this.turIntegrationAemSourceService.indexAll(_turIntegrationAemSource).subscribe(
+      () => {
+        this.notifier.notify("success", _turIntegrationAemSource.name
+          .concat(" Integration AEM source is indexing all content."));
+        this.modalDelete.nativeElement.removeAttribute("open");
+        this.router.navigate(['/integration/instance', this.getIntegrationId(), 'aem']);
+      },
+      (response: string) => {
+        this.notifier.notify("error", "Integration AEM source was error: " + response);
+      });
+  }
 }

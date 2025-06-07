@@ -31,20 +31,22 @@
         <div class="flex-auto">
           <div style="width: 24px;height: 24px;margin-right: 7px;border-radius: 50%;"
                class="float-left">
-            <svg width="24" height="24" style="border-radius: 50%;" [identiconHash]="aemSource.group | lowercase">
+            <svg width="24" height="24" style="border-radius: 50%;" [identiconHash]="aemSource.name | lowercase">
               Avatar
             </svg>
           </div>
-          <a [routerLink]="['/integration/instance', getIntegrationId(), 'aem', 'instance', aemSource.id]"
+          <a [routerLink]="['/integration/aem', getIntegrationId(), 'source', aemSource.id]"
              routerLinkActive="active"
              style="font-weight: bolder; font-size: large;">
-            {{ aemSource.group }} </a>
+            {{ aemSource.name }} </a>
           <div class="text-gray-light" style="margin-top: 5px;">
-            {{ aemSource.siteName }}
+            {{ aemSource.authorSNSite }}
+          </div>
+          <div class="text-gray-light" style="margin-top: 5px;">
+            {{ aemSource.publishSNSite }}
           </div>
           <div style="margin-top: 5px;">
             <span title="Label: green outline label" class="Label Label--outline Label--outline-green">Active</span>
-
           </div>
           <div class="text-gray-light d-flex flex-items-center" style="margin-top: 10px;">
             <div class="mr-3">

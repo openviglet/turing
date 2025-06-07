@@ -58,4 +58,8 @@ export class TurIntegrationAemSourceService {
   public delete(turIntegrationAemSource: TurIntegrationAemSource): Observable<Object> {
     return this.httpClient.delete(`${this.getUrl()}/${turIntegrationAemSource.id}`);
   }
+
+  indexAll(turIntegrationAemSource: TurIntegrationAemSource) {
+    return this.httpClient.get(`${this.getUrl()}/${turIntegrationAemSource.id}/indexAll`);
+  }
 }

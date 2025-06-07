@@ -7,10 +7,10 @@ import {TurIntegrationAemSourceService} from "../../../service/integration-aem-s
 
 @Component({
     selector: 'integration-aem-list-page',
-    templateUrl: './integration-aem-list-page.component.html',
+    templateUrl: './integration-aem-list-source.component.html',
     standalone: false
 })
-export class TurIntegrationAemListPageComponent implements OnInit {
+export class TurIntegrationAemListSourceComponent implements OnInit {
   private turIntegrationAemSources: Observable<TurIntegrationAemSource[]>;
   private integrationId: string;
   filterText: string;
@@ -19,7 +19,7 @@ export class TurIntegrationAemListPageComponent implements OnInit {
               private activatedRoute: ActivatedRoute,
               private router: Router) {
 
-    this.integrationId = this.activatedRoute.parent?.parent?.snapshot.paramMap.get('id') || "";
+    this.integrationId = this.activatedRoute.parent?.snapshot.paramMap.get('id') || "";
     turIntegrationAemSourceService.setIntegrationId(this.integrationId);
     this.turIntegrationAemSources = turIntegrationAemSourceService.query();
     this.filterText = "";

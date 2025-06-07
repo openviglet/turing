@@ -237,6 +237,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                 .locale(turSNJobItem.getLocale())
                 .checksum(turSNJobItem.getChecksum())
                 .created(new Date())
+                .modificationDate(new Date())
                 .sites(turSNJobItem.getSiteNames())
                 .environment(turSNJobItem.getEnvironment())
                 .status(status)

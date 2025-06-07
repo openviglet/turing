@@ -29,6 +29,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,7 +54,9 @@ public class TurIntegrationAPI {
         this.turIntegrationInstanceRepository = turIntegrationInstanceRepository;
     }
 
-    @RequestMapping(value = "**", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+    @RequestMapping(value = "**",
+            method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     public void indexAnyRequest(HttpServletRequest request, HttpServletResponse response,
                                 @PathVariable String integrationId) {
         turIntegrationInstanceRepository.findById(integrationId).ifPresent(turIntegrationInstance ->
@@ -62,23 +66,33 @@ public class TurIntegrationAPI {
     public void proxy(TurIntegrationInstance turIntegrationInstance, HttpServletRequest request,
                       HttpServletResponse response) {
         try {
-            HttpURLConnection httpURLConnection = (HttpURLConnection) URI.create(turIntegrationInstance.getEndpoint() +
-                            request.getRequestURI()
-                                    .replace("/api/v2/integration/" + turIntegrationInstance.getId(), "/api/v2"))
+            String endpoint = turIntegrationInstance.getEndpoint() +
+                    request.getRequestURI()
+                            .replace("/api/v2/integration/" + turIntegrationInstance.getId(), "/api/v2");
+            log.info("Executing: {}", endpoint);
+            HttpURLConnection connectorEnpoint = (HttpURLConnection) URI.create(endpoint)
                     .toURL().openConnection();
-            httpURLConnection.setRequestMethod(request.getMethod());
+            connectorEnpoint.setRequestMethod(request.getMethod());
             request.getHeaderNames().asIterator().forEachRemaining(headerName ->
-                    httpURLConnection.setRequestProperty(headerName, request.getHeader(headerName)));
+                    connectorEnpoint.setRequestProperty(headerName, request.getHeader(headerName)));
             String method = request.getMethod();
             if (method.equals(PUT) || method.equals(POST)) {
-                httpURLConnection.setDoOutput(true);
-                OutputStream outputStream = httpURLConnection.getOutputStream();
+                connectorEnpoint.setDoOutput(true);
+                OutputStream outputStream = connectorEnpoint.getOutputStream();
                 outputStream.write(CharStreams.toString(request.getReader()).getBytes());
                 outputStream.flush();
                 outputStream.close();
             }
-            response.setStatus(httpURLConnection.getResponseCode());
-            ByteStreams.copy(httpURLConnection.getInputStream(), response.getOutputStream());
+            response.setStatus(connectorEnpoint.getResponseCode());
+            ByteStreams.copy(connectorEnpoint.getInputStream(), response.getOutputStream());
+            connectorEnpoint.getHeaderFields()
+                    .forEach((header, values) ->
+                            values.forEach(value -> {
+                                if (header !=null && !header.equals(HttpHeaders.TRANSFER_ENCODING)) {
+                                    log.debug("Header: {} = {}", header, value);
+                                    response.setHeader(header, value);
+                                }
+                            }));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
