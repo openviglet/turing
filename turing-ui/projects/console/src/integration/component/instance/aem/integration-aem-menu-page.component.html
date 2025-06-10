@@ -65,7 +65,9 @@
       <a class="menu-item" [routerLink]="['/integration', 'aem', integrationInstance.id, 'source']"
          [routerLinkActive]="['selected']"><span
         octicon="git-commit" [size]=16 class="mr-1"></span> Sources</a>
-
+      <a class="menu-item" [routerLink]="['/integration', 'aem', integrationInstance.id, 'indexing-rule']"
+         [routerLinkActive]="['selected']"><span
+        octicon="tools" [size]=16 class="mr-1"></span> Indexing Rules</a>
     </nav>
     <nav class="menu" aria-label="Monitoring">
       <a class="menu-item" [routerLink]="['/integration', 'aem', integrationInstance.id, 'monitoring']"

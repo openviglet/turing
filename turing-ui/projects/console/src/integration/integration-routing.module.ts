@@ -16,6 +16,15 @@ import {TurIntegrationWcListPageComponent} from "./component/instance/wc/integra
 import {
   TurIntegrationMonitoringPageComponent
 } from "./component/instance/monitoring/integration-monitoring-page.component";
+import {
+  TurSNIndexingRulesRootPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-root-page.component";
+import {
+  TurIntegrationIndexingRulesListPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-list-page.component";
+import {
+  TurIntegrationIndexingRulesPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-page.component";
 
 const routes: Routes = [
   {
@@ -34,6 +43,14 @@ const routes: Routes = [
           {path: 'source/:aemId', component: TurIntegrationAemSourceComponent, canActivate: [AuthGuard]},
           {path: 'detail', component: TurIntegrationInstanceDetailPageComponent, canActivate: [AuthGuard]},
           {path: 'monitoring', component: TurIntegrationMonitoringPageComponent, canActivate: [AuthGuard]},
+          {
+            path: 'indexing-rule', component: TurSNIndexingRulesRootPageComponent, canActivate: [AuthGuard],
+            children: [
+              {path: 'list', component: TurIntegrationIndexingRulesListPageComponent, canActivate: [AuthGuard]},
+              {path: ':indexingRuleId', component: TurIntegrationIndexingRulesPageComponent, canActivate: [AuthGuard]},
+              {path: '', redirectTo: 'list', pathMatch: 'full'}
+            ]
+          },
           {path: '', redirectTo: 'detail', pathMatch: 'full'}
         ]
       },

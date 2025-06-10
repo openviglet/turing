@@ -1,11 +1,11 @@
-<div *ngIf="(getTurSNRankingExpressions() | async) as snRankingExpressions; else loading">
-  <div *ngIf="snRankingExpressions.length < 1" class="blankslate">
+<div *ngIf="(getTurIntegrationIndexingRules() | async) as integrationIndexingRules; else loading">
+  <div *ngIf="integrationIndexingRules.length < 1" class="blankslate">
     <span octicon="tools" [size]="48" class="mb-3"></span>
     <h3 class="mb-1">You don’t seem to have any indexing rule.</h3>
     <p>Establish a new indexing rule to precisely define the indexing process.</p>
-    <a [routerLink]="['/sn/site', getId(), 'ranking-expression', 'new']" class="btn btn-primary my-3" type="button">New indexing rule</a>
+    <a [routerLink]="['/integration/aem', getIntegrationId(), 'indexing-rule', 'new']" class="btn btn-primary my-3" type="button">New indexing rule</a>
   </div>
-  <div *ngIf="snRankingExpressions.length >= 1">
+  <div *ngIf="integrationIndexingRules.length >= 1">
   <div class="Subhead">
     <div class="Subhead-heading Subhead-heading--large"><span octicon="number" [size]="24" class="mr-1"></span> Indexing Rules </div>
     <div class="Subhead-description">Define content that will be featured in the term-based search.</div>
@@ -18,7 +18,7 @@
     </div>
     <div class="float-right" style="display: inline-flex;">
       <div class="d-flex flex-justify-end position-relative">
-        <a [routerLink]="['/sn/site', getId(), 'ranking-expression', 'new']" type="button" class="btn btn-primary"><span
+        <a [routerLink]="['/integration/aem', getIntegrationId(), 'indexing-rule', 'new']" type="button" class="btn btn-primary"><span
           octicon="number" [size]="16" class="mr-1"></span> New</a>
       </div>
     </div>
@@ -26,23 +26,23 @@
   <div style="margin-top: 20px;">
     <div class="Box Box--blue">
       <ul>
-        <li *ngFor="let snRankingExpression of snRankingExpressions | fullTextSearch:filterText:'name'" class="Box-row ">
+        <li *ngFor="let integrationIndexingRule of integrationIndexingRules | fullTextSearch:filterText:'name'" class="Box-row ">
           <div class="d-flex flex-items-center">
-            <a [routerLink]="['/sn/site', getId(), 'ranking-expression', snRankingExpression.id]" routerLinkActive="active" class="d-flex flex-items-center">
+            <a [routerLink]="['/integration/aem', getIntegrationId(), 'indexing-rule', integrationIndexingRule.id]" routerLinkActive="active" class="d-flex flex-items-center">
               <div style="background-color: whitesmoke;width: 24px;height: 24px;margin-right: 7px;border-radius: 50%;"
               class="float-left">
-              <svg width="24" height="24" style="border-radius: 50%;" [identiconHash]="snRankingExpression.name | lowercase">
+              <svg width="24" height="24" style="border-radius: 50%;" [identiconHash]="integrationIndexingRule.name | lowercase">
                 Avatar
               </svg>
             </div>
-              {{snRankingExpression.name}}</a>
+              {{integrationIndexingRule.name}}</a>
           </div>
           <div class="d-flex flex-items-center mt-1 color-text-secondary">
             <span octicon="clock" [size]=16 class="mr-1"></span>
             <span>
               <span style="font-size: smaller;"> Updated
-                {{snRankingExpression.lastModifiedDate | amTimeAgo}}</span>
-              <span> - </span> {{snRankingExpression.description}}</span>
+                {{integrationIndexingRule.lastModifiedDate | amTimeAgo}}</span>
+              <span> - </span> {{integrationIndexingRule.description}}</span>
           </div>
         </li>
       </ul>

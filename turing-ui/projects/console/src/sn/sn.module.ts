@@ -51,13 +51,7 @@ import {CdkDrag, CdkDropList, CdkDropListGroup} from "@angular/cdk/drag-drop";
 import {TurLLMInstanceService} from "../llm/service/llm-instance.service";
 import {TurStoreInstanceService} from "../store/service/store-instance.service";
 import {TurSNSiteGenAiPageComponent} from "./component/site/genai/sn-site-genai-page.component";
-import {
-  TurSNIndexingRulesRootPageComponent
-} from "./component/site/indexing-rules/sn-indexing-rules-root-page.component";
-import {
-  TurSNIndexingRulesListPageComponent
-} from "./component/site/indexing-rules/sn-indexing-rules-list-page.component";
-import {TurSNIndexingRulesPageComponent} from "./component/site/indexing-rules/sn-indexing-rules-page.component";
+
 @NgModule({
   declarations: [
     TurSNRootPageComponent,
@@ -85,10 +79,7 @@ import {TurSNIndexingRulesPageComponent} from "./component/site/indexing-rules/s
     TurSNRankingExpressionRootPageComponent,
     TurSNRankingExpressionListPageComponent,
     TurSNRankingExpressionPageComponent,
-    TurSNSiteGenAiPageComponent,
-    TurSNIndexingRulesRootPageComponent,
-    TurSNIndexingRulesListPageComponent,
-    TurSNIndexingRulesPageComponent
+    TurSNSiteGenAiPageComponent
   ],
   imports: [
     CdkDropListGroup, CdkDropList, CdkDrag,

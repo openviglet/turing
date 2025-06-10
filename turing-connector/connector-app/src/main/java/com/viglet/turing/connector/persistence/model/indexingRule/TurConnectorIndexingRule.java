@@ -19,10 +19,8 @@
  * under the License.
  */
 
-package com.viglet.turing.persistence.model.sn.indexingRule;
+package com.viglet.turing.connector.persistence.model.indexingRule;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.spring.security.TurAuditable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,15 +35,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The persistent class for the sn_indexing_rule database table.
+ * The persistent class for the conn_indexing_rule database table.
  * 
  * @author Alexandre Oliveira
  * @since 2025.2
  */
 @Getter
 @Entity
-@Table(name = "sn_indexing_rule")
-public class TurSNIndexingRule extends TurAuditable<String>  implements Serializable {
+@Table(name = "conn_indexing_rule")
+public class TurConnectorIndexingRule implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -64,22 +62,20 @@ public class TurSNIndexingRule extends TurAuditable<String>  implements Serializ
 	private String description;
 
 	@Setter
-	@ManyToOne
-	@JoinColumn(name = "sn_site_id", nullable = false)
-	private TurSNSite turSNSite;
+	private String source;
 
 	@Column
-	private TurSNIndexingRuleType ruleType;
+	private TurConnectorIndexingRuleType ruleType;
 
-	@OneToMany(mappedBy = "turSNIndexingRule", orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "indexingRule", orphanRemoval = true, fetch = FetchType.LAZY)
 	@Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN  })
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private Set<TurSNIndexingCondition> conditions = new HashSet<>();
+	private Set<TurConnectorIndexingCondition> conditions = new HashSet<>();
 
-	public void setTurSNIndexingRuleConditions(Set<TurSNIndexingCondition> turSNIndexingRuleConditions) {
+	public void setConditions(Set<TurConnectorIndexingCondition> turConnectorIndexingConditions) {
 		this.conditions.clear();
-		if (turSNIndexingRuleConditions != null) {
-			this.conditions.addAll(turSNIndexingRuleConditions);
+		if (turConnectorIndexingConditions != null) {
+			this.conditions.addAll(turConnectorIndexingConditions);
 		}
 	}
 }

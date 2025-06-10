@@ -34,7 +34,7 @@ import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.persistence.utils.TurPersistenceUtils;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.solr.TurSolrUtils;
 import com.viglet.turing.solr.bean.TurSolrFieldBean;
 import io.swagger.v3.oas.annotations.Operation;

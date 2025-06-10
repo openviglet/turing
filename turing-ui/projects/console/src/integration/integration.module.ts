@@ -26,6 +26,17 @@ import {TurIntegrationWcListPageComponent} from "./component/instance/wc/integra
 import {
   TurIntegrationMonitoringPageComponent
 } from "./component/instance/monitoring/integration-monitoring-page.component";
+import {
+  TurIntegrationIndexingRulesListPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-list-page.component";
+import {
+  TurIntegrationIndexingRulesPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-page.component";
+import {
+  TurSNIndexingRulesRootPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-root-page.component";
+import {MomentModule} from "ngx-moment";
+import {TurIntegrationIndexingRuleService} from "./service/integration-indexing-rule.service";
 
 @NgModule({
   declarations: [
@@ -38,7 +49,10 @@ import {
     TurIntegrationWcMenuPageComponent,
     TurIntegrationWcPageComponent,
     TurIntegrationWcListPageComponent,
-    TurIntegrationMonitoringPageComponent
+    TurIntegrationMonitoringPageComponent,
+    TurIntegrationIndexingRulesListPageComponent,
+    TurIntegrationIndexingRulesPageComponent,
+    TurSNIndexingRulesRootPageComponent
   ],
   imports: [
     CommonModule,
@@ -48,6 +62,7 @@ import {
     TurIntegrationRoutingModule,
     TurCommonsModule,
     RouterModule,
+    MomentModule,
   ],
   providers: [
     TurIntegrationInstanceService,
@@ -55,6 +70,7 @@ import {
     TurLocaleService,
     TurIntegrationAemSourceService,
     TurIntegrationWcSourceService,
+    TurIntegrationIndexingRuleService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

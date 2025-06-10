@@ -32,13 +32,6 @@ import {TurSNRankingExpressionPageComponent} from "./component/site/ranking/sn-r
 import {TurSNFacetOrderingListPageComponent} from "./component/site/facet/sn-facet-ordering-list-page.component";
 import {TurSNFacetOrderingRootPageComponent} from "./component/site/facet/sn-facet-ordering-root-page.component";
 import {TurSNSiteGenAiPageComponent} from "./component/site/genai/sn-site-genai-page.component";
-import {
-  TurSNIndexingRulesRootPageComponent
-} from "./component/site/indexing-rules/sn-indexing-rules-root-page.component";
-import {
-  TurSNIndexingRulesListPageComponent
-} from "./component/site/indexing-rules/sn-indexing-rules-list-page.component";
-import {TurSNIndexingRulesPageComponent} from "./component/site/indexing-rules/sn-indexing-rules-page.component";
 
 const routes: Routes = [
   {
@@ -65,14 +58,6 @@ const routes: Routes = [
           { path: 'facet-ordering', component: TurSNFacetOrderingRootPageComponent, canActivate: [AuthGuard],
             children: [
               { path: 'list', component: TurSNFacetOrderingListPageComponent, canActivate: [AuthGuard] },
-              { path: '', redirectTo: 'list', pathMatch: 'full' }
-            ]
-          },
-          {
-            path: 'indexing-rules', component: TurSNIndexingRulesRootPageComponent, canActivate: [AuthGuard],
-            children: [
-              { path: 'list', component: TurSNIndexingRulesListPageComponent, canActivate: [AuthGuard] },
-              { path: ':rankingExpressionId', component: TurSNIndexingRulesPageComponent, canActivate: [AuthGuard] },
               { path: '', redirectTo: 'list', pathMatch: 'full' }
             ]
           },

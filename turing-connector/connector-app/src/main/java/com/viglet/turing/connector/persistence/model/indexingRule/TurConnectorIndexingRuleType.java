@@ -18,25 +18,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.persistence.repository.sn.indexingRule;
-
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.indexingRule.TurSNIndexingRule;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Set;
+package com.viglet.turing.connector.persistence.model.indexingRule;
 
 /**
  * @author Alexandre Oliveira
  * @since 2025.2
  */
-public interface TurSNIndexingRuleRepository extends JpaRepository<TurSNIndexingRule, String> {
-	Set<TurSNIndexingRule> findByTurSNSite(Sort language, TurSNSite turSNSite);
-
-	@NotNull
-	TurSNIndexingRule save(@NotNull TurSNIndexingRule turSNIndexingRule);
-
-	void delete(@NotNull TurSNIndexingRule turSNIndexingRule);
+public enum TurConnectorIndexingRuleType {
+    IGNORE
 }

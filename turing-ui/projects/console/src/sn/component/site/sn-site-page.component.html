@@ -95,10 +95,6 @@
          [routerLinkActive]="['selected']">
         <span octicon="cpu" [size]=16 class="mr-1"></span>
         Generative AI</a>
-      <a *ngIf="!isNewObject()" class="menu-item" [routerLink]="['/sn/site',getId() , 'indexing-rules']"
-         [routerLinkActive]="['selected']">
-        <span octicon="tools" [size]=16 class="mr-1"></span>
-        Indexing Rules</a>
       <a *ngIf="!isNewObject()" class="menu-item" [routerLink]="['/sn/site',getId() , 'ranking-expression']"
          [routerLinkActive]="['selected']">
         <span octicon="number" [size]=16 class="mr-1"></span>

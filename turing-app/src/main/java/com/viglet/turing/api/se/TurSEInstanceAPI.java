@@ -28,7 +28,7 @@ import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.utils.TurPersistenceUtils;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstanceProcess;

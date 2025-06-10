@@ -19,10 +19,9 @@
  * under the License.
  */
 
-package com.viglet.turing.persistence.model.sn.indexingRule;
+package com.viglet.turing.connector.persistence.model.indexingRule;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.viglet.turing.spring.security.TurAuditable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,33 +31,33 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * The persistent class for the sn_ranking_condition database table.
- * 
+ * The persistent class for the conn_indexing_condition database table.
+ *
  * @author Alexandre Oliveira
  * @since 2025.2
  */
 @Setter
 @Getter
 @Entity
-@Table(name = "sn_ranking_condition")
-@JsonIgnoreProperties({ "turSNIndexingRule" })
-public class TurSNIndexingCondition extends TurAuditable<String>  implements Serializable {
-	@Serial
-	private static final long serialVersionUID = 1L;
+@Table(name = "conn_indexing_condition")
+@JsonIgnoreProperties({"indexingRule"})
+public class TurConnectorIndexingCondition implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@UuidGenerator
-	@Column(name = "id", updatable = false, nullable = false)
-	private String id;
+    @Id
+    @UuidGenerator
+    @Column(name = "id", updatable = false, nullable = false)
+    private String id;
 
-	private String attribute;
+    private String attribute;
 
-	private int condition;
+    private int condition;
 
-	private String value;
+    private String value;
 
-	@ManyToOne
-	@JoinColumn(name = "indexing_rule_id", nullable = false)
-	private TurSNIndexingRule turSNIndexingRule;
+    @ManyToOne
+    @JoinColumn(name = "indexing_rule_id", nullable = false)
+    private TurConnectorIndexingRule indexingRule;
 
 }

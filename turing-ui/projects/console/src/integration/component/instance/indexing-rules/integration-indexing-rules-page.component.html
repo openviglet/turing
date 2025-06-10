@@ -1,20 +1,20 @@
-<div *ngIf="(getTurSNRankingExpression() | async) as snRankingExpression; else loading">
+<div *ngIf="(getIntegrationIndexingRule() | async) as integrationIndexingRule; else loading">
   <div class="Subhead mt-4">
     <div class="Subhead-heading Subhead-heading--large">
       <div *ngIf="isNewObject()" class="d-flex">
         <div class="ml-2">
-          <span>New Result Ranking</span>
+          <span>New Integration Rule</span>
         </div>
       </div>
 
       <div *ngIf="!isNewObject()" class="d-flex">
         <div style="background-color: whitesmoke; height: 32px; border-radius: 50%;">
           <svg width="35" height="35" style="border-radius: 50%;"
-               [identiconHash]="snRankingExpression.name | lowercase">
+               [identiconHash]="integrationIndexingRule.name | lowercase">
           </svg>
         </div>
         <div class="ml-2">
-          <span>{{snRankingExpression.name}}</span>
+          <span>{{integrationIndexingRule.name}}</span>
         </div>
       </div>
     </div>
@@ -47,26 +47,26 @@
           <div class="Box-body overflow-auto">
             <p>
               This action <strong>cannot</strong> be undone. This will permanently delete the
-              <strong>{{snRankingExpression.name}}</strong> rule.
+              <strong>{{integrationIndexingRule.name}}</strong> rule.
             </p>
-            <button (click)="delete(snRankingExpression)" class="btn-danger btn btn-block">
+            <button (click)="delete(integrationIndexingRule)" class="btn-danger btn btn-block">
               <span class="d-md-inline-block d-none">I understand the consequences, delete this rule</span>
             </button>
           </div>
         </details-dialog>
       </details>
-      <button type="button" (click)="save(snRankingExpression)" class="btn btn-primary">{{saveButtonCaption()}}</button>
+      <button type="button" (click)="save(integrationIndexingRule)" class="btn btn-primary">{{saveButtonCaption()}}</button>
     </div>
 
 
-    <div class="Subhead-description">{{snRankingExpression.description}}</div>
+    <div class="Subhead-description">{{integrationIndexingRule.description}}</div>
   </div>
   <div class="form-group">
     <div class="form-group-header">
       <label for="sn-field-name">Name</label>
     </div>
     <div class="form-group-body">
-      <input [(ngModel)]="snRankingExpression.name" class="form-control" type="text" id="sn-field-name"
+      <input [(ngModel)]="integrationIndexingRule.name" class="form-control" type="text" id="sn-field-name"
              style="width: 100%;"/>
       <p class="note" id="sn-field-name-tip">
         Name will appear on semantic navigation site field list.
@@ -78,7 +78,7 @@
       <label for="sn-field-description">Description</label>
     </div>
     <div class="form-group-body">
-      <input [(ngModel)]="snRankingExpression.description" class="form-control" type="text" id="sn-field-description"
+      <input [(ngModel)]="integrationIndexingRule.description" class="form-control" type="text" id="sn-field-description"
              style="width: 100%;"/>
       <p class="note" id="sn-field-description-tip">
         Description will appear on semantic navigation site field list.
@@ -91,7 +91,7 @@
     <div class="Subhead-description">Create simple filter expressions to target specific content.</div>
   </div>
 
-  <div *ngFor="let snRankingCondition of snRankingExpression.turSNRankingConditions; last as isLast"
+  <div *ngFor="let snRankingCondition of integrationIndexingRule.conditions; last as isLast"
        data-view-component="true" [ngSwitch]="getFieldType(snRankingCondition.attribute)">
     <div style="display: flex">
       <select [(ngModel)]="snRankingCondition.attribute" class="form-select mr-3">
@@ -131,7 +131,7 @@
              class="form-control  mr-3" type="text" id="sn-field-value"/>
 
       <button class="btn btn-danger btn-octicon mr-1"
-              (click)="removeCondition(snRankingExpression, snRankingCondition)">
+              (click)="removeCondition(integrationIndexingRule, snRankingCondition)">
         <span octicon="trash" [size]=16></span>
       </button>
     </div>
@@ -141,7 +141,7 @@
 
   </div>
   <div class="mb-2 mt-4 ml-1">
-    <button class="btn btn-outline mr-1" (click)="newCondition(snRankingExpression.turSNRankingConditions)">
+    <button class="btn btn-outline mr-1" (click)="newCondition(integrationIndexingRule.conditions)">
       <span octicon="plus-circle" [size]=16
             class="mr-1"></span> Add
     </button>
@@ -152,10 +152,10 @@
     </div>
     <div class="form-group-body mt-2">
       <div style=" display:inline; width: 95%">
-        <input type="range" min="0" max="10" #ranger style="width: 90%" [(ngModel)]="snRankingExpression.weight">
+        <input type="range" min="0" max="10" #ranger style="width: 90%" [(ngModel)]="integrationIndexingRule.weight">
       </div>
       <div style="display:inline;">
-        <span style="position: relative;top: -2px" class="ml-5">+ {{snRankingExpression.weight}}</span>
+        <span style="position: relative;top: -2px" class="ml-5">+ {{integrationIndexingRule.weight}}</span>
       </div>
     </div>
   </div>

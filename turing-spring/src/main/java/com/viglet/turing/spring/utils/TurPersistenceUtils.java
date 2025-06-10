@@ -1,4 +1,4 @@
-package com.viglet.turing.persistence.utils;
+package com.viglet.turing.spring.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
