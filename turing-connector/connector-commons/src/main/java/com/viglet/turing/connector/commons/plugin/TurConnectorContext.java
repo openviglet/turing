@@ -22,5 +22,5 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 
 public interface TurConnectorContext {
     void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSession source);
-    void finishIndexing(TurConnectorSession source);
+    void finishIndexing(TurConnectorSession source, boolean standalone);
 }

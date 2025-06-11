@@ -4,6 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {Observable} from "rxjs";
 import {TurIntegrationMonitoringService} from "../../../service/integration-monitoring.service";
 import {TurIntegrationMonitoring} from "../../../model/integration-monitoring.model";
+import {TurIntegrationIndexing} from "../../../model/integration-indexing.model";
 
 @Component({
   selector: 'integration-root-page',
@@ -46,5 +47,9 @@ export class TurIntegrationMonitoringPageComponent {
       this.turIntegrationIndexing = this.getMonitoringService();
     }
     return this.turIntegrationIndexing;
+  }
+
+  getSNLink(indexing: TurIntegrationIndexing) {
+    return encodeURI("/sn/" + indexing.sites[0] + "/?_setlocale=" + indexing.locale + "&q=id:\"" + indexing.objectId + "\"");
   }
 }

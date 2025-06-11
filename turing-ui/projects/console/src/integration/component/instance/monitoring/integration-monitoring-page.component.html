@@ -28,13 +28,15 @@
             <div class="d-table-cell col-2">
               Source
             </div>
-            <div class="d-table-cell col-6">
-              Content Id
+            <div class="d-table-cell col-4">
+             Content Id
             </div>
             <div class="d-table-cell col-2" style="text-align: center;">
               Site
             </div>
-
+            <div class="d-table-cell col-2" style="text-align: center;">
+              Locale
+            </div>
             <div class="d-table-cell col-2" style="text-align: center;">
               Environment
             </div>
@@ -50,11 +52,15 @@
               <div>{{ indexing.name }}</div>
               <div>{{ indexing.modificationDate | amTimeAgo }}</div>
             </div>
-            <div class="d-table-cell col-6">
-              {{ indexing.objectId }}
+            <div class="d-table-cell col-4">
+              <a href="{{getSNLink(indexing)}}"target="_blank">{{ indexing.objectId }}</a>
+
             </div>
             <div class="d-table-cell col-2" style="text-align: center;">
               {{ indexing.sites }}
+            </div>
+            <div class="d-table-cell col-2" style="text-align: center;">
+              {{ indexing.locale }}
             </div>
             <div class="d-table-cell col-2" style="text-align: center;">
               {{ indexing.environment }}
@@ -62,6 +68,7 @@
             <div class="d-table-cell col-2" style="text-align: center;">
               {{ indexing.status }}
             </div>
+
           </div>
         </div>
       </div>

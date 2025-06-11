@@ -52,7 +52,7 @@ public class TurAemEventUtils {
         post.setHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpResponse response = httpClient.execute(post);
-            log.error("Response Body: {}", response.getEntity().toString());
+            log.error("Response Body: {}", response.getEntity());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

@@ -31,6 +31,7 @@ import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
 import com.viglet.turing.connector.aem.commons.mappers.*;
 import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
 import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
+import com.viglet.turing.connector.plugin.aem.api.TurAemPathList;
 import com.viglet.turing.connector.plugin.aem.conf.AemPluginHandlerConfiguration;
 import com.viglet.turing.connector.plugin.aem.persistence.model.*;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.*;
@@ -113,6 +114,23 @@ public class TurAemPluginProcess {
         indexAll(turAemSource);
     }
 
+    @Async
+    public void sentToIndexStandaloneAsync(String name, TurAemPathList turAemPathList) {
+        if (turAemPathList == null || turAemPathList.getPaths() == null || turAemPathList.getPaths().isEmpty()) {
+            log.error("Payload is empty");
+            return;
+        }
+        log.info("Receiving Async payload to {} source with paths {}", name, turAemPathList);
+        turAemSourceRepository.findByName(name).ifPresentOrElse(turAemSource -> {
+                    TurConnectorSession turConnectorSession = TurAemPluginProcess.getTurConnectorSession(turAemSource);
+                    turAemPathList.getPaths().forEach(path ->
+                            indexContentId(turConnectorSession, turAemSource, path));
+                    finished(turConnectorSession, true);
+                },
+                () -> log.info("{} Source not found", name));
+    }
+
+
     public void indexAll(TurAemSource turAemSource) {
         TurConnectorSession turConnectorSession = getTurConnectorSession(turAemSource);
         config = new AemPluginHandlerConfiguration(turAemSource);
@@ -124,7 +142,7 @@ public class TurAemPluginProcess {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        finished(turConnectorSession);
+        finished(turConnectorSession, false);
     }
 
     public static @NotNull TurConnectorSession getTurConnectorSession(TurAemSource turAemSource) {
@@ -132,8 +150,8 @@ public class TurAemPluginProcess {
         return new TurConnectorSession(turAemSource.getName(), null, AEM, turAemSource.getDefaultLocale());
     }
 
-    public void finished(TurConnectorSession turConnectorSession) {
-        turConnectorContext.finishIndexing(turConnectorSession);
+    public void finished(TurConnectorSession turConnectorSession, boolean standalone) {
+        turConnectorContext.finishIndexing(turConnectorSession, standalone);
     }
 
 

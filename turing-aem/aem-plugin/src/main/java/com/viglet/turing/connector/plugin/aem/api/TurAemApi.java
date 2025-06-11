@@ -21,17 +21,17 @@ package com.viglet.turing.connector.plugin.aem.api;
 import com.google.inject.Inject;
 import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
-import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v2/aem")
 @Tag(name = "Heartbeat", description = "Heartbeat")
@@ -51,27 +51,21 @@ public class TurAemApi {
         return statusOk();
     }
 
-    @Transactional
-    @PostMapping("index/{name}")
-    public ResponseEntity<Object> indexContentId(@PathVariable String name,
-                                                 @RequestBody TurAemPathList turAemPathList) {
-        return turAemSourceRepository.findByName(name).map(turAemSource -> {
-            TurConnectorSession turConnectorSession = TurAemPluginProcess.getTurConnectorSession(turAemSource);
-            turAemPathList.paths.forEach(path ->
-                    turAemPluginProcess.indexContentId(turConnectorSession, turAemSource, path));
-            turAemPluginProcess.finished(turConnectorSession);
-            return ResponseEntity.ok().build();
 
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+    @PostMapping("index/{name}")
+    public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String name,
+                                                              @RequestBody TurAemPathList turAemPathList) {
+        turAemPluginProcess.sentToIndexStandaloneAsync(name, turAemPathList);
+        return ResponseEntity.ok(statusSent());
 
     }
 
-    @Transactional
+
     @GetMapping("index/{name}/all")
-    public ResponseEntity<Object> indexAll(@PathVariable String name) {
+    public ResponseEntity<Map<String, String>> indexAll(@PathVariable String name) {
         return turAemSourceRepository.findByName(name).map(turAemSource -> {
             turAemPluginProcess.indexAllAsync(turAemSource);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(statusOk());
         }).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
@@ -79,6 +73,12 @@ public class TurAemApi {
     private static Map<String, String> statusOk() {
         Map<String, String> status = new HashMap<>();
         status.put("status", "ok");
+        return status;
+    }
+
+    private static Map<String, String> statusSent() {
+        Map<String, String> status = new HashMap<>();
+        status.put("status", "sent");
         return status;
     }
 }

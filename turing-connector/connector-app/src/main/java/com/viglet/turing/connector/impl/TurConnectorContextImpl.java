@@ -30,6 +30,7 @@ import com.viglet.turing.connector.persistence.model.TurConnectorStatus;
 import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -48,6 +49,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     private final TurConnectorIndexingRepository turConnectorIndexingRepository;
     private final int jobSize;
 
+    @Autowired
     public TurConnectorContextImpl(@Value("${turing.connector.job.size:50}") int jobSize,
                                    JmsMessagingTemplate jmsMessagingTemplate,
                                    TurConnectorIndexingRepository turConnectorIndexingRepository) {
@@ -67,7 +69,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     @Override
-    public void finishIndexing(TurConnectorSession source) {
+    public void finishIndexing(TurConnectorSession source, boolean standalone) {
         if (turSNJobItems.size() > 0) {
             log.info("Sending job to connector queue.");
             sendToMessageQueue();
@@ -75,7 +77,9 @@ public class TurConnectorContextImpl implements TurConnectorContext {
         } else {
             log.info("No job to send to connector queue.");
         }
-        deIndexObjects(source);
+        if (!standalone) {
+            deIndexObjects(source);
+        }
         queueLinks.clear();
     }
 
