@@ -21,6 +21,7 @@
 package com.viglet.turing.connector.persistence.repository;
 
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRule;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,7 +34,7 @@ import java.util.Set;
  */
 public interface TurConnectorIndexingRuleRepository extends JpaRepository<TurConnectorIndexingRule, String> {
 	Set<TurConnectorIndexingRule> findBySource(Sort language, String source);
-
+	Set<TurConnectorIndexingRule> findBySourceAndRuleType(String source, TurConnectorIndexingRuleType type);
 	@NotNull
 	TurConnectorIndexingRule save(@NotNull TurConnectorIndexingRule turConnectorIndexingRule);
 

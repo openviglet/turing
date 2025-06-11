@@ -51,8 +51,9 @@ public class TurSNJobItem implements Serializable{
 	}
 
 	public Object getAttribute(String attributeName) {
-		return attributes.containsKey(attributeName);
+		return attributes.get(attributeName);
 	}
+
 	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames) {
 		super();
 		this.turSNJobAction = turSNJobAction;

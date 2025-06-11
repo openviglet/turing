@@ -203,18 +203,6 @@
             }
           ]
         }
-      ],
-      "indexingRules": [
-        {
-          "name": "Indexing Ignore",
-          "description": "Indexing Description",
-          "ruleType": "IGNORE",
-          "attribute": "id",
-          "values": [
-            "/content/wknd/us/en/faqs/*",
-            "/content/wknd/us/en/magazine/ski-touring"
-          ]
-        }
       ]
     }
   ]
