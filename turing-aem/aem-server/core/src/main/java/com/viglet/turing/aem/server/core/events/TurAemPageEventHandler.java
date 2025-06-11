@@ -26,6 +26,7 @@ public class TurAemPageEventHandler implements EventHandler {
     private TurAemIndexerService turAemIndexerService;
     @Override
     public void handleEvent(Event event) {
+        log.info("Turing Log Page Event: {}", event);
         PageEvent pageEvent = PageEvent.fromEvent(event);
         List<String> paths = IteratorUtils
                 .toList(pageEvent.getModifications())

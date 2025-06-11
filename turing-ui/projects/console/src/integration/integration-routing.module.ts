@@ -42,7 +42,8 @@ const routes: Routes = [
           {path: 'source', component: TurIntegrationAemListSourceComponent, canActivate: [AuthGuard]},
           {path: 'source/:aemId', component: TurIntegrationAemSourceComponent, canActivate: [AuthGuard]},
           {path: 'detail', component: TurIntegrationInstanceDetailPageComponent, canActivate: [AuthGuard]},
-          {path: 'monitoring', component: TurIntegrationMonitoringPageComponent, canActivate: [AuthGuard]},
+          {path: 'monitoring', redirectTo: 'monitoring/all', pathMatch: 'full'},
+          {path: 'monitoring/:source', component: TurIntegrationMonitoringPageComponent, canActivate: [AuthGuard]},
           {
             path: 'indexing-rule', component: TurSNIndexingRulesRootPageComponent, canActivate: [AuthGuard],
             children: [

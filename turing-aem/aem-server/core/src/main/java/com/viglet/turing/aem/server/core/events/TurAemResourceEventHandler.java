@@ -25,8 +25,10 @@ public class TurAemResourceEventHandler implements EventHandler {
     @Reference
     private TurAemIndexerService turAemIndexerService;
 
+
     @Override
     public void handleEvent(Event event) {
+        log.info("Turing Log Resource Event: {}", event);
         Object path = event.getProperty(SlingConstants.PROPERTY_PATH);
         Object resourceType = event.getProperty(SlingConstants.PROPERTY_RESOURCE_TYPE);
         if ( path == null || resourceType == null || !isAssetEvent((String) path, (String) resourceType)) return;

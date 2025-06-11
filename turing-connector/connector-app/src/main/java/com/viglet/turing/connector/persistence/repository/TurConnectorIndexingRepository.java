@@ -22,8 +22,10 @@ import com.viglet.turing.connector.persistence.model.TurConnectorIndexing;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +50,13 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
     void deleteByNameAndTransactionIdNot(String name, String transactionId);
 
     Optional<List<TurConnectorIndexing>> findAllByNameOrderByModificationDateDesc(String name, Limit limit);
+    Optional<List<TurConnectorIndexing>>  findAllByOrderByModificationDateDesc(Limit limit);
+
     @Transactional
     default void deleteContentsWereDeIndexed(String name, String deltaId) {
         deleteByNameAndTransactionIdNot(name, deltaId);
     }
+
+    @Query("SELECT DISTINCT i.name FROM TurConnectorIndexing i")
+    List<String> findAllSources();
 }
