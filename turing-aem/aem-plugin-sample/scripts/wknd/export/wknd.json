@@ -5,7 +5,7 @@
       "name": "WKND",
       "defaultLocale": "en_US",
       "localeClass": "com.viglet.turing.connector.aem.commons.ext.TurAemExtLocale",
-      "deltaClass":  "com.viglet.turing.connector.aem.sample.ext.TurAemExtSampleDeltaDate",
+      "deltaClass": "com.viglet.turing.connector.aem.sample.ext.TurAemExtSampleDeltaDate",
       "endpoint": "http://localhost:4502",
       "username": "admin",
       "password": "admin",
@@ -201,6 +201,18 @@
                 }
               ]
             }
+          ]
+        }
+      ],
+      "indexingRules": [
+        {
+          "name": "Indexing Ignore",
+          "description": "Indexing Description",
+          "ruleType": "IGNORE",
+          "attribute": "id",
+          "values": [
+            "/content/wknd/us/en/faqs/*",
+            "/content/wknd/us/en/magazine/ski-touring"
           ]
         }
       ]

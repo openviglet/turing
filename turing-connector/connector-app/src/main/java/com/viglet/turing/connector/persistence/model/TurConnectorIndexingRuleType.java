@@ -18,24 +18,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.connector.persistence.repository.indexingRule;
+package com.viglet.turing.connector.persistence.model;
 
-import com.viglet.turing.connector.persistence.model.indexingRule.TurConnectorIndexingRule;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Set;
+import lombok.Getter;
 
 /**
  * @author Alexandre Oliveira
  * @since 2025.2
  */
-public interface TurConnectorIndexingRuleRepository extends JpaRepository<TurConnectorIndexingRule, String> {
-	Set<TurConnectorIndexingRule> findBySource(Sort language, String source);
 
-	@NotNull
-	TurConnectorIndexingRule save(@NotNull TurConnectorIndexingRule turConnectorIndexingRule);
-
-	void delete(@NotNull TurConnectorIndexingRule turConnectorIndexingRule);
+public enum TurConnectorIndexingRuleType {
+    IGNORE
 }

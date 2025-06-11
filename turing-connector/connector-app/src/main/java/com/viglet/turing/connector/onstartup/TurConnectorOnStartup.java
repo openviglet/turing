@@ -1,9 +1,9 @@
 package com.viglet.turing.connector.onstartup;
 
-import com.google.inject.Inject;
 import com.viglet.turing.connector.persistence.model.TurConnectorConfigVar;
 import com.viglet.turing.connector.persistence.repository.TurConnectorConfigVarRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -16,16 +16,20 @@ public class TurConnectorOnStartup implements ApplicationRunner {
     public static final String FIRST_TIME = "FIRST_TIME";
 
     private final TurConnectorConfigVarRepository turConnectorConfigVarRepository;
+    private final TurConnectorIndexingRulesOnStartup turConnectorIndexingRulesOnStartup;
 
-    @Inject
-    public TurConnectorOnStartup(TurConnectorConfigVarRepository turConnectorConfigVarRepository) {
+    @Autowired
+    public TurConnectorOnStartup(TurConnectorConfigVarRepository turConnectorConfigVarRepository,
+                                 TurConnectorIndexingRulesOnStartup turConnectorIndexingRulesOnStartup) {
         this.turConnectorConfigVarRepository = turConnectorConfigVarRepository;
+        this.turConnectorIndexingRulesOnStartup = turConnectorIndexingRulesOnStartup;
     }
 
     @Override
     public void run(ApplicationArguments arg0) {
         if (this.turConnectorConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
             log.info("First Time Configuration ...");
+            turConnectorIndexingRulesOnStartup.createDefaultRows();
             setFirstTIme();
             log.info("Configuration finished.");
         }

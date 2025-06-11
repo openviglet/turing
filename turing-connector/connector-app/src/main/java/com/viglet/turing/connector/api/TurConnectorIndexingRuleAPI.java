@@ -22,19 +22,15 @@
 package com.viglet.turing.connector.api;
 
 import com.google.inject.Inject;
-import com.viglet.turing.connector.persistence.model.indexingRule.TurConnectorIndexingCondition;
-import com.viglet.turing.connector.persistence.model.indexingRule.TurConnectorIndexingRule;
-import com.viglet.turing.connector.persistence.repository.indexingRule.TurConnectorIndexingRuleConditionRepository;
-import com.viglet.turing.connector.persistence.repository.indexingRule.TurConnectorIndexingRuleRepository;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRule;
+import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRuleRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,13 +44,10 @@ import java.util.Set;
 @Tag(name = "Connector Indexing Rules", description = "Connector Indexing Rules API")
 public class TurConnectorIndexingRuleAPI {
     private final TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository;
-    private final TurConnectorIndexingRuleConditionRepository turConnectorIndexingRuleConditionRepository;
 
     @Inject
-    public TurConnectorIndexingRuleAPI(TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository,
-                                       TurConnectorIndexingRuleConditionRepository turConnectorIndexingRuleConditionRepository) {
+    public TurConnectorIndexingRuleAPI(TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository) {
         this.turConnectorIndexingRuleRepository = turConnectorIndexingRuleRepository;
-        this.turConnectorIndexingRuleConditionRepository = turConnectorIndexingRuleConditionRepository;
     }
 
     @Operation(summary = "Connector Indexing Rule List By Source")
@@ -73,37 +66,20 @@ public class TurConnectorIndexingRuleAPI {
     @Operation(summary = "Show a Connector Indexing Rules")
     @GetMapping("{id}")
     public TurConnectorIndexingRule turConnectorIndexingRuleGet(@PathVariable String id) {
-        return turConnectorIndexingRuleRepository.findById(id).map(rule -> {
-                    rule.setConditions(
-                            turConnectorIndexingRuleConditionRepository.findByIndexingRule(rule));
-                    return rule;
-                })
+        return turConnectorIndexingRuleRepository.findById(id)
                 .orElse(new TurConnectorIndexingRule());
     }
 
     @Operation(summary = "Update a Connector Indexing Rules")
     @PutMapping("/{id}")
     public TurConnectorIndexingRule turConnectorIndexingRuleUpdate(@PathVariable String id,
-                                                            @RequestBody TurConnectorIndexingRule turConnectorIndexingRule) {
+                                                                   @RequestBody TurConnectorIndexingRule turConnectorIndexingRule) {
         return turConnectorIndexingRuleRepository.findById(id).map(turConnectorIndexingRuleEdit -> {
             turConnectorIndexingRuleEdit.setName(turConnectorIndexingRule.getName());
-            return getTurConnectorIndexingRule(turConnectorIndexingRule, turConnectorIndexingRuleEdit);
+            return turConnectorIndexingRuleRepository.save(turConnectorIndexingRuleEdit);
         }).orElse(new TurConnectorIndexingRule());
     }
 
-    @NotNull
-    private TurConnectorIndexingRule getTurConnectorIndexingRule(
-            @RequestBody TurConnectorIndexingRule turConnectorIndexingRule,
-                                                          TurConnectorIndexingRule turConnectorIndexingRuleEdit) {
-        Set<TurConnectorIndexingCondition> set = new HashSet<>();
-        for (TurConnectorIndexingCondition condition : turConnectorIndexingRule.getConditions()) {
-            condition.setIndexingRule(turConnectorIndexingRule);
-            set.add(condition);
-        }
-        turConnectorIndexingRuleEdit.setConditions(set);
-        turConnectorIndexingRuleRepository.save(turConnectorIndexingRuleEdit);
-        return turConnectorIndexingRuleEdit;
-    }
 
     @Transactional
     @Operation(summary = "Delete a Connector Indexing Rules")
@@ -117,7 +93,7 @@ public class TurConnectorIndexingRuleAPI {
     @PostMapping
     public TurConnectorIndexingRule turConnectorIndexingRuleAdd(
             @RequestBody TurConnectorIndexingRule turConnectorIndexingRule) {
-        return getTurConnectorIndexingRule(turConnectorIndexingRule, turConnectorIndexingRule);
+        return turConnectorIndexingRuleRepository.save(turConnectorIndexingRule);
     }
 
     @Operation(summary = "Connector Ranking Expression Structure")

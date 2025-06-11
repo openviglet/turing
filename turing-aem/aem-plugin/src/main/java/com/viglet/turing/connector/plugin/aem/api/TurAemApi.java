@@ -19,13 +19,11 @@
 package com.viglet.turing.connector.plugin.aem.api;
 
 import com.google.inject.Inject;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;

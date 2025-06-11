@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 the original author or authors.
+ * Copyright (C) 2016-2023 the original author or authors.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,29 +19,33 @@
  * under the License.
  */
 
-package com.viglet.turing.connector.persistence.model.indexingRule;
+package com.viglet.turing.connector.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * The persistent class for the conn_indexing_condition database table.
+ * The persistent class for the conn_indexing_rule database table.
  *
  * @author Alexandre Oliveira
  * @since 2025.2
  */
+
+@Builder
+@RequiredArgsConstructor
+@Accessors(chain = true)
 @Setter
 @Getter
 @Entity
-@Table(name = "conn_indexing_condition")
-@JsonIgnoreProperties({"indexingRule"})
-public class TurConnectorIndexingCondition implements Serializable {
+@Table(name = "con_indexing_rule", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@AllArgsConstructor
+public class TurConnectorIndexingRule implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -50,14 +54,24 @@ public class TurConnectorIndexingCondition implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private String id;
 
+    @Column(length = 50)
+    private String name;
+
+    @Column
+    private String description;
+
+    private String source;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private TurConnectorIndexingRuleType ruleType;
+
+    @Column
     private String attribute;
 
-    private int condition;
-
-    private String value;
-
-    @ManyToOne
-    @JoinColumn(name = "indexing_rule_id", nullable = false)
-    private TurConnectorIndexingRule indexingRule;
+    @ElementCollection
+    @CollectionTable(name = "con_indexing_rule_values", joinColumns = @JoinColumn(name = "id"))
+    @Column
+    private List<String> values;
 
 }
