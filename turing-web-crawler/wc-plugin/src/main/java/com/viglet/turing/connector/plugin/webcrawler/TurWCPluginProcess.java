@@ -130,7 +130,7 @@ public class TurWCPluginProcess {
     }
 
     private static void finished(TurConnectorContext turConnectorContext,  TurConnectorSession source) {
-        turConnectorContext.finishIndexing(source);
+        turConnectorContext.finishIndexing(source, false);
     }
 
 
