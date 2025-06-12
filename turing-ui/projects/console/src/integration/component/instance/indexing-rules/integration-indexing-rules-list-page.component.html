@@ -7,8 +7,8 @@
   </div>
   <div *ngIf="integrationIndexingRules.length >= 1">
   <div class="Subhead">
-    <div class="Subhead-heading Subhead-heading--large"><span octicon="number" [size]="24" class="mr-1"></span> Indexing Rules </div>
-    <div class="Subhead-description">Define content that will be featured in the term-based search.</div>
+    <div class="Subhead-heading Subhead-heading--large"><span octicon="tools" [size]="24" class="mr-1"></span> Indexing Rules </div>
+    <div class="Subhead-description">Establish guidelines for how the indexing process will operate.</div>
   </div>
   <div class="clearfix" style="padding: 5px 0px;">
     <div class="float-left" style="flex: 1 1 auto;">
@@ -19,7 +19,7 @@
     <div class="float-right" style="display: inline-flex;">
       <div class="d-flex flex-justify-end position-relative">
         <a [routerLink]="['/integration/aem', getIntegrationId(), 'indexing-rule', 'new']" type="button" class="btn btn-primary"><span
-          octicon="number" [size]="16" class="mr-1"></span> New</a>
+          octicon="tools" [size]="16" class="mr-1"></span> New</a>
       </div>
     </div>
   </div>

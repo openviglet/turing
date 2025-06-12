@@ -5,7 +5,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {TurSNSiteField} from "../../../../sn/model/sn-site-field.model";
 import {TurIntegrationIndexingRule} from "../../../model/integration-indexing-rule.model";
 import {TurIntegrationIndexingRuleService} from "../../../service/integration-indexing-rule.service";
-import {TurIntegrationIndexingCondition} from "../../../model/integration-indexing-condition.model";
 
 @Component({
     selector: 'integration-indexing-rules-page',
@@ -19,7 +18,7 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
   private turSNSiteSEFields: TurSNSiteField[] = new Array<TurSNSiteField>;
   private readonly newObject: boolean = false;
   private integrationId: string;
-  private aemId: string;
+  private indexingRuleId: string;
 
   constructor(
     private readonly notifier: NotifierService,
@@ -27,11 +26,12 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
 
     private activatedRoute: ActivatedRoute,
     private router: Router) {
-    this.aemId = this.activatedRoute.snapshot.paramMap.get('aemId') || "";
-    this.integrationId = this.activatedRoute.parent?.snapshot.paramMap.get('id') || "";
-    this.newObject = (this.aemId.toLowerCase() === 'new');
+    this.indexingRuleId = this.activatedRoute.snapshot.paramMap.get('indexingRuleId') || "";
+    this.integrationId = this.activatedRoute.parent?.parent?.snapshot.paramMap.get('id') || "";
+    this.newObject = (this.indexingRuleId.toLowerCase() === 'new');
+    this.integrationIndexingRuleService.setIntegrationId(this.integrationId);
     this.integrationIndexingRule = this.newObject ? this.integrationIndexingRuleService.getStructure() :
-      this.integrationIndexingRuleService.get(this.integrationId);
+      this.integrationIndexingRuleService.get(this.indexingRuleId);
   }
 
   getIntegrationIndexingRule(): Observable<TurIntegrationIndexingRule> {
@@ -46,17 +46,19 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
     return <string>this.turSNSiteSEFields.find(field => field.name == fieldName)?.type;
   }
 
-  newCondition(turIntegrationIndexingConditions: TurIntegrationIndexingCondition[]) {
-    let turIntegrationIndexingCondition = new TurIntegrationIndexingCondition();
-    turIntegrationIndexingCondition.condition = 1;
-    turIntegrationIndexingConditions.push(turIntegrationIndexingCondition);
+  newValue(values: string[]) {
+    if (values == null) {
+      values = [];
+    }
+    let value = "";
+        values.push(value);
 
   }
 
-  removeCondition(integrationIndexingRule: TurIntegrationIndexingRule, integrationIndexingCondition: TurIntegrationIndexingCondition) {
-    integrationIndexingRule.conditions =
-      integrationIndexingRule.conditions.filter(condition =>
-        condition != integrationIndexingCondition)
+  removeValue(integrationIndexingRule: TurIntegrationIndexingRule, _value: string) {
+    integrationIndexingRule.values =
+      integrationIndexingRule.values.filter(value =>
+        value != _value)
   }
 
   ngOnInit(): void {
@@ -66,7 +68,9 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
   isNewObject(): boolean {
     return this.newObject;
   }
-
+  trackByIndex(index: number, obj: any): any {
+    return index;
+  }
   saveButtonCaption(): string {
     return this.newObject ? "Create rule" : "Update rule";
   }
@@ -77,7 +81,7 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
         let message: string = this.newObject ? " indexing rule was created." : " indexing rule was updated.";
         _integrationIndexingRule = integrationIndexingRule;
         this.notifier.notify("success", integrationIndexingRule.name.concat(message));
-        this.router.navigate(['/sn/site/', this.aemId, 'indexing-rule', 'list']);
+        this.router.navigate(['/sn/site/', this.indexingRuleId, 'indexing-rule', 'list']);
       },
       response => {
         this.notifier.notify("error", "Indexing Rule was error: " + response);
@@ -92,7 +96,7 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
       (integrationIndexingRule: TurIntegrationIndexingRule) => {
         this.notifier.notify("success", _integrationIndexingRule.name.concat(" indexing rule was deleted."));
         this.modalDelete.nativeElement.removeAttribute("open");
-        this.router.navigate(['/sn/site/', this.aemId, 'indexing-rule', 'list']);
+        this.router.navigate(['/integration/aem/', this.integrationId, 'indexing-rule', 'list']);
       },
       response => {
         this.notifier.notify("error", "Indexing Rule was error: " + response);

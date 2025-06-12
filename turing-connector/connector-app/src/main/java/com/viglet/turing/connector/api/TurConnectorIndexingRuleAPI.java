@@ -51,7 +51,7 @@ public class TurConnectorIndexingRuleAPI {
     }
 
     @Operation(summary = "Connector Indexing Rule List By Source")
-    @GetMapping("{source}")
+    @GetMapping("source/{source}")
     public Set<TurConnectorIndexingRule> turConnectorIndexingRuleBySourceList(@PathVariable String source) {
         return this.turConnectorIndexingRuleRepository
                 .findBySource(TurPersistenceUtils.orderByNameIgnoreCase(), source);
@@ -74,9 +74,14 @@ public class TurConnectorIndexingRuleAPI {
     @PutMapping("/{id}")
     public TurConnectorIndexingRule turConnectorIndexingRuleUpdate(@PathVariable String id,
                                                                    @RequestBody TurConnectorIndexingRule turConnectorIndexingRule) {
-        return turConnectorIndexingRuleRepository.findById(id).map(turConnectorIndexingRuleEdit -> {
-            turConnectorIndexingRuleEdit.setName(turConnectorIndexingRule.getName());
-            return turConnectorIndexingRuleRepository.save(turConnectorIndexingRuleEdit);
+        return turConnectorIndexingRuleRepository.findById(id).map(edit -> {
+            edit.setName(turConnectorIndexingRule.getName());
+            edit.setDescription(turConnectorIndexingRule.getDescription());
+            edit.setAttribute(turConnectorIndexingRule.getAttribute());
+            edit.setRuleType(turConnectorIndexingRule.getRuleType());
+            edit.setSource(turConnectorIndexingRule.getSource());
+            edit.setValues(turConnectorIndexingRule.getValues());
+            return turConnectorIndexingRuleRepository.save(edit);
         }).orElse(new TurConnectorIndexingRule());
     }
 

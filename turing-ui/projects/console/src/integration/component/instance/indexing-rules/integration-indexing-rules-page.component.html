@@ -85,82 +85,69 @@
       </p>
     </div>
   </div>
+  <div class="form-group">
+    <div class="form-group-header">
+      <label for="sn-field-description">Source</label>
+    </div>
+    <div class="form-group-body">
+      <input [(ngModel)]="integrationIndexingRule.source" class="form-control" type="text" id="sn-field-rule-source"
+             style="width: 100%;"/>
+      <p class="note" id="sn-field-description-tip">
+        Description will appear on semantic navigation site field list.
+      </p>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-group-header">
+      <label for="sn-field-description">Attribute</label>
+    </div>
+    <div class="form-group-body">
+      <input [(ngModel)]="integrationIndexingRule.attribute" class="form-control" type="text" id="sn-field-rule-attribute"
+             style="width: 100%;"/>
+      <p class="note" id="sn-field-description-tip">
+        Description will appear on semantic navigation site field list.
+      </p>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-group-header">
+      <label for="sn-field-description">Rule Type</label>
+    </div>
+    <div class="form-group-body">
+      <select [(ngModel)]="integrationIndexingRule.ruleType" class="form-select mr-3" id="sn-field-rule-type">
+        <option value="IGNORE">
+         IGNORE
+        </option>
+      </select>
+      <p class="note" id="sn-field-rule-type">
+        Description will appear on semantic navigation site field list.
+      </p>
+    </div>
+  </div>
 
   <div class="Subhead">
     <div class="Subhead-heading Subhead-heading--medium">Content that matches</div>
     <div class="Subhead-description">Create simple filter expressions to target specific content.</div>
   </div>
-
-  <div *ngFor="let snRankingCondition of integrationIndexingRule.conditions; last as isLast"
-       data-view-component="true" [ngSwitch]="getFieldType(snRankingCondition.attribute)">
-    <div style="display: flex">
-      <select [(ngModel)]="snRankingCondition.attribute" class="form-select mr-3">
-        <option *ngFor="let field of getTurSNSiteSEFields() " [value]="field.name">
-          {{field.name}}
-        </option>
-      </select>
-      <select [(ngModel)]="snRankingCondition.condition" class="form-select mr-3">
-        <option value="1">
-          Is
-        </option>
-        <option value="2">
-          Is not
-        </option>
-      </select>
-      <select *ngSwitchCase="'DATE'" [(ngModel)]="snRankingCondition.value"
-              style="width: 100%"
-              class="form-select mr-3">
-        <option value='asc'  [selected]=true>
-          newest
-        </option>
-      </select>
-
-      <select *ngSwitchCase="'BOOL'" [(ngModel)]="snRankingCondition.value"
-              style="width: 100%"
-              class="form-select mr-3">
-        <option value="true">
-          True
-        </option>
-        <option value="false">
-          False
-        </option>
-      </select>
-
-      <input *ngSwitchDefault [(ngModel)]="snRankingCondition.value"
+  <div *ngFor="let value of integrationIndexingRule.values; let i = index; trackBy:trackByIndex; last as isLast">
+    <div style="display: flex" class="mb-3">
+     <input [(ngModel)]="integrationIndexingRule.values[i]"
              style="width: 100%"
-             class="form-control  mr-3" type="text" id="sn-field-value"/>
+             class="form-control mr-3" type="text"/>
 
       <button class="btn btn-danger btn-octicon mr-1"
-              (click)="removeCondition(integrationIndexingRule, snRankingCondition)">
+              (click)="removeValue(integrationIndexingRule, value)">
         <span octicon="trash" [size]=16></span>
       </button>
-    </div>
-    <div *ngIf="!isLast" class="mb-2 mt-2 ml-1">
-      And
     </div>
 
   </div>
   <div class="mb-2 mt-4 ml-1">
-    <button class="btn btn-outline mr-1" (click)="newCondition(integrationIndexingRule.conditions)">
+    <button class="btn btn-outline mr-1" (click)="newValue(integrationIndexingRule.values)">
       <span octicon="plus-circle" [size]=16
             class="mr-1"></span> Add
     </button>
   </div>
-  <div class="form-group mt-5">
-    <div class="form-group-header">
-      <label for="sn-field-description">Will have its weight changed by</label>
-    </div>
-    <div class="form-group-body mt-2">
-      <div style=" display:inline; width: 95%">
-        <input type="range" min="0" max="10" #ranger style="width: 90%" [(ngModel)]="integrationIndexingRule.weight">
-      </div>
-      <div style="display:inline;">
-        <span style="position: relative;top: -2px" class="ml-5">+ {{integrationIndexingRule.weight}}</span>
-      </div>
-    </div>
-  </div>
-
-
 </div>
 
 

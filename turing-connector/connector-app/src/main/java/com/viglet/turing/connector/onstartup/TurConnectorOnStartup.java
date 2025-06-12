@@ -16,20 +16,16 @@ public class TurConnectorOnStartup implements ApplicationRunner {
     public static final String FIRST_TIME = "FIRST_TIME";
 
     private final TurConnectorConfigVarRepository turConnectorConfigVarRepository;
-    private final TurConnectorIndexingRulesOnStartup turConnectorIndexingRulesOnStartup;
 
     @Autowired
-    public TurConnectorOnStartup(TurConnectorConfigVarRepository turConnectorConfigVarRepository,
-                                 TurConnectorIndexingRulesOnStartup turConnectorIndexingRulesOnStartup) {
+    public TurConnectorOnStartup(TurConnectorConfigVarRepository turConnectorConfigVarRepository) {
         this.turConnectorConfigVarRepository = turConnectorConfigVarRepository;
-        this.turConnectorIndexingRulesOnStartup = turConnectorIndexingRulesOnStartup;
     }
 
     @Override
     public void run(ApplicationArguments arg0) {
         if (this.turConnectorConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
             log.info("First Time Configuration ...");
-            turConnectorIndexingRulesOnStartup.createDefaultRows();
             setFirstTIme();
             log.info("Configuration finished.");
         }
