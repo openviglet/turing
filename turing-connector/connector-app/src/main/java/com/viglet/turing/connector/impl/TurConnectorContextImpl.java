@@ -127,7 +127,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     private void ignoreIndexingRulesLog(TurSNJobItem turSNJobItem, TurConnectorSession session) {
         getContentFromRepo(turSNJobItem, session)
                 .ifPresent(indexingList ->
-                        log.info(" the {} object ({} - {} - {}) was ignored by Indexing Rules and transactionId = {}",
+                        log.info("{} object ({} - {} - {}) was ignored by Indexing Rules. transactionId = {}",
                                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(),
                                 turSNJobItem.getEnvironment(), session.getTransactionId()));
     }
