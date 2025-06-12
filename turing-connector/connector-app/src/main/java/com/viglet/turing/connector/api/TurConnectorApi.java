@@ -50,7 +50,7 @@ public class TurConnectorApi {
 
     @GetMapping("monitoring/index/{name}")
     public ResponseEntity<List<TurConnectorIndexing>> monitoryIndexByName(@PathVariable String name) {
-        return turConnectorIndexingRepository.findAllByNameOrderByModificationDateDesc(name, Limit.of(50))
+        return turConnectorIndexingRepository.findAllBySourceOrderByModificationDateDesc(name, Limit.of(50))
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
 

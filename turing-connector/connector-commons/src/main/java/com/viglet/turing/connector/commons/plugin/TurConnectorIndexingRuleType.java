@@ -18,9 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.connector.persistence.model;
-
-import lombok.Getter;
+package com.viglet.turing.connector.commons.plugin;
 
 /**
  * @author Alexandre Oliveira

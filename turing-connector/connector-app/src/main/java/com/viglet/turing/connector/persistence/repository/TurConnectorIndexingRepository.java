@@ -20,43 +20,45 @@ package com.viglet.turing.connector.persistence.repository;
 
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexing;
 import org.springframework.data.domain.Limit;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Optional;
 
 public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexing, String> {
 
-    Optional<List<TurConnectorIndexing>> findByNameAndTransactionIdNot(String name, String transactionId);
+    Optional<List<TurConnectorIndexing>> findBySourceAndTransactionIdNot(String source, String transactionId);
 
-    default Optional<List<TurConnectorIndexing>> findContentsShouldBeDeIndexed(String name, String transactionId) {
-        return findByNameAndTransactionIdNot(name, transactionId);
+    default Optional<List<TurConnectorIndexing>> findContentsShouldBeDeIndexed(String source, String transactionId) {
+        return findBySourceAndTransactionIdNot(source, transactionId);
     }
 
-    boolean existsByObjectIdAndNameAndEnvironment(String objectId, String name, String environment);
+    boolean existsByObjectIdAndSourceAndEnvironment(String objectId, String source, String environment);
 
-    boolean existsByObjectIdAndNameAndEnvironmentAndChecksumNot(String objectId, String name, String environment,
+    boolean existsByObjectIdAndSourceAndEnvironmentAndChecksumNot(String objectId, String source, String environment,
                                                                 String checksum);
 
-    Optional<List<TurConnectorIndexing>> findByObjectIdAndNameAndEnvironment(String objectId, String name,
+    Optional<List<TurConnectorIndexing>> findByObjectIdAndSourceAndEnvironment(String objectId, String source,
                                                                              String environment);
 
-    void deleteByObjectIdAndNameAndEnvironment(String objectId, String name, String environment);
+    Optional<List<TurConnectorIndexing>> findByObjectIdAndSource(String objectId, String source);
+    void deleteByObjectIdAndSourceAndEnvironment(String objectId, String source, String environment);
 
-    void deleteByNameAndTransactionIdNot(String name, String transactionId);
+    void deleteBySourceAndTransactionIdNot(String source, String transactionId);
 
-    Optional<List<TurConnectorIndexing>> findAllByNameOrderByModificationDateDesc(String name, Limit limit);
+    Optional<List<TurConnectorIndexing>> findAllBySourceOrderByModificationDateDesc(String source, Limit limit);
     Optional<List<TurConnectorIndexing>>  findAllByOrderByModificationDateDesc(Limit limit);
 
     @Transactional
-    default void deleteContentsWereDeIndexed(String name, String deltaId) {
-        deleteByNameAndTransactionIdNot(name, deltaId);
+    void deleteBySourceAndObjectId(String name, String objectId);
+
+    @Transactional
+    default void deleteContentsWereDeIndexed(String source, String deltaId) {
+        deleteBySourceAndTransactionIdNot(source, deltaId);
     }
 
-    @Query("SELECT DISTINCT i.name FROM TurConnectorIndexing i")
+    @Query("SELECT DISTINCT i.source FROM TurConnectorIndexing i")
     List<String> findAllSources();
 }

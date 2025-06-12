@@ -19,6 +19,7 @@
 package com.viglet.turing.connector.plugin.aem;
 
 import com.google.inject.Inject;
+import com.viglet.turing.client.sn.TurSNConstants;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
@@ -31,6 +32,7 @@ import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
 import com.viglet.turing.connector.aem.commons.mappers.*;
 import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
 import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
+import com.viglet.turing.connector.commons.plugin.dto.TurConnectorIndexingDTO;
 import com.viglet.turing.connector.plugin.aem.api.TurAemPathList;
 import com.viglet.turing.connector.plugin.aem.conf.AemPluginHandlerConfiguration;
 import com.viglet.turing.connector.plugin.aem.persistence.model.*;
@@ -232,16 +234,32 @@ public class TurAemPluginProcess {
         }
     }
 
-    public void indexContentId(TurConnectorSession turConnectorSession, TurAemSource turAemSource, String guid) {
+    public void indexContentId(TurConnectorSession session, TurAemSource turAemSource, String guid) {
         config = new AemPluginHandlerConfiguration(turAemSource);
         turAemContentDefinitionProcess = new TurAemContentDefinitionProcess(getTurAemContentMapping(turAemSource));
         TurAemSourceContext turAemSourceContext = getTurAemSourceContext(config);
         getSiteName(turAemSourceContext);
         TurAemCommonsUtils.getInfinityJson(guid, turAemSourceContext, false)
-                .ifPresent(infinityJson -> {
+                .ifPresentOrElse(infinityJson -> {
                     turAemSourceContext.setContentType(infinityJson.getString(JCR_PRIMARY_TYPE));
-                    getNodeFromJson(guid, infinityJson, turAemSourceContext, turConnectorSession, turAemSource);
-                });
+                    getNodeFromJson(guid, infinityJson, turAemSourceContext, session, turAemSource);
+                }, () -> sendToTuringToBeDeIndexed(session, guid));
+    }
+
+    private void sendToTuringToBeDeIndexed(TurConnectorSession session, String guid) {
+        turConnectorContext.getIndexingItem(guid, session.getSource())
+                .forEach(indexing ->
+                        turConnectorContext.addJobItem(deIndexJob(session, indexing), session));
+    }
+
+    private TurSNJobItem deIndexJob(TurConnectorSession session,
+                                    TurConnectorIndexingDTO turConnectorIndexingDTO) {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(TurSNConstants.ID_ATTR, turConnectorIndexingDTO.getObjectId());
+        attributes.put(TurSNConstants.SOURCE_APPS_ATTR,
+                session.getProviderName());
+        return new TurSNJobItem(TurSNJobAction.DELETE,
+                turConnectorIndexingDTO.getSites(), turConnectorIndexingDTO.getLocale(), attributes);
     }
 
     private void getSiteName(TurAemSourceContext turAemSourceContext) {

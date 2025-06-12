@@ -18,6 +18,7 @@
 
 package com.viglet.turing.connector.persistence.model;
 
+import com.viglet.turing.connector.commons.plugin.TurConnectorStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -46,7 +47,7 @@ public class TurConnectorIndexing implements Serializable {
     @Column(length = 500)
     private String objectId;
     @Column
-    private String name;
+    private String source;
     @Column
     private String environment;
     @Column

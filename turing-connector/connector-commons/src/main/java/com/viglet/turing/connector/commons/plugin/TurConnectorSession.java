@@ -26,15 +26,15 @@ import java.util.UUID;
 
 @Data
 public class TurConnectorSession {
-    private String systemId;
+    private String source;
     private String transactionId;
     private Collection<String> sites;
     private String providerName;
     private Locale locale;
 
-    public TurConnectorSession(String systemId, Collection<String> sites, String providerName,
+    public TurConnectorSession(String source, Collection<String> sites, String providerName,
                                Locale locale) {
-        this.systemId = systemId;
+        this.source = source;
         this.transactionId = UUID.randomUUID().toString();
         this.sites = sites;
         this.providerName = providerName;

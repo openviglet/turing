@@ -21,7 +21,7 @@
 package com.viglet.turing.connector.persistence.repository;
 
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRule;
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleType;
+import com.viglet.turing.connector.commons.plugin.TurConnectorIndexingRuleType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;

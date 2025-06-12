@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.connector.persistence.model;
+package com.viglet.turing.connector.commons.plugin;
 
 public enum TurConnectorStatus {
     NEW,
