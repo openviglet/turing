@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -81,6 +82,7 @@ public class TurConnectorIndexingRuleAPI {
             edit.setRuleType(turConnectorIndexingRule.getRuleType());
             edit.setSource(turConnectorIndexingRule.getSource());
             edit.setValues(turConnectorIndexingRule.getValues());
+            edit.setLastModifiedDate(new Date());
             return turConnectorIndexingRuleRepository.save(edit);
         }).orElse(new TurConnectorIndexingRule());
     }
@@ -98,6 +100,7 @@ public class TurConnectorIndexingRuleAPI {
     @PostMapping
     public TurConnectorIndexingRule turConnectorIndexingRuleAdd(
             @RequestBody TurConnectorIndexingRule turConnectorIndexingRule) {
+        turConnectorIndexingRule.setLastModifiedDate(new Date());
         return turConnectorIndexingRuleRepository.save(turConnectorIndexingRule);
     }
 

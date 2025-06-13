@@ -2,7 +2,6 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
 import {NotifierService} from 'angular-notifier-updated';
 import {ActivatedRoute, Router} from '@angular/router';
-import {TurSNSiteField} from "../../../../sn/model/sn-site-field.model";
 import {TurIntegrationIndexingRule} from "../../../model/integration-indexing-rule.model";
 import {TurIntegrationIndexingRuleService} from "../../../service/integration-indexing-rule.service";
 
@@ -15,10 +14,9 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
   @ViewChild('modalDeleteRankingExpression')
   modalDelete!: ElementRef;
   private readonly integrationIndexingRule: Observable<TurIntegrationIndexingRule>;
-  private turSNSiteSEFields: TurSNSiteField[] = new Array<TurSNSiteField>;
   private readonly newObject: boolean = false;
-  private integrationId: string;
-  private indexingRuleId: string;
+  private readonly integrationId: string;
+  private readonly indexingRuleId: string;
 
   constructor(
     private readonly notifier: NotifierService,
@@ -36,14 +34,6 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
 
   getIntegrationIndexingRule(): Observable<TurIntegrationIndexingRule> {
     return this.integrationIndexingRule;
-  }
-
-  getTurSNSiteSEFields(): TurSNSiteField[] {
-    return this.turSNSiteSEFields;
-  }
-
-  getFieldType(fieldName: string): string {
-    return <string>this.turSNSiteSEFields.find(field => field.name == fieldName)?.type;
   }
 
   newValue(values: string[]) {
@@ -81,7 +71,7 @@ export class TurIntegrationIndexingRulesPageComponent implements OnInit {
         let message: string = this.newObject ? " indexing rule was created." : " indexing rule was updated.";
         _integrationIndexingRule = integrationIndexingRule;
         this.notifier.notify("success", integrationIndexingRule.name.concat(message));
-        this.router.navigate(['/sn/site/', this.indexingRuleId, 'indexing-rule', 'list']);
+        this.router.navigate(['/integration/aem/', this.integrationId, 'indexing-rule', 'list']);
       },
       response => {
         this.notifier.notify("error", "Indexing Rule was error: " + response);

@@ -6,4 +6,5 @@ export interface TurIntegrationIndexingRule {
   source: string;
   attribute: string;
   values: string[];
+  lastModifiedDate: Date;
 }

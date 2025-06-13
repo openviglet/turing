@@ -30,6 +30,7 @@ import org.hibernate.annotations.UuidGenerator;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,6 +71,10 @@ public class TurConnectorIndexingRule implements Serializable {
 
     @Column
     private String attribute;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    private Date lastModifiedDate;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "con_indexing_rule_values", joinColumns = @JoinColumn(name = "id"))

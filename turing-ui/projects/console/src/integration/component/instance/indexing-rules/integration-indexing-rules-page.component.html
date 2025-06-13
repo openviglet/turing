@@ -69,7 +69,7 @@
       <input [(ngModel)]="integrationIndexingRule.name" class="form-control" type="text" id="sn-field-name"
              style="width: 100%;"/>
       <p class="note" id="sn-field-name-tip">
-        Name will appear on semantic navigation site field list.
+        Integration rule name.
       </p>
     </div>
   </div>
@@ -81,7 +81,7 @@
       <input [(ngModel)]="integrationIndexingRule.description" class="form-control" type="text" id="sn-field-description"
              style="width: 100%;"/>
       <p class="note" id="sn-field-description-tip">
-        Description will appear on semantic navigation site field list.
+        Integration rule description.
       </p>
     </div>
   </div>
@@ -93,7 +93,7 @@
       <input [(ngModel)]="integrationIndexingRule.source" class="form-control" type="text" id="sn-field-rule-source"
              style="width: 100%;"/>
       <p class="note" id="sn-field-description-tip">
-        Description will appear on semantic navigation site field list.
+        Content Source.
       </p>
     </div>
   </div>
@@ -105,7 +105,7 @@
       <input [(ngModel)]="integrationIndexingRule.attribute" class="form-control" type="text" id="sn-field-rule-attribute"
              style="width: 100%;"/>
       <p class="note" id="sn-field-description-tip">
-        Description will appear on semantic navigation site field list.
+        Attribute applied to the values below.
       </p>
     </div>
   </div>
@@ -120,14 +120,14 @@
         </option>
       </select>
       <p class="note" id="sn-field-rule-type">
-        Description will appear on semantic navigation site field list.
+        Type of rule to be applied.
       </p>
     </div>
   </div>
 
   <div class="Subhead">
     <div class="Subhead-heading Subhead-heading--medium">Content that matches</div>
-    <div class="Subhead-description">Create simple filter expressions to target specific content.</div>
+    <div class="Subhead-description">Create simple filter expressions to target specific attribute.</div>
   </div>
   <div *ngFor="let value of integrationIndexingRule.values; let i = index; trackBy:trackByIndex; last as isLast">
     <div style="display: flex" class="mb-3">
