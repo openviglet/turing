@@ -27,8 +27,10 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
+import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.logging.TurLoggingUtils;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
@@ -74,6 +76,7 @@ public class TurSNProcessQueue {
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
+
     @Autowired
     public TurSNProcessQueue(TurSolr turSolr, TurSNSiteRepository turSNSiteRepository,
                              TurSNSiteLocaleRepository turSNSiteLocaleRepository,
@@ -111,6 +114,7 @@ public class TurSNProcessQueue {
                                                     } else {
                                                         noProcessedWarning(turSNSite, turSNJobItem);
                                                     }
+                                                    TurLoggingUtils.setLoggingStatus(turSNJobItem, TurIndexingStatus.FINISHED);
                                                 }))), () -> log.debug("turSNJob empty or siteId empty"));
     }
 
@@ -131,6 +135,7 @@ public class TurSNProcessQueue {
                 turSNJobItem.getAttributes().get(TurSNFieldName.ID),
                 turSNSite.getName(),
                 turSNJobItem.getLocale());
+        TurLoggingUtils.setLoggingStatus(turSNJobItem, TurIndexingStatus.NOT_PROCESSED);
     }
 
     private boolean processJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
@@ -166,8 +171,10 @@ public class TurSNProcessQueue {
         if (ObjectUtils.allNotNull(turSNSite, turSNJobItem) && turSNJobItem.getAttributes() != null) {
             if (Objects.requireNonNull(turSNJobItem.getTurSNJobAction()) == TurSNJobAction.CREATE) {
                 logCrudObject(turSNSite, turSNJobItem, CREATED);
+                TurLoggingUtils.setLoggingStatus(turSNJobItem, TurIndexingStatus.CREATED);
             } else if (turSNJobItem.getTurSNJobAction() == TurSNJobAction.DELETE) {
                 logCrudObject(turSNSite, turSNJobItem, DELETED);
+                TurLoggingUtils.setLoggingStatus(turSNJobItem, TurIndexingStatus.DELETED);
             }
         }
     }
@@ -202,7 +209,6 @@ public class TurSNProcessQueue {
     }
 
     private boolean index(TurSNJobItem turSNJobItem, TurSNSite turSNSite) {
-        log.debug("Index");
         Map<String, Object> attributes = this.removeDuplicateTerms(
                 turSNMergeProvidersProcess.mergeDocuments(turSNSite,
                         getConsolidateResults(turSNJobItem),

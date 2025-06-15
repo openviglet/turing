@@ -18,7 +18,7 @@
 
 package com.viglet.turing.connector.persistence.model;
 
-import com.viglet.turing.connector.commons.plugin.TurConnectorStatus;
+import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -63,7 +63,7 @@ public class TurConnectorIndexing implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column
-    private TurConnectorStatus status;
+    private TurIndexingStatus status;
 
     @Builder.Default
     @Convert(converter = TurStringListConverter.class)

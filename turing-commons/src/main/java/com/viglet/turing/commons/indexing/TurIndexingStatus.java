@@ -16,11 +16,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.connector.commons.plugin;
+package com.viglet.turing.commons.indexing;
 
-public enum TurConnectorStatus {
-    NEW,
+public enum TurIndexingStatus {
+    CREATED,
     UNCHANGED,
-    REINDEX,
-    RECREATE
+    UPDATED,
+    RECREATED,
+    CREATE_ERROR_SN_SITE_NOT_EXIST, DELETE_ERROR_SN_SITE_NOT_EXIST, SENT_TO_QUEUE, NOT_PROCESSED, DELETED, FINISHED, IGNORED
 }

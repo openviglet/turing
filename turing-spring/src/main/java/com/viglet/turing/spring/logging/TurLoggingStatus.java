@@ -1,29 +1,28 @@
-package com.viglet.turing.connector.commons.plugin.dto;
+package com.viglet.turing.spring.logging;
 
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+@Slf4j
 @Builder
 @Getter
 @Setter
-public class TurConnectorIndexingDTO {
-
-
-    private int id;
-    private String objectId;
-    private String source;
-    private String environment;
-    private String transactionId;
-    private String checksum;
-    private Locale locale;
-    private Date created;
+public class TurLoggingStatus {
     private Date modificationDate;
     private TurIndexingStatus status;
+    private String source;
+    private String contentId;
     private List<String> sites;
+    private String environment;
+    private Locale locale;
+    private String transactionId;
+    private String checksum;
+
 }
