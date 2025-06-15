@@ -35,8 +35,6 @@ import com.viglet.turing.genai.TurGenAi;
 import com.viglet.turing.logging.TurLoggingUtils;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.sn.TurSNConstants;
-import com.viglet.turing.spring.logging.TurIndexingLoggingStatus;
-import com.viglet.turing.spring.logging.TurLoggingStatus;
 import com.viglet.turing.spring.utils.TurSpringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +47,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 

@@ -14,8 +14,8 @@ import java.util.Locale;
 @Builder
 @Getter
 @Setter
-public class TurLoggingStatus {
-    private Date modificationDate;
+public class TurLoggingIndexing {
+    private Date timestamp;
     private TurIndexingStatus status;
     private String source;
     private String contentId;

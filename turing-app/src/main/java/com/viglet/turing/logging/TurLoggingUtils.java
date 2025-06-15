@@ -2,15 +2,15 @@ package com.viglet.turing.logging;
 
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
-import com.viglet.turing.spring.logging.TurIndexingLoggingStatus;
-import com.viglet.turing.spring.logging.TurLoggingStatus;
+import com.viglet.turing.spring.logging.TurLoggingIndexingLog;
+import com.viglet.turing.spring.logging.TurLoggingIndexing;
 
 import java.util.Date;
 
 public class TurLoggingUtils {
     public static void setLoggingStatus(TurSNJobItem turSNJobItem,
                                          TurIndexingStatus status) {
-        TurIndexingLoggingStatus.setStatus(TurLoggingStatus
+        TurLoggingIndexingLog.setStatus(TurLoggingIndexing
                 .builder()
                 .contentId(turSNJobItem.getId())
                 .environment(turSNJobItem.getEnvironment())
@@ -19,7 +19,7 @@ public class TurLoggingUtils {
                 .transactionId(null)
                 .checksum(turSNJobItem.getChecksum())
                 .source("Server")
-                .modificationDate(new Date())
+                .timestamp(new Date())
                 .sites(turSNJobItem.getSiteNames())
                 .build());
     }

@@ -6,7 +6,7 @@
 		<databaseName>turingLog</databaseName>
 		<collectionName>aemConnector</collectionName>
 	</appender>
-	<appender name="MONGO_STATUS" class="com.viglet.turing.spring.logging.TurMongoDBStatusAppender">
+	<appender name="MONGO_STATUS" class="com.viglet.turing.spring.logging.TurMongoDBIndexingAppender">
 		<enabled>true</enabled>
 		<connectionString>mongodb://localhost:27017</connectionString>
 		<databaseName>turingLog</databaseName>
@@ -24,7 +24,7 @@
 		additivity="false">
 		<appender-ref ref="CONSOLE" />
 	</logger>
-	<logger name="com.viglet.turing.spring.logging.TurIndexingLoggingStatus" level="info"
+	<logger name="com.viglet.turing.spring.logging.TurLoggingIndexingLog" level="info"
 			additivity="false">
 		<appender-ref ref="MONGO_STATUS" />
 	</logger>

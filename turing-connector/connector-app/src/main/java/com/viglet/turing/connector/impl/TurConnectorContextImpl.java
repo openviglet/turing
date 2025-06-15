@@ -26,8 +26,8 @@ import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
 import com.viglet.turing.connector.commons.plugin.dto.TurConnectorIndexingDTO;
-import com.viglet.turing.spring.logging.TurLoggingStatus;
-import com.viglet.turing.spring.logging.TurIndexingLoggingStatus;
+import com.viglet.turing.spring.logging.TurLoggingIndexing;
+import com.viglet.turing.spring.logging.TurLoggingIndexingLog;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexing;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRule;
 import com.viglet.turing.connector.commons.plugin.TurConnectorIndexingRuleType;
@@ -333,7 +333,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
 
     private static void setLoggingStatus(TurSNJobItem turSNJobItem, TurConnectorSession session,
                                          TurIndexingStatus status) {
-        TurIndexingLoggingStatus.setStatus(TurLoggingStatus
+        TurLoggingIndexingLog.setStatus(TurLoggingIndexing
                 .builder()
                 .contentId(turSNJobItem.getId())
                 .environment(turSNJobItem.getEnvironment())
@@ -342,7 +342,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                 .transactionId(session.getTransactionId())
                 .checksum(turSNJobItem.getChecksum())
                 .source(session.getSource())
-                .modificationDate(new Date())
+                .timestamp(new Date())
                 .sites(turSNJobItem.getSiteNames())
                 .build());
     }
