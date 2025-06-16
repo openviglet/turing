@@ -27,12 +27,13 @@ export class TurLoggingService {
 
   constructor(private httpClient: HttpClient) { }
 
-  general(): Observable<TurLoggingGeneral[]> {
+  server(): Observable<TurLoggingGeneral[]> {
     return this.httpClient.get<TurLoggingGeneral[]>(`${environment.apiUrl}/api/logging`);
   }
-
+  aem(): Observable<TurLoggingGeneral[]> {
+    return this.httpClient.get<TurLoggingGeneral[]>(`${environment.apiUrl}/api/logging/aem`);
+  }
   indexing(): Observable<TurLoggingIndexing[]> {
     return this.httpClient.get<TurLoggingIndexing[]>(`${environment.apiUrl}/api/logging/indexing`);
   }
-
 }

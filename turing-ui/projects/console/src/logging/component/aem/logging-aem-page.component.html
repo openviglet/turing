@@ -1,0 +1,28 @@
+<div *ngIf="(getLoggingAemList() | async) as aemList; else loading">
+
+    <div *ngFor="let aem of aemList" class="mb-2">
+      <div class="d-table">
+        <div class="d-table-cell col-1" style="width: 200px;text-wrap: nowrap;">
+          <div>{{ aem.timestamp | amTimeAgo }}</div>
+        </div>
+        <div class="d-table-cell col-1" style="width: 100px;">
+          <div>{{ aem.level }}</div>
+        </div>
+        <div class="d-table-cell col-3">
+          <div style=" overflow-wrap: break-word;width: 300px;">{{ aem.logger }}</div>
+        </div>
+
+        <div class="d-table-cell col-7">
+          <pre style="overflow-wrap: break-word;max-width: 200px">
+            {{ aem.message }}</pre>
+
+        </div>
+
+      </div>
+
+    </div>
+
+</div>
+<ng-template #loading>
+  <span>Loading</span><span class="AnimatedEllipsis"></span>
+</ng-template>

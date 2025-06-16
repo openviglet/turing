@@ -7,20 +7,20 @@ import {TurLLMInstance} from "../../../llm/model/llm-instance.model";
 import {TurLoggingService} from "../../service/logging.service";
 
 @Component({
-    selector: 'logging-general-page',
-    templateUrl: './logging-general-page.component.html',
+    selector: 'logging-aem-page',
+    templateUrl: './logging-aem-page.component.html',
     standalone: false
 })
-export class TurLoggingGeneralPageComponent implements OnInit {
-  private turLoggingGeneralList : Observable<TurLoggingGeneral[]>
+export class TurLoggingAemPageComponent implements OnInit {
+  private turLoggingAemList : Observable<TurLoggingGeneral[]>
   constructor(private readonly notifier: NotifierService,
               private router: Router,
               private turLoggingService: TurLoggingService) {
-    this.turLoggingGeneralList = turLoggingService.general();
+    this.turLoggingAemList = turLoggingService.aem();
   }
 
-  getLoggingGeneralList(): Observable<TurLoggingGeneral[]> {
-    return this.turLoggingGeneralList;
+  getLoggingAemList(): Observable<TurLoggingGeneral[]> {
+    return this.turLoggingAemList;
   }
 
   getRouter(): Router {

@@ -1,20 +1,20 @@
-<div *ngIf="(getLoggingGeneralList() | async) as generalList; else loading">
+<div *ngIf="(getLoggingServerList() | async) as serverList; else loading">
 
-    <div *ngFor="let general of generalList" class="mb-2">
+    <div *ngFor="let server of serverList" class="mb-2">
       <div class="d-table">
         <div class="d-table-cell col-1" style="width: 200px;text-wrap: nowrap;">
-          <div>{{ general.timestamp | amTimeAgo }}</div>
+          <div>{{ server.timestamp | amTimeAgo }}</div>
         </div>
         <div class="d-table-cell col-1" style="width: 100px;">
-          <div>{{ general.level }}</div>
+          <div>{{ server.level }}</div>
         </div>
         <div class="d-table-cell col-3">
-          <div style=" overflow-wrap: break-word;width: 300px;">{{ general.logger }}</div>
+          <div style=" overflow-wrap: break-word;width: 300px;">{{ server.logger }}</div>
         </div>
 
         <div class="d-table-cell col-7">
           <pre style="overflow-wrap: break-word;max-width: 200px">
-            {{ general.message }}</pre>
+            {{ server.message }}</pre>
 
         </div>
 
