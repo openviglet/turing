@@ -10,7 +10,7 @@
         <enabled>true</enabled>
         <connectionString>mongodb://localhost:27017</connectionString>
         <databaseName>turingLog</databaseName>
-        <collectionName>indexingStatus</collectionName>
+        <collectionName>indexing</collectionName>
     </appender>
     <appender name="CONSOLE"
               class="ch.qos.logback.core.ConsoleAppender">

@@ -4,13 +4,13 @@
 		<enabled>true</enabled>
 		<connectionString>mongodb://localhost:27017</connectionString>
 		<databaseName>turingLog</databaseName>
-		<collectionName>aemConnector</collectionName>
+		<collectionName>aem</collectionName>
 	</appender>
 	<appender name="MONGO_STATUS" class="com.viglet.turing.spring.logging.TurMongoDBIndexingAppender">
 		<enabled>true</enabled>
 		<connectionString>mongodb://localhost:27017</connectionString>
 		<databaseName>turingLog</databaseName>
-		<collectionName>indexingStatus</collectionName>
+		<collectionName>indexing</collectionName>
 	</appender>
 	<appender name="CONSOLE"
 		class="ch.qos.logback.core.ConsoleAppender">
