@@ -7,8 +7,8 @@ import org.bson.Document;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 
 @Component
@@ -22,7 +22,7 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
         }
         TurLoggingGeneral turLoggingGeneral = TurLoggingGeneral.builder()
                 .level(eventObject.getLevel().toString())
-                .logger(eventObject.getLoggerName())
+                .logger(abbreviatePackage(eventObject.getLoggerName()))
                 .message(eventObject.getFormattedMessage())
                 .timestamp(new Date(eventObject.getTimeStamp()))
                 .build();
@@ -31,6 +31,14 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    private static @NotNull String abbreviatePackage(String packageName) {
+        NameAbbreviator n = NameAbbreviator.getAbbreviator("1.");
+        StringBuffer sb = new StringBuffer();
+        sb.append(packageName);
+        n.abbreviate(1, sb);
+        return sb.toString();
     }
 
 

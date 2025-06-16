@@ -20,6 +20,7 @@
 			</Pattern>
 		</layout>
 	</appender>
+	<logger name="org.mongodb.driver" level="OFF" />
 	<logger name="com.viglet.turing.connector.TurConnectorApplication" level="info"
 		additivity="false">
 		<appender-ref ref="CONSOLE" />

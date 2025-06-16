@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -47,10 +48,11 @@ public class TurLoggingAPI {
             MongoCollection<Document> generalCollection = database.getCollection(generalCollectionName);
              generalCollection.find()
                     .sort(Sorts.descending(TIMESTAMP))
-                    .limit(50).forEach(documentList::add);
+                    .limit(100).forEach(documentList::add);
         } catch (Exception e) {
           log.error(e.getMessage(), e);
         }
+        Collections.reverse(documentList);
         return documentList;
     }
 
@@ -63,10 +65,11 @@ public class TurLoggingAPI {
             MongoCollection<Document> indexingCollection = database.getCollection(indexingCollectionName);
             indexingCollection.find()
                     .sort(Sorts.descending(TIMESTAMP))
-                    .limit(50).forEach(documentList::add);
+                    .limit(100).forEach(documentList::add);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+        Collections.reverse(documentList);
         return documentList;
     }
 
