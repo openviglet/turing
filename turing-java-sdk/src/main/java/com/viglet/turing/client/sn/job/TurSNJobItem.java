@@ -53,6 +53,14 @@ public class TurSNJobItem implements Serializable{
 	public Object getAttribute(String attributeName) {
 		return attributes.get(attributeName);
 	}
+	public String getStringAttribute(String attributeName) {
+		if (attributes.get(attributeName) == null)
+			return null;
+		return attributes.get(attributeName).toString();
+	}
+	public boolean containsAttribute(String attributeName) {
+		return attributes.containsKey(attributeName);
+	}
 
 	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames) {
 		super();

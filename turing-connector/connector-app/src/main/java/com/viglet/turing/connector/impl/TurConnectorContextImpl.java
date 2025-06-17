@@ -42,7 +42,6 @@ import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
@@ -96,14 +95,13 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     private void processRemainingJobs(TurConnectorSession session) {
         while (!queueLinks.isEmpty()) {
             TurSNJobItem turSNJobItem = queueLinks.poll();
-            if (!indexingRuleAllows(session, turSNJobItem)) {
-                ignoreIndexingRulesStatus(turSNJobItem, session);
+            if (isJobItemToDeIndex(turSNJobItem)) {
+                turConnectorIndexingRepository.deleteBySourceAndObjectId(session.getSource(), turSNJobItem.getId());
+                addJobToMessageQueue(turSNJobItem);
                 continue;
             }
-            if (isJobItemToDeIndex(turSNJobItem)) {
-                turConnectorIndexingRepository.deleteBySourceAndObjectId(session.getSource(),
-                        turSNJobItem.getId());
-                addJobToMessageQueue(turSNJobItem);
+            if (indexingRuleIgnore(session, turSNJobItem)) {
+                ignoreIndexingRulesStatus(turSNJobItem, session);
                 continue;
             }
             if (objectNeedBeIndexed(turSNJobItem, session)) {
@@ -149,10 +147,9 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                 turSNJobItem.getEnvironment(), session.getTransactionId());
     }
 
-    private boolean indexingRuleAllows(TurConnectorSession turConnectorSession, TurSNJobItem turSNJobItem) {
-        return getIndexingRules(turConnectorSession)
-                .stream()
-                .noneMatch(rule -> ignoredJobItem(turSNJobItem, rule));
+    private boolean indexingRuleIgnore(TurConnectorSession turConnectorSession, TurSNJobItem turSNJobItem) {
+        return getIndexingRules(turConnectorSession).stream()
+                .anyMatch(rule -> ignoredJobItem(turSNJobItem, rule));
     }
 
     private Set<TurConnectorIndexingRule> getIndexingRules(TurConnectorSession turConnectorSession) {
@@ -161,12 +158,15 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     private static boolean ignoredJobItem(TurSNJobItem turSNJobItem, TurConnectorIndexingRule rule) {
-        for (String s : rule.getValues()) {
-            if (StringUtils.isNotBlank(s)) {
-                Pattern p = Pattern.compile(s);
-                String value = (String) turSNJobItem.getAttribute(rule.getAttribute());
-                Matcher matcher = p.matcher(value);
-                if (matcher.lookingAt()) {
+        for (String ruleValue : rule.getValues()) {
+            if (StringUtils.isNotBlank(ruleValue)) {
+                if (!turSNJobItem.containsAttribute(rule.getAttribute())) {
+                    return false;
+                }
+                if (Pattern
+                        .compile(ruleValue)
+                        .matcher(turSNJobItem.getStringAttribute(rule.getAttribute()))
+                        .lookingAt()) {
                     return true;
                 }
             }

@@ -33,17 +33,16 @@ import java.util.Optional;
 @Slf4j
 public class TurAemExtContentTags implements TurAemExtAttributeInterface {
     public static final String TAGS_JSON_EXTENSION = "/jcr:content.tags.json";
-    private static final TurMultiValue EMPTY = null;
 
     @Override
     public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr, TurAemSourceAttr turAemSourceAttr,
                                  TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
         log.debug("Executing TurAemExtContentTags");
-        return new TurMultiValue(getTags(aemObject, turAemSourceContext).map(tags ->
-                        tags.getTags().stream()
+        return getTags(aemObject, turAemSourceContext).map(tags ->
+                new TurMultiValue(tags.getTags().stream()
                                 .map(TurAemContentTag::getTagID)
-                                .toList())
-                .orElse(EMPTY));
+                                .toList()))
+                .orElse(new TurMultiValue());
     }
 
     public static Optional<TurAemContentTags> getTags(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {

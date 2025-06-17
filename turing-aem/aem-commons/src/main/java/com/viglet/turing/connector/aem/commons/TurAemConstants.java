@@ -43,4 +43,14 @@ public class TurAemConstants {
     public static final String DATA_FOLDER = "data";
     public static final String DATE_JSON_FORMAT = "E MMM dd yyyy HH:mm:ss 'GMT'Z";
     public static final String EMPTY_VALUE = "";
+    public static final String STATIC_FILE = "static-file";
+    public static final String SITE = "site";
+    public static final String DATA_MASTER = "data/master";
+    public static final String METADATA = "metadata";
+    public static final String STATIC_FILE_SUB_TYPE = "STATIC_FILE";
+    public static final String CQ_PAGE = "cq:Page";
+    public static final String DAM_ASSET = "dam:Asset";
+    public static final String CQ = "cq:";
+    public static final String AEM = "AEM";
+    public static final String REP = "rep:";
 }

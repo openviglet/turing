@@ -288,7 +288,7 @@ public class TurAemCommonsUtils {
             responseHttpCache.forEach((k, v) -> log.debug("Cached Item Url: {}", k));
         }
         if (responseHttpCache.containsKey(url) && cached) {
-            log.info("Cached Response {}", url);
+            log.debug("Cached Response {}", url);
             return Optional.of(responseHttpCache.get(url));
         } else {
             return getResponseBodyNoCache(url, turAemSourceContext, cached);
