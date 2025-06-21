@@ -35,7 +35,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/v2/aem")
-@Tag(name = "Heartbeat", description = "Heartbeat")
+@Tag(name = "AEM API", description = "AEM API")
 public class TurAemApi {
     private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemPluginProcess turAemPluginProcess;
@@ -61,7 +61,6 @@ public class TurAemApi {
             turAemPluginProcess.sentToIndexStandaloneAsync(name, pathList);
         }
         return ResponseEntity.ok(statusSent());
-
     }
 
     private void updateCurrentRequests(String name, List<String> paths) {

@@ -51,7 +51,6 @@ import java.util.*;
 
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.*;
 
-
 /**
  * @author Alexandre Oliveira
  * @since 2025.2
@@ -73,7 +72,7 @@ public class TurAemPluginProcess {
     private final TurConnectorContext turConnectorContext;
     private final String turingUrl;
     private final String turingApiKey;
-
+    private final List<String> runningSources = new ArrayList<>();
     @Inject
     public TurAemPluginProcess(TurAemPluginSystemRepository turAemPluginSystemRepository,
                                TurAemConfigVarRepository turAemConfigVarRepository,
@@ -119,6 +118,11 @@ public class TurAemPluginProcess {
 
 
     public void indexAll(TurAemSource turAemSource) {
+        if (runningSources.contains(turAemSource.getName())) {
+            log.info("There are already source process running. Skipping: {}", turAemSource.getName());
+            return;
+        }
+        runningSources.add(turAemSource.getName());
         TurConnectorSession turConnectorSession = getTurConnectorSession(turAemSource);
         try {
             this.getNodesFromJson(getTurAemSourceContext(new AemPluginHandlerConfiguration(turAemSource)),
@@ -136,6 +140,9 @@ public class TurAemPluginProcess {
     }
 
     public void finished(TurConnectorSession turConnectorSession, boolean standalone) {
+        if (!standalone) {
+            runningSources.remove(turConnectorSession.getSource());
+        }
         turConnectorContext.finishIndexing(turConnectorSession, standalone);
     }
 
