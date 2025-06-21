@@ -56,32 +56,33 @@ public class TurAemApi {
 
     @PostMapping("index/{name}")
     public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String name,
-                                                              @RequestBody TurAemPathList turAemPathList) {
-        if (hasNonRepeatedRequest(name, turAemPathList)) {
-            turAemPluginProcess.sentToIndexStandaloneAsync(name, turAemPathList);
+                                                              @RequestBody TurAemPathList pathList) {
+        if (hasNonRepeatedRequest(name, pathList.getPaths())) {
+            turAemPluginProcess.sentToIndexStandaloneAsync(name, pathList);
         }
         return ResponseEntity.ok(statusSent());
 
     }
 
-    private void updateCurrentRequests(String name, TurAemPathList turAemPathList) {
+    private void updateCurrentRequests(String name, List<String> paths) {
         currentContentIdList.clear();
-        turAemPathList.getPaths()
-                .forEach(path -> currentContentIdList.add(getSourceWithContentId(name, path)));
+        paths.forEach(path -> currentContentIdList.add(getSourceWithContentId(name, path)));
     }
 
-    private boolean hasNonRepeatedRequest(String name, TurAemPathList turAemPathList) {
-        turAemPathList.getPaths().forEach(path -> {
+    private boolean hasNonRepeatedRequest(String name, List<String> paths) {
+        paths.forEach(path -> {
             String pathName = getSourceWithContentId(name, path);
             if (currentContentIdList.contains(pathName)) {
-                turAemPathList.getPaths().remove(path);
+                paths.remove(path);
                 log.warn("Repeated request: {}", pathName);
             }
         });
-        if (!turAemPathList.getPaths().isEmpty()) {
-            updateCurrentRequests(name, turAemPathList);
-        }
-        return !turAemPathList.getPaths().isEmpty();
+        if (hasPath(paths)) updateCurrentRequests(name, paths);
+        return hasPath(paths);
+    }
+
+    private static boolean hasPath(List<String> paths) {
+        return !paths.isEmpty();
     }
 
     private static @NotNull String getSourceWithContentId(String name, String path) {
