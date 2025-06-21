@@ -1,5 +1,8 @@
 package com.viglet.turing.spring.logging;
 
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
+import ch.qos.logback.core.CoreConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
@@ -19,16 +22,16 @@ import java.util.Date;
 @Setter
 public class TurMongoDBAppender extends TurMongoDBAppenderBase {
     @Override
-    protected void append(ILoggingEvent eventObject) {
+    protected void append(ILoggingEvent event) {
         if (!enabled || collection == null) {
             return;
         }
         TurLoggingGeneral turLoggingGeneral = TurLoggingGeneral.builder()
-                .level(eventObject.getLevel().toString())
-                .logger(abbreviatePackage(eventObject.getLoggerName()))
-                .message(eventObject.getFormattedMessage())
-                .timestamp(new Date(eventObject.getTimeStamp()))
-                .stackTrace(eventObject.getCallerData())
+                .level(event.getLevel().toString())
+                .logger(abbreviatePackage(event.getLoggerName()))
+                .message(event.getFormattedMessage())
+                .timestamp(new Date(event.getTimeStamp()))
+                .stackTrace(getStackTrace(event))
                 .build();
         try {
             turLoggingGeneral.setClusterNode(InetAddress.getLocalHost().getHostName());
@@ -40,6 +43,17 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    private static @NotNull String getStackTrace(ILoggingEvent event) {
+        StringBuilder stackStraceBuilder = new StringBuilder();
+        IThrowableProxy throwableProxy =  event.getThrowableProxy();
+        if (throwableProxy != null) {
+            String throwableStr = ThrowableProxyUtil.asString(throwableProxy);
+            stackStraceBuilder.append(throwableStr);
+            stackStraceBuilder.append(CoreConstants.LINE_SEPARATOR);
+        }
+        return stackStraceBuilder.toString();
     }
 
     private static @NotNull String abbreviatePackage(String packageName) {

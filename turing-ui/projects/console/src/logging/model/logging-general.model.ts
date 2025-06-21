@@ -3,4 +3,5 @@ export class TurLoggingGeneral {
   level!: string;
   logger!: string;
   message!: string;
+  stackTrace!: string;
 }

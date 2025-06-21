@@ -11,17 +11,16 @@
         <div class="d-table-cell col-3">
           <div style=" overflow-wrap: break-word;width: 300px;">{{ server.logger }}</div>
         </div>
-
-        <div class="d-table-cell col-7">
+        <div class="d-table-cell col-4">
           <pre style="overflow-wrap: break-word;max-width: 200px">
             {{ server.message }}</pre>
-
         </div>
-
+        <div class="d-table-cell col-3">
+          <pre style="overflow-wrap: break-word;max-width: 200px">
+            {{ server.stackTrace }}</pre>
+        </div>
       </div>
-
     </div>
-
 </div>
 <ng-template #loading>
   <span>Loading</span><span class="AnimatedEllipsis"></span>
