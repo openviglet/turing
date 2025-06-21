@@ -9,6 +9,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 @Component
@@ -25,7 +28,13 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
                 .logger(abbreviatePackage(eventObject.getLoggerName()))
                 .message(eventObject.getFormattedMessage())
                 .timestamp(new Date(eventObject.getTimeStamp()))
+                .stackTrace(eventObject.getCallerData())
                 .build();
+        try {
+            turLoggingGeneral.setClusterNode(InetAddress.getLocalHost().getHostName());
+        } catch (UnknownHostException e) {
+            log.error(e.getMessage(), e);
+        }
         try {
             collection.insertOne(Document.parse(new ObjectMapper().writeValueAsString(turLoggingGeneral)));
         } catch (JsonProcessingException e) {
@@ -34,7 +43,7 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
     }
 
     private static @NotNull String abbreviatePackage(String packageName) {
-        NameAbbreviator n = NameAbbreviator.getAbbreviator("1.");
+        TurNameAbbreviator n = TurNameAbbreviator.getAbbreviator("1.");
         StringBuffer sb = new StringBuffer();
         sb.append(packageName);
         n.abbreviate(1, sb);

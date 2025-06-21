@@ -15,8 +15,10 @@ import java.util.Locale;
 @Getter
 @Setter
 public class TurLoggingGeneral {
+    private String clusterNode;
     private Date timestamp;
     private String level;
     private String logger;
     private String message;
+    private StackTraceElement[] stackTrace;
 }

@@ -6,12 +6,12 @@ import java.util.List;
 /**
  * NameAbbreviator generates abbreviated logger and class names.
  */
-public abstract class NameAbbreviator {
+public abstract class TurNameAbbreviator {
 
     /**
      * Abbreviator that drops starting path elements.
      */
-    private static class DropElementAbbreviator extends NameAbbreviator {
+    private static class DropElementAbbreviator extends TurNameAbbreviator {
         /**
          * Maximum number of path elements to output.
          */
@@ -47,7 +47,7 @@ public abstract class NameAbbreviator {
     /**
      * Abbreviator that drops starting path elements.
      */
-    private static class MaxElementAbbreviator extends NameAbbreviator {
+    private static class MaxElementAbbreviator extends TurNameAbbreviator {
         /**
          * Maximum number of path elements to output.
          */
@@ -70,7 +70,7 @@ public abstract class NameAbbreviator {
          */
         @Override
         public void abbreviate(final int nameStart, final StringBuffer buf) {
-            // We substract 1 from 'len' when assigning to 'end' to avoid out of
+            // We subtract 1 from 'len' when assigning to 'end' to avoid out of
             // bounds exception in return r.substring(end+1, len). This can happen if
             // precision is 1 and the category name ends with a dot.
             int end = buf.length() - 1;
@@ -91,7 +91,7 @@ public abstract class NameAbbreviator {
     /**
      * Abbreviator that simply appends full name to buffer.
      */
-    private static class NOPAbbreviator extends NameAbbreviator {
+    private static class NOPAbbreviator extends TurNameAbbreviator {
         /**
          * Constructor.
          */
@@ -109,7 +109,7 @@ public abstract class NameAbbreviator {
      *
      *
      */
-    private static class PatternAbbreviator extends NameAbbreviator {
+    private static class PatternAbbreviator extends TurNameAbbreviator {
         /**
          * Element abbreviation patterns.
          */
@@ -120,8 +120,8 @@ public abstract class NameAbbreviator {
          *
          * @param fragments element abbreviation patterns.
          */
-        public PatternAbbreviator(final List fragments) {
-            if (fragments.size() == 0) {
+        public PatternAbbreviator(final List<PatternAbbreviatorFragment> fragments) {
+            if (fragments.isEmpty()) {
                 throw new IllegalArgumentException("fragments must have at least one element");
             }
 
@@ -158,67 +158,48 @@ public abstract class NameAbbreviator {
     }
 
     /**
-     * Fragment of an pattern abbreviator.
+     * Fragment of a pattern abbreviator.
      *
+     * @param charCount Count of initial characters of element to output.
+     * @param ellipsis  Character used to represent dropped characters. '\0' indicates no representation of dropped characters.
      */
-    private static class PatternAbbreviatorFragment {
-        /**
-         * Count of initial characters of element to output.
-         */
-        private final int charCount;
+        private record PatternAbbreviatorFragment(int charCount, char ellipsis) {
 
         /**
-         * Character used to represent dropped characters. '\0' indicates no representation of dropped characters.
-         */
-        private final char ellipsis;
+             * Abbreviate element of name.
+             *
+             * @param buf      buffer to receive element.
+             * @param startPos starting index of name element.
+             * @return starting index of next element.
+             */
+            public int abbreviate(final StringBuffer buf, final int startPos) {
+                int nextDot = buf.toString().indexOf(".", startPos);
 
-        /**
-         * Creates a PatternAbbreviatorFragment.
-         *
-         * @param charCount number of initial characters to preserve.
-         * @param ellipsis character to represent elimination of characters, '\0' if no ellipsis is desired.
-         */
-        public PatternAbbreviatorFragment(final int charCount, final char ellipsis) {
-            this.charCount = charCount;
-            this.ellipsis = ellipsis;
-        }
+                if (nextDot != -1) {
+                    if ((nextDot - startPos) > charCount) {
+                        buf.delete(startPos + charCount, nextDot);
+                        nextDot = startPos + charCount;
 
-        /**
-         * Abbreviate element of name.
-         *
-         * @param buf buffer to receive element.
-         * @param startPos starting index of name element.
-         * @return starting index of next element.
-         */
-        public int abbreviate(final StringBuffer buf, final int startPos) {
-            int nextDot = buf.toString().indexOf(".", startPos);
-
-            if (nextDot != -1) {
-                if ((nextDot - startPos) > charCount) {
-                    buf.delete(startPos + charCount, nextDot);
-                    nextDot = startPos + charCount;
-
-                    if (ellipsis != '\0') {
-                        buf.insert(nextDot, ellipsis);
-                        nextDot++;
+                        if (ellipsis != '\0') {
+                            buf.insert(nextDot, ellipsis);
+                            nextDot++;
+                        }
                     }
+
+                    nextDot++;
                 }
 
-                nextDot++;
+                return nextDot;
             }
-
-            return nextDot;
         }
-    }
 
     /**
      * Default (no abbreviation) abbreviator.
      */
-    private static final NameAbbreviator DEFAULT = new NOPAbbreviator();
+    private static final TurNameAbbreviator DEFAULT = new NOPAbbreviator();
 
     /**
      * Gets an abbreviator.
-     *
      * For example, "%logger{2}" will output only 2 elements of the logger name, %logger{-2} will drop 2 elements from the
      * logger name, "%logger{1.}" will output only the first character of the non-final elements in the name,
      * "%logger{1~.2~} will output the first character of the first element, two characters of the second and subsequent
@@ -227,22 +208,22 @@ public abstract class NameAbbreviator {
      * @param pattern abbreviation pattern.
      * @return abbreviator, will not be null.
      */
-    public static NameAbbreviator getAbbreviator(final String pattern) {
-        if (pattern.length() > 0) {
+    public static TurNameAbbreviator getAbbreviator(final String pattern) {
+        if (!pattern.isEmpty()) {
             // if pattern is just spaces and numbers then
             // use MaxElementAbbreviator
             final String trimmed = pattern.trim();
 
-            if (trimmed.length() == 0) {
+            if (trimmed.isEmpty()) {
                 return DEFAULT;
             }
 
             int i = 0;
-            if (trimmed.length() > 0) {
-                if (trimmed.charAt(0) == '-') {
-                    i++;
-                }
-                for (; (i < trimmed.length()) && (trimmed.charAt(i) >= '0') && (trimmed.charAt(i) <= '9'); i++) {}
+            if (trimmed.charAt(0) == '-') {
+                i++;
+            }
+            while ((i < trimmed.length()) && (trimmed.charAt(i) >= '0') && (trimmed.charAt(i) <= '9')) {
+                i++;
             }
 
             //
@@ -257,7 +238,7 @@ public abstract class NameAbbreviator {
                 }
             }
 
-            final ArrayList fragments = new ArrayList(5);
+            final ArrayList<PatternAbbreviatorFragment> fragments = new ArrayList<>(5);
             char ellipsis;
             int charCount;
             int pos = 0;
@@ -303,15 +284,6 @@ public abstract class NameAbbreviator {
         //
         // no matching abbreviation, return defaultAbbreviator
         //
-        return DEFAULT;
-    }
-
-    /**
-     * Gets default abbreviator.
-     *
-     * @return default abbreviator.
-     */
-    public static NameAbbreviator getDefaultAbbreviator() {
         return DEFAULT;
     }
 
