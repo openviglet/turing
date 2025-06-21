@@ -23,10 +23,13 @@ import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -36,6 +39,7 @@ import java.util.Map;
 public class TurAemApi {
     private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemPluginProcess turAemPluginProcess;
+    private final List<String> currentContentIdList = new ArrayList<>();
 
     @Inject
     public TurAemApi(TurAemSourceRepository turAemSourceRepository,
@@ -53,11 +57,36 @@ public class TurAemApi {
     @PostMapping("index/{name}")
     public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String name,
                                                               @RequestBody TurAemPathList turAemPathList) {
-        turAemPluginProcess.sentToIndexStandaloneAsync(name, turAemPathList);
+        if (hasNonRepeatedRequest(name, turAemPathList)) {
+            turAemPluginProcess.sentToIndexStandaloneAsync(name, turAemPathList);
+        }
         return ResponseEntity.ok(statusSent());
 
     }
 
+    private void updateCurrentRequests(String name, TurAemPathList turAemPathList) {
+        currentContentIdList.clear();
+        turAemPathList.getPaths()
+                .forEach(path -> currentContentIdList.add(getSourceWithContentId(name, path)));
+    }
+
+    private boolean hasNonRepeatedRequest(String name, TurAemPathList turAemPathList) {
+        turAemPathList.getPaths().forEach(path -> {
+            String pathName = getSourceWithContentId(name, path);
+            if (currentContentIdList.contains(pathName)) {
+                turAemPathList.getPaths().remove(path);
+                log.warn("Repeated request: {}", pathName);
+            }
+        });
+        if (!turAemPathList.getPaths().isEmpty()) {
+            updateCurrentRequests(name, turAemPathList);
+        }
+        return !turAemPathList.getPaths().isEmpty();
+    }
+
+    private static @NotNull String getSourceWithContentId(String name, String path) {
+        return name + "-" + path;
+    }
 
     @GetMapping("index/{name}/all")
     public ResponseEntity<Map<String, String>> indexAll(@PathVariable String name) {
