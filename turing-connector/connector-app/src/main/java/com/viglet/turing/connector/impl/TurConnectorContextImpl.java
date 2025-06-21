@@ -71,7 +71,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     @Override
     public void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone) {
         if (turSNJobItem != null) {
-            log.info("Adding {} object to payload.", turSNJobItem.getId());
+            log.debug("Adding {} object to payload.", turSNJobItem.getId());
             queueLinks.offer(turSNJobItem);
             processRemainingJobs(session, standalone);
         }
@@ -80,11 +80,11 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     @Override
     public void finishIndexing(TurConnectorSession session, boolean standalone) {
         if (turSNJobItems.size() > 0) {
-            log.info("Sending job to connector queue.");
+            log.debug("Sending job to connector queue.");
             sendToMessageQueue();
             getInfoQueue();
         } else {
-            log.info("No job to send to connector queue.");
+            log.debug("No job to send to connector queue.");
         }
         if (!standalone) {
             deIndexObjects(session);
@@ -144,7 +144,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     private static void ignoreIndexingRulesLog(TurSNJobItem turSNJobItem, TurConnectorSession session) {
-        log.info("{} object ({} - {} - {}) was ignored by Indexing Rules. transactionId = {}",
+        log.debug("{} object ({} - {} - {}) was ignored by Indexing Rules. transactionId = {}",
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(),
                 turSNJobItem.getEnvironment(), session.getTransactionId());
     }
@@ -196,8 +196,8 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     private void getInfoQueue() {
-        log.info("Total Job Item: {}", Iterators.size(turSNJobItems.iterator()));
-        log.info("Queue Size: {}", (long) queueLinks.size());
+        log.debug("Total Job Item: {}", Iterators.size(turSNJobItems.iterator()));
+        log.debug("Queue Size: {}", (long) queueLinks.size());
     }
 
     private void sendToMessageQueueWhenMaxSize() {
@@ -211,7 +211,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                               TurConnectorSession session) {
         getContentFromRepo(turSNJobItem, session)
                 .ifPresent(turAemIndexingsList ->
-                        log.info("Unchanged {} object ({} - {} - {}) and transactionId = {}",
+                        log.debug("Unchanged {} object ({} - {} - {}) and transactionId = {}",
                                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(),
                                 turSNJobItem.getEnvironment(), session.getTransactionId()));
     }
@@ -220,7 +220,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                             TurConnectorSession session) {
         getContentFromRepo(turSNJobItem, session)
                 .ifPresent(indexingList ->
-                        log.info("ReIndexed {} object ({} - {} - {}) from {} to {} and transactionId = {}",
+                        log.debug("ReIndexed {} object ({} - {} - {}) from {} to {} and transactionId = {}",
                                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(),
                                 turSNJobItem.getEnvironment(),
                                 indexingList.getFirst().getChecksum(),
@@ -278,7 +278,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
 
     private void addDeIndexItemToJob(TurConnectorSession session,
                                      TurConnectorIndexing turConnectorIndexing) {
-        log.info("DeIndex {} object ({} - {} - {}) systemId and {} transactionId",
+        log.debug("DeIndex {} object ({} - {} - {}) systemId and {} transactionId",
                 turConnectorIndexing.getObjectId(), turConnectorIndexing.getSource(), turConnectorIndexing.getLocale(),
                 turConnectorIndexing.getEnvironment(), session.getTransactionId());
         Map<String, Object> attributes = new HashMap<>();
@@ -307,12 +307,12 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     private void recreateDuplicatedStatus(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone) {
         turConnectorIndexingRepository.deleteByObjectIdAndSourceAndEnvironment(turSNJobItem.getId(),
                 session.getSource(), turSNJobItem.getEnvironment());
-        log.info("Removed duplicated status {} object ({} - {} - {})",
+        log.debug("Removed duplicated status {} object ({} - {} - {})",
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(), turSNJobItem.getEnvironment());
         turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, session,
                 TurIndexingStatus.RECREATED, standalone));
         setLoggingStatus(turSNJobItem, session, TurIndexingStatus.RECREATED);
-        log.info("Recreated status {} object ({} - {} - {}) and transactionId() = {}",
+        log.debug("Recreated status {} object ({} - {} - {}) and transactionId() = {}",
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(), turSNJobItem.getEnvironment(),
                 session.getTransactionId());
     }
@@ -323,7 +323,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                               boolean standalone) {
         turConnectorIndexingRepository.save(updateTurConnectorIndexing(turConnectorIndexingList.getFirst(),
                 turSNJobItem, session, status, standalone));
-        log.info("Updated status {} object ({} - {} - {}) transactionId() = {}",
+        log.debug("Updated status {} object ({} - {} - {}) transactionId() = {}",
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(), turSNJobItem.getEnvironment(),
                 session.getTransactionId());
     }
@@ -333,7 +333,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                               boolean standalone) {
         turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, session,
                 TurIndexingStatus.CREATED, standalone));
-        log.info("Created status {} object ({} - {} - {})", turSNJobItem.getId(), session.getSource(),
+        log.debug("Created status {} object ({} - {} - {})", turSNJobItem.getId(), session.getSource(),
                 turSNJobItem.getLocale(), turSNJobItem.getEnvironment());
         setLoggingStatus(turSNJobItem, session, TurIndexingStatus.CREATED);
     }

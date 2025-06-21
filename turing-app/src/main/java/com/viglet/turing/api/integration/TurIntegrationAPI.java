@@ -69,7 +69,7 @@ public class TurIntegrationAPI {
             String endpoint = turIntegrationInstance.getEndpoint() +
                     request.getRequestURI()
                             .replace("/api/v2/integration/" + turIntegrationInstance.getId(), "/api/v2");
-            log.info("Executing: {}", endpoint);
+            log.debug("Executing: {}", endpoint);
             HttpURLConnection connectorEnpoint = (HttpURLConnection) URI.create(endpoint)
                     .toURL().openConnection();
             connectorEnpoint.setRequestMethod(request.getMethod());
