@@ -60,11 +60,11 @@ public class TurConnectorIndexing implements Serializable {
     private Date created;
     @Column
     private Date modificationDate;
-
+    @Column
+    private boolean standalone;
     @Enumerated(EnumType.STRING)
     @Column
     private TurIndexingStatus status;
-
     @Builder.Default
     @Convert(converter = TurStringListConverter.class)
     private List<String> sites = new ArrayList<>();

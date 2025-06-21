@@ -191,7 +191,7 @@ public class TurWCPluginProcess {
                                  TurConnectorSession source) {
         turConnectorContext.addJobItem(new TurSNJobItem(TurSNJobAction.CREATE, new ArrayList<>(snSites),
                 getLocale(turWCSource, document, url),
-                getJobItemAttributes(turWCSource, document, url), null, checksum), source);
+                getJobItemAttributes(turWCSource, document, url), null, checksum), source, false);
     }
 
     public static String getCRC32Checksum(byte[] bytes) {
