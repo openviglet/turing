@@ -119,7 +119,7 @@ public class TurAemPluginProcess {
 
     public void indexAll(TurAemSource turAemSource) {
         if (runningSources.contains(turAemSource.getName())) {
-            log.info("There are already source process running. Skipping: {}", turAemSource.getName());
+            log.info("Skipping. There are already source process running. {}", turAemSource.getName());
             return;
         }
         runningSources.add(turAemSource.getName());

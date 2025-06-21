@@ -27,10 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -40,6 +39,7 @@ public class TurAemApi {
     private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemPluginProcess turAemPluginProcess;
     private final List<String> currentContentIdList = new ArrayList<>();
+    private LocalDateTime currentStandAloneUpdate = LocalDateTime.now();
 
     @Inject
     public TurAemApi(TurAemSourceRepository turAemSourceRepository,
@@ -66,14 +66,17 @@ public class TurAemApi {
     private void updateCurrentRequests(String name, List<String> paths) {
         currentContentIdList.clear();
         paths.forEach(path -> currentContentIdList.add(getSourceWithContentId(name, path)));
+        currentStandAloneUpdate = LocalDateTime.now();
     }
 
     private boolean hasNonRepeatedRequest(String name, List<String> paths) {
-        paths.forEach(path -> {
+        Duration duration = Duration.between(currentStandAloneUpdate, LocalDateTime.now());
+        if (duration.getSeconds() > 30L) return true;
+        new ArrayList<>(paths).forEach(path -> {
             String pathName = getSourceWithContentId(name, path);
             if (currentContentIdList.contains(pathName)) {
                 paths.remove(path);
-                log.warn("Repeated request: {}", pathName);
+                log.warn("Skipping. Repeated request: {}", pathName);
             }
         });
         if (hasPath(paths)) updateCurrentRequests(name, paths);
