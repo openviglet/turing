@@ -20,6 +20,7 @@
  */
 package com.viglet.turing.connector.aem.commons.bean;
 
+import com.viglet.turing.connector.aem.commons.TurAemObject;
 import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
@@ -29,12 +30,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TurAemContext {
-	private Object cmsObjectInstance;
+	private TurAemObject cmsObjectInstance;
 	private TurAemTargetAttr turAemTargetAttr;
 	private TurAemSourceAttr turAemSourceAttr;
 	private IAemConfiguration configuration;
 
-	public TurAemContext(Object cmsObjectInstance,
+	public TurAemContext(TurAemObject cmsObjectInstance,
 						 IAemConfiguration configuration) {
 		this.cmsObjectInstance = cmsObjectInstance;
 		this.turAemTargetAttr = null;

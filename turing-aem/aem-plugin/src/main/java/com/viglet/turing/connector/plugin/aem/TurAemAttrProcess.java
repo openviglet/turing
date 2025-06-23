@@ -62,7 +62,7 @@ public class TurAemAttrProcess {
     @Nullable
     public static Object getJcrProperty(TurAemContext context, String sourceAttrName) {
         return Optional.ofNullable(sourceAttrName).map(attrName -> {
-            TurAemObject aemObject = (TurAemObject) context.getCmsObjectInstance();
+            TurAemObject aemObject = context.getCmsObjectInstance();
             if (isValidNode(attrName, aemObject)) {
                 return aemObject.getJcrContentNode().get(attrName);
             } else if (aemObject.getAttributes().containsKey(attrName))
@@ -97,15 +97,17 @@ public class TurAemAttrProcess {
             String key = keys.next();
             String titleStartWith = JCR_TITLE + ".";
             if (key.startsWith(titleStartWith)) {
-                String locale = key.replaceAll(titleStartWith, "");
-                if (locale.equals("pt_br"))
-                    locale = "pt_BR";
-                else if (locale.equals("en_us"))
-                    locale = "en_US";
+                String locale = normalizeLocale(key.replaceAll(titleStartWith, ""));
                 labels.put(locale, tagJson.getString(key));
             }
         }
         return labels;
+    }
+
+    private static String normalizeLocale(String locale) {
+        String[] parts = locale.split("_");
+        if (parts.length == 2) return "%s_%s".formatted(parts[0].toLowerCase(), parts[1].toUpperCase());
+        return locale;
     }
 
     public static TurAemTargetAttrValueMap addValuesToAttributes(TurAemTargetAttr turAemTargetAttr,
@@ -130,8 +132,7 @@ public class TurAemAttrProcess {
     }
 
     private static boolean isJSONArray(Object jcrProperty) {
-        return jcrProperty instanceof JSONArray jsonArray
-                && !jsonArray.isEmpty();
+        return jcrProperty instanceof JSONArray jsonArray && !jsonArray.isEmpty();
     }
 
     public static boolean hasCustomClass(TurAemContext context) {
@@ -148,8 +149,7 @@ public class TurAemAttrProcess {
                 turAemTargetAttrValueMap.get(turAemTargetAttr.getName()).stream().distinct().toList(), false);
     }
 
-    public static TurSNAttributeSpec setTagFacet(TurAemSourceContext turAemSourceContext,
-                                                 String facetId) {
+    public static TurSNAttributeSpec setTagFacet(TurAemSourceContext turAemSourceContext, String facetId) {
         return TurAemCommonsUtils
                 .getInfinityJson((CQ_TAGS_PATH + "/%s").formatted(facetId),
                         turAemSourceContext, true).map(infinityJson ->
@@ -171,7 +171,6 @@ public class TurAemAttrProcess {
                         return tagLabels.get(titleLanguage);
                     else return tagLabels.getOrDefault(DEFAULT, value);
                 }).orElse(value);
-
     }
 
     public TurAemTargetAttrValueMap prepareAttributeDefs(TurAemObject aemObject,
@@ -190,7 +189,9 @@ public class TurAemAttrProcess {
                                     turAemTargetAttrValueMap.merge(process(context, turSNAttributeSpecList,
                                             turAemSourceContext));
                                 } else {
-                                    targetAttr.getSourceAttrs().stream().filter(Objects::nonNull)
+                                    targetAttr.getSourceAttrs()
+                                            .stream()
+                                            .filter(Objects::nonNull)
                                             .forEach(sourceAttr ->
                                                     turAemTargetAttrValueMap.merge(
                                                             addTargetAttrValuesBySourceAttr(turAemSourceContext,
@@ -221,11 +222,8 @@ public class TurAemAttrProcess {
                                             TurAemSourceContext turAemSourceContext) {
         log.debug("Target Attribute Name: {} and Source Attribute Name: {}",
                 context.getTurAemTargetAttr().getName(), context.getTurAemSourceAttr().getName());
-        if (hasTextValue(context.getTurAemTargetAttr())) {
-            return getTextValue(context);
-        } else {
-            return getCustomClassValue(context, turSNAttributeSpecList, turAemSourceContext);
-        }
+        return hasTextValue(context.getTurAemTargetAttr()) ? getTextValue(context) :
+                getCustomClassValue(context, turSNAttributeSpecList, turAemSourceContext);
     }
 
     private @NotNull TurAemTargetAttrValueMap getCustomClassValue(TurAemContext context,
@@ -314,11 +312,10 @@ public class TurAemAttrProcess {
                         ((TurAemExtAttributeInterface) classInstance)
                                 .consume(context.getTurAemTargetAttr(),
                                         context.getTurAemSourceAttr(),
-                                        (TurAemObject) context.getCmsObjectInstance(),
+                                        context.getCmsObjectInstance(),
                                         turAemSourceContext),
                         false))
                 .orElseGet(TurAemTargetAttrValueMap::new);
 
     }
-
 }

@@ -119,8 +119,7 @@ public class TurAemCommonsUtils {
 
 
     private static Date defaultDeltaDate(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
-        return new TurAemExtDeltaDate().consume(aemObject,
-                turAemSourceContext);
+        return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
     }
 
     public static TurAemTargetAttrValueMap runCustomClassFromContentType(TurAemModel turAemModel,
@@ -182,10 +181,7 @@ public class TurAemCommonsUtils {
 
     private static void convertAttributeSingleValueToArray(Map<String, Object> attributes,
                                                            String attributeName, String attributeValue) {
-        List<Object> attributeValues = new ArrayList<>();
-        attributeValues.add(attributes.get(attributeName));
-        attributeValues.add(attributeValue);
-        attributes.put(attributeName, attributeValues);
+        attributes.put(attributeName,  List.of(attributes.get(attributeName), attributeValue));
     }
 
     private static void addItemToArray(Map<String, Object> attributes, String attributeName, String attributeValue) {
@@ -239,7 +235,7 @@ public class TurAemCommonsUtils {
     }
 
     private static Optional<JSONObject> getInfinityJsonNotFound(String infinityJsonUrl) {
-        log.info("Request Not Found {}", infinityJsonUrl);
+        log.warn("Request Not Found {}", infinityJsonUrl);
         return Optional.empty();
     }
 
@@ -304,7 +300,7 @@ public class TurAemCommonsUtils {
                 .build()) {
             HttpGet request = new HttpGet(URI.create(UrlEscapers.urlFragmentEscaper().escape(url)).normalize());
             String json = httpClient.execute(request, response -> {
-                log.info("Request Status {} - {}", response.getCode(), url);
+                log.debug("Request Status {} - {}", response.getCode(), url);
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             });
@@ -343,8 +339,7 @@ public class TurAemCommonsUtils {
     }
 
     public static Locale getLocaleFromContext(TurAemSourceContext turAemSourceContext, TurAemContext context) {
-        TurAemObject aemObject = (TurAemObject) context.getCmsObjectInstance();
-        return getLocaleFromAemObject(turAemSourceContext, aemObject);
+        return getLocaleFromAemObject(turAemSourceContext, context.getCmsObjectInstance());
     }
 
     public static void cleanCache() {

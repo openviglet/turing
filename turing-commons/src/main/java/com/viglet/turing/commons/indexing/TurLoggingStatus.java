@@ -18,17 +18,7 @@
 
 package com.viglet.turing.commons.indexing;
 
-public enum TurIndexingStatus {
-    PREPARE_INDEX,
-    PREPARE_UNCHANGED,
-    PREPARE_REINDEX,
-    PREPARE_FORCED_REINDEX,
-    RECEIVED_AND_SENT_TO_TURING,
-    SENT_TO_QUEUE,
-    NOT_PROCESSED,
-    INDEXED,
-    DEINDEXED,
-    IGNORED,
-    FINISHED, RECEIVED_FROM_QUEUE,
-
+public enum TurLoggingStatus {
+    SUCCESS,
+    ERROR
 }

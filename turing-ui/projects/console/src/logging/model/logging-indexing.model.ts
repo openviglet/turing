@@ -8,5 +8,7 @@ export class TurLoggingIndexing {
   locale!: string;
   transactionId!: string;
   checksum!: string;
+  loggingStatus!: string;
+  details!: string;
 
 }

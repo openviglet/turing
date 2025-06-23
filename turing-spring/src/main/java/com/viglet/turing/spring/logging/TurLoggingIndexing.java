@@ -1,6 +1,7 @@
 package com.viglet.turing.spring.logging;
 
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
+import com.viglet.turing.commons.indexing.TurLoggingStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +20,13 @@ public class TurLoggingIndexing {
     private TurIndexingStatus status;
     private String source;
     private String contentId;
+    private String url;
     private List<String> sites;
     private String environment;
     private Locale locale;
     private String transactionId;
     private String checksum;
+    private TurLoggingStatus resultStatus;
+    private String details;
 
 }
