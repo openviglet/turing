@@ -19,6 +19,7 @@
 package com.viglet.turing.connector.plugin.aem;
 
 import com.google.inject.Inject;
+import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.client.sn.TurSNConstants;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
@@ -429,7 +430,7 @@ public class TurAemPluginProcess {
                         turAemContentDefinitionProcess,
                         getJobItemAttributes(
                                 turAemSourceContext,
-                                getTurAemTargetAttrValueMap(
+                                getTargetAttrValueMap(
                                         aemObject,
                                         turAemModel,
                                         turSNAttributeSpecList,
@@ -441,11 +442,12 @@ public class TurAemPluginProcess {
                 standalone);
     }
 
-    private static @NotNull TurAemTargetAttrValueMap getTurAemTargetAttrValueMap(TurAemObject aemObject,
-                                                                                 TurAemModel turAemModel,
-                                                                                 List<TurSNAttributeSpec> turSNAttributeSpecList,
-                                                                                 TurAemSourceContext turAemSourceContext,
-                                                                                 TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
+    private static @NotNull TurAemTargetAttrValueMap getTargetAttrValueMap(
+            TurAemObject aemObject,
+            TurAemModel turAemModel,
+            List<TurSNAttributeSpec> turSNAttributeSpecList,
+            TurAemSourceContext turAemSourceContext,
+            TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
         TurAemTargetAttrValueMap turAemTargetAttrValueMap = new TurAemAttrProcess()
                 .prepareAttributeDefs(aemObject, turAemContentDefinitionProcess, turSNAttributeSpecList,
                         turAemSourceContext);
@@ -461,11 +463,15 @@ public class TurAemPluginProcess {
                                                          TurConnectorSession turConnectorSession,
                                                          TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                                                          Map<String, Object> attributes) {
-        TurSNJobItem jobItem = new TurSNJobItem(TurSNJobAction.CREATE,
+        TurSNJobItem jobItem = new TurSNJobItem(
+                TurSNJobAction.CREATE,
                 turConnectorSession.getSites().stream().toList(),
-                locale, attributes,
+                locale,
+                attributes,
                 TurAemCommonsUtils.castSpecToJobSpec(
-                        TurAemCommonsUtils.getDefinitionFromModel(turSNAttributeSpecList, attributes)));
+                        TurAemCommonsUtils.getDefinitionFromModel(turSNAttributeSpecList, attributes)
+                )
+        );
         jobItem.setChecksum(String.valueOf(TurAemCommonsUtils
                 .getDeltaDate(aemObject, turAemSourceContext, turAemContentDefinitionProcess).getTime()));
         jobItem.setEnvironment(turAemSourceContext.getEnvironment().toString());
@@ -473,23 +479,25 @@ public class TurAemPluginProcess {
     }
 
     private static @NotNull Map<String, Object> getJobItemAttributes(TurAemSourceContext turAemSourceContext,
-                                                                     TurAemTargetAttrValueMap turAemTargetAttrValueMap) {
+                                                                     TurAemTargetAttrValueMap targetAttrValueMap) {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(SITE, turAemSourceContext.getSiteName());
-        turAemTargetAttrValueMap.entrySet().stream()
+        targetAttrValueMap.entrySet().stream()
                 .filter(entry -> !CollectionUtils.isEmpty(entry.getValue()))
-                .forEach(entry -> {
-                    String attributeName = entry.getKey();
-                    entry.getValue().forEach(attributeValue -> {
-                        if (StringUtils.isNotBlank(attributeValue)) {
-                            if (attributes.containsKey(attributeName)) {
-                                TurAemCommonsUtils.addItemInExistingAttribute(attributeValue, attributes, attributeName);
-                            } else {
-                                TurAemCommonsUtils.addFirstItemToAttribute(attributeName, attributeValue, attributes);
-                            }
-                        }
-                    });
-                });
+                .forEach(entry -> getJobItemAttribute(entry, attributes));
         return attributes;
+    }
+
+    private static void getJobItemAttribute(Map.Entry<String, TurMultiValue> entry, Map<String, Object> attributes) {
+        String attributeName = entry.getKey();
+        entry.getValue().stream()
+                .filter(StringUtils::isNotBlank)
+                .forEach(attributeValue -> {
+                    if (attributes.containsKey(attributeName)) {
+                        TurAemCommonsUtils.addItemInExistingAttribute(attributeValue, attributes, attributeName);
+                    } else {
+                        TurAemCommonsUtils.addFirstItemToAttribute(attributeName, attributeValue, attributes);
+                    }
+                });
     }
 }
