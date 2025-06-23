@@ -48,6 +48,8 @@ import static com.viglet.turing.connector.aem.commons.TurAemConstants.*;
 public class TurAemAttrProcess {
 
 
+    public static final String CQ_TAGS_PATH = "/content/_cq_tags";
+
     public static boolean hasCustomClass(TurAemTargetAttr targetAttr) {
         return targetAttr.getSourceAttrs() == null
                 && StringUtils.isNotBlank(targetAttr.getClassName());
@@ -61,26 +63,29 @@ public class TurAemAttrProcess {
     public static Object getJcrProperty(TurAemContext context, String sourceAttrName) {
         return Optional.ofNullable(sourceAttrName).map(attrName -> {
             TurAemObject aemObject = (TurAemObject) context.getCmsObjectInstance();
-            if (aemObject.getJcrContentNode() != null && aemObject.getJcrContentNode().has(attrName)) {
+            if (isValidNode(attrName, aemObject)) {
                 return aemObject.getJcrContentNode().get(attrName);
             } else if (aemObject.getAttributes().containsKey(attrName))
                 return aemObject.getAttributes().get(attrName);
             return null;
         }).orElse(null);
+    }
 
+    private static boolean isValidNode(String attrName, TurAemObject aemObject) {
+        return aemObject.getJcrContentNode() != null && aemObject.getJcrContentNode().has(attrName);
     }
 
     @NotNull
     public static TurSNAttributeSpec getTurSNAttributeSpec(String facet, Map<String, String> facetLabel) {
-        TurSNAttributeSpec turSNAttributeSpec = new TurSNAttributeSpec();
-        turSNAttributeSpec.setName(facet);
-        turSNAttributeSpec.setDescription(facetLabel.get(DEFAULT));
-        turSNAttributeSpec.setFacetName(facetLabel);
-        turSNAttributeSpec.setFacet(true);
-        turSNAttributeSpec.setMandatory(false);
-        turSNAttributeSpec.setType(TurSEFieldType.STRING);
-        turSNAttributeSpec.setMultiValued(true);
-        return turSNAttributeSpec;
+        return TurSNAttributeSpec.builder()
+                .name(facet)
+                .description(facetLabel.get(DEFAULT))
+                .facetName(facetLabel)
+                .facet(true)
+                .mandatory(false)
+                .type(TurSEFieldType.STRING)
+                .multiValued(true)
+                .build();
     }
 
     public static Map<String, String> getTagLabels(JSONObject tagJson) {
@@ -146,7 +151,7 @@ public class TurAemAttrProcess {
     public static TurSNAttributeSpec setTagFacet(TurAemSourceContext turAemSourceContext,
                                                  String facetId) {
         return TurAemCommonsUtils
-                .getInfinityJson("/content/_cq_tags/%s".formatted(facetId),
+                .getInfinityJson((CQ_TAGS_PATH + "/%s").formatted(facetId),
                         turAemSourceContext, true).map(infinityJson ->
                         getTurSNAttributeSpec(facetId, getTagLabels(infinityJson))).orElse(new TurSNAttributeSpec());
     }
@@ -154,7 +159,7 @@ public class TurAemAttrProcess {
     public static String addTagToAttrValueList(TurAemContext context, TurAemSourceContext turAemSourceContext,
                                                String facet, String value) {
         return TurAemCommonsUtils
-                .getInfinityJson("/content/_cq_tags/%s/%s".formatted(facet, value),
+                .getInfinityJson((CQ_TAGS_PATH + "/%s/%s").formatted(facet, value),
                         turAemSourceContext, true).map(infinityJson -> {
                     Locale locale = TurAemCommonsUtils.getLocaleFromContext(turAemSourceContext, context);
                     String titleLocale = locale.toString().toLowerCase();
@@ -239,8 +244,7 @@ public class TurAemAttrProcess {
     }
 
     private TurAemTargetAttrValueMap attributeByCMS(TurAemContext context) {
-        String sourceAttrName = context.getTurAemSourceAttr().getName();
-        final Object jcrProperty = getJcrProperty(context, sourceAttrName);
+        final Object jcrProperty = getJcrProperty(context, context.getTurAemSourceAttr().getName());
         return hasJcrPropertyValue(jcrProperty) ?
                 addValuesToAttributes(context.getTurAemTargetAttr(),
                         context.getTurAemSourceAttr(), jcrProperty) :
@@ -283,9 +287,9 @@ public class TurAemAttrProcess {
                                                   TurAemTargetAttrValueMap turAemTargetAttrValueMapFromClass,
                                                   String targetName,
                                                   TurAemTargetAttrValueMap turAemTargetAttrValueMap) {
-        turAemTargetAttrValueMapFromClass.get(targetName).forEach(tag ->
-                formatTags(context, turAemSourceContext, turSNAttributeSpecList,
-                        tag, turAemTargetAttrValueMap));
+        turAemTargetAttrValueMapFromClass.get(targetName)
+                .forEach(tag ->
+                        formatTags(context, turAemSourceContext, turSNAttributeSpecList, tag, turAemTargetAttrValueMap));
     }
 
     private static void formatTags(TurAemContext context, TurAemSourceContext turAemSourceContext,
