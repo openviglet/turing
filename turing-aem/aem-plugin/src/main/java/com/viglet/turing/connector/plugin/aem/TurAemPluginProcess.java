@@ -73,6 +73,7 @@ public class TurAemPluginProcess {
     private final String turingUrl;
     private final String turingApiKey;
     private final List<String> runningSources = new ArrayList<>();
+
     @Inject
     public TurAemPluginProcess(TurAemPluginSystemRepository turAemPluginSystemRepository,
                                TurAemConfigVarRepository turAemConfigVarRepository,
@@ -277,7 +278,7 @@ public class TurAemPluginProcess {
         TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext, false)
                 .ifPresent(infinityJson ->
                         getNodeFromJson(turAemSourceContext.getRootPath(), infinityJson, turAemSourceContext,
-                        turConnectorSession, turAemSource, turAemContentDefinitionProcess, false));
+                                turConnectorSession, turAemSource, turAemContentDefinitionProcess, false));
     }
 
     private void getNodeFromJson(String nodePath, JSONObject jsonObject,
@@ -418,12 +419,61 @@ public class TurAemPluginProcess {
                                          TurConnectorSession turConnectorSession,
                                          TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                                          boolean standalone) {
-        TurAemAttrProcess turAEMAttrProcess = new TurAemAttrProcess();
-        TurAemTargetAttrValueMap turAemTargetAttrValueMap = turAEMAttrProcess
+        turConnectorContext.addJobItem(
+                getTurSNJobItem(
+                        aemObject,
+                        turSNAttributeSpecList,
+                        locale,
+                        turAemSourceContext,
+                        turConnectorSession,
+                        turAemContentDefinitionProcess,
+                        getJobItemAttributes(
+                                turAemSourceContext,
+                                getTurAemTargetAttrValueMap(
+                                        aemObject,
+                                        turAemModel,
+                                        turSNAttributeSpecList,
+                                        turAemSourceContext,
+                                        turAemContentDefinitionProcess)
+                        )
+                ),
+                turConnectorSession,
+                standalone);
+    }
+
+    private static @NotNull TurAemTargetAttrValueMap getTurAemTargetAttrValueMap(TurAemObject aemObject,
+                                                                                 TurAemModel turAemModel,
+                                                                                 List<TurSNAttributeSpec> turSNAttributeSpecList,
+                                                                                 TurAemSourceContext turAemSourceContext,
+                                                                                 TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
+        TurAemTargetAttrValueMap turAemTargetAttrValueMap = new TurAemAttrProcess()
                 .prepareAttributeDefs(aemObject, turAemContentDefinitionProcess, turSNAttributeSpecList,
                         turAemSourceContext);
         turAemTargetAttrValueMap.merge(TurAemCommonsUtils.runCustomClassFromContentType(turAemModel,
                 aemObject, turAemSourceContext));
+        return turAemTargetAttrValueMap;
+    }
+
+    private static @NotNull TurSNJobItem getTurSNJobItem(TurAemObject aemObject,
+                                                         List<TurSNAttributeSpec> turSNAttributeSpecList,
+                                                         Locale locale,
+                                                         TurAemSourceContext turAemSourceContext,
+                                                         TurConnectorSession turConnectorSession,
+                                                         TurAemContentDefinitionProcess turAemContentDefinitionProcess,
+                                                         Map<String, Object> attributes) {
+        TurSNJobItem jobItem = new TurSNJobItem(TurSNJobAction.CREATE,
+                turConnectorSession.getSites().stream().toList(),
+                locale, attributes,
+                TurAemCommonsUtils.castSpecToJobSpec(
+                        TurAemCommonsUtils.getDefinitionFromModel(turSNAttributeSpecList, attributes)));
+        jobItem.setChecksum(String.valueOf(TurAemCommonsUtils
+                .getDeltaDate(aemObject, turAemSourceContext, turAemContentDefinitionProcess).getTime()));
+        jobItem.setEnvironment(turAemSourceContext.getEnvironment().toString());
+        return jobItem;
+    }
+
+    private static @NotNull Map<String, Object> getJobItemAttributes(TurAemSourceContext turAemSourceContext,
+                                                                     TurAemTargetAttrValueMap turAemTargetAttrValueMap) {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(SITE, turAemSourceContext.getSiteName());
         turAemTargetAttrValueMap.entrySet().stream()
@@ -440,15 +490,6 @@ public class TurAemPluginProcess {
                         }
                     });
                 });
-        TurSNJobItem jobItem = new TurSNJobItem(TurSNJobAction.CREATE,
-                turConnectorSession.getSites().stream().toList(),
-                locale,
-                attributes,
-                TurAemCommonsUtils.castSpecToJobSpec(
-                        TurAemCommonsUtils.getDefinitionFromModel(turSNAttributeSpecList, attributes)));
-        jobItem.setChecksum(String.valueOf(TurAemCommonsUtils
-                .getDeltaDate(aemObject, turAemSourceContext, turAemContentDefinitionProcess).getTime()));
-        jobItem.setEnvironment(turAemSourceContext.getEnvironment().toString());
-        turConnectorContext.addJobItem(jobItem, turConnectorSession, standalone);
+        return attributes;
     }
 }
