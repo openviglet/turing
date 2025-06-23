@@ -2,6 +2,7 @@ package com.viglet.turing.connector.logging;
 
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
+import com.viglet.turing.commons.indexing.TurLoggingStatus;
 import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.spring.logging.TurLoggingIndexing;
 import com.viglet.turing.spring.logging.TurLoggingIndexingLog;
@@ -19,10 +20,11 @@ public class TurConnectorLoggingUtils {
                 .environment(turSNJobItem.getEnvironment())
                 .locale(turSNJobItem.getLocale())
                 .status(status)
+                .resultStatus(TurLoggingStatus.SUCCESS)
                 .transactionId(session.getTransactionId())
                 .checksum(turSNJobItem.getChecksum())
                 .source(session.getSource())
-                .timestamp(new Date())
+                .date(new Date())
                 .sites(turSNJobItem.getSiteNames())
                 .build());
     }
@@ -36,8 +38,9 @@ public class TurConnectorLoggingUtils {
                 .environment(turSNJobItem.getEnvironment())
                 .locale(turSNJobItem.getLocale())
                 .status(status)
+                .resultStatus(TurLoggingStatus.SUCCESS)
                 .checksum(turSNJobItem.getChecksum())
-                .timestamp(new Date())
+                .date(new Date())
                 .sites(turSNJobItem.getSiteNames())
                 .build());
     }

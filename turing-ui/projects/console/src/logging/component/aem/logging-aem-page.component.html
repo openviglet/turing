@@ -3,7 +3,7 @@
     <div *ngFor="let aem of aemList" class="mb-2">
       <div class="d-table">
         <div class="d-table-cell col-1" style="width: 200px;text-wrap: nowrap;">
-          <div>{{ aem.timestamp | amTimeAgo }}</div>
+          <div>{{ aem.date | amTimeAgo }}</div>
         </div>
         <div class="d-table-cell col-1" style="width: 100px;">
           <div>{{ aem.level }}</div>

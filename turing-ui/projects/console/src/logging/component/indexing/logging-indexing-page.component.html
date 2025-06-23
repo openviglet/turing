@@ -3,19 +3,19 @@
   <div *ngFor="let indexing of indexingList" class="mb-2">
     <div class="d-table">
       <div class="d-table-cell col-1" style="width: 200px;text-wrap: nowrap;">
-        <div>{{ indexing.timestamp | amTimeAgo }}</div>
+        <div>{{ indexing.date | amTimeAgo }}</div>
+      </div>
+      <div class="d-table-cell col-1" style="width: 100px;">
+        <div>{{ indexing.source }}</div>
       </div>
       <div class="d-table-cell col-1" style="width: 150px;">
         <div>{{ indexing.status }}</div>
       </div>
       <div class="d-table-cell col-1" style="width: 150px;">
-        <div>{{ indexing.loggingStatus }}</div>
-      </div>
-      <div class="d-table-cell col-1" style="width: 100px;">
-        <div>{{ indexing.source }}</div>
+        <div>{{ indexing.resultStatus }}</div>
       </div>
       <div class="d-table-cell col-1" style="width: 500px;">
-        <div>{{ indexing.contentId }}</div>
+        <div>{{ indexing.url }}</div>
       </div>
       <div class="d-table-cell col-1" style="width: 100px;">
         <div>{{ indexing.environment }}</div>

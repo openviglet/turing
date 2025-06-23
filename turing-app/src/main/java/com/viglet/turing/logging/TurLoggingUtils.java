@@ -27,7 +27,7 @@ public class TurLoggingUtils {
                 .transactionId(null)
                 .checksum(turSNJobItem.getChecksum())
                 .source(SERVER)
-                .timestamp(new Date())
+                .date(new Date())
                 .sites(turSNJobItem.getSiteNames())
                 .resultStatus(loggingStatus)
                 .details(details)

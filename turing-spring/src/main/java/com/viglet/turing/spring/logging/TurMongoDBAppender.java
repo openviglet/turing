@@ -5,6 +5,8 @@ import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.CoreConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import lombok.Setter;
 import org.bson.Document;
 
@@ -30,7 +32,7 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
                 .level(event.getLevel().toString())
                 .logger(abbreviatePackage(event.getLoggerName()))
                 .message(event.getFormattedMessage())
-                .timestamp(new Date(event.getTimeStamp()))
+                .date(new Date(event.getTimeStamp()))
                 .stackTrace(getStackTrace(event))
                 .build();
         try {
@@ -39,7 +41,10 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
             log.error(e.getMessage(), e);
         }
         try {
-            collection.insertOne(Document.parse(new ObjectMapper().writeValueAsString(turLoggingGeneral)));
+            String json = new ObjectMapper().registerModule(new JodaModule())
+                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+                    .writeValueAsString(turLoggingGeneral);
+            collection.insertOne(Document.parse(json));
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
         }

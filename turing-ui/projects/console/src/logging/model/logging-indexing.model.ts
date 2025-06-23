@@ -1,14 +1,15 @@
 export class TurLoggingIndexing {
-  timestamp!: Date;
+  date!: Date;
   status!: string;
   source!: string;
   contentId!: string;
+  url!: string;
   sites!: string[];
   environment!: string;
   locale!: string;
   transactionId!: string;
   checksum!: string;
-  loggingStatus!: string;
+  resultStatus!: string;
   details!: string;
 
 }

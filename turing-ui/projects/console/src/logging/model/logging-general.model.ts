@@ -1,5 +1,5 @@
 export class TurLoggingGeneral {
-  timestamp!: Date;
+  date!: Date;
   level!: string;
   logger!: string;
   message!: string;
