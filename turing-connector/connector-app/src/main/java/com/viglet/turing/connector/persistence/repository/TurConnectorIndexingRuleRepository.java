@@ -35,8 +35,5 @@ import java.util.Set;
 public interface TurConnectorIndexingRuleRepository extends JpaRepository<TurConnectorIndexingRule, String> {
 	Set<TurConnectorIndexingRule> findBySource(Sort language, String source);
 	Set<TurConnectorIndexingRule> findBySourceAndRuleType(String source, TurConnectorIndexingRuleType type);
-	@NotNull
-	TurConnectorIndexingRule save(@NotNull TurConnectorIndexingRule turConnectorIndexingRule);
-
 	void delete(@NotNull TurConnectorIndexingRule turConnectorIndexingRule);
 }

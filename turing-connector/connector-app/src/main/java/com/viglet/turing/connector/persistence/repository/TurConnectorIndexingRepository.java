@@ -29,11 +29,11 @@ import java.util.Optional;
 
 public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexing, String> {
 
-    Optional<List<TurConnectorIndexing>> findBySourceAndTransactionIdNotAndStandalone(String source,
+    List<TurConnectorIndexing> findBySourceAndTransactionIdNotAndStandalone(String source,
                                                                                       String transactionId,
                                                                                       boolean standalone);
 
-    default Optional<List<TurConnectorIndexing>> findContentsShouldBeDeIndexed(String source, String transactionId) {
+    default List<TurConnectorIndexing> findContentsShouldBeDeIndexed(String source, String transactionId) {
         return findBySourceAndTransactionIdNotAndStandalone(source, transactionId, false);
     }
 
@@ -46,8 +46,11 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
                                                                              String environment);
 
     Optional<List<TurConnectorIndexing>> findByObjectIdAndSource(String objectId, String source);
+
+    @Transactional
     void deleteByObjectIdAndSourceAndEnvironment(String objectId, String source, String environment);
 
+    @Transactional
     void deleteBySourceAndTransactionIdNot(String source, String transactionId);
 
     Optional<List<TurConnectorIndexing>> findAllBySourceOrderByModificationDateDesc(String source, Limit limit);

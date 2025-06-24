@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
 import static com.viglet.turing.connector.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
 import static com.viglet.turing.connector.logging.TurConnectorLoggingUtils.setSuccessStatus;
+
 @Slf4j
 @Component
 public class TurConnectorContextImpl implements TurConnectorContext {
@@ -237,17 +238,14 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     private void deIndexObjects(TurConnectorSession session) {
-        getContentsShouldBeDeIndexed(session)
-                .ifPresent(contents -> {
-                            contents.forEach(content ->
-                                    addDeIndexItemToJob(session, content));
-                            removeDeIndexItemsFromRepo(session);
-                            sendToMessageQueue(session);
-                        }
-                );
+        List<TurConnectorIndexing> deindexedItems = getContentsShouldBeDeIndexed(session);
+        if (deindexedItems.isEmpty()) return;
+        deindexedItems.forEach(deindexedItem -> addDeIndexItemToJob(session, deindexedItem));
+        removeDeIndexItemsFromRepo(session);
+        sendToMessageQueue(session);
     }
 
-    private Optional<List<TurConnectorIndexing>> getContentsShouldBeDeIndexed(TurConnectorSession turConnectorSession) {
+    private List<TurConnectorIndexing> getContentsShouldBeDeIndexed(TurConnectorSession turConnectorSession) {
         return turConnectorIndexingRepository.findContentsShouldBeDeIndexed(turConnectorSession.getSource(),
                 turConnectorSession.getTransactionId());
     }
