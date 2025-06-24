@@ -21,6 +21,7 @@ package com.viglet.turing.connector.aem.commons;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
@@ -173,15 +174,16 @@ public class TurAemCommonsUtils {
     public static void addItemInExistingAttribute(String attributeValue,
                                                   Map<String, Object> attributes,
                                                   String attributeName) {
-        if (attributes.get(attributeName) instanceof ArrayList)
+        if (attributes.get(attributeName) instanceof ArrayList) {
             addItemToArray(attributes, attributeName, attributeValue);
-        else convertAttributeSingleValueToArray(attributes, attributeName, attributeValue);
+        } else {
+            convertAttributeSingleValueToArray(attributes, attributeName, attributeValue);
+        }
     }
-
 
     private static void convertAttributeSingleValueToArray(Map<String, Object> attributes,
                                                            String attributeName, String attributeValue) {
-        attributes.put(attributeName,  List.of(attributes.get(attributeName), attributeValue));
+        attributes.put(attributeName, Lists.newArrayList(attributes.get(attributeName), attributeValue));
     }
 
     private static void addItemToArray(Map<String, Object> attributes, String attributeName, String attributeValue) {

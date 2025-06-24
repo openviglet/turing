@@ -161,19 +161,7 @@ public class TurCommonsUtils {
     }
 
     public static List<String> cloneListOfTermsAsString(List<?> attributeArray) {
-        List<String> list = new ArrayList<>();
-        for (Object object : attributeArray) {
-            if (object instanceof String) {
-                String s = (String) object;
-                list.add(s);
-            } else if (object instanceof ArrayList<?>) {
-                for (Object o1: (ArrayList<?>) object) {
-                    String s = (String) o1;
-                    list.add(s);
-                }
-            }
-        }
-        return list;
+        return attributeArray.stream().map(String.class::cast).collect(Collectors.toList());
     }
 
     /**

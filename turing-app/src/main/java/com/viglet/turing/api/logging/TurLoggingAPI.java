@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/logging")
 @Tag(name = "Logging", description = "Logging API")
 public class TurLoggingAPI {
-    public static final String TIMESTAMP = "timestamp";
+    public static final String DATE = "date";
     private final boolean enabled;
     private final String connectionString;
     private final String databaseName;
@@ -70,7 +70,7 @@ public class TurLoggingAPI {
             MongoDatabase database = mongoClient.getDatabase(databaseName);
             MongoCollection<Document> indexingCollection = database.getCollection(ii);
             indexingCollection.find()
-                    .sort(Sorts.descending(TIMESTAMP))
+                    .sort(Sorts.descending(DATE))
                     .limit(100).forEach(documentList::add);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
