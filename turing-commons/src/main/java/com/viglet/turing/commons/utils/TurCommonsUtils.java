@@ -83,20 +83,21 @@ public class TurCommonsUtils {
             return false;
         }
     }
+
     public static String html2Text(String text) {
         return Jsoup.parse(text).text();
     }
 
     public static String text2Description(String text, int maxLength) {
-        if(text != null && text.length() > maxLength) {
+        if (text != null && text.length() > maxLength) {
             BreakIterator bi = BreakIterator.getWordInstance();
             bi.setText(text);
 
-            if(bi.isBoundary(maxLength-1)) {
-                return text.substring(0, maxLength-2) + " ...";
+            if (bi.isBoundary(maxLength - 1)) {
+                return text.substring(0, maxLength - 2) + " ...";
             } else {
-                int preceding = bi.preceding(maxLength-1);
-                return text.substring(0, preceding-1) + " ...";
+                int preceding = bi.preceding(maxLength - 1);
+                return text.substring(0, preceding - 1) + " ...";
             }
         } else {
             return text + " ...";
@@ -107,9 +108,10 @@ public class TurCommonsUtils {
         return text2Description(html2Text(text), numberChars);
     }
 
-    public static URI addOrReplaceParameter(URI uri, String paramName, Locale locale,  boolean decoded) {
-       return addOrReplaceParameter(uri, paramName, locale.toLanguageTag(), decoded);
+    public static URI addOrReplaceParameter(URI uri, String paramName, Locale locale, boolean decoded) {
+        return addOrReplaceParameter(uri, paramName, locale.toLanguageTag(), decoded);
     }
+
     public static URI addOrReplaceParameter(URI uri, String paramName, String paramValue, boolean decoded) {
         List<NameValuePair> params = new URIBuilder(uri, StandardCharsets.ISO_8859_1).getQueryParams();
         StringBuilder sbQueryString = new StringBuilder();
@@ -120,7 +122,7 @@ public class TurCommonsUtils {
                 addParameterToQueryString(sbQueryString, nameValuePair.getName(), paramValue);
             } else {
                 addParameterToQueryString(sbQueryString, nameValuePair.getName(),
-                        decoded? URLDecoder.decode(nameValuePair.getValue(), StandardCharsets.UTF_8):
+                        decoded ? URLDecoder.decode(nameValuePair.getValue(), StandardCharsets.UTF_8) :
                                 nameValuePair.getValue());
             }
         }
@@ -139,7 +141,10 @@ public class TurCommonsUtils {
 
     public static URI modifiedURI(URI uri, StringBuilder sbQueryString) {
         try {
-            return new URI(uri.getRawPath() + "?" + removeAmpersand(sbQueryString).replaceAll("[\\t\\n\\r]+","%20").replace(" ", "%20"));
+            return new URI(uri.getRawPath() + "?" + removeAmpersand(sbQueryString)
+                    .replaceAll("[\\t\\n\\r]+", "%20")
+                    .replace(" ", "%20")
+                    .replace("\"", "%22"));
         } catch (URISyntaxException e) {
             log.error(e.getMessage(), e);
         }

@@ -6,17 +6,17 @@
           <div>{{ server.date | amTimeAgo }}</div>
         </div>
         <div class="d-table-cell col-1" style="width: 100px;">
+          <div>{{ server.clusterNode }}</div>
+        </div>
+        <div class="d-table-cell col-1" style="width: 100px;">
           <div>{{ server.level }}</div>
         </div>
         <div class="d-table-cell col-3">
           <div style=" overflow-wrap: break-word;width: 300px;">{{ server.logger }}</div>
         </div>
-        <div class="d-table-cell col-4">
-          <pre style="overflow-wrap: break-word;max-width: 200px">
-            {{ server.message }}</pre>
-        </div>
-        <div class="d-table-cell col-3">
-          <pre style="overflow-wrap: break-word;max-width: 200px">
+        <div class="d-table-cell col-6">
+          <pre style="overflow-wrap: break-word;max-width: 600px">
+            {{ server.message }}
             {{ server.stackTrace }}</pre>
         </div>
       </div>

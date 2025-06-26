@@ -6,17 +6,17 @@
           <div>{{ aem.date | amTimeAgo }}</div>
         </div>
         <div class="d-table-cell col-1" style="width: 100px;">
+          <div>{{ aem.clusterNode }}</div>
+        </div>
+        <div class="d-table-cell col-1" style="width: 100px;">
           <div>{{ aem.level }}</div>
         </div>
         <div class="d-table-cell col-3">
           <div style=" overflow-wrap: break-word;width: 300px;">{{ aem.logger }}</div>
         </div>
-        <div class="d-table-cell col-4">
-          <pre style="overflow-wrap: break-word;max-width: 200px">
-            {{ aem.message }}</pre>
-        </div>
-        <div class="d-table-cell col-3">
-          <pre style="overflow-wrap: break-word;max-width: 200px">
+        <div class="d-table-cell col-6">
+          <pre style="overflow-wrap: break-word;max-width: 600px">
+            {{ aem.message }}
             {{ aem.stackTrace }}</pre>
         </div>
       </div>
