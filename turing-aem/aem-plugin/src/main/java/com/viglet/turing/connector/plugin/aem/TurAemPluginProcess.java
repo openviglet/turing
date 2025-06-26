@@ -117,7 +117,8 @@ public class TurAemPluginProcess {
         log.debug("Receiving Async payload to {} source with paths {}", name, turAemPathList);
         turAemSourceRepository.findByName(name).ifPresentOrElse(turAemSource -> {
                     TurConnectorSession turConnectorSession = TurAemPluginProcess.getTurConnectorSession(turAemSource);
-                    turAemPathList.getPaths().forEach(path -> indexContentId(turConnectorSession, turAemSource, path, true));
+                    turAemPathList.getPaths().forEach(path ->
+                            indexContentId(turConnectorSession, turAemSource, path, true));
                     finished(turConnectorSession, true);
                 },
                 () -> log.error("{} Source not found", name));
@@ -261,7 +262,8 @@ public class TurAemPluginProcess {
     private void sendToTuringToBeDeIndexed(TurConnectorSession session, String contentId, boolean standalone) {
         turConnectorContext.getIndexingItem(contentId, session.getSource())
                 .forEach(
-                        indexing -> turConnectorContext.addJobItem(deIndexJob(session, indexing), session, standalone));
+                        indexing ->
+                                turConnectorContext.addJobItem(deIndexJob(session, indexing), session, standalone));
     }
 
     private TurSNJobItem deIndexJob(TurConnectorSession session,
@@ -393,26 +395,44 @@ public class TurAemPluginProcess {
     private void indexObject(@NotNull TurAemObject aemObject, TurAemModel turAemModel,
                              List<TurSNAttributeSpec> turSNAttributeSpecList,
                              TurAemSourceContext turAemSourceContext,
-                             TurConnectorSession turConnectorSession,
+                             TurConnectorSession session,
                              TurAemSource turAemSource,
                              TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                              boolean standalone) {
         if (isAuthor(turAemSource)) {
             indexByEnvironment(TurAemEnv.AUTHOR, turAemSource.getAuthorSNSite(),
                     aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext,
-                    turConnectorSession, turAemContentDefinitionProcess, standalone);
+                    session, turAemContentDefinitionProcess, standalone);
         }
         if (isPublish(turAemSource)) {
             if (aemObject.isDelivered()) {
                 indexByEnvironment(TurAemEnv.PUBLISHING, turAemSource.getPublishSNSite(),
                         aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext,
-                        turConnectorSession, turAemContentDefinitionProcess, standalone);
+                        session, turAemContentDefinitionProcess, standalone);
             } else {
-                log.debug("Ignoring because {} object ({}) is not publishing. transactionId = {}",
-                        aemObject.getPath(), turAemSourceContext.getId(), turConnectorSession.getTransactionId());
+                if (standalone) {
+                    TurSNJobItem deIndexJobItem = deIndexJob(session, List.of(turAemSource.getPublishSNSite()),
+                            TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext, aemObject),
+                            aemObject.getPath());
+                    turConnectorContext.addJobItem(deIndexJobItem, session, true);
+                    log.debug("Forcing deIndex because {} object ({}) is not publishing. transactionId = {}",
+                            aemObject.getPath(), turAemSourceContext.getId(), session.getTransactionId());
+                } else {
+                    log.debug("Ignoring deIndex because {} object ({}) is not publishing. transactionId = {}",
+                            aemObject.getPath(), turAemSourceContext.getId(), session.getTransactionId());
+                }
             }
         }
     }
+
+    private TurSNJobItem deIndexJob(TurConnectorSession session, List<String> sites, Locale locale, String objectId) {
+        return new TurSNJobItem(
+                TurSNJobAction.DELETE, sites, locale,
+                Map.of(
+                        TurSNConstants.ID_ATTR, objectId,
+                        TurSNConstants.SOURCE_APPS_ATTR, session.getProviderName()));
+    }
+
 
     private void indexByEnvironment(TurAemEnv turAemEnv, String snSite,
                                     @NotNull TurAemObject aemObject, TurAemModel turAemModel,

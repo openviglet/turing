@@ -57,9 +57,6 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
     Optional<List<TurConnectorIndexing>>  findAllByOrderByModificationDateDesc(Limit limit);
 
     @Transactional
-    void deleteBySourceAndObjectId(String name, String objectId);
-
-    @Transactional
     default void deleteContentsWereDeIndexed(String source, String deltaId) {
         deleteBySourceAndTransactionIdNot(source, deltaId);
     }
