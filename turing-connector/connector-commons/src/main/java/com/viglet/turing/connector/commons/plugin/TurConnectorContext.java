@@ -22,9 +22,12 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.connector.commons.plugin.dto.TurConnectorIndexingDTO;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public interface TurConnectorContext {
     void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone);
     void finishIndexing(TurConnectorSession session, boolean standalone);
     List<TurConnectorIndexingDTO> getIndexingItem(String objectId, String source);
+    Optional<TurConnectorIndexingDTO> getIndexingItem(String objectId, String source, String environment, Locale locale);
 }

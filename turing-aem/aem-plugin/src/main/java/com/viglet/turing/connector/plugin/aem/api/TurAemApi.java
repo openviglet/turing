@@ -20,7 +20,6 @@ package com.viglet.turing.connector.plugin.aem.api;
 
 import com.google.inject.Inject;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
-import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -36,15 +35,12 @@ import java.util.*;
 @RequestMapping("/api/v2/aem")
 @Tag(name = "AEM API", description = "AEM API")
 public class TurAemApi {
-    private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemPluginProcess turAemPluginProcess;
     private final List<String> currentContentIdList = new ArrayList<>();
     private LocalDateTime currentStandAloneUpdate = LocalDateTime.now();
 
     @Inject
-    public TurAemApi(TurAemSourceRepository turAemSourceRepository,
-                     TurAemPluginProcess turAemPluginProcess) {
-        this.turAemSourceRepository = turAemSourceRepository;
+    public TurAemApi(TurAemPluginProcess turAemPluginProcess) {
         this.turAemPluginProcess = turAemPluginProcess;
     }
 
@@ -53,6 +49,12 @@ public class TurAemApi {
         return statusOk();
     }
 
+    @GetMapping("index/{name}/all")
+    public ResponseEntity<Map<String, String>> indexAll(@PathVariable String name) {
+        turAemPluginProcess.indexAllByNameAsync(name);
+        return ResponseEntity.ok(statusSent());
+
+    }
 
     @PostMapping("index/{name}")
     public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String name,
@@ -89,13 +91,6 @@ public class TurAemApi {
 
     private static @NotNull String getSourceWithContentId(String name, String path) {
         return name + "-" + path;
-    }
-
-    @GetMapping("index/{name}/all")
-    public ResponseEntity<Map<String, String>> indexAll(@PathVariable String name) {
-        turAemPluginProcess.indexAllByNameAsync(name);
-        return ResponseEntity.ok(statusSent());
-
     }
 
     private static Map<String, String> statusOk() {

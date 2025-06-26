@@ -22,7 +22,6 @@ import com.google.inject.Inject;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.persistence.repository.TurConnectorConfigVarRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +39,7 @@ public class TurConnectorScheduledTasks {
     }
 
     @Scheduled(cron = "${turing.connector.cron:-}", zone="${turing.connector.cron.zone:UTC}")
-    public void executeWebCrawler() {
+    public void executeScheduledCrawler() {
         if (turConnectorConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
             log.info("This is the first time, waiting next schedule.");
         } else {

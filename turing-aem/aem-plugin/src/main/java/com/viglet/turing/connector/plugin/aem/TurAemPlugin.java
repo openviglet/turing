@@ -18,6 +18,7 @@
 
 package com.viglet.turing.connector.plugin.aem;
 
+import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
@@ -26,16 +27,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 @Slf4j
 @Primary
 @Component("aem")
 public class TurAemPlugin implements TurConnectorPlugin {
     private final TurAemPluginProcess turAemPluginProcess;
+    private final TurAemPluginSingleProcess turAemPluginSingleProcess;
     private final TurAemSourceRepository turAemSourceRepository;
 
     @Autowired
-    public TurAemPlugin(TurAemPluginProcess turAemPluginProcess, TurAemSourceRepository turAemSourceRepository) {
+    public TurAemPlugin(TurAemPluginProcess turAemPluginProcess,
+                        TurAemPluginSingleProcess turAemPluginSingleProcess,
+                        TurAemSourceRepository turAemSourceRepository) {
         this.turAemPluginProcess = turAemPluginProcess;
+        this.turAemPluginSingleProcess = turAemPluginSingleProcess;
         this.turAemSourceRepository = turAemSourceRepository;
     }
 
@@ -45,5 +52,10 @@ public class TurAemPlugin implements TurConnectorPlugin {
             turAemPluginProcess.indexAll(turAemSource);
             TurAemCommonsUtils.cleanCache();
         });
+    }
+
+    @Override
+    public TurSNJobItem getJobItem(String objectId, String source, String environment, Locale locale) {
+        return turAemPluginSingleProcess.getTurSNJobItem(objectId, source, environment, locale);
     }
 }

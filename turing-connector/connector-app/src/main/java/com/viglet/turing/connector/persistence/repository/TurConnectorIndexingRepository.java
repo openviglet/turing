@@ -33,7 +33,7 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
                                                                                       String transactionId,
                                                                                       boolean standalone);
 
-    default List<TurConnectorIndexing> findContentsShouldBeDeIndexed(String source, String transactionId) {
+    default List<TurConnectorIndexing> findContentsShouldBeDeRechecked(String source, String transactionId) {
         return findBySourceAndTransactionIdNotAndStandalone(source, transactionId, false);
     }
 
@@ -50,19 +50,11 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
     @Transactional
     void deleteByObjectIdAndSourceAndEnvironment(String objectId, String source, String environment);
 
-    @Transactional
-    void deleteBySourceAndTransactionIdNot(String source, String transactionId);
-
     Optional<List<TurConnectorIndexing>> findAllBySourceOrderByModificationDateDesc(String source, Limit limit);
     Optional<List<TurConnectorIndexing>>  findAllByOrderByModificationDateDesc(Limit limit);
 
     @Transactional
     void deleteBySourceAndObjectId(String name, String objectId);
-
-    @Transactional
-    default void deleteContentsWereDeIndexed(String source, String deltaId) {
-        deleteBySourceAndTransactionIdNot(source, deltaId);
-    }
 
     @Query("SELECT DISTINCT i.source FROM TurConnectorIndexing i")
     List<String> findAllSources();

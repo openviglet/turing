@@ -19,6 +19,13 @@
 package com.viglet.turing.connector.commons.plugin;
 
 
+import com.viglet.turing.client.sn.job.TurSNJobItem;
+
+import java.util.Locale;
+
 public interface TurConnectorPlugin {
     void crawl();
+    TurSNJobItem getJobItem(String objectId, String source, String environment, Locale locale);
+
+
 }
