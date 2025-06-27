@@ -438,14 +438,15 @@ public class TurAemPluginProcess {
                                     @NotNull TurAemObject aemObject, TurAemModel turAemModel,
                                     List<TurSNAttributeSpec> turSNAttributeSpecList,
                                     TurAemSourceContext turAemSourceContext,
-                                    TurConnectorSession turConnectorSession,
+                                    TurConnectorSession session,
                                     TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                                     boolean standalone) {
         turAemSourceContext.setEnvironment(turAemEnv);
-        turConnectorSession.setSites(Collections.singletonList(snSite));
+        turAemSourceContext.setTurSNSite(snSite);
+        session.setSites(Collections.singletonList(snSite));
         sendToTuringToBeIndexed(aemObject, turAemModel, turSNAttributeSpecList,
                 TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext, aemObject),
-                turAemSourceContext, turConnectorSession, turAemContentDefinitionProcess, standalone);
+                turAemSourceContext, session, turAemContentDefinitionProcess, standalone);
     }
 
     private static boolean isPublish(TurAemSource turAemSource) {
@@ -461,7 +462,7 @@ public class TurAemPluginProcess {
     private void sendToTuringToBeIndexed(TurAemObject aemObject, TurAemModel turAemModel,
                                          List<TurSNAttributeSpec> turSNAttributeSpecList, Locale locale,
                                          TurAemSourceContext turAemSourceContext,
-                                         TurConnectorSession turConnectorSession,
+                                         TurConnectorSession session,
                                          TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                                          boolean standalone) {
         turConnectorContext.addJobItem(
@@ -470,7 +471,7 @@ public class TurAemPluginProcess {
                         turSNAttributeSpecList,
                         locale,
                         turAemSourceContext,
-                        turConnectorSession,
+                        session,
                         turAemContentDefinitionProcess,
                         getJobItemAttributes(
                                 turAemSourceContext,
@@ -480,7 +481,7 @@ public class TurAemPluginProcess {
                                         turSNAttributeSpecList,
                                         turAemSourceContext,
                                         turAemContentDefinitionProcess))),
-                turConnectorSession,
+                session,
                 standalone);
     }
 
@@ -502,12 +503,12 @@ public class TurAemPluginProcess {
                                                          List<TurSNAttributeSpec> turSNAttributeSpecList,
                                                          Locale locale,
                                                          TurAemSourceContext turAemSourceContext,
-                                                         TurConnectorSession turConnectorSession,
+                                                         TurConnectorSession session,
                                                          TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                                                          Map<String, Object> attributes) {
         TurSNJobItem jobItem = new TurSNJobItem(
                 TurSNJobAction.CREATE,
-                turConnectorSession.getSites().stream().toList(),
+                session.getSites().stream().toList(),
                 locale,
                 attributes,
                 TurAemCommonsUtils.castSpecToJobSpec(
