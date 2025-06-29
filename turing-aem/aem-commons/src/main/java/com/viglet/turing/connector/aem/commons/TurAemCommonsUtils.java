@@ -270,6 +270,9 @@ public class TurAemCommonsUtils {
                                                   boolean cached) {
         return getResponseBody(url, turAemSourceContext, cached).map(json ->
         {
+            if (!TurCommonsUtils.isJSONValid(json)) {
+                return null;
+            }
             try {
                 return new ObjectMapper()
                         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

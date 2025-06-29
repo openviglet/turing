@@ -66,6 +66,6 @@ public class TurConnectorIndexing implements Serializable {
     @Column
     private TurIndexingStatus status;
     @Builder.Default
-    @Convert(converter = TurStringListConverter.class)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> sites = new ArrayList<>();
 }

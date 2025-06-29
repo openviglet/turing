@@ -1500,9 +1500,9 @@ public class TurSolr {
 
     public void commit(TurSolrInstance turSolrInstance) {
         try {
-            turSolrInstance.getSolrClient().commit();
+            turSolrInstance.getSolrClient().commit(false, false);
         } catch (SolrServerException | IOException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage());
         }
     }
 }

@@ -22,9 +22,11 @@ import com.viglet.turing.connector.persistence.model.TurConnectorIndexing;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexing, String> {
@@ -63,4 +65,23 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
 
     @Query("SELECT DISTINCT i.source FROM TurConnectorIndexing i")
     List<String> findAllSources();
+
+    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexing i WHERE i.source = :source AND i.locale = :locale AND i.environment IN :environment")
+    List<String> findAllObjectIdsBySourceAndLocaleAndEnvironment(@Param("source") String source,
+                                                             @Param("locale") Locale locale,
+                                                             @Param("environment") String environment);
+
+    @Query("SELECT DISTINCT i.sites FROM TurConnectorIndexing i WHERE i.source = :source")
+    List<String> distinctSitesBySource(@Param("source") String source);
+
+    @Query("SELECT DISTINCT i.environment FROM TurConnectorIndexing i WHERE :site MEMBER OF i.sites")
+    List<String> distinctEnvironmentBySite(@Param("site") String site);
+
+    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexing i WHERE i.source = :source AND i.locale = :locale AND " +
+            "i.environment IN :environment AND i.objectId IN :ids" )
+    List<String> distinctObjectIdBySourceAndLocaleAndEnvironmentAndIdIn(@Param("source") String source,
+                                                          @Param("locale") Locale locale,
+                                                          @Param("environment") String environment,
+                                                          @Param("ids") List<String> ids);
+
 }
