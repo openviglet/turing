@@ -26,6 +26,7 @@ import com.viglet.turing.spring.security.TurAuditable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -44,6 +45,7 @@ import java.util.Set;
  */
 @Getter
 @Entity
+@ToString
 @Table(name = "sn_ranking_expression")
 public class TurSNRankingExpression extends TurAuditable<String>  implements Serializable {
 	@Serial

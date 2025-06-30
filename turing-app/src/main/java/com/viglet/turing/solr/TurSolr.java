@@ -405,11 +405,22 @@ public class TurSolr {
     private void prepareBoostQuery(TurSNSite turSNSite, SolrQuery query) {
         List<TurSNSiteFieldExt> turSNSiteFieldExtList = turSNSiteFieldExtRepository
                 .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
-        query.set(BOOST_QUERY, turSNRankingExpressionRepository.findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(),
-                turSNSite).stream().map(expression ->
-                String.format(Locale.US, "%s^%.1f",
-                        "(" + boostQueryAttributes(expression, turSNSiteFieldExtList) + ")",
-                        expression.getWeight())).toArray(String[]::new));
+        Set<TurSNRankingExpression> turSNRankingExpression = turSNRankingExpressionRepository
+                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(),
+                        turSNSite);
+        if (hasExpression(turSNRankingExpression)) {
+            String[] expressionString = turSNRankingExpression.stream().map(expression ->
+                    String.format(Locale.US, "%s^%.1f",
+                            "(" + boostQueryAttributes(expression, turSNSiteFieldExtList) + ")",
+                            expression.getWeight())).toArray(String[]::new);
+            query.set(BOOST_QUERY, expressionString);
+        }
+    }
+
+    private static boolean hasExpression(Set<TurSNRankingExpression> turSNRankingExpression) {
+        return turSNRankingExpression.stream()
+                .anyMatch(expression -> !expression.getTurSNRankingConditions()
+                        .isEmpty());
     }
 
     private String boostQueryAttributes(TurSNRankingExpression expression, List<TurSNSiteFieldExt> turSNSiteFieldExtList) {

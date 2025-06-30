@@ -38,10 +38,7 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.BreakIterator;
@@ -141,10 +138,8 @@ public class TurCommonsUtils {
 
     public static URI modifiedURI(URI uri, StringBuilder sbQueryString) {
         try {
-            return new URI(uri.getRawPath() + "?" + removeAmpersand(sbQueryString)
-                    .replaceAll("[\\t\\n\\r]+", "%20")
-                    .replace(" ", "%20")
-                    .replace("\"", "%22"));
+            String url = uri.getRawPath() + "?" + removeAmpersand(sbQueryString);
+            return new URI((!url.contains("%")) ? URLEncoder.encode(url, StandardCharsets.UTF_8) : url);
         } catch (URISyntaxException e) {
             log.error(e.getMessage(), e);
         }
