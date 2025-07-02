@@ -1,4 +1,4 @@
-package com.viglet.turing.connector.api;
+package com.viglet.turing.connector.domain;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -39,7 +39,7 @@ import java.io.Serializable;
 @Getter
 @Entity
 @Table(name = "con_config")
-public class TurConnectorConfigVar implements Serializable {
+public class TurConnectorConfigVarModel implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 

@@ -1,6 +1,6 @@
-package com.viglet.turing.connector.api;
+package com.viglet.turing.connector.domain;
 
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexing;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,5 +12,5 @@ import java.util.List;
 @Setter
 public class TurConnectorMonitoring {
     private List<String> sources;
-    private List<TurConnectorIndexing> indexing;
+    private List<TurConnectorIndexingModel> indexing;
 }

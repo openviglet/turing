@@ -19,6 +19,9 @@
 package com.viglet.turing.connector.commons.plugin;
 
 
+import java.util.List;
+
 public interface TurConnectorPlugin {
     void crawl();
+    void sentToIndexByIdList(String source, List<String> idList);
 }

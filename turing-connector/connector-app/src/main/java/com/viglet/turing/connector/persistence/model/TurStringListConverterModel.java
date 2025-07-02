@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Converter
-public class TurStringListConverter implements AttributeConverter<List<String>, String> {
+public class TurStringListConverterModel implements AttributeConverter<List<String>, String> {
 
     private static final String DELIMITER = ",";
 

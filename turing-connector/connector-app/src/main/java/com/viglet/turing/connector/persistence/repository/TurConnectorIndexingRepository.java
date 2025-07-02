@@ -18,7 +18,7 @@
 
 package com.viglet.turing.connector.persistence.repository;
 
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexing;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,13 +29,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexing, String> {
+public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexingModel, String> {
 
-    List<TurConnectorIndexing> findBySourceAndTransactionIdNotAndStandalone(String source,
-                                                                                      String transactionId,
-                                                                                      boolean standalone);
+    List<TurConnectorIndexingModel> findBySourceAndTransactionIdNotAndStandalone(String source,
+                                                                                 String transactionId,
+                                                                                 boolean standalone);
 
-    default List<TurConnectorIndexing> findContentsShouldBeDeIndexed(String source, String transactionId) {
+    default List<TurConnectorIndexingModel> findContentsShouldBeDeIndexed(String source, String transactionId) {
         return findBySourceAndTransactionIdNotAndStandalone(source, transactionId, false);
     }
 
@@ -44,10 +44,10 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
     boolean existsByObjectIdAndSourceAndEnvironmentAndChecksumNot(String objectId, String source, String environment,
                                                                 String checksum);
 
-    Optional<List<TurConnectorIndexing>> findByObjectIdAndSourceAndEnvironment(String objectId, String source,
-                                                                             String environment);
+    Optional<List<TurConnectorIndexingModel>> findByObjectIdAndSourceAndEnvironment(String objectId, String source,
+                                                                                    String environment);
 
-    Optional<List<TurConnectorIndexing>> findByObjectIdAndSource(String objectId, String source);
+    Optional<List<TurConnectorIndexingModel>> findByObjectIdAndSource(String objectId, String source);
 
     @Transactional
     void deleteByObjectIdAndSourceAndEnvironment(String objectId, String source, String environment);
@@ -55,29 +55,29 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
     @Transactional
     void deleteBySourceAndTransactionIdNot(String source, String transactionId);
 
-    Optional<List<TurConnectorIndexing>> findAllBySourceOrderByModificationDateDesc(String source, Limit limit);
-    Optional<List<TurConnectorIndexing>>  findAllByOrderByModificationDateDesc(Limit limit);
+    Optional<List<TurConnectorIndexingModel>> findAllBySourceOrderByModificationDateDesc(String source, Limit limit);
+    Optional<List<TurConnectorIndexingModel>>  findAllByOrderByModificationDateDesc(Limit limit);
 
     @Transactional
     default void deleteContentsWereDeIndexed(String source, String deltaId) {
         deleteBySourceAndTransactionIdNot(source, deltaId);
     }
 
-    @Query("SELECT DISTINCT i.source FROM TurConnectorIndexing i")
+    @Query("SELECT DISTINCT i.source FROM TurConnectorIndexingModel i")
     List<String> findAllSources();
 
-    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexing i WHERE i.source = :source AND i.locale = :locale AND i.environment IN :environment")
+    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND i.locale = :locale AND i.environment IN :environment")
     List<String> findAllObjectIdsBySourceAndLocaleAndEnvironment(@Param("source") String source,
                                                              @Param("locale") Locale locale,
                                                              @Param("environment") String environment);
 
-    @Query("SELECT DISTINCT i.sites FROM TurConnectorIndexing i WHERE i.source = :source")
+    @Query("SELECT DISTINCT i.sites FROM TurConnectorIndexingModel i WHERE i.source = :source")
     List<String> distinctSitesBySource(@Param("source") String source);
 
-    @Query("SELECT DISTINCT i.environment FROM TurConnectorIndexing i WHERE :site MEMBER OF i.sites")
+    @Query("SELECT DISTINCT i.environment FROM TurConnectorIndexingModel i WHERE :site MEMBER OF i.sites")
     List<String> distinctEnvironmentBySite(@Param("site") String site);
 
-    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexing i WHERE i.source = :source AND i.locale = :locale AND " +
+    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND i.locale = :locale AND " +
             "i.environment IN :environment AND i.objectId IN :ids" )
     List<String> distinctObjectIdBySourceAndLocaleAndEnvironmentAndIdIn(@Param("source") String source,
                                                           @Param("locale") Locale locale,

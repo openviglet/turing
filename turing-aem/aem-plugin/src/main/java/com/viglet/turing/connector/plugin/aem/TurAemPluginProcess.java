@@ -33,7 +33,7 @@ import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
 import com.viglet.turing.connector.aem.commons.mappers.*;
 import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
 import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
-import com.viglet.turing.connector.commons.plugin.dto.TurConnectorIndexingDTO;
+import com.viglet.turing.connector.commons.plugin.domain.TurConnectorIndexing;
 import com.viglet.turing.connector.plugin.aem.api.TurAemPathList;
 import com.viglet.turing.connector.plugin.aem.conf.AemPluginHandlerConfiguration;
 import com.viglet.turing.connector.plugin.aem.persistence.model.*;
@@ -109,20 +109,25 @@ public class TurAemPluginProcess {
     }
 
     @Async
-    public void sentToIndexStandaloneAsync(String name, TurAemPathList turAemPathList) {
-        if (turAemPathList == null || turAemPathList.getPaths() == null || turAemPathList.getPaths().isEmpty()) {
+    public void sentToIndexStandaloneAsync(@NotNull String source, @NotNull TurAemPathList turAemPathList) {
+        sentToIndexStandalone(source, turAemPathList.getPaths());
+    }
+
+    public void sentToIndexStandalone(@NotNull String source, @NotNull List<String> idList) {
+        if (idList.isEmpty()) {
             log.error("Payload is empty");
             return;
         }
-        log.debug("Receiving Async payload to {} source with paths {}", name, turAemPathList);
-        turAemSourceRepository.findByName(name).ifPresentOrElse(turAemSource -> {
+        log.debug("Receiving payload to {} source with paths {}", source, idList);
+        turAemSourceRepository.findByName(source).ifPresentOrElse(turAemSource -> {
                     TurConnectorSession turConnectorSession = TurAemPluginProcess.getTurConnectorSession(turAemSource);
-                    turAemPathList.getPaths().forEach(path ->
+                    idList.forEach(path ->
                             indexContentId(turConnectorSession, turAemSource, path, true));
                     finished(turConnectorSession, true);
                 },
-                () -> log.error("{} Source not found", name));
+                () -> log.error("{} Source not found", source));
     }
+
 
     public void indexAll(TurAemSource turAemSource) {
         if (runningSources.contains(turAemSource.getName())) {
@@ -267,7 +272,7 @@ public class TurAemPluginProcess {
     }
 
     private TurSNJobItem deIndexJob(TurConnectorSession session,
-                                    TurConnectorIndexingDTO turConnectorIndexingDTO) {
+                                    TurConnectorIndexing turConnectorIndexingDTO) {
         return new TurSNJobItem(
                 TurSNJobAction.DELETE,
                 turConnectorIndexingDTO.getSites(),

@@ -17,6 +17,7 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.viglet.turing.spring.logging.TurLoggingIndexingLog" level="OFF" />
+    <logger name="com.hazelcast.internal.diagnostics.HealthMonitor" level="OFF" />
     <include
             resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <property name="LOG_FILE"

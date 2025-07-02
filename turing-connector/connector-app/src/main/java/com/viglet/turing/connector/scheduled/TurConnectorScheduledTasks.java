@@ -16,13 +16,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.connector;
+package com.viglet.turing.connector.scheduled;
 
 import com.google.inject.Inject;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
-import com.viglet.turing.connector.persistence.repository.TurConnectorConfigVarRepository;
+import com.viglet.turing.connector.service.TurConnectorConfigVarService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -30,21 +29,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class TurConnectorScheduledTasks {
     private final TurConnectorPlugin turConnectorPlugin;
-    private final TurConnectorConfigVarRepository turConnectorConfigVarRepository;
-    public static final String FIRST_TIME = "FIRST_TIME";
+    private final TurConnectorConfigVarService configVarService;
+
     @Inject
     public TurConnectorScheduledTasks(TurConnectorPlugin turConnectorPlugin,
-                                      TurConnectorConfigVarRepository turConnectorConfigVarRepository) {
+                                      TurConnectorConfigVarService configVarService) {
         this.turConnectorPlugin = turConnectorPlugin;
-        this.turConnectorConfigVarRepository = turConnectorConfigVarRepository;
+        this.configVarService = configVarService;
     }
 
     @Scheduled(cron = "${turing.connector.cron:-}", zone="${turing.connector.cron.zone:UTC}")
     public void executeWebCrawler() {
-        if (turConnectorConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
+        if (configVarService.hasNotFirstTime()) {
             log.info("This is the first time, waiting next schedule.");
         } else {
             turConnectorPlugin.crawl();
         }
     }
+
+
 }

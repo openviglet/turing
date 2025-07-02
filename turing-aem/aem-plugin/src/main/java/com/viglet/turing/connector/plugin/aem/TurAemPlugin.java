@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @Primary
 @Component("aem")
@@ -45,5 +47,10 @@ public class TurAemPlugin implements TurConnectorPlugin {
             turAemPluginProcess.indexAll(turAemSource);
             TurAemCommonsUtils.cleanCache();
         });
+    }
+
+    @Override
+    public void sentToIndexByIdList(String source, List<String> idList) {
+        turAemPluginProcess.sentToIndexStandalone(source, idList);
     }
 }

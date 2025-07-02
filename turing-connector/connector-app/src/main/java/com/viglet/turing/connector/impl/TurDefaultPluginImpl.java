@@ -22,11 +22,18 @@ import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @Component("default")
 public class TurDefaultPluginImpl implements TurConnectorPlugin {
     @Override
     public void crawl() {
+        throw new UnsupportedOperationException("This method is only a placeholder");
+    }
+
+    @Override
+    public void sentToIndexByIdList(String source, List<String> idList) {
         throw new UnsupportedOperationException("This method is only a placeholder");
     }
 }

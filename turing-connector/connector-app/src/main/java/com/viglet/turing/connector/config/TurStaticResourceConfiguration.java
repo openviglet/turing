@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.connector.spring;
+package com.viglet.turing.connector.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

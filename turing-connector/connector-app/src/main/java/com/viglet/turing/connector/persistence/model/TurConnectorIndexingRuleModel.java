@@ -48,7 +48,7 @@ import java.util.List;
 @Entity
 @Table(name = "con_indexing_rule", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 @AllArgsConstructor
-public class TurConnectorIndexingRule implements Serializable {
+public class TurConnectorIndexingRuleModel implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 

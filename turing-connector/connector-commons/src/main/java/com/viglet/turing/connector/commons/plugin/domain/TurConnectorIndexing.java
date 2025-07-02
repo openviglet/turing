@@ -1,4 +1,4 @@
-package com.viglet.turing.connector.commons.plugin.dto;
+package com.viglet.turing.connector.commons.plugin.domain;
 
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.util.Locale;
 @Builder
 @Getter
 @Setter
-public class TurConnectorIndexingDTO {
+public class TurConnectorIndexing {
 
 
     private int id;

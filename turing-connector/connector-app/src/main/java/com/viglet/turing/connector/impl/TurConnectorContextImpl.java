@@ -23,15 +23,16 @@ import com.viglet.turing.client.sn.TurSNConstants;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
+import com.viglet.turing.connector.commons.plugin.domain.TurConnectorIndexing;
+import com.viglet.turing.connector.service.TurConnectorIndexingRuleService;
+import com.viglet.turing.connector.service.TurConnectorIndexingService;
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
-import com.viglet.turing.connector.commons.plugin.dto.TurConnectorIndexingDTO;
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexing;
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRule;
-import com.viglet.turing.connector.commons.plugin.TurConnectorIndexingRuleType;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleModel;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
-import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRepository;
-import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRuleRepository;
+import com.viglet.turing.connector.service.TurConnectorSolrService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,29 +44,36 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
-import static com.viglet.turing.connector.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
+import static com.viglet.turing.connector.constant.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
 import static com.viglet.turing.connector.logging.TurConnectorLoggingUtils.setSuccessStatus;
 
 @Slf4j
 @Component
 public class TurConnectorContextImpl implements TurConnectorContext {
 
+    private final TurConnectorIndexingService indexingService;
+    private final TurConnectorIndexingRuleService indexingRuleService;
     private final TurSNJobItems turSNJobItems = new TurSNJobItems();
     private final Queue<TurSNJobItem> queueLinks = new LinkedList<>();
     private final JmsMessagingTemplate jmsMessagingTemplate;
-    private final TurConnectorIndexingRepository turConnectorIndexingRepository;
-    private final TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository;
+    private final TurConnectorSolrService turConnectorSolr;
     private final int jobSize;
+    private final TurConnectorPlugin turConnectorPlugin;
 
     @Autowired
     public TurConnectorContextImpl(@Value("${turing.connector.job.size:50}") int jobSize,
+                                   TurConnectorIndexingService turConnectorIndexingService,
+                                   TurConnectorIndexingRuleService indexingRuleService,
                                    JmsMessagingTemplate jmsMessagingTemplate,
-                                   TurConnectorIndexingRepository turConnectorIndexingRepository,
-                                   TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository) {
+                                   TurConnectorSolrService turConnectorSolr,
+                                   TurConnectorPlugin turConnectorPlugin) {
+        this.indexingService = turConnectorIndexingService;
+        this.indexingRuleService = indexingRuleService;
         this.jmsMessagingTemplate = jmsMessagingTemplate;
         this.jobSize = jobSize;
-        this.turConnectorIndexingRepository = turConnectorIndexingRepository;
-        this.turConnectorIndexingRuleRepository = turConnectorIndexingRuleRepository;
+        this.turConnectorSolr = turConnectorSolr;
+        this.turConnectorPlugin = turConnectorPlugin;
+
     }
 
     @Override
@@ -87,17 +95,21 @@ public class TurConnectorContextImpl implements TurConnectorContext {
             log.debug("No job to send to connector queue.");
         }
         if (!standalone) {
-            deIndexObjects(session);
+            validateAndReprocessObjects(session);
         }
         queueLinks.clear();
+    }
+
+    @Override
+    public List<TurConnectorIndexing> getIndexingItem(String objectId, String source) {
+        return indexingService.getIndexingItem(objectId, source);
     }
 
     private void processRemainingJobs(TurConnectorSession session, boolean standalone) {
         while (!queueLinks.isEmpty()) {
             TurSNJobItem turSNJobItem = queueLinks.poll();
             if (isJobItemToDeIndex(turSNJobItem)) {
-                turConnectorIndexingRepository.deleteByObjectIdAndSourceAndEnvironment(session.getSource(),
-                        turSNJobItem.getId(), turSNJobItem.getEnvironment());
+                indexingService.delete(session, turSNJobItem);
                 addJobToMessageQueue(turSNJobItem, session);
                 continue;
             }
@@ -125,6 +137,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
         }
     }
 
+
     private Optional<TurSNJobItem> createJobDeleteFromCreate(TurConnectorSession session, TurSNJobItem jobItemCreate) {
         if (!jobItemCreate.getTurSNJobAction().equals(TurSNJobAction.CREATE))
             return Optional.empty();
@@ -146,15 +159,15 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                 .ifPresentOrElse(indexingList -> {
                     ignoreIndexingRulesLog(turSNJobItem, session);
                     indexingList.forEach(
-                            indexing -> turConnectorIndexingRepository.save(updateTurConnectorIndexing(indexing,
-                                    turSNJobItem, session, TurIndexingStatus.IGNORED, standalone)));
+                            indexing ->
+                                    indexingService.update(turSNJobItem, session, standalone, indexing));
                 }, () -> {
                     ignoreIndexingRulesLog(turSNJobItem, session);
-                    turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, session,
-                            TurIndexingStatus.IGNORED, standalone));
+                    indexingService.save(turSNJobItem, session, TurIndexingStatus.IGNORED, standalone);
                 });
         setSuccessStatus(turSNJobItem, session, TurIndexingStatus.IGNORED);
     }
+
 
     private static void ignoreIndexingRulesLog(TurSNJobItem turSNJobItem, TurConnectorSession session) {
         log.debug("{} object ({} - {} - {}) was ignored by Indexing Rules. transactionId = {}",
@@ -164,16 +177,12 @@ public class TurConnectorContextImpl implements TurConnectorContext {
 
     private boolean indexingRuleIgnore(TurConnectorSession turConnectorSession, TurSNJobItem turSNJobItem) {
         return turSNJobItem.getTurSNJobAction().equals(TurSNJobAction.CREATE) &&
-                getIndexingRules(turConnectorSession).stream()
+                indexingRuleService.getIndexingRules(turConnectorSession).stream()
                         .anyMatch(rule -> ignoredJobItem(turSNJobItem, rule));
     }
 
-    private Set<TurConnectorIndexingRule> getIndexingRules(TurConnectorSession turConnectorSession) {
-        return turConnectorIndexingRuleRepository
-                .findBySourceAndRuleType(turConnectorSession.getSource(), TurConnectorIndexingRuleType.IGNORE);
-    }
 
-    private static boolean ignoredJobItem(TurSNJobItem turSNJobItem, TurConnectorIndexingRule rule) {
+    private static boolean ignoredJobItem(TurSNJobItem turSNJobItem, TurConnectorIndexingRuleModel rule) {
         for (String ruleValue : rule.getValues()) {
             if (StringUtils.isNotBlank(ruleValue)) {
                 if (!turSNJobItem.containsAttribute(rule.getAttribute())) {
@@ -229,9 +238,10 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     private void unchangedLog(TurSNJobItem turSNJobItem,
                               TurConnectorSession session) {
         getContentFromRepo(turSNJobItem, session)
-                .ifPresent(turAemIndexingsList -> log.debug("Unchanged {} object ({} - {} - {}) and transactionId = {}",
-                        turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(),
-                        turSNJobItem.getEnvironment(), session.getTransactionId()));
+                .ifPresent(turAemIndexingsList ->
+                        log.debug("Unchanged {} object ({} - {} - {}) and transactionId = {}",
+                                turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(),
+                                turSNJobItem.getEnvironment(), session.getTransactionId()));
     }
 
     private void reindexLog(TurSNJobItem turSNJobItem,
@@ -246,64 +256,24 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                         session.getTransactionId()));
     }
 
-    private Optional<List<TurConnectorIndexing>> getContentFromRepo(TurSNJobItem turSNJobItem,
-                                                                    TurConnectorSession session) {
-        return turConnectorIndexingRepository.findByObjectIdAndSourceAndEnvironment(turSNJobItem.getId(),
-                session.getSource(), turSNJobItem.getEnvironment());
+    private Optional<List<TurConnectorIndexingModel>> getContentFromRepo(TurSNJobItem turSNJobItem,
+                                                                         TurConnectorSession session) {
+        return indexingService.getList(turSNJobItem, session);
     }
 
-    private void deIndexObjects(TurConnectorSession session) {
-        List<TurConnectorIndexing> deindexedItems = getContentsShouldBeDeIndexed(session);
+
+    private void validateAndReprocessObjects(TurConnectorSession session) {
+        List<TurConnectorIndexingModel> deindexedItems = getContentsShouldBeDeIndexed(session);
         if (deindexedItems.isEmpty())
             return;
-        deindexedItems.forEach(deIndexedItem -> createJobDeleteFromCreate(session, deIndexedItem));
-        removeDeIndexItemsFromRepo(session);
-        sendToMessageQueue(session);
+        turConnectorPlugin.sentToIndexByIdList(session.getSource(),
+                deindexedItems.stream().map(TurConnectorIndexingModel::getObjectId).toList());
     }
 
-    private List<TurConnectorIndexing> getContentsShouldBeDeIndexed(TurConnectorSession turConnectorSession) {
-        return turConnectorIndexingRepository.findContentsShouldBeDeIndexed(turConnectorSession.getSource(),
-                turConnectorSession.getTransactionId());
+    private List<TurConnectorIndexingModel> getContentsShouldBeDeIndexed(TurConnectorSession session) {
+        return indexingService.getShouldBeDeIndexedList(session);
     }
 
-    private void removeDeIndexItemsFromRepo(TurConnectorSession turConnectorSession) {
-        turConnectorIndexingRepository.deleteContentsWereDeIndexed(turConnectorSession.getSource(),
-                turConnectorSession.getTransactionId());
-    }
-
-    public List<TurConnectorIndexingDTO> getIndexingItem(String objectId, String source) {
-        List<TurConnectorIndexingDTO> dtoList = new ArrayList<>();
-        turConnectorIndexingRepository.findByObjectIdAndSource(objectId, source)
-                .ifPresent(indexingList -> indexingList.stream()
-                        .map(indexing -> TurConnectorIndexingDTO.builder()
-                                .checksum(indexing.getChecksum())
-                                .created(indexing.getCreated())
-                                .environment(indexing.getEnvironment())
-                                .id(indexing.getId())
-                                .locale(indexing.getLocale())
-                                .modificationDate(indexing.getModificationDate())
-                                .source(indexing.getSource())
-                                .objectId(indexing.getObjectId())
-                                .sites(indexing.getSites())
-                                .status(indexing.getStatus())
-                                .transactionId(indexing.getTransactionId())
-                                .build())
-                        .forEach(dtoList::add));
-        return dtoList;
-    }
-
-    private void createJobDeleteFromCreate(TurConnectorSession session,
-                                           TurConnectorIndexing turConnectorIndexing) {
-        log.debug("DeIndex {} object ({} - {} - {}) systemId and {} transactionId",
-                turConnectorIndexing.getObjectId(), turConnectorIndexing.getSource(), turConnectorIndexing.getLocale(),
-                turConnectorIndexing.getEnvironment(), session.getTransactionId());
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put(TurSNConstants.ID_ATTR, turConnectorIndexing.getObjectId());
-        attributes.put(TurSNConstants.SOURCE_APPS_ATTR,
-                session.getProviderName());
-        addJobToMessageQueue(new TurSNJobItem(TurSNJobAction.DELETE,
-                turConnectorIndexing.getSites(), turConnectorIndexing.getLocale(), attributes), session);
-    }
 
     private void modifyStatus(TurSNJobItem turSNJobItem,
                               TurConnectorSession turConnectorSession,
@@ -321,82 +291,57 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     private void recreateDuplicatedStatus(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone) {
-        turConnectorIndexingRepository.deleteByObjectIdAndSourceAndEnvironment(turSNJobItem.getId(),
-                session.getSource(), turSNJobItem.getEnvironment());
+        indexingService.delete(session, turSNJobItem);
         log.debug("Removed duplicated status {} object ({} - {} - {})",
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(), turSNJobItem.getEnvironment());
-        turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, session,
-                TurIndexingStatus.PREPARE_FORCED_REINDEX, standalone));
+        indexingService.save(turSNJobItem, session, TurIndexingStatus.PREPARE_FORCED_REINDEX, standalone);
         setSuccessStatus(turSNJobItem, session, TurIndexingStatus.PREPARE_FORCED_REINDEX);
         log.debug("Recreated status {} object ({} - {} - {}) and transactionId() = {}",
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(), turSNJobItem.getEnvironment(),
                 session.getTransactionId());
     }
 
+
     private void updateStatus(TurSNJobItem turSNJobItem, TurConnectorSession session,
-                              List<TurConnectorIndexing> turConnectorIndexingList,
+                              List<TurConnectorIndexingModel> turConnectorIndexingList,
                               TurIndexingStatus status,
                               boolean standalone) {
-        turConnectorIndexingRepository.save(updateTurConnectorIndexing(turConnectorIndexingList.getFirst(),
-                turSNJobItem, session, status, standalone));
+        indexingService.update(turSNJobItem, session, turConnectorIndexingList, status, standalone);
         log.debug("Updated status {} object ({} - {} - {}) transactionId() = {}",
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getLocale(), turSNJobItem.getEnvironment(),
                 session.getTransactionId());
     }
 
+
     private void createStatus(TurSNJobItem turSNJobItem,
                               TurConnectorSession session,
                               boolean standalone) {
-        turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, session,
-                TurIndexingStatus.PREPARE_INDEX, standalone));
+        indexingService.save(turSNJobItem, session, TurIndexingStatus.PREPARE_INDEX, standalone);
         log.debug("Created status {} object ({} - {} - {})", turSNJobItem.getId(), session.getSource(),
                 turSNJobItem.getLocale(), turSNJobItem.getEnvironment());
         setSuccessStatus(turSNJobItem, session, TurIndexingStatus.PREPARE_INDEX);
     }
 
-    private TurConnectorIndexing createTurConnectorIndexing(TurSNJobItem turSNJobItem,
-                                                            TurConnectorSession turConnectorSession,
-                                                            TurIndexingStatus status,
-                                                            boolean standalone) {
-        return TurConnectorIndexing.builder()
-                .objectId(turSNJobItem.getId())
-                .source(turConnectorSession.getSource())
-                .transactionId(turConnectorSession.getTransactionId())
-                .locale(turSNJobItem.getLocale())
-                .checksum(turSNJobItem.getChecksum())
-                .created(new Date())
-                .modificationDate(new Date())
-                .sites(turSNJobItem.getSiteNames())
-                .environment(turSNJobItem.getEnvironment())
-                .status(status)
-                .standalone(standalone)
-                .build();
-    }
 
-    private static TurConnectorIndexing updateTurConnectorIndexing(TurConnectorIndexing turConnectorIndexing,
-                                                                   TurSNJobItem turSNJobItem,
-                                                                   TurConnectorSession turConnectorSession,
-                                                                   TurIndexingStatus status,
-                                                                   boolean standalone) {
-        return turConnectorIndexing
-                .setChecksum(turSNJobItem.getChecksum())
-                .setTransactionId(turConnectorSession.getTransactionId())
-                .setModificationDate(new Date())
-                .setStatus(status)
-                .setStandalone(standalone)
-                .setSites(turSNJobItem.getSiteNames());
-    }
-
-    private boolean objectNeedBeIndexed(TurSNJobItem turSNJobItem, TurConnectorSession turConnectorSession) {
+    private boolean objectNeedBeIndexed(TurSNJobItem turSNJobItem, TurConnectorSession session) {
         return (StringUtils.isNotEmpty(turSNJobItem.getId()) &&
-                !turConnectorIndexingRepository.existsByObjectIdAndSourceAndEnvironment(turSNJobItem.getId(),
-                        turConnectorSession.getSource(), turSNJobItem.getEnvironment()));
+                !indexingService.exists(turSNJobItem, session));
     }
 
-    private boolean objectNeedBeReIndexed(TurSNJobItem turSNJobItem, TurConnectorSession turConnectorSession) {
-        return StringUtils.isNotEmpty(turSNJobItem.getId()) &&
-                turConnectorIndexingRepository.existsByObjectIdAndSourceAndEnvironmentAndChecksumNot(
-                        turSNJobItem.getId(),
-                        turConnectorSession.getSource(), turSNJobItem.getEnvironment(), turSNJobItem.getChecksum());
+
+    private boolean isChecksumDifferent(TurSNJobItem turSNJobItem, TurConnectorSession session) {
+        return indexingService.isChecksumDifferent(turSNJobItem, session);
+    }
+
+
+    private boolean hasIndexingButNotSolr(TurSNJobItem turSNJobItem, TurConnectorSession session) {
+
+        return indexingService.exists(turSNJobItem, session) &&
+                !turConnectorSolr.hasContentIdAtSolr(turSNJobItem.getId(), session.getSource());
+    }
+
+    private boolean objectNeedBeReIndexed(TurSNJobItem turSNJobItem, TurConnectorSession session) {
+        return isChecksumDifferent(turSNJobItem, session) ||
+                hasIndexingButNotSolr(turSNJobItem, session);
     }
 }

@@ -20,7 +20,7 @@
  */
 package com.viglet.turing.connector.persistence.repository;
 
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRule;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleModel;
 import com.viglet.turing.connector.commons.plugin.TurConnectorIndexingRuleType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
@@ -32,8 +32,8 @@ import java.util.Set;
  * @author Alexandre Oliveira
  * @since 2025.2
  */
-public interface TurConnectorIndexingRuleRepository extends JpaRepository<TurConnectorIndexingRule, String> {
-	Set<TurConnectorIndexingRule> findBySource(Sort language, String source);
-	Set<TurConnectorIndexingRule> findBySourceAndRuleType(String source, TurConnectorIndexingRuleType type);
-	void delete(@NotNull TurConnectorIndexingRule turConnectorIndexingRule);
+public interface TurConnectorIndexingRuleRepository extends JpaRepository<TurConnectorIndexingRuleModel, String> {
+	Set<TurConnectorIndexingRuleModel> findBySource(Sort language, String source);
+	Set<TurConnectorIndexingRuleModel> findBySourceAndRuleType(String source, TurConnectorIndexingRuleType type);
+	void delete(@NotNull TurConnectorIndexingRuleModel turConnectorIndexingRule);
 }

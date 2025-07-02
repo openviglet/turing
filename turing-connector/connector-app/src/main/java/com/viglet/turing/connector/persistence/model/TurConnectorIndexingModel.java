@@ -35,7 +35,7 @@ import java.util.*;
 @Entity
 @Table(name = "con_indexing", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 @AllArgsConstructor
-public class TurConnectorIndexing implements Serializable {
+public class TurConnectorIndexingModel implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -23,6 +23,9 @@ import java.util.Date;
 @Slf4j
 @Setter
 public class TurMongoDBAppender extends TurMongoDBAppenderBase {
+
+    public static final int MAX_LENGTH_PACKAGE_NAME = 40;
+
     @Override
     protected void append(ILoggingEvent event) {
         if (!enabled || collection == null) {
@@ -52,7 +55,7 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
 
     private static @NotNull String getStackTrace(ILoggingEvent event) {
         StringBuilder stackStraceBuilder = new StringBuilder();
-        IThrowableProxy throwableProxy =  event.getThrowableProxy();
+        IThrowableProxy throwableProxy = event.getThrowableProxy();
         if (throwableProxy != null) {
             String throwableStr = ThrowableProxyUtil.asString(throwableProxy);
             stackStraceBuilder.append(throwableStr);
@@ -62,11 +65,10 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
     }
 
     private static @NotNull String abbreviatePackage(String packageName) {
-        TurNameAbbreviator n = TurNameAbbreviator.getAbbreviator("1.");
-        StringBuffer sb = new StringBuffer();
-        sb.append(packageName);
-        n.abbreviate(1, sb);
-        return sb.toString();
+        if (packageName.length() <= MAX_LENGTH_PACKAGE_NAME) return packageName;
+        StringBuffer stringBuffer = new StringBuffer(packageName);
+        TurNameAbbreviator.getAbbreviator("1.").abbreviate(1, stringBuffer);
+        return stringBuffer.toString();
     }
 
 

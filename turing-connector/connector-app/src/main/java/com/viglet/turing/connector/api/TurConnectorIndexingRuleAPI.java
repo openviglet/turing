@@ -22,9 +22,8 @@
 package com.viglet.turing.connector.api;
 
 import com.google.inject.Inject;
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRule;
-import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRuleRepository;
-import com.viglet.turing.spring.utils.TurPersistenceUtils;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleModel;
+import com.viglet.turing.connector.service.TurConnectorIndexingRuleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -44,70 +43,67 @@ import java.util.Set;
 @RequestMapping("/api/v2/connector/indexing-rule")
 @Tag(name = "Connector Indexing Rules", description = "Connector Indexing Rules API")
 public class TurConnectorIndexingRuleAPI {
-    private final TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository;
-
+    private final TurConnectorIndexingRuleService indexingRuleService;
     @Inject
-    public TurConnectorIndexingRuleAPI(TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository) {
-        this.turConnectorIndexingRuleRepository = turConnectorIndexingRuleRepository;
+    public TurConnectorIndexingRuleAPI(TurConnectorIndexingRuleService turConnectorIndexingRuleService) {
+        this.indexingRuleService = turConnectorIndexingRuleService;
     }
 
     @Operation(summary = "Connector Indexing Rule List By Source")
     @GetMapping("source/{source}")
-    public Set<TurConnectorIndexingRule> turConnectorIndexingRuleBySourceList(@PathVariable String source) {
-        return this.turConnectorIndexingRuleRepository
-                .findBySource(TurPersistenceUtils.orderByNameIgnoreCase(), source);
+    public Set<TurConnectorIndexingRuleModel> turConnectorIndexingRuleBySourceList(@PathVariable String source) {
+        return indexingRuleService.getBySource(source);
     }
+
+
 
     @Operation(summary = "Connector Indexing Rule List")
     @GetMapping()
-    public List<TurConnectorIndexingRule> turConnectorIndexingRuleList() {
-        return this.turConnectorIndexingRuleRepository.findAll();
+    public List<TurConnectorIndexingRuleModel> turConnectorIndexingRuleList() {
+        return indexingRuleService.getAll();
     }
+
 
     @Operation(summary = "Show a Connector Indexing Rules")
     @GetMapping("{id}")
-    public TurConnectorIndexingRule turConnectorIndexingRuleGet(@PathVariable String id) {
-        return turConnectorIndexingRuleRepository.findById(id)
-                .orElse(new TurConnectorIndexingRule());
+    public TurConnectorIndexingRuleModel turConnectorIndexingRuleGet(@PathVariable String id) {
+        return indexingRuleService.getById(id)
+                .orElse(new TurConnectorIndexingRuleModel());
     }
+
+
 
     @Operation(summary = "Update a Connector Indexing Rules")
     @PutMapping("/{id}")
-    public TurConnectorIndexingRule turConnectorIndexingRuleUpdate(@PathVariable String id,
-                                                                   @RequestBody TurConnectorIndexingRule turConnectorIndexingRule) {
-        return turConnectorIndexingRuleRepository.findById(id).map(edit -> {
-            edit.setName(turConnectorIndexingRule.getName());
-            edit.setDescription(turConnectorIndexingRule.getDescription());
-            edit.setAttribute(turConnectorIndexingRule.getAttribute());
-            edit.setRuleType(turConnectorIndexingRule.getRuleType());
-            edit.setSource(turConnectorIndexingRule.getSource());
-            edit.setValues(turConnectorIndexingRule.getValues());
-            edit.setLastModifiedDate(new Date());
-            return turConnectorIndexingRuleRepository.save(edit);
-        }).orElse(new TurConnectorIndexingRule());
+    public TurConnectorIndexingRuleModel turConnectorIndexingRuleUpdate(@PathVariable String id,
+                                                                        @RequestBody TurConnectorIndexingRuleModel indexingRule) {
+        return indexingRuleService.update(id, indexingRule);
     }
+
+
 
 
     @Transactional
     @Operation(summary = "Delete a Connector Indexing Rules")
     @DeleteMapping("/{id}")
     public boolean turConnectorIndexingRuleDelete(@PathVariable String id) {
-        turConnectorIndexingRuleRepository.deleteById(id);
+        indexingRuleService.deleteById(id);
         return true;
     }
 
+
     @Operation(summary = "Create a Connector Ranking Expression")
     @PostMapping
-    public TurConnectorIndexingRule turConnectorIndexingRuleAdd(
-            @RequestBody TurConnectorIndexingRule turConnectorIndexingRule) {
+    public TurConnectorIndexingRuleModel turConnectorIndexingRuleAdd(
+            @RequestBody TurConnectorIndexingRuleModel turConnectorIndexingRule) {
         turConnectorIndexingRule.setLastModifiedDate(new Date());
-        return turConnectorIndexingRuleRepository.save(turConnectorIndexingRule);
+        return indexingRuleService.save(turConnectorIndexingRule);
     }
 
     @Operation(summary = "Connector Ranking Expression Structure")
     @GetMapping("structure")
-    public TurConnectorIndexingRule turConnectorIndexingRuleStructure() {
-        return new TurConnectorIndexingRule();
+    public TurConnectorIndexingRuleModel turConnectorIndexingRuleStructure() {
+        return new TurConnectorIndexingRuleModel();
 
     }
 }

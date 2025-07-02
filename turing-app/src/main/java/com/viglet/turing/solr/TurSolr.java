@@ -408,7 +408,7 @@ public class TurSolr {
         Set<TurSNRankingExpression> turSNRankingExpression = turSNRankingExpressionRepository
                 .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(),
                         turSNSite);
-        if (hasExpression(turSNRankingExpression)) {
+        if (hasRankingConditions(turSNRankingExpression)) {
             String[] expressionString = turSNRankingExpression.stream().map(expression ->
                     String.format(Locale.US, "%s^%.1f",
                             "(" + boostQueryAttributes(expression, turSNSiteFieldExtList) + ")",
@@ -417,7 +417,7 @@ public class TurSolr {
         }
     }
 
-    private static boolean hasExpression(Set<TurSNRankingExpression> turSNRankingExpression) {
+    private static boolean hasRankingConditions(Set<TurSNRankingExpression> turSNRankingExpression) {
         return turSNRankingExpression.stream()
                 .anyMatch(expression -> !expression.getTurSNRankingConditions()
                         .isEmpty());
@@ -1452,7 +1452,8 @@ public class TurSolr {
     private Map<String, TurSNSiteFieldExt> getFieldExtMap(TurSNSite turSNSite) {
         return turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite,
                 1).stream().collect(Collectors
-                .toMap(TurSNSiteFieldExt::getName, turSNSiteFieldExt -> turSNSiteFieldExt, (a, b) -> b));
+                .toMap(TurSNSiteFieldExt::getName, turSNSiteFieldExt -> turSNSiteFieldExt,
+                        (a, b) -> b));
     }
 
     private Map<String, Object> getRequiredFields(TurSNSite turSNSite) {

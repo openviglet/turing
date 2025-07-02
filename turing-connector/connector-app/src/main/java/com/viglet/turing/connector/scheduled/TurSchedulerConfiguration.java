@@ -1,4 +1,4 @@
-package com.viglet.turing.connector.spring;
+package com.viglet.turing.connector.scheduled;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;

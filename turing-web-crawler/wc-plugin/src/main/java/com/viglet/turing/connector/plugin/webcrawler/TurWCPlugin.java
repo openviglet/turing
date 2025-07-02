@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Primary
 @Component
 public class TurWCPlugin implements TurConnectorPlugin {
@@ -39,5 +41,10 @@ public class TurWCPlugin implements TurConnectorPlugin {
     @Override
     public void crawl() {
         turWCSourceRepository.findAll().forEach(turWCPluginProcess::start);
+    }
+
+    @Override
+    public void sentToIndexByIdList(String source, List<String> idList) {
+        throw new UnsupportedOperationException("This method is only a placeholder");
     }
 }

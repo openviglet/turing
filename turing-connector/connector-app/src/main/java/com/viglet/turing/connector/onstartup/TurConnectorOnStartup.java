@@ -1,7 +1,6 @@
 package com.viglet.turing.connector.onstartup;
 
-import com.viglet.turing.connector.persistence.model.TurConnectorConfigVar;
-import com.viglet.turing.connector.persistence.repository.TurConnectorConfigVarRepository;
+import com.viglet.turing.connector.service.TurConnectorConfigVarService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -13,18 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class TurConnectorOnStartup implements ApplicationRunner {
-    public static final String FIRST_TIME = "FIRST_TIME";
-
-    private final TurConnectorConfigVarRepository turConnectorConfigVarRepository;
+    private final TurConnectorConfigVarService configVarService;
 
     @Autowired
-    public TurConnectorOnStartup(TurConnectorConfigVarRepository turConnectorConfigVarRepository) {
-        this.turConnectorConfigVarRepository = turConnectorConfigVarRepository;
+    public TurConnectorOnStartup(TurConnectorConfigVarService configVarService) {
+        this.configVarService = configVarService;
     }
 
     @Override
     public void run(ApplicationArguments arg0) {
-        if (this.turConnectorConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
+        if (configVarService.hasNotFirstTime()) {
             log.info("First Time Configuration ...");
             setFirstTIme();
             log.info("Configuration finished.");
@@ -32,10 +29,10 @@ public class TurConnectorOnStartup implements ApplicationRunner {
     }
 
     private void setFirstTIme() {
-        TurConnectorConfigVar turConfigVar = new TurConnectorConfigVar();
-        turConfigVar.setId(FIRST_TIME);
-        turConfigVar.setPath("/system");
-        turConfigVar.setValue("true");
-        this.turConnectorConfigVarRepository.save(turConfigVar);
+        configVarService.saveFirstTime();
     }
+
+
+
+
 }

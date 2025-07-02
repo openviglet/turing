@@ -19,10 +19,10 @@
 package com.viglet.turing.connector.api;
 
 import com.google.inject.Inject;
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexing;
-import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRepository;
+import com.viglet.turing.connector.domain.TurConnectorMonitoring;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
+import com.viglet.turing.connector.service.TurConnectorIndexingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Limit;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,30 +35,31 @@ import java.util.List;
 @RequestMapping("/api/v2/connector/monitoring/indexing")
 @Tag(name = "Connector API", description = "Connector API")
 public class TurConnectorMonitoringApi {
-    private final TurConnectorIndexingRepository turConnectorIndexingRepository;
+    private final TurConnectorIndexingService indexingService;
 
     @Inject
-    public TurConnectorMonitoringApi(TurConnectorIndexingRepository turConnectorIndexingRepository) {
-        this.turConnectorIndexingRepository = turConnectorIndexingRepository;
+    public TurConnectorMonitoringApi(TurConnectorIndexingService indexingService) {
+        this.indexingService = indexingService;
     }
 
     @GetMapping
     public ResponseEntity<TurConnectorMonitoring> monitoringIndexing() {
-        return turConnectorIndexingRepository.findAllByOrderByModificationDateDesc(Limit.of(50))
+        return indexingService.findAll()
                 .map(indexing -> ResponseEntity.ok(getMonitoring(indexing)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    private TurConnectorMonitoring getMonitoring(List<TurConnectorIndexing> indexing) {
+
+    private TurConnectorMonitoring getMonitoring(List<TurConnectorIndexingModel> indexing) {
         return TurConnectorMonitoring.builder()
-                .sources(turConnectorIndexingRepository.findAllSources())
+                .sources(indexingService.getAllSources())
                 .indexing(indexing)
                 .build();
     }
 
     @GetMapping("{source}")
     public ResponseEntity<TurConnectorMonitoring> monitoringIndexingBySource(@PathVariable String source) {
-        return turConnectorIndexingRepository.findAllBySourceOrderByModificationDateDesc(source, Limit.of(50))
+        return indexingService.getBySource(source)
                 .map(indexing -> ResponseEntity.ok(getMonitoring(indexing)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
 
