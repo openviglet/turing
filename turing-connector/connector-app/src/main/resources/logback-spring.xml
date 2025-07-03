@@ -16,7 +16,7 @@
 			additivity="false">
 		<appender-ref ref="CONSOLE" />
 	</logger>
-	<logger name="com.viglet.turing.spring.logging.TurLoggingIndexingLog" level="OFF" />
+	<logger name="com.viglet.turing.commons.logging.TurLoggingIndexingLog" level="OFF" />
 	<include
 		resource="org/springframework/boot/logging/logback/defaults.xml" />
 	<property name="LOG_FILE"

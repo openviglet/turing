@@ -22,44 +22,12 @@ import {TurIntegrationAemSource} from "../model/integration-aem-source.model";
 import { environment } from '../../../../../environments/environment';
 
 @Injectable()
-export class TurIntegrationAemSourceService {
+export class TurIntegrationConnectorService {
   private integrationId: string | undefined;
   constructor(private httpClient: HttpClient) {}
 
-  setIntegrationId(integrationId: string) {
-    this.integrationId = integrationId;
-  }
-  query(): Observable<TurIntegrationAemSource[]> {
-    return this.httpClient.get<TurIntegrationAemSource[]>(this.getAemUrl());
-  }
-
-  private getAemUrl() {
-    return `${environment.apiUrl}/api/v2/integration/${this.integrationId}/aem/source`;
-  }
-  private getConnectorUrl() {
+    private getConnectorUrl() {
     return `${environment.apiUrl}/api/v2/integration/${this.integrationId}/connector`;
-  }
-
-  get(id: string): Observable<TurIntegrationAemSource> {
-    return this.httpClient.get<TurIntegrationAemSource>(`${this.getAemUrl()}/${id}`);
-  }
-
-  getStructure(): Observable<TurIntegrationAemSource> {
-    return this.httpClient.get<TurIntegrationAemSource>(`${this.getAemUrl()}/structure`);
-  }
-
-  public save(turIntegrationInstance: TurIntegrationAemSource, newObject: boolean): Observable<TurIntegrationAemSource> {
-    if (newObject) {
-      return this.httpClient.post<TurIntegrationAemSource>(this.getAemUrl(),
-        JSON.stringify(turIntegrationInstance));
-    }
-    else {
-      return this.httpClient.put<TurIntegrationAemSource>(`${this.getAemUrl()}/${turIntegrationInstance.id}`,
-        JSON.stringify(turIntegrationInstance));
-    }
-  }
-  public delete(turIntegrationAemSource: TurIntegrationAemSource): Observable<Object> {
-    return this.httpClient.delete(`${this.getAemUrl()}/${turIntegrationAemSource.id}`);
   }
 
   indexAll(turIntegrationAemSource: TurIntegrationAemSource) {

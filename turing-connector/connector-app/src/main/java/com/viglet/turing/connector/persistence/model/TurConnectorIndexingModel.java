@@ -47,6 +47,8 @@ public class TurConnectorIndexingModel implements Serializable {
     @Column(length = 500)
     private String objectId;
     @Column
+    private String provider;
+    @Column
     private String source;
     @Column
     private String environment;

@@ -18,13 +18,10 @@
 
 package com.viglet.turing.connector.commons.plugin;
 
-import com.viglet.turing.client.sn.job.TurSNJobItem;
-import com.viglet.turing.connector.commons.plugin.domain.TurConnectorIndexing;
 
 import java.util.List;
 
-public interface TurConnectorContext {
-    void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone);
-    void finishIndexing(TurConnectorSession session, boolean standalone);
-    List<TurConnectorIndexing> getIndexingItem(String objectId, String source);
+public interface TurConnectorRequestPlugin {
+    void sentToIndexByIdList(String source, List<String> idList);
+
 }

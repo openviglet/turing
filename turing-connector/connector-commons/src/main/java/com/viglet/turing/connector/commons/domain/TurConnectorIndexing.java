@@ -1,4 +1,4 @@
-package com.viglet.turing.connector.commons.plugin.domain;
+package com.viglet.turing.connector.commons.domain;
 
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import lombok.Builder;

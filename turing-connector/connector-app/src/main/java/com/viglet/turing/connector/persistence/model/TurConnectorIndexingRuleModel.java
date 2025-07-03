@@ -21,7 +21,7 @@
 
 package com.viglet.turing.connector.persistence.model;
 
-import com.viglet.turing.connector.commons.plugin.TurConnectorIndexingRuleType;
+import com.viglet.turing.connector.commons.TurConnectorIndexingRuleType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;

@@ -37,7 +37,10 @@ import com.viglet.turing.connector.commons.TurConnectorSession;
 import com.viglet.turing.connector.commons.domain.TurConnectorIndexing;
 import com.viglet.turing.connector.plugin.aem.api.TurAemPathList;
 import com.viglet.turing.connector.plugin.aem.conf.AemPluginHandlerConfiguration;
-import com.viglet.turing.connector.plugin.aem.persistence.model.*;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemPluginModel;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemPluginSystem;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemTargetAttribute;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +65,7 @@ import static com.viglet.turing.connector.commons.logging.TurConnectorLoggingUti
 @Slf4j
 @Getter
 @Component
-public class TurAemPluginProcess {
+public class TurAemPluginStandalone {
     private final Set<String> visitedLinks = new HashSet<>();
     private final Queue<String> remainingLinks = new LinkedList<>();
     private final TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository;
@@ -72,22 +75,20 @@ public class TurAemPluginProcess {
     private final TurAemPluginModelRepository turAemPluginModelRepository;
     private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemTargetAttributeRepository turAemTargetAttributeRepository;
-    private final TurConnectorContext turConnectorContext;
     private final String turingUrl;
     private final String turingApiKey;
     private final List<String> runningSources = new ArrayList<>();
 
     @Inject
-    public TurAemPluginProcess(TurAemPluginSystemRepository turAemPluginSystemRepository,
-                               TurAemConfigVarRepository turAemConfigVarRepository,
-                               TurAemSourceLocalePathRepository turAemSourceLocalePathRepository,
-                               TurAemPluginModelRepository turAemPluginModelRepository,
-                               TurAemSourceRepository turAemSourceRepository,
-                               TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository,
-                               TurAemTargetAttributeRepository turAemTargetAttributeRepository,
-                               TurConnectorContext turConnectorContext,
-                               @Value("${turing.url}") String turingUrl,
-                               @Value("${turing.apiKey}") String turingApiKey) {
+    public TurAemPluginStandalone(TurAemPluginSystemRepository turAemPluginSystemRepository,
+                                  TurAemConfigVarRepository turAemConfigVarRepository,
+                                  TurAemSourceLocalePathRepository turAemSourceLocalePathRepository,
+                                  TurAemPluginModelRepository turAemPluginModelRepository,
+                                  TurAemSourceRepository turAemSourceRepository,
+                                  TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository,
+                                  TurAemTargetAttributeRepository turAemTargetAttributeRepository,
+                                  @Value("${turing.url}") String turingUrl,
+                                  @Value("${turing.apiKey}") String turingApiKey) {
         this.turAemSystemRepository = turAemPluginSystemRepository;
         this.turAemConfigVarRepository = turAemConfigVarRepository;
         this.turAemSourceLocalePathRepository = turAemSourceLocalePathRepository;
@@ -95,27 +96,12 @@ public class TurAemPluginProcess {
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemAttributeSpecificationRepository = turAemAttributeSpecificationRepository;
         this.turAemTargetAttributeRepository = turAemTargetAttributeRepository;
-        this.turConnectorContext = turConnectorContext;
         this.turingUrl = turingUrl;
         this.turingApiKey = turingApiKey;
     }
 
     public static String getProviderName() {
         return AEM;
-    }
-    @Async
-    public void indexAllByNameAsync(String sourceName) {
-        turAemSourceRepository.findByName(sourceName).ifPresent(this::indexAll);
-    }
-
-    @Async
-    public void indexAllByIdAsync(String id) {
-        turAemSourceRepository.findById(id).ifPresent(this::indexAll);
-    }
-
-    @Async
-    public void sentToIndexStandaloneAsync(@NotNull String source, @NotNull TurAemPathList turAemPathList) {
-        sentToIndexStandalone(source, turAemPathList.getPaths());
     }
 
     public void sentToIndexStandalone(@NotNull String source, @NotNull List<String> idList) {
@@ -125,7 +111,7 @@ public class TurAemPluginProcess {
         }
         log.info("Receiving payload to {} source with paths {}", source, idList);
         turAemSourceRepository.findByName(source).ifPresentOrElse(turAemSource -> {
-                    TurConnectorSession session = TurAemPluginProcess.getTurConnectorSession(turAemSource);
+                    TurConnectorSession session = TurAemPluginStandalone.getTurConnectorSession(turAemSource);
                     idList.forEach(path ->
                             indexContentId(session, turAemSource, path, true));
                     finished(session, true);
@@ -133,23 +119,6 @@ public class TurAemPluginProcess {
                 () -> log.error("{} Source not found", source));
     }
 
-
-    public void indexAll(TurAemSource turAemSource) {
-        if (runningSources.contains(turAemSource.getName())) {
-            log.warn("Skipping. There are already source process running. {}", turAemSource.getName());
-            return;
-        }
-        runningSources.add(turAemSource.getName());
-        TurConnectorSession turConnectorSession = getTurConnectorSession(turAemSource);
-        try {
-            this.getNodesFromJson(getTurAemSourceContext(new AemPluginHandlerConfiguration(turAemSource)),
-                    turConnectorSession, turAemSource,
-                    new TurAemContentDefinitionProcess(getTurAemContentMapping(turAemSource)));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        finished(turConnectorSession, false);
-    }
 
     public static @NotNull TurConnectorSession getTurConnectorSession(TurAemSource turAemSource) {
         // sites parameter is null, because in next step need check if author our
@@ -249,16 +218,6 @@ public class TurAemPluginProcess {
         return turAemSourceContext;
     }
 
-    private void getNodesFromJson(TurAemSourceContext turAemSourceContext,
-                                  TurConnectorSession turConnectorSession,
-                                  TurAemSource turAemSource,
-                                  TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
-        if (!TurAemCommonsUtils.usingContentTypeParameter(turAemSourceContext))
-            return;
-        byContentTypeList(turAemSourceContext, turConnectorSession, turAemSource,
-                turAemContentDefinitionProcess);
-    }
-
     public void indexContentId(TurConnectorSession session, TurAemSource turAemSource, String contentId,
                                boolean standalone) {
         TurAemSourceContext turAemSourceContext = getTurAemSourceContext(
@@ -294,27 +253,6 @@ public class TurAemPluginProcess {
                         TurSNConstants.SOURCE_APPS_ATTR, session.getProviderName()));
         setSuccessStatus(turSNJobItem, session, TurIndexingStatus.DEINDEXED);
         return turSNJobItem;
-    }
-
-    private void byContentTypeList(TurAemSourceContext turAemSourceContext,
-                                   TurConnectorSession turConnectorSession,
-                                   TurAemSource turAemSource,
-                                   TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
-        turAemContentDefinitionProcess.findByNameFromModelWithDefinition(turAemSourceContext.getContentType())
-                .ifPresentOrElse(turAemModel -> byContentType(turAemSourceContext, turConnectorSession, turAemSource,
-                                turAemContentDefinitionProcess),
-                        () -> log.debug("{} type is not configured in CTD Mapping file.",
-                                turAemSourceContext.getContentType()));
-    }
-
-    private void byContentType(TurAemSourceContext turAemSourceContext,
-                               TurConnectorSession turConnectorSession,
-                               TurAemSource turAemSource,
-                               TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
-        TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext, false)
-                .ifPresent(infinityJson -> getNodeFromJson(turAemSourceContext.getRootPath(), infinityJson,
-                        turAemSourceContext,
-                        turConnectorSession, turAemSource, turAemContentDefinitionProcess, false));
     }
 
     private void getNodeFromJson(String nodePath, JSONObject jsonObject,

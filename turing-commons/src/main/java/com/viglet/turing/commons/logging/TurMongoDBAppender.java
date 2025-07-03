@@ -1,4 +1,4 @@
-package com.viglet.turing.spring.logging;
+package com.viglet.turing.commons.logging;
 
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
@@ -13,13 +13,11 @@ import org.bson.Document;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 
-@Component
 @Slf4j
 @Setter
 public class TurMongoDBAppender extends TurMongoDBAppenderBase {

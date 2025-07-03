@@ -16,28 +16,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.connector.commons.plugin;
+package com.viglet.turing.connector.commons;
 
-import lombok.Data;
+import com.viglet.turing.client.sn.job.TurSNJobItem;
+import com.viglet.turing.connector.commons.domain.TurConnectorIndexing;
 
-import java.util.Collection;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.List;
 
-@Data
-public class TurConnectorSession {
-    private String source;
-    private String transactionId;
-    private Collection<String> sites;
-    private String providerName;
-    private Locale locale;
-
-    public TurConnectorSession(String source, Collection<String> sites, String providerName,
-                               Locale locale) {
-        this.source = source;
-        this.transactionId = UUID.randomUUID().toString();
-        this.sites = sites;
-        this.providerName = providerName;
-        this.locale = locale;
-    }
+public interface TurConnectorContext {
+    void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone);
+    void finishIndexing(TurConnectorSession session, boolean standalone);
+    List<TurConnectorIndexing> getIndexingItem(String objectId, String source);
 }

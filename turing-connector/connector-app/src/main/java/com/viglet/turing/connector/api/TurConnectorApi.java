@@ -18,6 +18,7 @@
 
 package com.viglet.turing.connector.api;
 
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.domain.TurConnectorValidateDifference;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 import com.viglet.turing.connector.service.TurConnectorIndexingService;
@@ -37,12 +38,14 @@ import java.util.*;
 public class TurConnectorApi {
     private final TurConnectorIndexingService indexingService;
     private final TurConnectorSolrService turConnectorSolr;
-
+    private final TurConnectorPlugin plugin;
 
     @Autowired
-    public TurConnectorApi(TurConnectorIndexingService indexingService, TurConnectorSolrService turConnectorSolr) {
+    public TurConnectorApi(TurConnectorIndexingService indexingService, TurConnectorSolrService turConnectorSolr,
+                           TurConnectorPlugin plugin) {
         this.indexingService = indexingService;
         this.turConnectorSolr = turConnectorSolr;
+        this.plugin = plugin;
     }
 
     @GetMapping("status")
@@ -52,11 +55,17 @@ public class TurConnectorApi {
         return status;
     }
 
+    private static Map<String, String> statusSent() {
+        Map<String, String> status = new HashMap<>();
+        status.put("status", "sent");
+        return status;
+    }
+
     @GetMapping("validate/{source}")
     public TurConnectorValidateDifference validateSource(@PathVariable String source) {
         return TurConnectorValidateDifference.builder()
                 .missing(turConnectorSolr.solrMissingContent(source))
-                .extra(turConnectorSolr. solrExtraContent(source))
+                .extra(turConnectorSolr.solrExtraContent(source))
                 .build();
     }
 
@@ -67,5 +76,16 @@ public class TurConnectorApi {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("index/{name}/all")
+    public ResponseEntity<Map<String, String>> indexAll(@PathVariable String name) {
+        plugin.indexAll(name);
+        return ResponseEntity.ok(statusSent());
+    }
 
+    @GetMapping("reindex/{name}/all")
+    public ResponseEntity<Map<String, String>> reindexAll(@PathVariable String name) {
+        indexingService.deleteByProvider(plugin.getProviderName());
+        plugin.indexAll(name);
+        return ResponseEntity.ok(statusSent());
+    }
 }

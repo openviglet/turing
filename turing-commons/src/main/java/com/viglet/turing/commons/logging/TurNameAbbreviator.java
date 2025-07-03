@@ -1,4 +1,4 @@
-package com.viglet.turing.spring.logging;
+package com.viglet.turing.commons.logging;
 
 import java.util.ArrayList;
 import java.util.List;

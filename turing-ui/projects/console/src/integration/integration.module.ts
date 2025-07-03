@@ -38,6 +38,7 @@ import {
 import {MomentModule} from "ngx-moment";
 import {TurIntegrationIndexingRuleService} from "./service/integration-indexing-rule.service";
 import {TurIntegrationMonitoringService} from "./service/integration-monitoring.service";
+import {TurIntegrationConnectorService} from "./service/integration-connector.service";
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import {TurIntegrationMonitoringService} from "./service/integration-monitoring.
     TurIntegrationAemSourceService,
     TurIntegrationWcSourceService,
     TurIntegrationIndexingRuleService,
-    TurIntegrationMonitoringService
+    TurIntegrationMonitoringService,
+    TurIntegrationConnectorService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,4 +1,4 @@
-package com.viglet.turing.spring.logging;
+package com.viglet.turing.commons.logging;
 
 import lombok.extern.slf4j.Slf4j;
 

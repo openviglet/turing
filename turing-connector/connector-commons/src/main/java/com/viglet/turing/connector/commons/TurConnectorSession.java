@@ -16,13 +16,28 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.connector.commons.plugin;
+package com.viglet.turing.connector.commons;
 
+import lombok.Data;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.UUID;
 
-public interface TurConnectorPlugin {
-    void crawl();
-    String getProviderName();
-    void indexAll(String source);
+@Data
+public class TurConnectorSession {
+    private String source;
+    private String transactionId;
+    private Collection<String> sites;
+    private String providerName;
+    private Locale locale;
+
+    public TurConnectorSession(String source, Collection<String> sites, String providerName,
+                               Locale locale) {
+        this.source = source;
+        this.transactionId = UUID.randomUUID().toString();
+        this.sites = sites;
+        this.providerName = providerName;
+        this.locale = locale;
+    }
 }

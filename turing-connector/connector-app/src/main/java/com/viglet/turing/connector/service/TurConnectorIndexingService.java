@@ -3,8 +3,8 @@ package com.viglet.turing.connector.service;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.connector.domain.TurSNSiteLocale;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
-import com.viglet.turing.connector.commons.plugin.domain.TurConnectorIndexing;
+import com.viglet.turing.connector.commons.TurConnectorSession;
+import com.viglet.turing.connector.commons.domain.TurConnectorIndexing;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,9 @@ public class TurConnectorIndexingService {
                 session.getSource(), turSNJobItem.getEnvironment());
     }
 
+    public void deleteByProvider(String provider) {
+        turConnectorIndexingRepository.deleteByProvider(provider);
+    }
 
     public void update(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone,
                        TurConnectorIndexingModel indexing) {

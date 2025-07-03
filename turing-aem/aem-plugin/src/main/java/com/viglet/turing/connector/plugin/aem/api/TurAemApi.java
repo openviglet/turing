@@ -50,11 +50,11 @@ public class TurAemApi {
     }
 
 
-    @PostMapping("index/{name}")
-    public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String name,
+    @PostMapping("index/{source}")
+    public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String source,
                                                               @RequestBody TurAemPathList pathList) {
-        if (hasNonRepeatedRequest(name, pathList.getPaths())) {
-            turAemPluginProcess.sentToIndexStandaloneAsync(name, pathList);
+        if (hasNonRepeatedRequest(source, pathList.getPaths())) {
+            turAemPluginProcess.sentToIndexStandaloneAsync(source, pathList);
         }
         return ResponseEntity.ok(statusSent());
     }
@@ -85,13 +85,6 @@ public class TurAemApi {
 
     private static @NotNull String getSourceWithContentId(String name, String path) {
         return name + "-" + path;
-    }
-
-    @GetMapping("index/{name}/all")
-    public ResponseEntity<Map<String, String>> indexAll(@PathVariable String name) {
-        turAemPluginProcess.indexAllByNameAsync(name);
-        return ResponseEntity.ok(statusSent());
-
     }
 
     private static Map<String, String> statusOk() {

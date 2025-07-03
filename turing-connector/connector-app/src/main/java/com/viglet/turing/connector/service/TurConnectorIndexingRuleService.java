@@ -1,7 +1,7 @@
 package com.viglet.turing.connector.service;
 
-import com.viglet.turing.connector.commons.plugin.TurConnectorIndexingRuleType;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
+import com.viglet.turing.connector.commons.TurConnectorIndexingRuleType;
+import com.viglet.turing.connector.commons.TurConnectorSession;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleModel;
 import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRuleRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;

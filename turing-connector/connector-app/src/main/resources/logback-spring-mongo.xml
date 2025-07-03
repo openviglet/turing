@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<appender name="MONGO_GENERAL" class="com.viglet.turing.spring.logging.TurMongoDBAppender">
+	<appender name="MONGO_GENERAL" class="com.viglet.turing.commons.logging.TurMongoDBAppender">
 		<enabled>true</enabled>
 		<connectionString>mongodb://localhost:27017</connectionString>
 		<databaseName>turingLog</databaseName>
 		<collectionName>aem</collectionName>
 	</appender>
-	<appender name="MONGO_STATUS" class="com.viglet.turing.spring.logging.TurMongoDBIndexingAppender">
+	<appender name="MONGO_STATUS" class="com.viglet.turing.commons.logging.TurMongoDBIndexingAppender">
 		<enabled>true</enabled>
 		<connectionString>mongodb://localhost:27017</connectionString>
 		<databaseName>turingLog</databaseName>
@@ -25,8 +25,8 @@
 		additivity="false">
 		<appender-ref ref="CONSOLE" />
 	</logger>
-	<logger name="com.viglet.turing.spring.logging.TurLoggingIndexingLog" level="info"
-			additivity="false">
+	<logger name="com.viglet.turing.commons.logging.TurLoggingIndexingLog" level="info"
+            additivity="false">
 		<appender-ref ref="MONGO_STATUS" />
 	</logger>
 	<logger name="com.viglet.turing.connector.onstartup.TurConnectorOnStartup" level="info"

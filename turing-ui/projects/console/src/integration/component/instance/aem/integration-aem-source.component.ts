@@ -5,19 +5,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UntypedFormControl, Validators} from '@angular/forms';
 import {TurIntegrationAemSource} from "../../../model/integration-aem-source.model";
 import {TurIntegrationAemSourceService} from "../../../service/integration-aem-source.service";
-import 'brace';
-
-import 'brace/mode/text';
-import 'brace/theme/github';
-
-import 'brace/theme/clouds';
-import 'brace/mode/javascript';
-
-import 'brace/mode/json';
 import {AceComponent, AceConfigInterface, AceDirective} from "ngx-ace-wrapper";
 import {TurIntegrationAemLocalePath} from "../../../model/integration-aem-locale-path.model";
 import {TurLocale} from "../../../../locale/model/locale.model";
 import {TurLocaleService} from "../../../../locale/service/locale.service";
+import {TurIntegrationConnectorService} from "../../../service/integration-connector.service";
 
 @Component({
     selector: 'integration-aem-page',
@@ -37,15 +29,17 @@ export class TurIntegrationAemSourceComponent implements OnInit {
   directiveRef?: AceDirective;
   @ViewChild('modalDelete')
   modalDelete!: ElementRef;
-  private turIntegrationAemSource: Observable<TurIntegrationAemSource>;
-  private newObject: boolean = false;
-  private integrationId: string;
-  private turLocales: Observable<TurLocale[]>;
-  portControl = new UntypedFormControl(80, [Validators.max(100), Validators.min(0)])
+  private readonly turIntegrationAemSource: Observable<TurIntegrationAemSource>;
+  private readonly newObject: boolean = false;
+  private readonly integrationId: string;
+  private readonly turLocales: Observable<TurLocale[]>;
+  portControl = new UntypedFormControl(80, [Validators.max(100),
+    Validators.min(0)])
 
 
   constructor(
     private readonly notifier: NotifierService,
+    private turIntegrationConnectorService: TurIntegrationConnectorService,
     private turIntegrationAemSourceService: TurIntegrationAemSourceService,
     private turLocaleService: TurLocaleService,
     private activatedRoute: ActivatedRoute,
@@ -88,7 +82,8 @@ export class TurIntegrationAemSourceComponent implements OnInit {
 
   }
 
-  removeLocale(turIntegrationAemSource: TurIntegrationAemSource, turIntegrationAemLocalePath: TurIntegrationAemLocalePath) {
+  removeLocale(turIntegrationAemSource: TurIntegrationAemSource,
+               turIntegrationAemLocalePath: TurIntegrationAemLocalePath) {
     turIntegrationAemSource.localePaths =
       turIntegrationAemSource.localePaths.filter(condition =>
         condition != turIntegrationAemLocalePath)
@@ -101,7 +96,9 @@ export class TurIntegrationAemSourceComponent implements OnInit {
   public save(_turIntegrationAemSource: TurIntegrationAemSource) {
     this.turIntegrationAemSourceService.save(_turIntegrationAemSource, this.newObject).subscribe(
       (turIntegrationAemSource: TurIntegrationAemSource) => {
-        let message: string = this.newObject ? " Integration AEM source was created." : " Integration AEM source was updated.";
+        let message: string = this.newObject ?
+          " Integration AEM source was created." :
+          " Integration AEM source was updated.";
 
         _turIntegrationAemSource = turIntegrationAemSource;
 
@@ -120,7 +117,8 @@ export class TurIntegrationAemSourceComponent implements OnInit {
   public delete(_turIntegrationAemSource: TurIntegrationAemSource) {
     this.turIntegrationAemSourceService.delete(_turIntegrationAemSource).subscribe(
       () => {
-        this.notifier.notify("success", _turIntegrationAemSource.name.concat(" Integration AEM source was deleted."));
+        this.notifier.notify("success", _turIntegrationAemSource.name
+          .concat(" Integration AEM source was deleted."));
         this.modalDelete.nativeElement.removeAttribute("open");
         this.router.navigate(['/integration/instance', this.getIntegrationId(), 'aem']);
       },
@@ -129,13 +127,23 @@ export class TurIntegrationAemSourceComponent implements OnInit {
       });
   }
 
-  protected readonly JSON = JSON;
-
   indexAll(_turIntegrationAemSource: TurIntegrationAemSource) {
-    this.turIntegrationAemSourceService.indexAll(_turIntegrationAemSource).subscribe(
+    this.turIntegrationConnectorService.indexAll(_turIntegrationAemSource).subscribe(
       () => {
         this.notifier.notify("success", _turIntegrationAemSource.name
           .concat(" Integration AEM source is indexing all content."));
+        this.modalDelete.nativeElement.removeAttribute("open");
+        this.router.navigate(['/integration/instance', this.getIntegrationId(), 'aem']);
+      },
+      (response: string) => {
+        this.notifier.notify("error", "Integration AEM source was error: " + response);
+      });
+  }
+  reindexAll(_turIntegrationAemSource: TurIntegrationAemSource) {
+    this.turIntegrationConnectorService.reindexAll(_turIntegrationAemSource).subscribe(
+      () => {
+        this.notifier.notify("success", _turIntegrationAemSource.name
+          .concat(" Integration AEM source is reindexing all content."));
         this.modalDelete.nativeElement.removeAttribute("open");
         this.router.navigate(['/integration/instance', this.getIntegrationId(), 'aem']);
       },

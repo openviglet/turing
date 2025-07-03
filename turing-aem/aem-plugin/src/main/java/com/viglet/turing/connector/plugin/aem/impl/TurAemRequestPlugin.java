@@ -16,11 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.connector.plugin.aem;
+package com.viglet.turing.connector.plugin.aem.impl;
 
-import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
-import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
-import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
+import com.viglet.turing.connector.commons.plugin.TurConnectorRequestPlugin;
+import com.viglet.turing.connector.plugin.aem.TurAemPluginStandalone;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -30,27 +29,19 @@ import java.util.List;
 
 @Slf4j
 @Primary
-@Component("aem")
-public class TurAemPlugin implements TurConnectorPlugin {
-    private final TurAemPluginProcess turAemPluginProcess;
-    private final TurAemSourceRepository turAemSourceRepository;
+@Component("aem-request")
+public class TurAemRequestPlugin implements TurConnectorRequestPlugin {
+    private final TurAemPluginStandalone turAemPluginStandalone;
 
     @Autowired
-    public TurAemPlugin(TurAemPluginProcess turAemPluginProcess, TurAemSourceRepository turAemSourceRepository) {
-        this.turAemPluginProcess = turAemPluginProcess;
-        this.turAemSourceRepository = turAemSourceRepository;
+    public TurAemRequestPlugin(TurAemPluginStandalone turAemPluginStandalone) {
+        this.turAemPluginStandalone = turAemPluginStandalone;
     }
 
-    @Override
-    public void crawl() {
-        turAemSourceRepository.findAll().forEach(turAemSource -> {
-            turAemPluginProcess.indexAll(turAemSource);
-            TurAemCommonsUtils.cleanCache();
-        });
-    }
 
     @Override
     public void sentToIndexByIdList(String source, List<String> idList) {
-        turAemPluginProcess.sentToIndexStandalone(source, idList);
+        turAemPluginStandalone.sentToIndexStandalone(source, idList);
     }
+
 }

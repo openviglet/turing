@@ -3,8 +3,8 @@ package com.viglet.turing.logging;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.indexing.TurLoggingStatus;
-import com.viglet.turing.spring.logging.TurLoggingIndexingLog;
-import com.viglet.turing.spring.logging.TurLoggingIndexing;
+import com.viglet.turing.commons.logging.TurLoggingIndexingLog;
+import com.viglet.turing.commons.logging.TurLoggingIndexing;
 
 import java.util.Date;
 

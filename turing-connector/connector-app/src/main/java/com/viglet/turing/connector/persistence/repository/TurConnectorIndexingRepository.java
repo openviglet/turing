@@ -53,15 +53,10 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
     void deleteByObjectIdAndSourceAndEnvironment(String objectId, String source, String environment);
 
     @Transactional
-    void deleteBySourceAndTransactionIdNot(String source, String transactionId);
+    void deleteByProvider(String provider);
 
     Optional<List<TurConnectorIndexingModel>> findAllBySourceOrderByModificationDateDesc(String source, Limit limit);
     Optional<List<TurConnectorIndexingModel>>  findAllByOrderByModificationDateDesc(Limit limit);
-
-    @Transactional
-    default void deleteContentsWereDeIndexed(String source, String deltaId) {
-        deleteBySourceAndTransactionIdNot(source, deltaId);
-    }
 
     @Query("SELECT DISTINCT i.source FROM TurConnectorIndexingModel i")
     List<String> findAllSources();
@@ -83,5 +78,7 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
                                                           @Param("locale") Locale locale,
                                                           @Param("environment") String environment,
                                                           @Param("ids") List<String> ids);
+
+
 
 }

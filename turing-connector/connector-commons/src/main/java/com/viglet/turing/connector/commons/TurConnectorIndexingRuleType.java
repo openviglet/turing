@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.connector.commons.plugin;
+package com.viglet.turing.connector.commons;
 
 /**
  * @author Alexandre Oliveira

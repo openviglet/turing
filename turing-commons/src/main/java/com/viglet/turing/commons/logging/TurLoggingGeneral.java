@@ -1,4 +1,4 @@
-package com.viglet.turing.spring.logging;
+package com.viglet.turing.commons.logging;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Builder;

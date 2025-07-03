@@ -1,18 +1,24 @@
-package com.viglet.turing.connector.logging;
+package com.viglet.turing.connector.commons.logging;
 
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.indexing.TurLoggingStatus;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
-import com.viglet.turing.spring.logging.TurLoggingIndexing;
-import com.viglet.turing.spring.logging.TurLoggingIndexingLog;
+import com.viglet.turing.connector.commons.TurConnectorSession;
+import com.viglet.turing.commons.logging.TurLoggingIndexing;
+import com.viglet.turing.commons.logging.TurLoggingIndexingLog;
 
 import java.util.Date;
 
 public class TurConnectorLoggingUtils {
     public static final String URL = "url";
+
     public static void setSuccessStatus(TurSNJobItem turSNJobItem, TurConnectorSession session,
-                                         TurIndexingStatus status) {
+                                        TurIndexingStatus status) {
+        setSuccessStatus(turSNJobItem, session, status, null);
+    }
+
+    public static void setSuccessStatus(TurSNJobItem turSNJobItem, TurConnectorSession session,
+                                        TurIndexingStatus status, String details) {
         TurLoggingIndexingLog.setStatus(TurLoggingIndexing
                 .builder()
                 .contentId(turSNJobItem.getId())
@@ -26,6 +32,7 @@ public class TurConnectorLoggingUtils {
                 .source(session.getSource())
                 .date(new Date())
                 .sites(turSNJobItem.getSiteNames())
+                .details(details)
                 .build());
     }
 

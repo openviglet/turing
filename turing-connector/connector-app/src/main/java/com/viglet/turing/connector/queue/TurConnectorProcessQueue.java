@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.viglet.turing.connector.constant.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
-import static com.viglet.turing.connector.logging.TurConnectorLoggingUtils.setSuccessStatus;
+import static com.viglet.turing.connector.commons.logging.TurConnectorLoggingUtils.setSuccessStatus;
 
 @Component
 @Slf4j
