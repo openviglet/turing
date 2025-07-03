@@ -33,11 +33,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v2/connector/monitoring/indexing/")
+@RequestMapping("/api/v2/connector/monitoring/indexing")
 @Tag(name = "Connector API", description = "Connector API")
 public class TurConnectorMonitoringApi {
     private final TurConnectorIndexingService indexingService;
     private final TurConnectorPlugin plugin;
+
     @Inject
     public TurConnectorMonitoringApi(TurConnectorIndexingService indexingService, TurConnectorPlugin plugin) {
         this.indexingService = indexingService;
@@ -47,15 +48,14 @@ public class TurConnectorMonitoringApi {
     @GetMapping
     public ResponseEntity<TurConnectorMonitoring> monitoringIndexing() {
         List<TurConnectorIndexingModel> indexing = indexingService.findAll();
-        return indexing.isEmpty() ? ResponseEntity.notFound().build() :
-                ResponseEntity.ok(getMonitoring(indexing));
+        return ResponseEntity.ok(indexing.isEmpty() ? new TurConnectorMonitoring() : getMonitoring(indexing));
     }
 
     @GetMapping("{source}")
     public ResponseEntity<TurConnectorMonitoring> monitoringIndexingBySource(@PathVariable String source) {
-        List<TurConnectorIndexingModel> indexing = indexingService.getBySourceAndProvider(source, plugin.getProviderName());
-        return indexing.isEmpty() ? ResponseEntity.notFound().build() :
-                ResponseEntity.ok(getMonitoring(indexing));
+        List<TurConnectorIndexingModel> indexing = indexingService.getBySourceAndProvider(source,
+                plugin.getProviderName());
+        return ResponseEntity.ok(indexing.isEmpty() ? new TurConnectorMonitoring() : getMonitoring(indexing));
     }
 
     private TurConnectorMonitoring getMonitoring(List<TurConnectorIndexingModel> indexing) {
