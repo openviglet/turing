@@ -20,11 +20,8 @@ package com.viglet.turing.connector.plugin.aem;
 
 import com.google.inject.Inject;
 import com.viglet.turing.client.sn.TurMultiValue;
-import com.viglet.turing.client.sn.TurSNConstants;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
-import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
-import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
 import com.viglet.turing.connector.aem.commons.bean.TurAemEnv;
@@ -52,7 +49,14 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.viglet.turing.client.sn.TurSNConstants.ID_ATTR;
+import static com.viglet.turing.client.sn.TurSNConstants.SOURCE_APPS_ATTR;
+import static com.viglet.turing.client.sn.job.TurSNJobAction.CREATE;
+import static com.viglet.turing.client.sn.job.TurSNJobAction.DELETE;
+import static com.viglet.turing.commons.indexing.TurIndexingStatus.DEINDEXED;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.*;
+import static com.viglet.turing.connector.aem.commons.bean.TurAemEnv.AUTHOR;
+import static com.viglet.turing.connector.aem.commons.bean.TurAemEnv.PUBLISHING;
 import static com.viglet.turing.connector.commons.logging.TurConnectorLoggingUtils.setSuccessStatus;
 
 /**
@@ -274,7 +278,7 @@ public class TurAemPluginProcess {
     private void sendToTuringToBeDeIndexed(TurConnectorSession session, String contentId, boolean standalone) {
         log.info("DeIndex because {} object ({}) infinity Json file not found. transactionId = {}",
                 contentId, session.getSource(), session.getTransactionId());
-        turConnectorContext.getIndexingItem(contentId, session.getSource())
+        turConnectorContext.getIndexingItem(contentId, session.getSource(), session.getProviderName())
                 .forEach(
                         indexing ->
                                 turConnectorContext.addJobItem(deIndexJob(session, indexing), session, standalone));
@@ -288,11 +292,11 @@ public class TurAemPluginProcess {
 
     private TurSNJobItem deIndexJob(TurConnectorSession session, List<String> sites, Locale locale, String objectId) {
         TurSNJobItem turSNJobItem = new TurSNJobItem(
-                TurSNJobAction.DELETE, sites, locale,
+               DELETE, sites, locale,
                 Map.of(
-                        TurSNConstants.ID_ATTR, objectId,
-                        TurSNConstants.SOURCE_APPS_ATTR, session.getProviderName()));
-        setSuccessStatus(turSNJobItem, session, TurIndexingStatus.DEINDEXED);
+                        ID_ATTR, objectId,
+                        SOURCE_APPS_ATTR, session.getProviderName()));
+        setSuccessStatus(turSNJobItem, session, DEINDEXED);
         return turSNJobItem;
     }
 
@@ -343,7 +347,7 @@ public class TurAemPluginProcess {
         jsonObject.toMap().forEach((nodeName, nodeValue) -> {
             if (isIndexedNode(turAemSourceContext, nodeName)) {
                 String nodePathChild = "%s/%s".formatted(nodePath, nodeName);
-                if (!isOnce(turAemSourceContext) || !TurAemCommonsUtils.isOnceConfig(nodePathChild,
+                if (!isOnce(turAemSourceContext) || TurAemCommonsUtils.isNotOnceConfig(nodePathChild,
                         new AemPluginHandlerConfiguration(turAemSource))) {
                     TurAemCommonsUtils.getInfinityJson(nodePathChild, turAemSourceContext, false)
                             .ifPresent(infinityJson -> getNodeFromJson(nodePathChild, infinityJson, turAemSourceContext,
@@ -419,13 +423,13 @@ public class TurAemPluginProcess {
                              TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                              boolean standalone) {
         if (isAuthor(turAemSource)) {
-            indexByEnvironment(TurAemEnv.AUTHOR, turAemSource.getAuthorSNSite(),
+            indexByEnvironment(AUTHOR, turAemSource.getAuthorSNSite(),
                     aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext,
                     session, turAemContentDefinitionProcess, standalone);
         }
         if (isPublish(turAemSource)) {
             if (aemObject.isDelivered()) {
-                indexByEnvironment(TurAemEnv.PUBLISHING, turAemSource.getPublishSNSite(),
+                indexByEnvironment(PUBLISHING, turAemSource.getPublishSNSite(),
                         aemObject, turAemModel, turSNAttributeSpecList, turAemSourceContext,
                         session, turAemContentDefinitionProcess, standalone);
             } else {
@@ -518,7 +522,7 @@ public class TurAemPluginProcess {
                                                          TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                                                          Map<String, Object> attributes) {
         TurSNJobItem jobItem = new TurSNJobItem(
-                TurSNJobAction.CREATE,
+                CREATE,
                 session.getSites().stream().toList(),
                 locale,
                 attributes,

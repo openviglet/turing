@@ -50,6 +50,7 @@ export class TurIntegrationAemSourceComponent implements OnInit {
     this.turLocales = turLocaleService.query();
     let id: string = this.activatedRoute.snapshot.paramMap.get('aemId') || "";
     this.integrationId = this.activatedRoute.parent?.snapshot.paramMap.get('id') || "";
+    turIntegrationConnectorService.setIntegrationId(this.integrationId);
     turIntegrationAemSourceService.setIntegrationId(this.integrationId);
     this.newObject = (id != null && id.toLowerCase() === 'new');
 
@@ -127,10 +128,10 @@ export class TurIntegrationAemSourceComponent implements OnInit {
       });
   }
 
-  indexAll(_turIntegrationAemSource: TurIntegrationAemSource) {
-    this.turIntegrationConnectorService.indexAll(_turIntegrationAemSource).subscribe(
+  indexAll(source: string) {
+    this.turIntegrationConnectorService.indexAll(source).subscribe(
       () => {
-        this.notifier.notify("success", _turIntegrationAemSource.name
+        this.notifier.notify("success", source
           .concat(" Integration AEM source is indexing all content."));
         this.modalDelete.nativeElement.removeAttribute("open");
         this.router.navigate(['/integration/instance', this.getIntegrationId(), 'aem']);
@@ -139,10 +140,10 @@ export class TurIntegrationAemSourceComponent implements OnInit {
         this.notifier.notify("error", "Integration AEM source was error: " + response);
       });
   }
-  reindexAll(_turIntegrationAemSource: TurIntegrationAemSource) {
-    this.turIntegrationConnectorService.reindexAll(_turIntegrationAemSource).subscribe(
+  reindexAll(source: string) {
+    this.turIntegrationConnectorService.reindexAll(source).subscribe(
       () => {
-        this.notifier.notify("success", _turIntegrationAemSource.name
+        this.notifier.notify("success", source
           .concat(" Integration AEM source is reindexing all content."));
         this.modalDelete.nativeElement.removeAttribute("open");
         this.router.navigate(['/integration/instance', this.getIntegrationId(), 'aem']);

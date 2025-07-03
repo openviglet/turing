@@ -21,7 +21,6 @@ package com.viglet.turing.connector.plugin.aem;
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
-import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
@@ -42,6 +41,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 
+import static com.viglet.turing.commons.se.field.TurSEFieldType.STRING;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.*;
 
 @Slf4j
@@ -83,7 +83,7 @@ public class TurAemAttrProcess {
                 .facetName(facetLabel)
                 .facet(true)
                 .mandatory(false)
-                .type(TurSEFieldType.STRING)
+                .type(STRING)
                 .multiValued(true)
                 .build();
     }

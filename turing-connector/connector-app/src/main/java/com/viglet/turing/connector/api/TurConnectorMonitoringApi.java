@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v2/connector/monitoring/indexing")
+@RequestMapping("/api/v2/connector/monitoring/indexing/{provider}")
 @Tag(name = "Connector API", description = "Connector API")
 public class TurConnectorMonitoringApi {
     private final TurConnectorIndexingService indexingService;
@@ -43,25 +43,24 @@ public class TurConnectorMonitoringApi {
     }
 
     @GetMapping
-    public ResponseEntity<TurConnectorMonitoring> monitoringIndexing() {
-        return indexingService.findAll()
-                .map(indexing -> ResponseEntity.ok(getMonitoring(indexing)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-
-    private TurConnectorMonitoring getMonitoring(List<TurConnectorIndexingModel> indexing) {
-        return TurConnectorMonitoring.builder()
-                .sources(indexingService.getAllSources())
-                .indexing(indexing)
-                .build();
+    public ResponseEntity<TurConnectorMonitoring> monitoringIndexing(@PathVariable String provider) {
+        List<TurConnectorIndexingModel> indexing = indexingService.findAll();
+        return indexing.isEmpty() ? ResponseEntity.notFound().build() :
+                ResponseEntity.ok(getMonitoring(provider, indexing));
     }
 
     @GetMapping("{source}")
-    public ResponseEntity<TurConnectorMonitoring> monitoringIndexingBySource(@PathVariable String source) {
-        return indexingService.getBySource(source)
-                .map(indexing -> ResponseEntity.ok(getMonitoring(indexing)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<TurConnectorMonitoring> monitoringIndexingBySource(@PathVariable String provider,
+                                                                             @PathVariable String source) {
+        List<TurConnectorIndexingModel> indexing = indexingService.getBySourceAndProvider(source, provider);
+        return indexing.isEmpty() ? ResponseEntity.notFound().build() :
+                ResponseEntity.ok(getMonitoring(provider.toUpperCase(), indexing));
+    }
 
+    private TurConnectorMonitoring getMonitoring(String provider, List<TurConnectorIndexingModel> indexing) {
+        return TurConnectorMonitoring.builder()
+                .sources(indexingService.getAllSources(provider.toUpperCase()))
+                .indexing(indexing)
+                .build();
     }
 }

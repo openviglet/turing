@@ -93,13 +93,13 @@ public class TurAemCommonsUtils {
         return StringUtils.isNotBlank(turAemSourceContext.getContentType());
     }
 
-    public static boolean isOnceConfig(String path, IAemConfiguration config) {
+    public static boolean isNotOnceConfig(String path, IAemConfiguration config) {
         if (StringUtils.isNotBlank(config.getOncePatternPath())) {
             Pattern p = Pattern.compile(config.getOncePatternPath());
             Matcher m = p.matcher(path);
-            return m.lookingAt();
+            return !m.lookingAt();
         }
-        return false;
+        return true;
     }
 
     public static String configOnce(TurAemSourceContext turAemSourceContext) {
@@ -278,7 +278,7 @@ public class TurAemCommonsUtils {
                         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                         .readValue(json, clazz);
             } catch (JsonProcessingException e) {
-                log.error(e.getMessage(), e);
+                log.error("URL {} - {}" , url, e.getMessage(), e);
             }
             return null;
         });
@@ -318,7 +318,7 @@ public class TurAemCommonsUtils {
             }
             return Optional.empty();
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            log.error("URL {} - {}" , url, e.getMessage(), e);
             throw new TurRuntimeException(e);
         }
     }

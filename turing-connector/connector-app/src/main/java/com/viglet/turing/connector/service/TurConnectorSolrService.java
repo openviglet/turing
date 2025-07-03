@@ -1,9 +1,6 @@
 package com.viglet.turing.connector.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.common.collect.Lists;
-import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.viglet.turing.connector.domain.TurSNSiteLocale;
@@ -43,40 +40,13 @@ public class TurConnectorSolrService {
         this.solrEndpoint = solrEndpoint;
         this.turingUrl = turingUrl;
         this.turingApiKey = turingApiKey;
-        configureUnirest();
-    }
-
-    private void configureUnirest() {
-        Unirest.setTimeouts(0, 0);
-        Unirest.setObjectMapper(new ObjectMapper() {
-            final com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            public String writeValue(Object value) {
-                try {
-                    return mapper.writeValueAsString(value);
-                } catch (JsonProcessingException e) {
-                    log.error(e.getMessage(), e);
-                }
-                return null;
-            }
-
-            public <T> T readValue(String value, Class<T> valueType) {
-                try {
-                    return mapper.readValue(value, valueType);
-                } catch (JsonProcessingException e) {
-                    log.error(e.getMessage(), e);
-                }
-                return null;
-            }
-        });
     }
 
     @NotNull
-    public Map<String, List<String>> solrExtraContent(String source) {
+    public Map<String, List<String>> solrExtraContent(String source, String provider) {
         Map<String, List<String>> solrExtraContentMap = new HashMap<>();
-        for (String site : indexingService.getSitesBySource(source)) {
-            for (String environment : indexingService.getEnvironmentBySite(site)) {
+        for (String site : indexingService.getSites(source, provider)) {
+            for (String environment : indexingService.getEnvironment(site, provider)) {
                 turingLocale(site).forEach(siteLocale -> {
                     try (SolrClient solrClient = getSolrClient(siteLocale)) {
                         SolrQuery query = new SolrQuery();
@@ -91,7 +61,7 @@ public class TurConnectorSolrService {
                         List<String> connectorIds = new ArrayList<>();
                         for (List<String> partition : Lists.partition(solrIds, 100)) {
                             connectorIds.addAll(indexingService
-                                    .validateObjectIdList(source, environment, siteLocale, partition));
+                                    .validateObjectIdList(source, environment, siteLocale, provider, partition));
                         }
                         solrIds.removeAll(connectorIds);
                         solrExtraContentMap.put(siteLocale.getCore(), solrIds);
@@ -112,13 +82,14 @@ public class TurConnectorSolrService {
     }
 
     @NotNull
-    public Map<String, List<String>> solrMissingContent(String source) {
+    public Map<String, List<String>> solrMissingContent(String source, String provider) {
         Map<String, List<String>> solrMissingContentMap = new HashMap<>();
-        for (String site : indexingService.getSitesBySource(source)) {
-            for (String environment : indexingService.getEnvironmentBySite(site)) {
+        for (String site : indexingService.getSites(source, provider)) {
+            for (String environment : indexingService.getEnvironment(site, provider)) {
                 turingLocale(site).forEach(siteLocale -> {
                     List<String> outputIdList = new ArrayList<>();
-                    List<String> objectIdList = indexingService.getObjectIdList(source, environment, siteLocale);
+                    List<String> objectIdList = indexingService.getObjectIdList(source, environment, siteLocale,
+                            provider);
                     try (SolrClient solrClient = getSolrClient(siteLocale)) {
                         for (List<String> partition : Lists.partition(objectIdList, 100)) {
                             SolrDocumentList documents = solrClient.getById(partition);
@@ -150,8 +121,8 @@ public class TurConnectorSolrService {
     }
 
 
-    public boolean hasContentIdAtSolr(String id, String source) {
-        for (String site : indexingService.getSitesBySource(source)) {
+    public boolean hasContentIdAtSolr(String id, String source, String provider) {
+        for (String site : indexingService.getSites(source, provider)) {
             for (TurSNSiteLocale siteLocale : turingLocale(site)) {
                 try (SolrClient solrClient = getSolrClient(siteLocale)) {
                     if (solrClient.getById(id) != null) return true;

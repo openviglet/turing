@@ -31,54 +31,65 @@ import java.util.Optional;
 
 public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexingModel, String> {
 
-    List<TurConnectorIndexingModel> findBySourceAndTransactionIdNotAndStandalone(String source,
+
+    boolean existsByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source, String environment,
+                                                               String provider);
+
+    boolean existsByObjectIdAndSourceAndEnvironmentAndChecksumNot(String objectId, String source, String environment,
+                                                                  String checksum);
+
+    List<TurConnectorIndexingModel> findBySourceAndProviderAndTransactionIdNotAndStandalone(String source,
+                                                                                 String provider,
                                                                                  String transactionId,
                                                                                  boolean standalone);
 
-    default List<TurConnectorIndexingModel> findContentsShouldBeDeIndexed(String source, String transactionId) {
-        return findBySourceAndTransactionIdNotAndStandalone(source, transactionId, false);
-    }
+    List<TurConnectorIndexingModel> findByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source,
+                                                                                     String environment, String provider);
 
-    boolean existsByObjectIdAndSourceAndEnvironment(String objectId, String source, String environment);
+    List<TurConnectorIndexingModel> findByObjectIdAndSourceAndProvider(String objectId, String source, String provider);
 
-    boolean existsByObjectIdAndSourceAndEnvironmentAndChecksumNot(String objectId, String source, String environment,
-                                                                String checksum);
+    List<TurConnectorIndexingModel> findAllBySourceAndProviderOrderByModificationDateDesc(String source,
+                                                                                          String provider, Limit limit);
 
-    Optional<List<TurConnectorIndexingModel>> findByObjectIdAndSourceAndEnvironment(String objectId, String source,
-                                                                                    String environment);
-
-    Optional<List<TurConnectorIndexingModel>> findByObjectIdAndSource(String objectId, String source);
+    List<TurConnectorIndexingModel> findAllByOrderByModificationDateDesc(Limit limit);
 
     @Transactional
-    void deleteByObjectIdAndSourceAndEnvironment(String objectId, String source, String environment);
+    void deleteByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source, String environment,
+                                                            String provider);
 
     @Transactional
     void deleteByProvider(String provider);
 
-    Optional<List<TurConnectorIndexingModel>> findAllBySourceOrderByModificationDateDesc(String source, Limit limit);
-    Optional<List<TurConnectorIndexingModel>>  findAllByOrderByModificationDateDesc(Limit limit);
+    @Transactional
+    void deleteBySourceAndProviderAndTransactionIdNot(String source, String provider, String transactionId);
 
-    @Query("SELECT DISTINCT i.source FROM TurConnectorIndexingModel i")
-    List<String> findAllSources();
+    @Query("SELECT DISTINCT i.source FROM TurConnectorIndexingModel i WHERE i.provider = :provider")
+    List<String> findAllSources( @Param("provider") String provider);
 
-    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND i.locale = :locale AND i.environment IN :environment")
-    List<String> findAllObjectIdsBySourceAndLocaleAndEnvironment(@Param("source") String source,
-                                                             @Param("locale") Locale locale,
-                                                             @Param("environment") String environment);
+    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND " +
+            "i.locale = :locale AND i.environment IN :environment AND i.provider = :provider")
+    List<String> findAllObjectIds(@Param("source") String source,
+                                                                 @Param("locale") Locale locale,
+                                                                 @Param("environment") String environment,
+                                                                 @Param("provider") String provider);
 
-    @Query("SELECT DISTINCT i.sites FROM TurConnectorIndexingModel i WHERE i.source = :source")
-    List<String> distinctSitesBySource(@Param("source") String source);
+    @Query("SELECT DISTINCT i.sites FROM TurConnectorIndexingModel i WHERE i.source = :source AND " +
+            "i.provider = :provider")
+    List<String> distinctSites(@Param("source") String source,
+                                                  @Param("provider") String provider);
 
-    @Query("SELECT DISTINCT i.environment FROM TurConnectorIndexingModel i WHERE :site MEMBER OF i.sites")
-    List<String> distinctEnvironmentBySite(@Param("site") String site);
+    @Query("SELECT DISTINCT i.environment FROM TurConnectorIndexingModel i WHERE :site MEMBER OF i.sites AND " +
+            "i.provider = :provider")
+    List<String> distinctEnvironment(@Param("site") String site,
+                                                      @Param("provider") String provider);
 
     @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND i.locale = :locale AND " +
-            "i.environment IN :environment AND i.objectId IN :ids" )
-    List<String> distinctObjectIdBySourceAndLocaleAndEnvironmentAndIdIn(@Param("source") String source,
-                                                          @Param("locale") Locale locale,
-                                                          @Param("environment") String environment,
-                                                          @Param("ids") List<String> ids);
-
+            "i.environment IN :environment AND i.provider = :provider AND i.objectId IN :ids")
+    List<String> distinctObjectId(@Param("source") String source,
+                                                                        @Param("locale") Locale locale,
+                                                                        @Param("environment") String environment,
+                                                                                   @Param("provider") String provider,
+                                                                        @Param("ids") List<String> ids);
 
 
 }

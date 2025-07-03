@@ -26,5 +26,5 @@ import java.util.List;
 public interface TurConnectorContext {
     void addJobItem(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone);
     void finishIndexing(TurConnectorSession session, boolean standalone);
-    List<TurConnectorIndexing> getIndexingItem(String objectId, String source);
+    List<TurConnectorIndexing> getIndexingItem(String objectId, String source, String provider);
 }

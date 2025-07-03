@@ -15,26 +15,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import {TurIntegrationAemSource} from "../model/integration-aem-source.model";
-import { environment } from '../../../../../environments/environment';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../../../../environments/environment';
 
 @Injectable()
 export class TurIntegrationConnectorService {
   private integrationId: string | undefined;
-  constructor(private httpClient: HttpClient) {}
 
-    private getConnectorUrl() {
+  constructor(private httpClient: HttpClient) {
+  }
+
+  setIntegrationId(integrationId: string) {
+    this.integrationId = integrationId;
+  }
+
+  private getConnectorUrl() {
     return `${environment.apiUrl}/api/v2/integration/${this.integrationId}/connector`;
   }
 
-  indexAll(turIntegrationAemSource: TurIntegrationAemSource) {
-    return this.httpClient.get(`${this.getConnectorUrl()}/${turIntegrationAemSource.id}/indexAll`);
+  indexAll(source: string) {
+    return this.httpClient.get(`${this.getConnectorUrl()}/index/${source}/all`);
   }
 
-  reindexAll(turIntegrationAemSource: TurIntegrationAemSource) {
-    return this.httpClient.get(`${this.getConnectorUrl()}/${turIntegrationAemSource.id}/reindexAll`);
+  reindexAll(source: string) {
+    return this.httpClient.get(`${this.getConnectorUrl()}/reindex/${source}/all`);
   }
 }

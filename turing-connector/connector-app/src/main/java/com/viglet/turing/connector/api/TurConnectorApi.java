@@ -61,19 +61,19 @@ public class TurConnectorApi {
         return status;
     }
 
-    @GetMapping("validate/{source}")
-    public TurConnectorValidateDifference validateSource(@PathVariable String source) {
+    @GetMapping("validate/{provider}/{source}")
+    public TurConnectorValidateDifference validateSource(@PathVariable String provider, @PathVariable String source) {
         return TurConnectorValidateDifference.builder()
-                .missing(turConnectorSolr.solrMissingContent(source))
-                .extra(turConnectorSolr.solrExtraContent(source))
+                .missing(turConnectorSolr.solrMissingContent(source, provider.toUpperCase()))
+                .extra(turConnectorSolr.solrExtraContent(source, provider.toUpperCase()))
                 .build();
     }
 
-    @GetMapping("monitoring/index/{source}")
-    public ResponseEntity<List<TurConnectorIndexingModel>> monitoryIndexByName(@PathVariable String source) {
-        return indexingService.getBySource(source)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("monitoring/index/{provider}/{source}")
+    public ResponseEntity<List<TurConnectorIndexingModel>> monitoryIndexByName(@PathVariable String provider,
+                                                                               @PathVariable String source) {
+        List<TurConnectorIndexingModel> indexingModelList = indexingService.getBySourceAndProvider(source, provider);
+        return indexingModelList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(indexingModelList);
     }
 
     @GetMapping("index/{name}/all")
