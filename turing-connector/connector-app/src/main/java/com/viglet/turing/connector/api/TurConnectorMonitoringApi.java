@@ -19,6 +19,7 @@
 package com.viglet.turing.connector.api;
 
 import com.google.inject.Inject;
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.domain.TurConnectorMonitoring;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 import com.viglet.turing.connector.service.TurConnectorIndexingService;
@@ -32,34 +33,34 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v2/connector/monitoring/indexing/{provider}")
+@RequestMapping("/api/v2/connector/monitoring/indexing/")
 @Tag(name = "Connector API", description = "Connector API")
 public class TurConnectorMonitoringApi {
     private final TurConnectorIndexingService indexingService;
-
+    private final TurConnectorPlugin plugin;
     @Inject
-    public TurConnectorMonitoringApi(TurConnectorIndexingService indexingService) {
+    public TurConnectorMonitoringApi(TurConnectorIndexingService indexingService, TurConnectorPlugin plugin) {
         this.indexingService = indexingService;
+        this.plugin = plugin;
     }
 
     @GetMapping
-    public ResponseEntity<TurConnectorMonitoring> monitoringIndexing(@PathVariable String provider) {
+    public ResponseEntity<TurConnectorMonitoring> monitoringIndexing() {
         List<TurConnectorIndexingModel> indexing = indexingService.findAll();
         return indexing.isEmpty() ? ResponseEntity.notFound().build() :
-                ResponseEntity.ok(getMonitoring(provider, indexing));
+                ResponseEntity.ok(getMonitoring(indexing));
     }
 
     @GetMapping("{source}")
-    public ResponseEntity<TurConnectorMonitoring> monitoringIndexingBySource(@PathVariable String provider,
-                                                                             @PathVariable String source) {
-        List<TurConnectorIndexingModel> indexing = indexingService.getBySourceAndProvider(source, provider);
+    public ResponseEntity<TurConnectorMonitoring> monitoringIndexingBySource(@PathVariable String source) {
+        List<TurConnectorIndexingModel> indexing = indexingService.getBySourceAndProvider(source, plugin.getProviderName());
         return indexing.isEmpty() ? ResponseEntity.notFound().build() :
-                ResponseEntity.ok(getMonitoring(provider.toUpperCase(), indexing));
+                ResponseEntity.ok(getMonitoring(indexing));
     }
 
-    private TurConnectorMonitoring getMonitoring(String provider, List<TurConnectorIndexingModel> indexing) {
+    private TurConnectorMonitoring getMonitoring(List<TurConnectorIndexingModel> indexing) {
         return TurConnectorMonitoring.builder()
-                .sources(indexingService.getAllSources(provider.toUpperCase()))
+                .sources(indexingService.getAllSources(plugin.getProviderName()))
                 .indexing(indexing)
                 .build();
     }
