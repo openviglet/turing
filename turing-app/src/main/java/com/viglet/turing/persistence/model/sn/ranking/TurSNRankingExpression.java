@@ -62,19 +62,17 @@ public class TurSNRankingExpression extends TurAuditable<String>  implements Ser
 	private String name;
 
 	@Setter
-	@Column(length = 255)
+	@Column
 	private String description;
 	@Setter
 	@Column
 	private float weight;
 
-	// bi-directional many-to-one association to TurSNSite
 	@Setter
 	@ManyToOne
 	@JoinColumn(name = "sn_site_id", nullable = false)
 	private TurSNSite turSNSite;
 
-	// bi-directional many-to-one association to turSNSiteLocales
 	@OneToMany(mappedBy = "turSNRankingExpression", orphanRemoval = true, fetch = FetchType.LAZY)
 	@Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN  })
 	@OnDelete(action = OnDeleteAction.CASCADE)

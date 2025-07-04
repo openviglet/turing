@@ -59,7 +59,6 @@ public class TurSNRankingCondition extends TurAuditable<String>  implements Seri
 
 	private String value;
 
-	// bi-directional many-to-one association to TurSNSite
 	@ManyToOne
 	@JoinColumn(name = "ranking_exp_id", nullable = false)
 	private TurSNRankingExpression turSNRankingExpression;

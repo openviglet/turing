@@ -21,6 +21,24 @@
     <p>As soon as you have some access more information will appear.</p>
   </div>
   <div *ngIf="monitoring.indexing.length >= 1">
+    <table class="Box">
+      <thead class="Box-header">
+      <tr>
+        <th>AAA</th>
+        <th>BBB</th>
+      </tr>
+      </thead>
+      <tbody class="Box-body">
+      <tr class="Box-row">
+        <th>CCC</th>
+        <th>DDD</th>
+      </tr>
+      <tr class="Box-row">
+        <th>EEEE</th>
+        <th>FFFF</th>
+      </tr>
+      </tbody>
+    </table>
     <div>
       <div class="Box">
         <div class="Box-header">
@@ -29,7 +47,7 @@
               Source
             </div>
             <div class="d-table-cell col-4">
-             Content Id
+              Content Id
             </div>
             <div class="d-table-cell col-2" style="text-align: center;">
               Site
@@ -53,7 +71,7 @@
               <div>{{ indexing.modificationDate | amTimeAgo }}</div>
             </div>
             <div class="d-table-cell col-4">
-              <a href="{{getSNLink(indexing)}}"target="_blank">{{ indexing.objectId }}</a>
+              <a href="{{getSNLink(indexing)}}" target="_blank">{{ indexing.objectId }}</a>
 
             </div>
             <div class="d-table-cell col-2" style="text-align: center;">

@@ -1,20 +1,17 @@
 package com.viglet.turing.connector.service;
 
 import com.google.common.collect.Lists;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import com.viglet.turing.connector.domain.TurSNSiteLocale;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.util.*;
@@ -24,22 +21,17 @@ import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
 @Slf4j
 @Service
 public class TurConnectorSolrService {
-
-    public static final String KEY = "Key";
     private final TurConnectorIndexingService indexingService;
-    private final String solrEndpoint;
-    private final String turingUrl;
-    private final String turingApiKey;
+    private final SolrClient solrClient;
+    private final RestClient restClient;
 
     @Autowired
     public TurConnectorSolrService(TurConnectorIndexingService indexingService,
-                                   @Value("${turing.url:http://localhost:2700}") String turingUrl,
-                                   @Value("${turing.apiKey}") String turingApiKey,
-                                   @Value("${turing.solr.endpoint:http://localhost:8983}") String solrEndpoint) {
+                                   SolrClient solrClient,
+                                   RestClient restClient) {
         this.indexingService = indexingService;
-        this.solrEndpoint = solrEndpoint;
-        this.turingUrl = turingUrl;
-        this.turingApiKey = turingApiKey;
+        this.solrClient = solrClient;
+        this.restClient = restClient;
     }
 
     @NotNull
@@ -48,12 +40,12 @@ public class TurConnectorSolrService {
         for (String site : indexingService.getSites(source, provider)) {
             for (String environment : indexingService.getEnvironment(site, provider)) {
                 turingLocale(site).forEach(siteLocale -> {
-                    try (SolrClient solrClient = getSolrClient(siteLocale)) {
+                    try {
                         SolrQuery query = new SolrQuery();
                         query.setQuery("*:*");
                         query.setFields(ID);
                         query.setRows(Integer.MAX_VALUE);
-                        QueryResponse response = solrClient.query(query);
+                        QueryResponse response = solrClient.query(siteLocale.getCore(), query);
                         List<String> solrIds = new ArrayList<>(response.getResults().stream()
                                 .map(solrDocument ->
                                         (String) solrDocument.getFieldValue(ID))
@@ -74,12 +66,6 @@ public class TurConnectorSolrService {
         return solrExtraContentMap;
     }
 
-    private HttpJdkSolrClient getSolrClient(TurSNSiteLocale siteLocale) {
-        return new HttpJdkSolrClient
-                .Builder("%s/solr".formatted(solrEndpoint))
-                .withDefaultCollection(siteLocale.getCore())
-                .build();
-    }
 
     @NotNull
     public Map<String, List<String>> solrMissingContent(String source, String provider) {
@@ -90,9 +76,9 @@ public class TurConnectorSolrService {
                     List<String> outputIdList = new ArrayList<>();
                     List<String> objectIdList = indexingService.getObjectIdList(source, environment, siteLocale,
                             provider);
-                    try (SolrClient solrClient = getSolrClient(siteLocale)) {
+                    try {
                         for (List<String> partition : Lists.partition(objectIdList, 100)) {
-                            SolrDocumentList documents = solrClient.getById(partition);
+                            SolrDocumentList documents = solrClient.getById(siteLocale.getCore(), partition);
                             documents.forEach(document ->
                                     outputIdList.add(document.get(ID).toString()));
                         }
@@ -108,24 +94,20 @@ public class TurConnectorSolrService {
     }
 
     private List<TurSNSiteLocale> turingLocale(String snSite) {
-        try {
-            TurSNSiteLocale[] turSNSiteLocaleList = Unirest.get("%s/api/sn/name/%s/locale".formatted(turingUrl, snSite))
-                    .header(KEY, turingApiKey)
-                    .asObject(TurSNSiteLocale[].class).getBody();
-            if (turSNSiteLocaleList == null) return Collections.emptyList();
-            return Arrays.asList(turSNSiteLocaleList);
-        } catch (UnirestException e) {
-            log.error(e.getMessage(), e);
-        }
-        return Collections.emptyList();
+        TurSNSiteLocale[] turSNSiteLocaleList = restClient.get()
+                .uri("/api/sn/name/%s/locale".formatted(snSite))
+                .retrieve()
+                .body(TurSNSiteLocale[].class);
+        if (turSNSiteLocaleList == null) return Collections.emptyList();
+        return Arrays.asList(turSNSiteLocaleList);
     }
 
 
     public boolean hasContentIdAtSolr(String id, String source, String provider) {
         for (String site : indexingService.getSites(source, provider)) {
             for (TurSNSiteLocale siteLocale : turingLocale(site)) {
-                try (SolrClient solrClient = getSolrClient(siteLocale)) {
-                    if (solrClient.getById(id) != null) return true;
+                try {
+                    if (solrClient.getById(siteLocale.getCore(), id) != null) return true;
                 } catch (IOException | SolrServerException e) {
                     log.error(e.getMessage(), e);
                 }

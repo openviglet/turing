@@ -417,14 +417,16 @@ public class TurSolr {
         }
     }
 
-    private static boolean hasRankingConditions(Set<TurSNRankingExpression> turSNRankingExpression) {
-        return turSNRankingExpression.stream()
-                .anyMatch(expression -> !expression.getTurSNRankingConditions()
-                        .isEmpty());
+    private boolean hasRankingConditions(Set<TurSNRankingExpression> turSNRankingExpressions) {
+        return turSNRankingExpressions.stream()
+                .anyMatch(expressions ->
+                        !turSNRankingConditionRepository.findByTurSNRankingExpression(expressions).isEmpty());
     }
 
-    private String boostQueryAttributes(TurSNRankingExpression expression, List<TurSNSiteFieldExt> turSNSiteFieldExtList) {
-        return turSNRankingConditionRepository.findByTurSNRankingExpression(expression).stream().map(condition -> {
+    private String boostQueryAttributes(TurSNRankingExpression expression,
+                                        List<TurSNSiteFieldExt> turSNSiteFieldExtList) {
+        return turSNRankingConditionRepository.findByTurSNRankingExpression(expression)
+                .stream().map(condition -> {
                     TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtList
                             .stream()
                             .filter(field -> field.getName().equals(condition.getAttribute()))
@@ -489,7 +491,7 @@ public class TurSolr {
         try {
             return Optional.ofNullable(turSolrInstance.getSolrClient().query(query));
         } catch (SolrServerException | IOException e) {
-            log.error(e.getMessage(), e);
+            log.error("{}?{} - {}", query.getRequestHandler(), query.toQueryString(), e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -554,10 +556,11 @@ public class TurSolr {
     }
 
     private static boolean noResultGroups(QueryResponse queryResponse) {
-        return queryResponse.getGroupResponse() == null ||
-                (queryResponse.getGroupResponse() != null && queryResponse.getGroupResponse().getValues().isEmpty()) ||
-                (queryResponse.getGroupResponse() != null && queryResponse.getGroupResponse().getValues().size() == 1 &&
-                        queryResponse.getGroupResponse().getValues().getFirst().getValues().isEmpty());
+        GroupResponse groupResponse = queryResponse.getGroupResponse();
+        return groupResponse == null ||
+                groupResponse.getValues().isEmpty() ||
+                groupResponse.getValues().size() == 1 &&
+                        groupResponse.getValues().getFirst().getValues().isEmpty();
     }
 
     private void processResults(TurSNSite turSNSite, List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList,
@@ -1505,8 +1508,9 @@ public class TurSolr {
     }
 
     private void addRequiredFieldsToDocument(Map<String, Object> requiredFields, SolrDocument document) {
-        Arrays.stream(requiredFields.keySet().toArray()).map(String.class::cast).filter(requiredField ->
-                        !document.containsKey(requiredField))
+        Arrays.stream(requiredFields.keySet().toArray())
+                .map(String.class::cast)
+                .filter(requiredField -> !document.containsKey(requiredField))
                 .forEach(requiredField -> document.addField(requiredField, requiredFields.get(requiredField)));
     }
 
