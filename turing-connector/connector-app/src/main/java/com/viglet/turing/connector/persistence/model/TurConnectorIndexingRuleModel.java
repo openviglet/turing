@@ -76,6 +76,7 @@ public class TurConnectorIndexingRuleModel implements Serializable {
     @Column
     private Date lastModifiedDate;
 
+    @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "con_indexing_rule_values", joinColumns = @JoinColumn(name = "id"))
     @Column

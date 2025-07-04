@@ -77,7 +77,7 @@ public class TurConnectorSolrService {
                     List<String> objectIdList = indexingService.getObjectIdList(source, environment, siteLocale,
                             provider);
                     try {
-                        for (List<String> partition : Lists.partition(objectIdList, 100)) {
+                        for (List<String> partition : Lists.partition(objectIdList, 20)) {
                             SolrDocumentList documents = solrClient.getById(siteLocale.getCore(), partition);
                             documents.forEach(document ->
                                     outputIdList.add(document.get(ID).toString()));
