@@ -138,9 +138,10 @@ public class TurCommonsUtils {
 
     public static URI modifiedURI(URI uri, StringBuilder sbQueryString) {
         try {
-            String url = uri.getRawPath() + "?" + removeAmpersand(sbQueryString);
-            return new URI((!url.contains("%")) ? URLEncoder.encode(url, StandardCharsets.UTF_8) :
-                    URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8));
+            return new URI(uri.getRawPath() + "?" + removeAmpersand(sbQueryString)
+                    .replaceAll("[\\t\\n\\r]+", "%20")
+                    .replace(" ", "%20")
+                    .replace("\"", "%22"));
         } catch (URISyntaxException e) {
             log.error(e.getMessage(), e);
         }
