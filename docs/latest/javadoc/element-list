@@ -7,6 +7,7 @@ com.viglet.turing.api.discovery
 com.viglet.turing.api.exchange
 com.viglet.turing.api.integration
 com.viglet.turing.api.llm
+com.viglet.turing.api.logging
 com.viglet.turing.api.ocr
 com.viglet.turing.api.se
 com.viglet.turing.api.sn.bean
@@ -36,6 +37,8 @@ com.viglet.turing.client.utils
 com.viglet.turing.commons.cache
 com.viglet.turing.commons.exception
 com.viglet.turing.commons.file
+com.viglet.turing.commons.indexing
+com.viglet.turing.commons.logging
 com.viglet.turing.commons.se
 com.viglet.turing.commons.se.field
 com.viglet.turing.commons.se.result.spellcheck
@@ -57,11 +60,18 @@ com.viglet.turing.connector.aem.commons.ext
 com.viglet.turing.connector.aem.commons.mappers
 com.viglet.turing.connector.aem.sample.beans
 com.viglet.turing.connector.aem.sample.ext
+com.viglet.turing.connector.api
+com.viglet.turing.connector.commons
+com.viglet.turing.connector.commons.domain
+com.viglet.turing.connector.commons.logging
 com.viglet.turing.connector.commons.plugin
+com.viglet.turing.connector.config
+com.viglet.turing.connector.constant
 com.viglet.turing.connector.db
 com.viglet.turing.connector.db.ext
 com.viglet.turing.connector.db.format
 com.viglet.turing.connector.db.sample.ext
+com.viglet.turing.connector.domain
 com.viglet.turing.connector.filesystem
 com.viglet.turing.connector.filesystem.commons
 com.viglet.turing.connector.impl
@@ -73,6 +83,7 @@ com.viglet.turing.connector.plugin.aem.api
 com.viglet.turing.connector.plugin.aem.conf
 com.viglet.turing.connector.plugin.aem.export
 com.viglet.turing.connector.plugin.aem.export.bean
+com.viglet.turing.connector.plugin.aem.impl
 com.viglet.turing.connector.plugin.aem.onstartup
 com.viglet.turing.connector.plugin.aem.persistence.model
 com.viglet.turing.connector.plugin.aem.persistence.repository
@@ -83,7 +94,8 @@ com.viglet.turing.connector.plugin.webcrawler.onstartup
 com.viglet.turing.connector.plugin.webcrawler.persistence.model
 com.viglet.turing.connector.plugin.webcrawler.persistence.repository
 com.viglet.turing.connector.queue
-com.viglet.turing.connector.spring
+com.viglet.turing.connector.scheduled
+com.viglet.turing.connector.service
 com.viglet.turing.connector.webcrawler.commons
 com.viglet.turing.connector.webcrawler.commons.ext
 com.viglet.turing.console
@@ -93,6 +105,7 @@ com.viglet.turing.exchange
 com.viglet.turing.exchange.sn
 com.viglet.turing.genai
 com.viglet.turing.jpa
+com.viglet.turing.logging
 com.viglet.turing.onstartup
 com.viglet.turing.onstartup.auth
 com.viglet.turing.onstartup.llm
@@ -134,7 +147,6 @@ com.viglet.turing.persistence.repository.sn.source
 com.viglet.turing.persistence.repository.sn.spotlight
 com.viglet.turing.persistence.repository.store
 com.viglet.turing.persistence.repository.system
-com.viglet.turing.persistence.utils
 com.viglet.turing.properties
 com.viglet.turing.se
 com.viglet.turing.se.facet
