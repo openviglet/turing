@@ -19,6 +19,10 @@
 package com.viglet.turing.connector.commons.plugin;
 
 
+import java.util.List;
+
 public interface TurConnectorPlugin {
     void crawl();
+    String getProviderName();
+    void indexAll(String source);
 }

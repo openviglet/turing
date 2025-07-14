@@ -30,32 +30,43 @@ export class TurIntegrationAemSourceService {
     this.integrationId = integrationId;
   }
   query(): Observable<TurIntegrationAemSource[]> {
-    return this.httpClient.get<TurIntegrationAemSource[]>(this.getUrl());
+    return this.httpClient.get<TurIntegrationAemSource[]>(this.getAemUrl());
   }
 
-  private getUrl() {
+  private getAemUrl() {
     return `${environment.apiUrl}/api/v2/integration/${this.integrationId}/aem/source`;
+  }
+  private getConnectorUrl() {
+    return `${environment.apiUrl}/api/v2/integration/${this.integrationId}/connector`;
   }
 
   get(id: string): Observable<TurIntegrationAemSource> {
-    return this.httpClient.get<TurIntegrationAemSource>(`${this.getUrl()}/${id}`);
+    return this.httpClient.get<TurIntegrationAemSource>(`${this.getAemUrl()}/${id}`);
   }
 
   getStructure(): Observable<TurIntegrationAemSource> {
-    return this.httpClient.get<TurIntegrationAemSource>(`${this.getUrl()}/structure`);
+    return this.httpClient.get<TurIntegrationAemSource>(`${this.getAemUrl()}/structure`);
   }
 
   public save(turIntegrationInstance: TurIntegrationAemSource, newObject: boolean): Observable<TurIntegrationAemSource> {
     if (newObject) {
-      return this.httpClient.post<TurIntegrationAemSource>(this.getUrl(),
+      return this.httpClient.post<TurIntegrationAemSource>(this.getAemUrl(),
         JSON.stringify(turIntegrationInstance));
     }
     else {
-      return this.httpClient.put<TurIntegrationAemSource>(`${this.getUrl()}/${turIntegrationInstance.id}`,
+      return this.httpClient.put<TurIntegrationAemSource>(`${this.getAemUrl()}/${turIntegrationInstance.id}`,
         JSON.stringify(turIntegrationInstance));
     }
   }
   public delete(turIntegrationAemSource: TurIntegrationAemSource): Observable<Object> {
-    return this.httpClient.delete(`${this.getUrl()}/${turIntegrationAemSource.id}`);
+    return this.httpClient.delete(`${this.getAemUrl()}/${turIntegrationAemSource.id}`);
+  }
+
+  indexAll(turIntegrationAemSource: TurIntegrationAemSource) {
+    return this.httpClient.get(`${this.getConnectorUrl()}/${turIntegrationAemSource.id}/indexAll`);
+  }
+
+  reindexAll(turIntegrationAemSource: TurIntegrationAemSource) {
+    return this.httpClient.get(`${this.getConnectorUrl()}/${turIntegrationAemSource.id}/reindexAll`);
   }
 }

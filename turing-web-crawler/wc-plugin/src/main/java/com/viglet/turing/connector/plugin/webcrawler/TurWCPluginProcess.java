@@ -5,8 +5,8 @@ import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
-import com.viglet.turing.connector.commons.plugin.TurConnectorContext;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
+import com.viglet.turing.connector.commons.TurConnectorContext;
+import com.viglet.turing.connector.commons.TurConnectorSession;
 import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.*;
 import com.viglet.turing.connector.webcrawler.commons.TurWCContext;
 import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtInterface;
@@ -130,7 +130,7 @@ public class TurWCPluginProcess {
     }
 
     private static void finished(TurConnectorContext turConnectorContext,  TurConnectorSession source) {
-        turConnectorContext.finishIndexing(source);
+        turConnectorContext.finishIndexing(source, false);
     }
 
 
@@ -191,7 +191,7 @@ public class TurWCPluginProcess {
                                  TurConnectorSession source) {
         turConnectorContext.addJobItem(new TurSNJobItem(TurSNJobAction.CREATE, new ArrayList<>(snSites),
                 getLocale(turWCSource, document, url),
-                getJobItemAttributes(turWCSource, document, url), null, checksum), source);
+                getJobItemAttributes(turWCSource, document, url), null, checksum), source, false);
     }
 
     public static String getCRC32Checksum(byte[] bytes) {

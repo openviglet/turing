@@ -13,6 +13,7 @@ const routes: Routes = [
       { path: 'store', loadChildren: () => import('../store/store.module').then(m => m.TurStoreModule) },
       { path: 'sn', loadChildren: () => import('../sn/sn.module').then(m => m.TurSNModule) },
       { path: 'integration', loadChildren: () => import('../integration/integration.module').then(m => m.TurIntegrationModule) },
+      { path: 'logging', loadChildren: () => import('../logging/logging.module').then(m => m.TurLoggingModule) },
       { path: 'dev', loadChildren: () => import('../dev/dev.module').then(m => m.TurDevModule) },
       { path: '', redirectTo: '/sn', pathMatch: 'full' }
     ]

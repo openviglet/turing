@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @Setter
 public class TurAemPathList {
-    List<String> paths;
+    private List<String> paths;
 }

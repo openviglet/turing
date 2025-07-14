@@ -51,6 +51,7 @@ import {CdkDrag, CdkDropList, CdkDropListGroup} from "@angular/cdk/drag-drop";
 import {TurLLMInstanceService} from "../llm/service/llm-instance.service";
 import {TurStoreInstanceService} from "../store/service/store-instance.service";
 import {TurSNSiteGenAiPageComponent} from "./component/site/genai/sn-site-genai-page.component";
+
 @NgModule({
   declarations: [
     TurSNRootPageComponent,

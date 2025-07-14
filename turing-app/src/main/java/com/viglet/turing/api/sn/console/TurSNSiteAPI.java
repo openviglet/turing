@@ -33,7 +33,7 @@ import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.persistence.utils.TurPersistenceUtils;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.sn.TurSNQueue;
 import com.viglet.turing.sn.template.TurSNTemplate;

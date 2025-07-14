@@ -99,10 +99,7 @@ public class TurAemExchangeProcess {
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
-
             List<TurAemSource> turAemSources = turAemSourceRepository.findAll();
-
-
             File exportDir = new File(tmpDir.getAbsolutePath().concat(File.separator + folderName));
             File exportFile = new File(exportDir.getAbsolutePath().concat(File.separator + EXPORT_FILE));
             try {
@@ -110,7 +107,6 @@ public class TurAemExchangeProcess {
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
-
             // Object to JSON in file
             ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
             try {
@@ -128,31 +124,24 @@ public class TurAemExchangeProcess {
                                         .publish(turAemSource.isPublish())
                                         .name(turAemSource.getName())
                                         .build()).toList()));
-
                 File zipFile = new File(tmpDir.getAbsolutePath().concat(File.separator + folderName + ".zip"));
-
                 TurCommonsUtils.addFilesToZip(exportDir, zipFile);
-
                 String strDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
                 String zipFileName = "Aem_" + strDate + ".zip";
-
                 response.addHeader("Content-disposition", "attachment;filename=" + zipFileName);
                 response.setContentType("application/octet-stream");
                 response.setStatus(HttpServletResponse.SC_OK);
 
                 return output -> {
-
                     try {
                         java.nio.file.Path path = Paths.get(zipFile.getAbsolutePath());
                         byte[] data = Files.readAllBytes(path);
                         output.write(data);
                         output.flush();
-
                         FileUtils.deleteDirectory(exportDir);
                         FileUtils.deleteQuietly(zipFile);
-
                     } catch (Exception e) {
-                        log.error(e.getMessage(), e);
+                       log.error(e.getMessage(), e);
                     }
                 };
             } catch (Exception e) {
@@ -183,10 +172,10 @@ public class TurAemExchangeProcess {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
-
     }
 
     public void importFromFile(File exportFile) {
+        log.info("Importing {} file", exportFile);
         ObjectMapper mapper = new ObjectMapper();
         try {
             TurAemExchange turAemExchange = mapper.readValue(exportFile, TurAemExchange.class);

@@ -26,6 +26,7 @@ import com.viglet.turing.spring.security.TurAuditable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serial;
@@ -40,6 +41,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @Entity
+@ToString
 @Table(name = "sn_ranking_condition")
 @JsonIgnoreProperties({ "turSNRankingExpression" })
 public class TurSNRankingCondition extends TurAuditable<String>  implements Serializable {
@@ -57,7 +59,6 @@ public class TurSNRankingCondition extends TurAuditable<String>  implements Seri
 
 	private String value;
 
-	// bi-directional many-to-one association to TurSNSite
 	@ManyToOne
 	@JoinColumn(name = "ranking_exp_id", nullable = false)
 	private TurSNRankingExpression turSNRankingExpression;

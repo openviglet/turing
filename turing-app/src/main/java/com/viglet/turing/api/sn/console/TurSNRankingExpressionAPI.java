@@ -27,7 +27,7 @@ import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
-import com.viglet.turing.persistence.utils.TurPersistenceUtils;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.jetbrains.annotations.NotNull;

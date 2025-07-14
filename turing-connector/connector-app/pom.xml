@@ -21,10 +21,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
@@ -71,7 +67,7 @@
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
-            <version>2.2.32</version>
+            <version>2.2.34</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -89,10 +85,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -123,6 +115,22 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>26.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>9.8.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <dependencyManagement>

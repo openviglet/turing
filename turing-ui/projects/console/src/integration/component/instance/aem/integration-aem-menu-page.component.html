@@ -4,11 +4,12 @@
     <div class="Subhead-heading Subhead-heading--large">
       <div *ngIf="!isNewObject()" class="d-flex">
         <div style="height: 32px; border-radius: 50%;">
-          <svg width="35" height="35" style="border-radius: 50%;" [identiconHash]="integrationInstance.title | lowercase">
+          <svg width="35" height="35" style="border-radius: 50%;"
+               [identiconHash]="integrationInstance.title | lowercase">
           </svg>
         </div>
         <div class="ml-2">
-          <span>{{integrationInstance.title}}</span>
+          <span>{{ integrationInstance.title }}</span>
         </div>
       </div>
       <div *ngIf="isNewObject()" class="d-flex">
@@ -45,7 +46,7 @@
           <div class="Box-body overflow-auto">
             <p>
               This action <strong>cannot</strong> be undone. This will permanently delete the
-              <strong>{{integrationInstance.title}}</strong> integration.
+              <strong>{{ integrationInstance.title }}</strong> integration.
             </p>
             <button (click)="delete(integrationInstance)" class="btn-danger btn btn-block">
               <span class="d-md-inline-block d-none">I understand the consequences, delete this integration</span>
@@ -54,23 +55,24 @@
         </details-dialog>
       </details>
     </div>
-    <div *ngIf="!isNewObject()" class="Subhead-description">{{integrationInstance.description}}</div>
+    <div *ngIf="!isNewObject()" class="Subhead-description">{{ integrationInstance.description }}</div>
   </div>
   <div id="col-left" class="float-left" style="width: 280px;padding-right: 15px;">
     <nav class="menu" aria-label="Site settings">
-
-      <a class="menu-item" [routerLink]="['/integration/instance/', integrationInstance.id, 'detail']" [routerLinkActive]="['selected']"><span
+      <a class="menu-item" [routerLink]="['/integration', 'aem', integrationInstance.id, 'detail']"
+         [routerLinkActive]="['selected']"><span
         octicon="gear" [size]=16 class="mr-1"></span> Settings</a>
-    </nav>
-      <nav class="menu" aria-label="AEM">
-      <div class="menu-heading">AEM Connector</div>
-        <a class="menu-item" [routerLink]="['/integration/', 'aem', integrationInstance.id,  'sn']" [routerLinkActive]="['selected']"><span
-          octicon="server" [size]=16 class="mr-1"></span> Turing Servers</a>
-        <a class="menu-item" [routerLink]="['/integration/', 'aem', integrationInstance.id, 'mapping']" [routerLinkActive]="['selected']"><span
-          octicon="project-roadmap" [size]=16 class="mr-1"></span> Mappings</a>
-      <a class="menu-item" [routerLink]="['/integration/', 'aem', integrationInstance.id, 'instance']" [routerLinkActive]="['selected']"><span
+      <a class="menu-item" [routerLink]="['/integration', 'aem', integrationInstance.id, 'source']"
+         [routerLinkActive]="['selected']"><span
         octicon="git-commit" [size]=16 class="mr-1"></span> Sources</a>
-
+      <a class="menu-item" [routerLink]="['/integration', 'aem', integrationInstance.id, 'indexing-rule']"
+         [routerLinkActive]="['selected']"><span
+        octicon="tools" [size]=16 class="mr-1"></span> Indexing Rules</a>
+    </nav>
+    <nav class="menu" aria-label="Monitoring">
+      <a class="menu-item" [routerLink]="['/integration', 'aem', integrationInstance.id, 'monitoring']"
+         [routerLinkActive]="['selected']"><span
+        octicon="graph" [size]=16 class="mr-1"></span> Monitoring</a>
     </nav>
   </div>
   <div id="col-right" class="float-right" style="width: calc(100% - 300px);">

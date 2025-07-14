@@ -45,8 +45,8 @@ public class TurSolrConfiguration {
 		cm.setDefaultMaxPerRoute(10000);
 		cm.setValidateAfterInactivity(3000);
 
-		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setConnectTimeout(30000)
-				.setSocketTimeout(30000);
+		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setConnectTimeout(60000)
+				.setSocketTimeout(60000);
 
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().setKeepAliveStrategy((response, context) -> -1)
 				.evictIdleConnections(50000, TimeUnit.MILLISECONDS)

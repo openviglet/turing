@@ -24,6 +24,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.client.sn.job.TurSNJobUtils;
+import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
@@ -35,7 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.viglet.turing.connector.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
+import static com.viglet.turing.connector.constant.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
+import static com.viglet.turing.connector.commons.logging.TurConnectorLoggingUtils.setSuccessStatus;
 
 @Component
 @Slf4j
@@ -69,6 +71,7 @@ public class TurConnectorProcessQueue {
                 }
             });
             log.debug("Processing {} job item", turSNJobItem.getId());
+            setSuccessStatus(turSNJobItem, TurIndexingStatus.RECEIVED_AND_SENT_TO_TURING);
         }
         if (locales.isEmpty()) {
             turSNJobItems.add(new TurSNJobItem(TurSNJobAction.COMMIT, sites));

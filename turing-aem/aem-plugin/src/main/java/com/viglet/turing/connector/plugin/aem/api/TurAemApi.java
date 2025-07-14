@@ -19,65 +19,83 @@
 package com.viglet.turing.connector.plugin.aem.api;
 
 import com.google.inject.Inject;
-import com.viglet.turing.connector.commons.plugin.TurConnectorSession;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
-import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v2/aem")
-@Tag(name = "Heartbeat", description = "Heartbeat")
+@Tag(name = "AEM API", description = "AEM API")
 public class TurAemApi {
-    private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemPluginProcess turAemPluginProcess;
+    private final List<String> currentContentIdList = new ArrayList<>();
+    private LocalDateTime currentStandAloneUpdate = LocalDateTime.now();
 
     @Inject
-    public TurAemApi(TurAemSourceRepository turAemSourceRepository,
-                     TurAemPluginProcess turAemPluginProcess) {
-        this.turAemSourceRepository = turAemSourceRepository;
+    public TurAemApi(TurAemPluginProcess turAemPluginProcess) {
         this.turAemPluginProcess = turAemPluginProcess;
-
     }
 
-    @GetMapping
-    public Map<String, String> info() {
+    @GetMapping("status")
+    public Map<String, String> status() {
         return statusOk();
     }
 
-    @Transactional
-    @PostMapping("index/{name}")
-    public ResponseEntity<Object> indexContentId(@PathVariable String name,
-                                                   @RequestBody TurAemPathList turAemPathList) {
-        return turAemSourceRepository.findByName(name).map(turAemSource -> {
-            TurConnectorSession turConnectorSession = TurAemPluginProcess.getTurConnectorSession(turAemSource);
-            turAemPathList.paths.forEach(path ->
-                    turAemPluginProcess.indexContentId(turConnectorSession, turAemSource, path));
-            turAemPluginProcess.finished(turConnectorSession);
-            return ResponseEntity.ok().build();
 
-        }).orElseGet(() -> ResponseEntity.notFound().build());
-
+    @PostMapping("index/{source}")
+    public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String source,
+                                                              @RequestBody TurAemPathList pathList) {
+        if (hasNonRepeatedRequest(source, pathList.getPaths())) {
+            turAemPluginProcess.sentToIndexStandaloneAsync(source, pathList);
+        }
+        return ResponseEntity.ok(statusSent());
     }
 
-    @Transactional
-    @GetMapping("index/{name}/all")
-    public ResponseEntity<Object> indexAll(@PathVariable String name) {
-        return turAemSourceRepository.findByName(name).map(turAemSource -> {
-            turAemPluginProcess.indexAllAsync(turAemSource);
-            return ResponseEntity.ok().build();
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+    private void updateCurrentRequests(String name, List<String> paths) {
+        currentContentIdList.clear();
+        paths.forEach(path -> currentContentIdList.add(getSourceWithContentId(name, path)));
+        currentStandAloneUpdate = LocalDateTime.now();
+    }
 
+    private boolean hasNonRepeatedRequest(String name, List<String> paths) {
+        Duration duration = Duration.between(currentStandAloneUpdate, LocalDateTime.now());
+        if (duration.getSeconds() > 30L) return true;
+        new ArrayList<>(paths).forEach(path -> {
+            String pathName = getSourceWithContentId(name, path);
+            if (currentContentIdList.contains(pathName)) {
+                paths.remove(path);
+                log.warn("Skipping. Repeated request: {}", pathName);
+            }
+        });
+        if (hasPath(paths)) updateCurrentRequests(name, paths);
+        return hasPath(paths);
+    }
+
+    private static boolean hasPath(List<String> paths) {
+        return !paths.isEmpty();
+    }
+
+    private static @NotNull String getSourceWithContentId(String name, String path) {
+        return name + "-" + path;
     }
 
     private static Map<String, String> statusOk() {
         Map<String, String> status = new HashMap<>();
         status.put("status", "ok");
+        return status;
+    }
+
+    private static Map<String, String> statusSent() {
+        Map<String, String> status = new HashMap<>();
+        status.put("status", "sent");
         return status;
     }
 }

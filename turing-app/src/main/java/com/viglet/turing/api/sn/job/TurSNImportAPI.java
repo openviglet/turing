@@ -26,11 +26,13 @@ import com.google.inject.Inject;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
+import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.filesystem.commons.TurFileUtils;
 import com.viglet.turing.connector.filesystem.commons.TurTikaFileAttributes;
 import com.viglet.turing.genai.TurGenAi;
+import com.viglet.turing.logging.TurLoggingUtils;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.spring.utils.TurSpringUtils;
@@ -81,15 +83,17 @@ public class TurSNImportAPI {
                                     ? turSNJobItem.getAttributes().get(TurSNFieldName.ID)
                                     : null,
                             siteName, turSNJobItem.getLocale(), siteName);
+                    TurLoggingUtils.setErrorStatus(turSNJobItem, TurIndexingStatus.INDEXED, "Site doesn't exist");
                 } else if (turSNJobItem.getTurSNJobAction().equals(TurSNJobAction.DELETE)) {
                     log.error(
                             "Delete Object ID '{}' of '{}' SN Site ({}) was not processed. Because '{}' SN Site doesn't exist",
                             turSNJobItem.getAttributes() != null ?
                                     turSNJobItem.getAttributes().get(TurSNFieldName.TYPE) : "empty", siteName,
                             turSNJobItem.getLocale(), siteName);
+                    TurLoggingUtils.setErrorStatus(turSNJobItem, TurIndexingStatus.DEINDEXED, "Site doesn't exist");
                 }
             } else {
-                log.error("No JobItem' of '{}' SN Site", siteName);
+                log.warn("No JobItem' of '{}' SN Site", siteName);
             }
         });
     }
@@ -145,15 +149,17 @@ public class TurSNImportAPI {
     }
 
     private void sentQueueInfo(TurSNJobItems turSNJobItems) {
-        turSNJobItems.forEach(turJobItem -> {
-            if (isValidJobItem(turJobItem)) {
-                turJobItem.getSiteNames().forEach(siteName ->
-                        turSNSiteRepository.findByName(siteName).ifPresentOrElse(turSNSite ->
-                                        log.info("Sent to queue to {} the Object ID '{}' of '{}' SN Site ({}).",
-                                                actionType(turJobItem),
-                                                turJobItem.getAttributes().get(TurSNFieldName.ID),
-                                                turSNSite.getName(),
-                                                turJobItem.getLocale()),
+        turSNJobItems.forEach(turSNJobItem -> {
+            if (isValidJobItem(turSNJobItem)) {
+                turSNJobItem.getSiteNames().forEach(siteName ->
+                        turSNSiteRepository.findByName(siteName).ifPresentOrElse(turSNSite -> {
+                                    log.info("Sent to queue to {} the Object ID '{}' of '{}' SN Site ({}).",
+                                            actionType(turSNJobItem),
+                                            turSNJobItem.getAttributes().get(TurSNFieldName.ID),
+                                            turSNSite.getName(),
+                                            turSNJobItem.getLocale());
+                                    TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.SENT_TO_QUEUE);
+                                },
                                 () -> importUnsuccessful(siteName, turSNJobItems)));
             }
         });

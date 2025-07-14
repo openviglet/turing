@@ -1,11 +1,13 @@
 package com.viglet.turing.connector.aem.commons.mappers;
 
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 public class TurAemContentMapping {

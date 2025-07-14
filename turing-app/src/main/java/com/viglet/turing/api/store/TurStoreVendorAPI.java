@@ -23,7 +23,7 @@ package com.viglet.turing.api.store;
 import com.google.inject.Inject;
 import com.viglet.turing.persistence.model.store.TurStoreVendor;
 import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
-import com.viglet.turing.persistence.utils.TurPersistenceUtils;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.transaction.annotation.Transactional;

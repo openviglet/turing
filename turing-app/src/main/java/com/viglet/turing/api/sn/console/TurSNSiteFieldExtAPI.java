@@ -33,7 +33,7 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetR
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.persistence.utils.TurPersistenceUtils;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.template.TurSNTemplate;
 import io.swagger.v3.oas.annotations.Operation;

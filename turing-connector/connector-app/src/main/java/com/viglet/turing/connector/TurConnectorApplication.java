@@ -5,6 +5,8 @@ import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @EnableJms
 @EnableCaching
 @EnableAsync

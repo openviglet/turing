@@ -44,7 +44,7 @@ import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
-import com.viglet.turing.persistence.utils.TurPersistenceUtils;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.se.facet.TurSEFacetResult;
 import com.viglet.turing.se.facet.TurSEFacetResultAttr;
 import com.viglet.turing.se.result.TurSEGenericResults;
@@ -67,6 +67,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
 import org.apache.solr.client.solrj.response.*;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -405,15 +406,28 @@ public class TurSolr {
     private void prepareBoostQuery(TurSNSite turSNSite, SolrQuery query) {
         List<TurSNSiteFieldExt> turSNSiteFieldExtList = turSNSiteFieldExtRepository
                 .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
-        query.set(BOOST_QUERY, turSNRankingExpressionRepository.findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(),
-                turSNSite).stream().map(expression ->
-                String.format(Locale.US, "%s^%.1f",
-                        "(" + boostQueryAttributes(expression, turSNSiteFieldExtList) + ")",
-                        expression.getWeight())).toArray(String[]::new));
+        Set<TurSNRankingExpression> turSNRankingExpression = turSNRankingExpressionRepository
+                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(),
+                        turSNSite);
+        if (hasRankingConditions(turSNRankingExpression)) {
+            String[] expressionString = turSNRankingExpression.stream().map(expression ->
+                    String.format(Locale.US, "%s^%.1f",
+                            "(" + boostQueryAttributes(expression, turSNSiteFieldExtList) + ")",
+                            expression.getWeight())).toArray(String[]::new);
+            query.set(BOOST_QUERY, expressionString);
+        }
     }
 
-    private String boostQueryAttributes(TurSNRankingExpression expression, List<TurSNSiteFieldExt> turSNSiteFieldExtList) {
-        return turSNRankingConditionRepository.findByTurSNRankingExpression(expression).stream().map(condition -> {
+    private boolean hasRankingConditions(Set<TurSNRankingExpression> turSNRankingExpressions) {
+        return turSNRankingExpressions.stream()
+                .anyMatch(expressions ->
+                        !turSNRankingConditionRepository.findByTurSNRankingExpression(expressions).isEmpty());
+    }
+
+    private String boostQueryAttributes(TurSNRankingExpression expression,
+                                        List<TurSNSiteFieldExt> turSNSiteFieldExtList) {
+        return turSNRankingConditionRepository.findByTurSNRankingExpression(expression)
+                .stream().map(condition -> {
                     TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtList
                             .stream()
                             .filter(field -> field.getName().equals(condition.getAttribute()))
@@ -477,8 +491,8 @@ public class TurSolr {
     private static Optional<QueryResponse> executeSolrQuery(TurSolrInstance turSolrInstance, SolrQuery query) {
         try {
             return Optional.ofNullable(turSolrInstance.getSolrClient().query(query));
-        } catch (SolrServerException | IOException e) {
-            log.error(e.getMessage(), e);
+        } catch (BaseHttpSolrClient.RemoteSolrException | SolrServerException | IOException e) {
+            log.error("{}?{} - {}", query.getRequestHandler(), query.toQueryString(), e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -543,10 +557,11 @@ public class TurSolr {
     }
 
     private static boolean noResultGroups(QueryResponse queryResponse) {
-        return queryResponse.getGroupResponse() == null ||
-                (queryResponse.getGroupResponse() != null && queryResponse.getGroupResponse().getValues().isEmpty()) ||
-                (queryResponse.getGroupResponse() != null && queryResponse.getGroupResponse().getValues().size() == 1 &&
-                        queryResponse.getGroupResponse().getValues().getFirst().getValues().isEmpty());
+        GroupResponse groupResponse = queryResponse.getGroupResponse();
+        return groupResponse == null ||
+                groupResponse.getValues().isEmpty() ||
+                groupResponse.getValues().size() == 1 &&
+                        groupResponse.getValues().getFirst().getValues().isEmpty();
     }
 
     private void processResults(TurSNSite turSNSite, List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList,
@@ -1441,7 +1456,8 @@ public class TurSolr {
     private Map<String, TurSNSiteFieldExt> getFieldExtMap(TurSNSite turSNSite) {
         return turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite,
                 1).stream().collect(Collectors
-                .toMap(TurSNSiteFieldExt::getName, turSNSiteFieldExt -> turSNSiteFieldExt, (a, b) -> b));
+                .toMap(TurSNSiteFieldExt::getName, turSNSiteFieldExt -> turSNSiteFieldExt,
+                        (a, b) -> b));
     }
 
     private Map<String, Object> getRequiredFields(TurSNSite turSNSite) {
@@ -1493,16 +1509,17 @@ public class TurSolr {
     }
 
     private void addRequiredFieldsToDocument(Map<String, Object> requiredFields, SolrDocument document) {
-        Arrays.stream(requiredFields.keySet().toArray()).map(String.class::cast).filter(requiredField ->
-                        !document.containsKey(requiredField))
+        Arrays.stream(requiredFields.keySet().toArray())
+                .map(String.class::cast)
+                .filter(requiredField -> !document.containsKey(requiredField))
                 .forEach(requiredField -> document.addField(requiredField, requiredFields.get(requiredField)));
     }
 
     public void commit(TurSolrInstance turSolrInstance) {
         try {
-            turSolrInstance.getSolrClient().commit();
+            turSolrInstance.getSolrClient().commit(false, false);
         } catch (SolrServerException | IOException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage());
         }
     }
 }

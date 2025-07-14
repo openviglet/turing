@@ -11,40 +11,50 @@ import {TurIntegrationRootPageComponent} from './component/root/integration-root
 import {TurIntegrationVendorService} from './service/integration-vendor.service';
 import {TurLocaleService} from '../locale/service/locale.service';
 import {
-  TurIntegrationAemPageComponent
-} from "./component/instance/aem/integration-aem-page.component";
+  TurIntegrationAemSourceComponent
+} from "./component/instance/aem/integration-aem-source.component";
 import {TurIntegrationAemSourceService} from "./service/integration-aem-source.service";
-import {TurIntegrationAemListPageComponent} from "./component/instance/aem/integration-aem-list-page.component";
-import {ACE_CONFIG, AceConfigInterface, AceModule} from 'ngx-ace-wrapper';
+import {TurIntegrationAemListSourceComponent} from "./component/instance/aem/integration-aem-list-source.component";
 import {
   TurIntegrationInstanceDetailPageComponent
 } from "./component/instance/integration-instance-detail-page.component";
-import {TurIntegrationAemMappingPageComponent} from "./component/instance/aem/integration-aem-mapping-page.component";
 import {TurIntegrationAemMenuPageComponent} from "./component/instance/aem/integration-aem-menu-page.component";
 import {TurIntegrationWcMenuPageComponent} from "./component/instance/wc/integration-wc-menu-page.component";
 import {TurIntegrationWcPageComponent} from "./component/instance/wc/integration-wc-page.component";
 import {TurIntegrationWcSourceService} from "./service/integration-wc-source.service";
 import {TurIntegrationWcListPageComponent} from "./component/instance/wc/integration-wc-list-page.component";
-
-const DEFAULT_ACE_CONFIG: AceConfigInterface = {
-  tabSize: 2,
-  mode: 'ace/mode/json',
-  theme: 'github',
-  readOnly: false,
-};
+import {
+  TurIntegrationMonitoringPageComponent
+} from "./component/instance/monitoring/integration-monitoring-page.component";
+import {
+  TurIntegrationIndexingRulesListPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-list-page.component";
+import {
+  TurIntegrationIndexingRulesPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-page.component";
+import {
+  TurSNIndexingRulesRootPageComponent
+} from "./component/instance/indexing-rules/integration-indexing-rules-root-page.component";
+import {MomentModule} from "ngx-moment";
+import {TurIntegrationIndexingRuleService} from "./service/integration-indexing-rule.service";
+import {TurIntegrationMonitoringService} from "./service/integration-monitoring.service";
+import {TurIntegrationConnectorService} from "./service/integration-connector.service";
 
 @NgModule({
   declarations: [
     TurIntegrationRootPageComponent,
     TurIntegrationInstanceDetailPageComponent,
     TurIntegrationInstanceListPageComponent,
-    TurIntegrationAemPageComponent,
-    TurIntegrationAemListPageComponent,
-    TurIntegrationAemMappingPageComponent,
+    TurIntegrationAemSourceComponent,
+    TurIntegrationAemListSourceComponent,
     TurIntegrationAemMenuPageComponent,
     TurIntegrationWcMenuPageComponent,
     TurIntegrationWcPageComponent,
-    TurIntegrationWcListPageComponent
+    TurIntegrationWcListPageComponent,
+    TurIntegrationMonitoringPageComponent,
+    TurIntegrationIndexingRulesListPageComponent,
+    TurIntegrationIndexingRulesPageComponent,
+    TurSNIndexingRulesRootPageComponent
   ],
   imports: [
     CommonModule,
@@ -54,7 +64,7 @@ const DEFAULT_ACE_CONFIG: AceConfigInterface = {
     TurIntegrationRoutingModule,
     TurCommonsModule,
     RouterModule,
-    AceModule
+    MomentModule,
   ],
   providers: [
     TurIntegrationInstanceService,
@@ -62,10 +72,9 @@ const DEFAULT_ACE_CONFIG: AceConfigInterface = {
     TurLocaleService,
     TurIntegrationAemSourceService,
     TurIntegrationWcSourceService,
-    {
-      provide: ACE_CONFIG,
-      useValue: DEFAULT_ACE_CONFIG
-    },
+    TurIntegrationIndexingRuleService,
+    TurIntegrationMonitoringService,
+    TurIntegrationConnectorService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

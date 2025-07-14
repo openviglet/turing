@@ -20,8 +20,8 @@
  */
 package com.viglet.turing.connector.persistence.repository;
 
-import com.viglet.turing.connector.persistence.model.TurConnectorConfigVar;
+import com.viglet.turing.connector.persistence.model.TurConnectorConfigVarModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TurConnectorConfigVarRepository extends JpaRepository<TurConnectorConfigVar, String> {
+public interface TurConnectorConfigVarRepository extends JpaRepository<TurConnectorConfigVarModel, String> {
 }

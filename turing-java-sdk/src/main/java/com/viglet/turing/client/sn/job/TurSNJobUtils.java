@@ -91,15 +91,15 @@ public class TurSNJobUtils {
     private static int importItemsLog(ClassicHttpResponse response, HttpPost httpPost, String jsonResult) {
         if (log.isDebugEnabled()) {
             try {
-                log.debug("Viglet Turing Index Request URI: {}", httpPost.getUri());
-                log.debug("JSON: {}", jsonResult);
                 log.debug("Viglet Turing indexer response HTTP result is: {}, for request uri: {}",
                         response.getCode(), httpPost.getUri());
             } catch (URISyntaxException e) {
                 log.error(e.getMessage(), e);
             }
-            log.debug("Viglet Turing indexer response HTTP result is: {}", httpPost.getEntity().toString());
+
         }
+        log.trace("JSON: {}", jsonResult);
+        log.trace("Viglet Turing indexer response HTTP result is: {}", httpPost.getEntity().toString());
         return response.getCode();
     }
 

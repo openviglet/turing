@@ -40,4 +40,14 @@ public class TurWCPlugin implements TurConnectorPlugin {
     public void crawl() {
         turWCSourceRepository.findAll().forEach(turWCPluginProcess::start);
     }
+
+    @Override
+    public String getProviderName() {
+        return "WEB-CRAWLER";
+    }
+
+    @Override
+    public void indexAll(String source) {
+        throw new UnsupportedOperationException("This method is only a placeholder");
+    }
 }

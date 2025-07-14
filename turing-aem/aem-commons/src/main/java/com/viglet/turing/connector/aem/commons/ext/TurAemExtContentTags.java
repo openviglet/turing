@@ -28,22 +28,21 @@ import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Slf4j
 public class TurAemExtContentTags implements TurAemExtAttributeInterface {
     public static final String TAGS_JSON_EXTENSION = "/jcr:content.tags.json";
-    private static final TurMultiValue EMPTY = null;
 
     @Override
     public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr, TurAemSourceAttr turAemSourceAttr,
-                                 TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
+            TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
         log.debug("Executing TurAemExtContentTags");
-        return new TurMultiValue(getTags(aemObject, turAemSourceContext).map(tags ->
-                        tags.getTags().stream()
-                                .map(TurAemContentTag::getTagID)
-                                .toList())
-                .orElse(EMPTY));
+        return new TurMultiValue(new TurMultiValue(getTags(aemObject, turAemSourceContext).map(t -> t.getTags().stream()
+                .map(TurAemContentTag::getTagID)
+                .toList())
+                .orElse(Collections.emptyList())));
     }
 
     public static Optional<TurAemContentTags> getTags(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {

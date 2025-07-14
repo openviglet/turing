@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>3.5.3</version>
+            <version>3.5.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.6</version>
+            <version>42.7.7</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>

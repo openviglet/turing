@@ -29,4 +29,10 @@ public class TurDefaultPluginImpl implements TurConnectorPlugin {
     public void crawl() {
         throw new UnsupportedOperationException("This method is only a placeholder");
     }
+    public String getProviderName() {
+        return "DEFAULT";
+    }
+    public void indexAll(String source) {
+        throw new UnsupportedOperationException("This method is only a placeholder");
+    }
 }

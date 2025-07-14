@@ -21,6 +21,7 @@ package com.viglet.turing.connector.aem.commons;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
@@ -92,13 +93,13 @@ public class TurAemCommonsUtils {
         return StringUtils.isNotBlank(turAemSourceContext.getContentType());
     }
 
-    public static boolean isOnceConfig(String path, IAemConfiguration config) {
+    public static boolean isNotOnceConfig(String path, IAemConfiguration config) {
         if (StringUtils.isNotBlank(config.getOncePatternPath())) {
             Pattern p = Pattern.compile(config.getOncePatternPath());
             Matcher m = p.matcher(path);
-            return m.lookingAt();
+            return !m.lookingAt();
         }
-        return false;
+        return true;
     }
 
     public static String configOnce(TurAemSourceContext turAemSourceContext) {
@@ -119,8 +120,7 @@ public class TurAemCommonsUtils {
 
 
     private static Date defaultDeltaDate(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
-        return new TurAemExtDeltaDate().consume(aemObject,
-                turAemSourceContext);
+        return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
     }
 
     public static TurAemTargetAttrValueMap runCustomClassFromContentType(TurAemModel turAemModel,
@@ -174,18 +174,16 @@ public class TurAemCommonsUtils {
     public static void addItemInExistingAttribute(String attributeValue,
                                                   Map<String, Object> attributes,
                                                   String attributeName) {
-        if (attributes.get(attributeName) instanceof ArrayList)
+        if (attributes.get(attributeName) instanceof ArrayList) {
             addItemToArray(attributes, attributeName, attributeValue);
-        else convertAttributeSingleValueToArray(attributes, attributeName, attributeValue);
+        } else {
+            convertAttributeSingleValueToArray(attributes, attributeName, attributeValue);
+        }
     }
-
 
     private static void convertAttributeSingleValueToArray(Map<String, Object> attributes,
                                                            String attributeName, String attributeValue) {
-        List<Object> attributeValues = new ArrayList<>();
-        attributeValues.add(attributes.get(attributeName));
-        attributeValues.add(attributeValue);
-        attributes.put(attributeName, attributeValues);
+        attributes.put(attributeName, Lists.newArrayList(attributes.get(attributeName), attributeValue));
     }
 
     private static void addItemToArray(Map<String, Object> attributes, String attributeName, String attributeValue) {
@@ -239,7 +237,7 @@ public class TurAemCommonsUtils {
     }
 
     private static Optional<JSONObject> getInfinityJsonNotFound(String infinityJsonUrl) {
-        log.info("Request Not Found {}", infinityJsonUrl);
+        log.warn("Request Not Found {}", infinityJsonUrl);
         return Optional.empty();
     }
 
@@ -272,12 +270,15 @@ public class TurAemCommonsUtils {
                                                   boolean cached) {
         return getResponseBody(url, turAemSourceContext, cached).map(json ->
         {
+            if (!TurCommonsUtils.isJSONValid(json)) {
+                return null;
+            }
             try {
                 return new ObjectMapper()
                         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                         .readValue(json, clazz);
             } catch (JsonProcessingException e) {
-                log.error(e.getMessage(), e);
+                log.error("URL {} - {}" , url, e.getMessage(), e);
             }
             return null;
         });
@@ -288,7 +289,7 @@ public class TurAemCommonsUtils {
             responseHttpCache.forEach((k, v) -> log.debug("Cached Item Url: {}", k));
         }
         if (responseHttpCache.containsKey(url) && cached) {
-            log.info("Cached Response {}", url);
+            log.debug("Cached Response {}", url);
             return Optional.of(responseHttpCache.get(url));
         } else {
             return getResponseBodyNoCache(url, turAemSourceContext, cached);
@@ -304,7 +305,7 @@ public class TurAemCommonsUtils {
                 .build()) {
             HttpGet request = new HttpGet(URI.create(UrlEscapers.urlFragmentEscaper().escape(url)).normalize());
             String json = httpClient.execute(request, response -> {
-                log.info("Request Status {} - {}", response.getCode(), url);
+                log.debug("Request Status {} - {}", response.getCode(), url);
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             });
@@ -317,7 +318,7 @@ public class TurAemCommonsUtils {
             }
             return Optional.empty();
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            log.error("URL {} - {}" , url, e.getMessage(), e);
             throw new TurRuntimeException(e);
         }
     }
@@ -343,8 +344,7 @@ public class TurAemCommonsUtils {
     }
 
     public static Locale getLocaleFromContext(TurAemSourceContext turAemSourceContext, TurAemContext context) {
-        TurAemObject aemObject = (TurAemObject) context.getCmsObjectInstance();
-        return getLocaleFromAemObject(turAemSourceContext, aemObject);
+        return getLocaleFromAemObject(turAemSourceContext, context.getCmsObjectInstance());
     }
 
     public static void cleanCache() {

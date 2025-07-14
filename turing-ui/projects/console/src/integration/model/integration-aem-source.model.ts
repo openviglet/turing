@@ -2,20 +2,24 @@ import {TurIntegrationAemLocalePath} from "./integration-aem-locale-path.model";
 
 export interface TurIntegrationAemSource {
   id: string;
-  url: string;
+  name: string;
+  endpoint: string;
   username: string;
   password: string;
   rootPath: string;
   contentType: string;
   subType: string;
-  turSNSite: string;
-  siteName: string;
-  defaultLocale: string;
-  providerName: string;
-  group: string;
-  urlPrefix: string;
   oncePattern: string;
-  mappingJson: string;
+  defaultLocale: string;
+  localeClass: string;
+  deltaClass: string;
+  author: boolean;
+  publish: boolean;
+  authorSNSite: string;
+  publishSNSite: string;
+  authorURLPrefix: string;
+  publishURLPrefix: string;
   localePaths: TurIntegrationAemLocalePath[];
-  attributeMappings: string;
+  attributeSpecifications: object;
+  models: object;
 }

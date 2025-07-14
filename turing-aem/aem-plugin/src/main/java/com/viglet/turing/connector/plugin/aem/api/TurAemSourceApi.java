@@ -19,11 +19,13 @@
 package com.viglet.turing.connector.plugin.aem.api;
 
 import com.google.inject.Inject;
+import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceLocalePathRepository;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,12 +40,15 @@ public class TurAemSourceApi {
 
     private final TurAemSourceRepository turAemSourceRepository;
     private final TurAemSourceLocalePathRepository turAemSourceLocalePathRepository;
-    
+    private final TurAemPluginProcess turAemPluginProcess;
+
     @Inject
     public TurAemSourceApi(TurAemSourceRepository turAemSourceRepository,
-    TurAemSourceLocalePathRepository turAemSourceLocalePathRepository) {
+                           TurAemSourceLocalePathRepository turAemSourceLocalePathRepository,
+                           TurAemPluginProcess turAemPluginProcess) {
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemSourceLocalePathRepository = turAemSourceLocalePathRepository;
+        this.turAemPluginProcess = turAemPluginProcess;
     }
 
     @GetMapping
@@ -109,6 +114,11 @@ public class TurAemSourceApi {
     public TurAemSource turAemSourceAdd(@RequestBody TurAemSource turAemSource) {
         this.turAemSourceRepository.save(turAemSource);
         return turAemSource;
+    }
 
+    @GetMapping("{id}/indexAll")
+    public ResponseEntity<Object> sourceIndexAll(@PathVariable String id) {
+        turAemPluginProcess.indexAllByIdAsync(id);
+        return ResponseEntity.ok().build();
     }
 }

@@ -27,8 +27,10 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
+import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.logging.TurLoggingUtils;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
@@ -61,9 +63,9 @@ import java.util.Map.Entry;
 @Component
 @Slf4j
 public class TurSNProcessQueue {
-    public static final String CREATED = "Created";
-    public static final String DELETED = "Deleted";
     public static final String DEFAULT = "default";
+    public static final String INDEXED = "Indexed";
+    public static final String DEINDEXED = "Deindexed";
     private final TurSolr turSolr;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
@@ -74,6 +76,7 @@ public class TurSNProcessQueue {
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
+
     @Autowired
     public TurSNProcessQueue(TurSolr turSolr, TurSNSiteRepository turSNSiteRepository,
                              TurSNSiteLocaleRepository turSNSiteLocaleRepository,
@@ -99,8 +102,8 @@ public class TurSNProcessQueue {
     @JmsListener(destination = TurSNConstants.INDEXING_QUEUE)
     @Transactional
     public void receiveIndexingQueue(TurSNJobItems turSNJobItems) {
-        receiveQueueDebugLog(turSNJobItems);
-        Optional.ofNullable(turSNJobItems)
+        receiveQueueLog(turSNJobItems);
+        Optional.of(turSNJobItems)
                 .ifPresentOrElse(jobItems ->
                         jobItems.forEach(turSNJobItem ->
                                 turSNJobItem.getSiteNames().forEach(siteName ->
@@ -111,10 +114,13 @@ public class TurSNProcessQueue {
                                                     } else {
                                                         noProcessedWarning(turSNSite, turSNJobItem);
                                                     }
+                                                    TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.FINISHED);
                                                 }))), () -> log.debug("turSNJob empty or siteId empty"));
     }
 
-    private static void receiveQueueDebugLog(TurSNJobItems turSNJobItems) {
+    private static void receiveQueueLog(TurSNJobItems turSNJobItems) {
+        turSNJobItems.forEach(turSNJobItem ->
+                TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.RECEIVED_FROM_QUEUE));
         if (log.isDebugEnabled()) {
             try {
                 log.debug("receiveQueue turSNJobItems: {}", new ObjectMapper().writer()
@@ -131,6 +137,7 @@ public class TurSNProcessQueue {
                 turSNJobItem.getAttributes().get(TurSNFieldName.ID),
                 turSNSite.getName(),
                 turSNJobItem.getLocale());
+        TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.NOT_PROCESSED);
     }
 
     private boolean processJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
@@ -165,9 +172,11 @@ public class TurSNProcessQueue {
     private void processQueueInfo(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
         if (ObjectUtils.allNotNull(turSNSite, turSNJobItem) && turSNJobItem.getAttributes() != null) {
             if (Objects.requireNonNull(turSNJobItem.getTurSNJobAction()) == TurSNJobAction.CREATE) {
-                logCrudObject(turSNSite, turSNJobItem, CREATED);
+                logCrudObject(turSNSite, turSNJobItem, INDEXED);
+                TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.INDEXED);
             } else if (turSNJobItem.getTurSNJobAction() == TurSNJobAction.DELETE) {
-                logCrudObject(turSNSite, turSNJobItem, DELETED);
+                logCrudObject(turSNSite, turSNJobItem, DEINDEXED);
+                TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.DEINDEXED);
             }
         }
     }
@@ -202,7 +211,6 @@ public class TurSNProcessQueue {
     }
 
     private boolean index(TurSNJobItem turSNJobItem, TurSNSite turSNSite) {
-        log.debug("Index");
         Map<String, Object> attributes = this.removeDuplicateTerms(
                 turSNMergeProvidersProcess.mergeDocuments(turSNSite,
                         getConsolidateResults(turSNJobItem),

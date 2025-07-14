@@ -26,6 +26,11 @@
             [style.color]="getRouter().url === '/integration'?'':'#959da5'"></span>
       Integration
     </a>
+    <a [routerLink]="['/logging']" [routerLinkActive]="['selected']" class="UnderlineNav-item">
+      <span octicon="log" [size]=16 class="UnderlineNav-octicon octicon mr-1"
+            [style.color]="getRouter().url === '/logging'?'':'#959da5'"></span>
+      Logging
+    </a>
     <a [routerLink]="['/dev']" [routerLinkActive]="['selected']" class="UnderlineNav-item">
       <span octicon="code" [size]=16 class="UnderlineNav-octicon octicon mr-1"
             [style.color]="getRouter().url === '/dev'?'':'#959da5'"></span>
