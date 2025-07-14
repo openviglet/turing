@@ -67,6 +67,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
 import org.apache.solr.client.solrj.response.*;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -490,7 +491,7 @@ public class TurSolr {
     private static Optional<QueryResponse> executeSolrQuery(TurSolrInstance turSolrInstance, SolrQuery query) {
         try {
             return Optional.ofNullable(turSolrInstance.getSolrClient().query(query));
-        } catch (SolrServerException | IOException e) {
+        } catch (BaseHttpSolrClient.RemoteSolrException | SolrServerException | IOException e) {
             log.error("{}?{} - {}", query.getRequestHandler(), query.toQueryString(), e.getMessage(), e);
         }
         return Optional.empty();
