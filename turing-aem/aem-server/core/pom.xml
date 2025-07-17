@@ -20,7 +20,7 @@
     <parent>
         <groupId>com.viglet.turing.aem</groupId>
         <artifactId>aem-turing</artifactId>
-        <version>2025.2</version>
+        <version>2025.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>aem-turing.core</artifactId>
