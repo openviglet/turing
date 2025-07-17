@@ -34,7 +34,7 @@ import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;

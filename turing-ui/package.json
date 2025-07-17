@@ -1,6 +1,6 @@
 {
   "name": "turing-ui",
-  "version": "2025.2",
+  "version": "2025.3",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

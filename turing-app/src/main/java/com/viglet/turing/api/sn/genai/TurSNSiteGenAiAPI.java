@@ -28,7 +28,7 @@ import com.viglet.turing.genai.TurGenAi;
 import com.viglet.turing.genai.TurGenAiContext;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Locale;
