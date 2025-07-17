@@ -37,7 +37,7 @@ import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.solr.TurSolrUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;

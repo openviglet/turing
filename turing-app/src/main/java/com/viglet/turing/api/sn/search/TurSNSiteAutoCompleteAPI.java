@@ -27,7 +27,7 @@ import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.sn.ac.TurSNAutoComplete;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
