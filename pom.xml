@@ -133,6 +133,7 @@
                 <module>turing-db</module>
                 <module>turing-aem</module>
                 <module>turing-web-crawler</module>
+                <module>turing-mcp-server</module>
                 <module>turing-app</module>
             </modules>
         </profile>
