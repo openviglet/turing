@@ -4,7 +4,7 @@ import {BlankSlate} from "@/components/blank-slate.tsx";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {TurSNSiteMergeService} from "@/services/sn.site.merge.service.ts";
-import type {TurSNSiteMerge} from "@/models/sn-site-merge.model.ts";
+import type {TurSNSiteMerge} from "@/models/sn/sn-site-merge.model.ts";
 
 const turSNSiteMergeService = new TurSNSiteMergeService();
 export default function SNSiteMergeProvidersPage() {

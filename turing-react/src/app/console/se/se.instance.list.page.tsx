@@ -1,4 +1,4 @@
-import type { TurSEInstance } from "@/models/se-instance.model";
+import type { TurSEInstance } from "@/models/se/se-instance.model.ts";
 import { TurSEInstanceService } from "@/services/se.service"
 import { useEffect, useState } from "react";
 import { SECardList } from "@/components/se.card.list";

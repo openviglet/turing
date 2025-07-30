@@ -1,6 +1,6 @@
 import axios from "axios";
-import type { TurSNSite } from "@/models/sn-site.model";
-import type { TurSNSiteField } from "@/models/sn-site-field.model";
+import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
+import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts";
 
 export class TurSNSiteService {
   async query(): Promise<TurSNSite[]> {

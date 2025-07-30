@@ -28,7 +28,7 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { TurStoreInstance } from "@/models/store-instance.model"
+import type { TurStoreInstance } from "@/models/store/store-instance.model.ts"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"

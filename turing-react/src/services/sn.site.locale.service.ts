@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { TurSNSiteLocale } from "@/models/sn-site-locale.model";
+import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model.ts";
 
 export class TurSNSiteLocaleService {
   async query(siteId: string): Promise<TurSNSiteLocale[]> {

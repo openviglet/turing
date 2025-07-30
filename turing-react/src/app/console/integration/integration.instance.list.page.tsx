@@ -1,4 +1,4 @@
-import type { TurIntegrationInstance } from "@/models/integration-instance.model";
+import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts";
 import { TurIntegrationInstanceService } from "@/services/integration.service"
 import { useEffect, useState } from "react";
 import { IntegrationCardList } from "@/components/integration.card.list";

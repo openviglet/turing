@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { TurTokenInstance } from "@/models/token-instance.model";
+import type { TurTokenInstance } from "@/models/token/token-instance.model.ts";
 
 
 export class TurTokenInstanceService {

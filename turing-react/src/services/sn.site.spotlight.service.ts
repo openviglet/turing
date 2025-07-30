@@ -1,5 +1,5 @@
 import axios from "axios";
-import type {TurSNSiteSpotlight} from '@/models/sn-site-spotlight.model.ts';
+import type {TurSNSiteSpotlight} from '@/models/sn/sn-site-spotlight.model.ts';
 
 export class TurSNSiteSpotlightService {
 

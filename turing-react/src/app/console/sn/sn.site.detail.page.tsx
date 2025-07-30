@@ -1,6 +1,6 @@
 import { SNSiteForm } from "@/components/sn.site.form"
 import { useParams } from "react-router-dom";
-import type { TurSNSite } from "@/models/sn-site.model";
+import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
 import { useEffect, useState } from "react";
 import { TurSNSiteService } from "@/services/sn.service";
 import { SubPageHeader } from "@/components/sub.page.header";

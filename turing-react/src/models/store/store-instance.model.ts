@@ -1,11 +1,11 @@
-import type { TurTokenVendor } from "./token-vendor.model";
+import type { TurStoreVendor } from "./store-vendor.model.ts";
 
-export interface TurTokenInstance {
+export interface TurStoreInstance {
   id: string;
   title: string;
   description: string;
   url: string;
-  turTokenVendor: TurTokenVendor;
+  turStoreVendor: TurStoreVendor;
   language: string;
   enabled: number;
   modelName: string;

@@ -12,7 +12,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { NavLink, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
-import type { TurSNSite } from "@/models/sn-site.model";
+import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
 import { useEffect, useState } from "react";
 import { TurSNSiteService } from "@/services/sn.service";
 import { IconAlignBoxCenterStretch, IconCpu2, IconDashboard, IconGitMerge, IconLanguage, IconNumber123, IconReorder, IconScale, IconSearch, IconSettings, IconSpeakerphone, IconTrash } from "@tabler/icons-react";

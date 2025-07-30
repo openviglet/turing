@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import type { TurLLMInstance } from "@/models/llm-instance.model";
+import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts";
 import { useEffect, useState } from "react";
 import { TurLLMInstanceService } from "@/services/llm.service";
 import { LLMInstanceForm } from "@/components/llm.instance.form";

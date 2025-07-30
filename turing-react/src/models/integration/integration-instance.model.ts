@@ -1,11 +1,11 @@
-import type { TurLLMVendor } from "./llm-vendor.model";
+import type { TurIntegrationVendor } from "./integration-vendor.model.ts";
 
-export interface TurLLMInstance {
+export interface TurIntegrationInstance {
   id: string;
   title: string;
   description: string;
   url: string;
-  turLLMVendor: TurLLMVendor;
+  turIntegrationVendor: TurIntegrationVendor;
   language: string;
   enabled: number;
   modelName: string;

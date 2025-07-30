@@ -1,5 +1,5 @@
 import axios from "axios";
-import type {TurSNSiteMerge} from "@/models/sn-site-merge.model.ts";
+import type {TurSNSiteMerge} from "@/models/sn/sn-site-merge.model.ts";
 
 export class TurSNSiteMergeService {
 

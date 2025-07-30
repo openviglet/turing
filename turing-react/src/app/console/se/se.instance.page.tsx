@@ -1,6 +1,6 @@
 import { SEInstanceForm } from "@/components/se.instance.form"
 import { useParams } from "react-router-dom";
-import type { TurSEInstance } from "@/models/se-instance.model";
+import type { TurSEInstance } from "@/models/se/se-instance.model.ts";
 import { useEffect, useState } from "react";
 import { TurSEInstanceService } from "@/services/se.service";
 

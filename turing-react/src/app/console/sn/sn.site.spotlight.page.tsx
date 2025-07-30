@@ -3,7 +3,7 @@ import { IconSpeakerphone } from "@tabler/icons-react";
 import { TurSNSiteSpotlightService } from "@/services/sn.site.spotlight.service.ts";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { TurSNSiteSpotlight } from "@/models/sn-site-spotlight.model.ts";
+import type { TurSNSiteSpotlight } from "@/models/sn/sn-site-spotlight.model.ts";
 import { BlankSlate } from "@/components/blank-slate";
 
 const turSNSiteSpotlightService = new TurSNSiteSpotlightService();

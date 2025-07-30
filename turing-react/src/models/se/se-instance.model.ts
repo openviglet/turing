@@ -1,4 +1,4 @@
-import type { TurSEVendor } from "./se-vendor.model";
+import type { TurSEVendor } from "./se-vendor.model.ts";
 
 export interface TurSEInstance {
   id: string;

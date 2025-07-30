@@ -28,7 +28,7 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { TurSEInstance } from "@/models/se-instance.model"
+import type { TurSEInstance } from "@/models/se/se-instance.model.ts"
 import { useEffect, useState } from "react"
 import { TurSEInstanceService } from "@/services/se.service"
 import { toast } from "sonner"

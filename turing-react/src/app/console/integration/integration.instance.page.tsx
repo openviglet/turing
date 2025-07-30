@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import type { TurIntegrationInstance } from "@/models/integration-instance.model";
+import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts";
 import { useEffect, useState } from "react";
 import { TurIntegrationInstanceService } from "@/services/integration.service";
 import { IntegrationInstanceForm } from "@/components/integration.instance.form";

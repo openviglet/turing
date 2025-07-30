@@ -28,7 +28,7 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { TurTokenInstance } from "@/models/token-instance.model"
+import type { TurTokenInstance } from "@/models/token/token-instance.model.ts"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"

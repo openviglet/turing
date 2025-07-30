@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { TurSEInstance } from "@/models/se-instance.model";
+import type { TurSEInstance } from "@/models/se/se-instance.model.ts";
 
 export class TurSEInstanceService {
   async query(): Promise<TurSEInstance[]> {

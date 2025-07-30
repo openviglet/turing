@@ -1,11 +1,11 @@
-import type { TurLoggingVendor } from "./logging-vendor.model";
+import type { TurTokenVendor } from "./token-vendor.model.ts";
 
-export interface TurLoggingInstance {
+export interface TurTokenInstance {
   id: string;
   title: string;
   description: string;
   url: string;
-  turLoggingVendor: TurLoggingVendor;
+  turTokenVendor: TurTokenVendor;
   language: string;
   enabled: number;
   modelName: string;

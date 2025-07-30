@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/table"
 import { SubPageHeader } from "@/components/sub.page.header"
 import { IconAlignBoxCenterStretch, IconColumns3Filled } from "@tabler/icons-react"
-import type { TurSNSiteField } from "@/models/sn-site-field.model"
+import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts"
 import { TurSNSiteService } from "@/services/sn.service"
 import { useParams } from "react-router-dom"
 import { Switch } from "@/components/ui/switch"

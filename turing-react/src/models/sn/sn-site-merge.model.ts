@@ -1,5 +1,5 @@
-import type {TurSNSiteMergeField} from "./sn-site-merge-field.model";
-import type {TurSNSite} from "./sn-site.model";
+import type {TurSNSiteMergeField} from "./sn-site-merge-field.model.ts";
+import type {TurSNSite} from "./sn-site.model.ts";
 
 export type TurSNSiteMerge = {
   id: string;

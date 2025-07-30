@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import type { TurStoreInstance } from "@/models/store-instance.model";
+import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
 import type { PropsWithChildren } from "react";
 import { NavLink } from "react-router-dom";
 

@@ -1,4 +1,4 @@
-import type { TurLLMInstance } from "@/models/llm-instance.model";
+import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts";
 import { TurLLMInstanceService } from "@/services/llm.service"
 import { useEffect, useState } from "react";
 import { LLMCardList } from "@/components/llm.card.list";

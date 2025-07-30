@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { TurStoreInstance } from "@/models/store-instance.model";
+import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
 
 export class TurStoreInstanceService {
   async query(): Promise<TurStoreInstance[]> {

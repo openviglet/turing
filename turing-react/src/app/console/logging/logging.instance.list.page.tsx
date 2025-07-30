@@ -1,4 +1,4 @@
-import type { TurLoggingInstance } from "@/models/logging-instance.model";
+import type { TurLoggingInstance } from "@/models/logging/logging-instance.model.ts";
 import { TurLoggingInstanceService } from "@/services/logging.service"
 import { useEffect, useState } from "react";
 import { LoggingCardList } from "@/components/logging.card.list";

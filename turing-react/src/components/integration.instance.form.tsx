@@ -28,7 +28,7 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { TurIntegrationInstance } from "@/models/integration-instance.model"
+import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts"
 import { useEffect, useState } from "react"
 import { TurIntegrationInstanceService } from "@/services/integration.service"
 import { toast } from "sonner"

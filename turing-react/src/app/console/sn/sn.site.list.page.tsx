@@ -1,7 +1,7 @@
 import { TurSNSiteService } from "@/services/sn.service"
 import { useEffect, useState } from "react";
 import { SNCardList } from "@/components/sn.card.list";
-import type { TurSNSite } from "@/models/sn-site.model";
+import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
 
 const turSNSiteService = new TurSNSiteService();
 

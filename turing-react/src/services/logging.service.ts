@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { TurLoggingInstance } from "@/models/logging-instance.model";
+import type { TurLoggingInstance } from "@/models/logging/logging-instance.model.ts";
 
 export class TurLoggingInstanceService {
   async query(): Promise<TurLoggingInstance[]> {

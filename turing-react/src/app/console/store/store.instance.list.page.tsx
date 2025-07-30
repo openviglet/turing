@@ -1,4 +1,4 @@
-import type { TurStoreInstance } from "@/models/store-instance.model";
+import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
 import { TurStoreInstanceService } from "@/services/store.service"
 import { useEffect, useState } from "react";
 import { StoreCardList } from "@/components/store.card.list";

@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { TurIntegrationInstance } from "@/models/integration-instance.model";
+import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts";
 
 export class TurIntegrationInstanceService {
   async query(): Promise<TurIntegrationInstance[]> {

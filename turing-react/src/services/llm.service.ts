@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { TurLLMInstance } from "@/models/llm-instance.model";
+import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts";
 
 export class TurLLMInstanceService {
   async query(): Promise<TurLLMInstance[]> {

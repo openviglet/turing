@@ -1,6 +1,6 @@
 import { TokenInstanceForm } from "@/components/token.instance.form"
 import { useParams } from "react-router-dom";
-import type { TurTokenInstance } from "@/models/token-instance.model";
+import type { TurTokenInstance } from "@/models/token/token-instance.model.ts";
 import { useEffect, useState } from "react";
 import { TurTokenInstanceService } from "@/services/token.service";
 

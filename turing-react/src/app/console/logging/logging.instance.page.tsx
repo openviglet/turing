@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import type { TurLoggingInstance } from "@/models/logging-instance.model";
+import type { TurLoggingInstance } from "@/models/logging/logging-instance.model.ts";
 import { useEffect, useState } from "react";
 import { TurLoggingInstanceService } from "@/services/logging.service";
 import { LoggingInstanceForm } from "@/components/logging.instance.form";

@@ -33,7 +33,7 @@ import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { useNavigate } from "react-router-dom"
 import { TurLoggingInstanceService } from "@/services/logging.service"
-import type { TurLoggingInstance } from "@/models/logging-instance.model"
+import type { TurLoggingInstance } from "@/models/logging/logging-instance.model.ts"
 const turLoggingInstanceService = new TurLoggingInstanceService();
 interface Props {
   value: TurLoggingInstance;

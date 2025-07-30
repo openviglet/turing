@@ -28,7 +28,7 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { TurLLMInstance } from "@/models/llm-instance.model"
+import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts"
 import { useEffect, useState } from "react"
 import { TurLLMInstanceService } from "@/services/llm.service"
 import { toast } from "sonner"

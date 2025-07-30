@@ -33,7 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useParams } from "react-router-dom"
-import type { TurSNSiteLocale } from "@/models/sn-site-locale.model";
+import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model.ts";
 import { TurSNSiteLocaleService } from "@/services/sn.site.locale.service";
 
 // eslint-disable-next-line react-refresh/only-export-components

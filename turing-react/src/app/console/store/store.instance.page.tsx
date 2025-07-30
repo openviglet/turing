@@ -1,6 +1,6 @@
 import { StoreInstanceForm } from "@/components/store.instance.form"
 import { useParams } from "react-router-dom";
-import type { TurStoreInstance } from "@/models/store-instance.model";
+import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
 import { useEffect, useState } from "react";
 import { TurStoreInstanceService } from "@/services/store.service";
 

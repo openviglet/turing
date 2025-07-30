@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
-import type { TurSNSite } from "@/models/sn-site.model"
+import type { TurSNSite } from "@/models/sn/sn-site.model.ts"
 import { useEffect } from "react"
 import { TurSNSiteService } from "@/services/sn.service"
 import { toast } from "sonner"

@@ -1,5 +1,5 @@
-import type { TurLLMInstance } from "./llm-instance.model";
-import type { TurStoreInstance } from "./store-instance.model";
+import type { TurLLMInstance } from "../llm/llm-instance.model.ts";
+import type { TurStoreInstance } from "../store/store-instance.model.ts";
 
 export interface TurSNSiteGenAi {
   id: string;

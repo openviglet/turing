@@ -1,8 +1,8 @@
-import type { TurSEInstance } from "./se-instance.model";
-import type { TurSNSiteFacetFieldSortTypes } from "./sn-site-facet--field-sort.type";
-import type { TurSNSiteFacetTypes } from "./sn-site-facet.type";
-import type { TurSNSiteGenAi } from "./sn-site-genai.model";
-import type { TurSNSiteLocale } from "./sn-site-locale.model";
+import type { TurSEInstance } from "../se/se-instance.model.ts";
+import type { TurSNSiteFacetFieldSortTypes } from "./sn-site-facet--field-sort.type.ts";
+import type { TurSNSiteFacetTypes } from "./sn-site-facet.type.ts";
+import type { TurSNSiteGenAi } from "./sn-site-genai.model.ts";
+import type { TurSNSiteLocale } from "./sn-site-locale.model.ts";
 
 export type TurSNSite = {
  id: string;
