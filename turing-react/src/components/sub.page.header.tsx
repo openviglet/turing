@@ -1,7 +1,7 @@
-import { IconPlus } from "@tabler/icons-react";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { NavLink } from "react-router-dom";
+import React from "react";
 
 interface Props {
   icon: React.ElementType
