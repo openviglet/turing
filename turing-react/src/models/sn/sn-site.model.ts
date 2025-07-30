@@ -1,5 +1,5 @@
 import type { TurSEInstance } from "../se/se-instance.model.ts";
-import type { TurSNSiteFacetFieldSortTypes } from "./sn-site-facet--field-sort.type.ts";
+import type { TurSNSiteFacetFieldSortTypes } from "./sn-site-facet-field-sort.type.ts";
 import type { TurSNSiteFacetTypes } from "./sn-site-facet.type.ts";
 import type { TurSNSiteGenAi } from "./sn-site-genai.model.ts";
 import type { TurSNSiteLocale } from "./sn-site-locale.model.ts";

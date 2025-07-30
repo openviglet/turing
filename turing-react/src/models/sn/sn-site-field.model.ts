@@ -1,4 +1,4 @@
-import type { TurSNSiteFacetFieldSortTypes } from "./sn-site-facet--field-sort.type.ts";
+import type { TurSNSiteFacetFieldSortTypes } from "./sn-site-facet-field-sort.type.ts";
 import type { TurSNSiteFacetRangeTypes } from "./sn-site-facet-range.type.ts";
 import type { TurSNSiteFacetFieldTypes } from "./sn-site-facet.field.type.ts";
 import type { TurSNSiteFieldFacet } from "./sn-site-field-facet.model.ts";
