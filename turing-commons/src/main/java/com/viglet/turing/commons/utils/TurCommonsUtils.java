@@ -181,7 +181,7 @@ public class TurCommonsUtils {
             FileUtils.listFiles(source, null, true).forEach(file -> addFileToZip(source, archive, file));
 
             archive.finish();
-        } catch (IOException | ArchiveException e) {
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
     }
