@@ -106,6 +106,7 @@ com.viglet.turing.exchange.sn
 com.viglet.turing.genai
 com.viglet.turing.jpa
 com.viglet.turing.logging
+com.viglet.turing.mcp.server
 com.viglet.turing.onstartup
 com.viglet.turing.onstartup.auth
 com.viglet.turing.onstartup.llm
