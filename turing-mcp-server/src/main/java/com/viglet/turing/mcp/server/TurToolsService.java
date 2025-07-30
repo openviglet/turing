@@ -9,7 +9,6 @@ public class TurToolsService {
 
     private final String turingUrl;
     private final String turingApiKey;
-
     public TurToolsService(@Value("${turing.url}") String turingUrl,
                            @Value("${turing.apiKey}") String turingApiKey) {
         this.turingUrl = turingUrl;
@@ -46,5 +45,10 @@ public class TurToolsService {
                 index.version.created=137217827
                 ;
                 """;
+    }
+
+    @Tool(name = "search_index_tool", description = "Searches an index using a query written in query domain-specific language (DSL) in Turing ES")
+    public String searchIndexTool(String index, String query) {
+        return "Lista3";
     }
 }
