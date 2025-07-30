@@ -31,3 +31,14 @@ updates:
         applies-to: version-updates
         patterns:
           - "*"
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/turing-react" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    target-branch: "2025.3"
+    open-pull-requests-limit: 15
+    groups:
+      angular:
+        applies-to: version-updates
+        patterns:
+          - "*"

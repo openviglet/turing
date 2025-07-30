@@ -1,5 +1,5 @@
 import {SubPageHeader} from "@/components/sub.page.header";
-import {IconLanguage, IconSpeakerphone} from "@tabler/icons-react";
+import {IconLanguage} from "@tabler/icons-react";
 import * as React from "react"
 import {useParams} from "react-router-dom"
 import type {TurSNSiteLocale} from "@/models/sn/sn-site-locale.model.ts";
