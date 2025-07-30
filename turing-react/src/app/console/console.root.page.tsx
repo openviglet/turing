@@ -14,6 +14,7 @@ export default function ConsoleRootPage() {
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties
       }
+      className="min-h-svh"
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
