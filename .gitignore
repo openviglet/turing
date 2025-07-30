@@ -38,3 +38,5 @@ hs_err_pid*
 .flattened-pom.xml
 dependency-reduced-pom.xml
 /dist/
+turing-app/src/main/resources/public/index.html
+turing-app/src/main/resources/public/favicon.ico

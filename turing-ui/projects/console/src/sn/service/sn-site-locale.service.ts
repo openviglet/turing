@@ -20,7 +20,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { TurSNSiteLocale } from '../model/sn-site-locale.model';
-import { TurSNSite } from '../model/sn-site.model';
 
 @Injectable()
 export class TurSNSiteLocaleService {
