@@ -29,7 +29,7 @@ export default function SNSiteMultiLanguagePage() {
                     title="You don't seem to have any language."
                     description="Create a new language to semantic navigation search works."
                     buttonText="New language"
-                    urlNew={"/console/sn/site/" + id + "/locale/new"}
+                    urlNew={"/admin/sn/site/" + id + "/locale/new"}
                 />
             )}
         </>

@@ -44,46 +44,46 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/console" replace />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/console" element={<ConsoleRootPage />} >
+          <Route path="/admin" element={<ConsoleRootPage />} >
             <Route index element={<ConsolePage />} />
-            <Route path="/console/se" element={<SEInstanceRootPage />} >
-              <Route path="/console/se/instance" element={<SEInstanceListPage />} />
-              <Route path="/console/se/instance/:id" element={<SEInstancePage />} />
+            <Route path="/admin/se" element={<SEInstanceRootPage />} >
+              <Route path="/admin/se/instance" element={<SEInstanceListPage />} />
+              <Route path="/admin/se/instance/:id" element={<SEInstancePage />} />
             </Route>
-            <Route path="/console/sn" element={<SNSiteRootPage />} >
-              <Route path="/console/sn/instance" element={<SNSiteListPage />} />
-              <Route path="/console/sn/instance/:id" element={<SNSitePage />} >
-                <Route path="/console/sn/instance/:id/detail" element={<SNSiteDetailPage />} />
-                <Route path="/console/sn/instance/:id/locale" element={<SNSiteMultiLanguagePage />} />
-                <Route path="/console/sn/instance/:id/field" element={<SNSiteFieldsPage />} />
-                <Route path="/console/sn/instance/:id/behavior" element={<SNSiteBehaviorPage />} />
-                <Route path="/console/sn/instance/:id/facet-ordering" element={<SNSiteFacetOrderingPage />} />
-                <Route path="/console/sn/instance/:id/ai" element={<SNSiteGenAIPage />} />
-                <Route path="/console/sn/instance/:id/result-ranking" element={<SNSiteResultRankingPage />} />
-                <Route path="/console/sn/instance/:id/merge-providers" element={<SNSiteMergeProvidersPage />} />
-                <Route path="/console/sn/instance/:id/spotlight" element={<SNSiteSpotlightPage />} />
-                <Route path="/console/sn/instance/:id/top-terms" element={<SNSiteTopSearchTermsPage />} />
+            <Route path="/admin/sn" element={<SNSiteRootPage />} >
+              <Route path="/admin/sn/instance" element={<SNSiteListPage />} />
+              <Route path="/admin/sn/instance/:id" element={<SNSitePage />} >
+                <Route path="/admin/sn/instance/:id/detail" element={<SNSiteDetailPage />} />
+                <Route path="/admin/sn/instance/:id/locale" element={<SNSiteMultiLanguagePage />} />
+                <Route path="/admin/sn/instance/:id/field" element={<SNSiteFieldsPage />} />
+                <Route path="/admin/sn/instance/:id/behavior" element={<SNSiteBehaviorPage />} />
+                <Route path="/admin/sn/instance/:id/facet-ordering" element={<SNSiteFacetOrderingPage />} />
+                <Route path="/admin/sn/instance/:id/ai" element={<SNSiteGenAIPage />} />
+                <Route path="/admin/sn/instance/:id/result-ranking" element={<SNSiteResultRankingPage />} />
+                <Route path="/admin/sn/instance/:id/merge-providers" element={<SNSiteMergeProvidersPage />} />
+                <Route path="/admin/sn/instance/:id/spotlight" element={<SNSiteSpotlightPage />} />
+                <Route path="/admin/sn/instance/:id/top-terms" element={<SNSiteTopSearchTermsPage />} />
               </Route>
             </Route>
-            <Route path="/console/store" element={<StoreInstanceRootPage />} >
-              <Route path="/console/store/instance" element={<StoreInstanceListPage />} />
-              <Route path="/console/store/instance/:id" element={<StoreInstancePage />} />
+            <Route path="/admin/store" element={<StoreInstanceRootPage />} >
+              <Route path="/admin/store/instance" element={<StoreInstanceListPage />} />
+              <Route path="/admin/store/instance/:id" element={<StoreInstancePage />} />
             </Route>
-            <Route path="/console/token" element={<TokenInstanceRootPage />} >
-              <Route path="/console/token/instance" element={<TokenInstanceListPage />} />
-              <Route path="/console/token/instance/:id" element={<TokenInstancePage />} />
+            <Route path="/admin/token" element={<TokenInstanceRootPage />} >
+              <Route path="/admin/token/instance" element={<TokenInstanceListPage />} />
+              <Route path="/admin/token/instance/:id" element={<TokenInstancePage />} />
             </Route>
-            <Route path="/console/llm" element={<LLMInstanceRootPage />} >
-              <Route path="/console/llm/instance" element={<LLMInstanceListPage />} />
-              <Route path="/console/llm/instance/:id" element={<LLMInstancePage />} />
+            <Route path="/admin/llm" element={<LLMInstanceRootPage />} >
+              <Route path="/admin/llm/instance" element={<LLMInstanceListPage />} />
+              <Route path="/admin/llm/instance/:id" element={<LLMInstancePage />} />
             </Route>
-            <Route path="/console/integration" element={<IntegrationInstanceRootPage />} >
-              <Route path="/console/integration/instance" element={<IntegrationInstanceListPage />} />
-              <Route path="/console/integration/instance/:id" element={<IntegrationInstancePage />} />
+            <Route path="/admin/integration" element={<IntegrationInstanceRootPage />} >
+              <Route path="/admin/integration/instance" element={<IntegrationInstanceListPage />} />
+              <Route path="/admin/integration/instance/:id" element={<IntegrationInstancePage />} />
             </Route>
-            <Route path="/console/logging" element={<LoggingInstanceRootPage />} >
-              <Route path="/console/logging/instance" element={<LoggingInstanceListPage />} />
-              <Route path="/console/logging/instance/:id" element={<LoggingInstancePage />} />
+            <Route path="/admin/logging" element={<LoggingInstanceRootPage />} >
+              <Route path="/admin/logging/instance" element={<LoggingInstanceListPage />} />
+              <Route path="/admin/logging/instance/:id" element={<LoggingInstancePage />} />
             </Route>
           </Route>
         </Routes>

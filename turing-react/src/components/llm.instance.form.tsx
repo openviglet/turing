@@ -36,7 +36,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useNavigate } from "react-router-dom"
 import { Switch } from "./ui/switch"
 const turLLMInstanceService = new TurLLMInstanceService();
-const urlBase = "/console/llm/instance"
+const urlBase = "/admin/llm/instance"
 interface Props {
   value: TurLLMInstance;
   isNew: boolean;

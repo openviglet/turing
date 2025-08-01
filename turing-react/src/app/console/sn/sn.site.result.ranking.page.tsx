@@ -24,7 +24,7 @@ export default function SNSiteResultRankingPage() {
                     title="You don’t seem to have any result ranking."
                     description="Create a new result ranking to define relevance rules."
                     buttonText="New result ranking"
-                    urlNew={"/console/sn/site/" + id + "/result-ranking/new"}/>
+                    urlNew={"/admin/sn/site/" + id + "/result-ranking/new"}/>
             )}
         </>
     )

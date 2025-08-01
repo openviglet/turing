@@ -127,6 +127,8 @@ public class TurSecurityConfigProduction {
                                 mvc.matcher("/logout"),
                                 mvc.matcher("/index.html"),
                                 mvc.matcher("/welcome/**"),
+                                mvc.matcher("/login/**"),
+                                mvc.matcher("/admin/**"),
                                 mvc.matcher("/"),
                                 mvc.matcher("/assets/**"),
                                 mvc.matcher("/swagger-resources/**"),

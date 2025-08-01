@@ -36,7 +36,7 @@ import { useNavigate } from "react-router-dom"
 import { TurStoreInstanceService } from "@/services/store.service"
 import { Switch } from "./ui/switch"
 const turStoreInstanceService = new TurStoreInstanceService();
-const urlBase = "/console/store/instance"
+const urlBase = "/admin/store/instance"
 interface Props {
   value: TurStoreInstance;
   isNew: boolean;

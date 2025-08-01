@@ -21,7 +21,7 @@ export const SECardList: React.FC<PropsWithChildren<Props>>= ({ items }) => {
                 </CardContent>
                 <CardFooter className="flex-col gap-2">
                     <Button type="submit" className="w-full" asChild>
-                        <NavLink to={"/console/se/instance/" + item.id}>Edit</NavLink>
+                        <NavLink to={"/admin/se/instance/" + item.id}>Edit</NavLink>
                     </Button>
                 </CardFooter>
             </Card>

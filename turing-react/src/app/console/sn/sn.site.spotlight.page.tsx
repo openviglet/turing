@@ -27,7 +27,7 @@ export default function SNSiteSpotlightPage() {
                     title="You don't seem to have any spotlight."
                     description="Create a new spotlight to define content featured."
                     buttonText="New spotlight"
-                    urlNew={"/console/sn/site/" + id + "/spotlight/new"}
+                    urlNew={"/admin/sn/site/" + id + "/spotlight/new"}
                 />
             )}
         </>

@@ -59,7 +59,7 @@ export const LoggingInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       if (isNew) {
         turLoggingInstanceService.create(seInstance);
         toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate("/console/se/instance");
+        navigate("/admin/se/instance");
       }
       else {
         turLoggingInstanceService.update(seInstance);

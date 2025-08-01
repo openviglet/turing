@@ -393,19 +393,29 @@
                         <phase>generate-resources</phase>
                     </execution>
                     <execution>
-                        <id>npm run compile</id>
+                        <id>angular compile</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
                             <arguments>run compile</arguments>
+                            <workingDirectory>../turing-ui</workingDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>react compile</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run compile</arguments>
+                            <workingDirectory>../turing-react</workingDirectory>
                         </configuration>
                     </execution>
                 </executions>
                 <configuration>
                     <nodeVersion>v20.19.1</nodeVersion>
                     <npmVersion>10.8.2</npmVersion>
-                    <workingDirectory>../turing-ui</workingDirectory>
                 </configuration>
             </plugin>
             <plugin>

@@ -21,7 +21,7 @@ export const StoreCardList: React.FC<PropsWithChildren<Props>>= ({ items }) => {
                 </CardContent>
                 <CardFooter className="flex-col gap-2">
                     <Button type="submit" className="w-full" asChild>
-                        <NavLink to={"/console/store/instance/" + item.id}>Edit</NavLink>
+                        <NavLink to={"/admin/store/instance/" + item.id}>Edit</NavLink>
                     </Button>
                 </CardFooter>
             </Card>

@@ -25,7 +25,7 @@ export default function SNSiteMergeProvidersPage() {
                     title="You don’t seem to have any merge provider."
                     description="Create a new merge provider and allow to merge documents from different providers during indexing."
                     buttonText="New merge provider"
-                    urlNew={"/console/sn/site/" + id + "/merge/new"}/>
+                    urlNew={"/admin/sn/site/" + id + "/merge/new"}/>
             )
         }
         </>

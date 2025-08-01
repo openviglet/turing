@@ -59,7 +59,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       if (isNew) {
         turTokenInstanceService.create(seInstance);
         toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate("/console/se/instance");
+        navigate("/admin/se/instance");
       }
       else {
         turTokenInstanceService.update(seInstance);
@@ -76,7 +76,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     try {
       if (await turTokenInstanceService.delete(value)) {
         toast.success(`The ${value.title} Search Engine was deleted`);
-        navigate("/console/se/instance");
+        navigate("/admin/se/instance");
       }
       else {
         toast.error(`The ${value.title} Search Engine was not deleted`);

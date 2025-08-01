@@ -41,7 +41,7 @@ interface Props {
 export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
   const form = useForm<TurSNSite>();
   const { setValue } = form;
-  const urlBase = "/console/sn/instance";
+  const urlBase = "/admin/sn/instance";
   const navigate = useNavigate()
   useEffect(() => {
     setValue("id", value.id)

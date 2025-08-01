@@ -60,7 +60,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       if (isNew) {
         turSEInstanceService.create(seInstance);
         toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate("/console/se/instance");
+        navigate("/admin/se/instance");
       }
       else {
         turSEInstanceService.update(seInstance);
@@ -77,7 +77,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     try {
       if (await turSEInstanceService.delete(value)) {
         toast.success(`The ${value.title} Search Engine was deleted`);
-        navigate("/console/se/instance");
+        navigate("/admin/se/instance");
       }
       else {
         toast.error(`The ${value.title} Search Engine was not deleted`);

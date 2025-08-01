@@ -35,37 +35,37 @@ const data = {
   navMain: [
     {
       title: "Search Engine",
-      url: "/console/se/instance",
+      url: "/admin/se/instance",
       icon: IconZoomCode,
     },
     {
       title: "Language Model",
-      url: "/console/llm/instance",
+      url: "/admin/llm/instance",
       icon: IconCpu2,
     },
     {
       title: "Embedding Store",
-      url: "/console/store/instance",
+      url: "/admin/store/instance",
       icon: IconDatabase,
     },
     {
       title: "Semantic Navigation",
-      url: "/console/sn/instance",
+      url: "/admin/sn/instance",
       icon: IconSearch,
     },
     {
       title: "Integration",
-      url: "/console/integration/instance",
+      url: "/admin/integration/instance",
       icon: IconPlugConnectedX,
     },
     {
       title: "Logging",
-      url: "/console/logging/instance",
+      url: "/admin/logging/instance",
       icon: IconReceiptRupee,
     },
     {
       title: "API Token",
-      url: "/console/token/instance",
+      url: "/admin/token/instance",
       icon: IconCode,
     },
   ],

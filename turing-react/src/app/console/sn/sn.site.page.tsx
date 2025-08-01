@@ -105,7 +105,7 @@ export default function SNSitePage() {
     const navigate = useNavigate()
     const location = useLocation();
     const pathname = location.pathname;
-    const urlBase = "/console/sn/instance/" + id;
+    const urlBase = "/admin/sn/instance/" + id;
     useEffect(() => {
         if (id !== "new") {
             turSNSiteService.get(id).then(setSnSite);
@@ -148,7 +148,7 @@ export default function SNSitePage() {
                                     <SidebarMenuButton
                                         asChild
                                         className="data-[slot=sidebar-menu-button]:!p-1.5">
-                                        <NavLink to="/console">
+                                        <NavLink to="/admin">
                                             <IconSearch className="!size-5"/>
                                             {isNew ? (<span
                                                 className="text-base font-semibold">New Semantic Navigation</span>) : (

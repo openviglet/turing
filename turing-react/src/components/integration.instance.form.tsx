@@ -59,7 +59,7 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       if (isNew) {
         turIntegrationInstanceService.create(seInstance);
         toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate("/console/se/instance");
+        navigate("/admin/se/instance");
       }
       else {
         turIntegrationInstanceService.update(seInstance);
@@ -76,7 +76,7 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     try {
       if (await turIntegrationInstanceService.delete(value)) {
         toast.success(`The ${value.title} Search Engine was deleted`);
-        navigate("/console/se/instance");
+        navigate("/admin/se/instance");
       }
       else {
         toast.error(`The ${value.title} Search Engine was not deleted`);
