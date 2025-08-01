@@ -21,6 +21,7 @@
 
 package com.viglet.turing.spring;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
@@ -70,36 +71,32 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
     }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/console/**").addResourceLocations("classpath:/public/console/browser/")
+    public void addResourceHandlers(@NotNull ResourceHandlerRegistry registry) {
+        registryFrontend(registry, "/console/**", "classpath:/public/console/browser/",
+                "/public/console/browser/index.html");
+        registryFrontend(registry, "/welcome/**", "classpath:/public/welcome/browser/",
+                "/public/welcome/browser/index.html");
+        registryFrontend(registry, "/sn/templates/**", "classpath:/public/sn/templates/browser/",
+                "/public/sn/templates/browser/index.html");
+        registryReact(registry, "/login");
+        registryReact(registry, "/admin");
+    }
+
+    private static void registryFrontend(ResourceHandlerRegistry registry, String context, String location, String path) {
+        registry.addResourceHandler(context).addResourceLocations(location)
                 .resourceChain(true).addResolver(new PathResourceResolver() {
                     @Override
-                    protected Resource getResource(String resourcePath, Resource location) throws IOException {
+                    protected Resource getResource(@NotNull String resourcePath, @NotNull Resource location) throws IOException {
                         Resource requestedResource = location.createRelative(resourcePath);
 
                         return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
-                                : new ClassPathResource("/public/console/browser/index.html");
-                    }
-                });
-        registry.addResourceHandler("/welcome/**").addResourceLocations("classpath:/public/welcome/browser/")
-                .resourceChain(true).addResolver(new PathResourceResolver() {
-                    @Override
-                    protected Resource getResource(String resourcePath, Resource location) throws IOException {
-                        Resource requestedResource = location.createRelative(resourcePath);
-
-                        return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
-                                : new ClassPathResource("/public/welcome/browser/index.html");
-                    }
-                });
-        registry.addResourceHandler("/sn/templates/**").addResourceLocations("classpath:/public/sn/templates/browser/")
-                .resourceChain(true).addResolver(new PathResourceResolver() {
-                    @Override
-                    protected Resource getResource(String resourcePath, Resource location) throws IOException {
-                        Resource requestedResource = location.createRelative(resourcePath);
-
-                        return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
-                                : new ClassPathResource("/public/sn/templates/browser/index.html");
+                                : new ClassPathResource(path);
                     }
                 });
     }
+
+    private static void registryReact(ResourceHandlerRegistry registry, String context) {
+        registryFrontend(registry, "%s/**".formatted(context), "classpath:/public/", "/public/index.html");
+    }
+
 }

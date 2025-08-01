@@ -15,7 +15,7 @@
         "@schematics/angular:application": {
           "strict": true
         }
-      }
+      },
       "root": "projects/console",
       "sourceRoot": "projects/console/src",
       "prefix": "app",
