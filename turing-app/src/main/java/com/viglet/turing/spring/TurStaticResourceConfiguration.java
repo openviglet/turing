@@ -72,12 +72,9 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(@NotNull ResourceHandlerRegistry registry) {
-        registryFrontend(registry, "/console/**", "classpath:/public/console/browser/",
-                "/public/console/browser/index.html");
-        registryFrontend(registry, "/welcome/**", "classpath:/public/welcome/browser/",
-                "/public/welcome/browser/index.html");
-        registryFrontend(registry, "/sn/templates/**", "classpath:/public/sn/templates/browser/",
-                "/public/sn/templates/browser/index.html");
+        registryAngular(registry, "/console");
+        registryAngular(registry, "/welcome");
+        registryAngular(registry, "/sn/templates");
         registryReact(registry, "/login");
         registryReact(registry, "/admin");
     }
@@ -95,6 +92,10 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
                 });
     }
 
+    private static void registryAngular(ResourceHandlerRegistry registry, String context) {
+        registryFrontend(registry, "%s/**".formatted(context), "classpath:/public%s/browser/".formatted(context),
+                "/public%s/browser/index.html".formatted(context));
+    }
     private static void registryReact(ResourceHandlerRegistry registry, String context) {
         registryFrontend(registry, "%s/**".formatted(context), "classpath:/public/", "/public/index.html");
     }
