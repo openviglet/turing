@@ -71,6 +71,7 @@ public class TurSNSiteAPI {
     private final TurSolrInstanceProcess turSolrInstanceProcess;
     private final TurSolr turSolr;
     private final TurConfigProperties turConfigProperties;
+
     @Inject
     public TurSNSiteAPI(TurSNSiteRepository turSNSiteRepository,
                         TurSNSiteLocaleRepository turSNSiteLocaleRepository,
@@ -96,7 +97,7 @@ public class TurSNSiteAPI {
     @GetMapping
     public List<TurSNSite> turSNSiteList(Principal principal) {
         if (turConfigProperties.isMultiTenant()) {
-            return this.turSNSiteRepository.findByCreatedBy(TurPersistenceUtils.orderByNameIgnoreCase(),principal.getName().toLowerCase());
+            return this.turSNSiteRepository.findByCreatedBy(TurPersistenceUtils.orderByNameIgnoreCase(), principal.getName().toLowerCase());
         } else {
             return this.turSNSiteRepository.findAll(TurPersistenceUtils.orderByNameIgnoreCase());
         }
@@ -153,13 +154,12 @@ public class TurSNSiteAPI {
             turSNSiteEdit.setExactMatch(turSNSite.getExactMatch());
             turSNSiteEdit.setTurSNSiteGenAi(turSNSite.getTurSNSiteGenAi());
             turSNSiteRepository.save(turSNSiteEdit);
-
-            TurSNSiteGenAi turSNSiteGenAi = turSNSiteEdit.getTurSNSiteGenAi();
-            turSNSiteGenAi.setEnabled(turSNSite.getTurSNSiteGenAi().isEnabled());
-            turSNSiteGenAi.setTurLLMInstance(turSNSite.getTurSNSiteGenAi().getTurLLMInstance());
-            turSNSiteGenAi.setTurStoreInstance(turSNSite.getTurSNSiteGenAi().getTurStoreInstance());
-            turSNSiteGenAiRepository.save(turSNSiteGenAi);
-
+            Optional.ofNullable(turSNSiteEdit.getTurSNSiteGenAi()).ifPresent(turSNSiteGenAi -> {
+                turSNSiteGenAi.setEnabled(turSNSite.getTurSNSiteGenAi().isEnabled());
+                turSNSiteGenAi.setTurLLMInstance(turSNSite.getTurSNSiteGenAi().getTurLLMInstance());
+                turSNSiteGenAi.setTurStoreInstance(turSNSite.getTurSNSiteGenAi().getTurStoreInstance());
+                turSNSiteGenAiRepository.save(turSNSiteGenAi);
+            });
             return turSNSiteEdit;
         }).orElse(new TurSNSite());
 

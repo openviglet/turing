@@ -21,6 +21,8 @@
 
 package com.viglet.turing.solr;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.viglet.turing.commons.se.TurSEFilterQueryParameters;
 import com.viglet.turing.commons.se.TurSEParameters;
@@ -78,9 +80,13 @@ import org.apache.solr.common.params.MoreLikeThisParams;
 import org.apache.solr.common.util.SimpleOrderedMap;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -151,6 +157,17 @@ public class TurSolr {
         this.turSNRankingConditionRepository = turSNRankingConditionRepository;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNFieldProcess = turSNFieldProcess;
+    }
+
+    public String dslQuery(TurSolrInstance turSolrInstance, String jsonQuery) {
+        RestTemplate restTemplate = new RestTemplate();
+        String solrUrl = "%s/query".formatted(turSolrInstance.getSolrUrl());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonQuery, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(solrUrl, requestEntity, String.class);
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        return jsonObject.getJSONObject("response").toString();
     }
 
     public long getDocumentTotal(TurSolrInstance turSolrInstance) {
@@ -775,7 +792,8 @@ public class TurSolr {
     }
 
     private boolean wasFacetConfigured(TurSNSite turSNSite, List<TurSNSiteFieldExt> turSNSiteFacetFieldExtList) {
-        return turSNSite.getFacet() == 1 && !CollectionUtils.isEmpty(turSNSiteFacetFieldExtList);
+        return turSNSite.getFacet() == 1 && turSNSite.getItemsPerFacet() != null
+                && !CollectionUtils.isEmpty(turSNSiteFacetFieldExtList);
     }
 
     private void prepareQueryTargetingRules(TurSNSitePostParamsBean turSNSitePostParamsBean, SolrQuery query) {

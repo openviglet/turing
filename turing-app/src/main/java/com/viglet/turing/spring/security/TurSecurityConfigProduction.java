@@ -111,6 +111,8 @@ public class TurSecurityConfigProduction {
                         mvc.matcher("/api/sn/*/ac"),
                         mvc.matcher("/api/sn/*/search"),
                         mvc.matcher("/api/sn/*/search/**"),
+                        mvc.matcher("/api/sn/*/query"),
+                        mvc.matcher("/api/sn/*/query/**"),
                         mvc.matcher("/api/sn/*/chat"),
                         mvc.matcher("/api/sn/*/chat/**"),
                         mvc.matcher("/api/sn/*/*/spell-check")).permitAll();
@@ -137,6 +139,8 @@ public class TurSecurityConfigProduction {
                                 mvc.matcher("/api/sn/*/ac"),
                                 mvc.matcher("/api/sn/*/search"),
                                 mvc.matcher("/api/sn/*/search/**"),
+                                mvc.matcher("/api/sn/*/query"),
+                                mvc.matcher("/api/sn/*/query/**"),
                                 mvc.matcher("/api/sn/*/chat"),
                                 mvc.matcher("/api/sn/*/chat/**"),
                                 mvc.matcher("/api/sn/*/*/spell-check"),
