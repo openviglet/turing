@@ -19,7 +19,6 @@
 package com.viglet.turing.connector.aem.commons;
 
 public class TurAemConstants {
-    public static final String JCR_TITLE = "jcr:title";
     public static final String CQ_TAGS = "cq:tags";
     public static final String DEFAULT = "default";
     public static final String TEXT = "text";

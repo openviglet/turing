@@ -43,6 +43,7 @@ import java.util.*;
 
 import static com.viglet.turing.commons.se.field.TurSEFieldType.STRING;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.*;
+import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
 
 @Slf4j
 public class TurAemAttrProcess {

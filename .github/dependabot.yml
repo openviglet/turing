@@ -37,8 +37,10 @@ updates:
       interval: "weekly"
     target-branch: "2025.3"
     open-pull-requests-limit: 15
+    ignore:
+      - dependency-name: "typescript"
     groups:
-      angular:
+      react:
         applies-to: version-updates
         patterns:
           - "*"

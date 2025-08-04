@@ -58,6 +58,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.*;
+import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
 
 @Slf4j
 public class TurAemCommonsUtils {
