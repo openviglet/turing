@@ -46,7 +46,7 @@
     "@angular/language-service": "20.1.4",
     "@types/jasmine": "5.1.8",
     "@types/jasminewd2": "2.0.13",
-    "@types/node": "24.1.0",
+    "@types/node": "24.2.0",
     "@types/primer__octicons": "^19.11.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
