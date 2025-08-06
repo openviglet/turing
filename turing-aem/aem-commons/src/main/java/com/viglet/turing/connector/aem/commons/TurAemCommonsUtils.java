@@ -274,7 +274,7 @@ public class TurAemCommonsUtils {
             return null;
         });
     }
-    private static @NotNull Optional<String> getResponseBody(String url,
+    public static @NotNull Optional<String> getResponseBody(String url,
                                                                     TurAemSourceContext turAemSourceContext) {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setDefaultHeaders(List.of(new BasicHeader(HttpHeaders.AUTHORIZATION,
