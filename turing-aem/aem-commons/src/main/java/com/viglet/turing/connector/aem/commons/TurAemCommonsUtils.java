@@ -271,7 +271,7 @@ public class TurAemCommonsUtils {
                                                   boolean cached) {
         return getResponseBody(url, turAemSourceContext, cached).map(json ->
         {
-            if (!TurCommonsUtils.isJSONValid(json)) {
+            if (!TurCommonsUtils.isValidJson(json)) {
                 return null;
             }
             try {
@@ -310,7 +310,7 @@ public class TurAemCommonsUtils {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             });
-            if (TurCommonsUtils.isJSONValid(json)) {
+            if (TurCommonsUtils.isValidJson(json)) {
                 log.debug("Valid JSON - {}", url);
                 if (cached) {
                     responseHttpCache.put(url, json);

@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
-import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -252,7 +251,7 @@ public class TurCommonsUtils {
         }
     }
 
-    public static boolean isJSONValid(String test) {
+    public static boolean isValidJson(String test) {
         try {
             new JSONObject(test);
         } catch (JSONException ex) {

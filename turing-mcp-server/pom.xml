@@ -37,6 +37,10 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.viglet.turing</groupId>
+            <artifactId>turing-java-sdk</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
