@@ -25,4 +25,5 @@ public interface TurConnectorPlugin {
     void crawl();
     String getProviderName();
     void indexAll(String source);
+    void indexById(String source, List<String> contentId);
 }

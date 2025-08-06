@@ -36,7 +36,7 @@ public class TurAemExtSampleModelJson implements TurAemExtContentInterface {
         log.debug("Executing TurAemExtSampleModelJson");
         String url = turAemSourceContext.getUrl() + aemObject.getPath() + MODEL_JSON_EXTENSION;
         TurAemTargetAttrValueMap attrValues = new TurAemTargetAttrValueMap();
-        return TurAemCommonsUtils.getResponseBody(url, turAemSourceContext, TurAemSampleModel.class, false)
+        return TurAemCommonsUtils.getResponseBody(url, turAemSourceContext, TurAemSampleModel.class)
                 .map(model -> {
                     getFragmentData(attrValues, model);
                     return attrValues;

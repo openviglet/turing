@@ -22,6 +22,8 @@ import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @Component("default")
 public class TurDefaultPluginImpl implements TurConnectorPlugin {
@@ -32,7 +34,12 @@ public class TurDefaultPluginImpl implements TurConnectorPlugin {
     public String getProviderName() {
         return "DEFAULT";
     }
+    @Override
     public void indexAll(String source) {
+        throw new UnsupportedOperationException("This method is only a placeholder");
+    }
+    @Override
+    public void indexById(String source, List<String> contentId) {
         throw new UnsupportedOperationException("This method is only a placeholder");
     }
 }

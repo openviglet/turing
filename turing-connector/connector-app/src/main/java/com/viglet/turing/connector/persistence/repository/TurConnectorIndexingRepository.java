@@ -25,6 +25,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -59,6 +60,9 @@ public interface TurConnectorIndexingRepository extends JpaRepository<TurConnect
 
     @Transactional
     void deleteByProvider(String provider);
+
+    @Transactional
+    void deleteByProviderAndObjectIdIn(String provider, Collection<String> contentIds);
 
     @Transactional
     void deleteBySourceAndProviderAndTransactionIdNot(String source, String provider, String transactionId);

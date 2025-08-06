@@ -18,7 +18,6 @@
 
 package com.viglet.turing.connector.plugin.aem.impl;
 
-import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
@@ -26,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Slf4j
 @Primary
@@ -42,15 +43,15 @@ public class TurAemPlugin implements TurConnectorPlugin {
 
     @Override
     public void crawl() {
-        turAemSourceRepository.findAll().forEach(turAemSource -> {
-            turAemPluginProcess.indexAll(turAemSource);
-            TurAemCommonsUtils.cleanCache();
-        });
+        turAemSourceRepository.findAll().forEach(turAemPluginProcess::indexAll);
     }
 
     @Override
     public void indexAll(String source) {
         turAemPluginProcess.indexAllByNameAsync(source);
+    }
+    public void indexById(String source, List<String> contentId) {
+        turAemPluginProcess.sentToIndexStandalone(source, contentId);
     }
 
     @Override

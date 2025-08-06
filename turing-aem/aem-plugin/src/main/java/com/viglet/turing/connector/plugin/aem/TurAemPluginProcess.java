@@ -243,7 +243,7 @@ public class TurAemPluginProcess {
                 .username(config.getCmsUsername())
                 .localePaths(config.getLocales())
                 .build();
-        TurAemCommonsUtils.getInfinityJson(config.getCmsRootPath(), turAemSourceContext, false)
+        TurAemCommonsUtils.getInfinityJson(config.getCmsRootPath(), turAemSourceContext)
                 .flatMap(infinityJson -> TurAemCommonsUtils
                         .getSiteName(turAemSourceContext, infinityJson))
                 .ifPresent(turAemSourceContext::setSiteName);
@@ -267,7 +267,7 @@ public class TurAemPluginProcess {
                                boolean standalone) {
         TurAemSourceContext turAemSourceContext = getTurAemSourceContext(
                 new AemPluginHandlerConfiguration(turAemSource));
-        TurAemCommonsUtils.getInfinityJson(contentId, turAemSourceContext, false)
+        TurAemCommonsUtils.getInfinityJson(contentId, turAemSourceContext)
                 .ifPresentOrElse(infinityJson -> {
                     turAemSourceContext.setContentType(infinityJson.getString(JCR_PRIMARY_TYPE));
                     getNodeFromJson(contentId, infinityJson, turAemSourceContext, session, turAemSource,
@@ -315,7 +315,7 @@ public class TurAemPluginProcess {
                                TurConnectorSession turConnectorSession,
                                TurAemSource turAemSource,
                                TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
-        TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext, false)
+        TurAemCommonsUtils.getInfinityJson(turAemSourceContext.getRootPath(), turAemSourceContext)
                 .ifPresent(infinityJson -> getNodeFromJson(turAemSourceContext.getRootPath(), infinityJson,
                         turAemSourceContext,
                         turConnectorSession, turAemSource, turAemContentDefinitionProcess, false));
@@ -349,7 +349,7 @@ public class TurAemPluginProcess {
                 String nodePathChild = "%s/%s".formatted(nodePath, nodeName);
                 if (!isOnce(turAemSourceContext) || TurAemCommonsUtils.isNotOnceConfig(nodePathChild,
                         new AemPluginHandlerConfiguration(turAemSource))) {
-                    TurAemCommonsUtils.getInfinityJson(nodePathChild, turAemSourceContext, false)
+                    TurAemCommonsUtils.getInfinityJson(nodePathChild, turAemSourceContext)
                             .ifPresent(infinityJson -> getNodeFromJson(nodePathChild, infinityJson, turAemSourceContext,
                                     turConnectorSession, turAemSource, turAemContentDefinitionProcess,
                                     standalone));
