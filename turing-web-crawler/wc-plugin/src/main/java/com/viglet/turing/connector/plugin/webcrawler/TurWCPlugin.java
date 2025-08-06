@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Primary
 @Component
 public class TurWCPlugin implements TurConnectorPlugin {
@@ -48,6 +50,11 @@ public class TurWCPlugin implements TurConnectorPlugin {
 
     @Override
     public void indexAll(String source) {
+        throw new UnsupportedOperationException("This method is only a placeholder");
+    }
+
+    @Override
+    public void indexById(String source, List<String> contentId) {
         throw new UnsupportedOperationException("This method is only a placeholder");
     }
 }
