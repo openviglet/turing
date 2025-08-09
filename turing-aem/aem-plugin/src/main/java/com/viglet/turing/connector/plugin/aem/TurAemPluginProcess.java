@@ -107,6 +107,7 @@ public class TurAemPluginProcess {
     public static String getProviderName() {
         return AEM;
     }
+
     @Async
     public void indexAllByNameAsync(String sourceName) {
         turAemSourceRepository.findByName(sourceName).ifPresent(this::indexAll);
@@ -286,19 +287,20 @@ public class TurAemPluginProcess {
     }
 
 
-
     private TurSNJobItem deIndexJob(TurConnectorSession session,
                                     TurConnectorIndexing turConnectorIndexingDTO) {
         return deIndexJob(session, turConnectorIndexingDTO.getSites(), turConnectorIndexingDTO.getLocale(),
-                turConnectorIndexingDTO.getObjectId());
+                turConnectorIndexingDTO.getObjectId(), turConnectorIndexingDTO.getEnvironment());
     }
 
-    private TurSNJobItem deIndexJob(TurConnectorSession session, List<String> sites, Locale locale, String objectId) {
+    private TurSNJobItem deIndexJob(TurConnectorSession session, List<String> sites, Locale locale, String objectId,
+                                    String environment) {
         TurSNJobItem turSNJobItem = new TurSNJobItem(
-               DELETE, sites, locale,
+                DELETE, sites, locale,
                 Map.of(
                         ID_ATTR, objectId,
                         SOURCE_APPS_ATTR, session.getProviderName()));
+        turSNJobItem.setEnvironment(environment);
         setSuccessStatus(turSNJobItem, session, DEINDEXED);
         return turSNJobItem;
     }
@@ -439,7 +441,7 @@ public class TurAemPluginProcess {
                 if (standalone) {
                     TurSNJobItem deIndexJobItem = deIndexJob(session, List.of(turAemSource.getPublishSNSite()),
                             TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext, aemObject),
-                            aemObject.getPath());
+                            aemObject.getPath(), PUBLISHING.toString());
                     turConnectorContext.addJobItem(deIndexJobItem, session, true);
                     log.info("Forcing deIndex because {} is not publishing.",
                             TurAemPluginUtils.getObjectDetailForLogs(aemObject, turAemSourceContext, session));
