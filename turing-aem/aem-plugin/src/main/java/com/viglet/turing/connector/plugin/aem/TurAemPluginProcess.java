@@ -276,13 +276,16 @@ public class TurAemPluginProcess {
     }
 
     private void sendToTuringToBeDeIndexed(TurConnectorSession session, String contentId, boolean standalone) {
-        log.info("DeIndex because {} object ({}) infinity Json file not found. transactionId = {}",
-                contentId, session.getSource(), session.getTransactionId());
         turConnectorContext.getIndexingItem(contentId, session.getSource(), session.getProviderName())
                 .forEach(
-                        indexing ->
-                                turConnectorContext.addJobItem(deIndexJob(session, indexing), session, standalone));
+                        indexing -> {
+                            log.info("DeIndex because {} infinity Json file not found.",
+                                    TurAemPluginUtils.getObjectDetailForLogs(contentId, indexing, session));
+                            turConnectorContext.addJobItem(deIndexJob(session, indexing), session, standalone);
+                        });
     }
+
+
 
     private TurSNJobItem deIndexJob(TurConnectorSession session,
                                     TurConnectorIndexing turConnectorIndexingDTO) {
@@ -438,16 +441,15 @@ public class TurAemPluginProcess {
                             TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext, aemObject),
                             aemObject.getPath());
                     turConnectorContext.addJobItem(deIndexJobItem, session, true);
-                    log.info("Forcing deIndex because {} object ({}) is not publishing. transactionId = {}",
-                            aemObject.getPath(), turAemSourceContext.getId(), session.getTransactionId());
+                    log.info("Forcing deIndex because {} is not publishing.",
+                            TurAemPluginUtils.getObjectDetailForLogs(aemObject, turAemSourceContext, session));
                 } else {
-                    log.info("Ignoring deIndex because {} object ({}) is not publishing. transactionId = {}",
-                            aemObject.getPath(), turAemSourceContext.getId(), session.getTransactionId());
+                    log.info("Ignoring deIndex because {} is not publishing.",
+                            TurAemPluginUtils.getObjectDetailForLogs(aemObject, turAemSourceContext, session));
                 }
             }
         }
     }
-
 
     private void indexByEnvironment(TurAemEnv turAemEnv, String snSite,
                                     @NotNull TurAemObject aemObject, TurAemModel turAemModel,
