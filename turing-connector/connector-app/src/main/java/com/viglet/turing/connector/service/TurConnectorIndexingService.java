@@ -31,7 +31,7 @@ public class TurConnectorIndexingService {
         turConnectorIndexingRepository.deleteByProvider(provider);
     }
 
-    public void deleteComponentsListedAsDeIndexed(TurConnectorSession session) {
+    public void deleteContentsToBeDeIndexed(TurConnectorSession session) {
         turConnectorIndexingRepository.deleteBySourceAndProviderAndTransactionIdNot(session.getSource(),
                 session.getProviderName(), session.getTransactionId());
     }
