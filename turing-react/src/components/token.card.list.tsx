@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TurTokenInstance } from "@/models/token/token-instance.model.ts";
 import type { PropsWithChildren } from "react";
 import { NavLink } from "react-router-dom";
