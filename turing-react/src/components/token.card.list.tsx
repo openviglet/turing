@@ -16,9 +16,6 @@ export const TokenCardList: React.FC<PropsWithChildren<Props>>= ({ items }) => {
                     <CardTitle>{item.title}</CardTitle>
                     <CardDescription>{item.description}</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <p>{item.url}</p>
-                </CardContent>
                 <CardFooter className="flex-col gap-2">
                     <Button type="submit" className="w-full" asChild>
                         <NavLink to={"/admin/token/instance/" + item.id}>Edit</NavLink>
