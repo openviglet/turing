@@ -4,6 +4,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Outlet } from "react-router-dom"
+import React from "react";
 
 export default function ConsoleRootPage() {
   return (

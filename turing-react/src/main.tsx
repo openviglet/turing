@@ -10,7 +10,6 @@ import type { TurRestInfo } from './models/auth/rest-info.ts'
 axios.defaults.baseURL = `${environment.apiUrl}/api`;
 axios.interceptors.request.use((config) => {
   const token: TurRestInfo = getAuthToken();
-  console.log(token);
   config.headers['Content-Type'] = 'application/json';
   config.headers['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -18,7 +17,7 @@ axios.interceptors.request.use((config) => {
     config.headers.Authorization = `Basic ${token.authdata}`;
   }
   else {
-    window.location.href = '/welcome?returnUrl=/admin';
+    window.location.href = '/login?returnUrl=/admin';
   }
   return config;
 });
