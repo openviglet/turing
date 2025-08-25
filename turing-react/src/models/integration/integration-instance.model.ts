@@ -1,23 +1,8 @@
-import type { TurIntegrationVendor } from "./integration-vendor.model.ts";
-
-export interface TurIntegrationInstance {
+export type TurIntegrationInstance = {
   id: string;
   title: string;
   description: string;
-  url: string;
-  turIntegrationVendor: TurIntegrationVendor;
-  language: string;
+  endpoint: string;
+  vendor: string;
   enabled: number;
-  modelName: string;
-  temperature: number;
-  topK: number;
-  topP: number;
-  repeatPenalty: number;
-  seed: number;
-  numPredict: number;
-  stop: string;
-  responseFormat: string;
-  supportedCapabilities: string;
-  timeout: string;
-  maxRetries: number;
-}
+};

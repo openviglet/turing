@@ -35,6 +35,10 @@ import SNSiteMergeProvidersPage from "./app/console/sn/sn.site.merge.providers.p
 import SNSiteSpotlightPage from "./app/console/sn/sn.site.spotlight.page"
 import SNSiteTopSearchTermsPage from "./app/console/sn/sn.site.top.search.terms.page"
 import SNSiteBehaviorPage from "./app/console/sn/sn.site.behavior.page"
+import IntegrationInstanceDetailPage from "./app/console/integration/integration.instance.detail.page"
+import IntegrationInstanceSourcePage from "./app/console/integration/integration.instance.source.page"
+import IntegrationInstanceIndexingRulePage from "./app/console/integration/integration.instance.indexing.rule.page"
+import IntegrationInstanceMonitoringPage from "./app/console/integration/integration.instance.monitoring.page"
 
 function App() {
   return (
@@ -79,7 +83,12 @@ function App() {
             </Route>
             <Route path="/admin/integration" element={<IntegrationInstanceRootPage />} >
               <Route path="/admin/integration/instance" element={<IntegrationInstanceListPage />} />
-              <Route path="/admin/integration/instance/:id" element={<IntegrationInstancePage />} />
+              <Route path="/admin/integration/instance/:id" element={<IntegrationInstancePage />} >
+                <Route path="/admin/integration/instance/:id/detail" element={<IntegrationInstanceDetailPage />} />
+                <Route path="/admin/integration/instance/:id/source" element={<IntegrationInstanceSourcePage />} />
+                <Route path="/admin/integration/instance/:id/indexing-rule" element={<IntegrationInstanceIndexingRulePage />} />
+                <Route path="/admin/integration/instance/:id/monitoring" element={<IntegrationInstanceMonitoringPage />} />
+              </Route>
             </Route>
             <Route path="/admin/logging" element={<LoggingInstanceRootPage />} >
               <Route path="/admin/logging/instance" element={<LoggingInstanceListPage />} />

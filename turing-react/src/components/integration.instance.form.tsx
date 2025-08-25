@@ -27,12 +27,10 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { TurIntegrationInstanceService } from "@/services/integration.service"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { useNavigate } from "react-router-dom"
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 interface Props {
@@ -43,27 +41,27 @@ interface Props {
 export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   const form = useForm<TurIntegrationInstance>();
   const { setValue } = form;
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate()
   useEffect(() => {
     setValue("id", value.id)
     setValue("title", value.title);
     setValue("description", value.description);
-    setValue("turIntegrationVendor", value.turIntegrationVendor);
-    setValue("url", value.url);
+    setValue("vendor", value.vendor);
+    setValue("endpoint", value.endpoint);
+    setValue("enabled", value.enabled);
   }, [setValue, value]);
 
 
-  function onSubmit(seInstance: TurIntegrationInstance) {
+  function onSubmit(integrationInstance: TurIntegrationInstance) {
     try {
       if (isNew) {
-        turIntegrationInstanceService.create(seInstance);
-        toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate("/admin/se/instance");
+        turIntegrationInstanceService.create(integrationInstance);
+        toast.success(`The ${integrationInstance.title} Integration Instance was saved`);
+        navigate("/admin/integration/instance");
       }
       else {
-        turIntegrationInstanceService.update(seInstance);
-        toast.success(`The ${seInstance.title} Search Engine was updated`);
+        turIntegrationInstanceService.update(integrationInstance);
+        toast.success(`The ${integrationInstance.title} Integration Instance was updated`);
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -71,144 +69,90 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     }
   }
 
-  async function onDelete() {
-    console.log("delete");
-    try {
-      if (await turIntegrationInstanceService.delete(value)) {
-        toast.success(`The ${value.title} Search Engine was deleted`);
-        navigate("/admin/se/instance");
-      }
-      else {
-        toast.error(`The ${value.title} Search Engine was not deleted`);
-      }
-
-    } catch (error) {
-      console.error("Form submission error", error);
-      toast.error(`The ${value.title} Search Engine was not deleted`);
-    }
-    setOpen(false);
-  }
   return (
-    <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
-      <Card className="mx-auto max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Search Engine</CardTitle>
-          <CardAction>
-            {!isNew &&
-              <Dialog open={open} onOpenChange={setOpen}>
-                <form>
-                  <DialogTrigger asChild>
-                    <Button variant={"outline"}>Delete</Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[450px]">
-                    <DialogHeader>
-                      <DialogTitle>Are you absolutely sure?</DialogTitle>
-                      <DialogDescription>
-                        Unexpected bad things will happen if you don't read this!
-                      </DialogDescription>
-                    </DialogHeader>
-                    <p className="grid gap-4">
-                      This action cannot be undone. This will permanently delete the {value.title} search engine.
-                    </p>
-                    <DialogFooter>
-                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this search engine</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </form>
-              </Dialog>
-            }
-          </CardAction>
-          <CardDescription>
-            Search engine settings.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Title"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormDescription>Search engine instance title will appear on list.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Title"
+                  type="text"
+                />
+              </FormControl>
+              <FormDescription>Integration instance title will appear on list.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Description"
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>Search engine instance description will appear on list.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Description"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>Integration instance description will appear on list.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-              <FormField
-                control={form.control}
-                name="turIntegrationVendor.id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vendor</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem key="SOLR" value="SOLR">Solr</SelectItem>
-                        <SelectItem key="LUCENE" value="LUCENE">Lucene</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>Search engine vendor that will be used.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <FormField
+          control={form.control}
+          name="vendor"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Vendor</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose..." />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem key="AEM" value="AEM">AEM</SelectItem>
+                  <SelectItem key="WEB_CRAWLER" value="WEB_CRAWLER">Web Crawler</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormDescription>Integration vendor that will be used.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-              <FormField
-                control={form.control}
-                name="url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Host</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="URL"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>Search engine instance host will be connected.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Save</Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+        <FormField
+          control={form.control}
+          name="endpoint"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Endpoint</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="URL"
+                  type="text"
+                  {...field} />
+              </FormControl>
+              <FormDescription>Integration instance hostname will be connected.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Save</Button>
+      </form>
+    </Form>
   )
 }
 
