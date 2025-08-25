@@ -20,13 +20,6 @@ import {
 import {
   Textarea
 } from "@/components/ui/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { TurTokenInstance } from "@/models/token/token-instance.model.ts"
 import { useEffect, useState } from "react"
@@ -49,8 +42,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     setValue("id", value.id)
     setValue("title", value.title);
     setValue("description", value.description);
-    setValue("turTokenVendor", value.turTokenVendor);
-    setValue("url", value.url);
+    setValue("token", value.token);
   }, [setValue, value]);
 
 
@@ -58,12 +50,12 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     try {
       if (isNew) {
         turTokenInstanceService.create(seInstance);
-        toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate("/admin/se/instance");
+        toast.success(`The ${seInstance.title} API Token was saved`);
+        navigate("/admin/token/instance");
       }
       else {
         turTokenInstanceService.update(seInstance);
-        toast.success(`The ${seInstance.title} Search Engine was updated`);
+        toast.success(`The ${seInstance.title} API Token was updated`);
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -75,24 +67,34 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     console.log("delete");
     try {
       if (await turTokenInstanceService.delete(value)) {
-        toast.success(`The ${value.title} Search Engine was deleted`);
-        navigate("/admin/se/instance");
+        toast.success(`The ${value.title} API Token was deleted`);
+        navigate("/admin/token/instance");
       }
       else {
-        toast.error(`The ${value.title} Search Engine was not deleted`);
+        toast.error(`The ${value.title} API Token was not deleted`);
       }
 
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error(`The ${value.title} Search Engine was not deleted`);
+      toast.error(`The ${value.title} API Token was not deleted`);
     }
     setOpen(false);
   }
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value.token);
+      toast.success("Token API copied!");
+    } catch (err) {
+      toast.error("Failed to copy token API");
+      console.error("Failed to copy text: ", err);
+    }
+  };
   return (
     <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
       <Card className="mx-auto max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Search Engine</CardTitle>
+          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} API Token</CardTitle>
           <CardAction>
             {!isNew &&
               <Dialog open={open} onOpenChange={setOpen}>
@@ -108,10 +110,10 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                       </DialogDescription>
                     </DialogHeader>
                     <p className="grid gap-4">
-                      This action cannot be undone. This will permanently delete the {value.title} search engine.
+                      This action cannot be undone. This will permanently delete the {value.title} api token.
                     </p>
                     <DialogFooter>
-                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this search engine</Button>
+                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this api token</Button>
                     </DialogFooter>
                   </DialogContent>
                 </form>
@@ -119,7 +121,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
             }
           </CardAction>
           <CardDescription>
-            Search engine settings.
+            API Token settings.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -138,7 +140,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Search engine instance title will appear on list.</FormDescription>
+                    <FormDescription>API Token title will appear on API Token list.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -157,52 +159,32 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Search engine instance description will appear on list.</FormDescription>
+                    <FormDescription>API Token description will appear on API Token list.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <FormField
+              {!isNew && <FormField
                 control={form.control}
-                name="turTokenVendor.id"
+                name="token"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Vendor</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem key="SOLR" value="SOLR">Solr</SelectItem>
-                        <SelectItem key="LUCENE" value="LUCENE">Lucene</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>Search engine vendor that will be used.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Host</FormLabel>
+                    <FormLabel>API Token</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="URL"
-                        type="text"
-                        {...field} />
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          placeholder="API Token"
+                          type="text"
+                          readOnly
+                          {...field} />
+                        <Button type="button" onClick={handleCopy}>Copy</Button>
+                      </div>
                     </FormControl>
-                    <FormDescription>Search engine instance host will be connected.</FormDescription>
+                    <FormDescription>API Token instance host will be connected.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              />}
               <Button type="submit">Save</Button>
             </form>
           </Form>
