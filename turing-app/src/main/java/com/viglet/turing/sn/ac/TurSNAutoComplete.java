@@ -65,7 +65,9 @@ public class TurSNAutoComplete {
                                                       List<String> filterQueriesDefault,
                                                       List<String> filterQueriesAnd,
                                                       List<String> filterQueriesOr,
-                                                      TurSNFilterQueryOperator fqOperator, String sort,
+                                                      TurSNFilterQueryOperator fqOperator,
+                                                      TurSNFilterQueryOperator fqItemOperator,
+                                                      String sort,
                                                       String localeRequest,
                                                       HttpServletRequest request) {
         TurSNConfig turSNConfig = new TurSNConfig();
@@ -81,6 +83,7 @@ public class TurSNAutoComplete {
                                 filterQueriesAnd,
                                 filterQueriesOr,
                                 fqOperator,
+                                fqItemOperator,
                                 sort,
                                 rows,
                                 null,

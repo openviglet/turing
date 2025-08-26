@@ -1173,6 +1173,10 @@ public class TurSolr {
     private static TurSNSiteFacetFieldEnum getFacetItemType(TurSNFacetTypeContext context) {
         return Optional.ofNullable(context.getTurSNSiteFacetFieldExtDto()).map(field -> {
                     TurSNSiteFacetFieldEnum facetItemType = field.getFacetItemType();
+                    TurSNFilterQueryOperator itemOperator = context.getQueryParameters().getItemOperator();
+                    if (operatorIsNotEmpty(itemOperator)) {
+                        return getFaceTypeFromOperator(itemOperator);
+                    }
                     if (context.isSpecificField() && facetItemType != null && !isFacetTypeDefault(facetItemType)) {
                         return facetItemType;
                     } else {
@@ -1188,7 +1192,8 @@ public class TurSolr {
                     TurSNFilterQueryOperator operator = context.getQueryParameters().getOperator();
                     if (operatorIsNotEmpty(operator)) {
                         return getFaceTypeFromOperator(operator);
-                    } else if (context.isSpecificField() && facetType != null && !isFacetTypeDefault(facetType)) {
+                    }
+                    if (context.isSpecificField() && facetType != null && !isFacetTypeDefault(facetType)) {
                         return facetType;
                     } else {
                         return getFacetTypeFromSite(context.getTurSNSite());

@@ -63,6 +63,7 @@ public class TurSNSiteSearchAPI {
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+
     @Inject
     public TurSNSiteSearchAPI(TurSNSearchProcess turSNSearchProcess,
                               TurSNSiteRepository turSNSiteRepository,
@@ -84,6 +85,8 @@ public class TurSNSiteSearchAPI {
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE")
             TurSNFilterQueryOperator fqOperator,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = "NONE")
+            TurSNFilterQueryOperator fqItemOperator,
             @RequestParam(required = false, name = TurSNParamType.SORT) String sort,
             @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "-1") Integer rows,
             @RequestParam(required = false, name = TurSNParamType.GROUP) String group,
@@ -93,11 +96,11 @@ public class TurSNSiteSearchAPI {
             HttpServletRequest request) {
         Locale locale = LocaleUtils.toLocale(localeRequest);
         if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
-            return turSNSiteRepository.findByName(siteName).map( site -> {
+            return turSNSiteRepository.findByName(siteName).map(site -> {
                 TurSNConfig turSNConfig = getTurSNConfig(site);
                 TurSNSiteSearchContext turSNSiteSearchContext = TurSNUtils.getTurSNSiteSearchContext(turSNConfig,
                         siteName, q, currentPage, filterQueriesDefault, filterQueriesAnd, filterQueriesOr, fqOperator,
-                        sort, rows, group, autoCorrectionDisabled, request, locale);
+                        fqItemOperator, sort, rows, group, autoCorrectionDisabled, request, locale);
                 if (searchCacheEnabled) {
                     return new ResponseEntity<>(turSNSiteSearchCachedAPI.searchCached(
                             TurSNUtils.getCacheKey(siteName, request),
@@ -121,6 +124,8 @@ public class TurSNSiteSearchAPI {
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE")
             TurSNFilterQueryOperator fqOperator,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = "NONE")
+            TurSNFilterQueryOperator fqItemOperator,
             @RequestParam(required = false, name = TurSNParamType.SORT) String sort,
             @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "-1") Integer rows,
             @RequestParam(required = false, name = TurSNParamType.GROUP) String group,
@@ -136,14 +141,15 @@ public class TurSNSiteSearchAPI {
                     localeRequest);
 
             if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
-               return turSNSiteRepository.findByName(siteName).map( site -> {
+                return turSNSiteRepository.findByName(siteName).map(site -> {
                     TurSNConfig turSNConfig = getTurSNConfig(site);
-                turSNSitePostParamsBean.setTargetingRules(
-                        turSNSearchProcess.requestTargetingRules(turSNSitePostParamsBean.getTargetingRules()));
+                    turSNSitePostParamsBean.setTargetingRules(
+                            turSNSearchProcess.requestTargetingRules(turSNSitePostParamsBean.getTargetingRules()));
                     return new ResponseEntity<>(turSNSearchProcess.search(
-                            TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName, q, currentPage, filterQueriesDefault,
-                                    filterQueriesAnd, filterQueriesOr, fqOperator, sort, rows, group,
-                                    autoCorrectionDisabled, turSNSitePostParamsBean, request, locale)), HttpStatus.OK);
+                            TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName, q, currentPage,
+                                    filterQueriesDefault, filterQueriesAnd, filterQueriesOr, fqOperator, fqItemOperator,
+                                    sort, rows, group, autoCorrectionDisabled, turSNSitePostParamsBean, request,
+                                    locale)), HttpStatus.OK);
                 }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

@@ -73,6 +73,7 @@ public class TurSNUtils {
             List<String> fqAnd,
             List<String> fqOr,
             TurSNFilterQueryOperator fqOperator,
+            TurSNFilterQueryOperator fqItemOperator,
             String sort,
             Integer rows,
             String group,
@@ -88,6 +89,7 @@ public class TurSNUtils {
                 fqAnd,
                 fqOr,
                 fqOperator,
+                fqItemOperator,
                 sort,
                 rows,
                 group,
@@ -107,6 +109,7 @@ public class TurSNUtils {
             List<String> fqAnd,
             List<String> fqOr,
             TurSNFilterQueryOperator fqOperator,
+            TurSNFilterQueryOperator fqItemOperator,
             String sort,
             Integer rows,
             String group,
@@ -116,7 +119,7 @@ public class TurSNUtils {
             Locale locale) {
         return new TurSNSiteSearchContext(siteName, turSNConfig,
                 new TurSEParameters(q, new TurSEFilterQueryParameters(fq, fqAnd,
-                        fqOr, fqOperator), currentPage, sort, rows, group, autoCorrectionDisabled,
+                        fqOr, fqOperator, fqItemOperator), currentPage, sort, rows, group, autoCorrectionDisabled,
                         turSNSitePostParamsBean), locale,
                 TurSNUtils.requestToURI(request), turSNSitePostParamsBean);
     }

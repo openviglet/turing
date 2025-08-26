@@ -112,24 +112,28 @@ public class TurSEInstanceAPI {
     }
 
     @GetMapping("/select")
-    public ResponseEntity<TurSEResults> turSEInstanceSelect(@RequestParam(required = false, name = TurSNParamType.QUERY) String q,
-                                                            @RequestParam(required = false, name = TurSNParamType.PAGE) Integer currentPage,
-                                                            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_DEFAULT) List<String> filterQueriesDefault,
-                                                            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_AND) List<String> filterQueriesAnd,
-                                                            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
-                                                            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE")
-                                                            TurSNFilterQueryOperator fqOperator,
-                                                            @RequestParam(required = false, name = TurSNParamType.SORT) String sort,
-                                                            @RequestParam(required = false, name = TurSNParamType.ROWS) Integer rows,
-                                                            @RequestParam(required = false, name = TurSNParamType.GROUP) String group) {
+    public ResponseEntity<TurSEResults> turSEInstanceSelect(
+            @RequestParam(required = false, name = TurSNParamType.QUERY) String q,
+            @RequestParam(required = false, name = TurSNParamType.PAGE) Integer currentPage,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_DEFAULT) List<String> filterQueriesDefault,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_AND) List<String> filterQueriesAnd,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE")
+            TurSNFilterQueryOperator fqOperator,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = "NONE")
+            TurSNFilterQueryOperator fqItemOperator,
+            @RequestParam(required = false, name = TurSNParamType.SORT) String sort,
+            @RequestParam(required = false, name = TurSNParamType.ROWS) Integer rows,
+            @RequestParam(required = false, name = TurSNParamType.GROUP) String group) {
 
         currentPage = (currentPage == null || currentPage <= 0) ? 1 : currentPage;
         rows = rows == null ? 0 : rows;
-        TurSEParameters turSEParameters = new TurSEParameters(q, new TurSEFilterQueryParameters(filterQueriesDefault, filterQueriesAnd, filterQueriesOr, fqOperator), currentPage,
+        TurSEParameters turSEParameters = new TurSEParameters(q, new TurSEFilterQueryParameters(filterQueriesDefault,
+                filterQueriesAnd, filterQueriesOr, fqOperator, fqItemOperator), currentPage,
                 sort, rows, group, 0);
         return turSolrInstanceProcess.initSolrInstance()
-                .map(turSolrInstance -> new ResponseEntity<>(turSolr.retrieveSolr(turSolrInstance, turSEParameters,
-                        "text"), HttpStatus.OK))
+                .map(turSolrInstance -> new ResponseEntity<>(turSolr.retrieveSolr(turSolrInstance,
+                        turSEParameters, "text"), HttpStatus.OK))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 

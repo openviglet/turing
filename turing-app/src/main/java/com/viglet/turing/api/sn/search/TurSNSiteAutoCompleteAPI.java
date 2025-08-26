@@ -56,12 +56,14 @@ public class TurSNSiteAutoCompleteAPI {
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> fqOr,
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE")
             TurSNFilterQueryOperator fqOperator,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = "NONE")
+            TurSNFilterQueryOperator fqItemOperator,
             @RequestParam(required = false, name = TurSNParamType.SORT) String sort,
             @RequestParam(required = false, name = TurSNParamType.LOCALE) String locale,
             HttpServletRequest request) {
         if ((!CollectionUtils.isEmpty(fq)) || !CollectionUtils.isEmpty(fqAnd) || !CollectionUtils.isEmpty(fqOr)) {
-            return turSNAutoComplete.autoCompleteWithRegularSearch(siteName, q, rows, fq, fqAnd, fqOr, fqOperator, sort,
-                    locale, request);
+            return turSNAutoComplete.autoCompleteWithRegularSearch(siteName, q, rows, fq, fqAnd, fqOr, fqOperator,
+                    fqItemOperator, sort, locale, request);
         } else {
             return turSNAutoComplete.autoComplete(siteName, q, LocaleUtils.toLocale(locale), rows);
         }
