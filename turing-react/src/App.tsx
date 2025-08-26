@@ -38,7 +38,7 @@ import IntegrationInstanceSourcePage from "./app/console/integration/integration
 import IntegrationInstanceIndexingRulePage from "./app/console/integration/integration.instance.indexing.rule.page"
 import IntegrationInstanceMonitoringPage from "./app/console/integration/integration.instance.monitoring.page"
 import IntegrationInstancePage from "./app/console/integration/integration.instance.page"
-import { contextPath, ROUTES } from "./app/routes.const"
+import { ROUTES } from "./app/routes.const"
 
 
 
@@ -49,7 +49,7 @@ function RedirectToSNDetail() {
 
 function RedirectToIntegrationDetail() {
   const { id } = useParams();
-  return <Navigate to={`${contextPath}/integration/instance/${id}/detail`} replace />;
+  return <Navigate to={`${ROUTES.INTEGRATION_INSTANCE}/${id}/detail`} replace />;
 }
 
 
@@ -60,7 +60,7 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Toaster />
         <Routes>
-          <Route path="/" element={<Navigate to={ROUTES.CONSOLE} replace />} />
+          <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.CONSOLE} replace />} />
           <Route path={ROUTES.LOGIN} element={<LoginPage />} />
           <Route path={ROUTES.CONSOLE} element={<ConsoleRootPage />} >
             <Route index element={<Navigate to={ROUTES.SN_INSTANCE} replace />} />

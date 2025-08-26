@@ -6,6 +6,7 @@ import React from 'react'
 import axios from 'axios'
 import { environment } from './environment/environment.ts'
 import type { TurRestInfo } from './models/auth/rest-info.ts'
+import { ROUTES } from './app/routes.const.ts'
 
 axios.defaults.baseURL = `${environment.apiUrl}/api`;
 axios.interceptors.request.use((config) => {
@@ -17,7 +18,7 @@ axios.interceptors.request.use((config) => {
     config.headers.Authorization = `Basic ${token.authdata}`;
   }
   else {
-    window.location.href = '/login?returnUrl=/admin';
+    window.location.href = `${ROUTES.LOGIN}?returnUrl=${ROUTES.CONSOLE}`;
   }
   return config;
 });

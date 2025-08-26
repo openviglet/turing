@@ -35,8 +35,9 @@ import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { useNavigate } from "react-router-dom"
 import { Switch } from "./ui/switch"
+import { ROUTES } from "@/app/routes.const"
 const turLLMInstanceService = new TurLLMInstanceService();
-const urlBase = "/admin/llm/instance"
+const urlBase = ROUTES.LLM_INSTANCE
 interface Props {
   value: TurLLMInstance;
   isNew: boolean;

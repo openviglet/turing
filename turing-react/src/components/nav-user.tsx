@@ -27,6 +27,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { NavLink } from "react-router-dom"
+import { ROUTES } from "@/app/routes.const"
 
 export function NavUser({
   user,
@@ -103,7 +104,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <NavLink to="/logout"
+              <NavLink to={ROUTES.LOGOUT}
                 onClick={handleClick}>
                 <IconLogout />
                 Log out</NavLink>

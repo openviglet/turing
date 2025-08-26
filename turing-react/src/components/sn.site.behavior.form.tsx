@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom"
 import { Switch } from "./ui/switch"
 import { SubPageHeader } from "./sub.page.header"
 import { IconCodeAsterisk, IconCopy, IconHighlight, IconLayoutListFilled, IconListDetails, IconProgressHelp } from "@tabler/icons-react"
+import { ROUTES } from "@/app/routes.const"
 const turSNSiteService = new TurSNSiteService();
 interface Props {
   value: TurSNSite;
@@ -41,7 +42,7 @@ interface Props {
 export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
   const form = useForm<TurSNSite>();
   const { setValue } = form;
-  const urlBase = "/admin/sn/instance";
+  const urlBase = ROUTES.SN_INSTANCE;
   const navigate = useNavigate()
   useEffect(() => {
     setValue("id", value.id)

@@ -1,3 +1,4 @@
+import { ROUTES } from "@/app/routes.const";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TurTokenInstance } from "@/models/token/token-instance.model.ts";
@@ -18,7 +19,7 @@ export const TokenCardList: React.FC<PropsWithChildren<Props>>= ({ items }) => {
                 </CardHeader>
                 <CardFooter className="flex-col gap-2">
                     <Button type="submit" className="w-full" asChild>
-                        <NavLink to={"/admin/token/instance/" + item.id}>Edit</NavLink>
+                        <NavLink to={`${ROUTES.TOKEN_INSTANCE}/${item.id}`}>Edit</NavLink>
                     </Button>
                 </CardFooter>
             </Card>

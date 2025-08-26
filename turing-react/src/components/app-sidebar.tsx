@@ -25,6 +25,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { NavLink } from "react-router-dom"
+import { ROUTES } from "@/app/routes.const"
 
 const data = {
   user: {
@@ -98,7 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <NavLink to="/console">
+              <NavLink to={ROUTES.CONSOLE}>
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">Turing ES</span>
               </NavLink>

@@ -7,13 +7,14 @@ import type { TurRestInfo } from '@/models/auth/rest-info';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { useSearchParams } from 'react-router-dom';
+import { ROUTES } from '@/app/routes.const';
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"form">) {
     const [searchParams] = useSearchParams();
-    const returnUrl = searchParams.get('returnUrl') || '/admin';
+    const returnUrl = searchParams.get('returnUrl') || ROUTES.CONSOLE;
     const form = useForm<TurRestInfo>();
     const [error, setError] = useState('');
     const authorization = new TurAuthorizationService()

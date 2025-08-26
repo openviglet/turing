@@ -1,3 +1,4 @@
+import { ROUTES } from "@/app/routes.const";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
@@ -21,7 +22,7 @@ export const SNCardList: React.FC<PropsWithChildren<Props>>= ({ items }) => {
                 </CardContent>
                 <CardFooter className="flex-col gap-2">
                     <Button type="submit" className="w-full" asChild>
-                        <NavLink to={"/admin/sn/instance/" + item.id}>Edit</NavLink>
+                        <NavLink to={`${ROUTES.SN_INSTANCE}/${item.id}`}>Edit</NavLink>
                     </Button>
                 </CardFooter>
             </Card>

@@ -34,6 +34,7 @@ import { TurSEInstanceService } from "@/services/se.service"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { useNavigate } from "react-router-dom"
+import { ROUTES } from "@/app/routes.const"
 const turSEInstanceService = new TurSEInstanceService();
 interface Props {
   value: TurSEInstance;
@@ -60,7 +61,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       if (isNew) {
         turSEInstanceService.create(seInstance);
         toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate("/admin/se/instance");
+        navigate(ROUTES.SE_INSTANCE);
       }
       else {
         turSEInstanceService.update(seInstance);
@@ -77,7 +78,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     try {
       if (await turSEInstanceService.delete(value)) {
         toast.success(`The ${value.title} Search Engine was deleted`);
-        navigate("/admin/se/instance");
+        navigate(ROUTES.SE_INSTANCE);
       }
       else {
         toast.error(`The ${value.title} Search Engine was not deleted`);

@@ -6,6 +6,7 @@ import type {TurSNSiteLocale} from "@/models/sn/sn-site-locale.model.ts";
 import {TurSNSiteLocaleService} from "@/services/sn.site.locale.service";
 import {SNSiteMultiLanguageDataTable} from "@/components/sn/locales/sn.site.locale.data.table.tsx";
 import {BlankSlate} from "@/components/blank-slate.tsx";
+import { ROUTES } from "@/app/routes.const";
 
 const turSNSiteLocaleService = new TurSNSiteLocaleService();
 export default function SNSiteMultiLanguagePage() {
@@ -29,7 +30,7 @@ export default function SNSiteMultiLanguagePage() {
                     title="You don't seem to have any language."
                     description="Create a new language to semantic navigation search works."
                     buttonText="New language"
-                    urlNew={"/admin/sn/site/" + id + "/locale/new"}
+                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/locale/new`}
                 />
             )}
         </>

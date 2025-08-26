@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { SubPage } from "@/components/sub.page";
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
 import { TurIntegrationInstanceService } from "@/services/integration.service";
+import { ROUTES } from "@/app/routes.const";
 
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 const data = {
@@ -43,7 +44,7 @@ export default function IntegrationInstancePage() {
     const [isNew, setIsNew] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
     const navigate = useNavigate()
-    const urlBase = "/admin/integration/instance/" + id;
+    const urlBase = `${ROUTES.INTEGRATION_INSTANCE}/${id}`
     useEffect(() => {
         if (id !== "new") {
             turIntegrationInstanceService.get(id).then(setIntegration);

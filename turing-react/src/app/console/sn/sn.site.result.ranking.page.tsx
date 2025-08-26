@@ -5,6 +5,7 @@ import {useParams} from "react-router-dom";
 import {TurSNRankingExpressionService} from "@/services/sn.site.result.ranking.service.ts";
 import {useEffect, useState} from "react";
 import type {TurSNRankingExpression} from "@/models/sn/sn-ranking-expression.model.ts";
+import { ROUTES } from "@/app/routes.const";
 
 const turSNRankingExpressionService = new TurSNRankingExpressionService();
 export default function SNSiteResultRankingPage() {
@@ -24,7 +25,7 @@ export default function SNSiteResultRankingPage() {
                     title="You don’t seem to have any result ranking."
                     description="Create a new result ranking to define relevance rules."
                     buttonText="New result ranking"
-                    urlNew={"/admin/sn/site/" + id + "/result-ranking/new"}/>
+                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/result-ranking/new`}/>
             )}
         </>
     )

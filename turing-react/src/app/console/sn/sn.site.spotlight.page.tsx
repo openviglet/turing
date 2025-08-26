@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { TurSNSiteSpotlight } from "@/models/sn/sn-site-spotlight.model.ts";
 import { BlankSlate } from "@/components/blank-slate";
+import { ROUTES } from "@/app/routes.const";
 
 const turSNSiteSpotlightService = new TurSNSiteSpotlightService();
 export default function SNSiteSpotlightPage() {
@@ -27,7 +28,7 @@ export default function SNSiteSpotlightPage() {
                     title="You don't seem to have any spotlight."
                     description="Create a new spotlight to define content featured."
                     buttonText="New spotlight"
-                    urlNew={"/admin/sn/site/" + id + "/spotlight/new"}
+                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/spotlight/new`}
                 />
             )}
         </>

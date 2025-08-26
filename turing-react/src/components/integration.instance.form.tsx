@@ -32,6 +32,7 @@ import { useEffect } from "react"
 import { TurIntegrationInstanceService } from "@/services/integration.service"
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
+import { ROUTES } from "@/app/routes.const"
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 interface Props {
   value: TurIntegrationInstance;
@@ -57,7 +58,7 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       if (isNew) {
         turIntegrationInstanceService.create(integrationInstance);
         toast.success(`The ${integrationInstance.title} Integration Instance was saved`);
-        navigate("/admin/integration/instance");
+        navigate(ROUTES.INTEGRATION_INSTANCE);
       }
       else {
         turIntegrationInstanceService.update(integrationInstance);

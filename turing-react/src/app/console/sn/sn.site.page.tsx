@@ -17,6 +17,7 @@ import {
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { SubPage } from "@/components/sub.page";
+import { ROUTES } from "@/app/routes.const";
 
 const turSNSiteService = new TurSNSiteService();
 const data = {
@@ -79,7 +80,7 @@ export default function SNSitePage() {
     const [isNew, setIsNew] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
     const navigate = useNavigate()
-    const urlBase = "/admin/sn/instance/" + id;
+    const urlBase = `${ROUTES.SN_INSTANCE}/${id}`;
     useEffect(() => {
         if (id !== "new") {
             turSNSiteService.get(id).then(setSnSite);

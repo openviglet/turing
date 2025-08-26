@@ -5,6 +5,7 @@ import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {TurSNSiteMergeService} from "@/services/sn.site.merge.service.ts";
 import type {TurSNSiteMerge} from "@/models/sn/sn-site-merge.model.ts";
+import { ROUTES } from "@/app/routes.const";
 
 const turSNSiteMergeService = new TurSNSiteMergeService();
 export default function SNSiteMergeProvidersPage() {
@@ -25,7 +26,7 @@ export default function SNSiteMergeProvidersPage() {
                     title="You don’t seem to have any merge provider."
                     description="Create a new merge provider and allow to merge documents from different providers during indexing."
                     buttonText="New merge provider"
-                    urlNew={"/admin/sn/site/" + id + "/merge/new"}/>
+                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/merge/new`}/>
             )
         }
         </>

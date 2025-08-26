@@ -27,6 +27,7 @@ import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { useNavigate } from "react-router-dom"
 import { TurTokenInstanceService } from "@/services/token.service"
+import { ROUTES } from "@/app/routes.const"
 const turTokenInstanceService = new TurTokenInstanceService();
 interface Props {
   value: TurTokenInstance;
@@ -51,7 +52,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       if (isNew) {
         turTokenInstanceService.create(seInstance);
         toast.success(`The ${seInstance.title} API Token was saved`);
-        navigate("/admin/token/instance");
+        navigate(ROUTES.TOKEN_INSTANCE);
       }
       else {
         turTokenInstanceService.update(seInstance);
@@ -68,7 +69,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     try {
       if (await turTokenInstanceService.delete(value)) {
         toast.success(`The ${value.title} API Token was deleted`);
-        navigate("/admin/token/instance");
+        navigate(ROUTES.TOKEN_INSTANCE);
       }
       else {
         toast.error(`The ${value.title} API Token was not deleted`);

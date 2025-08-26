@@ -1,3 +1,4 @@
+import { ROUTES } from "@/app/routes.const";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts";
@@ -21,7 +22,7 @@ export const LLMCardList: React.FC<PropsWithChildren<Props>>= ({ items }) => {
                 </CardContent>
                 <CardFooter className="flex-col gap-2">
                     <Button type="submit" className="w-full" asChild>
-                        <NavLink to={"/admin/llm/instance/" + item.id}>Edit</NavLink>
+                        <NavLink to={`${ROUTES.LLM_INSTANCE}/${item.id}`}>Edit</NavLink>
                     </Button>
                 </CardFooter>
             </Card>

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts";
 import type { PropsWithChildren } from "react";
 import { NavLink } from "react-router-dom";
@@ -17,9 +17,6 @@ export const IntegrationCardList: React.FC<PropsWithChildren<Props>> = ({ items 
                         <CardTitle>{item.title}</CardTitle>
                         <CardDescription>{item.description}</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <p>{item.url}</p>
-                    </CardContent>
                     <CardFooter className="flex-col gap-2">
                         <Button type="submit" className="w-full" asChild>
                             <NavLink to={"/admin/integration/instance/" + item.id}>Edit</NavLink>

@@ -35,8 +35,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useNavigate } from "react-router-dom"
 import { TurStoreInstanceService } from "@/services/store.service"
 import { Switch } from "./ui/switch"
+import { ROUTES } from "@/app/routes.const"
 const turStoreInstanceService = new TurStoreInstanceService();
-const urlBase = "/admin/store/instance"
+const urlBase = ROUTES.STORE_INSTANCE
 interface Props {
   value: TurStoreInstance;
   isNew: boolean;
