@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import React, { useState, type Dispatch, type SetStateAction } from "react";
+import React, { type Dispatch, type SetStateAction } from "react";
 import { IconTrash } from "@tabler/icons-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 

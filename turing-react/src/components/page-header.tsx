@@ -2,7 +2,6 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
-import { IconPlus } from "@tabler/icons-react";
 import { NavLink } from "react-router-dom";
 
 interface MyComponentProps {
@@ -37,8 +36,8 @@ export const PageHeader: React.FC<MyComponentProps> = ({ turIcon: TurIcon, title
         <div className="ml-auto flex items-center gap-2">
           {urlNew !== undefined && (
             <Button>
-              <IconPlus />
-              <NavLink to={urlNew}>New {title}</NavLink>
+              {TurIcon && <TurIcon />}
+              <NavLink to={urlNew}>Add</NavLink>
             </Button>
           )}
           <ModeToggle></ModeToggle>
