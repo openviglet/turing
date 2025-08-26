@@ -1,0 +1,20 @@
+export const contextPath: string = import.meta.env.VITE_CONTEXT_PATH;
+export const ROUTES = {
+  ROOT: "/",
+  LOGIN: "/login",
+  CONSOLE: contextPath,
+  SN_ROOT: `${contextPath}/sn`,
+  SN_INSTANCE: `${contextPath}/sn/instance`,
+  SE_ROOT: `${contextPath}/se`,
+  SE_INSTANCE: `${contextPath}/se/instance`,
+  STORE_ROOT: `${contextPath}/store`,
+  STORE_INSTANCE: `${contextPath}/store/instance`,
+  TOKEN_ROOT: `${contextPath}/token`,
+  TOKEN_INSTANCE: `${contextPath}/token/instance`,
+  LLM_ROOT: `${contextPath}/llm`,
+  LLM_INSTANCE: `${contextPath}/llm/instance`,
+  INTEGRATION_ROOT: `${contextPath}/integration`,
+  INTEGRATION_INSTANCE: `${contextPath}/integration/instance`,
+  LOGGING_ROOT: `${contextPath}/logging`,
+  LOGGING_INSTANCE: `${contextPath}/logging/instance`,
+};
