@@ -313,10 +313,9 @@ public class TurAemCommonsUtils {
         jsonObject.toMap().forEach((key, value) -> {
             if (!key.startsWith(JCR) && !key.startsWith(SLING)
                     && (jsonObject.get(key) instanceof JSONObject jsonObjectNode)) {
-                getJsonNodeToComponent(jsonObjectNode, components);
+                components.append(getJsonNodeToComponent(jsonObjectNode));
             }
         });
-
         return components.toString();
     }
 
