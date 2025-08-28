@@ -50,7 +50,7 @@ public class TurAemExtPageComponents implements TurAemExtAttributeInterface {
      * @return TurMultiValue containing extracted component content
      */
     @NotNull
-    private TurMultiValue extractResponsiveGridComponents(@Nullable TurAemObject aemObject) {
+    public TurMultiValue extractResponsiveGridComponents(@Nullable TurAemObject aemObject) {
         if (!hasValidJcrContent(aemObject)) {
             log.debug("No valid JCR content found in AEM object");
             return TurMultiValue.empty();
