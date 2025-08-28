@@ -32,26 +32,34 @@ import org.json.JSONObject;
 
 @Slf4j
 public class TurAemExtPageComponents implements TurAemExtAttributeInterface {
+    public static final String ROOT = "root";
+    public static final String SLING_RESOURCE_TYPE = "sling:resourceType";
+    public static final String RESPONSIVEGRID_RESOURCE_TYPE = "wcm/foundation/components/responsivegrid";
 
-	public static final String RESPONSIVE_GRID = "responsivegrid";
-	public static final String ROOT = "root";
+    @Override
+    public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr, TurAemSourceAttr turAemSourceAttr,
+                                 TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
+        log.debug("Executing TurAemExtPageComponents");
+        return getResponsiveGridContent(aemObject);
+    }
 
-	@Override
-	public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr, TurAemSourceAttr turAemSourceAttr,
-								 TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
-		log.debug("Executing TurAemExtPageComponents");
-		return getResponsiveGridContent(aemObject);
-	}
+    @NotNull
+    public static TurMultiValue getResponsiveGridContent(TurAemObject aemObject) {
+        StringBuilder components = new StringBuilder();
+        if (aemObject.getJcrContentNode() != null && aemObject.getJcrContentNode().has(ROOT)
+                && aemObject.getJcrContentNode().get(ROOT) instanceof JSONObject root) {
 
-	@NotNull
-	public static TurMultiValue getResponsiveGridContent(TurAemObject aemObject) {
-		StringBuilder components = new StringBuilder();
-		if(aemObject.getJcrContentNode() != null && aemObject.getJcrContentNode().has(ROOT)
-				&& aemObject.getJcrContentNode().get(ROOT) instanceof JSONObject root
-				&& root.has(RESPONSIVE_GRID)
-				&& root.get(RESPONSIVE_GRID) instanceof JSONObject responsiveGrid) {
-			TurAemCommonsUtils.getJsonNodeToComponent(responsiveGrid, components);
-		}
-		return TurMultiValue.singleItem(TurCommonsUtils.html2Text(components.toString()));
-	}
+            root.keySet().forEach(key -> {
+                if (root.get(key) instanceof JSONObject responsiveGrid) {
+                    if (responsiveGrid.has(SLING_RESOURCE_TYPE)
+                            && responsiveGrid.getString(SLING_RESOURCE_TYPE).equals(RESPONSIVEGRID_RESOURCE_TYPE))
+                        components.append(TurCommonsUtils
+                                .html2Text(TurAemCommonsUtils
+                                        .getJsonNodeToComponent(responsiveGrid)));
+
+                }
+            });
+        }
+        return TurMultiValue.singleItem(components);
+    }
 }

@@ -301,7 +301,8 @@ public class TurAemCommonsUtils {
         return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
 
-    public static void getJsonNodeToComponent(JSONObject jsonObject, StringBuilder components) {
+    public static String getJsonNodeToComponent(JSONObject jsonObject) {
+        StringBuilder components = new StringBuilder();
         if (jsonObject.has(JCR_TITLE) && jsonObject.get(JCR_TITLE)
                 instanceof String title) {
             components.append(title);
@@ -315,6 +316,8 @@ public class TurAemCommonsUtils {
                 getJsonNodeToComponent(jsonObjectNode, components);
             }
         });
+
+        return components.toString();
     }
 
     public static Locale getLocaleFromContext(TurAemSourceContext turAemSourceContext, TurAemContext context) {
