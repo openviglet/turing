@@ -303,11 +303,7 @@ public class TurAemCommonsUtils {
 
     public static String getJsonNodeToComponent(JSONObject jsonObject) {
         StringBuilder components = new StringBuilder();
-        if (jsonObject.has(JCR_TITLE) && jsonObject.get(JCR_TITLE)
-                instanceof String title) {
-            components.append(title);
-        } else if (jsonObject.has(TEXT) && jsonObject.get(TEXT)
-                instanceof String text) {
+        if (jsonObject.has(TEXT) && jsonObject.get(TEXT) instanceof String text) {
             components.append(text);
         }
         jsonObject.toMap().forEach((key, value) -> {
