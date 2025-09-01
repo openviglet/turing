@@ -1,23 +1,22 @@
 package com.viglet.turing.connector.service;
 
-import com.viglet.turing.connector.commons.TurConnectorIndexingRuleType;
-import com.viglet.turing.connector.commons.TurConnectorSession;
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleModel;
-import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRuleRepository;
-import com.viglet.turing.spring.utils.TurPersistenceUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.stereotype.Service;
+
+import com.viglet.turing.connector.commons.TurConnectorIndexingRuleType;
+import com.viglet.turing.connector.commons.TurConnectorSession;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleModel;
+import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRuleRepository;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
+
 @Service
 public class TurConnectorIndexingRuleService {
     private final TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository;
 
-    @Autowired
     public TurConnectorIndexingRuleService(TurConnectorIndexingRuleRepository turConnectorIndexingRuleRepository) {
         this.turConnectorIndexingRuleRepository = turConnectorIndexingRuleRepository;
     }
@@ -35,6 +34,7 @@ public class TurConnectorIndexingRuleService {
     public List<TurConnectorIndexingRuleModel> getAll() {
         return turConnectorIndexingRuleRepository.findAll();
     }
+
     public Optional<TurConnectorIndexingRuleModel> getById(String id) {
         return turConnectorIndexingRuleRepository.findById(id);
     }
@@ -51,7 +51,6 @@ public class TurConnectorIndexingRuleService {
             return turConnectorIndexingRuleRepository.save(edit);
         }).orElse(new TurConnectorIndexingRuleModel());
     }
-
 
     public void deleteById(String id) {
         turConnectorIndexingRuleRepository.deleteById(id);

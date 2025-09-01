@@ -18,18 +18,26 @@
 
 package com.viglet.turing.connector.api;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.domain.TurConnectorValidateDifference;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 import com.viglet.turing.connector.service.TurConnectorIndexingService;
 import com.viglet.turing.connector.service.TurConnectorSolrService;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @Slf4j
 @RestController
@@ -40,9 +48,8 @@ public class TurConnectorApi {
     private final TurConnectorSolrService turConnectorSolr;
     private final TurConnectorPlugin plugin;
 
-    @Autowired
     public TurConnectorApi(TurConnectorIndexingService indexingService, TurConnectorSolrService turConnectorSolr,
-                           TurConnectorPlugin plugin) {
+            TurConnectorPlugin plugin) {
         this.indexingService = indexingService;
         this.turConnectorSolr = turConnectorSolr;
         this.plugin = plugin;
@@ -84,11 +91,10 @@ public class TurConnectorApi {
 
     @PostMapping("index/{name}")
     public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String name,
-                                                              @RequestBody List<String> contentId) {
+            @RequestBody List<String> contentId) {
         plugin.indexById(name, contentId);
         return ResponseEntity.ok(statusSent());
     }
-
 
     @GetMapping("reindex/{name}/all")
     public ResponseEntity<Map<String, String>> reindexAll(@PathVariable String name) {
@@ -96,13 +102,13 @@ public class TurConnectorApi {
         plugin.indexAll(name);
         return ResponseEntity.ok(statusSent());
     }
+
     @GetMapping("reindex/{name}")
     public ResponseEntity<Map<String, String>> reindexAll(@PathVariable String name,
-                                                          @RequestBody List<String> contentId) {
+            @RequestBody List<String> contentId) {
         indexingService.deleteByProvider(plugin.getProviderName());
         plugin.indexAll(name);
         return ResponseEntity.ok(statusSent());
     }
-
 
 }

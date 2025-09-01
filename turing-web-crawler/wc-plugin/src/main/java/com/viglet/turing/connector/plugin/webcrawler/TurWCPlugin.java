@@ -18,13 +18,13 @@
 
 package com.viglet.turing.connector.plugin.webcrawler;
 
-import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
-import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCSourceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCSourceRepository;
 
 @Primary
 @Component
@@ -32,7 +32,6 @@ public class TurWCPlugin implements TurConnectorPlugin {
     private final TurWCSourceRepository turWCSourceRepository;
     private final TurWCPluginProcess turWCPluginProcess;
 
-    @Autowired
     public TurWCPlugin(TurWCSourceRepository turWCSourceRepository, TurWCPluginProcess turWCPluginProcess) {
         this.turWCSourceRepository = turWCSourceRepository;
         this.turWCPluginProcess = turWCPluginProcess;

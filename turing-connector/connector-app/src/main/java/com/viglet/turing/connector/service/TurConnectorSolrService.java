@@ -1,22 +1,28 @@
 package com.viglet.turing.connector.service;
 
-import com.google.common.collect.Lists;
-import com.viglet.turing.connector.domain.TurSNSiteLocale;
-import lombok.extern.slf4j.Slf4j;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.io.IOException;
-import java.util.*;
+import com.google.common.collect.Lists;
+import com.viglet.turing.connector.domain.TurSNSiteLocale;
 
-import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -25,10 +31,9 @@ public class TurConnectorSolrService {
     private final SolrClient solrClient;
     private final RestClient restClient;
 
-    @Autowired
     public TurConnectorSolrService(TurConnectorIndexingService indexingService,
-                                   SolrClient solrClient,
-                                   RestClient restClient) {
+            SolrClient solrClient,
+            RestClient restClient) {
         this.indexingService = indexingService;
         this.solrClient = solrClient;
         this.restClient = restClient;
@@ -47,8 +52,7 @@ public class TurConnectorSolrService {
                         query.setRows(Integer.MAX_VALUE);
                         QueryResponse response = solrClient.query(siteLocale.getCore(), query);
                         List<String> solrIds = new ArrayList<>(response.getResults().stream()
-                                .map(solrDocument ->
-                                        (String) solrDocument.getFieldValue(ID))
+                                .map(solrDocument -> (String) solrDocument.getFieldValue(ID))
                                 .toList());
                         List<String> connectorIds = new ArrayList<>();
                         for (List<String> partition : Lists.partition(solrIds, 100)) {
@@ -66,7 +70,6 @@ public class TurConnectorSolrService {
         return solrExtraContentMap;
     }
 
-
     @NotNull
     public Map<String, List<String>> solrMissingContent(String source, String provider) {
         Map<String, List<String>> solrMissingContentMap = new HashMap<>();
@@ -79,8 +82,7 @@ public class TurConnectorSolrService {
                     try {
                         for (List<String> partition : Lists.partition(objectIdList, 20)) {
                             SolrDocumentList documents = solrClient.getById(siteLocale.getCore(), partition);
-                            documents.forEach(document ->
-                                    outputIdList.add(document.get(ID).toString()));
+                            documents.forEach(document -> outputIdList.add(document.get(ID).toString()));
                         }
                     } catch (IOException | SolrServerException e) {
                         log.error(e.getMessage(), e);
@@ -98,16 +100,17 @@ public class TurConnectorSolrService {
                 .uri("/api/sn/name/%s/locale".formatted(snSite))
                 .retrieve()
                 .body(TurSNSiteLocale[].class);
-        if (turSNSiteLocaleList == null) return Collections.emptyList();
+        if (turSNSiteLocaleList == null)
+            return Collections.emptyList();
         return Arrays.asList(turSNSiteLocaleList);
     }
-
 
     public boolean hasContentIdAtSolr(String id, String source, String provider) {
         for (String site : indexingService.getSites(source, provider)) {
             for (TurSNSiteLocale siteLocale : turingLocale(site)) {
                 try {
-                    if (solrClient.getById(siteLocale.getCore(), id) != null) return true;
+                    if (solrClient.getById(siteLocale.getCore(), id) != null)
+                        return true;
                 } catch (IOException | SolrServerException e) {
                     log.error(e.getMessage(), e);
                 }

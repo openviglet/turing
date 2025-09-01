@@ -18,82 +18,83 @@
 
 package com.viglet.turing.connector.persistence.repository;
 
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+
 import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 
-public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexingModel, String> {
+public interface TurConnectorIndexingRepository extends JpaRepository<TurConnectorIndexingModel, Integer> {
 
+        boolean existsByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source, String environment,
+                        String provider);
 
-    boolean existsByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source, String environment,
-                                                               String provider);
+        boolean existsByObjectIdAndSourceAndEnvironmentAndChecksumNot(String objectId, String source,
+                        String environment,
+                        String checksum);
 
-    boolean existsByObjectIdAndSourceAndEnvironmentAndChecksumNot(String objectId, String source, String environment,
-                                                                  String checksum);
+        List<TurConnectorIndexingModel> findBySourceAndProviderAndTransactionIdNotAndStandalone(String source,
+                        String provider,
+                        String transactionId,
+                        boolean standalone);
 
-    List<TurConnectorIndexingModel> findBySourceAndProviderAndTransactionIdNotAndStandalone(String source,
-                                                                                 String provider,
-                                                                                 String transactionId,
-                                                                                 boolean standalone);
+        List<TurConnectorIndexingModel> findByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source,
+                        String environment, String provider);
 
-    List<TurConnectorIndexingModel> findByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source,
-                                                                                     String environment, String provider);
+        List<TurConnectorIndexingModel> findByObjectIdAndSourceAndProvider(String objectId, String source,
+                        String provider);
 
-    List<TurConnectorIndexingModel> findByObjectIdAndSourceAndProvider(String objectId, String source, String provider);
+        List<TurConnectorIndexingModel> findAllBySourceAndProviderOrderByModificationDateDesc(String source,
+                        String provider, Limit limit);
 
-    List<TurConnectorIndexingModel> findAllBySourceAndProviderOrderByModificationDateDesc(String source,
-                                                                                          String provider, Limit limit);
+        List<TurConnectorIndexingModel> findAllByOrderByModificationDateDesc(Limit limit);
 
-    List<TurConnectorIndexingModel> findAllByOrderByModificationDateDesc(Limit limit);
+        @Transactional
+        void deleteByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source, String environment,
+                        String provider);
 
-    @Transactional
-    void deleteByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source, String environment,
-                                                            String provider);
+        @Transactional
+        void deleteByProvider(String provider);
 
-    @Transactional
-    void deleteByProvider(String provider);
+        @Transactional
+        void deleteByProviderAndObjectIdIn(String provider, Collection<String> contentIds);
 
-    @Transactional
-    void deleteByProviderAndObjectIdIn(String provider, Collection<String> contentIds);
+        @Transactional
+        void deleteBySourceAndProviderAndTransactionIdNot(String source, String provider, String transactionId);
 
-    @Transactional
-    void deleteBySourceAndProviderAndTransactionIdNot(String source, String provider, String transactionId);
+        @Query("SELECT DISTINCT i.source FROM TurConnectorIndexingModel i WHERE i.provider = :provider")
+        List<String> findAllSources(@Param("provider") String provider);
 
-    @Query("SELECT DISTINCT i.source FROM TurConnectorIndexingModel i WHERE i.provider = :provider")
-    List<String> findAllSources( @Param("provider") String provider);
+        @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND " +
+                        "i.locale = :locale AND i.environment IN :environment AND i.provider = :provider")
+        List<String> findAllObjectIds(@Param("source") String source,
+                        @Param("locale") Locale locale,
+                        @Param("environment") String environment,
+                        @Param("provider") String provider);
 
-    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND " +
-            "i.locale = :locale AND i.environment IN :environment AND i.provider = :provider")
-    List<String> findAllObjectIds(@Param("source") String source,
-                                                                 @Param("locale") Locale locale,
-                                                                 @Param("environment") String environment,
-                                                                 @Param("provider") String provider);
+        @Query("SELECT DISTINCT i.sites FROM TurConnectorIndexingModel i WHERE i.source = :source AND " +
+                        "i.provider = :provider")
+        List<String> distinctSites(@Param("source") String source,
+                        @Param("provider") String provider);
 
-    @Query("SELECT DISTINCT i.sites FROM TurConnectorIndexingModel i WHERE i.source = :source AND " +
-            "i.provider = :provider")
-    List<String> distinctSites(@Param("source") String source,
-                                                  @Param("provider") String provider);
+        @Query("SELECT DISTINCT i.environment FROM TurConnectorIndexingModel i WHERE :site MEMBER OF i.sites AND " +
+                        "i.provider = :provider")
+        List<String> distinctEnvironment(@Param("site") String site,
+                        @Param("provider") String provider);
 
-    @Query("SELECT DISTINCT i.environment FROM TurConnectorIndexingModel i WHERE :site MEMBER OF i.sites AND " +
-            "i.provider = :provider")
-    List<String> distinctEnvironment(@Param("site") String site,
-                                                      @Param("provider") String provider);
-
-    @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND i.locale = :locale AND " +
-            "i.environment IN :environment AND i.provider = :provider AND i.objectId IN :ids")
-    List<String> distinctObjectId(@Param("source") String source,
-                                                                        @Param("locale") Locale locale,
-                                                                        @Param("environment") String environment,
-                                                                                   @Param("provider") String provider,
-                                                                        @Param("ids") List<String> ids);
-
+        @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i WHERE i.source = :source AND i.locale = :locale AND "
+                        +
+                        "i.environment IN :environment AND i.provider = :provider AND i.objectId IN :ids")
+        List<String> distinctObjectId(@Param("source") String source,
+                        @Param("locale") Locale locale,
+                        @Param("environment") String environment,
+                        @Param("provider") String provider,
+                        @Param("ids") List<String> ids);
 
 }

@@ -31,7 +31,6 @@ import com.viglet.turing.connector.persistence.model.TurConnectorIndexingRuleMod
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -59,7 +58,6 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     private final JmsMessagingTemplate jmsMessagingTemplate;
     private final int jobSize;
 
-    @Autowired
     public TurConnectorContextImpl(@Value("${turing.connector.job.size:50}") int jobSize,
                                    TurConnectorIndexingService turConnectorIndexingService,
                                    TurConnectorIndexingRuleService indexingRuleService,

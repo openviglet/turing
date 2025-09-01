@@ -18,15 +18,16 @@
 
 package com.viglet.turing.connector.plugin.aem.impl;
 
-import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
-import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
-import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
+import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Primary
@@ -35,7 +36,6 @@ public class TurAemPlugin implements TurConnectorPlugin {
     private final TurAemPluginProcess turAemPluginProcess;
     private final TurAemSourceRepository turAemSourceRepository;
 
-    @Autowired
     public TurAemPlugin(TurAemPluginProcess turAemPluginProcess, TurAemSourceRepository turAemSourceRepository) {
         this.turAemPluginProcess = turAemPluginProcess;
         this.turAemSourceRepository = turAemSourceRepository;
@@ -50,6 +50,7 @@ public class TurAemPlugin implements TurConnectorPlugin {
     public void indexAll(String source) {
         turAemPluginProcess.indexAllByNameAsync(source);
     }
+
     public void indexById(String source, List<String> contentId) {
         turAemPluginProcess.sentToIndexStandalone(source, contentId);
     }
