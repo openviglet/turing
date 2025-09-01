@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,7 @@ import com.viglet.turing.exchange.sn.TurSNSiteExport;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -113,8 +115,7 @@ public class TurSNSiteAPI {
     public TurSNSite turSNSiteStructure() {
         TurSNSite turSNSite = new TurSNSite();
         turSNSite.setFacetSort(TurSNSiteFacetSortEnum.COUNT);
-        turSNSite.setFac
-
+        turSNSite.setFacetType(TurSNSiteFacetFieldEnum.AND);
         turSNSite.setTurSEInstance(new TurSEInstance());
         turSNSite.setTurSNSiteGenAi(new TurSNSiteGenAi());
         return turSNSite;
@@ -171,7 +172,7 @@ public class TurSNSiteAPI {
 
     }
 
-    ueteMapping("/{id}")
+    @DeleteMapping("/{id}")
 
     public boolean turSNSiteDelete(@PathVariable String id) {
         Optional<TurSNSite> turSNSite = turSNSiteRepository.findById(id);
