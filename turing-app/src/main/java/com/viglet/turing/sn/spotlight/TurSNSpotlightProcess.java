@@ -20,10 +20,26 @@
  */
 package com.viglet.turing.sn.spotlight;
 
+import java.lang.invoke.MethodHandles;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import com.viglet.turing.api.sn.queue.TurSpotlightContent;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
@@ -44,16 +60,6 @@ import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.stereotype.Component;
-
-import java.lang.invoke.MethodHandles;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * @author Alexandre Oliveira
@@ -73,13 +79,13 @@ public class TurSNSpotlightProcess {
 	private final TurSolr turSolr;
 	private final TurSpotlightCache turSpotlightCache;
 	private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
-	@Inject
+
 	public TurSNSpotlightProcess(TurSNSiteSpotlightRepository turSNSiteSpotlightRepository,
-								 TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository,
-								 TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository,
-								 TurSolr turSolr,
-								 TurSpotlightCache turSpotlightCache,
-								 TurSNSiteLocaleRepository turSNSiteLocaleRepository) {
+			TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository,
+			TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository,
+			TurSolr turSolr,
+			TurSpotlightCache turSpotlightCache,
+			TurSNSiteLocaleRepository turSNSiteLocaleRepository) {
 		this.turSNSiteSpotlightRepository = turSNSiteSpotlightRepository;
 		this.turSNSiteSpotlightTermRepository = turSNSiteSpotlightTermRepository;
 		this.turSNSiteSpotlightDocumentRepository = turSNSiteSpotlightDocumentRepository;
@@ -182,8 +188,8 @@ public class TurSNSpotlightProcess {
 				}
 
 				for (TurSpotlightContent turSpotlightContent : turSpotlightContents) {
-					final TurSNSiteSpotlightDocument turSNSiteSpotlightDocument =
-							getTurSNSiteSpotlightDocument(turSpotlightContent, turSNSiteSpotlight);
+					final TurSNSiteSpotlightDocument turSNSiteSpotlightDocument = getTurSNSiteSpotlightDocument(
+							turSpotlightContent, turSNSiteSpotlight);
 					turSNSiteSpotlightDocumentRepository.save(turSNSiteSpotlightDocument);
 				}
 				logger.warn("Spotlight ID '{}' of '{}' SN Site ({}) was created.",
@@ -198,7 +204,7 @@ public class TurSNSpotlightProcess {
 
 	@NotNull
 	private static TurSNSiteSpotlightDocument getTurSNSiteSpotlightDocument(TurSpotlightContent turSpotlightContent,
-																			TurSNSiteSpotlight turSNSiteSpotlight) {
+			TurSNSiteSpotlight turSNSiteSpotlight) {
 		TurSNSiteSpotlightDocument turSNSiteSpotlightDocument = new TurSNSiteSpotlightDocument();
 		turSNSiteSpotlightDocument.setPosition(turSpotlightContent.getPosition());
 		turSNSiteSpotlightDocument.setTitle(turSpotlightContent.getTitle());
@@ -210,8 +216,9 @@ public class TurSNSpotlightProcess {
 	}
 
 	public void addSpotlightToResults(TurSNSiteSearchContext context, TurSolrInstance turSolrInstance,
-									  TurSNSite turSNSite, Map<String, TurSNSiteFieldExtDto> facetMap, Map<String, TurSNSiteFieldExtDto> fieldExtMap,
-									  List<TurSNSiteSearchDocumentBean> turSNSiteSearchDocumentsBean) {
+			TurSNSite turSNSite, Map<String, TurSNSiteFieldExtDto> facetMap,
+			Map<String, TurSNSiteFieldExtDto> fieldExtMap,
+			List<TurSNSiteSearchDocumentBean> turSNSiteSearchDocumentsBean) {
 
 		Map<Integer, List<TurSNSiteSpotlightDocument>> turSNSiteSpotlightDocumentMap = getSpotlightsFromQuery(context,
 				turSNSite);
@@ -237,7 +244,8 @@ public class TurSNSpotlightProcess {
 				List<TurSNSiteSpotlightDocument> turSNSiteSpotlightDocuments = turSNSiteSpotlightDocumentMap
 						.get(currentPositionFromCurrentPage);
 				for (TurSNSiteSpotlightDocument document : turSNSiteSpotlightDocuments) {
-					TurSEResult turSEResult = turSolr.findById(turSolrInstance, turSNSite, document.getReferenceId(), context);
+					TurSEResult turSEResult = turSolr.findById(turSolrInstance, turSNSite, document.getReferenceId(),
+							context);
 					if (turSEResult != null) {
 						TurSNUtils.addSNDocumentWithPosition(context.getUri(), fieldExtMap, facetMap,
 								turSNSiteSearchDocumentsBean, turSEResult, true, currentPositionFromList);

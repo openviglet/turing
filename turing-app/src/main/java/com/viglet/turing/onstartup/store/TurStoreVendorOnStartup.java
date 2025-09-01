@@ -20,11 +20,11 @@
  */
 package com.viglet.turing.onstartup.store;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.store.TurStoreVendor;
-import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.viglet.turing.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
 
 @Component
 @Transactional
@@ -32,7 +32,6 @@ public class TurStoreVendorOnStartup {
 
 	private final TurStoreVendorRepository turStoreVendorRepository;
 
-	@Inject
 	public TurStoreVendorOnStartup(TurStoreVendorRepository turStoreVendorRepository) {
 		this.turStoreVendorRepository = turStoreVendorRepository;
 	}

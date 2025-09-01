@@ -20,21 +20,29 @@
  */
 package com.viglet.turing.api.sn.console;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.sn.template.TurSNTemplate;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.template.TurSNTemplate;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * @author Alexandre Oliveira
@@ -50,10 +58,9 @@ public class TurSNSiteLocaleAPI {
 	private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
 	private final TurSNTemplate turSNTemplate;
 
-	@Inject
 	public TurSNSiteLocaleAPI(TurSNSiteRepository turSNSiteRepository,
-							  TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-							  TurSNTemplate turSNTemplate) {
+			TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+			TurSNTemplate turSNTemplate) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
 		this.turSNTemplate = turSNTemplate;
@@ -63,7 +70,7 @@ public class TurSNSiteLocaleAPI {
 	@GetMapping
 	public List<TurSNSiteLocale> turSNSiteLocaleList(@PathVariable String ignoredSnSiteId) {
 		return turSNSiteRepository.findById(ignoredSnSiteId).map(site -> this.turSNSiteLocaleRepository
-						.findByTurSNSite(Sort.by(Sort.Order.asc("language").ignoreCase()), site))
+				.findByTurSNSite(Sort.by(Sort.Order.asc("language").ignoreCase()), site))
 				.orElse(Collections.emptyList());
 	}
 
@@ -76,8 +83,8 @@ public class TurSNSiteLocaleAPI {
 	@Operation(summary = "Update a Semantic Navigation Site Locale")
 	@PutMapping("/{id}")
 	public TurSNSiteLocale turSNSiteLocaleUpdate(@PathVariable String id,
-												 @RequestBody TurSNSiteLocale turSNSiteLocale,
-												 @PathVariable String ignoredSnSiteId) {
+			@RequestBody TurSNSiteLocale turSNSiteLocale,
+			@PathVariable String ignoredSnSiteId) {
 		return this.turSNSiteLocaleRepository.findById(id).map(turSNSiteLocaleEdit -> {
 			turSNSiteLocaleEdit.setCore(turSNSiteLocale.getCore());
 			turSNSiteLocaleEdit.setLanguage(turSNSiteLocale.getLanguage());
@@ -100,10 +107,10 @@ public class TurSNSiteLocaleAPI {
 	@Operation(summary = "Create a Semantic Navigation Site Locale")
 	@PostMapping
 	public TurSNSiteLocale turSNSiteLocaleAdd(@RequestBody TurSNSiteLocale turSNSiteLocale, Principal principal,
-											  @PathVariable String ignoredSnSiteId) {
+			@PathVariable String ignoredSnSiteId) {
 		turSNSiteLocale.setCore(turSNTemplate.createSolrCore(turSNSiteLocale, principal.getName()));
 		turSNSiteLocaleRepository.save(turSNSiteLocale);
-		
+
 		return turSNSiteLocale;
 	}
 

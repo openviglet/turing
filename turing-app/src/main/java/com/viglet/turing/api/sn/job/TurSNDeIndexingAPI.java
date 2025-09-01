@@ -20,17 +20,21 @@
  */
 package com.viglet.turing.api.sn.job;
 
-import com.google.inject.Inject;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.client.sn.job.TurSNJobItems;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/sn/deindex")
 @Tag(name = "Semantic Navigation DeIndexing", description = "Semantic Navigation DeIndexing API")
 public class TurSNDeIndexingAPI {
 	private final TurSNImportAPI turSNImportAPI;
-	@Inject
+
 	public TurSNDeIndexingAPI(TurSNImportAPI turSNImportAPI) {
 		this.turSNImportAPI = turSNImportAPI;
 	}

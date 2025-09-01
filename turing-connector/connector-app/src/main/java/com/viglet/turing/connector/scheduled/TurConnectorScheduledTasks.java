@@ -18,12 +18,13 @@
 
 package com.viglet.turing.connector.scheduled;
 
-import com.google.inject.Inject;
-import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
-import com.viglet.turing.connector.service.TurConnectorConfigVarService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
+import com.viglet.turing.connector.service.TurConnectorConfigVarService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -31,14 +32,13 @@ public class TurConnectorScheduledTasks {
     private final TurConnectorPlugin turConnectorPlugin;
     private final TurConnectorConfigVarService configVarService;
 
-    @Inject
     public TurConnectorScheduledTasks(TurConnectorPlugin turConnectorPlugin,
-                                      TurConnectorConfigVarService configVarService) {
+            TurConnectorConfigVarService configVarService) {
         this.turConnectorPlugin = turConnectorPlugin;
         this.configVarService = configVarService;
     }
 
-    @Scheduled(cron = "${turing.connector.cron:-}", zone="${turing.connector.cron.zone:UTC}")
+    @Scheduled(cron = "${turing.connector.cron:-}", zone = "${turing.connector.cron.zone:UTC}")
     public void executeWebCrawler() {
         if (configVarService.hasNotFirstTime()) {
             log.info("This is the first time, waiting next schedule.");
@@ -46,6 +46,5 @@ public class TurConnectorScheduledTasks {
             turConnectorPlugin.crawl();
         }
     }
-
 
 }

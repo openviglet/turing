@@ -21,15 +21,14 @@
 
 package com.viglet.turing.exchange.sn;
 
-import com.google.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.exchange.TurExchange;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
 
 @Component
 public class TurSNSiteImport {
@@ -38,19 +37,18 @@ public class TurSNSiteImport {
 
 	private final TurSNSiteFieldRepository turSNSiteFieldRepository;
 
-	@Inject
 	public TurSNSiteImport(TurSNSiteRepository turSNSiteRepository,
-						   TurSEInstanceRepository turSEInstanceRepository,
-						   TurSNSiteFieldRepository turSNSiteFieldRepository) {
+			TurSEInstanceRepository turSEInstanceRepository,
+			TurSNSiteFieldRepository turSNSiteFieldRepository) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSEInstanceRepository = turSEInstanceRepository;
 		this.turSNSiteFieldRepository = turSNSiteFieldRepository;
 	}
 
-	public void importSNSite(TurExchange turExchange){
+	public void importSNSite(TurExchange turExchange) {
 		for (TurSNSiteExchange turSNSiteExchange : turExchange.getSnSites()) {
 			if (turSNSiteRepository.findById(turSNSiteExchange.getId()).isEmpty()) {
-				
+
 				TurSNSite turSNSite = new TurSNSite();
 				turSNSite.setDefaultDateField(turSNSiteExchange.getDefaultDateField());
 				turSNSite.setDefaultDescriptionField(turSNSiteExchange.getDefaultDescriptionField());
@@ -60,16 +58,17 @@ public class TurSNSiteImport {
 				turSNSite.setDefaultURLField(turSNSiteExchange.getDefaultURLField());
 				turSNSite.setDescription(turSNSiteExchange.getDescription());
 				turSNSite.setFacet(boolToInteger(turSNSiteExchange.isFacet()));
-				turSNSite.setHl(boolToInteger( turSNSiteExchange.getHl()));
+				turSNSite.setHl(boolToInteger(turSNSiteExchange.getHl()));
 				turSNSite.setHlPost(turSNSiteExchange.getHlPost());
 				turSNSite.setHlPre(turSNSiteExchange.getHlPre());
 				turSNSite.setId(turSNSiteExchange.getId());
 				turSNSite.setItemsPerFacet(turSNSiteExchange.getItemsPerFacet());
-				turSNSite.setMlt(boolToInteger( turSNSiteExchange.isMlt()));
+				turSNSite.setMlt(boolToInteger(turSNSiteExchange.isMlt()));
 				turSNSite.setName(turSNSiteExchange.getName());
 				turSNSite.setRowsPerPage(turSNSiteExchange.getRowsPerPage());
 				turSNSite.setThesaurus(boolToInteger(turSNSiteExchange.isThesaurus()));
-				turSNSite.setTurSEInstance(turSEInstanceRepository.findById(turSNSiteExchange.getTurSEInstance()).orElse(null));
+				turSNSite.setTurSEInstance(
+						turSEInstanceRepository.findById(turSNSiteExchange.getTurSEInstance()).orElse(null));
 
 				turSNSiteRepository.save(turSNSite);
 
@@ -86,6 +85,6 @@ public class TurSNSiteImport {
 	}
 
 	private Integer boolToInteger(boolean bool) {
-		return bool ?  1 :  0;
+		return bool ? 1 : 0;
 	}
 }

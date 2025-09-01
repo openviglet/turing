@@ -18,9 +18,29 @@
 
 package com.viglet.turing.genai;
 
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.ABSTRACT;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.MODIFICATION_DATE;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.PUBLICATION_DATE;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.SOURCE_APPS;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.TEXT;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.TITLE;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.URL;
+import static org.apache.commons.lang3.stream.LangCollectors.joining;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
+
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.sn.TurSNSearchProcess;
+
 import dev.langchain4j.data.document.DefaultDocument;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
@@ -32,14 +52,6 @@ import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
-
-import static com.viglet.turing.commons.sn.field.TurSNFieldName.*;
-import static org.apache.commons.lang3.stream.LangCollectors.joining;
 
 @Slf4j
 @Component
@@ -50,11 +62,9 @@ public class TurGenAi {
     public static final String INFORMATION = "information";
     private final TurSNSearchProcess turSNSearchProcess;
 
-    @Autowired
     public TurGenAi(TurSNSearchProcess turSNSearchProcess) {
         this.turSNSearchProcess = turSNSearchProcess;
     }
-
 
     public TurChatMessage assistant(TurGenAiContext context, String q) {
         if (context.isEnabled()) {
@@ -97,22 +107,20 @@ public class TurGenAi {
     }
 
     public void addDocuments(TurSNJobItems turSNJobItems) {
-        turSNJobItems.getTuringDocuments().forEach(jobItem ->
-                jobItem.getSiteNames().forEach(siteName ->
-                        turSNSearchProcess.getSNSite(siteName).ifPresent(turSNSite -> {
-                            TurGenAiContext context = new TurGenAiContext(turSNSite.getTurSNSiteGenAi());
-                            if (context.isEnabled()) {
-                                StringBuilder sb = new StringBuilder();
-                                addAttributes(context, jobItem, sb);
-                                addDocument(context, sb.toString(), new Metadata(setMetadata(jobItem)));
-                            }
-                        })));
+        turSNJobItems.getTuringDocuments().forEach(jobItem -> jobItem.getSiteNames()
+                .forEach(siteName -> turSNSearchProcess.getSNSite(siteName).ifPresent(turSNSite -> {
+                    TurGenAiContext context = new TurGenAiContext(turSNSite.getTurSNSiteGenAi());
+                    if (context.isEnabled()) {
+                        StringBuilder sb = new StringBuilder();
+                        addAttributes(context, jobItem, sb);
+                        addDocument(context, sb.toString(), new Metadata(setMetadata(jobItem)));
+                    }
+                })));
     }
 
     private void addDocument(TurGenAiContext context, String text, Metadata metadata) {
         Document document = new DefaultDocument(text, metadata);
-        DocumentByCharacterSplitter documentByCharacterSplitter =
-                new DocumentByCharacterSplitter(1024, 0);
+        DocumentByCharacterSplitter documentByCharacterSplitter = new DocumentByCharacterSplitter(1024, 0);
         EmbeddingStoreIngestor embeddingStoreIngestor = EmbeddingStoreIngestor.builder()
                 .documentSplitter(documentByCharacterSplitter)
                 .embeddingModel(context.getEmbeddingModel())
@@ -124,7 +132,7 @@ public class TurGenAi {
 
     private void addAttributes(TurGenAiContext context, TurSNJobItem jobItem, StringBuilder sb) {
         if (context.isEnabled()) {
-            String[] allowedAttributes = {TITLE, ABSTRACT, TEXT};
+            String[] allowedAttributes = { TITLE, ABSTRACT, TEXT };
             jobItem.getAttributes().forEach((key, value) -> {
                 if (Arrays.asList(allowedAttributes).contains(key))
                     sb.append(value).append(System.lineSeparator());

@@ -18,6 +18,18 @@
 
 package com.viglet.turing.api.sn.search;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import org.bson.conversions.Bson;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -25,19 +37,8 @@ import com.mongodb.client.model.Filters;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.TurSNSearchProcess;
-import lombok.extern.slf4j.Slf4j;
-import org.bson.conversions.Bson;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -51,15 +52,15 @@ public class TurSNSiteSearchCachedAPI {
     private final String indexingCollectionName;
     private final String aemCollectionName;
     private final int purgeDays;
-    @Autowired
+
     public TurSNSiteSearchCachedAPI(TurSNSearchProcess turSNSearchProcess,
-                                    @Value("${turing.mongodb.enabled:false}") boolean enabled,
-                                    @Value("${turing.mongodb.uri:'mongodb://localhost:27017'}") String connectionString,
-                                    @Value("${turing.mongodb.logging.database:'turingLog'}") String databaseName,
-                                    @Value("${turing.mongodb.logging.collection.server:'server'}") String serverCollectionName,
-                                    @Value("${turing.mongodb.logging.collection.indexing:'indexing'}") String indexingCollectionName,
-                                    @Value("${turing.mongodb.logging.collection.aem:'aem'}") String aemCollectionName,
-                                    @Value("${turing.mongodb.logging.purge.days:30}") int purgeDays) {
+            @Value("${turing.mongodb.enabled:false}") boolean enabled,
+            @Value("${turing.mongodb.uri:'mongodb://localhost:27017'}") String connectionString,
+            @Value("${turing.mongodb.logging.database:'turingLog'}") String databaseName,
+            @Value("${turing.mongodb.logging.collection.server:'server'}") String serverCollectionName,
+            @Value("${turing.mongodb.logging.collection.indexing:'indexing'}") String indexingCollectionName,
+            @Value("${turing.mongodb.logging.collection.aem:'aem'}") String aemCollectionName,
+            @Value("${turing.mongodb.logging.purge.days:30}") int purgeDays) {
         this.turSNSearchProcess = turSNSearchProcess;
         this.enabled = enabled;
         this.connectionString = connectionString;
@@ -78,14 +79,15 @@ public class TurSNSiteSearchCachedAPI {
 
     @Cacheable(value = "searchAPI", key = "#cacheKey")
     public TurSNSiteSearchBean searchCached(String cacheKey,
-                                            TurSNSiteSearchContext turSNSiteSearchContext) {
+            TurSNSiteSearchContext turSNSiteSearchContext) {
         log.info("Search cache key: {}", cacheKey);
         return turSNSearchProcess.search(turSNSiteSearchContext);
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void purgeMongoDBLogs() {
-        if (!enabled) return;
+        if (!enabled)
+            return;
         log.info("Executing housekeeping log task");
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             Bson filter = Filters.lt(TIMESTAMP, getPurgeDate());

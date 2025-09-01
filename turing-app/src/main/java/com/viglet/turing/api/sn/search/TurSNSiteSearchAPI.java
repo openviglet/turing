@@ -21,7 +21,31 @@
 
 package com.viglet.turing.api.sn.search;
 
-import com.google.inject.Inject;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchLatestRequestBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteLocaleBean;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
@@ -32,25 +56,12 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.TurSNUtils;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.Principal;
-import java.util.*;
 
 @Slf4j
 @RestController
@@ -64,11 +75,10 @@ public class TurSNSiteSearchAPI {
     private final TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
 
-    @Inject
     public TurSNSiteSearchAPI(TurSNSearchProcess turSNSearchProcess,
-                              TurSNSiteRepository turSNSiteRepository,
-                              TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI,
-                              TurSNSiteFieldExtRepository turSNSiteFieldExtRepository) {
+            TurSNSiteRepository turSNSiteRepository,
+            TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI,
+            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository) {
         this.turSNSearchProcess = turSNSearchProcess;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteSearchCachedAPI = turSNSiteSearchCachedAPI;
@@ -83,15 +93,12 @@ public class TurSNSiteSearchAPI {
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_DEFAULT) List<String> filterQueriesDefault,
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_AND) List<String> filterQueriesAnd,
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
-            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE")
-            TurSNFilterQueryOperator fqOperator,
-            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = "NONE")
-            TurSNFilterQueryOperator fqItemOperator,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE") TurSNFilterQueryOperator fqOperator,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = "NONE") TurSNFilterQueryOperator fqItemOperator,
             @RequestParam(required = false, name = TurSNParamType.SORT) String sort,
             @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "-1") Integer rows,
             @RequestParam(required = false, name = TurSNParamType.GROUP) String group,
-            @RequestParam(required = false, name = TurSNParamType.AUTO_CORRECTION_DISABLED, defaultValue = "0")
-            Integer autoCorrectionDisabled,
+            @RequestParam(required = false, name = TurSNParamType.AUTO_CORRECTION_DISABLED, defaultValue = "0") Integer autoCorrectionDisabled,
             @RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest,
             HttpServletRequest request) {
         Locale locale = LocaleUtils.toLocale(localeRequest);
@@ -122,23 +129,20 @@ public class TurSNSiteSearchAPI {
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_DEFAULT) List<String> filterQueriesDefault,
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_AND) List<String> filterQueriesAnd,
             @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
-            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE")
-            TurSNFilterQueryOperator fqOperator,
-            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = "NONE")
-            TurSNFilterQueryOperator fqItemOperator,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = "NONE") TurSNFilterQueryOperator fqOperator,
+            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = "NONE") TurSNFilterQueryOperator fqItemOperator,
             @RequestParam(required = false, name = TurSNParamType.SORT) String sort,
             @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "-1") Integer rows,
             @RequestParam(required = false, name = TurSNParamType.GROUP) String group,
-            @RequestParam(required = false, name = TurSNParamType.AUTO_CORRECTION_DISABLED, defaultValue = "0")
-            Integer autoCorrectionDisabled,
+            @RequestParam(required = false, name = TurSNParamType.AUTO_CORRECTION_DISABLED, defaultValue = "0") Integer autoCorrectionDisabled,
             @RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest,
             @RequestBody TurSNSitePostParamsBean turSNSitePostParamsBean,
             Principal principal,
             HttpServletRequest request) {
         if (principal != null) {
-            Locale locale = LocaleUtils.toLocale(StringUtils.isNotBlank(turSNSitePostParamsBean.getLocale()) ?
-                    turSNSitePostParamsBean.getLocale() :
-                    localeRequest);
+            Locale locale = LocaleUtils.toLocale(
+                    StringUtils.isNotBlank(turSNSitePostParamsBean.getLocale()) ? turSNSitePostParamsBean.getLocale()
+                            : localeRequest);
 
             if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
                 return turSNSiteRepository.findByName(siteName).map(site -> {
@@ -149,7 +153,8 @@ public class TurSNSiteSearchAPI {
                             TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName, q, currentPage,
                                     filterQueriesDefault, filterQueriesAnd, filterQueriesOr, fqOperator, fqItemOperator,
                                     sort, rows, group, autoCorrectionDisabled, turSNSitePostParamsBean, request,
-                                    locale)), HttpStatus.OK);
+                                    locale)),
+                            HttpStatus.OK);
                 }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -169,12 +174,12 @@ public class TurSNSiteSearchAPI {
                 .findByTurSNSiteAndHlAndEnabled(turSNSite, 1, 1));
     }
 
-
     @GetMapping("locales")
     public List<TurSNSiteLocaleBean> turSNSiteSearchLocale(@PathVariable String siteName) {
         return turSNSiteRepository.findByName(siteName).map(turSNSite -> {
             try {
-                return turSNSearchProcess.responseLocales(turSNSite, new URI(String.format("/api/sn/%s/search", siteName)));
+                return turSNSearchProcess.responseLocales(turSNSite,
+                        new URI(String.format("/api/sn/%s/search", siteName)));
             } catch (URISyntaxException e) {
                 log.error(e.getMessage(), e);
             }
@@ -201,7 +206,7 @@ public class TurSNSiteSearchAPI {
     }
 
     private String isLatestImpersonate(Optional<TurSNSearchLatestRequestBean> turSNSearchLatestRequestBean,
-                                       Principal principal) {
+            Principal principal) {
         if (turSNSearchLatestRequestBean.isPresent() && turSNSearchLatestRequestBean.get().getUserId() != null) {
             return turSNSearchLatestRequestBean.get().getUserId();
         } else {

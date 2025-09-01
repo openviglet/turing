@@ -18,19 +18,20 @@
 
 package com.viglet.turing.connector.api;
 
-import com.google.inject.Inject;
-import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
-import com.viglet.turing.connector.domain.TurConnectorMonitoring;
-import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
-import com.viglet.turing.connector.service.TurConnectorIndexingService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
+import com.viglet.turing.connector.domain.TurConnectorMonitoring;
+import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
+import com.viglet.turing.connector.service.TurConnectorIndexingService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/v2/connector/monitoring/indexing")
@@ -39,7 +40,6 @@ public class TurConnectorMonitoringApi {
     private final TurConnectorIndexingService indexingService;
     private final TurConnectorPlugin plugin;
 
-    @Inject
     public TurConnectorMonitoringApi(TurConnectorIndexingService indexingService, TurConnectorPlugin plugin) {
         this.indexingService = indexingService;
         this.plugin = plugin;

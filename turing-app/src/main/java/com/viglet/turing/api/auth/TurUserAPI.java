@@ -21,25 +21,33 @@
 
 package com.viglet.turing.api.auth;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.bean.TurCurrentUser;
 import com.viglet.turing.persistence.model.auth.TurGroup;
 import com.viglet.turing.persistence.model.auth.TurUser;
 import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
 import com.viglet.turing.persistence.repository.auth.TurUserRepository;
 import com.viglet.turing.properties.TurConfigProperties;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Alexandre Oliveira
@@ -61,10 +69,9 @@ public class TurUserAPI {
     private final TurGroupRepository turGroupRepository;
     private final TurConfigProperties turConfigProperties;
 
-    @Inject
     public TurUserAPI(PasswordEncoder passwordEncoder, TurUserRepository turUserRepository,
-                      TurGroupRepository turGroupRepository,
-                      TurConfigProperties turConfigProperties) {
+            TurGroupRepository turGroupRepository,
+            TurConfigProperties turConfigProperties) {
         this.passwordEncoder = passwordEncoder;
         this.turUserRepository = turUserRepository;
         this.turGroupRepository = turGroupRepository;
@@ -153,8 +160,7 @@ public class TurUserAPI {
         if (!username.equalsIgnoreCase(ADMIN)) {
             turUserRepository.deleteByUsername(username);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

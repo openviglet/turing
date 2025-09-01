@@ -18,22 +18,23 @@
 
 package com.viglet.turing.connector.plugin.aem.onstartup;
 
-import com.google.inject.Inject;
-import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemConfigVar;
-import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemConfigVarRepository;
-import com.viglet.turing.connector.plugin.aem.export.TurAemExchangeProcess;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.viglet.turing.connector.plugin.aem.export.TurAemExchangeProcess;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemConfigVar;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemConfigVarRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -44,16 +45,16 @@ public class TurAemOnStartupJpa implements ApplicationRunner {
     private final TurAemConfigVarRepository turAemConfigVarRepository;
     private final TurAemExchangeProcess turAemExchangeProcess;
 
-    @Inject
     public TurAemOnStartupJpa(TurAemConfigVarRepository turAemConfigVarRepository,
-                              TurAemExchangeProcess turAemExchangeProcess) {
+            TurAemExchangeProcess turAemExchangeProcess) {
         this.turAemConfigVarRepository = turAemConfigVarRepository;
         this.turAemExchangeProcess = turAemExchangeProcess;
     }
 
     @Override
     public void run(ApplicationArguments arg0) {
-        if (this.turAemConfigVarRepository.findById(FIRST_TIME).isPresent()) return;
+        if (this.turAemConfigVarRepository.findById(FIRST_TIME).isPresent())
+            return;
 
         log.info("First Time Configuration ...");
         String exportPath = System.getProperty("user.dir") + File.separator + "export";
@@ -62,7 +63,8 @@ public class TurAemOnStartupJpa implements ApplicationRunner {
         String pattern = "*.json";
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, pattern)) {
             for (Path exportFile : stream) {
-                if (!exportFile.toFile().exists()) continue;
+                if (!exportFile.toFile().exists())
+                    continue;
 
                 turAemExchangeProcess.importFromFile(exportFile.toFile());
             }

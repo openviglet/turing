@@ -20,15 +20,15 @@
  */
 package com.viglet.turing.onstartup.auth;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
-import com.viglet.turing.persistence.repository.auth.TurUserRepository;
+import java.util.Collections;
+import java.util.Date;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Date;
+import com.viglet.turing.persistence.model.auth.TurUser;
+import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
+import com.viglet.turing.persistence.repository.auth.TurUserRepository;
 
 @Component
 public class TurUserOnStartup {
@@ -36,10 +36,9 @@ public class TurUserOnStartup {
     private final TurUserRepository turUserRepository;
     private final TurGroupRepository turGroupRepository;
 
-    @Inject
     public TurUserOnStartup(PasswordEncoder passwordEncoder,
-                            TurUserRepository turUserRepository,
-                            TurGroupRepository turGroupRepository) {
+            TurUserRepository turUserRepository,
+            TurGroupRepository turGroupRepository) {
         this.passwordEncoder = passwordEncoder;
         this.turUserRepository = turUserRepository;
         this.turGroupRepository = turGroupRepository;

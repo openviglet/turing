@@ -21,8 +21,23 @@
 
 package com.viglet.turing.api.sn.job;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.jms.core.JmsMessagingTemplate;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
@@ -36,19 +51,9 @@ import com.viglet.turing.logging.TurLoggingUtils;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.spring.utils.TurSpringUtils;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.jms.core.JmsMessagingTemplate;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -59,9 +64,8 @@ public class TurSNImportAPI {
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurGenAi turGenAi;
 
-    @Inject
     public TurSNImportAPI(JmsMessagingTemplate jmsMessagingTemplate, TurSNSiteRepository turSNSiteRepository,
-                          TurGenAi turGenAi) {
+            TurGenAi turGenAi) {
         this.jmsMessagingTemplate = jmsMessagingTemplate;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turGenAi = turGenAi;
@@ -87,8 +91,9 @@ public class TurSNImportAPI {
                 } else if (turSNJobItem.getTurSNJobAction().equals(TurSNJobAction.DELETE)) {
                     log.error(
                             "Delete Object ID '{}' of '{}' SN Site ({}) was not processed. Because '{}' SN Site doesn't exist",
-                            turSNJobItem.getAttributes() != null ?
-                                    turSNJobItem.getAttributes().get(TurSNFieldName.TYPE) : "empty", siteName,
+                            turSNJobItem.getAttributes() != null ? turSNJobItem.getAttributes().get(TurSNFieldName.TYPE)
+                                    : "empty",
+                            siteName,
                             turSNJobItem.getLocale(), siteName);
                     TurLoggingUtils.setErrorStatus(turSNJobItem, TurIndexingStatus.DEINDEXED, "Site doesn't exist");
                 }
@@ -138,12 +143,10 @@ public class TurSNImportAPI {
     private void sendToGenAi(TurSNJobItems turSNJobItems) {
         turSNJobItems.forEach(turJobItem -> {
             if (isValidJobItem(turJobItem)) {
-                turJobItem.getSiteNames().forEach(siteName ->
-                        turSNSiteRepository.findByName(siteName)
-                                .filter(turSNSite -> turSNSite.getTurSNSiteGenAi() != null
-                                        && turSNSite.getTurSNSiteGenAi().isEnabled())
-                                .ifPresent(turSNSite -> turGenAi.addDocuments(turSNJobItems)
-                                ));
+                turJobItem.getSiteNames().forEach(siteName -> turSNSiteRepository.findByName(siteName)
+                        .filter(turSNSite -> turSNSite.getTurSNSiteGenAi() != null
+                                && turSNSite.getTurSNSiteGenAi().isEnabled())
+                        .ifPresent(turSNSite -> turGenAi.addDocuments(turSNJobItems)));
             }
         });
     }
@@ -151,15 +154,15 @@ public class TurSNImportAPI {
     private void sentQueueInfo(TurSNJobItems turSNJobItems) {
         turSNJobItems.forEach(turSNJobItem -> {
             if (isValidJobItem(turSNJobItem)) {
-                turSNJobItem.getSiteNames().forEach(siteName ->
-                        turSNSiteRepository.findByName(siteName).ifPresentOrElse(turSNSite -> {
-                                    log.info("Sent to queue to {} the Object ID '{}' of '{}' SN Site ({}).",
-                                            actionType(turSNJobItem),
-                                            turSNJobItem.getAttributes().get(TurSNFieldName.ID),
-                                            turSNSite.getName(),
-                                            turSNJobItem.getLocale());
-                                    TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.SENT_TO_QUEUE);
-                                },
+                turSNJobItem.getSiteNames()
+                        .forEach(siteName -> turSNSiteRepository.findByName(siteName).ifPresentOrElse(turSNSite -> {
+                            log.info("Sent to queue to {} the Object ID '{}' of '{}' SN Site ({}).",
+                                    actionType(turSNJobItem),
+                                    turSNJobItem.getAttributes().get(TurSNFieldName.ID),
+                                    turSNSite.getName(),
+                                    turSNJobItem.getLocale());
+                            TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.SENT_TO_QUEUE);
+                        },
                                 () -> importUnsuccessful(siteName, turSNJobItems)));
             }
         });

@@ -1,17 +1,18 @@
 package com.viglet.turing.onstartup.auth;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.auth.TurPrivilege;
-import com.viglet.turing.persistence.model.auth.TurRole;
-import com.viglet.turing.persistence.repository.auth.TurPrivilegeRepository;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Component;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.viglet.turing.persistence.model.auth.TurPrivilege;
+import com.viglet.turing.persistence.model.auth.TurRole;
+import com.viglet.turing.persistence.repository.auth.TurPrivilegeRepository;
+import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
+
+import jakarta.transaction.Transactional;
 
 @Component
 public class TurRoleOnStartup {
@@ -19,7 +20,6 @@ public class TurRoleOnStartup {
 
     private final TurRoleRepository turRoleRepository;
 
-    @Inject
     public TurRoleOnStartup(TurPrivilegeRepository turPrivilegeRepository, TurRoleRepository turRoleRepository) {
         this.turPrivilegeRepository = turPrivilegeRepository;
         this.turRoleRepository = turRoleRepository;
@@ -27,10 +27,8 @@ public class TurRoleOnStartup {
 
     @Transactional
     public void createDefaultRows() {
-        TurPrivilege readPrivilege
-                = createPrivilegeIfNotFound("READ_PRIVILEGE");
-        TurPrivilege writePrivilege
-                = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+        TurPrivilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
+        TurPrivilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
         List<TurPrivilege> adminPrivileges = Arrays.asList(
                 readPrivilege, writePrivilege);
@@ -38,6 +36,7 @@ public class TurRoleOnStartup {
         createRoleIfNotFound("ROLE_USER", Collections.singletonList(readPrivilege));
 
     }
+
     @Transactional
     public TurPrivilege createPrivilegeIfNotFound(String name) {
 
@@ -58,8 +57,6 @@ public class TurRoleOnStartup {
             role = new TurRole(name);
             role.setTurPrivileges(privileges);
             turRoleRepository.save(role);
-
-
 
         }
     }

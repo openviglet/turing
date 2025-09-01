@@ -18,16 +18,18 @@
 
 package com.viglet.turing.connector.plugin.aem.export;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.connector.plugin.aem.export.bean.*;
-import com.viglet.turing.connector.plugin.aem.persistence.model.*;
-import com.viglet.turing.connector.plugin.aem.persistence.repository.*;
-import com.viglet.turing.spring.utils.TurSpringUtils;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -35,12 +37,30 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.connector.plugin.aem.export.bean.TurAemAttribExchange;
+import com.viglet.turing.connector.plugin.aem.export.bean.TurAemExchange;
+import com.viglet.turing.connector.plugin.aem.export.bean.TurAemModelExchange;
+import com.viglet.turing.connector.plugin.aem.export.bean.TurAemSourceExchange;
+import com.viglet.turing.connector.plugin.aem.export.bean.TurAemTargetAttrExchange;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemAttributeSpecification;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemPluginModel;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSourceAttribute;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSourceLocalePath;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemTargetAttribute;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemAttributeSpecificationRepository;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemPluginModelRepository;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceAttributeRepository;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceLocalePathRepository;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
+import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemTargetAttributeRepository;
+import com.viglet.turing.spring.utils.TurSpringUtils;
+
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Alexandre Oliveira
@@ -58,13 +78,12 @@ public class TurAemExchangeProcess {
     private final TurAemSourceAttributeRepository turAemSourceAttributeRepository;
     private final TurAemSourceLocalePathRepository turAemSourceLocalePathRepository;
 
-    @Inject
     public TurAemExchangeProcess(TurAemSourceRepository turAemSourceRepository,
-                                 TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository,
-                                 TurAemPluginModelRepository turAemModelRepository,
-                                 TurAemTargetAttributeRepository turAemTargetAttributeRepository,
-                                 TurAemSourceAttributeRepository turAemSourceAttributeRepository,
-                                 TurAemSourceLocalePathRepository turAemSourceLocalePathRepository) {
+            TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository,
+            TurAemPluginModelRepository turAemModelRepository,
+            TurAemTargetAttributeRepository turAemTargetAttributeRepository,
+            TurAemSourceAttributeRepository turAemSourceAttributeRepository,
+            TurAemSourceLocalePathRepository turAemSourceLocalePathRepository) {
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemAttributeSpecificationRepository = turAemAttributeSpecificationRepository;
         this.turAemModelRepository = turAemModelRepository;
@@ -73,19 +92,19 @@ public class TurAemExchangeProcess {
         this.turAemSourceLocalePathRepository = turAemSourceLocalePathRepository;
     }
 
-    private Collection<TurAemAttribExchange> attributeExchange(Collection<TurAemAttributeSpecification> attributeSpecifications) {
+    private Collection<TurAemAttribExchange> attributeExchange(
+            Collection<TurAemAttributeSpecification> attributeSpecifications) {
         Collection<TurAemAttribExchange> attribExchanges = new ArrayList<>();
-        attributeSpecifications.forEach(attributeSpecification ->
-                attribExchanges.add(TurAemAttribExchange.builder()
-                        .name(attributeSpecification.getName())
-                        .className(attributeSpecification.getClassName())
-                        .text(attributeSpecification.getText())
-                        .type(attributeSpecification.getType())
-                        .mandatory(attributeSpecification.isMandatory())
-                        .multiValued(attributeSpecification.isMultiValued())
-                        .description(attributeSpecification.getDescription())
-                        .facet(attributeSpecification.isFacet())
-                        .build()));
+        attributeSpecifications.forEach(attributeSpecification -> attribExchanges.add(TurAemAttribExchange.builder()
+                .name(attributeSpecification.getName())
+                .className(attributeSpecification.getClassName())
+                .text(attributeSpecification.getText())
+                .type(attributeSpecification.getType())
+                .mandatory(attributeSpecification.isMandatory())
+                .multiValued(attributeSpecification.isMultiValued())
+                .description(attributeSpecification.getDescription())
+                .facet(attributeSpecification.isFacet())
+                .build()));
         return attribExchanges;
     }
 
@@ -123,7 +142,8 @@ public class TurAemExchangeProcess {
                                         .author(turAemSource.isAuthor())
                                         .publish(turAemSource.isPublish())
                                         .name(turAemSource.getName())
-                                        .build()).toList()));
+                                        .build())
+                                .toList()));
                 File zipFile = new File(tmpDir.getAbsolutePath().concat(File.separator + folderName + ".zip"));
                 TurCommonsUtils.addFilesToZip(exportDir, zipFile);
                 String strDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
@@ -141,7 +161,7 @@ public class TurAemExchangeProcess {
                         FileUtils.deleteDirectory(exportDir);
                         FileUtils.deleteQuietly(zipFile);
                     } catch (Exception e) {
-                       log.error(e.getMessage(), e);
+                        log.error(e.getMessage(), e);
                     }
                 };
             } catch (Exception e) {
@@ -154,7 +174,8 @@ public class TurAemExchangeProcess {
     public void importFromMultipartFile(MultipartFile multipartFile) {
         File extractFolder = TurSpringUtils.extractZipFile(multipartFile);
         File parentExtractFolder = null;
-        if (!(new File(extractFolder, EXPORT_FILE).exists()) && Objects.requireNonNull(extractFolder.listFiles()).length == 1) {
+        if (!(new File(extractFolder, EXPORT_FILE).exists())
+                && Objects.requireNonNull(extractFolder.listFiles()).length == 1) {
             for (File fileOrDirectory : Objects.requireNonNull(extractFolder.listFiles())) {
                 if (fileOrDirectory.isDirectory() && new File(fileOrDirectory, EXPORT_FILE).exists()) {
                     parentExtractFolder = extractFolder;
@@ -197,10 +218,9 @@ public class TurAemExchangeProcess {
 
     private void setSources(TurAemExchange turAemExchange) {
         turAemExchange.getSources()
-                .stream().filter(turAemSourceExchange ->
-                        turAemSourceRepository.findById(turAemSourceExchange.getId()).isEmpty())
-                .forEach(turAemSourceExchange ->
-                {
+                .stream()
+                .filter(turAemSourceExchange -> turAemSourceRepository.findById(turAemSourceExchange.getId()).isEmpty())
+                .forEach(turAemSourceExchange -> {
                     TurAemSource source = setSource(turAemSourceExchange);
                     setFacetNames(turAemSourceExchange, source);
                     setModels(turAemSourceExchange, source);
@@ -208,8 +228,7 @@ public class TurAemExchangeProcess {
     }
 
     private void setModels(TurAemSourceExchange turAemSourceExchange, TurAemSource turAemSource) {
-        turAemSourceExchange.getModels().forEach(model ->
-                setTargetAttributes(model, setModel(model, turAemSource)));
+        turAemSourceExchange.getModels().forEach(model -> setTargetAttributes(model, setModel(model, turAemSource)));
     }
 
     private @NotNull TurAemPluginModel setModel(TurAemModelExchange model, TurAemSource turAemSource) {
@@ -221,12 +240,12 @@ public class TurAemExchangeProcess {
     }
 
     private void setTargetAttributes(TurAemModelExchange model, TurAemPluginModel turAemModel) {
-        model.getTargetAttrs().forEach(targetAttr ->
-                setSourceAttributes(targetAttr, setTargetAttribute(turAemModel, targetAttr)));
+        model.getTargetAttrs()
+                .forEach(targetAttr -> setSourceAttributes(targetAttr, setTargetAttribute(turAemModel, targetAttr)));
     }
 
     private @NotNull TurAemTargetAttribute setTargetAttribute(TurAemPluginModel turAemModel,
-                                                              TurAemTargetAttrExchange targetAttr) {
+            TurAemTargetAttrExchange targetAttr) {
         return turAemTargetAttributeRepository.save(TurAemTargetAttribute.builder()
                 .name(targetAttr.getName())
                 .turAemModel(turAemModel)
@@ -234,27 +253,27 @@ public class TurAemExchangeProcess {
     }
 
     private void setSourceAttributes(TurAemTargetAttrExchange targetAttr, TurAemTargetAttribute turAemTargetAttribute) {
-        targetAttr.getSourceAttrs().forEach(sourceAttr ->
-                turAemSourceAttributeRepository.save(TurAemSourceAttribute.builder()
+        targetAttr.getSourceAttrs()
+                .forEach(sourceAttr -> turAemSourceAttributeRepository.save(TurAemSourceAttribute.builder()
                         .name(sourceAttr.getName())
                         .className(sourceAttr.getClassName())
                         .text(sourceAttr.getText())
                         .turAemTargetAttribute(turAemTargetAttribute)
-                        .build()
-                ));
+                        .build()));
     }
 
     private void setFacetNames(TurAemSourceExchange turAemSourceExchange, TurAemSource turAemSource) {
-        turAemSourceExchange.getAttributes().forEach(attribute ->
-                setFacetName(attribute, setAttributeMapping(turAemSource, attribute)));
+        turAemSourceExchange.getAttributes()
+                .forEach(attribute -> setFacetName(attribute, setAttributeMapping(turAemSource, attribute)));
     }
 
     private void setFacetName(TurAemAttribExchange attribute,
-                              TurAemAttributeSpecification turAemAttributeSpecification) {
+            TurAemAttributeSpecification turAemAttributeSpecification) {
         turAemAttributeSpecification.setFacetNames(attribute.getFacetName());
     }
 
-    private TurAemAttributeSpecification setAttributeMapping(TurAemSource turAemSource, TurAemAttribExchange attribute) {
+    private TurAemAttributeSpecification setAttributeMapping(TurAemSource turAemSource,
+            TurAemAttribExchange attribute) {
         return turAemAttributeSpecificationRepository.save(TurAemAttributeSpecification.builder()
                 .name(attribute.getName())
                 .className(attribute.getClassName())
@@ -288,8 +307,8 @@ public class TurAemExchangeProcess {
                 .name(turAemSourceExchange.getName())
                 .build();
         turAemSourceRepository.save(turAemSource);
-        turAemSourceExchange.getLocalePaths().forEach(localePath ->
-                turAemSourceLocalePathRepository.save(TurAemSourceLocalePath.builder()
+        turAemSourceExchange.getLocalePaths()
+                .forEach(localePath -> turAemSourceLocalePathRepository.save(TurAemSourceLocalePath.builder()
                         .locale(localePath.getLocale())
                         .path(localePath.getPath())
                         .turAemSource(turAemSource).build()));

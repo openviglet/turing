@@ -18,17 +18,26 @@
 
 package com.viglet.turing.connector.plugin.aem.api;
 
-import com.google.inject.Inject;
-import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -39,7 +48,6 @@ public class TurAemApi {
     private final List<String> currentContentIdList = new ArrayList<>();
     private LocalDateTime currentStandAloneUpdate = LocalDateTime.now();
 
-    @Inject
     public TurAemApi(TurAemPluginProcess turAemPluginProcess) {
         this.turAemPluginProcess = turAemPluginProcess;
     }
@@ -49,10 +57,9 @@ public class TurAemApi {
         return statusOk();
     }
 
-
     @PostMapping("index/{source}")
     public ResponseEntity<Map<String, String>> indexContentId(@PathVariable String source,
-                                                              @RequestBody TurAemPathList pathList) {
+            @RequestBody TurAemPathList pathList) {
         if (hasNonRepeatedRequest(source, pathList.getPaths())) {
             turAemPluginProcess.sentToIndexStandaloneAsync(source, pathList);
         }
@@ -67,7 +74,8 @@ public class TurAemApi {
 
     private boolean hasNonRepeatedRequest(String name, List<String> paths) {
         Duration duration = Duration.between(currentStandAloneUpdate, LocalDateTime.now());
-        if (duration.getSeconds() > 30L) return true;
+        if (duration.getSeconds() > 30L)
+            return true;
         new ArrayList<>(paths).forEach(path -> {
             String pathName = getSourceWithContentId(name, path);
             if (currentContentIdList.contains(pathName)) {
@@ -75,7 +83,8 @@ public class TurAemApi {
                 log.warn("Skipping. Repeated request: {}", pathName);
             }
         });
-        if (hasPath(paths)) updateCurrentRequests(name, paths);
+        if (hasPath(paths))
+            updateCurrentRequests(name, paths);
         return hasPath(paths);
     }
 

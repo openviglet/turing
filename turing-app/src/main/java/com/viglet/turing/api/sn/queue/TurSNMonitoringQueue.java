@@ -20,18 +20,17 @@
  */
 package com.viglet.turing.api.sn.queue;
 
-import com.google.inject.Inject;
-import com.viglet.turing.sn.TurSNQueue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.viglet.turing.sn.TurSNQueue;
 
 @RestController
 @RequestMapping("/api/queue")
 public class TurSNMonitoringQueue {
 	private final TurSNQueue turSNQueue;
 
-	@Inject
 	public TurSNMonitoringQueue(TurSNQueue turSNQueue) {
 		this.turSNQueue = turSNQueue;
 	}

@@ -20,9 +20,18 @@
  */
 package com.viglet.turing.se;
 
-import com.google.inject.Inject;
-import com.viglet.turing.solr.TurSolrInstance;
-import lombok.extern.slf4j.Slf4j;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.schema.AnalyzerDefinition;
@@ -34,12 +43,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import com.viglet.turing.solr.TurSolrInstance;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -47,7 +53,6 @@ public class TurSEStopWord {
 
     private final ResourceLoader resourceloader;
 
-    @Inject
     public TurSEStopWord(ResourceLoader resourceloader) {
         this.resourceloader = resourceloader;
     }
@@ -62,8 +67,8 @@ public class TurSEStopWord {
 
     public List<String> getStopWords(TurSolrInstance turSolrInstance) {
         return Optional.ofNullable(Objects
-                        .requireNonNull(getStopwordsStreamFromSolr(turSolrInstance))
-                        .orElse(getStopWordsFromClassPath()))
+                .requireNonNull(getStopwordsStreamFromSolr(turSolrInstance))
+                .orElse(getStopWordsFromClassPath()))
                 .map(stopwords -> {
                     try (InputStreamReader isr = new InputStreamReader(stopwords)) {
                         return addStopwordsToList(isr);
@@ -127,7 +132,7 @@ public class TurSEStopWord {
     }
 
     private InputStream getStopWord(TurSolrInstance turSolrInstance,
-                                    AnalyzerDefinition analyzer) {
+            AnalyzerDefinition analyzer) {
         InputStream stopwordsStream = null;
         if (analyzer.getFilters() != null && !analyzer.getFilters().isEmpty())
             for (Map<String, Object> fieldTypeMap : analyzer.getFilters()) {
@@ -135,7 +140,8 @@ public class TurSEStopWord {
                     String url = String.format(ADMIN_FILE_URL, turSolrInstance.getSolrUrl().toString(),
                             APPLICATION_OCTET_STREAM_UTF8, fieldTypeMap.get(WORDS_ATTRIBUTE));
                     ResponseEntity<String> response = new RestTemplate().getForEntity(url, String.class);
-                    stopwordsStream = IOUtils.toInputStream(Objects.requireNonNull(response.getBody()), StandardCharsets.UTF_8);
+                    stopwordsStream = IOUtils.toInputStream(Objects.requireNonNull(response.getBody()),
+                            StandardCharsets.UTF_8);
                 }
 
             }

@@ -1,17 +1,18 @@
 package com.viglet.turing.connector.plugin.webcrawler.onstartup;
 
-import com.google.inject.Inject;
-import com.viglet.turing.connector.plugin.webcrawler.export.TurWCExchangeProcess;
-import com.viglet.turing.connector.plugin.webcrawler.persistence.model.TurWCConfigVar;
-import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCConfigVarRepository;
-import lombok.extern.slf4j.Slf4j;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.viglet.turing.connector.plugin.webcrawler.export.TurWCExchangeProcess;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.model.TurWCConfigVar;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCConfigVarRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -21,9 +22,8 @@ public class TurWCOnStartupJpa implements ApplicationRunner {
     private final TurWCConfigVarRepository turWCConfigVarRepository;
     private final TurWCExchangeProcess turWCExchangeProcess;
 
-    @Inject
     public TurWCOnStartupJpa(TurWCConfigVarRepository turWCConfigVarRepository,
-                             TurWCExchangeProcess turWCExchangeProcess) {
+            TurWCExchangeProcess turWCExchangeProcess) {
         this.turWCConfigVarRepository = turWCConfigVarRepository;
         this.turWCExchangeProcess = turWCExchangeProcess;
     }

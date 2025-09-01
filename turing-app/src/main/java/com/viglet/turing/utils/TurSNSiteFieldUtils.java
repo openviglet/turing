@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.persistence.model.sn.TurSNSite;
@@ -35,7 +34,6 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepositor
 public class TurSNSiteFieldUtils {
 	private final TurSNSiteFieldRepository turSNSiteFieldRepository;
 
-	@Inject
 	public TurSNSiteFieldUtils(TurSNSiteFieldRepository turSNSiteFieldRepository) {
 		this.turSNSiteFieldRepository = turSNSiteFieldRepository;
 	}

@@ -1,7 +1,5 @@
 package com.viglet.turing.solr;
 
-import java.io.Serializable;
-
 public enum TurSolrFieldAction {
     ADD("add-field"),
     REPLACE("replace-field");

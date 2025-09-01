@@ -20,11 +20,11 @@
  */
 package com.viglet.turing.onstartup.llm;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
-import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
 
 @Component
 @Transactional
@@ -32,7 +32,6 @@ public class TurLLMVendorOnStartup {
 
 	private final TurLLMVendorRepository turLLMVendorRepository;
 
-	@Inject
 	public TurLLMVendorOnStartup(TurLLMVendorRepository turLLMVendorRepository) {
 		this.turLLMVendorRepository = turLLMVendorRepository;
 	}

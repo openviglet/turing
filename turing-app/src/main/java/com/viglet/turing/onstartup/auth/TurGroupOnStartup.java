@@ -20,15 +20,14 @@
  */
 package com.viglet.turing.onstartup.auth;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.auth.TurRole;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
+import java.util.Collections;
+
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.persistence.model.auth.TurGroup;
+import com.viglet.turing.persistence.model.auth.TurRole;
 import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
-
-import java.util.Collections;
+import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
 
 @Component
 public class TurGroupOnStartup {
@@ -36,7 +35,6 @@ public class TurGroupOnStartup {
 
 	private final TurRoleRepository turRoleRepository;
 
-	@Inject
 	public TurGroupOnStartup(TurGroupRepository turGroupRepository, TurRoleRepository turRoleRepository) {
 		this.turGroupRepository = turGroupRepository;
 		this.turRoleRepository = turRoleRepository;

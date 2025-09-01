@@ -20,15 +20,10 @@
  */
 package com.viglet.turing.api.integration;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
-import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+
 import org.apache.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,9 +31,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
+import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
+import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -49,22 +50,20 @@ public class TurIntegrationAPI {
     public static final String POST = "POST";
     private final TurIntegrationInstanceRepository turIntegrationInstanceRepository;
 
-    @Inject
     TurIntegrationAPI(TurIntegrationInstanceRepository turIntegrationInstanceRepository) {
         this.turIntegrationInstanceRepository = turIntegrationInstanceRepository;
     }
 
-    @RequestMapping(value = "**",
-            method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "**", method = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
+            RequestMethod.DELETE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public void indexAnyRequest(HttpServletRequest request, HttpServletResponse response,
-                                @PathVariable String integrationId) {
-        turIntegrationInstanceRepository.findById(integrationId).ifPresent(turIntegrationInstance ->
-                proxy(turIntegrationInstance, request, response));
+            @PathVariable String integrationId) {
+        turIntegrationInstanceRepository.findById(integrationId)
+                .ifPresent(turIntegrationInstance -> proxy(turIntegrationInstance, request, response));
     }
 
     public void proxy(TurIntegrationInstance turIntegrationInstance, HttpServletRequest request,
-                      HttpServletResponse response) {
+            HttpServletResponse response) {
         try {
             String endpoint = turIntegrationInstance.getEndpoint() +
                     request.getRequestURI()
@@ -73,8 +72,8 @@ public class TurIntegrationAPI {
             HttpURLConnection connectorEnpoint = (HttpURLConnection) URI.create(endpoint)
                     .toURL().openConnection();
             connectorEnpoint.setRequestMethod(request.getMethod());
-            request.getHeaderNames().asIterator().forEachRemaining(headerName ->
-                    connectorEnpoint.setRequestProperty(headerName, request.getHeader(headerName)));
+            request.getHeaderNames().asIterator().forEachRemaining(
+                    headerName -> connectorEnpoint.setRequestProperty(headerName, request.getHeader(headerName)));
             String method = request.getMethod();
             if (method.equals(PUT) || method.equals(POST)) {
                 connectorEnpoint.setDoOutput(true);
@@ -86,13 +85,12 @@ public class TurIntegrationAPI {
             response.setStatus(connectorEnpoint.getResponseCode());
             ByteStreams.copy(connectorEnpoint.getInputStream(), response.getOutputStream());
             connectorEnpoint.getHeaderFields()
-                    .forEach((header, values) ->
-                            values.forEach(value -> {
-                                if (header !=null && !header.equals(HttpHeaders.TRANSFER_ENCODING)) {
-                                    log.debug("Header: {} = {}", header, value);
-                                    response.setHeader(header, value);
-                                }
-                            }));
+                    .forEach((header, values) -> values.forEach(value -> {
+                        if (header != null && !header.equals(HttpHeaders.TRANSFER_ENCODING)) {
+                            log.debug("Header: {} = {}", header, value);
+                            response.setHeader(header, value);
+                        }
+                    }));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

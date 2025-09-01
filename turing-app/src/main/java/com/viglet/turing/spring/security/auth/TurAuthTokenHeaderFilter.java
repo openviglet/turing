@@ -1,13 +1,8 @@
 package com.viglet.turing.spring.security.auth;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.persistence.repository.auth.TurUserRepository;
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,8 +10,14 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Collections;
+import com.viglet.turing.persistence.model.auth.TurUser;
+import com.viglet.turing.persistence.repository.auth.TurUserRepository;
+import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class TurAuthTokenHeaderFilter extends OncePerRequestFilter {
@@ -25,7 +26,6 @@ public class TurAuthTokenHeaderFilter extends OncePerRequestFilter {
     private final TurUserRepository turUserRepository;
     private final TurDevTokenRepository turDevTokenRepository;
 
-    @Inject
     public TurAuthTokenHeaderFilter(TurUserRepository turUserRepository, TurDevTokenRepository turDevTokenRepository) {
         this.turUserRepository = turUserRepository;
         this.turDevTokenRepository = turDevTokenRepository;
@@ -33,15 +33,14 @@ public class TurAuthTokenHeaderFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain)
+            @NotNull FilterChain filterChain)
             throws ServletException, IOException {
         String appId = request.getHeader(KEY);
         if (appId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             turDevTokenRepository.findByToken(appId).ifPresent(token -> {
                 TurUser turUser = turUserRepository.findByUsername(token.getCreatedBy());
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                turUser, null, Collections.emptyList());
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        turUser, null, Collections.emptyList());
                 authenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

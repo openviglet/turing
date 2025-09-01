@@ -21,20 +21,28 @@
 
 package com.viglet.turing.api.sn.console;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersFieldRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersFieldRepository;
+import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * @author Alexandre Oliveira
@@ -49,10 +57,10 @@ public class TurSNSiteMergeProvidersAPI {
 	private final TurSNSiteRepository turSNSiteRepository;
 	private final TurSNSiteMergeProvidersRepository turSNSiteMergeRepository;
 	private final TurSNSiteMergeProvidersFieldRepository turSNSiteMergeFieldRepository;
-	@Inject
+
 	public TurSNSiteMergeProvidersAPI(TurSNSiteRepository turSNSiteRepository,
-									  TurSNSiteMergeProvidersRepository turSNSiteMergeRepository,
-									  TurSNSiteMergeProvidersFieldRepository turSNSiteMergeFieldRepository) {
+			TurSNSiteMergeProvidersRepository turSNSiteMergeRepository,
+			TurSNSiteMergeProvidersFieldRepository turSNSiteMergeFieldRepository) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSNSiteMergeRepository = turSNSiteMergeRepository;
 		this.turSNSiteMergeFieldRepository = turSNSiteMergeFieldRepository;
@@ -71,7 +79,8 @@ public class TurSNSiteMergeProvidersAPI {
 		Optional<TurSNSiteMergeProviders> turSNSiteMergeOptional = turSNSiteMergeRepository.findById(id);
 		if (turSNSiteMergeOptional.isPresent()) {
 			TurSNSiteMergeProviders turSNSiteMerge = turSNSiteMergeOptional.get();
-			turSNSiteMerge.setOverwrittenFields(turSNSiteMergeFieldRepository.findByTurSNSiteMergeProviders(turSNSiteMerge));
+			turSNSiteMerge
+					.setOverwrittenFields(turSNSiteMergeFieldRepository.findByTurSNSiteMergeProviders(turSNSiteMerge));
 			return turSNSiteMerge;
 		} else {
 			return new TurSNSiteMergeProviders();
@@ -80,7 +89,8 @@ public class TurSNSiteMergeProvidersAPI {
 
 	@Operation(summary = "Update a Semantic Navigation Site Merge Providers")
 	@PutMapping("/{id}")
-	public TurSNSiteMergeProviders turSNSiteMergeUpdate(@PathVariable String id, @RequestBody TurSNSiteMergeProviders turSNSiteMerge, @PathVariable String ignoredSnSiteId) {
+	public TurSNSiteMergeProviders turSNSiteMergeUpdate(@PathVariable String id,
+			@RequestBody TurSNSiteMergeProviders turSNSiteMerge, @PathVariable String ignoredSnSiteId) {
 		return this.turSNSiteMergeRepository.findById(id).map(turSNSiteMergeEdit -> {
 			turSNSiteMergeEdit.setProviderFrom(turSNSiteMerge.getProviderFrom());
 			turSNSiteMergeEdit.setProviderTo(turSNSiteMerge.getProviderTo());
@@ -111,7 +121,8 @@ public class TurSNSiteMergeProvidersAPI {
 
 	@Operation(summary = "Create a Semantic Navigation Site Merge Providers")
 	@PostMapping
-	public TurSNSiteMergeProviders turSNSiteMergeAdd(@RequestBody TurSNSiteMergeProviders turSNSiteMerge, @PathVariable String ignoredSnSiteId) {
+	public TurSNSiteMergeProviders turSNSiteMergeAdd(@RequestBody TurSNSiteMergeProviders turSNSiteMerge,
+			@PathVariable String ignoredSnSiteId) {
 		turSNSiteMergeRepository.save(turSNSiteMerge);
 		turSNSiteMerge.getOverwrittenFields().forEach(field -> {
 			field.setTurSNSiteMergeProviders(turSNSiteMerge);

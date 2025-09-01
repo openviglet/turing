@@ -20,17 +20,21 @@
  */
 package com.viglet.turing.api.sn.console;
 
-import com.google.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Alexandre Oliveira
@@ -44,9 +48,8 @@ public class TurSNSiteByNameLocaleAPI {
 	private final TurSNSiteRepository turSNSiteRepository;
 	private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
 
-	@Inject
 	public TurSNSiteByNameLocaleAPI(TurSNSiteRepository turSNSiteRepository,
-                                    TurSNSiteLocaleRepository turSNSiteLocaleRepository) {
+			TurSNSiteLocaleRepository turSNSiteLocaleRepository) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
 	}
@@ -55,7 +58,7 @@ public class TurSNSiteByNameLocaleAPI {
 	@GetMapping
 	public List<TurSNSiteLocale> turSNSiteLocaleByNameList(@PathVariable String siteName) {
 		return turSNSiteRepository.findByName(siteName).map(site -> this.turSNSiteLocaleRepository
-						.findByTurSNSite(Sort.by(Sort.Order.asc("language").ignoreCase()), site))
+				.findByTurSNSite(Sort.by(Sort.Order.asc("language").ignoreCase()), site))
 				.orElse(Collections.emptyList());
 	}
 

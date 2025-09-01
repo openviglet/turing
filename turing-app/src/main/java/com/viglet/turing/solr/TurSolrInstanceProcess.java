@@ -20,7 +20,15 @@
  */
 package com.viglet.turing.solr;
 
-import com.google.inject.Inject;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.Locale;
+import java.util.Optional;
+
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.springframework.stereotype.Component;
+
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
@@ -29,15 +37,8 @@ import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 import com.viglet.turing.properties.TurConfigProperties;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.springframework.stereotype.Component;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.util.Locale;
-import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Alexandre Oliveira
@@ -53,13 +54,13 @@ public class TurSolrInstanceProcess {
     private final TurSolrCache turSolrCache;
     private final CloseableHttpClient closeableHttpClient;
     private final TurConfigProperties turConfigProperties;
-    @Inject
+
     public TurSolrInstanceProcess(TurConfigVarRepository turConfigVarRepository,
-                                  TurSEInstanceRepository turSEInstanceRepository,
-                                  TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-                                  TurSNSiteRepository turSNSiteRepository,
-                                  TurSolrCache turSolrCache, CloseableHttpClient closeableHttpClient,
-                                  TurConfigProperties turConfigProperties) {
+            TurSEInstanceRepository turSEInstanceRepository,
+            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteRepository turSNSiteRepository,
+            TurSolrCache turSolrCache, CloseableHttpClient closeableHttpClient,
+            TurConfigProperties turConfigProperties) {
         this.turConfigVarRepository = turConfigVarRepository;
         this.turSEInstanceRepository = turSEInstanceRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -81,7 +82,8 @@ public class TurSolrInstanceProcess {
                     .withConnectionTimeout(turConfigProperties.getSolr().getTimeout())
                     .withSocketTimeout(turConfigProperties.getSolr().getTimeout()).build();
             try {
-                return Optional.of(new TurSolrInstance(closeableHttpClient, httpSolrClient, URI.create(urlString).toURL(), core));
+                return Optional.of(
+                        new TurSolrInstance(closeableHttpClient, httpSolrClient, URI.create(urlString).toURL(), core));
             } catch (MalformedURLException e) {
                 log.error(e.getMessage(), e);
             }
@@ -117,8 +119,8 @@ public class TurSolrInstanceProcess {
         return turConfigVarRepository.findById("DEFAULT_SE")
                 .flatMap(turConfigVar -> turSEInstanceRepository.findById(turConfigVar.getValue())
                         .map(turSEInstance -> getSolrClient(turSEInstance, "turing")))
-                .orElse(turSEInstanceRepository.findAll().stream().findFirst().map(turSEInstance ->
-                        getSolrClient(turSEInstance, "turing")).orElse(null));
+                .orElse(turSEInstanceRepository.findAll().stream().findFirst()
+                        .map(turSEInstance -> getSolrClient(turSEInstance, "turing")).orElse(null));
     }
 
 }

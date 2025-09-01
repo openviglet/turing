@@ -18,19 +18,28 @@
 
 package com.viglet.turing.connector.plugin.aem.api;
 
-import com.google.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceLocalePathRepository;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -42,10 +51,9 @@ public class TurAemSourceApi {
     private final TurAemSourceLocalePathRepository turAemSourceLocalePathRepository;
     private final TurAemPluginProcess turAemPluginProcess;
 
-    @Inject
     public TurAemSourceApi(TurAemSourceRepository turAemSourceRepository,
-                           TurAemSourceLocalePathRepository turAemSourceLocalePathRepository,
-                           TurAemPluginProcess turAemPluginProcess) {
+            TurAemSourceLocalePathRepository turAemSourceLocalePathRepository,
+            TurAemPluginProcess turAemPluginProcess) {
         this.turAemSourceRepository = turAemSourceRepository;
         this.turAemSourceLocalePathRepository = turAemSourceLocalePathRepository;
         this.turAemPluginProcess = turAemPluginProcess;
@@ -73,7 +81,6 @@ public class TurAemSourceApi {
         }).orElse(new TurAemSource());
     }
 
-
     @Operation(summary = "Update a AEM Source")
     @PutMapping("/{id}")
     public TurAemSource turAemSourceUpdate(@PathVariable String id, @RequestBody TurAemSource turAemSource) {
@@ -90,8 +97,7 @@ public class TurAemSourceApi {
             turAemSourceEdit.setRootPath(turAemSource.getRootPath());
             turAemSourceEdit.setLocalePaths(turAemSource.getLocalePaths()
                     .stream()
-                    .peek(localePath ->
-                            localePath.setTurAemSource(turAemSource))
+                    .peek(localePath -> localePath.setTurAemSource(turAemSource))
                     .collect(Collectors.toSet()));
             this.turAemSourceRepository.save(turAemSourceEdit);
             return turAemSourceEdit;

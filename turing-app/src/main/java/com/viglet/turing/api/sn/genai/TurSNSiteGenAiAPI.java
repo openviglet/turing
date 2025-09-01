@@ -21,17 +21,22 @@
 
 package com.viglet.turing.api.sn.genai;
 
-import com.google.inject.Inject;
-import com.viglet.turing.genai.TurChatMessage;
+import java.util.Locale;
+
+import org.apache.commons.lang3.LocaleUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.commons.sn.search.TurSNParamType;
+import com.viglet.turing.genai.TurChatMessage;
 import com.viglet.turing.genai.TurGenAi;
 import com.viglet.turing.genai.TurGenAiContext;
 import com.viglet.turing.sn.TurSNSearchProcess;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.lang3.LocaleUtils;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.Locale;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/sn/{siteName}/chat")
@@ -40,19 +45,18 @@ public class TurSNSiteGenAiAPI {
 	private final TurSNSearchProcess turSNSearchProcess;
 	private final TurGenAi turGenAi;
 
-	@Inject
 	public TurSNSiteGenAiAPI(TurSNSearchProcess turSNSearchProcess, TurGenAi turGenAi) {
-        this.turSNSearchProcess = turSNSearchProcess;
-        this.turGenAi = turGenAi;
+		this.turSNSearchProcess = turSNSearchProcess;
+		this.turGenAi = turGenAi;
 	}
 
 	@GetMapping
 	public TurChatMessage chatMessage(@PathVariable String siteName,
-												@RequestParam(name = TurSNParamType.QUERY) String q,
-												@RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest) {
+			@RequestParam(name = TurSNParamType.QUERY) String q,
+			@RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest) {
 		Locale locale = LocaleUtils.toLocale(localeRequest);
 		if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
-			return turSNSearchProcess.getSNSite(siteName).map( site -> {
+			return turSNSearchProcess.getSNSite(siteName).map(site -> {
 				var turSNSiteGenAI = site.getTurSNSiteGenAi();
 				if (turSNSiteGenAI == null || !turSNSiteGenAI.isEnabled()) {
 					return TurChatMessage.builder()

@@ -21,22 +21,30 @@
 
 package com.viglet.turing.api.sn.console;
 
-import com.google.inject.Inject;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Alexandre Oliveira
@@ -51,10 +59,9 @@ public class TurSNRankingExpressionAPI {
     private final TurSNRankingExpressionRepository turSNRankingExpressionRepository;
     private final TurSNRankingConditionRepository turSNRankingConditionRepository;
 
-    @Inject
     public TurSNRankingExpressionAPI(TurSNSiteRepository turSNSiteRepository,
-                                     TurSNRankingExpressionRepository turSNRankingExpressionRepository,
-                                     TurSNRankingConditionRepository turSNRankingConditionRepository) {
+            TurSNRankingExpressionRepository turSNRankingExpressionRepository,
+            TurSNRankingConditionRepository turSNRankingConditionRepository) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNRankingExpressionRepository = turSNRankingExpressionRepository;
         this.turSNRankingConditionRepository = turSNRankingConditionRepository;
@@ -63,45 +70,44 @@ public class TurSNRankingExpressionAPI {
     @Operation(summary = "Semantic Navigation Ranking Expression List")
     @GetMapping
     public Set<TurSNRankingExpression> turSNRankingExpressionList(@PathVariable String snSiteId) {
-        return turSNSiteRepository.findById(snSiteId).map(site ->
-                        this.turSNRankingExpressionRepository
-                                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), site))
+        return turSNSiteRepository.findById(snSiteId).map(site -> this.turSNRankingExpressionRepository
+                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), site))
                 .orElse(new HashSet<>());
     }
 
     @Operation(summary = "Show a Semantic Navigation Ranking Expression")
     @GetMapping("/{id}")
     public TurSNRankingExpression turSNRankingExpressionGet(@PathVariable String snSiteId, @PathVariable String id) {
-        return turSNSiteRepository.findById(snSiteId).map(site ->
-                        turSNRankingExpressionRepository.findById(id).map(expression -> {
-                                    expression.setTurSNRankingConditions(
-                                            turSNRankingConditionRepository.findByTurSNRankingExpression(expression));
-                                    return expression;
-                                })
-                                .orElse(new TurSNRankingExpression()))
+        return turSNSiteRepository.findById(snSiteId)
+                .map(site -> turSNRankingExpressionRepository.findById(id).map(expression -> {
+                    expression.setTurSNRankingConditions(
+                            turSNRankingConditionRepository.findByTurSNRankingExpression(expression));
+                    return expression;
+                })
+                        .orElse(new TurSNRankingExpression()))
                 .orElse(new TurSNRankingExpression());
 
     }
 
     @Operation(summary = "Update a Semantic Navigation Ranking Expression")
     @PutMapping("/{id}")
-    @CacheEvict(value = {TurSNRankingConditionRepository.FIND_BY_TUR_SN_RANKING_EXPRESSION}, allEntries = true)
+    @CacheEvict(value = { TurSNRankingConditionRepository.FIND_BY_TUR_SN_RANKING_EXPRESSION }, allEntries = true)
     public TurSNRankingExpression turSNRankingExpressionUpdate(@PathVariable String id,
-                                                               @RequestBody TurSNRankingExpression turSNRankingExpression,
-                                                               @PathVariable String snSiteId) {
-        return turSNSiteRepository.findById(snSiteId).map(site ->
-                        turSNRankingExpressionRepository.findById(id).map(turSNRankingExpressionEdit -> {
-                            turSNRankingExpressionEdit.setWeight(turSNRankingExpression.getWeight());
-                            turSNRankingExpressionEdit.setName(turSNRankingExpression.getName());
-                            return getTurSNRankingExpression(turSNRankingExpression, turSNRankingExpressionEdit);
-                        }).orElse(new TurSNRankingExpression()))
+            @RequestBody TurSNRankingExpression turSNRankingExpression,
+            @PathVariable String snSiteId) {
+        return turSNSiteRepository.findById(snSiteId)
+                .map(site -> turSNRankingExpressionRepository.findById(id).map(turSNRankingExpressionEdit -> {
+                    turSNRankingExpressionEdit.setWeight(turSNRankingExpression.getWeight());
+                    turSNRankingExpressionEdit.setName(turSNRankingExpression.getName());
+                    return getTurSNRankingExpression(turSNRankingExpression, turSNRankingExpressionEdit);
+                }).orElse(new TurSNRankingExpression()))
                 .orElse(new TurSNRankingExpression());
     }
 
     @NotNull
 
     private TurSNRankingExpression getTurSNRankingExpression(@RequestBody TurSNRankingExpression turSNRankingExpression,
-                                                             TurSNRankingExpression turSNRankingExpressionEdit) {
+            TurSNRankingExpression turSNRankingExpressionEdit) {
         Set<TurSNRankingCondition> set = new HashSet<>();
         for (TurSNRankingCondition condition : turSNRankingExpression.getTurSNRankingConditions()) {
             condition.setTurSNRankingExpression(turSNRankingExpression);
@@ -115,21 +121,22 @@ public class TurSNRankingExpressionAPI {
     @Transactional
     @Operation(summary = "Delete a Semantic Navigation Ranking Expression")
     @DeleteMapping("/{id}")
-    @CacheEvict(value = {"ranking_expression", TurSNRankingExpressionRepository.FIND_BY_TUR_SN_SITE}, allEntries = true)
+    @CacheEvict(value = { "ranking_expression",
+            TurSNRankingExpressionRepository.FIND_BY_TUR_SN_SITE }, allEntries = true)
     public boolean turSNRankingExpressionDelete(@PathVariable String id, @PathVariable String snSiteId) {
         return turSNSiteRepository.findById(snSiteId).map(site -> {
-                    turSNRankingExpressionRepository.deleteById(id);
-                    return true;
-                })
+            turSNRankingExpressionRepository.deleteById(id);
+            return true;
+        })
                 .orElse(false);
     }
 
     @Operation(summary = "Create a Semantic Navigation Ranking Expression")
     @PostMapping
     public TurSNRankingExpression turSNRankingExpressionAdd(@RequestBody TurSNRankingExpression turSNRankingExpression,
-                                                            @PathVariable String snSiteId) {
-        return turSNSiteRepository.findById(snSiteId).map(site ->
-                        getTurSNRankingExpression(turSNRankingExpression, turSNRankingExpression))
+            @PathVariable String snSiteId) {
+        return turSNSiteRepository.findById(snSiteId)
+                .map(site -> getTurSNRankingExpression(turSNRankingExpression, turSNRankingExpression))
                 .orElse(new TurSNRankingExpression());
     }
 
@@ -137,10 +144,10 @@ public class TurSNRankingExpressionAPI {
     @GetMapping("structure")
     public TurSNRankingExpression turSNRankingExpressionStructure(@PathVariable String snSiteId) {
         return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
-                    TurSNRankingExpression turSNRankingExpression = new TurSNRankingExpression();
-                    turSNRankingExpression.setTurSNSite(turSNSite);
-                    return turSNRankingExpression;
-                })
+            TurSNRankingExpression turSNRankingExpression = new TurSNRankingExpression();
+            turSNRankingExpression.setTurSNSite(turSNSite);
+            return turSNRankingExpression;
+        })
                 .orElse(new TurSNRankingExpression());
     }
 }

@@ -20,7 +20,6 @@
  */
 package com.viglet.turing.onstartup.se;
 
-import com.google.inject.Inject;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,6 @@ public class TurSEVendorOnStartup {
 
 	private final TurSEVendorRepository turSEVendorRepository;
 
-	@Inject
 	public TurSEVendorOnStartup(TurSEVendorRepository turSEVendorRepository) {
 		this.turSEVendorRepository = turSEVendorRepository;
 	}

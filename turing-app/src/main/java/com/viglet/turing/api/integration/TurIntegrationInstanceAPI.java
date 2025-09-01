@@ -20,16 +20,24 @@
  */
 package com.viglet.turing.api.integration;
 
-import com.google.inject.Inject;
+import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
 import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/integration")
@@ -37,8 +45,6 @@ import java.util.List;
 public class TurIntegrationInstanceAPI {
 	private final TurIntegrationInstanceRepository turIntegrationInstanceRepository;
 
-
-	@Inject
 	public TurIntegrationInstanceAPI(TurIntegrationInstanceRepository turIntegrationInstanceRepository) {
 		this.turIntegrationInstanceRepository = turIntegrationInstanceRepository;
 	}
@@ -52,7 +58,7 @@ public class TurIntegrationInstanceAPI {
 	@Operation(summary = "Integration structure")
 	@GetMapping("/structure")
 	public TurIntegrationInstance turIntegrationInstanceStructure() {
-        return new TurIntegrationInstance();
+		return new TurIntegrationInstance();
 
 	}
 
@@ -65,7 +71,7 @@ public class TurIntegrationInstanceAPI {
 	@Operation(summary = "Update a Integration")
 	@PutMapping("/{id}")
 	public TurIntegrationInstance turIntegrationInstanceUpdate(@PathVariable String id,
-															   @RequestBody TurIntegrationInstance turIntegrationInstance) {
+			@RequestBody TurIntegrationInstance turIntegrationInstance) {
 		return turIntegrationInstanceRepository.findById(id).map(turIntegrationInstanceEdit -> {
 			turIntegrationInstanceEdit.setTitle(turIntegrationInstance.getTitle());
 			turIntegrationInstanceEdit.setDescription(turIntegrationInstance.getDescription());
@@ -88,7 +94,8 @@ public class TurIntegrationInstanceAPI {
 
 	@Operation(summary = "Create a Integration")
 	@PostMapping
-	public TurIntegrationInstance turIntegrationInstanceAdd(@RequestBody TurIntegrationInstance turIntegrationInstance) {
+	public TurIntegrationInstance turIntegrationInstanceAdd(
+			@RequestBody TurIntegrationInstance turIntegrationInstance) {
 		this.turIntegrationInstanceRepository.save(turIntegrationInstance);
 		return turIntegrationInstance;
 

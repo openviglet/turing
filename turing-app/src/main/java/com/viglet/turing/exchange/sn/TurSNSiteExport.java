@@ -21,19 +21,6 @@
 
 package com.viglet.turing.exchange.sn;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.exchange.TurExchange;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -45,13 +32,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.exchange.TurExchange;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
+
 @Log4j2
 @Component
 public class TurSNSiteExport {
 
 	private final TurSNSiteRepository turSNSiteRepository;
 
-	@Inject
 	public TurSNSiteExport(TurSNSiteRepository turSNSiteRepository) {
 		this.turSNSiteRepository = turSNSiteRepository;
 	}
@@ -124,7 +124,7 @@ public class TurSNSiteExport {
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
-		} 
+		}
 		return null;
 	}
 

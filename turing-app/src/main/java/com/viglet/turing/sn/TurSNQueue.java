@@ -20,17 +20,15 @@
  */
 package com.viglet.turing.sn;
 
-import com.google.inject.Inject;
+import java.util.Enumeration;
+
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.Enumeration;
 
 @Component
 public class TurSNQueue {
 	private final JmsTemplate jmsTemplate;
 
-	@Inject
 	public TurSNQueue(JmsTemplate jmsTemplate) {
 		this.jmsTemplate = jmsTemplate;
 	}

@@ -21,16 +21,24 @@
 
 package com.viglet.turing.api.system;
 
-import com.google.inject.Inject;
-import com.viglet.turing.persistence.model.system.TurLocale;
-import com.viglet.turing.persistence.repository.system.TurLocaleRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Locale;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.viglet.turing.persistence.model.system.TurLocale;
+import com.viglet.turing.persistence.repository.system.TurLocaleRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/locale")
@@ -38,7 +46,6 @@ import java.util.Locale;
 public class TurLocaleAPI {
 	private final TurLocaleRepository turLocaleRepository;
 
-	@Inject
 	public TurLocaleAPI(TurLocaleRepository turLocaleRepository) {
 		this.turLocaleRepository = turLocaleRepository;
 	}

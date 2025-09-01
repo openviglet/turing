@@ -21,7 +21,24 @@
 
 package com.viglet.turing.api.sn.console;
 
-import com.google.inject.Inject;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
@@ -30,14 +47,9 @@ import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightD
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightTermRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 /**
  * @author Alexandre Oliveira
@@ -53,11 +65,10 @@ public class TurSNSiteSpotlightAPI {
     private final TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository;
     private final TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository;
 
-    @Inject
     public TurSNSiteSpotlightAPI(TurSNSiteRepository turSNSiteRepository,
-                                 TurSNSiteSpotlightRepository turSNSiteSpotlightRepository,
-                                 TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository,
-                                 TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository) {
+            TurSNSiteSpotlightRepository turSNSiteSpotlightRepository,
+            TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository,
+            TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteSpotlightRepository = turSNSiteSpotlightRepository;
         this.turSNSiteSpotlightDocumentRepository = turSNSiteSpotlightDocumentRepository;
@@ -68,7 +79,7 @@ public class TurSNSiteSpotlightAPI {
     @GetMapping
     public List<TurSNSiteSpotlight> turSNSiteSpotlightList(@PathVariable String ignoredSnSiteId) {
         return turSNSiteRepository.findById(ignoredSnSiteId).map(site -> this.turSNSiteSpotlightRepository
-                        .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), site))
+                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), site))
                 .orElse(Collections.emptyList());
     }
 
@@ -89,10 +100,10 @@ public class TurSNSiteSpotlightAPI {
 
     @Operation(summary = "Update a Semantic Navigation Site Spotlight")
     @PutMapping("/{id}")
-    @CacheEvict(value = {"spotlight", "spotlight_term"}, allEntries = true)
+    @CacheEvict(value = { "spotlight", "spotlight_term" }, allEntries = true)
     public TurSNSiteSpotlight turSNSiteSpotlightUpdate(@PathVariable String id,
-                                                       @RequestBody TurSNSiteSpotlight turSNSiteSpotlight,
-                                                       @PathVariable String ignoredSnSiteId) {
+            @RequestBody TurSNSiteSpotlight turSNSiteSpotlight,
+            @PathVariable String ignoredSnSiteId) {
 
         return turSNSiteSpotlightRepository.findById(id).map(turSNSiteSpotlightEdit -> {
             turSNSiteSpotlightEdit.setDescription(turSNSiteSpotlight.getDescription());
@@ -119,11 +130,11 @@ public class TurSNSiteSpotlightAPI {
 
     @NotNull
     private TurSNSiteSpotlight saveSpotlight(@RequestBody TurSNSiteSpotlight turSNSiteSpotlight,
-                                             TurSNSiteSpotlight turSNSiteSpotlightEdit) {
-        turSNSiteSpotlight.getTurSNSiteSpotlightTerms().forEach(term ->
-                term.setTurSNSiteSpotlight(turSNSiteSpotlightEdit));
-        turSNSiteSpotlight.getTurSNSiteSpotlightDocuments().forEach(document ->
-                document.setTurSNSiteSpotlight(turSNSiteSpotlightEdit));
+            TurSNSiteSpotlight turSNSiteSpotlightEdit) {
+        turSNSiteSpotlight.getTurSNSiteSpotlightTerms()
+                .forEach(term -> term.setTurSNSiteSpotlight(turSNSiteSpotlightEdit));
+        turSNSiteSpotlight.getTurSNSiteSpotlightDocuments()
+                .forEach(document -> document.setTurSNSiteSpotlight(turSNSiteSpotlightEdit));
         turSNSiteSpotlightRepository.save(turSNSiteSpotlightEdit);
         return turSNSiteSpotlightEdit;
     }
@@ -131,7 +142,8 @@ public class TurSNSiteSpotlightAPI {
     @Transactional
     @Operation(summary = "Delete a Semantic Navigation Site Spotlight")
     @DeleteMapping("/{id}")
-    @CacheEvict(value = {"spotlight", "spotlight_term", TurSNSiteSpotlightRepository.FIND_BY_TUR_SN_SITE}, allEntries = true)
+    @CacheEvict(value = { "spotlight", "spotlight_term",
+            TurSNSiteSpotlightRepository.FIND_BY_TUR_SN_SITE }, allEntries = true)
     public boolean turSNSiteSpotlightDelete(@PathVariable String id, @PathVariable String ignoredSnSiteId) {
         turSNSiteSpotlightRepository.deleteById(id);
         return true;
@@ -139,9 +151,9 @@ public class TurSNSiteSpotlightAPI {
 
     @Operation(summary = "Create a Semantic Navigation Site Spotlight")
     @PostMapping
-    @CacheEvict(value = {"spotlight", "spotlight_term"}, allEntries = true)
+    @CacheEvict(value = { "spotlight", "spotlight_term" }, allEntries = true)
     public TurSNSiteSpotlight turSNSiteSpotlightAdd(@RequestBody TurSNSiteSpotlight turSNSiteSpotlight,
-                                                    @PathVariable String ignoredSnSiteId) {
+            @PathVariable String ignoredSnSiteId) {
         return saveSpotlight(turSNSiteSpotlight, turSNSiteSpotlight);
     }
 

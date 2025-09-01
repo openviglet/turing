@@ -17,6 +17,17 @@
 
 package com.viglet.turing.exchange;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Objects;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
 /*
  * Copyright (C) 2016-2022 the original author or authors. 
  *
@@ -39,20 +50,11 @@ package com.viglet.turing.exchange;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import com.viglet.turing.exchange.sn.TurSNSiteImport;
 import com.viglet.turing.spring.utils.TurSpringUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Component
 public class TurImportExchange {
@@ -60,7 +62,6 @@ public class TurImportExchange {
 	private final TurSNSiteImport turSNSiteImport;
 	private static final String EXPORT_FILE = "export.json";
 
-	@Inject
 	public TurImportExchange(TurSNSiteImport turSNSiteImport) {
 		this.turSNSiteImport = turSNSiteImport;
 	}
@@ -71,7 +72,8 @@ public class TurImportExchange {
 
 		if (extractFolder != null) {
 			// Check if export.json exists, if it is not exist try access a sub directory
-			if (!(new File(extractFolder, EXPORT_FILE).exists()) && (Objects.requireNonNull(extractFolder.listFiles()).length == 1)) {
+			if (!(new File(extractFolder, EXPORT_FILE).exists())
+					&& (Objects.requireNonNull(extractFolder.listFiles()).length == 1)) {
 				for (File fileOrDirectory : Objects.requireNonNull(extractFolder.listFiles())) {
 					if (fileOrDirectory.isDirectory() && new File(fileOrDirectory, EXPORT_FILE).exists()) {
 						parentExtractFolder = extractFolder;
@@ -83,6 +85,7 @@ public class TurImportExchange {
 		}
 		return new TurExchange();
 	}
+
 	private void importSNSiteFromExportFile(File extractFolder, File parentExtractFolder) {
 		ObjectMapper mapper = new ObjectMapper();
 		try {

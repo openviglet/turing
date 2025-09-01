@@ -1,20 +1,24 @@
 package com.viglet.turing.connector.plugin.webcrawler;
 
-import com.google.inject.Inject;
-import com.viglet.turing.client.sn.TurMultiValue;
-import com.viglet.turing.client.sn.job.TurSNJobAction;
-import com.viglet.turing.client.sn.job.TurSNJobItem;
-import com.viglet.turing.commons.cache.TurCustomClassCache;
-import com.viglet.turing.connector.commons.TurConnectorContext;
-import com.viglet.turing.connector.commons.TurConnectorSession;
-import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.*;
-import com.viglet.turing.connector.webcrawler.commons.TurWCContext;
-import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtInterface;
-import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtLocaleInterface;
-import com.viglet.turing.connector.plugin.webcrawler.persistence.model.TurWCAttributeMapping;
-import com.viglet.turing.connector.plugin.webcrawler.persistence.model.TurWCSource;
-import generator.RandomUserAgentGenerator;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -23,13 +27,25 @@ import org.jsoup.nodes.Entities;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
+import com.viglet.turing.client.sn.TurMultiValue;
+import com.viglet.turing.client.sn.job.TurSNJobAction;
+import com.viglet.turing.client.sn.job.TurSNJobItem;
+import com.viglet.turing.commons.cache.TurCustomClassCache;
+import com.viglet.turing.connector.commons.TurConnectorContext;
+import com.viglet.turing.connector.commons.TurConnectorSession;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.model.TurWCAttributeMapping;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.model.TurWCSource;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCAllowUrlRepository;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCAttributeMappingRepository;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCFileExtensionRepository;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCNotAllowUrlRepository;
+import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCStartingPointRepository;
+import com.viglet.turing.connector.webcrawler.commons.TurWCContext;
+import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtInterface;
+import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtLocaleInterface;
+
+import generator.RandomUserAgentGenerator;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -66,15 +82,14 @@ public class TurWCPluginProcess {
     private final TurWCAttributeMappingRepository turWCAttributeMappingRepository;
     private final TurConnectorContext turConnectorContext;
 
-    @Inject
     public TurWCPluginProcess(@Value("${turing.wc.timeout:5000}") int timeout,
-                              @Value("${turing.wc.referrer:https://www.google.com}") String referrer,
-                              TurWCAllowUrlRepository turWCAllowUrlRepository,
-                              TurWCNotAllowUrlRepository turWCNotAllowUrlRepository,
-                              TurWCFileExtensionRepository turWCFileExtensionRepository,
-                              TurWCAttributeMappingRepository turWCAttributeMappingRepository,
-                              TurWCStartingPointRepository turWCStartingPointsRepository,
-                              TurConnectorContext turConnectorContext) {
+            @Value("${turing.wc.referrer:https://www.google.com}") String referrer,
+            TurWCAllowUrlRepository turWCAllowUrlRepository,
+            TurWCNotAllowUrlRepository turWCNotAllowUrlRepository,
+            TurWCFileExtensionRepository turWCFileExtensionRepository,
+            TurWCAttributeMappingRepository turWCAttributeMappingRepository,
+            TurWCStartingPointRepository turWCStartingPointsRepository,
+            TurConnectorContext turConnectorContext) {
         this.timeout = timeout;
         this.referrer = referrer;
         this.turWCAllowUrlRepository = turWCAllowUrlRepository;
@@ -87,31 +102,25 @@ public class TurWCPluginProcess {
 
     public void start(TurWCSource turWCSource) {
         TurConnectorSession turConnectorSession = getSource(turWCSource);
-        turWCFileExtensionRepository.findByTurWCSource(turWCSource).ifPresent(source ->
-                source.forEach(turWCFileExtension ->
-                        this.notAllowExtensions.add(turWCFileExtension.getExtension())));
-        turWCNotAllowUrlRepository.findByTurWCSource(turWCSource).ifPresent(source ->
-                source.forEach(turWCNotAllowUrl -> {
-                            if (turWCNotAllowUrl.getUrl().trim().endsWith(WILD_CARD)) {
-                                this.notAllowStartsWithUrls.add(StringUtils.chop(turWCNotAllowUrl.getUrl()));
-                            } else {
-                                this.notAllowUrls.add(turWCNotAllowUrl.getUrl());
-                            }
-                        }
-                ));
-        turWCAllowUrlRepository.findByTurWCSource(turWCSource).ifPresent(source ->
-                source.forEach(turWCAllowUrl -> {
-                            if (turWCAllowUrl.getUrl().trim().endsWith(WILD_CARD)) {
-                                this.allowStartsWithUrls.add(StringUtils.chop(turWCAllowUrl.getUrl().trim()));
-                            } else {
-                                this.allowUrls.add(turWCAllowUrl.getUrl());
-                            }
-                        }
-                ));
-        turWCStartingPointsRepository.findByTurWCSource(turWCSource).ifPresent(source ->
-                source.forEach(turWCStartingPoint ->
-                        this.startingPoints.add(turWCStartingPoint.getUrl())
-                ));
+        turWCFileExtensionRepository.findByTurWCSource(turWCSource).ifPresent(source -> source
+                .forEach(turWCFileExtension -> this.notAllowExtensions.add(turWCFileExtension.getExtension())));
+        turWCNotAllowUrlRepository.findByTurWCSource(turWCSource)
+                .ifPresent(source -> source.forEach(turWCNotAllowUrl -> {
+                    if (turWCNotAllowUrl.getUrl().trim().endsWith(WILD_CARD)) {
+                        this.notAllowStartsWithUrls.add(StringUtils.chop(turWCNotAllowUrl.getUrl()));
+                    } else {
+                        this.notAllowUrls.add(turWCNotAllowUrl.getUrl());
+                    }
+                }));
+        turWCAllowUrlRepository.findByTurWCSource(turWCSource).ifPresent(source -> source.forEach(turWCAllowUrl -> {
+            if (turWCAllowUrl.getUrl().trim().endsWith(WILD_CARD)) {
+                this.allowStartsWithUrls.add(StringUtils.chop(turWCAllowUrl.getUrl().trim()));
+            } else {
+                this.allowUrls.add(turWCAllowUrl.getUrl());
+            }
+        }));
+        turWCStartingPointsRepository.findByTurWCSource(turWCSource).ifPresent(
+                source -> source.forEach(turWCStartingPoint -> this.startingPoints.add(turWCStartingPoint.getUrl())));
         this.website = turWCSource.getUrl();
         this.snSites = turWCSource.getTurSNSites();
         this.username = turWCSource.getUsername();
@@ -129,10 +138,9 @@ public class TurWCPluginProcess {
                 WEB_CRAWLER, turWCSource.getLocale());
     }
 
-    private static void finished(TurConnectorContext turConnectorContext,  TurConnectorSession source) {
+    private static void finished(TurConnectorContext turConnectorContext, TurConnectorSession source) {
         turConnectorContext.finishIndexing(source, false);
     }
-
 
     private void getPagesFromQueue(TurWCSource turWCSource, TurConnectorSession source) {
         while (!queueLinks.isEmpty()) {
@@ -178,17 +186,16 @@ public class TurWCPluginProcess {
                 && !StringUtils.equalsAny(pageUrl, queueLinks.toArray(new String[0]))
                 && !isSharpUrl(pageUrl) && !isPagination(pageUrl) && !isJavascriptUrl(pageUrl)
                 && pageUrl.startsWith(this.website)
-                && (
-                StringUtils.startsWithAny(getRelativePageUrl(pageUrl), allowStartsWithUrls.toArray(new String[0]))
-                        || StringUtils.equalsAny(getRelativePageUrl(pageUrl), allowUrls.toArray(new String[0]))
-        )
-                && !StringUtils.startsWithAny(getRelativePageUrl(pageUrl), notAllowStartsWithUrls.toArray(new String[0]))
+                && (StringUtils.startsWithAny(getRelativePageUrl(pageUrl), allowStartsWithUrls.toArray(new String[0]))
+                        || StringUtils.equalsAny(getRelativePageUrl(pageUrl), allowUrls.toArray(new String[0])))
+                && !StringUtils.startsWithAny(getRelativePageUrl(pageUrl),
+                        notAllowStartsWithUrls.toArray(new String[0]))
                 && !StringUtils.equalsAny(getRelativePageUrl(pageUrl), notAllowUrls.toArray(new String[0]))
                 && !StringUtils.endsWithAny(pageUrl, notAllowExtensions.toArray(new String[0]));
     }
 
     private void addTurSNJobItem(TurWCSource turWCSource, Document document, String url, String checksum,
-                                 TurConnectorSession source) {
+            TurConnectorSession source) {
         turConnectorContext.addJobItem(new TurSNJobItem(TurSNJobAction.CREATE, new ArrayList<>(snSites),
                 getLocale(turWCSource, document, url),
                 getJobItemAttributes(turWCSource, document, url), null, checksum), source, false);
@@ -202,20 +209,17 @@ public class TurWCPluginProcess {
 
     private Map<String, Object> getJobItemAttributes(TurWCSource turWCSource, Document document, String url) {
         Map<String, Object> turSNJobItemAttributes = new HashMap<>();
-        turWCAttributeMappingRepository.findByTurWCSource(turWCSource).ifPresent(source ->
-                source.forEach(turWCCustomClass ->
-                        Optional.ofNullable(turWCCustomClass.getText()).ifPresentOrElse(text ->
-                                        usesText(turWCCustomClass, text, turSNJobItemAttributes)
-                                , () -> {
-                                    if (!StringUtils.isEmpty(turWCCustomClass.getClassName()))
-                                        usesCustomClass(document, url, turWCCustomClass, turSNJobItemAttributes);
-                                }
-                        )));
+        turWCAttributeMappingRepository.findByTurWCSource(turWCSource)
+                .ifPresent(source -> source.forEach(turWCCustomClass -> Optional.ofNullable(turWCCustomClass.getText())
+                        .ifPresentOrElse(text -> usesText(turWCCustomClass, text, turSNJobItemAttributes), () -> {
+                            if (!StringUtils.isEmpty(turWCCustomClass.getClassName()))
+                                usesCustomClass(document, url, turWCCustomClass, turSNJobItemAttributes);
+                        })));
         return turSNJobItemAttributes;
     }
 
     private void usesCustomClass(Document document, String url, TurWCAttributeMapping turWCCustomClass,
-                                 Map<String, Object> turSNJobItemAttributes) {
+            Map<String, Object> turSNJobItemAttributes) {
         getCustomClass(document, url, turWCCustomClass)
                 .ifPresent(turMultiValue -> turMultiValue.forEach(attributeValue -> {
                     if (!StringUtils.isBlank(attributeValue)) {
@@ -231,27 +235,28 @@ public class TurWCPluginProcess {
     }
 
     private static void usesText(TurWCAttributeMapping turWCCustomClass, String text,
-                                 Map<String, Object> turSNJobItemAttributes) {
+            Map<String, Object> turSNJobItemAttributes) {
         turSNJobItemAttributes.put(turWCCustomClass.getName(), text);
     }
 
     private Optional<TurMultiValue> getCustomClass(Document document, String url,
-                                                   TurWCAttributeMapping turWCAttributeMapping) {
+            TurWCAttributeMapping turWCAttributeMapping) {
         return TurCustomClassCache.getCustomClassMap(turWCAttributeMapping.getClassName())
                 .flatMap(classInstance -> ((TurWCExtInterface) classInstance)
                         .consume(getTurWCContext(document, url)));
     }
 
     private static void addItemInExistingAttribute(String attributeValue,
-                                                   Map<String, Object> attributes,
-                                                   String attributeName) {
+            Map<String, Object> attributes,
+            String attributeName) {
         if (attributes.get(attributeName) instanceof ArrayList)
             addItemToArray(attributes, attributeName, attributeValue);
-        else convertAttributeSingleValueToArray(attributes, attributeName, attributeValue);
+        else
+            convertAttributeSingleValueToArray(attributes, attributeName, attributeValue);
     }
 
     private static void convertAttributeSingleValueToArray(Map<String, Object> attributes,
-                                                           String attributeName, String attributeValue) {
+            String attributeName, String attributeValue) {
         List<Object> attributeValues = new ArrayList<>();
         attributeValues.add(attributes.get(attributeName));
         attributeValues.add(attributeValue);
@@ -266,8 +271,8 @@ public class TurWCPluginProcess {
     }
 
     private void addFirstItemToAttribute(String attributeName,
-                                         String attributeValue,
-                                         Map<String, Object> attributes) {
+            String attributeValue,
+            Map<String, Object> attributes) {
         attributes.put(attributeName, attributeValue);
     }
 

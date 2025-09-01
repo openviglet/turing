@@ -20,7 +20,11 @@
  */
 package com.viglet.turing.onstartup;
 
-import com.google.inject.Inject;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.viglet.turing.onstartup.auth.TurGroupOnStartup;
 import com.viglet.turing.onstartup.auth.TurRoleOnStartup;
 import com.viglet.turing.onstartup.auth.TurUserOnStartup;
@@ -30,11 +34,8 @@ import com.viglet.turing.onstartup.store.TurStoreVendorOnStartup;
 import com.viglet.turing.onstartup.system.TurConfigVarOnStartup;
 import com.viglet.turing.onstartup.system.TurLocaleOnStartup;
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
@@ -53,21 +54,20 @@ public class TurOnStartup implements ApplicationRunner {
 	private final TurGroupOnStartup turGroupOnStartup;
 	private final TurRoleOnStartup turRoleOnStartup;
 
-	@Inject
 	public TurOnStartup(TurConfigVarRepository turConfigVarRepository,
-                        TurLocaleOnStartup turLocaleOnStartup,
-                        TurSEVendorOnStartup turSEVendorOnStartup,
-						TurLLMVendorOnStartup turLLMVendorOnStartup, TurStoreVendorOnStartup turStoreVendorOnStartup,
-                        TurConfigVarOnStartup turConfigVarOnStartup,
-                        TurUserOnStartup turUserOnStartup,
-                        TurGroupOnStartup turGroupOnStartup,
-                        TurRoleOnStartup turRoleOnStartup) {
+			TurLocaleOnStartup turLocaleOnStartup,
+			TurSEVendorOnStartup turSEVendorOnStartup,
+			TurLLMVendorOnStartup turLLMVendorOnStartup, TurStoreVendorOnStartup turStoreVendorOnStartup,
+			TurConfigVarOnStartup turConfigVarOnStartup,
+			TurUserOnStartup turUserOnStartup,
+			TurGroupOnStartup turGroupOnStartup,
+			TurRoleOnStartup turRoleOnStartup) {
 		this.turConfigVarRepository = turConfigVarRepository;
 		this.turLocaleOnStartup = turLocaleOnStartup;
 		this.turSEVendorOnStartup = turSEVendorOnStartup;
-        this.turLLMVendorOnStartup = turLLMVendorOnStartup;
-        this.turStoreVendorOnStartup = turStoreVendorOnStartup;
-        this.turConfigVarOnStartup = turConfigVarOnStartup;
+		this.turLLMVendorOnStartup = turLLMVendorOnStartup;
+		this.turStoreVendorOnStartup = turStoreVendorOnStartup;
+		this.turConfigVarOnStartup = turConfigVarOnStartup;
 		this.turUserOnStartup = turUserOnStartup;
 		this.turGroupOnStartup = turGroupOnStartup;
 		this.turRoleOnStartup = turRoleOnStartup;

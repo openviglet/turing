@@ -20,22 +20,20 @@
  */
 package com.viglet.turing;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
 import java.io.IOException;
 import java.security.Principal;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class TurIndexContext {
 	@GetMapping("/")
 	public void index(HttpServletResponse response, final Principal principal)
 			throws IOException {
-		if (principal != null ) {
+		if (principal != null) {
 			response.sendRedirect("/console");
 		} else {
 			response.sendRedirect("/welcome");

@@ -25,10 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.google.inject.Inject;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.persistence.model.auth.TurGroup;
@@ -45,10 +44,9 @@ public class TurCustomUserDetailsService implements UserDetailsService {
     private final TurRoleRepository turRoleRepository;
     private final TurGroupRepository turGroupRepository;
 
-    @Inject
     public TurCustomUserDetailsService(TurUserRepository turUserRepository,
-                                       TurRoleRepository turRoleRepository,
-                                       TurGroupRepository turGroupRepository) {
+            TurRoleRepository turRoleRepository,
+            TurGroupRepository turGroupRepository) {
         this.turUserRepository = turUserRepository;
         this.turRoleRepository = turRoleRepository;
         this.turGroupRepository = turGroupRepository;

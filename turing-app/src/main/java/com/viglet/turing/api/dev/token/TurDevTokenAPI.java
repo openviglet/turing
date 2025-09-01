@@ -21,17 +21,25 @@
 
 package com.viglet.turing.api.dev.token;
 
-import com.google.inject.Inject;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.persistence.model.dev.token.TurDevToken;
 import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/dev/token")
@@ -40,7 +48,6 @@ public class TurDevTokenAPI {
 
 	private final TurDevTokenRepository turDevTokenRepository;
 
-	@Inject
 	public TurDevTokenAPI(TurDevTokenRepository turDevTokenRepository) {
 		this.turDevTokenRepository = turDevTokenRepository;
 	}
@@ -80,7 +87,7 @@ public class TurDevTokenAPI {
 	@Operation(summary = "Create a Developer Token")
 	@PostMapping
 	public TurDevToken turDevTokenAdd(@RequestBody TurDevToken turDevToken) {
-		turDevToken.setToken(UUID.randomUUID().toString().replace("-","").substring(0,25));
+		turDevToken.setToken(UUID.randomUUID().toString().replace("-", "").substring(0, 25));
 		this.turDevTokenRepository.save(turDevToken);
 		return turDevToken;
 

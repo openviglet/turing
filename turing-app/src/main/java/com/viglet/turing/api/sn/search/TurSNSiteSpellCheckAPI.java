@@ -20,7 +20,15 @@
  */
 package com.viglet.turing.api.sn.search;
 
-import com.google.inject.Inject;
+import java.util.Locale;
+
+import org.apache.commons.lang3.LocaleUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.spellcheck.TurSNSiteSpellCheckBean;
@@ -29,12 +37,9 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.LocaleUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/sn/{siteName}/{localeRequest}/spell-check")
@@ -44,23 +49,23 @@ public class TurSNSiteSpellCheckAPI {
 
     private final TurSolrInstanceProcess turSolrInstanceProcess;
 
-    @Inject
     public TurSNSiteSpellCheckAPI(TurSolr turSolr, TurSolrInstanceProcess turSolrInstanceProcess) {
         this.turSolr = turSolr;
         this.turSolrInstanceProcess = turSolrInstanceProcess;
     }
 
     @GetMapping
-    public TurSNSiteSpellCheckBean turSNSiteSpellCheck(@PathVariable String siteName, @PathVariable String localeRequest,
-                                                       @RequestParam(name = TurSNParamType.QUERY)
-                                                       String q, HttpServletRequest request) {
+    public TurSNSiteSpellCheckBean turSNSiteSpellCheck(@PathVariable String siteName,
+            @PathVariable String localeRequest,
+            @RequestParam(name = TurSNParamType.QUERY) String q, HttpServletRequest request) {
         Locale locale = LocaleUtils.toLocale(localeRequest);
         return turSolrInstanceProcess.initSolrInstance(siteName, locale).map(turSolrInstance -> {
             TurSNConfig turSNConfig = new TurSNConfig();
             turSNConfig.setHlEnabled(false);
             TurSNSiteSearchContext turSNSiteSearchContext = new TurSNSiteSearchContext(siteName, turSNConfig,
                     new TurSEParameters(q, null,
-                            1, "relevance", 10, null, 0), locale,
+                            1, "relevance", 10, null, 0),
+                    locale,
                     TurSNUtils.requestToURI(request));
             return new TurSNSiteSpellCheckBean(turSNSiteSearchContext, turSolr.spellCheckTerm(turSolrInstance, q));
         }).orElse(null);
