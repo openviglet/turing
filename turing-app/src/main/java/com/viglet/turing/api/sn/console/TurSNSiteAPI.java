@@ -21,19 +21,32 @@
 
 package com.viglet.turing.api.sn.console;
 
-import com.google.inject.Inject;
+import java.security.Principal;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import com.viglet.turing.api.sn.bean.TurSNSiteMonitoringStatusBean;
 import com.viglet.turing.exchange.sn.TurSNSiteExport;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.sn.TurSNQueue;
 import com.viglet.turing.sn.template.TurSNTemplate;
@@ -41,20 +54,12 @@ import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
 import com.viglet.turing.solr.TurSolrUtils;
+import com.viglet.turing.spring.utils.TurPersistenceUtils;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -72,16 +77,15 @@ public class TurSNSiteAPI {
     private final TurSolr turSolr;
     private final TurConfigProperties turConfigProperties;
 
-    @Inject
     public TurSNSiteAPI(TurSNSiteRepository turSNSiteRepository,
-                        TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-                        TurSNSiteGenAiRepository turSNSiteGenAiRepository,
-                        TurSNSiteExport turSNSiteExport,
-                        TurSNTemplate turSNTemplate,
-                        TurSNQueue turSNQueue,
-                        TurSolrInstanceProcess turSolrInstanceProcess,
-                        TurSolr turSolr,
-                        TurConfigProperties turConfigProperties) {
+            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteGenAiRepository turSNSiteGenAiRepository,
+            TurSNSiteExport turSNSiteExport,
+            TurSNTemplate turSNTemplate,
+            TurSNQueue turSNQueue,
+            TurSolrInstanceProcess turSolrInstanceProcess,
+            TurSolr turSolr,
+            TurConfigProperties turConfigProperties) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
@@ -97,7 +101,8 @@ public class TurSNSiteAPI {
     @GetMapping
     public List<TurSNSite> turSNSiteList(Principal principal) {
         if (turConfigProperties.isMultiTenant()) {
-            return this.turSNSiteRepository.findByCreatedBy(TurPersistenceUtils.orderByNameIgnoreCase(), principal.getName().toLowerCase());
+            return this.turSNSiteRepository.findByCreatedBy(TurPersistenceUtils.orderByNameIgnoreCase(),
+                    principal.getName().toLowerCase());
         } else {
             return this.turSNSiteRepository.findAll(TurPersistenceUtils.orderByNameIgnoreCase());
         }
@@ -108,7 +113,8 @@ public class TurSNSiteAPI {
     public TurSNSite turSNSiteStructure() {
         TurSNSite turSNSite = new TurSNSite();
         turSNSite.setFacetSort(TurSNSiteFacetSortEnum.COUNT);
-        turSNSite.setFacetType(TurSNSiteFacetFieldEnum.AND);
+        turSNSite.setFac
+
         turSNSite.setTurSEInstance(new TurSEInstance());
         turSNSite.setTurSNSiteGenAi(new TurSNSiteGenAi());
         return turSNSite;
@@ -165,16 +171,13 @@ public class TurSNSiteAPI {
 
     }
 
-    @Transactional
-    @Operation(summary = "Delete a Semantic Navigation Site")
-    @DeleteMapping("/{id}")
+    ueteMapping("/{id}")
+
     public boolean turSNSiteDelete(@PathVariable String id) {
         Optional<TurSNSite> turSNSite = turSNSiteRepository.findById(id);
-        turSNSite.ifPresent(site ->
-                turSNSiteLocaleRepository.findByTurSNSite(TurPersistenceUtils.orderByLanguageIgnoreCase(), site).forEach(locale ->
-                        TurSolrUtils.deleteCore(site.getTurSEInstance(), locale.getCore())
-                )
-        );
+        turSNSite.ifPresent(
+                site -> turSNSiteLocaleRepository.findByTurSNSite(TurPersistenceUtils.orderByLanguageIgnoreCase(), site)
+                        .forEach(locale -> TurSolrUtils.deleteCore(site.getTurSEInstance(), locale.getCore())));
         turSNSiteRepository.delete(id);
 
         return true;
