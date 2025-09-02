@@ -7,7 +7,6 @@ db-encrypted.properties
 *.war
 *.ear
 /.classpath
-/.vscode
 /.settings
 /.project
 /volumes/mariadb/*
