@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
-
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.connector.commons.TurConnectorSession;
@@ -20,13 +18,15 @@ import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRe
 public class TurConnectorIndexingService {
     private final TurConnectorIndexingRepository turConnectorIndexingRepository;
 
-    public TurConnectorIndexingService(TurConnectorIndexingRepository turConnectorIndexingRepository) {
+    public TurConnectorIndexingService(
+            TurConnectorIndexingRepository turConnectorIndexingRepository) {
         this.turConnectorIndexingRepository = turConnectorIndexingRepository;
     }
 
     public void delete(TurConnectorSession session, TurSNJobItem turSNJobItem) {
-        turConnectorIndexingRepository.deleteByObjectIdAndSourceAndEnvironmentAndProvider(turSNJobItem.getId(),
-                session.getSource(), turSNJobItem.getEnvironment(), session.getProviderName());
+        turConnectorIndexingRepository.deleteByObjectIdAndSourceAndEnvironmentAndProvider(
+                turSNJobItem.getId(), session.getSource(), turSNJobItem.getEnvironment(),
+                session.getProviderName());
     }
 
     public void deleteByProvider(String provider) {
@@ -34,45 +34,50 @@ public class TurConnectorIndexingService {
     }
 
     public void deleteContentsToBeDeIndexed(TurConnectorSession session) {
-        turConnectorIndexingRepository.deleteBySourceAndProviderAndTransactionIdNot(session.getSource(),
-                session.getProviderName(), session.getTransactionId());
+        turConnectorIndexingRepository.deleteBySourceAndProviderAndTransactionIdNot(
+                session.getSource(), session.getProviderName(), session.getTransactionId());
     }
 
     public void update(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone,
             TurConnectorIndexingModel indexing) {
-        turConnectorIndexingRepository.save(updateTurConnectorIndexing(indexing,
-                turSNJobItem, session, TurIndexingStatus.IGNORED, standalone));
+        turConnectorIndexingRepository.save(updateTurConnectorIndexing(indexing, turSNJobItem,
+                session, TurIndexingStatus.IGNORED, standalone));
     }
 
     public void update(TurSNJobItem turSNJobItem, TurConnectorSession session,
-            List<TurConnectorIndexingModel> turConnectorIndexingList,
-            TurIndexingStatus status, boolean standalone) {
-        turConnectorIndexingList
-                .forEach(indexing -> turConnectorIndexingRepository.save(updateTurConnectorIndexing(indexing,
-                        turSNJobItem, session, status, standalone)));
-
+            List<TurConnectorIndexingModel> turConnectorIndexingList, TurIndexingStatus status,
+            boolean standalone) {
+        turConnectorIndexingList.forEach(indexing -> {
+            turConnectorIndexingRepository.findById(indexing.getId()).ifPresent(managedIndexing -> {
+                turConnectorIndexingRepository.save(updateTurConnectorIndexing(managedIndexing,
+                        turSNJobItem, session, status, standalone));
+            });
+        });
     }
 
-    public void save(TurSNJobItem turSNJobItem, TurConnectorSession session, TurIndexingStatus status,
-            boolean standalone) {
-        turConnectorIndexingRepository.save(createTurConnectorIndexing(turSNJobItem, session,
-                status, standalone));
+    public void save(TurSNJobItem turSNJobItem, TurConnectorSession session,
+            TurIndexingStatus status, boolean standalone) {
+        turConnectorIndexingRepository
+                .save(createTurConnectorIndexing(turSNJobItem, session, status, standalone));
     }
 
     public boolean exists(TurSNJobItem turSNJobItem, TurConnectorSession session) {
-        return turConnectorIndexingRepository.existsByObjectIdAndSourceAndEnvironmentAndProvider(turSNJobItem.getId(),
-                session.getSource(), turSNJobItem.getEnvironment(), session.getProviderName());
+        return turConnectorIndexingRepository.existsByObjectIdAndSourceAndEnvironmentAndProvider(
+                turSNJobItem.getId(), session.getSource(), turSNJobItem.getEnvironment(),
+                session.getProviderName());
     }
 
-    public List<TurConnectorIndexingModel> getList(TurSNJobItem turSNJobItem, TurConnectorSession session) {
-        return turConnectorIndexingRepository.findByObjectIdAndSourceAndEnvironmentAndProvider(turSNJobItem.getId(),
-                session.getSource(), turSNJobItem.getEnvironment(), session.getProviderName());
+    public List<TurConnectorIndexingModel> getList(TurSNJobItem turSNJobItem,
+            TurConnectorSession session) {
+        return turConnectorIndexingRepository.findByObjectIdAndSourceAndEnvironmentAndProvider(
+                turSNJobItem.getId(), session.getSource(), turSNJobItem.getEnvironment(),
+                session.getProviderName());
     }
 
     public List<TurConnectorIndexingModel> getShouldBeDeIndexedList(TurConnectorSession session) {
-        return turConnectorIndexingRepository.findBySourceAndProviderAndTransactionIdNotAndStandalone(
-                session.getSource(),
-                session.getProviderName(), session.getTransactionId(), false);
+        return turConnectorIndexingRepository
+                .findBySourceAndProviderAndTransactionIdNotAndStandalone(session.getSource(),
+                        session.getProviderName(), session.getTransactionId(), false);
     }
 
     public List<TurConnectorIndexingModel> findAll() {
@@ -83,38 +88,24 @@ public class TurConnectorIndexingService {
         return turConnectorIndexingRepository.findAllSources(provider);
     }
 
-    private static TurConnectorIndexingModel updateTurConnectorIndexing(TurConnectorIndexingModel turConnectorIndexing,
-            TurSNJobItem turSNJobItem,
-            TurConnectorSession turConnectorSession,
-            TurIndexingStatus status,
-            boolean standalone) {
-        return turConnectorIndexing
-                .setChecksum(turSNJobItem.getChecksum())
+    private static TurConnectorIndexingModel updateTurConnectorIndexing(
+            TurConnectorIndexingModel turConnectorIndexing, TurSNJobItem turSNJobItem,
+            TurConnectorSession turConnectorSession, TurIndexingStatus status, boolean standalone) {
+        return turConnectorIndexing.setChecksum(turSNJobItem.getChecksum())
                 .setTransactionId(turConnectorSession.getTransactionId())
-                .setModificationDate(new Date())
-                .setStatus(status)
-                .setStandalone(standalone)
+                .setModificationDate(new Date()).setStatus(status).setStandalone(standalone)
                 .setSites(turSNJobItem.getSiteNames());
     }
 
     private TurConnectorIndexingModel createTurConnectorIndexing(TurSNJobItem turSNJobItem,
-            TurConnectorSession turConnectorSession,
-            TurIndexingStatus status,
-            boolean standalone) {
-        return TurConnectorIndexingModel.builder()
-                .objectId(turSNJobItem.getId())
+            TurConnectorSession turConnectorSession, TurIndexingStatus status, boolean standalone) {
+        return TurConnectorIndexingModel.builder().objectId(turSNJobItem.getId())
                 .source(turConnectorSession.getSource())
                 .transactionId(turConnectorSession.getTransactionId())
-                .locale(turSNJobItem.getLocale())
-                .checksum(turSNJobItem.getChecksum())
-                .created(new Date())
-                .modificationDate(new Date())
-                .sites(turSNJobItem.getSiteNames())
-                .environment(turSNJobItem.getEnvironment())
-                .status(status)
-                .standalone(standalone)
-                .provider(turConnectorSession.getProviderName())
-                .build();
+                .locale(turSNJobItem.getLocale()).checksum(turSNJobItem.getChecksum())
+                .created(new Date()).modificationDate(new Date()).sites(turSNJobItem.getSiteNames())
+                .environment(turSNJobItem.getEnvironment()).status(status).standalone(standalone)
+                .provider(turConnectorSession.getProviderName()).build();
     }
 
     public boolean isChecksumDifferent(TurSNJobItem turSNJobItem, TurConnectorSession session) {
@@ -124,8 +115,8 @@ public class TurConnectorIndexingService {
     }
 
     public List<TurConnectorIndexingModel> getBySourceAndProvider(String source, String provider) {
-        return turConnectorIndexingRepository.findAllBySourceAndProviderOrderByModificationDateDesc(source,
-                provider, Limit.of(50));
+        return turConnectorIndexingRepository.findAllBySourceAndProviderOrderByModificationDateDesc(
+                source, provider, Limit.of(50));
     }
 
     public List<String> getSites(String source, String provider) {
@@ -136,38 +127,30 @@ public class TurConnectorIndexingService {
         return turConnectorIndexingRepository.distinctEnvironment(site, provider);
     }
 
-    public List<String> getObjectIdList(String source, String environment, TurSNSiteLocale siteLocale,
+    public List<String> getObjectIdList(String source, String environment,
+            TurSNSiteLocale siteLocale, String provider) {
+        return turConnectorIndexingRepository.findAllObjectIds(source, siteLocale.getLanguage(),
+                environment, provider);
+    }
+
+    public Collection<String> validateObjectIdList(String source, String environment,
+            TurSNSiteLocale siteLocale, String provider, List<String> objectIdList) {
+        return turConnectorIndexingRepository.distinctObjectId(source, siteLocale.getLanguage(),
+                environment, provider, objectIdList);
+    }
+
+    public List<TurConnectorIndexing> getIndexingItem(String objectId, String source,
             String provider) {
-        return turConnectorIndexingRepository
-                .findAllObjectIds(source, siteLocale.getLanguage(),
-                        environment, provider);
-    }
-
-    public Collection<String> validateObjectIdList(String source, String environment, TurSNSiteLocale siteLocale,
-            String provider,
-            List<String> objectIdList) {
-        return turConnectorIndexingRepository
-                .distinctObjectId(source, siteLocale.getLanguage(),
-                        environment, provider, objectIdList);
-    }
-
-    public List<TurConnectorIndexing> getIndexingItem(String objectId, String source, String provider) {
         List<TurConnectorIndexing> dtoList = new ArrayList<>();
-        turConnectorIndexingRepository.findByObjectIdAndSourceAndProvider(objectId, source, provider)
-                .stream()
-                .map(indexing -> TurConnectorIndexing.builder()
-                        .checksum(indexing.getChecksum())
-                        .created(indexing.getCreated())
-                        .environment(indexing.getEnvironment())
-                        .id(indexing.getId())
-                        .locale(indexing.getLocale())
+        turConnectorIndexingRepository
+                .findByObjectIdAndSourceAndProvider(objectId, source, provider).stream()
+                .map(indexing -> TurConnectorIndexing.builder().checksum(indexing.getChecksum())
+                        .created(indexing.getCreated()).environment(indexing.getEnvironment())
+                        .id(indexing.getId()).locale(indexing.getLocale())
                         .modificationDate(indexing.getModificationDate())
-                        .source(indexing.getSource())
-                        .objectId(indexing.getObjectId())
-                        .sites(indexing.getSites())
-                        .status(indexing.getStatus())
-                        .transactionId(indexing.getTransactionId())
-                        .build())
+                        .source(indexing.getSource()).objectId(indexing.getObjectId())
+                        .sites(indexing.getSites()).status(indexing.getStatus())
+                        .transactionId(indexing.getTransactionId()).build())
                 .forEach(dtoList::add);
         return dtoList;
     }

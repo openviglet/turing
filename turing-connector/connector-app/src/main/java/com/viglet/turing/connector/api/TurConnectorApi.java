@@ -2,18 +2,16 @@
  *
  * Copyright (C) 2016-2025 the original author or authors.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <https://www.gnu.org/licenses/>.
  */
 
 package com.viglet.turing.connector.api;
@@ -21,7 +19,6 @@ package com.viglet.turing.connector.api;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,13 +26,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.domain.TurConnectorValidateDifference;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 import com.viglet.turing.connector.service.TurConnectorIndexingService;
 import com.viglet.turing.connector.service.TurConnectorSolrService;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,8 +43,8 @@ public class TurConnectorApi {
     private final TurConnectorSolrService turConnectorSolr;
     private final TurConnectorPlugin plugin;
 
-    public TurConnectorApi(TurConnectorIndexingService indexingService, TurConnectorSolrService turConnectorSolr,
-            TurConnectorPlugin plugin) {
+    public TurConnectorApi(TurConnectorIndexingService indexingService,
+            TurConnectorSolrService turConnectorSolr, TurConnectorPlugin plugin) {
         this.indexingService = indexingService;
         this.turConnectorSolr = turConnectorSolr;
         this.plugin = plugin;
@@ -72,15 +67,16 @@ public class TurConnectorApi {
     public TurConnectorValidateDifference validateSource(@PathVariable String source) {
         return TurConnectorValidateDifference.builder()
                 .missing(turConnectorSolr.solrMissingContent(source, plugin.getProviderName()))
-                .extra(turConnectorSolr.solrExtraContent(source, plugin.getProviderName()))
-                .build();
+                .extra(turConnectorSolr.solrExtraContent(source, plugin.getProviderName())).build();
     }
 
     @GetMapping("monitoring/index/{source}")
-    public ResponseEntity<List<TurConnectorIndexingModel>> monitoryIndexByName(@PathVariable String source) {
-        List<TurConnectorIndexingModel> indexingModelList = indexingService.getBySourceAndProvider(source,
-                plugin.getProviderName());
-        return indexingModelList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(indexingModelList);
+    public ResponseEntity<List<TurConnectorIndexingModel>> monitoryIndexByName(
+            @PathVariable String source) {
+        List<TurConnectorIndexingModel> indexingModelList =
+                indexingService.getBySourceAndProvider(source, plugin.getProviderName());
+        return indexingModelList.isEmpty() ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(indexingModelList);
     }
 
     @GetMapping("index/{name}/all")
