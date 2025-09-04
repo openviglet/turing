@@ -1,3 +1,4 @@
+import type { TurDiscoveryAPI } from "@/models/auth/discovery";
 import type { TurRestInfo } from "@/models/auth/rest-info";
 import axios, { type AxiosRequestConfig } from "axios";
 
@@ -10,6 +11,14 @@ export class TurAuthorizationService {
       },
     };
     const response = await axios.create().get<TurRestInfo>("/v2", config);
+    return response.data;
+  }
+
+  async discovery(): Promise<TurDiscoveryAPI> {
+    const config: AxiosRequestConfig = {};
+    const response = await axios
+      .create()
+      .get<TurDiscoveryAPI>("/discovery", config);
     return response.data;
   }
 

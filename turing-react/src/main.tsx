@@ -1,24 +1,31 @@
-import { BrowserRouter } from 'react-router-dom'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
-import React from 'react'
 import axios from 'axios'
-import { environment } from './environment/environment.ts'
-import type { TurRestInfo } from './models/auth/rest-info.ts'
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App.tsx'
 import { ROUTES } from './app/routes.const.ts'
+import { environment } from './environment/environment.ts'
+import './index.css'
+import type { TurRestInfo } from './models/auth/rest-info.ts'
+import { TurAuthorizationService } from './services/authorization.service.ts'
 
+const authorization = new TurAuthorizationService()
 axios.defaults.baseURL = `${environment.apiUrl}/api`;
-axios.interceptors.request.use((config) => {
-  const token: TurRestInfo = getAuthToken();
+axios.interceptors.request.use(async (config) => {
   config.headers['Content-Type'] = 'application/json';
   config.headers['X-Requested-With'] = 'XMLHttpRequest';
-
-  if (token.authdata) {
-    config.headers.Authorization = `Basic ${token.authdata}`;
-  }
-  else {
-    window.location.href = `${ROUTES.LOGIN}?returnUrl=${ROUTES.CONSOLE}`;
+  try {
+    const discovery = await authorization.discovery();
+    if (!discovery.keycloak) {
+      const token: TurRestInfo = getAuthToken();
+      if (token.authdata) {
+        config.headers.Authorization = `Basic ${token.authdata}`;
+      } else {
+        window.location.href = `${ROUTES.LOGIN}?returnUrl=${ROUTES.CONSOLE}`;
+      }
+    }
+  } catch (error) {
+    console.error('Error during request interception:', error);
   }
   return config;
 });

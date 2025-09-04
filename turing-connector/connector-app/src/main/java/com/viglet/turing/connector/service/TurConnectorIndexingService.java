@@ -10,6 +10,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.connector.commons.TurConnectorSession;
 import com.viglet.turing.connector.commons.domain.TurConnectorIndexing;
+import com.viglet.turing.connector.commons.domain.TurJobItemWithSession;
 import com.viglet.turing.connector.domain.TurSNSiteLocale;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
 import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRepository;
@@ -23,10 +24,13 @@ public class TurConnectorIndexingService {
         this.turConnectorIndexingRepository = turConnectorIndexingRepository;
     }
 
-    public void delete(TurConnectorSession session, TurSNJobItem turSNJobItem) {
+    public void delete(TurJobItemWithSession turSNJobItemWithSession) {
+        TurSNJobItem turSNJobItem = turSNJobItemWithSession.turSNJobItem();
+        TurConnectorSession session = turSNJobItemWithSession.session();
         turConnectorIndexingRepository.deleteByObjectIdAndSourceAndEnvironmentAndProvider(
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getEnvironment(),
                 session.getProviderName());
+
     }
 
     public void deleteByProvider(String provider) {
@@ -38,37 +42,40 @@ public class TurConnectorIndexingService {
                 session.getSource(), session.getProviderName(), session.getTransactionId());
     }
 
-    public void update(TurSNJobItem turSNJobItem, TurConnectorSession session, boolean standalone,
+    public void update(TurJobItemWithSession turSNJobItemWithSession,
             TurConnectorIndexingModel indexing) {
-        turConnectorIndexingRepository.save(updateTurConnectorIndexing(indexing, turSNJobItem,
-                session, TurIndexingStatus.IGNORED, standalone));
+        turConnectorIndexingRepository.save(updateTurConnectorIndexing(indexing,
+                turSNJobItemWithSession.turSNJobItem(), turSNJobItemWithSession.session(),
+                TurIndexingStatus.IGNORED, turSNJobItemWithSession.standalone()));
     }
 
-    public void update(TurSNJobItem turSNJobItem, TurConnectorSession session,
-            List<TurConnectorIndexingModel> turConnectorIndexingList, TurIndexingStatus status,
-            boolean standalone) {
+    public void update(TurJobItemWithSession turSNJobItemWithSession,
+            List<TurConnectorIndexingModel> turConnectorIndexingList, TurIndexingStatus status) {
         turConnectorIndexingList.forEach(indexing -> {
             turConnectorIndexingRepository.findById(indexing.getId()).ifPresent(managedIndexing -> {
                 turConnectorIndexingRepository.save(updateTurConnectorIndexing(managedIndexing,
-                        turSNJobItem, session, status, standalone));
+                        turSNJobItemWithSession.turSNJobItem(), turSNJobItemWithSession.session(),
+                        status, turSNJobItemWithSession.standalone()));
             });
         });
     }
 
-    public void save(TurSNJobItem turSNJobItem, TurConnectorSession session,
-            TurIndexingStatus status, boolean standalone) {
+    public void save(TurJobItemWithSession turSNJobItemWithSession, TurIndexingStatus status) {
         turConnectorIndexingRepository
-                .save(createTurConnectorIndexing(turSNJobItem, session, status, standalone));
+                .save(createTurConnectorIndexing(turSNJobItemWithSession, status));
     }
 
-    public boolean exists(TurSNJobItem turSNJobItem, TurConnectorSession session) {
+    public boolean exists(TurJobItemWithSession turSNJobItemWithSession) {
+        TurSNJobItem turSNJobItem = turSNJobItemWithSession.turSNJobItem();
+        TurConnectorSession session = turSNJobItemWithSession.session();
         return turConnectorIndexingRepository.existsByObjectIdAndSourceAndEnvironmentAndProvider(
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getEnvironment(),
                 session.getProviderName());
     }
 
-    public List<TurConnectorIndexingModel> getList(TurSNJobItem turSNJobItem,
-            TurConnectorSession session) {
+    public List<TurConnectorIndexingModel> getList(TurJobItemWithSession turSNJobItemWithSession) {
+        TurSNJobItem turSNJobItem = turSNJobItemWithSession.turSNJobItem();
+        TurConnectorSession session = turSNJobItemWithSession.session();
         return turConnectorIndexingRepository.findByObjectIdAndSourceAndEnvironmentAndProvider(
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getEnvironment(),
                 session.getProviderName());
@@ -97,18 +104,23 @@ public class TurConnectorIndexingService {
                 .setSites(turSNJobItem.getSiteNames());
     }
 
-    private TurConnectorIndexingModel createTurConnectorIndexing(TurSNJobItem turSNJobItem,
-            TurConnectorSession turConnectorSession, TurIndexingStatus status, boolean standalone) {
+    private TurConnectorIndexingModel createTurConnectorIndexing(
+            TurJobItemWithSession turSNJobItemWithSession, TurIndexingStatus status) {
+        TurSNJobItem turSNJobItem = turSNJobItemWithSession.turSNJobItem();
+        TurConnectorSession turConnectorSession = turSNJobItemWithSession.session();
         return TurConnectorIndexingModel.builder().objectId(turSNJobItem.getId())
                 .source(turConnectorSession.getSource())
                 .transactionId(turConnectorSession.getTransactionId())
                 .locale(turSNJobItem.getLocale()).checksum(turSNJobItem.getChecksum())
                 .created(new Date()).modificationDate(new Date()).sites(turSNJobItem.getSiteNames())
-                .environment(turSNJobItem.getEnvironment()).status(status).standalone(standalone)
+                .environment(turSNJobItem.getEnvironment()).status(status)
+                .standalone(turSNJobItemWithSession.standalone())
                 .provider(turConnectorSession.getProviderName()).build();
     }
 
-    public boolean isChecksumDifferent(TurSNJobItem turSNJobItem, TurConnectorSession session) {
+    public boolean isChecksumDifferent(TurJobItemWithSession turSNJobItemWithSession) {
+        TurSNJobItem turSNJobItem = turSNJobItemWithSession.turSNJobItem();
+        TurConnectorSession session = turSNJobItemWithSession.session();
         return turConnectorIndexingRepository.existsByObjectIdAndSourceAndEnvironmentAndChecksumNot(
                 turSNJobItem.getId(), session.getSource(), turSNJobItem.getEnvironment(),
                 turSNJobItem.getChecksum());
@@ -154,5 +166,4 @@ public class TurConnectorIndexingService {
                 .forEach(dtoList::add);
         return dtoList;
     }
-
 }
