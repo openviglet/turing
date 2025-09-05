@@ -91,8 +91,6 @@ public class TurSecurityConfigProduction {
                                 mvc.matcher("/api/v2/guest/**"),
                                 mvc.matcher("/h2/**")))
                 .addFilterAfter(new TurCsrfCookieFilter(), BasicAuthenticationFilter.class);
-        http.sessionManagement(sess -> sess
-                .maximumSessions(1));
         if (turConfigProperties.isKeycloak()) {
             String keycloakUrlFormat =
                     String.format("%s/protocol/openid-connect/logout?client_id=%s&post_logout_redirect_uri=%s",
