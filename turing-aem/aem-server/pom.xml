@@ -14,22 +14,22 @@
  |  See the License for the specific language governing permissions and
  |  limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.viglet.turing.aem</groupId>
 
-    <artifactId>aem-turing</artifactId>
+    <artifactId>turing-aem-server</artifactId>
 
     <packaging>pom</packaging>
 
     <version>2025.3</version>
 
-    <name>Turing AEM</name>
+    <name>Turing AEM Server</name>
 
-    <description>Turing AEM</description>
+    <description>Turing AEM Server</description>
 
     <modules>
         <module>structure</module>
@@ -195,7 +195,7 @@ Bundle-Category: ${componentGroupName}
 Bundle-DocURL:
 -plugin org.apache.sling.caconfig.bndplugin.ConfigurationClassScannerPlugin
 -plugin org.apache.sling.bnd.models.ModelsScannerPlugin
-                                ]]></bnd>
+                                ]]>                                </bnd>
                             </configuration>
                         </execution>
                     </executions>

@@ -14,17 +14,17 @@
  |  See the License for the specific language governing permissions and
  |  limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.viglet.turing.aem</groupId>
-        <artifactId>aem-turing</artifactId>
+        <artifactId>turing-aem-server</artifactId>
         <version>2025.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>aem-turing.core</artifactId>
-    <name>Turing AEM - Core</name>
+    <name>Turing AEM Server - Core</name>
     <description>Core bundle for Turing AEM Project</description>
     <build>
         <plugins>
@@ -44,23 +44,8 @@
                         <configuration>
                             <bnd><![CDATA[
 Import-Package: javax.annotation;version=0.0.0,*
-                                ]]></bnd>
+                                ]]>                            </bnd>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>bnd-baseline-maven-plugin</artifactId>
-                <configuration>
-                    <failOnMissing>false</failOnMissing>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>baseline</id>
-                        <goals>
-                            <goal>baseline</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
