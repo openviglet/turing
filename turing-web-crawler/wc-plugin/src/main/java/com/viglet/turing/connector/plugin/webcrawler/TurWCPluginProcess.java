@@ -18,7 +18,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -26,13 +25,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
 import com.viglet.turing.connector.commons.TurConnectorContext;
 import com.viglet.turing.connector.commons.TurConnectorSession;
+import com.viglet.turing.connector.commons.domain.TurJobItemWithSession;
 import com.viglet.turing.connector.plugin.webcrawler.persistence.model.TurWCAttributeMapping;
 import com.viglet.turing.connector.plugin.webcrawler.persistence.model.TurWCSource;
 import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurWCAllowUrlRepository;
@@ -43,7 +42,6 @@ import com.viglet.turing.connector.plugin.webcrawler.persistence.repository.TurW
 import com.viglet.turing.connector.webcrawler.commons.TurWCContext;
 import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtInterface;
 import com.viglet.turing.connector.webcrawler.commons.ext.TurWCExtLocaleInterface;
-
 import generator.RandomUserAgentGenerator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,25 +100,30 @@ public class TurWCPluginProcess {
 
     public void start(TurWCSource turWCSource) {
         TurConnectorSession turConnectorSession = getSource(turWCSource);
-        turWCFileExtensionRepository.findByTurWCSource(turWCSource).ifPresent(source -> source
-                .forEach(turWCFileExtension -> this.notAllowExtensions.add(turWCFileExtension.getExtension())));
+        turWCFileExtensionRepository.findByTurWCSource(turWCSource)
+                .ifPresent(source -> source.forEach(turWCFileExtension -> this.notAllowExtensions
+                        .add(turWCFileExtension.getExtension())));
         turWCNotAllowUrlRepository.findByTurWCSource(turWCSource)
                 .ifPresent(source -> source.forEach(turWCNotAllowUrl -> {
                     if (turWCNotAllowUrl.getUrl().trim().endsWith(WILD_CARD)) {
-                        this.notAllowStartsWithUrls.add(StringUtils.chop(turWCNotAllowUrl.getUrl()));
+                        this.notAllowStartsWithUrls
+                                .add(StringUtils.chop(turWCNotAllowUrl.getUrl()));
                     } else {
                         this.notAllowUrls.add(turWCNotAllowUrl.getUrl());
                     }
                 }));
-        turWCAllowUrlRepository.findByTurWCSource(turWCSource).ifPresent(source -> source.forEach(turWCAllowUrl -> {
-            if (turWCAllowUrl.getUrl().trim().endsWith(WILD_CARD)) {
-                this.allowStartsWithUrls.add(StringUtils.chop(turWCAllowUrl.getUrl().trim()));
-            } else {
-                this.allowUrls.add(turWCAllowUrl.getUrl());
-            }
-        }));
-        turWCStartingPointsRepository.findByTurWCSource(turWCSource).ifPresent(
-                source -> source.forEach(turWCStartingPoint -> this.startingPoints.add(turWCStartingPoint.getUrl())));
+        turWCAllowUrlRepository.findByTurWCSource(turWCSource)
+                .ifPresent(source -> source.forEach(turWCAllowUrl -> {
+                    if (turWCAllowUrl.getUrl().trim().endsWith(WILD_CARD)) {
+                        this.allowStartsWithUrls
+                                .add(StringUtils.chop(turWCAllowUrl.getUrl().trim()));
+                    } else {
+                        this.allowUrls.add(turWCAllowUrl.getUrl());
+                    }
+                }));
+        turWCStartingPointsRepository.findByTurWCSource(turWCSource)
+                .ifPresent(source -> source.forEach(turWCStartingPoint -> this.startingPoints
+                        .add(turWCStartingPoint.getUrl())));
         this.website = turWCSource.getUrl();
         this.snSites = turWCSource.getTurSNSites();
         this.username = turWCSource.getUsername();
@@ -138,7 +141,8 @@ public class TurWCPluginProcess {
                 WEB_CRAWLER, turWCSource.getLocale());
     }
 
-    private static void finished(TurConnectorContext turConnectorContext, TurConnectorSession source) {
+    private static void finished(TurConnectorContext turConnectorContext,
+            TurConnectorSession source) {
         turConnectorContext.finishIndexing(source, false);
     }
 
@@ -181,24 +185,29 @@ public class TurWCPluginProcess {
     }
 
     private boolean isValidToAddQueue(String pageUrl) {
-        return isNotMailUrl(pageUrl)
-                && isNotTelUrl(pageUrl)
+        return isNotMailUrl(pageUrl) && isNotTelUrl(pageUrl)
                 && !StringUtils.equalsAny(pageUrl, queueLinks.toArray(new String[0]))
                 && !isSharpUrl(pageUrl) && !isPagination(pageUrl) && !isJavascriptUrl(pageUrl)
                 && pageUrl.startsWith(this.website)
-                && (StringUtils.startsWithAny(getRelativePageUrl(pageUrl), allowStartsWithUrls.toArray(new String[0]))
-                        || StringUtils.equalsAny(getRelativePageUrl(pageUrl), allowUrls.toArray(new String[0])))
+                && (StringUtils.startsWithAny(getRelativePageUrl(pageUrl),
+                        allowStartsWithUrls.toArray(new String[0]))
+                        || StringUtils.equalsAny(getRelativePageUrl(pageUrl),
+                                allowUrls.toArray(new String[0])))
                 && !StringUtils.startsWithAny(getRelativePageUrl(pageUrl),
                         notAllowStartsWithUrls.toArray(new String[0]))
-                && !StringUtils.equalsAny(getRelativePageUrl(pageUrl), notAllowUrls.toArray(new String[0]))
+                && !StringUtils.equalsAny(getRelativePageUrl(pageUrl),
+                        notAllowUrls.toArray(new String[0]))
                 && !StringUtils.endsWithAny(pageUrl, notAllowExtensions.toArray(new String[0]));
     }
 
-    private void addTurSNJobItem(TurWCSource turWCSource, Document document, String url, String checksum,
-            TurConnectorSession source) {
-        turConnectorContext.addJobItem(new TurSNJobItem(TurSNJobAction.CREATE, new ArrayList<>(snSites),
-                getLocale(turWCSource, document, url),
-                getJobItemAttributes(turWCSource, document, url), null, checksum), source, false);
+    private void addTurSNJobItem(TurWCSource turWCSource, Document document, String url,
+            String checksum, TurConnectorSession source) {
+        TurJobItemWithSession turJobItemWithSession = new TurJobItemWithSession(
+                new TurSNJobItem(TurSNJobAction.CREATE, new ArrayList<>(snSites),
+                        getLocale(turWCSource, document, url),
+                        getJobItemAttributes(turWCSource, document, url), null, checksum),
+                source, false);
+        turConnectorContext.addJobItem(turJobItemWithSession);
     }
 
     public static String getCRC32Checksum(byte[] bytes) {
@@ -207,28 +216,32 @@ public class TurWCPluginProcess {
         return String.valueOf(crc32.getValue());
     }
 
-    private Map<String, Object> getJobItemAttributes(TurWCSource turWCSource, Document document, String url) {
+    private Map<String, Object> getJobItemAttributes(TurWCSource turWCSource, Document document,
+            String url) {
         Map<String, Object> turSNJobItemAttributes = new HashMap<>();
         turWCAttributeMappingRepository.findByTurWCSource(turWCSource)
-                .ifPresent(source -> source.forEach(turWCCustomClass -> Optional.ofNullable(turWCCustomClass.getText())
-                        .ifPresentOrElse(text -> usesText(turWCCustomClass, text, turSNJobItemAttributes), () -> {
-                            if (!StringUtils.isEmpty(turWCCustomClass.getClassName()))
-                                usesCustomClass(document, url, turWCCustomClass, turSNJobItemAttributes);
-                        })));
+                .ifPresent(source -> source.forEach(turWCCustomClass -> Optional
+                        .ofNullable(turWCCustomClass.getText()).ifPresentOrElse(
+                                text -> usesText(turWCCustomClass, text, turSNJobItemAttributes),
+                                () -> {
+                                    if (!StringUtils.isEmpty(turWCCustomClass.getClassName()))
+                                        usesCustomClass(document, url, turWCCustomClass,
+                                                turSNJobItemAttributes);
+                                })));
         return turSNJobItemAttributes;
     }
 
-    private void usesCustomClass(Document document, String url, TurWCAttributeMapping turWCCustomClass,
-            Map<String, Object> turSNJobItemAttributes) {
+    private void usesCustomClass(Document document, String url,
+            TurWCAttributeMapping turWCCustomClass, Map<String, Object> turSNJobItemAttributes) {
         getCustomClass(document, url, turWCCustomClass)
                 .ifPresent(turMultiValue -> turMultiValue.forEach(attributeValue -> {
                     if (!StringUtils.isBlank(attributeValue)) {
                         if (turSNJobItemAttributes.containsKey(turWCCustomClass.getName())) {
-                            addItemInExistingAttribute(attributeValue,
-                                    turSNJobItemAttributes, turWCCustomClass.getName());
+                            addItemInExistingAttribute(attributeValue, turSNJobItemAttributes,
+                                    turWCCustomClass.getName());
                         } else {
-                            addFirstItemToAttribute(turWCCustomClass.getName(),
-                                    attributeValue, turSNJobItemAttributes);
+                            addFirstItemToAttribute(turWCCustomClass.getName(), attributeValue,
+                                    turSNJobItemAttributes);
                         }
                     }
                 }));
@@ -247,8 +260,7 @@ public class TurWCPluginProcess {
     }
 
     private static void addItemInExistingAttribute(String attributeValue,
-            Map<String, Object> attributes,
-            String attributeName) {
+            Map<String, Object> attributes, String attributeName) {
         if (attributes.get(attributeName) instanceof ArrayList)
             addItemToArray(attributes, attributeName, attributeValue);
         else
@@ -263,40 +275,34 @@ public class TurWCPluginProcess {
         attributes.put(attributeName, attributeValues);
     }
 
-    private static void addItemToArray(Map<String, Object> attributes, String attributeName, String attributeValue) {
+    private static void addItemToArray(Map<String, Object> attributes, String attributeName,
+            String attributeValue) {
         List<String> attributeValues = new ArrayList<>(((List<?>) attributes.get(attributeName))
                 .stream().map(String.class::cast).toList());
         attributeValues.add(attributeValue);
         attributes.put(attributeName, attributeValues);
     }
 
-    private void addFirstItemToAttribute(String attributeName,
-            String attributeValue,
+    private void addFirstItemToAttribute(String attributeName, String attributeValue,
             Map<String, Object> attributes) {
         attributes.put(attributeName, attributeValue);
     }
 
     private Locale getLocale(TurWCSource turWCSource, Document document, String url) {
-        return Optional.ofNullable(turWCSource.getLocale())
-                .orElseGet(() -> {
-                    if (!StringUtils.isEmpty(turWCSource.getLocaleClass())) {
-                        return TurCustomClassCache.getCustomClassMap(turWCSource.getLocaleClass())
-                                .map(classInstance -> ((TurWCExtLocaleInterface) classInstance)
-                                        .consume(getTurWCContext(document, url)))
-                                .orElse(Locale.US);
-                    }
-                    return Locale.US;
-                });
+        return Optional.ofNullable(turWCSource.getLocale()).orElseGet(() -> {
+            if (!StringUtils.isEmpty(turWCSource.getLocaleClass())) {
+                return TurCustomClassCache.getCustomClassMap(turWCSource.getLocaleClass())
+                        .map(classInstance -> ((TurWCExtLocaleInterface) classInstance)
+                                .consume(getTurWCContext(document, url)))
+                        .orElse(Locale.US);
+            }
+            return Locale.US;
+        });
     }
 
     private TurWCContext getTurWCContext(Document document, String url) {
-        return TurWCContext.builder()
-                .document(document)
-                .url(url)
-                .timeout(timeout)
-                .userAgent(userAgent)
-                .referrer(referrer)
-                .build();
+        return TurWCContext.builder().document(document).url(url).timeout(timeout)
+                .userAgent(userAgent).referrer(referrer).build();
     }
 
     private boolean canBeIndexed(String pageUrl) {
@@ -314,8 +320,9 @@ public class TurWCPluginProcess {
     }
 
     private String getPageUrl(String attr) {
-        String pageUrl = getUrlWithoutParameters(!isHttpUrl(attr)
-                && isNotMailUrl(attr) && isNotTelUrl(attr) ? this.website + attr : attr);
+        String pageUrl = getUrlWithoutParameters(
+                !isHttpUrl(attr) && isNotMailUrl(attr) && isNotTelUrl(attr) ? this.website + attr
+                        : attr);
         String pageUrlNormalized = pageUrl.endsWith("/") ? removeLastChar(pageUrl) : pageUrl;
         if (isNotMailUrl(attr) && isNotTelUrl(attr)) {
             try {
@@ -332,10 +339,8 @@ public class TurWCPluginProcess {
     }
 
     private Document getHTML(String url) throws IOException {
-        Connection connection = Jsoup.connect(url)
-                .userAgent(userAgent)
-                .referrer(referrer)
-                .timeout(timeout);
+        Connection connection =
+                Jsoup.connect(url).userAgent(userAgent).referrer(referrer).timeout(timeout);
         if (isBasicAuth()) {
             connection.header(AUTHORIZATION, "%s %s".formatted(BASIC, getBasicAuth()));
         }
@@ -348,7 +353,8 @@ public class TurWCPluginProcess {
     }
 
     private String getBasicAuth() {
-        return Base64.getEncoder().encodeToString("%s:%s".formatted(this.username, this.password).getBytes());
+        return Base64.getEncoder()
+                .encodeToString("%s:%s".formatted(this.username, this.password).getBytes());
     }
 
     private boolean isBasicAuth() {
@@ -382,10 +388,7 @@ public class TurWCPluginProcess {
     private String getUrlWithoutParameters(String url) {
         try {
             URI uri = new URI(url);
-            return new URI(uri.getScheme(),
-                    uri.getAuthority(),
-                    uri.getPath(),
-                    null,
+            return new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null,
                     uri.getFragment()).toString();
         } catch (URISyntaxException e) {
             return url;
