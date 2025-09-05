@@ -4,13 +4,12 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import { ROUTES } from './app/routes.const.ts'
-import { environment } from './environment/environment.ts'
 import './index.css'
 import type { TurRestInfo } from './models/auth/rest-info.ts'
 import { TurAuthorizationService } from './services/authorization.service.ts'
 
 const authorization = new TurAuthorizationService()
-axios.defaults.baseURL = `${environment.apiUrl}/api`;
+axios.defaults.baseURL = `${import.meta.env.VITE_API_URL}/api`;
 axios.interceptors.request.use(async (config) => {
   config.headers['Content-Type'] = 'application/json';
   config.headers['X-Requested-With'] = 'XMLHttpRequest';
