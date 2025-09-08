@@ -13,9 +13,6 @@
   // Disable automatic builds to reduce CPU usage
   "java.autobuild.enabled": false,
 
-  // Disable Maven auto-import if it's causing delays
-  "java.configuration.maven.userSettings": "DISABLED",
-
   // Improve editor responsiveness and clarity
   "editor.minimap.enabled": false,
   "editor.renderWhitespace": "boundary",

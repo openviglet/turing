@@ -18,25 +18,13 @@ package com.viglet.turing.connector.persistence.model;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -52,9 +40,9 @@ import lombok.experimental.Accessors;
 @Setter
 @Getter
 @Entity
-@Table(name = "con_indexing", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@Table(name = "con_dependency", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 @AllArgsConstructor
-public class TurConnectorIndexingModel implements Serializable {
+public class TurConnectorDependencyModel implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -65,32 +53,9 @@ public class TurConnectorIndexingModel implements Serializable {
     private int id;
     @Column(length = 500)
     private String objectId;
-    @Column
-    private String provider;
-    @Column
-    private String source;
-    @Column
-    private String environment;
-    @Column
-    private String transactionId;
-    @Column
-    private String checksum;
-    @Column
-    private Locale locale;
-    @Column
-    private Date created;
-    @Column
-    private Date modificationDate;
-    @Column
-    private boolean standalone;
-    @Enumerated(EnumType.STRING)
-    @Column
-    private TurIndexingStatus status;
-    @Builder.Default
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> sites = new ArrayList<>();
-    @OneToMany(mappedBy = "reference", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade({CascadeType.ALL})
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<TurConnectorDependencyModel> itens;
+    @ManyToOne
+    @JoinColumn(name = "reference_id", nullable = true)
+    private TurConnectorIndexingModel reference;
+
+
 }

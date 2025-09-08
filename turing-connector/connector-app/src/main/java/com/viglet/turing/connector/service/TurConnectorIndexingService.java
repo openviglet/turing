@@ -12,16 +12,21 @@ import com.viglet.turing.connector.commons.TurConnectorSession;
 import com.viglet.turing.connector.commons.domain.TurConnectorIndexing;
 import com.viglet.turing.connector.commons.domain.TurJobItemWithSession;
 import com.viglet.turing.connector.domain.TurSNSiteLocale;
+import com.viglet.turing.connector.persistence.model.TurConnectorDependencyModel;
 import com.viglet.turing.connector.persistence.model.TurConnectorIndexingModel;
+import com.viglet.turing.connector.persistence.repository.TurConnectorDependencyRepository;
 import com.viglet.turing.connector.persistence.repository.TurConnectorIndexingRepository;
 
 @Service
 public class TurConnectorIndexingService {
     private final TurConnectorIndexingRepository turConnectorIndexingRepository;
+    private final TurConnectorDependencyRepository turConnectorDependencyRepository;
 
     public TurConnectorIndexingService(
-            TurConnectorIndexingRepository turConnectorIndexingRepository) {
+            TurConnectorIndexingRepository turConnectorIndexingRepository,
+            TurConnectorDependencyRepository turConnectorDependencyRepository) {
         this.turConnectorIndexingRepository = turConnectorIndexingRepository;
+        this.turConnectorDependencyRepository = turConnectorDependencyRepository;
     }
 
     public void delete(TurJobItemWithSession turSNJobItemWithSession) {
@@ -44,25 +49,50 @@ public class TurConnectorIndexingService {
 
     public void update(TurJobItemWithSession turSNJobItemWithSession,
             TurConnectorIndexingModel indexing) {
-        turConnectorIndexingRepository.save(updateTurConnectorIndexing(indexing,
-                turSNJobItemWithSession.turSNJobItem(), turSNJobItemWithSession.session(),
-                TurIndexingStatus.IGNORED, turSNJobItemWithSession.standalone()));
+        TurConnectorIndexingModel turConnectorIndexingModel =
+                turConnectorIndexingRepository.save(updateTurConnectorIndexing(indexing,
+                        turSNJobItemWithSession.turSNJobItem(), turSNJobItemWithSession.session(),
+                        TurIndexingStatus.IGNORED, turSNJobItemWithSession.standalone()));
+        updateDependencies(turSNJobItemWithSession, turConnectorIndexingModel);
+    }
+
+    private void updateDependencies(TurJobItemWithSession turSNJobItemWithSession,
+            TurConnectorIndexingModel turConnectorIndexingModel) {
+        deleteDependencies(turConnectorIndexingModel);
+        saveDependencies(turSNJobItemWithSession, turConnectorIndexingModel);
     }
 
     public void update(TurJobItemWithSession turSNJobItemWithSession,
             List<TurConnectorIndexingModel> turConnectorIndexingList, TurIndexingStatus status) {
         turConnectorIndexingList.forEach(indexing -> {
             turConnectorIndexingRepository.findById(indexing.getId()).ifPresent(managedIndexing -> {
-                turConnectorIndexingRepository.save(updateTurConnectorIndexing(managedIndexing,
-                        turSNJobItemWithSession.turSNJobItem(), turSNJobItemWithSession.session(),
-                        status, turSNJobItemWithSession.standalone()));
+                TurConnectorIndexingModel turConnectorIndexingModel =
+                        turConnectorIndexingRepository.save(updateTurConnectorIndexing(
+                                managedIndexing, turSNJobItemWithSession.turSNJobItem(),
+                                turSNJobItemWithSession.session(), status,
+                                turSNJobItemWithSession.standalone()));
+                updateDependencies(turSNJobItemWithSession, turConnectorIndexingModel);
             });
         });
     }
 
     public void save(TurJobItemWithSession turSNJobItemWithSession, TurIndexingStatus status) {
-        turConnectorIndexingRepository
+        TurConnectorIndexingModel turConnectorIndexingModel = turConnectorIndexingRepository
                 .save(createTurConnectorIndexing(turSNJobItemWithSession, status));
+        saveDependencies(turSNJobItemWithSession, turConnectorIndexingModel);
+    }
+
+    private void deleteDependencies(TurConnectorIndexingModel turConnectorIndexingModel) {
+        turConnectorDependencyRepository.deleteAllByReferenceId(turConnectorIndexingModel.getId());
+    }
+
+    private void saveDependencies(TurJobItemWithSession turSNJobItemWithSession,
+            TurConnectorIndexingModel turConnectorIndexingModel) {
+        turConnectorDependencyRepository
+                .saveAll(turSNJobItemWithSession.dependencies().stream().map(dependency -> {
+                    return TurConnectorDependencyModel.builder().objectId(dependency)
+                            .reference(turConnectorIndexingModel).build();
+                }).toList());
     }
 
     public boolean exists(TurJobItemWithSession turSNJobItemWithSession) {
@@ -108,14 +138,16 @@ public class TurConnectorIndexingService {
             TurJobItemWithSession turSNJobItemWithSession, TurIndexingStatus status) {
         TurSNJobItem turSNJobItem = turSNJobItemWithSession.turSNJobItem();
         TurConnectorSession turConnectorSession = turSNJobItemWithSession.session();
-        return TurConnectorIndexingModel.builder().objectId(turSNJobItem.getId())
-                .source(turConnectorSession.getSource())
+        TurConnectorIndexingModel turConnectorIndexingModel = TurConnectorIndexingModel.builder()
+                .objectId(turSNJobItem.getId()).source(turConnectorSession.getSource())
                 .transactionId(turConnectorSession.getTransactionId())
                 .locale(turSNJobItem.getLocale()).checksum(turSNJobItem.getChecksum())
                 .created(new Date()).modificationDate(new Date()).sites(turSNJobItem.getSiteNames())
                 .environment(turSNJobItem.getEnvironment()).status(status)
                 .standalone(turSNJobItemWithSession.standalone())
                 .provider(turConnectorSession.getProviderName()).build();
+
+        return turConnectorIndexingModel;
     }
 
     public boolean isChecksumDifferent(TurJobItemWithSession turSNJobItemWithSession) {

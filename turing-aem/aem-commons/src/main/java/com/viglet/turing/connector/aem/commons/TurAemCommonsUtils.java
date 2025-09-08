@@ -2,24 +2,59 @@
  *
  * Copyright (C) 2016-2024 the original author or authors.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <https://www.gnu.org/licenses/>.
  */
 
 package com.viglet.turing.connector.aem.commons;
 
+import static com.viglet.turing.connector.aem.commons.TurAemConstants.JCR;
+import static com.viglet.turing.connector.aem.commons.TurAemConstants.JCR_CONTENT;
+import static com.viglet.turing.connector.aem.commons.TurAemConstants.JCR_PRIMARY_TYPE;
+import static com.viglet.turing.connector.aem.commons.TurAemConstants.JSON;
+import static com.viglet.turing.connector.aem.commons.TurAemConstants.ONCE;
+import static com.viglet.turing.connector.aem.commons.TurAemConstants.SLING;
+import static com.viglet.turing.connector.aem.commons.TurAemConstants.TEXT;
+import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
@@ -39,26 +74,6 @@ import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDateInterface;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentDefinitionProcess;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.message.BasicHeader;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.viglet.turing.connector.aem.commons.TurAemConstants.*;
-import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
 
 @Slf4j
 public class TurAemCommonsUtils {
@@ -66,20 +81,57 @@ public class TurAemCommonsUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static boolean isTypeEqualContentType(JSONObject jsonObject, TurAemSourceContext turAemSourceContext) {
-        return jsonObject.has(JCR_PRIMARY_TYPE) &&
-                jsonObject.getString(JCR_PRIMARY_TYPE)
-                        .equals(turAemSourceContext.getContentType());
+    public static Set<String> getDependencies(JSONObject infinityJson) {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root;
+        try {
+            root = mapper.readTree(infinityJson.toString());
+            return getContentValues(root);
+
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+        }
+        return Collections.emptySet();
     }
 
-    public static Optional<String> getSiteName(TurAemSourceContext turAemSourceContext, JSONObject jsonObject) {
-        return getSiteName(jsonObject)
-                .map(Optional::of)
-                .orElseGet(() -> {
-                    log.error("No site name the {} root path ({})", turAemSourceContext.getRootPath(),
-                            turAemSourceContext.getId());
-                    return Optional.empty();
-                });
+    private static Set<String> getContentValues(JsonNode node) {
+        Set<String> results = new HashSet<>();
+        extractContentValues(node, results);
+        return results;
+    }
+
+    private static void extractContentValues(JsonNode node, Set<String> results) {
+        if (node.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> entry = fields.next();
+                extractContentValues(entry.getValue(), results);
+            }
+        } else if (node.isArray()) {
+            for (JsonNode item : node) {
+                extractContentValues(item, results);
+            }
+        } else if (node.isTextual()) {
+            String value = node.asText();
+            if (value.startsWith("/content")) {
+                results.add(value);
+            }
+        }
+    }
+
+    public static boolean isTypeEqualContentType(JSONObject jsonObject,
+            TurAemSourceContext turAemSourceContext) {
+        return jsonObject.has(JCR_PRIMARY_TYPE) && jsonObject.getString(JCR_PRIMARY_TYPE)
+                .equals(turAemSourceContext.getContentType());
+    }
+
+    public static Optional<String> getSiteName(TurAemSourceContext turAemSourceContext,
+            JSONObject jsonObject) {
+        return getSiteName(jsonObject).map(Optional::of).orElseGet(() -> {
+            log.error("No site name the {} root path ({})", turAemSourceContext.getRootPath(),
+                    turAemSourceContext.getId());
+            return Optional.empty();
+        });
     }
 
     public static boolean usingContentTypeParameter(TurAemSourceContext turAemSourceContext) {
@@ -100,7 +152,7 @@ public class TurAemCommonsUtils {
     }
 
     public static Date getDeltaDate(TurAemObject aemObject, TurAemSourceContext turAemSourceContext,
-                                    TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
+            TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
         Date deltaDate = Optional.ofNullable(turAemContentDefinitionProcess.getDeltaClassName())
                 .map(className -> TurCustomClassCache.getCustomClassMap(className)
                         .map(classInstance -> ((TurAemExtDeltaDateInterface) classInstance)
@@ -112,24 +164,23 @@ public class TurAemCommonsUtils {
     }
 
 
-    private static Date defaultDeltaDate(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
+    private static Date defaultDeltaDate(TurAemObject aemObject,
+            TurAemSourceContext turAemSourceContext) {
         return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
     }
 
     public static TurAemTargetAttrValueMap runCustomClassFromContentType(TurAemModel turAemModel,
-                                                                         TurAemObject aemObject,
-                                                                         TurAemSourceContext turAemSourceContext) {
-        return StringUtils.isNotEmpty(turAemModel.getClassName()) ?
-                TurCustomClassCache.getCustomClassMap(turAemModel.getClassName())
+            TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
+        return StringUtils.isNotEmpty(turAemModel.getClassName())
+                ? TurCustomClassCache.getCustomClassMap(turAemModel.getClassName())
                         .map(customClassMap -> ((TurAemExtContentInterface) customClassMap)
                                 .consume(aemObject, turAemSourceContext))
-                        .orElseGet(TurAemTargetAttrValueMap::new) :
-                new TurAemTargetAttrValueMap();
+                        .orElseGet(TurAemTargetAttrValueMap::new)
+                : new TurAemTargetAttrValueMap();
     }
 
-    public static void addFirstItemToAttribute(String attributeName,
-                                               String attributeValue,
-                                               Map<String, Object> attributes) {
+    public static void addFirstItemToAttribute(String attributeName, String attributeValue,
+            Map<String, Object> attributes) {
         attributes.put(attributeName, attributeValue);
     }
 
@@ -142,12 +193,12 @@ public class TurAemCommonsUtils {
         return new Date();
     }
 
-    public static List<TurSNAttributeSpec> getDefinitionFromModel(List<TurSNAttributeSpec> turSNAttributeSpecList,
-                                                                  Map<String, Object> targetAttrMap) {
+    public static List<TurSNAttributeSpec> getDefinitionFromModel(
+            List<TurSNAttributeSpec> turSNAttributeSpecList, Map<String, Object> targetAttrMap) {
         List<TurSNAttributeSpec> turSNAttributeSpecFromModelList = new ArrayList<>();
         targetAttrMap.forEach((key, value) -> turSNAttributeSpecList.stream()
-                .filter(turSNAttributeSpec -> turSNAttributeSpec.getName() != null &&
-                        turSNAttributeSpec.getName().equals(key))
+                .filter(turSNAttributeSpec -> turSNAttributeSpec.getName() != null
+                        && turSNAttributeSpec.getName().equals(key))
                 .findFirst().ifPresent(turSNAttributeSpecFromModelList::add));
         return turSNAttributeSpecFromModelList;
     }
@@ -165,8 +216,7 @@ public class TurAemCommonsUtils {
     }
 
     public static void addItemInExistingAttribute(String attributeValue,
-                                                  Map<String, Object> attributes,
-                                                  String attributeName) {
+            Map<String, Object> attributes, String attributeName) {
         if (attributes.get(attributeName) instanceof ArrayList) {
             addItemToArray(attributes, attributeName, attributeValue);
         } else {
@@ -175,11 +225,13 @@ public class TurAemCommonsUtils {
     }
 
     private static void convertAttributeSingleValueToArray(Map<String, Object> attributes,
-                                                           String attributeName, String attributeValue) {
-        attributes.put(attributeName, Lists.newArrayList(attributes.get(attributeName), attributeValue));
+            String attributeName, String attributeValue) {
+        attributes.put(attributeName,
+                Lists.newArrayList(attributes.get(attributeName), attributeValue));
     }
 
-    private static void addItemToArray(Map<String, Object> attributes, String attributeName, String attributeValue) {
+    private static void addItemToArray(Map<String, Object> attributes, String attributeName,
+            String attributeValue) {
         List<String> attributeValues = new ArrayList<>(((List<?>) attributes.get(attributeName))
                 .stream().map(String.class::cast).toList());
         attributeValues.add(attributeValue);
@@ -188,15 +240,15 @@ public class TurAemCommonsUtils {
     }
 
     @NotNull
-    public static List<TurSNJobAttributeSpec> castSpecToJobSpec(List<TurSNAttributeSpec> turSNAttributeSpecList) {
-        return turSNAttributeSpecList.stream()
-                .filter(Objects::nonNull)
-                .map(TurSNJobAttributeSpec.class::cast)
-                .toList();
+    public static List<TurSNJobAttributeSpec> castSpecToJobSpec(
+            List<TurSNAttributeSpec> turSNAttributeSpecList) {
+        return turSNAttributeSpecList.stream().filter(Objects::nonNull)
+                .map(TurSNJobAttributeSpec.class::cast).toList();
     }
 
     public static Locale getLocaleByPath(TurAemSourceContext turAemSourceContext, String path) {
-        for (TurAemLocalePathContext turAemSourceLocalePath : turAemSourceContext.getLocalePaths()) {
+        for (TurAemLocalePathContext turAemSourceLocalePath : turAemSourceContext
+                .getLocalePaths()) {
             if (hasPath(turAemSourceLocalePath, path)) {
                 return turAemSourceLocalePath.getLocale();
             }
@@ -209,11 +261,12 @@ public class TurAemCommonsUtils {
     }
 
     public static Locale getLocaleFromAemObject(TurAemSourceContext turAemSourceContext,
-                                                TurAemObject aemObject) {
+            TurAemObject aemObject) {
         return getLocaleByPath(turAemSourceContext, aemObject.getPath());
     }
 
-    public static Optional<JSONObject> getInfinityJson(String url, TurAemSourceContext turAemSourceContext) {
+    public static Optional<JSONObject> getInfinityJson(String url,
+            TurAemSourceContext turAemSourceContext) {
         String infinityJsonUrl = String.format(url.endsWith(JSON) ? "%s%s" : "%s%s.infinity.json",
                 turAemSourceContext.getUrl(), url);
         return getResponseBody(infinityJsonUrl, turAemSourceContext).map(responseBody -> {
@@ -258,9 +311,9 @@ public class TurAemCommonsUtils {
         return responseBody.startsWith("{");
     }
 
-    public static <T> Optional<T> getResponseBody(String url, TurAemSourceContext turAemSourceContext, Class<T> clazz) {
-        return getResponseBody(url, turAemSourceContext).map(json ->
-        {
+    public static <T> Optional<T> getResponseBody(String url,
+            TurAemSourceContext turAemSourceContext, Class<T> clazz) {
+        return getResponseBody(url, turAemSourceContext).map(json -> {
             if (!TurCommonsUtils.isValidJson(json)) {
                 return null;
             }
@@ -269,18 +322,20 @@ public class TurAemCommonsUtils {
                         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                         .readValue(json, clazz);
             } catch (JsonProcessingException e) {
-                log.error("URL {} - {}" , url, e.getMessage(), e);
+                log.error("URL {} - {}", url, e.getMessage(), e);
             }
             return null;
         });
     }
+
     public static @NotNull Optional<String> getResponseBody(String url,
-                                                                    TurAemSourceContext turAemSourceContext) {
+            TurAemSourceContext turAemSourceContext) {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create()
-                .setDefaultHeaders(List.of(new BasicHeader(HttpHeaders.AUTHORIZATION,
-                        basicAuth(turAemSourceContext.getUsername(), turAemSourceContext.getPassword()))))
+                .setDefaultHeaders(List.of(new BasicHeader(HttpHeaders.AUTHORIZATION, basicAuth(
+                        turAemSourceContext.getUsername(), turAemSourceContext.getPassword()))))
                 .build()) {
-            HttpGet request = new HttpGet(URI.create(UrlEscapers.urlFragmentEscaper().escape(url)).normalize());
+            HttpGet request = new HttpGet(
+                    URI.create(UrlEscapers.urlFragmentEscaper().escape(url)).normalize());
             String json = httpClient.execute(request, response -> {
                 log.debug("Request Status {} - {}", response.getCode(), url);
                 HttpEntity entity = response.getEntity();
@@ -292,13 +347,14 @@ public class TurAemCommonsUtils {
             }
             return Optional.empty();
         } catch (IOException e) {
-            log.error("URL {} - {}" , url, e.getMessage(), e);
+            log.error("URL {} - {}", url, e.getMessage(), e);
             throw new TurRuntimeException(e);
         }
     }
 
     private static String basicAuth(String username, String password) {
-        return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+        return "Basic "
+                + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
 
     public static String getJsonNodeToComponent(JSONObject jsonObject) {
@@ -315,7 +371,8 @@ public class TurAemCommonsUtils {
         return components.toString();
     }
 
-    public static Locale getLocaleFromContext(TurAemSourceContext turAemSourceContext, TurAemContext context) {
+    public static Locale getLocaleFromContext(TurAemSourceContext turAemSourceContext,
+            TurAemContext context) {
         return getLocaleFromAemObject(turAemSourceContext, context.getCmsObjectInstance());
     }
 }

@@ -31,6 +31,7 @@ import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
 import static com.viglet.turing.connector.commons.logging.TurConnectorLoggingUtils.setSuccessStatus;
 import static com.viglet.turing.connector.constant.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,7 +125,7 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                 createJobDeleteFromCreate(turSNJobItemWithSession).ifPresent(deIndexJobItem -> {
                     TurJobItemWithSession turSNJobItemWithSessionDeIndex =
                             new TurJobItemWithSession(deIndexJobItem,
-                                    turSNJobItemWithSession.session(),
+                                    turSNJobItemWithSession.session(), Collections.emptySet(),
                                     turSNJobItemWithSession.standalone());
                     addJobToMessageQueue(turSNJobItemWithSessionDeIndex);
                     setSuccessStatus(turSNJobItemWithSession.turSNJobItem(), DEINDEXED);
@@ -284,9 +285,10 @@ public class TurConnectorContextImpl implements TurConnectorContext {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(ID_ATTR, turConnectorIndexing.getObjectId());
         attributes.put(SOURCE_APPS_ATTR, session.getProviderName());
-        addJobToMessageQueue(
-                new TurJobItemWithSession(new TurSNJobItem(DELETE, turConnectorIndexing.getSites(),
-                        turConnectorIndexing.getLocale(), attributes), session, false));
+        addJobToMessageQueue(new TurJobItemWithSession(
+                new TurSNJobItem(DELETE, turConnectorIndexing.getSites(),
+                        turConnectorIndexing.getLocale(), attributes),
+                session, Collections.emptySet(), false));
     }
 
     private void modifyIndexing(TurJobItemWithSession turSNJobItemWithSession,
