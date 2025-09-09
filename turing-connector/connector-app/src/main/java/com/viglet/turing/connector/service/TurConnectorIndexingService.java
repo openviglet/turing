@@ -26,6 +26,12 @@ public class TurConnectorIndexingService {
         this.turConnectorIndexingRepository = turConnectorIndexingRepository;
     }
 
+    public List<String> findByDependencies(String source, String provider,
+            List<String> referenceIds) {
+        return turConnectorIndexingRepository.findObjectIdsByDependencies(source, provider,
+                referenceIds);
+    }
+
     public void delete(TurJobItemWithSession turSNJobItemWithSession) {
         TurSNJobItem turSNJobItem = turSNJobItemWithSession.turSNJobItem();
         TurConnectorSession session = turSNJobItemWithSession.session();
@@ -163,19 +169,22 @@ public class TurConnectorIndexingService {
                 environment, provider, objectIdList);
     }
 
+
     public List<TurConnectorIndexing> getIndexingItem(String objectId, String source,
             String provider) {
         List<TurConnectorIndexing> dtoList = new ArrayList<>();
         turConnectorIndexingRepository
                 .findByObjectIdAndSourceAndProvider(objectId, source, provider).stream()
-                .map(indexing -> TurConnectorIndexing.builder().checksum(indexing.getChecksum())
-                        .created(indexing.getCreated()).environment(indexing.getEnvironment())
-                        .id(indexing.getId()).locale(indexing.getLocale())
-                        .modificationDate(indexing.getModificationDate())
-                        .source(indexing.getSource()).objectId(indexing.getObjectId())
-                        .sites(indexing.getSites()).status(indexing.getStatus())
-                        .transactionId(indexing.getTransactionId()).build())
-                .forEach(dtoList::add);
+                .map(indexing -> getConnectorIndexing(indexing)).forEach(dtoList::add);
         return dtoList;
+    }
+
+    public TurConnectorIndexing getConnectorIndexing(TurConnectorIndexingModel indexing) {
+        return TurConnectorIndexing.builder().checksum(indexing.getChecksum())
+                .created(indexing.getCreated()).environment(indexing.getEnvironment())
+                .id(indexing.getId()).locale(indexing.getLocale())
+                .modificationDate(indexing.getModificationDate()).source(indexing.getSource())
+                .objectId(indexing.getObjectId()).sites(indexing.getSites())
+                .status(indexing.getStatus()).transactionId(indexing.getTransactionId()).build();
     }
 }

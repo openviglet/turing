@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -206,7 +207,7 @@ public class TurWCPluginProcess {
                 new TurSNJobItem(TurSNJobAction.CREATE, new ArrayList<>(snSites),
                         getLocale(turWCSource, document, url),
                         getJobItemAttributes(turWCSource, document, url), null, checksum),
-                source, false);
+                source, Collections.emptySet(), false);
         turConnectorContext.addJobItem(turJobItemWithSession);
     }
 

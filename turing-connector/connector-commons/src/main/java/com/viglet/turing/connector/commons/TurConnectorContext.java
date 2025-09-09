@@ -26,4 +26,8 @@ public interface TurConnectorContext {
     void finishIndexing(TurConnectorSession session, boolean standalone);
 
     List<TurConnectorIndexing> getIndexingItem(String objectId, String source, String provider);
+
+
+    List<String> getObjectIdByDependency(String source, String provider,
+            List<String> dependenciesObjectIdList);
 }

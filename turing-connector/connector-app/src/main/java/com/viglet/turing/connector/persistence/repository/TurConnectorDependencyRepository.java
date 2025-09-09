@@ -23,4 +23,5 @@ public interface TurConnectorDependencyRepository
                 extends JpaRepository<TurConnectorDependencyModel, Integer> {
 
         void deleteAllByReferenceId(int referenceId);
+
 }

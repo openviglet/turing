@@ -80,6 +80,16 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     @Override
+    public List<String> getObjectIdByDependency(String source, String provider,
+            List<String> dependenciesObjectIdList) {
+        if (dependenciesObjectIdList == null || dependenciesObjectIdList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return indexingService.findByDependencies(source, provider, dependenciesObjectIdList)
+                .stream().distinct().toList();
+    }
+
+    @Override
     public void addJobItem(TurJobItemWithSession turJobItemWithSession) {
         if (turJobItemWithSession.turSNJobItem() != null) {
             log.info("Adding {} object to payload.", turJobItemWithSession.turSNJobItem().getId());
