@@ -89,7 +89,7 @@ public interface TurConnectorIndexingRepository
                         @Param("locale") Locale locale, @Param("environment") String environment,
                         @Param("provider") String provider, @Param("ids") List<String> ids);
 
-        @Query("SELECT DISTINCT d.objectId FROM TurConnectorIndexingModel i JOIN i.dependencies d WHERE i.source = :source AND "
+        @Query("SELECT DISTINCT i.objectId FROM TurConnectorIndexingModel i JOIN i.dependencies d WHERE i.source = :source AND "
                         + "i.provider = :provider AND d.objectId IN :ids")
         List<String> findObjectIdsByDependencies(@Param("source") String source,
                         @Param("provider") String provider, @Param("ids") List<String> ids);
