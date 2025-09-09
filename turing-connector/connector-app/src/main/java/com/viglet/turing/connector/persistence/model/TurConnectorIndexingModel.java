@@ -20,8 +20,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.OnDelete;
@@ -89,8 +91,16 @@ public class TurConnectorIndexingModel implements Serializable {
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> sites = new ArrayList<>();
+    @Builder.Default
     @OneToMany(mappedBy = "reference", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade({CascadeType.ALL})
+    @Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<TurConnectorDependencyModel> itens;
+    private Set<TurConnectorDependencyModel> dependencies = new HashSet<>();
+
+    public void setDependencies(Set<TurConnectorDependencyModel> dependencyModels) {
+        this.dependencies.clear();
+        if (dependencyModels != null) {
+            this.dependencies.addAll(dependencyModels);
+        }
+    }
 }
