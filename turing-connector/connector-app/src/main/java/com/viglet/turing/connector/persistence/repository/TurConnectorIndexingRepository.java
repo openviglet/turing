@@ -58,7 +58,11 @@ public interface TurConnectorIndexingRepository
         void deleteByProvider(String provider);
 
         @Transactional
-        void deleteByProviderAndObjectIdIn(String provider, Collection<String> contentIds);
+        void deleteByProviderAndSource(String provider, String source);
+
+        @Transactional
+        void deleteByProviderAndSourceAndObjectIdIn(String provider, String source,
+                        Collection<String> contentIds);
 
         @Transactional
         void deleteBySourceAndProviderAndTransactionIdNot(String source, String provider,
@@ -93,6 +97,4 @@ public interface TurConnectorIndexingRepository
                         + "i.provider = :provider AND d.objectId IN :ids")
         List<String> findObjectIdsByDependencies(@Param("source") String source,
                         @Param("provider") String provider, @Param("ids") List<String> ids);
-
-
 }

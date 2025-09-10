@@ -45,6 +45,17 @@ public class TurConnectorIndexingService {
         turConnectorIndexingRepository.deleteByProvider(provider);
     }
 
+    public void deleteByProviderAndSourceAndObjectIdIn(String provider, String source,
+            Collection<String> objectIds) {
+        turConnectorIndexingRepository.deleteByProviderAndSourceAndObjectIdIn(provider, source,
+                objectIds);
+
+    }
+
+    public void deleteByProviderAndSource(String provider, String source) {
+        turConnectorIndexingRepository.deleteByProviderAndSource(provider, source);
+    }
+
     public void deleteContentsToBeDeIndexed(TurConnectorSession session) {
         turConnectorIndexingRepository.deleteBySourceAndProviderAndTransactionIdNot(
                 session.getSource(), session.getProviderName(), session.getTransactionId());

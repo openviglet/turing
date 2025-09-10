@@ -94,16 +94,17 @@ public class TurConnectorApi {
 
     @GetMapping("reindex/{name}/all")
     public ResponseEntity<Map<String, String>> reindexAll(@PathVariable String name) {
-        indexingService.deleteByProvider(plugin.getProviderName());
+        indexingService.deleteByProviderAndSource(plugin.getProviderName(), name);
         plugin.indexAll(name);
         return ResponseEntity.ok(statusSent());
     }
 
     @GetMapping("reindex/{name}")
     public ResponseEntity<Map<String, String>> reindexAll(@PathVariable String name,
-            @RequestBody List<String> contentId) {
-        indexingService.deleteByProvider(plugin.getProviderName());
-        plugin.indexAll(name);
+            @RequestBody List<String> contentIds) {
+        indexingService.deleteByProviderAndSourceAndObjectIdIn(plugin.getProviderName(), name,
+                contentIds);
+        plugin.indexById(name, contentIds);
         return ResponseEntity.ok(statusSent());
     }
 
