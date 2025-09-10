@@ -164,14 +164,15 @@ public class TurAemPluginProcess {
                 turAemSourceRepository.findByName(source).ifPresentOrElse(turAemSource -> {
                         TurConnectorSession session = getTurConnectorSession(turAemSource);
                         // Index each provided path
-                        idList.stream().filter(StringUtils::isNotBlank).forEach(
-                                        path -> indexContentId(session, turAemSource, path, true));
+                        idList.stream().filter(StringUtils::isNotBlank)
+                                        .forEach(path -> indexContentId(session, turAemSource, path,
+                                                        true, true));
                         // Index dependencies if any
                         turConnectorContext
                                         .getObjectIdByDependency(source, getProviderName(), idList)
                                         .stream().filter(StringUtils::isNotBlank)
                                         .forEach(objectId -> indexContentId(session, turAemSource,
-                                                        objectId, true));
+                                                        objectId, true, false));
                         finished(session, true);
                 }, () -> log.error("Source '{}' not found", source));
         }
@@ -308,7 +309,7 @@ public class TurAemPluginProcess {
         }
 
         public void indexContentId(TurConnectorSession session, TurAemSource turAemSource,
-                        String contentId, boolean standalone) {
+                        String contentId, boolean standalone, boolean indexChildren) {
                 TurAemSourceContext turAemSourceContext = getTurAemSourceContext(
                                 new AemPluginHandlerConfiguration(turAemSource));
                 TurAemCommonsUtils.getInfinityJson(contentId, turAemSourceContext)
@@ -320,7 +321,7 @@ public class TurAemPluginProcess {
                                                         new TurAemContentDefinitionProcess(
                                                                         getTurAemContentMapping(
                                                                                         turAemSource)),
-                                                        standalone);
+                                                        standalone, indexChildren);
                                 }, () -> createDeIndexJobAndSendToConnectorQueue(session, contentId,
                                                 standalone));
         }
@@ -385,15 +386,15 @@ public class TurAemPluginProcess {
                                 .ifPresent(infinityJson -> getNodeFromJson(
                                                 turAemSourceContext.getRootPath(), infinityJson,
                                                 turAemSourceContext, turConnectorSession,
-                                                turAemSource, turAemContentDefinitionProcess,
-                                                false));
+                                                turAemSource, turAemContentDefinitionProcess, false,
+                                                true));
         }
 
         private void getNodeFromJson(String nodePath, JSONObject jsonObject,
                         TurAemSourceContext turAemSourceContext, TurConnectorSession session,
                         TurAemSource turAemSource,
                         TurAemContentDefinitionProcess turAemContentDefinitionProcess,
-                        boolean standalone) {
+                        boolean standalone, boolean indexChildren) {
                 if (TurAemCommonsUtils.isTypeEqualContentType(jsonObject, turAemSourceContext)) {
                         turAemContentDefinitionProcess
                                         .findByNameFromModelWithDefinition(
@@ -406,8 +407,10 @@ public class TurAemPluginProcess {
                                                         turAemContentDefinitionProcess,
                                                         standalone));
                 }
-                getChildrenFromJson(nodePath, jsonObject, turAemSourceContext, session,
-                                turAemSource, turAemContentDefinitionProcess, standalone);
+                if (indexChildren) {
+                        getChildrenFromJson(nodePath, jsonObject, turAemSourceContext, session,
+                                        turAemSource, turAemContentDefinitionProcess, standalone);
+                }
         }
 
         private void getChildrenFromJson(String nodePath, JSONObject jsonObject,
@@ -431,7 +434,7 @@ public class TurAemPluginProcess {
                                                                         turConnectorSession,
                                                                         turAemSource,
                                                                         turAemContentDefinitionProcess,
-                                                                        standalone));
+                                                                        standalone, true));
                                 }
                         }
                 });

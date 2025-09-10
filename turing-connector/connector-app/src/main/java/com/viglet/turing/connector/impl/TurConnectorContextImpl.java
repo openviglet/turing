@@ -85,6 +85,15 @@ public class TurConnectorContextImpl implements TurConnectorContext {
         if (dependenciesObjectIdList == null || dependenciesObjectIdList.isEmpty()) {
             return Collections.emptyList();
         }
+
+        List<String> dependencies =
+                indexingService.findByDependencies(source, provider, dependenciesObjectIdList)
+                        .stream().distinct().toList();
+        if (!dependencies.isEmpty()) {
+            log.info("Found dependencies for {} - {} - {}", source, provider,
+                    dependenciesObjectIdList);
+            dependencies.forEach(dependency -> log.info("Dependent object: {}", dependency));
+        }
         return indexingService.findByDependencies(source, provider, dependenciesObjectIdList)
                 .stream().distinct().toList();
     }
