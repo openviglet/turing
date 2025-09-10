@@ -651,10 +651,13 @@ public class TurAemPluginProcess {
                         TurAemSourceContext turAemSourceContext,
                         TurAemTargetAttrValueMap targetAttrValueMap) {
                 Map<String, Object> attributes = new HashMap<>();
-                attributes.put(SITE, turAemSourceContext.getSiteName());
+                String siteName = turAemSourceContext.getSiteName();
+                if (StringUtils.isNotBlank(siteName)) {
+                        attributes.put(SITE, siteName);
+                }
                 targetAttrValueMap.entrySet().stream()
-                                .filter(entry -> CollectionUtils.isNotEmpty(entry.getValue()))
-                                .forEach(entry -> getJobItemAttribute(entry, attributes));
+                                .filter(e -> CollectionUtils.isNotEmpty(e.getValue()))
+                                .forEach(e -> getJobItemAttribute(e, attributes));
                 return attributes;
         }
 

@@ -132,7 +132,11 @@ public class TurConnectorContextImpl implements TurConnectorContext {
         while (!queueLinks.isEmpty()) {
             TurJobItemWithSession turSNJobItemWithSession = queueLinks.poll();
             if (turSNJobItemWithSession.standalone()) {
-                reIndexProcess(turSNJobItemWithSession);
+                if (objectNeedBeIndexed(turSNJobItemWithSession)) {
+                    indexProcess(turSNJobItemWithSession);
+                } else {
+                    reIndexProcess(turSNJobItemWithSession);
+                }
                 continue;
             }
             if (isJobItemToDeIndex(turSNJobItemWithSession)) {
@@ -140,30 +144,41 @@ public class TurConnectorContextImpl implements TurConnectorContext {
                 continue;
             }
             if (indexingRuleIgnore(turSNJobItemWithSession)) {
-                ignoreIndexingRulesStatus(turSNJobItemWithSession);
-                createJobDeleteFromCreate(turSNJobItemWithSession).ifPresent(deIndexJobItem -> {
-                    TurJobItemWithSession turSNJobItemWithSessionDeIndex =
-                            new TurJobItemWithSession(deIndexJobItem,
-                                    turSNJobItemWithSession.session(), Collections.emptySet(),
-                                    turSNJobItemWithSession.standalone());
-                    addJobToMessageQueue(turSNJobItemWithSessionDeIndex);
-                    setSuccessStatus(turSNJobItemWithSession.turSNJobItem(), DEINDEXED);
-                });
+                indexingRuleIgnoreProcess(turSNJobItemWithSession);
                 continue;
             }
             if (objectNeedBeIndexed(turSNJobItemWithSession)) {
-                createIndexing(turSNJobItemWithSession);
-                addJobToMessageQueue(turSNJobItemWithSession);
+                indexProcess(turSNJobItemWithSession);
             } else {
                 if (objectNeedBeReIndexed(turSNJobItemWithSession)) {
                     reIndexProcess(turSNJobItemWithSession);
                 } else {
-                    unchangedLog(turSNJobItemWithSession);
-                    modifyIndexing(turSNJobItemWithSession, PREPARE_UNCHANGED);
-                    setSuccessStatus(turSNJobItemWithSession.turSNJobItem(), PREPARE_UNCHANGED);
+                    unchangeProcess(turSNJobItemWithSession);
                 }
             }
         }
+    }
+
+    private void indexingRuleIgnoreProcess(TurJobItemWithSession turSNJobItemWithSession) {
+        ignoreIndexingRulesStatus(turSNJobItemWithSession);
+        createJobDeleteFromCreate(turSNJobItemWithSession).ifPresent(deIndexJobItem -> {
+            TurJobItemWithSession turSNJobItemWithSessionDeIndex =
+                    new TurJobItemWithSession(deIndexJobItem, turSNJobItemWithSession.session(),
+                            Collections.emptySet(), turSNJobItemWithSession.standalone());
+            addJobToMessageQueue(turSNJobItemWithSessionDeIndex);
+            setSuccessStatus(turSNJobItemWithSession.turSNJobItem(), DEINDEXED);
+        });
+    }
+
+    private void unchangeProcess(TurJobItemWithSession turSNJobItemWithSession) {
+        unchangedLog(turSNJobItemWithSession);
+        modifyIndexing(turSNJobItemWithSession, PREPARE_UNCHANGED);
+        setSuccessStatus(turSNJobItemWithSession.turSNJobItem(), PREPARE_UNCHANGED);
+    }
+
+    private void indexProcess(TurJobItemWithSession turSNJobItemWithSession) {
+        createIndexing(turSNJobItemWithSession);
+        addJobToMessageQueue(turSNJobItemWithSession);
     }
 
     private void deIndexProcess(TurJobItemWithSession turSNJobItemWithSession) {
