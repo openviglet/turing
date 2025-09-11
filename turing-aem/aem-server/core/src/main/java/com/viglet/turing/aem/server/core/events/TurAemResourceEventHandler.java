@@ -22,24 +22,30 @@ public class TurAemResourceEventHandler implements EventHandler {
     public static final String DAM_ASSET = "dam:Asset";
     public static final String DAM_ASSET_CONTENT = "dam:AssetContent";
     public static final String CONTENT = "/content";
-    public static final String JCR_CONTENT = "jcr:content";
+    public static final String JCR_CONTENT = "/jcr:content";
     @Reference
     private TurAemIndexerService turAemIndexerService;
 
     @Override
     public void handleEvent(Event event) {
-        log.info("Turing Log Resource Event: {}", event);
-        Object path = event.getProperty(SlingConstants.PROPERTY_PATH);
-        Object resourceType = event.getProperty(SlingConstants.PROPERTY_RESOURCE_TYPE);
-        if (path == null || resourceType == null || !isAssetEvent((String) path, (String) resourceType))
+        String path = (String) event.getProperty(SlingConstants.PROPERTY_PATH);
+        String resourceType = (String) event.getProperty(SlingConstants.PROPERTY_RESOURCE_TYPE);
+        log.info("Turing Log Resource Event: path={}, resourceType={}", path, resourceType);
+        if (path == null || resourceType == null) {
             return;
-        TurAemEventUtils.index(turAemIndexerService.getConfig(), (String) path);
+        }
+        if (path.contains(JCR_CONTENT)) {
+            path = path.replace(JCR_CONTENT, "");
+        }
+        if (!isAssetEvent(path, resourceType))
+            return;
+        // Index the asset path to update the search engine with the latest changes in DAM assets.
+        TurAemEventUtils.index(turAemIndexerService.getConfig(), path);
     }
 
     protected boolean isAssetEvent(String path, String resourceType) {
         return ((Objects.equals(resourceType, DAM_ASSET) || Objects.equals(resourceType, DAM_ASSET_CONTENT)) &&
-                path.startsWith(CONTENT) &&
-                !path.contains(JCR_CONTENT));
+                path.startsWith(CONTENT));
     }
 
 }
