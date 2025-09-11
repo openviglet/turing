@@ -1,31 +1,25 @@
 /*
  * Copyright (C) 2016-2025 the original author or authors.
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.viglet.turing.connector.domain;
 
-import org.junit.jupiter.api.Test;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import java.io.Serializable;
 import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurSNSiteLocale.
@@ -88,7 +82,7 @@ class TurSNSiteLocaleTest {
     void testWithCustomLocale() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         Locale customLocale = new Locale("pt", "BR"); // Portuguese Brazil
-        
+
         siteLocale.setLanguage(customLocale);
         siteLocale.setCore("portuguese-brazil-core");
 
@@ -106,7 +100,7 @@ class TurSNSiteLocaleTest {
     @Test
     void testWithNullValues() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        
+
         siteLocale.setLanguage(null);
         siteLocale.setCore(null);
         siteLocale.setTurSNSite(null);
@@ -119,9 +113,9 @@ class TurSNSiteLocaleTest {
     @Test
     void testWithEmptyStrings() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        
+
         siteLocale.setCore("");
-        
+
         assertThat(siteLocale.getCore()).isEqualTo("");
         assertThat(siteLocale.getCore()).isEmpty();
     }
@@ -130,7 +124,7 @@ class TurSNSiteLocaleTest {
     void testRelationshipWithTurSNSite() {
         TurSNSite turSNSite = new TurSNSite();
         // Assuming TurSNSite has a name field based on typical patterns
-        
+
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setLanguage(Locale.JAPANESE);
         siteLocale.setCore("japanese-core");
@@ -151,8 +145,8 @@ class TurSNSiteLocaleTest {
         locale1.setTurSNSite(sharedSite);
 
         TurSNSiteLocale locale2 = new TurSNSiteLocale();
-        locale2.setLanguage(Locale.SPANISH);
-        locale2.setCore("es-core");
+        locale2.setLanguage(Locale.FRENCH);
+        locale2.setCore("fr-core");
         locale2.setTurSNSite(sharedSite);
 
         assertThat(locale1.getTurSNSite()).isSameAs(locale2.getTurSNSite());
@@ -163,16 +157,10 @@ class TurSNSiteLocaleTest {
     @Test
     void testCoreNamingConventions() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        
+
         // Test various core naming patterns
-        String[] coreNames = {
-                "simple-core",
-                "core_with_underscores",
-                "CoreWithCamelCase",
-                "core123",
-                "site.core.name",
-                "production-en-US-core"
-        };
+        String[] coreNames = {"simple-core", "core_with_underscores", "CoreWithCamelCase",
+                "core123", "site.core.name", "production-en-US-core"};
 
         for (String coreName : coreNames) {
             siteLocale.setCore(coreName);
@@ -217,15 +205,15 @@ class TurSNSiteLocaleTest {
     @Test
     void testFieldModification() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        
+
         // Set initial values
         siteLocale.setLanguage(Locale.ENGLISH);
         siteLocale.setCore("initial-core");
-        
+
         // Modify values
         siteLocale.setLanguage(Locale.FRENCH);
         siteLocale.setCore("modified-core");
-        
+
         // Verify modifications
         assertThat(siteLocale.getLanguage()).isEqualTo(Locale.FRENCH);
         assertThat(siteLocale.getCore()).isEqualTo("modified-core");

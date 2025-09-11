@@ -1,39 +1,32 @@
 /*
  * Copyright (C) 2016-2025 the original author or authors.
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.viglet.turing.connector.commons.logging;
 
-import com.viglet.turing.client.sn.job.TurSNJobItem;
-import com.viglet.turing.commons.indexing.TurIndexingStatus;
-import com.viglet.turing.connector.commons.TurConnectorSession;
-import com.viglet.turing.connector.commons.domain.TurJobItemWithSession;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
+import com.viglet.turing.client.sn.job.TurSNJobItem;
+import com.viglet.turing.commons.indexing.TurIndexingStatus;
+import com.viglet.turing.connector.commons.TurConnectorSession;
+import com.viglet.turing.connector.commons.domain.TurJobItemWithSession;
 
 /**
  * Unit tests for TurConnectorLoggingUtils.
@@ -58,12 +51,8 @@ class TurConnectorLoggingUtilsTest {
         when(jobItem.getChecksum()).thenReturn("test-checksum");
         when(jobItem.getSiteNames()).thenReturn(Arrays.asList("site1", "site2"));
 
-        TurConnectorSession session = new TurConnectorSession(
-                "test-source", 
-                Arrays.asList("site1", "site2"), 
-                "test-provider", 
-                Locale.ENGLISH
-        );
+        TurConnectorSession session = new TurConnectorSession("test-source",
+                Arrays.asList("site1", "site2"), "test-provider", Locale.ENGLISH);
         TurIndexingStatus status = TurIndexingStatus.INDEXED;
 
         // Since TurLoggingIndexingLog.setStatus is static, we need to verify it's called
@@ -90,13 +79,9 @@ class TurConnectorLoggingUtilsTest {
         when(jobItem.getChecksum()).thenReturn("test-checksum");
         when(jobItem.getSiteNames()).thenReturn(Collections.singletonList("site1"));
 
-        TurConnectorSession session = new TurConnectorSession(
-                "test-source", 
-                Collections.singletonList("site1"), 
-                "test-provider", 
-                Locale.FRENCH
-        );
-        TurIndexingStatus status = TurIndexingStatus.INDEXING;
+        TurConnectorSession session = new TurConnectorSession("test-source",
+                Collections.singletonList("site1"), "test-provider", Locale.FRENCH);
+        TurIndexingStatus status = TurIndexingStatus.INDEXED;
         String details = "Test details";
 
         try {
@@ -117,16 +102,11 @@ class TurConnectorLoggingUtilsTest {
         when(jobItem.getChecksum()).thenReturn("test-checksum");
         when(jobItem.getSiteNames()).thenReturn(Arrays.asList("site1", "site2"));
 
-        TurConnectorSession session = new TurConnectorSession(
-                "test-source", 
-                Arrays.asList("site1", "site2"), 
-                "test-provider", 
-                Locale.GERMAN
-        );
+        TurConnectorSession session = new TurConnectorSession("test-source",
+                Arrays.asList("site1", "site2"), "test-provider", Locale.GERMAN);
 
-        TurJobItemWithSession jobItemWithSession = new TurJobItemWithSession(
-                jobItem, session, new HashSet<>(), false
-        );
+        TurJobItemWithSession jobItemWithSession =
+                new TurJobItemWithSession(jobItem, session, new HashSet<>(), false);
         TurIndexingStatus status = TurIndexingStatus.INDEXED;
 
         try {
@@ -188,12 +168,8 @@ class TurConnectorLoggingUtilsTest {
         when(jobItem.getChecksum()).thenReturn("");
         when(jobItem.getSiteNames()).thenReturn(Collections.emptyList());
 
-        TurConnectorSession session = new TurConnectorSession(
-                "", 
-                Collections.emptyList(), 
-                "", 
-                Locale.ROOT
-        );
+        TurConnectorSession session =
+                new TurConnectorSession("", Collections.emptyList(), "", Locale.ROOT);
         TurIndexingStatus status = TurIndexingStatus.INDEXED;
 
         try {
@@ -211,7 +187,7 @@ class TurConnectorLoggingUtilsTest {
         when(jobItem.getStringAttribute(TurConnectorLoggingUtils.URL)).thenReturn(expectedUrl);
 
         String actualUrl = jobItem.getStringAttribute(TurConnectorLoggingUtils.URL);
-        
+
         assertThat(actualUrl).isEqualTo(expectedUrl);
         verify(jobItem).getStringAttribute("url");
     }
@@ -227,7 +203,7 @@ class TurConnectorLoggingUtilsTest {
 
         // These should compile without issues
         assertThat(jobItem).isNotNull();
-        assertThat(session).isNotNull(); 
+        assertThat(session).isNotNull();
         assertThat(jobItemWithSession).isNotNull();
         assertThat(status).isNotNull();
         assertThat(details).isNotNull();
