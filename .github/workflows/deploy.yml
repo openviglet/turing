@@ -93,7 +93,7 @@ jobs:
         run: |
           export JITPACK=true
           mvn --batch-mode -P jitpack deploy
-          cd turing-js-sd
+          cd turing-js-sdk
           npm publish
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
