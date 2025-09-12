@@ -39,3 +39,7 @@ dependency-reduced-pom.xml
 /dist/
 turing-app/src/main/resources/public/index.html
 turing-app/src/main/resources/public/favicon.ico
+
+# Turing JS SDK
+turing-js-sdk/node_modules/
+turing-js-sdk/dist/
