@@ -147,18 +147,14 @@ public class TurSNSiteSearchAPI {
             @RequestParam(required = false, name = TurSNParamType.SORT) String sort,
             @RequestParam(required = false, name = TurSNParamType.ROWS,
                     defaultValue = "-1") Integer rows,
-            @RequestParam(required = false, name = TurSNParamType.GROUP) String group,
-            @RequestParam(required = false, name = TurSNParamType.AUTO_CORRECTION_DISABLED,
-                    defaultValue = "0") Integer autoCorrectionDisabled,
             @RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest,
             HttpServletRequest request) {
         Locale locale = LocaleUtils.toLocale(localeRequest);
         if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
             return turSNSiteRepository.findByName(siteName).map(site -> {
-                TurSNSiteSearchContext turSNSiteSearchContext =
-                        getTurSNSiteSearchContext(siteName, q, currentPage, filterQueriesDefault,
-                                filterQueriesAnd, filterQueriesOr, fqOperator, fqItemOperator, sort,
-                                rows, group, autoCorrectionDisabled, request, locale, site);
+                TurSNSiteSearchContext turSNSiteSearchContext = getTurSNSiteSearchContext(siteName,
+                        q, currentPage, filterQueriesDefault, filterQueriesAnd, filterQueriesOr,
+                        fqOperator, fqItemOperator, sort, rows, null, 1, request, locale, site);
                 if (searchCacheEnabled) {
                     return new ResponseEntity<>(turSNSiteSearchCachedAPI.searchCached(
                             TurSNUtils.getCacheKey(siteName, request), turSNSiteSearchContext),
