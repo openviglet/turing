@@ -24,7 +24,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 18.10.0
-
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@openviglet'
       - name: Install Angular Cli
         run: npm i -g @angular/cli
 
@@ -41,6 +42,10 @@ jobs:
           git config user.email alexandre.oliveira@gmail.com
           git commit -m "Updated version in pom.xml" -a
           git push
+          cd turing-js-sdk
+          npm version patch
+          npm ci
+          npm run build
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
@@ -63,6 +68,7 @@ jobs:
           gh release upload ${TAG_NAME} turing-java-sdk/target/turing-java-sdk.jar --clobber
           gh release upload ${TAG_NAME} turing-commons/target/turing-commons.jar --clobber
           gh release upload ${TAG_NAME} turing-utils/target/turing-utils.zip --clobber
+          
   publish:
     runs-on: ubuntu-latest
     permissions:
@@ -87,6 +93,8 @@ jobs:
         run: |
           export JITPACK=true
           mvn --batch-mode -P jitpack deploy
+          cd turing-js-sd
+          npm publish
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
