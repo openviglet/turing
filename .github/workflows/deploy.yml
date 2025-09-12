@@ -44,7 +44,7 @@ jobs:
           git push
           cd turing-js-sdk
           npm version patch
-          npm ci
+          npm install
           npm run build
       - name: Cache Maven packages
         uses: actions/cache@v3
