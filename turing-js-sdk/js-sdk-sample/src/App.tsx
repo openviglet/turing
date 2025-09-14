@@ -2,34 +2,42 @@ import { TurSNSiteSearchService, type TurSNSiteSearchDocument } from "@openvigle
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
+const QUERY_PARAM = "q";
+
+const ROWS_PARAM = "rows";
+const PAGE_PARAM = "p";
+const SORT_PARAM = "sort";
 function App() {
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [searchDocuments, setSearchDocuments] = useState<TurSNSiteSearchDocument[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
-  const query = searchParams.get("q") || "*";
-
+  const query = searchParams.get(QUERY_PARAM) || import.meta.env.VITE_SN_DEFAULT_QUERY;
+  const rows = searchParams.get(ROWS_PARAM) || import.meta.env.VITE_SN_DEFAULT_ROWS;
+  const currentPage = searchParams.get(PAGE_PARAM) || import.meta.env.VITE_SN_DEFAULT_PAGE;
+  const sort = searchParams.get(SORT_PARAM) || import.meta.env.VITE_SN_DEFAULT_PAGE;
+  const fetchDocuments = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const searchService = new TurSNSiteSearchService(import.meta.env.VITE_API_URL);
+      const res = await searchService.search(import.meta.env.VITE_SN_SITE, {
+        q: query,
+        rows: rows,
+        currentPage: currentPage,
+        sort: sort,
+        localeRequest: import.meta.env.VITE_LOCALE,
+      });
+      setSearchDocuments(res.results?.document || []);
+      setTotalDocuments(res.queryContext?.count || 0);
+    } catch (err: any) {
+      setError("Search failed: " + (err?.message || "Unknown error"));
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchDocuments = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const searchService = new TurSNSiteSearchService(import.meta.env.VITE_API_URL);
-        const res = await searchService.search(import.meta.env.VITE_SN_SITE, {
-          q: query,
-          rows: 10,
-          currentPage: 1,
-          localeRequest: import.meta.env.VITE_LOCALE,
-        });
-        setSearchDocuments(res.results?.document || []);
-        setTotalDocuments(res.queryContext?.count || 0);
-      } catch (err: any) {
-        setError("Search failed: " + (err?.message || "Unknown error"));
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchDocuments();
   }, [query]);
 
