@@ -1,18 +1,20 @@
 import { TurSNSiteSearchService, type TurSNSiteSearchDocument } from "@openviglet/turing-js-sdk";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 function App() {
   const [totalDocuments, setTotalDocuments] = useState<number>(0);
   const [searchDocuments, setSearchDocuments] = useState<TurSNSiteSearchDocument[]>([]);
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('q') || '*';
   useEffect(() => {
-    const searchService = new TurSNSiteSearchService('http://localhost:2700');
-    ;
+    const searchService = new TurSNSiteSearchService(import.meta.env.VITE_API_URL);
     try {
-      searchService.search('wknd-author', {
-        q: 'wknd',
+      searchService.search(import.meta.env.VITE_SN_SITE, {
+        q: query,
         rows: 10,
         currentPage: 1,
-        localeRequest: 'en-US',
+        localeRequest: import.meta.env.VITE_LOCALE,
       }).then(res => {
         setSearchDocuments(res.results?.document || []);
         setTotalDocuments(res.queryContext?.count || 0);
