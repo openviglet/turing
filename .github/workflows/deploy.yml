@@ -38,7 +38,7 @@ jobs:
       - name: Increment Version
         run: |
           mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
-          cd turing-js-sdk
+          cd turing-js-sdk/js-sdk-lib
           npm version patch
           npm run build
           git config user.name alexandre.oliveira
@@ -92,7 +92,7 @@ jobs:
         run: |
           export JITPACK=true
           mvn --batch-mode -P jitpack deploy
-          cd turing-js-sdk
+          cd turing-js-sdk/js-sdk-lib
           npm publish
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
