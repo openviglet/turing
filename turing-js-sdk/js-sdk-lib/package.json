@@ -1,6 +1,6 @@
 {
   "name": "@openviglet/turing-js-sdk",
-  "version": "2025.3.3",
+  "version": "2025.3.4",
   "description": "TypeScript SDK for Turing Semantic Navigation Search API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
