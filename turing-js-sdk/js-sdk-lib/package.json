@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npm install && tsc",
+    "build": "npm install && node build.js",
     "dev": "tsc --watch",
     "clean": "",
     "prepublishOnly": "npm run clean && npm install && npm run build"
@@ -24,7 +24,7 @@
     "axios": "^1.11.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
+    "@types/node": "^20.19.14",
     "typescript": "^5.0.0"
   },
   "repository": {
