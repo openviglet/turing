@@ -1,0 +1,155 @@
+spring:
+  profiles:
+    active: production
+  h2:
+    console:
+      enabled: false
+      path: /h2
+      settings:
+        web-allow-others: true
+  datasource:
+    url: jdbc:h2:file:./store/db/turingDB
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        globally_quoted_identifiers: true
+        format_sql: false
+        enable_lazy_load_no_trans: true
+        generate_statistics: false
+      jakarta.persistence.sharedCache.mode: ALL
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  jackson:
+    mapper:
+      DEFAULT_VIEW_INCLUSION: true
+  thymeleaf:
+    mode: HTML
+    check-template: true
+    check-template-location: true
+    enabled: true
+    prefix: classpath:public/
+    suffix: .html
+  artemis:
+    mode: EMBEDDED
+    broker-url: localhost:61616
+    embedded:
+      enabled: true
+      persistent: true
+      data-directory: store/queue
+      queues: indexing.queue
+    pool:
+      max-connections: 10
+  jms:
+    template:
+      default-destination: indexing.queue
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+  mvc:
+    async:
+      request-timeout: 3600000
+  output:
+    ansi:
+      enabled: always
+
+server:
+  port: ${PORT:2700}
+  compression:
+    enabled: true
+    mime-types: application/json,text/css,application/javascript
+    min-response-size: 2048
+  tomcat:
+    accesslog:
+      enabled: false
+      suffix: .log
+      prefix: access_log
+      file-date-format: .yyyy-MM-dd
+      directory: logs
+    basedir: store
+    threads:
+      max: 600
+    max-swallow-size: 200MB
+    max-http-form-post-size: 200MB
+    maxHttpResponseHeaderSize: 800KB
+
+turing:
+  allowedOrigins: http://localhost:4200,http://localhost:5173
+  multi-tenant: false
+  keycloak: false
+  url: http://localhost:2700
+  solr:
+    timeout: 30000
+    cloud: false
+  search:
+    cache:
+      ttl:
+        seconds: 86400000
+      enabled: false
+  mongodb:
+    enabled: false
+    uri: mongodb://localhost:27017
+    logging:
+      database: turingLog
+      collection:
+        server: server
+        aem: aem
+        indexing: indexing
+      purge:
+        days: 30
+
+springdoc:
+  pathsToMatch: /api/**
+  swagger-ui:
+    path: /swagger-ui.html
+
+jasypt:
+  encryptor:
+    bean: turEncryptor
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org.springframework: INFO
+    com.viglet: INFO
+    org.apache: INFO
+    org.apache.activemq: ERROR
+    dev.langchain4j: INFO
+    dev.ai4j.openai4j: INFO
+  file:
+    name: store/logs/turing.log
+  logback:
+    rollingpolicy:
+      max-file-size: 25MB
+      max-history: 10
+
+      # spring:
+      #     security:
+      #         oauth2:
+      #             client:
+      #                 registration:
+      #                     keycloak:
+      #                         client-id: demo-app
+      #                         client-secret: jdeTitPc7onHamcFHjTVec6ySV4ZEG54
+      #                         scope: openid
+      #                         authorization-grant-type: authorization_code
+      #                         redirect-uri: http://localhost:2700/login/oauth2/code/demo-app
+      #                 provider:
+      #                     keycloak:
+      #                         issuer-uri: http://localhost:8080/realms/demo
+      #                         jwk-set-uri: http://localhost:8080/realms/demo/protocol/openid-connect/certs
+      #                         user-info-uri: http://localhost:8080/realms/demo/protocol/openid-connect/userinfo
+      #             resourceserver:
+      #                 jwt:
+      #                     issuer-uri: http://localhost:8080/realms/demo
