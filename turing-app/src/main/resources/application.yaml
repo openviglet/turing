@@ -83,6 +83,7 @@ turing:
   multi-tenant: false
   keycloak: false
   url: http://localhost:2700
+  open-browser: true
   solr:
     timeout: 30000
     cloud: false

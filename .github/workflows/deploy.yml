@@ -18,22 +18,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Use Node.js 18.10.0
         uses: actions/setup-node@v1
         with:
           node-version: 18.10.0
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@openviglet'
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@openviglet"
       - name: Install Angular Cli
         run: npm i -g @angular/cli
 
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
           cache: maven
       - name: Increment Version
         run: |
@@ -53,9 +53,9 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Deploy Version
         env:
-            GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mvn install package
+          mvn install package -Dturing.open-browser=false
           export TAG_NAME=v$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           gh release create ${TAG_NAME} --generate-notes
           gh release upload ${TAG_NAME} turing-aem/aem-plugin/target/aem-plugin.jar --clobber
@@ -67,18 +67,18 @@ jobs:
           gh release upload ${TAG_NAME} turing-java-sdk/target/turing-java-sdk.jar --clobber
           gh release upload ${TAG_NAME} turing-commons/target/turing-commons.jar --clobber
           gh release upload ${TAG_NAME} turing-utils/target/turing-utils.zip --clobber
-          
+
   publish:
     runs-on: ubuntu-latest
     permissions:
-        contents: write
-        packages: write
+      contents: write
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v3
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
           cache: maven
       - name: Deploy JavaDoc 🚀
         uses: MathieuSoysal/Javadoc-publisher.yml@v3.0.2
@@ -92,10 +92,9 @@ jobs:
       - name: Publish package
         run: |
           export JITPACK=true
-          mvn --batch-mode -P jitpack deploy
+          mvn --batch-mode -P jitpack -Dturing.open-browser=false deploy
           cd turing-js-sdk/js-sdk-lib
           npm publish
         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

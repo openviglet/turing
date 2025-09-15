@@ -15,11 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class TurBrowserLauncher {
+    @Value("${turing.open-browser:true}")
+    private boolean openBrowser;
     @Value("${turing.url:'http://localhost:2700'}")
     private String turingUrl;
 
     @EventListener(ApplicationReadyEvent.class)
     public void launchBrowser() {
+        if (!openBrowser) {
+            return;
+        }
         System.setProperty("java.awt.headless", "false");
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
