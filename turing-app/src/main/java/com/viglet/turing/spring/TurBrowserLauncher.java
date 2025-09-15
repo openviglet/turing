@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class TurBrowserLauncher {
-    @Value("${turing.url:http://localhost:2700}")
+    @Value("${turing.url:'http://localhost:2700'}")
     private String turingUrl;
 
     @EventListener(ApplicationReadyEvent.class)
@@ -22,10 +24,10 @@ public class TurBrowserLauncher {
             try {
                 desktop.browse(new URI(turingUrl));
             } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         } else {
-            System.out.println("Desktop is not supported, cannot open browser automatically.");
+            log.error("Desktop is not supported, cannot open browser automatically.");
         }
     }
 }
