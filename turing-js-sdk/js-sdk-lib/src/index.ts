@@ -1,3 +1,6 @@
+import "reflect-metadata"; // must be first
+import { TurSNSiteSearchService } from "./services/TurSNSiteSearchService";
+
 // Enums
 export { TurSNFilterQueryOperator } from "./enums/TurSNFilterQueryOperator";
 export { TurSNPaginationType } from "./enums/TurSNPaginationType";
@@ -22,7 +25,6 @@ export { TurSNSearchParams } from "./types/TurSNSearchParams";
 
 // Services
 export { TurSNSiteSearchService } from "./services/TurSNSiteSearchService";
-import { TurSNSiteSearchService } from "./services/TurSNSiteSearchService";
 
 // Default export
 export default TurSNSiteSearchService;

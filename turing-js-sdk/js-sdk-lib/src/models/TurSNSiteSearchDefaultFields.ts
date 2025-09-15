@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { TurSNURLImpl } from "../impl/TurSNUrlImpl";
+import { TurSNURL } from "./TurSNUrl";
 /**
  * Default fields configuration for search results
  */
@@ -9,6 +9,6 @@ export class TurSNSiteSearchDefaultFields {
   description?: string;
   text?: string;
   image?: string;
-  @Type(() => TurSNURLImpl)
+  @Type(() => TurSNURL)
   url?: string;
 }

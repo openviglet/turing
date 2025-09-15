@@ -1,4 +1,4 @@
-export class TurSNURLImpl {
+export class TurSNURL {
   private url: URL;
 
   constructor(urlString: string) {
