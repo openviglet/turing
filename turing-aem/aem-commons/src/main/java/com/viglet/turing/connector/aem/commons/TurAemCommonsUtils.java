@@ -81,8 +81,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TurAemCommonsUtils {
 
-    private static final Cache<String, Optional<String>> responseBodyCache =
-            Caffeine.newBuilder().maximumSize(1000).expireAfterWrite(Duration.ofMinutes(5)).build();
+    private static final Cache<String, Optional<String>> responseBodyCache = Caffeine.newBuilder().maximumSize(1000)
+            .expireAfterWrite(Duration.ofMinutes(5)).build();
 
     private TurAemCommonsUtils() {
         throw new IllegalStateException("Utility class");
@@ -170,7 +170,6 @@ public class TurAemCommonsUtils {
         return deltaDate;
     }
 
-
     private static Date defaultDeltaDate(TurAemObject aemObject,
             TurAemSourceContext turAemSourceContext) {
         return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
@@ -218,7 +217,7 @@ public class TurAemCommonsUtils {
     }
 
     public static boolean checkIfFileHasNotImageExtension(String s) {
-        String[] imageExtensions = {".jpg", ".png", ".jpeg", ".svg", ".webp"};
+        String[] imageExtensions = { ".jpg", ".png", ".jpeg", ".svg", ".webp" };
         return Arrays.stream(imageExtensions).noneMatch(suffix -> s.toLowerCase().endsWith(suffix));
     }
 
@@ -373,7 +372,7 @@ public class TurAemCommonsUtils {
     public static @NotNull Optional<String> fetchResponseBodyCached(String url,
             TurAemSourceContext turAemSourceContext) {
         if (responseBodyCache.asMap().containsKey(url))
-            log.info("Using Cache to request2 {}", url);
+            log.info("Using Cache to request {}", url);
         else
             log.info("Creating Cache to request {}", url);
         String cacheKey = url;

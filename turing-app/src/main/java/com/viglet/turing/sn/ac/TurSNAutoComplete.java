@@ -1,22 +1,18 @@
 /*
  * Copyright (C) 2016-2022 the original author or authors.
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.viglet.turing.sn.ac;
 
@@ -25,14 +21,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-
 import com.viglet.turing.api.sn.search.TurSNSiteSearchCachedAPI;
 import com.viglet.turing.commons.sn.TurSNConfig;
+import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchResultsBean;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
@@ -42,7 +37,6 @@ import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,44 +60,31 @@ public class TurSNAutoComplete {
 
     @NotNull
     public List<String> autoCompleteWithRegularSearch(String siteName, String q, Integer rows,
-            List<String> filterQueriesDefault,
-            List<String> filterQueriesAnd,
-            List<String> filterQueriesOr,
-            TurSNFilterQueryOperator fqOperator,
-            TurSNFilterQueryOperator fqItemOperator,
-            String sort,
-            String localeRequest,
+            List<String> filterQueriesDefault, List<String> filterQueriesAnd,
+            List<String> filterQueriesOr, TurSNFilterQueryOperator fqOperator,
+            TurSNFilterQueryOperator fqItemOperator, String sort, String localeRequest,
             HttpServletRequest request) {
         TurSNConfig turSNConfig = new TurSNConfig();
         turSNConfig.setHlEnabled(false);
-        return Optional.ofNullable(turSNSiteSearchCachedAPI.searchCached(
-                TurSNUtils.getCacheKey(siteName, request),
-                TurSNUtils.getTurSNSiteSearchContext(
-                        turSNConfig,
-                        siteName,
-                        String.format("%s:%s*", TurSNFieldName.TITLE, q),
-                        1,
-                        filterQueriesDefault,
-                        filterQueriesAnd,
-                        filterQueriesOr,
-                        fqOperator,
-                        fqItemOperator,
-                        sort,
-                        rows,
-                        null,
-                        0,
-                        request,
-                        LocaleUtils.toLocale(localeRequest))))
-                .map(TurSNSiteSearchBean::getResults)
-                .map(TurSNSiteSearchResultsBean::getDocument)
+        TurSNFilterParams turSNFilterParams = TurSNFilterParams.builder()
+                .defaultValues(filterQueriesDefault).and(filterQueriesAnd).or(filterQueriesOr)
+                .operator(fqOperator).itemOperator(fqItemOperator).build();
+        return Optional
+                .ofNullable(turSNSiteSearchCachedAPI.searchCached(
+                        TurSNUtils.getCacheKey(siteName, request),
+                        TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName,
+                                String.format("%s:%s*", TurSNFieldName.TITLE, q), 1,
+                                turSNFilterParams, sort, rows, null, 0, request,
+                                LocaleUtils.toLocale(localeRequest))))
+                .map(TurSNSiteSearchBean::getResults).map(TurSNSiteSearchResultsBean::getDocument)
                 .map(documents -> {
                     List<String> termList = new ArrayList<>();
                     documents.forEach(document -> Optional.ofNullable(document.getFields())
                             .filter(fields -> fields.containsKey(TurSNFieldName.TITLE))
-                            .map(fields -> termList.add(fields.get(TurSNFieldName.TITLE).toString())));
+                            .map(fields -> termList
+                                    .add(fields.get(TurSNFieldName.TITLE).toString())));
                     return termList;
-                })
-                .orElse(Collections.emptyList());
+                }).orElse(Collections.emptyList());
     }
 
     public List<String> autoComplete(String siteName, String q, Locale locale, long rows) {
@@ -121,8 +102,8 @@ public class TurSNAutoComplete {
                     numberOfWordsFromQuery++;
                 }
 
-                List<String> autoCompleteListFormatted = createFormattedList(turSEResults, instance,
-                        numberOfWordsFromQuery);
+                List<String> autoCompleteListFormatted =
+                        createFormattedList(turSEResults, instance, numberOfWordsFromQuery);
                 return autoCompleteListFormatted.stream().limit(rows).sorted().toList();
             }).orElse(Collections.emptyList());
         } else {
@@ -130,7 +111,8 @@ public class TurSNAutoComplete {
         }
     }
 
-    private SpellCheckResponse executeAutoCompleteFromSE(TurSolrInstance turSolrInstance, String q) {
+    private SpellCheckResponse executeAutoCompleteFromSE(TurSolrInstance turSolrInstance,
+            String q) {
         SpellCheckResponse turSEResults = null;
         try {
             turSEResults = turSolr.autoComplete(turSolrInstance, q);
@@ -140,17 +122,19 @@ public class TurSNAutoComplete {
         return turSEResults;
     }
 
-    private List<String> createFormattedList(SpellCheckResponse turSEResults, TurSolrInstance turSolrInstance,
-            int numberOfWordsFromQuery) {
+    private List<String> createFormattedList(SpellCheckResponse turSEResults,
+            TurSolrInstance turSolrInstance, int numberOfWordsFromQuery) {
         List<String> autoCompleteListFormatted = new ArrayList<>();
         // if there are suggestions in the response.
         if (hasSuggestions(turSEResults)) {
             // autoCompleteList is the list of auto complete suggestions returned by Solr.
-            List<String> autoCompleteList = turSEResults.getSuggestions().getFirst().getAlternatives();
-            TurSNAutoCompleteListData autoCompleteListData = new TurSNAutoCompleteListData(
-                    turSEStopword.getStopWords(turSolrInstance));
+            List<String> autoCompleteList =
+                    turSEResults.getSuggestions().getFirst().getAlternatives();
+            TurSNAutoCompleteListData autoCompleteListData =
+                    new TurSNAutoCompleteListData(turSEStopword.getStopWords(turSolrInstance));
 
-            TurSNSuggestionFilter suggestionFilter = new TurSNSuggestionFilter(autoCompleteListData.getStopWords());
+            TurSNSuggestionFilter suggestionFilter =
+                    new TurSNSuggestionFilter(autoCompleteListData.getStopWords());
             suggestionFilter.automatonStrategyConfig(numberOfWordsFromQuery);
             autoCompleteListFormatted = suggestionFilter.filter(autoCompleteList);
         }

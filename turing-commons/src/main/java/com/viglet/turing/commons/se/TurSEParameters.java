@@ -1,18 +1,20 @@
 package com.viglet.turing.commons.se;
 
-import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
+import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class TurSEParameters implements Serializable {
     private String query;
-    private TurSEFilterQueryParameters filterQueries;
+    private TurSNFilterParams turSNFilterParams;
     private List<String> boostQueries;
     private Integer currentPage;
     private String sort;
@@ -21,19 +23,18 @@ public class TurSEParameters implements Serializable {
     private Integer autoCorrectionDisabled;
     private TurSNSitePostParamsBean turSNSitePostParamsBean;
 
-    public TurSEParameters(String query, TurSEFilterQueryParameters filterQueries,
-                           Integer currentPage, String sort, Integer rows,
-                           String group, Integer autoCorrectionDisabled) {
-        this(query, filterQueries, currentPage, sort, rows, group, autoCorrectionDisabled, null);
+    public TurSEParameters(String query, TurSNFilterParams turSNFilterParams, Integer currentPage,
+            String sort, Integer rows, String group, Integer autoCorrectionDisabled) {
+        this(query, turSNFilterParams, currentPage, sort, rows, group, autoCorrectionDisabled,
+                null);
     }
 
-    public TurSEParameters(String gQuery, TurSEFilterQueryParameters gFilterQueries,
-                           Integer gCurrentPage, String gSort, Integer gRows,
-                           String gGroup, Integer gAutoCorrectionDisabled,
-                           TurSNSitePostParamsBean gTurSNSitePostParamsBean) {
+    public TurSEParameters(String gQuery, TurSNFilterParams gTurSNFilterParams,
+            Integer gCurrentPage, String gSort, Integer gRows, String gGroup,
+            Integer gAutoCorrectionDisabled, TurSNSitePostParamsBean gTurSNSitePostParamsBean) {
         super();
         this.query = gQuery;
-        this.filterQueries = gFilterQueries;
+        this.turSNFilterParams = gTurSNFilterParams;
         this.currentPage = gCurrentPage;
         this.sort = gSort;
         this.rows = gRows;
@@ -50,25 +51,14 @@ public class TurSEParameters implements Serializable {
             setGroup(Optional.ofNullable(postParams.getGroup()).orElse(getGroup()));
             setCurrentPage(Optional.ofNullable(postParams.getPage()).orElse(getCurrentPage()));
             setQuery(Optional.ofNullable(postParams.getQuery()).orElse(getQuery()));
-            getFilterQueries().setFq(Optional.ofNullable(postParams.getFq()).orElse(getFilterQueries().getFq()));
-            getFilterQueries().setAnd(Optional.ofNullable(postParams.getFqAnd()).orElse(getFilterQueries().getAnd()));
-            getFilterQueries().setOr(Optional.ofNullable(postParams.getFqOr()).orElse(getFilterQueries().getOr()));
-            getFilterQueries().setOperator(Optional.ofNullable(postParams.getFqOperator())
-                    .orElse(getFilterQueries().getOperator()));
+            getTurSNFilterParams().setDefaultValues(Optional.ofNullable(postParams.getFq())
+                    .orElse(getTurSNFilterParams().getDefaultValues()));
+            getTurSNFilterParams().setAnd(Optional.ofNullable(postParams.getFqAnd())
+                    .orElse(getTurSNFilterParams().getAnd()));
+            getTurSNFilterParams().setOr(Optional.ofNullable(postParams.getFqOr())
+                    .orElse(getTurSNFilterParams().getOr()));
+            getTurSNFilterParams().setOperator(Optional.ofNullable(postParams.getFqOperator())
+                    .orElse(getTurSNFilterParams().getOperator()));
         });
-    }
-
-    @Override
-    public String toString() {
-        return "TurSEParameters{" +
-                "query='" + query + '\'' +
-                ", filterQueries=" + filterQueries +
-                ", boostQueries=" + boostQueries +
-                ", currentPage=" + currentPage +
-                ", sort='" + sort + '\'' +
-                ", rows=" + rows +
-                ", group='" + group + '\'' +
-                ", autoCorrectionDisabled=" + autoCorrectionDisabled +
-                '}';
     }
 }
