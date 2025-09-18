@@ -31,6 +31,6 @@
 
   // Postman extension tweak
   "postman.settings.dotenv-detection-notification-visibility": false,
-  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.configuration.updateBuildConfiguration": "automatic",
   "java.compile.nullAnalysis.mode": "automatic"
 }

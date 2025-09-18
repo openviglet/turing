@@ -289,7 +289,9 @@ public class TurAemPluginProcess {
                                 .publishURLPrefix(config.getPublishURLPrefix())
                                 .username(config.getCmsUsername()).localePaths(config.getLocales())
                                 .build();
-                TurAemCommonsUtils.getInfinityJson(config.getCmsRootPath(), turAemSourceContext)
+                TurAemCommonsUtils
+                                .getInfinityJson(config.getCmsRootPath(), turAemSourceContext,
+                                                false)
                                 .flatMap(infinityJson -> TurAemCommonsUtils
                                                 .getSiteName(turAemSourceContext, infinityJson))
                                 .ifPresent(turAemSourceContext::setSiteName);
@@ -312,7 +314,7 @@ public class TurAemPluginProcess {
                         String contentId, boolean standalone, boolean indexChildren) {
                 TurAemSourceContext turAemSourceContext = getTurAemSourceContext(
                                 new AemPluginHandlerConfiguration(turAemSource));
-                TurAemCommonsUtils.getInfinityJson(contentId, turAemSourceContext)
+                TurAemCommonsUtils.getInfinityJson(contentId, turAemSourceContext, false)
                                 .ifPresentOrElse(infinityJson -> {
                                         turAemSourceContext.setContentType(
                                                         infinityJson.getString(JCR_PRIMARY_TYPE));
@@ -382,7 +384,7 @@ public class TurAemPluginProcess {
                         TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
                 TurAemCommonsUtils
                                 .getInfinityJson(turAemSourceContext.getRootPath(),
-                                                turAemSourceContext)
+                                                turAemSourceContext, false)
                                 .ifPresent(infinityJson -> getNodeFromJson(
                                                 turAemSourceContext.getRootPath(), infinityJson,
                                                 turAemSourceContext, turConnectorSession,
@@ -427,7 +429,7 @@ public class TurAemPluginProcess {
                                                                                 turAemSource))) {
                                         TurAemCommonsUtils
                                                         .getInfinityJson(nodePathChild,
-                                                                        turAemSourceContext)
+                                                                        turAemSourceContext, false)
                                                         .ifPresent(infinityJson -> getNodeFromJson(
                                                                         nodePathChild, infinityJson,
                                                                         turAemSourceContext,

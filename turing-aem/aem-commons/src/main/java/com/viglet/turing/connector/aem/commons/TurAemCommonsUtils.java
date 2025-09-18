@@ -26,6 +26,7 @@ import static com.viglet.turing.connector.aem.commons.TurAemConstants.TEXT;
 import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -56,6 +57,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
@@ -77,6 +80,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurAemCommonsUtils {
+
+    private static final Cache<String, Optional<String>> responseBodyCache =
+            Caffeine.newBuilder().maximumSize(1000).expireAfterWrite(Duration.ofMinutes(5)).build();
+
     private TurAemCommonsUtils() {
         throw new IllegalStateException("Utility class");
     }
@@ -266,18 +273,20 @@ public class TurAemCommonsUtils {
     }
 
     public static Optional<JSONObject> getInfinityJson(String url,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemSourceContext turAemSourceContext, boolean useCache) {
         String infinityJsonUrl = String.format(url.endsWith(JSON) ? "%s%s" : "%s%s.infinity.json",
                 turAemSourceContext.getUrl(), url);
-        return getResponseBody(infinityJsonUrl, turAemSourceContext).map(responseBody -> {
-            if (isResponseBodyJSONArray(responseBody) && !url.endsWith(JSON)) {
-                return getInfinityJson(new JSONArray(responseBody).toList().getFirst().toString(),
-                        turAemSourceContext);
-            } else if (isResponseBodyJSONObject(responseBody)) {
-                return Optional.of(new JSONObject(responseBody));
-            }
-            return getInfinityJsonNotFound(infinityJsonUrl);
-        }).orElseGet(() -> getInfinityJsonNotFound(infinityJsonUrl));
+        return getResponseBody(infinityJsonUrl, turAemSourceContext, useCache)
+                .<Optional<JSONObject>>map(responseBody -> {
+                    if (isResponseBodyJSONArray(responseBody) && !url.endsWith(JSON)) {
+                        return getInfinityJson(
+                                new JSONArray(responseBody).toList().getFirst().toString(),
+                                turAemSourceContext, useCache);
+                    } else if (isResponseBodyJSONObject(responseBody)) {
+                        return Optional.of(new JSONObject(responseBody));
+                    }
+                    return getInfinityJsonNotFound(infinityJsonUrl);
+                }).orElseGet(() -> getInfinityJsonNotFound(infinityJsonUrl));
 
     }
 
@@ -312,8 +321,8 @@ public class TurAemCommonsUtils {
     }
 
     public static <T> Optional<T> getResponseBody(String url,
-            TurAemSourceContext turAemSourceContext, Class<T> clazz) {
-        return getResponseBody(url, turAemSourceContext).map(json -> {
+            TurAemSourceContext turAemSourceContext, Class<T> clazz, boolean useCache) {
+        return getResponseBody(url, turAemSourceContext, useCache).map(json -> {
             if (!TurCommonsUtils.isValidJson(json)) {
                 return null;
             }
@@ -329,6 +338,15 @@ public class TurAemCommonsUtils {
     }
 
     public static @NotNull Optional<String> getResponseBody(String url,
+            TurAemSourceContext turAemSourceContext, boolean useCache) {
+        if (useCache) {
+            return fetchResponseBodyCached(url, turAemSourceContext);
+        } else {
+            return fetchResponseBodyWithoutCache(url, turAemSourceContext);
+        }
+    }
+
+    public static @NotNull Optional<String> fetchResponseBodyWithoutCache(String url,
             TurAemSourceContext turAemSourceContext) {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setDefaultHeaders(List.of(new BasicHeader(HttpHeaders.AUTHORIZATION, basicAuth(
@@ -350,6 +368,14 @@ public class TurAemCommonsUtils {
             log.error("URL {} - {}", url, e.getMessage(), e);
             throw new TurRuntimeException(e);
         }
+    }
+
+    public static @NotNull Optional<String> fetchResponseBodyCached(String url,
+            TurAemSourceContext turAemSourceContext) {
+        log.info("Using Cache to request {}", url);
+        String cacheKey = url;
+        return responseBodyCache.get(cacheKey,
+                k -> fetchResponseBodyWithoutCache(url, turAemSourceContext));
     }
 
     private static String basicAuth(String username, String password) {
