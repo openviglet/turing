@@ -1,9 +1,6 @@
 = 🔍 Viglet Turing ES
 Viglet Team <opensource@viglet.com>
 :organization: Viglet Turing
-:toclevels: 4
-:toc: auto
-:toc-title: Table of Content
 :viglet-version: 2025.3
 :icons: font
 
