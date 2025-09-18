@@ -57,6 +57,15 @@ spring:
   output:
     ansi:
       enabled: always
+  graphql:
+    graphiql:
+      enabled: true
+      path: /graphiql
+    path: /graphql
+    cors:
+      allowed-origins: ${turing.allowedOrigins}
+      allowed-methods: GET,POST
+      allowed-headers: "*"
 
 server:
   port: ${PORT:2700}

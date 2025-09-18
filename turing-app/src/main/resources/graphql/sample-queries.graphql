@@ -1,0 +1,210 @@
+# Sample GraphQL Queries for Turing Semantic Navigation Search
+
+# Basic search query
+query BasicSearch {
+  siteSearch(
+    siteName: "sample"
+    searchParams: {
+      q: "technology"
+      rows: 10
+      p: 1
+      sort: "relevance"
+    }
+    locale: "en"
+  ) {
+    queryContext {
+      count
+      page
+      pageCount
+      responseTime
+    }
+    results {
+      numFound
+      start
+      document {
+        fields {
+          title
+          text
+          url
+          date
+        }
+        source
+      }
+    }
+    pagination {
+      text
+      href
+      page
+      current
+    }
+  }
+}
+
+# Advanced search with filters
+query AdvancedSearch {
+  siteSearch(
+    siteName: "sample"
+    searchParams: {
+      q: "innovation"
+      rows: 20
+      p: 1
+      sort: "date"
+      fq: ["type:article", "status:published"]
+      fqOp: "AND"
+    }
+    locale: "en"
+  ) {
+    queryContext {
+      count
+      limit
+      offset
+      responseTime
+      defaultFields {
+        title
+        description
+        url
+        date
+      }
+      query {
+        q
+        sort
+        p
+        rows
+      }
+    }
+    results {
+      numFound
+      document {
+        fields {
+          id
+          title
+          text
+          description
+          url
+          date
+          image
+        }
+        metadata {
+          name
+          value
+        }
+        source
+      }
+      facet {
+        name
+        label {
+          lang
+          text
+        }
+        facets {
+          count
+          label
+          facet
+        }
+      }
+    }
+  }
+}
+
+# Search with grouping
+query GroupedSearch {
+  siteSearch(
+    siteName: "sample"
+    searchParams: {
+      q: "*"
+      group: "category"
+      rows: 5
+      nfpr: 3
+    }
+    locale: "en"
+  ) {
+    groups {
+      name
+      count
+      page
+      pageCount
+      pageStart
+      pageEnd
+      limit
+      results {
+        numFound
+        document {
+          fields {
+            title
+            description
+            url
+          }
+          source
+        }
+      }
+      pagination {
+        text
+        href
+        page
+        current
+      }
+    }
+    widget {
+      id
+      name
+      description
+      html
+    }
+  }
+}
+
+# Simple search with minimal fields
+query SimpleSearch {
+  siteSearch(
+    siteName: "sample"
+    searchParams: {
+      q: "example"
+      rows: 5
+    }
+    locale: "en"
+  ) {
+    queryContext {
+      count
+      responseTime
+    }
+    results {
+      numFound
+      document {
+        fields {
+          title
+          url
+        }
+      }
+    }
+  }
+}
+
+# Search with OR filters
+query SearchWithOrFilters {
+  siteSearch(
+    siteName: "sample"
+    searchParams: {
+      q: "content"
+      fqOr: ["category:news", "category:blog"]
+      fqOp: "OR"
+      rows: 15
+    }
+    locale: "en"
+  ) {
+    results {
+      numFound
+      document {
+        fields {
+          title
+          description
+          url
+          date
+        }
+        metadata {
+          name
+          value
+        }
+      }
+    }
+  }
+}
