@@ -67,7 +67,7 @@ Viglet Turing is built with a modern, scalable architecture supporting multiple 
 == 🚦 Quick Start
 
 === Prerequisites
-- Java 17+ ☕
+- Java 21+ ☕
 - Maven 3.6+ 📦
 - Docker & Docker Compose (recommended) 🐳
 
@@ -195,7 +195,7 @@ cd turing
 # Build specific components
 ./mvnw clean install -pl turing-app          # Main application
 ./mvnw clean install -pl turing-java-sdk     # Java SDK
-./mvnw clean install -pl turing-js-sdk       # JavaScript SDK
+cd turing-js-sdk/js-sdk-lib; npm run build              # JavaScript SDK
 ----
 
 === Running Tests
@@ -240,7 +240,6 @@ We welcome contributions from developers of all skill levels! Here's how you can
 === Connect with Us
 
 - 🌐 **Website**: https://viglet.org/turing/
-- 📧 **Email**: opensource@viglet.com
 - 🐛 **Issues**: https://github.com/openviglet/turing/issues
 - 📋 **Discussions**: https://github.com/openviglet/turing/discussions
 
@@ -249,16 +248,13 @@ We welcome contributions from developers of all skill levels! Here's how you can
 === Essential Links
 
 - 📖 **Full Documentation**: https://docs.viglet.org/turing/
-- 🎥 **Video Tutorials**: https://www.youtube.com/c/VigletTuring
 - 💾 **Downloads**: https://viglet.org/turing/download/
 - 🔧 **API Documentation**: https://turing.viglet.com/latest/javadoc/
-- 🌟 **Live Demo**: https://demo.viglet.org/turing/
 
 === SDK Documentation
 
 - **Java SDK**: https://openturing.github.io/turing-java-sdk/
 - **JavaScript SDK**: link:turing-js-sdk/js-sdk-lib/README.md[JS SDK Guide]
-- **Python SDK**: _Coming Soon_
 
 == 🐳 Deployment Options
 
@@ -267,7 +263,7 @@ We welcome contributions from developers of all skill levels! Here's how you can
 [source,bash]
 ----
 # Production with external database
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.yml up -d
 
 # Kubernetes deployment
 kubectl apply -f k8s/
@@ -281,7 +277,7 @@ kubectl apply -f k8s/
 ./mvnw clean package -pl turing-app
 
 # Run with production profile
-java -jar turing-app/target/turing-app-{viglet-version}.jar --spring.profiles.active=production
+java -jar turing-app/target/viglet-turing.jar
 ----
 
 == 🆘 Troubleshooting
@@ -295,7 +291,7 @@ A: Ensure your content is properly indexed and the search site is configured cor
 A: Check that ports 2700, 8983, and 3306 are not in use by other applications.
 
 **Q: Build fails with Java version error**
-A: Ensure you're using Java 17 or higher. Check with `java -version`.
+A: Ensure you're using Java 21 or higher. Check with `java -version`.
 
 === Getting Help
 
