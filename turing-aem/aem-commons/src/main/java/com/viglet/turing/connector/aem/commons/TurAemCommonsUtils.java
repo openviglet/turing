@@ -372,7 +372,10 @@ public class TurAemCommonsUtils {
 
     public static @NotNull Optional<String> fetchResponseBodyCached(String url,
             TurAemSourceContext turAemSourceContext) {
-        log.info("Using Cache to request {}", url);
+        if (responseBodyCache.asMap().containsKey(url))
+            log.info("Using Cache to request2 {}", url);
+        else
+            log.info("Creating Cache to request {}", url);
         String cacheKey = url;
         return responseBodyCache.get(cacheKey,
                 k -> fetchResponseBodyWithoutCache(url, turAemSourceContext));

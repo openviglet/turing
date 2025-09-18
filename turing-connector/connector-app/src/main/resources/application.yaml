@@ -1,82 +1,75 @@
 server:
-    port: 30130
+  port: 30130
 
 turing:
-    url: http://localhost:2700
-    apiKey: 4618ac5e0e5640f8bd8ea8c83
-    connector:
-        job:
-            size: 50
-        cron: "-"
-        cron:
-            zone: UTC
-    scheduler:
-        enabled: false
-    solr:
-        endpoint: http://localhost:8983
+  url: http://localhost:2700
+  apiKey: 4618ac5e0e5640f8bd8ea8c83
+  connector:
+    job.size: 50
+    cron: "-"
+    cron.zone: UTC
+
+  scheduler:
+    enabled: false
+  solr:
+    endpoint: http://localhost:8983
 
 spring:
-    h2:
-        console:
-            enabled: false
-            path: /h2
-            settings:
-                web-allow-others: true
-    datasource:
-        url: jdbc:h2:file:./store/db/turConnectorDB
-        username: sa
-        password: ""
-        driver-class-name: org.h2.Driver
-    jpa:
-        properties:
-            hibernate:
-                dialect: org.hibernate.dialect.H2Dialect
-                globally_quoted_identifiers: true
-                enable_lazy_load_no_trans: true
-                generate_statistics: false
-            jakarta:
-                persistence:
-                    sharedCache:
-                        mode: ALL
-        hibernate:
-            ddl-auto: update
-        show-sql: false
-    jmx:
-        default-domain: com.viglet.turing.connector.persistence.model
-    output:
-        ansi:
-            enabled: always
-    profiles:
-        active: production
-
+  h2:
+    console:
+      enabled: false
+      path: /h2
+      settings:
+        web-allow-others: true
+  datasource:
+    url: jdbc:h2:file:./store/db/turConnectorDB
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        globally_quoted_identifiers: true
+        enable_lazy_load_no_trans: true
+        generate_statistics: false
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: ALL
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  jmx:
+    default-domain: com.viglet.turing.connector.persistence.model
+  output:
+    ansi:
+      enabled: always
+  profiles:
+    active: production
+  artemis:
+    mode: EMBEDDED
+    broker-url: localhost:61616
+    embedded:
+      enabled: true
+      persistent: true
+      data-directory: store/queue
+      queues: connector-indexing.queue
+    pool:
+      max-connections: 10
+  jms:
+    template:
+      default-destination: connector-indexing.queue
 logging:
-    config: classpath:logback-spring.xml
-    level:
-        org:
-            springframework: INFO
-            apache: INFO
-            apache:
-                activemq: ERROR
-        com:
-            viglet: INFO
-    file:
-        name: store/logs/tur-connector.log
-    logback:
-        rollingpolicy:
-            max-file-size: 25MB
-            max-history: 10
-
-spring:
-    artemis:
-        mode: EMBEDDED
-        broker-url: localhost:61616
-        embedded:
-            enabled: true
-            persistent: true
-            data-directory: store/queue
-            queues: connector-indexing.queue
-        pool:
-            max-connections: 10
-    jms:
-        template:
-            default-destination: connector-indexing.queue
+  config: classpath:logback-spring.xml
+  level:
+    org.springframework: INFO
+    org.apache: INFO
+    org.apache.activemq: ERROR
+    com.viglet: INFO
+  file:
+    name: store/logs/tur-connector.log
+  logback:
+    rollingpolicy:
+      max-file-size: 25MB
+      max-history: 10
