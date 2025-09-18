@@ -27,11 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import com.viglet.turing.api.sn.search.TurSNSiteSearchCachedAPI;
 import com.viglet.turing.commons.sn.TurSNConfig;
-import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
+import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchResultsBean;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.se.TurSEStopWord;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.solr.TurSolr;
@@ -59,23 +58,21 @@ public class TurSNAutoComplete {
     }
 
     @NotNull
-    public List<String> autoCompleteWithRegularSearch(String siteName, String q, Integer rows,
-            List<String> filterQueriesDefault, List<String> filterQueriesAnd,
-            List<String> filterQueriesOr, TurSNFilterQueryOperator fqOperator,
-            TurSNFilterQueryOperator fqItemOperator, String sort, String localeRequest,
-            HttpServletRequest request) {
+    public List<String> autoCompleteWithRegularSearch(String siteName,
+            TurSNSearchParams turSNSearchParams, HttpServletRequest request) {
         TurSNConfig turSNConfig = new TurSNConfig();
         turSNConfig.setHlEnabled(false);
-        TurSNFilterParams turSNFilterParams = TurSNFilterParams.builder()
-                .defaultValues(filterQueriesDefault).and(filterQueriesAnd).or(filterQueriesOr)
-                .operator(fqOperator).itemOperator(fqItemOperator).build();
+        turSNSearchParams
+                .setQ(String.format("%s:%s*", TurSNFieldName.TITLE, turSNSearchParams.getQ()));
+        turSNSearchParams.setGroup(null);
+        turSNSearchParams.setNfpr(0);
+        turSNSearchParams.setP(1);
         return Optional
                 .ofNullable(turSNSiteSearchCachedAPI.searchCached(
                         TurSNUtils.getCacheKey(siteName, request),
                         TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName,
-                                String.format("%s:%s*", TurSNFieldName.TITLE, q), 1,
-                                turSNFilterParams, sort, rows, null, 0, request,
-                                LocaleUtils.toLocale(localeRequest))))
+                                turSNSearchParams, request,
+                                LocaleUtils.toLocale(turSNSearchParams.getLocale()))))
                 .map(TurSNSiteSearchBean::getResults).map(TurSNSiteSearchResultsBean::getDocument)
                 .map(documents -> {
                     List<String> termList = new ArrayList<>();

@@ -37,7 +37,7 @@ import org.springframework.web.util.ForwardedHeaderUtils;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.TurSNConfig;
-import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
+import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentMetadataBean;
@@ -66,24 +66,20 @@ public class TurSNUtils {
 
     @NotNull
     public static TurSNSiteSearchContext getTurSNSiteSearchContext(TurSNConfig turSNConfig,
-            String siteName, String q, Integer currentPage, TurSNFilterParams turSNFilterParams,
-            String sort, Integer rows, String group, Integer autoCorrectionDisabled,
-            HttpServletRequest request, Locale locale) {
-        return getTurSNSiteSearchContext(turSNConfig, siteName, q, currentPage, turSNFilterParams,
-                sort, rows, group, autoCorrectionDisabled, new TurSNSitePostParamsBean(), request,
-                locale);
+            String siteName, TurSNSearchParams turSNSearchParams, HttpServletRequest request,
+            Locale locale) {
+        return getTurSNSiteSearchContext(turSNConfig, siteName, turSNSearchParams,
+                new TurSNSitePostParamsBean(), request, locale);
     }
 
     @NotNull
     public static TurSNSiteSearchContext getTurSNSiteSearchContext(TurSNConfig turSNConfig,
-            String siteName, String q, Integer currentPage, TurSNFilterParams turSNFilterParams,
-            String sort, Integer rows, String group, Integer autoCorrectionDisabled,
+            String siteName, TurSNSearchParams turSNSearchParams,
             TurSNSitePostParamsBean turSNSitePostParamsBean, HttpServletRequest request,
             Locale locale) {
         return new TurSNSiteSearchContext(siteName, turSNConfig,
-                new TurSEParameters(q, turSNFilterParams, currentPage, sort, rows, group,
-                        autoCorrectionDisabled, turSNSitePostParamsBean),
-                locale, TurSNUtils.requestToURI(request), turSNSitePostParamsBean);
+                new TurSEParameters(turSNSearchParams, turSNSitePostParamsBean), locale,
+                TurSNUtils.requestToURI(request), turSNSitePostParamsBean);
     }
 
     public static boolean hasCorrectedText(TurSESpellCheckResult turSESpellCheckResult) {
