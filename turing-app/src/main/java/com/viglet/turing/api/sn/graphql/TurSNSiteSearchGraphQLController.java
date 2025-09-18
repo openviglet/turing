@@ -17,14 +17,19 @@
 
 package com.viglet.turing.api.sn.graphql;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
@@ -35,6 +40,9 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
+import com.viglet.turing.sn.TurSNUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,8 +95,21 @@ public class TurSNSiteSearchGraphQLController {
 
         return turSNSiteRepository.findByName(siteName)
                 .map(site -> {
+                    // Get the current HTTP request to create proper search context
+                    ServletRequestAttributes requestAttributes = 
+                            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                    
+                    HttpServletRequest request;
+                    if (requestAttributes != null) {
+                        request = requestAttributes.getRequest();
+                    } else {
+                        // Create a mock request for GraphQL context
+                        request = createMockRequestForGraphQL(siteName, turSNSearchParams);
+                    }
+                    
                     TurSNSiteSearchContext turSNSiteSearchContext = getTurSNSiteSearchContext(
-                            siteName, turSNSearchParams, localeObj, site);
+                            siteName, turSNSearchParams, request, localeObj, site);
+                    
                     return turSNSearchProcess.search(turSNSiteSearchContext);
                 })
                 .orElse(new TurSNSiteSearchBean());
@@ -134,19 +155,43 @@ public class TurSNSiteSearchGraphQLController {
         return params;
     }
 
+    private HttpServletRequest createMockRequestForGraphQL(String siteName, TurSNSearchParams params) {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setMethod("POST");
+        mockRequest.setRequestURI("/graphql");
+        mockRequest.setContextPath("/");
+        mockRequest.setServerName("localhost");
+        mockRequest.setServerPort(2700);
+        
+        // Add search parameters as query parameters for URI construction
+        if (params != null) {
+            if (StringUtils.isNotBlank(params.getQ())) {
+                mockRequest.addParameter("q", params.getQ());
+            }
+            if (params.getP() != null) {
+                mockRequest.addParameter("p", params.getP().toString());
+            }
+            if (params.getRows() != null) {
+                mockRequest.addParameter("rows", params.getRows().toString());
+            }
+            if (StringUtils.isNotBlank(params.getSort())) {
+                mockRequest.addParameter("sort", params.getSort());
+            }
+            if (StringUtils.isNotBlank(params.getLocale())) {
+                mockRequest.addParameter("locale", params.getLocale());
+            }
+        }
+        
+        return mockRequest;
+    }
+
     private TurSNSiteSearchContext getTurSNSiteSearchContext(String siteName,
-            TurSNSearchParams turSNSearchParams, Locale locale, TurSNSite site) {
+            TurSNSearchParams turSNSearchParams, HttpServletRequest request, 
+            Locale locale, TurSNSite site) {
         
         TurSNConfig turSNConfig = getTurSNConfig(site);
-        
-        // Create a basic search context - simplified version of the original method
-        TurSNSiteSearchContext context = new TurSNSiteSearchContext();
-        context.setSiteName(siteName);
-        context.setLocale(locale);
-        context.setTurSNConfig(turSNConfig);
-        context.setTurSNSearchParams(turSNSearchParams);
-        
-        return context;
+        return TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName,
+                turSNSearchParams, request, locale);
     }
 
     private TurSNConfig getTurSNConfig(TurSNSite turSNSite) {
