@@ -1,0 +1,137 @@
+# GraphQL Schema for Turing Semantic Navigation Search
+
+type Query {
+    siteSearch(
+        siteName: String!
+        searchParams: SearchParamsInput!
+        locale: String
+    ): SiteSearchResult
+}
+
+input SearchParamsInput {
+    q: String
+    rows: Int
+    p: Int
+    sort: String
+    group: String
+    nfpr: Int
+    fq: [String]
+    fqAnd: [String] 
+    fqOr: [String]
+    fqOp: String
+    fqiOp: String
+    locale: String
+}
+
+type SiteSearchResult {
+    pagination: [SearchPagination]
+    queryContext: SearchQueryContext
+    results: SearchResults
+    groups: [SearchGroup]
+    widget: SearchWidget
+}
+
+type SearchPagination {
+    text: String
+    href: String
+    page: Int
+    current: Boolean
+}
+
+type SearchQueryContext {
+    count: Int
+    defaultFields: SearchDefaultFields
+    index: String
+    limit: Int
+    offset: Int
+    page: Int
+    pageCount: Int
+    pageEnd: Int
+    pageStart: Int
+    query: SearchQuery
+    responseTime: Float
+    facetType: String
+    facetItemType: String
+}
+
+type SearchDefaultFields {
+    date: String
+    description: String
+    image: String
+    text: String
+    title: String
+    url: String
+}
+
+type SearchQuery {
+    q: String
+    sort: String
+    p: Int
+    rows: Int
+    group: String
+    nfpr: Int
+}
+
+type SearchResults {
+    numFound: Int
+    start: Int
+    document: [SearchDocument]
+    facet: SearchFacet
+}
+
+type SearchDocument {
+    source: String
+    fields: SearchDocumentFields
+    metadata: [SearchDocumentMetadata]
+}
+
+type SearchDocumentFields {
+    id: String
+    title: String
+    text: String
+    url: String
+    date: String
+    description: String
+    image: String
+}
+
+type SearchDocumentMetadata {
+    name: String
+    value: String
+}
+
+type SearchFacet {
+    name: String
+    label: SearchFacetLabel
+    facets: [SearchFacetItem]
+}
+
+type SearchFacetLabel {
+    lang: String
+    text: String
+}
+
+type SearchFacetItem {
+    count: Int
+    label: String
+    facet: String
+}
+
+type SearchGroup {
+    name: String
+    count: Int
+    page: Int
+    pageCount: Int
+    pageEnd: Int
+    pageStart: Int
+    limit: Int
+    results: SearchResults
+    pagination: [SearchPagination]
+}
+
+type SearchWidget {
+    id: String
+    name: String
+    description: String
+    html: String
+}
