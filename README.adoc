@@ -56,13 +56,11 @@ Viglet Turing is built with a modern, scalable architecture supporting multiple 
 - **Web Crawler**: Automated website content indexing
 - **Database Connectors**: MySQL, PostgreSQL, Oracle, SQL Server
 - **File System**: Local and network file indexing
-- **Cloud Storage**: Integration with cloud document repositories
 
 ==== 🛠️ **Developer Tools**
 - **Java SDK**: Full-featured client library for Java applications
 - **JavaScript SDK**: TypeScript-ready SDK for web applications
 - **REST APIs**: Comprehensive RESTful API for all operations
-- **WebSocket Support**: Real-time search and notifications
 
 == 🚦 Quick Start
 
