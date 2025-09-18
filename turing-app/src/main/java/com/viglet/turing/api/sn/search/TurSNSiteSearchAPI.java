@@ -156,7 +156,6 @@ public class TurSNSiteSearchAPI {
                 turSNSearchParams.setGroup(null);
                 turSNSearchParams.setNfpr(1);
                 Locale locale = LocaleUtils.toLocale(turSNSearchParams.getLocale());
-                System.out.println(turSNSearchParams);
                 if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
                         return turSNSiteRepository.findByName(siteName).map(site -> {
                                 TurSNSiteSearchContext turSNSiteSearchContext =
