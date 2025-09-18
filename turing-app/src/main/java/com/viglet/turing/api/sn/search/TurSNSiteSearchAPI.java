@@ -25,12 +25,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,8 +81,8 @@ public class TurSNSiteSearchAPI {
                 this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         }
 
-        @GetMapping("/list")
-        public ResponseEntity<Set<String>> turSNSiteSearchSelectListGet(
+        @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<List<Object>> turSNSiteSearchSelectListGet(
                         @PathVariable String siteName,
                         @ModelAttribute TurSNSearchParams turSNSearchParams,
                         @RequestParam(required = false,
@@ -108,12 +108,11 @@ public class TurSNSiteSearchAPI {
                 Locale locale = LocaleUtils.toLocale(turSNSearchParams.getLocale());
                 if (turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
                         return turSNSiteRepository.findByName(siteName).map(site -> {
-
-                                return new ResponseEntity<>(turSNSearchProcess
+                                List<Object> termList = turSNSearchProcess
                                                 .searchList(getTurSNSiteSearchContext(siteName,
                                                                 turSNSearchParams, request, locale,
-                                                                site)),
-                                                HttpStatus.OK);
+                                                                site));
+                                return new ResponseEntity<>(termList, HttpStatus.OK);
                         }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
                 } else {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

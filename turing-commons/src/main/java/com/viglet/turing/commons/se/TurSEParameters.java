@@ -17,6 +17,7 @@ public class TurSEParameters implements Serializable {
         private String query;
         private TurSNFilterParams turSNFilterParams;
         private List<String> boostQueries;
+        private List<String> fieldList;
         private Integer currentPage;
         private String sort;
         private Integer rows;
@@ -44,28 +45,34 @@ public class TurSEParameters implements Serializable {
                 this.rows = turSNSearchParams.getRows();
                 this.group = turSNSearchParams.getGroup();
                 this.autoCorrectionDisabled = turSNSearchParams.getNfpr();
+                this.fieldList = turSNSearchParams.getFl();
                 this.turSNSitePostParamsBean = gTurSNSitePostParamsBean;
                 overrideFromPost(gTurSNSitePostParamsBean);
         }
 
-        private void overrideFromPost(TurSNSitePostParamsBean gTurSNSitePostParamsBean) {
-                Optional.ofNullable(gTurSNSitePostParamsBean).ifPresent(postParams -> {
-                        setSort(Optional.ofNullable(postParams.getSort()).orElse(getSort()));
-                        setRows(Optional.ofNullable(postParams.getRows()).orElse(getRows()));
-                        setGroup(Optional.ofNullable(postParams.getGroup()).orElse(getGroup()));
-                        setCurrentPage(Optional.ofNullable(postParams.getPage())
-                                        .orElse(getCurrentPage()));
-                        setQuery(Optional.ofNullable(postParams.getQuery()).orElse(getQuery()));
-                        getTurSNFilterParams().setDefaultValues(
-                                        Optional.ofNullable(postParams.getFq()).orElse(
-                                                        getTurSNFilterParams().getDefaultValues()));
-                        getTurSNFilterParams().setAnd(Optional.ofNullable(postParams.getFqAnd())
-                                        .orElse(getTurSNFilterParams().getAnd()));
-                        getTurSNFilterParams().setOr(Optional.ofNullable(postParams.getFqOr())
-                                        .orElse(getTurSNFilterParams().getOr()));
-                        getTurSNFilterParams().setOperator(
-                                        Optional.ofNullable(postParams.getFqOperator()).orElse(
-                                                        getTurSNFilterParams().getOperator()));
-                });
+        private void overrideFromPost(TurSNSitePostParamsBean postParamsBean) {
+                if (postParamsBean == null) {
+                        return;
+                }
+
+                setSort(Optional.ofNullable(postParamsBean.getSort()).orElse(sort));
+                setRows(Optional.ofNullable(postParamsBean.getRows()).orElse(rows));
+                setGroup(Optional.ofNullable(postParamsBean.getGroup()).orElse(group));
+                setCurrentPage(Optional.ofNullable(postParamsBean.getPage()).orElse(currentPage));
+                setQuery(Optional.ofNullable(postParamsBean.getQuery()).orElse(query));
+                setFieldList(Optional.ofNullable(postParamsBean.getFieldList()).orElse(fieldList));
+
+                if (turSNFilterParams != null) {
+                        turSNFilterParams.setDefaultValues(
+                                        Optional.ofNullable(postParamsBean.getFq()).orElse(
+                                                        turSNFilterParams.getDefaultValues()));
+                        turSNFilterParams.setAnd(Optional.ofNullable(postParamsBean.getFqAnd())
+                                        .orElse(turSNFilterParams.getAnd()));
+                        turSNFilterParams.setOr(Optional.ofNullable(postParamsBean.getFqOr())
+                                        .orElse(turSNFilterParams.getOr()));
+                        turSNFilterParams.setOperator(
+                                        Optional.ofNullable(postParamsBean.getFqOperator())
+                                                        .orElse(turSNFilterParams.getOperator()));
+                }
         }
 }

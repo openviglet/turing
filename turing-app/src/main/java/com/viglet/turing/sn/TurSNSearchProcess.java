@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.IntStream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
@@ -252,7 +251,7 @@ public class TurSNSearchProcess {
                                 .orElse(new TurSNSiteSearchBean());
         }
 
-        public Set<String> searchList(TurSNSiteSearchContext turSNSiteSearchContext) {
+        public List<Object> searchList(TurSNSiteSearchContext turSNSiteSearchContext) {
                 turSNSiteSearchContext.getTurSNConfig().setHlEnabled(false);
                 return turSolrInstanceProcess
                                 .initSolrInstance(turSNSiteSearchContext.getSiteName(),
@@ -263,17 +262,17 @@ public class TurSNSearchProcess {
                                                 .map(turSEResults -> searchResponseList(
                                                                 turSNSiteSearchContext,
                                                                 turSolrInstance, turSEResults))
-                                                .orElse(Collections.emptySet()))
-                                .orElse(Collections.emptySet());
+                                                .orElse(Collections.emptyList()))
+                                .orElse(Collections.emptyList());
         }
 
-        private Set<String> searchResponseList(TurSNSiteSearchContext context,
+        private List<Object> searchResponseList(TurSNSiteSearchContext context,
                         TurSolrInstance turSolrInstance, TurSEResults turSEResults) {
                 return turSNSiteRepository.findByName(context.getSiteName()).map(turSNSite -> {
                         populateMetrics(turSNSite, context, turSEResults.getNumFound());
                         return responseList(context, turSolrInstance, turSNSite,
                                         Collections.emptyMap(), turSEResults.getResults());
-                }).orElse(Collections.emptySet());
+                }).orElse(Collections.emptyList());
         }
 
         private TurSNSiteSearchBean searchResponse(TurSNSiteSearchContext context,
@@ -462,17 +461,44 @@ public class TurSNSearchProcess {
                 return targetingRuleModified;
         }
 
-        private Set<String> responseList(TurSNSiteSearchContext context,
+        private List<Object> responseList(TurSNSiteSearchContext context,
                         TurSolrInstance turSolrInstance, TurSNSite turSNSite,
                         Map<String, TurSNSiteFieldExtDto> facetMap, List<TurSEResult> seResults) {
-                Set<String> termList = new HashSet<>(seResults.size());
+                List<Object> termList = new ArrayList<>();
+                List<String> fields = getFieldListOrDefault(context);
+
                 for (TurSEResult result : seResults) {
-                        Object title = result.getFields().get("title");
-                        if (title != null) {
-                                termList.add(title.toString());
+                        if (fields.size() > 1) {
+                                termList.add(buildJsonObjectFromFields(result, fields));
+                        } else {
+                                Object attribute = result.getFields().get(fields.get(0));
+                                if (attribute != null) {
+                                        termList.add(attribute);
+                                }
                         }
                 }
                 return termList;
+        }
+
+        private List<String> getFieldListOrDefault(TurSNSiteSearchContext context) {
+                List<String> fields = context.getTurSEParameters().getFieldList();
+                if (fields == null || fields.isEmpty()) {
+                        fields = new ArrayList<>();
+                        fields.add("title");
+                }
+                return fields;
+        }
+
+        private Map<String, Object> buildJsonObjectFromFields(TurSEResult result,
+                        List<String> fields) {
+                Map<String, Object> jsonObject = new HashMap<>();
+                for (String field : fields) {
+                        Object attribute = result.getFields().get(field);
+                        if (attribute != null) {
+                                jsonObject.put(field, attribute);
+                        }
+                }
+                return jsonObject;
         }
 
         private TurSNSiteSearchResultsBean responseDocuments(TurSNSiteSearchContext context,
