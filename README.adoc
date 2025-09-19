@@ -173,6 +173,54 @@ curl -X POST "http://localhost:2700/api/sn/MySite" \
     }]
   }'
 ----
+=== GraphQL API Example
+
+=== API Endpoints
+
+- **GraphQL API**: `POST /graphql`
+- **GraphiQL Interface**: `GET /graphiql`
+
+=== Example Usage
+
+[source,graphql]
+----
+query {
+  siteSearch(
+    siteName: "your-site-name"
+    searchParams: {
+      q: "technology"
+      rows: 10
+      p: 1
+      sort: "relevance"
+    }
+    locale: "en"
+  ) {
+    queryContext {
+      count
+      responseTime
+    }
+    results {
+      numFound
+      document {
+        fields {
+          title
+          text
+          url
+        }
+      }
+    }
+  }
+}
+----
+
+=== Integration Benefits
+
+1. **Type Safety**: Strong typing prevents runtime errors
+2. **Flexible Queries**: Clients can request exactly the data they need
+3. **Single Endpoint**: All search operations through one GraphQL endpoint
+4. **Backward Compatibility**: Existing REST API remains unchanged
+5. **Interactive Development**: GraphiQL interface for query development
+6. **Consistent Results**: Uses same search engine and processing as REST API
 
 == 🛠️ Development Setup
 
