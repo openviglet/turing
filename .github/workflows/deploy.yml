@@ -24,8 +24,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 18.10.0
-          registry-url: "https://npm.pkg.github.com"
-          scope: "@openviglet"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@viglet"
       - name: Install Angular Cli
         run: npm i -g @angular/cli
 
@@ -84,7 +84,7 @@ jobs:
         uses: MathieuSoysal/Javadoc-publisher.yml@v3.0.2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           javadoc-branch: javadoc
           java-version: 21
           target-folder: docs/latest/javadoc
