@@ -10,6 +10,9 @@
     "clean": "",
     "prepublishOnly": "npm run clean && npm install && npm run build"
   },
+  "publishConfig": {
+  "access": "public"
+  },
   "keywords": [
     "turing",
     "search",

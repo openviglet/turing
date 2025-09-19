@@ -94,7 +94,7 @@ jobs:
           export JITPACK=true
           mvn --batch-mode -P jitpack -Dturing.open-browser=false deploy
           cd turing-js-sdk/js-sdk-lib
-          npm publish --access public
+          npm publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
