@@ -136,6 +136,18 @@ Get latest search queries.
 const latestSearches = await searchService.getLatestSearches('sample-site', 10, 'en_US');
 ```
 
+### Generative AI Methods
+
+#### `chatMessage(siteName: string, query: string, localeRequest?: string): Promise<TurChatMessage>`
+
+Get a chat response from the Generative AI API.
+
+```typescript
+const chatResponse = await searchService.chatMessage('sample-site', 'What is artificial intelligence?', 'en_US');
+console.log(chatResponse.text); // AI-generated response
+console.log(chatResponse.enabled); // Whether AI is enabled for this site
+```
+
 ## Search Parameters
 
 ### TurSNSearchParams
@@ -180,6 +192,12 @@ Individual search result document with:
 - `elevate`: Elevation flag
 - `metadata`: Document metadata
 - `fields`: Document fields
+
+### TurChatMessage
+
+Generative AI chat response containing:
+- `enabled`: Boolean indicating if AI is enabled for the site
+- `text`: The generated text response from the AI
 
 ## Enums
 

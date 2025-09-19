@@ -19,6 +19,7 @@ export { TurSNSiteSearchQueryContext } from "./models/TurSNSiteSearchQueryContex
 export { TurSNSiteSearchQueryContextQuery } from "./models/TurSNSiteSearchQueryContextQuery";
 export { TurSNSiteSearchResults } from "./models/TurSNSiteSearchResults";
 export { TurSNSiteSearchWidget } from "./models/TurSNSiteSearchWidget";
+export { TurChatMessage } from "./models/TurChatMessage";
 
 // Types
 export { TurSNSearchParams } from "./types/TurSNSearchParams";
