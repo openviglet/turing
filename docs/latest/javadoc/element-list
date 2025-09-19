@@ -13,6 +13,7 @@ com.viglet.turing.api.se
 com.viglet.turing.api.sn.bean
 com.viglet.turing.api.sn.console
 com.viglet.turing.api.sn.genai
+com.viglet.turing.api.sn.graphql
 com.viglet.turing.api.sn.job
 com.viglet.turing.api.sn.queue
 com.viglet.turing.api.sn.search
