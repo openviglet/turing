@@ -1,5 +1,5 @@
 {
-  "name": "@openviglet/turing-js-sdk",
+  "name": "@viglet/turing-sdk",
   "version": "2025.3.6",
   "description": "TypeScript SDK for Turing Semantic Navigation Search API",
   "main": "dist/index.js",
@@ -18,7 +18,7 @@
     "sdk",
     "rest-api"
   ],
-  "author": "OpenViglet",
+  "author": "Viglet",
   "license": "Apache-2.0",
   "dependencies": {
     "axios": "^1.11.0",
@@ -32,7 +32,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/openviglet/turing.git",
-    "directory": "turing-js-sdk"
+    "directory": "turing-js-sdk/js-sdk-lib"
   },
   "files": [
     "dist/**/*",

@@ -5,7 +5,7 @@ import {
     SidebarInset,
     SidebarProvider, SidebarTrigger
 } from "@/components/ui/sidebar";
-import { TurSNSiteSearchService, type TurSNSiteSearchDocument } from "@openviglet/turing-js-sdk";
+import { TurSNSiteSearchService, type TurSNSiteSearchDocument } from "@viglet/turing-sdk";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 const QUERY_PARAM = "q";
