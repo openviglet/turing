@@ -186,12 +186,6 @@ The connector will:
 3. Connect to Turing server
 4. Start indexing content from the configured root path
 
-### Monitoring
-
-- **H2 Console**: Access at `http://localhost:8080/h2-console` (if enabled)
-- **Logs**: Monitor console output for indexing progress
-- **Turing Dashboard**: Check indexed content at your Turing URL
-
 ### Custom Extensions
 
 To create your own extensions:
