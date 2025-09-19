@@ -1,6 +1,6 @@
 {
   "name": "@viglet/turing-sdk",
-  "version": "2025.3.8",
+  "version": "2025.3.9",
   "description": "TypeScript SDK for Turing Semantic Navigation Search API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
     "prepublishOnly": "npm run clean && npm install && npm run build"
   },
   "publishConfig": {
-  "access": "public"
+    "access": "public"
   },
   "keywords": [
     "turing",
