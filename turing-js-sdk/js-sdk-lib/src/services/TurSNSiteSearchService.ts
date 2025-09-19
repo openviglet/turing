@@ -3,6 +3,7 @@ import { TurSNSearchLatestRequest } from "../models/TurSNSearchLatestRequest.js"
 import { TurSNSiteLocale } from "../models/TurSNSiteLocale.js";
 import { TurSNSitePostParams } from "../models/TurSNSitePostParams.js";
 import { TurSNSiteSearch } from "../models/TurSNSiteSearch.js";
+import { TurChatMessage } from "../models/TurChatMessage.js";
 import { TurSNSearchParams } from "../types/TurSNSearchParams.js";
 
 /**
@@ -114,6 +115,24 @@ export class TurSNSiteSearchService {
     const response = await this.axiosInstance.post<string[]>(
       `/api/sn/${siteName}/search/latest`,
       request,
+      { params }
+    );
+    return response.data;
+  }
+
+  /**
+   * GET chat message - returns a chat response from the Generative AI API
+   */
+  public async chatMessage(
+    siteName: string,
+    query: string,
+    localeRequest?: string
+  ): Promise<TurChatMessage> {
+    const params: any = { q: query };
+    if (localeRequest !== undefined) params._setlocale = localeRequest;
+
+    const response = await this.axiosInstance.get<TurChatMessage>(
+      `/api/sn/${siteName}/chat`,
       { params }
     );
     return response.data;
