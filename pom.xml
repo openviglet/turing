@@ -9,38 +9,78 @@
     <version>2025.3.25</version>
     <name>Turing ES Master</name>
     <description>Viglet Turing ES</description>
-
+    <url>https://github.com/openviglet/turing</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>alegauss</id>
+            <name>Alexandre Oliveira</name>
+            <email>alexandre.oliveira@viglet.com</email>
+            <organization>Viglet</organization>
+            <organizationUrl>https://viglet.com</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/openviglet/turing.git</connection>
+        <developerConnection>scm:git:https://github.com/openviglet/turing.git</developerConnection>
+        <url>https://github.com/openviglet/turing</url>
+        <tag>HEAD</tag>
+    </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>3.5.5</spring-boot.version>
         <sonar.organization>viglet</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <build>
         <plugins>
             <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>5.2.0.4988</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.3</version>
-                <configuration>
-                    <!-- Default configuration for all reports -->
-                    <noqualifier>all</noqualifier>
-                    <doclint>all,-missing</doclint>
-                </configuration>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
-                        <id>aggregate</id>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>aggregate</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>5.2.0.4988</version>
             </plugin>
             <plugin>
                 <groupId>pl.project13.maven</groupId>
@@ -323,11 +363,11 @@
     </repositories>
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
+            <id>central</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
+            <id>central</id>
             <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
