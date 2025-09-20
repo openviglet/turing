@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <parent>
+        <artifactId>turing-db</artifactId>
+        <groupId>com.viglet.turing</groupId>
+        <version>2025.3.45</version>
+    </parent>
     <artifactId>db-sample</artifactId>
-    <groupId>com.viglet.turing</groupId>
-    <version>${revision}</version>
     <name>Turing Database - Sample Custom Connector</name>
     <description>Turing Database - Sample Custom Connector</description>
     <properties>
-        <revision>2025.3</revision>
-        <turing.version>3ee63eeed0</turing.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -18,15 +18,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.openturing.turing</groupId>
+            <groupId>com.viglet.turing</groupId>
             <artifactId>db-commons</artifactId>
-            <version>${turing.version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <finalName>db-sample</finalName>
-        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+        <pluginManagement>            <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>
                 <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
                 <plugin>
@@ -70,10 +69,4 @@
             </plugins>
         </pluginManagement>
     </build>
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 </project>
