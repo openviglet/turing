@@ -94,7 +94,7 @@ jobs:
       - name: Publish package
         run: |
           cd turing-commons
-          mvn --batch-mode deploy -am
+          mvn --batch-mode deploy -am -Dgpg.passphrase="${GPG_PASSPHRASE}"
         # cd turing-js-sdk/js-sdk-lib
         # npm publish
         env:
@@ -102,6 +102,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       - name: Deploy JavaDoc 🚀
         uses: MathieuSoysal/Javadoc-publisher.yml@v3.0.2
         with:
