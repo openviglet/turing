@@ -93,7 +93,7 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
       - name: Publish package
         run: |
-          mvn -Dgpg.passphrase="${GPG_PASSPHRASE}" --batch-mode deploy -pl turing-commons -am
+          mvn --batch-mode  -pl turing-commons -am deploy -Dgpg.passphrase="${GPG_PASSPHRASE}"
         # cd turing-js-sdk/js-sdk-lib
         # npm publish
         env:
