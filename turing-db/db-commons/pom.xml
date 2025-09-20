@@ -5,7 +5,7 @@
   <parent>
     <artifactId>turing-db</artifactId>
     <groupId>com.viglet.turing</groupId>
-    <version>2025.3.28</version>
+    <version>2025.3.29</version>
   </parent>
 
   <artifactId>db-commons</artifactId>
