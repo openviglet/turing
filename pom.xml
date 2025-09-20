@@ -40,6 +40,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <gpg.keyname>30AA85DC937DA16691466FE2A0CCF43371503F2D</gpg.keyname>
         <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <build>
         <plugins>
