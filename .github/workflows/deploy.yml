@@ -85,8 +85,7 @@ jobs:
           server-password: MAVEN_PASSWORD
       - name: Publish package
         run: |
-          export JITPACK=true
-          cd turing-java-sdk
+          cd turing-commons
           mvn --batch-mode deploy -am
         # cd turing-js-sdk/js-sdk-lib
         # npm publish
