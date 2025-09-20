@@ -22,7 +22,7 @@ public class TurBrowserLauncher {
 
     @EventListener(ApplicationReadyEvent.class)
     public void launchBrowser() {
-        if (!openBrowser) {
+        if (!openBrowser || isCalledFromTestFramework()) {
             return;
         }
         System.setProperty("java.awt.headless", "false");
@@ -37,4 +37,15 @@ public class TurBrowserLauncher {
             log.error("Desktop is not supported, cannot open browser automatically.");
         }
     }
+
+    public static boolean isCalledFromTestFramework() {
+        for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+            if (element.getClassName().contains("org.junit")
+                    || element.getClassName().contains("org.testng")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
