@@ -22,7 +22,10 @@
         <maven.compiler.target>21</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
-
+    <modules>
+        <module>connector-commons</module>
+        <module>connector-app</module>
+    </modules>
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -30,29 +33,4 @@
             <version>1.5.18</version>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <property>
-                    <name>!env.JITPACK</name>
-                </property>
-            </activation>
-            <modules>
-                <module>connector-commons</module>
-                <module>connector-app</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>jitpack</id>
-            <activation>
-                <property>
-                    <name>env.JITPACK</name>
-                </property>
-            </activation>
-            <modules>
-                <module>connector-commons</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

@@ -30,29 +30,8 @@
             <version>1.5.18</version>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <property>
-                    <name>!env.JITPACK</name>
-                </property>
-            </activation>
-            <modules>
-                <module>wc-commons</module>
-                <module>wc-plugin</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>jitpack</id>
-            <activation>
-                <property>
-                    <name>env.JITPACK</name>
-                </property>
-            </activation>
-            <modules>
-                <module>wc-commons</module>
-            </modules>
-        </profile>
-    </profiles>
+    <modules>
+        <module>wc-commons</module>
+        <module>wc-plugin</module>
+    </modules>
 </project>

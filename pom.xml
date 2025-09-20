@@ -162,36 +162,17 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <configuration>
-                    <gpgArguments>
-                        <arg>--pinentry-mode</arg>
-                        <arg>loopback</arg>
-                    </gpgArguments>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
     <profiles>
         <profile>
             <id>default</id>
             <activation>
-                <property>
-                    <name>!env.JITPACK</name>
-                </property>
+                <activeByDefault>true</activeByDefault>
             </activation>
+            <properties>
+                <gpg.skip>true</gpg.skip>
+            </properties>
             <modules>
                 <module>turing-utils</module>
                 <module>turing-commons</module>
@@ -207,12 +188,7 @@
             </modules>
         </profile>
         <profile>
-            <id>jitpack</id>
-            <activation>
-                <property>
-                    <name>env.JITPACK</name>
-                </property>
-            </activation>
+            <id>release</id>
             <modules>
                 <module>turing-commons</module>
                 <module>turing-java-sdk</module>
@@ -220,6 +196,30 @@
                 <module>turing-aem</module>
                 <module>turing-web-crawler</module>
             </modules>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>coverage</id>

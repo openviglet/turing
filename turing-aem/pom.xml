@@ -20,30 +20,9 @@
         <maven.compiler.target>21</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <property>
-                    <name>!env.JITPACK</name>
-                </property>
-            </activation>
-            <modules>
-                <module>aem-commons</module>
-                <module>aem-plugin</module>
-                <module>aem-plugin-sample</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>jitpack</id>
-            <activation>
-                <property>
-                    <name>env.JITPACK</name>
-                </property>
-            </activation>
-            <modules>
-                <module>aem-commons</module>
-            </modules>
-        </profile>
-    </profiles>
+    <modules>
+        <module>aem-commons</module>
+        <module>aem-plugin</module>
+        <module>aem-plugin-sample</module>
+    </modules>
 </project>
