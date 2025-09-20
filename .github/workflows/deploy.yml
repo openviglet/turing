@@ -86,7 +86,7 @@ jobs:
       - name: Publish package
         run: |
           export JITPACK=true
-          cd turing-js-sdk
+          cd turing-java-sdk
           mvn --batch-mode deploy -am
         # cd turing-js-sdk/js-sdk-lib
         # npm publish
