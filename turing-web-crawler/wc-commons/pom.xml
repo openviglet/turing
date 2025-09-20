@@ -5,7 +5,7 @@
   <parent>
     <artifactId>turing-web-crawler</artifactId>
     <groupId>com.viglet.turing.connector</groupId>
-    <version>2025.3.33</version>
+    <version>2025.3.34</version>
   </parent>
 
   <artifactId>wc-commons</artifactId>
