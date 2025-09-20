@@ -37,7 +37,7 @@ jobs:
           cache: maven
       - name: Increment Version
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
+          mvn build-helper:parse-version versions:set -Dgpg.skip=true -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
           cd turing-js-sdk/js-sdk-lib
           npm version patch
           npm run build
@@ -55,7 +55,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mvn install package -Dturing.open-browser=false
+          mvn install package -Dgpg.skip=true -Dturing.open-browser=false
           export TAG_NAME=v$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           gh release create ${TAG_NAME} --generate-notes
           gh release upload ${TAG_NAME} turing-aem/aem-plugin/target/aem-plugin.jar --clobber
