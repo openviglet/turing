@@ -118,10 +118,6 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-jasypt:
-  encryptor:
-    bean: turEncryptor
-
 management:
   endpoints:
     web:
