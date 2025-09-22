@@ -1308,7 +1308,7 @@ public class TurSolr {
                 : getFacetItemTypeFromSite(context.getTurSNSite()).toString();
     }
 
-    public List<String> getFacetsInFilterQuery(TurSNFacetTypeContext context) {
+    public List<String> getFacetFieldsInFilterQuery(TurSNFacetTypeContext context) {
         List<String> enabledFacetNames = getEnabledFacets(context.getTurSNSite()).stream()
                 .map(TurSNSiteFieldExt::getName).toList();
         return getFqFields(context.getTurSNFilterParams()).stream()
