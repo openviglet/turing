@@ -658,6 +658,7 @@ public class TurSNSearchProcess {
                                                                                                                                         context.getUri(),
                                                                                                                                         facetToRemove)
                                                                                                                         .toString())
+                                                                                                        .setFilterQuery(facetToRemove)
                                                                                                         .setSelected(true));
                                                                 }
                                                         }));
@@ -846,6 +847,7 @@ public class TurSNSearchProcess {
                                                                                         .setLabel(facetItem
                                                                                                         .getAttribute())
                                                                                         .setSelected(selected)
+                                                                                        .setFilterQuery(fq)
                                                                                         .setLink(getLink(
                                                                                                         context,
                                                                                                         selected,
