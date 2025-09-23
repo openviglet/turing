@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Set;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.DialectOverride.Version;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
@@ -60,7 +61,8 @@ public class TurConnectorIndexingModel implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
+    @Version
+    private Integer version;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, length = 11)
