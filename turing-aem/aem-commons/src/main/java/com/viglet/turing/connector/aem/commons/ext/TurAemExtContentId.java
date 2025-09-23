@@ -33,7 +33,7 @@ public class TurAemExtContentId implements TurAemExtAttributeInterface {
 								 TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
 		log.debug("Executing TurAemExtContentId");
 		return TurMultiValue
-				.singleItem(String.format(aemObject.getPath()));
+				.singleItem(String.format("%s", aemObject.getPath()));
 
 	}
 }
