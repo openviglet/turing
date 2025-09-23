@@ -69,7 +69,17 @@ public class TurIntegrationAPI {
                     request.getRequestURI()
                             .replace("/api/v2/integration/" + turIntegrationInstance.getId(), "/api/v2");
             log.debug("Executing: {}", endpoint);
-            HttpURLConnection connectorEnpoint = (HttpURLConnection) URI.create(endpoint)
+            URI baseUri = URI.create(turIntegrationInstance.getEndpoint());
+            URI fullUri = URI.create(endpoint);
+            // SSRF Mitigation: Only allow requests to the same host and scheme as the registered endpoint
+            if (!baseUri.getHost().equalsIgnoreCase(fullUri.getHost()) ||
+                !baseUri.getScheme().equalsIgnoreCase(fullUri.getScheme())) {
+                log.warn("Blocked SSRF attempt: attempted host={}, scheme={}", fullUri.getHost(), fullUri.getScheme());
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("{\"error\": \"Forbidden proxy target\"}");
+                return;
+            }
+            HttpURLConnection connectorEnpoint = (HttpURLConnection) fullUri
                     .toURL().openConnection();
             connectorEnpoint.setRequestMethod(request.getMethod());
             request.getHeaderNames().asIterator().forEachRemaining(
