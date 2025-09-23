@@ -1,0 +1,7 @@
+<address-settings>
+    <address-setting match="#">
+        <max-size-bytes>104857600</max-size-bytes>        <!-- 100MB -->
+        <page-size-bytes>1048576</page-size-bytes>        <!-- 1MB -->
+        <max-large-message-size>524288</max-large-message-size>        <!-- 512KB -->
+    </address-setting>
+</address-settings>
