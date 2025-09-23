@@ -51,7 +51,7 @@ class TurQueueManagementAPITest {
     private WebApplicationContext webApplicationContext;
     
     private MockMvc mockMvc;
-    private static final String API_URL = "/api/queue";
+    private static final String API_URL = "/api/artemis";
     
     @BeforeAll
     void setup() {

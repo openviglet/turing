@@ -39,8 +39,8 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/queue")
-@Tag(name = "Queue Management", description = "Artemis Queue Management API")
+@RequestMapping("/api/artemis")
+@Tag(name = "Artemis Queue Management", description = "Artemis Queue Management API")
 public class TurQueueManagementAPI {
     
     private final TurQueueManagementService queueManagementService;
