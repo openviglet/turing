@@ -30,7 +30,6 @@ import static com.viglet.turing.commons.indexing.TurIndexingStatus.SENT_TO_QUEUE
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
 import static com.viglet.turing.connector.commons.logging.TurConnectorLoggingUtils.setSuccessStatus;
 import static com.viglet.turing.connector.constant.TurConnectorConstants.CONNECTOR_INDEXING_QUEUE;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -253,27 +252,30 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     }
 
     private void addJobToMessageQueue(TurJobItemWithSession turSNJobItemWithSession) {
-        turSNJobItems.add(turSNJobItemWithSession.turSNJobItem());
+        synchronized (turSNJobItems) {
+            turSNJobItems.add(turSNJobItemWithSession.turSNJobItem());
+        }
         sendToMessageQueueWhenMaxSize(turSNJobItemWithSession.session());
         getInfoQueue();
     }
 
     private void sendToMessageQueue(TurConnectorSession session) {
-        if (turSNJobItems.getTuringDocuments().isEmpty()) {
-            return;
-        }
-        // To avoid concurrency in for statement, was created a copy of List
-        List<TurSNJobItem> turSNJobItemsClone = new ArrayList<>(turSNJobItems.getTuringDocuments());
-        if (log.isDebugEnabled()) {
-            for (TurSNJobItem turSNJobItem : turSNJobItemsClone) {
-                log.debug("TurSNJobItem Id: {}", turSNJobItem.getAttributes().get(ID));
+        synchronized (turSNJobItems) {
+            if (turSNJobItems.getTuringDocuments().isEmpty()) {
+                return;
             }
+            if (log.isDebugEnabled()) {
+                for (TurSNJobItem turSNJobItem : turSNJobItems) {
+                    log.debug("TurSNJobItem Id: {}", turSNJobItem.getAttributes().get(ID));
+                }
+            }
+            for (TurSNJobItem turSNJobItem : turSNJobItems) {
+                setSuccessStatus(turSNJobItem, session, SENT_TO_QUEUE);
+            }
+            this.jmsMessagingTemplate.convertAndSend(CONNECTOR_INDEXING_QUEUE, turSNJobItems);
+            turSNJobItems.clear();
         }
-        for (TurSNJobItem turSNJobItem : turSNJobItemsClone) {
-            setSuccessStatus(turSNJobItem, session, SENT_TO_QUEUE);
-        }
-        this.jmsMessagingTemplate.convertAndSend(CONNECTOR_INDEXING_QUEUE, turSNJobItems);
-        turSNJobItems.clear();
+
     }
 
     private void getInfoQueue() {
@@ -284,7 +286,6 @@ public class TurConnectorContextImpl implements TurConnectorContext {
     private void sendToMessageQueueWhenMaxSize(TurConnectorSession session) {
         if (turSNJobItems.size() >= jobSize) {
             sendToMessageQueue(session);
-            turSNJobItems.clear();
         }
     }
 
