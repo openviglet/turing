@@ -44,12 +44,65 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @Slf4j
 public class TurFileUtils {
+
+    /**
+     * Checks if the provided URL is allowed to be accessed from the server (SSRF protection).
+     * Prevents requests to localhost, private, and reserved address ranges.
+     * Customize ALLOWED_DOMAINS or additional logic as needed.
+     */
+    private static final Set<String> ALLOWED_DOMAINS = Set.of(
+        // Add allowed domains below, e.g.:
+        // "example.com",
+        // "sometrustedsource.org"
+    );
+
+    private static boolean isAllowedRemoteUrl(URL url) {
+        if (url == null) {
+            return false;
+        }
+        String host = url.getHost();
+        if (host == null || host.isEmpty()) {
+            return false;
+        }
+        // Allow only HTTP/HTTPS
+        String protocol = url.getProtocol();
+        if (!("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol))) {
+            return false;
+        }
+        try {
+            InetAddress inetAddress = InetAddress.getByName(host);
+            // Block localhost and any local/private addresses
+            if (inetAddress.isAnyLocalAddress() ||
+                inetAddress.isLoopbackAddress() ||
+                inetAddress.isSiteLocalAddress() ||
+                inetAddress.getHostAddress().startsWith("127.") ||
+                inetAddress.getHostAddress().equals("0.0.0.0") ||
+                inetAddress.getHostAddress().equals("::1")) {
+                return false;
+            }
+            // Optionally match against allowlist of permitted domains
+            if (!ALLOWED_DOMAINS.isEmpty()) {
+                boolean matched = ALLOWED_DOMAINS.stream().anyMatch(allowed ->
+                    host.equalsIgnoreCase(allowed) || host.endsWith("." + allowed)
+                );
+                if (!matched) {
+                    return false;
+                }
+            }
+        } catch (UnknownHostException e) {
+            log.warn("Unknown host in user-supplied URL: {}", url);
+            return false;
+        }
+        return true;
+    }
 
     public static final String PDF_DOC_INFO_TITLE = "pdf:docinfo:title";
     public static final int CONNECTION_TIMEOUT_MILLIS = 5000;
@@ -175,7 +228,7 @@ public class TurFileUtils {
 
     private static Date getLastModifiedFromUrl(URL url) {
         Date date = new Date();
-        if (TurCommonsUtils.isValidUrl(url)) {
+        if (isAllowedRemoteUrl(url)) {
             try {
                 HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
                 httpUrlConnection.setRequestMethod(HEAD);
@@ -184,17 +237,21 @@ public class TurFileUtils {
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
+        } else {
+            log.warn("Blocked attempt to access disallowed URL: {}", url);
         }
         return date;
     }
 
     private static File getFile(URL url) {
         File tempFile = null;
-        if (TurCommonsUtils.isValidUrl(url)) {
+        if (isAllowedRemoteUrl(url)) {
             try {
                 tempFile = createTempFile();
                 FileUtils.copyURLToFile(
                         url,
+        } else {
+            log.warn("Blocked attempt to access disallowed URL: {}", url);
                         tempFile,
                         CONNECTION_TIMEOUT_MILLIS,
                         CONNECTION_TIMEOUT_MILLIS);
