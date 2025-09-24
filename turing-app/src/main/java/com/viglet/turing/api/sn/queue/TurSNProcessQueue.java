@@ -150,10 +150,7 @@ public class TurSNProcessQueue {
         return turSolrInstanceProcess
                 .initSolrInstance(turSNSite.getName(), turSNJobItem.getLocale())
                 .map(turSolrInstance -> {
-                    String uuid = turSolr.commit(turSolrInstance);
-                    log.info("Commit ID '{}' for '{}' SN Site ({})", uuid, turSNSite.getName(),
-                            turSNJobItem.getLocale());
-                    return true;
+                    return turSolr.commit(turSolrInstance);
                 }).orElse(false);
     }
 

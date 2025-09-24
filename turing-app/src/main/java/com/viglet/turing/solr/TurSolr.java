@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.collections4.KeyValue;
@@ -1561,17 +1560,15 @@ public class TurSolr {
                         requiredFields.get(requiredField)));
     }
 
-    public String commit(TurSolrInstance turSolrInstance) {
-        String uuid = UUID.randomUUID().toString();
+    public boolean commit(TurSolrInstance turSolrInstance) {
         try {
             UpdateRequest updateRequest = new UpdateRequest();
-            updateRequest.setAction(UpdateRequest.ACTION.COMMIT, false, false);
-            updateRequest.setParam(ASYNC, uuid);
+            updateRequest.setCommitWithin(5000);
             updateRequest.process(turSolrInstance.getSolrClient());
-
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage());
+            return false;
         }
-        return uuid;
+        return true;
     }
 }
