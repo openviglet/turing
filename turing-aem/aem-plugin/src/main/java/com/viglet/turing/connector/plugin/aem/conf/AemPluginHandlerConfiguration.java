@@ -2,32 +2,31 @@
  *
  * Copyright (C) 2016-2024 the original author or authors.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <https://www.gnu.org/licenses/>.
  */
 package com.viglet.turing.connector.plugin.aem.conf;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
 import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
 import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-
 @Slf4j
 public class AemPluginHandlerConfiguration implements IAemConfiguration {
     private final TurAemSource turAemSource;
-     private final Locale snLocale;
+    private final Locale snLocale;
     private final String authorURLPrefix;
     private final String publishURLPrefix;
     private final String providerName;
@@ -44,10 +43,10 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
         this.turAemSource = turAemSource;
         providerName = DEFAULT_PROVIDER;
         snLocale = turAemSource.getDefaultLocale();
-        authorURLPrefix =   turAemSource.getAuthorURLPrefix();
-        publishURLPrefix =   turAemSource.getPublishURLPrefix();
+        authorURLPrefix = turAemSource.getAuthorURLPrefix();
+        publishURLPrefix = turAemSource.getPublishURLPrefix();
         oncePatternPath = turAemSource.getOncePattern();
-        cmsHost =   turAemSource.getEndpoint();
+        cmsHost = turAemSource.getEndpoint();
         cmsUsername = turAemSource.getUsername();
         cmsPassword = turAemSource.getPassword();
         cmsGroup = turAemSource.getName();
@@ -111,13 +110,12 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
     public Locale getDefaultLocale() {
         return snLocale;
     }
+
     public Collection<TurAemLocalePathContext> getLocales() {
         Collection<TurAemLocalePathContext> turAemLocalePathContexts = new HashSet<>();
-     turAemSource.getLocalePaths().forEach(localePath ->
-             turAemLocalePathContexts.add(TurAemLocalePathContext.builder()
-             .path(localePath.getPath())
-             .locale(localePath.getLocale())
-             .build()));
+        turAemSource.getLocalePaths().forEach(
+                localePath -> turAemLocalePathContexts.add(TurAemLocalePathContext.builder()
+                        .path(localePath.getPath()).locale(localePath.getLocale()).build()));
 
         return turAemLocalePathContexts;
     }

@@ -281,14 +281,13 @@ public class TurAemPluginProcess {
                                 .id(config.getCmsGroup()).contentType(config.getCmsContentType())
                                 .defaultLocale(config.getDefaultLocale())
                                 .rootPath(config.getCmsRootPath()).url(config.getCmsHost())
+                                .authorURLPrefix(config.getAuthorURLPrefix())
+                                .publishURLPrefix(config.getPublishURLPrefix())
                                 .subType(config.getCmsSubType())
                                 .oncePattern(config.getOncePatternPath())
                                 .providerName(config.getProviderName())
-                                .password(config.getCmsPassword())
-                                .authorURLPrefix(config.getAuthorURLPrefix())
-                                .publishURLPrefix(config.getPublishURLPrefix())
-                                .username(config.getCmsUsername()).localePaths(config.getLocales())
-                                .build();
+                                .password(config.getCmsPassword()).username(config.getCmsUsername())
+                                .localePaths(config.getLocales()).build();
                 TurAemCommonsUtils
                                 .getInfinityJson(config.getCmsRootPath(), turAemSourceContext,
                                                 false)
