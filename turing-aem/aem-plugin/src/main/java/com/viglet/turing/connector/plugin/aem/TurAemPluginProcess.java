@@ -425,62 +425,18 @@ public class TurAemPluginProcess {
                         TurConnectorSession turConnectorSession, TurAemSource turAemSource,
                         TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                         boolean standalone) {
-                
-                // Count eligible child nodes to decide on processing approach
-                int childNodeCount = (int) jsonObject.toMap().entrySet().stream()
-                        .filter(entry -> isIndexedNode(turAemSourceContext, entry.getKey()))
-                        .count();
-                
-                log.debug("Processing {} child nodes for path: {}", childNodeCount, nodePath);
-                
-                // Use reactive approach for more than 5 child nodes to improve performance
-                if (childNodeCount > 5) {
-                        log.info("Using reactive processing for {} child nodes at path: {}", childNodeCount, nodePath);
-                        try {
-                                getChildrenFromJsonReactive(nodePath, jsonObject, turAemSourceContext, 
-                                                turConnectorSession, turAemSource, turAemContentDefinitionProcess, standalone)
-                                        .block(); // Block to maintain synchronous interface
-                        } catch (Exception e) {
-                                log.warn("Reactive processing failed, falling back to synchronous: {}", e.getMessage());
-                                // Fall back to original synchronous processing
-                                getChildrenFromJsonSynchronous(nodePath, jsonObject, turAemSourceContext, 
-                                                turConnectorSession, turAemSource, turAemContentDefinitionProcess, standalone);
-                        }
-                } else {
-                        // Use original synchronous approach for smaller node counts
-                        getChildrenFromJsonSynchronous(nodePath, jsonObject, turAemSourceContext, 
-                                        turConnectorSession, turAemSource, turAemContentDefinitionProcess, standalone);
+                try {
+                        getChildrenFromJsonReactive(nodePath, jsonObject, turAemSourceContext,
+                                        turConnectorSession, turAemSource,
+                                        turAemContentDefinitionProcess, standalone).block(); // Block
+                                                                                             // to
+                                                                                             // maintain
+                                                                                             // synchronous
+                                                                                             // interface
+                } catch (Exception e) {
+                        log.warn("Reactive processing failed, falling back to synchronous: {}",
+                                        e.getMessage());
                 }
-        }
-
-        /**
-         * Original synchronous implementation, renamed for clarity
-         */
-        private void getChildrenFromJsonSynchronous(String nodePath, JSONObject jsonObject,
-                        TurAemSourceContext turAemSourceContext,
-                        TurConnectorSession turConnectorSession, TurAemSource turAemSource,
-                        TurAemContentDefinitionProcess turAemContentDefinitionProcess,
-                        boolean standalone) {
-                jsonObject.toMap().forEach((nodeName, nodeValue) -> {
-                        if (isIndexedNode(turAemSourceContext, nodeName)) {
-                                String nodePathChild = "%s/%s".formatted(nodePath, nodeName);
-                                if (!isOnce(turAemSourceContext)
-                                                || TurAemCommonsUtils.isNotOnceConfig(nodePathChild,
-                                                                new AemPluginHandlerConfiguration(
-                                                                                turAemSource))) {
-                                        TurAemCommonsUtils
-                                                        .getInfinityJson(nodePathChild,
-                                                                        turAemSourceContext, false)
-                                                        .ifPresent(infinityJson -> getNodeFromJson(
-                                                                        nodePathChild, infinityJson,
-                                                                        turAemSourceContext,
-                                                                        turConnectorSession,
-                                                                        turAemSource,
-                                                                        turAemContentDefinitionProcess,
-                                                                        standalone, true));
-                                }
-                        }
-                });
         }
 
         private static boolean isIndexedNode(TurAemSourceContext turAemSourceContext,
@@ -729,28 +685,35 @@ public class TurAemPluginProcess {
                         TurConnectorSession turConnectorSession, TurAemSource turAemSource,
                         TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                         boolean standalone) {
-                
+
                 // Create a Flux from the child nodes
                 return Flux.fromIterable(jsonObject.toMap().entrySet())
-                        .filter(entry -> isIndexedNode(turAemSourceContext, entry.getKey()))
-                        .flatMap(entry -> {
-                                String nodeName = entry.getKey();
-                                String nodePathChild = "%s/%s".formatted(nodePath, nodeName);
-                                
-                                if (!isOnce(turAemSourceContext) || TurAemCommonsUtils.isNotOnceConfig(nodePathChild,
-                                                new AemPluginHandlerConfiguration(turAemSource))) {
-                                        
-                                        // Use reactive getInfinityJson
-                                        return turAemReactiveUtils.getInfinityJsonReactive(nodePathChild, turAemSourceContext)
-                                                .flatMap(infinityJson -> getNodeFromJsonReactive(
-                                                        nodePathChild, infinityJson,
-                                                        turAemSourceContext, turConnectorSession,
-                                                        turAemSource, turAemContentDefinitionProcess,
-                                                        standalone, true));
-                                }
-                                return Mono.<Void>empty();
-                        }, 10) // Process up to 10 concurrent requests
-                        .then(); // Convert to Mono<Void>
+                                .filter(entry -> isIndexedNode(turAemSourceContext, entry.getKey()))
+                                .flatMap(entry -> {
+                                        String nodeName = entry.getKey();
+                                        String nodePathChild =
+                                                        "%s/%s".formatted(nodePath, nodeName);
+
+                                        if (!isOnce(turAemSourceContext) || TurAemCommonsUtils
+                                                        .isNotOnceConfig(nodePathChild,
+                                                                        new AemPluginHandlerConfiguration(
+                                                                                        turAemSource))) {
+
+                                                // Use reactive getInfinityJson
+                                                return turAemReactiveUtils.getInfinityJsonReactive(
+                                                                nodePathChild, turAemSourceContext)
+                                                                .flatMap(infinityJson -> getNodeFromJsonReactive(
+                                                                                nodePathChild,
+                                                                                infinityJson,
+                                                                                turAemSourceContext,
+                                                                                turConnectorSession,
+                                                                                turAemSource,
+                                                                                turAemContentDefinitionProcess,
+                                                                                standalone, true));
+                                        }
+                                        return Mono.<Void>empty();
+                                }, 10) // Process up to 10 concurrent requests
+                                .then(); // Convert to Mono<Void>
         }
 
         /**
@@ -761,7 +724,7 @@ public class TurAemPluginProcess {
                         TurAemSource turAemSource,
                         TurAemContentDefinitionProcess turAemContentDefinitionProcess,
                         boolean standalone, boolean indexChildren) {
-                
+
                 // Handle node indexing synchronously (this part doesn't involve HTTP calls)
                 if (TurAemCommonsUtils.isTypeEqualContentType(jsonObject, turAemSourceContext)) {
                         turAemContentDefinitionProcess
@@ -775,14 +738,14 @@ public class TurAemPluginProcess {
                                                         turAemContentDefinitionProcess,
                                                         standalone));
                 }
-                
+
                 // Handle children processing reactively if needed
                 if (indexChildren) {
-                        return getChildrenFromJsonReactive(nodePath, jsonObject, turAemSourceContext, session,
-                                        turAemSource, turAemContentDefinitionProcess, standalone);
+                        return getChildrenFromJsonReactive(nodePath, jsonObject,
+                                        turAemSourceContext, session, turAemSource,
+                                        turAemContentDefinitionProcess, standalone);
                 }
-                
+
                 return Mono.empty();
-        }
         }
 }
