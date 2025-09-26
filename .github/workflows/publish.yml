@@ -13,7 +13,7 @@ on:
     branches:
       - main
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -61,9 +61,18 @@ jobs:
           git config user.email alexandre.oliveira@gmail.com
           git commit -m "Updated version in pom.xml" -a
           git push
+      - name: Configure Maven Settings
+        uses: s4u/maven-settings-action@v3.0.0
+        with:
+          servers: |
+            [{
+              "id": "central",
+              "username": "${{ secrets.OSSRH_USERNAME }}",
+              "password": "${{ secrets.OSSRH_TOKEN }}"
+            }]
       - name: Publish package
         run: |
-          mvn --batch-mode -pl turing-commons,turing-java-sdk,turing-aem-commons -P release -am deploy -Dgpg.passphrase="${GPG_PASSPHRASE}"
+          mvn --batch-mode -pl turing-commons,turing-java-sdk,turing-aem-commons -P release -am deploy -DskipTests -Dturing.open-browser=false
         # cd turing-js-sdk/js-sdk-lib
         # npm publish
         env:
