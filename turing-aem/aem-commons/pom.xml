@@ -12,6 +12,7 @@
     <packaging>jar</packaging>
     <name>Turing AEM - Commons</name>
     <description>Turing AEM Connector - Commons</description>
+    <url>https://github.com/openviglet/turing</url>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
