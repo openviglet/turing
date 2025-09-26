@@ -19,7 +19,6 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <central.publishing.skip>false</central.publishing.skip>
     </properties>
     <dependencies>
         <dependency>

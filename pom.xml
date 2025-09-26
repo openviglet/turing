@@ -41,7 +41,6 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <gpg.keyname>30AA85DC937DA16691466FE2A0CCF43371503F2D</gpg.keyname>
         <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
-        <central.publishing.skip>true</central.publishing.skip>
     </properties>
     <build>
         <plugins>
@@ -102,33 +101,6 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.13</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.7.3</version>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                    <flattenMode>oss</flattenMode>
-                </configuration>
-                <executions>
-                    <!-- enable flattening -->
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <!-- ensure proper cleanup -->
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
