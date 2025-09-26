@@ -38,11 +38,24 @@ public class TurAemUnixTimestamp extends StdDeserializer<Date> {
     public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
             throws IOException {
         String timestamp = jsonParser.getText().trim();
-        if (timestamp == null || timestamp.trim().isEmpty()) {
+        if (timestamp.isEmpty()) {
             return null;
         }
         try {
-            return new Date(Long.parseLong(timestamp) * 1000);
+            // Pad to at least 10 digits (seconds), but not arbitrarily to 12
+            while (timestamp.length() < 10) {
+                timestamp += "0";
+            }
+            long timeMillis;
+            if (timestamp.length() == 10) {
+                // Assume seconds, convert to milliseconds
+                timeMillis = Long.parseLong(timestamp) * 1000L;
+            } else {
+                // Assume milliseconds
+                timeMillis = Long.parseLong(timestamp);
+            }
+            Date date = new Date(timeMillis);
+            return date;
         } catch (NumberFormatException e) {
             log.error("Unable to deserialize timestamp: {}", timestamp, e);
             return null;
