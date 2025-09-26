@@ -6,7 +6,7 @@
     <groupId>com.viglet.turing</groupId>
     <artifactId>turing</artifactId>
     <packaging>pom</packaging>
-    <version>2025.3.45</version>
+    <version>2025.3.59</version>
     <name>Turing ES Master</name>
     <description>Viglet Turing ES</description>
     <url>https://github.com/openviglet/turing</url>
@@ -45,42 +45,9 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.4</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.12.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.9.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -136,28 +103,27 @@
                 <version>0.8.13</version>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.7.3</version>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                    <flattenMode>oss</flattenMode>
-                </configuration>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
                 <executions>
-                    <!-- enable flattening -->
                     <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>flatten</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
-                    <!-- ensure proper cleanup -->
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.12.0</version>
+                <executions>
                     <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
+                        <id>attach-javadocs</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>clean</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -181,6 +147,7 @@
                 <module>turing-connector</module>
                 <module>turing-filesystem</module>
                 <module>turing-db</module>
+                <module>turing-aem-commons</module>
                 <module>turing-aem</module>
                 <module>turing-web-crawler</module>
                 <module>turing-mcp-server</module>
@@ -192,9 +159,7 @@
             <modules>
                 <module>turing-commons</module>
                 <module>turing-java-sdk</module>
-                <module>turing-db</module>
-                <module>turing-aem</module>
-                <module>turing-web-crawler</module>
+                <module>turing-aem-commons</module>
             </modules>
             <build>
                 <plugins>
@@ -384,14 +349,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>central</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>central</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 </project>
