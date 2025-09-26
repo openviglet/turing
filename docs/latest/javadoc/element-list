@@ -89,6 +89,7 @@ com.viglet.turing.connector.plugin.aem.impl
 com.viglet.turing.connector.plugin.aem.onstartup
 com.viglet.turing.connector.plugin.aem.persistence.model
 com.viglet.turing.connector.plugin.aem.persistence.repository
+com.viglet.turing.connector.plugin.aem.service
 com.viglet.turing.connector.plugin.webcrawler
 com.viglet.turing.connector.plugin.webcrawler.export
 com.viglet.turing.connector.plugin.webcrawler.export.bean
