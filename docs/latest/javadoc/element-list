@@ -9,6 +9,7 @@ com.viglet.turing.api.integration
 com.viglet.turing.api.llm
 com.viglet.turing.api.logging
 com.viglet.turing.api.ocr
+com.viglet.turing.api.queue
 com.viglet.turing.api.se
 com.viglet.turing.api.sn.bean
 com.viglet.turing.api.sn.console
@@ -99,9 +100,6 @@ com.viglet.turing.connector.scheduled
 com.viglet.turing.connector.service
 com.viglet.turing.connector.webcrawler.commons
 com.viglet.turing.connector.webcrawler.commons.ext
-com.viglet.turing.console
-com.viglet.turing.console.encrypt
-com.viglet.turing.encrypt
 com.viglet.turing.exchange
 com.viglet.turing.exchange.sn
 com.viglet.turing.genai
