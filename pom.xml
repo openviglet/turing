@@ -50,6 +50,7 @@
                 <version>0.9.0</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <skipPublishing>true</skipPublishing>
                     <publishingServerId>central</publishingServerId>
                 </configuration>
             </plugin>
