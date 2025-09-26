@@ -52,6 +52,7 @@
                 <configuration>
                     <skipPublishing>true</skipPublishing>
                     <publishingServerId>central</publishingServerId>
+                    <inherited>false</inherited>
                 </configuration>
             </plugin>
             <plugin>

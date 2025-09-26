@@ -12,6 +12,28 @@
     <packaging>jar</packaging>
     <name>Turing AEM - Commons</name>
     <description>Turing AEM Connector - Commons</description>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>alegauss</id>
+            <name>Alexandre Oliveira</name>
+            <email>alexandre.oliveira@viglet.com</email>
+            <organization>Viglet</organization>
+            <organizationUrl>https://viglet.com</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/openviglet/turing.git</connection>
+        <developerConnection>scm:git:https://github.com/openviglet/turing.git</developerConnection>
+        <url>https://github.com/openviglet/turing</url>
+        <tag>HEAD</tag>
+    </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
