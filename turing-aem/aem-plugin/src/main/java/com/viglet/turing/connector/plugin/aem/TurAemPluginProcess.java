@@ -435,7 +435,7 @@ public class TurAemPluginProcess {
                                                                                              // interface
                 } catch (Exception e) {
                         log.warn("Reactive processing failed, falling back to synchronous: {}",
-                                        e.getMessage());
+                                        e.getMessage(), e);
                 }
         }
 
