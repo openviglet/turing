@@ -36,8 +36,9 @@ export class TurLoginPageComponent implements OnInit {
       password: ['', Validators.required]
     });
 
-    // get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/console';
+    // get return url from route parameters or default to '/console'
+    const queryReturnUrl = this.route.snapshot.queryParams['returnUrl'];
+    this.returnUrl = this.isSafeRelativePath(queryReturnUrl) ? queryReturnUrl : '/console';
   }
 
   // convenience getter for easy access to form fields
@@ -62,5 +63,12 @@ export class TurLoginPageComponent implements OnInit {
           this.error = error;
           this.loading = false;
         });
+  }
+  /**
+   * Checks if the given path is a safe, relative URL for internal navigation.
+   */
+  private isSafeRelativePath(path: string): boolean {
+    // Only allow paths starting with '/' and not containing protocol, double slash, or blank
+    return !!path && /^\/(?!\/)[\w\-./]*$/.test(path);
   }
 }

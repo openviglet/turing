@@ -159,8 +159,29 @@ public class TurSNUtils {
         return TurCommonsUtils.modifiedURI(uri, sbQueryString);
     }
 
+    public static List<String> filterQueryByFieldNames(URI uri, List<String> fieldNames) {
+        List<String> filterQueries = new ArrayList<>();
+        List<NameValuePair> params = new URIBuilder(uri).getQueryParams();
+        params.forEach(nameValuePair -> {
+            if (nameValuePair.getName().equals(TurSNParamType.FILTER_QUERIES_DEFAULT)) {
+                TurCommonsUtils.getKeyValueFromColon(nameValuePair.getValue()).ifPresent(kv -> {
+                    if ((fieldNames
+                            .contains(URLDecoder.decode(kv.getKey(), StandardCharsets.UTF_8)))) {
+                        filterQueries.add(nameValuePair.getValue());
+                    }
+                });
+            }
+        });
+        return filterQueries;
+    }
+
+
     public static URI removeFilterQueryByFieldName(URI uri, String fieldName) {
         return removeFilterQueryByFieldNames(uri, Collections.singletonList(fieldName));
+    }
+
+    public static List<String> filterQueryByFieldName(URI uri, String fieldName) {
+        return filterQueryByFieldNames(uri, Collections.singletonList(fieldName));
     }
 
     public static URI removeQueryStringParameter(URI uri, String field) {

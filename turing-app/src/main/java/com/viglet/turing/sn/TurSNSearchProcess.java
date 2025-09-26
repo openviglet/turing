@@ -206,7 +206,9 @@ public class TurSNSearchProcess {
                                 .setCleanUpLink(TurSNUtils
                                                 .removeFilterQueryByFieldName(context.getUri(),
                                                                 turSNSiteFieldExtDto.getName())
-                                                .toString());
+                                                .toString())
+                                .setSelectedFilterQueries(TurSNUtils.filterQueryByFieldName(
+                                                context.getUri(), turSNSiteFieldExtDto.getName()));
         }
 
         @NotNull
@@ -543,7 +545,9 @@ public class TurSNSearchProcess {
                                                 turSEResults.getSpellCheck()))
                                 .setLocales(responseLocales(turSNSite, context.getUri()))
                                 .setSpotlights(responseSpotlights(context, turSNSite))
-                                .setCleanUpFacets(responseCleanUpFacet(context, turSNSite));
+                                .setCleanUpFacets(responseCleanUpFacet(context, turSNSite))
+                                .setSelectedFilterQueries(
+                                                responseFieldQueriesFromFacets(context, turSNSite));
         }
 
         private List<TurSNSiteSpotlightDocumentBean> responseSpotlights(
@@ -646,7 +650,7 @@ public class TurSNSearchProcess {
                                         .forEach(facetToRemove -> TurCommonsUtils
                                                         .getKeyValueFromColon(facetToRemove)
                                                         .ifPresent(f -> {
-                                                                if (turSolr.getFacetsInFilterQuery(
+                                                                if (turSolr.getFacetFieldsInFilterQuery(
                                                                                 turSNFacetTypeContext)
                                                                                 .contains(f.getKey())) {
                                                                         turSNSiteSearchFacetToRemoveItemBeans
@@ -658,6 +662,7 @@ public class TurSNSearchProcess {
                                                                                                                                         context.getUri(),
                                                                                                                                         facetToRemove)
                                                                                                                         .toString())
+                                                                                                        .setFilterQuery(facetToRemove)
                                                                                                         .setSelected(true));
                                                                 }
                                                         }));
@@ -670,12 +675,22 @@ public class TurSNSearchProcess {
         }
 
         private String responseCleanUpFacet(TurSNSiteSearchContext context, TurSNSite turSNSite) {
-                return TurSNUtils.removeFilterQueryByFieldNames(context.getUri(),
-                                turSolr.getFacetsInFilterQuery(new TurSNFacetTypeContext(null,
-                                                turSNSite,
-                                                context.getTurSEParameters()
-                                                                .getTurSNFilterParams())))
+                return TurSNUtils
+                                .removeFilterQueryByFieldNames(context.getUri(),
+                                                getFacetFieldsInFilterQuery(context, turSNSite))
                                 .toString();
+        }
+
+        private List<String> getFacetFieldsInFilterQuery(TurSNSiteSearchContext context,
+                        TurSNSite turSNSite) {
+                return turSolr.getFacetFieldsInFilterQuery(new TurSNFacetTypeContext(null,
+                                turSNSite, context.getTurSEParameters().getTurSNFilterParams()));
+        }
+
+        private List<String> responseFieldQueriesFromFacets(TurSNSiteSearchContext context,
+                        TurSNSite turSNSite) {
+                return TurSNUtils.filterQueryByFieldNames(context.getUri(),
+                                getFacetFieldsInFilterQuery(context, turSNSite));
         }
 
         private List<TurSNSiteSearchFacetBean> responseFacet(TurSNSiteSearchContext context,
@@ -846,6 +861,7 @@ public class TurSNSearchProcess {
                                                                                         .setLabel(facetItem
                                                                                                         .getAttribute())
                                                                                         .setSelected(selected)
+                                                                                        .setFilterQuery(fq)
                                                                                         .setLink(getLink(
                                                                                                         context,
                                                                                                         selected,

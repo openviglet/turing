@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 the original author or authors. 
+ * Copyright (C) 2016-2024 the original author or authors.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,30 +19,29 @@
  * under the License.
  */
 
-package com.viglet.turing.console.encrypt;
+package com.viglet.turing.api.queue;
 
-import org.jasypt.encryption.StringEncryptor;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
 
-@Slf4j
-@Component
-public class TurEncryptCLI {
-	private final StringEncryptor stringEncryptor;
-
-	public TurEncryptCLI(@Qualifier("turEncryptor") StringEncryptor stringEncryptor) {
-		this.stringEncryptor = stringEncryptor;
-	}
-
-	public String encrypt(String input) {
-		try {
-			return stringEncryptor.encrypt(input);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return null;
-	}
-
+/**
+ * Queue message information DTO for Artemis queue management.
+ *
+ * @author Alexandre Oliveira
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class TurQueueMessage {
+    private String messageId;
+    private String content;
+    private LocalDateTime timestamp;
+    private int deliveryCount;
+    private String type;
+    private long size;
 }

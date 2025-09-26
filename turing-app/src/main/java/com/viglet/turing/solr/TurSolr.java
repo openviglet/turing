@@ -35,15 +35,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.GroupResponse;
@@ -108,10 +113,12 @@ import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.utils.TurSNSiteFieldUtils;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 @Component
 @Transactional
 public class TurSolr {
+    private static final String ASYNC = "async";
     public static final String NEWEST = "newest";
     public static final String OLDEST = "oldest";
     public static final String ASC = "asc";
@@ -1308,7 +1315,7 @@ public class TurSolr {
                 : getFacetItemTypeFromSite(context.getTurSNSite()).toString();
     }
 
-    public List<String> getFacetsInFilterQuery(TurSNFacetTypeContext context) {
+    public List<String> getFacetFieldsInFilterQuery(TurSNFacetTypeContext context) {
         List<String> enabledFacetNames = getEnabledFacets(context.getTurSNSite()).stream()
                 .map(TurSNSiteFieldExt::getName).toList();
         return getFqFields(context.getTurSNFilterParams()).stream()
@@ -1558,11 +1565,22 @@ public class TurSolr {
                         requiredFields.get(requiredField)));
     }
 
-    public void commit(TurSolrInstance turSolrInstance) {
+    public boolean commit(TurSolrInstance turSolrInstance) {
+        String uuid = UUID.randomUUID().toString();
+        String solrUrl = turSolrInstance.getSolrUrl().toString();
+        SolrClient solrClient =
+                new HttpJdkSolrClient.Builder(solrUrl).withConnectionTimeout(5, TimeUnit.SECONDS)
+                        .withRequestTimeout(5, TimeUnit.SECONDS).build();
         try {
-            turSolrInstance.getSolrClient().commit(false, false);
+            log.info("Commit Solr {} - {}", uuid, solrUrl);
+            UpdateRequest updateRequest = new UpdateRequest();
+            updateRequest.setAction(UpdateRequest.ACTION.COMMIT, false, false);
+            updateRequest.setParam(ASYNC, uuid);
+            updateRequest.process(solrClient);
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage());
         }
+        return true;
     }
 }
+

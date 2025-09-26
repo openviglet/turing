@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.apache.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import java.nio.file.Paths;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -69,7 +70,24 @@ public class TurIntegrationAPI {
                     request.getRequestURI()
                             .replace("/api/v2/integration/" + turIntegrationInstance.getId(), "/api/v2");
             log.debug("Executing: {}", endpoint);
-            HttpURLConnection connectorEnpoint = (HttpURLConnection) URI.create(endpoint)
+            URI baseUri = URI.create(turIntegrationInstance.getEndpoint());
+            URI fullUri = URI.create(endpoint);
+            // SSRF Mitigation: Only allow requests to the same host and scheme as the registered endpoint
+            if (!baseUri.getHost().equalsIgnoreCase(fullUri.getHost()) ||
+                !baseUri.getScheme().equalsIgnoreCase(fullUri.getScheme())) {
+                log.warn("Blocked SSRF attempt: attempted host={}, scheme={}", fullUri.getHost(), fullUri.getScheme());
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("{\"error\": \"Forbidden proxy target\"}");
+                return;
+            }
+            // Validate that the path is safe and does not contain traversal or forbidden segments
+            if (!isValidProxyPath(fullUri.getPath())) {
+                log.warn("Blocked SSRF attempt: invalid or unauthorized path: {}", fullUri.getPath());
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("{\"error\": \"Forbidden proxy path\"}");
+                return;
+            }
+            HttpURLConnection connectorEnpoint = (HttpURLConnection) fullUri
                     .toURL().openConnection();
             connectorEnpoint.setRequestMethod(request.getMethod());
             request.getHeaderNames().asIterator().forEachRemaining(
@@ -94,5 +112,23 @@ public class TurIntegrationAPI {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Validates that the proxy path is safe: normalized, does not contain directory traversal,
+     * and starts with the expected API prefix.
+     */
+    private boolean isValidProxyPath(String path) {
+        if (path == null) return false;
+        String normalized = java.nio.file.Paths.get(path).normalize().toString();
+        // Must start with allowed prefix after normalization (prevent access to internal endpoints)
+        if (!normalized.startsWith("/api/v2/")) {
+            return false;
+        }
+        // Disallow any attempts at directory traversal
+        if (normalized.contains("..")) {
+            return false;
+        }
+        return true;
     }
 }
