@@ -21,7 +21,6 @@
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <modules>
-        <module>aem-commons</module>
         <module>aem-plugin</module>
         <module>aem-plugin-sample</module>
     </modules>

@@ -50,9 +50,7 @@
                 <version>0.9.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <skipPublishing>true</skipPublishing>
                     <publishingServerId>central</publishingServerId>
-                    <inherited>false</inherited>
                 </configuration>
             </plugin>
             <plugin>
@@ -149,6 +147,7 @@
                 <module>turing-connector</module>
                 <module>turing-filesystem</module>
                 <module>turing-db</module>
+                <module>turing-aem-commons</module>
                 <module>turing-aem</module>
                 <module>turing-web-crawler</module>
                 <module>turing-mcp-server</module>
@@ -160,9 +159,7 @@
             <modules>
                 <module>turing-commons</module>
                 <module>turing-java-sdk</module>
-                <module>turing-db</module>
-                <module>turing-aem</module>
-                <module>turing-web-crawler</module>
+                <module>turing-aem-commons</module>
             </modules>
             <build>
                 <plugins>
