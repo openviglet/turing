@@ -210,7 +210,6 @@
         </profile>
     </profiles>
     <dependencyManagement>
-
         <dependencies>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
