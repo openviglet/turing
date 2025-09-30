@@ -29,6 +29,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -38,6 +39,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -92,6 +94,7 @@ public class TurConnectorIndexingModel implements Serializable {
     private TurIndexingStatus status;
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "con_indexing_sites", joinColumns = @JoinColumn(name = "indexing_id"))
     private List<String> sites = new ArrayList<>();
     @Builder.Default
     @OneToMany(mappedBy = "reference", orphanRemoval = true, fetch = FetchType.LAZY)

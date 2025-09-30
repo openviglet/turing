@@ -75,14 +75,15 @@ import com.viglet.turing.connector.aem.commons.ext.TurAemExtContentInterface;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDate;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDateInterface;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentDefinitionProcess;
+import com.viglet.turing.connector.aem.commons.mappers.TurAemContentMapping;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurAemCommonsUtils {
 
-    private static final Cache<String, Optional<String>> responseBodyCache = Caffeine.newBuilder().maximumSize(1000)
-            .expireAfterWrite(Duration.ofMinutes(5)).build();
+    private static final Cache<String, Optional<String>> responseBodyCache =
+            Caffeine.newBuilder().maximumSize(1000).expireAfterWrite(Duration.ofMinutes(5)).build();
 
     private TurAemCommonsUtils() {
         throw new IllegalStateException("Utility class");
@@ -159,8 +160,9 @@ public class TurAemCommonsUtils {
     }
 
     public static Date getDeltaDate(TurAemObject aemObject, TurAemSourceContext turAemSourceContext,
-            TurAemContentDefinitionProcess turAemContentDefinitionProcess) {
-        Date deltaDate = Optional.ofNullable(turAemContentDefinitionProcess.getDeltaClassName())
+            TurAemContentMapping turAemContentMapping) {
+        Date deltaDate = Optional
+                .ofNullable(TurAemContentDefinitionProcess.getDeltaClassName(turAemContentMapping))
                 .map(className -> TurCustomClassCache.getCustomClassMap(className)
                         .map(classInstance -> ((TurAemExtDeltaDateInterface) classInstance)
                                 .consume(aemObject, turAemSourceContext))
@@ -217,7 +219,7 @@ public class TurAemCommonsUtils {
     }
 
     public static boolean checkIfFileHasNotImageExtension(String s) {
-        String[] imageExtensions = { ".jpg", ".png", ".jpeg", ".svg", ".webp" };
+        String[] imageExtensions = {".jpg", ".png", ".jpeg", ".svg", ".webp"};
         return Arrays.stream(imageExtensions).noneMatch(suffix -> s.toLowerCase().endsWith(suffix));
     }
 

@@ -1,129 +1,120 @@
 /*
  * Copyright (C) 2016-2023 the original author or authors.
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.viglet.turing.connector.aem.commons.mappers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
-import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
 
 @Getter
 @Setter
 @Slf4j
 public class TurAemContentDefinitionProcess {
-    private IAemConfiguration config;
-    private Path workingDirectory;
-    private Path jsonFile;
-    private TurAemContentMapping turAemContentMapping;
-
-    public TurAemContentDefinitionProcess(TurAemContentMapping turAemContentMapping) {
-        this.config = null;
-        this.workingDirectory = null;
-        this.jsonFile = null;
-        this.turAemContentMapping = turAemContentMapping;
+    public static List<TurSNAttributeSpec> getTargetAttrDefinitions(
+            TurAemContentMapping turAemContentMapping) {
+        return Optional.ofNullable(turAemContentMapping)
+                .map(TurAemContentMapping::getTargetAttrDefinitions).orElse(new ArrayList<>());
 
     }
 
-    private Optional<TurAemTargetAttr> findByNameFromTargetAttrs(final List<TurAemTargetAttr> turCmsTargetAttrs,
-                                                                 final String name) {
-        return turCmsTargetAttrs.stream().filter(o -> o.getName().equals(name)).findFirst();
+    public static String getDeltaClassName(TurAemContentMapping turAemContentMapping) {
+        return Optional.ofNullable(turAemContentMapping)
+                .map(TurAemContentMapping::getDeltaClassName).orElse(null);
     }
 
-    private Optional<TurAemModel> findByNameFromModel(final List<TurAemModel> turCmsModels,
-                                                      final String name) {
-        return turCmsModels != null ?
-                turCmsModels.stream().filter(o -> o != null && o.getType().equals(name)).findFirst() :
-                Optional.empty();
-    }
-    public List<TurSNAttributeSpec> getTargetAttrDefinitions() {
-        return getMappingDefinitions().map(TurAemContentMapping::getTargetAttrDefinitions).orElse(new ArrayList<>());
-
-    }
-    public String getDeltaClassName() {
-        return getMappingDefinitions().map(TurAemContentMapping::getDeltaClassName).orElse(null);
-    }
-    public Optional<TurAemModel> findByNameFromModelWithDefinition(String modelName) {
-          return getMappingDefinitions()
-                  .flatMap(turCmsContentMapping -> findByNameFromModel(turCmsContentMapping.getModels(), modelName)
-                  .map(model -> {
-                      List<TurAemTargetAttr> turCmsTargetAttrs =
-                              new ArrayList<>(addTargetAttrFromDefinition(model, turCmsContentMapping));
-                      model.getTargetAttrs().forEach(turCmsTargetAttr -> {
-                          if (turCmsTargetAttrs.stream()
-                                  .noneMatch(o -> o.getName().equals(turCmsTargetAttr.getName())))
-                              turCmsTargetAttrs.add(turCmsTargetAttr);
-                      });
-                      model.setTargetAttrs(turCmsTargetAttrs);
-                      return model;
-                  }));
+    public static Optional<TurAemModel> findByNameFromModelWithDefinition(String modelName,
+            TurAemContentMapping turAemContentMapping) {
+        return Optional.ofNullable(turAemContentMapping).flatMap(
+                turCmsContentMapping -> findByNameFromModel(turCmsContentMapping.getModels(),
+                        modelName).map(model -> {
+                            List<TurAemTargetAttr> turCmsTargetAttrs = new ArrayList<>(
+                                    addTargetAttrFromDefinition(model, turCmsContentMapping));
+                            model.getTargetAttrs().forEach(turCmsTargetAttr -> {
+                                if (turCmsTargetAttrs.stream().noneMatch(
+                                        o -> o.getName().equals(turCmsTargetAttr.getName())))
+                                    turCmsTargetAttrs.add(turCmsTargetAttr);
+                            });
+                            model.setTargetAttrs(turCmsTargetAttrs);
+                            return model;
+                        }));
     }
 
-    private List<TurAemTargetAttr> addTargetAttrFromDefinition(TurAemModel model,
-                                                               TurAemContentMapping turCmsContentMapping) {
+    private static Optional<TurAemModel> findByNameFromModel(final List<TurAemModel> turCmsModels,
+            final String name) {
+        return turCmsModels != null
+                ? turCmsModels.stream().filter(o -> o != null && o.getType().equals(name))
+                        .findFirst()
+                : Optional.empty();
+    }
+
+    private static List<TurAemTargetAttr> addTargetAttrFromDefinition(TurAemModel model,
+            TurAemContentMapping turCmsContentMapping) {
         List<TurAemTargetAttr> turCmsTargetAttrs = new ArrayList<>();
         turCmsContentMapping.getTargetAttrDefinitions()
-                .forEach(targetAttrDefinition ->
-                        findByNameFromTargetAttrs(model.getTargetAttrs(), targetAttrDefinition.getName())
-                                .ifPresentOrElse(targetAttr ->
-                                                turCmsTargetAttrs.add(
-                                                        setTargetAttrFromDefinition(targetAttrDefinition, targetAttr)),
-                                        () -> {
-                                            if (targetAttrDefinition.isMandatory()) {
-                                                turCmsTargetAttrs.add(
-                                                        setTargetAttrFromDefinition(targetAttrDefinition,
-                                                                new TurAemTargetAttr()));
-                                            }
-                                        }));
+                .forEach(
+                        targetAttrDefinition -> findByNameFromTargetAttrs(model.getTargetAttrs(),
+                                targetAttrDefinition.getName())
+                                        .ifPresentOrElse(
+                                                targetAttr -> turCmsTargetAttrs
+                                                        .add(setTargetAttrFromDefinition(
+                                                                targetAttrDefinition, targetAttr)),
+                                                () -> {
+                                                    if (targetAttrDefinition.isMandatory()) {
+                                                        turCmsTargetAttrs
+                                                                .add(setTargetAttrFromDefinition(
+                                                                        targetAttrDefinition,
+                                                                        new TurAemTargetAttr()));
+                                                    }
+                                                }));
 
         return turCmsTargetAttrs;
     }
 
-    private TurAemTargetAttr setTargetAttrFromDefinition(TurSNAttributeSpec turSNAttributeSpec,
-                                                         TurAemTargetAttr targetAttr) {
+    private static Optional<TurAemTargetAttr> findByNameFromTargetAttrs(
+            final List<TurAemTargetAttr> turCmsTargetAttrs, final String name) {
+        return turCmsTargetAttrs.stream().filter(o -> o.getName().equals(name)).findFirst();
+    }
+
+    private static TurAemTargetAttr setTargetAttrFromDefinition(
+            TurSNAttributeSpec turSNAttributeSpec, TurAemTargetAttr targetAttr) {
         if (StringUtils.isBlank(targetAttr.getName())) {
             targetAttr.setName(turSNAttributeSpec.getName());
         }
         if (StringUtils.isNotBlank(turSNAttributeSpec.getClassName())) {
             if (CollectionUtils.isEmpty(targetAttr.getSourceAttrs())) {
-                List<TurAemSourceAttr> sourceAttrs = Collections.singletonList(TurAemSourceAttr.builder()
-                        .className(turSNAttributeSpec.getClassName())
-                        .uniqueValues(false)
-                        .convertHtmlToText(false)
-                        .build());
+                List<TurAemSourceAttr> sourceAttrs = Collections.singletonList(
+                        TurAemSourceAttr.builder().className(turSNAttributeSpec.getClassName())
+                                .uniqueValues(false).convertHtmlToText(false).build());
                 targetAttr.setSourceAttrs(sourceAttrs);
                 targetAttr.setClassName(turSNAttributeSpec.getClassName());
             } else {
                 targetAttr.getSourceAttrs().stream()
                         .filter(turCmsSourceAttr -> Objects.nonNull(turCmsSourceAttr)
                                 && StringUtils.isBlank(turCmsSourceAttr.getClassName()))
-                        .forEach(turCmsSourceAttr ->
-                                turCmsSourceAttr.setClassName(turSNAttributeSpec.getClassName()));
+                        .forEach(turCmsSourceAttr -> turCmsSourceAttr
+                                .setClassName(turSNAttributeSpec.getClassName()));
             }
         }
         targetAttr.setDescription(turSNAttributeSpec.getDescription());
@@ -134,19 +125,5 @@ public class TurAemContentDefinitionProcess {
         targetAttr.setType(turSNAttributeSpec.getType());
         return targetAttr;
 
-    }
-
-    public Optional<TurAemContentMapping> getMappingDefinitions() {
-        return Optional.ofNullable(turAemContentMapping).or(() -> Optional.ofNullable(jsonFile)
-                .flatMap(TurAemContentDefinitionProcess::readJsonMapping));
-    }
-
-    private static Optional<TurAemContentMapping> readJsonMapping(Path path) {
-        try {
-            return Optional.of(new ObjectMapper().readValue(path.toFile(), TurAemContentMapping.class));
-        } catch (IOException e) {
-            log.error("Can not read mapping file, because is not valid: {}", path.toFile().getAbsolutePath(), e);
-            return Optional.empty();
-        }
     }
 }
