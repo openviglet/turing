@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.data.domain.Limit;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,10 +46,19 @@ public interface TurConnectorIndexingRepository
         List<TurConnectorIndexingModel> findByObjectIdAndSourceAndProvider(String objectId,
                         String source, String provider);
 
+        @EntityGraph(value = "TurConnectorIndexingModel.dependencies",
+                        type = EntityGraph.EntityGraphType.LOAD)
         List<TurConnectorIndexingModel> findAllBySourceAndProviderOrderByModificationDateDesc(
                         String source, String provider, Limit limit);
 
+        @EntityGraph(value = "TurConnectorIndexingModel.dependencies",
+                        type = EntityGraph.EntityGraphType.LOAD)
         List<TurConnectorIndexingModel> findAllByOrderByModificationDateDesc(Limit limit);
+
+        @EntityGraph(value = "TurConnectorIndexingModel.dependencies",
+                        type = EntityGraph.EntityGraphType.LOAD)
+        List<TurConnectorIndexingModel> findAllByProviderAndObjectIdIn(String provider,
+                        Collection<String> objectIds);
 
         @Transactional
         void deleteByObjectIdAndSourceAndEnvironmentAndProvider(String objectId, String source,

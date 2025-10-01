@@ -45,6 +45,11 @@ public class TurConnectorIndexingService {
         turConnectorIndexingRepository.deleteByProvider(provider);
     }
 
+    public List<TurConnectorIndexingModel> findAllByProviderAndObjectIdIn(String provider,
+            Collection<String> objectIds) {
+        return turConnectorIndexingRepository.findAllByProviderAndObjectIdIn(provider, objectIds);
+    }
+
     public void deleteByProviderAndSourceAndObjectIdIn(String provider, String source,
             Collection<String> objectIds) {
         turConnectorIndexingRepository.deleteByProviderAndSourceAndObjectIdIn(provider, source,
