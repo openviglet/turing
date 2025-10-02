@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
@@ -74,12 +75,14 @@ public class TurConnectorIndexingService {
 
     public void update(TurJobItemWithSession turSNJobItemWithSession,
             List<TurConnectorIndexingModel> turConnectorIndexingList, TurIndexingStatus status) {
-        turConnectorIndexingList.forEach(indexing -> {
-            turConnectorIndexingRepository.findById(indexing.getId()).ifPresent(managedIndexing -> {
-                turConnectorIndexingRepository.save(updateTurConnectorIndexing(managedIndexing,
-                        turSNJobItemWithSession, status));
-            });
-        });
+        List<TurConnectorIndexingModel> managedList = turConnectorIndexingList
+                .stream().map(
+                        indexing -> turConnectorIndexingRepository.findById(indexing.getId())
+                                .map(managed -> updateTurConnectorIndexing(managed,
+                                        turSNJobItemWithSession, status))
+                                .orElse(null))
+                .filter(Objects::nonNull).toList();
+        turConnectorIndexingRepository.saveAll(managedList);
     }
 
     public void save(TurJobItemWithSession turSNJobItemWithSession, TurIndexingStatus status) {

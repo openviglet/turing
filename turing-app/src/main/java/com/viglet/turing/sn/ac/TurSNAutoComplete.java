@@ -101,7 +101,8 @@ public class TurSNAutoComplete {
 
                 List<String> autoCompleteListFormatted =
                         createFormattedList(turSEResults, instance, numberOfWordsFromQuery);
-                return autoCompleteListFormatted.stream().limit(rows).sorted().toList();
+                return autoCompleteListFormatted.stream().limit(rows >= 0 ? rows : 0).sorted()
+                        .toList();
             }).orElse(Collections.emptyList());
         } else {
             return Collections.emptyList();

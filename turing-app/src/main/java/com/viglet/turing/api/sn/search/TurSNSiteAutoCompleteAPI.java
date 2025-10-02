@@ -35,46 +35,50 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/sn/{siteName}/ac")
 @Tag(name = "Semantic Navigation Auto Complete",
-        description = "Semantic Navigation Auto Complete API")
+                description = "Semantic Navigation Auto Complete API")
 public class TurSNSiteAutoCompleteAPI {
 
-    private final TurSNAutoComplete turSNAutoComplete;
+        private final TurSNAutoComplete turSNAutoComplete;
 
-    public TurSNSiteAutoCompleteAPI(TurSNAutoComplete turSNAutoComplete) {
-        this.turSNAutoComplete = turSNAutoComplete;
-    }
-
-    @GetMapping
-    public List<String> turSNSiteAutoComplete(@PathVariable String siteName,
-            TurSNSearchParams turSNSearchParams,
-            @RequestParam(required = false,
-                    name = TurSNParamType.FILTER_QUERIES_DEFAULT) List<String> filterQueriesDefault,
-            @RequestParam(required = false,
-                    name = TurSNParamType.FILTER_QUERIES_AND) List<String> filterQueriesAnd,
-            @RequestParam(required = false,
-                    name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
-            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR,
-                    defaultValue = "NONE") TurSNFilterQueryOperator fqOperator,
-            @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR,
-                    defaultValue = "NONE") TurSNFilterQueryOperator fqItemOperator,
-            @RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest,
-            HttpServletRequest request) {
-        turSNSearchParams.setFq(filterQueriesDefault);
-        turSNSearchParams.setFqAnd(filterQueriesAnd);
-        turSNSearchParams.setFqOr(filterQueriesOr);
-        turSNSearchParams.setFqOp(fqOperator);
-        turSNSearchParams.setFqiOp(fqItemOperator);
-        turSNSearchParams.setLocale(localeRequest);
-        if ((!CollectionUtils.isEmpty(turSNSearchParams.getFq()))
-                || !CollectionUtils.isEmpty(turSNSearchParams.getFqAnd())
-                || !CollectionUtils.isEmpty(turSNSearchParams.getFqOr())) {
-            return turSNAutoComplete.autoCompleteWithRegularSearch(siteName, turSNSearchParams,
-                    request);
-        } else {
-            return turSNAutoComplete.autoComplete(siteName, turSNSearchParams.getQ(),
-                    LocaleUtils.toLocale(turSNSearchParams.getLocale()),
-                    turSNSearchParams.getRows());
+        public TurSNSiteAutoCompleteAPI(TurSNAutoComplete turSNAutoComplete) {
+                this.turSNAutoComplete = turSNAutoComplete;
         }
-    }
+
+        @GetMapping
+        public List<String> turSNSiteAutoComplete(@PathVariable String siteName,
+                        TurSNSearchParams turSNSearchParams,
+                        @RequestParam(required = false,
+                                        name = TurSNParamType.FILTER_QUERIES_DEFAULT) List<String> filterQueriesDefault,
+                        @RequestParam(required = false,
+                                        name = TurSNParamType.FILTER_QUERIES_AND) List<String> filterQueriesAnd,
+                        @RequestParam(required = false,
+                                        name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR,
+                                        defaultValue = "NONE") TurSNFilterQueryOperator fqOperator,
+                        @RequestParam(required = false,
+                                        name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR,
+                                        defaultValue = "NONE") TurSNFilterQueryOperator fqItemOperator,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) String locale,
+                        HttpServletRequest request) {
+                turSNSearchParams.setFq(filterQueriesDefault);
+                turSNSearchParams.setFqAnd(filterQueriesAnd);
+                turSNSearchParams.setFqOr(filterQueriesOr);
+                turSNSearchParams.setFqOp(fqOperator);
+                turSNSearchParams.setFqiOp(fqItemOperator);
+                turSNSearchParams.setLocale(locale);
+                if (turSNSearchParams.getRows() < 0) {
+                        turSNSearchParams.setRows(20);
+                }
+                if ((!CollectionUtils.isEmpty(turSNSearchParams.getFq()))
+                                || !CollectionUtils.isEmpty(turSNSearchParams.getFqAnd())
+                                || !CollectionUtils.isEmpty(turSNSearchParams.getFqOr())) {
+                        return turSNAutoComplete.autoCompleteWithRegularSearch(siteName,
+                                        turSNSearchParams, request);
+                } else {
+                        return turSNAutoComplete.autoComplete(siteName, turSNSearchParams.getQ(),
+                                        LocaleUtils.toLocale(turSNSearchParams.getLocale()),
+                                        turSNSearchParams.getRows());
+                }
+        }
 
 }
