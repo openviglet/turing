@@ -1,14 +1,17 @@
 package com.viglet.turing.api.sn.console;
 
-import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
-import com.viglet.turing.utils.TurUtilTests;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.Date;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +23,18 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.security.Principal;
-import java.util.Collections;
-import java.util.Date;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.utils.TurUtilTests;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(properties = "spring.jmx.enabled=true")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TurSNSiteSpotlightAPITests {
@@ -91,15 +94,16 @@ class TurSNSiteSpotlightAPITests {
             turSNSiteSpotlight.setManaged(1);
             turSNSiteSpotlight.setProvider("TURING");
             turSNSiteSpotlight.setTurSNSite(turSNSite);
-            turSNSite.getTurSNSiteLocales().stream().findFirst().ifPresent(locale ->
-                    turSNSiteSpotlight.setLanguage(locale.getLanguage())
-            );
-            turSNSiteSpotlight.setTurSNSiteSpotlightDocuments(Collections.singleton(turSNSiteSpotlightDocument));
-            turSNSiteSpotlight.setTurSNSiteSpotlightTerms(Collections.singleton(turSNSiteSpotlightTerm));
+            turSNSite.getTurSNSiteLocales().stream().findFirst()
+                    .ifPresent(locale -> turSNSiteSpotlight.setLanguage(locale.getLanguage()));
+            turSNSiteSpotlight.setTurSNSiteSpotlightDocuments(
+                    Collections.singleton(turSNSiteSpotlightDocument));
+            turSNSiteSpotlight
+                    .setTurSNSiteSpotlightTerms(Collections.singleton(turSNSiteSpotlightTerm));
             try {
                 String spotlightRequestBody = TurCommonsUtils.asJsonString(turSNSiteSpotlight);
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.post(SERVICE_URL).principal(mockPrincipal)
-                        .accept(MediaType.APPLICATION_JSON)
+                RequestBuilder requestBuilder = MockMvcRequestBuilders.post(SERVICE_URL)
+                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON)
                         .content(spotlightRequestBody).contentType(MediaType.APPLICATION_JSON);
 
                 mockMvc.perform(requestBuilder).andExpect(status().isOk());
@@ -116,8 +120,8 @@ class TurSNSiteSpotlightAPITests {
     void stage02SpotlightGet() {
         turSNSiteSpotlightRepository.findAll().stream().findFirst().ifPresent(spotlight -> {
             try {
-                mockMvc.perform(get(TurUtilTests
-                                .getUrlTemplate(SERVICE_URL, spotlight.getId()))).andExpect(status().isOk())
+                mockMvc.perform(get(TurUtilTests.getUrlTemplate(SERVICE_URL, spotlight.getId())))
+                        .andExpect(status().isOk())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -133,10 +137,10 @@ class TurSNSiteSpotlightAPITests {
                 spotlight.setDescription("Description Changed");
                 String spotlightRequestBody = TurCommonsUtils.asJsonString(spotlight);
 
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.put(TurUtilTests
-                                .getUrlTemplate(SERVICE_URL, spotlight.getId()))
-                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON).content(spotlightRequestBody)
-                        .contentType(MediaType.APPLICATION_JSON);
+                RequestBuilder requestBuilder = MockMvcRequestBuilders
+                        .put(TurUtilTests.getUrlTemplate(SERVICE_URL, spotlight.getId()))
+                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON)
+                        .content(spotlightRequestBody).contentType(MediaType.APPLICATION_JSON);
 
                 mockMvc.perform(requestBuilder).andExpect(status().isOk());
             } catch (Exception e) {
@@ -150,9 +154,10 @@ class TurSNSiteSpotlightAPITests {
     void stage04SpotlightDelete() {
         turSNSiteSpotlightRepository.findAll().stream().findFirst().ifPresent(spotlight -> {
             try {
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(TurUtilTests
-                                .getUrlTemplate(SERVICE_URL, spotlight.getId()))
-                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
+                RequestBuilder requestBuilder = MockMvcRequestBuilders
+                        .delete(TurUtilTests.getUrlTemplate(SERVICE_URL, spotlight.getId()))
+                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON);
 
                 mockMvc.perform(requestBuilder).andExpect(status().isOk())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON));

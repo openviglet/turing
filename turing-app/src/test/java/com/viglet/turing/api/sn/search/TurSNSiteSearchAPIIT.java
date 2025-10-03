@@ -1,12 +1,21 @@
 package com.viglet.turing.api.sn.search;
 
-import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +27,16 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.security.Principal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Locale;
-
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(properties = "spring.jmx.enabled=true")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TurSNSiteSearchAPIIT {
@@ -42,7 +48,8 @@ class TurSNSiteSearchAPIIT {
     private MockMvc mockMvc;
     private static final String SN_SITE_NAME = "Sample";
     private Principal mockPrincipal;
-    private static final String SPOTLIGHT_SERVICE_URL = String.format("/api/sn/%s/spotlight", SN_SITE_NAME);
+    private static final String SPOTLIGHT_SERVICE_URL =
+            String.format("/api/sn/%s/spotlight", SN_SITE_NAME);
     private static final String SEARCH_SERVICE_URL = "/api/sn/%s/search?q=%s&_setlocale=%s";
     private static final String SEARCH_INSTANCE_SERVICE_URL = "/api/se/select?q=*:*";
     private static final String WRONG_SEARCH_TERM = "siarch";
@@ -78,15 +85,16 @@ class TurSNSiteSearchAPIIT {
             turSNSiteSpotlight.setManaged(1);
             turSNSiteSpotlight.setProvider("TURING");
             turSNSiteSpotlight.setTurSNSite(turSNSite);
-            turSNSite.getTurSNSiteLocales().stream().findFirst().ifPresent(locale ->
-                    turSNSiteSpotlight.setLanguage(locale.getLanguage())
-            );
-            turSNSiteSpotlight.setTurSNSiteSpotlightDocuments(Collections.singleton(turSNSiteSpotlightDocument));
-            turSNSiteSpotlight.setTurSNSiteSpotlightTerms(Collections.singleton(turSNSiteSpotlightTerm));
+            turSNSite.getTurSNSiteLocales().stream().findFirst()
+                    .ifPresent(locale -> turSNSiteSpotlight.setLanguage(locale.getLanguage()));
+            turSNSiteSpotlight.setTurSNSiteSpotlightDocuments(
+                    Collections.singleton(turSNSiteSpotlightDocument));
+            turSNSiteSpotlight
+                    .setTurSNSiteSpotlightTerms(Collections.singleton(turSNSiteSpotlightTerm));
             try {
                 String spotlightRequestBody = TurCommonsUtils.asJsonString(turSNSiteSpotlight);
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.post(SPOTLIGHT_SERVICE_URL).principal(mockPrincipal)
-                        .accept(MediaType.APPLICATION_JSON)
+                RequestBuilder requestBuilder = MockMvcRequestBuilders.post(SPOTLIGHT_SERVICE_URL)
+                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON)
                         .content(spotlightRequestBody).contentType(MediaType.APPLICATION_JSON);
                 mockMvc.perform(requestBuilder).andExpect(status().isOk());
             } catch (Exception e) {
@@ -100,8 +108,7 @@ class TurSNSiteSearchAPIIT {
     @Order(2)
     void showSpotLightInSearch() throws Exception {
         mockMvc.perform(get(String.format(SEARCH_SERVICE_URL, SN_SITE_NAME, SEARCH_TERM,
-                        Locale.ENGLISH.getLanguage())))
-                .andExpect(status().isOk())
+                Locale.ENGLISH.getLanguage()))).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.widget.spotlights.length()", is(1)));
     }
@@ -110,8 +117,7 @@ class TurSNSiteSearchAPIIT {
     @Order(3)
     void didYouMeanShowsCorrectTerm() throws Exception {
         mockMvc.perform(get(String.format(SEARCH_SERVICE_URL, SN_SITE_NAME, WRONG_SEARCH_TERM,
-                        Locale.ENGLISH.getLanguage())))
-                .andExpect(status().isOk())
+                Locale.ENGLISH.getLanguage()))).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.widget.spellCheck.corrected.text").value(SEARCH_TERM));
     }
@@ -138,19 +144,18 @@ class TurSNSiteSearchAPIIT {
     @Order(7)
     @Timeout(100)
     void solrTimeout() throws Exception {
-        mockMvc.perform(get(SEARCH_INSTANCE_SERVICE_URL))
-                .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        mockMvc.perform(get(SEARCH_INSTANCE_SERVICE_URL)).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     private void multiLanguageExistsTests() throws Exception {
-        mockMvc.perform(get(String.format(SEARCH_SERVICE_URL, SN_SITE_NAME, SEARCH_ALL_TERM
-                        , Locale.ENGLISH.getLanguage())))
-                .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        mockMvc.perform(get(String.format(SEARCH_SERVICE_URL, SN_SITE_NAME, SEARCH_ALL_TERM,
+                Locale.ENGLISH.getLanguage()))).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     private void multiLanguageNotExistsTests(Locale locale) throws Exception {
-        mockMvc.perform(get(String.format(SEARCH_SERVICE_URL, SN_SITE_NAME, SEARCH_ALL_TERM
-                        , locale.getLanguage())))
-                .andExpect(status().is4xxClientError());
+        mockMvc.perform(get(String.format(SEARCH_SERVICE_URL, SN_SITE_NAME, SEARCH_ALL_TERM,
+                locale.getLanguage()))).andExpect(status().is4xxClientError());
     }
 }

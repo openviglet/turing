@@ -48,7 +48,7 @@ public class TurQueueBrowserService {
             Map<String, Object>[] messages = queueControl.listMessages("");
             return Arrays.asList(messages);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao listar itens da fila: " + queueName, e);
+            throw new RuntimeException("Error listing items from queue: " + queueName, e);
         }
     }
 
@@ -63,7 +63,7 @@ public class TurQueueBrowserService {
 
             return Arrays.asList(serverControl.getQueueNames());
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao listar todas as filas do broker.", e);
+            throw new RuntimeException("Error listing all queues from broker.", e);
         }
     }
 
@@ -85,7 +85,7 @@ public class TurQueueBrowserService {
                             contents.add(doc.getId());
                         });
                     } else {
-                        contents.add("Mensagem de tipo não suportado.");
+                        contents.add("Unsupported message type.");
                     }
                 }
                 return contents;

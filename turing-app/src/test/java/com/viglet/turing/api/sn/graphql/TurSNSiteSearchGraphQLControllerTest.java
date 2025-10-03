@@ -20,7 +20,6 @@ package com.viglet.turing.api.sn.graphql;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,12 +28,14 @@ import org.junit.jupiter.api.Test;
  * @author Alexandre Oliveira
  * @since 0.3.6
  */
+
+
 class TurSNSiteSearchGraphQLControllerTest {
 
     @Test
     void testSearchParamsInputCreation() {
         TurSNSearchParamsInput input = new TurSNSearchParamsInput();
-        
+
         // Test default values
         assertEquals("*", input.getQ());
         assertEquals(Integer.valueOf(1), input.getP());
@@ -43,7 +44,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         assertEquals(Integer.valueOf(1), input.getNfpr());
         assertEquals("NONE", input.getFqOp());
         assertEquals("NONE", input.getFqiOp());
-        
+
         // Test nullable fields
         assertNull(input.getLocale());
         assertNull(input.getGroup());
@@ -56,7 +57,7 @@ class TurSNSiteSearchGraphQLControllerTest {
     @Test
     void testSearchParamsInputSetters() {
         TurSNSearchParamsInput input = new TurSNSearchParamsInput();
-        
+
         // Test setters
         input.setQ("test query");
         input.setP(2);
@@ -67,7 +68,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         input.setNfpr(5);
         input.setFqOp("AND");
         input.setFqiOp("OR");
-        
+
         // Verify values
         assertEquals("test query", input.getQ());
         assertEquals(Integer.valueOf(2), input.getP());
@@ -80,15 +81,15 @@ class TurSNSiteSearchGraphQLControllerTest {
         assertEquals("OR", input.getFqiOp());
     }
 
-    @Test 
+    @Test
     void testToString() {
         TurSNSearchParamsInput input = new TurSNSearchParamsInput();
         input.setQ("test");
         input.setP(1);
-        
+
         String toString = input.toString();
         assertNotNull(toString);
         // Should contain class name and some field values
-        assert(toString.contains("TurSNSearchParamsInput"));
+        assert (toString.contains("TurSNSearchParamsInput"));
     }
 }

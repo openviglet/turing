@@ -1,15 +1,18 @@
 package com.viglet.turing.api.sn.console;
 
-import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.utils.TurUtilTests;
-import lombok.extern.slf4j.Slf4j;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.Locale;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +24,18 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.security.Principal;
-import java.util.Collections;
-import java.util.Locale;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
+import com.viglet.turing.utils.TurUtilTests;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(properties = "spring.jmx.enabled=true")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TurSNSiteMergeProvidersAPITests {
@@ -77,9 +80,11 @@ class TurSNSiteMergeProvidersAPITests {
     void stage01MergeProvidersAdd() {
         turSNSiteRepository.findByName(SN_SITE_NAME).ifPresent(turSNSite -> {
             try {
-                String mergeRequestBody = TurCommonsUtils.asJsonString(getTurSNSiteMergeProviders(turSNSite));
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.post(SERVICE_URL).principal(mockPrincipal)
-                        .accept(MediaType.APPLICATION_JSON).content(mergeRequestBody).contentType(MediaType.APPLICATION_JSON);
+                String mergeRequestBody =
+                        TurCommonsUtils.asJsonString(getTurSNSiteMergeProviders(turSNSite));
+                RequestBuilder requestBuilder = MockMvcRequestBuilders.post(SERVICE_URL)
+                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON)
+                        .content(mergeRequestBody).contentType(MediaType.APPLICATION_JSON);
 
                 mockMvc.perform(requestBuilder).andExpect(status().isOk());
             } catch (Exception e) {
@@ -108,49 +113,56 @@ class TurSNSiteMergeProvidersAPITests {
     @Test
     @Order(4)
     void stage02MergeProvidersGet() {
-        turSNSiteMergeProvidersRepository.findAll().stream().findFirst().ifPresent(mergeProviders -> {
-            try {
-                mockMvc.perform(get(TurUtilTests
-                                .getUrlTemplate(SERVICE_URL, mergeProviders.getId())))
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        turSNSiteMergeProvidersRepository.findAll().stream().findFirst()
+                .ifPresent(mergeProviders -> {
+                    try {
+                        mockMvc.perform(get(
+                                TurUtilTests.getUrlTemplate(SERVICE_URL, mergeProviders.getId())))
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     @Test
     @Order(5)
     void stage03MergeProvidersUpdate() {
-        turSNSiteMergeProvidersRepository.findAll().stream().findFirst().ifPresent(mergeProviders -> {
-            try {
-                mergeProviders.setDescription("Description Changed");
-                String spotlightRequestBody = TurCommonsUtils.asJsonString(mergeProviders);
+        turSNSiteMergeProvidersRepository.findAll().stream().findFirst()
+                .ifPresent(mergeProviders -> {
+                    try {
+                        mergeProviders.setDescription("Description Changed");
+                        String spotlightRequestBody = TurCommonsUtils.asJsonString(mergeProviders);
 
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.put(TurUtilTests
-                                .getUrlTemplate(SERVICE_URL, mergeProviders.getId()))
-                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON).content(spotlightRequestBody)
-                        .contentType(MediaType.APPLICATION_JSON);
-                mockMvc.perform(requestBuilder).andExpect(status().isOk());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+                        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                                .put(TurUtilTests.getUrlTemplate(SERVICE_URL,
+                                        mergeProviders.getId()))
+                                .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON)
+                                .content(spotlightRequestBody)
+                                .contentType(MediaType.APPLICATION_JSON);
+                        mockMvc.perform(requestBuilder).andExpect(status().isOk());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     @Test
     @Order(6)
     void stage04MergeProvidersDelete() {
-        turSNSiteMergeProvidersRepository.findAll().stream().findFirst().ifPresent(mergeProviders -> {
-            try {
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(TurUtilTests
-                                .getUrlTemplate(SERVICE_URL, mergeProviders.getId()))
-                        .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
-                mockMvc.perform(requestBuilder).andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        turSNSiteMergeProvidersRepository.findAll().stream().findFirst()
+                .ifPresent(mergeProviders -> {
+                    try {
+                        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                                .delete(TurUtilTests.getUrlTemplate(SERVICE_URL,
+                                        mergeProviders.getId()))
+                                .principal(mockPrincipal).accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON);
+                        mockMvc.perform(requestBuilder).andExpect(status().isOk())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 }
