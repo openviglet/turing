@@ -1,4 +1,5 @@
 spring:
+  jmx.enabled: true
   profiles:
     active: production
   h2:
@@ -38,6 +39,7 @@ spring:
     mode: EMBEDDED
     broker-url: localhost:61616
     embedded:
+      broker-name: artemis
       enabled: true
       persistent: true
       data-directory: store/queue
