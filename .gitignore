@@ -1,5 +1,6 @@
 db-encrypted.properties
 
+node
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
