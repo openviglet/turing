@@ -1,35 +1,88 @@
 package com.viglet.turing.connector.aem.commons.bean;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Optional;
-
 @Slf4j
 public class TurAemTargetAttrValueMap extends HashMap<String, TurMultiValue> {
-    public <T> void addWithSingleValue(String attributeName, T value, boolean override) {
-        Optional.ofNullable(value).ifPresent(v -> {
-            if (!this.containsKey(attributeName) || (containsKey(attributeName) && override)) {
-                switch (v) {
-                    case TurMultiValue turMultiValue -> this.put(attributeName, turMultiValue);
-                    case Date date -> this.put(attributeName, TurMultiValue.singleItem(date, override));
-                    case Boolean bool -> this.put(attributeName,TurMultiValue.singleItem(bool, override));
-                    case String string -> this.put(attributeName,TurMultiValue.singleItem(string, override));
-                    default -> this.put(attributeName,TurMultiValue.singleItem(v.toString(), override));
-                }
-            } else {
-                switch (v) {
-                    case TurMultiValue turMultiValue -> this.get(attributeName).addAll(turMultiValue);
-                    case Date date -> this.get(attributeName).addAll(TurMultiValue.singleItem(date, override));
-                    case Boolean bool -> this.get(attributeName).addAll(TurMultiValue.singleItem(bool, override));
-                    case String string -> this.get(attributeName).addAll(TurMultiValue.singleItem(string, override));
-                    default -> this.get(attributeName).addAll(TurMultiValue.singleItem(v.toString(), override));
-                }
-            }
-        });
+
+    public void addWithSingleValue(String attributeName, String value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, TurMultiValue.singleItem(value, override), override);
+    }
+
+    public void addWithSingleValue(String attributeName, Date value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, TurMultiValue.singleItem(value, override), override);
+    }
+
+    public void addWithSingleValue(String attributeName, Boolean value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, TurMultiValue.singleItem(value, override), override);
+    }
+
+    public void addWithSingleValue(String attributeName, Long value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, TurMultiValue.singleItem(value, override), override);
+    }
+
+    public void addWithSingleValue(String attributeName, Double value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, TurMultiValue.singleItem(value, override), override);
+    }
+
+    public void addWithSingleValue(String attributeName, Float value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, TurMultiValue.singleItem(value, override), override);
+    }
+
+    public void addWithSingleValue(String attributeName, List<String> value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, new TurMultiValue(value, override), override);
+    }
+
+    public void addWithSingleValue(String attributeName, Integer value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        TurMultiValue newValue = TurMultiValue.singleItem(value, override);
+        addOrMerge(attributeName, newValue, override);
+    }
+
+    public void addWithSingleValue(String attributeName, TurMultiValue value, boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, value, override);
+    }
+
+    /**
+     * Internal helper to add or merge TurMultiValue based on override flag.
+     */
+    private void addOrMerge(String attributeName, TurMultiValue value, boolean override) {
+        if (override || !this.containsKey(attributeName)) {
+            this.put(attributeName, value);
+        } else {
+            this.get(attributeName).addAll(value);
+        }
     }
 
     public void merge(TurAemTargetAttrValueMap fromMap) {
@@ -37,12 +90,10 @@ public class TurAemTargetAttrValueMap extends HashMap<String, TurMultiValue> {
             if (this.containsKey(fromKey)) {
                 if (fromMap.get(fromKey).isOverride()) {
                     this.put(fromKey, fromMap.get(fromKey));
-                }
-                else {
+                } else {
                     this.get(fromKey).addAll(fromMap.get(fromKey));
                 }
-            }
-            else {
+            } else {
                 this.put(fromKey, fromMap.get(fromKey));
             }
         });
@@ -50,23 +101,84 @@ public class TurAemTargetAttrValueMap extends HashMap<String, TurMultiValue> {
 
     public static TurAemTargetAttrValueMap singleItem(TurAemTargetAttrValue turCmsTargetAttrValue) {
         TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
-        turCmsTargetAttrValueMap.put(turCmsTargetAttrValue.getTargetAttrName(), turCmsTargetAttrValue.getMultiValue());
+        turCmsTargetAttrValueMap.put(turCmsTargetAttrValue.getTargetAttrName(),
+                turCmsTargetAttrValue.getMultiValue());
         return turCmsTargetAttrValueMap;
     }
 
-    public static <T> TurAemTargetAttrValueMap singleItem(String attributeName, T value, boolean override) {
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, List<String> value,
+            boolean override) {
         TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
         turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
         return turCmsTargetAttrValueMap;
     }
 
-    public static TurAemTargetAttrValueMap singleItem(String attributeName, TurMultiValue turMultiValue) {
-        return TurAemTargetAttrValueMap.singleItem(new TurAemTargetAttrValue(attributeName, turMultiValue));
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, TurMultiValue value,
+            boolean override) {
+        TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
+        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        return turCmsTargetAttrValueMap;
+    }
+
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, String value,
+            boolean override) {
+        TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
+        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        return turCmsTargetAttrValueMap;
+    }
+
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, Date value,
+            boolean override) {
+        TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
+        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        return turCmsTargetAttrValueMap;
+    }
+
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, Boolean value,
+            boolean override) {
+        TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
+        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        return turCmsTargetAttrValueMap;
+    }
+
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, Integer value,
+            boolean override) {
+        TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
+        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        return turCmsTargetAttrValueMap;
+    }
+
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, Double value,
+            boolean override) {
+        TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
+        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        return turCmsTargetAttrValueMap;
+    }
+
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, Float value,
+            boolean override) {
+        TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
+        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        return turCmsTargetAttrValueMap;
+    }
+
+    public static TurAemTargetAttrValueMap singleItem(String attributeName, Long value,
+            boolean override) {
+        TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
+        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        return turCmsTargetAttrValueMap;
+    }
+
+    public static TurAemTargetAttrValueMap singleItem(String attributeName,
+            TurMultiValue turMultiValue) {
+        return TurAemTargetAttrValueMap
+                .singleItem(new TurAemTargetAttrValue(attributeName, turMultiValue));
     }
 
 
-    public static TurAemTargetAttrValueMap singleItem(TurAemTargetAttr turAemTargetAttr, boolean override) {
-        return TurAemTargetAttrValueMap.singleItem(turAemTargetAttr.getName(), turAemTargetAttr.getTextValue(),
-                override);
+    public static TurAemTargetAttrValueMap singleItem(TurAemTargetAttr turAemTargetAttr,
+            boolean override) {
+        return TurAemTargetAttrValueMap.singleItem(turAemTargetAttr.getName(),
+                turAemTargetAttr.getTextValue(), override);
     }
 }
