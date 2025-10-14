@@ -20,6 +20,7 @@ com.viglet.turing.api.sn.queue
 com.viglet.turing.api.sn.search
 com.viglet.turing.api.store
 com.viglet.turing.api.system
+com.viglet.turing.artemis
 com.viglet.turing.bean
 com.viglet.turing.client.auth
 com.viglet.turing.client.auth.credentials
