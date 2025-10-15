@@ -52,11 +52,20 @@ public class TurAemTargetAttrValueMap extends HashMap<String, TurMultiValue> {
         addOrMerge(attributeName, TurMultiValue.singleItem(value, override), override);
     }
 
-    public void addWithSingleValue(String attributeName, List<String> value, boolean override) {
+    public void addWithStringCollectionValue(String attributeName, List<String> value,
+            boolean override) {
         if (value == null) {
             return;
         }
         addOrMerge(attributeName, new TurMultiValue(value, override), override);
+    }
+
+    public void addWithDateCollectionValue(String attributeName, List<Date> value,
+            boolean override) {
+        if (value == null) {
+            return;
+        }
+        addOrMerge(attributeName, TurMultiValue.fromDateCollection(value, override), override);
     }
 
     public void addWithSingleValue(String attributeName, Integer value, boolean override) {
@@ -109,7 +118,7 @@ public class TurAemTargetAttrValueMap extends HashMap<String, TurMultiValue> {
     public static TurAemTargetAttrValueMap singleItem(String attributeName, List<String> value,
             boolean override) {
         TurAemTargetAttrValueMap turCmsTargetAttrValueMap = new TurAemTargetAttrValueMap();
-        turCmsTargetAttrValueMap.addWithSingleValue(attributeName, value, override);
+        turCmsTargetAttrValueMap.addWithStringCollectionValue(attributeName, value, override);
         return turCmsTargetAttrValueMap;
     }
 
