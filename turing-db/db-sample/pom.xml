@@ -5,7 +5,7 @@
     <parent>
         <artifactId>turing-db</artifactId>
         <groupId>com.viglet.turing</groupId>
-        <version>2025.3.64</version>
+        <version>2025.3.65</version>
     </parent>
     <artifactId>db-sample</artifactId>
     <name>Turing Database - Sample Custom Connector</name>
