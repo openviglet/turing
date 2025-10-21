@@ -108,6 +108,7 @@ public class TurAemPluginProcess {
         private final TurConnectorContext turConnectorContext;
         private final String turingUrl;
         private final String turingApiKey;
+        private final boolean connectorDependencies;
         private final List<String> runningSources = new ArrayList<>();
         private final TurAemReactiveUtils turAemReactiveUtils;
         private final TurAemContentMappingService turAemContentMappingService;
@@ -123,6 +124,7 @@ public class TurAemPluginProcess {
                         TurConnectorContext turConnectorContext,
                         @Value("${turing.url}") String turingUrl,
                         @Value("${turing.apiKey}") String turingApiKey,
+                        @Value("${turing.connector.dependencies.enabled:true}") boolean connectorDependencies,
                         TurAemReactiveUtils turAemReactiveUtils,
                         TurAemContentMappingService turAemContentMappingService,
                         TurAemAttrProcess turAemAttrProcess) {
@@ -137,6 +139,7 @@ public class TurAemPluginProcess {
                 this.turConnectorContext = turConnectorContext;
                 this.turingUrl = turingUrl;
                 this.turingApiKey = turingApiKey;
+                this.connectorDependencies = connectorDependencies;
                 this.turAemReactiveUtils = turAemReactiveUtils;
                 this.turAemContentMappingService = turAemContentMappingService;
                 this.turAemAttrProcess = turAemAttrProcess;
@@ -174,14 +177,19 @@ public class TurAemPluginProcess {
                         idList.stream().filter(StringUtils::isNotBlank)
                                         .forEach(path -> indexContentId(session, turAemSource, path,
                                                         true, true));
-                        // Index dependencies if any
-                        turConnectorContext
-                                        .getObjectIdByDependency(source, getProviderName(), idList)
-                                        .stream().filter(StringUtils::isNotBlank)
-                                        .forEach(objectId -> indexContentId(session, turAemSource,
-                                                        objectId, true, false));
+                        if (connectorDependencies) {
+                                indexDependencies(source, idList, turAemSource, session);
+                        }
                         finished(session, true);
                 }, () -> log.error("Source '{}' not found", source));
+        }
+
+        private void indexDependencies(String source, List<String> idList,
+                        TurAemSource turAemSource, TurConnectorSession session) {
+                turConnectorContext.getObjectIdByDependency(source, getProviderName(), idList)
+                                .stream().filter(StringUtils::isNotBlank)
+                                .forEach(objectId -> indexContentId(session, turAemSource, objectId,
+                                                true, false));
         }
 
         public void indexAll(TurAemSource turAemSource) {

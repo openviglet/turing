@@ -8,7 +8,7 @@ turing:
     job.size: 50
     cron: "-"
     cron.zone: UTC
-
+    dependencies.enabled: false
   scheduler:
     enabled: false
   solr:
