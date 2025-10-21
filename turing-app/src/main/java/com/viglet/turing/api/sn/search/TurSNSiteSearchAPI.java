@@ -238,7 +238,8 @@ public class TurSNSiteSearchAPI {
 
         private TurSNConfig getTurSNConfig(TurSNSite turSNSite) {
                 TurSNConfig turSNConfig = new TurSNConfig();
-                turSNConfig.setHlEnabled(turSNSite.getHl() == 1 && hasSiteHLFields(turSNSite));
+                turSNConfig.setHlEnabled(
+                                TurSNUtils.isTrue(turSNSite.getHl()) && hasSiteHLFields(turSNSite));
                 return turSNConfig;
         }
 

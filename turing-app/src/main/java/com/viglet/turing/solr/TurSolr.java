@@ -746,7 +746,8 @@ public class TurSolr {
     }
 
     private boolean hasMLT(TurSNSite turSNSite, List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList) {
-        return turSNSite.getMlt() == 1 && !CollectionUtils.isEmpty(turSNSiteMLTFieldExtList);
+        return TurSNUtils.isTrue(turSNSite.getMlt())
+                && !CollectionUtils.isEmpty(turSNSiteMLTFieldExtList);
     }
 
     private List<TurSEResult> addSolrDocumentsToSEResults(SolrDocumentList solrDocumentList,
@@ -835,7 +836,7 @@ public class TurSolr {
 
     private boolean wasFacetConfigured(TurSNSite turSNSite,
             List<TurSNSiteFieldExt> turSNSiteFacetFieldExtList) {
-        return turSNSite.getFacet() == 1 && turSNSite.getItemsPerFacet() != null
+        return TurSNUtils.isTrue(turSNSite.getFacet()) && turSNSite.getItemsPerFacet() != null
                 && !CollectionUtils.isEmpty(turSNSiteFacetFieldExtList);
     }
 

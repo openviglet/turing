@@ -59,6 +59,10 @@ public class TurSNUtils {
         throw new IllegalStateException("SN Utility class");
     }
 
+    public static boolean isTrue(Integer value) {
+        return Integer.valueOf(1).equals(value);
+    }
+
     @NotNull
     public static String getCacheKey(String siteName, HttpServletRequest request) {
         return "%s_%s".formatted(siteName, request.getQueryString());

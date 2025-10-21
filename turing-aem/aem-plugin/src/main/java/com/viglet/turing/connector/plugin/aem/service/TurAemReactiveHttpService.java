@@ -18,6 +18,7 @@ package com.viglet.turing.connector.plugin.aem.service;
 
 import java.time.Duration;
 import java.util.Base64;
+import javax.net.ssl.SSLException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
@@ -25,11 +26,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.google.common.net.UrlEscapers;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import io.netty.channel.ChannelOption;
+import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandshakeTimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.tcp.SslProvider.SslContextSpec;
 import reactor.util.retry.Retry;
 
 /**
@@ -45,12 +49,42 @@ public class TurAemReactiveHttpService {
         private final WebClient webClient;
 
         public TurAemReactiveHttpService() {
-                HttpClient httpClient = HttpClient.create().protocol(HttpProtocol.HTTP11);
-                this.webClient = WebClient.builder()
+                try {
+                        this.webClient = createOptimizedWebClient();
+                } catch (SSLException e) {
+                        log.error("Failed to initialize WebClient with SSL configuration", e);
+                        throw new IllegalStateException("Unable to create HTTP client", e);
+                }
+        }
+
+        private WebClient createOptimizedWebClient() throws SSLException {
+                HttpClient httpClient = HttpClient.create()
+                                .protocol(HttpProtocol.HTTP11, HttpProtocol.H2C)
+                                .secure(this::configureSsl).responseTimeout(Duration.ofSeconds(30))
+                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 15000)
+                                .option(ChannelOption.SO_KEEPALIVE, true)
+                                .option(ChannelOption.TCP_NODELAY, true);
+
+                return WebClient.builder()
                                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                                 .codecs(configurer -> configurer.defaultCodecs()
-                                                .maxInMemorySize(16 * 1024 * 1024)) // 16MB
+                                                .maxInMemorySize(16 * 1024 * 1024))
+                                .defaultHeader(HttpHeaders.USER_AGENT,
+                                                "Turing-AEM-Connector/2025.3")
                                 .build();
+        }
+
+        private void configureSsl(SslContextSpec sslContextSpec) {
+                try {
+                        sslContextSpec.sslContext(SslContextBuilder.forClient()
+                                        .protocols("TLSv1.2", "TLSv1.3").build())
+                                        .handshakeTimeout(Duration.ofSeconds(30))
+                                        .closeNotifyFlushTimeout(Duration.ofSeconds(3))
+                                        .closeNotifyReadTimeout(Duration.ofSeconds(3));
+                } catch (SSLException e) {
+                        log.error("SSL configuration failed", e);
+                        throw new RuntimeException("SSL setup error", e);
+                }
         }
 
         /**

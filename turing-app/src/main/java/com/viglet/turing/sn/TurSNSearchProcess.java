@@ -140,10 +140,6 @@ public class TurSNSearchProcess {
                                 .contains(snType);
         }
 
-        private static boolean isTrue(Integer value) {
-                return value == 1;
-        }
-
         private static boolean showFacetByFacetItemType(TurSNSite turSNSite) {
                 if (turSNSite.getFacetItemType() == null)
                         return false;
@@ -202,7 +198,8 @@ public class TurSNSearchProcess {
                                 .setDescription(turSNSiteFieldExtDto.getDescription())
                                 .setType(turSNSiteFieldExtDto.getType())
                                 .setFacets(turSNSiteSearchFacetItemBeans)
-                                .setMultiValued(isTrue(turSNSiteFieldExtDto.getMultiValued()))
+                                .setMultiValued(TurSNUtils
+                                                .isTrue(turSNSiteFieldExtDto.getMultiValued()))
                                 .setCleanUpLink(TurSNUtils
                                                 .removeFilterQueryByFieldName(context.getUri(),
                                                                 turSNSiteFieldExtDto.getName())
@@ -516,7 +513,7 @@ public class TurSNSearchProcess {
                 seResults.forEach(result -> TurSNUtils.addSNDocument(context.getUri(), fieldExtMap,
                                 facetMap, turSNSiteSearchDocumentsBean, result, false));
                 Optional.ofNullable(turSNSite).map(TurSNSite::getSpotlightWithResults)
-                                .filter(TurSNSearchProcess::isTrue)
+                                .filter(TurSNUtils::isTrue)
                                 .ifPresent(r -> turSNSpotlightProcess.addSpotlightToResults(context,
                                                 turSolrInstance, turSNSite, facetMap, fieldExtMap,
                                                 turSNSiteSearchDocumentsBean));
@@ -633,7 +630,8 @@ public class TurSNSearchProcess {
         }
 
         private boolean hasMLT(TurSNSite turSNSite, TurSEResults turSEResults) {
-                return isTrue(turSNSite.getMlt()) && turSEResults.getSimilarResults() != null
+                return TurSNUtils.isTrue(turSNSite.getMlt())
+                                && turSEResults.getSimilarResults() != null
                                 && !turSEResults.getSimilarResults().isEmpty();
         }
 
@@ -726,8 +724,9 @@ public class TurSNSearchProcess {
         }
 
         private static boolean facetIsEnabled(TurSNSite turSNSite, TurSEResults turSEResults) {
-                return turSNSite.getFacet() == 1
-                                && Optional.ofNullable(turSEResults.getFacetResults()).isPresent();
+                return TurSNUtils.isTrue(turSNSite.getFacet())
+                                && turSEResults.getFacetResults() != null
+                                && !turSEResults.getFacetResults().isEmpty();
         }
 
         private List<TurSNSiteSearchFacetBean> responseSecondaryFacet(

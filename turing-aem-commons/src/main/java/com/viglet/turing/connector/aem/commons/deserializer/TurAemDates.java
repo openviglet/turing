@@ -56,7 +56,7 @@ public class TurAemDates extends StdDeserializer<Date> {
         for (SimpleDateFormat formatter : DATE_FORMATTERS) {
             try {
                 return formatter.parse(dateAsString);
-            } catch (ParseException ignored) {
+            } catch (ParseException | NumberFormatException ignored) {
                 // Nothing
             }
         }
