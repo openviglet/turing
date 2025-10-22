@@ -103,6 +103,11 @@ public class TurAemObject {
             return;
         }
 
+        if (TurAemEvent.PUBLISHING.equals(event)) {
+            log.info("Overriding publishing status for path", this.path);
+        } else if (TurAemEvent.UNPUBLISHING.equals(event)) {
+            log.info("Overriding unpublishing status for path: {}", this.path);
+        }
         this.jcrContentNode = jcrNode.getJSONObject(JCR_CONTENT);
         this.template = getJcrTemplate();
         this.title = getJcrTitle();
