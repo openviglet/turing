@@ -18,11 +18,13 @@ package com.viglet.turing.connector.plugin.aem.service;
 
 import java.time.Duration;
 import java.util.Base64;
+import java.util.concurrent.TimeoutException;
 import javax.net.ssl.SSLException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import com.google.common.net.UrlEscapers;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
@@ -33,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.http.client.PrematureCloseException;
 import reactor.netty.tcp.SslProvider.SslContextSpec;
 import reactor.util.retry.Retry;
 
@@ -58,8 +61,7 @@ public class TurAemReactiveHttpService {
         }
 
         private WebClient createOptimizedWebClient() throws SSLException {
-                HttpClient httpClient = HttpClient.create()
-                                .protocol(HttpProtocol.HTTP11, HttpProtocol.H2C)
+                HttpClient httpClient = HttpClient.create().protocol(HttpProtocol.HTTP11)
                                 .secure(this::configureSsl).responseTimeout(Duration.ofSeconds(30))
                                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 15000)
                                 .option(ChannelOption.SO_KEEPALIVE, true)
@@ -97,25 +99,41 @@ public class TurAemReactiveHttpService {
         public Mono<String> fetchResponseBodyReactive(String url,
                         TurAemSourceContext turAemSourceContext) {
                 log.debug("Making reactive HTTP request to: {}", url);
-
                 String escapedUrl = UrlEscapers.urlFragmentEscaper().escape(url);
                 String basicAuth = basicAuth(turAemSourceContext.getUsername(),
                                 turAemSourceContext.getPassword());
-
                 return webClient.get().uri(escapedUrl).header(HttpHeaders.AUTHORIZATION, basicAuth)
                                 .retrieve().bodyToMono(String.class).timeout(Duration.ofSeconds(30))
-                                .retry(3).filter(TurCommonsUtils::isValidJson)
+                                .map(responseBody -> {
+                                        if (!TurCommonsUtils.isValidJson(responseBody)) {
+                                                throw new IllegalArgumentException(
+                                                                "Invalid JSON response");
+                                        }
+                                        return responseBody;
+                                })
+                                .retryWhen(Retry.backoff(5, Duration.ofSeconds(10))
+                                                .maxBackoff(Duration.ofSeconds(30)).jitter(0.5)
+                                                .filter(throwable -> throwable instanceof SslHandshakeTimeoutException
+                                                                || throwable instanceof PrematureCloseException
+                                                                || (throwable.getCause() != null
+                                                                                && throwable.getCause() instanceof PrematureCloseException)
+                                                                || throwable instanceof TimeoutException
+                                                                || (throwable instanceof WebClientRequestException
+                                                                                && throwable.getCause() instanceof TimeoutException)
+                                                                || throwable instanceof IllegalArgumentException)
+                                                .doBeforeRetry(retrySignal -> {
+                                                        log.warn("Retrying HTTP request: {}", url);
+                                                })
+                                                .onRetryExhaustedThrow((retryBackoffSpec,
+                                                                retrySignal) -> retrySignal
+                                                                                .failure()))
+
                                 .doOnNext(responseBody -> log.debug("Valid JSON response from: {}",
                                                 url))
                                 .doOnError(error -> log.error("Error fetching URL {}: {}", url,
                                                 error.getMessage()))
-                                .onErrorReturn("")
-                                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-                                                .maxBackoff(Duration.ofSeconds(5)).jitter(0.5)
-                                                .filter(throwable -> throwable instanceof SslHandshakeTimeoutException)
-                                                .onRetryExhaustedThrow((retryBackoffSpec,
-                                                                retrySignal) -> retrySignal
-                                                                                .failure()));
+
+                                .onErrorReturn("");
         }
 
         private String basicAuth(String username, String password) {

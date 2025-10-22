@@ -496,8 +496,10 @@ public class TurAemPluginProcess {
         private void indexByEnvironment(TurAemEnv turAemEnv, String snSite,
                         @NotNull TurAemObject aemObject, TurAemModel turAemModel,
                         List<TurSNAttributeSpec> turSNAttributeSpecList,
-                        TurAemSourceContext turAemSourceContext, TurAemSource turAemSource,
+                        TurAemSourceContext originalTurAemSourceContext, TurAemSource turAemSource,
                         TurConnectorSession session, boolean standalone) {
+                TurAemSourceContext turAemSourceContext =
+                                new TurAemSourceContext(originalTurAemSourceContext);
                 turAemSourceContext.setEnvironment(turAemEnv);
                 turAemSourceContext.setTurSNSite(snSite);
                 session.setSites(Collections.singletonList(snSite));

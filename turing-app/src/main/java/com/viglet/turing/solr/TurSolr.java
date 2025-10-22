@@ -768,7 +768,7 @@ public class TurSolr {
             List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList,
             List<TurSESimilarResult> similarResults, SolrDocument document,
             QueryResponse queryResponse) {
-        if (turSNSite.getMlt() == 1 && !turSNSiteMLTFieldExtList.isEmpty()) {
+        if (TurSNUtils.isTrue(turSNSite.getMlt()) && !turSNSiteMLTFieldExtList.isEmpty()) {
             @SuppressWarnings("rawtypes")
             SimpleOrderedMap mltResp =
                     (SimpleOrderedMap) queryResponse.getResponse().get(MORE_LIKE_THIS);
@@ -1502,7 +1502,8 @@ public class TurSolr {
 
     private static boolean isHL(TurSNSite turSNSite,
             List<TurSNSiteFieldExt> turSNSiteHlFieldExtList) {
-        return turSNSite.getHl() == 1 && !CollectionUtils.isEmpty(turSNSiteHlFieldExtList);
+        return TurSNUtils.isTrue(turSNSite.getHl())
+                && !CollectionUtils.isEmpty(turSNSiteHlFieldExtList);
     }
 
     private Map<String, TurSNSiteFieldExt> getFieldExtMap(TurSNSite turSNSite) {
