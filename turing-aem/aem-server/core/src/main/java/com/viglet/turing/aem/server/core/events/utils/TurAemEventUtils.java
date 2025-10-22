@@ -3,6 +3,7 @@ package com.viglet.turing.aem.server.core.events.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.aem.server.config.TurAemIndexerConfig;
+import com.viglet.turing.aem.server.core.events.beans.TurAemEvent;
 import com.viglet.turing.aem.server.core.events.beans.TurAemPayload;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
@@ -23,11 +24,11 @@ public class TurAemEventUtils {
     public static final String API_TURING_AEM_REINDEX = "/api/v2/aem/index/";
     public static final String CONTENT_TYPE = "Content-Type";
 
-    public static void index(TurAemIndexerConfig config, String path) {
-        index(config, Collections.singletonList(path));
+    public static void index(TurAemIndexerConfig config, String path, TurAemEvent event) {
+        index(config, Collections.singletonList(path), event);
     }
 
-    public static void index(TurAemIndexerConfig config, List<String> pathList) {
+    public static void index(TurAemIndexerConfig config, List<String> pathList, TurAemEvent event) {
         if (!config.enabled()) {
             return;
         }
@@ -36,6 +37,7 @@ public class TurAemEventUtils {
                             .writeValueAsString(TurAemPayload
                                     .builder()
                                     .paths(pathList)
+                                    .event(event)
                                     .build()))
                     .ifPresent(payload -> indexContent(config, payload));
         } catch (JsonProcessingException e) {

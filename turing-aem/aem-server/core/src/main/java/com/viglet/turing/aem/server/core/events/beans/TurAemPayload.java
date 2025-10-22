@@ -11,4 +11,5 @@ import java.util.List;
 @Setter
 public class TurAemPayload {
     List<String> paths;
+    TurAemEvent event;
 }

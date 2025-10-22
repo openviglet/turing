@@ -1,5 +1,6 @@
 package com.viglet.turing.aem.server.core.events;
 
+import com.viglet.turing.aem.server.core.events.beans.TurAemEvent;
 import com.viglet.turing.aem.server.core.events.utils.TurAemEventUtils;
 import com.viglet.turing.aem.server.core.services.TurAemIndexerService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class TurAemResourceEventHandler implements EventHandler {
         if (!isAssetEvent(path, resourceType))
             return;
         // Index the asset path to update the search engine with the latest changes in DAM assets.
-        TurAemEventUtils.index(turAemIndexerService.getConfig(), path);
+        TurAemEventUtils.index(turAemIndexerService.getConfig(), path, TurAemEvent.NONE);
     }
 
     protected boolean isAssetEvent(String path, String resourceType) {

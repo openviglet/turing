@@ -19,6 +19,7 @@ package com.viglet.turing.connector.plugin.aem.impl;
 import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import com.viglet.turing.connector.aem.commons.bean.TurAemEvent;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
@@ -48,7 +49,7 @@ public class TurAemPlugin implements TurConnectorPlugin {
     }
 
     public void indexById(String source, List<String> contentId) {
-        turAemPluginProcess.sentToIndexStandalone(source, contentId, false);
+        turAemPluginProcess.sentToIndexStandalone(source, contentId, false, TurAemEvent.NONE);
     }
 
     @Override

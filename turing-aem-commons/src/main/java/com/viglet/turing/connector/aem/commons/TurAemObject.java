@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import org.json.JSONObject;
+import com.viglet.turing.connector.aem.commons.bean.TurAemEvent;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +73,7 @@ public class TurAemObject {
     public final SimpleDateFormat aemJsonDateFormat =
             new SimpleDateFormat(DATE_JSON_FORMAT, Locale.ENGLISH);
 
-    public TurAemObject(String nodePath, JSONObject jcrNode) {
+    public TurAemObject(String nodePath, JSONObject jcrNode, TurAemEvent event) {
         this.jcrNode = jcrNode;
         this.path = nodePath;
         this.url = nodePath + HTML;
@@ -80,7 +81,7 @@ public class TurAemObject {
         this.dependencies = TurAemCommonsUtils.getDependencies(jcrNode);
         try {
             if (jcrNode.has(JCR_CONTENT)) {
-                processJcrContent(jcrNode);
+                processJcrContent(jcrNode, event);
             }
             if (jcrNode.has(JCR_CREATED)) {
                 processJcrCreated(jcrNode);
@@ -96,15 +97,35 @@ public class TurAemObject {
         this.createdDate = createdDateCalendar;
     }
 
-    private void processJcrContent(JSONObject jcrNode) throws ParseException {
+    private void processJcrContent(JSONObject jcrNode, TurAemEvent event) throws ParseException {
+        if (!jcrNode.has(JCR_CONTENT)) {
+            log.warn("JCR content node not found for path: {}", this.path);
+            return;
+        }
+
         this.jcrContentNode = jcrNode.getJSONObject(JCR_CONTENT);
         this.template = getJcrTemplate();
-        this.delivered = getJcrDelivered();
         this.title = getJcrTitle();
         this.contentFragment = isJcrContentFragment();
-        getDataFolder(jcrContentNode);
-        this.lastModified = getJcrLastModified();
-        this.publicationDate = getJcrPublicationDate();
+        this.delivered = switch (event) {
+            case PUBLISHING -> true;
+            case UNPUBLISHING -> false;
+            default -> getJcrDelivered();
+        };
+        getDataFolder(this.jcrContentNode);
+        try {
+            this.lastModified = getJcrLastModified();
+        } catch (ParseException e) {
+            log.error("Failed to parse last modified date for path: {}", this.path, e);
+            this.lastModified = null;
+        }
+
+        try {
+            this.publicationDate = getJcrPublicationDate();
+        } catch (ParseException e) {
+            log.error("Failed to parse publication date for path: {}", this.path, e);
+            this.publicationDate = null;
+        }
     }
 
     private boolean isJcrContentFragment() {

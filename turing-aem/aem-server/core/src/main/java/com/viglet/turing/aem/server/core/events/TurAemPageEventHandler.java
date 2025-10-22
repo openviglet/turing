@@ -2,6 +2,7 @@ package com.viglet.turing.aem.server.core.events;
 
 import com.day.cq.wcm.api.PageEvent;
 import com.day.cq.wcm.api.PageModification;
+import com.viglet.turing.aem.server.core.events.beans.TurAemEvent;
 import com.viglet.turing.aem.server.core.events.utils.TurAemEventUtils;
 import com.viglet.turing.aem.server.core.services.TurAemIndexerService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,6 @@ public class TurAemPageEventHandler implements EventHandler {
                 .stream()
                 .map(PageModification::getPath)
                 .collect(Collectors.toList());
-        TurAemEventUtils.index(turAemIndexerService.getConfig(), paths);
+        TurAemEventUtils.index(turAemIndexerService.getConfig(), paths, TurAemEvent.NONE);
     }
 }
