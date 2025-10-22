@@ -109,6 +109,7 @@ public class TurAemPluginProcess {
         private final String turingUrl;
         private final String turingApiKey;
         private final boolean connectorDependencies;
+        private final boolean reativeIndexing;
         private final List<String> runningSources = new ArrayList<>();
         private final TurAemReactiveUtils turAemReactiveUtils;
         private final TurAemContentMappingService turAemContentMappingService;
@@ -125,6 +126,7 @@ public class TurAemPluginProcess {
                         @Value("${turing.url}") String turingUrl,
                         @Value("${turing.apiKey}") String turingApiKey,
                         @Value("${turing.connector.dependencies.enabled:true}") boolean connectorDependencies,
+                        @Value("${turing.connector.reactive.indexing:false}") boolean reativeIndexing,
                         TurAemReactiveUtils turAemReactiveUtils,
                         TurAemContentMappingService turAemContentMappingService,
                         TurAemAttrProcess turAemAttrProcess) {
@@ -140,6 +142,7 @@ public class TurAemPluginProcess {
                 this.turingUrl = turingUrl;
                 this.turingApiKey = turingApiKey;
                 this.connectorDependencies = connectorDependencies;
+                this.reativeIndexing = reativeIndexing;
                 this.turAemReactiveUtils = turAemReactiveUtils;
                 this.turAemContentMappingService = turAemContentMappingService;
                 this.turAemAttrProcess = turAemAttrProcess;
@@ -359,18 +362,49 @@ public class TurAemPluginProcess {
                         TurAemSourceContext turAemSourceContext,
                         TurConnectorSession turConnectorSession, TurAemSource turAemSource,
                         boolean standalone) {
-                try {
-                        getChildrenFromJsonReactive(nodePath, jsonObject, turAemSourceContext,
-                                        turConnectorSession, turAemSource, standalone).block(); // Block
-                                                                                                // to
-                                                                                                // maintain
-                                                                                                // synchronous
-                                                                                                // interface
-                } catch (Exception e) {
-                        log.warn("Reactive processing failed, falling back to synchronous: {}",
-                                        e.getMessage(), e);
+                if (reativeIndexing) {
+                        try {
+                                getChildrenFromJsonReactive(nodePath, jsonObject,
+                                                turAemSourceContext, turConnectorSession,
+                                                turAemSource, standalone).block();
+                        } catch (Exception e) {
+                                log.warn("Reactive processing failed, falling back to synchronous: {}",
+                                                e.getMessage(), e);
+                        }
+                } else {
+                        getChildrenFromJsonSynchronous(nodePath, jsonObject, turAemSourceContext,
+                                        turConnectorSession, turAemSource, standalone);
                 }
+
+
+
         }
+
+        private void getChildrenFromJsonSynchronous(String nodePath, JSONObject jsonObject,
+                        TurAemSourceContext turAemSourceContext,
+                        TurConnectorSession turConnectorSession, TurAemSource turAemSource,
+                        boolean standalone) {
+                jsonObject.toMap().forEach((nodeName, nodeValue) -> {
+                        if (isIndexedNode(turAemSourceContext, nodeName)) {
+                                String nodePathChild = "%s/%s".formatted(nodePath, nodeName);
+                                if (!isOnce(turAemSourceContext)
+                                                || TurAemCommonsUtils.isNotOnceConfig(nodePathChild,
+                                                                new AemPluginHandlerConfiguration(
+                                                                                turAemSource))) {
+                                        TurAemCommonsUtils
+                                                        .getInfinityJson(nodePathChild,
+                                                                        turAemSourceContext, false)
+                                                        .ifPresent(infinityJson -> getNodeFromJson(
+                                                                        nodePathChild, infinityJson,
+                                                                        turAemSourceContext,
+                                                                        turConnectorSession,
+                                                                        turAemSource, standalone,
+                                                                        true));
+                                }
+                        }
+                });
+        }
+
 
         private static boolean isIndexedNode(TurAemSourceContext turAemSourceContext,
                         String nodeName) {

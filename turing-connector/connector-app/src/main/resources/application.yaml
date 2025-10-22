@@ -9,6 +9,7 @@ turing:
     cron: "-"
     cron.zone: UTC
     dependencies.enabled: false
+    reactive.indexing: false
   scheduler:
     enabled: false
   solr:
