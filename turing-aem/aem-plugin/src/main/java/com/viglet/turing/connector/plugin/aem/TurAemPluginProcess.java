@@ -165,10 +165,12 @@ public class TurAemPluginProcess {
         @Async
         public void sentToIndexStandaloneAsync(@NotNull String source,
                         @NotNull TurAemPathList turAemPathList) {
-                sentToIndexStandalone(source, turAemPathList.getPaths());
+                sentToIndexStandalone(source, turAemPathList.getPaths(),
+                                Boolean.TRUE.equals(turAemPathList.getRecursive()));
         }
 
-        public void sentToIndexStandalone(@NotNull String source, @NotNull List<String> idList) {
+        public void sentToIndexStandalone(@NotNull String source, @NotNull List<String> idList,
+                        boolean indexChildren) {
                 if (CollectionUtils.isEmpty(idList)) {
                         log.warn("Received empty payload for source: {}", source);
                         return;
@@ -179,7 +181,7 @@ public class TurAemPluginProcess {
                         // Index each provided path
                         idList.stream().filter(StringUtils::isNotBlank)
                                         .forEach(path -> indexContentId(session, turAemSource, path,
-                                                        true, true));
+                                                        true, indexChildren));
                         if (connectorDependencies) {
                                 indexDependencies(source, idList, turAemSource, session);
                         }
