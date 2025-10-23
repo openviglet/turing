@@ -103,35 +103,59 @@ public class TurAemObject {
             return;
         }
 
-        if (TurAemEvent.PUBLISHING.equals(event)) {
-            log.info("Overriding publishing status for path", this.path);
-        } else if (TurAemEvent.UNPUBLISHING.equals(event)) {
-            log.info("Overriding unpublishing status for path: {}", this.path);
-        }
         this.jcrContentNode = jcrNode.getJSONObject(JCR_CONTENT);
+
+        handleEventOverrides(event);
+        extractBasicProperties();
+        extractDataFolder();
+        extractDates();
+    }
+
+    private void handleEventOverrides(TurAemEvent event) {
+        if (event != null) {
+            switch (event) {
+                case PUBLISHING -> {
+                    log.info("Overriding publishing status for path: {}", this.path);
+                    this.delivered = true;
+                }
+                case UNPUBLISHING -> {
+                    log.info("Overriding unpublishing status for path: {}", this.path);
+                    this.delivered = false;
+                }
+                default -> this.delivered = getJcrDelivered();
+            }
+        } else {
+            this.delivered = getJcrDelivered();
+        }
+    }
+
+    private void extractBasicProperties() {
         this.template = getJcrTemplate();
         this.title = getJcrTitle();
         this.contentFragment = isJcrContentFragment();
-        this.delivered = event != null ? switch (event) {
-            case PUBLISHING -> true;
-            case UNPUBLISHING -> false;
-            default -> getJcrDelivered();
-        } : getJcrDelivered();
+    }
 
+    private void extractDataFolder() {
         getDataFolder(this.jcrContentNode);
-        try {
-            this.lastModified = getJcrLastModified();
-        } catch (ParseException e) {
-            log.error("Failed to parse last modified date for path: {}", this.path, e);
-            this.lastModified = null;
-        }
+    }
 
+    private void extractDates() {
+        this.lastModified = parseDate(this::getJcrLastModified, "last modified");
+        this.publicationDate = parseDate(this::getJcrPublicationDate, "publication");
+    }
+
+    private Calendar parseDate(DateParser parser, String dateType) {
         try {
-            this.publicationDate = getJcrPublicationDate();
+            return parser.parse();
         } catch (ParseException e) {
-            log.error("Failed to parse publication date for path: {}", this.path, e);
-            this.publicationDate = null;
+            log.error("Failed to parse {} date for path: {}", dateType, this.path, e);
+            return null;
         }
+    }
+
+    @FunctionalInterface
+    private interface DateParser {
+        Calendar parse() throws ParseException;
     }
 
     private boolean isJcrContentFragment() {
