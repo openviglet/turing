@@ -112,11 +112,12 @@ public class TurAemObject {
         this.template = getJcrTemplate();
         this.title = getJcrTitle();
         this.contentFragment = isJcrContentFragment();
-        this.delivered = switch (event) {
+        this.delivered = event != null ? switch (event) {
             case PUBLISHING -> true;
             case UNPUBLISHING -> false;
             default -> getJcrDelivered();
-        };
+        } : getJcrDelivered();
+
         getDataFolder(this.jcrContentNode);
         try {
             this.lastModified = getJcrLastModified();
