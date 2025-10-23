@@ -73,6 +73,11 @@ public class TurAemObject {
     public final SimpleDateFormat aemJsonDateFormat =
             new SimpleDateFormat(DATE_JSON_FORMAT, Locale.ENGLISH);
 
+
+    public TurAemObject(String nodePath, JSONObject jcrNode) {
+        this(nodePath, jcrNode, TurAemEvent.NONE);
+    }
+
     public TurAemObject(String nodePath, JSONObject jcrNode, TurAemEvent event) {
         this.jcrNode = jcrNode;
         this.path = nodePath;
