@@ -24,6 +24,7 @@ import static com.viglet.turing.connector.aem.commons.TurAemConstants.ONCE;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.SLING;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.TEXT;
 import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
+
 import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
@@ -42,6 +43,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -53,6 +55,7 @@ import org.apache.hc.core5.http.message.BasicHeader;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -77,13 +80,14 @@ import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDateInterface;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentDefinitionProcess;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentMapping;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurAemCommonsUtils {
 
-    private static final Cache<String, Optional<String>> responseBodyCache =
-            Caffeine.newBuilder().maximumSize(1000).expireAfterWrite(Duration.ofMinutes(5)).build();
+    private static final Cache<String, Optional<String>> responseBodyCache = Caffeine.newBuilder().maximumSize(1000)
+            .expireAfterWrite(Duration.ofMinutes(5)).build();
 
     private TurAemCommonsUtils() {
         throw new IllegalStateException("Utility class");
@@ -219,7 +223,7 @@ public class TurAemCommonsUtils {
     }
 
     public static boolean checkIfFileHasNotImageExtension(String s) {
-        String[] imageExtensions = {".jpg", ".png", ".jpeg", ".svg", ".webp"};
+        String[] imageExtensions = { ".jpg", ".png", ".jpeg", ".svg", ".webp" };
         return Arrays.stream(imageExtensions).noneMatch(suffix -> s.toLowerCase().endsWith(suffix));
     }
 
@@ -374,9 +378,9 @@ public class TurAemCommonsUtils {
     public static @NotNull Optional<String> fetchResponseBodyCached(String url,
             TurAemSourceContext turAemSourceContext) {
         if (responseBodyCache.asMap().containsKey(url))
-            log.info("Using Cache to request {}", url);
+            log.debug("Using Cache to request {}", url);
         else
-            log.info("Creating Cache to request {}", url);
+            log.debug("Creating Cache to request {}", url);
         String cacheKey = url;
         return responseBodyCache.get(cacheKey,
                 k -> fetchResponseBodyWithoutCache(url, turAemSourceContext));
