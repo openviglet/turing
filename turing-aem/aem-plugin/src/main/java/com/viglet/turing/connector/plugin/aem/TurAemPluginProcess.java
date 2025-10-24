@@ -37,6 +37,7 @@ import static com.viglet.turing.connector.aem.commons.TurAemConstants.STATIC_FIL
 import static com.viglet.turing.connector.aem.commons.bean.TurAemEnv.AUTHOR;
 import static com.viglet.turing.connector.aem.commons.bean.TurAemEnv.PUBLISHING;
 import static com.viglet.turing.connector.commons.logging.TurConnectorLoggingUtils.setSuccessStatus;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +57,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
@@ -84,6 +87,7 @@ import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourc
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
 import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemTargetAttributeRepository;
 import com.viglet.turing.connector.plugin.aem.service.TurAemReactiveUtils;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
@@ -136,8 +140,7 @@ public class TurAemPluginProcess {
                 this.turAemSourceLocalePathRepository = turAemSourceLocalePathRepository;
                 this.turAemPluginModelRepository = turAemPluginModelRepository;
                 this.turAemSourceRepository = turAemSourceRepository;
-                this.turAemAttributeSpecificationRepository =
-                                turAemAttributeSpecificationRepository;
+                this.turAemAttributeSpecificationRepository = turAemAttributeSpecificationRepository;
                 this.turAemTargetAttributeRepository = turAemTargetAttributeRepository;
                 this.turConnectorContext = turConnectorContext;
                 this.turingUrl = turingUrl;
@@ -287,13 +290,12 @@ public class TurAemPluginProcess {
                                                         TurAemPluginUtils.getObjectDetailForLogs(
                                                                         contentId, indexing,
                                                                         session));
-                                        TurJobItemWithSession turJobItemWithSession =
-                                                        new TurJobItemWithSession(
-                                                                        deIndexJob(session,
-                                                                                        indexing),
-                                                                        session,
-                                                                        Collections.emptySet(),
-                                                                        standalone);
+                                        TurJobItemWithSession turJobItemWithSession = new TurJobItemWithSession(
+                                                        deIndexJob(session,
+                                                                        indexing),
+                                                        session,
+                                                        Collections.emptySet(),
+                                                        standalone);
                                         turConnectorContext.addJobItem(turJobItemWithSession);
                                 });
         }
@@ -383,8 +385,6 @@ public class TurAemPluginProcess {
                                         turConnectorSession, turAemSource, standalone);
                 }
 
-
-
         }
 
         private void getChildrenFromJsonSynchronous(String nodePath, JSONObject jsonObject,
@@ -412,7 +412,6 @@ public class TurAemPluginProcess {
                 });
         }
 
-
         private static boolean isIndexedNode(TurAemSourceContext turAemSourceContext,
                         String nodeName) {
                 return !nodeName.startsWith(JCR) && !nodeName.startsWith(REP)
@@ -436,6 +435,12 @@ public class TurAemPluginProcess {
                         TurAemSourceContext turAemSourceContext,
                         TurConnectorSession turConnectorSession, TurAemSource turAemSource,
                         boolean standalone) {
+                if (turAemSourceContext.getRootPath() != null
+                                && !aemObject.getPath().startsWith(turAemSourceContext.getRootPath())) {
+                        log.debug("Skipping object {} as it is outside the root path {}",
+                                        aemObject.getPath(), turAemSourceContext.getRootPath());
+                        return;
+                }
                 String type = Objects.requireNonNull(turAemSourceContext.getContentType());
                 if (isNotValidType(turAemModel, aemObject, type)) {
                         return;
@@ -492,7 +497,8 @@ public class TurAemPluginProcess {
                         indexByEnvironment(AUTHOR, turAemSource.getAuthorSNSite(), aemObject,
                                         turAemModel, turSNAttributeSpecList, turAemSourceContext,
                                         turAemSource, session, standalone);
-                } ;
+                }
+                ;
         }
 
         private void indexingPublish(TurAemObject aemObject, TurAemModel turAemModel,
@@ -522,11 +528,10 @@ public class TurAemPluginProcess {
 
         private void forcingDeIndex(TurAemObject aemObject, TurAemSourceContext turAemSourceContext,
                         TurConnectorSession session, TurAemSource turAemSource) {
-                TurSNJobItem deIndexJobItem =
-                                deIndexJob(session, List.of(turAemSource.getPublishSNSite()),
-                                                TurAemCommonsUtils.getLocaleFromAemObject(
-                                                                turAemSourceContext, aemObject),
-                                                aemObject.getPath(), PUBLISHING.toString());
+                TurSNJobItem deIndexJobItem = deIndexJob(session, List.of(turAemSource.getPublishSNSite()),
+                                TurAemCommonsUtils.getLocaleFromAemObject(
+                                                turAemSourceContext, aemObject),
+                                aemObject.getPath(), PUBLISHING.toString());
                 TurJobItemWithSession turJobItemWithSession = new TurJobItemWithSession(
                                 deIndexJobItem, session, aemObject.getDependencies(), true);
                 turConnectorContext.addJobItem(turJobItemWithSession);
@@ -539,8 +544,7 @@ public class TurAemPluginProcess {
                         List<TurSNAttributeSpec> turSNAttributeSpecList,
                         TurAemSourceContext originalTurAemSourceContext, TurAemSource turAemSource,
                         TurConnectorSession session, boolean standalone) {
-                TurAemSourceContext turAemSourceContext =
-                                new TurAemSourceContext(originalTurAemSourceContext);
+                TurAemSourceContext turAemSourceContext = new TurAemSourceContext(originalTurAemSourceContext);
                 turAemSourceContext.setEnvironment(turAemEnv);
                 turAemSourceContext.setTurSNSite(snSite);
                 session.setSites(Collections.singletonList(snSite));
@@ -648,8 +652,7 @@ public class TurAemPluginProcess {
                                 .filter(entry -> isIndexedNode(turAemSourceContext, entry.getKey()))
                                 .flatMap(entry -> {
                                         String nodeName = entry.getKey();
-                                        String nodePathChild =
-                                                        "%s/%s".formatted(nodePath, nodeName);
+                                        String nodePathChild = "%s/%s".formatted(nodePath, nodeName);
 
                                         if (!isOnce(turAemSourceContext) || TurAemCommonsUtils
                                                         .isNotOnceConfig(nodePathChild,
