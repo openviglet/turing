@@ -15,20 +15,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {environment} from '../../../../../environments/environment';
-import {TurSNSite} from '../model/sn-site.model';
-import {TurSNSiteField} from '../model/sn-site-field.model';
-import {map} from 'rxjs/operators';
-import {TurSNSiteStatus} from '../model/sn-site-monitoring.model';
-import {TurSNStatusFields} from "../model/sn-field-status.model";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
+import { TurSNStatusFields } from '../model/sn-field-status.model';
+import { TurSNSiteField } from '../model/sn-site-field.model';
+import { TurSNSiteStatus } from '../model/sn-site-monitoring.model';
+import { TurSNSite } from '../model/sn-site.model';
 
 @Injectable()
 export class TurSNSiteService {
-  constructor(private httpClient: HttpClient) {
-  }
+  constructor(private httpClient: HttpClient) {}
 
   query(): Observable<TurSNSite[]> {
     return this.httpClient.get<TurSNSite[]>(`${environment.apiUrl}/api/sn`);
@@ -39,69 +38,110 @@ export class TurSNSiteService {
   }
 
   getStructure(): Observable<TurSNSite> {
-    return this.httpClient.get<TurSNSite>(`${environment.apiUrl}/api/sn/structure`);
+    return this.httpClient.get<TurSNSite>(
+      `${environment.apiUrl}/api/sn/structure`,
+    );
   }
 
   getFields(id: string): Observable<TurSNSiteField[]> {
-    return this.httpClient.get<TurSNSiteField[]>(`${environment.apiUrl}/api/sn/${id}/field/ext`);
+    return this.httpClient.get<TurSNSiteField[]>(
+      `${environment.apiUrl}/api/sn/${id}/field/ext`,
+    );
   }
   getFacetedFields(id: string): Observable<TurSNSiteField[]> {
-    return this.httpClient.get<TurSNSiteField[]>(`${environment.apiUrl}/api/sn/${id}/facet`);
+    return this.httpClient.get<TurSNSiteField[]>(
+      `${environment.apiUrl}/api/sn/${id}/facet`,
+    );
   }
 
-  public saveFacetOrderingList(id: string, turSNSiteFields: TurSNSiteField[]): Observable<TurSNSiteField[]> {
-      return this.httpClient.put<TurSNSiteField[]>(`${environment.apiUrl}/api/sn/${id}/facet/ordering`,
-        JSON.stringify(turSNSiteFields));
+  public saveFacetOrderingList(
+    id: string,
+    turSNSiteFields: TurSNSiteField[],
+  ): Observable<TurSNSiteField[]> {
+    return this.httpClient.put<TurSNSiteField[]>(
+      `${environment.apiUrl}/api/sn/${id}/facet/ordering`,
+      JSON.stringify(turSNSiteFields),
+    );
   }
 
   getStatusFields(id: string): Observable<TurSNStatusFields> {
-    return this.httpClient.get<TurSNStatusFields>(`${environment.apiUrl}/api/sn/${id}/field/check`);
+    return this.httpClient.get<TurSNStatusFields>(
+      `${environment.apiUrl}/api/sn/${id}/field/check`,
+    );
   }
 
   getField(id: string, fieldId: string): Observable<TurSNSiteField> {
-    return this.httpClient.get<TurSNSiteField>(`${environment.apiUrl}/api/sn/${id}/field/ext/${fieldId}`);
+    return this.httpClient.get<TurSNSiteField>(
+      `${environment.apiUrl}/api/sn/${id}/field/ext/${fieldId}`,
+    );
   }
 
   getFieldStructure(id: string): Observable<TurSNSiteField> {
-    return this.httpClient.get<TurSNSiteField>(`${environment.apiUrl}/api/sn/${id}/field/ext/structure`);
+    return this.httpClient.get<TurSNSiteField>(
+      `${environment.apiUrl}/api/sn/${id}/field/ext/structure`,
+    );
   }
 
   getStatus(id: string): Observable<TurSNSiteStatus> {
-    return this.httpClient.get<TurSNSiteStatus>(`${environment.apiUrl}/api/sn/${id}/monitoring`);
+    return this.httpClient.get<TurSNSiteStatus>(
+      `${environment.apiUrl}/api/sn/${id}/monitoring`,
+    );
   }
 
   getFieldsByType(id: string, type: string): Observable<TurSNSiteField[]> {
-    return this.httpClient.get<TurSNSiteField[]>(`${environment.apiUrl}/api/sn/${id}/field/ext`).pipe(map(items =>
-      items.filter(item => item.snType.toLowerCase() === type)));
+    return this.httpClient
+      .get<TurSNSiteField[]>(`${environment.apiUrl}/api/sn/${id}/field/ext`)
+      .pipe(
+        map((items) =>
+          items.filter((item) => item.snType.toLowerCase() === type),
+        ),
+      );
   }
 
   public save(turSNSite: TurSNSite, newObject: boolean): Observable<TurSNSite> {
     if (newObject) {
-      return this.httpClient.post<TurSNSite>(`${environment.apiUrl}/api/sn`,
-        JSON.stringify(turSNSite));
+      return this.httpClient.post<TurSNSite>(
+        `${environment.apiUrl}/api/sn`,
+        JSON.stringify(turSNSite),
+      );
     } else {
-      return this.httpClient.put<TurSNSite>(`${environment.apiUrl}/api/sn/${turSNSite.id}`,
-        JSON.stringify(turSNSite));
+      return this.httpClient.put<TurSNSite>(
+        `${environment.apiUrl}/api/sn/${turSNSite.id}`,
+        JSON.stringify(turSNSite),
+      );
     }
   }
 
   public delete(turSNSite: TurSNSite): Observable<TurSNSite> {
-    return this.httpClient.delete<TurSNSite>(`${environment.apiUrl}/api/sn/${turSNSite.id}`);
-
+    return this.httpClient.delete<TurSNSite>(
+      `${environment.apiUrl}/api/sn/${turSNSite.id}`,
+    );
   }
 
-  public saveField(siteId: string, turSNSiteField: TurSNSiteField, newObject: boolean): Observable<TurSNSiteField> {
+  public saveField(
+    siteId: string,
+    turSNSiteField: TurSNSiteField,
+    newObject: boolean,
+  ): Observable<TurSNSiteField> {
     if (newObject) {
-      return this.httpClient.post<TurSNSiteField>(`${environment.apiUrl}/api/sn/${siteId}/field/ext`,
-        JSON.stringify(turSNSiteField));
+      return this.httpClient.post<TurSNSiteField>(
+        `${environment.apiUrl}/api/sn/${siteId}/field/ext`,
+        JSON.stringify(turSNSiteField),
+      );
     } else {
-      return this.httpClient.put<TurSNSiteField>(`${environment.apiUrl}/api/sn/${siteId}/field/ext/${turSNSiteField.id}`,
-        JSON.stringify(turSNSiteField));
+      return this.httpClient.put<TurSNSiteField>(
+        `${environment.apiUrl}/api/sn/${siteId}/field/ext/${turSNSiteField.id}`,
+        JSON.stringify(turSNSiteField),
+      );
     }
   }
 
-  public deleteField(siteId: string, turSNSiteField: TurSNSiteField): Observable<TurSNSiteField> {
-    return this.httpClient.delete<TurSNSiteField>(`${environment.apiUrl}/api/sn/${siteId}/field/ext/${turSNSiteField.id}`);
-
+  public deleteField(
+    siteId: string,
+    turSNSiteField: TurSNSiteField,
+  ): Observable<TurSNSiteField> {
+    return this.httpClient.delete<TurSNSiteField>(
+      `${environment.apiUrl}/api/sn/${siteId}/field/ext/${turSNSiteField.id}`,
+    );
   }
 }
