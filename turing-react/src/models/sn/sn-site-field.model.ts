@@ -13,7 +13,7 @@ export type TurSNSiteField = {
   facet: number;
   facetName: string;
   facetRange: TurSNSiteFacetRangeTypes;
-  facetLocales: TurSNSiteFieldFacet[]
+  facetLocales: TurSNSiteFieldFacet[];
   facetType: TurSNSiteFacetFieldTypes;
   facetItemType: TurSNSiteFacetFieldTypes;
   facetSort: TurSNSiteFacetFieldSortTypes;
@@ -26,4 +26,4 @@ export type TurSNSiteField = {
   snType: string;
   type: string;
   hl: number;
-}
+};

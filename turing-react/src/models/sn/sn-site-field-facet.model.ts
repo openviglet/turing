@@ -1,5 +1,5 @@
-export class TurSNSiteFieldFacet {
-  id?: string;
-  locale?: string;
-  label?: string;
-}
+export type TurSNSiteFieldFacet = {
+  id: string;
+  locale: string;
+  label: string;
+};

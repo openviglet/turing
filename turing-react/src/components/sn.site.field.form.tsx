@@ -35,6 +35,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { DynamicLanguageFields } from "./dynamic-field"
 import { SubPageHeader } from "./sub.page.header"
 import { Switch } from "./ui/switch"
 const turSNSiteService = new TurSNSiteService();
@@ -47,7 +48,7 @@ interface Props {
 
 export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) => {
   const form = useForm<TurSNSiteField>();
-  const { setValue } = form;
+  const { control, register, setValue } = form;
   const [snFieldTypes, setSnFieldTypes] = useState<TurSNFieldType[]>([]);
   const urlBase = `/admin/sn/instance/${snSiteId}/field`;
   const navigate = useNavigate()
@@ -88,6 +89,8 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
     setValue("facetItemType", snField.facetItemType);
     setValue("facetRange", snField.facetRange);
     setValue("facetName", snField.facetName);
+    setValue("facetLocales", snField.facetLocales);
+
 
   }, [setValue, snField]);
 
@@ -449,6 +452,16 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
             </FormItem>
           )}
         />
+        <FormItem>
+          <FormLabel>Facet Multi Languages</FormLabel>
+          <FormControl>
+            <DynamicLanguageFields
+              fieldName="locales"
+              control={control}
+              register={register}
+            />
+          </FormControl>
+        </FormItem>
         <Button type="submit">Save</Button>
       </form>
     </Form>
