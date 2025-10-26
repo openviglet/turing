@@ -53,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/v2/sn/{siteName}/search")
-@Tag(name = "Semantic Navigation Search", description = "Semantic Navigation Search API")
+@Tag(name = "Semantic Navigation Search Version 2", description = "Semantic Navigation Search API Version 2")
 public class TurSNSiteSearchV2API {
         private final TurSNSiteSearchService turSNSiteSearchService;
         private final TurSNSearchProcess turSNSearchProcess;
@@ -69,7 +69,7 @@ public class TurSNSiteSearchV2API {
                 this.turSNSiteRepository = turSNSiteRepository;
         }
 
-        @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value = "list", produces = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<List<Object>> turSNSiteSearchSelectListGet(
                         @PathVariable String siteName,
                         @ModelAttribute TurSNSearchParams turSNSearchParams,
@@ -126,7 +126,7 @@ public class TurSNSiteSearchV2API {
                 return turSNSiteRepository.findByName(siteName).map(turSNSite -> {
                         try {
                                 return turSNSearchProcess.responseLocales(turSNSite, new URI(
-                                                String.format("/api/sn/%s/search", siteName)));
+                                                String.format("/api/v2/sn/%s/search", siteName)));
                         } catch (URISyntaxException e) {
                                 log.error(e.getMessage(), e);
                         }

@@ -69,7 +69,7 @@ public class TurSNSiteSearchAPI {
                 this.turSNSiteRepository = turSNSiteRepository;
         }
 
-        @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value = "list", produces = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<List<Object>> turSNSiteSearchSelectListGet(
                         @PathVariable String siteName,
                         @ModelAttribute TurSNSearchParams turSNSearchParams,
