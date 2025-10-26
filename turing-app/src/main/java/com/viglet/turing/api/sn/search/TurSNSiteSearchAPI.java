@@ -94,10 +94,10 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqOperator,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
-                        @RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
                         HttpServletRequest request) {
                 setSearchParams(turSNSearchParams, filterQueriesDefault, filterQueriesAnd, filterQueriesOr,
-                                fqOperator, fqItemOperator, convertToLocale(localeRequest));
+                                fqOperator, fqItemOperator, locale);
                 if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, turSNSearchParams.getLocale())) {
                         return notFoundResponse();
                 }
@@ -130,10 +130,10 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqOperator,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
-                        @RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
                         HttpServletRequest request) {
                 setSearchParams(turSNSearchParams, filterQueriesDefault, filterQueriesAnd,
-                                filterQueriesOr, fqOperator, fqItemOperator, convertToLocale(localeRequest));
+                                filterQueriesOr, fqOperator, fqItemOperator, locale);
                 if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, turSNSearchParams.getLocale())) {
                         return notFoundResponse();
                 }
@@ -157,12 +157,18 @@ public class TurSNSiteSearchAPI {
                         List<String> filterQueriesAnd, List<String> filterQueriesOr,
                         TurSNFilterQueryOperator fqOperator, TurSNFilterQueryOperator fqItemOperator,
                         Locale locale) {
-                turSNSearchParams.setFq(filterQueriesDefault);
-                turSNSearchParams.setFqAnd(filterQueriesAnd);
-                turSNSearchParams.setFqOr(filterQueriesOr);
-                turSNSearchParams.setFqOp(fqOperator);
-                turSNSearchParams.setFqiOp(fqItemOperator);
-                turSNSearchParams.setLocale(locale);
+                if (filterQueriesDefault != null)
+                        turSNSearchParams.setFq(filterQueriesDefault);
+                if (filterQueriesAnd != null)
+                        turSNSearchParams.setFqAnd(filterQueriesAnd);
+                if (filterQueriesOr != null)
+                        turSNSearchParams.setFqOr(filterQueriesOr);
+                if (fqOperator != null)
+                        turSNSearchParams.setFqOp(fqOperator);
+                if (fqItemOperator != null)
+                        turSNSearchParams.setFqiOp(fqItemOperator);
+                if (locale != null)
+                        turSNSearchParams.setLocale(locale);
         }
 
         private <T> ResponseEntity<T> notFoundResponse() {
@@ -192,7 +198,7 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> filterQueriesOr,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqOperator,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
-                        @RequestParam(required = false, name = TurSNParamType.LOCALE) String localeRequest,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
                         @RequestBody TurSNSitePostParamsBean turSNSitePostParamsBean,
                         Principal principal,
                         HttpServletRequest request) {
@@ -201,7 +207,7 @@ public class TurSNSiteSearchAPI {
                 }
                 setSearchParams(turSNSearchParams, filterQueriesDefault, filterQueriesAnd,
                                 filterQueriesOr, fqOperator, fqItemOperator,
-                                determineLocale(turSNSitePostParamsBean, localeRequest));
+                                determineLocale(turSNSitePostParamsBean, locale));
                 if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, turSNSearchParams.getLocale())) {
                         return notFoundResponse();
                 }
@@ -212,11 +218,10 @@ public class TurSNSiteSearchAPI {
                                 .orElse(notFoundResponse());
         }
 
-        private Locale determineLocale(TurSNSitePostParamsBean turSNSitePostParamsBean, String localeRequest) {
-                String localeStr = StringUtils.isNotBlank(turSNSitePostParamsBean.getLocale())
-                                ? turSNSitePostParamsBean.getLocale()
-                                : localeRequest;
-                return convertToLocale(localeStr);
+        private Locale determineLocale(TurSNSitePostParamsBean turSNSitePostParamsBean, Locale locale) {
+                return StringUtils.isNotBlank(turSNSitePostParamsBean.getLocale())
+                                ? convertToLocale(turSNSitePostParamsBean.getLocale())
+                                : locale;
         }
 
         private ResponseEntity<TurSNSiteSearchBean> executePostSearch(
