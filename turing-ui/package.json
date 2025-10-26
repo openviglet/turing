@@ -40,7 +40,7 @@
     "turing-ui": "file:"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.6",
+    "@angular/build": "^20.3.7",
     "@angular/cli": "20.3.6",
     "@angular/compiler-cli": "20.3.6",
     "@angular/language-service": "20.3.6",
