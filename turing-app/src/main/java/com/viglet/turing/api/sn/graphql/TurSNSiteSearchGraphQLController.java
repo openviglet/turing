@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 the original author or authors.
+ * Copyright (C) 2016-2025 the original author or authors.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for additional information regarding
@@ -17,8 +17,6 @@
 
 package com.viglet.turing.api.sn.graphql;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Locale;
 
 import org.apache.commons.lang3.LocaleUtils;
@@ -43,14 +41,13 @@ import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.TurSNUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * GraphQL Controller for Semantic Navigation Search API.
  * 
  * @author Alexandre Oliveira
- * @since 0.3.6
+ * @since 2025.03
  */
 @Slf4j
 @Controller
@@ -73,20 +70,21 @@ public class TurSNSiteSearchGraphQLController {
             @Argument TurSNSearchParamsInput searchParams,
             @Argument String locale) {
 
-        log.debug("GraphQL siteSearch called with siteName: {}, params: {}, locale: {}", 
-                  siteName, searchParams, locale);
+        log.debug("GraphQL siteSearch called with siteName: {}, params: {}, locale: {}",
+                siteName, searchParams, locale);
 
         // Convert GraphQL input to internal search params
         TurSNSearchParams turSNSearchParams = convertToTurSNSearchParams(searchParams, locale);
-        
+
         // Get locale, prioritizing the direct locale parameter over searchParams locale
-        String localeToUse = StringUtils.isNotBlank(locale) ? locale : turSNSearchParams.getLocale();
+        String localeToUse = StringUtils.isNotBlank(locale) ? locale
+                : (turSNSearchParams.getLocale() != null ? turSNSearchParams.getLocale().toString() : null);
         if (StringUtils.isBlank(localeToUse)) {
             localeToUse = "en"; // Default locale
         }
-        
+
         Locale localeObj = LocaleUtils.toLocale(localeToUse);
-        
+
         // Check if site exists and has the specified language
         if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, localeObj)) {
             log.warn("Site {} with locale {} not found or not supported", siteName, localeToUse);
@@ -96,9 +94,9 @@ public class TurSNSiteSearchGraphQLController {
         return turSNSiteRepository.findByName(siteName)
                 .map(site -> {
                     // Get the current HTTP request to create proper search context
-                    ServletRequestAttributes requestAttributes = 
-                            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-                    
+                    ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+                            .getRequestAttributes();
+
                     HttpServletRequest request;
                     if (requestAttributes != null) {
                         request = requestAttributes.getRequest();
@@ -106,10 +104,10 @@ public class TurSNSiteSearchGraphQLController {
                         // Create a mock request for GraphQL context
                         request = createMockRequestForGraphQL(siteName, turSNSearchParams);
                     }
-                    
+
                     TurSNSiteSearchContext turSNSiteSearchContext = getTurSNSiteSearchContext(
-                            siteName, turSNSearchParams, request, localeObj, site);
-                    
+                            siteName, turSNSearchParams, request, site);
+
                     return turSNSearchProcess.search(turSNSiteSearchContext);
                 })
                 .orElse(new TurSNSiteSearchBean());
@@ -117,7 +115,7 @@ public class TurSNSiteSearchGraphQLController {
 
     private TurSNSearchParams convertToTurSNSearchParams(TurSNSearchParamsInput input, String locale) {
         TurSNSearchParams params = new TurSNSearchParams();
-        
+
         if (input != null) {
             params.setQ(StringUtils.defaultIfBlank(input.getQ(), "*"));
             params.setP(input.getP() != null ? input.getP() : 1);
@@ -129,7 +127,7 @@ public class TurSNSiteSearchGraphQLController {
             params.setFqAnd(input.getFqAnd());
             params.setFqOr(input.getFqOr());
             params.setFl(input.getFl());
-            
+
             // Convert String operators to enum values
             if (StringUtils.isNotBlank(input.getFqOp())) {
                 try {
@@ -138,7 +136,7 @@ public class TurSNSiteSearchGraphQLController {
                     params.setFqOp(TurSNFilterQueryOperator.NONE);
                 }
             }
-            
+
             if (StringUtils.isNotBlank(input.getFqiOp())) {
                 try {
                     params.setFqiOp(TurSNFilterQueryOperator.valueOf(input.getFqiOp().toUpperCase()));
@@ -146,12 +144,12 @@ public class TurSNSiteSearchGraphQLController {
                     params.setFqiOp(TurSNFilterQueryOperator.NONE);
                 }
             }
-            
+
             // Set locale from input if available, otherwise use the direct locale parameter
             String inputLocale = StringUtils.isNotBlank(input.getLocale()) ? input.getLocale() : locale;
-            params.setLocale(inputLocale);
+            params.setLocale(LocaleUtils.toLocale(inputLocale));
         }
-        
+
         return params;
     }
 
@@ -162,7 +160,7 @@ public class TurSNSiteSearchGraphQLController {
         mockRequest.setContextPath("/");
         mockRequest.setServerName("localhost");
         mockRequest.setServerPort(2700);
-        
+
         // Add search parameters as query parameters for URI construction
         if (params != null) {
             if (StringUtils.isNotBlank(params.getQ())) {
@@ -177,21 +175,20 @@ public class TurSNSiteSearchGraphQLController {
             if (StringUtils.isNotBlank(params.getSort())) {
                 mockRequest.addParameter("sort", params.getSort());
             }
-            if (StringUtils.isNotBlank(params.getLocale())) {
-                mockRequest.addParameter("locale", params.getLocale());
+            if (params.getLocale() != null) {
+                mockRequest.addParameter("locale", params.getLocale().toString());
             }
         }
-        
+
         return mockRequest;
     }
 
     private TurSNSiteSearchContext getTurSNSiteSearchContext(String siteName,
-            TurSNSearchParams turSNSearchParams, HttpServletRequest request, 
-            Locale locale, TurSNSite site) {
-        
+            TurSNSearchParams turSNSearchParams, HttpServletRequest request, TurSNSite site) {
+
         TurSNConfig turSNConfig = getTurSNConfig(site);
         return TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName,
-                turSNSearchParams, request, locale);
+                turSNSearchParams, request);
     }
 
     private TurSNConfig getTurSNConfig(TurSNSite turSNSite) {

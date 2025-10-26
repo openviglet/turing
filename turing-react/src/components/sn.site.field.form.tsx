@@ -66,7 +66,7 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
   const facetSorts = [
     { value: "DEFAULT", name: "Default" },
     { value: "ALPHABETICAL", name: "Alphabetical" },
-    { valor: "COUNT", name: "Count" }
+    { value: "COUNT", name: "Count" }
   ];
   useEffect(() => {
     turSNFieldTypeService.query().then(setSnFieldTypes)
@@ -456,7 +456,7 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
           <FormLabel>Facet Multi Languages</FormLabel>
           <FormControl>
             <DynamicLanguageFields
-              fieldName="locales"
+              fieldName="facetLocales"
               control={control}
               register={register}
             />

@@ -21,10 +21,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import org.apache.commons.lang3.LocaleUtils;
+
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
 import com.viglet.turing.api.sn.search.TurSNSiteSearchCachedAPI;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
@@ -36,6 +37,7 @@ import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -70,9 +72,7 @@ public class TurSNAutoComplete {
         return Optional
                 .ofNullable(turSNSiteSearchCachedAPI.searchCached(
                         TurSNUtils.getCacheKey(siteName, request),
-                        TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName,
-                                turSNSearchParams, request,
-                                LocaleUtils.toLocale(turSNSearchParams.getLocale()))))
+                        TurSNUtils.getTurSNSiteSearchContext(turSNConfig, siteName, turSNSearchParams, request)))
                 .map(TurSNSiteSearchBean::getResults).map(TurSNSiteSearchResultsBean::getDocument)
                 .map(documents -> {
                     List<String> termList = new ArrayList<>();
@@ -99,8 +99,8 @@ public class TurSNAutoComplete {
                     numberOfWordsFromQuery++;
                 }
 
-                List<String> autoCompleteListFormatted =
-                        createFormattedList(turSEResults, instance, numberOfWordsFromQuery);
+                List<String> autoCompleteListFormatted = createFormattedList(turSEResults, instance,
+                        numberOfWordsFromQuery);
                 return autoCompleteListFormatted.stream().limit(rows >= 0 ? rows : 0).sorted()
                         .toList();
             }).orElse(Collections.emptyList());
@@ -126,13 +126,11 @@ public class TurSNAutoComplete {
         // if there are suggestions in the response.
         if (hasSuggestions(turSEResults)) {
             // autoCompleteList is the list of auto complete suggestions returned by Solr.
-            List<String> autoCompleteList =
-                    turSEResults.getSuggestions().getFirst().getAlternatives();
-            TurSNAutoCompleteListData autoCompleteListData =
-                    new TurSNAutoCompleteListData(turSEStopword.getStopWords(turSolrInstance));
+            List<String> autoCompleteList = turSEResults.getSuggestions().getFirst().getAlternatives();
+            TurSNAutoCompleteListData autoCompleteListData = new TurSNAutoCompleteListData(
+                    turSEStopword.getStopWords(turSolrInstance));
 
-            TurSNSuggestionFilter suggestionFilter =
-                    new TurSNSuggestionFilter(autoCompleteListData.getStopWords());
+            TurSNSuggestionFilter suggestionFilter = new TurSNSuggestionFilter(autoCompleteListData.getStopWords());
             suggestionFilter.automatonStrategyConfig(numberOfWordsFromQuery);
             autoCompleteListFormatted = suggestionFilter.filter(autoCompleteList);
         }
