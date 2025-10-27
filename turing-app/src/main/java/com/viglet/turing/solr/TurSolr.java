@@ -62,6 +62,7 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -159,12 +160,18 @@ public class TurSolr {
     private final TurSNRankingConditionRepository turSNRankingConditionRepository;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNFieldProcess turSNFieldProcess;
+    private final boolean isCommitEnabled;
+    private final int commitWithin;
 
-    public TurSolr(TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
+    public TurSolr(@Value("${turing.solr.commit.enabled:false}") boolean isCommitEnabled,
+            @Value("${turing.solr.commit.within:10000}") int commitWithin,
+            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
             TurSNTargetingRules turSNTargetingRules, TurSNSiteFieldUtils turSNSiteFieldUtils,
             TurSNRankingExpressionRepository turSNRankingExpressionRepository,
             TurSNRankingConditionRepository turSNRankingConditionRepository,
             TurSNSiteRepository turSNSiteRepository, TurSNFieldProcess turSNFieldProcess) {
+        this.isCommitEnabled = isCommitEnabled;
+        this.commitWithin = commitWithin;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNTargetingRules = turSNTargetingRules;
         this.turSNSiteFieldUtils = turSNSiteFieldUtils;
@@ -249,6 +256,7 @@ public class TurSolr {
             attr.forEach((key, value) -> processAttribute(turSNSiteFieldMap, document, key, value));
             addSolrDocument(turSolrInstance, document);
         });
+
     }
 
     private void processAttribute(Map<String, TurSNSiteField> turSNSiteFieldMap,
@@ -311,7 +319,10 @@ public class TurSolr {
 
     private void addSolrDocument(TurSolrInstance turSolrInstance, SolrInputDocument document) {
         try {
-            turSolrInstance.getSolrClient().add(document);
+            UpdateRequest updateRequest = new UpdateRequest();
+            updateRequest.add(document);
+            updateRequest.setCommitWithin(commitWithin);
+            updateRequest.process(turSolrInstance.getSolrClient());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -1560,11 +1571,11 @@ public class TurSolr {
     }
 
     public boolean commit(TurSolrInstance turSolrInstance) {
+        if (!isCommitEnabled) {
+            return true;
+        }
         try {
-            log.info("Commit Solr - {}", turSolrInstance.getSolrUrl());
-            UpdateRequest updateRequest = new UpdateRequest();
-            updateRequest.setCommitWithin(5000);
-            updateRequest.process(turSolrInstance.getSolrClient());
+            turSolrInstance.getSolrClient().commit();
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage());
         }

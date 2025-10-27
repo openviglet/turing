@@ -98,6 +98,9 @@ turing:
   solr:
     timeout: 30000
     cloud: false
+    commit:
+      within: 10000
+      enabled: false
   search:
     cache:
       ttl:
