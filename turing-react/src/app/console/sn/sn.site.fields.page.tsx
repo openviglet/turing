@@ -1,4 +1,3 @@
-import * as React from "react"
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -12,7 +11,9 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import * as React from "react"
 
+import { SubPageHeader } from "@/components/sub.page.header"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -24,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
 import {
   Table,
   TableBody,
@@ -32,12 +34,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { SubPageHeader } from "@/components/sub.page.header"
-import { IconAlignBoxCenterStretch, IconColumns3Filled } from "@tabler/icons-react"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts"
 import { TurSNSiteService } from "@/services/sn.service"
+import { IconAlignBoxCenterStretch, IconColumns3Filled } from "@tabler/icons-react"
 import { useParams } from "react-router-dom"
-import { Switch } from "@/components/ui/switch"
 
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -116,7 +116,7 @@ export const columns: ColumnDef<TurSNSiteField>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -127,7 +127,9 @@ export const columns: ColumnDef<TurSNSiteField>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>
+              <a href={"field/" + row.original.id}>Edit</a>
+            </DropdownMenuItem>
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
