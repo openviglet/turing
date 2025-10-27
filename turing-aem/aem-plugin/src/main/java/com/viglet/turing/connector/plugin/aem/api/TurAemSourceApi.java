@@ -81,28 +81,38 @@ public class TurAemSourceApi {
         }).orElse(new TurAemSource());
     }
 
+    @Transactional
     @Operation(summary = "Update a AEM Source")
     @PutMapping("/{id}")
-    public TurAemSource turAemSourceUpdate(@PathVariable String id, @RequestBody TurAemSource turAemSource) {
-        return turAemSourceRepository.findById(id).map(turAemSourceEdit -> {
-            turAemSourceEdit.setName(turAemSource.getName());
-            turAemSourceEdit.setEndpoint(turAemSource.getEndpoint());
-            turAemSourceEdit.setUsername(turAemSource.getUsername());
-            turAemSourceEdit.setPassword(turAemSource.getPassword());
-            turAemSourceEdit.setAuthorURLPrefix(turAemSource.getAuthorURLPrefix());
-            turAemSourceEdit.setPublishURLPrefix(turAemSource.getPublishURLPrefix());
-            turAemSourceEdit.setAuthor(turAemSource.isAuthor());
-            turAemSourceEdit.setPublish(turAemSource.isPublish());
-            turAemSourceEdit.setOncePattern(turAemSource.getOncePattern());
-            turAemSourceEdit.setRootPath(turAemSource.getRootPath());
-            turAemSourceEdit.setLocalePaths(turAemSource.getLocalePaths()
-                    .stream()
-                    .peek(localePath -> localePath.setTurAemSource(turAemSource))
-                    .collect(Collectors.toSet()));
-            this.turAemSourceRepository.save(turAemSourceEdit);
-            return turAemSourceEdit;
-        }).orElse(new TurAemSource());
+    public ResponseEntity<TurAemSource> turAemSourceUpdate(@PathVariable String id,
+            @RequestBody TurAemSource turAemSource) {
+        return turAemSourceRepository.findById(id)
+                .map(turAemSourceEdit -> {
+                    updateAemSourceFields(turAemSourceEdit, turAemSource);
+                    turAemSourceRepository.save(turAemSourceEdit);
+                    return ResponseEntity.ok(turAemSourceEdit);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 
+    private void updateAemSourceFields(TurAemSource target, TurAemSource source) {
+        target.setName(source.getName());
+        target.setEndpoint(source.getEndpoint());
+        target.setUsername(source.getUsername());
+        target.setPassword(source.getPassword());
+        target.setAuthorURLPrefix(source.getAuthorURLPrefix());
+        target.setPublishURLPrefix(source.getPublishURLPrefix());
+        target.setAuthor(source.isAuthor());
+        target.setPublish(source.isPublish());
+        target.setOncePattern(source.getOncePattern());
+        target.setRootPath(source.getRootPath());
+
+        if (source.getLocalePaths() != null) {
+            target.setLocalePaths(source.getLocalePaths()
+                    .stream()
+                    .peek(localePath -> localePath.setTurAemSource(target))
+                    .collect(Collectors.toSet()));
+        }
     }
 
     @Transactional
