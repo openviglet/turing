@@ -221,7 +221,10 @@ public class TurSolr {
 
     public void deleteDocument(TurSolrInstance turSolrInstance, String id) {
         try {
-            turSolrInstance.getSolrClient().deleteById(id);
+            UpdateRequest updateRequest = new UpdateRequest();
+            updateRequest.deleteById(id);
+            updateRequest.setCommitWithin(commitWithin);
+            updateRequest.process(turSolrInstance.getSolrClient());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -229,7 +232,10 @@ public class TurSolr {
 
     public void deleteDocumentByType(TurSolrInstance turSolrInstance, String type) {
         try {
-            turSolrInstance.getSolrClient().deleteByQuery(TYPE + ":" + type);
+            UpdateRequest updateRequest = new UpdateRequest();
+            updateRequest.deleteByQuery(TYPE + ":" + type);
+            updateRequest.setCommitWithin(commitWithin);
+            updateRequest.process(turSolrInstance.getSolrClient());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage(), e);
         }
