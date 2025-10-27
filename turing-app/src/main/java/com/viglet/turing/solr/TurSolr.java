@@ -35,20 +35,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
-import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.GroupCommand;
@@ -1564,15 +1560,11 @@ public class TurSolr {
     }
 
     public boolean commit(TurSolrInstance turSolrInstance) {
-        String uuid = UUID.randomUUID().toString();
-        String solrUrl = turSolrInstance.getSolrUrl().toString();
-        SolrClient solrClient = new HttpJdkSolrClient.Builder(solrUrl).withConnectionTimeout(10, TimeUnit.SECONDS)
-                .withRequestTimeout(5, TimeUnit.SECONDS).build();
         try {
-            log.info("Commit Solr {} - {}", uuid, solrUrl);
+            log.info("Commit Solr - {}", turSolrInstance.getSolrUrl());
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.setCommitWithin(5000);
-            updateRequest.process(solrClient);
+            updateRequest.process(turSolrInstance.getSolrClient());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage());
         }
