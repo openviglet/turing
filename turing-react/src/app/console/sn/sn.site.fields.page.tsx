@@ -140,7 +140,7 @@ export const columns: ColumnDef<TurSNSiteField>[] = [
 const turSNSiteService = new TurSNSiteService();
 export default function SNSiteFieldsPage() {
   const { id } = useParams() as { id: string };
-  const [data, setSnField] = React.useState<TurSNSiteField[]>({} as TurSNSiteField[]);
+  const [data, setSnField] = React.useState<TurSNSiteField[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

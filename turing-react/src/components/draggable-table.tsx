@@ -14,7 +14,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
     Table,
@@ -24,18 +24,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
+import { TurSNSiteService } from '@/services/sn.service';
 
-// 1. Defina o tipo para os itens da sua tabela
-export interface Facet {
-    id: string; // ID único para o dnd-kit
-    position: number;
-    facetName: string;
-    fieldName: string;
-}
-
-// 2. Crie um componente para a linha da tabela que será arrastável
 interface DraggableTableRowProps {
-    row: Facet;
+    row: TurSNSiteField;
 }
 
 const DraggableTableRow: React.FC<DraggableTableRowProps> = ({ row }) => {
@@ -63,44 +56,42 @@ const DraggableTableRow: React.FC<DraggableTableRowProps> = ({ row }) => {
                     <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </button>
             </TableCell>
-            <TableCell className="w-24 font-medium">{row.position}</TableCell>
+            <TableCell className="w-24 font-medium">{row.facetPosition}</TableCell>
             <TableCell>{row.facetName}</TableCell>
-            <TableCell className="text-muted-foreground">{row.fieldName}</TableCell>
+            <TableCell className="text-muted-foreground">{row.name}</TableCell>
         </TableRow>
     );
 };
 
 
-// 3. Crie o componente principal da tabela
 interface DraggableTableProps {
-    initialData: Facet[];
+    id: string;
 }
-
-export const DraggableTable: React.FC<DraggableTableProps> = ({ initialData }) => {
-    const [tableData, setTableData] = useState<Facet[]>(initialData);
+const turSNSiteService = new TurSNSiteService();
+export const DraggableTable: React.FC<DraggableTableProps> = ({ id }) => {
+    const [tableData, setTableData] = React.useState<TurSNSiteField[]>([]);
+    React.useEffect(() => {
+        turSNSiteService.getFacetedFields(id).then(setTableData);
+    }, [id])
     const sensors = useSensors(useSensor(PointerSensor));
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
-
         if (over && active.id !== over.id) {
             setTableData((items) => {
                 const oldIndex = items.findIndex((item) => item.id === active.id);
                 const newIndex = items.findIndex((item) => item.id === over.id);
 
-                // Reordena o array
                 const reorderedItems = arrayMove(items, oldIndex, newIndex);
 
-                // Atualiza a propriedade 'position' de cada item
                 return reorderedItems.map((item, index) => ({
                     ...item,
-                    position: index + 1,
+                    facetPosition: index + 1,
                 }));
             });
         }
     };
 
-    // Extrai os IDs para o SortableContext
     const itemIds = tableData.map(item => item.id);
 
     return (
@@ -113,7 +104,7 @@ export const DraggableTable: React.FC<DraggableTableProps> = ({ initialData }) =
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-12"></TableHead> {/* Para o ícone de arrastar */}
+                            <TableHead className="w-12"></TableHead>
                             <TableHead className="w-24">Position</TableHead>
                             <TableHead>Facet Name</TableHead>
                             <TableHead>Field Name</TableHead>

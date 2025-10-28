@@ -21,6 +21,10 @@ export class TurSNSiteService {
     );
     return response.data;
   }
+  async getFacetedFields(id: string): Promise<TurSNSiteField[]> {
+    const response = await axios.get<TurSNSiteField[]>(`/sn/${id}/facet`);
+    return response.data;
+  }
   async create(turSNSite: TurSNSite): Promise<TurSNSite> {
     const response = await axios.post<TurSNSite>("/sn", turSNSite);
     return response.data;
