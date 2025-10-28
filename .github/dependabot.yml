@@ -1,7 +1,7 @@
 # To get started with Dependabot version updates, you'll need to specify which
 # Package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options: 
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates 
+# Please see the documentation for all configuration options:
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
 updates:
@@ -9,7 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
-    target-branch: "2025.3"
+    target-branch: "2025.4"
     open-pull-requests-limit: 15
     groups:
       java:
@@ -21,7 +21,7 @@ updates:
     directory: "/turing-ui" # Location of package manifests
     schedule:
       interval: "weekly"
-    target-branch: "2025.3"
+    target-branch: "2025.4"
     open-pull-requests-limit: 15
     ignore:
       - dependency-name: "typescript"
@@ -35,7 +35,7 @@ updates:
     directory: "/turing-react" # Location of package manifests
     schedule:
       interval: "weekly"
-    target-branch: "2025.3"
+    target-branch: "2025.4"
     open-pull-requests-limit: 15
     ignore:
       - dependency-name: "typescript"
@@ -48,7 +48,7 @@ updates:
     directory: "/turing-js-sdk/js-sdk-lib" # Location of package manifests
     schedule:
       interval: "weekly"
-    target-branch: "2025.3"
+    target-branch: "2025.4"
     open-pull-requests-limit: 15
     ignore:
       - dependency-name: "typescript"
@@ -61,7 +61,7 @@ updates:
     directory: "/turing-js-sdk/js-sdk-sample" # Location of package manifests
     schedule:
       interval: "weekly"
-    target-branch: "2025.3"
+    target-branch: "2025.4"
     open-pull-requests-limit: 15
     ignore:
       - dependency-name: "typescript"
