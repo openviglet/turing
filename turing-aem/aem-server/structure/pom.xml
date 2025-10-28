@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.viglet.turing.aem</groupId>
         <artifactId>turing-aem-server</artifactId>
-        <version>2025.3</version>
+        <version>2025.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <!-- ====================================================================== -->
