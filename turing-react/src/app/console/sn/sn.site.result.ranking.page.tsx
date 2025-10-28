@@ -1,32 +1,36 @@
-import {SubPageHeader} from "@/components/sub.page.header";
-import {IconNumber123} from "@tabler/icons-react";
-import {BlankSlate} from "@/components/blank-slate.tsx";
-import {useParams} from "react-router-dom";
-import {TurSNRankingExpressionService} from "@/services/sn.site.result.ranking.service.ts";
-import {useEffect, useState} from "react";
-import type {TurSNRankingExpression} from "@/models/sn/sn-ranking-expression.model.ts";
-import { ROUTES } from "@/app/routes.const";
+import { SubPageHeader } from "@/components/sub.page.header";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { IconNumber123 } from "@tabler/icons-react";
+import React from "react";
 
-const turSNRankingExpressionService = new TurSNRankingExpressionService();
 export default function SNSiteResultRankingPage() {
-    const {id} = useParams() as { id: string };
-    const [rankingList, setRankingList] = useState<TurSNRankingExpression[]>({} as TurSNRankingExpression[]);
-    useEffect(() => {
-        turSNRankingExpressionService.query(id).then(setRankingList);
-    }, [id])
+    const [value, setValue] = React.useState([4]);
     return (
         <>
-            {rankingList.length > 0 ? (
-                <SubPageHeader icon={IconNumber123} title="Result Ranking"
-                               description="Define content that will be featured in the term-based search."/>
-            ) : (
-                <BlankSlate
-                    icon={IconNumber123}
-                    title="You don’t seem to have any result ranking."
-                    description="Create a new result ranking to define relevance rules."
-                    buttonText="New result ranking"
-                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/result-ranking/new`}/>
-            )}
+            <SubPageHeader icon={IconNumber123} title="Result Ranking"
+                description="Define content that will be featured in the term-based search." />
+            <div>
+
+                <Label htmlFor="weight-slider">
+                    Will have its weight changed by
+                </Label>
+
+                <div className="flex items-center gap-4 mt-3">
+                    <Slider
+                        id="weight-slider"
+                        value={value}
+                        onValueChange={setValue}
+                        max={10}
+                        min={0}
+                        step={1}
+                    />
+                    <span className="w-10 text-right">
+                        + {value[0]}
+                    </span>
+
+                </div>
+            </div>
         </>
     )
 }
