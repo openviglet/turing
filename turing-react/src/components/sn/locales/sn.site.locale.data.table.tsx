@@ -1,15 +1,15 @@
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import { columns } from "@/components/sn/locales/sn.site.locale.coldef.tsx";
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger
-} from "@radix-ui/react-dropdown-menu";
-import {IconColumns3Filled} from "@tabler/icons-react";
-import {ChevronDown} from "lucide-react";
-import React from "react";
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model.ts";
+import { IconColumns3Filled } from "@tabler/icons-react";
 import {
     type ColumnFiltersState,
     flexRender,
@@ -18,14 +18,14 @@ import {
     getSortedRowModel, type SortingState,
     useReactTable, type VisibilityState
 } from "@tanstack/react-table";
-import {columns} from "@/components/sn/locales/sn.site.locale.coldef.tsx";
-import type {TurSNSiteLocale} from "@/models/sn/sn-site-locale.model.ts";
+import { ChevronDown } from "lucide-react";
+import React from "react";
 
 interface Props {
     data: TurSNSiteLocale[]
 }
 
-export const SNSiteMultiLanguageDataTable: React.FC<Props> = ({data}) => {
+export const SNSiteMultiLanguageDataTable: React.FC<Props> = ({ data }) => {
 
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -68,7 +68,7 @@ export const SNSiteMultiLanguageDataTable: React.FC<Props> = ({data}) => {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline">
-                                <IconColumns3Filled/> Columns <ChevronDown/>
+                                <IconColumns3Filled /> Columns <ChevronDown />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
