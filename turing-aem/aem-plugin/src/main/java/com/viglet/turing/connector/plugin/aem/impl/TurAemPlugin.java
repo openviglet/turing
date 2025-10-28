@@ -17,12 +17,17 @@
 package com.viglet.turing.connector.plugin.aem.impl;
 
 import java.util.List;
+
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+
 import com.viglet.turing.connector.aem.commons.bean.TurAemEvent;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
-import com.viglet.turing.connector.plugin.aem.persistence.repository.TurAemSourceRepository;
+import com.viglet.turing.connector.plugin.aem.api.TurAemPathList;
+import com.viglet.turing.connector.plugin.aem.service.TurAemService;
+import com.viglet.turing.connector.plugin.aem.service.TurAemSourceService;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -30,17 +35,20 @@ import lombok.extern.slf4j.Slf4j;
 @Component("aem")
 public class TurAemPlugin implements TurConnectorPlugin {
     private final TurAemPluginProcess turAemPluginProcess;
-    private final TurAemSourceRepository turAemSourceRepository;
+    private final TurAemSourceService turAemSourceService;
+    private final TurAemService turAemService;
 
     public TurAemPlugin(TurAemPluginProcess turAemPluginProcess,
-            TurAemSourceRepository turAemSourceRepository) {
+            TurAemSourceService turAemSourceService,
+            TurAemService turAemService) {
         this.turAemPluginProcess = turAemPluginProcess;
-        this.turAemSourceRepository = turAemSourceRepository;
+        this.turAemSourceService = turAemSourceService;
+        this.turAemService = turAemService;
     }
 
     @Override
     public void crawl() {
-        turAemSourceRepository.findAll().forEach(turAemPluginProcess::indexAll);
+        turAemSourceService.getAllSources().forEach(turAemPluginProcess::indexAll);
     }
 
     @Override
@@ -49,11 +57,15 @@ public class TurAemPlugin implements TurConnectorPlugin {
     }
 
     public void indexById(String source, List<String> contentId) {
-        turAemPluginProcess.sentToIndexStandalone(source, contentId, false, TurAemEvent.NONE);
+        TurAemPathList turAemPathList = new TurAemPathList();
+        turAemPathList.setPaths(contentId);
+        turAemPathList.setEvent(TurAemEvent.NONE);
+        turAemPathList.setRecursive(false);
+        turAemPluginProcess.sentToIndexStandalone(source, turAemPathList);
     }
 
     @Override
     public String getProviderName() {
-        return TurAemPluginProcess.getProviderName();
+        return turAemService.getProviderName();
     }
 }

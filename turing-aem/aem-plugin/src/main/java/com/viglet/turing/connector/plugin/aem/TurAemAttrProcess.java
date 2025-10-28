@@ -17,10 +17,13 @@
 package com.viglet.turing.connector.plugin.aem;
 
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.CQ_TAGS;
+
 import java.util.List;
 import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
@@ -32,130 +35,133 @@ import com.viglet.turing.connector.aem.commons.mappers.TurAemContentDefinitionPr
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
+import com.viglet.turing.connector.plugin.aem.service.TurAemContentMappingService;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class TurAemAttrProcess {
 
-    private final TurAemContentMappingService turAemContentMappingService;
-    public static final String CQ_TAGS_PATH = "/content/_cq_tags";
+        private final TurAemContentMappingService turAemContentMappingService;
+        public static final String CQ_TAGS_PATH = "/content/_cq_tags";
 
-    public TurAemAttrProcess(TurAemContentMappingService turAemContentMappingService) {
-        this.turAemContentMappingService = turAemContentMappingService;
-    }
-
-
-
-    public TurAemTargetAttrValueMap prepareAttributeDefs(TurAemObject aemObject,
-            List<TurSNAttributeSpec> turSNAttributeSpecList,
-            TurAemSourceContext turAemSourceContext, TurAemSource turAemSource) {
-        return TurAemContentDefinitionProcess
-                .findByNameFromModelWithDefinition(aemObject.getType(),
-                        turAemContentMappingService.getTurAemContentMapping(turAemSource))
-                .map(turAemModel -> {
-                    TurAemContext context = new TurAemContext(aemObject);
-                    TurAemTargetAttrValueMap turAemTargetAttrValueMap =
-                            new TurAemTargetAttrValueMap();
-                    turAemModel.getTargetAttrs().stream().filter(Objects::nonNull)
-                            .forEach(targetAttr -> {
-                                log.debug("TargetAttr: {}", targetAttr);
-                                context.setTurAemTargetAttr(targetAttr);
-                                if (TurAemAttrUtils.hasCustomClass(targetAttr)) {
-                                    turAemTargetAttrValueMap.merge(process(context,
-                                            turSNAttributeSpecList, turAemSourceContext));
-                                } else {
-                                    targetAttr.getSourceAttrs().stream().filter(Objects::nonNull)
-                                            .forEach(sourceAttr -> turAemTargetAttrValueMap
-                                                    .merge(addTargetAttrValuesBySourceAttr(
-                                                            turAemSourceContext,
-                                                            turSNAttributeSpecList, targetAttr,
-                                                            sourceAttr, context)));
-                                }
-                            });
-                    return turAemTargetAttrValueMap;
-                }).orElseGet(() -> {
-                    log.error("Content Type not found: {}", aemObject.getType());
-                    return new TurAemTargetAttrValueMap();
-                });
-    }
-
-    public TurAemTargetAttrValueMap addTargetAttrValuesBySourceAttr(
-            TurAemSourceContext turAemSourceContext,
-            List<TurSNAttributeSpec> turSNAttributeSpecList, TurAemTargetAttr targetAttr,
-            TurAemSourceAttr sourceAttr, TurAemContext context) {
-
-        context.setTurAemSourceAttr(sourceAttr);
-        TurAemTargetAttrValueMap targetAttrValues =
-                process(context, turSNAttributeSpecList, turAemSourceContext);
-        return sourceAttr.isUniqueValues()
-                ? TurAemAttrUtils.getTurAttrDefUnique(targetAttr, targetAttrValues)
-                : targetAttrValues;
-    }
-
-    public TurAemTargetAttrValueMap process(TurAemContext context,
-            List<TurSNAttributeSpec> turSNAttributeSpecList,
-            TurAemSourceContext turAemSourceContext) {
-        log.debug("Target Attribute Name: {} and Source Attribute Name: {}",
-                context.getTurAemTargetAttr().getName(), context.getTurAemSourceAttr().getName());
-        return TurAemAttrUtils.hasTextValue(context.getTurAemTargetAttr())
-                ? TurAemAttrUtils.getTextValue(context)
-                : getCustomClassValue(context, turSNAttributeSpecList, turAemSourceContext);
-    }
-
-    private @NotNull TurAemTargetAttrValueMap getCustomClassValue(TurAemContext context,
-            List<TurSNAttributeSpec> turSNAttributeSpecList,
-            TurAemSourceContext turAemSourceContext) {
-        TurAemTargetAttrValueMap turAemTargetAttrValueMap = TurAemAttrUtils.hasCustomClass(context)
-                ? attributeByClass(context, turAemSourceContext)
-                : attributeByCMS(context);
-        turAemTargetAttrValueMap.merge(generateNewAttributesFromCqTags(context, turAemSourceContext,
-                turSNAttributeSpecList, turAemTargetAttrValueMap));
-        return turAemTargetAttrValueMap;
-    }
-
-    private TurAemTargetAttrValueMap attributeByCMS(TurAemContext context) {
-        final Object jcrProperty =
-                TurAemAttrUtils.getJcrProperty(context, context.getTurAemSourceAttr().getName());
-        return TurAemAttrUtils.hasJcrPropertyValue(jcrProperty)
-                ? TurAemAttrUtils.addValuesToAttributes(context.getTurAemTargetAttr(),
-                        context.getTurAemSourceAttr(), jcrProperty)
-                : new TurAemTargetAttrValueMap();
-    }
-
-    private TurAemTargetAttrValueMap generateNewAttributesFromCqTags(TurAemContext context,
-            TurAemSourceContext turAemSourceContext,
-            List<TurSNAttributeSpec> turSNAttributeSpecList,
-            TurAemTargetAttrValueMap turAemTargetAttrValueMapFromClass) {
-        TurAemTargetAttrValueMap turAemTargetAttrValueMap = new TurAemTargetAttrValueMap();
-        String attributeName = context.getTurAemSourceAttr().getName();
-        if (CQ_TAGS.equals(attributeName)) {
-            String targetName = context.getTurAemTargetAttr().getName();
-            if (turAemTargetAttrValueMapFromClass.containsKey(targetName)) {
-                TurAemAttrUtils.processTagsFromTargetAttr(context, turAemSourceContext,
-                        turSNAttributeSpecList, turAemTargetAttrValueMapFromClass, targetName,
-                        turAemTargetAttrValueMap);
-            } else {
-                TurAemAttrUtils.processTagsFromSourceAttr(context, turAemSourceContext,
-                        turSNAttributeSpecList, attributeName, turAemTargetAttrValueMap);
-            }
+        public TurAemAttrProcess(TurAemContentMappingService turAemContentMappingService) {
+                this.turAemContentMappingService = turAemContentMappingService;
         }
-        return turAemTargetAttrValueMap;
-    }
 
+        public TurAemTargetAttrValueMap prepareAttributeDefs(TurAemObject aemObject,
+                        List<TurSNAttributeSpec> turSNAttributeSpecList,
+                        TurAemSourceContext turAemSourceContext, TurAemSource turAemSource) {
+                return TurAemContentDefinitionProcess
+                                .findByNameFromModelWithDefinition(aemObject.getType(),
+                                                turAemContentMappingService.getTurAemContentMapping(turAemSource))
+                                .map(turAemModel -> {
+                                        TurAemContext context = new TurAemContext(aemObject);
+                                        TurAemTargetAttrValueMap turAemTargetAttrValueMap = new TurAemTargetAttrValueMap();
+                                        turAemModel.getTargetAttrs().stream().filter(Objects::nonNull)
+                                                        .forEach(targetAttr -> {
+                                                                log.debug("TargetAttr: {}", targetAttr);
+                                                                context.setTurAemTargetAttr(targetAttr);
+                                                                if (TurAemAttrUtils.hasCustomClass(targetAttr)) {
+                                                                        turAemTargetAttrValueMap.merge(process(context,
+                                                                                        turSNAttributeSpecList,
+                                                                                        turAemSourceContext));
+                                                                } else {
+                                                                        targetAttr.getSourceAttrs().stream()
+                                                                                        .filter(Objects::nonNull)
+                                                                                        .forEach(sourceAttr -> turAemTargetAttrValueMap
+                                                                                                        .merge(addTargetAttrValuesBySourceAttr(
+                                                                                                                        turAemSourceContext,
+                                                                                                                        turSNAttributeSpecList,
+                                                                                                                        targetAttr,
+                                                                                                                        sourceAttr,
+                                                                                                                        context)));
+                                                                }
+                                                        });
+                                        return turAemTargetAttrValueMap;
+                                }).orElseGet(() -> {
+                                        log.error("Content Type not found: {}", aemObject.getType());
+                                        return new TurAemTargetAttrValueMap();
+                                });
+        }
 
-    private TurAemTargetAttrValueMap attributeByClass(TurAemContext context,
-            TurAemSourceContext turAemSourceContext) {
-        String className = context.getTurAemSourceAttr().getClassName();
-        log.debug("ClassName : {}", className);
-        return TurCustomClassCache.getCustomClassMap(className)
-                .map(classInstance -> TurAemTargetAttrValueMap.singleItem(
-                        context.getTurAemTargetAttr().getName(),
-                        ((TurAemExtAttributeInterface) classInstance).consume(
-                                context.getTurAemTargetAttr(), context.getTurAemSourceAttr(),
-                                context.getCmsObjectInstance(), turAemSourceContext),
-                        false))
-                .orElseGet(TurAemTargetAttrValueMap::new);
+        public TurAemTargetAttrValueMap addTargetAttrValuesBySourceAttr(
+                        TurAemSourceContext turAemSourceContext,
+                        List<TurSNAttributeSpec> turSNAttributeSpecList, TurAemTargetAttr targetAttr,
+                        TurAemSourceAttr sourceAttr, TurAemContext context) {
 
-    }
+                context.setTurAemSourceAttr(sourceAttr);
+                TurAemTargetAttrValueMap targetAttrValues = process(context, turSNAttributeSpecList,
+                                turAemSourceContext);
+                return sourceAttr.isUniqueValues()
+                                ? TurAemAttrUtils.getTurAttrDefUnique(targetAttr, targetAttrValues)
+                                : targetAttrValues;
+        }
+
+        public TurAemTargetAttrValueMap process(TurAemContext context,
+                        List<TurSNAttributeSpec> turSNAttributeSpecList,
+                        TurAemSourceContext turAemSourceContext) {
+                log.debug("Target Attribute Name: {} and Source Attribute Name: {}",
+                                context.getTurAemTargetAttr().getName(), context.getTurAemSourceAttr().getName());
+                return TurAemAttrUtils.hasTextValue(context.getTurAemTargetAttr())
+                                ? TurAemAttrUtils.getTextValue(context)
+                                : getCustomClassValue(context, turSNAttributeSpecList, turAemSourceContext);
+        }
+
+        private @NotNull TurAemTargetAttrValueMap getCustomClassValue(TurAemContext context,
+                        List<TurSNAttributeSpec> turSNAttributeSpecList,
+                        TurAemSourceContext turAemSourceContext) {
+                TurAemTargetAttrValueMap turAemTargetAttrValueMap = TurAemAttrUtils.hasCustomClass(context)
+                                ? attributeByClass(context, turAemSourceContext)
+                                : attributeByCMS(context);
+                turAemTargetAttrValueMap.merge(generateNewAttributesFromCqTags(context, turAemSourceContext,
+                                turSNAttributeSpecList, turAemTargetAttrValueMap));
+                return turAemTargetAttrValueMap;
+        }
+
+        private TurAemTargetAttrValueMap attributeByCMS(TurAemContext context) {
+                final Object jcrProperty = TurAemAttrUtils.getJcrProperty(context,
+                                context.getTurAemSourceAttr().getName());
+                return TurAemAttrUtils.hasJcrPropertyValue(jcrProperty)
+                                ? TurAemAttrUtils.addValuesToAttributes(context.getTurAemTargetAttr(),
+                                                context.getTurAemSourceAttr(), jcrProperty)
+                                : new TurAemTargetAttrValueMap();
+        }
+
+        private TurAemTargetAttrValueMap generateNewAttributesFromCqTags(TurAemContext context,
+                        TurAemSourceContext turAemSourceContext,
+                        List<TurSNAttributeSpec> turSNAttributeSpecList,
+                        TurAemTargetAttrValueMap turAemTargetAttrValueMapFromClass) {
+                TurAemTargetAttrValueMap turAemTargetAttrValueMap = new TurAemTargetAttrValueMap();
+                String attributeName = context.getTurAemSourceAttr().getName();
+                if (CQ_TAGS.equals(attributeName)) {
+                        String targetName = context.getTurAemTargetAttr().getName();
+                        if (turAemTargetAttrValueMapFromClass.containsKey(targetName)) {
+                                TurAemAttrUtils.processTagsFromTargetAttr(context, turAemSourceContext,
+                                                turSNAttributeSpecList, turAemTargetAttrValueMapFromClass, targetName,
+                                                turAemTargetAttrValueMap);
+                        } else {
+                                TurAemAttrUtils.processTagsFromSourceAttr(context, turAemSourceContext,
+                                                turSNAttributeSpecList, attributeName, turAemTargetAttrValueMap);
+                        }
+                }
+                return turAemTargetAttrValueMap;
+        }
+
+        private TurAemTargetAttrValueMap attributeByClass(TurAemContext context,
+                        TurAemSourceContext turAemSourceContext) {
+                String className = context.getTurAemSourceAttr().getClassName();
+                log.debug("ClassName : {}", className);
+                return TurCustomClassCache.getCustomClassMap(className)
+                                .map(classInstance -> TurAemTargetAttrValueMap.singleItem(
+                                                context.getTurAemTargetAttr().getName(),
+                                                ((TurAemExtAttributeInterface) classInstance).consume(
+                                                                context.getTurAemTargetAttr(),
+                                                                context.getTurAemSourceAttr(),
+                                                                context.getCmsObjectInstance(), turAemSourceContext),
+                                                false))
+                                .orElseGet(TurAemTargetAttrValueMap::new);
+
+        }
 }
