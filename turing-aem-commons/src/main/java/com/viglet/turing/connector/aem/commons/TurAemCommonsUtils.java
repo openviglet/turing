@@ -75,10 +75,6 @@ import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
 import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
 import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtContentInterface;
-import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDate;
-import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDateInterface;
-import com.viglet.turing.connector.aem.commons.mappers.TurAemContentDefinitionProcess;
-import com.viglet.turing.connector.aem.commons.mappers.TurAemContentMapping;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
 
 import lombok.extern.slf4j.Slf4j;
@@ -161,24 +157,6 @@ public class TurAemCommonsUtils {
 
     public static String configOnce(TurAemSourceContext turAemSourceContext) {
         return "%s/%s".formatted(turAemSourceContext.getId(), ONCE);
-    }
-
-    public static Date getDeltaDate(TurAemObject aemObject, TurAemSourceContext turAemSourceContext,
-            TurAemContentMapping turAemContentMapping) {
-        Date deltaDate = Optional
-                .ofNullable(TurAemContentDefinitionProcess.getDeltaClassName(turAemContentMapping))
-                .map(className -> TurCustomClassCache.getCustomClassMap(className)
-                        .map(classInstance -> ((TurAemExtDeltaDateInterface) classInstance)
-                                .consume(aemObject, turAemSourceContext))
-                        .orElseGet(() -> defaultDeltaDate(aemObject, turAemSourceContext)))
-                .orElseGet(() -> defaultDeltaDate(aemObject, turAemSourceContext));
-        log.debug("Delta Date {} from {}", deltaDate.toString(), aemObject.getPath());
-        return deltaDate;
-    }
-
-    private static Date defaultDeltaDate(TurAemObject aemObject,
-            TurAemSourceContext turAemSourceContext) {
-        return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
     }
 
     public static TurAemTargetAttrValueMap runCustomClassFromContentType(TurAemModel turAemModel,

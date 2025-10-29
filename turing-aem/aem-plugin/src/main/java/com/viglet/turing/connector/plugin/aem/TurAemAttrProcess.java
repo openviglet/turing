@@ -31,7 +31,6 @@ import com.viglet.turing.connector.aem.commons.bean.TurAemContext;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
 import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtAttributeInterface;
-import com.viglet.turing.connector.aem.commons.mappers.TurAemContentDefinitionProcess;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
@@ -43,19 +42,19 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurAemAttrProcess {
 
-        private final TurAemContentMappingService turAemContentMappingService;
+        private final TurAemContentDefinitionService turAemContentDefinitionService;
         public static final String CQ_TAGS_PATH = "/content/_cq_tags";
 
-        public TurAemAttrProcess(TurAemContentMappingService turAemContentMappingService) {
-                this.turAemContentMappingService = turAemContentMappingService;
+        public TurAemAttrProcess(TurAemContentMappingService turAemContentMappingService,
+                        TurAemContentDefinitionService turAemContentDefinitionService) {
+                this.turAemContentDefinitionService = turAemContentDefinitionService;
         }
 
         public TurAemTargetAttrValueMap prepareAttributeDefs(TurAemObject aemObject,
                         List<TurSNAttributeSpec> turSNAttributeSpecList,
                         TurAemSourceContext turAemSourceContext, TurAemSource turAemSource) {
-                return TurAemContentDefinitionProcess
-                                .findByNameFromModelWithDefinition(aemObject.getType(),
-                                                turAemContentMappingService.getTurAemContentMapping(turAemSource))
+                return turAemContentDefinitionService
+                                .findByModelNameAndAemSource(aemObject.getType(), turAemSource)
                                 .map(turAemModel -> {
                                         TurAemContext context = new TurAemContext(aemObject);
                                         TurAemTargetAttrValueMap turAemTargetAttrValueMap = new TurAemTargetAttrValueMap();
