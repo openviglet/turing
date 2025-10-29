@@ -48,9 +48,7 @@ public class TurAemAttrProcess {
 
         public TurAemTargetAttrValueMap prepareAttributeDefs(TurAemSession turAemSession,
                         TurAemObject aemObject) {
-                return turAemContentDefinitionService
-                                .findByModelNameAndAemSource(aemObject.getType(),
-                                                turAemSession.getAemSource())
+                return turAemContentDefinitionService.getTurAemModel(turAemSession)
                                 .map(turAemModel -> {
                                         TurAemContext context = new TurAemContext(aemObject);
                                         TurAemTargetAttrValueMap turAemTargetAttrValueMap =
