@@ -49,7 +49,7 @@ public class TurAemContentDefinitionService {
                 this.turAemContentMappingService = turAemContentMappingService;
         }
 
-        public List<TurSNAttributeSpec> getTargetAttrDefinitions(
+        public List<TurSNAttributeSpec> getAttributeSpec(
                         TurAemContentMapping turAemContentMapping) {
                 return Optional.ofNullable(turAemContentMapping)
                                 .map(TurAemContentMapping::getTargetAttrDefinitions)
@@ -81,18 +81,20 @@ public class TurAemContentDefinitionService {
                 return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
         }
 
-        public Optional<TurAemModel> getTurAemModel(TurAemSession turAemSession) {
+        public Optional<TurAemModel> getModel(TurAemSession turAemSession) {
                 TurAemContentMapping turAemContentMapping = turAemContentMappingService
                                 .getTurAemContentMapping(turAemSession.getAemSource());
                 return Optional.ofNullable(turAemContentMapping)
-                                .flatMap(turCmsContentMapping -> getTurAemContentMapping(
-                                                turCmsContentMapping.getModels(),
-                                                turAemSession.getConfiguration().getContentType())
-                                                                .map(model -> {
-                                                                        return getTurCmsTargetAttrs(
-                                                                                        turCmsContentMapping,
-                                                                                        model);
-                                                                }));
+                                .flatMap(turCmsContentMapping -> getModel(turAemSession,
+                                                turCmsContentMapping));
+        }
+
+        private Optional<TurAemModel> getModel(TurAemSession turAemSession,
+                        TurAemContentMapping turCmsContentMapping) {
+                return getModel(turCmsContentMapping.getModels(),
+                                turAemSession.getConfiguration().getContentType()).map(model -> {
+                                        return getTurCmsTargetAttrs(turCmsContentMapping, model);
+                                });
         }
 
         private TurAemModel getTurCmsTargetAttrs(TurAemContentMapping turCmsContentMapping,
@@ -108,7 +110,7 @@ public class TurAemContentDefinitionService {
                 return model;
         }
 
-        private Optional<TurAemModel> getTurAemContentMapping(final List<TurAemModel> turCmsModels,
+        private Optional<TurAemModel> getModel(final List<TurAemModel> turCmsModels,
                         final String name) {
                 return turCmsModels != null ? turCmsModels.stream()
                                 .filter(o -> o != null && o.getType().equals(name)).findFirst()
@@ -125,15 +127,13 @@ public class TurAemContentDefinitionService {
                 return turCmsTargetAttrs;
         }
 
-        private void addTargetAttr(TurAemModel model, List<TurAemTargetAttr> turCmsTargetAttrs,
-                        TurSNAttributeSpec targetAttrDefinition) {
-                findByNameFromTargetAttrs(model.getTargetAttrs(), targetAttrDefinition.getName())
-                                .ifPresentOrElse(
-                                                targetAttr -> addTargetAttr(turCmsTargetAttrs,
-                                                                targetAttrDefinition, targetAttr),
-                                                () -> {
-                                                        addTargetAttrMandatory(turCmsTargetAttrs,
-                                                                        targetAttrDefinition);
+        private void addTargetAttr(TurAemModel model, List<TurAemTargetAttr> turAemTargetAttr,
+                        TurSNAttributeSpec attributeSpec) {
+                getTargetAttr(model.getTargetAttrs(), attributeSpec.getName())
+                                .ifPresentOrElse(targetAttr -> addTargetAttr(turAemTargetAttr,
+                                                attributeSpec, targetAttr), () -> {
+                                                        addTargetAttrMandatory(turAemTargetAttr,
+                                                                        attributeSpec);
                                                 });
         }
 
@@ -151,7 +151,7 @@ public class TurAemContentDefinitionService {
                                 .add(setTargetAttrFromDefinition(targetAttrDefinition, targetAttr));
         }
 
-        private Optional<TurAemTargetAttr> findByNameFromTargetAttrs(
+        private Optional<TurAemTargetAttr> getTargetAttr(
                         final List<TurAemTargetAttr> turCmsTargetAttrs, final String name) {
                 return turCmsTargetAttrs.stream().filter(o -> o.getName().equals(name)).findFirst();
         }

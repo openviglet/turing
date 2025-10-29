@@ -148,7 +148,7 @@ public class TurAemPluginProcess {
                 TurConnectorSession session =
                                 turAemSourceService.getTurConnectorSession(turAemSource);
                 List<TurSNAttributeSpec> targetAttrDefinitions = turAemContentDefinitionService
-                                .getTargetAttrDefinitions(turAemContentMappingService
+                                .getAttributeSpec(turAemContentMappingService
                                                 .getTurAemContentMapping(turAemSource));
                 return TurAemSession.builder().aemSource(turAemSource)
                                 .configuration(turAemSourceService
@@ -165,7 +165,7 @@ public class TurAemPluginProcess {
                 TurConnectorSession session =
                                 turAemSourceService.getTurConnectorSession(turAemSource);
                 List<TurSNAttributeSpec> targetAttrDefinitions = turAemContentDefinitionService
-                                .getTargetAttrDefinitions(turAemContentMappingService
+                                .getAttributeSpec(turAemContentMappingService
                                                 .getTurAemContentMapping(turAemSource));
                 return TurAemSession.builder().aemSource(turAemSource)
                                 .configuration(turAemSourceService
@@ -217,7 +217,7 @@ public class TurAemPluginProcess {
 
 
         private void byContentTypeList(TurAemSession turAemSession) {
-                turAemContentDefinitionService.getTurAemModel(turAemSession).ifPresentOrElse(
+                turAemContentDefinitionService.getModel(turAemSession).ifPresentOrElse(
                                 turAemModel -> byContentType(turAemSession),
                                 () -> log.debug("{} type is not configured in CTD Mapping file.",
                                                 turAemSession.getConfiguration().getContentType()));
@@ -239,7 +239,7 @@ public class TurAemPluginProcess {
         private void getNodeFromJson(TurAemSession turAemSession, TurAemObject turAemObject) {
                 if (TurAemCommonsUtils.isTypeEqualContentType(turAemObject.getJcrNode(),
                                 turAemSession.getConfiguration())) {
-                        turAemContentDefinitionService.getTurAemModel(turAemSession).ifPresent(
+                        turAemContentDefinitionService.getModel(turAemSession).ifPresent(
                                         model -> turAemJobService.prepareIndexObject(turAemSession,
                                                         model, turAemObject));
                 }
@@ -352,7 +352,7 @@ public class TurAemPluginProcess {
                 // Handle node indexing synchronously (this part doesn't involve HTTP calls)
                 if (TurAemCommonsUtils.isTypeEqualContentType(turAemObject.getJcrNode(),
                                 turAemSession.getConfiguration())) {
-                        turAemContentDefinitionService.getTurAemModel(turAemSession).ifPresent(
+                        turAemContentDefinitionService.getModel(turAemSession).ifPresent(
                                         model -> turAemJobService.prepareIndexObject(turAemSession,
                                                         model, turAemObject));
                 }
