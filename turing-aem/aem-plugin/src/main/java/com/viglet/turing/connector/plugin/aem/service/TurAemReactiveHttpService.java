@@ -19,15 +19,19 @@ package com.viglet.turing.connector.plugin.aem.service;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.concurrent.TimeoutException;
+
 import javax.net.ssl.SSLException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+
 import com.google.common.net.UrlEscapers;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
+
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandshakeTimeoutException;
@@ -92,12 +96,12 @@ public class TurAemReactiveHttpService {
         /**
          * Fetches response body reactively for the given URL and context
          * 
-         * @param url the URL to fetch
+         * @param url                 the URL to fetch
          * @param turAemSourceContext the source context containing credentials
          * @return Mono containing the response body if valid JSON, empty otherwise
          */
         public Mono<String> fetchResponseBodyReactive(String url,
-                        TurAemSourceContext turAemSourceContext) {
+                        TurAemConfiguration turAemSourceContext) {
                 log.debug("Making reactive HTTP request to: {}", url);
                 String escapedUrl = UrlEscapers.urlFragmentEscaper().escape(url);
                 String basicAuth = basicAuth(turAemSourceContext.getUsername(),

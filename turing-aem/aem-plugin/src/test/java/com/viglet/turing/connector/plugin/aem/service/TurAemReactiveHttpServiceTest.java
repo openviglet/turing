@@ -18,7 +18,7 @@ package com.viglet.turing.connector.plugin.aem.service;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 
 import reactor.core.publisher.Mono;
 
@@ -34,7 +34,7 @@ class TurAemReactiveHttpServiceTest {
     void testFetchResponseBodyReactive_BasicConfiguration() {
         // Given
         TurAemReactiveHttpService service = new TurAemReactiveHttpService();
-        TurAemSourceContext context = new TurAemSourceContext();
+        TurAemConfiguration context = new TurAemConfiguration();
         context.setUsername("admin");
         context.setPassword("admin");
 

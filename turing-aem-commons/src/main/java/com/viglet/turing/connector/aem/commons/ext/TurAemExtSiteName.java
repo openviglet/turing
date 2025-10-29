@@ -18,19 +18,21 @@
 
 package com.viglet.turing.connector.aem.commons.ext;
 
-import com.viglet.turing.connector.aem.commons.TurAemObject;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
 import com.viglet.turing.client.sn.TurMultiValue;
+import com.viglet.turing.connector.aem.commons.TurAemObject;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
+
 import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 public class TurAemExtSiteName implements TurAemExtAttributeInterface {
 	private static final TurMultiValue EMPTY = null;
 
 	@Override
 	public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr, TurAemSourceAttr turAemSourceAttr,
-								 TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
+			TurAemObject aemObject, TurAemConfiguration turAemSourceContext) {
 		log.debug("Executing TurAemExtSiteName");
 		return EMPTY;
 	}

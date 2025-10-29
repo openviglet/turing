@@ -19,18 +19,21 @@ package com.viglet.turing.connector.plugin.aem;
 import static com.viglet.turing.commons.se.field.TurSEFieldType.STRING;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.DEFAULT;
 import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
@@ -38,9 +41,10 @@ import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
 import com.viglet.turing.connector.aem.commons.bean.TurAemContext;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -147,7 +151,7 @@ public class TurAemAttrUtils {
                         false);
     }
 
-    public static TurSNAttributeSpec setTagFacet(TurAemSourceContext turAemSourceContext,
+    public static TurSNAttributeSpec setTagFacet(TurAemConfiguration turAemSourceContext,
             String facetId) {
         return TurAemCommonsUtils
                 .getInfinityJson((CQ_TAGS_PATH + "/%s").formatted(facetId), turAemSourceContext,
@@ -157,11 +161,10 @@ public class TurAemAttrUtils {
     }
 
     public static String addTagToAttrValueList(TurAemContext context,
-            TurAemSourceContext turAemSourceContext, String facet, String value) {
+            TurAemConfiguration turAemSourceContext, String facet, String value) {
         return TurAemCommonsUtils.getInfinityJson((CQ_TAGS_PATH + "/%s/%s").formatted(facet, value),
                 turAemSourceContext, true).map(infinityJson -> {
-                    Locale locale =
-                            TurAemCommonsUtils.getLocaleFromContext(turAemSourceContext, context);
+                    Locale locale = TurAemCommonsUtils.getLocaleFromContext(turAemSourceContext, context);
                     String titleLocale = locale.toString().toLowerCase();
                     String titleLanguage = locale.getLanguage().toLowerCase();
                     Map<String, String> tagLabels = getTagLabels(infinityJson);
@@ -179,7 +182,7 @@ public class TurAemAttrUtils {
     }
 
     public static void processTagsFromSourceAttr(TurAemContext context,
-            TurAemSourceContext turAemSourceContext,
+            TurAemConfiguration turAemSourceContext,
             List<TurSNAttributeSpec> turSNAttributeSpecList, String attributeName,
             TurAemTargetAttrValueMap turAemTargetAttrValueMap) {
         Optional.ofNullable((JSONArray) getJcrProperty(context, attributeName)).ifPresent(
@@ -188,7 +191,7 @@ public class TurAemAttrUtils {
     }
 
     public static void processTagsFromTargetAttr(TurAemContext context,
-            TurAemSourceContext turAemSourceContext,
+            TurAemConfiguration turAemSourceContext,
             List<TurSNAttributeSpec> turSNAttributeSpecList,
             TurAemTargetAttrValueMap turAemTargetAttrValueMapFromClass, String targetName,
             TurAemTargetAttrValueMap turAemTargetAttrValueMap) {
@@ -196,7 +199,7 @@ public class TurAemAttrUtils {
                 turAemSourceContext, turSNAttributeSpecList, tag, turAemTargetAttrValueMap));
     }
 
-    public static void formatTags(TurAemContext context, TurAemSourceContext turAemSourceContext,
+    public static void formatTags(TurAemContext context, TurAemConfiguration turAemSourceContext,
             List<TurSNAttributeSpec> turSNAttributeSpecList, String tag,
             TurAemTargetAttrValueMap turAemTargetAttrValueMap) {
         TurCommonsUtils.getKeyValueFromColon(tag)

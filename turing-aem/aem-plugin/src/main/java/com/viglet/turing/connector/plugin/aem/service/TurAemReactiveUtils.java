@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -37,9 +37,9 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 public class TurAemReactiveUtils {
-    
+
     private final TurAemReactiveHttpService reactiveHttpService;
-    
+
     public TurAemReactiveUtils(TurAemReactiveHttpService reactiveHttpService) {
         this.reactiveHttpService = reactiveHttpService;
     }
@@ -47,16 +47,16 @@ public class TurAemReactiveUtils {
     /**
      * Reactively gets infinity JSON for the given URL and context
      * 
-     * @param url the URL path
+     * @param url                 the URL path
      * @param turAemSourceContext the source context
      * @return Mono containing JSONObject or empty if not found/invalid
      */
-    public Mono<JSONObject> getInfinityJsonReactive(String url, TurAemSourceContext turAemSourceContext) {
+    public Mono<JSONObject> getInfinityJsonReactive(String url, TurAemConfiguration turAemSourceContext) {
         String infinityJsonUrl = String.format(url.endsWith(JSON) ? "%s%s" : "%s%s.infinity.json",
                 turAemSourceContext.getUrl(), url);
-        
+
         log.debug("Getting infinity JSON reactively for: {}", infinityJsonUrl);
-        
+
         return reactiveHttpService.fetchResponseBodyReactive(infinityJsonUrl, turAemSourceContext)
                 .filter(StringUtils::isNotBlank)
                 .flatMap(responseBody -> {

@@ -27,14 +27,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @ToString
-public class TurAemSourceContext {
+public class TurAemConfiguration {
     private String id;
     private String url;
     private String username;
@@ -53,7 +52,7 @@ public class TurAemSourceContext {
     @Builder.Default
     private Collection<TurAemLocalePathContext> localePaths = new HashSet<>();
 
-    public TurAemSourceContext(TurAemSourceContext turAemSourceContext) {
+    public TurAemConfiguration(TurAemConfiguration turAemSourceContext) {
         this.id = turAemSourceContext.getId();
         this.url = turAemSourceContext.getUrl();
         this.username = turAemSourceContext.getUsername();

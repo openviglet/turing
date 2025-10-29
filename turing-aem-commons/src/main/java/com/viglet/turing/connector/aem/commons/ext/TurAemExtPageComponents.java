@@ -1,24 +1,25 @@
 package com.viglet.turing.connector.aem.commons.ext;
 
-import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.connector.aem.commons.TurAemObject;
-import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
-import com.viglet.turing.client.sn.TurMultiValue;
-import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
-import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
-
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.viglet.turing.client.sn.TurMultiValue;
+import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
+import com.viglet.turing.connector.aem.commons.TurAemObject;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
+import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
+import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Extension for extracting page components from AEM pages.
@@ -34,9 +35,9 @@ public class TurAemExtPageComponents implements TurAemExtAttributeInterface {
 
     @Override
     public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr,
-                                 TurAemSourceAttr turAemSourceAttr,
-                                 TurAemObject aemObject,
-                                 TurAemSourceContext turAemSourceContext) {
+            TurAemSourceAttr turAemSourceAttr,
+            TurAemObject aemObject,
+            TurAemConfiguration turAemSourceContext) {
         log.debug("Executing TurAemExtPageComponents for path: {}",
                 aemObject != null ? aemObject.getPath() : "unknown");
 
@@ -127,7 +128,7 @@ public class TurAemExtPageComponents implements TurAemExtAttributeInterface {
      */
     @NotNull
     private Optional<String> processNodeIfResponsiveGrid(@NotNull JSONObject parentNode,
-                                                         @NotNull String nodeKey) {
+            @NotNull String nodeKey) {
         Object nodeObject = parentNode.get(nodeKey);
         if (!(nodeObject instanceof JSONObject node)) {
             return Optional.empty();

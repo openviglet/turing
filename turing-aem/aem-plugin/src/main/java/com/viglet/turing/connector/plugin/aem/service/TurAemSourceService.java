@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.commons.TurConnectorSession;
 import com.viglet.turing.connector.plugin.aem.conf.AemPluginHandlerConfiguration;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemPluginSystem;
@@ -53,14 +53,14 @@ public class TurAemSourceService {
         return AEM;
     }
 
-    public boolean isOnce(TurAemSourceContext turAemSourceContext) {
+    public boolean isOnce(TurAemConfiguration turAemSourceContext) {
         return turAemPluginSystemRepository
                 .findByConfig(TurAemCommonsUtils.configOnce(turAemSourceContext))
                 .map(TurAemPluginSystem::isBooleanValue).orElse(false);
     }
 
-    private TurAemSourceContext getTurAemSourceContext(IAemConfiguration config) {
-        TurAemSourceContext turAemSourceContext = TurAemSourceContext.builder()
+    private TurAemConfiguration getTurAemConfiguration(IAemConfiguration config) {
+        TurAemConfiguration turAemSourceContext = TurAemConfiguration.builder()
                 .id(config.getCmsGroup()).contentType(config.getCmsContentType())
                 .defaultLocale(config.getDefaultLocale())
                 .rootPath(config.getCmsRootPath()).url(config.getCmsHost())
@@ -83,8 +83,8 @@ public class TurAemSourceService {
         return turAemSourceContext;
     }
 
-    public TurAemSourceContext getTurAemSourceContext(TurAemSource turAemSource) {
-        return getTurAemSourceContext(new AemPluginHandlerConfiguration(
+    public TurAemConfiguration getTurAemConfiguration(TurAemSource turAemSource) {
+        return getTurAemConfiguration(new AemPluginHandlerConfiguration(
                 turAemSource));
     }
 

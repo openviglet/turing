@@ -5,6 +5,6 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.connector.commons.TurConnectorSession;
 
 public record TurJobItemWithSession(TurSNJobItem turSNJobItem, TurConnectorSession session,
-        Set<String> dependencies, boolean standalone) {
+                Set<String> dependencies, boolean standalone) {
 
 }

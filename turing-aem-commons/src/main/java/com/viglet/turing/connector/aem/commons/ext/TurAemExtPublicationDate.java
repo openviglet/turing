@@ -18,20 +18,21 @@
 
 package com.viglet.turing.connector.aem.commons.ext;
 
-import com.viglet.turing.connector.aem.commons.TurAemObject;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import java.util.Optional;
+
 import com.viglet.turing.client.sn.TurMultiValue;
+import com.viglet.turing.connector.aem.commons.TurAemObject;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurAemExtPublicationDate implements TurAemExtAttributeInterface {
 	@Override
 	public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr, TurAemSourceAttr turAemSourceAttr,
-								 TurAemObject aemObject,  TurAemSourceContext turAemSourceContext) {
+			TurAemObject aemObject, TurAemConfiguration turAemSourceContext) {
 		log.debug("Executing TurAemExtPublicationDate");
 		return Optional.ofNullable(aemObject.getPublicationDate())
 				.map(publicationDate -> TurMultiValue.singleItem(publicationDate.getTime())).orElse(null);

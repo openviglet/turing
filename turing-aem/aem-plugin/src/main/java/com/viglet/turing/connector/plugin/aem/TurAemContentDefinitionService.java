@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDate;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDateInterface;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentMapping;
@@ -63,7 +63,7 @@ public class TurAemContentDefinitionService {
                                 .map(TurAemContentMapping::getDeltaClassName).orElse(null);
         }
 
-        public Date getDeltaDate(TurAemObject aemObject, TurAemSourceContext turAemSourceContext,
+        public Date getDeltaDate(TurAemObject aemObject, TurAemConfiguration turAemSourceContext,
                         TurAemContentMapping turAemContentMapping) {
                 Date deltaDate = Optional
                                 .ofNullable(getDeltaClassName(turAemContentMapping))
@@ -77,7 +77,7 @@ public class TurAemContentDefinitionService {
         }
 
         private Date defaultDeltaDate(TurAemObject aemObject,
-                        TurAemSourceContext turAemSourceContext) {
+                        TurAemConfiguration turAemSourceContext) {
                 return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
         }
 

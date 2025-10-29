@@ -19,9 +19,10 @@ package com.viglet.turing.connector.aem.sample.ext;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtContentInterface;
 import com.viglet.turing.connector.aem.sample.beans.TurAemSampleModel;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class TurAemExtSampleModelJson implements TurAemExtContentInterface {
 
     @Override
     public TurAemTargetAttrValueMap consume(TurAemObject aemObject,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemConfiguration turAemSourceContext) {
         log.debug("Executing TurAemExtSampleModelJson");
         String url = turAemSourceContext.getUrl() + aemObject.getPath() + MODEL_JSON_EXTENSION;
         TurAemTargetAttrValueMap attrValues = new TurAemTargetAttrValueMap();

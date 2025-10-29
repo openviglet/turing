@@ -20,8 +20,8 @@ package com.viglet.turing.connector.aem.commons.ext;
 
 import com.viglet.turing.connector.aem.commons.TurAemObject;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 
 public interface TurAemExtContentInterface {
-    TurAemTargetAttrValueMap consume(TurAemObject aemObject, TurAemSourceContext turAemSourceContext);
+    TurAemTargetAttrValueMap consume(TurAemObject aemObject, TurAemConfiguration turAemSourceContext);
 }

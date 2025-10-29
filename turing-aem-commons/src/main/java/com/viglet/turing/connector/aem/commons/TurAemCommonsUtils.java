@@ -24,7 +24,6 @@ import static com.viglet.turing.connector.aem.commons.TurAemConstants.ONCE;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.SLING;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.TEXT;
 import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
-
 import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
@@ -43,7 +42,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -55,7 +53,6 @@ import org.apache.hc.core5.http.message.BasicHeader;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,18 +69,17 @@ import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.aem.commons.bean.TurAemContext;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
 import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtContentInterface;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurAemCommonsUtils {
 
-    private static final Cache<String, Optional<String>> responseBodyCache = Caffeine.newBuilder().maximumSize(1000)
-            .expireAfterWrite(Duration.ofMinutes(5)).build();
+    private static final Cache<String, Optional<String>> responseBodyCache =
+            Caffeine.newBuilder().maximumSize(1000).expireAfterWrite(Duration.ofMinutes(5)).build();
 
     private TurAemCommonsUtils() {
         throw new IllegalStateException("Utility class");
@@ -128,12 +124,12 @@ public class TurAemCommonsUtils {
     }
 
     public static boolean isTypeEqualContentType(JSONObject jsonObject,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemConfiguration turAemSourceContext) {
         return jsonObject.has(JCR_PRIMARY_TYPE) && jsonObject.getString(JCR_PRIMARY_TYPE)
                 .equals(turAemSourceContext.getContentType());
     }
 
-    public static Optional<String> getSiteName(TurAemSourceContext turAemSourceContext,
+    public static Optional<String> getSiteName(TurAemConfiguration turAemSourceContext,
             JSONObject jsonObject) {
         return getSiteName(jsonObject).map(Optional::of).orElseGet(() -> {
             log.error("No site name the {} root path ({})", turAemSourceContext.getRootPath(),
@@ -142,7 +138,7 @@ public class TurAemCommonsUtils {
         });
     }
 
-    public static boolean usingContentTypeParameter(TurAemSourceContext turAemSourceContext) {
+    public static boolean usingContentTypeParameter(TurAemConfiguration turAemSourceContext) {
         return StringUtils.isNotBlank(turAemSourceContext.getContentType());
     }
 
@@ -155,12 +151,12 @@ public class TurAemCommonsUtils {
         return true;
     }
 
-    public static String configOnce(TurAemSourceContext turAemSourceContext) {
+    public static String configOnce(TurAemConfiguration turAemSourceContext) {
         return "%s/%s".formatted(turAemSourceContext.getId(), ONCE);
     }
 
     public static TurAemTargetAttrValueMap runCustomClassFromContentType(TurAemModel turAemModel,
-            TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
+            TurAemObject aemObject, TurAemConfiguration turAemSourceContext) {
         return StringUtils.isNotEmpty(turAemModel.getClassName())
                 ? TurCustomClassCache.getCustomClassMap(turAemModel.getClassName())
                         .map(customClassMap -> ((TurAemExtContentInterface) customClassMap)
@@ -201,7 +197,7 @@ public class TurAemCommonsUtils {
     }
 
     public static boolean checkIfFileHasNotImageExtension(String s) {
-        String[] imageExtensions = { ".jpg", ".png", ".jpeg", ".svg", ".webp" };
+        String[] imageExtensions = {".jpg", ".png", ".jpeg", ".svg", ".webp"};
         return Arrays.stream(imageExtensions).noneMatch(suffix -> s.toLowerCase().endsWith(suffix));
     }
 
@@ -236,7 +232,7 @@ public class TurAemCommonsUtils {
                 .map(TurSNJobAttributeSpec.class::cast).toList();
     }
 
-    public static Locale getLocaleByPath(TurAemSourceContext turAemSourceContext, String path) {
+    public static Locale getLocaleByPath(TurAemConfiguration turAemSourceContext, String path) {
         for (TurAemLocalePathContext turAemSourceLocalePath : turAemSourceContext
                 .getLocalePaths()) {
             if (hasPath(turAemSourceLocalePath, path)) {
@@ -250,13 +246,13 @@ public class TurAemCommonsUtils {
         return path.startsWith(turAemSourceLocalePath.getPath());
     }
 
-    public static Locale getLocaleFromAemObject(TurAemSourceContext turAemSourceContext,
+    public static Locale getLocaleFromAemObject(TurAemConfiguration turAemSourceContext,
             TurAemObject aemObject) {
         return getLocaleByPath(turAemSourceContext, aemObject.getPath());
     }
 
     public static Optional<JSONObject> getInfinityJson(String url,
-            TurAemSourceContext turAemSourceContext, boolean useCache) {
+            TurAemConfiguration turAemSourceContext, boolean useCache) {
         String infinityJsonUrl = String.format(url.endsWith(JSON) ? "%s%s" : "%s%s.infinity.json",
                 turAemSourceContext.getUrl(), url);
         return getResponseBody(infinityJsonUrl, turAemSourceContext, useCache)
@@ -304,7 +300,7 @@ public class TurAemCommonsUtils {
     }
 
     public static <T> Optional<T> getResponseBody(String url,
-            TurAemSourceContext turAemSourceContext, Class<T> clazz, boolean useCache) {
+            TurAemConfiguration turAemSourceContext, Class<T> clazz, boolean useCache) {
         return getResponseBody(url, turAemSourceContext, useCache).map(json -> {
             if (!TurCommonsUtils.isValidJson(json)) {
                 return null;
@@ -321,7 +317,7 @@ public class TurAemCommonsUtils {
     }
 
     public static @NotNull Optional<String> getResponseBody(String url,
-            TurAemSourceContext turAemSourceContext, boolean useCache) {
+            TurAemConfiguration turAemSourceContext, boolean useCache) {
         if (useCache) {
             return fetchResponseBodyCached(url, turAemSourceContext);
         } else {
@@ -330,7 +326,7 @@ public class TurAemCommonsUtils {
     }
 
     public static @NotNull Optional<String> fetchResponseBodyWithoutCache(String url,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemConfiguration turAemSourceContext) {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setDefaultHeaders(List.of(new BasicHeader(HttpHeaders.AUTHORIZATION, basicAuth(
                         turAemSourceContext.getUsername(), turAemSourceContext.getPassword()))))
@@ -354,7 +350,7 @@ public class TurAemCommonsUtils {
     }
 
     public static @NotNull Optional<String> fetchResponseBodyCached(String url,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemConfiguration turAemSourceContext) {
         if (responseBodyCache.asMap().containsKey(url))
             log.debug("Using Cache to request {}", url);
         else
@@ -383,7 +379,7 @@ public class TurAemCommonsUtils {
         return components.toString();
     }
 
-    public static Locale getLocaleFromContext(TurAemSourceContext turAemSourceContext,
+    public static Locale getLocaleFromContext(TurAemConfiguration turAemSourceContext,
             TurAemContext context) {
         return getLocaleFromAemObject(turAemSourceContext, context.getCmsObjectInstance());
     }

@@ -18,21 +18,22 @@ package com.viglet.turing.connector.aem.commons.ext;
 
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurAemExtContentUrl implements TurAemExtAttributeInterface {
-    public static String getURL(TurAemObject aemObject, TurAemSourceContext turAemSourceContext) {
+    public static String getURL(TurAemObject aemObject, TurAemConfiguration turAemSourceContext) {
         return String.format("%s%s.html", turAemSourceContext.getUrlPrefix(), aemObject.getPath());
     }
 
     @Override
     public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr,
             TurAemSourceAttr turAemSourceAttr, TurAemObject aemObject,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemConfiguration turAemSourceContext) {
         log.debug("Executing TurAemExtContentUrl");
         return TurMultiValue.singleItem(getURL(aemObject, turAemSourceContext));
     }

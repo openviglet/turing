@@ -18,14 +18,16 @@ package com.viglet.turing.connector.aem.commons.ext;
 
 import java.util.Collections;
 import java.util.Optional;
+
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
 import com.viglet.turing.connector.aem.commons.bean.TurAemContentTag;
 import com.viglet.turing.connector.aem.commons.bean.TurAemContentTags;
-import com.viglet.turing.connector.aem.commons.context.TurAemSourceContext;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -35,7 +37,7 @@ public class TurAemExtContentTags implements TurAemExtAttributeInterface {
     @Override
     public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr,
             TurAemSourceAttr turAemSourceAttr, TurAemObject aemObject,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemConfiguration turAemSourceContext) {
         log.debug("Executing TurAemExtContentTags");
         return new TurMultiValue(new TurMultiValue(getTags(aemObject, turAemSourceContext)
                 .map(t -> t.getTags().stream().map(TurAemContentTag::getTagID).toList())
@@ -43,7 +45,7 @@ public class TurAemExtContentTags implements TurAemExtAttributeInterface {
     }
 
     public static Optional<TurAemContentTags> getTags(TurAemObject aemObject,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemConfiguration turAemSourceContext) {
         String url = turAemSourceContext.getUrl() + aemObject.getPath() + TAGS_JSON_EXTENSION;
         return TurAemCommonsUtils.getResponseBody(url, turAemSourceContext, TurAemContentTags.class,
                 true);
