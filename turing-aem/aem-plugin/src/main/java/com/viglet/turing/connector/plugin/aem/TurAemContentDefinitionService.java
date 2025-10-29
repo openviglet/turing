@@ -119,24 +119,36 @@ public class TurAemContentDefinitionService {
                         TurAemContentMapping turCmsContentMapping) {
                 List<TurAemTargetAttr> turCmsTargetAttrs = new ArrayList<>();
                 turCmsContentMapping.getTargetAttrDefinitions()
-                                .forEach(targetAttrDefinition -> findByNameFromTargetAttrs(
-                                                model.getTargetAttrs(),
-                                                targetAttrDefinition.getName()).ifPresentOrElse(
-                                                                targetAttr -> turCmsTargetAttrs.add(
-                                                                                setTargetAttrFromDefinition(
-                                                                                                targetAttrDefinition,
-                                                                                                targetAttr)),
-                                                                () -> {
-                                                                        if (targetAttrDefinition
-                                                                                        .isMandatory()) {
-                                                                                turCmsTargetAttrs
-                                                                                                .add(setTargetAttrFromDefinition(
-                                                                                                                targetAttrDefinition,
-                                                                                                                new TurAemTargetAttr()));
-                                                                        }
-                                                                }));
+                                .forEach(targetAttrDefinition -> addTargetAttr(model,
+                                                turCmsTargetAttrs, targetAttrDefinition));
 
                 return turCmsTargetAttrs;
+        }
+
+        private void addTargetAttr(TurAemModel model, List<TurAemTargetAttr> turCmsTargetAttrs,
+                        TurSNAttributeSpec targetAttrDefinition) {
+                findByNameFromTargetAttrs(model.getTargetAttrs(), targetAttrDefinition.getName())
+                                .ifPresentOrElse(
+                                                targetAttr -> addTargetAttr(turCmsTargetAttrs,
+                                                                targetAttrDefinition, targetAttr),
+                                                () -> {
+                                                        addTargetAttrMandatory(turCmsTargetAttrs,
+                                                                        targetAttrDefinition);
+                                                });
+        }
+
+        private void addTargetAttrMandatory(List<TurAemTargetAttr> turCmsTargetAttrs,
+                        TurSNAttributeSpec targetAttrDefinition) {
+                if (targetAttrDefinition.isMandatory()) {
+                        turCmsTargetAttrs.add(setTargetAttrFromDefinition(targetAttrDefinition,
+                                        new TurAemTargetAttr()));
+                }
+        }
+
+        private boolean addTargetAttr(List<TurAemTargetAttr> turCmsTargetAttrs,
+                        TurSNAttributeSpec targetAttrDefinition, TurAemTargetAttr targetAttr) {
+                return turCmsTargetAttrs
+                                .add(setTargetAttrFromDefinition(targetAttrDefinition, targetAttr));
         }
 
         private Optional<TurAemTargetAttr> findByNameFromTargetAttrs(
@@ -146,30 +158,26 @@ public class TurAemContentDefinitionService {
 
         private TurAemTargetAttr setTargetAttrFromDefinition(TurSNAttributeSpec turSNAttributeSpec,
                         TurAemTargetAttr targetAttr) {
+                // Set name if not already present
                 if (StringUtils.isBlank(targetAttr.getName())) {
                         targetAttr.setName(turSNAttributeSpec.getName());
                 }
+
+                // Handle className configuration
                 if (StringUtils.isNotBlank(turSNAttributeSpec.getClassName())) {
                         if (CollectionUtils.isEmpty(targetAttr.getSourceAttrs())) {
-                                List<TurAemSourceAttr> sourceAttrs =
-                                                Collections.singletonList(TurAemSourceAttr.builder()
-                                                                .className(turSNAttributeSpec
-                                                                                .getClassName())
-                                                                .uniqueValues(false)
-                                                                .convertHtmlToText(false).build());
-                                targetAttr.setSourceAttrs(sourceAttrs);
-                                targetAttr.setClassName(turSNAttributeSpec.getClassName());
+                                setClassNameInNewSourceAttrs(turSNAttributeSpec, targetAttr);
                         } else {
-                                targetAttr.getSourceAttrs().stream()
-                                                .filter(turCmsSourceAttr -> Objects
-                                                                .nonNull(turCmsSourceAttr)
-                                                                && StringUtils.isBlank(
-                                                                                turCmsSourceAttr.getClassName()))
-                                                .forEach(turCmsSourceAttr -> turCmsSourceAttr
-                                                                .setClassName(turSNAttributeSpec
-                                                                                .getClassName()));
+                                setClassNameInSourceAttrs(turSNAttributeSpec, targetAttr);
                         }
                 }
+
+                // Set all attribute properties from specification
+                return updateTargetAttrProperties(turSNAttributeSpec, targetAttr);
+        }
+
+        private TurAemTargetAttr updateTargetAttrProperties(TurSNAttributeSpec turSNAttributeSpec,
+                        TurAemTargetAttr targetAttr) {
                 targetAttr.setDescription(turSNAttributeSpec.getDescription());
                 targetAttr.setFacet(turSNAttributeSpec.isFacet());
                 targetAttr.setFacetName(turSNAttributeSpec.getFacetName());
@@ -177,6 +185,23 @@ public class TurAemContentDefinitionService {
                 targetAttr.setMultiValued(turSNAttributeSpec.isMultiValued());
                 targetAttr.setType(turSNAttributeSpec.getType());
                 return targetAttr;
+        }
 
+        private void setClassNameInSourceAttrs(TurSNAttributeSpec turSNAttributeSpec,
+                        TurAemTargetAttr targetAttr) {
+                targetAttr.getSourceAttrs().stream().filter(
+                                turCmsSourceAttr -> Objects.nonNull(turCmsSourceAttr) && StringUtils
+                                                .isBlank(turCmsSourceAttr.getClassName()))
+                                .forEach(turCmsSourceAttr -> turCmsSourceAttr
+                                                .setClassName(turSNAttributeSpec.getClassName()));
+        }
+
+        private void setClassNameInNewSourceAttrs(TurSNAttributeSpec turSNAttributeSpec,
+                        TurAemTargetAttr targetAttr) {
+                List<TurAemSourceAttr> sourceAttrs = Collections.singletonList(TurAemSourceAttr
+                                .builder().className(turSNAttributeSpec.getClassName())
+                                .uniqueValues(false).convertHtmlToText(false).build());
+                targetAttr.setSourceAttrs(sourceAttrs);
+                targetAttr.setClassName(turSNAttributeSpec.getClassName());
         }
 }
