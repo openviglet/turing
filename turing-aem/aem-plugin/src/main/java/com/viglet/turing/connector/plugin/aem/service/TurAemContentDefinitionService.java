@@ -22,9 +22,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
@@ -37,6 +39,7 @@ import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
 import com.viglet.turing.connector.plugin.aem.context.TurAemSession;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -67,10 +70,8 @@ public class TurAemContentDefinitionService {
                 Date deltaDate = Optional.ofNullable(getDeltaClassName(turAemContentMapping)).map(
                                 className -> TurCustomClassCache.getCustomClassMap(className).map(
                                                 classInstance -> ((TurAemExtDeltaDateInterface) classInstance)
-                                                                .consume(aemObject,
-                                                                                turAemSourceContext))
-                                                .orElseGet(() -> defaultDeltaDate(aemObject,
-                                                                turAemSourceContext)))
+                                                                .consume(aemObject, turAemSourceContext))
+                                                .orElseGet(() -> defaultDeltaDate(aemObject, turAemSourceContext)))
                                 .orElseGet(() -> defaultDeltaDate(aemObject, turAemSourceContext));
                 log.debug("Delta Date {} from {}", deltaDate.toString(), aemObject.getPath());
                 return deltaDate;
@@ -83,11 +84,10 @@ public class TurAemContentDefinitionService {
 
         public Optional<TurAemModel> getModel(TurAemSession turAemSession,
                         TurAemSource turAemSource) {
-                TurAemContentMapping turAemContentMapping =
-                                turAemContentMappingService.getTurAemContentMapping(turAemSource);
+                TurAemContentMapping turAemContentMapping = turAemContentMappingService
+                                .getTurAemContentMapping(turAemSource);
                 return Optional.ofNullable(turAemContentMapping)
-                                .flatMap(turCmsContentMapping -> getModel(turAemSession,
-                                                turCmsContentMapping));
+                                .flatMap(turCmsContentMapping -> getModel(turAemSession, turCmsContentMapping));
         }
 
         private Optional<TurAemModel> getModel(TurAemSession turAemSession,
@@ -122,8 +122,8 @@ public class TurAemContentDefinitionService {
                         TurAemContentMapping turCmsContentMapping) {
                 List<TurAemTargetAttr> turCmsTargetAttrs = new ArrayList<>();
                 turCmsContentMapping.getTargetAttrDefinitions()
-                                .forEach(targetAttrDefinition -> addTargetAttr(model,
-                                                turCmsTargetAttrs, targetAttrDefinition));
+                                .forEach(targetAttrDefinition -> addTargetAttr(model, turCmsTargetAttrs,
+                                                targetAttrDefinition));
 
                 return turCmsTargetAttrs;
         }
@@ -131,10 +131,10 @@ public class TurAemContentDefinitionService {
         private void addTargetAttr(TurAemModel model, List<TurAemTargetAttr> turAemTargetAttr,
                         TurSNAttributeSpec attributeSpec) {
                 getTargetAttr(model.getTargetAttrs(), attributeSpec.getName())
-                                .ifPresentOrElse(targetAttr -> addTargetAttr(turAemTargetAttr,
-                                                attributeSpec, targetAttr), () -> {
-                                                        addTargetAttrMandatory(turAemTargetAttr,
-                                                                        attributeSpec);
+                                .ifPresentOrElse(targetAttr -> addTargetAttr(turAemTargetAttr, attributeSpec,
+                                                targetAttr),
+                                                () -> {
+                                                        addTargetAttrMandatory(turAemTargetAttr, attributeSpec);
                                                 });
         }
 
@@ -159,12 +159,9 @@ public class TurAemContentDefinitionService {
 
         private TurAemTargetAttr setTargetAttrFromDefinition(TurSNAttributeSpec turSNAttributeSpec,
                         TurAemTargetAttr targetAttr) {
-                // Set name if not already present
                 if (StringUtils.isBlank(targetAttr.getName())) {
                         targetAttr.setName(turSNAttributeSpec.getName());
                 }
-
-                // Handle className configuration
                 if (StringUtils.isNotBlank(turSNAttributeSpec.getClassName())) {
                         if (CollectionUtils.isEmpty(targetAttr.getSourceAttrs())) {
                                 setClassNameInNewSourceAttrs(turSNAttributeSpec, targetAttr);
@@ -172,8 +169,6 @@ public class TurAemContentDefinitionService {
                                 setClassNameInSourceAttrs(turSNAttributeSpec, targetAttr);
                         }
                 }
-
-                // Set all attribute properties from specification
                 return updateTargetAttrProperties(turSNAttributeSpec, targetAttr);
         }
 
@@ -199,9 +194,12 @@ public class TurAemContentDefinitionService {
 
         private void setClassNameInNewSourceAttrs(TurSNAttributeSpec turSNAttributeSpec,
                         TurAemTargetAttr targetAttr) {
-                List<TurAemSourceAttr> sourceAttrs = Collections.singletonList(TurAemSourceAttr
-                                .builder().className(turSNAttributeSpec.getClassName())
-                                .uniqueValues(false).convertHtmlToText(false).build());
+                List<TurAemSourceAttr> sourceAttrs = Collections
+                                .singletonList(TurAemSourceAttr.builder()
+                                                .className(turSNAttributeSpec.getClassName())
+                                                .uniqueValues(false)
+                                                .convertHtmlToText(false)
+                                                .build());
                 targetAttr.setSourceAttrs(sourceAttrs);
                 targetAttr.setClassName(turSNAttributeSpec.getClassName());
         }

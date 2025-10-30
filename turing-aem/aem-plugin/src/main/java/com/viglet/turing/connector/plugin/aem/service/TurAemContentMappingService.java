@@ -1,15 +1,17 @@
 package com.viglet.turing.connector.plugin.aem.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentMapping;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemAttributeSpecification;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemPluginModel;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemTargetAttribute;
@@ -24,8 +26,7 @@ public class TurAemContentMappingService {
         public TurAemContentMappingService(TurAemPluginModelRepository turAemPluginModelRepository,
                         TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository) {
                 this.turAemPluginModelRepository = turAemPluginModelRepository;
-                this.turAemAttributeSpecificationRepository =
-                                turAemAttributeSpecificationRepository;
+                this.turAemAttributeSpecificationRepository = turAemAttributeSpecificationRepository;
         }
 
         public @NotNull TurAemContentMapping getTurAemContentMapping(TurAemSource turAemSource) {
@@ -45,8 +46,7 @@ public class TurAemContentMappingService {
                                 .toList();
         }
 
-        private static @NotNull List<TurAemTargetAttr> getTurAemTargetAttrs(
-                        TurAemPluginModel pluginModel) {
+        private static @NotNull List<TurAemTargetAttr> getTurAemTargetAttrs(TurAemPluginModel pluginModel) {
                 return pluginModel.getTargetAttrs().stream()
                                 .map(targetAttr -> TurAemTargetAttr.builder()
                                                 .name(targetAttr.getName())
@@ -55,8 +55,7 @@ public class TurAemContentMappingService {
                                 .collect(Collectors.toList());
         }
 
-        private static @NotNull List<TurAemSourceAttr> getTurAemSourceAttrs(
-                        TurAemTargetAttribute targetAttr) {
+        private static @NotNull List<TurAemSourceAttr> getTurAemSourceAttrs(TurAemTargetAttribute targetAttr) {
                 return targetAttr.getSourceAttrs().stream()
                                 .map(sourceAttr -> TurAemSourceAttr.builder()
                                                 .className(sourceAttr.getClassName())
@@ -65,30 +64,24 @@ public class TurAemContentMappingService {
                                 .toList();
         }
 
-        private @NotNull List<TurSNAttributeSpec> getTurSNAttributeSpecs(
-                        TurAemSource turAemSource) {
-                List<TurSNAttributeSpec> targetAttrDefinitions = new ArrayList<>();
-                turAemAttributeSpecificationRepository.findByTurAemSource(turAemSource)
-                                .ifPresent(attributeSpecifications -> attributeSpecifications
-                                                .forEach(attributeSpec -> targetAttrDefinitions
-                                                                .add(TurSNAttributeSpec.builder()
-                                                                                .className(attributeSpec
-                                                                                                .getClassName())
-                                                                                .name(attributeSpec
-                                                                                                .getName())
-                                                                                .type(attributeSpec
-                                                                                                .getType())
-                                                                                .facetName(attributeSpec
-                                                                                                .getFacetNames())
-                                                                                .description(attributeSpec
-                                                                                                .getDescription())
-                                                                                .mandatory(attributeSpec
-                                                                                                .isMandatory())
-                                                                                .multiValued(attributeSpec
-                                                                                                .isMultiValued())
-                                                                                .facet(attributeSpec
-                                                                                                .isFacet())
-                                                                                .build())));
-                return targetAttrDefinitions;
+        private @NotNull List<TurSNAttributeSpec> getTurSNAttributeSpecs(TurAemSource turAemSource) {
+                return turAemAttributeSpecificationRepository.findByTurAemSource(turAemSource)
+                                .map(attributeSpecifications -> attributeSpecifications.stream()
+                                                .map(this::mapToTurSNAttributeSpec)
+                                                .toList())
+                                .orElse(List.of());
+        }
+
+        private TurSNAttributeSpec mapToTurSNAttributeSpec(TurAemAttributeSpecification attributeSpec) {
+                return TurSNAttributeSpec.builder()
+                                .className(attributeSpec.getClassName())
+                                .name(attributeSpec.getName())
+                                .type(attributeSpec.getType())
+                                .facetName(attributeSpec.getFacetNames())
+                                .description(attributeSpec.getDescription())
+                                .mandatory(attributeSpec.isMandatory())
+                                .multiValued(attributeSpec.isMultiValued())
+                                .facet(attributeSpec.isFacet())
+                                .build();
         }
 }
