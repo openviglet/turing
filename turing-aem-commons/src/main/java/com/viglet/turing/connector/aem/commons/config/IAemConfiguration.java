@@ -18,10 +18,10 @@
 
 package com.viglet.turing.connector.aem.commons.config;
 
-import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
-
 import java.util.Collection;
 import java.util.Locale;
+
+import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
 
 public interface IAemConfiguration {
     String DEFAULT_PROVIDER = "AEM";
@@ -51,4 +51,12 @@ public interface IAemConfiguration {
     Locale getDefaultLocale();
 
     Collection<TurAemLocalePathContext> getLocales();
+
+    boolean isAuthor();
+
+    boolean isPublish();
+
+    String getAuthorSNSite();
+
+    String getPublishSNSite();
 }

@@ -11,16 +11,19 @@ import static com.viglet.turing.connector.aem.commons.TurAemConstants.SITE;
 import static com.viglet.turing.connector.aem.commons.bean.TurAemEnv.AUTHOR;
 import static com.viglet.turing.connector.aem.commons.bean.TurAemEnv.PUBLISHING;
 import static com.viglet.turing.connector.commons.logging.TurConnectorLoggingUtils.setSuccessStatus;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
@@ -32,15 +35,14 @@ import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
 import com.viglet.turing.connector.commons.TurConnectorContext;
 import com.viglet.turing.connector.commons.domain.TurConnectorIndexing;
 import com.viglet.turing.connector.commons.domain.TurJobItemWithSession;
-import com.viglet.turing.connector.plugin.aem.TurAemContentDefinitionService;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginUtils;
 import com.viglet.turing.connector.plugin.aem.context.TurAemSession;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class TurAemJobService {
-        private final TurAemContentMappingService turAemContentMappingService;
         private final TurAemSourceService turAemSourceService;
         private final TurAemService turAemService;
         private final TurConnectorContext turConnectorContext;
@@ -50,7 +52,6 @@ public class TurAemJobService {
                         TurAemSourceService turAemSourceService, TurAemService turAemService,
                         TurConnectorContext turConnectorContext,
                         TurAemContentDefinitionService turAemContentDefinitionService) {
-                this.turAemContentMappingService = turAemContentMappingService;
                 this.turAemSourceService = turAemSourceService;
                 this.turAemService = turAemService;
                 this.turConnectorContext = turConnectorContext;
@@ -84,8 +85,7 @@ public class TurAemJobService {
                                                                 attributes)));
                 jobItem.setChecksum(String.valueOf(turAemContentDefinitionService
                                 .getDeltaDate(aemObject, turAemSession.getConfiguration(),
-                                                turAemContentMappingService.getTurAemContentMapping(
-                                                                turAemSession.getAemSource()))
+                                                turAemSession.getContentMapping())
                                 .getTime()));
                 jobItem.setEnvironment(
                                 turAemSession.getConfiguration().getEnvironment().toString());
@@ -100,19 +100,20 @@ public class TurAemJobService {
 
         public void indexingAuthor(TurAemSession turAemSession, TurAemObject aemObject,
                         TurAemModel turAemModel) {
-                if (turAemSourceService.isAuthor(turAemSession.getAemSource())) {
+                if (turAemSourceService.isAuthor(turAemSession.getConfiguration())) {
                         indexByEnvironment(turAemSession, AUTHOR,
-                                        turAemSession.getAemSource().getAuthorSNSite(), aemObject,
+                                        turAemSession.getConfiguration().getAuthorSNSite(), aemObject,
                                         turAemModel);
-                } ;
+                }
+                ;
         }
 
         public void indexingPublish(TurAemSession turAemSession, TurAemObject aemObject,
                         TurAemModel turAemModel) {
-                if (turAemSourceService.isPublish(turAemSession.getAemSource())) {
+                if (turAemSourceService.isPublish(turAemSession.getConfiguration())) {
                         if (aemObject.isDelivered()) {
                                 indexByEnvironment(turAemSession, PUBLISHING,
-                                                turAemSession.getAemSource().getPublishSNSite(),
+                                                turAemSession.getConfiguration().getPublishSNSite(),
                                                 aemObject, turAemModel);
                         } else if (turAemSession.isStandalone()) {
                                 forcingDeIndex(turAemSession, aemObject);
@@ -129,7 +130,7 @@ public class TurAemJobService {
 
         private void forcingDeIndex(TurAemSession turAemSession, TurAemObject aemObject) {
                 TurSNJobItem deIndexJobItem = deIndexJob(turAemSession,
-                                List.of(turAemSession.getAemSource().getPublishSNSite()),
+                                List.of(turAemSession.getConfiguration().getPublishSNSite()),
                                 TurAemCommonsUtils.getLocaleFromAemObject(
                                                 turAemSession.getConfiguration(), aemObject),
                                 aemObject.getPath(), PUBLISHING.toString());
@@ -143,13 +144,12 @@ public class TurAemJobService {
         private void indexByEnvironment(TurAemSession turAemSession, TurAemEnv turAemEnv,
                         String snSite, @NotNull TurAemObject aemObject, TurAemModel turAemModel) {
                 // Review - clone turAemSession entire
-                TurAemConfiguration turAemSourceContext =
-                                new TurAemConfiguration(turAemSession.getConfiguration());
-                turAemSourceContext.setEnvironment(turAemEnv);
-                turAemSourceContext.setTurSNSite(snSite);
+                TurAemConfiguration turAemConfiguration = new TurAemConfiguration(turAemSession.getConfiguration());
+                turAemConfiguration.setEnvironment(turAemEnv);
+                turAemConfiguration.setTurSNSite(snSite);
                 turAemSession.setSites(Collections.singletonList(snSite));
                 createIndexJobAndSendToConnectorQueue(turAemSession, aemObject, turAemModel,
-                                TurAemCommonsUtils.getLocaleFromAemObject(turAemSourceContext,
+                                TurAemCommonsUtils.getLocaleFromAemObject(turAemConfiguration,
                                                 aemObject));
         }
 
@@ -205,13 +205,12 @@ public class TurAemJobService {
                                                         TurAemPluginUtils.getObjectDetailForLogs(
                                                                         contentId, indexing,
                                                                         turAemSession));
-                                        TurJobItemWithSession turJobItemWithSession =
-                                                        new TurJobItemWithSession(
-                                                                        deIndexJob(turAemSession,
-                                                                                        indexing),
-                                                                        turAemSession,
-                                                                        Collections.emptySet(),
-                                                                        turAemSession.isStandalone());
+                                        TurJobItemWithSession turJobItemWithSession = new TurJobItemWithSession(
+                                                        deIndexJob(turAemSession,
+                                                                        indexing),
+                                                        turAemSession,
+                                                        Collections.emptySet(),
+                                                        turAemSession.isStandalone());
                                         turConnectorContext.addJobItem(turJobItemWithSession);
                                 });
         }

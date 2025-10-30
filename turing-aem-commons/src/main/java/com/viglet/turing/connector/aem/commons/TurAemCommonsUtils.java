@@ -68,7 +68,6 @@ import com.viglet.turing.commons.exception.TurRuntimeException;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.aem.commons.bean.TurAemContext;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
-import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
 import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtContentInterface;
@@ -142,9 +141,9 @@ public class TurAemCommonsUtils {
         return StringUtils.isNotBlank(turAemSourceContext.getContentType());
     }
 
-    public static boolean isNotOnceConfig(String path, IAemConfiguration config) {
-        if (StringUtils.isNotBlank(config.getOncePatternPath())) {
-            Pattern p = Pattern.compile(config.getOncePatternPath());
+    public static boolean isNotOnceConfig(String path, TurAemConfiguration config) {
+        if (StringUtils.isNotBlank(config.getOncePattern())) {
+            Pattern p = Pattern.compile(config.getOncePattern());
             Matcher m = p.matcher(path);
             return !m.lookingAt();
         }
@@ -246,21 +245,21 @@ public class TurAemCommonsUtils {
         return path.startsWith(turAemSourceLocalePath.getPath());
     }
 
-    public static Locale getLocaleFromAemObject(TurAemConfiguration turAemSourceContext,
+    public static Locale getLocaleFromAemObject(TurAemConfiguration turAemConfiguration,
             TurAemObject aemObject) {
-        return getLocaleByPath(turAemSourceContext, aemObject.getPath());
+        return getLocaleByPath(turAemConfiguration, aemObject.getPath());
     }
 
     public static Optional<JSONObject> getInfinityJson(String url,
-            TurAemConfiguration turAemSourceContext, boolean useCache) {
+            TurAemConfiguration turAemConfiguration, boolean useCache) {
         String infinityJsonUrl = String.format(url.endsWith(JSON) ? "%s%s" : "%s%s.infinity.json",
-                turAemSourceContext.getUrl(), url);
-        return getResponseBody(infinityJsonUrl, turAemSourceContext, useCache)
+                turAemConfiguration.getUrl(), url);
+        return getResponseBody(infinityJsonUrl, turAemConfiguration, useCache)
                 .<Optional<JSONObject>>map(responseBody -> {
                     if (isResponseBodyJSONArray(responseBody) && !url.endsWith(JSON)) {
                         return getInfinityJson(
                                 new JSONArray(responseBody).toList().getFirst().toString(),
-                                turAemSourceContext, useCache);
+                                turAemConfiguration, useCache);
                     } else if (isResponseBodyJSONObject(responseBody)) {
                         return Optional.of(new JSONObject(responseBody));
                     }

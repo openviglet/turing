@@ -53,62 +53,62 @@ import lombok.ToString;
 @Table(name = "aem_source")
 public class TurAemSource implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+        @Serial
+        private static final long serialVersionUID = 1L;
 
-    @Id
-    @TurUuid
-    private String id;
-    @Column
-    private String name;
-    @Column
-    private String endpoint;
-    @Column
-    private String username;
-    @Column
-    private String password;
-    @Column
-    private String rootPath;
-    @Column
-    private String contentType;
-    @Column
-    private String subType;
-    @Column
-    private String oncePattern;
-    @Column
-    private Locale defaultLocale;
-    @Column
-    private String localeClass;
-    @Column
-    private String deltaClass;
-    @Column
-    private boolean author;
-    @Column
-    private boolean publish;
-    @Column
-    private String authorSNSite;
-    @Column
-    private String publishSNSite;
-    @Column
-    private String authorURLPrefix;
-    @Column
-    private String publishURLPrefix;
+        @Id
+        @TurUuid
+        private String id;
+        @Column
+        private String name;
+        @Column
+        private String endpoint;
+        @Column
+        private String username;
+        @Column
+        private String password;
+        @Column
+        private String rootPath;
+        @Column
+        private String contentType;
+        @Column
+        private String subType;
+        @Column
+        private String oncePattern;
+        @Column
+        private Locale defaultLocale;
+        @Column
+        private String localeClass;
+        @Column
+        private String deltaClass;
+        @Column
+        private boolean author;
+        @Column
+        private boolean publish;
+        @Column
+        private String authorSNSite;
+        @Column
+        private String publishSNSite;
+        @Column
+        private String authorURLPrefix;
+        @Column
+        private String publishURLPrefix;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Collection<TurAemSourceLocalePath> localePaths = new HashSet<>();
+        @Builder.Default
+        @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
+        @Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        private Collection<TurAemSourceLocalePath> localePaths = new HashSet<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Collection<TurAemAttributeSpecification> attributeSpecifications = new HashSet<>();
+        @Builder.Default
+        @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
+        @Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        private Collection<TurAemAttributeSpecification> attributeSpecifications = new HashSet<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Collection<TurAemPluginModel> models = new HashSet<>();
+        @Builder.Default
+        @OneToMany(mappedBy = "turAemSource", orphanRemoval = true, fetch = FetchType.LAZY)
+        @Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        private Collection<TurAemPluginModel> models = new HashSet<>();
 }

@@ -3,10 +3,8 @@ package com.viglet.turing.connector.plugin.aem.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentMapping;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
@@ -26,7 +24,8 @@ public class TurAemContentMappingService {
         public TurAemContentMappingService(TurAemPluginModelRepository turAemPluginModelRepository,
                         TurAemAttributeSpecificationRepository turAemAttributeSpecificationRepository) {
                 this.turAemPluginModelRepository = turAemPluginModelRepository;
-                this.turAemAttributeSpecificationRepository = turAemAttributeSpecificationRepository;
+                this.turAemAttributeSpecificationRepository =
+                                turAemAttributeSpecificationRepository;
         }
 
         public @NotNull TurAemContentMapping getTurAemContentMapping(TurAemSource turAemSource) {

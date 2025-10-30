@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
@@ -18,26 +16,25 @@ import com.viglet.turing.connector.aem.commons.TurAemObject;
 import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Extension for extracting page components from AEM pages.
- * Processes responsive grid components within the page structure.
+ * Extension for extracting page components from AEM pages. Processes responsive grid components
+ * within the page structure.
  */
 @Slf4j
 public class TurAemExtPageComponents implements TurAemExtAttributeInterface {
 
     private static final String ROOT = "root";
     private static final String SLING_RESOURCE_TYPE = "sling:resourceType";
-    private static final String RESPONSIVEGRID_RESOURCE_TYPE = "wcm/foundation/components/responsivegrid";
+    private static final String RESPONSIVEGRID_RESOURCE_TYPE =
+            "wcm/foundation/components/responsivegrid";
     private static final String COMPONENT_SEPARATOR = "\n";
 
     @Override
     public TurMultiValue consume(TurAemTargetAttr turAemTargetAttr,
-            TurAemSourceAttr turAemSourceAttr,
-            TurAemObject aemObject,
-            TurAemConfiguration turAemSourceContext) {
+            TurAemSourceAttr turAemSourceAttr, TurAemObject aemObject,
+            TurAemConfiguration turAemConfiguration) {
         log.debug("Executing TurAemExtPageComponents for path: {}",
                 aemObject != null ? aemObject.getPath() : "unknown");
 
@@ -65,8 +62,7 @@ public class TurAemExtPageComponents implements TurAemExtAttributeInterface {
             }
 
             List<String> components = extractComponentsFromRoot(rootNode.get());
-            String combinedContent = components.stream()
-                    .filter(Objects::nonNull)
+            String combinedContent = components.stream().filter(Objects::nonNull)
                     .filter(content -> !content.trim().isEmpty())
                     .collect(Collectors.joining(COMPONENT_SEPARATOR));
 
@@ -99,7 +95,8 @@ public class TurAemExtPageComponents implements TurAemExtAttributeInterface {
             return Optional.of((JSONObject) rootObject);
         }
 
-        log.debug("Root node exists but is not a JSONObject: {}", rootObject.getClass().getSimpleName());
+        log.debug("Root node exists but is not a JSONObject: {}",
+                rootObject.getClass().getSimpleName());
         return Optional.empty();
     }
 
@@ -112,8 +109,7 @@ public class TurAemExtPageComponents implements TurAemExtAttributeInterface {
 
         rootNode.keySet().forEach(key -> {
             try {
-                processNodeIfResponsiveGrid(rootNode, key)
-                        .ifPresent(components::add);
+                processNodeIfResponsiveGrid(rootNode, key).ifPresent(components::add);
             } catch (JSONException e) {
                 log.warn("Error processing node with key: {}", key, e);
             }

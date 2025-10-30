@@ -31,24 +31,16 @@ import com.viglet.turing.connector.aem.commons.ext.TurAemExtAttributeInterface;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
 import com.viglet.turing.connector.plugin.aem.context.TurAemSession;
-import com.viglet.turing.connector.plugin.aem.service.TurAemContentMappingService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class TurAemAttrProcess {
-
-        private final TurAemContentDefinitionService turAemContentDefinitionService;
         public static final String CQ_TAGS_PATH = "/content/_cq_tags";
-
-        public TurAemAttrProcess(TurAemContentMappingService turAemContentMappingService,
-                        TurAemContentDefinitionService turAemContentDefinitionService) {
-                this.turAemContentDefinitionService = turAemContentDefinitionService;
-        }
 
         public TurAemTargetAttrValueMap prepareAttributeDefs(TurAemSession turAemSession,
                         TurAemObject aemObject) {
-                return turAemContentDefinitionService.getModel(turAemSession).map(turAemModel -> {
+                return turAemSession.getModel().map(turAemModel -> {
                         TurAemContext context = new TurAemContext(aemObject);
                         TurAemTargetAttrValueMap turAemTargetAttrValueMap =
                                         new TurAemTargetAttrValueMap();

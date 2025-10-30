@@ -7,9 +7,8 @@
 
   // Java Language Server memory tuning
   "java.jdt.ls.vmargs": "-Xms4096m -Xmx8192m -XX:+UseG1GC -XX:+UseStringDeduplication",
-  "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+  "java.format.settings.url": "./eclipse-java-style.xml",
   "java.format.settings.profile": "GoogleStyle",
-
   // Disable automatic builds to reduce CPU usage
   "java.autobuild.enabled": false,
 

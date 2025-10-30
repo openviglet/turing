@@ -14,7 +14,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.connector.plugin.aem;
+package com.viglet.turing.connector.plugin.aem.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +36,7 @@ import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
 import com.viglet.turing.connector.plugin.aem.context.TurAemSession;
-import com.viglet.turing.connector.plugin.aem.service.TurAemContentMappingService;
+import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -81,9 +81,10 @@ public class TurAemContentDefinitionService {
                 return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
         }
 
-        public Optional<TurAemModel> getModel(TurAemSession turAemSession) {
-                TurAemContentMapping turAemContentMapping = turAemContentMappingService
-                                .getTurAemContentMapping(turAemSession.getAemSource());
+        public Optional<TurAemModel> getModel(TurAemSession turAemSession,
+                        TurAemSource turAemSource) {
+                TurAemContentMapping turAemContentMapping =
+                                turAemContentMappingService.getTurAemContentMapping(turAemSource);
                 return Optional.ofNullable(turAemContentMapping)
                                 .flatMap(turCmsContentMapping -> getModel(turAemSession,
                                                 turCmsContentMapping));

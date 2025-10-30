@@ -18,9 +18,11 @@ package com.viglet.turing.connector.plugin.aem.conf;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
+
 import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
 import com.viglet.turing.connector.aem.commons.context.TurAemLocalePathContext;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,6 +40,10 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
     private final String cmsContentType;
     private final String cmsSubType;
     private final String cmsRootPath;
+    private final boolean author;
+    private final boolean publish;
+    private final String authorSNSite;
+    private final String publishSNSite;
 
     public AemPluginHandlerConfiguration(TurAemSource turAemSource) {
         this.turAemSource = turAemSource;
@@ -53,8 +59,11 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
         cmsContentType = turAemSource.getContentType();
         cmsSubType = turAemSource.getSubType();
         cmsRootPath = turAemSource.getRootPath();
+        author = turAemSource.isAuthor();
+        publish = turAemSource.isPublish();
+        authorSNSite = turAemSource.getAuthorSNSite();
+        publishSNSite = turAemSource.getPublishSNSite();
     }
-
 
     @Override
     public String getCmsHost() {
@@ -123,5 +132,25 @@ public class AemPluginHandlerConfiguration implements IAemConfiguration {
     @Override
     public String getProviderName() {
         return providerName;
+    }
+
+    @Override
+    public boolean isAuthor() {
+        return author;
+    }
+
+    @Override
+    public boolean isPublish() {
+        return publish;
+    }
+
+    @Override
+    public String getAuthorSNSite() {
+        return authorSNSite;
+    }
+
+    @Override
+    public String getPublishSNSite() {
+        return publishSNSite;
     }
 }

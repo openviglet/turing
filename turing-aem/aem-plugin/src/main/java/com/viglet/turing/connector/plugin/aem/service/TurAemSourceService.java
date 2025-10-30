@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
-import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
 import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.commons.TurConnectorSession;
 import com.viglet.turing.connector.plugin.aem.conf.AemPluginHandlerConfiguration;
@@ -59,42 +58,16 @@ public class TurAemSourceService {
                 .map(TurAemPluginSystem::isBooleanValue).orElse(false);
     }
 
-    private TurAemConfiguration getTurAemConfiguration(IAemConfiguration config) {
-        TurAemConfiguration turAemSourceContext = TurAemConfiguration.builder()
-                .id(config.getCmsGroup()).contentType(config.getCmsContentType())
-                .defaultLocale(config.getDefaultLocale())
-                .rootPath(config.getCmsRootPath()).url(config.getCmsHost())
-                .authorURLPrefix(config.getAuthorURLPrefix())
-                .publishURLPrefix(config.getPublishURLPrefix())
-                .subType(config.getCmsSubType())
-                .oncePattern(config.getOncePatternPath())
-                .providerName(config.getProviderName())
-                .password(config.getCmsPassword()).username(config.getCmsUsername())
-                .localePaths(config.getLocales()).build();
-        TurAemCommonsUtils
-                .getInfinityJson(config.getCmsRootPath(), turAemSourceContext,
-                        false)
-                .flatMap(infinityJson -> TurAemCommonsUtils
-                        .getSiteName(turAemSourceContext, infinityJson))
-                .ifPresent(turAemSourceContext::setSiteName);
-        if (log.isDebugEnabled()) {
-            log.debug("TurAemSourceContext: {}", turAemSourceContext);
-        }
-        return turAemSourceContext;
-    }
-
     public TurAemConfiguration getTurAemConfiguration(TurAemSource turAemSource) {
-        return getTurAemConfiguration(new AemPluginHandlerConfiguration(
-                turAemSource));
+        return new TurAemConfiguration(new AemPluginHandlerConfiguration(turAemSource));
     }
 
-    public boolean isPublish(TurAemSource turAemSource) {
-        return turAemSource.isPublish()
-                && StringUtils.isNotEmpty(turAemSource.getPublishSNSite());
+    public boolean isPublish(TurAemConfiguration configuration) {
+        return configuration.isPublish()
+                && StringUtils.isNotEmpty(configuration.getPublishSNSite());
     }
 
-    public boolean isAuthor(TurAemSource turAemSource) {
-        return turAemSource.isAuthor()
-                && StringUtils.isNotEmpty(turAemSource.getAuthorSNSite());
+    public boolean isAuthor(TurAemConfiguration configuration) {
+        return configuration.isAuthor() && StringUtils.isNotEmpty(configuration.getAuthorSNSite());
     }
 }
