@@ -114,9 +114,7 @@ public class TurAemPluginProcess {
                 turAemSourceService.getTurAemSourceByName(source).ifPresentOrElse(turAemSource -> {
                         TurAemSession turAemSession = turAemSessionService.getTurAemSession(turAemSource,
                                         turAemPathList);
-                        // Index each provided path
-                        turAemPathList.getPaths().stream().filter(StringUtils::isNotBlank)
-                                        .forEach(path -> indexContentId(turAemSession, path));
+                        indexContentIdList(turAemPathList.getPaths(), turAemSession);
                         if (connectorDependencies) {
                                 indexDependencies(turAemSession, turAemPathList.getPaths());
                         }
@@ -124,25 +122,50 @@ public class TurAemPluginProcess {
                 }, () -> log.error("Source '{}' not found", source));
         }
 
-        public void indexContentId(TurAemSession turAemSession, String contentId) {
-                TurAemCommonsUtils
-                                .getInfinityJson(contentId, turAemSession.getConfiguration(), false)
-                                .ifPresentOrElse(infinityJson -> {
-                                        turAemSession.getConfiguration().setContentType(
-                                                        infinityJson.getString(JCR_PRIMARY_TYPE));
-                                        TurAemObject turAemObject = new TurAemObject(contentId,
-                                                        infinityJson, turAemSession.getEvent());
-                                        getNodeFromJson(turAemSession, turAemObject);
-                                }, () -> turAemJobService.createDeIndexJobAndSendToConnectorQueue(
-                                                turAemSession, contentId));
+        private void indexContentIdList(List<String> contentIdList, TurAemSession turAemSession) {
+                contentIdList.stream().filter(StringUtils::isNotBlank)
+                                .forEach(path -> indexContentId(turAemSession, path));
         }
 
-        private void indexDependencies(TurAemSession turAemSession, List<String> idList) {
-                turConnectorContext
-                                .getObjectIdByDependency(turAemSession.getSource(),
-                                                turAemService.getProviderName(), idList)
-                                .stream().filter(StringUtils::isNotBlank)
-                                .forEach(objectId -> indexContentId(turAemSession, objectId));
+        public void indexContentId(TurAemSession turAemSession, String contentId) {
+                if (turAemSession == null || turAemSession.getConfiguration() == null) {
+                        log.warn("Session or configuration is null for contentId: {}", contentId);
+                        return;
+                }
+
+                if (StringUtils.isBlank(contentId)) {
+                        log.debug("Ignoring blank contentId");
+                        return;
+                }
+
+                TurAemCommonsUtils.getInfinityJson(contentId, turAemSession.getConfiguration(), false)
+                                .ifPresentOrElse(infinityJson -> {
+                                        String previousContentType = turAemSession.getConfiguration().getContentType();
+                                        try {
+                                                if (infinityJson.has(JCR_PRIMARY_TYPE)
+                                                                && !infinityJson.isNull(JCR_PRIMARY_TYPE)) {
+                                                        String primaryType = infinityJson.getString(JCR_PRIMARY_TYPE);
+                                                        // TODO: Reviewed to set content type for this indexing only
+                                                        turAemSession.getConfiguration().setContentType(primaryType);
+                                                }
+                                                TurAemObject turAemObject = new TurAemObject(contentId,
+                                                                infinityJson, turAemSession.getEvent());
+                                                getNodeFromJson(turAemSession, turAemObject);
+                                        } catch (Exception e) {
+                                                log.error("Failed to process contentId {}: {}", contentId,
+                                                                e.getMessage(), e);
+                                        } finally {
+                                                turAemSession.getConfiguration().setContentType(previousContentType);
+                                        }
+                                }, () -> {
+                                        try {
+                                                turAemJobService.createDeIndexJobAndSendToConnectorQueue(turAemSession,
+                                                                contentId);
+                                        } catch (Exception e) {
+                                                log.error("Failed to create de-index job for contentId {}: {}",
+                                                                contentId, e.getMessage(), e);
+                                        }
+                                });
         }
 
         public void indexAll(TurAemSource turAemSource) {
@@ -161,7 +184,14 @@ public class TurAemPluginProcess {
                 finished(turAemSession);
         }
 
-        public void finished(TurAemSession turAemSession) {
+        private void indexDependencies(TurAemSession turAemSession, List<String> idList) {
+                List<String> contentIdList = turConnectorContext
+                                .getObjectIdByDependency(turAemSession.getSource(),
+                                                turAemService.getProviderName(), idList);
+                indexContentIdList(contentIdList, turAemSession);
+        }
+
+        private void finished(TurAemSession turAemSession) {
                 if (!turAemSession.isStandalone())
                         runningSources.remove(turAemSession.getSource());
                 turConnectorContext.finishIndexing(turAemSession, turAemSession.isStandalone());
@@ -174,33 +204,43 @@ public class TurAemPluginProcess {
         }
 
         private void byContentTypeList(TurAemSession turAemSession) {
-                turAemSession.getModel().ifPresentOrElse(
-                                turAemModel -> byContentType(turAemSession),
+                turAemSession.getModel().ifPresentOrElse(turAemModel -> byContentType(turAemSession),
                                 () -> log.debug("{} type is not configured in CTD Mapping file.",
                                                 turAemSession.getConfiguration().getContentType()));
         }
 
         private void byContentType(TurAemSession turAemSession) {
-                TurAemCommonsUtils
-                                .getInfinityJson(turAemSession.getConfiguration().getRootPath(),
-                                                turAemSession.getConfiguration(), false)
+                String rootPath = turAemSession.getConfiguration().getRootPath();
+                TurAemCommonsUtils.getInfinityJson(rootPath, turAemSession.getConfiguration(), false)
                                 .ifPresent(infinityJson -> {
-                                        TurAemObject turAemObject = new TurAemObject(
-                                                        turAemSession.getConfiguration()
-                                                                        .getRootPath(),
-                                                        infinityJson, TurAemEvent.NONE);
-                                        getNodeFromJson(turAemSession, turAemObject);
+                                        getNodeFromJson(turAemSession, new TurAemObject(rootPath, infinityJson));
                                 });
         }
 
         private void getNodeFromJson(TurAemSession turAemSession, TurAemObject turAemObject) {
-                if (TurAemCommonsUtils.isTypeEqualContentType(turAemObject.getJcrNode(),
-                                turAemSession.getConfiguration())) {
-                        turAemSession.getModel().ifPresent(model -> turAemJobService
-                                        .prepareIndexObject(turAemSession, model, turAemObject));
-                }
+                processIndexingForContentType(turAemSession, turAemObject);
                 if (turAemSession.isIndexChildren()) {
                         getChildrenFromJson(turAemSession, turAemObject);
+                }
+        }
+
+        /**
+         * Reactive version of getNodeFromJson
+         */
+        private Mono<Void> getNodeFromJsonReactive(TurAemSession turAemSession,
+                        TurAemObject turAemObject) {
+                processIndexingForContentType(turAemSession, turAemObject);
+
+                if (turAemSession.isIndexChildren()) {
+                        return getChildrenFromJsonReactive(turAemSession, turAemObject);
+                }
+                return Mono.empty();
+        }
+
+        private void processIndexingForContentType(TurAemSession turAemSession, TurAemObject turAemObject) {
+                if (TurAemCommonsUtils.isTypeEqualContentType(turAemObject.getJcrNode(),
+                                turAemSession.getConfiguration())) {
+                        turAemJobService.prepareIndexObject(turAemSession, turAemObject);
                 }
         }
 
@@ -245,21 +285,19 @@ public class TurAemPluginProcess {
         }
 
         private boolean isNotOnce(TurAemSession turAemSession, String nodePathChild) {
-                return !turAemSourceService.isOnce(turAemSession.getConfiguration())
-                                || TurAemCommonsUtils.isNotOnceConfig(nodePathChild,
-                                                turAemSession.getConfiguration());
+                TurAemConfiguration config = turAemSession.getConfiguration();
+                return !turAemSourceService.isOnce(config) || TurAemCommonsUtils.isNotOnceConfig(nodePathChild, config);
         }
 
         private static boolean isIndexedNode(TurAemConfiguration turAemSourceContext,
                         String nodeName) {
-                return !nodeName.startsWith(JCR) && !nodeName.startsWith(REP)
+                return !nodeName.startsWith(JCR)
+                                && !nodeName.startsWith(REP)
                                 && !nodeName.startsWith(CQ)
                                 && (turAemSourceContext.getSubType() != null
                                                 && turAemSourceContext.getSubType()
                                                                 .equals(STATIC_FILE_SUB_TYPE)
-                                                || TurAemCommonsUtils
-                                                                .checkIfFileHasNotImageExtension(
-                                                                                nodeName));
+                                                || TurAemCommonsUtils.checkIfFileHasNotImageExtension(nodeName));
         }
 
         /**
@@ -267,47 +305,21 @@ public class TurAemPluginProcess {
          */
         private Mono<Void> getChildrenFromJsonReactive(TurAemSession turAemSession,
                         TurAemObject turAemObject) {
+                TurAemConfiguration config = turAemSession.getConfiguration();
                 return Flux.fromIterable(turAemObject.getJcrNode().toMap().entrySet())
-                                .filter(entry -> isIndexedNode(turAemSession.getConfiguration(),
-                                                entry.getKey()))
+                                .filter(entry -> isIndexedNode(config, entry.getKey()))
                                 .flatMap(entry -> {
                                         String nodeName = entry.getKey();
-                                        String nodePathChild = "%s/%s".formatted(
-                                                        turAemObject.getPath(), nodeName);
-
-                                        if (!turAemSourceService
-                                                        .isOnce(turAemSession.getConfiguration())
-                                                        || TurAemCommonsUtils.isNotOnceConfig(
-                                                                        nodePathChild,
-                                                                        turAemSession.getConfiguration())) {
-                                                return turAemReactiveUtils.getInfinityJsonReactive(
-                                                                nodePathChild,
-                                                                turAemSession.getConfiguration())
+                                        String nodePathChild = "%s/%s".formatted(turAemObject.getPath(), nodeName);
+                                        if (!turAemSourceService.isOnce(config)
+                                                        || TurAemCommonsUtils.isNotOnceConfig(nodePathChild, config)) {
+                                                return turAemReactiveUtils
+                                                                .getInfinityJsonReactive(nodePathChild, config)
                                                                 .flatMap(infinityJson -> getNodeFromJsonReactive(
-                                                                                turAemSession,
-                                                                                turAemObject));
+                                                                                turAemSession, turAemObject));
                                         }
                                         return Mono.<Void>empty();
                                 }, 10).then();
         }
 
-        /**
-         * Reactive version of getNodeFromJson
-         */
-        private Mono<Void> getNodeFromJsonReactive(TurAemSession turAemSession,
-                        TurAemObject turAemObject) {
-
-                // Handle node indexing synchronously (this part doesn't involve HTTP calls)
-                if (TurAemCommonsUtils.isTypeEqualContentType(turAemObject.getJcrNode(),
-                                turAemSession.getConfiguration())) {
-                        turAemSession.getModel().ifPresent(model -> turAemJobService
-                                        .prepareIndexObject(turAemSession, model, turAemObject));
-                }
-
-                // Handle children processing reactively if needed
-                if (turAemSession.isIndexChildren()) {
-                        return getChildrenFromJsonReactive(turAemSession, turAemObject);
-                }
-                return Mono.empty();
-        }
 }

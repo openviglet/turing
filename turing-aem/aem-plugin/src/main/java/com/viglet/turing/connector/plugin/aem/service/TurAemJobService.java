@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -195,46 +194,78 @@ public class TurAemJobService {
                                 });
         }
 
-        public void createDeIndexJobAndSendToConnectorQueue(TurAemSession turAemSession,
-                        String contentId) {
-                turConnectorContext
-                                .getIndexingItem(contentId, turAemSession.getSource(),
-                                                turAemSession.getProviderName())
-                                .forEach(indexing -> {
-                                        log.info("DeIndex because {} infinity Json file not found.",
-                                                        TurAemPluginUtils.getObjectDetailForLogs(
-                                                                        contentId, indexing,
-                                                                        turAemSession));
-                                        TurJobItemWithSession turJobItemWithSession = new TurJobItemWithSession(
-                                                        deIndexJob(turAemSession,
-                                                                        indexing),
-                                                        turAemSession,
-                                                        Collections.emptySet(),
-                                                        turAemSession.isStandalone());
-                                        turConnectorContext.addJobItem(turJobItemWithSession);
-                                });
+        public void createDeIndexJobAndSendToConnectorQueue(TurAemSession turAemSession, String contentId) {
+                List<TurConnectorIndexing> indexingItems = turConnectorContext
+                                .getIndexingItem(contentId, turAemSession.getSource(), turAemSession.getProviderName());
+
+                if (CollectionUtils.isEmpty(indexingItems)) {
+                        log.debug("No indexing items found for contentId: {} in source: {}",
+                                        contentId, turAemSession.getProviderName());
+                        return;
+                }
+
+                indexingItems.forEach(indexing -> {
+                        try {
+                                log.info("DeIndex initiated for {} - infinity Json file not found.",
+                                                TurAemPluginUtils.getObjectDetailForLogs(contentId, indexing,
+                                                                turAemSession));
+
+                                TurSNJobItem deIndexJobItem = deIndexJob(turAemSession, indexing);
+                                TurJobItemWithSession turJobItemWithSession = new TurJobItemWithSession(
+                                                deIndexJobItem, turAemSession, Collections.emptySet(),
+                                                turAemSession.isStandalone());
+                                turConnectorContext.addJobItem(turJobItemWithSession);
+                                log.debug("DeIndex job successfully queued for contentId: {}", contentId);
+
+                        } catch (Exception e) {
+                                log.error("Failed to create deIndex job for contentId: {} in session: {}. Error: {}",
+                                                contentId, turAemSession.getProviderName(), e.getMessage(), e);
+                        }
+                });
         }
 
-        public void prepareIndexObject(TurAemSession turAemSession, TurAemModel turAemModel,
-                        TurAemObject aemObject) {
+        public void prepareIndexObject(TurAemSession turAemSession, TurAemObject aemObject) {
+                turAemSession.getModel().ifPresent(turAemModel -> {
+                        if (!isObjectEligibleForIndexing(turAemSession, aemObject, turAemModel)) {
+                                return;
+                        }
 
-                if (turAemSession.getConfiguration().getRootPath() != null && !aemObject.getPath()
-                                .startsWith(turAemSession.getConfiguration().getRootPath())) {
+                        configureObjectDataPath(turAemModel, aemObject, turAemSession.getConfiguration());
+                        indexObject(turAemSession, aemObject, turAemModel);
+                });
+        }
+
+        private boolean isObjectEligibleForIndexing(TurAemSession turAemSession, TurAemObject aemObject,
+                        TurAemModel turAemModel) {
+                TurAemConfiguration config = turAemSession.getConfiguration();
+                if (!isWithinRootPath(aemObject, config)) {
+                        return false;
+                }
+                String contentType = config.getContentType();
+                if (contentType == null) {
+                        log.warn("Content type is null for session {}", turAemSession.getProviderName());
+                        return false;
+                }
+                return !turAemService.isNotValidType(turAemModel, aemObject, contentType);
+        }
+
+        private boolean isWithinRootPath(TurAemObject aemObject, TurAemConfiguration config) {
+                String rootPath = config.getRootPath();
+                if (rootPath != null && !aemObject.getPath().startsWith(rootPath)) {
                         log.debug("Skipping object {} as it is outside the root path {}",
-                                        aemObject.getPath(),
-                                        turAemSession.getConfiguration().getRootPath());
-                        return;
+                                        aemObject.getPath(), rootPath);
+                        return false;
                 }
-                String type = Objects
-                                .requireNonNull(turAemSession.getConfiguration().getContentType());
-                if (turAemService.isNotValidType(turAemModel, aemObject, type)) {
-                        return;
-                }
-                if (turAemService.isContentFragment(turAemModel, type, aemObject)) {
+                return true;
+        }
+
+        private void configureObjectDataPath(TurAemModel turAemModel, TurAemObject aemObject,
+                        TurAemConfiguration config) {
+                String contentType = config.getContentType();
+                if (turAemService.isContentFragment(turAemModel, contentType, aemObject)) {
                         aemObject.setDataPath(DATA_MASTER);
-                } else if (turAemService.isStaticFile(turAemModel, type)) {
+                } else if (turAemService.isStaticFile(turAemModel, contentType)) {
                         aemObject.setDataPath(METADATA);
                 }
-                indexObject(turAemSession, aemObject, turAemModel);
         }
 }
