@@ -1,4 +1,9 @@
 spring:
+  datasource.hikari:
+    maximum-pool-size: 20
+    minimum-idle: 5
+    idle-timeout: 600000
+    pool-name: TurConnectionPool
   jmx.enabled: true
   profiles:
     active: production
@@ -102,6 +107,7 @@ turing:
       within: 10000
       enabled: false
   search:
+    metrics.enabled: false
     cache:
       ttl:
         seconds: 86400000
