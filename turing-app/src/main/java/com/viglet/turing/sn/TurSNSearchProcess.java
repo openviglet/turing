@@ -32,6 +32,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -104,6 +105,7 @@ public class TurSNSearchProcess {
         private final TurSolr turSolr;
         private final TurSNSpotlightProcess turSNSpotlightProcess;
         private final TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository;
+        private final boolean metricsEnabled;
 
         public TurSNSearchProcess(TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
                         TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository,
@@ -111,7 +113,8 @@ public class TurSNSearchProcess {
                         TurSNSiteLocaleRepository turSNSiteLocaleRepository,
                         TurSolrInstanceProcess turSolrInstanceProcess, TurSolr turSolr,
                         TurSNSpotlightProcess turSNSpotlightProcess,
-                        TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository) {
+                        TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository,
+                        @Value("${turing.search.metrics.enabled:false}") boolean metricsEnabled) {
                 this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
                 this.turSNSiteFieldExtFacetRepository = turSNSiteFieldExtFacetRepository;
                 this.turSNSiteRepository = turSNSiteRepository;
@@ -120,6 +123,7 @@ public class TurSNSearchProcess {
                 this.turSolr = turSolr;
                 this.turSNSpotlightProcess = turSNSpotlightProcess;
                 this.turSNSiteMetricAccessRepository = turSNSiteMetricAccessRepository;
+                this.metricsEnabled = metricsEnabled;
         }
 
         public Optional<TurSNSite> getSNSite(String siteName) {
@@ -392,9 +396,11 @@ public class TurSNSearchProcess {
         }
 
         private boolean useMetrics(TurSNSiteSearchContext turSNSiteSearchContext) {
-                return turSNSiteSearchContext.getTurSNSitePostParamsBean() == null
-                                || turSNSiteSearchContext.getTurSNSitePostParamsBean()
-                                                .isPopulateMetrics();
+                if (!metricsEnabled) {
+                        return false;
+                }
+                return Optional.ofNullable(turSNSiteSearchContext.getTurSNSitePostParamsBean())
+                                .map(params -> params.isPopulateMetrics()).orElse(true);
         }
 
         private Map<String, TurSNSiteFieldExtDto> setFacetMap(
