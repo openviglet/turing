@@ -1425,14 +1425,11 @@ public class TurSolr {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-
-        query.set("f." + fieldName + ".facet.range.gap",
+        query.addDateRangeFacet(
+                fieldName,
+                DateUtils.addYears(cal.getTime(), -100),
+                DateUtils.addYears(cal.getTime(), 100),
                 PLUS_ONE + context.getTurSNSiteFacetFieldExtDto().getFacetRange());
-        query.set("f." + fieldName + ".facet.range.start",
-                solrDateFormatter().format(DateUtils.addYears(cal.getTime(), -100)));
-        query.set("f." + fieldName + ".facet.range.end",
-                solrDateFormatter().format(DateUtils.addYears(cal.getTime(), 100)));
-        query.set("facet.range", setFacetTypeConditionInFacet(context, fieldName));
     }
 
     @NotNull
