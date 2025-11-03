@@ -19,22 +19,17 @@ package com.viglet.turing.connector.aem.commons.context;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
-
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
-import com.viglet.turing.connector.aem.commons.bean.TurAemEnv;
 import com.viglet.turing.connector.aem.commons.config.IAemConfiguration;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
 @ToString
 public class TurAemConfiguration {
@@ -43,7 +38,7 @@ public class TurAemConfiguration {
   private String username;
   private String password;
   private String rootPath;
-  private String contentType;
+
   private String subType;
 
   private String siteName;
@@ -57,8 +52,9 @@ public class TurAemConfiguration {
   private String authorSNSite;
   private String publishSNSite;
 
-  private String turSNSite;
-  private TurAemEnv environment;
+  private String contentType;
+  // private String turSNSite;
+  // private TurAemEnv environment;
   @Builder.Default
   private Collection<TurAemLocalePathContext> localePaths = new HashSet<>();
 
@@ -83,8 +79,8 @@ public class TurAemConfiguration {
     this.authorSNSite = turAemConfiguration.getAuthorSNSite();
     this.publishSNSite = turAemConfiguration.getPublishSNSite();
 
-    this.turSNSite = turAemConfiguration.getTurSNSite();
-    this.environment = turAemConfiguration.getEnvironment();
+    // this.turSNSite = turAemConfiguration.getTurSNSite();
+    // this.environment = turAemConfiguration.getEnvironment();
   }
 
   public TurAemConfiguration(IAemConfiguration iaemConfiguration) {
@@ -110,11 +106,8 @@ public class TurAemConfiguration {
     TurAemCommonsUtils.getInfinityJson(iaemConfiguration.getCmsRootPath(), this, false)
         .flatMap(infinityJson -> TurAemCommonsUtils.getSiteName(this,
             infinityJson))
-        .ifPresent(this::setSiteName);
+        .ifPresent(siteName -> this.siteName = siteName);
   }
 
-  public String getUrlPrefix() {
-    return getEnvironment().equals(TurAemEnv.AUTHOR) ? getAuthorURLPrefix()
-        : getPublishURLPrefix();
-  }
+
 }

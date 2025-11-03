@@ -28,11 +28,12 @@ public class TurAemService {
     }
 
     public @NotNull TurAemTargetAttrValueMap getTargetAttrValueMap(TurAemSession turAemSession,
-            TurAemObject aemObject, TurAemModel turAemModel) {
+            TurAemObject aemObject) {
         TurAemTargetAttrValueMap turAemTargetAttrValueMap =
                 turAemAttrProcess.prepareAttributeDefs(turAemSession, aemObject);
-        turAemTargetAttrValueMap.merge(TurAemCommonsUtils.runCustomClassFromContentType(turAemModel,
-                aemObject, turAemSession.getConfiguration()));
+        turAemTargetAttrValueMap
+                .merge(TurAemCommonsUtils.runCustomClassFromContentType(turAemSession.getModel(),
+                        aemObject, turAemSession.getConfiguration()));
         return turAemTargetAttrValueMap;
     }
 

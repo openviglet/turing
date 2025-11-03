@@ -17,17 +17,14 @@
 package com.viglet.turing.connector.plugin.aem.impl;
 
 import java.util.List;
-
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-
 import com.viglet.turing.connector.aem.commons.bean.TurAemEvent;
 import com.viglet.turing.connector.commons.plugin.TurConnectorPlugin;
 import com.viglet.turing.connector.plugin.aem.TurAemPluginProcess;
 import com.viglet.turing.connector.plugin.aem.api.TurAemPathList;
 import com.viglet.turing.connector.plugin.aem.service.TurAemService;
 import com.viglet.turing.connector.plugin.aem.service.TurAemSourceService;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -57,10 +54,11 @@ public class TurAemPlugin implements TurConnectorPlugin {
     }
 
     public void indexById(String source, List<String> contentId) {
-        TurAemPathList turAemPathList = new TurAemPathList();
-        turAemPathList.setPaths(contentId);
-        turAemPathList.setEvent(TurAemEvent.NONE);
-        turAemPathList.setRecursive(false);
+        TurAemPathList turAemPathList = TurAemPathList.builder()
+                .paths(contentId)
+                .event(TurAemEvent.NONE)
+                .recursive(false)
+                .build();
         turAemPluginProcess.sentToIndexStandalone(source, turAemPathList);
     }
 

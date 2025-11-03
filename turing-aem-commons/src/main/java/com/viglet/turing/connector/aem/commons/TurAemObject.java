@@ -46,7 +46,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import org.json.JSONObject;
+import com.viglet.turing.connector.aem.commons.bean.TurAemEnv;
 import com.viglet.turing.connector.aem.commons.bean.TurAemEvent;
+import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -70,20 +72,24 @@ public class TurAemObject {
     private String model;
     private Set<String> dependencies;
     private final Map<String, Object> attributes = new HashMap<>();
+    private TurAemEnv environment;
     public final SimpleDateFormat aemJsonDateFormat =
             new SimpleDateFormat(DATE_JSON_FORMAT, Locale.ENGLISH);
 
 
-    public TurAemObject(String nodePath, JSONObject jcrNode) {
-        this(nodePath, jcrNode, TurAemEvent.NONE);
+    public TurAemObject(String nodePath, JSONObject jcrNode,
+            TurAemEnv environment) {
+        this(nodePath, jcrNode, TurAemEvent.NONE, environment);
     }
 
-    public TurAemObject(String nodePath, JSONObject jcrNode, TurAemEvent event) {
+    public TurAemObject(String nodePath, JSONObject jcrNode, TurAemEvent event,
+            TurAemEnv environment) {
         this.jcrNode = jcrNode;
         this.path = nodePath;
         this.url = nodePath + HTML;
         this.type = jcrNode.has(JCR_PRIMARYTYPE) ? jcrNode.getString(JCR_PRIMARYTYPE) : EMPTY_VALUE;
         this.dependencies = TurAemCommonsUtils.getDependencies(jcrNode);
+        this.environment = environment;
         try {
             if (jcrNode.has(JCR_CONTENT)) {
                 processJcrContent(jcrNode, event);
@@ -94,6 +100,16 @@ public class TurAemObject {
         } catch (ParseException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    public String getUrlPrefix(TurAemConfiguration configuration) {
+        return getEnvironment().equals(TurAemEnv.AUTHOR) ? configuration.getAuthorURLPrefix()
+                : configuration.getPublishURLPrefix();
+    }
+
+    public String getSNSite(TurAemConfiguration configuration) {
+        return getEnvironment().equals(TurAemEnv.AUTHOR) ? configuration.getAuthorSNSite()
+                : configuration.getPublishSNSite();
     }
 
     private void processJcrCreated(JSONObject jcrNode) throws ParseException {

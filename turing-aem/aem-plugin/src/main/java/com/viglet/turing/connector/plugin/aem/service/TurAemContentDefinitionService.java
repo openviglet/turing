@@ -22,11 +22,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
@@ -37,9 +35,7 @@ import com.viglet.turing.connector.aem.commons.mappers.TurAemContentMapping;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemSourceAttr;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemTargetAttr;
-import com.viglet.turing.connector.plugin.aem.context.TurAemSession;
 import com.viglet.turing.connector.plugin.aem.persistence.model.TurAemSource;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -70,8 +66,10 @@ public class TurAemContentDefinitionService {
                 Date deltaDate = Optional.ofNullable(getDeltaClassName(turAemContentMapping)).map(
                                 className -> TurCustomClassCache.getCustomClassMap(className).map(
                                                 classInstance -> ((TurAemExtDeltaDateInterface) classInstance)
-                                                                .consume(aemObject, turAemSourceContext))
-                                                .orElseGet(() -> defaultDeltaDate(aemObject, turAemSourceContext)))
+                                                                .consume(aemObject,
+                                                                                turAemSourceContext))
+                                                .orElseGet(() -> defaultDeltaDate(aemObject,
+                                                                turAemSourceContext)))
                                 .orElseGet(() -> defaultDeltaDate(aemObject, turAemSourceContext));
                 log.debug("Delta Date {} from {}", deltaDate.toString(), aemObject.getPath());
                 return deltaDate;
@@ -82,18 +80,19 @@ public class TurAemContentDefinitionService {
                 return new TurAemExtDeltaDate().consume(aemObject, turAemSourceContext);
         }
 
-        public Optional<TurAemModel> getModel(TurAemSession turAemSession,
+        public Optional<TurAemModel> getModel(TurAemConfiguration turAemConfiguration,
                         TurAemSource turAemSource) {
                 TurAemContentMapping turAemContentMapping = turAemContentMappingService
                                 .getTurAemContentMapping(turAemSource);
                 return Optional.ofNullable(turAemContentMapping)
-                                .flatMap(turCmsContentMapping -> getModel(turAemSession, turCmsContentMapping));
+                                .flatMap(turCmsContentMapping -> getModel(turAemConfiguration,
+                                                turCmsContentMapping));
         }
 
-        private Optional<TurAemModel> getModel(TurAemSession turAemSession,
+        private Optional<TurAemModel> getModel(TurAemConfiguration turAemConfiguration,
                         TurAemContentMapping turCmsContentMapping) {
                 return getModel(turCmsContentMapping.getModels(),
-                                turAemSession.getConfiguration().getContentType()).map(model -> {
+                                turAemConfiguration.getContentType()).map(model -> {
                                         return getTurCmsTargetAttrs(turCmsContentMapping, model);
                                 });
         }
@@ -122,7 +121,8 @@ public class TurAemContentDefinitionService {
                         TurAemContentMapping turCmsContentMapping) {
                 List<TurAemTargetAttr> turCmsTargetAttrs = new ArrayList<>();
                 turCmsContentMapping.getTargetAttrDefinitions()
-                                .forEach(targetAttrDefinition -> addTargetAttr(model, turCmsTargetAttrs,
+                                .forEach(targetAttrDefinition -> addTargetAttr(model,
+                                                turCmsTargetAttrs,
                                                 targetAttrDefinition));
 
                 return turCmsTargetAttrs;
@@ -131,10 +131,13 @@ public class TurAemContentDefinitionService {
         private void addTargetAttr(TurAemModel model, List<TurAemTargetAttr> turAemTargetAttr,
                         TurSNAttributeSpec attributeSpec) {
                 getTargetAttr(model.getTargetAttrs(), attributeSpec.getName())
-                                .ifPresentOrElse(targetAttr -> addTargetAttr(turAemTargetAttr, attributeSpec,
-                                                targetAttr),
+                                .ifPresentOrElse(
+                                                targetAttr -> addTargetAttr(turAemTargetAttr,
+                                                                attributeSpec,
+                                                                targetAttr),
                                                 () -> {
-                                                        addTargetAttrMandatory(turAemTargetAttr, attributeSpec);
+                                                        addTargetAttrMandatory(turAemTargetAttr,
+                                                                        attributeSpec);
                                                 });
         }
 

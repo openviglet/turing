@@ -40,33 +40,30 @@ public class TurAemAttrProcess {
 
         public TurAemTargetAttrValueMap prepareAttributeDefs(TurAemSession turAemSession,
                         TurAemObject aemObject) {
-                return turAemSession.getModel().map(turAemModel -> {
-                        TurAemContext context = new TurAemContext(aemObject);
-                        TurAemTargetAttrValueMap turAemTargetAttrValueMap =
-                                        new TurAemTargetAttrValueMap();
-                        turAemModel.getTargetAttrs().stream().filter(Objects::nonNull)
-                                        .forEach(targetAttr -> {
-                                                log.debug("TargetAttr: {}", targetAttr);
-                                                context.setTurAemTargetAttr(targetAttr);
-                                                if (TurAemAttrUtils.hasCustomClass(targetAttr)) {
-                                                        turAemTargetAttrValueMap.merge(process(
-                                                                        turAemSession, context));
-                                                } else {
-                                                        targetAttr.getSourceAttrs().stream()
-                                                                        .filter(Objects::nonNull)
-                                                                        .forEach(sourceAttr -> turAemTargetAttrValueMap
-                                                                                        .merge(addTargetAttrValuesBySourceAttr(
-                                                                                                        turAemSession,
-                                                                                                        targetAttr,
-                                                                                                        sourceAttr,
-                                                                                                        context)));
-                                                }
-                                        });
-                        return turAemTargetAttrValueMap;
-                }).orElseGet(() -> {
-                        log.error("Content Type not found: {}", aemObject.getType());
-                        return new TurAemTargetAttrValueMap();
-                });
+
+                TurAemContext context = new TurAemContext(aemObject);
+                TurAemTargetAttrValueMap turAemTargetAttrValueMap =
+                                new TurAemTargetAttrValueMap();
+                turAemSession.getModel().getTargetAttrs().stream().filter(Objects::nonNull)
+                                .forEach(targetAttr -> {
+                                        log.debug("TargetAttr: {}", targetAttr);
+                                        context.setTurAemTargetAttr(targetAttr);
+                                        if (TurAemAttrUtils.hasCustomClass(targetAttr)) {
+                                                turAemTargetAttrValueMap.merge(process(
+                                                                turAemSession, context));
+                                        } else {
+                                                targetAttr.getSourceAttrs().stream()
+                                                                .filter(Objects::nonNull)
+                                                                .forEach(sourceAttr -> turAemTargetAttrValueMap
+                                                                                .merge(addTargetAttrValuesBySourceAttr(
+                                                                                                turAemSession,
+                                                                                                targetAttr,
+                                                                                                sourceAttr,
+                                                                                                context)));
+                                        }
+                                });
+                return turAemTargetAttrValueMap;
+
         }
 
         public TurAemTargetAttrValueMap addTargetAttrValuesBySourceAttr(TurAemSession turAemSession,

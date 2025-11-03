@@ -18,7 +18,6 @@ package com.viglet.turing.connector.aem.commons;
 
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.JCR;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.JCR_CONTENT;
-import static com.viglet.turing.connector.aem.commons.TurAemConstants.JCR_PRIMARY_TYPE;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.JSON;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.ONCE;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.SLING;
@@ -122,10 +121,9 @@ public class TurAemCommonsUtils {
         }
     }
 
-    public static boolean isTypeEqualContentType(JSONObject jsonObject,
+    public static boolean isTypeEqualContentType(TurAemObject turAemObject,
             TurAemConfiguration turAemSourceContext) {
-        return jsonObject.has(JCR_PRIMARY_TYPE) && jsonObject.getString(JCR_PRIMARY_TYPE)
-                .equals(turAemSourceContext.getContentType());
+        return turAemObject.getType().equals(turAemSourceContext.getContentType());
     }
 
     public static Optional<String> getSiteName(TurAemConfiguration turAemSourceContext,
