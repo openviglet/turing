@@ -99,7 +99,7 @@ public class TurSNProcessQueue {
         this.turSEInstanceRepository = turSEInstanceRepository;
     }
 
-    @JmsListener(destination = TurSNConstants.INDEXING_QUEUE)
+    @JmsListener(destination = TurSNConstants.INDEXING_QUEUE, id = TurSNConstants.INDEXING_QUEUE_LISTENER)
     @Transactional
     public void receiveIndexingQueue(TurSNJobItems turSNJobItems) {
         receiveQueueLog(turSNJobItems);
