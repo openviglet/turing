@@ -31,6 +31,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
+import com.viglet.turing.connector.aem.commons.bean.TurAemEnv;
 import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.commons.TurConnectorContext;
 import com.viglet.turing.connector.plugin.aem.api.TurAemPathList;
@@ -280,27 +281,27 @@ public class TurAemPluginProcess {
                                 String nodePathChild =
                                                 "%s/%s".formatted(turAemObject.getPath(), nodeName);
                                 if (isNotOnce(turAemSession, nodePathChild)) {
-                                        getChildNode(turAemSession, nodePathChild);
+                                        getChildNode(turAemSession, nodePathChild,
+                                                        turAemObject.getEnvironment());
                                 }
                         }
                 });
         }
 
-        private void getChildNode(TurAemSession turAemSession, String nodePathChild) {
+        private void getChildNode(TurAemSession turAemSession, String nodePathChild,
+                        TurAemEnv env) {
                 TurAemCommonsUtils.getInfinityJson(nodePathChild, turAemSession.getConfiguration(),
                                 false).ifPresent(infinityJson -> {
                                         getTurAemObjectChild(turAemSession, nodePathChild,
-                                                        infinityJson);
+                                                        infinityJson, env);
                                 });
         }
 
         private void getTurAemObjectChild(TurAemSession turAemSession, String nodePathChild,
-                        JSONObject infinityJson) {
-                turAemObjectService
-                                .getTurAemObjects(turAemSession.getConfiguration(), nodePathChild,
-                                                infinityJson)
-                                .forEach(turAemObjectChild -> getNodeFromJson(turAemSession,
-                                                turAemObjectChild));
+                        JSONObject infinityJson, TurAemEnv env) {
+                TurAemObject turAemObject = turAemObjectService
+                                .getTurAemObject(nodePathChild, infinityJson, env);
+                getNodeFromJson(turAemSession, turAemObject);
         }
 
         private boolean isNotOnce(TurAemSession turAemSession, String nodePathChild) {

@@ -36,16 +36,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class TurAemJobService {
-        private final TurAemSourceService turAemSourceService;
         private final TurAemService turAemService;
         private final TurConnectorContext turConnectorContext;
         private final TurAemContentDefinitionService turAemContentDefinitionService;
 
         public TurAemJobService(TurAemContentMappingService turAemContentMappingService,
-                        TurAemSourceService turAemSourceService, TurAemService turAemService,
+                        TurAemService turAemService,
                         TurConnectorContext turConnectorContext,
                         TurAemContentDefinitionService turAemContentDefinitionService) {
-                this.turAemSourceService = turAemSourceService;
                 this.turAemService = turAemService;
                 this.turConnectorContext = turConnectorContext;
                 this.turAemContentDefinitionService = turAemContentDefinitionService;

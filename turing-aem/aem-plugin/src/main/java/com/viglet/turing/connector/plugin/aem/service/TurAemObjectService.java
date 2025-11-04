@@ -20,13 +20,14 @@ public class TurAemObjectService {
         }
 
         List<TurAemObject> turAemObjects = new ArrayList<>();
-
+        TurAemObject turAemObjectAuthor =
+                createTurAemObject(path, infinityJson, turAemEvent, TurAemEnv.AUTHOR);
         if (turAemConfiguration.isAuthor()) {
             turAemObjects
-                    .add(createTurAemObject(path, infinityJson, turAemEvent, TurAemEnv.AUTHOR));
+                    .add(turAemObjectAuthor);
         }
 
-        if (turAemConfiguration.isPublish()) {
+        if (turAemConfiguration.isPublish() && turAemObjectAuthor.isDelivered()) {
             turAemObjects
                     .add(createTurAemObject(path, infinityJson, turAemEvent, TurAemEnv.PUBLISHING));
         }
@@ -39,8 +40,14 @@ public class TurAemObjectService {
         return getTurAemObjects(turAemConfiguration, path, infinityJson, TurAemEvent.NONE);
     }
 
+    public TurAemObject getTurAemObject(String path,
+            JSONObject infinityJson, TurAemEnv environment) {
+        return createTurAemObject(path, infinityJson, TurAemEvent.NONE, environment);
+    }
+
     private TurAemObject createTurAemObject(String path, JSONObject infinityJson,
             TurAemEvent turAemEvent, TurAemEnv environment) {
         return new TurAemObject(path, infinityJson, turAemEvent, environment);
     }
+
 }
