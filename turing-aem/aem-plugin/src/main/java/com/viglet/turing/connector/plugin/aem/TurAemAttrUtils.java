@@ -36,7 +36,7 @@ import com.viglet.turing.client.sn.TurMultiValue;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
-import com.viglet.turing.connector.aem.commons.TurAemObject;
+import com.viglet.turing.connector.aem.commons.TurAemObjectGeneric;
 import com.viglet.turing.connector.aem.commons.bean.TurAemContext;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
 import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
@@ -60,7 +60,7 @@ public class TurAemAttrUtils {
     @Nullable
     public static Object getJcrProperty(TurAemContext context, String sourceAttrName) {
         return Optional.ofNullable(sourceAttrName).map(attrName -> {
-            TurAemObject aemObject = context.getCmsObjectInstance();
+            TurAemObjectGeneric aemObject = context.getCmsObjectInstance();
             if (isValidNode(attrName, aemObject)) {
                 return aemObject.getJcrContentNode().get(attrName);
             } else if (aemObject.getAttributes().containsKey(attrName))
@@ -69,7 +69,7 @@ public class TurAemAttrUtils {
         }).orElse(null);
     }
 
-    public static boolean isValidNode(String attrName, TurAemObject aemObject) {
+    public static boolean isValidNode(String attrName, TurAemObjectGeneric aemObject) {
         return aemObject.getJcrContentNode() != null && aemObject.getJcrContentNode().has(attrName);
     }
 

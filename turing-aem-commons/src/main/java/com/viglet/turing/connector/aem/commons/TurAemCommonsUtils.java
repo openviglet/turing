@@ -121,7 +121,7 @@ public class TurAemCommonsUtils {
         }
     }
 
-    public static boolean isTypeEqualContentType(TurAemObject turAemObject,
+    public static boolean isTypeEqualContentType(TurAemObjectGeneric turAemObject,
             TurAemConfiguration turAemSourceContext) {
         return turAemObject.getType().equals(turAemSourceContext.getContentType());
     }
@@ -168,7 +168,7 @@ public class TurAemCommonsUtils {
     }
 
     @NotNull
-    public static Date getDeltaDate(TurAemObject aemObject) {
+    public static Date getDeltaDate(TurAemObjectGeneric aemObject) {
         if (aemObject.getLastModified() != null)
             return aemObject.getLastModified().getTime();
         if (aemObject.getCreatedDate() != null)
@@ -244,7 +244,7 @@ public class TurAemCommonsUtils {
     }
 
     public static Locale getLocaleFromAemObject(TurAemConfiguration turAemConfiguration,
-            TurAemObject aemObject) {
+            TurAemObjectGeneric aemObject) {
         return getLocaleByPath(turAemConfiguration, aemObject.getPath());
     }
 

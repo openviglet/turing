@@ -22,7 +22,6 @@ import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
 import com.viglet.turing.connector.aem.commons.context.TurAemConfiguration;
 import com.viglet.turing.connector.aem.commons.ext.TurAemExtContentInterface;
 import com.viglet.turing.connector.aem.sample.beans.TurAemSampleModel;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
+import com.viglet.turing.connector.aem.commons.TurAemObjectGeneric;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
 import com.viglet.turing.connector.plugin.aem.TurAemAttrProcess;
@@ -37,7 +38,8 @@ public class TurAemService {
         return turAemTargetAttrValueMap;
     }
 
-    public boolean isNotValidType(TurAemModel turAemModel, TurAemObject aemObject, String type) {
+    public boolean isNotValidType(TurAemModel turAemModel, TurAemObjectGeneric aemObject,
+            String type) {
         return !isPage(type) && !isContentFragment(turAemModel, type, aemObject)
                 && !isStaticFile(turAemModel, type);
     }
@@ -50,7 +52,8 @@ public class TurAemService {
         return isAsset(turAemModel, type) && turAemModel.getSubType().equals(STATIC_FILE);
     }
 
-    public boolean isContentFragment(TurAemModel turAemModel, String type, TurAemObject aemObject) {
+    public boolean isContentFragment(TurAemModel turAemModel, String type,
+            TurAemObjectGeneric aemObject) {
         return isAsset(turAemModel, type) && turAemModel.getSubType().equals(CONTENT_FRAGMENT)
                 && aemObject.isContentFragment();
     }

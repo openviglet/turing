@@ -61,7 +61,8 @@ public class TurAemContentDefinitionService {
                                 .map(TurAemContentMapping::getDeltaClassName).orElse(null);
         }
 
-        public Date getDeltaDate(TurAemObject aemObject, TurAemConfiguration turAemSourceContext,
+        public Date getDeltaDate(TurAemObject aemObject,
+                        TurAemConfiguration turAemSourceContext,
                         TurAemContentMapping turAemContentMapping) {
                 Date deltaDate = Optional.ofNullable(getDeltaClassName(turAemContentMapping)).map(
                                 className -> TurCustomClassCache.getCustomClassMap(className).map(

@@ -25,7 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurAemExtContentUrl implements TurAemExtAttributeInterface {
-    public static String getURL(TurAemObject aemObject, TurAemConfiguration turAemConfiguration) {
+    public static String getURL(TurAemObject aemObject,
+            TurAemConfiguration turAemConfiguration) {
         return String.format("%s%s.html", aemObject.getUrlPrefix(turAemConfiguration),
                 aemObject.getPath());
     }
