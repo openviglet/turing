@@ -43,6 +43,12 @@ export default function ConsoleRootPage() {
                   Store
                 </Link>
                 <Link
+                  to={`${ROUTES.CONSOLE}/${ROUTES.TOKEN_INSTANCE}`}
+                  className="border-transparent text-muted-foreground hover:border-primary hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  Token
+                </Link>
+                <Link
                   to={`${ROUTES.CONSOLE}/${ROUTES.LOGGING_INSTANCE}`}
                   className="border-transparent text-muted-foreground hover:border-primary hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
