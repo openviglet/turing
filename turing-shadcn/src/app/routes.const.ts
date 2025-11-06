@@ -1,28 +1,30 @@
+const consolePath: string = import.meta.env.VITE_CONSOLE_CONTEXT_PATH || "/console";
 export const ROUTES = {
   ROOT: "/",
   LOGIN: "/login",
-  CONSOLE: "/console",
+  LOGOUT: "/logout",
+  CONSOLE: consolePath,
   WELCOME: "/welcome",
   
   // Console Routes
-  SE_ROOT: "se",
-  SE_INSTANCE: "se",
+  SE_ROOT: `${consolePath}/se`,
+  SE_INSTANCE: `${consolePath}/se/instance`,
   
-  SN_ROOT: "sn",
-  SN_INSTANCE: "sn",
+  SN_ROOT: `${consolePath}/sn`,
+  SN_INSTANCE: `${consolePath}/sn/instance`,
   
-  STORE_ROOT: "store",
-  STORE_INSTANCE: "store",
+  STORE_ROOT: `${consolePath}/store`,
+  STORE_INSTANCE: `${consolePath}/store/instance`,
   
-  TOKEN_ROOT: "token",
-  TOKEN_INSTANCE: "token",
+  TOKEN_ROOT: `${consolePath}/token`,
+  TOKEN_INSTANCE: `${consolePath}/token/instance`,
   
-  LLM_ROOT: "llm",
-  LLM_INSTANCE: "llm",
+  LLM_ROOT: `${consolePath}/llm`,
+  LLM_INSTANCE: `${consolePath}/llm/instance`,
   
-  INTEGRATION_ROOT: "integration",
-  INTEGRATION_INSTANCE: "integration",
+  INTEGRATION_ROOT: `${consolePath}/integration`,
+  INTEGRATION_INSTANCE: `${consolePath}/integration/instance`,
   
-  LOGGING_ROOT: "logging",
-  LOGGING_INSTANCE: "logging",
+  LOGGING_ROOT: `${consolePath}/logging`,
+  LOGGING_INSTANCE: `${consolePath}/logging/instance`,
 } as const;

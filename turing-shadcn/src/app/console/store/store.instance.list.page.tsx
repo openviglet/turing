@@ -1,18 +1,19 @@
+import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
+import { TurStoreInstanceService } from "@/services/store.service"
+import { useEffect, useState } from "react";
+import { StoreCardList } from "@/components/store.card.list";
+
+const turStoreInstanceService = new TurStoreInstanceService();
+
 export default function StoreInstanceListPage() {
+  const [storeInstances, setStoreInstances] = useState<TurStoreInstance[]>();
+
+  useEffect(() => {
+    turStoreInstanceService.query().then(setStoreInstances)
+  }, [])
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-foreground">Store Instances</h2>
-        <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-          New Instance
-        </button>
-      </div>
-      
-      <div className="bg-card rounded-lg shadow p-6">
-        <p className="text-muted-foreground">
-          List of store instances will appear here.
-        </p>
-      </div>
-    </div>
-  );
+    <StoreCardList items={storeInstances} />
+  )
 }
+
+

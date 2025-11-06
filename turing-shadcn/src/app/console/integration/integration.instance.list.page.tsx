@@ -1,18 +1,19 @@
+import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts";
+import { TurIntegrationInstanceService } from "@/services/integration.service"
+import { useEffect, useState } from "react";
+import { IntegrationCardList } from "@/components/integration.card.list";
+
+const turIntegrationInstanceService = new TurIntegrationInstanceService();
+
 export default function IntegrationInstanceListPage() {
+  const [integrationInstances, setIntegrationInstances] = useState<TurIntegrationInstance[]>();
+
+  useEffect(() => {
+    turIntegrationInstanceService.query().then(setIntegrationInstances)
+  }, [])
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-foreground">Integration Instances</h2>
-        <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-          New Instance
-        </button>
-      </div>
-      
-      <div className="bg-card rounded-lg shadow p-6">
-        <p className="text-muted-foreground">
-          List of integration instances will appear here.
-        </p>
-      </div>
-    </div>
-  );
+    <IntegrationCardList items={integrationInstances} />
+  )
 }
+
+

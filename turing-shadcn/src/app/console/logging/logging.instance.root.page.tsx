@@ -1,5 +1,11 @@
-import { Outlet } from "react-router-dom";
+import { ROUTES } from "@/app/routes.const";
+import { Page } from "@/components/page";
+import { IconReceiptRupee } from "@tabler/icons-react";
 
 export default function LoggingInstanceRootPage() {
-  return <Outlet />;
+  return (
+    <Page turIcon={IconReceiptRupee} title="Logging" urlBase={ROUTES.LOGGING_INSTANCE} urlNew={`${ROUTES.LOGGING_INSTANCE}/new`} />
+  )
 }
+
+

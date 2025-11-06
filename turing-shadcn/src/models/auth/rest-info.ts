@@ -1,5 +1,10 @@
-export interface TurRestInfo {
-  username?: string;
-  password?: string;
-  authdata?: string;
+export type TurRestInfo = {
+    id: number;
+    username: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    authdata?: string;
+    admin: boolean;
+    email: string;
 }

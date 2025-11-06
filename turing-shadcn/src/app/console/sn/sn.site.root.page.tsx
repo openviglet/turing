@@ -1,5 +1,11 @@
-import { Outlet } from "react-router-dom";
+import { ROUTES } from "@/app/routes.const";
+import { Page } from "@/components/page";
+import { IconSearch } from "@tabler/icons-react";
 
 export default function SNSiteRootPage() {
-  return <Outlet />;
+  return (
+    <Page turIcon={IconSearch} title="Semantic Navigation" urlBase={ROUTES.SN_INSTANCE} urlNew={`${ROUTES.SN_INSTANCE}/new`} />
+  )
 }
+
+

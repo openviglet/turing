@@ -1,18 +1,20 @@
+import type { TurSEInstance } from "@/models/se/se-instance.model.ts";
+import { TurSEInstanceService } from "@/services/se.service"
+import { useEffect, useState } from "react";
+import { SECardList } from "@/components/se.card.list";
+
+const turSEInstanceService = new TurSEInstanceService();
+
 export default function SEInstanceListPage() {
+  const [seInstances, setSeInstances] = useState<TurSEInstance[]>();
+
+  useEffect(() => {
+    turSEInstanceService.query().then(setSeInstances)
+  }, [])
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-foreground">Search Engine Instances</h2>
-        <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-          New Instance
-        </button>
-      </div>
-      
-      <div className="bg-card rounded-lg shadow p-6">
-        <p className="text-muted-foreground">
-          List of search engine instances will appear here.
-        </p>
-      </div>
-    </div>
-  );
+    <SECardList items={seInstances} />
+
+  )
 }
+
+

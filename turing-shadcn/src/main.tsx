@@ -6,16 +6,17 @@ import App from './App.tsx'
 import { ROUTES } from './app/routes.const.ts'
 import './index.css'
 import type { TurRestInfo } from './models/auth/rest-info.ts'
-import { TurAuthorizationService, type TurDiscovery } from './services/authorization.service.ts'
+import { TurAuthorizationService } from './services/authorization.service.ts'
+import type { TurDiscoveryAPI } from './models/auth/discovery.ts'
 
 const authorization = new TurAuthorizationService()
 axios.defaults.baseURL = `${import.meta.env.VITE_API_URL}/api`;
 
 // Cache discovery result to avoid repeated API calls
-let discoveryCache: TurDiscovery | null = null;
-let discoveryPromise: Promise<TurDiscovery> | null = null;
+let discoveryCache: TurDiscoveryAPI | null = null;
+let discoveryPromise: Promise<TurDiscoveryAPI> | null = null;
 
-const getDiscovery = async (): Promise<TurDiscovery> => {
+const getDiscovery = async (): Promise<TurDiscoveryAPI> => {
   if (discoveryCache) {
     return discoveryCache;
   }

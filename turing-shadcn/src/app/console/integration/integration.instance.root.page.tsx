@@ -1,5 +1,9 @@
-import { Outlet } from "react-router-dom";
+import { ROUTES } from "@/app/routes.const";
+import { Page } from "@/components/page";
+import { IconPlugConnectedX } from "@tabler/icons-react";
 
 export default function IntegrationInstanceRootPage() {
-  return <Outlet />;
+  return (
+    <Page turIcon={IconPlugConnectedX} title="Integration" urlBase={ROUTES.INTEGRATION_INSTANCE} urlNew={`${ROUTES.INTEGRATION_INSTANCE}/new`} />
+  )
 }

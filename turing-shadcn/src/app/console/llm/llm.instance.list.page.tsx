@@ -1,18 +1,19 @@
+import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts";
+import { TurLLMInstanceService } from "@/services/llm.service"
+import { useEffect, useState } from "react";
+import { LLMCardList } from "@/components/llm.card.list";
+
+const turLLMInstanceService = new TurLLMInstanceService();
+
 export default function LLMInstanceListPage() {
+  const [llmInstances, setLlmInstances] = useState<TurLLMInstance[]>();
+
+  useEffect(() => {
+    turLLMInstanceService.query().then(setLlmInstances)
+  }, [])
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-foreground">LLM Instances</h2>
-        <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-          New Instance
-        </button>
-      </div>
-      
-      <div className="bg-card rounded-lg shadow p-6">
-        <p className="text-muted-foreground">
-          List of LLM (Large Language Model) instances will appear here.
-        </p>
-      </div>
-    </div>
-  );
+    <LLMCardList items={llmInstances} />
+  )
 }
+
+
