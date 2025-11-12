@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "compile": "npm install && tsc -b && vite build",
+    "dev:search": "vite --config vite.config.search.ts --port 5174",
+    "compile": "npm install && tsc -b && vite build && vite build --config vite.config.search.ts",
+    "compile:console": "npm install && tsc -b && vite build",
+    "compile:search": "npm install && tsc -b && vite build --config vite.config.search.ts",
     "lint": "eslint .",
     "preview": "vite preview"
   },
