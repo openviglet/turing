@@ -1,0 +1,1 @@
+  export type TurSNSiteFacetFieldSortTypes = 'DEFAULT' | 'COUNT' | 'ALPHABETICAL';
