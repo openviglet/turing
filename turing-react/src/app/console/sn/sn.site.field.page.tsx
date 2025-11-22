@@ -1,12 +1,12 @@
 import { SNSiteFieldForm } from "@/components/sn.site.field.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model";
-import { TurSNSiteService } from "@/services/sn.service";
+import { TurSNFieldService } from "@/services/sn.field.service";
 import { IconAlignBoxCenterStretch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const turSNSiteService = new TurSNSiteService();
+const turSNFieldService = new TurSNFieldService();
 
 export default function SNSiteFieldPage() {
   const { id, fieldId } = useParams() as { id: string, fieldId: string };
@@ -14,7 +14,7 @@ export default function SNSiteFieldPage() {
   const [isNew, setIsNew] = useState<boolean>(true);
   useEffect(() => {
     if (id !== "new") {
-      turSNSiteService.getField(id, fieldId).then(setSnField);
+      turSNFieldService.get(id, fieldId).then(setSnField);
       setIsNew(false);
     }
   }, [id])

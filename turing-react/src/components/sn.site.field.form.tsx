@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/textarea"
 import type { TurSNFieldType } from "@/models/sn/sn-field-type.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
+import { TurSNFieldService } from "@/services/sn.field.service"
 import { TurSNFieldTypeService } from "@/services/sn.field.type.service"
-import { TurSNSiteService } from "@/services/sn.service"
 import { IconReorder } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import {
@@ -38,7 +38,7 @@ import { toast } from "sonner"
 import { DynamicLanguageFields } from "./dynamic-language-field"
 import { SubPageHeader } from "./sub.page.header"
 import { Switch } from "./ui/switch"
-const turSNSiteService = new TurSNSiteService();
+const turSNFieldService = new TurSNFieldService();
 const turSNFieldTypeService = new TurSNFieldTypeService();
 interface Props {
   snSiteId: string;
@@ -99,12 +99,12 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
     try {
       if (isNew) {
 
-        turSNSiteService.createField(snSiteId, snField);
+        turSNFieldService.create(snSiteId, snField);
         toast.success(`The ${snField.name} SN Field was saved`);
         navigate(urlBase);
       }
       else {
-        turSNSiteService.updateField(snSiteId, snField);
+        turSNFieldService.update(snSiteId, snField);
         toast.success(`The ${snField.name} SN Field was updated`);
       }
     } catch (error) {
