@@ -25,15 +25,15 @@ export default function SNSiteResultRankingListPage() {
                     <SubPageHeader icon={IconNumber123} title="Result Ranking"
                         description="Define content that will be featured in the term-based search." />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {rankingList.map((site) => (
-                            <Card key={site.id} className="flex flex-col justify-between hover:border-primary transition-colors">
+                        {rankingList.map((ranking) => (
+                            <Card key={ranking.id} className="flex flex-col justify-between hover:border-primary transition-colors">
                                 <CardHeader>
-                                    <CardTitle className="text-xl">{site.name}</CardTitle>
-                                    <CardDescription>{site.description}</CardDescription>
+                                    <CardTitle className="text-xl">{ranking.name}</CardTitle>
+                                    <CardDescription>{ranking.description}</CardDescription>
                                 </CardHeader>
                                 <CardFooter>
                                     <a
-                                        href={"result-ranking/" + site.id}
+                                        href={"result-ranking/" + ranking.id}
                                         className={buttonVariants({ variant: "ghost" })}
                                     >
                                         Edit
