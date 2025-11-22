@@ -30,6 +30,7 @@ import SNSitePage from "./app/console/sn/sn.site.page"
 import SNSiteResultRankingListPage from "./app/console/sn/sn.site.result.ranking.list.page"
 import SNSiteResultRankingPage from "./app/console/sn/sn.site.result.ranking.page"
 import SNSiteRootPage from "./app/console/sn/sn.site.root.page"
+import SNSiteSpotlightListPage from "./app/console/sn/sn.site.spotlight.list.page"
 import SNSiteSpotlightPage from "./app/console/sn/sn.site.spotlight.page"
 import SNSiteTopSearchTermsPage from "./app/console/sn/sn.site.top.search.terms.page"
 import StoreInstanceListPage from "./app/console/store/store.instance.list.page"
@@ -84,11 +85,12 @@ function App() {
                 <Route path={`${ROUTES.SN_INSTANCE}/:id/ai`} element={<SNSiteGenAIPage />} />
                 <Route path={`${ROUTES.SN_INSTANCE}/:id/result-ranking`} element={<SNSiteResultRankingListPage />} />
                 <Route path={`${ROUTES.SN_INSTANCE}/:id/merge-providers`} element={<SNSiteMergeProvidersListPage />} />
-                <Route path={`${ROUTES.SN_INSTANCE}/:id/spotlight`} element={<SNSiteSpotlightPage />} />
+                <Route path={`${ROUTES.SN_INSTANCE}/:id/spotlight`} element={<SNSiteSpotlightListPage />} />
                 <Route path={`${ROUTES.SN_INSTANCE}/:id/top-terms`} element={<SNSiteTopSearchTermsPage />} />
                 <Route path={`${ROUTES.SN_INSTANCE}/:id/field/:fieldId`} element={<SNSiteFieldPage />} />
                 <Route path={`${ROUTES.SN_INSTANCE}/:id/result-ranking/:resultRankingId`} element={<SNSiteResultRankingPage />} />
                 <Route path={`${ROUTES.SN_INSTANCE}/:id/merge-providers/:mergeProviderId`} element={<SNSiteMergeProvidersPage />} />
+                <Route path={`${ROUTES.SN_INSTANCE}/:id/spotlight/:spotlightId`} element={<SNSiteSpotlightPage />} />
               </Route>
 
             </Route>
