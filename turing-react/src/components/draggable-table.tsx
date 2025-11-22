@@ -25,7 +25,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
-import { TurSNSiteService } from '@/services/sn.service';
+import { TurSNFacetedFieldService } from '@/services/sn.faceted.field.service';
 
 interface DraggableTableRowProps {
     row: TurSNSiteField;
@@ -67,11 +67,11 @@ const DraggableTableRow: React.FC<DraggableTableRowProps> = ({ row }) => {
 interface DraggableTableProps {
     id: string;
 }
-const turSNSiteService = new TurSNSiteService();
+const turSNFacetedFieldService = new TurSNFacetedFieldService();
 export const DraggableTable: React.FC<DraggableTableProps> = ({ id }) => {
     const [tableData, setTableData] = React.useState<TurSNSiteField[]>([]);
     React.useEffect(() => {
-        turSNSiteService.getFacetedFields(id).then(setTableData);
+        turSNFacetedFieldService.query(id).then(setTableData);
     }, [id])
     const sensors = useSensors(useSensor(PointerSensor));
 

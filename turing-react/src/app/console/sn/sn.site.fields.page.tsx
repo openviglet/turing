@@ -35,7 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts"
-import { TurSNSiteService } from "@/services/sn.service"
+import { TurSNFieldService } from "@/services/sn.field.service"
 import { IconAlignBoxCenterStretch, IconColumns3Filled } from "@tabler/icons-react"
 import { useParams } from "react-router-dom"
 
@@ -137,7 +137,7 @@ export const columns: ColumnDef<TurSNSiteField>[] = [
     },
   },
 ]
-const turSNSiteService = new TurSNSiteService();
+const turSNFieldService = new TurSNFieldService();
 export default function SNSiteFieldsPage() {
   const { id } = useParams() as { id: string };
   const [data, setSnField] = React.useState<TurSNSiteField[]>([]);
@@ -149,7 +149,7 @@ export default function SNSiteFieldsPage() {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   React.useEffect(() => {
-    turSNSiteService.getFields(id).then(setSnField);
+    turSNFieldService.query(id).then(setSnField);
   }, [id])
   const table = useReactTable({
     data,

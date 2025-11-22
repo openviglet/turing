@@ -35,7 +35,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { DynamicLanguageFields } from "./dynamic-field"
+import { DynamicLanguageFields } from "./dynamic-language-field"
 import { SubPageHeader } from "./sub.page.header"
 import { Switch } from "./ui/switch"
 const turSNSiteService = new TurSNSiteService();

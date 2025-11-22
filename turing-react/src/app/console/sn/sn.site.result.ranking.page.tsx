@@ -1,36 +1,29 @@
+import { SNSiteResultRankingForm } from "@/components/sn.site.result.ranking.form";
 import { SubPageHeader } from "@/components/sub.page.header";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import type { TurSNRankingExpression } from "@/models/sn/sn-ranking-expression.model";
+import { TurSNRankingExpressionService } from "@/services/sn.site.result.ranking.service";
 import { IconNumber123 } from "@tabler/icons-react";
-import React from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+const turSNRankingExpressionService = new TurSNRankingExpressionService();
 
 export default function SNSiteResultRankingPage() {
-    const [value, setValue] = React.useState([4]);
+    const { id, resultRankingId } = useParams() as { id: string, resultRankingId: string };
+    const [resultRanking, setResultRanking] = useState<TurSNRankingExpression>({} as TurSNRankingExpression);
+    const [isNew, setIsNew] = useState<boolean>(true);
+    useEffect(() => {
+
+        if (resultRankingId !== "new") {
+            turSNRankingExpressionService.get(id, resultRankingId).then(setResultRanking);
+            setIsNew(false);
+        }
+    }, [id])
     return (
         <>
             <SubPageHeader icon={IconNumber123} title="Result Ranking"
                 description="Define content that will be featured in the term-based search." />
-            <div>
-
-                <Label htmlFor="weight-slider">
-                    Will have its weight changed by
-                </Label>
-
-                <div className="flex items-center gap-4 mt-3">
-                    <Slider
-                        id="weight-slider"
-                        value={value}
-                        onValueChange={setValue}
-                        max={10}
-                        min={0}
-                        step={1}
-                    />
-                    <span className="w-10 text-right">
-                        + {value[0]}
-                    </span>
-
-                </div>
-            </div>
+            <SNSiteResultRankingForm siteId={id} value={resultRanking} isNew={isNew} />
         </>
     )
 }
