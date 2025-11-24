@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Deploy
+name: Publish Packages
 
 on:
   push:
@@ -89,6 +89,7 @@ jobs:
         run: |
           mvn install package -Dgpg.skip=true -Dturing.open-browser=false
           export TAG_NAME=v$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "TAG_NAME=${TAG_NAME}"
           gh release create ${TAG_NAME} --generate-notes
           gh release upload ${TAG_NAME} turing-app/target/viglet-turing.jar --clobber
           gh release upload ${TAG_NAME} turing-java-sdk/target/turing-java-sdk.jar --clobber
