@@ -35,7 +35,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>4.0.0</spring-boot.version>
+        <spring-boot.version>3.5.7</spring-boot.version>
         <sonar.organization>viglet</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -144,12 +144,7 @@
                 <module>turing-commons</module>
                 <module>turing-spring</module>
                 <module>turing-java-sdk</module>
-                <module>turing-connector</module>
-                <module>turing-filesystem</module>
-                <module>turing-db</module>
-                <module>turing-aem-commons</module>
-                <module>turing-aem</module>
-                <module>turing-web-crawler</module>
+                <module>turing-fs-commons</module>
                 <module>turing-mcp-server</module>
                 <module>turing-app</module>
             </modules>
@@ -159,7 +154,6 @@
             <modules>
                 <module>turing-commons</module>
                 <module>turing-java-sdk</module>
-                <module>turing-aem-commons</module>
             </modules>
             <build>
                 <plugins>
@@ -314,38 +308,8 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.viglet.turing.connector</groupId>
-                <artifactId>connector-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.viglet.turing</groupId>
-                <artifactId>db-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.viglet.turing</groupId>
                 <artifactId>fs-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.viglet.turing.connector</groupId>
-                <artifactId>wc-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.viglet.turing.connector</groupId>
-                <artifactId>wc-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.viglet.turing.connector</groupId>
-                <artifactId>aem-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.viglet.turing.connector</groupId>
-                <artifactId>sprinklr-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
