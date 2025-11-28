@@ -54,6 +54,7 @@
     "waderyan.gitblame",
     "wmaurer.change-case",
     "xabikos.javascriptsnippets",
-    "zuoez02.tslint-snippets"
+    "zuoez02.tslint-snippets",
+    "vmware.vscode-spring-boot"
   ]
 }
