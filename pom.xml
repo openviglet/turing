@@ -104,7 +104,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -360,7 +360,7 @@
             <dependency>
                 <groupId>org.xerial</groupId>
                 <artifactId>sqlite-jdbc</artifactId>
-                <version>3.51.0.0</version>
+                <version>3.51.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
