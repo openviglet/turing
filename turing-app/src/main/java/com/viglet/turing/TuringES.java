@@ -18,20 +18,21 @@ package com.viglet.turing;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
 import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+import com.fasterxml.jackson.datatype.hibernate7.Hibernate7Module;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@SpringBootApplication(exclude = { MongoAutoConfiguration.class })
 @EnableJms
 @EnableCaching
 @EnableScheduling
@@ -46,8 +47,7 @@ public class TuringES {
 
     @Bean
     FilterRegistrationBean<CharacterEncodingFilter> filterRegistrationBean() {
-        FilterRegistrationBean<CharacterEncodingFilter> registrationBean =
-                new FilterRegistrationBean<>();
+        FilterRegistrationBean<CharacterEncodingFilter> registrationBean = new FilterRegistrationBean<>();
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setForceEncoding(true);
         characterEncodingFilter.setEncoding(UTF_8);
@@ -56,7 +56,7 @@ public class TuringES {
     }
 
     @Bean
-    Module hibernate5Module() {
-        return new Hibernate5JakartaModule();
+    Module hibernate7Module() {
+        return new Hibernate7Module();
     }
 }

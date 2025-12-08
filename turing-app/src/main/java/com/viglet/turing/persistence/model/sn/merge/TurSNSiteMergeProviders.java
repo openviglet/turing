@@ -21,20 +21,28 @@
 
 package com.viglet.turing.persistence.model.sn.merge;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import jakarta.persistence.*;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.*;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UuidGenerator;
+
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the turSNSiteMerge database table.
@@ -77,8 +85,7 @@ public class TurSNSiteMergeProviders implements Serializable {
 	@Column(nullable = false, length = 50)
 	private String relationTo;
 
-	@OneToMany(mappedBy = "turSNSiteMergeProviders", orphanRemoval = true, fetch = FetchType.LAZY)
-	@Cascade({ CascadeType.ALL })
+	@OneToMany(mappedBy = "turSNSiteMergeProviders", orphanRemoval = true, fetch = FetchType.LAZY, cascade = jakarta.persistence.CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNSiteMergeProvidersField> overwrittenFields = new HashSet<>();
 }

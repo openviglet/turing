@@ -5,10 +5,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Locale;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -16,26 +18,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(properties = "spring.jmx.enabled=true")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -48,8 +49,7 @@ class TurSNSiteSearchAPIIT {
     private MockMvc mockMvc;
     private static final String SN_SITE_NAME = "Sample";
     private Principal mockPrincipal;
-    private static final String SPOTLIGHT_SERVICE_URL =
-            String.format("/api/sn/%s/spotlight", SN_SITE_NAME);
+    private static final String SPOTLIGHT_SERVICE_URL = String.format("/api/sn/%s/spotlight", SN_SITE_NAME);
     private static final String SEARCH_SERVICE_URL = "/api/sn/%s/search?q=%s&_setlocale=%s";
     private static final String SEARCH_INSTANCE_SERVICE_URL = "/api/se/select?q=*:*";
     private static final String WRONG_SEARCH_TERM = "siarch";
@@ -81,7 +81,7 @@ class TurSNSiteSearchAPIIT {
             TurSNSiteSpotlight turSNSiteSpotlight = new TurSNSiteSpotlight();
             turSNSiteSpotlight.setDescription("Spotlight Sample Test");
             turSNSiteSpotlight.setName("Spotlight Sample Test");
-            turSNSiteSpotlight.setModificationDate(new Date());
+            turSNSiteSpotlight.setModificationDate(LocalDateTime.now());
             turSNSiteSpotlight.setManaged(1);
             turSNSiteSpotlight.setProvider("TURING");
             turSNSiteSpotlight.setTurSNSite(turSNSite);

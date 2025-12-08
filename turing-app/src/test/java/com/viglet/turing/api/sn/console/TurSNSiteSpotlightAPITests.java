@@ -3,26 +3,27 @@ package com.viglet.turing.api.sn.console;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
@@ -30,10 +31,10 @@ import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.utils.TurUtilTests;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(properties = "spring.jmx.enabled=true")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -90,7 +91,7 @@ class TurSNSiteSpotlightAPITests {
             TurSNSiteSpotlight turSNSiteSpotlight = new TurSNSiteSpotlight();
             turSNSiteSpotlight.setDescription("Spotlight Sample Test");
             turSNSiteSpotlight.setName("Spotlight Sample Test");
-            turSNSiteSpotlight.setModificationDate(new Date());
+            turSNSiteSpotlight.setModificationDate(LocalDateTime.now());
             turSNSiteSpotlight.setManaged(1);
             turSNSiteSpotlight.setProvider("TURING");
             turSNSiteSpotlight.setTurSNSite(turSNSite);
@@ -111,7 +112,6 @@ class TurSNSiteSpotlightAPITests {
                 log.error(e.getMessage(), e);
             }
         });
-
 
     }
 
