@@ -21,21 +21,30 @@
 
 package com.viglet.turing.persistence.model.sn.ranking;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.spring.security.TurAuditable;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UuidGenerator;
+
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.spring.security.TurAuditable;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * The persistent class for the turSNRankingExpression database table.
@@ -47,7 +56,7 @@ import java.util.Set;
 @Entity
 @ToString
 @Table(name = "sn_ranking_expression")
-public class TurSNRankingExpression extends TurAuditable<String>  implements Serializable {
+public class TurSNRankingExpression extends TurAuditable<String> implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -73,8 +82,7 @@ public class TurSNRankingExpression extends TurAuditable<String>  implements Ser
 	@JoinColumn(name = "sn_site_id", nullable = false)
 	private TurSNSite turSNSite;
 
-	@OneToMany(mappedBy = "turSNRankingExpression", orphanRemoval = true, fetch = FetchType.LAZY)
-	@Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN  })
+	@OneToMany(mappedBy = "turSNRankingExpression", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNRankingCondition> turSNRankingConditions = new HashSet<>();
 

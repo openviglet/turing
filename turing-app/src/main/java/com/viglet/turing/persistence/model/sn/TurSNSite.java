@@ -20,6 +20,16 @@
  */
 package com.viglet.turing.persistence.model.sn;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UuidGenerator;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
@@ -31,19 +41,20 @@ import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.spring.security.TurAuditable;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * The persistent class for the TurSNSite database table.
@@ -149,7 +160,7 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 
 	@Column
 	private Integer spotlightWithResults;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "se_instance_id", nullable = false)
 	private TurSEInstance turSEInstance;
@@ -157,33 +168,27 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	@OneToOne
 	private TurSNSiteGenAi turSNSiteGenAi;
 
-	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY)
-	@Cascade({ CascadeType.ALL })
+	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNSiteField> turSNSiteFields = new HashSet<>();
 
-	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY)
-	@Cascade({ CascadeType.ALL })
+	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNSiteFieldExt> turSNSiteFieldExts = new HashSet<>();
 
-	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY)
-	@Cascade({ CascadeType.ALL })
+	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNSiteSpotlight> turSNSiteSpotlights = new HashSet<>();
 
-	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY)
-	@Cascade({ CascadeType.ALL })
+	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNSiteLocale> turSNSiteLocales = new HashSet<>();
 
-	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY)
-	@Cascade({ CascadeType.ALL })
+	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNSiteMetricAccess> turSNSiteMetricAccesses = new HashSet<>();
 
-	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY)
-	@Cascade({ CascadeType.ALL })
+	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNRankingExpression> turSNRankingExpressions = new HashSet<>();
 }

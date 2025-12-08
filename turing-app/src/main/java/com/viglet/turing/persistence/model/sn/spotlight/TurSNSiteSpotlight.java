@@ -21,21 +21,30 @@
 
 package com.viglet.turing.persistence.model.sn.spotlight;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.Cascade;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the turSNSiteSpotlight database table.
@@ -65,8 +74,7 @@ public class TurSNSiteSpotlight implements Serializable {
     private String description;
 
     @Setter
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modificationDate;
+    private LocalDateTime modificationDate;
 
     @Setter
     @Column
@@ -91,14 +99,12 @@ public class TurSNSiteSpotlight implements Serializable {
     private TurSNSite turSNSite;
 
     // bi-directional many-to-one association to turSNSiteSpotlightTerms
-    @OneToMany(mappedBy = "turSNSiteSpotlight", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "turSNSiteSpotlight", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<TurSNSiteSpotlightTerm> turSNSiteSpotlightTerms = new HashSet<>();
 
     // bi-directional many-to-one association to turSNSiteSpotlightDocuments
-    @OneToMany(mappedBy = "turSNSiteSpotlight", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "turSNSiteSpotlight", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<TurSNSiteSpotlightDocument> turSNSiteSpotlightDocuments = new HashSet<>();
 

@@ -21,10 +21,10 @@
 package com.viglet.turing.sn.spotlight;
 
 import java.lang.invoke.MethodHandles;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,8 +164,9 @@ public class TurSNSpotlightProcess {
 				String[] terms = ((String) turSNJobItem.getAttributes().get(TERMS_ATTRIBUTE)).split(",");
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 				simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-				Date date = simpleDateFormat
-						.parse((String) turSNJobItem.getAttributes().get(TurSNFieldName.MODIFICATION_DATE));
+				LocalDateTime date = LocalDateTime.parse(
+						(String) turSNJobItem.getAttributes().get(TurSNFieldName.MODIFICATION_DATE),
+						DateTimeFormatter.ISO_DATE_TIME);
 				List<TurSpotlightContent> turSpotlightContents = new ObjectMapper().readValue(jsonContent,
 						new TypeReference<>() {
 						});
@@ -195,7 +196,7 @@ public class TurSNSpotlightProcess {
 				logger.warn("Spotlight ID '{}' of '{}' SN Site ({}) was created.",
 						turSNJobItem.getAttributes().get(TurSNFieldName.ID), turSNSite.getName(),
 						turSNJobItem.getLocale());
-			} catch (ParseException | JsonProcessingException e) {
+			} catch (JsonProcessingException e) {
 				logger.error(e.getMessage(), e);
 			}
 			return true;

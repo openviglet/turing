@@ -21,17 +21,21 @@
 
 package com.viglet.turing.spring;
 
+import java.io.IOException;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.webmvc.autoconfigure.DispatcherServletAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
-
-import java.io.IOException;
 
 @Configuration
 @AutoConfigureAfter(DispatcherServletAutoConfiguration.class)
@@ -43,11 +47,6 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**").allowedOrigins(allowedOrigins).allowedMethods("PUT", "DELETE", "GET", "POST")
                 .allowCredentials(false).maxAge(3600);
-    }
-
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.setUseTrailingSlashMatch(true);
     }
 
     @Override
@@ -79,11 +78,13 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
         registryReact(registry, "/admin");
     }
 
-    private static void registryFrontend(ResourceHandlerRegistry registry, String context, String location, String path) {
+    private static void registryFrontend(ResourceHandlerRegistry registry, String context, String location,
+            String path) {
         registry.addResourceHandler(context).addResourceLocations(location)
                 .resourceChain(true).addResolver(new PathResourceResolver() {
                     @Override
-                    protected Resource getResource(@NotNull String resourcePath, @NotNull Resource location) throws IOException {
+                    protected Resource getResource(@NotNull String resourcePath, @NotNull Resource location)
+                            throws IOException {
                         Resource requestedResource = location.createRelative(resourcePath);
 
                         return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
@@ -96,6 +97,7 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
         registryFrontend(registry, "%s/**".formatted(context), "classpath:/public%s/browser/".formatted(context),
                 "/public%s/browser/index.html".formatted(context));
     }
+
     private static void registryReact(ResourceHandlerRegistry registry, String context) {
         registryFrontend(registry, "%s/**".formatted(context), "classpath:/public/", "/public/index.html");
     }

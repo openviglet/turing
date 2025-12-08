@@ -1,12 +1,8 @@
 package com.viglet.turing.connector;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +11,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
-@SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@SpringBootApplication(exclude = { MongoAutoConfiguration.class })
 @EnableJms
 @EnableCaching
 @EnableAsync
@@ -37,6 +38,7 @@ public class TurConnectorApplication {
         registrationBean.setFilter(characterEncodingFilter);
         return registrationBean;
     }
+
     @Bean
     Module hibernate5Module() {
         return new Hibernate5JakartaModule();

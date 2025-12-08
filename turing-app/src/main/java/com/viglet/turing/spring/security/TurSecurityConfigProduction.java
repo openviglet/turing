@@ -21,14 +21,14 @@
 
 package com.viglet.turing.spring.security;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.spring.security.auth.TurAuthTokenHeaderFilter;
-import com.viglet.turing.spring.security.auth.TurLogoutHandler;
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -40,14 +40,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
-import static org.springframework.security.config.Customizer.withDefaults;
+import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.spring.security.auth.TurAuthTokenHeaderFilter;
+import com.viglet.turing.spring.security.auth.TurLogoutHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -68,10 +69,10 @@ public class TurSecurityConfigProduction {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http,
-                                    TurAuthTokenHeaderFilter turAuthTokenHeaderFilter,
-                                    TurLogoutHandler turLogoutHandler,
-                                    TurConfigProperties turConfigProperties,
-                                    TurAuthenticationEntryPoint turAuthenticationEntryPoint) throws Exception {
+            TurAuthTokenHeaderFilter turAuthTokenHeaderFilter,
+            TurLogoutHandler turLogoutHandler,
+            TurConfigProperties turConfigProperties,
+            TurAuthenticationEntryPoint turAuthenticationEntryPoint) throws Exception {
 
         http.headers(header -> header.frameOptions(
                 frameOptions -> frameOptions.disable().cacheControl(HeadersConfigurer.CacheControlConfig::disable)));
@@ -79,22 +80,22 @@ public class TurSecurityConfigProduction {
         http.addFilterBefore(turAuthTokenHeaderFilter, BasicAuthenticationFilter.class);
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
         http.csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new TurSpaCsrfTokenRequestHandler())
-                        .ignoringRequestMatchers(
-                                mvc.matcher("/api/genai/chat"),
-                                mvc.matcher("/api/sn/**"),
-                                mvc.matcher(ERROR_PATH),
-                                mvc.matcher("/logout"),
-                                mvc.matcher("/api/ocr/**"),
-                                mvc.matcher("/api/genai/**"),
-                                mvc.matcher("/api/v2/guest/**"),
-                                mvc.matcher("/h2/**")))
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new TurSpaCsrfTokenRequestHandler())
+                .ignoringRequestMatchers(
+                        mvc.matcher("/api/genai/chat"),
+                        mvc.matcher("/api/sn/**"),
+                        mvc.matcher(ERROR_PATH),
+                        mvc.matcher("/logout"),
+                        mvc.matcher("/api/ocr/**"),
+                        mvc.matcher("/api/genai/**"),
+                        mvc.matcher("/api/v2/guest/**"),
+                        mvc.matcher("/h2/**")))
                 .addFilterAfter(new TurCsrfCookieFilter(), BasicAuthenticationFilter.class);
         if (turConfigProperties.isKeycloak()) {
-            String keycloakUrlFormat =
-                    String.format("%s/protocol/openid-connect/logout?client_id=%s&post_logout_redirect_uri=%s",
-                            issuerUri, clientId, turingUrl);
+            String keycloakUrlFormat = String.format(
+                    "%s/protocol/openid-connect/logout?client_id=%s&post_logout_redirect_uri=%s",
+                    issuerUri, clientId, turingUrl);
             http.oauth2Login(withDefaults());
             http.authorizeHttpRequests(authorizeRequests -> {
                 authorizeRequests.requestMatchers(
@@ -158,8 +159,8 @@ public class TurSecurityConfigProduction {
 
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
-        return web ->
-            web.httpFirewall(allowUrlEncodedSlaturHttpFirewall()).ignoring().requestMatchers(mvc.matcher("/h2/**"));
+        return web -> web.httpFirewall(allowUrlEncodedSlaturHttpFirewall()).ignoring()
+                .requestMatchers(mvc.matcher("/h2/**"));
     }
 
     @Autowired
@@ -179,16 +180,4 @@ public class TurSecurityConfigProduction {
         firewall.setAllowUrlEncodedSlash(true);
         return firewall;
     }
-
-    @Bean
-    public RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl.fromHierarchy("ROLE_ADMIN > ROLE_STAFF \n ROLE_STAFF > ROLE_USER");
-    }
-    @Bean
-    public DefaultWebSecurityExpressionHandler customWebSecurityExpressionHandler() {
-        DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
-        expressionHandler.setRoleHierarchy(roleHierarchy());
-        return expressionHandler;
-    }
-
 }
