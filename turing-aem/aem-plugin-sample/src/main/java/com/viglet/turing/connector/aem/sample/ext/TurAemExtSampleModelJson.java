@@ -16,6 +16,7 @@
 
 package com.viglet.turing.connector.aem.sample.ext;
 
+import java.io.IOException;
 import com.viglet.turing.connector.aem.commons.TurAemCommonsUtils;
 import com.viglet.turing.connector.aem.commons.TurAemObject;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
@@ -35,12 +36,16 @@ public class TurAemExtSampleModelJson implements TurAemExtContentInterface {
         log.debug("Executing TurAemExtSampleModelJson");
         String url = turAemSourceContext.getUrl() + aemObject.getPath() + MODEL_JSON_EXTENSION;
         TurAemTargetAttrValueMap attrValues = new TurAemTargetAttrValueMap();
-        return TurAemCommonsUtils
-                .getResponseBody(url, turAemSourceContext, TurAemSampleModel.class, false)
-                .map(model -> {
-                    getFragmentData(attrValues, model);
-                    return attrValues;
-                }).orElseGet(TurAemTargetAttrValueMap::new);
+        try {
+            return TurAemCommonsUtils
+                    .getResponseBody(url, turAemSourceContext, TurAemSampleModel.class, false)
+                    .map(model -> {
+                        getFragmentData(attrValues, model);
+                        return attrValues;
+                    }).orElseGet(TurAemTargetAttrValueMap::new);
+        } catch (IOException e) {
+            return new TurAemTargetAttrValueMap();
+        }
     }
 
     private static void getFragmentData(TurAemTargetAttrValueMap attrValues,

@@ -16,6 +16,7 @@
 
 package com.viglet.turing.connector.aem.commons.ext;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 import com.viglet.turing.client.sn.TurMultiValue;
@@ -45,7 +46,11 @@ public class TurAemExtContentTags implements TurAemExtAttributeInterface {
     public static Optional<TurAemContentTags> getTags(TurAemObject aemObject,
             TurAemSourceContext turAemSourceContext) {
         String url = turAemSourceContext.getUrl() + aemObject.getPath() + TAGS_JSON_EXTENSION;
-        return TurAemCommonsUtils.getResponseBody(url, turAemSourceContext, TurAemContentTags.class,
-                true);
+        try {
+            return TurAemCommonsUtils.getResponseBody(url, turAemSourceContext,
+                    TurAemContentTags.class, true);
+        } catch (IOException e) {
+            return Optional.empty();
+        }
     }
 }

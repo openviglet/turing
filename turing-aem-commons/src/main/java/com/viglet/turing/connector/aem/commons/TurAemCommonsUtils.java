@@ -24,7 +24,6 @@ import static com.viglet.turing.connector.aem.commons.TurAemConstants.ONCE;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.SLING;
 import static com.viglet.turing.connector.aem.commons.TurAemConstants.TEXT;
 import static org.apache.jackrabbit.JcrConstants.JCR_TITLE;
-
 import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
@@ -43,7 +42,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -55,7 +53,6 @@ import org.apache.hc.core5.http.message.BasicHeader;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -67,7 +64,6 @@ import com.google.common.net.UrlEscapers;
 import com.viglet.turing.client.sn.job.TurSNAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.cache.TurCustomClassCache;
-import com.viglet.turing.commons.exception.TurRuntimeException;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.connector.aem.commons.bean.TurAemContext;
 import com.viglet.turing.connector.aem.commons.bean.TurAemTargetAttrValueMap;
@@ -80,14 +76,13 @@ import com.viglet.turing.connector.aem.commons.ext.TurAemExtDeltaDateInterface;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentDefinitionProcess;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemContentMapping;
 import com.viglet.turing.connector.aem.commons.mappers.TurAemModel;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurAemCommonsUtils {
 
-    private static final Cache<String, Optional<String>> responseBodyCache = Caffeine.newBuilder().maximumSize(1000)
-            .expireAfterWrite(Duration.ofMinutes(5)).build();
+    private static final Cache<String, Optional<String>> responseBodyCache =
+            Caffeine.newBuilder().maximumSize(1000).expireAfterWrite(Duration.ofMinutes(5)).build();
 
     private TurAemCommonsUtils() {
         throw new IllegalStateException("Utility class");
@@ -223,7 +218,7 @@ public class TurAemCommonsUtils {
     }
 
     public static boolean checkIfFileHasNotImageExtension(String s) {
-        String[] imageExtensions = { ".jpg", ".png", ".jpeg", ".svg", ".webp" };
+        String[] imageExtensions = {".jpg", ".png", ".jpeg", ".svg", ".webp"};
         return Arrays.stream(imageExtensions).noneMatch(suffix -> s.toLowerCase().endsWith(suffix));
     }
 
@@ -281,17 +276,22 @@ public class TurAemCommonsUtils {
             TurAemSourceContext turAemSourceContext, boolean useCache) {
         String infinityJsonUrl = String.format(url.endsWith(JSON) ? "%s%s" : "%s%s.infinity.json",
                 turAemSourceContext.getUrl(), url);
-        return getResponseBody(infinityJsonUrl, turAemSourceContext, useCache)
-                .<Optional<JSONObject>>map(responseBody -> {
-                    if (isResponseBodyJSONArray(responseBody) && !url.endsWith(JSON)) {
-                        return getInfinityJson(
-                                new JSONArray(responseBody).toList().getFirst().toString(),
-                                turAemSourceContext, useCache);
-                    } else if (isResponseBodyJSONObject(responseBody)) {
-                        return Optional.of(new JSONObject(responseBody));
-                    }
-                    return getInfinityJsonNotFound(infinityJsonUrl);
-                }).orElseGet(() -> getInfinityJsonNotFound(infinityJsonUrl));
+        try {
+            return getResponseBody(infinityJsonUrl, turAemSourceContext, useCache)
+                    .<Optional<JSONObject>>map(responseBody -> {
+                        if (isResponseBodyJSONArray(responseBody) && !url.endsWith(JSON)) {
+                            return getInfinityJson(
+                                    new JSONArray(responseBody).toList().getFirst().toString(),
+                                    turAemSourceContext, useCache);
+                        } else if (isResponseBodyJSONObject(responseBody)) {
+                            return Optional.of(new JSONObject(responseBody));
+                        }
+                        return getInfinityJsonNotFound(infinityJsonUrl);
+                    }).orElseGet(() -> getInfinityJsonNotFound(infinityJsonUrl));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return getInfinityJsonNotFound(infinityJsonUrl);
+        }
 
     }
 
@@ -326,24 +326,25 @@ public class TurAemCommonsUtils {
     }
 
     public static <T> Optional<T> getResponseBody(String url,
-            TurAemSourceContext turAemSourceContext, Class<T> clazz, boolean useCache) {
-        return getResponseBody(url, turAemSourceContext, useCache).map(json -> {
+            TurAemSourceContext turAemSourceContext, Class<T> clazz, boolean useCache)
+            throws IOException {
+        return getResponseBody(url, turAemSourceContext, useCache).flatMap(json -> {
             if (!TurCommonsUtils.isValidJson(json)) {
-                return null;
+                return Optional.empty();
             }
             try {
-                return new ObjectMapper()
+                return Optional.of(new ObjectMapper()
                         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                        .readValue(json, clazz);
+                        .readValue(json, clazz));
             } catch (JsonProcessingException e) {
                 log.error("URL {} - {}", url, e.getMessage(), e);
             }
-            return null;
+            return Optional.empty();
         });
     }
 
     public static @NotNull Optional<String> getResponseBody(String url,
-            TurAemSourceContext turAemSourceContext, boolean useCache) {
+            TurAemSourceContext turAemSourceContext, boolean useCache) throws IOException {
         if (useCache) {
             return fetchResponseBodyCached(url, turAemSourceContext);
         } else {
@@ -352,13 +353,14 @@ public class TurAemCommonsUtils {
     }
 
     public static @NotNull Optional<String> fetchResponseBodyWithoutCache(String url,
-            TurAemSourceContext turAemSourceContext) {
+            TurAemSourceContext turAemSourceContext) throws IOException {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setDefaultHeaders(List.of(new BasicHeader(HttpHeaders.AUTHORIZATION, basicAuth(
                         turAemSourceContext.getUsername(), turAemSourceContext.getPassword()))))
                 .build()) {
             HttpGet request = new HttpGet(
-                    URI.create(UrlEscapers.urlFragmentEscaper().escape(url)).normalize());
+                    URI.create(Objects.requireNonNull(UrlEscapers.urlFragmentEscaper().escape(url)))
+                            .normalize());
             String json = httpClient.execute(request, response -> {
                 log.debug("Request Status {} - {}", response.getCode(), url);
                 HttpEntity entity = response.getEntity();
@@ -371,7 +373,7 @@ public class TurAemCommonsUtils {
             return Optional.empty();
         } catch (IOException e) {
             log.error("URL {} - {}", url, e.getMessage(), e);
-            throw new TurRuntimeException(e);
+            throw e;
         }
     }
 
@@ -382,8 +384,14 @@ public class TurAemCommonsUtils {
         else
             log.debug("Creating Cache to request {}", url);
         String cacheKey = url;
-        return responseBodyCache.get(cacheKey,
-                k -> fetchResponseBodyWithoutCache(url, turAemSourceContext));
+        return responseBodyCache.get(cacheKey, k -> {
+            try {
+                return fetchResponseBodyWithoutCache(url, turAemSourceContext);
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+                return Optional.empty();
+            }
+        });
     }
 
     private static String basicAuth(String username, String password) {
