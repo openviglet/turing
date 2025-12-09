@@ -43,7 +43,7 @@ public class TurSearchEnginePluginFactory {
             @Value("${turing.search.engine.type:solr}") String defaultEngineType) {
         this.pluginMap = plugins.stream()
                 .collect(Collectors.toMap(
-                        TurSearchEnginePlugin::getPluginType,
+                        plugin -> plugin.getPluginType().toLowerCase(),
                         Function.identity()));
         this.defaultEngineType = defaultEngineType;
         log.info("Initialized TurSearchEnginePluginFactory with {} plugins. Default engine: {}",
