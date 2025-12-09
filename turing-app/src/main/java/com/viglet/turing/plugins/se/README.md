@@ -81,7 +81,7 @@ public interface TurSearchEnginePlugin {
 
 To add support for a new search engine:
 
-1. Create a new package under `com.viglet.turing.plugins.se` (e.g., `opensearch`)
+1. Create a new package under `com.viglet.turing.plugins.se` (e.g., `mongodb`)
 
 2. Implement the `TurSearchEnginePlugin` interface:
 
@@ -92,17 +92,17 @@ public class TurOpenSearchSearchEnginePlugin implements TurSearchEnginePlugin {
     
     @Override
     public Optional<TurSEResults> retrieveSearchResults(TurSNSiteSearchContext context) {
-        // Implement search logic for OpenSearch
+        // Implement search logic for MongoDB
     }
 
     @Override
     public Optional<TurSEResults> retrieveFacetResults(TurSNSiteSearchContext context, String facetName) {
-        // Implement facet retrieval logic for OpenSearch
+        // Implement facet retrieval logic for MongoDB
     }
 
     @Override
     public String getPluginType() {
-        return "opensearch";
+        return "mongodb";
     }
 }
 ```
@@ -115,7 +115,7 @@ public class TurOpenSearchSearchEnginePlugin implements TurSearchEnginePlugin {
 turing:
   search:
     engine:
-      type: opensearch
+      type: mongodb
 ```
 
 ## Plugin Factory
@@ -149,7 +149,6 @@ public void performSearch() {
 
 - ✅ **Solr Plugin** - Fully implemented and functional
 - ✅ **Elasticsearch Plugin** - Implemented with basic functionality (search, pagination, sorting)
-- 🔄 **Future Plugins** - Can be added as needed (OpenSearch, Algolia, etc.)
 
 ### Elasticsearch Implementation Notes
 
