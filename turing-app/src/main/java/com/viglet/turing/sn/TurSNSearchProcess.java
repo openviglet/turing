@@ -78,6 +78,8 @@ import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
+import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
+import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
@@ -106,6 +108,7 @@ public class TurSNSearchProcess {
         private final TurSNSpotlightProcess turSNSpotlightProcess;
         private final TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository;
         private final boolean metricsEnabled;
+        private final TurSearchEnginePluginFactory searchEnginePluginFactory;
 
         public TurSNSearchProcess(TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
                         TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository,
@@ -114,7 +117,8 @@ public class TurSNSearchProcess {
                         TurSolrInstanceProcess turSolrInstanceProcess, TurSolr turSolr,
                         TurSNSpotlightProcess turSNSpotlightProcess,
                         TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository,
-                        @Value("${turing.search.metrics.enabled:false}") boolean metricsEnabled) {
+                        @Value("${turing.search.metrics.enabled:false}") boolean metricsEnabled,
+                        TurSearchEnginePluginFactory searchEnginePluginFactory) {
                 this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
                 this.turSNSiteFieldExtFacetRepository = turSNSiteFieldExtFacetRepository;
                 this.turSNSiteRepository = turSNSiteRepository;
@@ -124,6 +128,7 @@ public class TurSNSearchProcess {
                 this.turSNSpotlightProcess = turSNSpotlightProcess;
                 this.turSNSiteMetricAccessRepository = turSNSiteMetricAccessRepository;
                 this.metricsEnabled = metricsEnabled;
+                this.searchEnginePluginFactory = searchEnginePluginFactory;
         }
 
         public Optional<TurSNSite> getSNSite(String siteName) {
@@ -241,13 +246,12 @@ public class TurSNSearchProcess {
         }
 
         public TurSNSiteSearchBean search(TurSNSiteSearchContext turSNSiteSearchContext) {
-                return turSolrInstanceProcess
-                                .initSolrInstance(turSNSiteSearchContext.getSiteName(),
-                                                turSNSiteSearchContext.getLocale())
-                                .map(turSolrInstance -> turSolr
-                                                .retrieveSolrFromSN(turSolrInstance,
-                                                                turSNSiteSearchContext)
-                                                .map(turSEResults -> searchResponse(
+                TurSearchEnginePlugin plugin = searchEnginePluginFactory.getDefaultPlugin();
+                return plugin.retrieveSearchResults(turSNSiteSearchContext)
+                                .map(turSEResults -> turSolrInstanceProcess
+                                                .initSolrInstance(turSNSiteSearchContext.getSiteName(),
+                                                                turSNSiteSearchContext.getLocale())
+                                                .map(turSolrInstance -> searchResponse(
                                                                 turSNSiteSearchContext,
                                                                 turSolrInstance, turSEResults))
                                                 .orElse(new TurSNSiteSearchBean()))
@@ -256,13 +260,12 @@ public class TurSNSearchProcess {
 
         public List<Object> searchList(TurSNSiteSearchContext turSNSiteSearchContext) {
                 turSNSiteSearchContext.getTurSNConfig().setHlEnabled(false);
-                return turSolrInstanceProcess
-                                .initSolrInstance(turSNSiteSearchContext.getSiteName(),
-                                                turSNSiteSearchContext.getLocale())
-                                .map(turSolrInstance -> turSolr
-                                                .retrieveSolrFromSN(turSolrInstance,
-                                                                turSNSiteSearchContext)
-                                                .map(turSEResults -> searchResponseList(
+                TurSearchEnginePlugin plugin = searchEnginePluginFactory.getDefaultPlugin();
+                return plugin.retrieveSearchResults(turSNSiteSearchContext)
+                                .map(turSEResults -> turSolrInstanceProcess
+                                                .initSolrInstance(turSNSiteSearchContext.getSiteName(),
+                                                                turSNSiteSearchContext.getLocale())
+                                                .map(turSolrInstance -> searchResponseList(
                                                                 turSNSiteSearchContext,
                                                                 turSolrInstance, turSEResults))
                                                 .orElse(Collections.emptyList()))
@@ -778,9 +781,9 @@ public class TurSNSearchProcess {
                 if (facetTypeAndFacetItemTypeValues.equals(AND_OR)
                                 && turSolr.getFqFields(turSNFacetTypeContext.getTurSNFilterParams())
                                                 .contains(facetName)) {
-                        TurSEFacetResult turSEFacetResult = turSolr
-                                        .retrieveFacetSolrFromSN(turSolrInstance,
-                                                        getContextSearchFacet(context, facetName),
+                        TurSearchEnginePlugin plugin = searchEnginePluginFactory.getDefaultPlugin();
+                        TurSEFacetResult turSEFacetResult = plugin
+                                        .retrieveFacetResults(getContextSearchFacet(context, facetName),
                                                         facetName)
                                         .map(turSEFacetResults -> turSEFacetResults
                                                         .getFacetResults().stream()

@@ -107,6 +107,8 @@ turing:
       within: 10000
       enabled: false
   search:
+    engine:
+      type: solr
     metrics.enabled: false
     cache:
       ttl:
