@@ -35,7 +35,7 @@ class TurSearchEnginePluginFactoryTest {
     @Test
     void testGetDefaultPlugin_Solr() {
         TurSolrSearchEnginePlugin solrPlugin = new TurSolrSearchEnginePlugin(null, null);
-        TurElasticsearchSearchEnginePlugin elasticsearchPlugin = new TurElasticsearchSearchEnginePlugin();
+        TurElasticsearchSearchEnginePlugin elasticsearchPlugin = new TurElasticsearchSearchEnginePlugin(null, null);
         
         TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(
                 Arrays.asList(solrPlugin, elasticsearchPlugin),
@@ -51,7 +51,7 @@ class TurSearchEnginePluginFactoryTest {
     @Test
     void testGetDefaultPlugin_Elasticsearch() {
         TurSolrSearchEnginePlugin solrPlugin = new TurSolrSearchEnginePlugin(null, null);
-        TurElasticsearchSearchEnginePlugin elasticsearchPlugin = new TurElasticsearchSearchEnginePlugin();
+        TurElasticsearchSearchEnginePlugin elasticsearchPlugin = new TurElasticsearchSearchEnginePlugin(null, null);
         
         TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(
                 Arrays.asList(solrPlugin, elasticsearchPlugin),
@@ -67,7 +67,7 @@ class TurSearchEnginePluginFactoryTest {
     @Test
     void testGetPlugin_SpecificType() {
         TurSolrSearchEnginePlugin solrPlugin = new TurSolrSearchEnginePlugin(null, null);
-        TurElasticsearchSearchEnginePlugin elasticsearchPlugin = new TurElasticsearchSearchEnginePlugin();
+        TurElasticsearchSearchEnginePlugin elasticsearchPlugin = new TurElasticsearchSearchEnginePlugin(null, null);
         
         TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(
                 Arrays.asList(solrPlugin, elasticsearchPlugin),

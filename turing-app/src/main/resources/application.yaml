@@ -106,6 +106,8 @@ turing:
     commit:
       within: 10000
       enabled: false
+  elasticsearch:
+    timeout: 30000
   search:
     engine:
       type: solr

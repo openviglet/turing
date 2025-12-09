@@ -46,7 +46,7 @@ turing:
       enabled: false
 ```
 
-### Elasticsearch (Coming Soon)
+### Elasticsearch
 
 ```yaml
 turing:
@@ -54,10 +54,16 @@ turing:
     engine:
       type: elasticsearch
   elasticsearch:
-    # Elasticsearch-specific configuration will go here
+    timeout: 30000
 ```
 
-**Note:** Elasticsearch support is currently a stub implementation for future development.
+The Elasticsearch plugin is now implemented and functional. It supports:
+- Basic search queries (match all, query string)
+- Pagination
+- Sorting
+- Result mapping to TurSEResults format
+
+**Configuration**: Elasticsearch instances are configured through the Turing SE Instance settings in the database, similar to Solr. The plugin connects to Elasticsearch using the host and port configured for each site locale.
 
 ## Plugin Interface
 
@@ -142,8 +148,19 @@ public void performSearch() {
 ## Current Status
 
 - ✅ **Solr Plugin** - Fully implemented and functional
-- ⚠️ **Elasticsearch Plugin** - Stub implementation (returns empty results with warning logs)
+- ✅ **Elasticsearch Plugin** - Implemented with basic functionality (search, pagination, sorting)
 - 🔄 **Future Plugins** - Can be added as needed (OpenSearch, Algolia, etc.)
+
+### Elasticsearch Implementation Notes
+
+The Elasticsearch plugin includes:
+- Connection management via `TurElasticsearchInstanceProcess`
+- Query building with query_string and match_all support
+- Result mapping to common `TurSEResults` format
+- Pagination and sorting support
+- Basic facet support (can be enhanced)
+
+Advanced features like MLT (More Like This), spell checking, and grouping can be added incrementally.
 
 ## Migration from Direct Solr Usage
 

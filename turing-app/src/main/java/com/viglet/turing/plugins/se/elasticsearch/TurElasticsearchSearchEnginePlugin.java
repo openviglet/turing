@@ -16,6 +16,8 @@
  */
 package com.viglet.turing.plugins.se.elasticsearch;
 
+import com.viglet.turing.elasticsearch.TurElasticsearch;
+import com.viglet.turing.elasticsearch.TurElasticsearchInstanceProcess;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
@@ -26,7 +28,6 @@ import java.util.Optional;
 
 /**
  * Elasticsearch implementation of the search engine plugin interface.
- * This is a stub implementation for future Elasticsearch integration.
  *
  * @author Alexandre Oliveira
  * @since 2025.4.4
@@ -35,20 +36,28 @@ import java.util.Optional;
 @Component
 public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin {
 
-    public TurElasticsearchSearchEnginePlugin() {
-        log.warn("Elasticsearch plugin is not yet implemented. This is a stub for future development.");
+    private final TurElasticsearch turElasticsearch;
+    private final TurElasticsearchInstanceProcess turElasticsearchInstanceProcess;
+
+    public TurElasticsearchSearchEnginePlugin(
+            TurElasticsearch turElasticsearch,
+            TurElasticsearchInstanceProcess turElasticsearchInstanceProcess) {
+        this.turElasticsearch = turElasticsearch;
+        this.turElasticsearchInstanceProcess = turElasticsearchInstanceProcess;
     }
 
     @Override
     public Optional<TurSEResults> retrieveSearchResults(TurSNSiteSearchContext context) {
-        log.error("Elasticsearch search is not yet implemented");
-        return Optional.empty();
+        return turElasticsearchInstanceProcess
+                .initElasticsearchInstance(context.getSiteName(), context.getLocale())
+                .flatMap(elasticsearchInstance -> turElasticsearch.retrieveElasticsearchFromSN(elasticsearchInstance, context));
     }
 
     @Override
     public Optional<TurSEResults> retrieveFacetResults(TurSNSiteSearchContext context, String facetName) {
-        log.error("Elasticsearch facet retrieval is not yet implemented");
-        return Optional.empty();
+        return turElasticsearchInstanceProcess
+                .initElasticsearchInstance(context.getSiteName(), context.getLocale())
+                .flatMap(elasticsearchInstance -> turElasticsearch.retrieveFacetElasticsearchFromSN(elasticsearchInstance, context, facetName));
     }
 
     @Override
@@ -56,3 +65,4 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
         return "elasticsearch";
     }
 }
+

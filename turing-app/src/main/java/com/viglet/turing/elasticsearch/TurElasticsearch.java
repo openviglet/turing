@@ -1,0 +1,154 @@
+/*
+ * Copyright (C) 2016-2022 the original author or authors.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package com.viglet.turing.elasticsearch;
+
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.se.facet.TurSEFacetResult;
+import com.viglet.turing.se.result.TurSEResult;
+import com.viglet.turing.se.result.TurSEResults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.*;
+
+/**
+ * Elasticsearch search operations
+ *
+ * @author Alexandre Oliveira
+ * @since 2025.4.4
+ */
+@Slf4j
+@Component
+public class TurElasticsearch {
+    private final TurSNSiteRepository turSNSiteRepository;
+
+    public TurElasticsearch(TurSNSiteRepository turSNSiteRepository) {
+        this.turSNSiteRepository = turSNSiteRepository;
+    }
+
+    public Optional<TurSEResults> retrieveElasticsearchFromSN(
+            TurElasticsearchInstance elasticsearchInstance,
+            TurSNSiteSearchContext context) {
+        return turSNSiteRepository.findByName(context.getSiteName())
+                .flatMap(turSNSite -> {
+                    try {
+                        TurSEParameters turSEParameters = context.getTurSEParameters();
+                        
+                        // Build Elasticsearch query
+                        SearchRequest.Builder searchBuilder = new SearchRequest.Builder()
+                                .index(elasticsearchInstance.getIndex())
+                                .query(buildQuery(turSEParameters))
+                                .from(getStartPosition(turSEParameters))
+                                .size(turSEParameters.getRows());
+
+                        // Add sorting if specified
+                        if (turSEParameters.getSort() != null && !turSEParameters.getSort().isEmpty()) {
+                            addSorting(searchBuilder, turSEParameters.getSort());
+                        }
+
+                        SearchRequest searchRequest = searchBuilder.build();
+                        SearchResponse<Map> response = elasticsearchInstance.getClient()
+                                .search(searchRequest, Map.class);
+
+                        return Optional.of(buildTurSEResults(response, turSEParameters, turSNSite));
+                    } catch (IOException e) {
+                        log.error("Error executing Elasticsearch search: {}", e.getMessage(), e);
+                        return Optional.empty();
+                    }
+                });
+    }
+
+    public Optional<TurSEResults> retrieveFacetElasticsearchFromSN(
+            TurElasticsearchInstance elasticsearchInstance,
+            TurSNSiteSearchContext context,
+            String facetName) {
+        // Simplified facet implementation - can be enhanced later
+        return retrieveElasticsearchFromSN(elasticsearchInstance, context);
+    }
+
+    private Query buildQuery(TurSEParameters turSEParameters) {
+        String queryString = turSEParameters.getQuery();
+        if (queryString == null || queryString.trim().isEmpty() || "*".equals(queryString.trim())) {
+            // Match all query
+            return Query.of(q -> q.matchAll(m -> m));
+        }
+        
+        // Simple query string query
+        return Query.of(q -> q.queryString(qs -> qs
+                .query(queryString)
+                .defaultOperator(co.elastic.clients.elasticsearch._types.query_dsl.Operator.And)));
+    }
+
+    private int getStartPosition(TurSEParameters turSEParameters) {
+        int currentPage = turSEParameters.getCurrentPage();
+        int rows = turSEParameters.getRows();
+        return (currentPage - 1) * rows;
+    }
+
+    private void addSorting(SearchRequest.Builder searchBuilder, String sortString) {
+        String[] sortParts = sortString.split("\\s+");
+        if (sortParts.length > 0) {
+            String field = sortParts[0];
+            SortOrder order = sortParts.length > 1 && "desc".equalsIgnoreCase(sortParts[1])
+                    ? SortOrder.Desc
+                    : SortOrder.Asc;
+            
+            searchBuilder.sort(s -> s.field(f -> f.field(field).order(order)));
+        }
+    }
+
+    private TurSEResults buildTurSEResults(SearchResponse<Map> response, TurSEParameters turSEParameters, TurSNSite turSNSite) {
+        long numFound = response.hits().total() != null ? response.hits().total().value() : 0;
+        int rows = turSEParameters.getRows();
+        int pageCount = (int) Math.ceil((double) numFound / rows);
+        
+        List<TurSEResult> results = new ArrayList<>();
+        for (Hit<Map> hit : response.hits().hits()) {
+            Map<String, Object> source = hit.source();
+            if (source != null) {
+                results.add(TurSEResult.builder().fields(source).build());
+            }
+        }
+
+        return TurSEResults.builder()
+                .numFound(numFound)
+                .start(getStartPosition(turSEParameters))
+                .limit(rows)
+                .pageCount(pageCount)
+                .currentPage(turSEParameters.getCurrentPage())
+                .results(results)
+                .qTime((int) response.took())
+                .elapsedTime(response.took())
+                .queryString(turSEParameters.getQuery())
+                .sort(turSEParameters.getSort())
+                .spellCheck(null)
+                .similarResults(Collections.emptyList())
+                .facetResults(Collections.emptyList())
+                .groups(Collections.emptyList())
+                .build();
+    }
+}
