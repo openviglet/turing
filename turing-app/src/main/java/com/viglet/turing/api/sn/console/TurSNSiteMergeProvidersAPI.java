@@ -87,6 +87,7 @@ public class TurSNSiteMergeProvidersAPI {
 		}
 	}
 
+	@Transactional
 	@Operation(summary = "Update a Semantic Navigation Site Merge Providers")
 	@PutMapping("/{id}")
 	public TurSNSiteMergeProviders turSNSiteMergeUpdate(@PathVariable String id,
