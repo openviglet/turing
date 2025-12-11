@@ -82,13 +82,6 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <skip>false</skip>
-                    <parameters>true</parameters>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
                 <executions>
                     <execution>

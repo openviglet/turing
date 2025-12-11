@@ -268,32 +268,6 @@
             <version>33.5.0-jre</version>
         </dependency>
         <dependency>
-            <groupId>org.languagetool</groupId>
-            <artifactId>language-en</artifactId>
-            <version>6.7</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>lucene-backward-codecs</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.languagetool</groupId>
-            <artifactId>language-pt</artifactId>
-            <version>6.7</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>lucene-backward-codecs</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot.version}</version>
