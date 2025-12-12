@@ -16,9 +16,9 @@
 
 package com.viglet.turing.client.sn;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurSNLocale.
@@ -31,7 +31,7 @@ class TurSNLocaleTest {
     @Test
     void testDefaultConstructor() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         assertThat(locale.getLocale()).isNull();
         assertThat(locale.getLink()).isNull();
     }
@@ -39,10 +39,10 @@ class TurSNLocaleTest {
     @Test
     void testSettersAndGetters() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         locale.setLocale("en_US");
         locale.setLink("/search?locale=en_US");
-        
+
         assertThat(locale.getLocale()).isEqualTo("en_US");
         assertThat(locale.getLink()).isEqualTo("/search?locale=en_US");
     }
@@ -52,18 +52,18 @@ class TurSNLocaleTest {
         TurSNLocale locale = new TurSNLocale();
         locale.setLocale("pt_BR");
         locale.setLink("/search?locale=pt_BR");
-        
+
         String result = locale.toString();
-        
+
         assertThat(result).isEqualTo("pt_BR: /search?locale=pt_BR");
     }
 
     @Test
     void testToStringWithNullValues() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         String result = locale.toString();
-        
+
         assertThat(result).isEqualTo("null: null");
     }
 
@@ -71,9 +71,9 @@ class TurSNLocaleTest {
     void testToStringWithNullLocale() {
         TurSNLocale locale = new TurSNLocale();
         locale.setLink("/search");
-        
+
         String result = locale.toString();
-        
+
         assertThat(result).isEqualTo("null: /search");
     }
 
@@ -81,24 +81,24 @@ class TurSNLocaleTest {
     void testToStringWithNullLink() {
         TurSNLocale locale = new TurSNLocale();
         locale.setLocale("fr_FR");
-        
+
         String result = locale.toString();
-        
+
         assertThat(result).isEqualTo("fr_FR: null");
     }
 
     @Test
     void testSetLocaleWithDifferentFormats() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         // Test with language only
         locale.setLocale("en");
         assertThat(locale.getLocale()).isEqualTo("en");
-        
+
         // Test with language and country
         locale.setLocale("en_US");
         assertThat(locale.getLocale()).isEqualTo("en_US");
-        
+
         // Test with language, country and variant
         locale.setLocale("en_US_POSIX");
         assertThat(locale.getLocale()).isEqualTo("en_US_POSIX");
@@ -107,15 +107,15 @@ class TurSNLocaleTest {
     @Test
     void testSetLinkWithDifferentFormats() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         // Test absolute URL
         locale.setLink("https://example.com/search?locale=en");
         assertThat(locale.getLink()).isEqualTo("https://example.com/search?locale=en");
-        
+
         // Test relative URL
         locale.setLink("/api/search");
         assertThat(locale.getLink()).isEqualTo("/api/search");
-        
+
         // Test with query parameters
         locale.setLink("/search?q=test&locale=en_US&page=1");
         assertThat(locale.getLink()).isEqualTo("/search?q=test&locale=en_US&page=1");
@@ -124,10 +124,10 @@ class TurSNLocaleTest {
     @Test
     void testEmptyStringValues() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         locale.setLocale("");
         locale.setLink("");
-        
+
         assertThat(locale.getLocale()).isEmpty();
         assertThat(locale.getLink()).isEmpty();
         assertThat(locale.toString()).isEqualTo(": ");
@@ -136,18 +136,18 @@ class TurSNLocaleTest {
     @Test
     void testUpdateValues() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         // Set initial values
         locale.setLocale("en");
         locale.setLink("/search/en");
-        
+
         assertThat(locale.getLocale()).isEqualTo("en");
         assertThat(locale.getLink()).isEqualTo("/search/en");
-        
+
         // Update values
         locale.setLocale("es");
         locale.setLink("/search/es");
-        
+
         assertThat(locale.getLocale()).isEqualTo("es");
         assertThat(locale.getLink()).isEqualTo("/search/es");
     }
@@ -155,7 +155,7 @@ class TurSNLocaleTest {
     @Test
     void testSpecialCharactersInLocale() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         locale.setLocale("zh_CN@calendar=chinese");
         assertThat(locale.getLocale()).isEqualTo("zh_CN@calendar=chinese");
     }
@@ -163,7 +163,7 @@ class TurSNLocaleTest {
     @Test
     void testSpecialCharactersInLink() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         locale.setLink("/search?q=café&locale=fr_FR");
         assertThat(locale.getLink()).isEqualTo("/search?q=café&locale=fr_FR");
     }
@@ -173,9 +173,9 @@ class TurSNLocaleTest {
         TurSNLocale locale = new TurSNLocale();
         locale.setLocale("de_DE");
         locale.setLink("https://example.de/suchen");
-        
+
         String result = locale.toString();
-        
+
         // Verify the exact format: "locale: link"
         assertThat(result).matches("de_DE: https://example\\.de/suchen");
         assertThat(result).contains(": ");
@@ -186,17 +186,17 @@ class TurSNLocaleTest {
     @Test
     void testLocaleNormalization() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         // Test various locale formats
         String[] locales = {
-            "en",
-            "EN",
-            "en_US", 
-            "en_us",
-            "EN_US",
-            "zh_Hans_CN"
+                "en",
+                "EN",
+                "en_US",
+                "en_us",
+                "EN_US",
+                "zh_Hans_CN"
         };
-        
+
         for (String localeStr : locales) {
             locale.setLocale(localeStr);
             assertThat(locale.getLocale()).isEqualTo(localeStr);
@@ -206,10 +206,10 @@ class TurSNLocaleTest {
     @Test
     void testLinkWithFragment() {
         TurSNLocale locale = new TurSNLocale();
-        
+
         locale.setLink("/search?locale=en_US#results");
         assertThat(locale.getLink()).isEqualTo("/search?locale=en_US#results");
-        
+
         String result = locale.toString();
         assertThat(result).contains("#results");
     }
@@ -219,11 +219,11 @@ class TurSNLocaleTest {
         TurSNLocale locale1 = new TurSNLocale();
         locale1.setLocale("en_US");
         locale1.setLink("/en");
-        
+
         TurSNLocale locale2 = new TurSNLocale();
         locale2.setLocale("fr_FR");
         locale2.setLink("/fr");
-        
+
         assertThat(locale1.getLocale()).isNotEqualTo(locale2.getLocale());
         assertThat(locale1.getLink()).isNotEqualTo(locale2.getLink());
         assertThat(locale1.toString()).isNotEqualTo(locale2.toString());

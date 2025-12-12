@@ -1,38 +1,21 @@
 package com.viglet.turing.mcp.server;
 
+import java.net.URI;
+import java.util.List;
+
+import org.apache.commons.lang3.LocaleUtils;
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.stereotype.Service;
+
 import com.viglet.turing.client.sn.HttpTurSNServer;
 import com.viglet.turing.client.sn.TurSNDocumentList;
 import com.viglet.turing.client.sn.TurSNQuery;
-import com.viglet.turing.client.sn.pagination.TurSNPagination;
 import com.viglet.turing.client.sn.response.QueryTurSNResponse;
-import com.viglet.turing.commons.utils.TurCommonsUtils;
-import org.apache.commons.lang3.LocaleUtils;
-import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
-import java.util.List;
 
 @Service
 public class TurToolsService {
 
-    private final String turingUrl;
-    private final String turingApiKey;
-
-    public TurToolsService(@Value("${turing.url}") String turingUrl,
-                           @Value("${turing.apiKey}") String turingApiKey) {
-        this.turingUrl = turingUrl;
-        this.turingApiKey = turingApiKey;
-    }
-
-    @Tool(name = "list_indices_tool",
-            description = "Lists all indices in the Turing ES cluster with full information including docs.count. If an index parameter is provided, returns detailed information about that specific index.")
+    @Tool(name = "list_indices_tool", description = "Lists all indices in the Turing ES cluster with full information including docs.count. If an index parameter is provided, returns detailed information about that specific index.")
     public String listIndexTool(String index) {
         return """
                 index;locale;description
@@ -40,12 +23,11 @@ public class TurToolsService {
                 """;
     }
 
-    @Tool(name = "get_index_mapping_tool",
-            description = "Retrieves index mapping and setting information for an index in Turing ES")
+    @Tool(name = "get_index_mapping_tool", description = "Retrieves index mapping and setting information for an index in Turing ES")
     public String indexMappingTool(String index, String locale) {
         return """
                 index: wknd-author
-                
+
                 mappings:
                 properties={title={type=string}, description={type=string}, url={type=string}, modificationDate={type=date}, publicationDate={type=date}
                 """;
@@ -53,7 +35,7 @@ public class TurToolsService {
 
     @Tool(name = "search_index_tool", description = """
             Executes a search query against the Turing Elasticsearch (ES) instance.
-            
+
             Args:
                 index (str): Name of the index to query. Required. Example: 'samplesite'.
                 query (str, optional): Search query string. Example: 'foobar'. If date need be ISO-8601 format.
@@ -67,9 +49,10 @@ public class TurToolsService {
                 A dictionary containing the search results that match the provided parameters.
             """)
     public TurSNDocumentList searchIndexTool(String index, String locale, String query, int page,
-                                  List<String> fq, String sort, int rows, String group) {
+            List<String> fq, String sort, int rows, String group) {
 
-        HttpTurSNServer turSNServer = new HttpTurSNServer(URI.create("http://localhost:2700"), index, LocaleUtils.toLocale(locale));
+        HttpTurSNServer turSNServer = new HttpTurSNServer(URI.create("http://localhost:2700"), index,
+                LocaleUtils.toLocale(locale));
 
         TurSNQuery turSNQuery = new TurSNQuery();
         turSNQuery.setQuery(query);
