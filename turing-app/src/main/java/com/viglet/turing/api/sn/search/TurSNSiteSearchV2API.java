@@ -43,7 +43,6 @@ import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,9 +60,7 @@ public class TurSNSiteSearchV2API {
 
         public TurSNSiteSearchV2API(TurSNSiteSearchService turSNSiteSearchService,
                         TurSNSearchProcess turSNSearchProcess,
-                        TurSNSiteRepository turSNSiteRepository,
-                        TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI,
-                        TurSNSiteFieldExtRepository turSNSiteFieldExtRepository) {
+                        TurSNSiteRepository turSNSiteRepository) {
                 this.turSNSiteSearchService = turSNSiteSearchService;
                 this.turSNSearchProcess = turSNSearchProcess;
                 this.turSNSiteRepository = turSNSiteRepository;

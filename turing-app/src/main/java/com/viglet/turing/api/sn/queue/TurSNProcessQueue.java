@@ -149,9 +149,7 @@ public class TurSNProcessQueue {
     private boolean commitJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
         return turSolrInstanceProcess
                 .initSolrInstance(turSNSite.getName(), turSNJobItem.getLocale())
-                .map(turSolrInstance -> {
-                    return turSolr.commit(turSolrInstance);
-                }).orElse(false);
+                .map(turSolr::commit).orElse(false);
     }
 
     private boolean deleteJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {

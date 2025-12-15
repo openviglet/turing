@@ -121,9 +121,6 @@ public class TurIntegrationAPI {
         }
         String normalized = Paths.get(path).normalize().toString();
         // Disallow any attempts at directory traversal
-        if (normalized.contains("..")) {
-            return false;
-        }
-        return true;
+        return !normalized.contains("..");
     }
 }

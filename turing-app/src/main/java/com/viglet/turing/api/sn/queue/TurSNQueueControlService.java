@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSNQueueControlService {
     private final JmsListenerEndpointRegistry registry;
     private boolean suspendedQueue = false;
-    private boolean solrServiceAvailable = true;
 
     public TurSNQueueControlService(JmsListenerEndpointRegistry registry) {
         this.registry = registry;
@@ -23,7 +22,7 @@ public class TurSNQueueControlService {
         MessageListenerContainer container = registry.getListenerContainer(listenerId);
         if (container != null && container.isRunning()) {
             container.stop();
-            log.error("Queue listener '" + listenerId + "' SUSPENDED.");
+            log.error("Queue listener '{}' SUSPENDED.", listenerId);
             startMonitoring(listenerId);
         }
     }
@@ -32,7 +31,7 @@ public class TurSNQueueControlService {
         MessageListenerContainer container = registry.getListenerContainer(listenerId);
         if (container != null && !container.isRunning()) {
             container.start();
-            log.info("Queue listener '" + listenerId + "' STARTED.");
+            log.info("Queue listener '{}' STARTED.", listenerId);
         }
     }
 
@@ -43,10 +42,8 @@ public class TurSNQueueControlService {
     @Scheduled(fixedDelay = 60000)
     public void checkTuring() {
         if (suspendedQueue) {
-            if (solrServiceAvailable) {
-                startQueue(TurSNConstants.INDEXING_QUEUE_LISTENER);
-                suspendedQueue = false;
-            }
+            startQueue(TurSNConstants.INDEXING_QUEUE_LISTENER);
+            suspendedQueue = false;
         }
     }
 

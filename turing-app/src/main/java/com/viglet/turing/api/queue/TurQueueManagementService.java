@@ -20,10 +20,7 @@ package com.viglet.turing.api.queue;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
@@ -73,8 +70,8 @@ public class TurQueueManagementService {
                     TurQueueInfo queueInfo = TurQueueInfo.builder().name(queueName).address(address)
                             .messageCount(messageCount != null ? messageCount : 0)
                             .consumerCount(consumerCount != null ? consumerCount : 0)
-                            .paused(paused != null ? paused : false)
-                            .temporary(temporary != null ? temporary : false)
+                            .paused(Objects.requireNonNullElse(paused, false))
+                            .temporary(Objects.requireNonNullElse(temporary, false))
                             .status(paused != null && paused ? "PAUSED" : "ACTIVE").build();
 
                     queues.add(queueInfo);
@@ -203,27 +200,25 @@ public class TurQueueManagementService {
     }
 
     private LocalDateTime convertTimestamp(Object timestamp) {
-        if (timestamp instanceof Long) {
-            return LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli((Long) timestamp),
-                    ZoneId.systemDefault());
-        }
+        if (timestamp instanceof Long l) return LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(l),
+                ZoneId.systemDefault());
         return LocalDateTime.now();
     }
 
     private int getIntValue(Object value) {
-        if (value instanceof Integer) {
-            return (Integer) value;
-        } else if (value instanceof Long) {
-            return ((Long) value).intValue();
+        if (value instanceof Integer i) {
+            return i;
+        } else if (value instanceof Long l) {
+            return l.intValue();
         }
         return 0;
     }
 
     private long getLongValue(Object value) {
-        if (value instanceof Long) {
-            return (Long) value;
-        } else if (value instanceof Integer) {
-            return ((Integer) value).longValue();
+        if (value instanceof Long l) {
+            return l;
+        } else if (value instanceof Integer i) {
+            return i.longValue();
         }
         return 0L;
     }

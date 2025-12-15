@@ -42,7 +42,10 @@ import java.util.Map;
 @RequestMapping("/api/artemis")
 @Tag(name = "Artemis Queue Management", description = "Artemis Queue Management API")
 public class TurQueueManagementAPI {
-    
+
+    public static final String SUCCESS = "success";
+    public static final String MESSAGE = "message";
+    public static final String QUEUE_NAME = "queueName";
     private final TurQueueManagementService queueManagementService;
     
     public TurQueueManagementAPI(TurQueueManagementService queueManagementService) {
@@ -86,17 +89,17 @@ public class TurQueueManagementAPI {
         try {
             boolean success = queueManagementService.pauseQueue(queueName);
             Map<String, Object> response = new HashMap<>();
-            response.put("success", success);
-            response.put("message", success ? "Queue paused successfully" : "Failed to pause queue");
-            response.put("queueName", queueName);
+            response.put(SUCCESS, success);
+            response.put(MESSAGE, success ? "Queue paused successfully" : "Failed to pause queue");
+            response.put(QUEUE_NAME, queueName);
             
             return success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             log.error("Error pausing queue {}", queueName, e);
             Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "Error pausing queue: " + e.getMessage());
-            response.put("queueName", queueName);
+            response.put(SUCCESS, false);
+            response.put(MESSAGE, "Error pausing queue: " + e.getMessage());
+            response.put(QUEUE_NAME, queueName);
             return ResponseEntity.internalServerError().body(response);
         }
     }
@@ -109,17 +112,17 @@ public class TurQueueManagementAPI {
         try {
             boolean success = queueManagementService.resumeQueue(queueName);
             Map<String, Object> response = new HashMap<>();
-            response.put("success", success);
-            response.put("message", success ? "Queue resumed successfully" : "Failed to resume queue");
-            response.put("queueName", queueName);
+            response.put(SUCCESS, success);
+            response.put(MESSAGE, success ? "Queue resumed successfully" : "Failed to resume queue");
+            response.put(QUEUE_NAME, queueName);
             
             return success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             log.error("Error resuming queue {}", queueName, e);
             Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "Error resuming queue: " + e.getMessage());
-            response.put("queueName", queueName);
+            response.put(SUCCESS, false);
+            response.put(MESSAGE, "Error resuming queue: " + e.getMessage());
+            response.put(QUEUE_NAME, queueName);
             return ResponseEntity.internalServerError().body(response);
         }
     }
@@ -148,17 +151,17 @@ public class TurQueueManagementAPI {
         try {
             boolean success = queueManagementService.clearQueue(queueName);
             Map<String, Object> response = new HashMap<>();
-            response.put("success", success);
-            response.put("message", success ? "Queue cleared successfully" : "Failed to clear queue");
-            response.put("queueName", queueName);
+            response.put(SUCCESS, success);
+            response.put(MESSAGE, success ? "Queue cleared successfully" : "Failed to clear queue");
+            response.put(QUEUE_NAME, queueName);
             
             return success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             log.error("Error clearing queue {}", queueName, e);
             Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "Error clearing queue: " + e.getMessage());
-            response.put("queueName", queueName);
+            response.put(SUCCESS, false);
+            response.put(MESSAGE, "Error clearing queue: " + e.getMessage());
+            response.put(QUEUE_NAME, queueName);
             return ResponseEntity.internalServerError().body(response);
         }
     }

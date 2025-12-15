@@ -81,9 +81,7 @@ public class TurQueueBrowserService {
                     if (message instanceof ActiveMQObjectMessage) {
                         TurSNJobItems obj =
                                 (TurSNJobItems) ((ActiveMQObjectMessage) message).getObject();
-                        obj.getTuringDocuments().forEach(doc -> {
-                            contents.add(doc.getId());
-                        });
+                        obj.getTuringDocuments().forEach(doc -> contents.add(doc.getId()));
                     } else {
                         contents.add("Unsupported message type.");
                     }

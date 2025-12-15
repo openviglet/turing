@@ -34,6 +34,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Elasticsearch search operations
@@ -126,13 +127,10 @@ public class TurElasticsearch {
         int rows = turSEParameters.getRows();
         int pageCount = (int) Math.ceil((double) numFound / rows);
         
-        List<TurSEResult> results = new ArrayList<>();
-        for (Hit<Map> hit : response.hits().hits()) {
-            Map<String, Object> source = hit.source();
-            if (source != null) {
-                results.add(TurSEResult.builder().fields(source).build());
-            }
-        }
+        List<TurSEResult> results = response.hits()
+                .hits()
+                .stream().map(Hit::source)
+                .filter(Objects::nonNull).map(source -> TurSEResult.builder().fields(source).build()).collect(Collectors.toList());
 
         return TurSEResults.builder()
                 .numFound(numFound)
