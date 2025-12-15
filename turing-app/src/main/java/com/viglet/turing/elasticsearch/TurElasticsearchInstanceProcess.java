@@ -16,23 +16,24 @@
  */
 package com.viglet.turing.elasticsearch;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.Locale;
+import java.util.Optional;
+
+import org.elasticsearch.client.RestClient;
+import org.springframework.stereotype.Component;
+
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
-import org.springframework.stereotype.Component;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.util.Locale;
-import java.util.Optional;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Elasticsearch instance process for initializing connections
@@ -53,26 +54,28 @@ public class TurElasticsearchInstanceProcess {
         this.turSNSiteRepository = turSNSiteRepository;
     }
 
-    private Optional<TurElasticsearchInstance> getElasticsearchClient(TurSNSite turSNSite, TurSNSiteLocale turSNSiteLocale) {
+    private Optional<TurElasticsearchInstance> getElasticsearchClient(TurSNSite turSNSite,
+            TurSNSiteLocale turSNSiteLocale) {
         return getElasticsearchClient(turSNSite.getTurSEInstance(), turSNSiteLocale.getCore());
     }
 
     private Optional<TurElasticsearchInstance> getElasticsearchClient(TurSEInstance turSEInstance, String index) {
-        String urlString = String.format("http://%s:%s", turSEInstance.getHost(), turSEInstance.getPort());
+        String scheme = "http";
+        String urlString = String.format("%s://%s:%s", scheme, turSEInstance.getHost(), turSEInstance.getPort());
+
         try {
-            RestClient restClient = RestClient.builder(
-                    new HttpHost(turSEInstance.getHost(), turSEInstance.getPort(), "http")
-            ).build();
+            RestClient restClient = RestClient.builder(urlString).build();
 
             RestClientTransport transport = new RestClientTransport(
-                    restClient, new JacksonJsonpMapper()
-            );
+                    restClient, new JacksonJsonpMapper());
 
             ElasticsearchClient client = new ElasticsearchClient(transport);
 
             return Optional.of(new TurElasticsearchInstance(client, URI.create(urlString).toURL(), index));
         } catch (MalformedURLException e) {
             log.error("Error creating Elasticsearch URL: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("Error initializing Elasticsearch client: {}", e.getMessage(), e);
         }
         return Optional.empty();
     }
