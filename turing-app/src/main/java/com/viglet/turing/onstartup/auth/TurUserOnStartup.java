@@ -20,8 +20,8 @@
  */
 package com.viglet.turing.onstartup.auth;
 
+import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -50,7 +50,7 @@ public class TurUserOnStartup {
             turUserRepository.save(TurUser.builder()
                     .email("admin@localhost.local")
                     .firstName("Admin")
-                    .lastLogin(new Date())
+                    .lastLogin(Instant.now())
                     .lastName("Administrator")
                     .loginTimes(0)
                     .password(passwordEncoder.encode(password))

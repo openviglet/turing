@@ -20,13 +20,16 @@ package com.viglet.turing.persistence.model.sn.metric;
 import java.io.Serial;
 import java.io.Serializable;
 import java.text.Normalizer;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.UuidGenerator;
+
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -35,8 +38,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -64,8 +65,7 @@ public class TurSNSiteMetricAccess implements Serializable {
 	private String userId;
 
 	@Setter
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date accessDate;
+	private Instant accessDate;
 
 	@Column
 	private String term;

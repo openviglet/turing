@@ -37,14 +37,12 @@ spring:
     mode: HTML
     check-template: true
     check-template-location: true
-    enabled: true
     prefix: classpath:public/
     suffix: .html
   artemis:
-    mode: EMBEDDED
+    mode: embedded
     broker-url: localhost:61616
     embedded:
-      broker-name: artemis
       enabled: true
       persistent: true
       data-directory: store/queue
@@ -68,7 +66,7 @@ spring:
     graphiql:
       enabled: true
       path: /graphiql
-    path: /graphql
+    http.path: /graphql
     cors:
       allowed-origins: ${turing.allowedOrigins}
       allowed-methods: GET,POST

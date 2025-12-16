@@ -20,14 +20,22 @@
  */
 package com.viglet.turing.persistence.model.auth;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * The persistent class for the TurUser database table.
@@ -58,8 +66,7 @@ public class TurUser implements Serializable {
 	private String firstName;
 
 	@Setter
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastLogin;
+	private Instant lastLogin;
 
 	@Setter
 	private String lastName;
@@ -84,7 +91,7 @@ public class TurUser implements Serializable {
 
 	@Builder.Default
 	@ManyToMany
-	private Collection<TurGroup> turGroups  = new HashSet<>();
+	private Collection<TurGroup> turGroups = new HashSet<>();
 
 	public TurUser(TurUser turUser) {
 		this.username = turUser.username;

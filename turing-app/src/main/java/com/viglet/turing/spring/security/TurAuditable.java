@@ -1,6 +1,7 @@
 package com.viglet.turing.spring.security;
 
-import lombok.Getter;
+import java.time.Instant;
+
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -9,9 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import java.util.Date;
+import lombok.Getter;
 
 @Getter
 @MappedSuperclass
@@ -22,14 +21,12 @@ public abstract class TurAuditable<U> {
     protected U createdBy;
 
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date creationDate;
+    protected Instant creationDate;
 
     @LastModifiedBy
     protected U lastModifiedBy;
 
     @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date lastModifiedDate;
+    protected Instant lastModifiedDate;
 
 }
