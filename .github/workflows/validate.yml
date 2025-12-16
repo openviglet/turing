@@ -28,10 +28,10 @@ jobs:
       - name: Install Angular Cli
         run: npm i -g @angular/cli
 
-      - name: Set up JDK 25
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: "25"
+          java-version: "21"
           distribution: "temurin"
           cache: maven
       - name: Cache SonarCloud packages
