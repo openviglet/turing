@@ -37,7 +37,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -59,6 +58,8 @@ public class TurSecurityConfigProduction {
     public static final String ERROR_PATH = "/error/**";
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Value("${spring.security.oauth2.client.provider.keycloak.issuer-uri:''}")
     private String issuerUri;
     @Value("${spring.security.oauth2.client.registration.keycloak.client-id:''}")
@@ -165,12 +166,7 @@ public class TurSecurityConfigProduction {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
-    }
-
-    @Bean(name = "passwordEncoder")
-    PasswordEncoder passwordencoder() {
-        return new BCryptPasswordEncoder();
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
     @Bean
