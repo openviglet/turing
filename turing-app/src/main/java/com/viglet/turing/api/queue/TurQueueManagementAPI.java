@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,13 +48,13 @@ public class TurQueueManagementAPI {
     public static final String MESSAGE = "message";
     public static final String QUEUE_NAME = "queueName";
     private final TurQueueManagementService queueManagementService;
-    
+
     public TurQueueManagementAPI(TurQueueManagementService queueManagementService) {
         this.queueManagementService = queueManagementService;
     }
-    
-    @Operation(summary = "List all queues", 
-               description = "Get information about all existing Artemis queues")
+
+    @Operation(summary = "List all queues",
+            description = "Get information about all existing Artemis queues")
     @GetMapping
     public ResponseEntity<List<TurQueueInfo>> listQueues() {
         try {
@@ -64,13 +65,13 @@ public class TurQueueManagementAPI {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
-    @Operation(summary = "Get queue messages", 
-               description = "Get messages from a specific queue")
+
+    @Operation(summary = "Get queue messages",
+            description = "Get messages from a specific queue")
     @GetMapping("/{queueName}/messages")
     public ResponseEntity<List<TurQueueMessage>> getQueueMessages(
             @Parameter(description = "Queue name") @PathVariable String queueName,
-            @Parameter(description = "Maximum number of messages to retrieve") 
+            @Parameter(description = "Maximum number of messages to retrieve")
             @RequestParam(defaultValue = "50") int maxMessages) {
         try {
             List<TurQueueMessage> messages = queueManagementService.getQueueMessages(queueName, maxMessages);
@@ -80,94 +81,95 @@ public class TurQueueManagementAPI {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
-    @Operation(summary = "Pause queue", 
-               description = "Pause message consumption for a specific queue")
+
+    @Operation(summary = "Pause queue",
+            description = "Pause message consumption for a specific queue")
     @PostMapping("/{queueName}/pause")
     public ResponseEntity<Map<String, Object>> pauseQueue(
             @Parameter(description = "Queue name") @PathVariable String queueName) {
-        try {
-            boolean success = queueManagementService.pauseQueue(queueName);
-            Map<String, Object> response = new HashMap<>();
-            response.put(SUCCESS, success);
-            response.put(MESSAGE, success ? "Queue paused successfully" : "Failed to pause queue");
-            response.put(QUEUE_NAME, queueName);
-            
-            return success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            log.error("Error pausing queue {}", queueName, e);
-            Map<String, Object> response = new HashMap<>();
-            response.put(SUCCESS, false);
-            response.put(MESSAGE, "Error pausing queue: " + e.getMessage());
-            response.put(QUEUE_NAME, queueName);
-            return ResponseEntity.internalServerError().body(response);
+
+        boolean success = queueManagementService.pauseQueue(queueName);
+        if (success) {
+            return ResponseEntity.ok(Map.of(
+                    SUCCESS, true,
+                    MESSAGE, "Queue paused successfully",
+                    QUEUE_NAME, queueName)
+            );
         }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                        SUCCESS, false,
+                        MESSAGE, "Failed to pause queue: current state prevents pausing",
+                        QUEUE_NAME, queueName)
+                );
     }
-    
-    @Operation(summary = "Resume queue", 
-               description = "Resume message consumption for a specific queue")
+
+    @Operation(summary = "Resume queue",
+            description = "Resume message consumption for a specific queue")
     @PostMapping("/{queueName}/resume")
     public ResponseEntity<Map<String, Object>> resumeQueue(
             @Parameter(description = "Queue name") @PathVariable String queueName) {
-        try {
-            boolean success = queueManagementService.resumeQueue(queueName);
-            Map<String, Object> response = new HashMap<>();
-            response.put(SUCCESS, success);
-            response.put(MESSAGE, success ? "Queue resumed successfully" : "Failed to resume queue");
-            response.put(QUEUE_NAME, queueName);
-            
-            return success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            log.error("Error resuming queue {}", queueName, e);
-            Map<String, Object> response = new HashMap<>();
-            response.put(SUCCESS, false);
-            response.put(MESSAGE, "Error resuming queue: " + e.getMessage());
-            response.put(QUEUE_NAME, queueName);
-            return ResponseEntity.internalServerError().body(response);
+
+        boolean success = queueManagementService.resumeQueue(queueName);
+        if (success) {
+            return ResponseEntity.ok(Map.of(
+                    SUCCESS, true,
+                    MESSAGE, "Queue resumed successfully",
+                    QUEUE_NAME, queueName)
+            );
         }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                        SUCCESS, false,
+                        MESSAGE, "Failed to resume queue",
+                        QUEUE_NAME, queueName)
+                );
     }
-    
-    @Operation(summary = "Start queue", 
-               description = "Start/resume message consumption for a specific queue (alias for resume)")
+
+    @Operation(summary = "Start queue",
+            description = "Start/resume message consumption for a specific queue (alias for resume)")
     @PostMapping("/{queueName}/start")
     public ResponseEntity<Map<String, Object>> startQueue(
             @Parameter(description = "Queue name") @PathVariable String queueName) {
         return resumeQueue(queueName);
     }
-    
-    @Operation(summary = "Stop queue", 
-               description = "Stop/pause message consumption for a specific queue (alias for pause)")
+
+    @Operation(summary = "Stop queue",
+            description = "Stop/pause message consumption for a specific queue (alias for pause)")
     @PostMapping("/{queueName}/stop")
     public ResponseEntity<Map<String, Object>> stopQueue(
             @Parameter(description = "Queue name") @PathVariable String queueName) {
         return pauseQueue(queueName);
     }
-    
-    @Operation(summary = "Clear queue", 
-               description = "Remove all messages from a specific queue")
+
+    @Operation(summary = "Clear queue",
+            description = "Remove all messages from a specific queue")
     @DeleteMapping("/{queueName}/messages")
     public ResponseEntity<Map<String, Object>> clearQueue(
             @Parameter(description = "Queue name") @PathVariable String queueName) {
-        try {
-            boolean success = queueManagementService.clearQueue(queueName);
-            Map<String, Object> response = new HashMap<>();
-            response.put(SUCCESS, success);
-            response.put(MESSAGE, success ? "Queue cleared successfully" : "Failed to clear queue");
-            response.put(QUEUE_NAME, queueName);
-            
-            return success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            log.error("Error clearing queue {}", queueName, e);
-            Map<String, Object> response = new HashMap<>();
-            response.put(SUCCESS, false);
-            response.put(MESSAGE, "Error clearing queue: " + e.getMessage());
-            response.put(QUEUE_NAME, queueName);
-            return ResponseEntity.internalServerError().body(response);
+
+        boolean success = queueManagementService.clearQueue(queueName);
+        if (success) {
+            return ResponseEntity.ok(Map.of(
+                    SUCCESS, true,
+                    MESSAGE, "Queue cleared successfully",
+                    QUEUE_NAME, queueName)
+            );
         }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                        SUCCESS, false,
+                        MESSAGE, "Failed to clear queue",
+                        QUEUE_NAME, queueName)
+                );
+
     }
-    
-    @Operation(summary = "Get queue info", 
-               description = "Get detailed information about a specific queue")
+
+    @Operation(summary = "Get queue info",
+            description = "Get detailed information about a specific queue")
     @GetMapping("/{queueName}")
     public ResponseEntity<TurQueueInfo> getQueueInfo(
             @Parameter(description = "Queue name") @PathVariable String queueName) {
@@ -177,7 +179,7 @@ public class TurQueueManagementAPI {
                     .filter(queue -> queueName.equals(queue.getName()))
                     .findFirst()
                     .orElse(null);
-            
+
             if (queueInfo != null) {
                 return ResponseEntity.ok(queueInfo);
             } else {
