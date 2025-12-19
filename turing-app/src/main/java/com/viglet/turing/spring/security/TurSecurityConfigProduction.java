@@ -56,10 +56,10 @@ import com.viglet.turing.spring.security.auth.TurLogoutHandler;
 @ComponentScan(basePackageClasses = TurCustomUserDetailsService.class)
 public class TurSecurityConfigProduction {
     public static final String ERROR_PATH = "/error/**";
-    @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+    private final UserDetailsService userDetailsService;
+
+    private final PasswordEncoder passwordEncoder;
     @Value("${spring.security.oauth2.client.provider.keycloak.issuer-uri:''}")
     private String issuerUri;
     @Value("${spring.security.oauth2.client.registration.keycloak.client-id:''}")
@@ -67,6 +67,12 @@ public class TurSecurityConfigProduction {
     @Value("${turing.url:'http://localhost:2700'}")
     private String turingUrl;
     PathPatternRequestMatcher.Builder mvc = PathPatternRequestMatcher.withDefaults();
+
+    @Autowired
+    public TurSecurityConfigProduction(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http,

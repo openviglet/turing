@@ -16,8 +16,13 @@ public class TurAuditorAwareImpl implements AuditorAware<String> {
 
     public static final String ADMIN = "admin";
     public static final String PREFERRED_USERNAME = "preferred_username";
+
+    private final TurConfigProperties turConfigProperties;
+
     @Autowired
-    private TurConfigProperties turConfigProperties;
+    public TurAuditorAwareImpl(TurConfigProperties turConfigProperties) {
+        this.turConfigProperties = turConfigProperties;
+    }
 
 
     @Override
