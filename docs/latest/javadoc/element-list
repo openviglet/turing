@@ -1,7 +1,6 @@
 com.viglet.turing
 com.viglet.turing.api
 com.viglet.turing.api.auth
-com.viglet.turing.api.cognitive
 com.viglet.turing.api.dev.token
 com.viglet.turing.api.discovery
 com.viglet.turing.api.exchange
@@ -54,6 +53,7 @@ com.viglet.turing.commons.sn.pagination
 com.viglet.turing.commons.sn.search
 com.viglet.turing.commons.utils
 com.viglet.turing.connector.filesystem.commons
+com.viglet.turing.elasticsearch
 com.viglet.turing.exchange
 com.viglet.turing.exchange.sn
 com.viglet.turing.genai
@@ -101,6 +101,9 @@ com.viglet.turing.persistence.repository.sn.source
 com.viglet.turing.persistence.repository.sn.spotlight
 com.viglet.turing.persistence.repository.store
 com.viglet.turing.persistence.repository.system
+com.viglet.turing.plugins.se
+com.viglet.turing.plugins.se.elasticsearch
+com.viglet.turing.plugins.se.solr
 com.viglet.turing.properties
 com.viglet.turing.se
 com.viglet.turing.se.facet
