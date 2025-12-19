@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -79,6 +80,7 @@ public class TurSNSiteAPI {
     private final TurSolr turSolr;
     private final TurConfigProperties turConfigProperties;
 
+    @Autowired
     public TurSNSiteAPI(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteLocaleRepository turSNSiteLocaleRepository,
             TurSNSiteGenAiRepository turSNSiteGenAiRepository,

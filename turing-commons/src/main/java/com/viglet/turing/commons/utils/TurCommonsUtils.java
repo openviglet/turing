@@ -26,11 +26,9 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.BreakIterator;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -111,12 +109,12 @@ public class TurCommonsUtils {
     }
 
     public static URI addOrReplaceParameter(URI uri, String paramName, Locale locale,
-            boolean decoded) {
+                                            boolean decoded) {
         return addOrReplaceParameter(uri, paramName, locale.toLanguageTag(), decoded);
     }
 
     public static URI addOrReplaceParameter(URI uri, String paramName, String paramValue,
-            boolean decoded) {
+                                            boolean decoded) {
         List<NameValuePair> params =
                 new URIBuilder(uri, StandardCharsets.ISO_8859_1).getQueryParams();
         StringBuilder sbQueryString = new StringBuilder();
@@ -146,7 +144,7 @@ public class TurCommonsUtils {
     }
 
     public static void addParameterToQueryString(StringBuilder sbQueryString, String name,
-            String value) {
+                                                 String value) {
         if (value != null) {
             sbQueryString.append(String.format("%s=%s&", name, value));
         }
@@ -177,20 +175,22 @@ public class TurCommonsUtils {
     }
 
     public static List<String> cloneListOfTermsAsString(List<?> attributeArray) {
-        return attributeArray.stream().map(String.class::cast).collect(Collectors.toList());
+        return attributeArray.stream()
+                .map(String.class::cast)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
      * Add all files from the source directory to the destination zip file
      *
-     * @param source the directory with files to add
+     * @param source      the directory with files to add
      * @param destination the zip file that should contain the files
      */
     public static void addFilesToZip(File source, File destination) {
 
         try (OutputStream archiveStream = Files.newOutputStream(destination.toPath());
-                ArchiveOutputStream<ZipArchiveEntry> archive = new ArchiveStreamFactory()
-                        .createArchiveOutputStream(ArchiveStreamFactory.ZIP, archiveStream)) {
+             ArchiveOutputStream<ZipArchiveEntry> archive = new ArchiveStreamFactory()
+                     .createArchiveOutputStream(ArchiveStreamFactory.ZIP, archiveStream)) {
 
             FileUtils.listFiles(source, null, true)
                     .forEach(file -> addFileToZip(source, archive, file));
@@ -202,7 +202,7 @@ public class TurCommonsUtils {
     }
 
     private static void addFileToZip(File source, ArchiveOutputStream<ZipArchiveEntry> archive,
-            File file) {
+                                     File file) {
         String entryName;
         try {
             entryName = getEntryName(source, file);
@@ -210,7 +210,7 @@ public class TurCommonsUtils {
             archive.putArchiveEntry(entry);
 
             try (BufferedInputStream input =
-                    new BufferedInputStream(Files.newInputStream(file.toPath()))) {
+                         new BufferedInputStream(Files.newInputStream(file.toPath()))) {
                 input.transferTo(archive);
                 archive.closeArchiveEntry();
             }
@@ -223,7 +223,7 @@ public class TurCommonsUtils {
      * Remove the leading part of each entry that contains the source directory name
      *
      * @param source the directory where the file entry is found
-     * @param file the file that is about to be added
+     * @param file   the file that is about to be added
      * @return the name of an archive entry
      * @throws IOException if the io fails
      */
@@ -258,7 +258,7 @@ public class TurCommonsUtils {
     /**
      * Unzip it
      *
-     * @param file input zip file
+     * @param file         input zip file
      * @param outputFolder output Folder
      */
     public static void unZipIt(File file, File outputFolder) {

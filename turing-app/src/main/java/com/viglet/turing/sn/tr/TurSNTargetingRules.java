@@ -50,12 +50,14 @@ public class TurSNTargetingRules {
         Map<String, List<String>> trMap = new HashMap<>();
 
         for (String tr : trs) {
-            if (tr.contains(TWO_POINTS)) {
-                String attribute = tr.substring(0, tr.indexOf(TWO_POINTS));
-                String value = tr.substring(tr.indexOf(TWO_POINTS) + 1);
-                if (!trMap.containsKey(attribute))
-                    trMap.put(attribute, new ArrayList<>());
-                trMap.get(attribute).add(value);
+            int index = tr.indexOf(TWO_POINTS);
+
+            if (index != -1) {
+                String attribute = tr.substring(0, index);
+                String value = tr.substring(index + 1);
+
+                trMap.computeIfAbsent(attribute, k -> new ArrayList<>())
+                        .add(value);
             }
         }
 
@@ -94,7 +96,7 @@ public class TurSNTargetingRules {
                         TurCommonsUtils.getKeyValueFromColon(tr)
                                 .ifPresent(kv -> {
                                     attributeList.add(String.format("NOT %s:*", kv.getKey()));
-                                   trList.add(String.format("%s:%s",kv.getKey(), kv.getValue()));
+                                    trList.add(String.format("%s:%s", kv.getKey(), kv.getValue()));
                                 }));
         return String.format("%s OR (*:* %s)",
                 String.join(" OR ", trList),
