@@ -57,7 +57,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     public Optional<TurSEResults> retrieveFacetResults(TurSNSiteSearchContext context, String facetName) {
         return turElasticsearchInstanceProcess
                 .initElasticsearchInstance(context.getSiteName(), context.getLocale())
-                .flatMap(elasticsearchInstance -> turElasticsearch.retrieveFacetElasticsearchFromSN(elasticsearchInstance, context, facetName));
+                .flatMap(elasticsearchInstance -> turElasticsearch.retrieveFacetElasticsearchFromSN(elasticsearchInstance, context));
     }
 
     @Override

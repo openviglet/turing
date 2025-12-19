@@ -236,18 +236,13 @@ public class TurSNSearchProcess {
         public TurSNSiteSearchBean search(TurSNSiteSearchContext turSNSiteSearchContext) {
                 TurSearchEnginePlugin plugin = searchEnginePluginFactory.getDefaultPlugin();
                 return plugin.retrieveSearchResults(turSNSiteSearchContext)
-                                .map(turSEResults -> {
-                                        // Note: turSolrInstance is still needed for processing facets, spotlights, and
-                                        // other features
-                                        // This will be abstracted when Elasticsearch plugin is fully implemented
-                                        return turSolrInstanceProcess
-                                                        .initSolrInstance(turSNSiteSearchContext.getSiteName(),
-                                                                        turSNSiteSearchContext.getLocale())
-                                                        .map(turSolrInstance -> searchResponse(
-                                                                        turSNSiteSearchContext,
-                                                                        turSolrInstance, turSEResults))
-                                                        .orElse(new TurSNSiteSearchBean());
-                                })
+                                .map(turSEResults -> turSolrInstanceProcess
+                                                .initSolrInstance(turSNSiteSearchContext.getSiteName(),
+                                                                turSNSiteSearchContext.getLocale())
+                                                .map(turSolrInstance -> searchResponse(
+                                                                turSNSiteSearchContext,
+                                                                turSolrInstance, turSEResults))
+                                                .orElse(new TurSNSiteSearchBean()))
                                 .orElse(new TurSNSiteSearchBean());
         }
 
@@ -255,18 +250,13 @@ public class TurSNSearchProcess {
                 turSNSiteSearchContext.getTurSNConfig().setHlEnabled(false);
                 TurSearchEnginePlugin plugin = searchEnginePluginFactory.getDefaultPlugin();
                 return plugin.retrieveSearchResults(turSNSiteSearchContext)
-                                .map(turSEResults -> {
-                                        // Note: turSolrInstance is still needed for processing facets, spotlights, and
-                                        // other features
-                                        // This will be abstracted when Elasticsearch plugin is fully implemented
-                                        return turSolrInstanceProcess
-                                                        .initSolrInstance(turSNSiteSearchContext.getSiteName(),
-                                                                        turSNSiteSearchContext.getLocale())
-                                                        .map(turSolrInstance -> searchResponseList(
-                                                                        turSNSiteSearchContext,
-                                                                       turSEResults))
-                                                        .orElse(Collections.emptyList());
-                                })
+                                .map(turSEResults -> turSolrInstanceProcess
+                                                .initSolrInstance(turSNSiteSearchContext.getSiteName(),
+                                                                turSNSiteSearchContext.getLocale())
+                                                .map(turSolrInstance -> searchResponseList(
+                                                                turSNSiteSearchContext,
+                                                               turSEResults))
+                                                .orElse(Collections.emptyList()))
                                 .orElse(Collections.emptyList());
         }
 

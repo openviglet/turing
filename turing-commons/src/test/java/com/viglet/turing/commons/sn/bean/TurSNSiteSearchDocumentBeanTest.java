@@ -123,7 +123,7 @@ class TurSNSiteSearchDocumentBeanTest {
         assertThat(document.getFields()).containsKey("title");
         assertThat(document.getFields()).containsKey("author");
         assertThat(document.getFields()).containsKey("date");
-        assertThat(document.getFields().get("title")).isEqualTo("Document Title");
+        assertThat(document.getFields()).containsEntry("title", "Document Title");
     }
 
     @Test
@@ -175,11 +175,11 @@ class TurSNSiteSearchDocumentBeanTest {
         fields.put("mapField", Collections.singletonMap("nested", "value"));
         
         document.setFields(fields);
-        
-        assertThat(document.getFields().get("stringField")).isEqualTo("text value");
-        assertThat(document.getFields().get("intField")).isEqualTo(42);
-        assertThat(document.getFields().get("doubleField")).isEqualTo(3.14);
-        assertThat(document.getFields().get("booleanField")).isEqualTo(true);
+        assertThat(document.getFields())
+                .containsEntry("stringField", "text value")
+                .containsEntry("intField", 42)
+                .containsEntry("doubleField", 3.14)
+                .containsEntry("booleanField",true);
         assertThat(document.getFields().get("listField")).isInstanceOf(List.class);
         assertThat(document.getFields().get("mapField")).isInstanceOf(Map.class);
     }

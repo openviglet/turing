@@ -27,9 +27,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.solr.client.solrj.impl.HttpClientUtil;
-import org.apache.solr.client.solrj.impl.HttpClientUtil.SocketFactoryRegistryProvider;
-import org.apache.solr.client.solrj.impl.SolrHttpRequestRetryHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,26 +35,24 @@ public class TurSolrConfiguration {
 
 	@Bean
 	public CloseableHttpClient closeableHttpClient() {
-		SocketFactoryRegistryProvider socketFactoryRegistryProvider = HttpClientUtil.getSocketFactoryRegistryProvider();
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setConnectTimeout(60000)
+				.setSocketTimeout(60000)
+				.build();
 
-		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(
-				socketFactoryRegistryProvider.getSocketFactoryRegistry());
+		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 		cm.setMaxTotal(10000);
 		cm.setDefaultMaxPerRoute(10000);
 		cm.setValidateAfterInactivity(3000);
 
-		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setConnectTimeout(60000)
-				.setSocketTimeout(60000);
-
-		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create()
+		return HttpClientBuilder.create()
+				.setConnectionManager(cm)
+				.setDefaultRequestConfig(requestConfig)
 				.setKeepAliveStrategy((response, context) -> -1)
 				.evictIdleConnections(50000, TimeUnit.MILLISECONDS)
-				.setDefaultRequestConfig(requestConfigBuilder.build())
 				.setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
-				.disableContentCompression().useSystemProperties()
-				.setConnectionManager(cm);
-
-		return httpClientBuilder.build();
-
+				.disableContentCompression()
+				.useSystemProperties()
+				.build();
 	}
 }

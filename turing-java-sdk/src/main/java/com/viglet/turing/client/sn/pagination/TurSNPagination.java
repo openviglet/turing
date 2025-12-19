@@ -17,7 +17,6 @@
 package com.viglet.turing.client.sn.pagination;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchPaginationBean;
 
@@ -45,7 +44,7 @@ public class TurSNPagination {
 	}
 
 	public List<TurSNPaginationItem> getAllPages() {
-		return paginationList.stream().map(TurSNPaginationItem::new).collect(Collectors.toList());
+		return paginationList.stream().map(TurSNPaginationItem::new).toList();
 	}
 
 	public Optional<TurSNPaginationItem> findByType(String type) {
@@ -89,6 +88,6 @@ public class TurSNPagination {
 	}
 
 	public List<Integer> getPageNumberList() {
-		return paginationList.stream().map(TurSNSiteSearchPaginationBean::getPage).collect(Collectors.toList());
+		return paginationList.stream().map(TurSNSiteSearchPaginationBean::getPage).toList();
 	}
 }

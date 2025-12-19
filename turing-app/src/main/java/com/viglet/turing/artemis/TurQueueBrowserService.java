@@ -57,7 +57,6 @@ public class TurQueueBrowserService {
 
     public List<String> listAllQueues() {
         try {
-            // Constrói o ObjectName para o broker diretamente, usando o padrão JMX
             String objectNameString = "org.apache.activemq.artemis:broker=\"localhost\"";
             ObjectName brokerObjectName = new ObjectName(objectNameString);
 
@@ -71,7 +70,6 @@ public class TurQueueBrowserService {
     }
 
     public List<String> browseQueueContents(String queueName) {
-        // Usa o método browse com a interface genérica BrowserCallback
         return jmsTemplate.browse(queueName, new BrowserCallback<List<String>>() {
             @Override
             public List<String> doInJms(@NonNull Session session, @NonNull QueueBrowser browser) throws JMSException {

@@ -40,7 +40,7 @@ class TurClientUtilsTest {
                 constructor.newInstance();
             } catch (Exception e) {
                 if (e.getCause() instanceof IllegalStateException) {
-                    throw (IllegalStateException) e.getCause();
+                    throw e.getCause();
                 }
                 throw new RuntimeException(e);
             }

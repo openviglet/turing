@@ -16,7 +16,6 @@
  */
 package com.viglet.turing.elasticsearch;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
@@ -24,15 +23,15 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.se.facet.TurSEFacetResult;
 import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.UnknownNullability;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,10 +71,10 @@ public class TurElasticsearch {
                         }
 
                         SearchRequest searchRequest = searchBuilder.build();
-                        SearchResponse<Map> response = elasticsearchInstance.getClient()
-                                .search(searchRequest, Map.class);
+                        SearchResponse<Map<String, Object>> response = elasticsearchInstance.getClient()
+                                .search(searchRequest, (Type) Map.class);
 
-                        return Optional.of(buildTurSEResults(response, turSEParameters, turSNSite));
+                        return Optional.of(buildTurSEResults(response, turSEParameters));
                     } catch (IOException e) {
                         log.error("Error executing Elasticsearch search: {}", e.getMessage(), e);
                         return Optional.empty();
@@ -85,8 +84,7 @@ public class TurElasticsearch {
 
     public Optional<TurSEResults> retrieveFacetElasticsearchFromSN(
             TurElasticsearchInstance elasticsearchInstance,
-            TurSNSiteSearchContext context,
-            String facetName) {
+            TurSNSiteSearchContext context){
         // Simplified facet implementation - can be enhanced later
         return retrieveElasticsearchFromSN(elasticsearchInstance, context);
     }
@@ -122,7 +120,7 @@ public class TurElasticsearch {
         }
     }
 
-    private TurSEResults buildTurSEResults(SearchResponse<Map> response, TurSEParameters turSEParameters, TurSNSite turSNSite) {
+    private TurSEResults buildTurSEResults(@UnknownNullability SearchResponse<Map<String, Object>> response, TurSEParameters turSEParameters) {
         long numFound = response.hits().total() != null ? response.hits().total().value() : 0;
         int rows = turSEParameters.getRows();
         int pageCount = (int) Math.ceil((double) numFound / rows);
