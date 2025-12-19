@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.solr.client.solrj.impl.HttpClientUtil;
@@ -48,10 +49,12 @@ public class TurSolrConfiguration {
 		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setConnectTimeout(60000)
 				.setSocketTimeout(60000);
 
-		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().setKeepAliveStrategy((response, context) -> -1)
+		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create()
+				.setKeepAliveStrategy((response, context) -> -1)
 				.evictIdleConnections(50000, TimeUnit.MILLISECONDS)
 				.setDefaultRequestConfig(requestConfigBuilder.build())
-				.setRetryHandler(new SolrHttpRequestRetryHandler(0)).disableContentCompression().useSystemProperties()
+				.setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
+				.disableContentCompression().useSystemProperties()
 				.setConnectionManager(cm);
 
 		return httpClientBuilder.build();

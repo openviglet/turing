@@ -112,7 +112,7 @@ public class TurSNSiteSearchAPI {
                         return turSNSiteSearchService.notFoundResponse();
                 }
                 return turSNSiteRepository.findByName(siteName)
-                                .map(site -> turSNSiteSearchService.executeGetSearch(siteName, turSNSearchParams,
+                                .map(site -> turSNSiteSearchService.executeGetSearch(turSNSearchParams,
                                                 request, site))
                                 .orElse(turSNSiteSearchService.notFoundResponse());
         }

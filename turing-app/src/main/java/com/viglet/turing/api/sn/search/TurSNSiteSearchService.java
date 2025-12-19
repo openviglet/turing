@@ -53,12 +53,11 @@ public class TurSNSiteSearchService {
     public TurSNSiteSearchContext getTurSNSiteSearchContext(
             TurSNSearchParams turSNSearchParams, HttpServletRequest request, TurSNSite site) {
         TurSNConfig turSNConfig = getTurSNConfig(site);
-        TurSNSiteSearchContext turSNSiteSearchContext = TurSNUtils.getTurSNSiteSearchContext(turSNConfig,
+        return TurSNUtils.getTurSNSiteSearchContext(turSNConfig,
                 site.getName(), turSNSearchParams, request);
-        return turSNSiteSearchContext;
     }
 
-    public ResponseEntity<TurSNSiteSearchBean> executeGetSearch(String siteName,
+    public ResponseEntity<TurSNSiteSearchBean> executeGetSearch(
             TurSNSearchParams turSNSearchParams,
             HttpServletRequest request,
             TurSNSite site) {

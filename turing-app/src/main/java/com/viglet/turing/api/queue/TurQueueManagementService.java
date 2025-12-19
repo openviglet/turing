@@ -52,39 +52,40 @@ public class TurQueueManagementService {
             ObjectName objectName = new ObjectName(
                     "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
             Set<ObjectInstance> queueMBeans = mbeanServer.queryMBeans(objectName, null);
-
-            for (ObjectInstance queueMBean : queueMBeans) {
-                ObjectName queueObjectName = queueMBean.getObjectName();
-                try {
-                    String queueName = queueObjectName.getKeyProperty("queue");
-                    String address = queueObjectName.getKeyProperty("address");
-
-                    Long messageCount =
-                            (Long) mbeanServer.getAttribute(queueObjectName, "MessageCount");
-                    Long consumerCount =
-                            (Long) mbeanServer.getAttribute(queueObjectName, "ConsumerCount");
-                    Boolean paused = (Boolean) mbeanServer.getAttribute(queueObjectName, "Paused");
-                    Boolean temporary =
-                            (Boolean) mbeanServer.getAttribute(queueObjectName, "Temporary");
-
-                    TurQueueInfo queueInfo = TurQueueInfo.builder().name(queueName).address(address)
-                            .messageCount(messageCount != null ? messageCount : 0)
-                            .consumerCount(consumerCount != null ? consumerCount : 0)
-                            .paused(Objects.requireNonNullElse(paused, false))
-                            .temporary(Objects.requireNonNullElse(temporary, false))
-                            .status(paused != null && paused ? "PAUSED" : "ACTIVE").build();
-
-                    queues.add(queueInfo);
-                } catch (Exception e) {
-                    log.warn("Error getting queue info for {}: {}", queueObjectName,
-                            e.getMessage());
-                }
-            }
+            queueMBeans.stream().map(ObjectInstance::getObjectName)
+                    .forEach(queueObjectName -> getQueue(queueObjectName, queues));
         } catch (Exception e) {
             log.error("Error listing queues", e);
         }
 
         return queues;
+    }
+
+    private void getQueue(ObjectName queueObjectName, List<TurQueueInfo> queues) {
+        try {
+            String queueName = queueObjectName.getKeyProperty("queue");
+            String address = queueObjectName.getKeyProperty("address");
+
+            Long messageCount =
+                    (Long) mbeanServer.getAttribute(queueObjectName, "MessageCount");
+            Long consumerCount =
+                    (Long) mbeanServer.getAttribute(queueObjectName, "ConsumerCount");
+            Boolean paused = (Boolean) mbeanServer.getAttribute(queueObjectName, "Paused");
+            Boolean temporary =
+                    (Boolean) mbeanServer.getAttribute(queueObjectName, "Temporary");
+
+            TurQueueInfo queueInfo = TurQueueInfo.builder().name(queueName).address(address)
+                    .messageCount(messageCount != null ? messageCount : 0)
+                    .consumerCount(consumerCount != null ? consumerCount : 0)
+                    .paused(Boolean.TRUE.equals(paused))
+                    .temporary(Boolean.TRUE.equals(temporary))
+                    .status(paused != null && paused ? "PAUSED" : "ACTIVE").build();
+
+            queues.add(queueInfo);
+        } catch (Exception e) {
+            log.warn("Error getting queue info for {}: {}", queueObjectName,
+                    e.getMessage());
+        }
     }
 
     /**

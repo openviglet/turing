@@ -347,12 +347,12 @@ public class TurSolr {
 
     public SpellCheckResponse autoComplete(TurSolrInstance turSolrInstance, String term) {
         return executeSolrQuery(turSolrInstance,
-                new SolrQuery().setRequestHandler(TUR_SUGGEST).setQuery(term))
+                new SolrQuery().setParam("qt", TUR_SUGGEST).setQuery(term))
                 .map(QueryResponse::getSpellCheckResponse).orElse(null);
     }
 
     public TurSESpellCheckResult spellCheckTerm(TurSolrInstance turSolrInstance, String term) {
-        return executeSolrQuery(turSolrInstance, new SolrQuery().setRequestHandler(TUR_SPELL)
+        return executeSolrQuery(turSolrInstance, new SolrQuery().setParam("qt",TUR_SPELL)
                 .setQuery(term.replace("\"", EMPTY))).map(
                         queryResponse -> Optional.ofNullable(queryResponse.getSpellCheckResponse())
                                 .map(spellCheckResponse -> {
@@ -555,7 +555,7 @@ public class TurSolr {
         try {
             return Optional.ofNullable(turSolrInstance.getSolrClient().query(query));
         } catch (BaseHttpSolrClient.RemoteSolrException | SolrServerException | IOException e) {
-            log.error("{}?{} - {}", query.getRequestHandler(), query.toQueryString(),
+            log.error("{}?{} - {}",query.get("qt"), query.toQueryString(),
                     e.getMessage(), e);
         }
         return Optional.empty();

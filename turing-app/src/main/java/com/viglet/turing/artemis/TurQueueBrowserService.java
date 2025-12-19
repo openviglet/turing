@@ -8,12 +8,15 @@ import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
+
+import com.viglet.turing.commons.exception.TurRuntimeException;
 import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.management.ActiveMQServerControl;
 import org.apache.activemq.artemis.api.core.management.ObjectNameBuilder;
 import org.apache.activemq.artemis.api.core.management.QueueControl;
 import org.apache.activemq.artemis.jms.client.ActiveMQObjectMessage;
+import org.jspecify.annotations.NonNull;
 import org.springframework.jms.core.BrowserCallback;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
@@ -48,7 +51,7 @@ public class TurQueueBrowserService {
             Map<String, Object>[] messages = queueControl.listMessages("");
             return Arrays.asList(messages);
         } catch (Exception e) {
-            throw new RuntimeException("Error listing items from queue: " + queueName, e);
+            throw new TurRuntimeException("Error listing items from queue: " + queueName, e);
         }
     }
 
@@ -63,7 +66,7 @@ public class TurQueueBrowserService {
 
             return Arrays.asList(serverControl.getQueueNames());
         } catch (Exception e) {
-            throw new RuntimeException("Error listing all queues from broker.", e);
+            throw new TurRuntimeException("Error listing all queues from broker.", e);
         }
     }
 
@@ -71,7 +74,7 @@ public class TurQueueBrowserService {
         // Usa o método browse com a interface genérica BrowserCallback
         return jmsTemplate.browse(queueName, new BrowserCallback<List<String>>() {
             @Override
-            public List<String> doInJms(Session session, QueueBrowser browser) throws JMSException {
+            public List<String> doInJms(@NonNull Session session, @NonNull QueueBrowser browser) throws JMSException {
                 List<String> contents = new ArrayList<>();
                 @SuppressWarnings("unchecked")
                 Enumeration<jakarta.jms.Message> messages = browser.getEnumeration();

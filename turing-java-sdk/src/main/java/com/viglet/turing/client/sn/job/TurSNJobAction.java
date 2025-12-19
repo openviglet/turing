@@ -22,5 +22,5 @@ package com.viglet.turing.client.sn.job;
  * @since 0.3.4
  */
 public enum TurSNJobAction {
-	CREATE, DELETE, COMMIT;
+	CREATE, DELETE, COMMIT
 }

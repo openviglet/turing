@@ -114,6 +114,6 @@ public class TurSNJobUtils {
         turSNJobItems.add(turSNJobItem);
         if (importItems(turSNJobItems, turSNServer, false)) {
             log.info ("Successfully deleted");
-        };
+        }
     }
 }

@@ -16,6 +16,8 @@
 
 package com.viglet.turing.client.sn;
 
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -39,41 +41,36 @@ public class TurSNQuery {
 		asc, desc
 	}
 
-	private String query;
-	private int rows;
-	private String groupBy;
+	@Setter
+    private String query;
+	@Setter
+    private int rows;
+	@Setter
+    private String groupBy;
 	private TurSNSortField sortField;
 	private TurSNClientBetweenDates betweenDates;
-	private List<String> fieldQueries;
-	private List<String> targetingRules;
-	private int pageNumber;
-	private boolean populateMetrics;
+	@Setter
+    private List<String> fieldQueries;
+	@Setter
+    private List<String> targetingRules;
+	@Setter
+    private int pageNumber;
+	@Setter
+    private boolean populateMetrics;
 
 	public String getQuery() {
 		return query;
 	}
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
-
-	public int getRows() {
+    public int getRows() {
 		return rows;
 	}
 
-	public void setRows(int rows) {
-		this.rows = rows;
-	}
-
-	public String getGroupBy() {
+    public String getGroupBy() {
 		return groupBy;
 	}
 
-	public void setGroupBy(String groupBy) {
-		this.groupBy = groupBy;
-	}
-
-	public TurSNSortField getSortField() {
+    public TurSNSortField getSortField() {
 		return sortField;
 	}
 
@@ -121,11 +118,7 @@ public class TurSNQuery {
 		return fieldQueries;
 	}
 
-	public void setFieldQueries(List<String> fieldQueries) {
-		this.fieldQueries = fieldQueries;
-	}
-
-	public void addTargetingRule(String... tr) {
+    public void addTargetingRule(String... tr) {
 		if (this.targetingRules == null) {
 			this.targetingRules = new ArrayList<>();
 		}
@@ -136,23 +129,12 @@ public class TurSNQuery {
 		return targetingRules;
 	}
 
-	public void setTargetingRules(List<String> targetingRules) {
-		this.targetingRules = targetingRules;
-	}
-
-	public int getPageNumber() {
+    public int getPageNumber() {
 		return pageNumber;
 	}
 
-	public void setPageNumber(int pageNumber) {
-		this.pageNumber = pageNumber;
-	}
-
-	public boolean isPopulateMetrics() {
+    public boolean isPopulateMetrics() {
 		return populateMetrics;
 	}
 
-	public void setPopulateMetrics(boolean populateMetrics) {
-		this.populateMetrics = populateMetrics;
-	}
 }

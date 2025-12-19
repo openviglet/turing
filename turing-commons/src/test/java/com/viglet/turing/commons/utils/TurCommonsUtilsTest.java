@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for TurCommonsUtils.
@@ -47,7 +46,7 @@ class TurCommonsUtilsTest {
     void testGetKeyValueFromColonValid() {
         String input = "key:value";
         Optional<KeyValue<String, String>> result = TurCommonsUtils.getKeyValueFromColon(input);
-        
+
         assertThat(result).isPresent();
         assertThat(result.get().getKey()).isEqualTo("key");
         assertThat(result.get().getValue()).isEqualTo("value");
@@ -57,7 +56,7 @@ class TurCommonsUtilsTest {
     void testGetKeyValueFromColonWithMultipleColons() {
         String input = "key:value:extra";
         Optional<KeyValue<String, String>> result = TurCommonsUtils.getKeyValueFromColon(input);
-        
+
         assertThat(result).isPresent();
         assertThat(result.get().getKey()).isEqualTo("key");
         assertThat(result.get().getValue()).isEqualTo("value:extra");
@@ -67,7 +66,7 @@ class TurCommonsUtilsTest {
     void testGetKeyValueFromColonNoColon() {
         String input = "keyvalue";
         Optional<KeyValue<String, String>> result = TurCommonsUtils.getKeyValueFromColon(input);
-        
+
         assertThat(result).isEmpty();
     }
 
@@ -75,32 +74,32 @@ class TurCommonsUtilsTest {
     void testGetKeyValueFromColonEmptyValue() {
         String input = "key:";
         Optional<KeyValue<String, String>> result = TurCommonsUtils.getKeyValueFromColon(input);
-        
+
         // Based on the actual implementation, this returns empty when there's only one part after split
         assertThat(result).isEmpty();
     }
 
     @Test
     void testIsValidUrlValidUrl() throws MalformedURLException {
-        URL validUrl = new URL("https://www.example.com");
+        URL validUrl = URI.create("https://www.example.com").toURL();
         boolean result = TurCommonsUtils.isValidUrl(validUrl);
-        
+
         assertThat(result).isTrue();
     }
 
     @Test
     void testIsValidUrlLocalUrl() throws MalformedURLException {
-        URL localUrl = new URL("http://localhost:8080/api");
+        URL localUrl = URI.create("http://localhost:8080/api").toURL();
         boolean result = TurCommonsUtils.isValidUrl(localUrl);
-        
+
         assertThat(result).isTrue();
     }
 
     @Test
     void testIsValidUrlFileUrl() throws MalformedURLException {
-        URL fileUrl = new URL("file:///tmp/test.txt");
+        URL fileUrl = URI.create("file:///tmp/test.txt").toURL();
         boolean result = TurCommonsUtils.isValidUrl(fileUrl);
-        
+
         // Based on the actual behavior, file URLs are considered invalid by the validator
         assertThat(result).isFalse();
     }
@@ -109,7 +108,7 @@ class TurCommonsUtilsTest {
     void testHtml2Text() {
         String html = "<p>This is a <strong>test</strong> with <em>HTML</em> tags.</p>";
         String result = TurCommonsUtils.html2Text(html);
-        
+
         assertThat(result).isEqualTo("This is a test with HTML tags.");
     }
 
@@ -117,7 +116,7 @@ class TurCommonsUtilsTest {
     void testHtml2TextWithComplexHtml() {
         String html = "<div><h1>Title</h1><p>Paragraph with <a href=\"#\">link</a></p></div>";
         String result = TurCommonsUtils.html2Text(html);
-        
+
         assertThat(result).isEqualTo("Title Paragraph with link");
     }
 
@@ -125,16 +124,16 @@ class TurCommonsUtilsTest {
     void testText2DescriptionShortText() {
         String text = "Short text";
         String result = TurCommonsUtils.text2Description(text, 100);
-        
+
         assertThat(result).isEqualTo("Short text ...");
     }
 
     @Test
     void testText2DescriptionLongText() {
         String text = "This is a very long text that should be truncated at word boundaries " +
-                     "to ensure readability and proper formatting when displayed.";
+                "to ensure readability and proper formatting when displayed.";
         String result = TurCommonsUtils.text2Description(text, 50);
-        
+
         assertThat(result).contains("...");
         assertThat(result.length()).isLessThanOrEqualTo(52); // 50 + " ..."
     }
@@ -142,7 +141,7 @@ class TurCommonsUtilsTest {
     @Test
     void testText2DescriptionNullText() {
         String result = TurCommonsUtils.text2Description(null, 50);
-        
+
         assertThat(result).isEqualTo("null ...");
     }
 
@@ -150,7 +149,7 @@ class TurCommonsUtilsTest {
     void testHtml2Description() {
         String html = "<p>This is HTML <strong>content</strong> that should be converted to text and truncated.</p>";
         String result = TurCommonsUtils.html2Description(html, 30);
-        
+
         assertThat(result).contains("This is HTML content");
         assertThat(result).contains("...");
     }
@@ -160,7 +159,7 @@ class TurCommonsUtilsTest {
         URI uri = new URI("/test?param1=value1");
         Locale locale = Locale.ENGLISH;
         URI result = TurCommonsUtils.addOrReplaceParameter(uri, "locale", locale, false);
-        
+
         assertThat(result.toString()).contains("locale=en");
     }
 
@@ -168,7 +167,7 @@ class TurCommonsUtilsTest {
     void testAddOrReplaceParameterNewParameter() throws URISyntaxException {
         URI uri = new URI("/test?param1=value1");
         URI result = TurCommonsUtils.addOrReplaceParameter(uri, "newParam", "newValue", false);
-        
+
         assertThat(result.toString()).contains("newParam=newValue");
         assertThat(result.toString()).contains("param1=value1");
     }
@@ -177,7 +176,7 @@ class TurCommonsUtilsTest {
     void testAddOrReplaceParameterExistingParameter() throws URISyntaxException {
         URI uri = new URI("/test?param1=oldValue&param2=value2");
         URI result = TurCommonsUtils.addOrReplaceParameter(uri, "param1", "newValue", false);
-        
+
         assertThat(result.toString()).contains("param1=newValue");
         assertThat(result.toString()).contains("param2=value2");
         assertThat(result.toString()).doesNotContain("param1=oldValue");
@@ -187,14 +186,14 @@ class TurCommonsUtilsTest {
     void testCleanTextContent() {
         String dirtyText = " \t\n Text  with   multiple\r\n   spaces \t ";
         String result = TurCommonsUtils.cleanTextContent(dirtyText);
-        
+
         assertThat(result).isEqualTo("Text with multiple spaces");
     }
 
     @Test
     void testCleanTextContentEmpty() {
         String result = TurCommonsUtils.cleanTextContent("");
-        
+
         assertThat(result).isEmpty();
     }
 
@@ -202,7 +201,7 @@ class TurCommonsUtilsTest {
     void testCloneListOfTermsAsString() {
         List<Object> input = Arrays.asList("term1", "term2", "term3");
         List<String> result = TurCommonsUtils.cloneListOfTermsAsString(input);
-        
+
         assertThat(result).hasSize(3);
         assertThat(result).containsExactly("term1", "term2", "term3");
     }
@@ -212,19 +211,19 @@ class TurCommonsUtilsTest {
         // Create source directory with test files
         File sourceDir = tempDir.resolve("source").toFile();
         assertThat(sourceDir.mkdirs()).isTrue();
-        
+
         File testFile1 = new File(sourceDir, "test1.txt");
         Files.write(testFile1.toPath(), "Test content 1".getBytes());
-        
+
         File testFile2 = new File(sourceDir, "test2.txt");
         Files.write(testFile2.toPath(), "Test content 2".getBytes());
-        
+
         // Create destination zip
         File destinationZip = tempDir.resolve("test.zip").toFile();
-        
+
         // Test the method
         TurCommonsUtils.addFilesToZip(sourceDir, destinationZip);
-        
+
         // Verify zip was created
         assertThat(destinationZip).exists();
         assertThat(destinationZip.length()).isGreaterThan(0);
@@ -235,21 +234,21 @@ class TurCommonsUtilsTest {
         // Create a test file structure
         File sourceDir = tempDir.resolve("source").toFile();
         assertThat(sourceDir.mkdirs()).isTrue();
-        
+
         File testFile = new File(sourceDir, "test.txt");
         Files.write(testFile.toPath(), "Test content".getBytes());
-        
+
         // Create zip
         File zipFile = tempDir.resolve("test.zip").toFile();
         TurCommonsUtils.addFilesToZip(sourceDir, zipFile);
-        
+
         // Create extraction directory
         File extractDir = tempDir.resolve("extract").toFile();
         assertThat(extractDir.mkdirs()).isTrue();
-        
+
         // Test unzipping
         TurCommonsUtils.unZipIt(zipFile, extractDir);
-        
+
         // Verify extracted files
         File extractedFile = new File(extractDir, "test.txt");
         assertThat(extractedFile).exists();
@@ -260,7 +259,7 @@ class TurCommonsUtilsTest {
     void testIsValidJsonValidObject() {
         String validJson = "{\"key\": \"value\", \"number\": 42}";
         boolean result = TurCommonsUtils.isValidJson(validJson);
-        
+
         assertThat(result).isTrue();
     }
 
@@ -268,7 +267,7 @@ class TurCommonsUtilsTest {
     void testIsValidJsonValidArray() {
         String validJsonArray = "[{\"key\": \"value1\"}, {\"key\": \"value2\"}]";
         boolean result = TurCommonsUtils.isValidJson(validJsonArray);
-        
+
         assertThat(result).isTrue();
     }
 
@@ -276,7 +275,7 @@ class TurCommonsUtilsTest {
     void testIsValidJsonInvalidJson() {
         String invalidJson = "{invalid json structure";
         boolean result = TurCommonsUtils.isValidJson(invalidJson);
-        
+
         assertThat(result).isFalse();
     }
 
@@ -284,7 +283,7 @@ class TurCommonsUtilsTest {
     void testAsJsonStringValidObject() throws Exception {
         TestObject testObject = new TestObject("test", 42);
         String result = TurCommonsUtils.asJsonString(testObject);
-        
+
         assertThat(result).contains("\"name\":\"test\"");
         assertThat(result).contains("\"value\":42");
     }
@@ -299,7 +298,7 @@ class TurCommonsUtilsTest {
     @Test
     void testGetStoreDir() {
         File storeDir = TurCommonsUtils.getStoreDir();
-        
+
         assertThat(storeDir).isNotNull();
         assertThat(storeDir.getName()).isEqualTo("store");
         assertThat(storeDir).exists();
@@ -309,11 +308,11 @@ class TurCommonsUtilsTest {
     void testAddSubDirToStoreDir() {
         String subDirName = "testSubDir";
         File subDir = TurCommonsUtils.addSubDirToStoreDir(subDirName);
-        
+
         assertThat(subDir).isNotNull();
         assertThat(subDir.getName()).isEqualTo(subDirName);
         assertThat(subDir).exists();
-        
+
         // Clean up
         assertThat(subDir.delete()).isTrue();
     }
@@ -321,28 +320,14 @@ class TurCommonsUtilsTest {
     @Test
     void testGetTempDirectory() {
         File tempDir = TurCommonsUtils.getTempDirectory();
-        
+
         assertThat(tempDir).isNotNull();
         assertThat(tempDir.getName()).isEqualTo("tmp");
         assertThat(tempDir).exists();
     }
 
     // Helper class for JSON testing
-    public static class TestObject {
-        private final String name;
-        private final int value;
+    public record TestObject(String name, int value) {
 
-        public TestObject(String name, int value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getValue() {
-            return value;
-        }
     }
 }

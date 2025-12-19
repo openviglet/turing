@@ -29,15 +29,15 @@ public abstract class TurNameAbbreviator {
         /**
          * Abbreviate name.
          *
-         * @param buf buffer to append abbreviation.
+         * @param stringBuilder buffer to append abbreviation.
          * @param nameStart start of name to abbreviate.
          */
         @Override
-        public void abbreviate(final int nameStart, final StringBuffer buf) {
+        public void abbreviate(final int nameStart, final StringBuilder stringBuilder) {
             int i = count;
-            for (int pos = buf.indexOf(".", nameStart); pos != -1; pos = buf.indexOf(".", pos + 1)) {
+            for (int pos = stringBuilder.indexOf(".", nameStart); pos != -1; pos = stringBuilder.indexOf(".", pos + 1)) {
                 if (--i == 0) {
-                    buf.delete(nameStart, pos + 1);
+                    stringBuilder.delete(nameStart, pos + 1);
                     break;
                 }
             }
@@ -65,17 +65,17 @@ public abstract class TurNameAbbreviator {
         /**
          * Abbreviate name.
          *
-         * @param buf buffer to append abbreviation.
+         * @param stringBuilder buffer to append abbreviation.
          * @param nameStart start of name to abbreviate.
          */
         @Override
-        public void abbreviate(final int nameStart, final StringBuffer buf) {
+        public void abbreviate(final int nameStart, final StringBuilder stringBuilder) {
             // We subtract 1 from 'len' when assigning to 'end' to avoid out of
             // bounds exception in return r.substring(end+1, len). This can happen if
             // precision is 1 and the category name ends with a dot.
-            int end = buf.length() - 1;
+            int end = stringBuilder.length() - 1;
 
-            final String bufString = buf.toString();
+            final String bufString = stringBuilder.toString();
             for (int i = count; i > 0; i--) {
                 end = bufString.lastIndexOf(".", end - 1);
 
@@ -84,7 +84,7 @@ public abstract class TurNameAbbreviator {
                 }
             }
 
-            buf.delete(nameStart, end + 1);
+            stringBuilder.delete(nameStart, end + 1);
         }
     }
 
@@ -101,7 +101,7 @@ public abstract class TurNameAbbreviator {
          * {@inheritDoc}
          */
         @Override
-        public void abbreviate(final int nameStart, final StringBuffer buf) {}
+        public void abbreviate(final int nameStart, final StringBuilder stringBuilder) {}
     }
 
     /**
@@ -132,18 +132,18 @@ public abstract class TurNameAbbreviator {
         /**
          * Abbreviate name.
          *
-         * @param buf buffer that abbreviated name is appended.
+         * @param stringBuilder buffer that abbreviated name is appended.
          * @param nameStart start of name.
          */
         @Override
-        public void abbreviate(final int nameStart, final StringBuffer buf) {
+        public void abbreviate(final int nameStart, final StringBuilder stringBuilder) {
             //
             // all non-terminal patterns are executed once
             //
             int pos = nameStart;
 
-            for (int i = 0; (i < (fragments.length - 1)) && (pos < buf.length()); i++) {
-                pos = fragments[i].abbreviate(buf, pos);
+            for (int i = 0; (i < (fragments.length - 1)) && (pos < stringBuilder.length()); i++) {
+                pos = fragments[i].abbreviate(stringBuilder, pos);
             }
 
             //
@@ -151,8 +151,8 @@ public abstract class TurNameAbbreviator {
             //
             final PatternAbbreviatorFragment terminalFragment = fragments[fragments.length - 1];
 
-            while ((pos < buf.length()) && (pos >= 0)) {
-                pos = terminalFragment.abbreviate(buf, pos);
+            while ((pos < stringBuilder.length()) && (pos >= 0)) {
+                pos = terminalFragment.abbreviate(stringBuilder, pos);
             }
         }
     }
@@ -168,20 +168,20 @@ public abstract class TurNameAbbreviator {
         /**
              * Abbreviate element of name.
              *
-             * @param buf      buffer to receive element.
+             * @param stringBuilder      buffer to receive element.
              * @param startPos starting index of name element.
              * @return starting index of next element.
              */
-            public int abbreviate(final StringBuffer buf, final int startPos) {
-                int nextDot = buf.toString().indexOf(".", startPos);
+            public int abbreviate(final StringBuilder stringBuilder, final int startPos) {
+                int nextDot = stringBuilder.toString().indexOf(".", startPos);
 
                 if (nextDot != -1) {
                     if ((nextDot - startPos) > charCount) {
-                        buf.delete(startPos + charCount, nextDot);
+                        stringBuilder.delete(startPos + charCount, nextDot);
                         nextDot = startPos + charCount;
 
                         if (ellipsis != '\0') {
-                            buf.insert(nextDot, ellipsis);
+                            stringBuilder.insert(nextDot, ellipsis);
                             nextDot++;
                         }
                     }
@@ -288,10 +288,10 @@ public abstract class TurNameAbbreviator {
     }
 
     /**
-     * Abbreviates a name in a StringBuffer.
+     * Abbreviates a name in a StringBuilder.
      *
      * @param nameStart starting position of name in buf.
-     * @param buf buffer, may not be null.
+     * @param stringBuilder buffer, may not be null.
      */
-    public abstract void abbreviate(final int nameStart, final StringBuffer buf);
+    public abstract void abbreviate(final int nameStart, final StringBuilder stringBuilder);
 }

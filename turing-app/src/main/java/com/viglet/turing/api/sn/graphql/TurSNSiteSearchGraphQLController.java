@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -77,11 +78,7 @@ public class TurSNSiteSearchGraphQLController {
         TurSNSearchParams turSNSearchParams = convertToTurSNSearchParams(searchParams, locale);
 
         // Get locale, prioritizing the direct locale parameter over searchParams locale
-        String localeToUse = StringUtils.isNotBlank(locale) ? locale
-                : (turSNSearchParams.getLocale() != null ? turSNSearchParams.getLocale().toString() : null);
-        if (StringUtils.isBlank(localeToUse)) {
-            localeToUse = "en"; // Default locale
-        }
+        String localeToUse = getLocale(locale, turSNSearchParams);
 
         Locale localeObj = LocaleUtils.toLocale(localeToUse);
 
@@ -102,7 +99,7 @@ public class TurSNSiteSearchGraphQLController {
                         request = requestAttributes.getRequest();
                     } else {
                         // Create a mock request for GraphQL context
-                        request = createMockRequestForGraphQL(siteName, turSNSearchParams);
+                        request = createMockRequestForGraphQL(turSNSearchParams);
                     }
 
                     TurSNSiteSearchContext turSNSiteSearchContext = getTurSNSiteSearchContext(
@@ -113,47 +110,69 @@ public class TurSNSiteSearchGraphQLController {
                 .orElse(new TurSNSiteSearchBean());
     }
 
+    private static @NonNull String getLocale(String locale, TurSNSearchParams turSNSearchParams) {
+        String localeToUse = null;
+        if (StringUtils.isNotBlank(locale)) {
+            localeToUse = locale;
+        } else if (turSNSearchParams.getLocale() != null) {
+            localeToUse = turSNSearchParams.getLocale().toString();
+        }
+        if (StringUtils.isBlank(localeToUse)) {
+            localeToUse = "en"; // Default locale
+        }
+        return localeToUse;
+    }
+
     private TurSNSearchParams convertToTurSNSearchParams(TurSNSearchParamsInput input, String locale) {
         TurSNSearchParams params = new TurSNSearchParams();
 
-        if (input != null) {
-            params.setQ(StringUtils.defaultIfBlank(input.getQ(), "*"));
-            params.setP(input.getP() != null ? input.getP() : 1);
-            params.setRows(input.getRows() != null ? input.getRows() : -1);
-            params.setSort(StringUtils.defaultIfBlank(input.getSort(), "relevance"));
-            params.setGroup(input.getGroup());
-            params.setNfpr(input.getNfpr() != null ? input.getNfpr() : 1);
-            params.setFq(input.getFq());
-            params.setFqAnd(input.getFqAnd());
-            params.setFqOr(input.getFqOr());
-            params.setFl(input.getFl());
-
-            // Convert String operators to enum values
-            if (StringUtils.isNotBlank(input.getFqOp())) {
-                try {
-                    params.setFqOp(TurSNFilterQueryOperator.valueOf(input.getFqOp().toUpperCase()));
-                } catch (IllegalArgumentException e) {
-                    params.setFqOp(TurSNFilterQueryOperator.NONE);
-                }
-            }
-
-            if (StringUtils.isNotBlank(input.getFqiOp())) {
-                try {
-                    params.setFqiOp(TurSNFilterQueryOperator.valueOf(input.getFqiOp().toUpperCase()));
-                } catch (IllegalArgumentException e) {
-                    params.setFqiOp(TurSNFilterQueryOperator.NONE);
-                }
-            }
-
-            // Set locale from input if available, otherwise use the direct locale parameter
-            String inputLocale = StringUtils.isNotBlank(input.getLocale()) ? input.getLocale() : locale;
-            params.setLocale(LocaleUtils.toLocale(inputLocale));
+        if (input == null) {
+            return params;
         }
+        params.setQ(StringUtils.defaultIfBlank(input.getQ(), "*"));
+        params.setP(input.getP() != null ? input.getP() : 1);
+        params.setRows(input.getRows() != null ? input.getRows() : -1);
+        params.setSort(StringUtils.defaultIfBlank(input.getSort(), "relevance"));
+        params.setGroup(input.getGroup());
+        params.setNfpr(input.getNfpr() != null ? input.getNfpr() : 1);
+        params.setFq(input.getFq());
+        params.setFqAnd(input.getFqAnd());
+        params.setFqOr(input.getFqOr());
+        params.setFl(input.getFl());
+
+        setFilterQueryOperator(input, params);
+        setFilterQueryItemOperator(input, params);
+
+        params.setLocale(LocaleUtils.toLocale(getInputLocale(input, locale)));
 
         return params;
     }
 
-    private HttpServletRequest createMockRequestForGraphQL(String siteName, TurSNSearchParams params) {
+    private static String getInputLocale(TurSNSearchParamsInput input, String locale) {
+        return StringUtils.isNotBlank(input.getLocale()) ? input.getLocale() : locale;
+    }
+
+    private static void setFilterQueryItemOperator(TurSNSearchParamsInput input, TurSNSearchParams params) {
+        if (StringUtils.isNotBlank(input.getFqiOp())) {
+            try {
+                params.setFqiOp(TurSNFilterQueryOperator.valueOf(input.getFqiOp().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                params.setFqiOp(TurSNFilterQueryOperator.NONE);
+            }
+        }
+    }
+
+    private static void setFilterQueryOperator(TurSNSearchParamsInput input, TurSNSearchParams params) {
+        if (StringUtils.isNotBlank(input.getFqOp())) {
+            try {
+                params.setFqOp(TurSNFilterQueryOperator.valueOf(input.getFqOp().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                params.setFqOp(TurSNFilterQueryOperator.NONE);
+            }
+        }
+    }
+
+    private HttpServletRequest createMockRequestForGraphQL(TurSNSearchParams params) {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setMethod("POST");
         mockRequest.setRequestURI("/graphql");

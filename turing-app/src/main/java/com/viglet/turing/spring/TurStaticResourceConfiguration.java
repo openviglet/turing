@@ -40,6 +40,10 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 @Configuration
 @AutoConfigureAfter(DispatcherServletAutoConfiguration.class)
 public class TurStaticResourceConfiguration implements WebMvcConfigurer {
+    public static final String FORWARD_INDEX_HTML = "forward:/index.html";
+    public static final String FORWARD_SN_TEMPLATES_BROWSER_INDEX_HTML = "forward:/sn/templates/browser/index.html";
+    public static final String FORWARD_WELCOME_BROWSER_INDEX_HTML = "forward:/welcome/browser/index.html";
+    public static final String FORWARD_CONSOLE_BROWSER_INDEX_HTML = "forward:/console/browser/index.html";
     @Value("${turing.allowedOrigins:localhost}")
     private String allowedOrigins;
 
@@ -51,16 +55,16 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/console").setViewName("forward:/console/browser/index.html");
-        registry.addViewController("/console/").setViewName("forward:/console/browser/index.html");
-        registry.addViewController("/welcome").setViewName("forward:/welcome/browser/index.html");
-        registry.addViewController("/welcome/").setViewName("forward:/welcome/browser/index.html");
-        registry.addViewController("/sn/templates").setViewName("forward:/sn/templates/browser/index.html");
-        registry.addViewController("/sn/templates/").setViewName("forward:/sn/templates/browser/index.html");
-        registry.addViewController("/login").setViewName("forward:/index.html");
-        registry.addViewController("/login/").setViewName("forward:/index.html");
-        registry.addViewController("/admin").setViewName("forward:/index.html");
-        registry.addViewController("/admin/").setViewName("forward:/index.html");
+        registry.addViewController("/console").setViewName(FORWARD_CONSOLE_BROWSER_INDEX_HTML);
+        registry.addViewController("/console/").setViewName(FORWARD_CONSOLE_BROWSER_INDEX_HTML);
+        registry.addViewController("/welcome").setViewName(FORWARD_WELCOME_BROWSER_INDEX_HTML);
+        registry.addViewController("/welcome/").setViewName(FORWARD_WELCOME_BROWSER_INDEX_HTML);
+        registry.addViewController("/sn/templates").setViewName(FORWARD_SN_TEMPLATES_BROWSER_INDEX_HTML);
+        registry.addViewController("/sn/templates/").setViewName(FORWARD_SN_TEMPLATES_BROWSER_INDEX_HTML);
+        registry.addViewController("/login").setViewName(FORWARD_INDEX_HTML);
+        registry.addViewController("/login/").setViewName(FORWARD_INDEX_HTML);
+        registry.addViewController("/admin").setViewName(FORWARD_INDEX_HTML);
+        registry.addViewController("/admin/").setViewName(FORWARD_INDEX_HTML);
 
     }
 

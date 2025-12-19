@@ -4,6 +4,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class TurSNJobAttributeSpec implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     protected String name;
     protected TurSEFieldType type;
@@ -20,7 +22,7 @@ public class TurSNJobAttributeSpec implements Serializable {
     protected boolean multiValued;
     protected String description;
     protected boolean facet;
-    protected Map<String, String> facetName;
+    protected  transient Map<String, String> facetName;
 
     @Override
     public String toString() {

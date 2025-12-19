@@ -77,22 +77,27 @@ public class TurSolrField {
 		if (arrAttValue == null || arrAttValue.isEmpty()) {
 			return EMPTY_STRING;
 		}
-		Object firstElement = arrAttValue.get(0);
-		if (firstElement == null) {
-			return EMPTY_STRING;
-		}
-		if (firstElement instanceof String stringValue) {
-			return stringValue.trim();
-		} else if (firstElement instanceof Long longValue) {
-			return longValue.toString();
-		} else if (firstElement instanceof Date dateValue) {
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-			simpleDateFormat.setTimeZone(TimeZone.getTimeZone(GMT));
-			return simpleDateFormat.format(dateValue);
-		} else {
-			return firstElement.toString().trim();
-		}
-	}
+		Object firstElement = arrAttValue.getFirst();
+        switch (firstElement) {
+            case null -> {
+                return EMPTY_STRING;
+            }
+            case String stringValue -> {
+                return stringValue.trim();
+            }
+            case Long longValue -> {
+                return longValue.toString();
+            }
+            case Date dateValue -> {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
+                simpleDateFormat.setTimeZone(TimeZone.getTimeZone(GMT));
+                return simpleDateFormat.format(dateValue);
+            }
+            default -> {
+                return firstElement.toString().trim();
+            }
+        }
+    }
 
 	private static String longToString(Long longValue) {
 		return longValue.toString();

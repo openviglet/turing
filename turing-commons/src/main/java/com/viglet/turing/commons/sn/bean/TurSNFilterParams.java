@@ -14,11 +14,11 @@ public class TurSNFilterParams implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     @Builder.Default
-    List<String> defaultValues = Collections.emptyList();
+    private List<String> defaultValues = Collections.emptyList();
     @Builder.Default
-    List<String> and = Collections.emptyList();
+    private List<String> and = Collections.emptyList();
     @Builder.Default
-    List<String> or = Collections.emptyList();
-    TurSNFilterQueryOperator operator;
-    TurSNFilterQueryOperator itemOperator;
+    private List<String> or = Collections.emptyList();
+    private TurSNFilterQueryOperator operator;
+    private TurSNFilterQueryOperator itemOperator;
 }

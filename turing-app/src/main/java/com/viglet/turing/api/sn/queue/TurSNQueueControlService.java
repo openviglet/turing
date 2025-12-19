@@ -23,7 +23,7 @@ public class TurSNQueueControlService {
         if (container != null && container.isRunning()) {
             container.stop();
             log.error("Queue listener '{}' SUSPENDED.", listenerId);
-            startMonitoring(listenerId);
+            startMonitoring();
         }
     }
 
@@ -35,7 +35,7 @@ public class TurSNQueueControlService {
         }
     }
 
-    public void startMonitoring(String listenerId) {
+    public void startMonitoring() {
         this.suspendedQueue = true;
     }
 

@@ -64,9 +64,9 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
 
     private static @NotNull String abbreviatePackage(String packageName) {
         if (packageName.length() <= MAX_LENGTH_PACKAGE_NAME) return packageName;
-        StringBuffer stringBuffer = new StringBuffer(packageName);
-        TurNameAbbreviator.getAbbreviator("1.").abbreviate(1, stringBuffer);
-        return stringBuffer.toString();
+        StringBuilder stringBuilder = new StringBuilder(packageName);
+        TurNameAbbreviator.getAbbreviator("1.").abbreviate(1, stringBuilder);
+        return stringBuilder.toString();
     }
 
 

@@ -26,4 +26,7 @@ public class TurRuntimeException extends RuntimeException {
 	}
 	public TurRuntimeException(Throwable throwable) {super(throwable);}
 
+    public TurRuntimeException(String s, Exception e) {
+		super(s, e);
+    }
 }

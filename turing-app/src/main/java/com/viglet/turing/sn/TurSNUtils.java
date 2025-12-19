@@ -235,9 +235,9 @@ public class TurSNUtils {
 
     private static Map<String, Object> addFieldsFromDocument(
             Map<String, TurSNSiteFieldExtDto> fieldExtMap, Map<String, Object> turSEResultAttr,
-            Set<String> attribs) {
+            Set<String> attributes) {
         Map<String, Object> fields = new HashMap<>();
-        attribs.forEach(attribute -> {
+        attributes.forEach(attribute -> {
             if (!attribute.startsWith(TURING_ENTITY)) {
                 addFieldAndValueToMap(turSEResultAttr, fields, attribute,
                         getFieldName(fieldExtMap, attribute));

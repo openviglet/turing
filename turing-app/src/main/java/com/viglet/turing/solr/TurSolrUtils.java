@@ -38,6 +38,7 @@ import org.apache.solr.common.SolrDocument;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class TurSolrUtils {
@@ -90,7 +93,7 @@ public class TurSolrUtils {
                             getSolrUrl(turSEInstance), coreName, fieldName)))
                     .build();
             HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if( httpResponse.statusCode() == 200) {
+            if (httpResponse.statusCode() == 200) {
                 JSONObject jsonObject = new JSONObject(httpResponse.body());
                 if (jsonObject.has("field")) {
                     return new Gson().fromJson(jsonObject.getJSONObject("field").toString(), TurSolrFieldBean.class);
@@ -125,17 +128,15 @@ public class TurSolrUtils {
     public static void addOrUpdateField(TurSolrFieldAction turSolrFieldAction, TurSEInstance turSEInstance,
                                         String coreName, String fieldName, TurSEFieldType turSEFieldType,
                                         boolean stored, boolean multiValued) {
-        String json = String.format("""
-                        {
-                        	"%s":{
-                        		"name": "%s",
-                        		"type": "%s",
-                        		"stored": %s,
-                        		"multiValued": %s
-                        		}
-                        	}
-                        """, turSolrFieldAction.getSolrAction(), fieldName,
-                getSolrFieldType(turSEFieldType), stored, multiValued);
+        Map<String, Object> fieldDetails = Map.of(
+                "name", fieldName,
+                "type", getSolrFieldType(turSEFieldType),
+                "stored", stored,
+                "multiValued", multiValued
+        );
+
+        Map<String, Object> root = Map.of(turSolrFieldAction.getSolrAction(), fieldDetails);
+        String json = new ObjectMapper().writeValueAsString(root);
         try (HttpClient client = getHttpClient()) {
             client.send(getHttpRequestSchemaApi(turSEInstance, coreName, json), HttpResponse.BodyHandlers.ofString());
             if (isCreateCopyFieldByCore(turSEInstance, coreName, fieldName, turSEFieldType)) {
@@ -161,14 +162,14 @@ public class TurSolrUtils {
                                              boolean multiValued) {
         addOrUpdateField(TurSolrFieldAction.ADD, turSEInstance, coreName, fieldName.concat(STR_SUFFIX),
                 TurSEFieldType.STRING, true, multiValued);
-        String json = String.format("""
-                	{
-                    "add-copy-field":{
-                 		 "source":"%s",
-                         "dest":[ "%s"]
-                 		}
-                 	}
-                """, fieldName, fieldName.concat(STR_SUFFIX));
+        List<String> destinations = List.of(fieldName.concat(STR_SUFFIX));
+        Map<String, Object> copyFieldDetails = Map.of(
+                "source", fieldName,
+                "dest", destinations
+        );
+        Map<String, Object> root = Map.of("add-copy-field", copyFieldDetails);
+
+        String json = new ObjectMapper().writeValueAsString(root);
         try (HttpClient client = getHttpClient()) {
             HttpRequest request = getHttpRequestSchemaApi(turSEInstance, coreName, json);
             client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -219,17 +220,14 @@ public class TurSolrUtils {
     }
 
     public static void createCore(String solrUrl, String coreName, String configSet) {
-        String json = String.format("""
-                	{
-                    "create": [
-                        {
-                            "name": "%s",
-                            "instanceDir": "%s",
-                            "configSet": "%s"
-                        }
-                    ]
-                }
-                """, coreName, coreName, configSet);
+        Map<String, String> coreDetails = Map.of(
+                "name", coreName,
+                "instanceDir", coreName,
+                "configSet", configSet
+        );
+        List<Map<String, String>> createList = List.of(coreDetails);
+        Map<String, Object> root = Map.of("create", createList);
+        String json = new ObjectMapper().writeValueAsString(root);
         try (HttpClient client = getHttpClient()) {
             HttpRequest request = getHttpRequestBuilderJson()
                     .uri(URI.create(String.format("%s/api/cores", solrUrl)))
@@ -253,13 +251,12 @@ public class TurSolrUtils {
                     .PUT(BodyPublishers.ofByteArray(inputStream.readAllBytes()))
                     .build();
             client.send(configSetRequest, HttpResponse.BodyHandlers.ofString());
-            String json = String.format("""
-                    	{
-                     	"name": "%s",
-                     	"config": "%s",
-                     	"numShards": %d
-                     	}
-                    """, coreName, coreName, shards);
+            Map<String, Object> root = Map.of(
+                    "name", coreName,
+                    "config", coreName,
+                    "numShards", shards
+            );
+            String json = new ObjectMapper().writeValueAsString(root);
             HttpRequest request = getHttpRequestBuilderJson()
                     .uri(URI.create(String.format("%s/api/collections", solrUrl)))
                     .POST(BodyPublishers.ofString(json))

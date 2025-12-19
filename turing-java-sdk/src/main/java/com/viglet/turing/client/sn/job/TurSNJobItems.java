@@ -17,7 +17,9 @@
 package com.viglet.turing.client.sn.job;
 
 import com.google.common.collect.Iterators;
+import org.jspecify.annotations.NonNull;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,7 +33,8 @@ import java.util.List;
  * @since 0.3.4
  */
 public class TurSNJobItems implements Iterable<TurSNJobItem>, Serializable {
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private List<TurSNJobItem> snJobItems = new ArrayList<>();
 	public TurSNJobItems() {
 		super();
@@ -43,7 +46,7 @@ public class TurSNJobItems implements Iterable<TurSNJobItem>, Serializable {
 		turSNJobItems.forEach(this::add);
 	}
 	@Override
-	public Iterator<TurSNJobItem> iterator() {
+	public @NonNull Iterator<TurSNJobItem> iterator() {
 		return snJobItems.iterator();
 	}
 	public int size () {

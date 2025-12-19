@@ -20,16 +20,11 @@
  */
 package com.viglet.turing.sn.spotlight;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 
 /**
  * @author Alexandre Oliveira
@@ -38,25 +33,14 @@ import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightR
  */
 @Component
 public class TurSpotlightCache {
-	private final TurSNSiteRepository turSNSiteRepository;
-	private final TurSNSiteSpotlightRepository turSNSiteSpotlightRepository;
-
-	public TurSpotlightCache(TurSNSiteRepository turSNSiteRepository,
-			TurSNSiteSpotlightRepository turSNSiteSpotlightRepository) {
-		this.turSNSiteRepository = turSNSiteRepository;
-		this.turSNSiteSpotlightRepository = turSNSiteSpotlightRepository;
-	}
-
-	@Cacheable(value = "spotlight", sync = true)
-	public List<TurSNSiteSpotlight> findSpotlightBySNSiteAndLanguage(String snSite, Locale language) {
-		return turSNSiteRepository.findByName(snSite).map(turSNSite -> turSNSiteSpotlightRepository
-				.findByTurSNSiteAndLanguage(turSNSite, language)).orElse(Collections.emptyList());
-
-	}
+	private final TurSpotlightService turSpotlightService;
+	public TurSpotlightCache(TurSpotlightService turSpotlightService) {
+        this.turSpotlightService = turSpotlightService;
+    }
 
 	@Cacheable(value = "spotlight_term", sync = true)
 	public List<TurSNSpotlightTermCacheBean> findTermsBySNSiteAndLanguage(String snSite, Locale language) {
-		return findSpotlightBySNSiteAndLanguage(snSite, language).stream()
+		return turSpotlightService.findSpotlightBySNSiteAndLanguage(snSite, language).stream()
 				.flatMap(turSNSiteSpotlight -> turSNSiteSpotlight.getTurSNSiteSpotlightTerms().stream())
 				.map(turSNSiteSpotlightTerm -> new TurSNSpotlightTermCacheBean(
 						turSNSiteSpotlightTerm.getName(), turSNSiteSpotlightTerm.getTurSNSiteSpotlight()))

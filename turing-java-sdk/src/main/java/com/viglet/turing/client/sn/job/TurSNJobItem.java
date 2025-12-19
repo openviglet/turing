@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -38,12 +39,13 @@ import static com.viglet.turing.commons.sn.field.TurSNFieldName.SOURCE_APPS;
 @ToString
 public class TurSNJobItem implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
     private Locale locale;
 	private TurSNJobAction turSNJobAction;
 	private List<String> siteNames;
     private List<TurSNJobAttributeSpec> specs = new ArrayList<>();
-    private Map<String, Object> attributes = new HashMap<>();
+    private transient Map<String, Object> attributes = new HashMap<>();
 	private String checksum;
 	private String environment;
 	public TurSNJobItem() {

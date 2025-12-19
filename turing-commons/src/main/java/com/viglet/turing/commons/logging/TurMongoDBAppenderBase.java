@@ -1,12 +1,14 @@
 package com.viglet.turing.commons.logging;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
+import org.bson.Document;
+
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.AppenderBase;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 
 @Slf4j
 @Setter
@@ -25,8 +27,7 @@ public class TurMongoDBAppenderBase extends AppenderBase<ILoggingEvent> {
     @Override
     public void start() {
         super.start();
-        try {
-            var mongoClient = MongoClients.create(connectionString);
+        try (var mongoClient = MongoClients.create(connectionString)) {
             collection = mongoClient
                     .getDatabase(databaseName)
                     .getCollection(collectionName);

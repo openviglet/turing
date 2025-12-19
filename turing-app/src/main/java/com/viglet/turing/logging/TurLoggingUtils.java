@@ -12,6 +12,9 @@ public class TurLoggingUtils {
 
     public static final String URL = "url";
     public static final String SERVER = "Server";
+    private TurLoggingUtils() {
+        throw new IllegalStateException("Logging utility provider.");
+    }
 
     public static void setLoggingStatus(TurSNJobItem turSNJobItem,
                                         TurIndexingStatus status,
