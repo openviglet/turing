@@ -41,15 +41,13 @@ public class TurToolsService {
                 query (str, optional): Search query string. Example: 'foobar'. If date need be ISO-8601 format.
                 page (int, optional): Page number for paginated results. Example: 1.
                 fq (list[str], optional): List of filter queries using attribute:value format. If date need be ISO-8601 format. Example: ['title:foobar'].
-                sort (str, optional): Sort order for results. Options: 'asc', 'desc', 'relevant'. Example: 'relevant'.
                 rows (int, optional): Number of results to return per page. Example: 10.
-                group (str, optional): Field name to group results by. Example: 'foobar'.
-                locales (str): Locale or language code for the search. Required. Example: 'en-US' or 'pt-BR'.
+                locale (str): Locale or language code for the search. Required. Example: 'en-US' or 'pt-BR'.
             Returns:
                 A dictionary containing the search results that match the provided parameters.
             """)
     public TurSNDocumentList searchIndexTool(String index, String locale, String query, int page,
-            List<String> fq, String sort, int rows, String group) {
+            List<String> fq, int rows) {
 
         HttpTurSNServer turSNServer = new HttpTurSNServer(URI.create("http://localhost:2700"), index,
                 LocaleUtils.toLocale(locale));

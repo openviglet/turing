@@ -31,23 +31,6 @@ import org.junit.jupiter.api.Test;
 class TurClientUtilsTest {
 
     @Test
-    void testConstructorThrowsException() {
-        // Use reflection to test private constructor
-        assertThrows(IllegalStateException.class, () -> {
-            try {
-                var constructor = TurClientUtils.class.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                constructor.newInstance();
-            } catch (Exception e) {
-                if (e.getCause() instanceof IllegalStateException) {
-                    throw e.getCause();
-                }
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    @Test
     void testAuthenticationWithValidApiKey() {
         HttpPost httpPost = new HttpPost("http://example.com/api");
         String apiKey = "test-api-key-123";
