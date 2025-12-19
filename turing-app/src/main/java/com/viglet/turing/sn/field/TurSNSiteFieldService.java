@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.utils;
+package com.viglet.turing.sn.field;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +31,10 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
 
 @Component
-public class TurSNSiteFieldUtils {
+public class TurSNSiteFieldService {
 	private final TurSNSiteFieldRepository turSNSiteFieldRepository;
 
-	public TurSNSiteFieldUtils(TurSNSiteFieldRepository turSNSiteFieldRepository) {
+	public TurSNSiteFieldService(TurSNSiteFieldRepository turSNSiteFieldRepository) {
 		this.turSNSiteFieldRepository = turSNSiteFieldRepository;
 	}
 

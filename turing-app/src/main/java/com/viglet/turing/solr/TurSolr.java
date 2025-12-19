@@ -109,7 +109,7 @@ import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 import com.viglet.turing.sn.tr.TurSNTargetingRuleMethod;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
-import com.viglet.turing.utils.TurSNSiteFieldUtils;
+import com.viglet.turing.sn.field.TurSNSiteFieldService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -155,7 +155,7 @@ public class TurSolr {
     public static final String HYPHEN = "-";
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNTargetingRules turSNTargetingRules;
-    private final TurSNSiteFieldUtils turSNSiteFieldUtils;
+    private final TurSNSiteFieldService turSNSiteFieldUtils;
     private final TurSNRankingExpressionRepository turSNRankingExpressionRepository;
     private final TurSNRankingConditionRepository turSNRankingConditionRepository;
     private final TurSNSiteRepository turSNSiteRepository;
@@ -166,7 +166,7 @@ public class TurSolr {
     public TurSolr(@Value("${turing.solr.commit.enabled:false}") boolean isCommitEnabled,
             @Value("${turing.solr.commit.within:10000}") int commitWithin,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSNTargetingRules turSNTargetingRules, TurSNSiteFieldUtils turSNSiteFieldUtils,
+            TurSNTargetingRules turSNTargetingRules, TurSNSiteFieldService turSNSiteFieldUtils,
             TurSNRankingExpressionRepository turSNRankingExpressionRepository,
             TurSNRankingConditionRepository turSNRankingConditionRepository,
             TurSNSiteRepository turSNSiteRepository, TurSNFieldProcess turSNFieldProcess) {

@@ -24,8 +24,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.springframework.stereotype.Component;
 
@@ -52,21 +54,19 @@ public class TurSolrInstanceProcess {
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSolrCache turSolrCache;
-    private final CloseableHttpClient closeableHttpClient;
     private final TurConfigProperties turConfigProperties;
 
     public TurSolrInstanceProcess(TurConfigVarRepository turConfigVarRepository,
             TurSEInstanceRepository turSEInstanceRepository,
             TurSNSiteLocaleRepository turSNSiteLocaleRepository,
             TurSNSiteRepository turSNSiteRepository,
-            TurSolrCache turSolrCache, CloseableHttpClient closeableHttpClient,
+            TurSolrCache turSolrCache,
             TurConfigProperties turConfigProperties) {
         this.turConfigVarRepository = turConfigVarRepository;
         this.turSEInstanceRepository = turSEInstanceRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSolrCache = turSolrCache;
-        this.closeableHttpClient = closeableHttpClient;
         this.turConfigProperties = turConfigProperties;
     }
 
@@ -75,15 +75,19 @@ public class TurSolrInstanceProcess {
     }
 
     private Optional<TurSolrInstance> getSolrClient(TurSEInstance turSEInstance, String core) {
-        String urlString = String.format("http://%s:%s/solr/%s", turSEInstance.getHost(), turSEInstance.getPort(),
+        String urlString = String.format("http://%s:%s/solr/%s",
+                turSEInstance.getHost(),
+                turSEInstance.getPort(),
                 core);
+
         if (turSolrCache.isSolrCoreExists(urlString)) {
-            HttpSolrClient httpSolrClient = new HttpSolrClient.Builder(urlString).withHttpClient(closeableHttpClient)
-                    .withConnectionTimeout(turConfigProperties.getSolr().getTimeout())
-                    .withSocketTimeout(turConfigProperties.getSolr().getTimeout()).build();
+            HttpJdkSolrClient httpSolrClient = new HttpJdkSolrClient.Builder(urlString)
+                    .withConnectionTimeout(turConfigProperties.getSolr().getTimeout(), TimeUnit.MILLISECONDS)
+                    .withIdleTimeout(turConfigProperties.getSolr().getTimeout(), TimeUnit.MILLISECONDS)
+                    .build();
             try {
                 return Optional.of(
-                        new TurSolrInstance(closeableHttpClient, httpSolrClient, URI.create(urlString).toURL(), core));
+                        new TurSolrInstance(httpSolrClient, URI.create(urlString).toURL(), core));
             } catch (MalformedURLException e) {
                 log.error(e.getMessage(), e);
             }

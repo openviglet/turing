@@ -171,7 +171,7 @@ public class TurSecurityConfigProduction {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    public void configureGlobal(AuthenticationManagerBuilder auth) {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
