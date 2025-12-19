@@ -16,26 +16,18 @@
 
 package com.viglet.turing.client.sn;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.client.auth.credentials.TurApiKeyCredentials;
-import com.viglet.turing.client.auth.credentials.TurUsernamePasswordCredentials;
-import com.viglet.turing.client.sn.TurSNQuery.ORDER;
-import com.viglet.turing.client.sn.autocomplete.TurSNAutoCompleteQuery;
-import com.viglet.turing.client.sn.didyoumean.TurSNDidYouMean;
-import com.viglet.turing.client.sn.facet.TurSNFacetFieldList;
-import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.client.sn.job.TurSNJobUtils;
-import com.viglet.turing.client.sn.pagination.TurSNPagination;
-import com.viglet.turing.client.sn.response.QueryTurSNResponse;
-import com.viglet.turing.client.sn.spotlight.TurSNSpotlightDocument;
-import com.viglet.turing.client.sn.utils.TurSNClientUtils;
-import com.viglet.turing.commons.sn.bean.*;
-import com.viglet.turing.commons.sn.search.TurSNParamType;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
@@ -47,13 +39,32 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.net.URIBuilder;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.client.auth.credentials.TurApiKeyCredentials;
+import com.viglet.turing.client.auth.credentials.TurUsernamePasswordCredentials;
+import com.viglet.turing.client.sn.TurSNQuery.Order;
+import com.viglet.turing.client.sn.autocomplete.TurSNAutoCompleteQuery;
+import com.viglet.turing.client.sn.didyoumean.TurSNDidYouMean;
+import com.viglet.turing.client.sn.facet.TurSNFacetFieldList;
+import com.viglet.turing.client.sn.job.TurSNJobItems;
+import com.viglet.turing.client.sn.job.TurSNJobUtils;
+import com.viglet.turing.client.sn.pagination.TurSNPagination;
+import com.viglet.turing.client.sn.response.QueryTurSNResponse;
+import com.viglet.turing.client.sn.spotlight.TurSNSpotlightDocument;
+import com.viglet.turing.client.sn.utils.TurSNClientUtils;
+import com.viglet.turing.commons.sn.bean.TurSNSearchLatestRequestBean;
+import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchQueryContextBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchResultsBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSpotlightDocumentBean;
+import com.viglet.turing.commons.sn.search.TurSNParamType;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Connect to Turing ES Server.
@@ -106,13 +117,12 @@ public class TurSNServer {
 
     private TurUsernamePasswordCredentials credentials;
 
-
     private String apiKey;
 
     private String providerName;
 
     public TurSNServer(URI serverURL, String siteName, Locale locale, TurUsernamePasswordCredentials credentials,
-                       String userId) {
+            String userId) {
         super();
         this.serverURL = serverURL;
         this.siteName = siteName;
@@ -127,7 +137,7 @@ public class TurSNServer {
     }
 
     public TurSNServer(URI serverURL, String siteName, Locale locale, TurApiKeyCredentials apiKeyCredentials,
-                       String userId) {
+            String userId) {
         super();
         this.serverURL = serverURL;
         this.siteName = siteName;
@@ -238,8 +248,8 @@ public class TurSNServer {
 
     private String getHttpResponse(HttpGet httpGet, CloseableHttpClient client) {
         try {
-            return client.execute(httpGet, response ->
-                    EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8));
+            return client.execute(httpGet,
+                    response -> EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -248,7 +258,6 @@ public class TurSNServer {
 
     private List<String> executeAutoCompleteRequest(HttpGet httpGet, CloseableHttpClient client)
             throws IOException {
-
 
         return new ObjectMapper().readValue(getHttpResponse(httpGet, client), new TypeReference<>() {
         });
@@ -391,7 +400,7 @@ public class TurSNServer {
     }
 
     private TurSNDocumentList setResultsResponse(TurSNSiteSearchResultsBean turSNSiteSearchResultsBean,
-                                                 TurSNSiteSearchQueryContextBean turSNSiteSearchQueryContextBean) {
+            TurSNSiteSearchQueryContextBean turSNSiteSearchQueryContextBean) {
         if (hasSearchResults(turSNSiteSearchResultsBean)) {
             List<TurSNDocument> turSNDocuments = new ArrayList<>();
             turSNSiteSearchResultsBean.getDocument().forEach(turSNSiteSearchDocumentBean -> {
@@ -497,9 +506,9 @@ public class TurSNServer {
             if (turSortField.getSort() != null) {
                 if (turSortField.getField() == null) {
                     String orderMod;
-                    if (turSortField.getSort().name().equals(ORDER.desc.name())) {
+                    if (turSortField.getSort().name().equals(Order.desc.name())) {
                         orderMod = NEWEST_SORT;
-                    } else if (turSortField.getSort().name().equals(ORDER.asc.name())) {
+                    } else if (turSortField.getSort().name().equals(Order.asc.name())) {
                         orderMod = OLDEST_SORT;
                     } else {
                         orderMod = RELEVANCE_SORT;

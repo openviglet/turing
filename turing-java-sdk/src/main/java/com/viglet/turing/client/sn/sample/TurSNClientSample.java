@@ -16,20 +16,24 @@
 
 package com.viglet.turing.client.sn.sample;
 
-import com.viglet.turing.client.sn.*;
-import com.viglet.turing.client.sn.autocomplete.TurSNAutoCompleteQuery;
-import com.viglet.turing.client.auth.credentials.TurApiKeyCredentials;
-import com.viglet.turing.client.sn.didyoumean.TurSNDidYouMean;
-import com.viglet.turing.client.sn.pagination.TurSNPagination;
-import com.viglet.turing.client.sn.response.QueryTurSNResponse;
-import com.viglet.turing.client.sn.spotlight.TurSNSpotlightDocument;
-import lombok.extern.slf4j.Slf4j;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+
+import com.viglet.turing.client.auth.credentials.TurApiKeyCredentials;
+import com.viglet.turing.client.sn.HttpTurSNServer;
+import com.viglet.turing.client.sn.TurSNDocumentList;
+import com.viglet.turing.client.sn.TurSNGroupList;
+import com.viglet.turing.client.sn.TurSNQuery;
+import com.viglet.turing.client.sn.autocomplete.TurSNAutoCompleteQuery;
+import com.viglet.turing.client.sn.didyoumean.TurSNDidYouMean;
+import com.viglet.turing.client.sn.pagination.TurSNPagination;
+import com.viglet.turing.client.sn.response.QueryTurSNResponse;
+import com.viglet.turing.client.sn.spotlight.TurSNSpotlightDocument;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Sample code to use this SDK.
@@ -50,35 +54,35 @@ public class TurSNClientSample {
 	public static void main(String[] args) {
 
 		HttpTurSNServer turSNServer;
-			log.info("--- Locales");
-			locales();
+		log.info("--- Locales");
+		locales();
 
-			turSNServer = new HttpTurSNServer(URI.create(TURING_URL), TURING_SITE, TURING_LOCALE,
-					new TurApiKeyCredentials(TURING_API_KEY), TURING_USERID);
+		turSNServer = new HttpTurSNServer(URI.create(TURING_URL), TURING_SITE, TURING_LOCALE,
+				new TurApiKeyCredentials(TURING_API_KEY), TURING_USERID);
 
-			log.info("--- Auto complete");
-			autoComplete(turSNServer);
+		log.info("--- Auto complete");
+		autoComplete(turSNServer);
 
-			log.info("--- Latest Searches");
-			latestSearches(turSNServer);
+		log.info("--- Latest Searches");
+		latestSearches(turSNServer);
 
-			log.info("--- Query");
-			QueryTurSNResponse response = query(args, turSNServer);
+		log.info("--- Query");
+		QueryTurSNResponse response = query(args, turSNServer);
 
-			log.info("--- Spotlight Documents");
-			spolight(response);
+		log.info("--- Spotlight Documents");
+		spolight(response);
 
-			log.info("--- Pagination");
-			pagination(response.getPagination());
+		log.info("--- Pagination");
+		pagination(response.getPagination());
 
-			log.info("--- Facet");
-			facet(response);
+		log.info("--- Facet");
+		facet(response);
 
-			log.info("--- Did You Mean");
-			didYouMean(response);
+		log.info("--- Did You Mean");
+		didYouMean(response);
 
-			log.info("--- Group By");
-			groupBy(args, turSNServer);
+		log.info("--- Group By");
+		groupBy(args, turSNServer);
 
 	}
 
@@ -102,7 +106,7 @@ public class TurSNClientSample {
 		}
 		query.setFieldQueries(Collections.singletonList(FILTER_QUERY));
 		query.setRows(1);
-		query.setSortField(TurSNQuery.ORDER.asc);
+		query.setSortField(TurSNQuery.Order.asc);
 		query.setPageNumber(1);
 		QueryTurSNResponse response = turSNServer.query(query);
 		@SuppressWarnings("unused")
@@ -128,12 +132,12 @@ public class TurSNClientSample {
 			turSNGroupList.forEach(group -> {
 				log.info("Group Name: ".concat(group.getName()));
 				pagination(group.getPagination());
-				
+
 				group.getResults().forEach(result -> {
 					if (result.getContent() != null && result.getContent().getFields() != null) {
 						log.info((String) result.getContent().getFields().get("title"));
 					}
-				}); 
+				});
 			});
 		}
 

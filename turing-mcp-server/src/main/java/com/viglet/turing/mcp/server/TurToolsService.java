@@ -56,7 +56,7 @@ public class TurToolsService {
         turSNQuery.setQuery(query);
         turSNQuery.addFilterQuery(fq.toArray(String[]::new));
         turSNQuery.setRows(rows);
-        turSNQuery.setSortField(TurSNQuery.ORDER.asc);
+        turSNQuery.setSortField(TurSNQuery.Order.asc);
         turSNQuery.setPageNumber(page);
         QueryTurSNResponse response = turSNServer.query(turSNQuery);
         return response.getResults();

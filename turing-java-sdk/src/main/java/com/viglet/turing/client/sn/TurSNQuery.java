@@ -16,12 +16,12 @@
 
 package com.viglet.turing.client.sn;
 
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import lombok.Setter;
 
 /**
  * Configure the query that will send to Turing ES.
@@ -37,40 +37,40 @@ public class TurSNQuery {
 	 * 
 	 * @since 0.3.4
 	 */
-	public enum ORDER {
+	public enum Order {
 		asc, desc
 	}
 
 	@Setter
-    private String query;
+	private String query;
 	@Setter
-    private int rows;
+	private int rows;
 	@Setter
-    private String groupBy;
+	private String groupBy;
 	private TurSNSortField sortField;
 	private TurSNClientBetweenDates betweenDates;
 	@Setter
-    private List<String> fieldQueries;
+	private List<String> fieldQueries;
 	@Setter
-    private List<String> targetingRules;
+	private List<String> targetingRules;
 	@Setter
-    private int pageNumber;
+	private int pageNumber;
 	@Setter
-    private boolean populateMetrics;
+	private boolean populateMetrics;
 
 	public String getQuery() {
 		return query;
 	}
 
-    public int getRows() {
+	public int getRows() {
 		return rows;
 	}
 
-    public String getGroupBy() {
+	public String getGroupBy() {
 		return groupBy;
 	}
 
-    public TurSNSortField getSortField() {
+	public TurSNSortField getSortField() {
 		return sortField;
 	}
 
@@ -78,7 +78,7 @@ public class TurSNQuery {
 		this.sortField = sortField;
 	}
 
-	public void setSortField(String field, TurSNQuery.ORDER sort) {
+	public void setSortField(String field, TurSNQuery.Order sort) {
 		if (this.sortField == null) {
 			this.sortField = new TurSNSortField();
 		}
@@ -86,7 +86,7 @@ public class TurSNQuery {
 		this.sortField.setSort(sort);
 	}
 
-	public void setSortField(TurSNQuery.ORDER sort) {
+	public void setSortField(TurSNQuery.Order sort) {
 		if (this.sortField == null) {
 			this.sortField = new TurSNSortField();
 		}
@@ -118,7 +118,7 @@ public class TurSNQuery {
 		return fieldQueries;
 	}
 
-    public void addTargetingRule(String... tr) {
+	public void addTargetingRule(String... tr) {
 		if (this.targetingRules == null) {
 			this.targetingRules = new ArrayList<>();
 		}
@@ -129,11 +129,11 @@ public class TurSNQuery {
 		return targetingRules;
 	}
 
-    public int getPageNumber() {
+	public int getPageNumber() {
 		return pageNumber;
 	}
 
-    public boolean isPopulateMetrics() {
+	public boolean isPopulateMetrics() {
 		return populateMetrics;
 	}
 

@@ -26,20 +26,22 @@ package com.viglet.turing.client.sn;
 public class TurSNSortField {
 
 	private String field;
-	private TurSNQuery.ORDER sort;
-	
+	private TurSNQuery.Order sort;
+
 	public String getField() {
 		return field;
 	}
+
 	public void setField(String field) {
 		this.field = field;
 	}
-	public TurSNQuery.ORDER getSort() {
+
+	public TurSNQuery.Order getSort() {
 		return sort;
 	}
-	public void setSort(TurSNQuery.ORDER sort) {
+
+	public void setSort(TurSNQuery.Order sort) {
 		this.sort = sort;
 	}
-	
-	
+
 }

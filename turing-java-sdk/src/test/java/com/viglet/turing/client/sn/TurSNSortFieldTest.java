@@ -16,9 +16,9 @@
 
 package com.viglet.turing.client.sn;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurSNSortField.
@@ -31,7 +31,7 @@ class TurSNSortFieldTest {
     @Test
     void testDefaultConstructor() {
         TurSNSortField sortField = new TurSNSortField();
-        
+
         assertThat(sortField.getField()).isNull();
         assertThat(sortField.getSort()).isNull();
     }
@@ -39,39 +39,39 @@ class TurSNSortFieldTest {
     @Test
     void testFieldSetterAndGetter() {
         TurSNSortField sortField = new TurSNSortField();
-        
+
         sortField.setField("title");
-        
+
         assertThat(sortField.getField()).isEqualTo("title");
     }
 
     @Test
     void testSortSetterAndGetter() {
         TurSNSortField sortField = new TurSNSortField();
-        
-        sortField.setSort(TurSNQuery.ORDER.asc);
-        
-        assertThat(sortField.getSort()).isEqualTo(TurSNQuery.ORDER.asc);
+
+        sortField.setSort(TurSNQuery.Order.asc);
+
+        assertThat(sortField.getSort()).isEqualTo(TurSNQuery.Order.asc);
     }
 
     @Test
     void testCompleteConfiguration() {
         TurSNSortField sortField = new TurSNSortField();
-        
+
         sortField.setField("publishDate");
-        sortField.setSort(TurSNQuery.ORDER.desc);
-        
+        sortField.setSort(TurSNQuery.Order.desc);
+
         assertThat(sortField.getField()).isEqualTo("publishDate");
-        assertThat(sortField.getSort()).isEqualTo(TurSNQuery.ORDER.desc);
+        assertThat(sortField.getSort()).isEqualTo(TurSNQuery.Order.desc);
     }
 
     @Test
     void testNullValues() {
         TurSNSortField sortField = new TurSNSortField();
-        
+
         sortField.setField(null);
         sortField.setSort(null);
-        
+
         assertThat(sortField.getField()).isNull();
         assertThat(sortField.getSort()).isNull();
     }
@@ -79,11 +79,11 @@ class TurSNSortFieldTest {
     @Test
     void testFieldUpdate() {
         TurSNSortField sortField = new TurSNSortField();
-        
+
         // Set initial value
         sortField.setField("title");
         assertThat(sortField.getField()).isEqualTo("title");
-        
+
         // Update value
         sortField.setField("date");
         assertThat(sortField.getField()).isEqualTo("date");
@@ -92,35 +92,35 @@ class TurSNSortFieldTest {
     @Test
     void testSortOrderUpdate() {
         TurSNSortField sortField = new TurSNSortField();
-        
+
         // Set initial order
-        sortField.setSort(TurSNQuery.ORDER.asc);
-        assertThat(sortField.getSort()).isEqualTo(TurSNQuery.ORDER.asc);
-        
+        sortField.setSort(TurSNQuery.Order.asc);
+        assertThat(sortField.getSort()).isEqualTo(TurSNQuery.Order.asc);
+
         // Update order
-        sortField.setSort(TurSNQuery.ORDER.desc);
-        assertThat(sortField.getSort()).isEqualTo(TurSNQuery.ORDER.desc);
+        sortField.setSort(TurSNQuery.Order.desc);
+        assertThat(sortField.getSort()).isEqualTo(TurSNQuery.Order.desc);
     }
 
     @Test
     void testEmptyStringField() {
         TurSNSortField sortField = new TurSNSortField();
-        
+
         sortField.setField("");
-        
+
         assertThat(sortField.getField()).isEmpty();
     }
 
     @Test
     void testSpecialCharactersInField() {
         TurSNSortField sortField = new TurSNSortField();
-        
+
         sortField.setField("field_with_underscores");
         assertThat(sortField.getField()).isEqualTo("field_with_underscores");
-        
+
         sortField.setField("field-with-dashes");
         assertThat(sortField.getField()).isEqualTo("field-with-dashes");
-        
+
         sortField.setField("field.with.dots");
         assertThat(sortField.getField()).isEqualTo("field.with.dots");
     }

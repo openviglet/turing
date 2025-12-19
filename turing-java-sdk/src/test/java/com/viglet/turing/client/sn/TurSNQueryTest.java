@@ -88,22 +88,22 @@ class TurSNQueryTest {
     void testSetSortFieldWithFieldAndOrder() {
         TurSNQuery query = new TurSNQuery();
 
-        query.setSortField("title", TurSNQuery.ORDER.asc);
+        query.setSortField("title", TurSNQuery.Order.asc);
 
         assertThat(query.getSortField()).isNotNull();
         assertThat(query.getSortField().getField()).isEqualTo("title");
-        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.ORDER.asc);
+        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.Order.asc);
     }
 
     @Test
     void testSetSortFieldWithOrderOnly() {
         TurSNQuery query = new TurSNQuery();
 
-        query.setSortField(TurSNQuery.ORDER.desc);
+        query.setSortField(TurSNQuery.Order.desc);
 
         assertThat(query.getSortField()).isNotNull();
         assertThat(query.getSortField().getField()).isNull();
-        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.ORDER.desc);
+        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.Order.desc);
     }
 
     @Test
@@ -111,14 +111,14 @@ class TurSNQueryTest {
         TurSNQuery query = new TurSNQuery();
 
         // Set initial sort field
-        query.setSortField("date", TurSNQuery.ORDER.desc);
+        query.setSortField("date", TurSNQuery.Order.desc);
         assertThat(query.getSortField().getField()).isEqualTo("date");
-        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.ORDER.desc);
+        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.Order.desc);
 
         // Overwrite with new field
-        query.setSortField("title", TurSNQuery.ORDER.asc);
+        query.setSortField("title", TurSNQuery.Order.asc);
         assertThat(query.getSortField().getField()).isEqualTo("title");
-        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.ORDER.asc);
+        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.Order.asc);
     }
 
     @Test
@@ -243,7 +243,7 @@ class TurSNQueryTest {
         query.setQuery("search term");
         query.setRows(20);
         query.setGroupBy("category");
-        query.setSortField("date", TurSNQuery.ORDER.desc);
+        query.setSortField("date", TurSNQuery.Order.desc);
         query.setBetweenDates("publishDate", new Date(0), new Date());
         query.addFilterQuery("status:active", "type:article");
         query.addTargetingRule("location:US");
@@ -255,7 +255,7 @@ class TurSNQueryTest {
         assertThat(query.getRows()).isEqualTo(20);
         assertThat(query.getGroupBy()).isEqualTo("category");
         assertThat(query.getSortField().getField()).isEqualTo("date");
-        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.ORDER.desc);
+        assertThat(query.getSortField().getSort()).isEqualTo(TurSNQuery.Order.desc);
         assertThat(query.getBetweenDates()).isNotNull();
         assertThat(query.getFieldQueries()).hasSize(2);
         assertThat(query.getTargetingRules()).hasSize(1);
@@ -266,12 +266,12 @@ class TurSNQueryTest {
     @Test
     void testOrderEnum() {
         // Test enum values
-        assertThat(TurSNQuery.ORDER.asc).isNotNull();
-        assertThat(TurSNQuery.ORDER.desc).isNotNull();
+        assertThat(TurSNQuery.Order.asc).isNotNull();
+        assertThat(TurSNQuery.Order.desc).isNotNull();
 
         // Test enum string representations
-        assertThat(TurSNQuery.ORDER.asc.toString()).hasToString("asc");
-        assertThat(TurSNQuery.ORDER.desc.toString()).hasToString("desc");
+        assertThat(TurSNQuery.Order.asc.toString()).hasToString("asc");
+        assertThat(TurSNQuery.Order.desc.toString()).hasToString("desc");
     }
 
     @Test
