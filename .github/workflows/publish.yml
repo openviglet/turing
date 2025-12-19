@@ -74,7 +74,7 @@ jobs:
             }]
       - name: Publish package
         run: |
-          mvn --batch-mode -pl turing-commons,turing-java-sdk -P release -am deploy -DskipTests -Dturing.open-browser=false
+          mvn --batch-mode -pl turing-commons,turing-java-sdk -P release -am deploy -DskipPublishing=true -DskipTests -Dturing.open-browser=false
         # cd turing-js-sdk/js-sdk-lib
         # npm publish
         env:
