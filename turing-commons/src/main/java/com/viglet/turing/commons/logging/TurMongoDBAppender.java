@@ -1,5 +1,7 @@
 package com.viglet.turing.commons.logging;
 
+import ch.qos.logback.classic.pattern.Abbreviator;
+import ch.qos.logback.classic.pattern.TargetLengthBasedClassNameAbbreviator;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.CoreConstants;
@@ -23,6 +25,7 @@ import java.util.Date;
 public class TurMongoDBAppender extends TurMongoDBAppenderBase {
 
     public static final int MAX_LENGTH_PACKAGE_NAME = 40;
+    private static final Abbreviator ABBREVIATOR = new TargetLengthBasedClassNameAbbreviator(1);
 
     @Override
     protected void append(ILoggingEvent event) {
@@ -63,11 +66,8 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
     }
 
     private static @NotNull String abbreviatePackage(String packageName) {
+        if (packageName == null) return "";
         if (packageName.length() <= MAX_LENGTH_PACKAGE_NAME) return packageName;
-        StringBuilder stringBuilder = new StringBuilder(packageName);
-        TurNameAbbreviator.getAbbreviator("1.").abbreviate(1, stringBuilder);
-        return stringBuilder.toString();
+        return ABBREVIATOR.abbreviate(packageName);
     }
-
-
 }
