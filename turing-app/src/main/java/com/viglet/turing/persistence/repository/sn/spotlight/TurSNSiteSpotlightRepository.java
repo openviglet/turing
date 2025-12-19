@@ -21,17 +21,19 @@
 
 package com.viglet.turing.persistence.repository.sn.spotlight;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-import java.util.Set;
-import java.util.Locale;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+
 /**
  * @author Alexandre Oliveira
  * @since 0.3.4
@@ -56,13 +58,14 @@ public interface TurSNSiteSpotlightRepository extends JpaRepository<TurSNSiteSpo
 	@Cacheable(FIND_BY_PROVIDER)
 	Set<TurSNSiteSpotlight> findByProvider(String provider);
 
-	@CacheEvict(value = {FIND_BY_UNMANAGED_ID_AND_TUR_SN_SITE_AND_LANGUAGE, FIND_BY_TUR_SN_SITE_AND_LANGUAGE,
-			FIND_BY_TUR_SN_SITE, FIND_BY_PROVIDER}, allEntries = true)
+	@CacheEvict(value = { FIND_BY_UNMANAGED_ID_AND_TUR_SN_SITE_AND_LANGUAGE, FIND_BY_TUR_SN_SITE_AND_LANGUAGE,
+			FIND_BY_TUR_SN_SITE, FIND_BY_PROVIDER }, allEntries = true)
 	@NotNull
-	TurSNSiteSpotlight save(@NotNull TurSNSiteSpotlight turSNSiteSpotlight);
+	@Override
+	<S extends TurSNSiteSpotlight> S save(@NotNull S entity);
 
-	@CacheEvict(value = {FIND_BY_UNMANAGED_ID_AND_TUR_SN_SITE_AND_LANGUAGE, FIND_BY_TUR_SN_SITE_AND_LANGUAGE,
-			FIND_BY_TUR_SN_SITE, FIND_BY_PROVIDER}, allEntries = true)
+	@CacheEvict(value = { FIND_BY_UNMANAGED_ID_AND_TUR_SN_SITE_AND_LANGUAGE, FIND_BY_TUR_SN_SITE_AND_LANGUAGE,
+			FIND_BY_TUR_SN_SITE, FIND_BY_PROVIDER }, allEntries = true)
 	void delete(@NotNull TurSNSiteSpotlight turSNSiteSpotlight);
 
 }

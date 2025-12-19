@@ -21,7 +21,9 @@
 
 package com.viglet.turing.persistence.repository.store;
 
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import java.util.List;
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,8 +31,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-import java.util.Optional;
+import com.viglet.turing.persistence.model.store.TurStoreInstance;
 
 public interface TurStoreInstanceRepository extends JpaRepository<TurStoreInstance, String> {
 
@@ -41,10 +42,10 @@ public interface TurStoreInstanceRepository extends JpaRepository<TurStoreInstan
 	@NotNull
 	Optional<TurStoreInstance> findById(@NotNull String id);
 
-	@SuppressWarnings("unchecked")
 	@CacheEvict(value = { "turStoreInstancefindAll", "turStoreInstancefindById" }, allEntries = true)
 	@NotNull
-	TurStoreInstance save(@NotNull TurStoreInstance turStoreInstance);
+	@Override
+	<S extends TurStoreInstance> S save(@NotNull S entity);
 
 	@Modifying
 	@Query("delete from  TurStoreInstance si where si.id = ?1")

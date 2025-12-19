@@ -161,9 +161,6 @@
                             <extensions>true</extensions>
                             <configuration>
                                 <publishingServerId>central</publishingServerId>
-                                <excludeArtifacts>
-                                    <artifact>turing</artifact>
-                                </excludeArtifacts>
                             </configuration>
                         </plugin>
                     </plugins>

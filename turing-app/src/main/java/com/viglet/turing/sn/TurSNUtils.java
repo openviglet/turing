@@ -263,14 +263,22 @@ public class TurSNUtils {
     }
 
     private static void addValueToExistingFieldMap(Map<String, Object> turSEResultAttr,
-            Map<String, Object> fields, String attribute, String nodeName) {
-        if (!(fields.get(nodeName) instanceof List)) {
-            List<Object> attributeValues = new ArrayList<>();
-            attributeValues.add(fields.get(nodeName));
-            attributeValues.add(turSEResultAttr.get(attribute));
-            fields.put(nodeName, attributeValues);
+            Map<String, Object> fields,
+            String attribute,
+            String nodeName) {
+        Object existingValue = fields.get(nodeName);
+        Object newValue = turSEResultAttr.get(attribute);
+
+        if (existingValue instanceof List<?> listValue) {
+            List<Object> mutableList = new ArrayList<>(listValue);
+            mutableList.add(newValue);
+            fields.put(nodeName, mutableList);
         } else {
-            ((List<Object>) fields.get(nodeName)).add(turSEResultAttr.get(attribute));
+            List<Object> newList = new ArrayList<>();
+            if (existingValue != null)
+                newList.add(existingValue);
+            newList.add(newValue);
+            fields.put(nodeName, newList);
         }
     }
 

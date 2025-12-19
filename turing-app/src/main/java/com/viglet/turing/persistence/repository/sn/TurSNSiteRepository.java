@@ -21,7 +21,9 @@
 
 package com.viglet.turing.persistence.repository.sn;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import java.util.List;
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,8 +32,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-import java.util.Optional;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
 
 public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 
@@ -41,7 +42,7 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 
 	@Cacheable("turSNSitefindAByCreatedBy")
 	List<TurSNSite> findByCreatedBy(Sort name, String createdBy);
-	
+
 	@Cacheable("turSNSitefindById")
 	@NotNull
 	Optional<TurSNSite> findById(@NotNull String id);
@@ -49,10 +50,10 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	@Cacheable("turSNSitefindByName")
 	Optional<TurSNSite> findByName(String name);
 
-	@SuppressWarnings("unchecked")
 	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindById", "turSNSitefindByName" }, allEntries = true)
 	@NotNull
-	TurSNSite save(@NotNull TurSNSite turSNSite);
+	@Override
+	<S extends TurSNSite> S save(@NotNull S entity);
 
 	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindById", "turSNSitefindByName" }, allEntries = true)
 	void delete(@NotNull TurSNSite turSNSite);

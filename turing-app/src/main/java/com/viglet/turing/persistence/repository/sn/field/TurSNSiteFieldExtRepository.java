@@ -95,7 +95,8 @@ public interface TurSNSiteFieldExtRepository extends JpaRepository<TurSNSiteFiel
 			FIND_BY_TUR_SN_SITE_FIELD_EXT,
 			FIND_BY_TUR_SN_SITE_FIELD_EXT_AND_LOCALE }, allEntries = true)
 	@NotNull
-	TurSNSiteFieldExt save(@NotNull TurSNSiteFieldExt turSNSiteFieldExt);
+	@Override
+	<S extends TurSNSiteFieldExt> S save(@NotNull S entity);
 
 	@CacheEvict(value = { FIND_BY_TUR_SN_SITE, FIND_BY_TUR_SN_SITE_AND_ENABLED,
 			FIND_BY_TUR_SN_SITE_AND_FACET_AND_ENABLED, FIND_BY_TUR_SN_SITE_AND_HL_AND_ENABLED,

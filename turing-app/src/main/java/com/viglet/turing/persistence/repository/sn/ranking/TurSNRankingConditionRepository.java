@@ -20,14 +20,15 @@
  */
 package com.viglet.turing.persistence.repository.sn.ranking;
 
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
+import java.util.Set;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Set;
+import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
+import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 
 /**
  * @author Alexandre Oliveira
@@ -40,10 +41,11 @@ public interface TurSNRankingConditionRepository extends JpaRepository<TurSNRank
 	@Cacheable(FIND_BY_TUR_SN_RANKING_EXPRESSION)
 	Set<TurSNRankingCondition> findByTurSNRankingExpression(TurSNRankingExpression turSNRankingExpression);
 
-	@CacheEvict(value = {FIND_BY_TUR_SN_RANKING_EXPRESSION}, allEntries = true)
+	@CacheEvict(value = { FIND_BY_TUR_SN_RANKING_EXPRESSION }, allEntries = true)
 	@NotNull
-	TurSNRankingCondition save(@NotNull TurSNRankingCondition turSNRankingCondition);
+	@Override
+	<S extends TurSNRankingCondition> S save(@NotNull S entity);
 
-	@CacheEvict(value = {FIND_BY_TUR_SN_RANKING_EXPRESSION}, allEntries = true)
+	@CacheEvict(value = { FIND_BY_TUR_SN_RANKING_EXPRESSION }, allEntries = true)
 	void delete(@NotNull TurSNRankingCondition turSNRankingCondition);
 }

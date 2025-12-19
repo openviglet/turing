@@ -21,7 +21,9 @@
 
 package com.viglet.turing.persistence.repository.llm;
 
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import java.util.List;
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,23 +31,22 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-import java.util.Optional;
+import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 
 public interface TurLLMVendorRepository extends JpaRepository<TurLLMVendor, String> {
-	
+
 	@Cacheable("turLLMVendorfindAll")
 	@NotNull
 	List<TurLLMVendor> findAll();
-	
+
 	@Cacheable("turLLMVendorfindById")
 	@NotNull
 	Optional<TurLLMVendor> findById(@NotNull String id);
 
-	@SuppressWarnings("unchecked")
 	@CacheEvict(value = { "turLLMVendorfindAll", "turLLMVendorfindById" }, allEntries = true)
 	@NotNull
-	TurLLMVendor save(@NotNull TurLLMVendor turLLMVendor);
+	@Override
+	<S extends TurLLMVendor> S save(@NotNull S entity);
 
 	@Modifying
 	@Query("delete from  TurStoreVendor sv where sv.id = ?1")

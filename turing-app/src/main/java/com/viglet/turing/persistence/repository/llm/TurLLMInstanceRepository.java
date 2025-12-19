@@ -23,12 +23,14 @@ package com.viglet.turing.persistence.repository.llm;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 
 public interface TurLLMInstanceRepository extends JpaRepository<TurLLMInstance, String> {
@@ -40,13 +42,13 @@ public interface TurLLMInstanceRepository extends JpaRepository<TurLLMInstance, 
 	@NotNull
 	Optional<TurLLMInstance> findById(@NotNull String id);
 
-	@SuppressWarnings("unchecked")
-	@CacheEvict(value = {"turLLMInstancefindAll", "turLLMInstancefindById"}, allEntries = true)
+	@CacheEvict(value = { "turLLMInstancefindAll", "turLLMInstancefindById" }, allEntries = true)
 	@NotNull
-	TurLLMInstance save(@NotNull TurLLMInstance turLLMInstance);
+	@Override
+	<S extends TurLLMInstance> S save(@NotNull S entity);
 
 	@Modifying
 	@Query("delete from  TurLLMInstance li where li.id = ?1")
-	@CacheEvict(value = {"turLLMInstancefindAll", "turLLMInstancefindById"}, allEntries = true)
+	@CacheEvict(value = { "turLLMInstancefindAll", "turLLMInstancefindById" }, allEntries = true)
 	void delete(String id);
 }
