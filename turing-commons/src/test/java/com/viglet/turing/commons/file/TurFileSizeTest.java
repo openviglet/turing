@@ -125,9 +125,10 @@ class TurFileSizeTest {
         TurFileSize fileSize = new TurFileSize(1024.0f);
         String toString = fileSize.toString();
         
-        assertThat(toString).contains("bytes=1024.0");
-        assertThat(toString).contains("kiloBytes=1.0");
-        assertThat(toString).contains("megaBytes=0.0");
+        assertThat(toString)
+                .contains("bytes=1024.0")
+                .contains("kiloBytes=1.0")
+                .contains("megaBytes=0.0");
     }
 
     @Test

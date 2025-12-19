@@ -130,7 +130,7 @@ class TurSNLocaleTest {
 
         assertThat(locale.getLocale()).isEmpty();
         assertThat(locale.getLink()).isEmpty();
-        assertThat(locale.toString()).isEqualTo(": ");
+        assertThat(locale).hasToString(": ");
     }
 
     @Test
@@ -177,10 +177,11 @@ class TurSNLocaleTest {
         String result = locale.toString();
 
         // Verify the exact format: "locale: link"
-        assertThat(result).matches("de_DE: https://example\\.de/suchen");
-        assertThat(result).contains(": ");
-        assertThat(result).startsWith("de_DE");
-        assertThat(result).endsWith("https://example.de/suchen");
+        assertThat(result)
+                .matches("de_DE: https://example\\.de/suchen")
+                .contains(": ")
+                .startsWith("de_DE")
+                .endsWith("https://example.de/suchen");
     }
 
     @Test

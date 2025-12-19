@@ -53,8 +53,9 @@ class TurMultiValueTest {
         List<String> items = Arrays.asList("item1", "item2", "item3");
         TurMultiValue multiValue = new TurMultiValue(items);
 
-        assertThat(multiValue).hasSize(3);
-        assertThat(multiValue).containsExactly("item1", "item2", "item3");
+        assertThat(multiValue)
+                .hasSize(3)
+                .containsExactly("item1", "item2", "item3");
         assertThat(multiValue.isOverride()).isFalse();
     }
 
@@ -63,8 +64,9 @@ class TurMultiValueTest {
         List<String> items = Arrays.asList("item1", "item2");
         TurMultiValue multiValue = new TurMultiValue(items, true);
 
-        assertThat(multiValue).hasSize(2);
-        assertThat(multiValue).containsExactly("item1", "item2");
+        assertThat(multiValue)
+                .hasSize(2)
+                .containsExactly("item1", "item2");
         assertThat(multiValue.isOverride()).isTrue();
     }
 
@@ -72,8 +74,9 @@ class TurMultiValueTest {
     void testSingleItemString() {
         TurMultiValue multiValue = TurMultiValue.singleItem("test");
 
-        assertThat(multiValue).hasSize(1);
-        assertThat(multiValue).containsExactly("test");
+        assertThat(multiValue)
+                .hasSize(1)
+                .containsExactly("test");
         assertThat(multiValue.isOverride()).isFalse();
     }
 
@@ -81,8 +84,9 @@ class TurMultiValueTest {
     void testSingleItemStringWithOverride() {
         TurMultiValue multiValue = TurMultiValue.singleItem("test", true);
 
-        assertThat(multiValue).hasSize(1);
-        assertThat(multiValue).containsExactly("test");
+        assertThat(multiValue)
+                .hasSize(1)
+                .containsExactly("test");
         assertThat(multiValue.isOverride()).isTrue();
     }
 
@@ -91,12 +95,14 @@ class TurMultiValueTest {
         TurMultiValue multiValueTrue = TurMultiValue.singleItem(true);
         TurMultiValue multiValueFalse = TurMultiValue.singleItem(false);
 
-        assertThat(multiValueTrue).hasSize(1);
-        assertThat(multiValueTrue).containsExactly("true");
+        assertThat(multiValueTrue)
+                .hasSize(1)
+                .containsExactly("true");
         assertThat(multiValueTrue.isOverride()).isFalse();
 
-        assertThat(multiValueFalse).hasSize(1);
-        assertThat(multiValueFalse).containsExactly("false");
+        assertThat(multiValueFalse)
+                .hasSize(1)
+                .containsExactly("false");
         assertThat(multiValueFalse.isOverride()).isFalse();
     }
 
@@ -104,8 +110,9 @@ class TurMultiValueTest {
     void testSingleItemBooleanObject() {
         TurMultiValue multiValue = TurMultiValue.singleItem(Boolean.TRUE, true);
 
-        assertThat(multiValue).hasSize(1);
-        assertThat(multiValue).containsExactly("true");
+        assertThat(multiValue)
+                .hasSize(1)
+                .containsExactly("true");
         assertThat(multiValue.isOverride()).isTrue();
     }
 
@@ -115,7 +122,7 @@ class TurMultiValueTest {
         TurMultiValue multiValue = TurMultiValue.singleItem(testDate);
 
         assertThat(multiValue).hasSize(1);
-        assertThat(multiValue.get(0)).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z");
+        assertThat(multiValue.getFirst()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z");
         assertThat(multiValue.isOverride()).isFalse();
     }
 
@@ -125,14 +132,13 @@ class TurMultiValueTest {
         TurMultiValue multiValue = TurMultiValue.singleItem(testDate, true);
 
         assertThat(multiValue).hasSize(1);
-        assertThat(multiValue.get(0)).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z");
+        assertThat(multiValue.getFirst()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z");
         assertThat(multiValue.isOverride()).isTrue();
     }
 
     @Test
     void testSingleItemNullDate() {
-        Date nullDate = null;
-        TurMultiValue multiValue = TurMultiValue.singleItem(nullDate, false);
+        TurMultiValue multiValue = TurMultiValue.singleItem((Date) null, false);
 
         assertThat(multiValue).isEmpty();
         assertThat(multiValue.isOverride()).isFalse();
@@ -143,8 +149,9 @@ class TurMultiValueTest {
         Integer number = 42;
         TurMultiValue multiValue = TurMultiValue.singleItem(number);
 
-        assertThat(multiValue).hasSize(1);
-        assertThat(multiValue).containsExactly("42");
+        assertThat(multiValue)
+                .hasSize(1)
+                .containsExactly("42");
         assertThat(multiValue.isOverride()).isFalse();
     }
 
@@ -153,8 +160,9 @@ class TurMultiValueTest {
         List<String> list = Arrays.asList("a", "b", "c", "d");
         TurMultiValue multiValue = new TurMultiValue(list);
 
-        assertThat(multiValue).hasSize(4);
-        assertThat(multiValue).containsExactly("a", "b", "c", "d");
+        assertThat(multiValue)
+                .hasSize(4)
+                .containsExactly("a", "b", "c", "d");
         assertThat(multiValue.isOverride()).isFalse();
     }
 
@@ -183,8 +191,9 @@ class TurMultiValueTest {
         TurMultiValue multiValue1 = new TurMultiValue(items1);
         TurMultiValue multiValue2 = new TurMultiValue(items2);
 
-        assertThat(multiValue1).isEqualTo(multiValue2);
-        assertThat(multiValue1.hashCode()).isEqualTo(multiValue2.hashCode());
+        assertThat(multiValue1)
+                .isEqualTo(multiValue2)
+                .hasSameHashCodeAs(multiValue2);
     }
 
     @Test
@@ -204,8 +213,9 @@ class TurMultiValueTest {
         multiValue.add("second");
         multiValue.add(1, "middle");
 
-        assertThat(multiValue).hasSize(3);
-        assertThat(multiValue).containsExactly("first", "middle", "second");
+        assertThat(multiValue)
+                .hasSize(3)
+                .containsExactly("first", "middle", "second");
         assertThat(multiValue.get(1)).isEqualTo("middle");
 
         // Test removal
@@ -227,7 +237,7 @@ class TurMultiValueTest {
         TurMultiValue multiValue1 = TurMultiValue.singleItem(testDate);
         TurMultiValue multiValue2 = TurMultiValue.singleItem(testDate);
 
-        assertThat(multiValue1.get(0)).isEqualTo(multiValue2.get(0));
+        assertThat(multiValue1.getFirst()).isEqualTo(multiValue2.getFirst());
     }
 
     @Test
@@ -235,8 +245,9 @@ class TurMultiValueTest {
         List<String> listWithNulls = Arrays.asList("item1", null, "item3");
         TurMultiValue multiValue = new TurMultiValue(listWithNulls);
 
-        assertThat(multiValue).hasSize(3);
-        assertThat(multiValue).containsExactly("item1", null, "item3");
+        assertThat(multiValue)
+                .hasSize(3)
+                .containsExactly("item1", null, "item3");
     }
 
     @Test
