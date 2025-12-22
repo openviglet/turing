@@ -3,24 +3,24 @@ package com.viglet.turing.solr;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.common.SolrInputDocument;
 import org.json.JSONArray;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.viglet.turing.solr.TurSolrConstants.*;
 
+@Slf4j
 public class TurSolrDocumentHandler {
-    private static final Logger logger = Logger.getLogger(TurSolrDocumentHandler.class.getName());
     private final int commitWithin;
     private final TurSNSiteFieldService turSNSiteFieldUtils;
 
@@ -31,7 +31,7 @@ public class TurSolrDocumentHandler {
 
     public void indexing(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
                          Map<String, Object> attributes) {
-        logger.fine("Executing indexing ...");
+        log.debug("Executing indexing ...");
         attributes.remove(SCORE);
         attributes.remove(VERSION);
         attributes.remove(BOOST);
@@ -39,12 +39,12 @@ public class TurSolrDocumentHandler {
     }
 
     public void deIndexing(TurSolrInstance turSolrInstance, String id) {
-        logger.fine("Executing deIndexing ...");
+        log.debug("Executing deIndexing ...");
         this.deleteDocument(turSolrInstance, id);
     }
 
     public void deIndexingByType(TurSolrInstance turSolrInstance, String type) {
-        logger.fine(String.format("Executing deIndexing by type %s...", type));
+        log.debug("Executing deIndexing by type {}...", type);
         this.deleteDocumentByType(turSolrInstance, type);
     }
 
@@ -55,7 +55,7 @@ public class TurSolrDocumentHandler {
             updateRequest.setCommitWithin(commitWithin);
             updateRequest.process(turSolrInstance.getSolrClient());
         } catch (SolrServerException | IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -66,7 +66,7 @@ public class TurSolrDocumentHandler {
             updateRequest.setCommitWithin(commitWithin);
             updateRequest.process(turSolrInstance.getSolrClient());
         } catch (SolrServerException | IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -157,7 +157,7 @@ public class TurSolrDocumentHandler {
             updateRequest.setCommitWithin(commitWithin);
             updateRequest.process(turSolrInstance.getSolrClient());
         } catch (SolrServerException | IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

@@ -2,7 +2,7 @@ package com.viglet.turing.solr;
 
 public final class TurSolrConstants {
     private TurSolrConstants() {
-        // private constructor
+        throw new IllegalStateException("Solr Constants class");
     }
     public static final String NEWEST = "newest";
     public static final String OLDEST = "oldest";

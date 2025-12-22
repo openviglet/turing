@@ -83,7 +83,6 @@ import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
-import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
 import com.viglet.turing.solr.TurSolrQueryBuilder;
@@ -108,7 +107,6 @@ public class TurSNSearchProcess {
         private final TurSNSiteRepository turSNSiteRepository;
         private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
         private final TurSolrInstanceProcess turSolrInstanceProcess;
-        private final TurSolr turSolr;
         private final TurSNSpotlightProcess turSNSpotlightProcess;
         private final TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository;
         private final boolean metricsEnabled;
@@ -119,7 +117,7 @@ public class TurSNSearchProcess {
                         TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository,
                         TurSNSiteRepository turSNSiteRepository,
                         TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-                        TurSolrInstanceProcess turSolrInstanceProcess, TurSolr turSolr,
+                        TurSolrInstanceProcess turSolrInstanceProcess,
                         TurSNSpotlightProcess turSNSpotlightProcess,
                         TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository,
                         @Value("${turing.search.metrics.enabled:false}") boolean metricsEnabled,
@@ -130,7 +128,6 @@ public class TurSNSearchProcess {
                 this.turSNSiteRepository = turSNSiteRepository;
                 this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
                 this.turSolrInstanceProcess = turSolrInstanceProcess;
-                this.turSolr = turSolr;
                 this.turSNSpotlightProcess = turSNSpotlightProcess;
                 this.turSNSiteMetricAccessRepository = turSNSiteMetricAccessRepository;
                 this.metricsEnabled = metricsEnabled;

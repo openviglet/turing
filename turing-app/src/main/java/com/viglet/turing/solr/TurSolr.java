@@ -1,10 +1,5 @@
 package com.viglet.turing.solr;
 
-import static com.viglet.turing.solr.TurSolrConstants.EMPTY;
-import static com.viglet.turing.solr.TurSolrConstants.ID;
-import static com.viglet.turing.solr.TurSolrConstants.TUR_SPELL;
-import static com.viglet.turing.solr.TurSolrConstants.TUR_SUGGEST;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.sn.TurSNUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
@@ -48,6 +45,8 @@ import com.viglet.turing.sn.field.TurSNSiteFieldService;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static com.viglet.turing.solr.TurSolrConstants.*;
 
 @Slf4j
 @Component
@@ -150,10 +149,29 @@ public class TurSolr {
                 .orElse(TurSEResult.builder().build());
     }
 
-    public Optional<TurSEResults> retrieveSolrFromSN(TurSolrInstance turSolrInstance,
+    private TurSESpellCheckResult prepareQueryAutoCorrection(
+            TurSNSiteSearchContext turSNSiteSearchContext, TurSNSite turSNSite,
+            TurSolrInstance turSolrInstance) {
+        TurSESpellCheckResult turSESpellCheckResult = spellCheckTerm(turSolrInstance,
+                turSNSiteSearchContext.getTurSEParameters().getQuery());
+        if (TurSNUtils.isAutoCorrectionEnabled(turSNSiteSearchContext, turSNSite)) {
+            turSESpellCheckResult.setUsingCorrected(true);
+            if (TurSNUtils.hasCorrectedText(turSESpellCheckResult)) {
+                turSNSiteSearchContext.setUri(
+                        TurCommonsUtils.addOrReplaceParameter(turSNSiteSearchContext.getUri(),
+                                QUERY, turSESpellCheckResult.getCorrectedText(), true));
+            }
+        } else {
+            turSESpellCheckResult.setUsingCorrected(false);
+        }
+        return turSESpellCheckResult;
+    }
+	
+	public Optional<TurSEResults> retrieveSolrFromSN(TurSolrInstance turSolrInstance,
             TurSNSiteSearchContext context) {
         return turSNSiteRepository.findByName(context.getSiteName()).map(turSNSite -> {
-            TurSESpellCheckResult turSESpellCheckResult = new TurSESpellCheckResult();
+            TurSESpellCheckResult turSESpellCheckResult = prepareQueryAutoCorrection(context, turSNSite,
+                    turSolrInstance);
             TurSEParameters turSEParameters = context.getTurSEParameters();
             SolrQuery query = turSolrQueryBuilder.prepareSolrQuery(context, turSNSite, turSEParameters,
                     turSESpellCheckResult);
@@ -218,7 +236,7 @@ public class TurSolr {
         try {
             return Optional.ofNullable(turSolrInstance.getSolrClient().query(query));
         } catch (BaseHttpSolrClient.RemoteSolrException | SolrServerException | IOException e) {
-            log.error("%s?%s - %s", query.get("qt"), query.toQueryString(),
+            log.error("{}?{} - {}", query.get("qt"), query.toQueryString(),
                     e.getMessage(), e);
         }
         return Optional.empty();

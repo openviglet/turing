@@ -1,29 +1,5 @@
 package com.viglet.turing.solr;
 
-import static com.viglet.turing.solr.TurSolrConstants.AND;
-import static com.viglet.turing.solr.TurSolrConstants.ASC;
-import static com.viglet.turing.solr.TurSolrConstants.BOOST_QUERY;
-import static com.viglet.turing.solr.TurSolrConstants.COUNT;
-import static com.viglet.turing.solr.TurSolrConstants.DEF_TYPE;
-import static com.viglet.turing.solr.TurSolrConstants.EDISMAX;
-import static com.viglet.turing.solr.TurSolrConstants.EMPTY;
-import static com.viglet.turing.solr.TurSolrConstants.FACET_OR;
-import static com.viglet.turing.solr.TurSolrConstants.FILTER_QUERY_OR;
-import static com.viglet.turing.solr.TurSolrConstants.HYPHEN;
-import static com.viglet.turing.solr.TurSolrConstants.INDEX;
-import static com.viglet.turing.solr.TurSolrConstants.NEWEST;
-import static com.viglet.turing.solr.TurSolrConstants.NO_FACET_NAME;
-import static com.viglet.turing.solr.TurSolrConstants.OLDEST;
-import static com.viglet.turing.solr.TurSolrConstants.OR;
-import static com.viglet.turing.solr.TurSolrConstants.OR_AND;
-import static com.viglet.turing.solr.TurSolrConstants.OR_OR;
-import static com.viglet.turing.solr.TurSolrConstants.PLUS_ONE;
-import static com.viglet.turing.solr.TurSolrConstants.Q_OP;
-import static com.viglet.turing.solr.TurSolrConstants.ROWS;
-import static com.viglet.turing.solr.TurSolrConstants.SOLR_DATE_PATTERN;
-import static com.viglet.turing.solr.TurSolrConstants.TRUE;
-import static com.viglet.turing.solr.TurSolrConstants.TURING_ENTITY;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,10 +14,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -81,9 +56,11 @@ import com.viglet.turing.sn.tr.TurSNTargetingRuleMethod;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
+import static com.viglet.turing.solr.TurSolrConstants.*;
+
 @Component
+@Slf4j
 public class TurSolrQueryBuilder {
-    private static final Logger logger = Logger.getLogger(TurSolrQueryBuilder.class.getName());
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNRankingExpressionRepository turSNRankingExpressionRepository;
     private final TurSNRankingConditionRepository turSNRankingConditionRepository;
@@ -170,7 +147,7 @@ public class TurSolrQueryBuilder {
                             .findFirst().orElse(TurSNSiteFieldExt.builder().build());
                     if (turSNSiteFieldExt.getType().equals(TurSEFieldType.DATE)
                             && condition.getValue().equalsIgnoreCase(ASC)) {
-                        return String.format("_query_:\"%s\"",
+                        return String.format("_query_:\"" + RECENT_DATES + "\"",
                                 condition.getAttribute());
                     }
                     return String.format("%s:\"%s\"", condition.getAttribute(),
@@ -414,7 +391,7 @@ public class TurSolrQueryBuilder {
                 };
             }
         } catch (ParseException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return fq;
     }
