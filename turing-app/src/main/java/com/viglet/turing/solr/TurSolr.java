@@ -106,10 +106,10 @@ import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.facet.TurSNFacetMapForFilterQuery;
 import com.viglet.turing.sn.facet.TurSNFacetProperties;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
+import com.viglet.turing.sn.field.TurSNSiteFieldService;
 import com.viglet.turing.sn.tr.TurSNTargetingRuleMethod;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -352,7 +352,7 @@ public class TurSolr {
     }
 
     public TurSESpellCheckResult spellCheckTerm(TurSolrInstance turSolrInstance, String term) {
-        return executeSolrQuery(turSolrInstance, new SolrQuery().setParam("qt",TUR_SPELL)
+        return executeSolrQuery(turSolrInstance, new SolrQuery().setParam("qt", TUR_SPELL)
                 .setQuery(term.replace("\"", EMPTY))).map(
                         queryResponse -> Optional.ofNullable(queryResponse.getSpellCheckResponse())
                                 .map(spellCheckResponse -> {
@@ -555,7 +555,7 @@ public class TurSolr {
         try {
             return Optional.ofNullable(turSolrInstance.getSolrClient().query(query));
         } catch (BaseHttpSolrClient.RemoteSolrException | SolrServerException | IOException e) {
-            log.error("{}?{} - {}",query.get("qt"), query.toQueryString(),
+            log.error("{}?{} - {}", query.get("qt"), query.toQueryString(),
                     e.getMessage(), e);
         }
         return Optional.empty();
@@ -1541,14 +1541,17 @@ public class TurSolr {
                 attrValue = hl.get(attribute).getFirst();
             }
             if (attribute != null && fields.containsKey(attribute)) {
-                if (!(fields.get(attribute) instanceof List)) {
-                    List<Object> attributeValues = new ArrayList<>();
-                    attributeValues.add(fields.get(attribute));
-                    attributeValues.add(attrValue);
-                    fields.put(attribute, attributeValues);
+                Object existingValue = fields.get(attribute);
+                List<Object> attributeValues;
+                if (existingValue instanceof List<?>) {
+
+                    attributeValues = new ArrayList<>((List<?>) existingValue);
                 } else {
-                    ((List<Object>) fields.get(attribute)).add(attrValue);
+                    attributeValues = new ArrayList<>();
+                    attributeValues.add(existingValue);
                 }
+                attributeValues.add(attrValue);
+                fields.put(attribute, attributeValues);
             } else {
                 fields.put(attribute, attrValue);
             }
