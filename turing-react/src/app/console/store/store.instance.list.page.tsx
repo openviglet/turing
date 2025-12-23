@@ -2,7 +2,7 @@ import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
 import { StoreCardList } from "@/components/store.card.list";
 import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
-import { TurStoreInstanceService } from "@/services/store.service";
+import { TurStoreInstanceService } from "@/services/store/store.service";
 import { IconDatabase } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 

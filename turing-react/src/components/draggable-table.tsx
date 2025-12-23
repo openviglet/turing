@@ -25,7 +25,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
-import { TurSNFacetedFieldService } from '@/services/sn.faceted.field.service';
+import { TurSNFacetedFieldService } from '@/services/sn/sn.faceted.field.service';
 
 interface DraggableTableRowProps {
     row: TurSNSiteField;

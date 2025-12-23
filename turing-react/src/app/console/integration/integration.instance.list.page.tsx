@@ -1,7 +1,7 @@
-import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts";
-import { TurIntegrationInstanceService } from "@/services/integration.service"
-import { useEffect, useState } from "react";
 import { IntegrationCardList } from "@/components/integration.card.list";
+import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts";
+import { TurIntegrationInstanceService } from "@/services/integration/integration.service";
+import { useEffect, useState } from "react";
 
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 

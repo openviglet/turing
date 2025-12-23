@@ -4,7 +4,7 @@ import { SubPageHeader } from "@/components/sub.page.header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TurSNRankingExpression } from "@/models/sn/sn-ranking-expression.model.ts";
-import { TurSNRankingExpressionService } from "@/services/sn.site.result.ranking.service.ts";
+import { TurSNRankingExpressionService } from "@/services/sn/sn.site.result.ranking.service";
 import { IconNumber123 } from "@tabler/icons-react";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";

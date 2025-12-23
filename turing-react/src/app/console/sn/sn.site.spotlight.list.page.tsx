@@ -4,7 +4,7 @@ import { SubPageHeader } from "@/components/sub.page.header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TurSNSiteSpotlight } from "@/models/sn/sn-site-spotlight.model";
-import { TurSNSiteSpotlightService } from "@/services/sn.site.spotlight.service";
+import { TurSNSiteSpotlightService } from "@/services/sn/sn.site.spotlight.service";
 import { IconSpeakerphone } from "@tabler/icons-react";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";

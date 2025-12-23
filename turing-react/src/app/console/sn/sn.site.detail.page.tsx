@@ -1,10 +1,10 @@
-import { SNSiteForm } from "@/components/sn.site.form"
-import { useParams } from "react-router-dom";
-import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
-import { useEffect, useState } from "react";
-import { TurSNSiteService } from "@/services/sn.service";
+import { SNSiteForm } from "@/components/sn.site.form";
 import { SubPageHeader } from "@/components/sub.page.header";
+import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
+import { TurSNSiteService } from "@/services/sn/sn.service";
 import { IconSettings } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const turSNSiteService = new TurSNSiteService();
 

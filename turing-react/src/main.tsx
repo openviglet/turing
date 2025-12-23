@@ -6,7 +6,7 @@ import App from './App.tsx'
 import { ROUTES } from './app/routes.const.ts'
 import './index.css'
 import type { TurRestInfo } from './models/auth/rest-info.ts'
-import { TurAuthorizationService } from './services/authorization.service.ts'
+import { TurAuthorizationService } from './services/auth/authorization.service.ts'
 
 const authorization = new TurAuthorizationService()
 axios.defaults.baseURL = `${import.meta.env.VITE_API_URL}/api`;

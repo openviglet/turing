@@ -4,7 +4,7 @@ import { SubPageHeader } from "@/components/sub.page.header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TurSNSiteMerge } from "@/models/sn/sn-site-merge.model";
-import { TurSNSiteMergeService } from "@/services/sn.site.merge.service";
+import { TurSNSiteMergeService } from "@/services/sn/sn.site.merge.service";
 import { IconGitMerge } from "@tabler/icons-react";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";

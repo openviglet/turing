@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/textarea"
 import type { TurSNFieldType } from "@/models/sn/sn-field-type.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
-import { TurSNFieldService } from "@/services/sn.field.service"
-import { TurSNFieldTypeService } from "@/services/sn.field.type.service"
+import { TurSNFieldService } from "@/services/sn/sn.field.service"
+import { TurSNFieldTypeService } from "@/services/sn/sn.field.type.service"
 import { IconReorder } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import {

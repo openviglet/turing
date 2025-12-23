@@ -1,8 +1,8 @@
-import { StoreInstanceForm } from "@/components/store.instance.form"
-import { useParams } from "react-router-dom";
+import { StoreInstanceForm } from "@/components/store.instance.form";
 import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
+import { TurStoreInstanceService } from "@/services/store/store.service";
 import { useEffect, useState } from "react";
-import { TurStoreInstanceService } from "@/services/store.service";
+import { useParams } from "react-router-dom";
 
 const turStoreInstanceService = new TurStoreInstanceService();
 
@@ -17,6 +17,6 @@ export default function StoreInstancePage() {
     }
   }, [id])
   return (
-     <StoreInstanceForm value={storeInstance} isNew={isNew} />
+    <StoreInstanceForm value={storeInstance} isNew={isNew} />
   )
 }

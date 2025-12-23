@@ -1,7 +1,7 @@
-import type { TurSEInstance } from "@/models/se/se-instance.model.ts";
-import { TurSEInstanceService } from "@/services/se.service"
-import { useEffect, useState } from "react";
 import { SECardList } from "@/components/se.card.list";
+import type { TurSEInstance } from "@/models/se/se-instance.model.ts";
+import { TurSEInstanceService } from "@/services/se/se.service";
+import { useEffect, useState } from "react";
 
 const turSEInstanceService = new TurSEInstanceService();
 

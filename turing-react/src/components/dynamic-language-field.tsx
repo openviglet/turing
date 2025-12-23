@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select';
 import type { TurLocale } from '@/models/locale/locale.model';
 import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
-import { TurLocaleService } from '@/services/locale.service';
+import { TurLocaleService } from '@/services/locale/locale.service';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, type Control, type UseFormRegister } from 'react-hook-form';

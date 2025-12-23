@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { cn } from "@/lib/utils.ts";
-import { TurAuthorizationService } from '@/services/authorization.service';
-import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
-import { useForm } from 'react-hook-form';
-import type { TurRestInfo } from '@/models/auth/rest-info';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { useSearchParams } from 'react-router-dom';
 import { ROUTES } from '@/app/routes.const';
+import { cn } from "@/lib/utils.ts";
+import type { TurRestInfo } from '@/models/auth/rest-info';
+import { TurAuthorizationService } from '@/services/auth/authorization.service';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
+import { Button } from './ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
+import { Input } from './ui/input';
 
 export function LoginForm({
     className,

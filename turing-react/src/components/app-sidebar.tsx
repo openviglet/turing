@@ -1,19 +1,17 @@
-import * as React from "react"
 import {
-  IconHelp,
-  IconInnerShadowTop,
-  IconSearch,
-  IconSettings,
-  IconZoomCode,
+  IconCode,
   IconCpu2,
   IconDatabase,
+  IconInnerShadowTop,
   IconPlugConnectedX,
   IconReceiptRupee,
-  IconCode
+  IconSearch,
+  IconZoomCode
 } from "@tabler/icons-react"
+import * as React from "react"
 
+import { ROUTES } from "@/app/routes.const"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -24,15 +22,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import type { TurUser } from "@/models/auth/user"
+import { TurUserService } from "@/services/auth/user.service"
 import { NavLink } from "react-router-dom"
-import { ROUTES } from "@/app/routes.const"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Search Engine",
@@ -69,28 +63,15 @@ const data = {
       url: "/admin/token/instance",
       icon: IconCode,
     },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
+  ]
 }
-
+const turUserService = new TurUserService();
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = React.useState<TurUser>({} as TurUser);
+  React.useEffect(() => {
 
+    turUserService.get().then(setUser);
+  }, [])
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -98,9 +79,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5">
+              className="data-[slot=sidebar-menu-button]:p-1.5!">
               <NavLink to={ROUTES.CONSOLE}>
-                <IconInnerShadowTop className="!size-5" />
+                <IconInnerShadowTop className="size-5!" />
                 <span className="text-base font-semibold">Turing ES</span>
               </NavLink>
             </SidebarMenuButton>
@@ -109,10 +90,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

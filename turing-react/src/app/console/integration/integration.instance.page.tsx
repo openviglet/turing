@@ -1,5 +1,7 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { ROUTES } from "@/app/routes.const";
+import { SubPage } from "@/components/sub.page";
+import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
+import { TurIntegrationInstanceService } from "@/services/integration/integration.service";
 import {
     IconGitCommit,
     IconGraph,
@@ -7,11 +9,9 @@ import {
     IconSettings,
     IconTools
 } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { SubPage } from "@/components/sub.page";
-import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
-import { TurIntegrationInstanceService } from "@/services/integration.service";
-import { ROUTES } from "@/app/routes.const";
 
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 const data = {

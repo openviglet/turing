@@ -1,10 +1,9 @@
 "use client"
-import {
-  useForm
-} from "react-hook-form"
+import { ROUTES } from "@/app/routes.const"
 import {
   Button
 } from "@/components/ui/button"
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -20,14 +19,15 @@ import {
 import {
   Textarea
 } from "@/components/ui/textarea"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { TurTokenInstance } from "@/models/token/token-instance.model.ts"
+import { TurTokenInstanceService } from "@/services/token/token.service"
 import { useEffect, useState } from "react"
+import {
+  useForm
+} from "react-hook-form"
+import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { useNavigate } from "react-router-dom"
-import { TurTokenInstanceService } from "@/services/token.service"
-import { ROUTES } from "@/app/routes.const"
 const turTokenInstanceService = new TurTokenInstanceService();
 interface Props {
   value: TurTokenInstance;

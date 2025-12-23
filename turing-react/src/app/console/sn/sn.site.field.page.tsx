@@ -1,7 +1,7 @@
 import { SNSiteFieldForm } from "@/components/sn.site.field.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model";
-import { TurSNFieldService } from "@/services/sn.field.service";
+import { TurSNFieldService } from "@/services/sn/sn.field.service";
 import { IconAlignBoxCenterStretch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";

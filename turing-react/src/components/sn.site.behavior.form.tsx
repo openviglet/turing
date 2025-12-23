@@ -1,7 +1,5 @@
 "use client"
-import {
-  useForm
-} from "react-hook-form"
+import { ROUTES } from "@/app/routes.const"
 import {
   Button
 } from "@/components/ui/button"
@@ -25,14 +23,16 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts"
-import { useEffect } from "react"
-import { TurSNSiteService } from "@/services/sn.service"
-import { toast } from "sonner"
-import { useNavigate } from "react-router-dom"
-import { Switch } from "./ui/switch"
-import { SubPageHeader } from "./sub.page.header"
+import { TurSNSiteService } from "@/services/sn/sn.service"
 import { IconCodeAsterisk, IconCopy, IconHighlight, IconLayoutListFilled, IconListDetails, IconProgressHelp } from "@tabler/icons-react"
-import { ROUTES } from "@/app/routes.const"
+import { useEffect } from "react"
+import {
+  useForm
+} from "react-hook-form"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
+import { SubPageHeader } from "./sub.page.header"
+import { Switch } from "./ui/switch"
 const turSNSiteService = new TurSNSiteService();
 interface Props {
   value: TurSNSite;

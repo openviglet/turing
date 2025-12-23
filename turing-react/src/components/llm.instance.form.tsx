@@ -1,10 +1,9 @@
 "use client"
-import {
-  useForm
-} from "react-hook-form"
+import { ROUTES } from "@/app/routes.const"
 import {
   Button
 } from "@/components/ui/button"
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -18,24 +17,25 @@ import {
   Input
 } from "@/components/ui/input"
 import {
-  Textarea
-} from "@/components/ui/textarea"
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Textarea
+} from "@/components/ui/textarea"
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts"
+import { TurLLMInstanceService } from "@/services/llm/llm.service"
 import { useEffect, useState } from "react"
-import { TurLLMInstanceService } from "@/services/llm.service"
+import {
+  useForm
+} from "react-hook-form"
+import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { useNavigate } from "react-router-dom"
 import { Switch } from "./ui/switch"
-import { ROUTES } from "@/app/routes.const"
 const turLLMInstanceService = new TurLLMInstanceService();
 const urlBase = ROUTES.LLM_INSTANCE
 interface Props {

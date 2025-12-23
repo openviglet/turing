@@ -1,8 +1,8 @@
-import { useParams } from "react-router-dom";
-import type { TurLoggingInstance } from "@/models/logging/logging-instance.model.ts";
-import { useEffect, useState } from "react";
-import { TurLoggingInstanceService } from "@/services/logging.service";
 import { LoggingInstanceForm } from "@/components/logging.instance.form";
+import type { TurLoggingInstance } from "@/models/logging/logging-instance.model.ts";
+import { TurLoggingInstanceService } from "@/services/logging/logging.service";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const turLoggingInstanceService = new TurLoggingInstanceService();
 
@@ -17,6 +17,6 @@ export default function LoggingInstancePage() {
     }
   }, [id])
   return (
-   <LoggingInstanceForm value={loggingInstance} isNew={isNew} />
+    <LoggingInstanceForm value={loggingInstance} isNew={isNew} />
   )
 }

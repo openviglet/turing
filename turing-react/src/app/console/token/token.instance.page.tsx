@@ -1,8 +1,8 @@
-import { TokenInstanceForm } from "@/components/token.instance.form"
-import { useParams } from "react-router-dom";
+import { TokenInstanceForm } from "@/components/token.instance.form";
 import type { TurTokenInstance } from "@/models/token/token-instance.model.ts";
+import { TurTokenInstanceService } from "@/services/token/token.service";
 import { useEffect, useState } from "react";
-import { TurTokenInstanceService } from "@/services/token.service";
+import { useParams } from "react-router-dom";
 
 const turTokenInstanceService = new TurTokenInstanceService();
 
@@ -17,6 +17,6 @@ export default function TokenInstancePage() {
     }
   }, [id])
   return (
-   <TokenInstanceForm value={tokenInstance} isNew={isNew} />
+    <TokenInstanceForm value={tokenInstance} isNew={isNew} />
   )
 }

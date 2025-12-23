@@ -1,7 +1,7 @@
 import { SNSiteBehaviorForm } from "@/components/sn.site.behavior.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
-import { TurSNSiteService } from "@/services/sn.service";
+import { TurSNSiteService } from "@/services/sn/sn.service";
 import { IconScale } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";

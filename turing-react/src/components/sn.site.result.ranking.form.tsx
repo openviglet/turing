@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/textarea"
 import type { TurSNRankingExpression } from "@/models/sn/sn-ranking-expression.model"
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts"
-import { TurSNSiteService } from "@/services/sn.service"
+import { TurSNSiteService } from "@/services/sn/sn.service"
 import React, { useEffect } from "react"
 import {
   useForm

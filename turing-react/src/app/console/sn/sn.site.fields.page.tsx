@@ -35,7 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts"
-import { TurSNFieldService } from "@/services/sn.field.service"
+import { TurSNFieldService } from "@/services/sn/sn.field.service"
 import { IconAlignBoxCenterStretch, IconColumns3Filled } from "@tabler/icons-react"
 import { useParams } from "react-router-dom"
 

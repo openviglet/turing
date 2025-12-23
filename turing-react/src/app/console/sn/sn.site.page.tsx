@@ -1,7 +1,7 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { ROUTES } from "@/app/routes.const";
+import { SubPage } from "@/components/sub.page";
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
-import { useEffect, useState } from "react";
-import { TurSNSiteService } from "@/services/sn.service";
+import { TurSNSiteService } from "@/services/sn/sn.service";
 import {
     IconAlignBoxCenterStretch,
     IconCpu2,
@@ -15,9 +15,9 @@ import {
     IconSettings,
     IconSpeakerphone
 } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { SubPage } from "@/components/sub.page";
-import { ROUTES } from "@/app/routes.const";
 
 const turSNSiteService = new TurSNSiteService();
 const data = {

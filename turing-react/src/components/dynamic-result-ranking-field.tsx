@@ -8,7 +8,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
-import { TurSNFieldService } from '@/services/sn.field.service';
+import { TurSNFieldService } from '@/services/sn/sn.field.service';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, type Control, type UseFormRegister } from 'react-hook-form';

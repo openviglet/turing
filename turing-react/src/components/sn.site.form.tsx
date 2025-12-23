@@ -1,8 +1,5 @@
 "use client"
 import {
-  useForm
-} from "react-hook-form"
-import {
   Button
 } from "@/components/ui/button"
 import {
@@ -18,20 +15,23 @@ import {
   Input
 } from "@/components/ui/input"
 import {
-  Textarea
-} from "@/components/ui/textarea"
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
+import {
+  Textarea
+} from "@/components/ui/textarea"
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts"
+import { TurSNSiteService } from "@/services/sn/sn.service"
 import { useEffect } from "react"
-import { TurSNSiteService } from "@/services/sn.service"
-import { toast } from "sonner"
+import {
+  useForm
+} from "react-hook-form"
 import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 const turSNSiteService = new TurSNSiteService();
 interface Props {
   value: TurSNSite;
@@ -69,71 +69,71 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
   }
 
   return (
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Title"
-                    type="text"
-                  />
-                </FormControl>
-                <FormDescription>Name will appear on semantic navigation site list.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Title"
+                  type="text"
+                />
+              </FormControl>
+              <FormDescription>Name will appear on semantic navigation site list.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Description"
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>Description will appear on semantic navigation site list.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Description"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>Description will appear on semantic navigation site list.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <FormField
-            control={form.control}
-            name="turSEInstance.id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Search Engine</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose..." />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem key="SOLR" value="SOLR">Solr</SelectItem>
-                    <SelectItem key="LUCENE" value="LUCENE">Lucene</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>Search engine that supports semantic navigation site.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Save</Button>
-        </form>
-      </Form>
+        <FormField
+          control={form.control}
+          name="turSEInstance.id"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Search Engine</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose..." />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem key="SOLR" value="SOLR">Solr</SelectItem>
+                  <SelectItem key="LUCENE" value="LUCENE">Lucene</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormDescription>Search engine that supports semantic navigation site.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Save</Button>
+      </form>
+    </Form>
   )
 }
 

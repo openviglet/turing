@@ -1,11 +1,10 @@
 import {
-  IconCreditCard,
   IconDotsVertical,
   IconLogout,
-  IconNotification,
-  IconUserCircle,
+  IconUserCircle
 } from "@tabler/icons-react"
 
+import { ROUTES } from "@/app/routes.const"
 import {
   Avatar,
   AvatarFallback,
@@ -26,17 +25,14 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import type { TurUser } from "@/models/auth/user"
+import React from "react"
 import { NavLink } from "react-router-dom"
-import { ROUTES } from "@/app/routes.const"
 
 export function NavUser({
-  user,
+  user
 }: {
-  readonly user: {
-    readonly name: string
-    readonly email: string
-    readonly avatar: string
-  }
+  user: TurUser
 }) {
   const { isMobile } = useSidebar()
   const handleClick = () => {
@@ -44,7 +40,21 @@ export function NavUser({
     localStorage.removeItem('restInfo');
     localStorage.removeItem('user');
   };
+  const initials = React.useMemo(() => {
 
+    const first = user.firstName || '';
+    const last = user.lastName || '';
+
+    if (!first && !last) return ' ';
+
+    const fullName = `${first} ${last}`.trim();
+    const nameParts = fullName.split(' ');
+
+    return nameParts
+      .map((part) => part.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('');
+  }, [user]);
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -55,11 +65,11 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage src='/avatars/shadcn.jpg' alt={user.username} />
+                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{user.firstName} {user.lastName}</span>
                 <span className="text-muted-foreground truncate text-xs">
                   {user.email}
                 </span>
@@ -76,11 +86,11 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src='/avatars/shadcn.jpg' alt={user.username} />
+                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{user.firstName} {user.lastName}</span>
                   <span className="text-muted-foreground truncate text-xs">
                     {user.email}
                   </span>
@@ -93,21 +103,13 @@ export function NavUser({
                 <IconUserCircle />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <NavLink to={ROUTES.LOGOUT}
-                onClick={handleClick}>
+                onClick={handleClick} className="flex items-center gap-1 w-full">
                 <IconLogout />
-                Log out</NavLink>
+                <span>Log out</span></NavLink>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

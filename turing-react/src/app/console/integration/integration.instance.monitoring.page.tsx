@@ -1,10 +1,10 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { SubPageHeader } from "@/components/sub.page.header";
-import { IconGraph } from "@tabler/icons-react";
 import { IntegrationInstanceForm } from "@/components/integration.instance.form";
+import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
-import { TurIntegrationInstanceService } from "@/services/integration.service";
+import { TurIntegrationInstanceService } from "@/services/integration/integration.service";
+import { IconGraph } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 
 export default function IntegrationInstanceMonitoringPage() {

@@ -2,7 +2,7 @@ import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
 import { LLMCardList } from "@/components/llm.card.list";
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts";
-import { TurLLMInstanceService } from "@/services/llm.service";
+import { TurLLMInstanceService } from "@/services/llm/llm.service";
 import { IconCpu2 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 

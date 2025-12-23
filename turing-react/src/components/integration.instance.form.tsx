@@ -1,7 +1,5 @@
 "use client"
-import {
-  useForm
-} from "react-hook-form"
+import { ROUTES } from "@/app/routes.const"
 import {
   Button
 } from "@/components/ui/button"
@@ -18,21 +16,23 @@ import {
   Input
 } from "@/components/ui/input"
 import {
-  Textarea
-} from "@/components/ui/textarea"
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
+import {
+  Textarea
+} from "@/components/ui/textarea"
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts"
+import { TurIntegrationInstanceService } from "@/services/integration/integration.service"
 import { useEffect } from "react"
-import { TurIntegrationInstanceService } from "@/services/integration.service"
-import { toast } from "sonner"
+import {
+  useForm
+} from "react-hook-form"
 import { useNavigate } from "react-router-dom"
-import { ROUTES } from "@/app/routes.const"
+import { toast } from "sonner"
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 interface Props {
   value: TurIntegrationInstance;
