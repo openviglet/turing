@@ -59,11 +59,12 @@ import jakarta.transaction.Transactional;
 @Tag(name = "User", description = "User API")
 public class TurUserAPI {
 
-    public static final String ADMIN = "admin";
-    public static final String ADMINISTRATOR = "Administrator";
-    public static final String PREFERRED_USERNAME = "preferred_username";
-    public static final String GIVEN_NAME = "given_name";
-    public static final String FAMILY_NAME = "family_name";
+    private static final String ADMIN = "admin";
+    private static final String ADMINISTRATOR = "Administrator";
+    private static final String PREFERRED_USERNAME = "preferred_username";
+    private static final String GIVEN_NAME = "given_name";
+    private static final String FAMILY_NAME = "family_name";
+    private static final String EMAIL = "email";
     private final PasswordEncoder passwordEncoder;
     private final TurUserRepository turUserRepository;
     private final TurGroupRepository turGroupRepository;
@@ -124,6 +125,7 @@ public class TurUserAPI {
         turCurrentUser.setUsername(user.getAttribute(PREFERRED_USERNAME));
         turCurrentUser.setFirstName(user.getAttribute(GIVEN_NAME));
         turCurrentUser.setLastName(user.getAttribute(FAMILY_NAME));
+        turCurrentUser.setEmail(user.getAttribute(EMAIL));
         turCurrentUser.setAdmin(true);
         return turCurrentUser;
     }

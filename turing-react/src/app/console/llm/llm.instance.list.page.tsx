@@ -1,10 +1,11 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
-import { LLMCardList } from "@/components/llm.card.list";
+import { GridList } from "@/components/grid.list";
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts";
+import type { TurGridItem } from "@/models/ui/grid-item";
 import { TurLLMInstanceService } from "@/services/llm/llm.service";
 import { IconCpu2 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const turLLMInstanceService = new TurLLMInstanceService();
 
@@ -14,10 +15,20 @@ export default function LLMInstanceListPage() {
   useEffect(() => {
     turLLMInstanceService.query().then(setLlmInstances)
   }, [])
+  const gridItemList: TurGridItem[] = useMemo(() => {
+    return llmInstances
+      ? llmInstances.map(({ id, title, description }) => ({
+        id,
+        name: title,
+        description,
+        url: ROUTES.LLM_INSTANCE + "/" + id
+      }))
+      : [];
+  }, [llmInstances]);
   return (
     <>
       {llmInstances.length > 0 ? (
-        <LLMCardList items={llmInstances} />
+        <GridList gridItemList={gridItemList ?? []} />
       ) : (
         <BlankSlate
           icon={IconCpu2}
