@@ -1,6 +1,7 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
-import { StoreCardList } from "@/components/store.card.list";
+import { GridList } from "@/components/grid.list";
+import { useGridAdapter } from "@/hooks/use-grid-adapter";
 import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
 import { TurStoreInstanceService } from "@/services/store/store.service";
 import { IconDatabase } from "@tabler/icons-react";
@@ -14,10 +15,15 @@ export default function StoreInstanceListPage() {
   useEffect(() => {
     turStoreInstanceService.query().then(setStoreInstances)
   }, [])
+  const gridItemList = useGridAdapter(storeInstances, {
+    name: "title",
+    description: "description",
+    url: (item) => `${ROUTES.STORE_INSTANCE}/${item.id}`
+  });
   return (
     <>
-      {storeInstances.length > 0 ? (
-        <StoreCardList items={storeInstances} />
+      {gridItemList.length > 0 ? (
+        <GridList gridItemList={gridItemList} />
       ) : (
         <BlankSlate
           icon={IconDatabase}
