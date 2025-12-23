@@ -103,7 +103,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   <DialogTrigger asChild>
                     <Button variant={"outline"}>Delete</Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[450px]">
+                  <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>
                       <DialogTitle>Are you absolutely sure?</DialogTitle>
                       <DialogDescription>

@@ -61,7 +61,7 @@ export function DynamicLanguageFields({ control, register, fieldName }: DynamicL
                     />
 
                     <Input
-                        className="flex-grow"
+                        className="grow"
                         placeholder="Facet Name..."
                         {...register(`${fieldName}.${index}.label`)}
                     />
