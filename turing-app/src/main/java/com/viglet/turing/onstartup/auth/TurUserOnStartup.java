@@ -52,7 +52,6 @@ public class TurUserOnStartup {
                     .firstName("Admin")
                     .lastLogin(Instant.now())
                     .lastName("Administrator")
-                    .loginTimes(0)
                     .password(passwordEncoder.encode(password))
                     .realm("default")
                     .username("admin")

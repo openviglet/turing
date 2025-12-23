@@ -21,7 +21,6 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
         globally_quoted_identifiers: true
         format_sql: false
         enable_lazy_load_no_trans: true

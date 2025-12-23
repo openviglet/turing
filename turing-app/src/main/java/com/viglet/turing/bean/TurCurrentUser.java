@@ -23,13 +23,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TurCurrentUser {
-
 	private String username;
-	
 	private String firstName;
-	
 	private String lastName;
-	
 	private boolean admin;
-
+	private String email;
 }

@@ -99,6 +99,7 @@ public class TurUserAPI {
     private TurCurrentUser regularUser(String currentUserName) {
         boolean isAdmin = false;
         TurUser turUser = turUserRepository.findByUsername(currentUserName);
+
         turUser.setPassword(null);
         if (turUser.getTurGroups() != null) {
             for (TurGroup turGroup : turUser.getTurGroups()) {
@@ -113,6 +114,7 @@ public class TurUserAPI {
         turCurrentUser.setFirstName(turUser.getFirstName());
         turCurrentUser.setLastName(turUser.getLastName());
         turCurrentUser.setAdmin(isAdmin);
+        turCurrentUser.setEmail(turUser.getEmail());
         return turCurrentUser;
     }
 

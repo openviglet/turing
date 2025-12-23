@@ -26,7 +26,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -53,11 +52,7 @@ public class TurUser implements Serializable {
 
 	@Setter
 	@Id
-	@Column(name = "username")
 	private String username;
-
-	@Setter
-	private String confirmEmail;
 
 	@Setter
 	private String email;
@@ -72,19 +67,10 @@ public class TurUser implements Serializable {
 	private String lastName;
 
 	@Setter
-	private String lastPostType;
-
-	@Setter
-	private int loginTimes;
-
-	@Setter
 	private String password;
 
 	@Setter
 	private String realm;
-
-	@Setter
-	private String recoverPassword;
 
 	@Setter
 	private int enabled;

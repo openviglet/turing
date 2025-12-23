@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import type { TurUser } from "@/models/auth/user"
+import { MD5 } from "crypto-js"
 import React from "react"
 import { NavLink } from "react-router-dom"
 
@@ -55,6 +56,16 @@ export function NavUser({
       .slice(0, 2)
       .join('');
   }, [user]);
+
+  const gravatarUrl = React.useMemo(() => {
+    if (!user || !user.email) return '';
+
+
+    const cleanEmail = user.email.trim().toLowerCase();
+    const hash = MD5(cleanEmail).toString();
+
+    return `https://www.gravatar.com/avatar/${hash}?d=404`;
+  }, [user]);
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -64,8 +75,8 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src='/avatars/shadcn.jpg' alt={user.username} />
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={gravatarUrl} alt={user.username} />
                 <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -86,7 +97,7 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src='/avatars/shadcn.jpg' alt={user.username} />
+                  <AvatarImage src={gravatarUrl} alt={user.username} />
                   <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
