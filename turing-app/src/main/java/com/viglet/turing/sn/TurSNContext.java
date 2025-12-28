@@ -29,6 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class TurSNContext {
 	@GetMapping(value = { "/sn/{ignoredSiteName:[^\\.]*}", "/sn/{ignoredSiteName:[^\\.]*}/" })
 	public String sn(@PathVariable String ignoredSiteName) {
-		return "sn/templates/browser/index";
+		return "sn/templates/search";
 	}
 }

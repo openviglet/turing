@@ -18,7 +18,7 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(true);
   const turSiteName = siteName || "Sample"; // Get from URL params or use default
   const navigate = useNavigate();
-  const fixedSiteName = "insper-prod-publish";
+  const fixedSiteName = "Sample";
   const sortOptions: Record<string, string> = {
     relevance: "Relevance",
     newest: "Newest",

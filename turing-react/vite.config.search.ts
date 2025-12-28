@@ -6,11 +6,12 @@ import { defineConfig } from "vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  base: "/sn/templates/",
   root: path.resolve(__dirname),
   build: {
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
-      input: path.resolve(__dirname, 'search.html'),
+      input: path.resolve(__dirname, "search.html"),
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
@@ -27,6 +28,6 @@ export default defineConfig({
     },
   },
   server: {
-    open: '/search.html'
-  }
+    open: "/search.html",
+  },
 });

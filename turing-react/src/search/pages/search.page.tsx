@@ -18,7 +18,6 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(true);
   const turSiteName = siteName || "Sample"; // Get from URL params or use default
   const navigate = useNavigate();
-  const fixedSiteName = "Sample";
   const sortOptions: Record<string, string> = {
     relevance: "Relevance",
     newest: "Newest",
@@ -42,7 +41,7 @@ export default function SearchPage() {
 
       const [searchResult, chatResult] = await Promise.all([
 
-        TurSNSearchService.query(fixedSiteName, q, p, _setlocale, sort, fq, tr, nfpr),
+        TurSNSearchService.query(turSiteName, q, p, _setlocale, sort, fq, tr, nfpr),
         q !== "*" ? TurSNSearchService.chat(turSiteName, q, _setlocale) : Promise.resolve(null),
       ]);
 

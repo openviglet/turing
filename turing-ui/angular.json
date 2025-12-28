@@ -25,10 +25,17 @@
           "options": {
             "stylePreprocessorOptions": {
               "sass": {
-                "silenceDeprecations": ["mixed-decls", "color-functions", "global-builtin", "import"]
+                "silenceDeprecations": [
+                  "mixed-decls",
+                  "color-functions",
+                  "global-builtin",
+                  "import"
+                ]
               }
             },
-            "allowedCommonJsDependencies": ["@primer/octicons"],
+            "allowedCommonJsDependencies": [
+              "@primer/octicons"
+            ],
             "baseHref": "/console/",
             "outputPath": {
               "base": "../turing-app/src/main/resources/public/console"
@@ -110,109 +117,9 @@
               "projects/console/src/favicon.ico",
               "projects/console/src/assets"
             ],
-            "styles": ["projects/console/src/styles.scss"],
-            "scripts": []
-          }
-        }
-      }
-    },
-    "sn": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
-        }
-      },
-      "root": "projects/sn",
-      "sourceRoot": "projects/sn/src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular/build:application",
-          "options": {
-            "stylePreprocessorOptions": {
-              "sass": {
-                "silenceDeprecations": ["mixed-decls", "color-functions", "global-builtin", "import"]
-              }
-            },
-            "allowedCommonJsDependencies": ["@primer/octicons"],
-            "baseHref": "/sn/templates/",
-            "outputPath": {
-              "base": "../turing-app/src/main/resources/public/sn/templates"
-            },
-            "index": "projects/sn/src/index.html",
-            "polyfills": [
-              "projects/sn/src/polyfills.ts"
+            "styles": [
+              "projects/console/src/styles.scss"
             ],
-            "tsConfig": "projects/sn/tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": ["projects/sn/src/favicon.ico", "projects/sn/src/assets"],
-            "styles": ["projects/sn/src/styles.scss"],
-            "scripts": [],
-            "browser": "projects/sn/src/main.ts"
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "10mb",
-                  "maximumError": "10mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "10mb",
-                  "maximumError": "10mb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "/environments/environment.ts",
-                  "with": "/environments/environment.prod.ts"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular/build:dev-server",
-          "configurations": {
-            "production": {
-              "buildTarget": "sn:build:production"
-            },
-            "development": {
-              "buildTarget": "sn:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular/build:extract-i18n",
-          "options": {
-            "buildTarget": "sn:build"
-          }
-        },
-        "test": {
-          "builder": "@angular/build:karma",
-          "options": {
-            "main": "projects/sn/src/test.ts",
-            "polyfills": "projects/sn/src/polyfills.ts",
-            "tsConfig": "projects/sn/tsconfig.spec.json",
-            "karmaConfig": "projects/sn/karma.conf.js",
-            "inlineStyleLanguage": "scss",
-            "assets": ["projects/sn/src/favicon.ico", "projects/sn/src/assets"],
-            "styles": ["projects/sn/src/styles.scss"],
             "scripts": []
           }
         }
@@ -237,10 +144,17 @@
           "options": {
             "stylePreprocessorOptions": {
               "sass": {
-                "silenceDeprecations": ["mixed-decls", "color-functions", "global-builtin", "import"]
+                "silenceDeprecations": [
+                  "mixed-decls",
+                  "color-functions",
+                  "global-builtin",
+                  "import"
+                ]
               }
             },
-            "allowedCommonJsDependencies": ["@primer/octicons"],
+            "allowedCommonJsDependencies": [
+              "@primer/octicons"
+            ],
             "baseHref": "/welcome/",
             "outputPath": {
               "base": "../turing-app/src/main/resources/public/welcome"
@@ -255,7 +169,9 @@
               "projects/welcome/src/favicon.ico",
               "projects/welcome/src/assets"
             ],
-            "styles": ["projects/welcome/src/styles.scss"],
+            "styles": [
+              "projects/welcome/src/styles.scss"
+            ],
             "scripts": [],
             "browser": "projects/welcome/src/main.ts"
           },
@@ -320,7 +236,9 @@
               "projects/welcome/src/favicon.ico",
               "projects/welcome/src/assets"
             ],
-            "styles": ["projects/welcome/src/styles.scss"],
+            "styles": [
+              "projects/welcome/src/styles.scss"
+            ],
             "scripts": []
           }
         }
