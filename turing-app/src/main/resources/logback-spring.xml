@@ -1,29 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="CONSOLE"
-              class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
             <Pattern>
                 %msg%n
             </Pattern>
-        </layout>
+        </encoder>
     </appender>
-    <logger name="com.viglet.turing.TuringES" level="info"
-            additivity="false">
+    <logger name="com.viglet.turing.TuringES" level="info" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.viglet.turing.onstartup"
-            level="info" additivity="false">
+    <logger name="com.viglet.turing.onstartup" level="info" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.viglet.turing.commons.logging.TurLoggingIndexingLog" level="OFF" />
     <logger name="com.hazelcast.internal.diagnostics.HealthMonitor" level="OFF" />
-    <include
-            resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <property name="LOG_FILE"
-              value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
-    <include
-            resource="org/springframework/boot/logging/logback/file-appender.xml"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
     <root level="INFO">
         <appender-ref ref="FILE"/>
     </root>
