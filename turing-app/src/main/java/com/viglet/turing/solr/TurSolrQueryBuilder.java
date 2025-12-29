@@ -545,19 +545,7 @@ public class TurSolrQueryBuilder {
 
     @NotNull
     public static String getFacetTypeAndFacetItemTypeValues(TurSNFacetTypeContext context) {
-        return getFacetTypeValue(context) + HYPHEN + getFacetItemTypeValue(context);
-    }
-
-    private static String getFacetTypeValue(TurSNFacetTypeContext context) {
-        TurSNSiteFacetFieldEnum facetType = getFacetType(context);
-        return facetType != null ? facetType.toString()
-                : getFacetTypeFromSite(context.getTurSNSite()).toString();
-    }
-
-    private static String getFacetItemTypeValue(TurSNFacetTypeContext context) {
-        TurSNSiteFacetFieldEnum facetItemType = getFacetItemType(context);
-        return facetItemType != null ? facetItemType.toString()
-                : getFacetItemTypeFromSite(context.getTurSNSite()).toString();
+        return getFacetType(context).toString() + HYPHEN +  getFacetItemType(context).toString();
     }
 
     public List<String> getFacetFieldsInFilterQuery(TurSNFacetTypeContext context) {
