@@ -1,7 +1,7 @@
 {
   "name": "turing-react",
   "private": true,
-  "version": "2025.4",
+  "version": "2026.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
