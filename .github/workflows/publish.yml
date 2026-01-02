@@ -92,8 +92,6 @@ jobs:
           echo "TAG_NAME=${TAG_NAME}"
           gh release create ${TAG_NAME} --generate-notes
           gh release upload ${TAG_NAME} turing-app/target/viglet-turing.jar --clobber
-          gh release upload ${TAG_NAME} turing-java-sdk/target/turing-java-sdk.jar --clobber
-          gh release upload ${TAG_NAME} turing-commons/target/turing-commons.jar --clobber
           gh release upload ${TAG_NAME} turing-utils/target/turing-utils.zip --clobber
       - name: Deploy JavaDoc 🚀
         uses: MathieuSoysal/Javadoc-publisher.yml@v3.0.2
