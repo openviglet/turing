@@ -68,7 +68,6 @@ public class TurSecurityConfigProduction {
     private String turingUrl;
     PathPatternRequestMatcher.Builder mvc = PathPatternRequestMatcher.withDefaults();
 
-    @Autowired
     public TurSecurityConfigProduction(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
