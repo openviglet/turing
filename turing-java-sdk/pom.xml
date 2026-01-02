@@ -9,6 +9,7 @@
         <version>2026.1.6</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+    <groupId>com.viglet.turing</groupId>
     <artifactId>turing-java-sdk</artifactId>
     <packaging>jar</packaging>
     <name>Turing Java SDK</name>
