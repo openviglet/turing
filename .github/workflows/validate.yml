@@ -21,10 +21,10 @@ jobs:
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Use Node.js 18.10.0
+      - name: Use Node.js 24.12.0
         uses: actions/setup-node@v5
         with:
-          node-version: 18.10.0
+          node-version: 24.12.0
       - name: Install Angular Cli
         run: npm i -g @angular/cli
 
