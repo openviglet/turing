@@ -63,7 +63,7 @@ export const columns: ColumnDef<TurLoggingGeneral>[] = [
 ];
 
 
-export const GridLogging: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) => {
+export const LoggingGrid: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) => {
     const [pagination, setPagination] = useState({
         pageIndex: 0, // initial page index
         pageSize: 100, // default page size

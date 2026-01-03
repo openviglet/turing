@@ -1,18 +1,24 @@
-import { GridLogging } from "@/components/grid.logging";
-import type { TurLoggingGeneral } from "@/models/logging/logging-general.model";
-import { TurLoggingInstanceService } from "@/services/logging/logging.service";
-import { useEffect, useState } from "react";
+import { GridList } from "@/components/grid.list";
 
-const turLoggingInstanceService = new TurLoggingInstanceService();
-
+const gridItemList = [{
+  id: "1",
+  name: "Server",
+  description: "Logging server instance",
+  url: "/admin/logging/instance/server",
+}, {
+  id: "2",
+  name: "Indexing",
+  description: "Indexing service instance",
+  url: "/admin/logging/instance/indexing",
+}, {
+  id: "2",
+  name: "AEM",
+  description: "AEM service instance",
+  url: "/admin/logging/instance/aem",
+}];
 export default function LoggingInstanceListPage() {
-  const [loggingInstances, setLoggingInstances] = useState<TurLoggingGeneral[]>();
 
-  useEffect(() => {
-    turLoggingInstanceService.query().then(setLoggingInstances)
-  }, [])
-
-  return (
-    <GridLogging gridItemList={loggingInstances || []} />
-  )
+  return <GridList gridItemList={gridItemList} />
 }
+
+
