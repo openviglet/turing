@@ -15,34 +15,34 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.viglet.turing.connector.filesystem.commons;
+package com.viglet.turing.api.ocr;
 
 import java.io.File;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.tika.metadata.Metadata;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
-*
-* @author Alexandre Oliveira
-* 
-* @since 0.3.0
-*
-**/
+ *
+ * @author Alexandre Oliveira
+ * 
+ * @since 0.3.0
+ *
+ **/
 @Setter
 @Getter
 public class TurTikaFileAttributes {
 	private File file;
-	private String content;	
+	private String content;
 	private Metadata metadata;
-	
+
 	public TurTikaFileAttributes(File file, String content, Metadata metadata) {
 		super();
 		this.file = file;
 		this.content = content;
 		this.metadata = metadata;
 	}
-
 
 }

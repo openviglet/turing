@@ -18,14 +18,21 @@
 
 package com.viglet.turing.api.ocr;
 
-import com.viglet.turing.commons.file.TurFileAttributes;
-import com.viglet.turing.connector.filesystem.commons.TurFileUtils;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import java.net.MalformedURLException;
 import java.net.URI;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.viglet.turing.commons.file.TurFileAttributes;
+import com.viglet.turing.utils.TurFileUtils;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Alexandre Oliveira
@@ -39,15 +46,14 @@ public class TurOcrAPI {
 
     @PostMapping("/file")
     public TurFileAttributes fileToText(@RequestParam("file") MultipartFile multipartFile) {
-       return TurFileUtils.documentToText(multipartFile);
+        return TurFileUtils.documentToText(multipartFile);
     }
 
     @PostMapping("/url")
     public TurFileAttributes urlToText(@RequestBody TurOcrFromUrl turOcrFromUrl) {
         try {
             return TurFileUtils.urlContentToText(URI.create(turOcrFromUrl.getUrl()).toURL());
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             log.error(e.getMessage(), e);
         }
         return new TurFileAttributes();

@@ -27,12 +27,9 @@ public class TurMongoDBAppenderBase extends AppenderBase<ILoggingEvent> {
     @Override
     public void start() {
         super.start();
-        try (var mongoClient = MongoClients.create(connectionString)) {
-            collection = mongoClient
-                    .getDatabase(databaseName)
-                    .getCollection(collectionName);
-        } catch (Exception e) {
-            addError("Error connecting to MongoDB", e);
-        }
+        var mongoClient = MongoClients.create(connectionString);
+        collection = mongoClient
+                .getDatabase(databaseName)
+                .getCollection(collectionName);
     }
 }
