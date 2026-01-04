@@ -393,7 +393,7 @@ Proposed implementation timeline
 - `#contributors`: For active contributors
 - `#off-topic`: Non-Turing chat
 
-**Join**: [Create Discord server link]
+**Join**: Discord server will be created in Phase 1 - link to be added
 
 ### 4. Mailing List (Proposed)
 **Purpose**: Important announcements, RFCs

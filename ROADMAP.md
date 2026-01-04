@@ -49,7 +49,7 @@ Meeting production requirements for large organizations
 **Effort**: 2-3 weeks
 
 ### 1.2 Code Quality Improvements
-- [ ] Increase test coverage from current to 70%+
+- [ ] Increase test coverage to 70%+ (establish baseline first)
   - Add unit tests for service layers
   - Add integration tests for APIs
   - Add end-to-end tests for critical workflows

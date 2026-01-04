@@ -219,12 +219,28 @@ public class CMSConnectorFactory implements IntegrationConnectorFactory {
     
     @Override
     public IntegrationConnector createConnector(TurIntegrationType type) {
+        // Example implementation - actual connector classes need to be created
         return switch(type) {
-            case AEM -> new AEMConnector();
-            case WORDPRESS -> new WordPressConnector();
-            case DRUPAL -> new DrupalConnector();
+            case AEM -> createAEMConnector();
+            case WORDPRESS -> createWordPressConnector();
+            case DRUPAL -> createDrupalConnector();
             default -> throw new UnsupportedConnectorException(type);
         };
+    }
+    
+    private IntegrationConnector createAEMConnector() {
+        // Implementation for AEM connector
+        throw new UnsupportedOperationException("AEM connector not yet implemented");
+    }
+    
+    private IntegrationConnector createWordPressConnector() {
+        // Implementation for WordPress connector
+        throw new UnsupportedOperationException("WordPress connector not yet implemented");
+    }
+    
+    private IntegrationConnector createDrupalConnector() {
+        // Implementation for Drupal connector
+        throw new UnsupportedOperationException("Drupal connector not yet implemented");
     }
     
     @Override

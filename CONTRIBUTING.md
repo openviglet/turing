@@ -252,7 +252,7 @@ Before writing code, please review:
 
 - **GitHub Issues**: Bug reports and feature requests
 - **GitHub Discussions**: Questions and general discussion
-- **Discord** (coming soon): Real-time chat
+- **Discord** (planned for Q1 2026): Real-time chat
 - **Email**: opensource@viglet.com
 
 ### Code of Conduct
