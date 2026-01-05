@@ -52,7 +52,6 @@ com.viglet.turing.commons.sn.field
 com.viglet.turing.commons.sn.pagination
 com.viglet.turing.commons.sn.search
 com.viglet.turing.commons.utils
-com.viglet.turing.connector.filesystem.commons
 com.viglet.turing.elasticsearch
 com.viglet.turing.exchange
 com.viglet.turing.exchange.sn
