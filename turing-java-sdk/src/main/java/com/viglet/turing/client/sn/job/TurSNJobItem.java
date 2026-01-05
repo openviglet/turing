@@ -16,16 +16,20 @@
 
 package com.viglet.turing.client.sn.job;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.SOURCE_APPS;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
-import static com.viglet.turing.commons.sn.field.TurSNFieldName.SOURCE_APPS;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Job to index and deIndex in Turing ES.
@@ -37,17 +41,19 @@ import static com.viglet.turing.commons.sn.field.TurSNFieldName.SOURCE_APPS;
 @Getter
 @Setter
 @ToString
-public class TurSNJobItem implements Serializable{
+public class TurSNJobItem implements Serializable {
 
 	@Serial
-    private static final long serialVersionUID = 1L;
-    private Locale locale;
+	private static final long serialVersionUID = 1L;
+	private Locale locale;
 	private TurSNJobAction turSNJobAction;
 	private List<String> siteNames;
-    private List<TurSNJobAttributeSpec> specs = new ArrayList<>();
-    private transient Map<String, Object> attributes = new HashMap<>();
+	private List<TurSNJobAttributeSpec> specs = new ArrayList<>();
+	@SuppressWarnings("java:S1948")
+	private Map<String, Object> attributes = new HashMap<>();
 	private String checksum;
 	private String environment;
+
 	public TurSNJobItem() {
 		super();
 	}
@@ -55,11 +61,13 @@ public class TurSNJobItem implements Serializable{
 	public Object getAttribute(String attributeName) {
 		return attributes.get(attributeName);
 	}
+
 	public String getStringAttribute(String attributeName) {
 		if (attributes.get(attributeName) == null)
 			return null;
 		return attributes.get(attributeName).toString();
 	}
+
 	public boolean containsAttribute(String attributeName) {
 		return attributes.containsKey(attributeName);
 	}
@@ -73,30 +81,30 @@ public class TurSNJobItem implements Serializable{
 		this.checksum = null;
 	}
 
-	public TurSNJobItem(TurSNJobAction turSNJobAction,  List<String> siteNames, Locale locale) {
+	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames, Locale locale) {
 		this(turSNJobAction, siteNames);
 		this.locale = locale;
 		this.specs = null;
 		this.checksum = null;
 	}
 
-	public TurSNJobItem(TurSNJobAction turSNJobAction,  List<String> siteNames, Locale locale,
-						Map<String, Object> attributes) {
+	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames, Locale locale,
+			Map<String, Object> attributes) {
 		this(turSNJobAction, siteNames, locale);
 		this.attributes = attributes;
 		this.specs = null;
 		this.checksum = null;
 	}
 
-	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames,  Locale locale,
-						Map<String, Object> attributes, List<TurSNJobAttributeSpec> specs) {
+	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames, Locale locale,
+			Map<String, Object> attributes, List<TurSNJobAttributeSpec> specs) {
 		this(turSNJobAction, siteNames, locale, attributes);
 		this.specs = specs;
 		this.checksum = null;
 	}
 
-	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames,  Locale locale,
-						Map<String, Object> attributes, List<TurSNJobAttributeSpec> specs, String checksum) {
+	public TurSNJobItem(TurSNJobAction turSNJobAction, List<String> siteNames, Locale locale,
+			Map<String, Object> attributes, List<TurSNJobAttributeSpec> specs, String checksum) {
 		this(turSNJobAction, siteNames, locale, attributes, specs);
 		this.checksum = checksum;
 	}
