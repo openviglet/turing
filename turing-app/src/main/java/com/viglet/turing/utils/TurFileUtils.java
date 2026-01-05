@@ -14,7 +14,7 @@
  * not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.connector.filesystem.commons;
+package com.viglet.turing.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.exception.TikaException;
@@ -48,17 +49,22 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
+import com.viglet.turing.api.ocr.TurTikaFileAttributes;
 import com.viglet.turing.commons.file.TurFileAttributes;
 import com.viglet.turing.commons.file.TurFileSize;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurFileUtils {
 
     /**
-     * Checks if the provided URL is allowed to be accessed from the server (SSRF protection).
-     * Prevents requests to localhost, private, and reserved address ranges. Customize
+     * Checks if the provided URL is allowed to be accessed from the server (SSRF
+     * protection).
+     * Prevents requests to localhost, private, and reserved address ranges.
+     * Customize
      * ALLOWED_DOMAINS or additional logic as needed.
      */
     private static final Set<String> ALLOWED_DOMAINS = Set.of(
@@ -307,6 +313,5 @@ public class TurFileUtils {
         return File.createTempFile(UUID.randomUUID().toString(), null,
                 TurCommonsUtils.addSubDirToStoreDir(TMP));
     }
-
 
 }

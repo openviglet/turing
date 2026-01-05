@@ -38,19 +38,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.api.ocr.TurTikaFileAttributes;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.connector.filesystem.commons.TurFileUtils;
-import com.viglet.turing.connector.filesystem.commons.TurTikaFileAttributes;
 import com.viglet.turing.genai.TurGenAi;
 import com.viglet.turing.logging.TurLoggingUtils;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.spring.utils.TurSpringUtils;
+import com.viglet.turing.utils.TurFileUtils;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

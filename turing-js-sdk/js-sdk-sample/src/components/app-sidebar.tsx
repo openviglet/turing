@@ -28,11 +28,6 @@ import {
 import { NavLink } from "react-router-dom"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Search Engine",

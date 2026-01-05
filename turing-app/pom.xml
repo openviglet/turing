@@ -82,6 +82,10 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate7</artifactId>
             <version>2.20.1</version>
@@ -115,17 +119,6 @@
         <dependency>
             <groupId>com.viglet.turing</groupId>
             <artifactId>turing-java-sdk</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.viglet.turing</groupId>
-            <artifactId>fs-commons</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
@@ -259,7 +252,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.squins.google.fork.schema-org-client</groupId>

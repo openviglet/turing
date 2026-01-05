@@ -10,8 +10,10 @@ import IntegrationInstanceSourcePage from "./app/console/integration/integration
 import LLMInstanceListPage from "./app/console/llm/llm.instance.list.page"
 import LLMInstancePage from "./app/console/llm/llm.instance.page"
 import LLMInstanceRootPage from "./app/console/llm/llm.instance.root.page"
+import LoggingAemPage from "./app/console/logging/instance/logging.aem.page"
+import LoggingIndexingPage from "./app/console/logging/instance/logging.indexing.page"
+import LoggingServerPage from "./app/console/logging/instance/logging.server.page"
 import LoggingInstanceListPage from "./app/console/logging/logging.instance.list.page"
-import LoggingInstancePage from "./app/console/logging/logging.instance.page"
 import LoggingInstanceRootPage from "./app/console/logging/logging.instance.root.page"
 import SEInstanceListPage from "./app/console/se/se.instance.list.page"
 import SEInstancePage from "./app/console/se/se.instance.page"
@@ -123,7 +125,9 @@ function App() {
             <Route path={ROUTES.LOGGING_ROOT} element={<LoggingInstanceRootPage />} >
               <Route index element={<Navigate to={ROUTES.LOGGING_INSTANCE} replace />} />
               <Route path={ROUTES.LOGGING_INSTANCE} element={<LoggingInstanceListPage />} />
-              <Route path={`${ROUTES.LOGGING_INSTANCE}/:id`} element={<LoggingInstancePage />} />
+              <Route path={`${ROUTES.LOGGING_INSTANCE}/server`} element={<LoggingServerPage />} />
+              <Route path={`${ROUTES.LOGGING_INSTANCE}/aem`} element={<LoggingAemPage />} />
+              <Route path={`${ROUTES.LOGGING_INSTANCE}/indexing`} element={<LoggingIndexingPage />} />
             </Route>
           </Route>
         </Routes>

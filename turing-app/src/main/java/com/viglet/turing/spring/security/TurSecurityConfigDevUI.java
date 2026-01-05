@@ -21,10 +21,8 @@
 
 package com.viglet.turing.spring.security;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.spring.security.auth.TurAuthTokenHeaderFilter;
-import com.viglet.turing.spring.security.auth.TurLogoutHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher.withDefaults;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +37,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
-import static org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher.withDefaults;
+import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.spring.security.auth.TurAuthTokenHeaderFilter;
+import com.viglet.turing.spring.security.auth.TurLogoutHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -47,18 +47,17 @@ import static org.springframework.security.web.servlet.util.matcher.PathPatternR
 @ComponentScan(basePackageClasses = TurCustomUserDetailsService.class)
 public class TurSecurityConfigDevUI extends TurSecurityConfigProduction {
 
-    @Autowired
-    public TurSecurityConfigDevUI(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        super(userDetailsService, passwordEncoder);
-    }
+	public TurSecurityConfigDevUI(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+		super(userDetailsService, passwordEncoder);
+	}
 
-    @Override
+	@Override
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http,
-										   TurAuthTokenHeaderFilter turAuthTokenHeaderFilter,
-										   TurLogoutHandler turLogoutHandler,
-										   TurConfigProperties turConfigProperties,
-										   TurAuthenticationEntryPoint turAuthenticationEntryPoint) throws Exception {
+			TurAuthTokenHeaderFilter turAuthTokenHeaderFilter,
+			TurLogoutHandler turLogoutHandler,
+			TurConfigProperties turConfigProperties,
+			TurAuthenticationEntryPoint turAuthenticationEntryPoint) throws Exception {
 		PathPatternRequestMatcher.Builder mvc = withDefaults();
 		http.headers(header -> header.frameOptions(
 				frameOptions -> frameOptions.disable().cacheControl(HeadersConfigurer.CacheControlConfig::disable)));

@@ -1,32 +1,18 @@
+import type { TurLoggingGeneral } from "@/models/logging/logging-general.model";
+import type { TurLoggingIndexing } from "@/models/logging/logging-indexing.model";
 import axios from "axios";
-import type { TurLoggingInstance } from "@/models/logging/logging-instance.model.ts";
 
 export class TurLoggingInstanceService {
-  async query(): Promise<TurLoggingInstance[]> {
-    const response = await axios.get<TurLoggingInstance[]>("/logging");
+  async server(): Promise<TurLoggingGeneral[]> {
+    const response = await axios.get<TurLoggingGeneral[]>("/logging");
     return response.data;
   }
-  async get(id: string): Promise<TurLoggingInstance> {
-    const response = await axios.get<TurLoggingInstance>(`/logging/${id}`);
+  async aem(): Promise<TurLoggingGeneral[]> {
+    const response = await axios.get<TurLoggingGeneral[]>("/logging/aem");
     return response.data;
   }
-  async create(turLoggingInstance: TurLoggingInstance): Promise<TurLoggingInstance> {
-    const response = await axios.post<TurLoggingInstance>("/logging",
-      turLoggingInstance
-    );
+  async indexing(): Promise<TurLoggingIndexing[]> {
+    const response = await axios.get<TurLoggingIndexing[]>("/logging/indexing");
     return response.data;
-  }
-  async update(turLoggingInstance: TurLoggingInstance): Promise<TurLoggingInstance> {
-    const response = await axios.put<TurLoggingInstance>(
-      `/logging/${turLoggingInstance.id.toString()}`,
-      turLoggingInstance
-    );
-    return response.data;
-  }
-  async delete(turLoggingInstance: TurLoggingInstance): Promise<boolean> {
-    const response = await axios.delete<TurLoggingInstance>(
-      `/logging/${turLoggingInstance.id.toString()}`
-    );
-    return  response.status == 200;
   }
 }

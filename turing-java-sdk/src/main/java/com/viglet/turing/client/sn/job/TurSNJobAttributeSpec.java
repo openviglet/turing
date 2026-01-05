@@ -1,12 +1,16 @@
 package com.viglet.turing.client.sn.job;
 
-import com.viglet.turing.commons.se.field.TurSEFieldType;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
+
+import com.viglet.turing.commons.se.field.TurSEFieldType;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -22,7 +26,8 @@ public class TurSNJobAttributeSpec implements Serializable {
     protected boolean multiValued;
     protected String description;
     protected boolean facet;
-    protected  transient Map<String, String> facetName;
+    @SuppressWarnings("java:S1948")
+    protected Map<String, String> facetName;
 
     @Override
     public String toString() {
