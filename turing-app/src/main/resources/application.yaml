@@ -139,12 +139,16 @@ management:
 logging:
   config: classpath:logback-spring.xml
   level:
-    org.springframework: INFO
-    com.viglet: INFO
-    org.apache: INFO
-    org.apache.activemq: ERROR
-    dev.langchain4j: INFO
-    dev.ai4j.openai4j: INFO
+    org:
+      springframework: INFO
+      apache: INFO
+      "[apache.activemq]": ERROR
+    com:
+      viglet: INFO
+    dev:
+      langchain4j: INFO
+      ai4j:
+        openai4j: INFO
   file:
     name: store/logs/turing.log
   logback:

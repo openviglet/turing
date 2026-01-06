@@ -4,10 +4,12 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-   "compilerOptions": {
-    "baseUrl": ".",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "strict": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

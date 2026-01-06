@@ -2,6 +2,10 @@
   "name": "turing-ui",
   "version": "2026.1",
   "scripts": {
+    "check-node": "node check-node.cjs",
+    "prestart": "npm run check-node",
+    "precompile": "npm run check-node",
+    "preng": "npm run check-node",
     "ng": "ng",
     "start": "ng serve",
     "compile": "npm install && ng build welcome && ng build console",

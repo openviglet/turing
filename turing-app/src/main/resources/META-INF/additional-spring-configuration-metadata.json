@@ -1,37 +1,94 @@
-{"properties": [
-  {
-    "name": "turing.allowedOrigins",
-    "type": "java.lang.String",
-    "description": "A description for 'turing.allowedOrigins'."
-  },
-  {
-    "name": "turing.solr.timeout",
-    "type": "java.lang.Integer",
-    "description": "A description for 'turing.solr.timeout'."
-  },
-  {
-    "name": "turing.solr.cloud",
-    "type": "java.lang.Boolean",
-    "description": "A description for 'turing.solr.cloud'."
-  },
-  {
-    "name": "turing.multi-tenant",
-    "type": "java.lang.Boolean",
-    "description": "A description for 'turing.multi-tenant'."
-  },
-  {
-    "name": "turing.keycloak",
-    "type": "java.lang.Boolean",
-    "description": "A description for 'turing.keycloak'."
-  },
-  {
-    "name": "turing.openai.key",
-    "type": "java.lang.String",
-    "description": "A description for 'turing.openai.key'."
-  },
-  {
-    "name": "turing.ai.enabled",
-    "type": "java.lang.Boolean",
-    "description": "turing.ai.enabled."
-  }
-]}
+{
+  "properties": [
+    {
+      "name": "turing.ai.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable AI features including generative AI and semantic search capabilities."
+    },
+    {
+      "name": "turing.allowedOrigins",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed CORS origins for cross-origin requests."
+    },
+    {
+      "name": "turing.elasticsearch.timeout",
+      "type": "java.lang.Integer",
+      "description": "Connection timeout in milliseconds for Elasticsearch operations."
+    },
+    {
+      "name": "turing.keycloak",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable Keycloak integration for authentication and authorization."
+    },
+    {
+      "name": "turing.mongodb.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable MongoDB integration for data persistence."
+    },
+    {
+      "name": "turing.mongodb.logging.database",
+      "type": "java.lang.String",
+      "description": "MongoDB database name used for storing application logs."
+    },
+    {
+      "name": "turing.mongodb.uri",
+      "type": "java.lang.String",
+      "description": "MongoDB connection URI string (e.g., mongodb://localhost:27017)."
+    },
+    {
+      "name": "turing.multi-tenant",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable multi-tenant mode for supporting multiple isolated tenants."
+    },
+    {
+      "name": "turing.open-browser",
+      "type": "java.lang.Boolean",
+      "description": "Automatically open the default web browser on application startup."
+    },
+    {
+      "name": "turing.openai.key",
+      "type": "java.lang.String",
+      "description": "OpenAI API key for accessing generative AI and LLM services."
+    },
+    {
+      "name": "turing.search.cache.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable caching for search query results."
+    },
+    {
+      "name": "turing.search.cache.ttl.seconds",
+      "type": "java.lang.Integer",
+      "description": "Time-to-live in seconds for cached search results before expiration."
+    },
+    {
+      "name": "turing.search.engine.type",
+      "type": "java.lang.String",
+      "description": "Search engine type to use (e.g., 'solr', 'elasticsearch')."
+    },
+    {
+      "name": "turing.search.metrics.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable collection of search performance metrics."
+    },
+    {
+      "name": "turing.solr.cloud",
+      "type": "java.lang.Boolean",
+      "description": "Enable SolrCloud mode for distributed search across multiple nodes."
+    },
+    {
+      "name": "turing.solr.commit.within",
+      "type": "java.lang.Integer",
+      "description": "Maximum time in milliseconds before a soft commit is triggered in Solr."
+    },
+    {
+      "name": "turing.solr.timeout",
+      "type": "java.lang.Integer",
+      "description": "Connection timeout in milliseconds for Solr operations."
+    },
+    {
+      "name": "turing.url",
+      "type": "java.lang.String",
+      "description": "Base URL of the Turing application (e.g., http://localhost:2700)."
+    }
+  ]
+}
