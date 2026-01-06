@@ -36,32 +36,46 @@ export const columns: ColumnDef<TurLoggingGeneral>[] = [
     {
         accessorKey: "date",
         header: "Date",
-        cell: ({ row }) => <div>{
-            (new Date(row.getValue("date") as string)).toLocaleString(window.navigator.language)
+        cell: ({ row }) => <div className="font-mono text-sm">{
+            (new Date(row.getValue("date") as string)).toLocaleString(window.navigator.language, {
+                day: '2-digit',
+                month: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).replace(',', '')
         }</div>,
     },
     {
         accessorKey: "clusterNode",
-        header: "Cluster Node",
-        cell: ({ row }) => <div>{row.getValue("clusterNode")}</div>,
+        header: "Node",
+        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("clusterNode")}</div>,
     },
     {
         accessorKey: "level",
         header: "Level",
-        cell: ({ row }) => <div>{row.getValue("level")}</div>,
+        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("level")}</div>,
     },
     {
         accessorKey: "logger",
         header: "Logger",
-        cell: ({ row }) => <div>{row.getValue("logger")}</div>,
+        cell: ({ row }) => <div className="font-mono text-sm">{truncateLogger(row.getValue("logger"), 40)}</div>,
     },
     {
         accessorKey: "message",
         header: "Message",
-        cell: ({ row }) => <div className="max-w-100 wrap-break-word whitespace-normal">{row.getValue("message")}</div>,
+        size: 500,
+        cell: ({ row }) => <div className="font-mono text-sm w-full wrap-break-word whitespace-pre-wrap">{row.getValue("message")}</div>,
     }
 ];
+function truncateLogger(str: string, limite: number): string {
+    if (str.length <= limite) {
+        return str;
+    }
 
+    // Cortamos a string para caber o limite menos o espaço dos pontos (...)
+    return "..." + str.slice(-(limite - 3));
+}
 
 export const LoggingGrid: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) => {
     const [pagination, setPagination] = useState({

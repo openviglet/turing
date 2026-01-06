@@ -34,29 +34,52 @@ export const columns: ColumnDef<TurLoggingIndexing>[] = [
     {
         accessorKey: "date",
         header: "Date",
-        cell: ({ row }) => <div>{
-            (new Date(row.getValue("date") as string)).toLocaleString(window.navigator.language)
+        cell: ({ row }) => <div className="font-mono text-sm">{
+            (new Date(row.getValue("date") as string)).toLocaleString(window.navigator.language, {
+                day: '2-digit',
+                month: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).replace(',', '')
         }</div>,
     },
     {
-        accessorKey: "clusterNode",
-        header: "Cluster Node",
-        cell: ({ row }) => <div>{row.getValue("clusterNode")}</div>,
+        accessorKey: "source",
+        header: "Source",
+        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("source")}</div>,
     },
     {
-        accessorKey: "level",
-        header: "Level",
-        cell: ({ row }) => <div>{row.getValue("level")}</div>,
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("status")}</div>,
     },
     {
-        accessorKey: "logger",
-        header: "Logger",
-        cell: ({ row }) => <div>{row.getValue("logger")}</div>,
+        accessorKey: "resultStatus",
+        header: "Result Status",
+        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("resultStatus")}</div>,
+    }
+    ,
+    {
+        accessorKey: "url",
+        header: "URL",
+        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("url")}</div>,
     },
     {
-        accessorKey: "message",
-        header: "Message",
-        cell: ({ row }) => <div className="max-w-100 wrap-break-word whitespace-normal">{row.getValue("message")}</div>,
+        accessorKey: "environment",
+        header: "Environment",
+        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("environment")}</div>,
+    },
+    {
+        accessorKey: "locale",
+        header: "Locale",
+        cell: ({ row }) => <div>{row.getValue("locale")}</div>,
+    }
+    ,
+    {
+        accessorKey: "sites",
+        header: "Sites",
+        cell: ({ row }) => <div>{row.getValue("sites")}</div>,
     }
 ];
 
