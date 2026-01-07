@@ -116,10 +116,13 @@ function App() {
               <Route path={ROUTES.INTEGRATION_INSTANCE} element={<IntegrationInstanceListPage />} />
               <Route path={`${ROUTES.INTEGRATION_INSTANCE}/:id`} element={<IntegrationInstancePage />} >
                 <Route index element={<RedirectToIntegrationDetail />} />
-                <Route path={`${ROUTES.INTEGRATION_INSTANCE}/:id/detail`} element={<IntegrationInstanceDetailPage />} />
-                <Route path={`${ROUTES.INTEGRATION_INSTANCE}/:id/source`} element={<IntegrationInstanceSourcePage />} />
-                <Route path={`${ROUTES.INTEGRATION_INSTANCE}/:id/indexing-rule`} element={<IntegrationInstanceIndexingRulePage />} />
-                <Route path={`${ROUTES.INTEGRATION_INSTANCE}/:id/monitoring`} element={<IntegrationInstanceMonitoringPage />} />
+                <Route path="detail" element={<IntegrationInstanceDetailPage />} />
+                <Route path="source" element={<IntegrationInstanceSourcePage />} />
+                <Route path="indexing-rule" element={<IntegrationInstanceIndexingRulePage />} />
+                <Route path="monitoring" >
+                  <Route index element={<Navigate to="all" replace />} />
+                  <Route path=":source" element={<IntegrationInstanceMonitoringPage />} />
+                </Route>
               </Route>
             </Route>
             <Route path={ROUTES.LOGGING_ROOT} element={<LoggingInstanceRootPage />} >
