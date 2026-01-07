@@ -294,7 +294,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.23</version>
+                <version>1.5.24</version>
             </dependency>
             <dependency>
                 <groupId>com.viglet.turing</groupId>
@@ -314,7 +314,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.23</version>
+                <version>1.5.24</version>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>
