@@ -6,6 +6,7 @@ import IntegrationInstanceListPage from "./app/console/integration/integration.i
 import IntegrationInstanceMonitoringPage from "./app/console/integration/integration.instance.monitoring.page"
 import IntegrationInstancePage from "./app/console/integration/integration.instance.page"
 import IntegrationInstanceRootPage from "./app/console/integration/integration.instance.root.page"
+import IntegrationInstanceSourceListPage from "./app/console/integration/integration.instance.source.list.page"
 import IntegrationInstanceSourcePage from "./app/console/integration/integration.instance.source.page"
 import LLMInstanceListPage from "./app/console/llm/llm.instance.list.page"
 import LLMInstancePage from "./app/console/llm/llm.instance.page"
@@ -117,7 +118,8 @@ function App() {
               <Route path={`${ROUTES.INTEGRATION_INSTANCE}/:id`} element={<IntegrationInstancePage />} >
                 <Route index element={<RedirectToIntegrationDetail />} />
                 <Route path="detail" element={<IntegrationInstanceDetailPage />} />
-                <Route path="source" element={<IntegrationInstanceSourcePage />} />
+                <Route path="source" element={<IntegrationInstanceSourceListPage />} />
+                <Route path={'source/:sourceId'} element={<IntegrationInstanceSourcePage />} />
                 <Route path="indexing-rule" element={<IntegrationInstanceIndexingRulePage />} />
                 <Route path="monitoring" >
                   <Route index element={<Navigate to="all" replace />} />

@@ -1,0 +1,40 @@
+import { ROUTES } from "@/app/routes.const";
+import { BlankSlate } from "@/components/blank-slate";
+import { GridList } from "@/components/grid.list";
+import { SubPageHeader } from "@/components/sub.page.header";
+import { useGridAdapter } from "@/hooks/use-grid-adapter";
+import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model";
+import { TurIntegrationAemSourceService } from "@/services/integration/integration-aem-source.service";
+import { IconGitCommit } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+export default function IntegrationInstanceSourceListPage() {
+  const { id } = useParams<{ id: string }>();
+  const [integrationAemSources, setIntegrationAemSources] = useState<TurIntegrationAemSource[]>();
+  const turIntegrationAemSourceService = new TurIntegrationAemSourceService(id || "");
+  useEffect(() => {
+    turIntegrationAemSourceService.query().then(setIntegrationAemSources)
+  }, [id])
+  const gridItemList = useGridAdapter(integrationAemSources, {
+    name: "name",
+    description: "endpoint",
+    url: (item) => `${ROUTES.INTEGRATION_INSTANCE}/${id}/source/${item.id}`
+  });
+  return (
+    <>
+
+      {gridItemList.length > 0 ? (<>
+        <SubPageHeader icon={IconGitCommit} title="Sources" description="Available AEM sources for indexing and configuration." />
+        <GridList gridItemList={gridItemList} />
+      </>) : (
+        <BlankSlate
+          icon={IconGitCommit}
+          title="You don’t seem to have any AEM sources."
+          description="Create a new AEM source to index from many AEM external data sources."
+          buttonText="New AEM source"
+          urlNew={`${ROUTES.INTEGRATION_INSTANCE}/new`} />
+      )}
+    </>
+  )
+}

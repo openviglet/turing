@@ -11,11 +11,11 @@ export class TurIntegrationAemSourceService {
   }
 
   private get aemUrl(): string {
-    return `/integration/${this.integrationId}/aem/source`;
+    return `/v2/integration/${this.integrationId}/aem/source`;
   }
 
   private get connectorUrl(): string {
-    return `/integration/${this.integrationId}/connector`;
+    return `/v2/integration/${this.integrationId}/connector`;
   }
 
   setIntegrationId(integrationId: string): this {
@@ -72,9 +72,7 @@ export class TurIntegrationAemSourceService {
   }
 
   async indexAll(source: TurIntegrationAemSource): Promise<void> {
-    await this.axiosInstance.get(
-      `${this.connectorUrl}/${source.id}/indexAll`
-    );
+    await this.axiosInstance.get(`${this.connectorUrl}/${source.id}/indexAll`);
   }
 
   async reindexAll(source: TurIntegrationAemSource): Promise<void> {
