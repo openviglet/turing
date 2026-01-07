@@ -29,20 +29,20 @@ export const SNRoutes = (
         <Route path={ROUTES.SN_INSTANCE} element={<SNSiteListPage />} />
         <Route path={`${ROUTES.SN_INSTANCE}/:id`} element={<SNSitePage />}>
             <Route index element={<RedirectToSNDetail />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/detail`} element={<SNSiteDetailPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/locale`} element={<SNSiteMultiLanguagePage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/field`} element={<SNSiteFieldsPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/behavior`} element={<SNSiteBehaviorPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/facet-ordering`} element={<SNSiteFacetOrderingPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/ai`} element={<SNSiteGenAIPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/result-ranking`} element={<SNSiteResultRankingListPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/merge-providers`} element={<SNSiteMergeProvidersListPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/spotlight`} element={<SNSiteSpotlightListPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/top-terms`} element={<SNSiteTopSearchTermsPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/field/:fieldId`} element={<SNSiteFieldPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/result-ranking/:resultRankingId`} element={<SNSiteResultRankingPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/merge-providers/:mergeProviderId`} element={<SNSiteMergeProvidersPage />} />
-            <Route path={`${ROUTES.SN_INSTANCE}/:id/spotlight/:spotlightId`} element={<SNSiteSpotlightPage />} />
+            <Route path={'detail'} element={<SNSiteDetailPage />} />
+            <Route path={'locale'} element={<SNSiteMultiLanguagePage />} />
+            <Route path={'field'} element={<SNSiteFieldsPage />} />
+            <Route path={'behavior'} element={<SNSiteBehaviorPage />} />
+            <Route path={'facet-ordering'} element={<SNSiteFacetOrderingPage />} />
+            <Route path={'ai'} element={<SNSiteGenAIPage />} />
+            <Route path={'result-ranking'} element={<SNSiteResultRankingListPage />} />
+            <Route path={'merge-providers'} element={<SNSiteMergeProvidersListPage />} />
+            <Route path={'spotlight'} element={<SNSiteSpotlightListPage />} />
+            <Route path={'top-terms'} element={<SNSiteTopSearchTermsPage />} />
+            <Route path={'field/:fieldId'} element={<SNSiteFieldPage />} />
+            <Route path={'result-ranking/:resultRankingId'} element={<SNSiteResultRankingPage />} />
+            <Route path={'merge-providers/:mergeProviderId'} element={<SNSiteMergeProvidersPage />} />
+            <Route path={'spotlight/:spotlightId'} element={<SNSiteSpotlightPage />} />
         </Route>
     </Route>
 )
