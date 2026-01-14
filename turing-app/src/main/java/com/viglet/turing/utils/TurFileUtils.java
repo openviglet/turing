@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -240,7 +241,7 @@ public class TurFileUtils {
 
         try {
             InetAddress inetAddress = InetAddress.getByName(host);
-            if (isBlockedAddress(inetAddress)) {
+            if (isSafe(inetAddress)) {
                 return false;
             }
         } catch (UnknownHostException e) {
@@ -249,21 +250,6 @@ public class TurFileUtils {
         }
 
         return ALLOWED_DOMAINS.isEmpty() || isHostInAllowedDomains(host);
-    }
-
-    private static boolean isBlockedAddress(InetAddress inetAddress) {
-        String hostAddress = inetAddress.getHostAddress();
-        return inetAddress.isAnyLocalAddress()
-                || inetAddress.isLoopbackAddress()
-                || inetAddress.isSiteLocalAddress()
-                || inetAddress.isLinkLocalAddress()
-                || hostAddress.startsWith("127.")
-                || hostAddress.equals("0.0.0.0")
-                || hostAddress.equals("::1")
-                || hostAddress.startsWith("169.254.")
-                || hostAddress.startsWith("10.")
-                || hostAddress.startsWith("172.16.")
-                || hostAddress.startsWith("192.168.");
     }
 
     private static boolean isHostInAllowedDomains(String host) {
@@ -304,12 +290,58 @@ public class TurFileUtils {
     }
 
     private static HttpURLConnection createConnection(URL url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setConnectTimeout(CONNECTION_TIMEOUT_MILLIS);
-        connection.setReadTimeout(CONNECTION_TIMEOUT_MILLIS);
-        connection.setInstanceFollowRedirects(false);
-        connection.setRequestMethod("GET");
-        return connection;
+        InetAddress safeAddress = InetAddress.getByName(url.getHost());
+        if (isSafe(safeAddress)) {
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(CONNECTION_TIMEOUT_MILLIS);
+            connection.setReadTimeout(CONNECTION_TIMEOUT_MILLIS);
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("GET");
+            return connection;
+        }
+        return null;
+
+    }
+
+    public static boolean isSafe(InetAddress address) {
+        if (address.isLoopbackAddress())
+            return false;
+
+        if (address.isSiteLocalAddress())
+            return false;
+
+        if (address.isLinkLocalAddress())
+            return false;
+
+        if (address.isAnyLocalAddress())
+            return false;
+
+        if (address.isMulticastAddress())
+            return false;
+
+        if (address instanceof Inet4Address) {
+            byte[] addr = address.getAddress();
+            int firstOctet = addr[0] & 0xFF;
+            int secondOctet = addr[1] & 0xFF;
+
+            // 10.0.0.0/8
+            if (firstOctet == 10)
+                return false;
+
+            // 172.16.0.0/12
+            if (firstOctet == 172 && (secondOctet >= 16 && secondOctet <= 31))
+                return false;
+
+            // 192.168.0.0/16
+            if (firstOctet == 192 && secondOctet == 168)
+                return false;
+
+            // 100.64.0.0/10 (CGNAT)
+            if (firstOctet == 100 && (secondOctet >= 64 && secondOctet <= 127))
+                return false;
+        }
+
+        return true;
     }
 
     private static boolean isRedirectResponse(int responseCode) {
