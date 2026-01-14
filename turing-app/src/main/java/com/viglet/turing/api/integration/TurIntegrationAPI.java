@@ -87,20 +87,7 @@ public class TurIntegrationAPI {
                 response.getWriter().write("{\"error\": \"Forbidden proxy path\"}");
                 return;
             }
-            // Validate port to prevent access to unexpected services
-            int basePort = baseUri.getPort() == -1 ? getDefaultPort(baseUri.getScheme()) : baseUri.getPort();
-            int fullPort = fullUri.getPort() == -1 ? getDefaultPort(fullUri.getScheme()) : fullUri.getPort();
-            if (basePort != fullPort) {
-                log.warn("Blocked SSRF attempt: port mismatch base={}, target={}", basePort, fullPort);
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("{\"error\": \"Forbidden proxy port\"}");
-                return;
-            }
             HttpURLConnection connectorEnpoint = (HttpURLConnection) fullUri.toURL().openConnection();
-            // Disable automatic redirects to prevent redirect-based SSRF attacks
-            connectorEnpoint.setInstanceFollowRedirects(false);
-            connectorEnpoint.setConnectTimeout(30000);
-            connectorEnpoint.setReadTimeout(30000);
             connectorEnpoint.setRequestMethod(request.getMethod());
             request.getHeaderNames().asIterator().forEachRemaining(headerName -> connectorEnpoint
                     .setRequestProperty(headerName, request.getHeader(headerName)));
@@ -141,17 +128,5 @@ public class TurIntegrationAPI {
         String normalized = Paths.get(path).normalize().toString();
         // Disallow any attempts at directory traversal
         return !normalized.contains("..");
-    }
-
-    /**
-     * Returns the default port for a given scheme.
-     */
-    private int getDefaultPort(String scheme) {
-        if ("https".equalsIgnoreCase(scheme)) {
-            return 443;
-        } else if ("http".equalsIgnoreCase(scheme)) {
-            return 80;
-        }
-        return -1;
     }
 }
