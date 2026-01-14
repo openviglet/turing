@@ -118,15 +118,32 @@ public class TurIntegrationAPI {
      * starts with the expected API prefix.
      */
     private boolean isValidProxyPath(String path) {
-        if (path == null)
-            return false;
-        // Must start with allowed prefix after normalization (prevent access to
-        // internal endpoints)
-        if (!path.startsWith("/api/")) {
+        if (path == null) {
             return false;
         }
+        // Normalize the path first to eliminate any ./ or ../ segments
         String normalized = Paths.get(path).normalize().toString();
-        // Disallow any attempts at directory traversal
-        return !normalized.contains("..");
+
+        // Ensure the normalized path still starts with the expected API prefix.
+        // This prevents proxying to arbitrary internal endpoints.
+        if (!normalized.startsWith("/api/")) {
+            return false;
+        }
+
+        // Disallow any attempts at directory traversal in the normalized path
+        if (normalized.contains("..")) {
+            return false;
+        }
+
+        // Optionally, restrict characters in the path to a safe subset
+        // (alphanumeric, slash, dash, underscore, dot).
+        for (int i = 0; i < normalized.length(); i++) {
+            char c = normalized.charAt(i);
+            if (!(Character.isLetterOrDigit(c) || c == '/' || c == '-' || c == '_' || c == '.')) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
