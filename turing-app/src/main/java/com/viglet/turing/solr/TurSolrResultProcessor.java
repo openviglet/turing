@@ -99,14 +99,34 @@ public class TurSolrResultProcessor {
 
         private void populateGroupsFromResponse(QueryResponse queryResponse, TurSNSite turSNSite,
                         TurSolrQueryContext queryContext, List<TurSEGroup> turSEGroups) {
-                queryResponse.getGroupResponse().getValues()
-                                .forEach(groupCommand -> groupCommand.getValues()
-                                                .forEach(group -> Optional.ofNullable(group.getGroupValue())
-                                                                .ifPresent(g -> turSEGroups
-                                                                                .add(setTurSEGroup(turSNSite,
-                                                                                                queryContext,
-                                                                                                queryResponse,
-                                                                                                group)))));
+                var groupResponse = queryResponse.getGroupResponse();
+                if (groupResponse == null || CollectionUtils.isEmpty(groupResponse.getValues())) {
+                        return;
+                }
+
+                for (GroupCommand groupCommand : groupResponse.getValues()) {
+                        addGroupsFromCommand(turSNSite, queryContext, queryResponse, turSEGroups, groupCommand);
+                }
+        }
+
+        private void addGroupsFromCommand(TurSNSite turSNSite, TurSolrQueryContext queryContext,
+                        QueryResponse queryResponse, List<TurSEGroup> turSEGroups, GroupCommand groupCommand) {
+                if (CollectionUtils.isEmpty(groupCommand.getValues())) {
+                        return;
+                }
+
+                for (Group group : groupCommand.getValues()) {
+                        addGroupIfPresent(turSNSite, queryContext, queryResponse, turSEGroups, group);
+                }
+        }
+
+        private void addGroupIfPresent(TurSNSite turSNSite, TurSolrQueryContext queryContext,
+                        QueryResponse queryResponse, List<TurSEGroup> turSEGroups, Group group) {
+                if (group.getGroupValue() == null) {
+                        return;
+                }
+
+                turSEGroups.add(setTurSEGroup(turSNSite, queryContext, queryResponse, group));
         }
 
         private boolean shouldApplyWildcardQuery(TurSNSite turSNSite, SolrQuery query) {
