@@ -20,16 +20,19 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.file.Paths;
+
 import org.apache.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
 import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,8 +51,8 @@ public class TurIntegrationAPI {
         this.turIntegrationInstanceRepository = turIntegrationInstanceRepository;
     }
 
-    @RequestMapping(value = "**", method = {RequestMethod.GET, RequestMethod.POST,
-            RequestMethod.PUT, RequestMethod.DELETE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "**", method = { RequestMethod.GET, RequestMethod.POST,
+            RequestMethod.PUT, RequestMethod.DELETE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public void indexAnyRequest(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String integrationId) {
         turIntegrationInstanceRepository.findById(integrationId).ifPresent(
@@ -64,7 +67,8 @@ public class TurIntegrationAPI {
             log.debug("Executing: {}", endpoint);
             URI baseUri = URI.create(turIntegrationInstance.getEndpoint());
             URI fullUri = URI.create(endpoint);
-            // SSRF Mitigation: Only allow requests to the same host and scheme as the registered
+            // SSRF Mitigation: Only allow requests to the same host and scheme as the
+            // registered
             // endpoint
             if (!baseUri.getHost().equalsIgnoreCase(fullUri.getHost())
                     || !baseUri.getScheme().equalsIgnoreCase(fullUri.getScheme())) {
@@ -74,7 +78,8 @@ public class TurIntegrationAPI {
                 response.getWriter().write("{\"error\": \"Forbidden proxy target\"}");
                 return;
             }
-            // Validate that the path is safe and does not contain traversal or forbidden segments
+            // Validate that the path is safe and does not contain traversal or forbidden
+            // segments
             if (!isValidProxyPath(fullUri.getPath())) {
                 log.warn("Blocked SSRF attempt: invalid or unauthorized path: {}",
                         fullUri.getPath());
@@ -82,8 +87,20 @@ public class TurIntegrationAPI {
                 response.getWriter().write("{\"error\": \"Forbidden proxy path\"}");
                 return;
             }
-            HttpURLConnection connectorEnpoint =
-                    (HttpURLConnection) fullUri.toURL().openConnection();
+            // Validate port to prevent access to unexpected services
+            int basePort = baseUri.getPort() == -1 ? getDefaultPort(baseUri.getScheme()) : baseUri.getPort();
+            int fullPort = fullUri.getPort() == -1 ? getDefaultPort(fullUri.getScheme()) : fullUri.getPort();
+            if (basePort != fullPort) {
+                log.warn("Blocked SSRF attempt: port mismatch base={}, target={}", basePort, fullPort);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("{\"error\": \"Forbidden proxy port\"}");
+                return;
+            }
+            HttpURLConnection connectorEnpoint = (HttpURLConnection) fullUri.toURL().openConnection();
+            // Disable automatic redirects to prevent redirect-based SSRF attacks
+            connectorEnpoint.setInstanceFollowRedirects(false);
+            connectorEnpoint.setConnectTimeout(30000);
+            connectorEnpoint.setReadTimeout(30000);
             connectorEnpoint.setRequestMethod(request.getMethod());
             request.getHeaderNames().asIterator().forEachRemaining(headerName -> connectorEnpoint
                     .setRequestProperty(headerName, request.getHeader(headerName)));
@@ -109,18 +126,32 @@ public class TurIntegrationAPI {
     }
 
     /**
-     * Validates that the proxy path is safe: normalized, does not contain directory traversal, and
+     * Validates that the proxy path is safe: normalized, does not contain directory
+     * traversal, and
      * starts with the expected API prefix.
      */
     private boolean isValidProxyPath(String path) {
         if (path == null)
             return false;
-        // Must start with allowed prefix after normalization (prevent access to internal endpoints)
+        // Must start with allowed prefix after normalization (prevent access to
+        // internal endpoints)
         if (!path.startsWith("/api/")) {
             return false;
         }
         String normalized = Paths.get(path).normalize().toString();
         // Disallow any attempts at directory traversal
         return !normalized.contains("..");
+    }
+
+    /**
+     * Returns the default port for a given scheme.
+     */
+    private int getDefaultPort(String scheme) {
+        if ("https".equalsIgnoreCase(scheme)) {
+            return 443;
+        } else if ("http".equalsIgnoreCase(scheme)) {
+            return 80;
+        }
+        return -1;
     }
 }
