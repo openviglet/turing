@@ -1,14 +1,17 @@
 package com.viglet.turing.solr;
 
+import static com.viglet.turing.solr.TurSolrConstants.EMPTY;
+import static com.viglet.turing.solr.TurSolrConstants.ID;
+import static com.viglet.turing.solr.TurSolrConstants.QUERY;
+import static com.viglet.turing.solr.TurSolrConstants.TUR_SPELL;
+import static com.viglet.turing.solr.TurSolrConstants.TUR_SUGGEST;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.sn.TurSNUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
@@ -32,8 +35,8 @@ import org.springframework.web.client.RestTemplate;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
+import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
@@ -41,12 +44,11 @@ import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressio
 import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.sn.TurSNFieldProcess;
+import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 import lombok.extern.slf4j.Slf4j;
-
-import static com.viglet.turing.solr.TurSolrConstants.*;
 
 @Slf4j
 @Component
@@ -166,8 +168,8 @@ public class TurSolr {
         }
         return turSESpellCheckResult;
     }
-	
-	public Optional<TurSEResults> retrieveSolrFromSN(TurSolrInstance turSolrInstance,
+
+    public Optional<TurSEResults> retrieveSolrFromSN(TurSolrInstance turSolrInstance,
             TurSNSiteSearchContext context) {
         return turSNSiteRepository.findByName(context.getSiteName()).map(turSNSite -> {
             TurSESpellCheckResult turSESpellCheckResult = prepareQueryAutoCorrection(context, turSNSite,
@@ -175,10 +177,19 @@ public class TurSolr {
             TurSEParameters turSEParameters = context.getTurSEParameters();
             SolrQuery query = turSolrQueryBuilder.prepareSolrQuery(context, turSNSite, turSEParameters,
                     turSESpellCheckResult);
-            return executeSolrQueryFromSN(turSolrInstance, turSNSite, turSEParameters, query,
-                    turSolrQueryBuilder.prepareQueryMLT(turSNSite, query),
-                    turSolrQueryBuilder.prepareQueryFacet(turSNSite, query, turSEParameters.getTurSNFilterParams()),
-                    turSolrQueryBuilder.prepareQueryHL(turSNSite, query, context), turSESpellCheckResult, false);
+
+            TurSolrQueryContext queryContext = TurSolrQueryContext.builder()
+                    .query(query)
+                    .turSEParameters(turSEParameters)
+                    .mltFieldExtList(turSolrQueryBuilder.prepareQueryMLT(turSNSite, query))
+                    .facetFieldExtList(turSolrQueryBuilder.prepareQueryFacet(turSNSite, query,
+                            turSEParameters.getTurSNFilterParams()))
+                    .hlFieldExtList(turSolrQueryBuilder.prepareQueryHL(turSNSite, query, context))
+                    .spellCheckResult(turSESpellCheckResult)
+                    .queryToRenderFacet(false)
+                    .build();
+
+            return executeSolrQueryFromSN(turSolrInstance, turSNSite, queryContext);
         }).orElse(Optional.empty());
     }
 
@@ -188,39 +199,37 @@ public class TurSolr {
             TurSEParameters turSEParameters = context.getTurSEParameters();
             SolrQuery query = turSolrQueryBuilder.prepareSolrQuery(context, turSNSite, turSEParameters,
                     new TurSESpellCheckResult());
-            return executeSolrQueryFromSNFacet(turSolrInstance, turSNSite, turSEParameters, query,
-                    turSolrQueryBuilder.prepareQueryFacetWithOneFacet(turSNSite, query,
-                            turSEParameters.getTurSNFilterParams(), facetName));
-        }).orElse(Optional.empty());
 
+            TurSolrQueryContext queryContext = TurSolrQueryContext.builder()
+                    .query(query)
+                    .turSEParameters(turSEParameters)
+                    .mltFieldExtList(Collections.emptyList())
+                    .facetFieldExtList(turSolrQueryBuilder.prepareQueryFacetWithOneFacet(turSNSite, query,
+                            turSEParameters.getTurSNFilterParams(), facetName))
+                    .hlFieldExtList(Collections.emptyList())
+                    .spellCheckResult(new TurSESpellCheckResult())
+                    .queryToRenderFacet(true)
+                    .build();
+
+            return executeSolrQueryFromSN(turSolrInstance, turSNSite, queryContext);
+        }).orElse(Optional.empty());
     }
 
     private Optional<TurSEResults> executeSolrQueryFromSN(TurSolrInstance turSolrInstance,
-            TurSNSite turSNSite, TurSEParameters turSEParameters, SolrQuery query,
-            List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList,
-            List<TurSNSiteFieldExt> turSNSiteFacetFieldExtList,
-            List<TurSNSiteFieldExt> turSNSiteHlFieldExtList,
-            TurSESpellCheckResult turSESpellCheckResult, boolean isQueryToRenderFacet) {
+            TurSNSite turSNSite, TurSolrQueryContext queryContext) {
+        SolrQuery query = queryContext.getQuery();
+        boolean isQueryToRenderFacet = queryContext.isQueryToRenderFacet();
+
         if (!isQueryToRenderFacet && enabledWildcardAlways(turSNSite)
                 && isNotQueryExpression(query)) {
             addAWildcardInQuery(query);
         }
+
         return executeSolrQuery(turSolrInstance, query)
-                .map(queryResponse -> turSolrResultProcessor.getResults(turSolrInstance, turSNSite, turSEParameters,
-                        query,
-                        turSNSiteMLTFieldExtList, turSNSiteFacetFieldExtList,
-                        turSNSiteHlFieldExtList, turSESpellCheckResult,
-                        getQueryResponseModified(turSolrInstance, turSNSite, query, queryResponse,
+                .map(queryResponse -> turSolrResultProcessor.getResults(turSolrInstance, turSNSite,
+                        query, queryContext, getQueryResponseModified(turSolrInstance, turSNSite, query, queryResponse,
                                 isQueryToRenderFacet),
                         turSolrQueryBuilder));
-    }
-
-    private Optional<TurSEResults> executeSolrQueryFromSNFacet(TurSolrInstance turSolrInstance,
-            TurSNSite turSNSite, TurSEParameters turSEParameters, SolrQuery query,
-            List<TurSNSiteFieldExt> turSNSiteFacetFieldExtList) {
-        return executeSolrQueryFromSN(turSolrInstance, turSNSite, turSEParameters, query,
-                Collections.emptyList(), turSNSiteFacetFieldExtList, Collections.emptyList(),
-                new TurSESpellCheckResult(), true);
     }
 
     private static QueryResponse getQueryResponseModified(TurSolrInstance turSolrInstance,
