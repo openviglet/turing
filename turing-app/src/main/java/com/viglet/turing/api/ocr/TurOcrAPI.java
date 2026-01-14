@@ -51,9 +51,14 @@ public class TurOcrAPI {
 
     @PostMapping("/url")
     public TurFileAttributes urlToText(@RequestBody TurOcrFromUrl turOcrFromUrl) {
+        String urlString = turOcrFromUrl.getUrl();
+        if (!TurFileUtils.isAllowedRemoteUrlString(urlString)) {
+            log.warn("Blocked OCR request for disallowed URL: {}", urlString);
+            return new TurFileAttributes();
+        }
         try {
-            return TurFileUtils.urlContentToText(URI.create(turOcrFromUrl.getUrl()).toURL());
-        } catch (MalformedURLException e) {
+            return TurFileUtils.urlContentToText(URI.create(urlString).toURL());
+        } catch (IllegalArgumentException | MalformedURLException e) {
             log.error(e.getMessage(), e);
         }
         return new TurFileAttributes();
