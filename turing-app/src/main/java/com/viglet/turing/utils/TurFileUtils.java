@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -186,6 +187,25 @@ public class TurFileUtils {
                 .orElseGet(TurFileAttributes::new);
     }
 
+    /**
+     * Helper method to validate a URL provided as a String before it is parsed and used.
+     *
+     * @param urlString the URL string supplied by a client
+     * @return true if the URL is syntactically valid and allowed according to isAllowedRemoteUrl(URL)
+     */
+    public static boolean isAllowedRemoteUrlString(String urlString) {
+        if (urlString == null || urlString.isBlank()) {
+            return false;
+        }
+        try {
+            URL url = URI.create(urlString).toURL();
+            return isAllowedRemoteUrl(url);
+        } catch (IllegalArgumentException | MalformedURLException e) {
+            log.warn("Invalid or malformed URL string received: {}", urlString);
+            return false;
+        }
+    }
+
     private static Optional<UrlParseResult> fetchAndParseUrl(URL url) {
         File tempFile;
         try {
@@ -264,6 +284,9 @@ public class TurFileUtils {
         try {
             for (int redirectCount = 0; redirectCount <= MAX_REDIRECTS; redirectCount++) {
                 connection = createConnection(currentUrl);
+                if (connection == null) {
+                    throw new IOException("Connection blocked for unsafe or disallowed URL: " + currentUrl);
+                }
                 int responseCode = connection.getResponseCode();
 
                 if (isRedirectResponse(responseCode)) {
