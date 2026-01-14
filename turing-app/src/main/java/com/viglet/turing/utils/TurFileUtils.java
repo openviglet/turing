@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -188,10 +189,12 @@ public class TurFileUtils {
     }
 
     /**
-     * Helper method to validate a URL provided as a String before it is parsed and used.
+     * Helper method to validate a URL provided as a String before it is parsed and
+     * used.
      *
      * @param urlString the URL string supplied by a client
-     * @return true if the URL is syntactically valid and allowed according to isAllowedRemoteUrl(URL)
+     * @return true if the URL is syntactically valid and allowed according to
+     *         isAllowedRemoteUrl(URL)
      */
     public static boolean isAllowedRemoteUrlString(String urlString) {
         if (urlString == null || urlString.isBlank()) {
@@ -313,17 +316,31 @@ public class TurFileUtils {
     }
 
     private static HttpURLConnection createConnection(URL url) throws IOException {
-        InetAddress safeAddress = InetAddress.getByName(url.getHost());
-        if (isSafe(safeAddress)) {
+        String originalHost = url.getHost();
+
+        if (!ALLOWED_DOMAINS.isEmpty() && !isHostInAllowedDomains(originalHost)) {
+            log.warn("Host not in allowed domains: {}", originalHost);
+            return null;
+        }
+
+        InetAddress resolvedAddress = InetAddress.getByName(originalHost);
+        if (!isSafe(resolvedAddress)) {
+            log.warn("Resolved address is not safe: {} -> {}", originalHost, resolvedAddress.getHostAddress());
+            return null;
+        }
+
+        try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(CONNECTION_TIMEOUT_MILLIS);
             connection.setReadTimeout(CONNECTION_TIMEOUT_MILLIS);
             connection.setInstanceFollowRedirects(false);
             connection.setRequestMethod("GET");
-            return connection;
-        }
-        return null;
+            connection.setRequestProperty("Host", originalHost);
 
+            return connection;
+        } catch (IOException e) {
+            throw new IOException("Failed to create connection to: " + originalHost, e);
+        }
     }
 
     public static boolean isSafe(InetAddress address) {
