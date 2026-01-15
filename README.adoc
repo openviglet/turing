@@ -285,19 +285,6 @@ We welcome contributions from developers of all skill levels! Here's how you can
 - 💾 **Downloads**: https://viglet.org/turing/download/
 - 🔧 **API Documentation**: https://turing.viglet.com/latest/javadoc/
 
-=== Strategic Documentation
-
-Learn about our roadmap and how to contribute:
-
-- 📋 **link:DOCS_INDEX.md[Documentation Index]** - Start here for navigation
-- 📊 **link:STRATEGIC_SUMMARY.md[Strategic Summary]** - Executive overview (5 min read)
-- 🏗️ **link:ARCHITECTURE.md[Architecture Guide]** - System design and components
-- 🗺️ **link:ROADMAP.md[Strategic Roadmap]** - 18-month improvement plan
-- 🎨 **link:DESIGN_PATTERNS.md[Design Patterns]** - Code patterns and best practices
-- 📈 **link:SCALABILITY.md[Scalability Guide]** - Scale to enterprise workloads
-- 👥 **link:COMMUNITY.md[Community Guide]** - Join and grow the community
-- 🚀 **link:IMPLEMENTATION_GUIDE.md[Implementation Guide]** - Quick reference for improvements
-
 === SDK Documentation
 
 - **Java SDK**: link:turing-java-sdk/README.md[Java SDK Guide]
