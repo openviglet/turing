@@ -25,8 +25,13 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.BreakIterator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.KeyValue;
@@ -42,9 +47,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.viglet.turing.commons.exception.TurException;
+
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
 
@@ -109,14 +116,13 @@ public class TurCommonsUtils {
     }
 
     public static URI addOrReplaceParameter(URI uri, String paramName, Locale locale,
-                                            boolean decoded) {
+            boolean decoded) {
         return addOrReplaceParameter(uri, paramName, locale.toLanguageTag(), decoded);
     }
 
     public static URI addOrReplaceParameter(URI uri, String paramName, String paramValue,
-                                            boolean decoded) {
-        List<NameValuePair> params =
-                new URIBuilder(uri, StandardCharsets.ISO_8859_1).getQueryParams();
+            boolean decoded) {
+        List<NameValuePair> params = new URIBuilder(uri, StandardCharsets.ISO_8859_1).getQueryParams();
         StringBuilder sbQueryString = new StringBuilder();
         boolean alreadyExists = false;
         for (NameValuePair nameValuePair : params) {
@@ -144,7 +150,7 @@ public class TurCommonsUtils {
     }
 
     public static void addParameterToQueryString(StringBuilder sbQueryString, String name,
-                                                 String value) {
+            String value) {
         if (value != null) {
             sbQueryString.append(String.format("%s=%s&", name, value));
         }
@@ -189,8 +195,8 @@ public class TurCommonsUtils {
     public static void addFilesToZip(File source, File destination) {
 
         try (OutputStream archiveStream = Files.newOutputStream(destination.toPath());
-             ArchiveOutputStream<ZipArchiveEntry> archive = new ArchiveStreamFactory()
-                     .createArchiveOutputStream(ArchiveStreamFactory.ZIP, archiveStream)) {
+                ArchiveOutputStream<ZipArchiveEntry> archive = new ArchiveStreamFactory()
+                        .createArchiveOutputStream(ArchiveStreamFactory.ZIP, archiveStream)) {
 
             FileUtils.listFiles(source, null, true)
                     .forEach(file -> addFileToZip(source, archive, file));
@@ -202,15 +208,14 @@ public class TurCommonsUtils {
     }
 
     private static void addFileToZip(File source, ArchiveOutputStream<ZipArchiveEntry> archive,
-                                     File file) {
+            File file) {
         String entryName;
         try {
             entryName = getEntryName(source, file);
             ZipArchiveEntry entry = new ZipArchiveEntry(entryName);
             archive.putArchiveEntry(entry);
 
-            try (BufferedInputStream input =
-                         new BufferedInputStream(Files.newInputStream(file.toPath()))) {
+            try (BufferedInputStream input = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
                 input.transferTo(archive);
                 archive.closeArchiveEntry();
             }
@@ -228,10 +233,10 @@ public class TurCommonsUtils {
      * @throws IOException if the io fails
      */
     private static String getEntryName(File source, File file) throws IOException {
-        int index = source.getAbsolutePath().length() + 1;
-        String path = file.getCanonicalPath();
+        Path sourcePath = source.toPath().toAbsolutePath().normalize();
+        Path filePath = file.toPath().toAbsolutePath().normalize();
 
-        return path.substring(index);
+        return sourcePath.relativize(filePath).toString();
     }
 
     public static File getStoreDir() {
