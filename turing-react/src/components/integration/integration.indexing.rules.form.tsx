@@ -25,44 +25,48 @@ import {
 import {
   Textarea
 } from "@/components/ui/textarea"
-import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model.ts"
-import { TurIntegrationInstanceService } from "@/services/integration/integration.service"
+import type { TurIntegrationIndexingRule } from "@/models/integration/integration-indexing-rule.model"
+import { TurIntegrationIndexingRuleService } from "@/services/integration/integration-indexing-rule.service"
 import { useEffect } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-const turIntegrationInstanceService = new TurIntegrationInstanceService();
+import { DynamicIndexingRuleFields } from "./dynamic.indexing.rule.field"
+
 interface Props {
-  value: TurIntegrationInstance;
+  value: TurIntegrationIndexingRule;
   isNew: boolean;
 }
 
 export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurIntegrationInstance>();
-  const { setValue } = form;
+  const form = useForm<TurIntegrationIndexingRule>();
+  const { control, register, setValue } = form;
   const navigate = useNavigate()
   useEffect(() => {
     setValue("id", value.id)
-    setValue("title", value.title);
+    setValue("name", value.name);
     setValue("description", value.description);
-    setValue("vendor", value.vendor);
-    setValue("endpoint", value.endpoint);
-    setValue("enabled", value.enabled);
+    setValue("ruleType", value.ruleType);
+    setValue("source", value.source);
+    setValue("attribute", value.attribute);
+    setValue("values", value.values);
   }, [setValue, value]);
 
 
-  function onSubmit(integrationInstance: TurIntegrationInstance) {
+  function onSubmit(integrationIndexingRule: TurIntegrationIndexingRule) {
     try {
       if (isNew) {
-        turIntegrationInstanceService.create(integrationInstance);
-        toast.success(`The ${integrationInstance.title} Integration Instance was saved`);
+        const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService("");
+        turIntegrationIndexingRuleService.create(integrationIndexingRule);
+        toast.success(`The ${integrationIndexingRule.name} Integration Indexing Rule was saved`);
         navigate(ROUTES.INTEGRATION_INSTANCE);
       }
       else {
-        turIntegrationInstanceService.update(integrationInstance);
-        toast.success(`The ${integrationInstance.title} Integration Instance was updated`);
+        const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService("");
+        turIntegrationIndexingRuleService.update(integrationIndexingRule);
+        toast.success(`The ${integrationIndexingRule.name} Integration Indexing Rule was updated`);
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -75,18 +79,18 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, isNew }) 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
         <FormField
           control={form.control}
-          name="title"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Rule Name</FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  placeholder="Title"
+                  placeholder="e.g., Ignore Draft Pages"
                   type="text"
                 />
               </FormControl>
-              <FormDescription>Integration instance title will appear on list.</FormDescription>
+              <FormDescription>A unique, descriptive name to easily identify this rule in the list.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -97,15 +101,49 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, isNew }) 
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Rule Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Description"
+                  placeholder="e.g., Excludes all draft pages from indexing"
                   className="resize-none"
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Integration instance description will appear on list.</FormDescription>
+              <FormDescription>Provide details about what this rule does and when it should be applied.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="source"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Content Source</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="e.g., WKND"
+                  type="text"
+                  {...field} />
+              </FormControl>
+              <FormDescription>The content path or source location where this rule will be applied.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="attribute"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Target Attribute</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="e.g., title"
+                  type="text"
+                  {...field} />
+              </FormControl>
+              <FormDescription>The content attribute or property name used to match against the values below.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -113,10 +151,10 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, isNew }) 
 
         <FormField
           control={form.control}
-          name="vendor"
+          name="ruleType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Vendor</FormLabel>
+              <FormLabel>Action Type</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -124,33 +162,27 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, isNew }) 
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem key="AEM" value="AEM">AEM</SelectItem>
-                  <SelectItem key="WEB_CRAWLER" value="WEB_CRAWLER">Web Crawler</SelectItem>
+                  <SelectItem key="IGNORE" value="IGNORE">Ignore</SelectItem>
                 </SelectContent>
               </Select>
-              <FormDescription>Integration vendor that will be used.</FormDescription>
+              <FormDescription>Defines the action to take when content matches this rule. "Ignore" will exclude matching content from indexing.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="endpoint"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Endpoint</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="URL"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>Integration instance hostname will be connected.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>Matching Values</FormLabel>
+          <FormDescription>Add the values that the attribute should match. Content with matching attribute values will have the rule applied.</FormDescription>
+          <FormControl>
+            <DynamicIndexingRuleFields
+              fieldName="values"
+              control={control}
+              register={register}
+            />
+          </FormControl>
+        </FormItem>
+
         <Button type="submit">Save</Button>
       </form>
     </Form>

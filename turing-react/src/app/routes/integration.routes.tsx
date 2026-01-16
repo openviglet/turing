@@ -25,7 +25,7 @@ export const IntegrationRoutes = (
             <Route path="source" element={<IntegrationInstanceSourceListPage />} />
             <Route path="source/:sourceId" element={<IntegrationInstanceSourcePage />} />
             <Route path="indexing-rule" element={<IntegrationInstanceIndexingRulesListPage />} />
-            <Route path="indexing-rule/:rulesId" element={<IntegrationInstanceIndexingRulesPage />} />
+            <Route path="indexing-rule/:ruleId" element={<IntegrationInstanceIndexingRulesPage />} />
             <Route path="monitoring">
                 <Route index element={<Navigate to="all" replace />} />
                 <Route path=":source" element={<IntegrationInstanceMonitoringPage />} />
