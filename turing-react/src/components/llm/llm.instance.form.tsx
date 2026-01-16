@@ -1,9 +1,11 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { Switch } from "@/components//ui/switch"
 import {
   Button
 } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -34,8 +36,6 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { Switch } from "./ui/switch"
 const turLLMInstanceService = new TurLLMInstanceService();
 const urlBase = ROUTES.LLM_INSTANCE
 interface Props {

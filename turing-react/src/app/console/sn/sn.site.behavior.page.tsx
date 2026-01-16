@@ -1,4 +1,4 @@
-import { SNSiteBehaviorForm } from "@/components/sn.site.behavior.form";
+import { SNSiteBehaviorForm } from "@/components/sn/sn.site.behavior.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
 import { TurSNSiteService } from "@/services/sn/sn.service";

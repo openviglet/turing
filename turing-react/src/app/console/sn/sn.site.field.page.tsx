@@ -1,4 +1,4 @@
-import { SNSiteFieldForm } from "@/components/sn.site.field.form";
+import { SNSiteFieldForm } from "@/components/sn/sn.site.field.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model";
 import { TurSNFieldService } from "@/services/sn/sn.field.service";

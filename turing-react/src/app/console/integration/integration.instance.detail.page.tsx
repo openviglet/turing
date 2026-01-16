@@ -1,4 +1,4 @@
-import { IntegrationInstanceForm } from "@/components/integration.instance.form";
+import { IntegrationInstanceForm } from "@/components/integration/integration.instance.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
 import { TurIntegrationInstanceService } from "@/services/integration/integration.service";

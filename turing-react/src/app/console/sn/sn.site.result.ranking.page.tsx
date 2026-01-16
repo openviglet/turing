@@ -1,4 +1,4 @@
-import { SNSiteResultRankingForm } from "@/components/sn.site.result.ranking.form";
+import { SNSiteResultRankingForm } from "@/components/sn/sn.site.result.ranking.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNRankingExpression } from "@/models/sn/sn-ranking-expression.model";
 import { TurSNRankingExpressionService } from "@/services/sn/sn.site.result.ranking.service";

@@ -9,7 +9,7 @@ export class TurIntegrationIndexingRuleService {
   constructor(integrationId: string, axiosInstance: AxiosInstance = axios) {
     this.integrationId = integrationId;
     this.axiosInstance = axiosInstance;
-    this.endpointPrefix = `/integration/${this.integrationId}/connector/indexing-rule`;
+    this.endpointPrefix = `/v2/integration/${this.integrationId}/connector/indexing-rule`;
   }
 
   setIntegrationId(integrationId: string): this {
@@ -19,48 +19,48 @@ export class TurIntegrationIndexingRuleService {
 
   async query(): Promise<TurIntegrationIndexingRule[]> {
     const { data } = await this.axiosInstance.get<TurIntegrationIndexingRule[]>(
-      `${this.endpointPrefix}`
+      `${this.endpointPrefix}`,
     );
     return data;
   }
 
   async get(id: string): Promise<TurIntegrationIndexingRule> {
     const { data } = await this.axiosInstance.get<TurIntegrationIndexingRule>(
-      `${this.endpointPrefix}/${id}`
+      `${this.endpointPrefix}/${id}`,
     );
     return data;
   }
 
   async getStructure(): Promise<TurIntegrationIndexingRule[]> {
     const { data } = await this.axiosInstance.get<TurIntegrationIndexingRule[]>(
-      `${this.endpointPrefix}/structure`
+      `${this.endpointPrefix}/structure`,
     );
     return data;
   }
 
   async create(
-    source: TurIntegrationIndexingRule
+    source: TurIntegrationIndexingRule,
   ): Promise<TurIntegrationIndexingRule> {
     const { data } = await this.axiosInstance.post<TurIntegrationIndexingRule>(
       `${this.endpointPrefix}`,
-      source
+      source,
     );
     return data;
   }
 
   async update(
-    source: TurIntegrationIndexingRule
+    source: TurIntegrationIndexingRule,
   ): Promise<TurIntegrationIndexingRule> {
     const { data } = await this.axiosInstance.put<TurIntegrationIndexingRule>(
       `${this.endpointPrefix}/${source.id}`,
-      source
+      source,
     );
     return data;
   }
 
   async delete(source: TurIntegrationIndexingRule): Promise<boolean> {
     const { status } = await this.axiosInstance.delete(
-      `${this.endpointPrefix}/${source.id}`
+      `${this.endpointPrefix}/${source.id}`,
     );
     return status === 200;
   }

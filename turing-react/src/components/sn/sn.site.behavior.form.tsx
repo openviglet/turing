@@ -31,8 +31,8 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { SubPageHeader } from "./sub.page.header"
-import { Switch } from "./ui/switch"
+import { SubPageHeader } from "../sub.page.header"
+import { Switch } from "../ui/switch"
 const turSNSiteService = new TurSNSiteService();
 interface Props {
   value: TurSNSite;

@@ -1,4 +1,4 @@
-import { SEInstanceForm } from "@/components/se.instance.form";
+import { SEInstanceForm } from "@/components/se/se.instance.form";
 import type { TurSEInstance } from "@/models/se/se-instance.model.ts";
 import { TurSEInstanceService } from "@/services/se/se.service";
 import { useEffect, useState } from "react";

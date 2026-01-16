@@ -1,4 +1,4 @@
-import { IndexingLoggingGrid } from "@/components/indexing.logging.grid";
+import { IndexingLoggingGrid } from "@/components/logging/indexing.logging.grid";
 import type { TurLoggingIndexing } from "@/models/logging/logging-indexing.model";
 import { TurLoggingInstanceService } from "@/services/logging/logging.service";
 import { useEffect, useState } from "react";

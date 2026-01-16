@@ -4,6 +4,7 @@ import {
   Button
 } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -17,34 +18,24 @@ import {
   Input
 } from "@/components/ui/input"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
-import {
   Textarea
 } from "@/components/ui/textarea"
-import type { TurStoreInstance } from "@/models/store/store-instance.model.ts"
-import { TurStoreInstanceService } from "@/services/store/store.service"
+import type { TurTokenInstance } from "@/models/token/token-instance.model.ts"
+import { TurTokenInstanceService } from "@/services/token/token.service"
 import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { Switch } from "./ui/switch"
-const turStoreInstanceService = new TurStoreInstanceService();
-const urlBase = ROUTES.STORE_INSTANCE
+const turTokenInstanceService = new TurTokenInstanceService();
 interface Props {
-  value: TurStoreInstance;
+  value: TurTokenInstance;
   isNew: boolean;
 }
 
-export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurStoreInstance>();
+export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
+  const form = useForm<TurTokenInstance>();
   const { setValue } = form;
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
@@ -52,22 +43,20 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     setValue("id", value.id)
     setValue("title", value.title);
     setValue("description", value.description);
-    setValue("turStoreVendor", value.turStoreVendor);
-    setValue("url", value.url);
-    setValue("enabled", value.enabled);
+    setValue("token", value.token);
   }, [setValue, value]);
 
 
-  function onSubmit(storeInstance: TurStoreInstance) {
+  function onSubmit(seInstance: TurTokenInstance) {
     try {
       if (isNew) {
-        turStoreInstanceService.create(storeInstance);
-        toast.success(`The ${storeInstance.title} Embedding Store was saved`);
-        navigate(urlBase);
+        turTokenInstanceService.create(seInstance);
+        toast.success(`The ${seInstance.title} API Token was saved`);
+        navigate(ROUTES.TOKEN_INSTANCE);
       }
       else {
-        turStoreInstanceService.update(storeInstance);
-        toast.success(`The ${storeInstance.title} Embedding Store was updated`);
+        turTokenInstanceService.update(seInstance);
+        toast.success(`The ${seInstance.title} API Token was updated`);
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -78,25 +67,35 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   async function onDelete() {
     console.log("delete");
     try {
-      if (await turStoreInstanceService.delete(value)) {
-        toast.success(`The ${value.title} Embedding Store was deleted`);
-        navigate(urlBase);
+      if (await turTokenInstanceService.delete(value)) {
+        toast.success(`The ${value.title} API Token was deleted`);
+        navigate(ROUTES.TOKEN_INSTANCE);
       }
       else {
-        toast.error(`The ${value.title} Embedding Store was not deleted`);
+        toast.error(`The ${value.title} API Token was not deleted`);
       }
 
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error(`The ${value.title} Embedding Store was not deleted`);
+      toast.error(`The ${value.title} API Token was not deleted`);
     }
     setOpen(false);
   }
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value.token);
+      toast.success("Token API copied!");
+    } catch (err) {
+      toast.error("Failed to copy token API");
+      console.error("Failed to copy text: ", err);
+    }
+  };
   return (
     <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
       <Card className="mx-auto max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Embedding Store</CardTitle>
+          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} API Token</CardTitle>
           <CardAction>
             {!isNew &&
               <Dialog open={open} onOpenChange={setOpen}>
@@ -104,7 +103,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   <DialogTrigger asChild>
                     <Button variant={"outline"}>Delete</Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[450px]">
+                  <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>
                       <DialogTitle>Are you absolutely sure?</DialogTitle>
                       <DialogDescription>
@@ -112,10 +111,10 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                       </DialogDescription>
                     </DialogHeader>
                     <p className="grid gap-4">
-                      This action cannot be undone. This will permanently delete the {value.title} embedding store.
+                      This action cannot be undone. This will permanently delete the {value.title} api token.
                     </p>
                     <DialogFooter>
-                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this embedding store</Button>
+                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this api token</Button>
                     </DialogFooter>
                   </DialogContent>
                 </form>
@@ -123,7 +122,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
             }
           </CardAction>
           <CardDescription>
-            Embedding store settings.
+            API Token settings.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -142,7 +141,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Embedding store instance title will appear on list.</FormDescription>
+                    <FormDescription>API Token title will appear on API Token list.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -161,68 +160,32 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Embedding store instance description will appear on list.</FormDescription>
+                    <FormDescription>API Token description will appear on API Token list.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <FormField
+              {!isNew && <FormField
                 control={form.control}
-                name="turStoreVendor.id"
+                name="token"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Vendor</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem key="CHROMA" value="CHROMA">Chroma</SelectItem>
-                        <SelectItem key="MILVUS" value="MILVUS">Milvus</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>Embedding store vendor that will be used.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Endpoint</FormLabel>
+                    <FormLabel>API Token</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Endpoint"
-                        type="text"
-                        {...field} />
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          placeholder="API Token"
+                          type="text"
+                          readOnly
+                          {...field} />
+                        <Button type="button" onClick={handleCopy}>Copy</Button>
+                      </div>
                     </FormControl>
-                    <FormDescription>Embedding store instance host will be connected.</FormDescription>
+                    <FormDescription>API Token instance host will be connected.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="enabled"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Enabled</FormLabel>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              />}
               <Button type="submit">Save</Button>
             </form>
           </Form>

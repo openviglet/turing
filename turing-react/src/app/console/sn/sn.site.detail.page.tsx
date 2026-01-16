@@ -1,4 +1,4 @@
-import { SNSiteForm } from "@/components/sn.site.form";
+import { SNSiteForm } from "@/components/sn/sn.site.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
 import { TurSNSiteService } from "@/services/sn/sn.service";

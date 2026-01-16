@@ -1,4 +1,4 @@
-import { IntegrationInstanceForm } from "@/components/integration.instance.form";
+import { IntegrationIndexingRulesForm } from "@/components/integration/integration.indexing.rules.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
 import { TurIntegrationInstanceService } from "@/services/integration/integration.service";
@@ -20,7 +20,7 @@ export default function IntegrationInstanceIndexingRulePage() {
   return (
     <>
       <SubPageHeader icon={IconTools} title="Indexing Rules" description="Establish guidelines for how the indexing process will operate." />
-      <IntegrationInstanceForm value={integrationInstance} isNew={isNew} />
+      <IntegrationIndexingRulesForm value={integrationInstance} isNew={isNew} />
     </>
   )
 }

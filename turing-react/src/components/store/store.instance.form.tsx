@@ -26,23 +26,25 @@ import {
 import {
   Textarea
 } from "@/components/ui/textarea"
-import type { TurSEInstance } from "@/models/se/se-instance.model.ts"
-import { TurSEInstanceService } from "@/services/se/se.service"
+import type { TurStoreInstance } from "@/models/store/store-instance.model.ts"
+import { TurStoreInstanceService } from "@/services/store/store.service"
 import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-const turSEInstanceService = new TurSEInstanceService();
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Switch } from "../ui/switch"
+const turStoreInstanceService = new TurStoreInstanceService();
+const urlBase = ROUTES.STORE_INSTANCE
 interface Props {
-  value: TurSEInstance;
+  value: TurStoreInstance;
   isNew: boolean;
 }
 
-export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurSEInstance>();
+export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
+  const form = useForm<TurStoreInstance>();
   const { setValue } = form;
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
@@ -50,22 +52,22 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     setValue("id", value.id)
     setValue("title", value.title);
     setValue("description", value.description);
-    setValue("turSEVendor", value.turSEVendor);
-    setValue("host", value.host);
-    setValue("port", value.port);
+    setValue("turStoreVendor", value.turStoreVendor);
+    setValue("url", value.url);
+    setValue("enabled", value.enabled);
   }, [setValue, value]);
 
 
-  function onSubmit(seInstance: TurSEInstance) {
+  function onSubmit(storeInstance: TurStoreInstance) {
     try {
       if (isNew) {
-        turSEInstanceService.create(seInstance);
-        toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate(ROUTES.SE_INSTANCE);
+        turStoreInstanceService.create(storeInstance);
+        toast.success(`The ${storeInstance.title} Embedding Store was saved`);
+        navigate(urlBase);
       }
       else {
-        turSEInstanceService.update(seInstance);
-        toast.success(`The ${seInstance.title} Search Engine was updated`);
+        turStoreInstanceService.update(storeInstance);
+        toast.success(`The ${storeInstance.title} Embedding Store was updated`);
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -76,17 +78,17 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   async function onDelete() {
     console.log("delete");
     try {
-      if (await turSEInstanceService.delete(value)) {
-        toast.success(`The ${value.title} Search Engine was deleted`);
-        navigate(ROUTES.SE_INSTANCE);
+      if (await turStoreInstanceService.delete(value)) {
+        toast.success(`The ${value.title} Embedding Store was deleted`);
+        navigate(urlBase);
       }
       else {
-        toast.error(`The ${value.title} Search Engine was not deleted`);
+        toast.error(`The ${value.title} Embedding Store was not deleted`);
       }
 
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error(`The ${value.title} Search Engine was not deleted`);
+      toast.error(`The ${value.title} Embedding Store was not deleted`);
     }
     setOpen(false);
   }
@@ -94,7 +96,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
       <Card className="mx-auto max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Search Engine</CardTitle>
+          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Embedding Store</CardTitle>
           <CardAction>
             {!isNew &&
               <Dialog open={open} onOpenChange={setOpen}>
@@ -102,7 +104,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   <DialogTrigger asChild>
                     <Button variant={"outline"}>Delete</Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-112.5">
+                  <DialogContent className="sm:max-w-[450px]">
                     <DialogHeader>
                       <DialogTitle>Are you absolutely sure?</DialogTitle>
                       <DialogDescription>
@@ -110,10 +112,10 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                       </DialogDescription>
                     </DialogHeader>
                     <p className="grid gap-4">
-                      This action cannot be undone. This will permanently delete the {value.title} search engine.
+                      This action cannot be undone. This will permanently delete the {value.title} embedding store.
                     </p>
                     <DialogFooter>
-                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this search engine</Button>
+                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this embedding store</Button>
                     </DialogFooter>
                   </DialogContent>
                 </form>
@@ -121,7 +123,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
             }
           </CardAction>
           <CardDescription>
-            Search engine settings.
+            Embedding store settings.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -140,7 +142,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Search engine instance title will appear on list.</FormDescription>
+                    <FormDescription>Embedding store instance title will appear on list.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -159,7 +161,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Search engine instance description will appear on list.</FormDescription>
+                    <FormDescription>Embedding store instance description will appear on list.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -167,7 +169,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
 
               <FormField
                 control={form.control}
-                name="turSEVendor.id"
+                name="turStoreVendor.id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Vendor</FormLabel>
@@ -178,11 +180,11 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem key="SOLR" value="SOLR">Solr</SelectItem>
-                        <SelectItem key="LUCENE" value="LUCENE">Lucene</SelectItem>
+                        <SelectItem key="CHROMA" value="CHROMA">Chroma</SelectItem>
+                        <SelectItem key="MILVUS" value="MILVUS">Milvus</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>Search engine vendor that will be used.</FormDescription>
+                    <FormDescription>Embedding store vendor that will be used.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -190,35 +192,34 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
 
               <FormField
                 control={form.control}
-                name="host"
+                name="url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Host</FormLabel>
+                    <FormLabel>Endpoint</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Host"
+                        placeholder="Endpoint"
                         type="text"
                         {...field} />
                     </FormControl>
-                    <FormDescription>Search engine instance host will be connected.</FormDescription>
+                    <FormDescription>Embedding store instance host will be connected.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
-                name="port"
+                name="enabled"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Port</FormLabel>
+                    <FormLabel>Enabled</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Port"
-                        type="number"
-                        {...field} />
+                      <Switch checked={field.value === 1}
+                        onCheckedChange={(checked) => {
+                          field.onChange(checked ? 1 : 0);
+                        }}
+                      />
                     </FormControl>
-                    <FormDescription>Search engine instance port will be connected.</FormDescription>
-                    <FormMessage />
                   </FormItem>
                 )}
               />

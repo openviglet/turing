@@ -122,7 +122,7 @@ public class TurIntegrationAPI {
             return false;
         }
         // Normalize the path first to eliminate any ./ or ../ segments
-        String normalized = Paths.get(path).normalize().toString();
+        String normalized = Paths.get(path).normalize().toString().replace('\\', '/');
 
         // Ensure the normalized path still starts with the expected API prefix.
         // This prevents proxying to arbitrary internal endpoints.

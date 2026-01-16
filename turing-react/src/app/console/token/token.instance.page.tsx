@@ -1,4 +1,4 @@
-import { TokenInstanceForm } from "@/components/token.instance.form";
+import { TokenInstanceForm } from "@/components/token/token.instance.form";
 import type { TurTokenInstance } from "@/models/token/token-instance.model.ts";
 import { TurTokenInstanceService } from "@/services/token/token.service";
 import { useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-import { LLMInstanceForm } from "@/components/llm.instance.form";
+import { LLMInstanceForm } from "@/components/llm/llm.instance.form";
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts";
 import { TurLLMInstanceService } from "@/services/llm/llm.service";
 import { useEffect, useState } from "react";

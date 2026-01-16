@@ -1,4 +1,4 @@
-import { StoreInstanceForm } from "@/components/store.instance.form";
+import { StoreInstanceForm } from "@/components/store/store.instance.form";
 import type { TurStoreInstance } from "@/models/store/store-instance.model.ts";
 import { TurStoreInstanceService } from "@/services/store/store.service";
 import { useEffect, useState } from "react";

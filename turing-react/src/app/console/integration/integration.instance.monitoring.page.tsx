@@ -1,5 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
-import { AemMonitoringGrid } from "@/components/aem.monitoring.grid";
+import { AemMonitoringGrid } from "@/components/integration/aem.monitoring.grid";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";

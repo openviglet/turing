@@ -17,25 +17,32 @@ import {
   Input
 } from "@/components/ui/input"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
+import {
   Textarea
 } from "@/components/ui/textarea"
-import type { TurTokenInstance } from "@/models/token/token-instance.model.ts"
-import { TurTokenInstanceService } from "@/services/token/token.service"
+import type { TurSEInstance } from "@/models/se/se-instance.model.ts"
+import { TurSEInstanceService } from "@/services/se/se.service"
 import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-const turTokenInstanceService = new TurTokenInstanceService();
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+const turSEInstanceService = new TurSEInstanceService();
 interface Props {
-  value: TurTokenInstance;
+  value: TurSEInstance;
   isNew: boolean;
 }
 
-export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurTokenInstance>();
+export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
+  const form = useForm<TurSEInstance>();
   const { setValue } = form;
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
@@ -43,20 +50,22 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     setValue("id", value.id)
     setValue("title", value.title);
     setValue("description", value.description);
-    setValue("token", value.token);
+    setValue("turSEVendor", value.turSEVendor);
+    setValue("host", value.host);
+    setValue("port", value.port);
   }, [setValue, value]);
 
 
-  function onSubmit(seInstance: TurTokenInstance) {
+  function onSubmit(seInstance: TurSEInstance) {
     try {
       if (isNew) {
-        turTokenInstanceService.create(seInstance);
-        toast.success(`The ${seInstance.title} API Token was saved`);
-        navigate(ROUTES.TOKEN_INSTANCE);
+        turSEInstanceService.create(seInstance);
+        toast.success(`The ${seInstance.title} Search Engine was saved`);
+        navigate(ROUTES.SE_INSTANCE);
       }
       else {
-        turTokenInstanceService.update(seInstance);
-        toast.success(`The ${seInstance.title} API Token was updated`);
+        turSEInstanceService.update(seInstance);
+        toast.success(`The ${seInstance.title} Search Engine was updated`);
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -67,35 +76,25 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   async function onDelete() {
     console.log("delete");
     try {
-      if (await turTokenInstanceService.delete(value)) {
-        toast.success(`The ${value.title} API Token was deleted`);
-        navigate(ROUTES.TOKEN_INSTANCE);
+      if (await turSEInstanceService.delete(value)) {
+        toast.success(`The ${value.title} Search Engine was deleted`);
+        navigate(ROUTES.SE_INSTANCE);
       }
       else {
-        toast.error(`The ${value.title} API Token was not deleted`);
+        toast.error(`The ${value.title} Search Engine was not deleted`);
       }
 
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error(`The ${value.title} API Token was not deleted`);
+      toast.error(`The ${value.title} Search Engine was not deleted`);
     }
     setOpen(false);
   }
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value.token);
-      toast.success("Token API copied!");
-    } catch (err) {
-      toast.error("Failed to copy token API");
-      console.error("Failed to copy text: ", err);
-    }
-  };
   return (
     <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
       <Card className="mx-auto max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} API Token</CardTitle>
+          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Search Engine</CardTitle>
           <CardAction>
             {!isNew &&
               <Dialog open={open} onOpenChange={setOpen}>
@@ -111,10 +110,10 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                       </DialogDescription>
                     </DialogHeader>
                     <p className="grid gap-4">
-                      This action cannot be undone. This will permanently delete the {value.title} api token.
+                      This action cannot be undone. This will permanently delete the {value.title} search engine.
                     </p>
                     <DialogFooter>
-                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this api token</Button>
+                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this search engine</Button>
                     </DialogFooter>
                   </DialogContent>
                 </form>
@@ -122,7 +121,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
             }
           </CardAction>
           <CardDescription>
-            API Token settings.
+            Search engine settings.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -141,7 +140,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>API Token title will appear on API Token list.</FormDescription>
+                    <FormDescription>Search engine instance title will appear on list.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -160,32 +159,69 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>API Token description will appear on API Token list.</FormDescription>
+                    <FormDescription>Search engine instance description will appear on list.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {!isNew && <FormField
+
+              <FormField
                 control={form.control}
-                name="token"
+                name="turSEVendor.id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>API Token</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          placeholder="API Token"
-                          type="text"
-                          readOnly
-                          {...field} />
-                        <Button type="button" onClick={handleCopy}>Copy</Button>
-                      </div>
-                    </FormControl>
-                    <FormDescription>API Token instance host will be connected.</FormDescription>
+                    <FormLabel>Vendor</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem key="SOLR" value="SOLR">Solr</SelectItem>
+                        <SelectItem key="LUCENE" value="LUCENE">Lucene</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>Search engine vendor that will be used.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
-              />}
+              />
+
+              <FormField
+                control={form.control}
+                name="host"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Host</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Host"
+                        type="text"
+                        {...field} />
+                    </FormControl>
+                    <FormDescription>Search engine instance host will be connected.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="port"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Port</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Port"
+                        type="number"
+                        {...field} />
+                    </FormControl>
+                    <FormDescription>Search engine instance port will be connected.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit">Save</Button>
             </form>
           </Form>

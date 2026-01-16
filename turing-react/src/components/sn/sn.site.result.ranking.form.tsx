@@ -26,9 +26,9 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { DynamicResultRankingFields } from "./dynamic-result-ranking-field"
-import { Label } from "./ui/label"
-import { Slider } from "./ui/slider"
+import { Label } from "../ui/label"
+import { Slider } from "../ui/slider"
+import { DynamicResultRankingFields } from "./result-ranking/dynamic-result-ranking-field"
 const turSNSiteService = new TurSNSiteService();
 interface Props {
   siteId: string
