@@ -20,7 +20,7 @@ export default function IntegrationInstanceIndexingRulePage() {
   return (
     <>
       <SubPageHeader icon={IconTools} title="Indexing Rules" description="Establish guidelines for how the indexing process will operate." />
-      <IntegrationIndexingRulesForm value={integrationIndexingRules} isNew={isNew} />
+      <IntegrationIndexingRulesForm value={integrationIndexingRules} integrationId={id} isNew={isNew} />
     </>
   )
 }

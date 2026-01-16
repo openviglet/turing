@@ -37,10 +37,11 @@ import { DynamicIndexingRuleFields } from "./dynamic.indexing.rule.field"
 
 interface Props {
   value: TurIntegrationIndexingRule;
+  integrationId: string;
   isNew: boolean;
 }
 
-export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, isNew }) => {
+export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrationId, isNew }) => {
   const form = useForm<TurIntegrationIndexingRule>();
   const { control, register, setValue } = form;
   const navigate = useNavigate()
@@ -58,13 +59,13 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, isNew }) 
   function onSubmit(integrationIndexingRule: TurIntegrationIndexingRule) {
     try {
       if (isNew) {
-        const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService("");
+        const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService(integrationId);
         turIntegrationIndexingRuleService.create(integrationIndexingRule);
         toast.success(`The ${integrationIndexingRule.name} Integration Indexing Rule was saved`);
         navigate(ROUTES.INTEGRATION_INSTANCE);
       }
       else {
-        const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService("");
+        const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService(integrationId);
         turIntegrationIndexingRuleService.update(integrationIndexingRule);
         toast.success(`The ${integrationIndexingRule.name} Integration Indexing Rule was updated`);
       }
