@@ -44,13 +44,17 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
     public static final String FORWARD_SN_TEMPLATES_BROWSER_INDEX_HTML = "forward:/sn/templates/browser/index.html";
     public static final String FORWARD_WELCOME_BROWSER_INDEX_HTML = "forward:/welcome/browser/index.html";
     public static final String FORWARD_CONSOLE_BROWSER_INDEX_HTML = "forward:/console/browser/index.html";
-    @Value("${turing.allowedOrigins:localhost}")
+    @Value("${turing.allowedOrigins:http://localhost:5173,http://localhost:2700}")
     private String allowedOrigins;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**").allowedOrigins(allowedOrigins).allowedMethods("PUT", "DELETE", "GET", "POST")
-                .allowCredentials(false).maxAge(3600);
+        registry.addMapping("/api/**")
+                .allowedOrigins(allowedOrigins.split(","))
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 
     @Override

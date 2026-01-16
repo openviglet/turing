@@ -1,3 +1,4 @@
+import '@/lib/axios'; // Configure axios interceptors for CSRF
 import axios from 'axios'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
