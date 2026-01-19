@@ -26,8 +26,12 @@ import {
   Textarea
 } from "@/components/ui/textarea"
 import type { TurIntegrationIndexingRule } from "@/models/integration/integration-indexing-rule.model"
+import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
+import type { TurSNSite } from "@/models/sn/sn-site.model"
 import { TurIntegrationIndexingRuleService } from "@/services/integration/integration-indexing-rule.service"
-import { useEffect } from "react"
+import { TurSNFieldService } from "@/services/sn/sn.field.service"
+import { TurSNSiteService } from "@/services/sn/sn.service"
+import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
@@ -42,10 +46,20 @@ interface Props {
 }
 
 export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrationId, isNew }) => {
+  const turSNSiteService = new TurSNSiteService();
+  const turSNFieldService = new TurSNFieldService();
   const form = useForm<TurIntegrationIndexingRule>();
-  const { control, register, setValue } = form;
-  const navigate = useNavigate()
+  const { control, register, setValue, watch } = form;
+  const [turSNSites, setTurSNSites] = useState<TurSNSite[]>([] as TurSNSite[]);
+  const [turSNSiteFields, setTurSNSiteFields] = useState<TurSNSiteField[]>([] as TurSNSiteField[]);
+  const navigate = useNavigate();
+  const selectedSource = watch("source");
+
   useEffect(() => {
+    turSNSiteService.query().then((sites) => {
+      setTurSNSites(sites);
+    });
+
     setValue("id", value.id)
     setValue("name", value.name);
     setValue("description", value.description);
@@ -54,6 +68,21 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrati
     setValue("attribute", value.attribute);
     setValue("values", value.values);
   }, [setValue, value]);
+
+  useEffect(() => {
+    if (selectedSource && turSNSites.length > 0) {
+      const selectedSite = turSNSites.find((site) => site.name === selectedSource);
+      if (selectedSite?.id) {
+        turSNFieldService.query(selectedSite.id).then((fields) => {
+          setTurSNSiteFields(fields);
+          // Re-set attribute value after fields are loaded
+          if (value.attribute) {
+            setValue("attribute", value.attribute);
+          }
+        });
+      }
+    }
+  }, [selectedSource, turSNSites]);
 
 
   function onSubmit(integrationIndexingRule: TurIntegrationIndexingRule) {
@@ -120,14 +149,20 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrati
           name="source"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Content Source</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="e.g., WKND"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>The content path or source location where this rule will be applied.</FormDescription>
+              <FormLabel>Semantic Navigation Site</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose..." />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {turSNSites.map((site) => (
+                    <SelectItem key={site.name} value={site.name}>{site.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormDescription>The Semantic Navigation site where this rule will be applied.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -137,19 +172,24 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrati
           name="attribute"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Target Attribute</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="e.g., title"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>The content attribute or property name used to match against the values below.</FormDescription>
+              <FormLabel>Field</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose..." />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {turSNSiteFields.map((field) => (
+                    <SelectItem key={field.name} value={field.name}>{field.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormDescription>The content attribute used to match against the values below.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="ruleType"
