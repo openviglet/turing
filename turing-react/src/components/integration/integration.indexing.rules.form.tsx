@@ -1,8 +1,8 @@
 "use client"
 
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
-import { UNSAFE_NavigationContext as NavigationContext, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 
 import { ROUTES } from "@/app/routes.const"
@@ -62,7 +62,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
   const form = useForm<TurIntegrationIndexingRule>({
     defaultValues: value
   });
-  const { control, register, setValue, watch, formState: { isDirty } } = form;
+  const { control, register, setValue, watch } = form;
 
   // State
   const [turSNSites, setTurSNSites] = useState<TurSNSite[]>([]);
@@ -74,42 +74,8 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
 
   // Navigation
   const navigate = useNavigate();
-  const { navigator } = useContext(NavigationContext);
-
   // Watch selected source for dependent field loading
   const selectedSource = watch("source");
-
-  // Handle browser's beforeunload event for tab close/refresh
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isDirty) {
-        e.preventDefault();
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [isDirty]);
-
-  // Block React Router navigation when form has unsaved changes
-  useEffect(() => {
-    if (!isDirty) return;
-
-    const push = navigator.push;
-
-    navigator.push = (...args: Parameters<typeof push>) => {
-      const confirmLeave = window.confirm(
-        "You have unsaved changes. Are you sure you want to leave this page?"
-      );
-      if (confirmLeave) {
-        push(...args);
-      }
-    };
-
-    return () => {
-      navigator.push = push;
-    };
-  }, [isDirty, navigator]);
 
   // Find selected site - memoized for performance
   const selectedSite = useMemo(
