@@ -1,8 +1,12 @@
 "use client"
+
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
+import { useForm } from "react-hook-form"
+import { UNSAFE_NavigationContext as NavigationContext, useNavigate } from "react-router-dom"
+import { toast } from "sonner"
+
 import { ROUTES } from "@/app/routes.const"
-import {
-  Button
-} from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -12,9 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Input
-} from "@/components/ui/input"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -22,93 +24,193 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
-import {
-  Textarea
-} from "@/components/ui/textarea"
+import { Textarea } from "@/components/ui/textarea"
 import type { TurIntegrationIndexingRule } from "@/models/integration/integration-indexing-rule.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
 import type { TurSNSite } from "@/models/sn/sn-site.model"
 import { TurIntegrationIndexingRuleService } from "@/services/integration/integration-indexing-rule.service"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
 import { TurSNSiteService } from "@/services/sn/sn.service"
-import { useEffect, useState } from "react"
-import {
-  useForm
-} from "react-hook-form"
-import { useNavigate } from "react-router-dom"
-import { toast } from "sonner"
 import { DynamicIndexingRuleFields } from "./dynamic.indexing.rule.field"
 
-interface Props {
+// Constants
+const RULE_TYPES = [
+  { value: "IGNORE", label: "Ignore" }
+] as const;
+
+// Props interface with descriptive naming
+interface IntegrationIndexingRulesFormProps {
   value: TurIntegrationIndexingRule;
   integrationId: string;
   isNew: boolean;
 }
 
-export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrationId, isNew }) => {
-  const turSNSiteService = new TurSNSiteService();
-  const turSNFieldService = new TurSNFieldService();
-  const form = useForm<TurIntegrationIndexingRule>();
-  const { control, register, setValue, watch } = form;
-  const [turSNSites, setTurSNSites] = useState<TurSNSite[]>([] as TurSNSite[]);
-  const [turSNSiteFields, setTurSNSiteFields] = useState<TurSNSiteField[]>([] as TurSNSiteField[]);
+export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesFormProps> = ({
+  value,
+  integrationId,
+  isNew
+}) => {
+  // Services - memoized to prevent recreation on each render
+  const turSNSiteService = useMemo(() => new TurSNSiteService(), []);
+  const turSNFieldService = useMemo(() => new TurSNFieldService(), []);
+  const turIntegrationIndexingRuleService = useMemo(
+    () => new TurIntegrationIndexingRuleService(integrationId),
+    [integrationId]
+  );
+
+  // Form setup with default values
+  const form = useForm<TurIntegrationIndexingRule>({
+    defaultValues: value
+  });
+  const { control, register, setValue, watch, formState: { isDirty } } = form;
+
+  // State
+  const [turSNSites, setTurSNSites] = useState<TurSNSite[]>([]);
+  const [turSNSiteFields, setTurSNSiteFields] = useState<TurSNSiteField[]>([]);
+  const [isLoadingFields, setIsLoadingFields] = useState(false);
+
+  // Ref to track pending attribute value that needs to be set after fields load
+  const pendingAttributeRef = useRef<string | null>(value.attribute || null);
+
+  // Navigation
   const navigate = useNavigate();
+  const { navigator } = useContext(NavigationContext);
+
+  // Watch selected source for dependent field loading
   const selectedSource = watch("source");
 
+  // Handle browser's beforeunload event for tab close/refresh
   useEffect(() => {
-    turSNSiteService.query().then((sites) => {
-      setTurSNSites(sites);
-    });
-
-    setValue("id", value.id)
-    setValue("name", value.name);
-    setValue("description", value.description);
-    setValue("ruleType", value.ruleType);
-    setValue("source", value.source);
-    setValue("attribute", value.attribute);
-    setValue("values", value.values);
-  }, [setValue, value]);
-
-  useEffect(() => {
-    if (selectedSource && turSNSites.length > 0) {
-      const selectedSite = turSNSites.find((site) => site.name === selectedSource);
-      if (selectedSite?.id) {
-        turSNFieldService.query(selectedSite.id).then((fields) => {
-          setTurSNSiteFields(fields);
-          // Re-set attribute value after fields are loaded
-          if (value.attribute) {
-            setValue("attribute", value.attribute);
-          }
-        });
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
       }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  // Block React Router navigation when form has unsaved changes
+  useEffect(() => {
+    if (!isDirty) return;
+
+    const push = navigator.push;
+
+    navigator.push = (...args: Parameters<typeof push>) => {
+      const confirmLeave = window.confirm(
+        "You have unsaved changes. Are you sure you want to leave this page?"
+      );
+      if (confirmLeave) {
+        push(...args);
+      }
+    };
+
+    return () => {
+      navigator.push = push;
+    };
+  }, [isDirty, navigator]);
+
+  // Find selected site - memoized for performance
+  const selectedSite = useMemo(
+    () => turSNSites.find((site) => site.name === selectedSource),
+    [turSNSites, selectedSource]
+  );
+
+  // Load initial data (sites only)
+  useEffect(() => {
+    const loadSites = async () => {
+      try {
+        const sites = await turSNSiteService.query();
+        setTurSNSites(sites);
+      } catch (error) {
+        console.error("Failed to load sites:", error);
+        toast.error("Failed to load Semantic Navigation sites.");
+      }
+    };
+
+    loadSites();
+  }, [turSNSiteService]);
+
+  // Reset form when value changes
+  useEffect(() => {
+    form.reset(value);
+    // Store the attribute to be set after fields are loaded
+    pendingAttributeRef.current = value.attribute || null;
+  }, [form, value]);
+
+  // Load fields when site selection changes
+  useEffect(() => {
+    const loadFields = async () => {
+      if (!selectedSite?.id) {
+        setTurSNSiteFields([]);
+        return;
+      }
+
+      setIsLoadingFields(true);
+      try {
+        const fields = await turSNFieldService.query(selectedSite.id);
+        setTurSNSiteFields(fields);
+      } catch (error) {
+        console.error("Failed to load fields:", error);
+        toast.error("Failed to load site fields.");
+      } finally {
+        setIsLoadingFields(false);
+      }
+    };
+
+    loadFields();
+  }, [selectedSite?.id, turSNFieldService]);
+
+  // Set attribute value after fields are loaded
+  useEffect(() => {
+    if (turSNSiteFields.length > 0 && pendingAttributeRef.current) {
+      const attributeExists = turSNSiteFields.some(
+        (field) => field.name === pendingAttributeRef.current
+      );
+      if (attributeExists) {
+        setValue("attribute", pendingAttributeRef.current);
+      }
+      pendingAttributeRef.current = null;
     }
-  }, [selectedSource, turSNSites]);
+  }, [turSNSiteFields, setValue]);
 
-
-  function onSubmit(integrationIndexingRule: TurIntegrationIndexingRule) {
+  // Form submission handler - memoized with useCallback
+  const onSubmit = useCallback(async (data: TurIntegrationIndexingRule) => {
     try {
       if (isNew) {
-        const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService(integrationId);
-        turIntegrationIndexingRuleService.create(integrationIndexingRule);
-        toast.success(`The ${integrationIndexingRule.name} Integration Indexing Rule was saved`);
-        navigate(ROUTES.INTEGRATION_INSTANCE);
-      }
-      else {
-        const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService(integrationId);
-        turIntegrationIndexingRuleService.update(integrationIndexingRule);
-        toast.success(`The ${integrationIndexingRule.name} Integration Indexing Rule was updated`);
+        const result = await turIntegrationIndexingRuleService.create(data);
+        if (result) {
+          form.reset(data); // Reset dirty state after successful save
+          toast.success(`The "${data.name}" Integration Indexing Rule was created successfully.`);
+          navigate(ROUTES.INTEGRATION_INSTANCE);
+        } else {
+          toast.error("Failed to create the rule. Please try again.");
+        }
+      } else {
+        const result = await turIntegrationIndexingRuleService.update(data);
+        if (result) {
+          form.reset(data); // Reset dirty state after successful save
+          toast.success(`The "${data.name}" Integration Indexing Rule was updated successfully.`);
+        } else {
+          toast.error("Failed to update the rule. Please try again.");
+        }
       }
     } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+      console.error("Form submission error:", error);
+      toast.error("Failed to save the rule. Please try again.");
     }
-  }
+  }, [isNew, turIntegrationIndexingRuleService, navigate, form]);
+
+  // Check if attribute field should be disabled
+  const isAttributeFieldDisabled = !selectedSource || isLoadingFields;
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
+        {/* Rule Name */}
         <FormField
-          control={form.control}
+          control={control}
           name="name"
           render={({ field }) => (
             <FormItem>
@@ -120,32 +222,39 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrati
                   type="text"
                 />
               </FormControl>
-              <FormDescription>A unique, descriptive name to easily identify this rule in the list.</FormDescription>
+              <FormDescription>
+                A unique, descriptive name to easily identify this rule in the list.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Rule Description */}
         <FormField
-          control={form.control}
+          control={control}
           name="description"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Rule Description</FormLabel>
               <FormControl>
                 <Textarea
+                  {...field}
                   placeholder="e.g., Excludes all draft pages from indexing"
                   className="resize-none"
-                  {...field}
                 />
               </FormControl>
-              <FormDescription>Provide details about what this rule does and when it should be applied.</FormDescription>
+              <FormDescription>
+                Provide details about what this rule does and when it should be applied.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Semantic Navigation Site */}
         <FormField
-          control={form.control}
+          control={control}
           name="source"
           render={({ field }) => (
             <FormItem>
@@ -158,40 +267,58 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrati
                 </FormControl>
                 <SelectContent>
                   {turSNSites.map((site) => (
-                    <SelectItem key={site.name} value={site.name}>{site.name}</SelectItem>
+                    <SelectItem key={site.id} value={site.name}>
+                      {site.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <FormDescription>The Semantic Navigation site where this rule will be applied.</FormDescription>
+              <FormDescription>
+                The Semantic Navigation site where this rule will be applied.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Target Attribute/Field */}
         <FormField
-          control={form.control}
+          control={control}
           name="attribute"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Field</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+                disabled={isAttributeFieldDisabled}
+              >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose..." />
+                    <SelectValue
+                      placeholder={isLoadingFields ? "Loading..." : "Choose..."}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {turSNSiteFields.map((field) => (
-                    <SelectItem key={field.name} value={field.name}>{field.name}</SelectItem>
+                  {turSNSiteFields.map((siteField) => (
+                    <SelectItem key={siteField.id} value={siteField.name}>
+                      {siteField.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <FormDescription>The content attribute used to match against the values below.</FormDescription>
+              <FormDescription>
+                The content attribute used to match against the values below.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Action Type */}
         <FormField
-          control={form.control}
+          control={control}
           name="ruleType"
           render={({ field }) => (
             <FormItem>
@@ -203,18 +330,29 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrati
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem key="IGNORE" value="IGNORE">Ignore</SelectItem>
+                  {RULE_TYPES.map((ruleType) => (
+                    <SelectItem key={ruleType.value} value={ruleType.value}>
+                      {ruleType.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
-              <FormDescription>Defines the action to take when content matches this rule. "Ignore" will exclude matching content from indexing.</FormDescription>
+              <FormDescription>
+                Defines the action to take when content matches this rule.
+                "Ignore" will exclude matching content from indexing.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Matching Values */}
         <FormItem>
           <FormLabel>Matching Values</FormLabel>
-          <FormDescription>Add the values that the attribute should match. Content with matching attribute values will have the rule applied.</FormDescription>
+          <FormDescription>
+            Add the values that the attribute should match.
+            Content with matching attribute values will have the rule applied.
+          </FormDescription>
           <FormControl>
             <DynamicIndexingRuleFields
               fieldName="values"
@@ -227,6 +365,6 @@ export const IntegrationIndexingRulesForm: React.FC<Props> = ({ value, integrati
         <Button type="submit">Save</Button>
       </form>
     </Form>
-  )
+  );
 }
 
