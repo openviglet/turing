@@ -44,19 +44,15 @@ interface Props {
 }
 
 export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurStoreInstance>();
-  const { setValue } = form;
+  const form = useForm<TurStoreInstance>({
+    defaultValues: value
+  });
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
-  useEffect(() => {
-    setValue("id", value.id)
-    setValue("title", value.title);
-    setValue("description", value.description);
-    setValue("turStoreVendor", value.turStoreVendor);
-    setValue("url", value.url);
-    setValue("enabled", value.enabled);
-  }, [setValue, value]);
 
+  useEffect(() => {
+    form.reset(value);
+  }, [value])
 
   function onSubmit(storeInstance: TurStoreInstance) {
     try {

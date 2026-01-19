@@ -44,31 +44,16 @@ interface Props {
 }
 
 export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurLLMInstance>();
-  const { setValue } = form;
+  const form = useForm<TurLLMInstance>({
+    defaultValues: value
+  });
+
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
-  useEffect(() => {
-    setValue("id", value.id)
-    setValue("title", value.title);
-    setValue("description", value.description);
-    setValue("turLLMVendor", value.turLLMVendor);
-    setValue("url", value.url);
-    setValue("modelName", value.modelName);
-    setValue("temperature", value.temperature);
-    setValue("topK", value.topK);
-    setValue("topP", value.topP);
-    setValue("repeatPenalty", value.repeatPenalty);
-    setValue("seed", value.seed);
-    setValue("numPredict", value.numPredict);
-    setValue("stop", value.stop);
-    setValue("responseFormat", value.responseFormat);
-    setValue("supportedCapabilities", value.supportedCapabilities);
-    setValue("timeout", value.timeout);
-    setValue("maxRetries", value.maxRetries);
-    setValue("enabled", value.enabled);
-  }, [setValue, value]);
 
+  useEffect(() => {
+    form.reset(value);
+  }, [value])
 
   function onSubmit(llmInstance: TurLLMInstance) {
     try {

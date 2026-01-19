@@ -39,17 +39,15 @@ interface Props {
 }
 
 export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurSNSite>();
-  const { setValue } = form;
+  const form = useForm<TurSNSite>({
+    defaultValues: value
+  });
   const urlBase = "/admin/sn/instance";
   const navigate = useNavigate()
-  useEffect(() => {
-    setValue("id", value.id)
-    setValue("name", value.name);
-    setValue("description", value.description);
-    setValue("turSEInstance", value.turSEInstance);
-  }, [setValue, value]);
 
+  useEffect(() => {
+    form.reset(value);
+  }, [value])
 
   function onSubmit(snSite: TurSNSite) {
     try {

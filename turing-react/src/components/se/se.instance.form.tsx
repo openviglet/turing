@@ -42,19 +42,16 @@ interface Props {
 }
 
 export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurSEInstance>();
-  const { setValue } = form;
+  const form = useForm<TurSEInstance>({
+    defaultValues: value
+  });
+  const { control } = form;
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
-  useEffect(() => {
-    setValue("id", value.id)
-    setValue("title", value.title);
-    setValue("description", value.description);
-    setValue("turSEVendor", value.turSEVendor);
-    setValue("host", value.host);
-    setValue("port", value.port);
-  }, [setValue, value]);
 
+  useEffect(() => {
+    form.reset(value);
+  }, [value])
 
   function onSubmit(seInstance: TurSEInstance) {
     try {
@@ -128,7 +125,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
               <FormField
-                control={form.control}
+                control={control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
@@ -147,7 +144,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               />
 
               <FormField
-                control={form.control}
+                control={control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -166,7 +163,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               />
 
               <FormField
-                control={form.control}
+                control={control}
                 name="turSEVendor.id"
                 render={({ field }) => (
                   <FormItem>
@@ -189,7 +186,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               />
 
               <FormField
-                control={form.control}
+                control={control}
                 name="host"
                 render={({ field }) => (
                   <FormItem>
@@ -206,7 +203,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                 )}
               />
               <FormField
-                control={form.control}
+                control={control}
                 name="port"
                 render={({ field }) => (
                   <FormItem>
