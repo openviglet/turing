@@ -294,7 +294,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.24</version>
+                <version>1.5.25</version>
             </dependency>
             <dependency>
                 <groupId>com.viglet.turing</groupId>
@@ -314,7 +314,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.24</version>
+                <version>1.5.25</version>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>
@@ -369,7 +369,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.20.1</version>
+                <version>2.21.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
