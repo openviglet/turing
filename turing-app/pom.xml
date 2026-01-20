@@ -13,8 +13,8 @@
     <url>https://github.com/openturing/turing</url>
     <packaging>jar</packaging>
     <properties>
-        <elasticsearch.version>9.2.3</elasticsearch.version>
-        <jackson.version>2.20.1</jackson.version>
+        <elasticsearch.version>9.2.4</elasticsearch.version>
+        <jackson.version>2.21.0</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>21</maven.compiler.release>
@@ -183,7 +183,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.8</version>
+            <version>42.7.9</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
