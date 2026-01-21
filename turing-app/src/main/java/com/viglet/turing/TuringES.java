@@ -26,10 +26,9 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.datatype.hibernate7.Hibernate7Module;
-
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.datatype.hibernate7.Hibernate7Module;
 
 @Slf4j
 @SpringBootApplication(exclude = { MongoAutoConfiguration.class })
@@ -56,7 +55,7 @@ public class TuringES {
     }
 
     @Bean
-    Module hibernate7Module() {
+    JacksonModule hibernate7Module() {
         return new Hibernate7Module();
     }
 }
