@@ -1,24 +1,23 @@
 package com.viglet.turing.commons.logging;
 
-import ch.qos.logback.classic.pattern.Abbreviator;
-import ch.qos.logback.classic.pattern.TargetLengthBasedClassNameAbbreviator;
-import ch.qos.logback.classic.spi.IThrowableProxy;
-import ch.qos.logback.classic.spi.ThrowableProxyUtil;
-import ch.qos.logback.core.CoreConstants;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import lombok.Setter;
-import org.bson.Document;
-
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+
+import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
+
+import ch.qos.logback.classic.pattern.Abbreviator;
+import ch.qos.logback.classic.pattern.TargetLengthBasedClassNameAbbreviator;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
+import ch.qos.logback.core.CoreConstants;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.joda.JodaModule;
 
 @Slf4j
 @Setter
@@ -32,6 +31,7 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
         if (!enabled || collection == null) {
             return;
         }
+
         TurLoggingGeneral turLoggingGeneral = TurLoggingGeneral.builder()
                 .level(event.getLevel().toString())
                 .logger(abbreviatePackage(event.getLoggerName()))
@@ -39,19 +39,20 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
                 .date(new Date(event.getTimeStamp()))
                 .stackTrace(getStackTrace(event))
                 .build();
+
         try {
             turLoggingGeneral.setClusterNode(InetAddress.getLocalHost().getHostName());
         } catch (UnknownHostException e) {
-            log.error(e.getMessage(), e);
+            // Use um fallback ou log de console aqui, evite recursão se o log falhar
+            System.err.println(e.getMessage());
         }
-        try {
-            String json = new ObjectMapper().registerModule(new JodaModule())
-                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
-                    .writeValueAsString(turLoggingGeneral);
-            collection.insertOne(Document.parse(json));
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-        }
+        JsonMapper mapper = JsonMapper.builder()
+                .addModule(new JodaModule())
+                .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+                .build();
+        String json = mapper.writeValueAsString(turLoggingGeneral);
+        collection.insertOne(Document.parse(json));
+
     }
 
     private static @NotNull String getStackTrace(ILoggingEvent event) {
@@ -66,8 +67,10 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
     }
 
     private static @NotNull String abbreviatePackage(String packageName) {
-        if (packageName == null) return "";
-        if (packageName.length() <= MAX_LENGTH_PACKAGE_NAME) return packageName;
+        if (packageName == null)
+            return "";
+        if (packageName.length() <= MAX_LENGTH_PACKAGE_NAME)
+            return packageName;
         return ABBREVIATOR.abbreviate(packageName);
     }
 }

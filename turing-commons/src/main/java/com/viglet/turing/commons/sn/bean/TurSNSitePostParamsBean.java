@@ -18,13 +18,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.MapSerializer;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.jdk.MapSerializer;
 
 /**
  * Post Parameters for Search with sensitive data

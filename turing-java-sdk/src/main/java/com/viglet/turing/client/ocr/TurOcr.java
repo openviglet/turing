@@ -1,10 +1,9 @@
 package com.viglet.turing.client.ocr;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.client.auth.TurServer;
-import com.viglet.turing.client.utils.TurClientUtils;
-import com.viglet.turing.commons.file.TurFileAttributes;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.entity.mime.FileBody;
@@ -21,9 +20,12 @@ import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
+import com.viglet.turing.client.auth.TurServer;
+import com.viglet.turing.client.utils.TurClientUtils;
+import com.viglet.turing.commons.file.TurFileAttributes;
+
+import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 public class TurOcr {
@@ -34,8 +36,9 @@ public class TurOcr {
     public static final String FILE = "file";
     public static final String URL = "url";
     private final PoolingHttpClientConnectionManager pool;
+
     public TurOcr() {
-       pool = setConnectionManager();
+        pool = setConnectionManager();
     }
 
     public TurFileAttributes processFile(TurServer turServer, File file, boolean showOutput) {
@@ -46,15 +49,14 @@ public class TurOcr {
     }
 
     private TurFileAttributes getTurFileAttributes(TurServer turServer, HttpEntity requestEntity,
-                                                          String endpoint,
-                                                          boolean showOutput) {
+            String endpoint,
+            boolean showOutput) {
 
         try (CloseableHttpClient client = HttpClients
-                     .custom()
-                     .setConnectionManager(pool)
-                     .build();
-             HttpEntity entity = requestEntity
-        ) {
+                .custom()
+                .setConnectionManager(pool)
+                .build();
+                HttpEntity entity = requestEntity) {
             HttpPost httpPost = new HttpPost(endpoint);
             httpPost.setEntity(entity);
             TurClientUtils.authentication(httpPost, turServer.getApiKey());

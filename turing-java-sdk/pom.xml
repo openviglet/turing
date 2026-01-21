@@ -54,10 +54,8 @@
             <version>33.5.0-jre</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-            <version>2.20.1</version>
-            <scope>compile</scope>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- Test Dependencies -->
         <dependency>

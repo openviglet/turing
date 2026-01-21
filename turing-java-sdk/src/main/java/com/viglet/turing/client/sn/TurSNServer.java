@@ -39,9 +39,6 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.net.URIBuilder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.client.auth.credentials.TurApiKeyCredentials;
 import com.viglet.turing.client.auth.credentials.TurUsernamePasswordCredentials;
 import com.viglet.turing.client.sn.TurSNQuery.Order;
@@ -65,6 +62,8 @@ import com.viglet.turing.commons.sn.search.TurSNParamType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Connect to Turing ES Server.
@@ -197,7 +196,7 @@ public class TurSNServer {
                         new TypeReference<>() {
                         });
             }
-        } catch (JsonProcessingException | URISyntaxException e) {
+        } catch (URISyntaxException e) {
             log.error(e.getMessage(), e);
         }
         return Collections.emptyList();
@@ -278,15 +277,12 @@ public class TurSNServer {
 
     public QueryTurSNResponse query(TurSNQuery turSNQuery) {
         this.turSNQuery = turSNQuery;
-        try {
-            String requestString = openConnectionAndRequest(prepareQueryRequest());
-            if (requestString != null) {
-                TurSNSiteSearchBean turSNSiteSearchBean = new ObjectMapper().readValue(requestString,
-                        TurSNSiteSearchBean.class);
-                return createTuringResponse(turSNSiteSearchBean);
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
+
+        String requestString = openConnectionAndRequest(prepareQueryRequest());
+        if (requestString != null) {
+            TurSNSiteSearchBean turSNSiteSearchBean = new ObjectMapper().readValue(requestString,
+                    TurSNSiteSearchBean.class);
+            return createTuringResponse(turSNSiteSearchBean);
         }
         return new QueryTurSNResponse();
     }
@@ -446,7 +442,7 @@ public class TurSNServer {
             TurSNClientUtils.authentication(httpPost, this.getCredentials(), this.getApiKey());
 
             requestLog(turingURL);
-        } catch (JsonProcessingException | URISyntaxException e) {
+        } catch (URISyntaxException e) {
             log.error(e.getMessage(), e);
         }
 

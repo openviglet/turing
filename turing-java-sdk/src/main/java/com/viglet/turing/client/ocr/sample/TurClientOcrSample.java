@@ -18,16 +18,16 @@
 
 package com.viglet.turing.client.ocr.sample;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.net.URI;
+
 import com.viglet.turing.client.auth.TurServer;
 import com.viglet.turing.client.auth.credentials.TurApiKeyCredentials;
 import com.viglet.turing.client.ocr.TurOcr;
 import com.viglet.turing.commons.file.TurFileAttributes;
-import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.net.URI;
+import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Sample code to use this SDK.
@@ -40,7 +40,7 @@ public class TurClientOcrSample {
 
     public static final String HTTP = "http";
 
-    public static void main(String[] args) throws JsonProcessingException {
+    public static void main(String[] args) {
         if (args.length == 4) {
             String turingUrl = args[0];
             String apiKey = args[1];
@@ -57,7 +57,7 @@ public class TurClientOcrSample {
 
     private static TurFileAttributes getAttributes(String turingUrl, String apikey, String fileUrl) {
         TurServer turServer = new TurServer(URI.create(turingUrl),
-                new  TurApiKeyCredentials(apikey));
+                new TurApiKeyCredentials(apikey));
         TurOcr turOcr = new TurOcr();
         if (fileUrl.toLowerCase().startsWith(HTTP)) {
             return turOcr.processUrl(turServer, URI.create(fileUrl), false);

@@ -16,17 +16,6 @@
  */
 package com.viglet.turing.client.sn.job;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.viglet.turing.client.sn.TurSNServer;
-import com.viglet.turing.client.sn.utils.TurSNClientUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.io.entity.StringEntity;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -34,6 +23,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+
+import com.viglet.turing.client.sn.TurSNServer;
+import com.viglet.turing.client.sn.utils.TurSNClientUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Turing Semantic Navigation Utilities.
@@ -57,7 +58,9 @@ public class TurSNJobUtils {
             return false;
         }
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            String jsonResult = new ObjectMapper().registerModule(new Jdk8Module()).writeValueAsString(turSNJobItems);
+            String jsonResult = JsonMapper.builder()
+                    .build()
+                    .writeValueAsString(turSNJobItems);
             ByteBuffer buffer = StandardCharsets.UTF_8.encode(jsonResult);
             String jsonUTF8 = StandardCharsets.UTF_8.decode(buffer).toString();
 
@@ -72,8 +75,7 @@ public class TurSNJobUtils {
             httpPost.setHeader("Accept-Encoding", StandardCharsets.UTF_8.name());
 
             TurSNClientUtils.authentication(httpPost, turSNServer.getCredentials(), turSNServer.getApiKey());
-            int statusCode = client.execute(httpPost, response ->
-                    importItemsLog(response, httpPost, jsonResult));
+            int statusCode = client.execute(httpPost, response -> importItemsLog(response, httpPost, jsonResult));
             if (statusCode == 200) {
                 log.info("Successfully imported the Job into Turing.");
                 return true;
@@ -113,7 +115,7 @@ public class TurSNJobUtils {
         turSNJobItem.setAttributes(attributes);
         turSNJobItems.add(turSNJobItem);
         if (importItems(turSNJobItems, turSNServer, false)) {
-            log.info ("Successfully deleted");
+            log.info("Successfully deleted");
         }
     }
 }

@@ -48,12 +48,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.viglet.turing.commons.exception.TurException;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * @author Alexandre Oliveira
@@ -289,8 +289,11 @@ public class TurCommonsUtils {
 
     public static String asJsonString(final Object obj) throws TurException {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            // No Jackson 3, usamos o Builder para configurar e criar o mapper
+            JsonMapper mapper = JsonMapper.builder()
+                    .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                    .build();
+
             return mapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new TurException(e);
