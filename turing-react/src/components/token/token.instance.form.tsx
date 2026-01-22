@@ -47,16 +47,24 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   }, [setValue, value]);
 
 
-  function onSubmit(seInstance: TurTokenInstance) {
+  async function onSubmit(seInstance: TurTokenInstance) {
     try {
       if (isNew) {
-        turTokenInstanceService.create(seInstance);
-        toast.success(`The ${seInstance.title} API Token was saved`);
-        navigate(ROUTES.TOKEN_INSTANCE);
+        const result = await turTokenInstanceService.create(seInstance);
+        if (result) {
+          toast.success(`The ${seInstance.title} API Token was saved`);
+          navigate(ROUTES.TOKEN_INSTANCE);
+        } else {
+          toast.error(`The ${seInstance.title} API Token was not saved`);
+        }
       }
       else {
-        turTokenInstanceService.update(seInstance);
-        toast.success(`The ${seInstance.title} API Token was updated`);
+        const result = await turTokenInstanceService.update(seInstance);
+        if (result) {
+          toast.success(`The ${seInstance.title} API Token was updated`);
+        } else {
+          toast.error(`The ${seInstance.title} API Token was not updated`);
+        }
       }
     } catch (error) {
       console.error("Form submission error", error);

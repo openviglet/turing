@@ -49,16 +49,24 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
     form.reset(value);
   }, [value])
 
-  function onSubmit(snSite: TurSNSite) {
+  async function onSubmit(snSite: TurSNSite) {
     try {
       if (isNew) {
-        turSNSiteService.create(snSite);
-        toast.success(`The ${snSite.name} SN Site was saved`);
-        navigate(urlBase);
+        const result = await turSNSiteService.create(snSite);
+        if (result) {
+          toast.success(`The ${snSite.name} SN Site was saved`);
+          navigate(urlBase);
+        } else {
+          toast.error(`The ${snSite.name} SN Site was not saved`);
+        }
       }
       else {
-        turSNSiteService.update(snSite);
-        toast.success(`The ${snSite.name} SN Site was updated`);
+        const result = await turSNSiteService.update(snSite);
+        if (result) {
+          toast.success(`The ${snSite.name} SN Site was updated`);
+        } else {
+          toast.error(`The ${snSite.name} SN Site was not updated`);
+        }
       }
     } catch (error) {
       console.error("Form submission error", error);

@@ -33,7 +33,7 @@ export default function IntegrationInstanceSourceListPage() {
           title="You don’t seem to have any AEM sources."
           description="Create a new AEM source to index from many AEM external data sources."
           buttonText="New AEM source"
-          urlNew={`${ROUTES.INTEGRATION_INSTANCE}/new`} />
+          urlNew={`${ROUTES.INTEGRATION_INSTANCE}/${id}/source/new`} />
       )}
     </>
   )

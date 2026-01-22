@@ -57,7 +57,7 @@ export default function IntegrationInstancePage() {
         try {
             if (await turIntegrationInstanceService.delete(integration)) {
                 toast.success(`The ${integration.title} Integration Instance was deleted`);
-                navigate(urlBase);
+                navigate(`${ROUTES.INTEGRATION_INSTANCE}`);
             } else {
                 toast.error(`The ${integration.title} Integration Instance was not deleted`);
             }
