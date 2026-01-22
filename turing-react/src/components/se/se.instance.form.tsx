@@ -53,16 +53,24 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     form.reset(value);
   }, [value])
 
-  function onSubmit(seInstance: TurSEInstance) {
+  async function onSubmit(seInstance: TurSEInstance) {
     try {
       if (isNew) {
-        turSEInstanceService.create(seInstance);
-        toast.success(`The ${seInstance.title} Search Engine was saved`);
-        navigate(ROUTES.SE_INSTANCE);
+        const result = await turSEInstanceService.create(seInstance);
+        if (result) {
+          toast.success(`The ${seInstance.title} Search Engine was saved`);
+          navigate(ROUTES.SE_INSTANCE);
+        } else {
+          toast.error(`The ${seInstance.title} Search Engine was not saved`);
+        }
       }
       else {
-        turSEInstanceService.update(seInstance);
-        toast.success(`The ${seInstance.title} Search Engine was updated`);
+        const result = await turSEInstanceService.update(seInstance);
+        if (result) {
+          toast.success(`The ${seInstance.title} Search Engine was updated`);
+        } else {
+          toast.error(`The ${seInstance.title} Search Engine was not updated`);
+        }
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -175,8 +183,8 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem key="SOLR" value="SOLR">Solr</SelectItem>
-                        <SelectItem key="LUCENE" value="LUCENE">Lucene</SelectItem>
+                        <SelectItem key="SOLR" value="SOLR">Apache Solr</SelectItem>
+                        <SelectItem key="LUCENE" value="LUCENE">Apache Lucene</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormDescription>Search engine vendor that will be used.</FormDescription>

@@ -55,16 +55,24 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     form.reset(value);
   }, [value])
 
-  function onSubmit(llmInstance: TurLLMInstance) {
+  async function onSubmit(llmInstance: TurLLMInstance) {
     try {
       if (isNew) {
-        turLLMInstanceService.create(llmInstance);
-        toast.success(`The ${llmInstance.title} Language Model was saved`);
-        navigate(urlBase);
+        const result = await turLLMInstanceService.create(llmInstance);
+        if (result) {
+          toast.success(`The ${llmInstance.title} Language Model was saved`);
+          navigate(urlBase);
+        } else {
+          toast.error(`The ${llmInstance.title} Language Model was not saved`);
+        }
       }
       else {
-        turLLMInstanceService.update(llmInstance);
-        toast.success(`The ${llmInstance.title} Language Model was updated`);
+        const result = await turLLMInstanceService.update(llmInstance);
+        if (result) {
+          toast.success(`The ${llmInstance.title} Language Model was updated`);
+        } else {
+          toast.error(`The ${llmInstance.title} Language Model was not updated`);
+        }
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -359,7 +367,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               />
               <FormField
                 control={form.control}
-                name="responseFormat"
+                name="supportedCapabilities"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Supported capabilities</FormLabel>

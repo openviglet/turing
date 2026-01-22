@@ -1,8 +1,8 @@
-import { Separator } from "@/components/ui/separator"
-import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { NavLink } from "react-router-dom";
 import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
-import { NavLink } from "react-router-dom";
 
 interface MyComponentProps {
   turIcon?: React.ElementType;
@@ -23,21 +23,22 @@ export const PageHeader: React.FC<MyComponentProps> = ({ turIcon: TurIcon, title
         />
         {urlBase !== undefined ? (
           <>
-            {TurIcon && <TurIcon />}
-            <NavLink to={urlBase}>
+
+            <NavLink to={urlBase} className="flex items-center gap-2">
+              {TurIcon && <TurIcon />}
               <h1 className="text-base font-medium"> {title}</h1>
             </NavLink>
           </>
         ) :
-          (<> {TurIcon && <TurIcon />}
+          (<>
+            {TurIcon && <TurIcon />}
             <h1 className="text-base font-medium"> {title}</h1>
           </>)
         }
         <div className="ml-auto flex items-center gap-2">
           {urlNew !== undefined && (
             <Button>
-              {TurIcon && <TurIcon />}
-              <NavLink to={urlNew}>Add</NavLink>
+              <NavLink to={urlNew} className="flex items-center gap-2">{TurIcon && <TurIcon />} Add</NavLink>
             </Button>
           )}
           <ModeToggle></ModeToggle>
