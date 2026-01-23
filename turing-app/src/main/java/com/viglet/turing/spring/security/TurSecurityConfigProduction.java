@@ -90,6 +90,7 @@ public class TurSecurityConfigProduction {
                 .csrfTokenRequestHandler(new TurSpaCsrfTokenRequestHandler())
                 .ignoringRequestMatchers(
                         mvc.matcher("/api/genai/chat"),
+                        mvc.matcher("/api/v2/integration/**"),
                         mvc.matcher("/api/sn/**"),
                         mvc.matcher(ERROR_PATH),
                         mvc.matcher("/logout"),
