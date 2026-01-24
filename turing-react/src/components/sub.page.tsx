@@ -1,8 +1,8 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
 import React, { type Dispatch, type SetStateAction } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { DialogDelete } from "./dialog.delete";
 import { Card } from "./ui/card";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem, SidebarProvider } from "./ui/sidebar";
-import { DialogDelete } from "./dialog.delete";
 
 interface NavMainItem {
   title: string;
@@ -46,9 +46,9 @@ export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, i
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    className="data-[slot=sidebar-menu-button]:!p-1.5">
+                    className="data-[slot=sidebar-menu-button]:p-1.5!">
                     <NavLink to="/admin">
-                      <Icon className="!size-5" />
+                      <Icon className="size-5!" />
                       {isNew ? (<span
                         className="text-base font-semibold">New {feature}</span>) : (
                         <span className="text-base font-semibold">{name}</span>)}

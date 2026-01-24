@@ -1,6 +1,6 @@
-import { Button } from "./ui/button";
-import React, { type Dispatch, type SetStateAction } from "react";
 import { IconTrash } from "@tabler/icons-react";
+import React, { type Dispatch, type SetStateAction } from "react";
+import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
 interface Props {
@@ -17,7 +17,7 @@ export const DialogDelete: React.FC<Props> = ({ feature, name, onDelete, open, s
         <DialogTrigger asChild>
           <Button variant={"outline"} className="mr-5"><IconTrash /></Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[450px]">
+        <DialogContent className="sm:max-w-150">
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
@@ -28,7 +28,7 @@ export const DialogDelete: React.FC<Props> = ({ feature, name, onDelete, open, s
             This action cannot be undone. This will permanently delete
             the {name} {feature}.
           </p>
-          <DialogFooter>
+          <DialogFooter className="sm:justify-center">
             <Button onClick={onDelete} variant="destructive">I understand
               the consequences, delete this {feature}</Button>
           </DialogFooter>

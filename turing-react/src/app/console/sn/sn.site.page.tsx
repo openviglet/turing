@@ -18,62 +18,16 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-
-const turSNSiteService = new TurSNSiteService();
-const data = {
+let data = {
     navMain: [
         {
             title: "Settings",
             url: "/detail",
             icon: IconSettings,
-        },
-        {
-            title: "Multi Languages",
-            url: "/locale",
-            icon: IconLanguage,
-        },
-        {
-            title: "Fields",
-            url: "/field",
-            icon: IconAlignBoxCenterStretch,
-        },
-        {
-            title: "Behavior",
-            url: "/behavior",
-            icon: IconScale,
-        },
-        {
-            title: "Facet Ordering",
-            url: "/facet-ordering",
-            icon: IconReorder,
-        },
-        {
-            title: "Generative AI",
-            url: "/ai",
-            icon: IconCpu2,
-        },
-        {
-            title: "Result Ranking",
-            url: "/result-ranking",
-            icon: IconNumber123,
-        },
-        {
-            title: "Merge Providers",
-            url: "/merge-providers",
-            icon: IconGitMerge,
-        },
-        {
-            title: "Spotlight",
-            url: "/spotlight",
-            icon: IconSpeakerphone,
-        },
-        {
-            title: "Top Search Terms",
-            url: "/top-terms",
-            icon: IconDashboard,
-        },
-    ],
-}
+        }]
+};
+const turSNSiteService = new TurSNSiteService();
+
 export default function SNSitePage() {
     const { id } = useParams() as { id: string };
     const [snSite, setSnSite] = useState<TurSNSite>({} as TurSNSite);
@@ -83,17 +37,83 @@ export default function SNSitePage() {
     const urlBase = `${ROUTES.SN_INSTANCE}/${id}`;
     useEffect(() => {
         if (id !== "new") {
+            data = {
+                navMain: [
+                    {
+                        title: "Settings",
+                        url: "/detail",
+                        icon: IconSettings,
+                    },
+                    {
+                        title: "Multi Languages",
+                        url: "/locale",
+                        icon: IconLanguage,
+                    },
+                    {
+                        title: "Fields",
+                        url: "/field",
+                        icon: IconAlignBoxCenterStretch,
+                    },
+                    {
+                        title: "Behavior",
+                        url: "/behavior",
+                        icon: IconScale,
+                    },
+                    {
+                        title: "Facet Ordering",
+                        url: "/facet-ordering",
+                        icon: IconReorder,
+                    },
+                    {
+                        title: "Generative AI",
+                        url: "/ai",
+                        icon: IconCpu2,
+                    },
+                    {
+                        title: "Result Ranking",
+                        url: "/result-ranking",
+                        icon: IconNumber123,
+                    },
+                    {
+                        title: "Merge Providers",
+                        url: "/merge-providers",
+                        icon: IconGitMerge,
+                    },
+                    {
+                        title: "Spotlight",
+                        url: "/spotlight",
+                        icon: IconSpeakerphone,
+                    },
+                    {
+                        title: "Top Search Terms",
+                        url: "/top-terms",
+                        icon: IconDashboard,
+                    },
+                ],
+            }
             turSNSiteService.get(id).then(setSnSite);
             setIsNew(false);
         }
+        else {
+            setSnSite({} as TurSNSite);
+            setIsNew(true);
+            data = {
+                navMain: [
+                    {
+                        title: "Settings",
+                        url: "/detail",
+                        icon: IconSettings,
+                    }]
+            };
+        }
+
     }, [id])
 
     async function onDelete() {
-        console.log("delete");
         try {
             if (await turSNSiteService.delete(snSite)) {
                 toast.success(`The ${snSite.name} Search Engine was deleted`);
-                navigate(urlBase);
+                navigate(`${ROUTES.SN_INSTANCE}`);
             } else {
                 toast.error(`The ${snSite.name} Search Engine was not deleted`);
             }

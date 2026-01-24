@@ -26,6 +26,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -76,8 +78,10 @@ public class TurSNSiteFieldExt implements Serializable {
     private String description;
     @Column(length = 50)
     private String facetName;
+
     @Builder.Default
     @OneToMany(mappedBy = "turSNSiteFieldExt", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<TurSNSiteFieldExtFacet> facetLocales = new HashSet<>();
     @Builder.Default
     @Column
