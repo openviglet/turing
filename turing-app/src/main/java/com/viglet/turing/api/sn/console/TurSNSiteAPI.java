@@ -187,7 +187,9 @@ public class TurSNSiteAPI {
     @Operation(summary = "Create a Semantic Navigation Site")
     @PostMapping
     public TurSNSite turSNSiteAdd(@RequestBody TurSNSite turSNSite, Principal principal) {
-        turSNSiteGenAiRepository.save(turSNSite.getTurSNSiteGenAi());
+        if (turSNSite.getTurSNSiteGenAi() != null) {
+            turSNSiteGenAiRepository.save(turSNSite.getTurSNSiteGenAi());
+        }
         turSNSiteRepository.save(turSNSite);
         turSNTemplate.createSNSite(turSNSite, principal.getName(), Locale.US);
         return turSNSite;

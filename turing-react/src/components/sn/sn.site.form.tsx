@@ -24,21 +24,25 @@ import {
 import {
   Textarea
 } from "@/components/ui/textarea"
+import type { TurSEInstance } from "@/models/se/se-instance.model"
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts"
+import { TurSEInstanceService } from "@/services/se/se.service"
 import { TurSNSiteService } from "@/services/sn/sn.service"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 const turSNSiteService = new TurSNSiteService();
+const turSEInstanceService = new TurSEInstanceService();
 interface Props {
   value: TurSNSite;
   isNew: boolean;
 }
 
 export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
+  const [seInstances, setSeInstances] = useState<TurSEInstance[]>([]);
   const form = useForm<TurSNSite>({
     defaultValues: value
   });
@@ -46,6 +50,7 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    turSEInstanceService.query().then(setSeInstances);
     form.reset(value);
   }, [value])
 
@@ -120,7 +125,7 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
           name="turSEInstance.id"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Search Engine</FormLabel>
+              <FormLabel>Search Engine Instance</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -128,11 +133,12 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem key="SOLR" value="SOLR">Solr</SelectItem>
-                  <SelectItem key="LUCENE" value="LUCENE">Lucene</SelectItem>
+                  {seInstances.map((seInstance) => (
+                    <SelectItem key={seInstance.id} value={seInstance.id}>{seInstance.title}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
-              <FormDescription>Search engine that supports semantic navigation site.</FormDescription>
+              <FormDescription>Search engine instance that supports semantic navigation site.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
