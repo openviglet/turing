@@ -34,6 +34,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { Skeleton } from "../ui/skeleton"
 const turSNSiteService = new TurSNSiteService();
 const turSEInstanceService = new TurSEInstanceService();
 interface Props {
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [seInstances, setSeInstances] = useState<TurSEInstance[]>([]);
   const form = useForm<TurSNSite>({
     defaultValues: value
@@ -52,12 +54,15 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
   useEffect(() => {
     turSEInstanceService.query().then(setSeInstances);
     form.reset(value);
+    setIsLoading(false);
   }, [value])
 
   async function onSubmit(snSite: TurSNSite) {
+    setIsLoading(true);
     try {
       if (isNew) {
         const result = await turSNSiteService.create(snSite);
+        setIsLoading(false)
         if (result) {
           toast.success(`The ${snSite.name} SN Site was saved`);
           navigate(urlBase);
@@ -67,6 +72,7 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
       }
       else {
         const result = await turSNSiteService.update(snSite);
+        setIsLoading(false)
         if (result) {
           toast.success(`The ${snSite.name} SN Site was updated`);
         } else {
@@ -76,76 +82,93 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
+      setIsLoading(false);
     }
   }
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Title"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Name will appear on semantic navigation site list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <>
+      {
+        isLoading ? (
+          <div className="flex w-full max-w-xs flex-col gap-7">
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-8 w-full" />
+            </div>
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-8 w-full" />
+            </div>
+            <Skeleton className="h-8 w-24" />
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Title"
+                        type="text"
+                      />
+                    </FormControl>
+                    <FormDescription>Name will appear on semantic navigation site list.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Description"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>Description will appear on semantic navigation site list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Description"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>Description will appear on semantic navigation site list.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <FormField
-          control={form.control}
-          name="turSEInstance.id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Search Engine Instance</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {seInstances.map((seInstance) => (
-                    <SelectItem key={seInstance.id} value={seInstance.id}>{seInstance.title}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormDescription>Search engine instance that supports semantic navigation site.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Save</Button>
-      </form>
-    </Form>
+              <FormField
+                control={form.control}
+                name="turSEInstance.id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Search Engine Instance</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {seInstances.map((seInstance) => (
+                          <SelectItem key={seInstance.id} value={seInstance.id}>{seInstance.title}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>Search engine instance that supports semantic navigation site.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Save</Button>
+            </form>
+          </Form>
+        )}
+    </>
   )
 }
 
