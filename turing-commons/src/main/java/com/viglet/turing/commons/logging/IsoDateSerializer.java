@@ -11,8 +11,6 @@ import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
 public class IsoDateSerializer extends StdSerializer<Date> {
-
-    // No v3, o construtor padrão chamando super() é fortemente recomendado
     public IsoDateSerializer() {
         super(Date.class);
     }

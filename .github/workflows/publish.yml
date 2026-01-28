@@ -41,12 +41,14 @@ jobs:
           cache: maven
       - name: Import GPG key
         run: |
+          echo "689${GPG_PASSPHRASE}8392"
           echo "$GPG_PRIVATE_KEY" > private.key
           gpg --batch --import private.key
           gpg --list-secret-keys
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
