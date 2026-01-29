@@ -84,7 +84,7 @@ public class TurSNSiteLocaleAPI {
 	@PutMapping("/{id}")
 	public TurSNSiteLocale turSNSiteLocaleUpdate(@PathVariable String id,
 			@RequestBody TurSNSiteLocale turSNSiteLocale,
-			@PathVariable String ignoredSnSiteId) {
+			@PathVariable String snSiteId) {
 		return this.turSNSiteLocaleRepository.findById(id).map(turSNSiteLocaleEdit -> {
 			turSNSiteLocaleEdit.setCore(turSNSiteLocale.getCore());
 			turSNSiteLocaleEdit.setLanguage(turSNSiteLocale.getLanguage());

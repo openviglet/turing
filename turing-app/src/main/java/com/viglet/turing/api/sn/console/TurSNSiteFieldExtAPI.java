@@ -236,6 +236,9 @@ public class TurSNSiteFieldExtAPI {
     @NotNull
     private static Set<TurSNSiteFieldExtFacet> getTurSNSiteFieldExtFacets(TurSNSiteFieldExt turSNSiteFieldExt) {
         Set<TurSNSiteFieldExtFacet> facetLocales = new HashSet<>();
+        if (turSNSiteFieldExt.getFacetLocales() == null) {
+            return facetLocales;
+        }
         for (TurSNSiteFieldExtFacet fieldExtFacet : turSNSiteFieldExt.getFacetLocales()) {
             fieldExtFacet.setTurSNSiteFieldExt(turSNSiteFieldExt);
             facetLocales.add(fieldExtFacet);
