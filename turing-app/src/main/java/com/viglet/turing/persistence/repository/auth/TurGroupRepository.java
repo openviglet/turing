@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.viglet.turing.persistence.model.auth.TurGroup;
 import com.viglet.turing.persistence.model.auth.TurUser;
@@ -32,7 +34,8 @@ import com.viglet.turing.persistence.model.auth.TurUser;
 public interface TurGroupRepository extends JpaRepository<TurGroup, String> {
 
 	TurGroup findByName(String name);
-	
-	Set<TurGroup> findByTurUsersIn(Collection<TurUser> users);
+
+	@Query("select distinct t from TurGroup t join t.turUsers u where u in :users")
+	Set<TurGroup> findByTurUsersIn(@Param("users") Collection<TurUser> users);
 
 }

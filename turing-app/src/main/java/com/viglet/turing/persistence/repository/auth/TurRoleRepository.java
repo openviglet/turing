@@ -25,14 +25,17 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.viglet.turing.persistence.model.auth.TurGroup;
 import com.viglet.turing.persistence.model.auth.TurRole;
 
-
 @Repository
 public interface TurRoleRepository extends JpaRepository<TurRole, String> {
-	Set<TurRole> findByTurGroupsIn(Collection<TurGroup> turGroup);
+	@Query("select distinct t from TurRole t join t.turGroups g where g in :turGroups")
+	Set<TurRole> findByTurGroupsIn(@Param("turGroups") Collection<TurGroup> turGroups);
+
 	TurRole findByName(String name);
 }

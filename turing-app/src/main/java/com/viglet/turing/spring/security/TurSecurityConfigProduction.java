@@ -84,6 +84,7 @@ public class TurSecurityConfigProduction {
                 frameOptions -> frameOptions.disable().cacheControl(HeadersConfigurer.CacheControlConfig::disable)));
         http.cors(Customizer.withDefaults());
         http.addFilterBefore(turAuthTokenHeaderFilter, BasicAuthenticationFilter.class);
+        http.userDetailsService(userDetailsService);
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
         http.csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
