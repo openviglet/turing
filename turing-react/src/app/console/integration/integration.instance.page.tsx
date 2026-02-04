@@ -32,6 +32,11 @@ const data = {
             icon: IconTools,
         },
         {
+            title: "Index Admin",
+            url: "/index-admin",
+            icon: IconTools,
+        },
+        {
             title: "Monitoring",
             url: "/monitoring",
             icon: IconGraph,
