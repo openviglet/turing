@@ -13,26 +13,29 @@ import {
 import { ROUTES } from "./app/routes.const"
 import { ThemeProvider } from "./components/theme-provider"
 import { Toaster } from "./components/ui/sonner"
+import { TuringServiceProvider } from "./contexts/TuringServiceContext"
 
 function App() {
   return (
     <div className="App">
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Toaster />
-        <Routes>
-          <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.CONSOLE} replace />} />
-          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-          <Route path={ROUTES.CONSOLE} element={<ConsoleRootPage />}>
-            <Route index element={<Navigate to={ROUTES.SN_INSTANCE} replace />} />
-            {SERoutes}
-            {SNRoutes}
-            {StoreRoutes}
-            {TokenRoutes}
-            {LLMRoutes}
-            {IntegrationRoutes}
-            {LoggingRoutes}
-          </Route>
-        </Routes>
+        <TuringServiceProvider>
+          <Toaster />
+          <Routes>
+            <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.CONSOLE} replace />} />
+            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+            <Route path={ROUTES.CONSOLE} element={<ConsoleRootPage />}>
+              <Route index element={<Navigate to={ROUTES.SN_INSTANCE} replace />} />
+              {SERoutes}
+              {SNRoutes}
+              {StoreRoutes}
+              {TokenRoutes}
+              {LLMRoutes}
+              {IntegrationRoutes}
+              {LoggingRoutes}
+            </Route>
+          </Routes>
+        </TuringServiceProvider>
       </ThemeProvider>
     </div>
   )

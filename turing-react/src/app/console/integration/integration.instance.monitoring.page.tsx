@@ -35,7 +35,10 @@ export default function IntegrationInstanceMonitoringPage() {
         const data = source === DEFAULT_SOURCE
           ? await monitoringService.query()
           : await monitoringService.get(source);
-        setIntegrationMonitoring(data);
+        setIntegrationMonitoring({
+          sources: data.sources || [],
+          indexing: data.indexing || [],
+        });
       } catch (error) {
         console.error("Failed to fetch monitoring data:", error);
         setIntegrationMonitoring(initialMonitoringState);
@@ -66,11 +69,11 @@ export default function IntegrationInstanceMonitoringPage() {
       <Tabs value={source} onValueChange={handleTabChange} className="mb-4 mt-2" >
         <TabsList>
           <TabsTrigger value={DEFAULT_SOURCE}>All</TabsTrigger>
-          {integrationMonitoring.sources.map((tab) => (
+          {integrationMonitoring.sources?.map((tab) => (
             <TabsTrigger key={tab} value={tab}>
               {tab}
             </TabsTrigger>
-          ))}
+          )) || null}
         </TabsList>
       </Tabs>
       {isLoading ? (

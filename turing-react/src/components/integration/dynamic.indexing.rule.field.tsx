@@ -9,7 +9,16 @@ interface DynamicIndexingRuleFieldsProps {
     fieldName: string;
 }
 
-export function DynamicIndexingRuleFields({ control, register, fieldName }: DynamicIndexingRuleFieldsProps) {
+/**
+ * Componente reutilizável para gerenciar campos dinâmicos de regras de indexação
+ * Suporta integração com AI Agents através do Turing MCP Server
+ * Alinhado com a arquitetura Enterprise Search Intelligence Platform
+ */
+export function DynamicIndexingRuleFields({
+    control,
+    register,
+    fieldName
+}: Readonly<DynamicIndexingRuleFieldsProps>) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: fieldName,

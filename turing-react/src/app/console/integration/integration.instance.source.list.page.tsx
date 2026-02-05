@@ -10,9 +10,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function IntegrationInstanceSourceListPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams() as { id: string };
   const [integrationAemSources, setIntegrationAemSources] = useState<TurIntegrationAemSource[]>();
-  const turIntegrationAemSourceService = new TurIntegrationAemSourceService(id || "");
+  const turIntegrationAemSourceService = new TurIntegrationAemSourceService(id);
   useEffect(() => {
     turIntegrationAemSourceService.query().then(setIntegrationAemSources)
   }, [id])
