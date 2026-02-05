@@ -24,10 +24,7 @@ export const DialogDelete: React.FC<Props> = ({ feature, name, onDelete, open, s
               Unexpected bad things will happen if you don't read this!
             </DialogDescription>
           </DialogHeader>
-          <p className="grid gap-4">
-            This action cannot be undone. This will permanently delete
-            the {name} {feature}.
-          </p>
+          <p>This action cannot be undone. This will permanently delete <span className="font-semibold">{name}</span> {feature}.</p>
           <DialogFooter className="sm:justify-center">
             <Button onClick={onDelete} variant="destructive">I understand
               the consequences, delete this {feature}</Button>

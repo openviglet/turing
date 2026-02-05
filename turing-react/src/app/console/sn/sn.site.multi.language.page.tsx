@@ -20,8 +20,8 @@ export default function SNSiteMultiLanguagePage() {
   }, [id, localeId])
   return (
     <>
-      {isNew && <SubPageHeader icon={IconLanguage} title="Multi Language" description="Define Multi Languages." />}
-      {!isNew && <SubPageHeader icon={IconLanguage} title={snLocale.language} description={snLocale.core} />}
+      {isNew && <SubPageHeader icon={IconLanguage} name="Multi Language" feature="Multi Language" description="Define Multi Languages." />}
+      {!isNew && <SubPageHeader icon={IconLanguage} name={snLocale.language} feature="Multi Language" description={snLocale.core} />}
       <SNSiteLocaleForm snSiteId={id} snLocale={snLocale} isNew={isNew} />
     </>
   )

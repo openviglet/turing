@@ -35,7 +35,7 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
         accessorKey: "modificationDate",
         header: "Date",
         cell: ({ row }) => <div className="font-mono text-sm">{
-            (new Date(row.getValue("modificationDate") as string)).toLocaleString(window.navigator.language, {
+            (new Date(row.getValue("modificationDate"))).toLocaleString(globalThis.navigator.language, {
                 day: '2-digit',
                 month: '2-digit',
                 hour: '2-digit',

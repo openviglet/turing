@@ -282,7 +282,7 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconReorder} title="Facet" description="Filters on Search." />
+        <SubPageHeader icon={IconReorder} name="Facet" feature="Facet" description="Filters on Search." />
         <FormField
           control={form.control}
           name="facet"

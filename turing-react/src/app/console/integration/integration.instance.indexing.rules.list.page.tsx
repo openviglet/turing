@@ -25,7 +25,9 @@ export default function IntegrationInstanceIndexingRulesListPage() {
     <>
 
       {gridItemList.length > 0 ? (<>
-        <SubPageHeader icon={IconGitCommit} title="Indexing Rules" description="Establish guidelines for how the indexing process will operate." />
+        <SubPageHeader icon={IconGitCommit} name="Indexing Rules" feature="Indexing Rules"
+          description="Establish guidelines for how the indexing process will operate."
+          urlNew={`${ROUTES.INTEGRATION_INSTANCE}/${id}/indexing-rule/new`} />
         <GridList gridItemList={gridItemList} />
       </>) : (
         <BlankSlate

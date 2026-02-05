@@ -22,7 +22,7 @@ export default function SNSiteSpotlightListPage() {
         <>
             {spotlightList.length > 0 ? (
                 <>
-                    <SubPageHeader icon={IconSpeakerphone} title="Spotlight"
+                    <SubPageHeader icon={IconSpeakerphone} name="Spotlight" feature="Spotlight"
                         description="Define content that will be featured in the term-based search." />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {spotlightList.map((spotlight) => (

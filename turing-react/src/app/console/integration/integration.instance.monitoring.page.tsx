@@ -59,7 +59,8 @@ export default function IntegrationInstanceMonitoringPage() {
     <>
       <SubPageHeader
         icon={IconGraph}
-        title="Monitoring"
+        name="Monitoring"
+        feature="Monitoring"
         description="Verify the current status of AEM content indexing."
       />
       <Tabs value={source} onValueChange={handleTabChange} className="mb-4 mt-2" >

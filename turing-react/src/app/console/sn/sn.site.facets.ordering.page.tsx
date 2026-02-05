@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 export default function SNSiteFacetOrderingPage() {
   const { id } = useParams() as { id: string };
   return (
-    <><SubPageHeader icon={IconReorder} title="Facet Ordering" description="Order the facets of the search." />
+    <><SubPageHeader icon={IconReorder} name="Facet Ordering" feature="Facet Ordering" description="Order the facets of the search." />
       <DraggableTable id={id} /></>
   )
 }

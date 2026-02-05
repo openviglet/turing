@@ -20,7 +20,7 @@ export default function SNSiteFieldPage() {
   }, [id])
   return (
     <>
-      <SubPageHeader icon={IconAlignBoxCenterStretch} title={snField.name} description={snField.description} />
+      <SubPageHeader icon={IconAlignBoxCenterStretch} name={snField.name} feature="Field" description={snField.description} />
       <SNSiteFieldForm snSiteId={id} snField={snField} isNew={isNew} />
     </>
   )

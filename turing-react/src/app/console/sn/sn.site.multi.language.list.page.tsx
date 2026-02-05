@@ -20,7 +20,8 @@ export default function SNSiteMultiLanguageListPage() {
         <>
             {data.length > 0 ? (
                 <>
-                    <SubPageHeader icon={IconLanguage} title="Multi Language" description="Define Multi Languages."
+                    <SubPageHeader icon={IconLanguage} name="Multi Language" feature="Multi Language"
+                        description="Define Multi Languages."
                         urlNew={`${ROUTES.SN_INSTANCE}/${id}/locale/new`} />
                     <SNSiteMultiLanguageDataTable data={data} />
                 </>

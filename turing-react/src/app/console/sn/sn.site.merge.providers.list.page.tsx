@@ -22,7 +22,7 @@ export default function SNSiteMergeProvidersListPage() {
         <>
             {mergeProviderList.length > 0 ? (
                 <>
-                    <SubPageHeader icon={IconGitMerge} title="Merge Providers"
+                    <SubPageHeader icon={IconGitMerge} name="Merge Providers" feature="Merge Providers"
                         description="Unify different sources contents." />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {mergeProviderList.map((merge) => (

@@ -19,7 +19,7 @@ export default function IntegrationInstanceDetailPage() {
   }, [id])
   return (
     <>
-      <SubPageHeader icon={IconSettings} title="Settings" description="Integration settings." />
+      <SubPageHeader icon={IconSettings} name="Settings" feature="Settings" description="Integration settings." />
       <IntegrationInstanceForm value={integrationInstance} isNew={isNew} />
     </>
   )

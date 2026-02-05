@@ -19,7 +19,7 @@ export default function IntegrationInstanceSourcePage() {
   }, [id])
   return (
     <>
-      <SubPageHeader icon={IconGitCommit} title="Sources" description="Available AEM sources for indexing and configuration." />
+      <SubPageHeader icon={IconGitCommit} name="Sources" feature="Sources" description="Available AEM sources for indexing and configuration." />
       <IntegrationInstanceForm value={integrationInstance} isNew={isNew} />
     </>
   )

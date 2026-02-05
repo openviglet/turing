@@ -17,7 +17,7 @@ export default function SNSiteMergeProvidersPage() {
     return (
         <>
             {mergeList.length > 0 ? (
-                <SubPageHeader icon={IconGitMerge} title="Merge Providers"
+                <SubPageHeader icon={IconGitMerge} name="Merge Providers" feature="Merge Providers"
                     description="Unify different sources contents." />
             )
                 : (
