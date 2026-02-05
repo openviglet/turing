@@ -1,8 +1,21 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import {
   Button
 } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -15,6 +28,9 @@ import {
 import {
   Input
 } from "@/components/ui/input"
+import {
+  Switch
+} from "@/components/ui/switch"
 import { useAemSourceService } from "@/contexts/TuringServiceContext"
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model"
 import { useEffect } from "react"
@@ -70,273 +86,340 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Name"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Integration source name will appear on list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="rootPath"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Root Path</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Root Path"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Integration source root path will appear on list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="authorSNSite"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Author SN Site</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Author SN Site"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Integration source author SN Site will appear on list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-8 pr-8">
 
-        <FormField
-          control={form.control}
-          name="authorURLPrefix"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Author URL Prefix</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Author URL Prefix"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Integration source author URL Prefix will appear on list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Username"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Integration source username will appear on list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Password"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Integration source password will appear on list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="publishSNSite"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Publish SN Site</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Publish SN Site"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Integration source publish SN Site will appear on list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="publishURLPrefix"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Publish URL Prefix</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Publish URL Prefix"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Integration source publish URL Prefix will appear on list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="endpoint"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Endpoint</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="URL"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>Integration instance hostname will be connected.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="contentType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Content Type</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Content Type"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>Integration instance content type will be connected.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="subType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Sub Type</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Sub Type"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>Integration instance sub type will be connected.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="defaultLocale"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Default Locale</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Default Locale"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>Integration instance default locale will be connected.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="deltaClass"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Delta Class</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Delta Class"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>Integration instance delta class will be connected.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Configurações Gerais */}
+        <Card>
+          <CardHeader>
+            <CardTitle>General Configuration</CardTitle>
+            <CardDescription>Basic information and connection settings for the AEM integration source</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name *</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="My AEM Source" type="text" />
+                  </FormControl>
+                  <FormDescription>Unique identifier for this integration source</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="localeClass"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Locale Class</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Locale Class"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>Integration instance locale class will be connected.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="oncePattern"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Once Pattern</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Once Pattern"
-                  type="text"
-                  {...field} />
-              </FormControl>
-              <FormDescription>Integration instance once pattern will be connected.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Save</Button>
+            <FormField
+              control={form.control}
+              name="endpoint"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Endpoint *</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="https://aem.example.com" type="url" />
+                  </FormControl>
+                  <FormDescription>AEM instance URL to connect</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username *</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="admin" type="text" />
+                    </FormControl>
+                    <FormDescription>AEM authentication username</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password *</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="••••••••" type="password" />
+                    </FormControl>
+                    <FormDescription>AEM authentication password</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="rootPath"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Root Path *</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="/content/mysite" type="text" />
+                  </FormControl>
+                  <FormDescription>Root JCR path to start content extraction</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="contentType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Content Type</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="cq:Page" type="text" />
+                    </FormControl>
+                    <FormDescription>JCR content type to index</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="subType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sub Type</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="cq:PageContent" type="text" />
+                    </FormControl>
+                    <FormDescription>JCR sub-type for content nodes</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="oncePattern"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Once Pattern</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder=".*" type="text" />
+                  </FormControl>
+                  <FormDescription>Regex pattern for one-time indexing filter</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Accordion para Author, Publish e Locales */}
+        <Accordion type="multiple" defaultValue={["author", "publish", "locales"]} className="space-y-2">
+
+          {/* Author Configuration */}
+          <AccordionItem value="author" className="border rounded-lg px-6">
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold">Author Configuration</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-6 pt-4">
+              <FormField
+                control={form.control}
+                name="author"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Enable Author</FormLabel>
+                      <FormDescription>
+                        Index content from AEM Author instance
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="authorSNSite"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Author SN Site</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="author-site" type="text" />
+                    </FormControl>
+                    <FormDescription>Semantic Navigation site ID for author content</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="authorURLPrefix"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Author URL Prefix</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="https://author.example.com" type="url" />
+                    </FormControl>
+                    <FormDescription>URL prefix for author content links</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Publish Configuration */}
+          <AccordionItem value="publish" className="border rounded-lg px-6">
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold">Publish Configuration</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-6 pt-4">
+              <FormField
+                control={form.control}
+                name="publish"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Enable Publish</FormLabel>
+                      <FormDescription>
+                        Index content from AEM Publish instance
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="publishSNSite"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Publish SN Site</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="publish-site" type="text" />
+                    </FormControl>
+                    <FormDescription>Semantic Navigation site ID for published content</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="publishURLPrefix"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Publish URL Prefix</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="https://www.example.com" type="url" />
+                    </FormControl>
+                    <FormDescription>URL prefix for published content links</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Locales Configuration */}
+          <AccordionItem value="locales" className="border rounded-lg px-6">
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold">Locales Configuration</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-6 pt-4">
+              <FormField
+                control={form.control}
+                name="defaultLocale"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Default Locale</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="en_US" type="text" />
+                    </FormControl>
+                    <FormDescription>Default locale for content without explicit locale</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="localeClass"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Locale Class</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="com.example.LocaleProvider" type="text" />
+                    </FormControl>
+                    <FormDescription>Java class for custom locale detection logic</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deltaClass"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Delta Class</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="com.example.DeltaProvider" type="text" />
+                    </FormControl>
+                    <FormDescription>Java class for incremental indexing logic</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="rounded-lg border p-4 bg-muted/50">
+                <h4 className="font-medium mb-2">Locale Paths</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Define specific paths for different locales. This feature will be implemented in a future update.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Coming soon: Dynamic locale path management with add/remove functionality
+                </p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <div className="flex justify-end gap-4 pt-6">
+          <Button type="button" variant="outline" onClick={() => navigate(ROUTES.INTEGRATION_INSTANCE)}>
+            Cancel
+          </Button>
+          <Button type="submit">
+            {isNew ? 'Create Source' : 'Save Changes'}
+          </Button>
+        </div>
       </form>
     </Form>
   )
