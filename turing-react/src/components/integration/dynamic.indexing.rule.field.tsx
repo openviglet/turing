@@ -9,11 +9,6 @@ interface DynamicIndexingRuleFieldsProps {
     fieldName: string;
 }
 
-/**
- * Componente reutilizável para gerenciar campos dinâmicos de regras de indexação
- * Suporta integração com AI Agents através do Turing MCP Server
- * Alinhado com a arquitetura Enterprise Search Intelligence Platform
- */
 export function DynamicIndexingRuleFields({
     control,
     register,

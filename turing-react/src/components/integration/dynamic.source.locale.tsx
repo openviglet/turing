@@ -1,26 +1,23 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import type { TurLocale } from '@/models/locale/locale.model';
-import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
 import { TurLocaleService } from '@/services/locale/locale.service';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, type Control, type UseFormRegister } from 'react-hook-form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-interface DynamicLanguageFieldsProps {
+interface DynamicSourceLocalesProps {
     control: Control<any>;
     register: UseFormRegister<any>;
-    fieldName: keyof TurSNSiteField;
+    fieldName: string;
 }
 const turLocaleService = new TurLocaleService();
-export function DynamicLanguageFields({ control, register, fieldName }: Readonly<DynamicLanguageFieldsProps>) {
+export function DynamicSourceLocales({
+    control,
+    register,
+    fieldName
+}: Readonly<DynamicSourceLocalesProps>) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: fieldName,
@@ -29,13 +26,12 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
     useEffect(() => {
         turLocaleService.query().then(setLocales)
     }, []);
-
     const handleAddField = () => {
-        append({ id: '', locale: '', label: '' });
+        append({ locale: '', path: '' });
     };
 
     return (
-        <div className="flex flex-col gap-4 w-full max-w-2xl">
+        <div className="flex flex-col gap-4 w-full">
             {fields.map((field, index) => (
                 <div key={field.id} className="flex items-center gap-2">
                     <Controller
@@ -46,7 +42,7 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
                                 onValueChange={controllerField.onChange}
                                 defaultValue={controllerField.value}
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Choose the language" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -59,11 +55,10 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
                             </Select>
                         )}
                     />
-
                     <Input
                         className="grow"
-                        placeholder="Facet Name..."
-                        {...register(`${fieldName}.${index}.label`)}
+                        placeholder="Path"
+                        {...register(`${fieldName}.${index}.path`)}
                     />
                     <Button
                         variant="ghost"

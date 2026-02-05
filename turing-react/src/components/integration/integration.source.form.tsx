@@ -39,6 +39,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { DynamicSourceLocales } from "./dynamic.source.locale"
 
 interface Props {
   value: TurIntegrationAemSource;
@@ -51,7 +52,7 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
   const form = useForm<TurIntegrationAemSource>({
     defaultValues: value
   });
-
+  const { control, register } = form;
   const navigate = useNavigate()
   useEffect(() => {
     form.reset(value);
@@ -402,11 +403,13 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
               <div className="rounded-lg border p-4 bg-muted/50">
                 <h4 className="font-medium mb-2">Locale Paths</h4>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Define specific paths for different locales. This feature will be implemented in a future update.
+                  Define specific paths for different locales.
                 </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Coming soon: Dynamic locale path management with add/remove functionality
-                </p>
+                <DynamicSourceLocales
+                  fieldName="localePaths"
+                  control={control}
+                  register={register}
+                />
               </div>
             </AccordionContent>
           </AccordionItem>
