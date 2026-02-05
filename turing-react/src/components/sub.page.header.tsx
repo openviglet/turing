@@ -17,15 +17,12 @@ interface Props {
 }
 export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, description, urlNew, urlBase, onDelete, open, setOpen }) => {
   return (
-    <header className="mb-5 h-(--header-height) shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+    <header className="mb-5">
       <div className="w-full flex items-center gap-1 pr-4 lg:gap-2 lg:pr-6">
         {urlBase ? (
-          <>
-            {Icon && <Icon />}
-            <NavLink to={urlBase}>
-              <h1 className="text-base font-medium"> {feature}</h1>
-            </NavLink>
-          </>
+          <NavLink to={urlBase} className="flex items-center gap-2">
+            <h1 className="text-base font-medium">{Icon && <Icon />} {feature}</h1>
+          </NavLink>
         ) : (
           <>
             {Icon && <Icon />}
@@ -34,8 +31,7 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
         )}
         {urlNew !== undefined && <div className="ml-auto flex items-center gap-2">
           <Button>
-            {Icon && <Icon />}
-            <NavLink to={urlNew}>New {feature}</NavLink>
+            <NavLink to={urlNew} className="flex items-center gap-2">{Icon && <Icon />} New {feature}</NavLink>
           </Button>
         </div>}
         {open !== undefined && onDelete !== undefined && setOpen !== undefined && <div className="ml-auto flex items-center gap-2">

@@ -9,8 +9,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function IntegrationInstanceIndexingRulePage() {
-  const { id, ruleId } = useParams() as { id: string, ruleId: string };
   const navigate = useNavigate();
+  const { id, ruleId } = useParams() as { id: string, ruleId: string };
   const [integrationIndexingRules, setIntegrationIndexingRules] = useState<TurIntegrationIndexingRule>({} as TurIntegrationIndexingRule);
   const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService(id || "");
   const [isNew, setIsNew] = useState<boolean>(true);
@@ -20,9 +20,8 @@ export default function IntegrationInstanceIndexingRulePage() {
       turIntegrationIndexingRuleService.get(ruleId).then(setIntegrationIndexingRules);
       setIsNew(false);
     }
-  }, [id])
+  }, [id, ruleId, turIntegrationIndexingRuleService]);
   async function onDelete() {
-    console.log("delete");
     try {
       if (await turIntegrationIndexingRuleService.delete(integrationIndexingRules)) {
         toast.success(`The ${integrationIndexingRules.name} Indexing Rule Instance was deleted`);

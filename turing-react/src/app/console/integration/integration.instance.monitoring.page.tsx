@@ -77,7 +77,7 @@ export default function IntegrationInstanceMonitoringPage() {
         </TabsList>
       </Tabs>
       {isLoading ? (
-        <div className="px-4">
+        <div className="pr-4">
           <Skeleton className="h-50 w-full rounded-xl" />
           <Skeleton className="h-4 w-62.5" />
           <Skeleton className="h-4 w-50" />

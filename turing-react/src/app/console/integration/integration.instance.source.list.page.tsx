@@ -25,8 +25,12 @@ export default function IntegrationInstanceSourceListPage() {
     <>
 
       {gridItemList.length > 0 ? (<>
-        <SubPageHeader icon={IconGitCommit} name="Sources" feature="Integration Instance" description="Available AEM sources for indexing and configuration." />
+        <SubPageHeader icon={IconGitCommit} name="Sources"
+          feature="Source"
+          description="Available AEM sources for indexing and configuration."
+          urlNew={`${ROUTES.INTEGRATION_INSTANCE}/${id}/source/new`} />
         <GridList gridItemList={gridItemList} />
+
       </>) : (
         <BlankSlate
           icon={IconGitCommit}

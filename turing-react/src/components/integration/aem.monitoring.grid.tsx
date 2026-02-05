@@ -91,7 +91,7 @@ export const AemMonitoringGrid: React.FC<PropsWithChildren<Props>> = ({ gridItem
     });
 
     return (
-        <div className="px-4">
+        <div className="pr-4">
             <Card>
                 <div className="rounded-md">
                     <Table>
