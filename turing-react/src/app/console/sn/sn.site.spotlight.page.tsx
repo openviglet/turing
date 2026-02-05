@@ -19,7 +19,7 @@ export default function SNSiteSpotlightPage() {
             {spotlightList.length > 0 ? (
                 <SubPageHeader
                     icon={IconSpeakerphone}
-                    title="Spotlight"
+                    name="Spotlight" feature="Spotlight"
                     description="Define content that will be featured in the term-based search."
                 />
             ) : (
