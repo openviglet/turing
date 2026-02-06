@@ -17,7 +17,7 @@ export default function IntegrationInstanceSourcePage() {
   const turIntegrationAemSourceService = useAemSourceService(id);
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    if (id !== "new") {
+    if (sourceId !== "new") {
       turIntegrationAemSourceService.get(sourceId).then(setIntegrationAemSource);
       setIsNew(false);
     }

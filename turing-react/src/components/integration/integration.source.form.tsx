@@ -33,12 +33,15 @@ import {
 } from "@/components/ui/switch"
 import { useAemSourceService } from "@/contexts/TuringServiceContext"
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model"
-import { useEffect } from "react"
+import type { TurLocale } from "@/models/locale/locale.model"
+import { TurLocaleService } from "@/services/locale/locale.service"
+import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { DynamicSourceLocales } from "./dynamic.source.locale"
 
 interface Props {
@@ -46,7 +49,7 @@ interface Props {
   isNew: boolean;
   integrationId: string;
 }
-
+const turLocaleService = new TurLocaleService();
 export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrationId }) => {
   const turIntegrationAemSourceService = useAemSourceService(integrationId);
   const form = useForm<TurIntegrationAemSource>({
@@ -54,18 +57,21 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
   });
   const { control, register } = form;
   const navigate = useNavigate()
+  const [locales, setLocales] = useState<TurLocale[]>([]);
   useEffect(() => {
     form.reset(value);
+    turLocaleService.query().then(setLocales)
   }, [form, value]);
 
-
+  const sourceInstanceRoute = `${ROUTES.INTEGRATION_INSTANCE}/${integrationId}/source`
   async function onSubmit(integrationAemSource: TurIntegrationAemSource) {
     try {
       if (isNew) {
         const result = await turIntegrationAemSourceService.create(integrationAemSource);
         if (result) {
           toast.success(`The ${integrationAemSource.name} Integration Source was saved`);
-          navigate(ROUTES.INTEGRATION_INSTANCE);
+
+          navigate(sourceInstanceRoute);
         }
         else {
           toast.error("Failed to create the integration source. Please try again.");
@@ -87,7 +93,7 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-8 pr-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pr-8">
 
         {/* Configurações Gerais */}
         <Card>
@@ -361,9 +367,18 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Default Locale</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="en_US" type="text" />
-                    </FormControl>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose the language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locales.map((option) => (
+                          <SelectItem key={option.initials} value={option.initials}>
+                            {option.en} ({option.initials})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormDescription>Default locale for content without explicit locale</FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -415,8 +430,8 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
           </AccordionItem>
         </Accordion>
 
-        <div className="flex justify-end gap-4 pt-6">
-          <Button type="button" variant="outline" onClick={() => navigate(ROUTES.INTEGRATION_INSTANCE)}>
+        <div className="flex justify-end gap-4 py-4">
+          <Button type="button" variant="outline" onClick={() => navigate(sourceInstanceRoute)}>
             Cancel
           </Button>
           <Button type="submit">
