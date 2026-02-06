@@ -26,4 +26,8 @@ export class TurIntegrationIndexAdminService {
   async deindex(sourceName: string, payload: TurIntegrationIndexAdmin): Promise<void> {
     await this.axiosInstance.post(this.getUrl(sourceName), payload);
   }
+
+  async submit(sourceName: string, payload: TurIntegrationIndexAdmin): Promise<void> {
+    await this.axiosInstance.post(this.getUrl(sourceName), payload);
+  }
 }
