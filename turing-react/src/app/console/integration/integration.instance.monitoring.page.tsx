@@ -31,19 +31,33 @@ export default function IntegrationInstanceMonitoringPage() {
 
     const fetchData = async () => {
       setIsLoading(true);
+      let redirected = false;
       try {
-        const data = source === DEFAULT_SOURCE
-          ? await monitoringService.query()
-          : await monitoringService.get(source);
-        setIntegrationMonitoring({
-          sources: data.sources || [],
-          indexing: data.indexing || [],
-        });
+        if (source === DEFAULT_SOURCE) {
+          const data = await monitoringService.query();
+          if (data.sources && data.sources.length > 0) {
+            navigate(`${ROUTES.INTEGRATION_INSTANCE}/${id}/monitoring/${data.sources[0]}`);
+            redirected = true;
+            return;
+          }
+          setIntegrationMonitoring({
+            sources: data.sources || [],
+            indexing: data.indexing || [],
+          });
+        } else {
+          const data = await monitoringService.get(source);
+          setIntegrationMonitoring({
+            sources: data.sources || [],
+            indexing: data.indexing || [],
+          });
+        }
       } catch (error) {
         console.error("Failed to fetch monitoring data:", error);
         setIntegrationMonitoring(initialMonitoringState);
       } finally {
-        setIsLoading(false);
+        if (!redirected) {
+          setIsLoading(false);
+        }
       }
     };
 

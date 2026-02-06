@@ -16,6 +16,7 @@ export default function SearchPage() {
   const [turSort] = useState(searchParams.get("sort") || "relevance");
   const [autoComplete, setAutoComplete] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const turSiteName = siteName || "Sample"; // Get from URL params or use default
   const navigate = useNavigate();
   const sortOptions: Record<string, string> = {
@@ -30,6 +31,7 @@ export default function SearchPage() {
 
   const performSearch = async () => {
     setLoading(true);
+    setError(null);
     try {
       const q = searchParams.get("q") || "*";
       const p = searchParams.get("p") || "1";
@@ -49,6 +51,8 @@ export default function SearchPage() {
       setLlmChat(chatResult);
     } catch (error) {
       console.error("Search error:", error);
+      setError("Search failed");
+      setSnSearch(null);
     } finally {
       setLoading(false);
     }
@@ -107,7 +111,7 @@ export default function SearchPage() {
       search: `?${searchParams.toString()}`
     });
 
-    window.location.reload();
+    // performSearch will be triggered by useEffect on searchParams change
   };
 
   const showAll = () => {
@@ -134,13 +138,40 @@ export default function SearchPage() {
       .join(" ");
   };
 
-  if (loading || !snSearch) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <span className="text-lg">Loading</span>
           <span className="animate-pulse">...</span>
         </div>
+      </div>
+    );
+  }
+
+  if (error || !snSearch) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <header className="border-b border-border bg-card">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center gap-4">
+              <svg className="w-8 h-8" viewBox="0 0 549 549">
+                <rect className="fill-primary" x="0.063" width="548" height="548.188" rx="100" ry="100" />
+                <text className="fill-primary-foreground font-bold text-6xl" transform="translate(64.825 442.418) scale(2.74 2.741)">Tu</text>
+              </svg>
+              <span>{turSiteName}</span>
+            </div>
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-6">
+          <div className="text-center py-12">
+            <h3 className="text-xl font-semibold mb-2">No content to display</h3>
+            <p className="text-muted-foreground mb-4">{error ? "There was an error performing the search." : "Try adjusting your query or locale."}</p>
+            <button className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90" onClick={showAll}>
+              Show all the available content
+            </button>
+          </div>
+        </main>
       </div>
     );
   }
