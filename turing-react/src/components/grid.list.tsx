@@ -79,7 +79,7 @@ export const GridList: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) =
     });
 
     return (
-        <div className="px-4">
+        <div className="pr-6">
             <Card>
                 <div className="rounded-md">
                     <Table>

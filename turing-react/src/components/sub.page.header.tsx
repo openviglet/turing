@@ -29,7 +29,7 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
             <h1 className="text-base font-medium"> {feature}</h1>
           </>
         )}
-        {urlNew !== undefined && <div className="ml-auto flex items-center gap-2">
+        {urlNew !== undefined && <div className="ml-auto flex items-center gap-2 pr-2">
           <Button>
             <NavLink to={urlNew} className="flex items-center gap-2">{Icon && <Icon />} New {feature}</NavLink>
           </Button>

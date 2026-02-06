@@ -14,8 +14,8 @@ export const DialogDelete: React.FC<Props> = ({ feature, name, onDelete, open, s
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <form>
-        <DialogTrigger asChild>
-          <Button variant={"outline"} className="mr-5"><IconTrash /></Button>
+        <DialogTrigger asChild >
+          <Button variant={"outline"} className="mr-2" ><IconTrash /></Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-150">
           <DialogHeader>
