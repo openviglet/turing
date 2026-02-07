@@ -42,7 +42,7 @@ export const SNRoutes = (
             <Route path={'merge-providers'} element={<SNSiteMergeProvidersListPage />} />
             <Route path={'spotlight'} element={<SNSiteSpotlightListPage />} />
             <Route path={'spotlight/:spotlightId'} element={<SNSiteSpotlightPage />} />
-            <Route path={'top-terms'} element={<SNSiteTopSearchTermsPage />} />
+            <Route path={'top-terms/:period?'} element={<SNSiteTopSearchTermsPage />} />
             <Route path={'result-ranking/:resultRankingId'} element={<SNSiteResultRankingPage />} />
             <Route path={'merge-providers/:mergeProviderId'} element={<SNSiteMergeProvidersPage />} />
         </Route>
