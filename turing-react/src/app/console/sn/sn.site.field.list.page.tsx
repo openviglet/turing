@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import * as React from "react"
 
+import { ROUTES } from "@/app/routes.const"
 import { SubPageHeader } from "@/components/sub.page.header"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -51,7 +52,7 @@ type StatusFieldDropdownProps = {
     statusField?: TurSNFieldCheck;
 };
 
-function StatusFieldDropdown({ statusField }: StatusFieldDropdownProps) {
+function StatusFieldDropdown({ statusField }: Readonly<StatusFieldDropdownProps>) {
     if (!statusField) {
         return null;
     }
@@ -164,8 +165,12 @@ function StatusFieldDropdown({ statusField }: StatusFieldDropdownProps) {
     )
 }
 
+type FieldToggleKey = "enabled" | "mlt" | "facet" | "hl";
+
 const buildColumns = (
-    statusFieldMap: Map<string, TurSNFieldCheck>
+    statusFieldMap: Map<string, TurSNFieldCheck>,
+    onToggle: (fieldId: string, key: FieldToggleKey, checked: boolean) => void,
+    isSavingField: (fieldId: string) => boolean
 ): ColumnDef<TurSNSiteField>[] => [
         {
             id: "select",
@@ -216,10 +221,17 @@ const buildColumns = (
             accessorKey: "enabled",
             header: () => <div className="text-right">Enabled</div>,
             cell: ({ row }) => {
-                const enabled = parseFloat(row.getValue("enabled"))
+                const enabled = row.original.enabled;
+                const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch checked={enabled == 1} />
+                        <Switch
+                            checked={enabled == 1}
+                            onCheckedChange={(checked) =>
+                                onToggle(fieldId, "enabled", checked)
+                            }
+                            disabled={isSavingField(fieldId)}
+                        />
                     </div>
                 )
             },
@@ -228,10 +240,17 @@ const buildColumns = (
             accessorKey: "mlt",
             header: () => <div className="text-right">MLT</div>,
             cell: ({ row }) => {
-                const mlt = parseFloat(row.getValue("mlt"))
+                const mlt = row.original.mlt;
+                const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch checked={mlt == 1} />
+                        <Switch
+                            checked={mlt == 1}
+                            onCheckedChange={(checked) =>
+                                onToggle(fieldId, "mlt", checked)
+                            }
+                            disabled={isSavingField(fieldId)}
+                        />
                     </div>
                 )
             },
@@ -240,22 +259,36 @@ const buildColumns = (
             accessorKey: "facet",
             header: () => <div className="text-right">Facet</div>,
             cell: ({ row }) => {
-                const facet = parseFloat(row.getValue("facet"))
+                const facet = row.original.facet;
+                const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch checked={facet == 1} />
+                        <Switch
+                            checked={facet == 1}
+                            onCheckedChange={(checked) =>
+                                onToggle(fieldId, "facet", checked)
+                            }
+                            disabled={isSavingField(fieldId)}
+                        />
                     </div>
                 )
             },
         },
         {
-            accessorKey: "highlighting",
+            accessorKey: "hl",
             header: () => <div className="text-right">Highlighting</div>,
             cell: ({ row }) => {
-                const hl = parseFloat(row.getValue("hl"))
+                const hl = row.original.hl;
+                const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch checked={hl == 1} />
+                        <Switch
+                            checked={hl == 1}
+                            onCheckedChange={(checked) =>
+                                onToggle(fieldId, "hl", checked)
+                            }
+                            disabled={isSavingField(fieldId)}
+                        />
                     </div>
                 )
             },
@@ -299,6 +332,9 @@ export default function SNSiteFieldListPage() {
     const [columnVisibility, setColumnVisibility] =
         React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [savingFieldIds, setSavingFieldIds] = React.useState<Set<string>>(
+        new Set()
+    );
 
     React.useEffect(() => {
         setStatusFields(null);
@@ -319,9 +355,62 @@ export default function SNSiteFieldListPage() {
         return map;
     }, [statusFields]);
 
+    const setFieldSaving = React.useCallback((fieldId: string, saving: boolean) => {
+        setSavingFieldIds((prev) => {
+            const next = new Set(prev);
+            if (saving) {
+                next.add(fieldId);
+            } else {
+                next.delete(fieldId);
+            }
+            return next;
+        });
+    }, []);
+
+    const isSavingField = React.useCallback(
+        (fieldId: string) => savingFieldIds.has(fieldId),
+        [savingFieldIds]
+    );
+
+    const handleToggle = React.useCallback(
+        (fieldId: string, key: FieldToggleKey, checked: boolean) => {
+            const currentField = data.find((field) => field.id === fieldId);
+            if (!currentField) {
+                return;
+            }
+
+            const updatedField: TurSNSiteField = {
+                ...currentField,
+                [key]: checked ? 1 : 0,
+            };
+
+            setSnField((prev) =>
+                prev.map((field) =>
+                    field.id === fieldId ? updatedField : field
+                )
+            );
+
+            setFieldSaving(fieldId, true);
+            turSNFieldService
+                .update(id, updatedField)
+                .catch((error) => {
+                    console.error("Failed to update SN field", error);
+                    setSnField((prev) =>
+                        prev.map((field) =>
+                            field.id === fieldId ? currentField : field
+                        )
+                    );
+                })
+                .finally(() => {
+                    setFieldSaving(fieldId, false);
+                });
+        },
+        [data, id, setFieldSaving]
+    );
+
     const columns = React.useMemo(
-        () => buildColumns(statusFieldMap),
-        [statusFieldMap]
+        () => buildColumns(statusFieldMap, handleToggle, isSavingField),
+        [statusFieldMap, handleToggle, isSavingField]
     );
 
     const table = useReactTable({
@@ -350,7 +439,7 @@ export default function SNSiteFieldListPage() {
                 name="Search Engine Field"
                 feature="Search Engine Field"
                 description="Custom Search Engine Fields."
-                urlNew={"/sn/site/" + id + "/field/new"} />
+                urlNew={`${ROUTES.SN_INSTANCE}/${id}/field/new`} />
             <div className="pr-5">
                 <div className="flex items-center py-4">
                     <Input
