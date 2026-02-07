@@ -91,8 +91,8 @@ export default function SNSiteTopSearchTermsPage() {
               <Skeleton className="h-6 w-48" />
             </CardHeader>
             <CardContent className="space-y-2">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <Skeleton key={index} className="h-8 w-full" />
+              {Array.from({ length: 6 }).map(() => (
+                <Skeleton key={crypto.randomUUID()} className="h-8 w-full" />
               ))}
             </CardContent>
           </Card>
@@ -129,7 +129,7 @@ export default function SNSiteTopSearchTermsPage() {
     }
 
     return (
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] pr-4">
         <Card>
           <CardContent>
             <Table>
@@ -169,11 +169,11 @@ export default function SNSiteTopSearchTermsPage() {
             </Table>
           </CardContent>
         </Card>
-        <Card>
+        <Card >
           <CardHeader>
             <CardTitle>Statistics</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <CardContent className="space-y-2 text-sm text-muted-foreground ">
             <div className="flex items-center gap-2 text-foreground">
               <IconSearch className="h-4 w-4 text-muted-foreground" />
               <span>

@@ -2,7 +2,7 @@ import React, { type Dispatch, type SetStateAction } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { DialogDelete } from "./dialog.delete";
 import { Card } from "./ui/card";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem, SidebarProvider } from "./ui/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarProvider } from "./ui/sidebar";
 
 interface NavMainItem {
   title: string;
@@ -10,8 +10,15 @@ interface NavMainItem {
   icon?: React.ElementType;
 }
 
+interface NavCountItem {
+  title: string;
+  icon?: React.ElementType;
+  count?: number;
+}
+
 interface DataType {
   navMain: NavMainItem[];
+  counts?: NavCountItem[];
 }
 
 interface Props {
@@ -25,6 +32,8 @@ interface Props {
   setOpen: Dispatch<SetStateAction<boolean>>
   onDelete: () => void;
 }
+
+const formatCount = (value?: number) => (value ?? 0).toLocaleString();
 
 export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, isNew, data, onDelete, open, setOpen }) => {
   const location = useLocation();
@@ -61,6 +70,28 @@ export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, i
               </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
+              {data?.counts && data.counts.length > 0 && (
+                <SidebarGroup>
+                  <SidebarGroupContent className="flex flex-col gap-2 pt-4">
+                    <SidebarMenu>
+                      {data.counts.map((item) => (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton
+                            tooltip={item.title}
+                            variant="outline"
+                            size="sm"
+                            disabled
+                          >
+                            {item.icon && <item.icon />}
+                            <span>{item.title}</span>
+                          </SidebarMenuButton>
+                          <SidebarMenuBadge>{formatCount(item.count)}</SidebarMenuBadge>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              )}
               <SidebarGroup>
                 <SidebarGroupContent className="flex flex-col gap-2">
                   <SidebarMenu>
@@ -79,6 +110,7 @@ export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, i
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
+
             </SidebarContent>
           </Sidebar>
           <SidebarInset className="mr-1 rounded-xl border ">
