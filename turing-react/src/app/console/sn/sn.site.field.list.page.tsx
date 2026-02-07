@@ -1,297 +1,470 @@
 import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  type SortingState,
-  useReactTable,
-  type VisibilityState,
+    type ColumnDef,
+    type ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    type SortingState,
+    useReactTable,
+    type VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import {
+    AlertTriangle,
+    ArrowUpDown,
+    CheckCircle2,
+    ChevronDown,
+    MoreHorizontal,
+} from "lucide-react"
 import * as React from "react"
 
 import { SubPageHeader } from "@/components/sub.page.header"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table"
+import type { TurSNFieldCheck } from "@/models/sn/sn-field-check.model.ts"
+import type { TurSNStatusFields } from "@/models/sn/sn-field-status.model.ts"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
 import { IconAlignBoxCenterStretch, IconColumns3Filled } from "@tabler/icons-react"
 import { useParams } from "react-router-dom"
 
+type StatusFieldDropdownProps = {
+    statusField?: TurSNFieldCheck;
+};
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const columns: ColumnDef<TurSNSiteField>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Field
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("name")}</div>
-    ),
-  },
-  {
-    accessorKey: "enabled",
-    header: () => <div className="text-right">Enabled</div>,
-    cell: ({ row }) => {
-      const enabled = parseFloat(row.getValue("enabled"))
-      return <div className="text-right font-medium"> <Switch checked={enabled == 1} /></div>
-    },
-  },
-  {
-    accessorKey: "mlt",
-    header: () => <div className="text-right">MLT</div>,
-    cell: ({ row }) => {
-      const mlt = parseFloat(row.getValue("mlt"))
-      return <div className="text-right font-medium"> <Switch checked={mlt == 1} /></div>
-    },
-  },
-  {
-    accessorKey: "facet",
-    header: () => <div className="text-right">Facet</div>,
-    cell: ({ row }) => {
-      const facet = parseFloat(row.getValue("facet"))
-      return <div className="text-right font-medium"><Switch checked={facet == 1} /></div>
-    },
-  },
-  {
-    accessorKey: "highlighting",
-    header: () => <div className="text-right">Highlighting</div>,
-    cell: ({ row }) => {
-      const hl = parseFloat(row.getValue("hl"))
-      return <div className="text-right font-medium"><Switch checked={hl == 1} /></div>
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      return (
+function StatusFieldDropdown({ statusField }: StatusFieldDropdownProps) {
+    if (!statusField) {
+        return null;
+    }
+
+    return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <a href={"field/" + row.original.id}>Edit</a>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-          </DropdownMenuContent>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-6 w-6 p-0">
+                    <span className="sr-only">Open field status</span>
+                    {statusField.correct ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                    ) : (
+                        <AlertTriangle className="h-4 w-4 text-rose-500" />
+                    )}
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-80">
+                {statusField.correct
+                    ? statusField.cores.map((core) => (
+                        <DropdownMenuItem
+                            key={core.name}
+                            className="flex items-center gap-2"
+                        >
+                            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                            <span>{core.name}</span>
+                        </DropdownMenuItem>
+                    ))
+                    : statusField.cores.map((core) => (
+                        <div key={core.name} className="py-1">
+                            {core.correct ? (
+                                <DropdownMenuItem className="flex items-center gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                    <span>{core.name}</span>
+                                </DropdownMenuItem>
+                            ) : (
+                                <>
+                                    <div className="flex items-center justify-between px-2 py-1 text-xs font-semibold text-muted-foreground">
+                                        <span>{core.name}</span>
+                                        <button
+                                            type="button"
+                                            className="text-xs text-primary hover:underline"
+                                        >
+                                            Repair All
+                                        </button>
+                                    </div>
+                                    {!core.exists && (
+                                        <div className="flex items-center justify-between px-2 py-1 text-sm">
+                                            <div className="flex items-center gap-2 text-rose-600">
+                                                <AlertTriangle className="h-4 w-4" />
+                                                <span>Missing field</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="text-xs text-primary hover:underline"
+                                            >
+                                                Repair
+                                            </button>
+                                        </div>
+                                    )}
+                                    {core.exists && !statusField.facetIsCorrect && (
+                                        <div className="flex items-center justify-between px-2 py-1 text-sm">
+                                            <div className="flex items-center gap-2 text-rose-600">
+                                                <AlertTriangle className="h-4 w-4" />
+                                                <span>Facet Type is incorrect</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="text-xs text-primary hover:underline"
+                                            >
+                                                Repair
+                                            </button>
+                                        </div>
+                                    )}
+                                    {core.exists && !core.multiValuedIsCorrect && (
+                                        <div className="flex items-center justify-between px-2 py-1 text-sm">
+                                            <div className="flex items-center gap-2 text-rose-600">
+                                                <AlertTriangle className="h-4 w-4" />
+                                                <span>SE MultiValued isn't configured</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="text-xs text-primary hover:underline"
+                                            >
+                                                Repair
+                                            </button>
+                                        </div>
+                                    )}
+                                    {core.exists &&
+                                        statusField.facetIsCorrect &&
+                                        !core.typeIsCorrect && (
+                                            <div className="flex items-center justify-between px-2 py-1 text-sm">
+                                                <div className="flex items-center gap-2 text-rose-600">
+                                                    <AlertTriangle className="h-4 w-4" />
+                                                    <span>Using {core.type}</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="text-xs text-primary hover:underline"
+                                                >
+                                                    Repair
+                                                </button>
+                                            </div>
+                                        )}
+                                </>
+                            )}
+                        </div>
+                    ))}
+            </DropdownMenuContent>
         </DropdownMenu>
-      )
-    },
-  },
-]
+    )
+}
+
+const buildColumns = (
+    statusFieldMap: Map<string, TurSNFieldCheck>
+): ColumnDef<TurSNSiteField>[] => [
+        {
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
+        {
+            accessorKey: "name",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Field
+                        <ArrowUpDown />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => {
+                const statusField = statusFieldMap.get(row.original.id);
+                return (
+                    <div className="flex items-center gap-2">
+                        <StatusFieldDropdown statusField={statusField} />
+                        <div className="text-left font-medium">{row.getValue("name")}</div>
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: "enabled",
+            header: () => <div className="text-right">Enabled</div>,
+            cell: ({ row }) => {
+                const enabled = parseFloat(row.getValue("enabled"))
+                return (
+                    <div className="text-right font-medium">
+                        <Switch checked={enabled == 1} />
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: "mlt",
+            header: () => <div className="text-right">MLT</div>,
+            cell: ({ row }) => {
+                const mlt = parseFloat(row.getValue("mlt"))
+                return (
+                    <div className="text-right font-medium">
+                        <Switch checked={mlt == 1} />
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: "facet",
+            header: () => <div className="text-right">Facet</div>,
+            cell: ({ row }) => {
+                const facet = parseFloat(row.getValue("facet"))
+                return (
+                    <div className="text-right font-medium">
+                        <Switch checked={facet == 1} />
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: "highlighting",
+            header: () => <div className="text-right">Highlighting</div>,
+            cell: ({ row }) => {
+                const hl = parseFloat(row.getValue("hl"))
+                return (
+                    <div className="text-right font-medium">
+                        <Switch checked={hl == 1} />
+                    </div>
+                )
+            },
+        },
+        {
+            id: "actions",
+            enableHiding: false,
+            cell: ({ row }) => {
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem>
+                                <a href={"field/" + row.original.id}>Edit</a>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            },
+        },
+    ]
+
 const turSNFieldService = new TurSNFieldService();
 export default function SNSiteFieldListPage() {
-  const { id } = useParams() as { id: string };
-  const [data, setSnField] = React.useState<TurSNSiteField[]>([]);
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  React.useEffect(() => {
-    turSNFieldService.query(id).then(setSnField);
-  }, [id])
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  })
+    const { id } = useParams() as { id: string };
+    const [data, setSnField] = React.useState<TurSNSiteField[]>([]);
+    const [statusFields, setStatusFields] = React.useState<TurSNStatusFields | null>(
+        null
+    );
+    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+        []
+    )
+    const [columnVisibility, setColumnVisibility] =
+        React.useState<VisibilityState>({})
+    const [rowSelection, setRowSelection] = React.useState({})
 
-  return (
-    <div className="w-full">
-      <SubPageHeader
-        icon={IconAlignBoxCenterStretch}
-        name="Search Engine Field"
-        feature="Search Engine Field"
-        description="Custom Search Engine Fields."
-        urlNew={"/sn/site/" + id + "/field/new"} />
-      <div className="pr-5">
-        <div className="flex items-center py-4">
-          <Input
-            placeholder="Filter fields..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-          <div className="ml-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  <IconColumns3Filled /> Columns <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(value)
+    React.useEffect(() => {
+        setStatusFields(null);
+        turSNFieldService.query(id).then(setSnField);
+        turSNFieldService
+            .getStatusFields(id)
+            .then(setStatusFields)
+            .catch((error) => {
+                console.error("Failed to load SN field status", error);
+            });
+    }, [id])
+
+    const statusFieldMap = React.useMemo(() => {
+        const map = new Map<string, TurSNFieldCheck>();
+        statusFields?.fields?.forEach((field) => {
+            map.set(field.id, field);
+        });
+        return map;
+    }, [statusFields]);
+
+    const columns = React.useMemo(
+        () => buildColumns(statusFieldMap),
+        [statusFieldMap]
+    );
+
+    const table = useReactTable({
+        data,
+        columns,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
+        state: {
+            sorting,
+            columnFilters,
+            columnVisibility,
+            rowSelection,
+        },
+    })
+
+    return (
+        <div className="w-full">
+            <SubPageHeader
+                icon={IconAlignBoxCenterStretch}
+                name="Search Engine Field"
+                feature="Search Engine Field"
+                description="Custom Search Engine Fields."
+                urlNew={"/sn/site/" + id + "/field/new"} />
+            <div className="pr-5">
+                <div className="flex items-center py-4">
+                    <Input
+                        placeholder="Filter fields..."
+                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn("name")?.setFilterValue(event.target.value)
                         }
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    )
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                        className="max-w-sm"
+                    />
+                    <div className="ml-auto">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    <IconColumns3Filled /> Columns <ChevronDown />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                {table
+                                    .getAllColumns()
+                                    .filter((column) => column.getCanHide())
+                                    .map((column) => {
+                                        return (
+                                            <DropdownMenuCheckboxItem
+                                                key={column.id}
+                                                className="capitalize"
+                                                checked={column.getIsVisible()}
+                                                onCheckedChange={(value) =>
+                                                    column.toggleVisibility(value)
+                                                }
+                                            >
+                                                {column.id}
+                                            </DropdownMenuCheckboxItem>
+                                        )
+                                    })}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </div>
+                <div className="overflow-hidden rounded-md border">
+                    <Table>
+                        <TableHeader>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => {
+                                        return (
+                                            <TableHead key={header.id}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
+                                            </TableHead>
+                                        )
+                                    })}
+                                </TableRow>
+                            ))}
+                        </TableHeader>
+                        <TableBody>
+                            {table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={row.getIsSelected() && "selected"}
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={columns.length}
+                                        className="h-24 text-center"
+                                    >
+                                        No results.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+                <div className="flex items-center justify-end space-x-2 py-4">
+                    <div className="text-muted-foreground flex-1 text-sm">
+                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                        {table.getFilteredRowModel().rows.length} row(s) selected.
+                    </div>
+                    <div className="space-x-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => table.previousPage()}
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            Previous
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => table.nextPage()}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div className="overflow-hidden rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                      </TableHead>
-                    )
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="text-muted-foreground flex-1 text-sm">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div >
-  )
+    )
 }
