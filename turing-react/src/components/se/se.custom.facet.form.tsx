@@ -66,12 +66,12 @@ export const SECustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
       }
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      toast.error(`Failed to submit the form: ${errorMessage}`);
     }
   }
 
   async function onDelete() {
-    console.log("delete");
     try {
       if (await turSECustomFacetService.delete(value)) {
         toast.success(`The ${value.label} Custom Facet was deleted`);
@@ -82,8 +82,9 @@ export const SECustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
       }
 
     } catch (error) {
-      console.error("Form submission error", error);
-      toast.error(`The ${value.label} Custom Facet was not deleted`);
+      console.error("Form deletion error", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      toast.error(`Failed to delete: ${errorMessage}`);
     }
     setOpen(false);
   }

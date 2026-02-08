@@ -13,7 +13,7 @@ export const SERoutes = (
         <Route path={`${ROUTES.SE_INSTANCE}/:id`} element={<SEInstancePage />} />
         <Route path={`${ROUTES.SE_INSTANCE}/custom-facet`} element={<SECustomFacetRootPage />}>
             <Route index element={<SECustomFacetListPage />} />
-            <Route path={`${ROUTES.SE_INSTANCE}/custom-facet/:id`} element={<SECustomFacetPage />} />
+            <Route path=":id" element={<SECustomFacetPage />} />
         </Route>
     </Route>
 )
