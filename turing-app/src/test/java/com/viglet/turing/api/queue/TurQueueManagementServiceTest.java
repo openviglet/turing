@@ -21,21 +21,35 @@
 
 package com.viglet.turing.api.queue;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.LoggerFactory;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 /**
  * Unit tests for TurQueueManagementService.
@@ -46,329 +60,364 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TurQueueManagementServiceTest {
 
-    @Mock
-    private MBeanServer mbeanServer;
+        @Mock
+        private MBeanServer mbeanServer;
 
-    private TurQueueManagementService service;
+        private TurQueueManagementService service;
 
-    @BeforeEach
-    void setUp() {
-        service = new TurQueueManagementService();
-        try {
-            var mbeanServerField = TurQueueManagementService.class.getDeclaredField("mbeanServer");
-            mbeanServerField.setAccessible(true);
-            mbeanServerField.set(service, mbeanServer);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        @BeforeEach
+        void setUp() {
+                service = new TurQueueManagementService();
+                try {
+                        var mbeanServerField = TurQueueManagementService.class.getDeclaredField("mbeanServer");
+                        mbeanServerField.setAccessible(true);
+                        mbeanServerField.set(service, mbeanServer);
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
         }
-    }
 
-    @Test
-    void testGetAllQueuesWithMultipleQueues() throws Exception {
-        ObjectName pattern = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
-        
-        ObjectName queue1Name = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=queue1,address=addr1");
-        ObjectName queue2Name = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=queue2,address=addr2");
-        
-        ObjectInstance instance1 = new ObjectInstance(queue1Name, "org.apache.activemq.artemis.core.server.impl.QueueImpl");
-        ObjectInstance instance2 = new ObjectInstance(queue2Name, "org.apache.activemq.artemis.core.server.impl.QueueImpl");
-        
-        Set<ObjectInstance> instances = new HashSet<>(Arrays.asList(instance1, instance2));
+        @Test
+        void testGetAllQueuesWithMultipleQueues() throws Exception {
+                ObjectName pattern = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
 
-        when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(instances);
-        when(mbeanServer.getAttribute(eq(queue1Name), eq("MessageCount"))).thenReturn(10L);
-        when(mbeanServer.getAttribute(eq(queue1Name), eq("ConsumerCount"))).thenReturn(2L);
-        when(mbeanServer.getAttribute(eq(queue1Name), eq("Paused"))).thenReturn(false);
-        when(mbeanServer.getAttribute(eq(queue1Name), eq("Temporary"))).thenReturn(false);
-        
-        when(mbeanServer.getAttribute(eq(queue2Name), eq("MessageCount"))).thenReturn(5L);
-        when(mbeanServer.getAttribute(eq(queue2Name), eq("ConsumerCount"))).thenReturn(1L);
-        when(mbeanServer.getAttribute(eq(queue2Name), eq("Paused"))).thenReturn(true);
-        when(mbeanServer.getAttribute(eq(queue2Name), eq("Temporary"))).thenReturn(false);
+                ObjectName queue1Name = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=queue1,address=addr1");
+                ObjectName queue2Name = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=queue2,address=addr2");
 
-        List<TurQueueInfo> queues = service.getAllQueues();
+                ObjectInstance instance1 = new ObjectInstance(queue1Name,
+                                "org.apache.activemq.artemis.core.server.impl.QueueImpl");
+                ObjectInstance instance2 = new ObjectInstance(queue2Name,
+                                "org.apache.activemq.artemis.core.server.impl.QueueImpl");
 
-        assertThat(queues).hasSize(2);
-        assertThat(queues).extracting(TurQueueInfo::getName).containsExactlyInAnyOrder("queue1", "queue2");
-        
-        TurQueueInfo queue1 = queues.stream().filter(q -> "queue1".equals(q.getName())).findFirst().orElseThrow();
-        assertThat(queue1.getMessageCount()).isEqualTo(10L);
-        assertThat(queue1.getConsumerCount()).isEqualTo(2L);
-        assertThat(queue1.isPaused()).isFalse();
-        assertThat(queue1.getStatus()).isEqualTo("ACTIVE");
-        assertThat(queue1.getAddress()).isEqualTo("addr1");
-    }
+                Set<ObjectInstance> instances = new HashSet<>(Arrays.asList(instance1, instance2));
 
-    @Test
-    void testGetAllQueuesWithException() throws Exception {
-        ObjectName pattern = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
-        
-        when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenThrow(new RuntimeException("MBean error"));
+                when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(instances);
+                when(mbeanServer.getAttribute(eq(queue1Name), eq("MessageCount"))).thenReturn(10L);
+                when(mbeanServer.getAttribute(eq(queue1Name), eq("ConsumerCount"))).thenReturn(2L);
+                when(mbeanServer.getAttribute(eq(queue1Name), eq("Paused"))).thenReturn(false);
+                when(mbeanServer.getAttribute(eq(queue1Name), eq("Temporary"))).thenReturn(false);
 
-        List<TurQueueInfo> queues = service.getAllQueues();
+                when(mbeanServer.getAttribute(eq(queue2Name), eq("MessageCount"))).thenReturn(5L);
+                when(mbeanServer.getAttribute(eq(queue2Name), eq("ConsumerCount"))).thenReturn(1L);
+                when(mbeanServer.getAttribute(eq(queue2Name), eq("Paused"))).thenReturn(true);
+                when(mbeanServer.getAttribute(eq(queue2Name), eq("Temporary"))).thenReturn(false);
 
-        assertThat(queues).isEmpty();
-    }
+                List<TurQueueInfo> queues = service.getAllQueues();
 
-    @Test
-    void testGetAllQueuesWithEmptyResult() throws Exception {
-        ObjectName pattern = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
-        
-        when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(Collections.emptySet());
+                assertThat(queues).hasSize(2);
+                assertThat(queues).extracting(TurQueueInfo::getName).containsExactlyInAnyOrder("queue1", "queue2");
 
-        List<TurQueueInfo> queues = service.getAllQueues();
+                TurQueueInfo queue1 = queues.stream().filter(q -> "queue1".equals(q.getName())).findFirst()
+                                .orElseThrow();
+                assertThat(queue1.getMessageCount()).isEqualTo(10L);
+                assertThat(queue1.getConsumerCount()).isEqualTo(2L);
+                assertThat(queue1.isPaused()).isFalse();
+                assertThat(queue1.getStatus()).isEqualTo("ACTIVE");
+                assertThat(queue1.getAddress()).isEqualTo("addr1");
+        }
 
-        assertThat(queues).isEmpty();
-    }
+        @Test
+        void testGetAllQueuesWithException() throws Exception {
+                ObjectName pattern = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
 
-    @Test
-    void testGetQueueMessagesSuccess() throws Exception {
-        String queueName = "testQueue";
-        ObjectName queueObjectName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=" + queueName);
-        ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.singleton(instance));
+                when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenThrow(new RuntimeException("MBean error"));
+                withLoggerOff(() -> {
+                        List<TurQueueInfo> queues = service.getAllQueues();
 
-        Map<String, Object> message1 = new HashMap<>();
-        message1.put("messageID", "msg-1");
-        message1.put("text", "Test message 1");
-        message1.put("timestamp", System.currentTimeMillis());
-        message1.put("deliveryCount", 1);
-        message1.put("type", "TEXT");
-        message1.put("size", 100L);
+                        assertThat(queues).isEmpty();
+                });
+        }
 
-        Object[] messages = new Object[]{message1};
-        
-        when(mbeanServer.invoke(eq(queueObjectName), eq("browse"), 
-                any(Object[].class), any(String[].class))).thenReturn(messages);
+        @Test
+        void testGetAllQueuesWithEmptyResult() throws Exception {
+                ObjectName pattern = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
 
-        List<TurQueueMessage> result = service.getQueueMessages(queueName, 10);
+                when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(Collections.emptySet());
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getMessageId()).isEqualTo("msg-1");
-        assertThat(result.get(0).getContent()).isEqualTo("Test message 1");
-        assertThat(result.get(0).getDeliveryCount()).isEqualTo(1);
-        assertThat(result.get(0).getType()).isEqualTo("TEXT");
-        assertThat(result.get(0).getSize()).isEqualTo(100L);
-    }
+                List<TurQueueInfo> queues = service.getAllQueues();
 
-    @Test
-    void testGetQueueMessagesWithNonExistentQueue() throws Exception {
-        String queueName = "nonExistentQueue";
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.emptySet());
+                assertThat(queues).isEmpty();
+        }
 
-        List<TurQueueMessage> result = service.getQueueMessages(queueName, 10);
+        @Test
+        void testGetQueueMessagesSuccess() throws Exception {
+                String queueName = "testQueue";
+                ObjectName queueObjectName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue="
+                                                + queueName);
+                ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
 
-        assertThat(result).isEmpty();
-    }
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.singleton(instance));
 
-    @Test
-    void testGetQueueMessagesWithException() throws Exception {
-        String queueName = "errorQueue";
-        ObjectName queueObjectName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=" + queueName);
-        ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.singleton(instance));
-        when(mbeanServer.invoke(eq(queueObjectName), eq("browse"), 
-                any(Object[].class), any(String[].class)))
-                .thenThrow(new RuntimeException("Invoke error"));
+                Map<String, Object> message1 = new HashMap<>();
+                message1.put("messageID", "msg-1");
+                message1.put("text", "Test message 1");
+                message1.put("timestamp", System.currentTimeMillis());
+                message1.put("deliveryCount", 1);
+                message1.put("type", "TEXT");
+                message1.put("size", 100L);
 
-        List<TurQueueMessage> result = service.getQueueMessages(queueName, 10);
+                Object[] messages = new Object[] { message1 };
 
-        assertThat(result).isEmpty();
-    }
+                when(mbeanServer.invoke(eq(queueObjectName), eq("browse"),
+                                any(Object[].class), any(String[].class))).thenReturn(messages);
 
-    @Test
-    void testPauseQueueSuccess() throws Exception {
-        String queueName = "testQueue";
-        ObjectName queueObjectName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=" + queueName);
-        ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.singleton(instance));
-        when(mbeanServer.invoke(eq(queueObjectName), eq("pause"), 
-                any(Object[].class), any(String[].class))).thenReturn(null);
+                List<TurQueueMessage> result = service.getQueueMessages(queueName, 10);
 
-        boolean result = service.pauseQueue(queueName);
+                assertThat(result).hasSize(1);
+                assertThat(result.get(0).getMessageId()).isEqualTo("msg-1");
+                assertThat(result.get(0).getContent()).isEqualTo("Test message 1");
+                assertThat(result.get(0).getDeliveryCount()).isEqualTo(1);
+                assertThat(result.get(0).getType()).isEqualTo("TEXT");
+                assertThat(result.get(0).getSize()).isEqualTo(100L);
+        }
 
-        assertThat(result).isTrue();
-        verify(mbeanServer).invoke(eq(queueObjectName), eq("pause"), 
-                any(Object[].class), any(String[].class));
-    }
+        @Test
+        void testGetQueueMessagesWithNonExistentQueue() throws Exception {
+                String queueName = "nonExistentQueue";
 
-    @Test
-    void testPauseQueueWithNonExistentQueue() throws Exception {
-        String queueName = "nonExistentQueue";
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.emptySet());
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.emptySet());
 
-        boolean result = service.pauseQueue(queueName);
+                List<TurQueueMessage> result = service.getQueueMessages(queueName, 10);
 
-        assertThat(result).isFalse();
-        verify(mbeanServer, never()).invoke(any(ObjectName.class), eq("pause"), 
-                any(Object[].class), any(String[].class));
-    }
+                assertThat(result).isEmpty();
+        }
 
-    @Test
-    void testResumeQueueSuccess() throws Exception {
-        String queueName = "testQueue";
-        ObjectName queueObjectName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=" + queueName);
-        ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.singleton(instance));
-        when(mbeanServer.invoke(eq(queueObjectName), eq("resume"), 
-                any(Object[].class), any(String[].class))).thenReturn(null);
+        @Test
+        void testGetQueueMessagesWithException() throws Exception {
+                String queueName = "errorQueue";
+                ObjectName queueObjectName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue="
+                                                + queueName);
+                ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
 
-        boolean result = service.resumeQueue(queueName);
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.singleton(instance));
+                when(mbeanServer.invoke(eq(queueObjectName), eq("browse"),
+                                any(Object[].class), any(String[].class)))
+                                .thenThrow(new RuntimeException("Invoke error"));
 
-        assertThat(result).isTrue();
-        verify(mbeanServer).invoke(eq(queueObjectName), eq("resume"), 
-                any(Object[].class), any(String[].class));
-    }
+                withLoggerOff(() -> {
+                        List<TurQueueMessage> result = service.getQueueMessages(queueName, 10);
 
-    @Test
-    void testResumeQueueWithException() throws Exception {
-        String queueName = "errorQueue";
-        ObjectName queueObjectName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=" + queueName);
-        ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.singleton(instance));
-        when(mbeanServer.invoke(eq(queueObjectName), eq("resume"), 
-                any(Object[].class), any(String[].class)))
-                .thenThrow(new RuntimeException("Resume error"));
+                        assertThat(result).isEmpty();
+                });
+        }
 
-        boolean result = service.resumeQueue(queueName);
+        @Test
+        void testPauseQueueSuccess() throws Exception {
+                String queueName = "testQueue";
+                ObjectName queueObjectName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue="
+                                                + queueName);
+                ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
 
-        assertThat(result).isFalse();
-    }
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.singleton(instance));
+                when(mbeanServer.invoke(eq(queueObjectName), eq("pause"),
+                                any(Object[].class), any(String[].class))).thenReturn(null);
 
-    @Test
-    void testClearQueueSuccess() throws Exception {
-        String queueName = "testQueue";
-        ObjectName queueObjectName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=" + queueName);
-        ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.singleton(instance));
-        when(mbeanServer.invoke(eq(queueObjectName), eq("removeAllMessages"), 
-                any(Object[].class), any(String[].class))).thenReturn(5L);
+                boolean result = service.pauseQueue(queueName);
 
-        boolean result = service.clearQueue(queueName);
+                assertThat(result).isTrue();
+                verify(mbeanServer).invoke(eq(queueObjectName), eq("pause"),
+                                any(Object[].class), any(String[].class));
+        }
 
-        assertThat(result).isTrue();
-        verify(mbeanServer).invoke(eq(queueObjectName), eq("removeAllMessages"), 
-                any(Object[].class), any(String[].class));
-    }
+        @Test
+        void testPauseQueueWithNonExistentQueue() throws Exception {
+                String queueName = "nonExistentQueue";
 
-    @Test
-    void testClearQueueWithNonExistentQueue() throws Exception {
-        String queueName = "nonExistentQueue";
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.emptySet());
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.emptySet());
 
-        boolean result = service.clearQueue(queueName);
+                boolean result = service.pauseQueue(queueName);
 
-        assertThat(result).isFalse();
-    }
+                assertThat(result).isFalse();
+                verify(mbeanServer, never()).invoke(any(ObjectName.class), eq("pause"),
+                                any(Object[].class), any(String[].class));
+        }
 
-    @Test
-    void testGetQueueMessagesWithLongDeliveryCount() throws Exception {
-        String queueName = "testQueue";
-        ObjectName queueObjectName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=" + queueName);
-        ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
-        
-        when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
-                .thenReturn(Collections.singleton(instance));
+        @Test
+        void testResumeQueueSuccess() throws Exception {
+                String queueName = "testQueue";
+                ObjectName queueObjectName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue="
+                                                + queueName);
+                ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
 
-        Map<String, Object> message = new HashMap<>();
-        message.put("messageID", "msg-1");
-        message.put("text", "Test");
-        message.put("timestamp", System.currentTimeMillis());
-        message.put("deliveryCount", 5L);
-        message.put("type", "TEXT");
-        message.put("size", 50);
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.singleton(instance));
+                when(mbeanServer.invoke(eq(queueObjectName), eq("resume"),
+                                any(Object[].class), any(String[].class))).thenReturn(null);
 
-        Object[] messages = new Object[]{message};
-        
-        when(mbeanServer.invoke(eq(queueObjectName), eq("browse"), 
-                any(Object[].class), any(String[].class))).thenReturn(messages);
+                withLoggerOff(() -> {
+                        boolean result = service.resumeQueue(queueName);
 
-        List<TurQueueMessage> result = service.getQueueMessages(queueName, 10);
+                        assertThat(result).isTrue();
+                        verify(mbeanServer).invoke(eq(queueObjectName), eq("resume"),
+                                        any(Object[].class), any(String[].class));
+                });
+        }
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getDeliveryCount()).isEqualTo(5);
-        assertThat(result.get(0).getSize()).isEqualTo(50L);
-    }
+        @Test
+        void testResumeQueueWithException() throws Exception {
+                String queueName = "errorQueue";
+                ObjectName queueObjectName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue="
+                                                + queueName);
+                ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
 
-    @Test
-    void testGetAllQueuesWithNullAttributes() throws Exception {
-        ObjectName pattern = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
-        
-        ObjectName queueName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=nullQueue,address=nullAddr");
-        
-        ObjectInstance instance = new ObjectInstance(queueName, "QueueImpl");
-        Set<ObjectInstance> instances = Collections.singleton(instance);
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.singleton(instance));
+                when(mbeanServer.invoke(eq(queueObjectName), eq("resume"),
+                                any(Object[].class), any(String[].class)))
+                                .thenThrow(new RuntimeException("Resume error"));
 
-        when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(instances);
-        when(mbeanServer.getAttribute(eq(queueName), eq("MessageCount"))).thenReturn(null);
-        when(mbeanServer.getAttribute(eq(queueName), eq("ConsumerCount"))).thenReturn(null);
-        when(mbeanServer.getAttribute(eq(queueName), eq("Paused"))).thenReturn(null);
-        when(mbeanServer.getAttribute(eq(queueName), eq("Temporary"))).thenReturn(null);
+                withLoggerOff(() -> {
+                        boolean result = service.resumeQueue(queueName);
 
-        List<TurQueueInfo> queues = service.getAllQueues();
+                        assertThat(result).isFalse();
+                });
+        }
 
-        assertThat(queues).hasSize(1);
-        TurQueueInfo queue = queues.get(0);
-        assertThat(queue.getMessageCount()).isZero();
-        assertThat(queue.getConsumerCount()).isZero();
-        assertThat(queue.isPaused()).isFalse();
-        assertThat(queue.getStatus()).isEqualTo("ACTIVE");
-    }
+        @Test
+        void testClearQueueSuccess() throws Exception {
+                String queueName = "testQueue";
+                ObjectName queueObjectName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue="
+                                                + queueName);
+                ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
 
-    @Test
-    void testGetAllQueuesWithPausedQueue() throws Exception {
-        ObjectName pattern = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
-        
-        ObjectName queueName = new ObjectName(
-                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=pausedQueue,address=addr");
-        
-        ObjectInstance instance = new ObjectInstance(queueName, "QueueImpl");
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.singleton(instance));
+                when(mbeanServer.invoke(eq(queueObjectName), eq("removeAllMessages"),
+                                any(Object[].class), any(String[].class))).thenReturn(5L);
 
-        when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(Collections.singleton(instance));
-        when(mbeanServer.getAttribute(eq(queueName), eq("MessageCount"))).thenReturn(0L);
-        when(mbeanServer.getAttribute(eq(queueName), eq("ConsumerCount"))).thenReturn(0L);
-        when(mbeanServer.getAttribute(eq(queueName), eq("Paused"))).thenReturn(true);
-        when(mbeanServer.getAttribute(eq(queueName), eq("Temporary"))).thenReturn(true);
+                withLoggerOff(() -> {
+                        boolean result = service.clearQueue(queueName);
 
-        List<TurQueueInfo> queues = service.getAllQueues();
+                        assertThat(result).isTrue();
+                        verify(mbeanServer).invoke(eq(queueObjectName), eq("removeAllMessages"),
+                                        any(Object[].class), any(String[].class));
+                });
+        }
 
-        assertThat(queues).hasSize(1);
-        TurQueueInfo queue = queues.get(0);
-        assertThat(queue.isPaused()).isTrue();
-        assertThat(queue.isTemporary()).isTrue();
-        assertThat(queue.getStatus()).isEqualTo("PAUSED");
-    }
+        private void withLoggerOff(ThrowingRunnable action) throws Exception {
+                Logger logger = (Logger) LoggerFactory.getLogger(TurQueueManagementService.class);
+                Level previousLevel = logger.getLevel();
+                logger.setLevel(Level.OFF);
+                try {
+                        action.run();
+                } finally {
+                        logger.setLevel(previousLevel);
+                }
+        }
+
+        @FunctionalInterface
+        private interface ThrowingRunnable {
+                void run() throws Exception;
+        }
+
+        @Test
+        void testClearQueueWithNonExistentQueue() throws Exception {
+                String queueName = "nonExistentQueue";
+
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.emptySet());
+
+                boolean result = service.clearQueue(queueName);
+
+                assertThat(result).isFalse();
+        }
+
+        @Test
+        void testGetQueueMessagesWithLongDeliveryCount() throws Exception {
+                String queueName = "testQueue";
+                ObjectName queueObjectName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue="
+                                                + queueName);
+                ObjectInstance instance = new ObjectInstance(queueObjectName, "QueueImpl");
+
+                when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
+                                .thenReturn(Collections.singleton(instance));
+
+                Map<String, Object> message = new HashMap<>();
+                message.put("messageID", "msg-1");
+                message.put("text", "Test");
+                message.put("timestamp", System.currentTimeMillis());
+                message.put("deliveryCount", 5L);
+                message.put("type", "TEXT");
+                message.put("size", 50);
+
+                Object[] messages = new Object[] { message };
+
+                when(mbeanServer.invoke(eq(queueObjectName), eq("browse"),
+                                any(Object[].class), any(String[].class))).thenReturn(messages);
+
+                List<TurQueueMessage> result = service.getQueueMessages(queueName, 10);
+
+                assertThat(result).hasSize(1);
+                assertThat(result.get(0).getDeliveryCount()).isEqualTo(5);
+                assertThat(result.get(0).getSize()).isEqualTo(50L);
+        }
+
+        @Test
+        void testGetAllQueuesWithNullAttributes() throws Exception {
+                ObjectName pattern = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
+
+                ObjectName queueName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=nullQueue,address=nullAddr");
+
+                ObjectInstance instance = new ObjectInstance(queueName, "QueueImpl");
+                Set<ObjectInstance> instances = Collections.singleton(instance);
+
+                when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(instances);
+                when(mbeanServer.getAttribute(eq(queueName), eq("MessageCount"))).thenReturn(null);
+                when(mbeanServer.getAttribute(eq(queueName), eq("ConsumerCount"))).thenReturn(null);
+                when(mbeanServer.getAttribute(eq(queueName), eq("Paused"))).thenReturn(null);
+                when(mbeanServer.getAttribute(eq(queueName), eq("Temporary"))).thenReturn(null);
+
+                List<TurQueueInfo> queues = service.getAllQueues();
+
+                assertThat(queues).hasSize(1);
+                TurQueueInfo queue = queues.get(0);
+                assertThat(queue.getMessageCount()).isZero();
+                assertThat(queue.getConsumerCount()).isZero();
+                assertThat(queue.isPaused()).isFalse();
+                assertThat(queue.getStatus()).isEqualTo("ACTIVE");
+        }
+
+        @Test
+        void testGetAllQueuesWithPausedQueue() throws Exception {
+                ObjectName pattern = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=*,queue=*");
+
+                ObjectName queueName = new ObjectName(
+                                "org.apache.activemq.artemis:broker=\"localhost\",subcomponent=queues,routing-type=anycast,queue=pausedQueue,address=addr");
+
+                ObjectInstance instance = new ObjectInstance(queueName, "QueueImpl");
+
+                when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(Collections.singleton(instance));
+                when(mbeanServer.getAttribute(eq(queueName), eq("MessageCount"))).thenReturn(0L);
+                when(mbeanServer.getAttribute(eq(queueName), eq("ConsumerCount"))).thenReturn(0L);
+                when(mbeanServer.getAttribute(eq(queueName), eq("Paused"))).thenReturn(true);
+                when(mbeanServer.getAttribute(eq(queueName), eq("Temporary"))).thenReturn(true);
+
+                List<TurQueueInfo> queues = service.getAllQueues();
+
+                assertThat(queues).hasSize(1);
+                TurQueueInfo queue = queues.get(0);
+                assertThat(queue.isPaused()).isTrue();
+                assertThat(queue.isTemporary()).isTrue();
+                assertThat(queue.getStatus()).isEqualTo("PAUSED");
+        }
 }
