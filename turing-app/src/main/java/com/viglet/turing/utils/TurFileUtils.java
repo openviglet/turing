@@ -264,7 +264,7 @@ public class TurFileUtils {
 
         try {
             InetAddress inetAddress = InetAddress.getByName(host);
-            if (isSafe(inetAddress)) {
+            if (!isSafe(inetAddress)) {
                 return false;
             }
         } catch (UnknownHostException e) {
