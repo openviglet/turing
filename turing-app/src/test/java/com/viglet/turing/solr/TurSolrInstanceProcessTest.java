@@ -225,6 +225,8 @@ class TurSolrInstanceProcessTest {
 
         Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance();
 
+        // Production code returns null instead of Optional.empty() when no instances available
+        // This is a design issue but test reflects current behavior
         assertThat(result).isNull();
         verify(turConfigVarRepository).findById("DEFAULT_SE");
         verify(turSEInstanceRepository).findAll();

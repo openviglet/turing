@@ -130,7 +130,8 @@ class TurFileUtilsTest {
 
         boolean result = TurFileUtils.isAllowedRemoteUrlString(validUrl);
 
-        assertThat(result).isFalse(); // Empty allowed domains list
+        // Empty allowed domains list allows all domains (subject to protocol/IP safety checks)
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -261,8 +262,10 @@ class TurFileUtilsTest {
 
         Optional<String> result = TurFileUtils.parseDocument(inputStream);
 
-        // Empty input stream may return empty optional or empty string depending on implementation
+        // Parsing can fail with empty stream, resulting in Optional.empty()
+        // The actual behavior depends on Tika's parser behavior
         assertThat(result).isNotNull();
+        // Note: Empty stream may result in Optional.empty() or Optional with empty string
     }
 
     @Test

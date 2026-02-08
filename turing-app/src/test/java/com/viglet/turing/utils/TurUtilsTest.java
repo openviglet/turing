@@ -62,6 +62,8 @@ class TurUtilsTest {
         
         String result = TurUtils.getUrlTemplate(serviceUrl, id);
         
+        // Current implementation creates double slash - this encodes existing behavior
+        // Note: This should ideally be normalized to single slash in production code
         assertThat(result).isEqualTo("http://example.com//12345");
     }
 

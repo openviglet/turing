@@ -276,12 +276,13 @@ class TurSNUtilsTest {
 
     @Test
     void testFilterQueryByFieldName() {
-        URI uri = URI.create("http://example.com/search?fq=category:books&fq=author:smith");
+        URI uri = URI.create("http://example.com/search?fq[]=category:books&fq[]=author:smith");
         
         List<String> result = TurSNUtils.filterQueryByFieldName(uri, "category");
         
-        // Result may be empty or contain filtered queries depending on implementation
-        assertThat(result).isNotNull();
+        assertThat(result).hasSize(1);
+        assertThat(result).contains("category:books");
+        assertThat(result).doesNotContain("author:smith");
     }
 
     @Test
@@ -351,10 +352,12 @@ class TurSNUtilsTest {
 
     @Test
     void testFilterQueryByFieldNames() {
-        URI uri = URI.create("http://example.com/search?fq=category:books&fq=author:smith&fq=year:2024");
+        URI uri = URI.create("http://example.com/search?fq[]=category:books&fq[]=author:smith&fq[]=year:2024");
         
         List<String> result = TurSNUtils.filterQueryByFieldNames(uri, List.of("category", "year"));
         
-        assertThat(result).isNotNull();
+        assertThat(result).hasSize(2);
+        assertThat(result).contains("category:books", "year:2024");
+        assertThat(result).doesNotContain("author:smith");
     }
 }
