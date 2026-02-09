@@ -8,6 +8,7 @@ import {
     IconCpu2,
     IconDashboard,
     IconDatabase,
+    IconFilter,
     IconGitMerge,
     IconInbox,
     IconLanguage,
@@ -65,6 +66,11 @@ export default function SNSitePage() {
                     title: "Behavior",
                     url: "/behavior",
                     icon: IconScale,
+                },
+                {
+                    title: "Custom Facets",
+                    url: "/custom-facet",
+                    icon: IconFilter,
                 },
                 {
                     title: "Facet Ordering",

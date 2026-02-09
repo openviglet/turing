@@ -21,7 +21,7 @@ export default function SNSiteListPage() {
     url: (item) => `${ROUTES.SN_INSTANCE}/${item.id}`
   });
   return (
-    <>
+    <div className="px-4">
       {gridItemList.length > 0 ? (
         <GridList gridItemList={gridItemList ?? []} />
       ) : (
@@ -32,7 +32,7 @@ export default function SNSiteListPage() {
           buttonText="New semantic navigation instance"
           urlNew={`${ROUTES.SN_INSTANCE}/new`} />
       )}
-    </>
+    </div>
   )
 }
 

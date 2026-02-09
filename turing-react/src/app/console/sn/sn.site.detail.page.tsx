@@ -21,7 +21,9 @@ export default function SNSiteDetailPage() {
   return (
     <>
       <SubPageHeader icon={IconSettings} name="Settings" feature="Settings" description="Configure the Semantic Navigation Site." />
-      <SNSiteForm value={snSite} isNew={isNew} />
+      <div className="px-4">
+        <SNSiteForm value={snSite} isNew={isNew} />
+      </div>
     </>
   )
 }

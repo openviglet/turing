@@ -21,7 +21,9 @@ export default function SNSiteBehaviorPage() {
   return (
     <>
       <SubPageHeader icon={IconScale} name="Behavior" feature="Behavior" description="How the search will behave during the search." />
-      <SNSiteBehaviorForm value={snSite} isNew={isNew} />
+      <div className="px-4">
+        <SNSiteBehaviorForm value={snSite} isNew={isNew} />
+      </div>
     </>
   )
 }

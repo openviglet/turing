@@ -440,7 +440,7 @@ export default function SNSiteFieldListPage() {
                 feature="Search Engine Field"
                 description="Custom Search Engine Fields."
                 urlNew={`${ROUTES.SN_INSTANCE}/${id}/field/new`} />
-            <div className="pr-5">
+            <div className="px-4">
                 <div className="flex items-center py-4">
                     <Input
                         placeholder="Filter fields..."
