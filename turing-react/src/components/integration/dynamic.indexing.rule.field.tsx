@@ -9,7 +9,11 @@ interface DynamicIndexingRuleFieldsProps {
     fieldName: string;
 }
 
-export function DynamicIndexingRuleFields({ control, register, fieldName }: DynamicIndexingRuleFieldsProps) {
+export function DynamicIndexingRuleFields({
+    control,
+    register,
+    fieldName
+}: Readonly<DynamicIndexingRuleFieldsProps>) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: fieldName,

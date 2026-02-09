@@ -22,9 +22,9 @@ export default function SNSiteResultRankingListPage() {
         <>
             {rankingList.length > 0 ? (
                 <>
-                    <SubPageHeader icon={IconNumber123} title="Result Ranking"
+                    <SubPageHeader icon={IconNumber123} name="Result Ranking" feature="Result Ranking"
                         description="Define content that will be featured in the term-based search." />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
                         {rankingList.map((ranking) => (
                             <Card key={ranking.id} className="flex flex-col justify-between hover:border-primary transition-colors">
                                 <CardHeader>
@@ -45,12 +45,14 @@ export default function SNSiteResultRankingListPage() {
                     </div>
                 </>
             ) : (
-                <BlankSlate
-                    icon={IconNumber123}
-                    title="You don’t seem to have any result ranking."
-                    description="Create a new result ranking to define relevance rules."
-                    buttonText="New result ranking"
-                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/result-ranking/new`} />
+                <div className="px-4">
+                    <BlankSlate
+                        icon={IconNumber123}
+                        title="You don’t seem to have any result ranking."
+                        description="Create a new result ranking to define relevance rules."
+                        buttonText="New result ranking"
+                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/result-ranking/new`} />
+                </div>
             )}
         </>
     )

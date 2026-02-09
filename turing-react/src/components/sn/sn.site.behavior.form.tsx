@@ -131,7 +131,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconCodeAsterisk} title="Wildcard" description="When use wildcard on search." />
+        <SubPageHeader icon={IconCodeAsterisk} name="Wildcard" feature="Wildcard" description="When use wildcard on search." />
         <FormField
           control={form.control}
           name="wildcardNoResults"
@@ -166,7 +166,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconLayoutListFilled} title="Facet" description="Behavior filter on search page." />
+        <SubPageHeader icon={IconLayoutListFilled} name="Facet" feature="Facet" description="Behavior filter on search page." />
         <FormField
           control={form.control}
           name="facet"
@@ -268,7 +268,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconHighlight} title="Highlighting" description="Highlighting terms of search on results." />
+        <SubPageHeader icon={IconHighlight} name="Highlighting" feature="Highlighting" description="Highlighting terms of search on results." />
         <FormField
           control={form.control}
           name="hl"
@@ -322,10 +322,10 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconProgressHelp} title="Did you mean?" description="Corrects the searched term if you have a spelling error. It uses the contents indexed in the Search Engine as a dictionary." />
+        <SubPageHeader icon={IconProgressHelp} name="Did you mean?" feature="Did you mean?" description="Corrects the searched term if you have a spelling error. It uses the contents indexed in the Search Engine as a dictionary." />
         <FormField
           control={form.control}
-          name="hl"
+          name="spellCheck"
           render={({ field }) => (
             <FormItem>
               <FormLabel>"Did you mean?" enabled</FormLabel>
@@ -342,7 +342,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
         />
         <FormField
           control={form.control}
-          name="spellCheck"
+          name="spellCheckFixes"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Always show the search with the corrected term</FormLabel>
@@ -357,10 +357,10 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconCopy} title="MLT" description="The More Like This Query finds other items that are 'like' a given set of items of search results." />
+        <SubPageHeader icon={IconCopy} name="MLT" feature="MLT" description="The More Like This Query finds other items that are 'like' a given set of items of search results." />
         <FormField
           control={form.control}
-          name="spellCheckFixes"
+          name="mlt"
           render={({ field }) => (
             <FormItem>
               <FormLabel>"More Like This" enabled</FormLabel>
@@ -375,7 +375,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconCopy} title="Spotlight" description="Show spotlight content based in the term-based search." />
+        <SubPageHeader icon={IconCopy} name="Spotlight" feature="Spotlight" description="Show spotlight content based in the term-based search." />
         <FormField
           control={form.control}
           name="spotlightWithResults"
@@ -393,7 +393,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconListDetails} title="Default Fields" description="What is the fields that will be used on search results display." />
+        <SubPageHeader icon={IconListDetails} name="Default Fields" feature="Default Fields" description="What is the fields that will be used on search results display." />
         <FormField
           control={form.control}
           name="exactMatchField"

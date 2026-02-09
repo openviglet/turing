@@ -13,15 +13,17 @@ export default function SNSiteFieldPage() {
   const [snField, setSnField] = useState<TurSNSiteField>({} as TurSNSiteField);
   const [isNew, setIsNew] = useState<boolean>(true);
   useEffect(() => {
-    if (id !== "new") {
+    if (fieldId !== "new") {
       turSNFieldService.get(id, fieldId).then(setSnField);
       setIsNew(false);
     }
-  }, [id])
+  }, [fieldId])
   return (
     <>
-      <SubPageHeader icon={IconAlignBoxCenterStretch} title={snField.name} description={snField.description} />
-      <SNSiteFieldForm snSiteId={id} snField={snField} isNew={isNew} />
+      <SubPageHeader icon={IconAlignBoxCenterStretch} name={snField.name} feature="Field" description={snField.description} />
+      <div className="px-4">
+        <SNSiteFieldForm snSiteId={id} snField={snField} isNew={isNew} />
+      </div>
     </>
   )
 }

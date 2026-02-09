@@ -6,6 +6,7 @@ import {
   IconUserCircle,
 } from "@tabler/icons-react"
 
+import { ROUTES } from "@/app/routes.const"
 import {
   Avatar,
   AvatarFallback,
@@ -27,7 +28,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { NavLink } from "react-router-dom"
-import { ROUTES } from "@/app/routes.const"
 
 export function NavUser({
   user,
@@ -40,7 +40,6 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const handleClick = () => {
-    console.log('NavLink clicked!');
     localStorage.removeItem('restInfo');
     localStorage.removeItem('user');
   };

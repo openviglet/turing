@@ -17,16 +17,18 @@ export default function SNSiteMergeProvidersPage() {
     return (
         <>
             {mergeList.length > 0 ? (
-                <SubPageHeader icon={IconGitMerge} title="Merge Providers"
+                <SubPageHeader icon={IconGitMerge} name="Merge Providers" feature="Merge Providers"
                     description="Unify different sources contents." />
             )
                 : (
-                    <BlankSlate
-                        icon={IconGitMerge}
-                        title="You don’t seem to have any merge provider."
-                        description="Create a new merge provider and allow to merge documents from different providers during indexing."
-                        buttonText="New merge provider"
-                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/merge/new`} />
+                    <div className="px-4">
+                        <BlankSlate
+                            icon={IconGitMerge}
+                            title="You don’t seem to have any merge provider."
+                            description="Create a new merge provider and allow to merge documents from different providers during indexing."
+                            buttonText="New merge provider"
+                            urlNew={`${ROUTES.SN_INSTANCE}/${id}/merge/new`} />
+                    </div>
                 )
             }
         </>

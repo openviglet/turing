@@ -1,4 +1,7 @@
 import { Navigate, Route, useParams } from "react-router-dom"
+import SECustomFacetRootPage from "../console/se/se.custom.facet.root.page"
+import SECustomFacetListPage from "../console/sn/se.custom.facet.list.page"
+import SECustomFacetPage from "../console/sn/se.custom.facet.page"
 import SNSiteBehaviorPage from "../console/sn/sn.site.behavior.page"
 import SNSiteDetailPage from "../console/sn/sn.site.detail.page"
 import SNSiteFacetOrderingPage from "../console/sn/sn.site.facets.ordering.page"
@@ -42,9 +45,13 @@ export const SNRoutes = (
             <Route path={'merge-providers'} element={<SNSiteMergeProvidersListPage />} />
             <Route path={'spotlight'} element={<SNSiteSpotlightListPage />} />
             <Route path={'spotlight/:spotlightId'} element={<SNSiteSpotlightPage />} />
-            <Route path={'top-terms'} element={<SNSiteTopSearchTermsPage />} />
+            <Route path={'top-terms/:period?'} element={<SNSiteTopSearchTermsPage />} />
             <Route path={'result-ranking/:resultRankingId'} element={<SNSiteResultRankingPage />} />
             <Route path={'merge-providers/:mergeProviderId'} element={<SNSiteMergeProvidersPage />} />
+            <Route path={'custom-facet'} element={<SECustomFacetRootPage />}>
+                <Route index element={<SECustomFacetListPage />} />
+                <Route path=":customFacetId" element={<SECustomFacetPage />} />
+            </Route>
         </Route>
     </Route>
 )

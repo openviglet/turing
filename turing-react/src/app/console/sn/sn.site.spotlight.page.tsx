@@ -19,17 +19,19 @@ export default function SNSiteSpotlightPage() {
             {spotlightList.length > 0 ? (
                 <SubPageHeader
                     icon={IconSpeakerphone}
-                    title="Spotlight"
+                    name="Spotlight" feature="Spotlight"
                     description="Define content that will be featured in the term-based search."
                 />
             ) : (
-                < BlankSlate
-                    icon={IconSpeakerphone}
-                    title="You don't seem to have any spotlight."
-                    description="Create a new spotlight to define content featured."
-                    buttonText="New spotlight"
-                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/spotlight/new`}
-                />
+                <div className="px-4">
+                    < BlankSlate
+                        icon={IconSpeakerphone}
+                        title="You don't seem to have any spotlight."
+                        description="Create a new spotlight to define content featured."
+                        buttonText="New spotlight"
+                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/spotlight/new`}
+                    />
+                </div>
             )}
         </>
     )

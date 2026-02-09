@@ -21,7 +21,6 @@
 
 package com.viglet.turing.api.auth;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,9 +134,7 @@ public class TurUserAPI {
         TurUser turUser = turUserRepository.findByUsername(username);
         return Optional.ofNullable(turUser).map(user -> {
             user.setPassword(null);
-            List<TurUser> turUsers = new ArrayList<>();
-            turUsers.add(user);
-            user.setTurGroups(turGroupRepository.findByTurUsersIn(turUsers));
+            user.setTurGroups(turGroupRepository.findByTurUsersContaining(user));
             return user;
         }).orElseGet(TurUser::new);
     }

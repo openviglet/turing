@@ -1,4 +1,5 @@
 "use client"
+import { ROUTES } from "@/app/routes.const"
 import {
   Button
 } from "@/components/ui/button"
@@ -47,10 +48,12 @@ interface Props {
 }
 
 export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) => {
-  const form = useForm<TurSNSiteField>();
-  const { control, register, setValue } = form;
+  const form = useForm<TurSNSiteField>({
+    defaultValues: snField
+  });
+  const { control, register } = form;
   const [snFieldTypes, setSnFieldTypes] = useState<TurSNFieldType[]>([]);
-  const urlBase = `/admin/sn/instance/${snSiteId}/field`;
+  const urlBase = `${ROUTES.SN_INSTANCE}/${snSiteId}/field`;
   const navigate = useNavigate()
   const facetRanges = [
     { value: "DISABLED", name: "Disabled" },
@@ -69,43 +72,31 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
     { value: "COUNT", name: "Count" }
   ];
   useEffect(() => {
-    turSNFieldTypeService.query().then(setSnFieldTypes)
-
-    setValue("id", snField.id)
-    setValue("name", snField.name);
-    setValue("description", snField.description);
-    setValue("type", snField.type);
-    setValue("multiValued", snField.multiValued);
-    setValue("hl", snField.hl);
-    setValue("mlt", snField.mlt);
-    setValue("enabled", snField.enabled);
-    setValue("required", snField.required);
-    setValue("defaultValue", snField.defaultValue);
-    setValue("facet", snField.facet);
-    setValue("secondaryFacet", snField.secondaryFacet);
-    setValue("showAllFacetItems", snField.showAllFacetItems);
-    setValue("facetSort", snField.facetSort);
-    setValue("facetType", snField.facetType);
-    setValue("facetItemType", snField.facetItemType);
-    setValue("facetRange", snField.facetRange);
-    setValue("facetName", snField.facetName);
-    setValue("facetLocales", snField.facetLocales);
+    form.reset(snField);
+    turSNFieldTypeService.query().then(setSnFieldTypes);
+  }, [snField]);
 
 
-  }, [setValue, snField]);
-
-
-  function onSubmit(snField: TurSNSiteField) {
+  async function onSubmit(snField: TurSNSiteField) {
     try {
       if (isNew) {
 
-        turSNFieldService.create(snSiteId, snField);
-        toast.success(`The ${snField.name} SN Field was saved`);
-        navigate(urlBase);
+        const result = await turSNFieldService.create(snSiteId, snField);
+        if (result) {
+          toast.success(`The ${snField.name} SN Field was saved`);
+          navigate(urlBase);
+        }
+        else {
+          toast.error(`The ${snField.name} SN Field was not saved`);
+        }
       }
       else {
-        turSNFieldService.update(snSiteId, snField);
-        toast.success(`The ${snField.name} SN Field was updated`);
+        const result = await turSNFieldService.update(snSiteId, snField);
+        if (result) {
+          toast.success(`The ${snField.name} SN Field was updated`);
+        } else {
+          toast.error(`The ${snField.name} SN Field was not updated`);
+        }
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -282,7 +273,7 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
             </FormItem>
           )}
         />
-        <SubPageHeader icon={IconReorder} title="Facet" description="Filters on Search." />
+        <SubPageHeader icon={IconReorder} name="Facet" feature="Facet" description="Filters on Search." />
         <FormField
           control={form.control}
           name="facet"

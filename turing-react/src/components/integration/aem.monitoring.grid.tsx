@@ -35,7 +35,7 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
         accessorKey: "modificationDate",
         header: "Date",
         cell: ({ row }) => <div className="font-mono text-sm">{
-            (new Date(row.getValue("modificationDate") as string)).toLocaleString(window.navigator.language, {
+            (new Date(row.getValue("modificationDate"))).toLocaleString(globalThis.navigator.language, {
                 day: '2-digit',
                 month: '2-digit',
                 hour: '2-digit',
@@ -47,7 +47,18 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
     {
         accessorKey: "objectId",
         header: "Object ID",
-        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("objectId")}</div>,
+        cell: ({ row }) => {
+            const objectId = row.getValue("objectId") as string;
+            const locale = row.getValue("locale") as string;
+            const sites = row.original.sites;
+            const siteId = Array.isArray(sites) && sites.length > 0 ? sites[0] : "";
+            const href = siteId
+                ? encodeURI(`/sn/${siteId}/?_setlocale=${locale}&q=id:"${objectId}"`)
+                : "";
+            return href
+                ? <a href={href} target="_blank" rel="noreferrer" className="font-mono text-sm text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">{objectId}</a>
+                : <div className="font-mono text-sm">{objectId}</div>;
+        },
     },
     {
         accessorKey: "status",
@@ -91,7 +102,7 @@ export const AemMonitoringGrid: React.FC<PropsWithChildren<Props>> = ({ gridItem
     });
 
     return (
-        <div className="px-4">
+        <div className="pr-4">
             <Card>
                 <div className="rounded-md">
                     <Table>

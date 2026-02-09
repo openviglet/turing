@@ -50,6 +50,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
   integrationId,
   isNew
 }) => {
+  console.log("isNew", isNew);
   // Services - memoized to prevent recreation on each render
   const turSNSiteService = useMemo(() => new TurSNSiteService(), []);
   const turSNFieldService = useMemo(() => new TurSNFieldService(), []);
@@ -149,7 +150,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
         if (result) {
           form.reset(data); // Reset dirty state after successful save
           toast.success(`The "${data.name}" Integration Indexing Rule was created successfully.`);
-          navigate(ROUTES.INTEGRATION_INSTANCE);
+          navigate(`${ROUTES.INTEGRATION_INSTANCE}/${integrationId}/indexing-rule`);
         } else {
           toast.error("Failed to create the rule. Please try again.");
         }

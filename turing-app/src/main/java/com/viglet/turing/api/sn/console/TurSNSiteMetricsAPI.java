@@ -87,11 +87,12 @@ public class TurSNSiteMetricsAPI {
 	private TurSNSiteMetricsTopTermsBean getTopTermsReport(int rows, Optional<TurSNSite> turSNSite, Calendar cal,
 			Calendar previousBegin, Calendar previousEnd) {
 		return turSNSite.map(snSite -> new TurSNSiteMetricsTopTermsBean(
-				this.turSNSiteMetricAccessRepository.topTermsBetweenDates(snSite, cal.getTime(),
-						new Date(), PageRequest.of(0, rows)),
-				this.turSNSiteMetricAccessRepository.countTermsByPeriod(snSite, cal.getTime(), new Date()),
-				this.turSNSiteMetricAccessRepository.countTermsByPeriod(snSite, previousBegin.getTime(),
-						previousEnd.getTime())))
+				this.turSNSiteMetricAccessRepository.topTermsBetweenDates(snSite, cal.getTime().toInstant(),
+						new Date().toInstant(), PageRequest.of(0, rows)),
+				this.turSNSiteMetricAccessRepository.countTermsByPeriod(snSite, cal.getTime().toInstant(),
+						new Date().toInstant()),
+				this.turSNSiteMetricAccessRepository.countTermsByPeriod(snSite, previousBegin.getTime().toInstant(),
+						previousEnd.getTime().toInstant())))
 				.orElseGet(TurSNSiteMetricsTopTermsBean::new);
 	}
 

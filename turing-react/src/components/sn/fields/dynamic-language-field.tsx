@@ -20,7 +20,7 @@ interface DynamicLanguageFieldsProps {
     fieldName: keyof TurSNSiteField;
 }
 const turLocaleService = new TurLocaleService();
-export function DynamicLanguageFields({ control, register, fieldName }: DynamicLanguageFieldsProps) {
+export function DynamicLanguageFields({ control, register, fieldName }: Readonly<DynamicLanguageFieldsProps>) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: fieldName,

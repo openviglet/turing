@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/table';
 import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
 import { TurSNFacetedFieldService } from '@/services/sn/sn.faceted.field.service';
+import { toast } from 'sonner';
 
 interface DraggableTableRowProps {
     row: TurSNSiteField;
@@ -75,20 +76,28 @@ export const DraggableTable: React.FC<DraggableTableProps> = ({ id }) => {
     }, [id])
     const sensors = useSensors(useSensor(PointerSensor));
 
-    const handleDragEnd = (event: DragEndEvent) => {
+    const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
         if (over && active.id !== over.id) {
-            setTableData((items) => {
-                const oldIndex = items.findIndex((item) => item.id === active.id);
-                const newIndex = items.findIndex((item) => item.id === over.id);
+            const oldIndex = tableData.findIndex((item) => item.id === active.id);
+            const newIndex = tableData.findIndex((item) => item.id === over.id);
 
-                const reorderedItems = arrayMove(items, oldIndex, newIndex);
-
-                return reorderedItems.map((item, index) => ({
+            const reorderedItems = arrayMove(tableData, oldIndex, newIndex).map(
+                (item, index) => ({
                     ...item,
                     facetPosition: index + 1,
-                }));
-            });
+                })
+            );
+
+            setTableData(reorderedItems);
+
+            try {
+                await turSNFacetedFieldService.saveOrdering(id, reorderedItems);
+                toast.success('Facet ordering saved.');
+            } catch (error) {
+                console.error('Failed to save facet ordering', error);
+                toast.error('Failed to save facet ordering.');
+            }
         }
     };
 

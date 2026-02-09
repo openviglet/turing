@@ -21,9 +21,11 @@ export default function SNSiteResultRankingPage() {
     }, [id])
     return (
         <>
-            <SubPageHeader icon={IconNumber123} title="Result Ranking"
+            <SubPageHeader icon={IconNumber123} name="Result Ranking" feature="Result Ranking"
                 description="Define content that will be featured in the term-based search." />
-            <SNSiteResultRankingForm siteId={id} value={resultRanking} isNew={isNew} />
+            <div className="px-4">
+                <SNSiteResultRankingForm siteId={id} value={resultRanking} isNew={isNew} />
+            </div>
         </>
     )
 }

@@ -21,20 +21,17 @@ export const PageHeader: React.FC<MyComponentProps> = ({ turIcon: TurIcon, title
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        {urlBase !== undefined ? (
-          <>
-
-            <NavLink to={urlBase} className="flex items-center gap-2">
-              {TurIcon && <TurIcon />}
-              <h1 className="text-base font-medium"> {title}</h1>
-            </NavLink>
-          </>
-        ) :
-          (<>
+        {urlBase ? (
+          <NavLink to={urlBase} className="flex items-center gap-2">
             {TurIcon && <TurIcon />}
             <h1 className="text-base font-medium"> {title}</h1>
-          </>)
-        }
+          </NavLink>
+        ) : (
+          <>
+            {TurIcon && <TurIcon />}
+            <h1 className="text-base font-medium"> {title}</h1>
+          </>
+        )}
         <div className="ml-auto flex items-center gap-2">
           {urlNew !== undefined && (
             <Button>

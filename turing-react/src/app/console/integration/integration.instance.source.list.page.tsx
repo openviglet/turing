@@ -10,9 +10,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function IntegrationInstanceSourceListPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams() as { id: string };
   const [integrationAemSources, setIntegrationAemSources] = useState<TurIntegrationAemSource[]>();
-  const turIntegrationAemSourceService = new TurIntegrationAemSourceService(id || "");
+  const turIntegrationAemSourceService = new TurIntegrationAemSourceService(id);
   useEffect(() => {
     turIntegrationAemSourceService.query().then(setIntegrationAemSources)
   }, [id])
@@ -25,8 +25,12 @@ export default function IntegrationInstanceSourceListPage() {
     <>
 
       {gridItemList.length > 0 ? (<>
-        <SubPageHeader icon={IconGitCommit} title="Sources" description="Available AEM sources for indexing and configuration." />
+        <SubPageHeader icon={IconGitCommit} name="Sources"
+          feature="Source"
+          description="Available AEM sources for indexing and configuration."
+          urlNew={`${ROUTES.INTEGRATION_INSTANCE}/${id}/source/new`} />
         <GridList gridItemList={gridItemList} />
+
       </>) : (
         <BlankSlate
           icon={IconGitCommit}
