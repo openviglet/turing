@@ -21,7 +21,9 @@ export default function SNSiteFieldPage() {
   return (
     <>
       <SubPageHeader icon={IconAlignBoxCenterStretch} name={snField.name} feature="Field" description={snField.description} />
-      <SNSiteFieldForm snSiteId={id} snField={snField} isNew={isNew} />
+      <div className="px-4">
+        <SNSiteFieldForm snSiteId={id} snField={snField} isNew={isNew} />
+      </div>
     </>
   )
 }

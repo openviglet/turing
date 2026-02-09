@@ -17,6 +17,8 @@ export default function SECustomFacetPage() {
     }
   }, [customFacetId])
   return (
-    <SECustomFacetForm value={customFacet} isNew={isNew} />
+    <div className="px-4">
+      <SECustomFacetForm value={customFacet} isNew={isNew} />
+    </div>
   )
 }

@@ -24,7 +24,7 @@ export default function SNSiteSpotlightListPage() {
                 <>
                     <SubPageHeader icon={IconSpeakerphone} name="Spotlight" feature="Spotlight"
                         description="Define content that will be featured in the term-based search." />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
                         {spotlightList.map((spotlight) => (
                             <Card key={spotlight.id} className="flex flex-col justify-between hover:border-primary transition-colors">
                                 <CardHeader>
@@ -45,12 +45,14 @@ export default function SNSiteSpotlightListPage() {
                     </div>
                 </>
             ) : (
-                <BlankSlate
-                    icon={IconSpeakerphone}
-                    title="You don’t seem to have any spotlight."
-                    description="Create a spotlight component that highlights content triggered by specific search terms."
-                    buttonText="New spotlight"
-                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/spotlight/new`} />
+                <div className="px-4">
+                    <BlankSlate
+                        icon={IconSpeakerphone}
+                        title="You don’t seem to have any spotlight."
+                        description="Create a spotlight component that highlights content triggered by specific search terms."
+                        buttonText="New spotlight"
+                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/spotlight/new`} />
+                </div>
             )}
         </>
     )

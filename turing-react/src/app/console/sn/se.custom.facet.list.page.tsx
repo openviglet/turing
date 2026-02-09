@@ -25,8 +25,9 @@ export default function SECustomFacetListPage() {
   });
   return (
 
-    <>
+    <div className="px-4">
       {gridItemList.length > 0 ? (
+
         <GridList gridItemList={gridItemList} />
       ) : (
         <BlankSlate
@@ -36,7 +37,7 @@ export default function SECustomFacetListPage() {
           buttonText="New custom facet"
           urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`} />
       )}
-    </>
+    </div>
 
   )
 }
