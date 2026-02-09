@@ -7,15 +7,15 @@ import { useParams } from "react-router-dom";
 const turSECustomFacetService = new TurSECustomFacetService();
 
 export default function SECustomFacetPage() {
-  const { id } = useParams() as { id: string };
+  const { customFacetId } = useParams() as { customFacetId: string };
   const [customFacet, setCustomFacet] = useState<TurSECustomFacet>({} as TurSECustomFacet);
   const [isNew, setIsNew] = useState<boolean>(true);
   useEffect(() => {
-    if (id !== "new") {
-      turSECustomFacetService.get(id).then(setCustomFacet);
+    if (customFacetId !== "new") {
+      turSECustomFacetService.get(customFacetId).then(setCustomFacet);
       setIsNew(false);
     }
-  }, [id])
+  }, [customFacetId])
   return (
     <SECustomFacetForm value={customFacet} isNew={isNew} />
   )

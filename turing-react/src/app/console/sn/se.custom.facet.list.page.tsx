@@ -6,10 +6,12 @@ import type { TurSECustomFacet } from "@/models/se/se-custom-facet.model";
 import { TurSECustomFacetService } from "@/services/se/se.custom.facet.service";
 import { IconFilter } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const turSECustomFacetService = new TurSECustomFacetService();
 
 export default function SECustomFacetListPage() {
+  const { id } = useParams() as { id: string };
   const [customFacets, setCustomFacets] = useState<TurSECustomFacet[]>();
 
   useEffect(() => {
@@ -19,7 +21,7 @@ export default function SECustomFacetListPage() {
   const gridItemList = useGridAdapter(customFacets, {
     name: "label",
     description: "field",
-    url: (item) => `${ROUTES.SE_INSTANCE}/custom-facet/${item.id}`
+    url: (item) => `${ROUTES.SN_INSTANCE}/${id}/custom-facet/${item.id}`
   });
   return (
 
@@ -32,7 +34,7 @@ export default function SECustomFacetListPage() {
           title="You don't seem to have any custom facets."
           description="Create a new custom facet to define range-based filters for your search data."
           buttonText="New custom facet"
-          urlNew={`${ROUTES.SE_INSTANCE}/custom-facet/new`} />
+          urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`} />
       )}
     </>
 
