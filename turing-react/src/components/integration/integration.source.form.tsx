@@ -93,7 +93,7 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pr-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-6">
 
         {/* Configurações Gerais */}
         <Card>

@@ -24,7 +24,7 @@ export default function SNSiteMergeProvidersListPage() {
                 <>
                     <SubPageHeader icon={IconGitMerge} name="Merge Providers" feature="Merge Providers"
                         description="Unify different sources contents." />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
                         {mergeProviderList.map((merge) => (
                             <Card key={merge.id} className="flex flex-col justify-between hover:border-primary transition-colors">
                                 <CardHeader>
@@ -45,14 +45,13 @@ export default function SNSiteMergeProvidersListPage() {
                     </div>
                 </>
             ) : (
-                <div className="px-4">
-                    <BlankSlate
-                        icon={IconGitMerge}
-                        title="You don’t seem to have any merge provider."
-                        description="Create a new merge provider and allow to merge documents from different providers during indexing."
-                        buttonText="New merge provider"
-                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/merge-providers/new`} />
-                </div>
+                <BlankSlate
+                    icon={IconGitMerge}
+                    title="You don’t seem to have any merge provider."
+                    description="Create a new merge provider and allow to merge documents from different providers during indexing."
+                    buttonText="New merge provider"
+                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/merge-providers/new`} />
+
             )}
         </>
     )

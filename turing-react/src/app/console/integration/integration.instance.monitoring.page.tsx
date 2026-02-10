@@ -80,7 +80,7 @@ export default function IntegrationInstanceMonitoringPage() {
         feature="Monitoring"
         description="Verify the current status of AEM content indexing."
       />
-      <Tabs value={source} onValueChange={handleTabChange} className="mb-4 mt-2" >
+      <Tabs value={source} onValueChange={handleTabChange} className="mb-4 mt-2 px-6" >
         <TabsList>
           <TabsTrigger value={DEFAULT_SOURCE}>All</TabsTrigger>
           {integrationMonitoring.sources?.map((tab) => (
@@ -91,7 +91,7 @@ export default function IntegrationInstanceMonitoringPage() {
         </TabsList>
       </Tabs>
       {isLoading ? (
-        <div className="pr-4">
+        <div className="px-6">
           <Skeleton className="h-50 w-full rounded-xl" />
           <Skeleton className="h-4 w-62.5" />
           <Skeleton className="h-4 w-50" />

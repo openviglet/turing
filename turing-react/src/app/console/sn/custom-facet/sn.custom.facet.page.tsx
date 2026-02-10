@@ -1,4 +1,4 @@
-import { SECustomFacetForm } from "@/components/se/se.custom.facet.form";
+import { SNSiteCustomFacetForm } from "@/components/se/se.custom.facet.form";
 import type { TurSECustomFacet } from "@/models/se/se-custom-facet.model";
 import { TurSECustomFacetService } from "@/services/se/se.custom.facet.service";
 import { useEffect, useState } from "react";
@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 
 const turSECustomFacetService = new TurSECustomFacetService();
 
-export default function SECustomFacetPage() {
+export default function SNSiteCustomFacetPage() {
   const { customFacetId } = useParams() as { customFacetId: string };
   const [customFacet, setCustomFacet] = useState<TurSECustomFacet>({} as TurSECustomFacet);
   const [isNew, setIsNew] = useState<boolean>(true);
@@ -17,8 +17,6 @@ export default function SECustomFacetPage() {
     }
   }, [customFacetId])
   return (
-    <div className="px-4">
-      <SECustomFacetForm value={customFacet} isNew={isNew} />
-    </div>
+    <SNSiteCustomFacetForm value={customFacet} isNew={isNew} />
   )
 }

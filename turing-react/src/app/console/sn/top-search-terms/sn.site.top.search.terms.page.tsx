@@ -85,7 +85,7 @@ export default function SNSiteTopSearchTermsPage() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] px-4">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] px-6">
           <Card>
             <CardHeader>
               <Skeleton className="h-6 w-48" />
@@ -119,14 +119,12 @@ export default function SNSiteTopSearchTermsPage() {
 
     if (!hasResults) {
       return (
-        <div className="px-4">
-          <BlankSlate
-            icon={IconChartBar}
-            title="No search terms yet."
-            description="As soon as users search, the top terms will show up here."
-            buttonText=""
-          />
-        </div>
+        <BlankSlate
+          icon={IconChartBar}
+          title="No search terms yet."
+          description="As soon as users search, the top terms will show up here."
+          buttonText=""
+        />
       );
     }
 
@@ -212,7 +210,7 @@ export default function SNSiteTopSearchTermsPage() {
         feature="Top Search Terms"
         description="Top search terms report."
       />
-      <div className="px-4">
+      <div className="px-6">
         <Tabs
           value={resolvedPeriod}
           onValueChange={(value) =>

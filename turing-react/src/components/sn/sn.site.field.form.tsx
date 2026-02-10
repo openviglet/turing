@@ -106,7 +106,7 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-6">
         <FormField
           control={form.control}
           name="name"

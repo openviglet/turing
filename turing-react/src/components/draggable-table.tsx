@@ -104,33 +104,35 @@ export const DraggableTable: React.FC<DraggableTableProps> = ({ id }) => {
     const itemIds = tableData.map(item => item.id);
 
     return (
-        <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-        >
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-12"></TableHead>
-                            <TableHead className="w-24">Position</TableHead>
-                            <TableHead>Facet Name</TableHead>
-                            <TableHead>Field Name</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        <SortableContext
-                            items={itemIds}
-                            strategy={verticalListSortingStrategy}
-                        >
-                            {tableData.map((row) => (
-                                <DraggableTableRow key={row.id} row={row} />
-                            ))}
-                        </SortableContext>
-                    </TableBody>
-                </Table>
-            </div>
-        </DndContext>
+        <div className='px-6'>
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+            >
+                <div className="rounded-md border">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-12"></TableHead>
+                                <TableHead className="w-24">Position</TableHead>
+                                <TableHead>Facet Name</TableHead>
+                                <TableHead>Field Name</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            <SortableContext
+                                items={itemIds}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                {tableData.map((row) => (
+                                    <DraggableTableRow key={row.id} row={row} />
+                                ))}
+                            </SortableContext>
+                        </TableBody>
+                    </Table>
+                </div>
+            </DndContext>
+        </div>
     );
 };

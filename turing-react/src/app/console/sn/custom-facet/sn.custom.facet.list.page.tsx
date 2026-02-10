@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 
 const turSECustomFacetService = new TurSECustomFacetService();
 
-export default function SECustomFacetListPage() {
+export default function SNSiteCustomFacetListPage() {
   const { id } = useParams() as { id: string };
   const [customFacets, setCustomFacets] = useState<TurSECustomFacet[]>();
 
@@ -24,10 +24,8 @@ export default function SECustomFacetListPage() {
     url: (item) => `${ROUTES.SN_INSTANCE}/${id}/custom-facet/${item.id}`
   });
   return (
-
-    <div className="px-4">
+    <>
       {gridItemList.length > 0 ? (
-
         <GridList gridItemList={gridItemList} />
       ) : (
         <BlankSlate
@@ -37,7 +35,6 @@ export default function SECustomFacetListPage() {
           buttonText="New custom facet"
           urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`} />
       )}
-    </div>
-
+    </>
   )
 }

@@ -1,14 +1,14 @@
-import { SNSiteBehaviorForm } from "@/components/sn/sn.site.behavior.form";
+import { SNSiteForm } from "@/components/sn/sn.site.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
 import { TurSNSiteService } from "@/services/sn/sn.service";
-import { IconScale } from "@tabler/icons-react";
+import { IconSettings } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const turSNSiteService = new TurSNSiteService();
 
-export default function SNSiteBehaviorPage() {
+export default function SNSiteDetailPage() {
   const { id } = useParams() as { id: string };
   const [snSite, setSnSite] = useState<TurSNSite>({} as TurSNSite);
   const [isNew, setIsNew] = useState<boolean>(true);
@@ -20,10 +20,8 @@ export default function SNSiteBehaviorPage() {
   }, [id])
   return (
     <>
-      <SubPageHeader icon={IconScale} name="Behavior" feature="Behavior" description="How the search will behave during the search." />
-      <div className="px-4">
-        <SNSiteBehaviorForm value={snSite} isNew={isNew} />
-      </div>
+      <SubPageHeader icon={IconSettings} name="Settings" feature="Settings" description="Configure the Semantic Navigation Site." />
+      <SNSiteForm value={snSite} isNew={isNew} />
     </>
   )
 }

@@ -174,7 +174,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-6">
         {/* Rule Name */}
         <FormField
           control={control}

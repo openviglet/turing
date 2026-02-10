@@ -54,7 +54,7 @@ export const SNSiteMultiLanguageDataTable: React.FC<Props> = ({ data }) => {
         },
     })
     return (
-        <div className="pr-5">
+        <div className="px-6">
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter languages..."

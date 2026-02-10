@@ -33,7 +33,7 @@ interface Props {
   isNew: boolean;
 }
 
-export const SECustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
+export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
   const form = useForm<TurSECustomFacet>({
     defaultValues: value
   });

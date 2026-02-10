@@ -77,7 +77,8 @@ export default function IntegrationInstanceSourcePage() {
         onDelete={onDelete}
         open={open}
         setOpen={setOpen} />
-      <div className="flex justify-end pb-4 pr-8">
+
+      <div className="flex justify-end pb-4 px-6">
         <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/50 px-3 py-2">
           <Button
             type="button"
@@ -98,6 +99,7 @@ export default function IntegrationInstanceSourcePage() {
         </div>
       </div>
       <IntegrationSourceForm value={integrationAemSource} isNew={isNew} integrationId={id} />
+
     </>
   )
 }

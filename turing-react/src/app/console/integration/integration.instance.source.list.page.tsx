@@ -23,7 +23,6 @@ export default function IntegrationInstanceSourceListPage() {
   });
   return (
     <>
-
       {gridItemList.length > 0 ? (<>
         <SubPageHeader icon={IconGitCommit} name="Sources"
           feature="Source"

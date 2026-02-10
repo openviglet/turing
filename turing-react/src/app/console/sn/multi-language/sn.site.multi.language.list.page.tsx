@@ -23,20 +23,16 @@ export default function SNSiteMultiLanguageListPage() {
                     <SubPageHeader icon={IconLanguage} name="Multi Language" feature="Multi Language"
                         description="Define Multi Languages."
                         urlNew={`${ROUTES.SN_INSTANCE}/${id}/locale/new`} />
-                    <div className="px-4">
-                        <SNSiteMultiLanguageDataTable data={data} />
-                    </div>
+                    <SNSiteMultiLanguageDataTable data={data} />
                 </>
             ) : (
-                <div className="px-4">
-                    < BlankSlate
-                        icon={IconLanguage}
-                        title="You don't seem to have any language."
-                        description="Create a new language to semantic navigation search works."
-                        buttonText="New language"
-                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/locale/new`}
-                    />
-                </div>
+                < BlankSlate
+                    icon={IconLanguage}
+                    title="You don't seem to have any language."
+                    description="Create a new language to semantic navigation search works."
+                    buttonText="New language"
+                    urlNew={`${ROUTES.SN_INSTANCE}/${id}/locale/new`}
+                />
             )}
         </>
     )

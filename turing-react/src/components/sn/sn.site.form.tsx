@@ -89,7 +89,7 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
     <>
       {
         isLoading ? (
-          <div className="flex w-full max-w-xs flex-col gap-7">
+          <div className="flex w-full max-w-xs flex-col gap-7 px-6">
             <div className="flex flex-col gap-3">
               <Skeleton className="h-4 w-20" />
               <Skeleton className="h-8 w-full" />
@@ -102,7 +102,7 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
           </div>
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 pr-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-6">
               <FormField
                 control={form.control}
                 name="name"

@@ -22,9 +22,7 @@ export default function SNSiteMultiLanguagePage() {
     <>
       {isNew && <SubPageHeader icon={IconLanguage} name="Multi Language" feature="Multi Language" description="Define Multi Languages." />}
       {!isNew && <SubPageHeader icon={IconLanguage} name={snLocale.language} feature="Multi Language" description={snLocale.core} />}
-      <div className="px-4">
-        <SNSiteLocaleForm snSiteId={id} snLocale={snLocale} isNew={isNew} />
-      </div>
+      <SNSiteLocaleForm snSiteId={id} snLocale={snLocale} isNew={isNew} />
     </>
   )
 }
