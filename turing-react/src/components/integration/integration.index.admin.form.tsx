@@ -20,7 +20,7 @@ import {
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model"
 import type { TurIntegrationIndexingManager } from "@/models/integration/integration-indexing-manager.model"
 import { TurIntegrationAemSourceService } from "@/services/integration/integration-aem-source.service"
-import { TurIntegrationIndexAdminService } from "@/services/integration/integration-index-admin.service"
+import { TurIntegrationIndexingManagerService } from "@/services/integration/integration-indexing-manager.service"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -39,7 +39,7 @@ interface IntegrationIndexingManagerFormProps {
 }
 
 export const IntegrationIndexAdminForm: React.FC<IntegrationIndexingManagerFormProps> = ({ integrationId, mode }) => {
-  const turIntegrationIndexAdminService = useMemo(() => new TurIntegrationIndexAdminService(integrationId), [integrationId]);
+  const turIntegrationIndexingManagerService = useMemo(() => new TurIntegrationIndexingManagerService(integrationId), [integrationId]);
   const turIntegrationAemSourceService = useMemo(() => new TurIntegrationAemSourceService(integrationId), [integrationId]);
 
   const form = useForm<IndexingManagerFormValues>({
@@ -73,7 +73,7 @@ export const IntegrationIndexAdminForm: React.FC<IntegrationIndexingManagerFormP
         ...(isRecursive && { recursive: true }),
       };
 
-      await turIntegrationIndexAdminService.submit(data.source, payload);
+      await turIntegrationIndexingManagerService.submit(data.source, payload);
       toast.success(`${mode} requested successfully`)
 
       form.reset({
