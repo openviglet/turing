@@ -1,6 +1,6 @@
 export interface TurIntegrationIndexAdmin {
   attribute: "ID" | "URL";
   paths: string[];
-  event: "PUBLISHING" | "UNPUBLISHING" | "DEFAULT" | "CREATE" | "DELETE";
+  event: "PUBLISHING" | "UNPUBLISHING" | "INDEXING" | "DEINDEXING";
   recursive?: boolean;
 }

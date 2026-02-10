@@ -35,7 +35,7 @@ interface IndexAdminFormValues {
 
 interface IntegrationIndexAdminFormProps {
   integrationId: string;
-  mode: "PUBLISHING" | "UNPUBLISHING" | "DEFAULT" | "CREATE" | "DELETE";
+  mode: "PUBLISHING" | "UNPUBLISHING" | "INDEXING" | "DEINDEXING";
 }
 
 export const IntegrationIndexAdminForm: React.FC<IntegrationIndexAdminFormProps> = ({ integrationId, mode }) => {
@@ -63,6 +63,7 @@ export const IntegrationIndexAdminForm: React.FC<IntegrationIndexAdminFormProps>
         toast.error("Please select Target Attribute")
         return
       }
+
       const isRecursive = data.attribute === "id" && data.recursive;
       
       const payload: TurIntegrationIndexAdmin = {

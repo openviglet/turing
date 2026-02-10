@@ -1,10 +1,11 @@
 import { IntegrationIndexAdminForm } from "@/components/integration/integration.index.admin.form";
 import { SubPageHeader } from "@/components/sub.page.header";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  IconBolt,
   IconCloudDownload,
   IconCloudUpload,
+  IconInfoCircle,
   IconPlus,
   IconTools,
   IconTrash
@@ -16,12 +17,34 @@ export default function IntegrationInstanceIndexAdminPage() {
 
   const items = [
     {
+      value: "INDEXING",
+      title: "Indexing",
+      icon: IconPlus,
+      mode: "INDEXING" as const,
+      color: "text-green-500",
+      activeBorder: "data-[state=active]:border-green-500",
+      description: "This action affects both environments, but content will only appear in Publish if it is published in AEM.",
+      detailedDescription: "Detailed breakdown of the indexing process including recursive crawling strategies, content extraction pipelines, and metadata enrichment phases. This ensures all new content is properly ingested into the search index."
+    },
+    {
+      value: "DEINDEXING",
+      title: "Deindexing",
+      icon: IconTrash,
+      mode: "DEINDEXING" as const,
+      color: "text-red-500",
+      activeBorder: "data-[state=active]:border-red-500",
+      description: "This action will deindex content from both Author and Publish environments.",
+      detailedDescription: "Comprehensive removal procedure that safely detaches content from the search index, cleans up associated vector embeddings, and updates the index stats. Use this to remove obsolete or sensitive content."
+    },
+    {
       value: "PUBLISHING",
       title: "Publishing",
       icon: IconCloudUpload,
       mode: "PUBLISHING" as const,
       color: "text-blue-500",
-      activeBorder: "data-[state=active]:border-blue-500"
+      activeBorder: "data-[state=active]:border-blue-500",
+      description: "This action will only affect the Publish environment.",
+      detailedDescription: "Synchronization workflow that propagates content changes from the Author environment to the live Publish environment. This includes cache invalidation and CDN updates to ensure users see the latest version."
     },
     {
       value: "UNPUBLISHING",
@@ -29,39 +52,17 @@ export default function IntegrationInstanceIndexAdminPage() {
       icon: IconCloudDownload,
       mode: "UNPUBLISHING" as const,
       color: "text-orange-500",
-      activeBorder: "data-[state=active]:border-orange-500"
-    },
-    {
-      value: "DEFAULT",
-      title: "Default",
-      icon: IconBolt,
-      mode: "DEFAULT" as const,
-      color: "text-gray-500",
-      activeBorder: "data-[state=active]:border-gray-500"
-    },
-    {
-      value: "CREATE",
-      title: "Create",
-      icon: IconPlus,
-      mode: "CREATE" as const,
-      color: "text-green-500",
-      activeBorder: "data-[state=active]:border-green-500"
-    },
-    {
-      value: "DELETE",
-      title: "Delete",
-      icon: IconTrash,
-      mode: "DELETE" as const,
-      color: "text-red-500",
-      activeBorder: "data-[state=active]:border-red-500"
+      activeBorder: "data-[state=active]:border-orange-500",
+      description: "This action will only affect the Publish environment.",
+      detailedDescription: "Reversal process that removes content from the live Publish environment while keeping it available in Author for future edits. This action triggers a localized index update to reflect the change immediately."
     }
   ];
 
   return (
     <>
-      <SubPageHeader icon={IconTools} title="Index Admin" description="Submit indexing or deindexing requests for specific paths or URLs." />
+      <SubPageHeader icon={IconTools} feature="Index Admin" name="Index Admin" description="Request indexing or deindexing of content" />
       <div className="w-full mx-auto mt-6">
-        <Tabs defaultValue="PUBLISHING" className="w-full">
+        <Tabs defaultValue="INDEXING" className="w-full">
           <TabsList className="w-full h-auto bg-transparent p-0 gap-4 flex-wrap justify-start">
             {items.map((item) => (
               <TabsTrigger
@@ -82,10 +83,26 @@ export default function IntegrationInstanceIndexAdminPage() {
                     <h3 className="text-xl font-semibold flex items-center gap-2">
                         <item.icon className={`w-6 h-6 ${item.color}`} />
                         {item.title} Operation
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <IconInfoCircle className="w-5 h-5 text-muted-foreground cursor-help" />
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-80">
+                            <div className="space-y-2">
+                              <h4 className="font-medium leading-none">About {item.title}</h4>
+                              <p className="text-sm text-muted-foreground">
+                                {item.detailedDescription}
+                              </p>
+                            </div>
+                          </HoverCardContent>
+                        </HoverCard>
                     </h3>
                     <p className="text-muted-foreground text-sm mt-1">
                         Configure the parameters for the {item.title.toLowerCase()} operation below.
                     </p>
+                    <div className="mt-2 rounded-md bg-blue-50 p-4 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+                      {item.description}
+                    </div>
                  </div>
                 <IntegrationIndexAdminForm integrationId={id} mode={item.mode} />
               </TabsContent>
