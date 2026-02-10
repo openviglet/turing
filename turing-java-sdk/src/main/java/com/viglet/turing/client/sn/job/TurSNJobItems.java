@@ -16,14 +16,16 @@
 
 package com.viglet.turing.client.sn.job;
 
-import com.google.common.collect.Iterators;
-import org.jspecify.annotations.NonNull;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+
+import org.jspecify.annotations.NonNull;
+
+import com.google.common.collect.Iterators;
 
 /**
  * List of jobs to index and deIndex in Turing ES.
@@ -34,24 +36,30 @@ import java.util.List;
  */
 public class TurSNJobItems implements Iterable<TurSNJobItem>, Serializable {
 	@Serial
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	private List<TurSNJobItem> snJobItems = new ArrayList<>();
+
 	public TurSNJobItems() {
 		super();
 	}
+
 	public TurSNJobItems(TurSNJobItem turSNJobItem) {
 		this.add(turSNJobItem);
 	}
+
 	public TurSNJobItems(List<TurSNJobItem> turSNJobItems) {
 		turSNJobItems.forEach(this::add);
 	}
+
 	@Override
 	public @NonNull Iterator<TurSNJobItem> iterator() {
-		return snJobItems.iterator();
+		return Objects.requireNonNull(snJobItems.iterator());
 	}
-	public int size () {
+
+	public int size() {
 		return Iterators.size(this.iterator());
 	}
+
 	public List<TurSNJobItem> getTuringDocuments() {
 		return snJobItems;
 	}

@@ -177,6 +177,7 @@ class TurSNLocaleTest {
         String result = locale.toString();
 
         // Verify the exact format: "locale: link"
+        assertThat(result).isNotNull();
         assertThat(result)
                 .matches("de_DE: https://example\\.de/suchen")
                 .contains(": ")

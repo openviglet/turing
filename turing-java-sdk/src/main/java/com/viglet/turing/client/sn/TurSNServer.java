@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -239,8 +240,7 @@ public class TurSNServer {
         return Collections.emptyList();
     }
 
-    private List<TurSNLocale> executeLocaleRequest(HttpGet httpGet, CloseableHttpClient client)
-            throws IOException {
+    private List<TurSNLocale> executeLocaleRequest(HttpGet httpGet, CloseableHttpClient client) {
         return new ObjectMapper().readValue(getHttpResponse(httpGet, client), new TypeReference<>() {
         });
     }
@@ -280,8 +280,8 @@ public class TurSNServer {
 
         String requestString = openConnectionAndRequest(prepareQueryRequest());
         if (requestString != null) {
-            TurSNSiteSearchBean turSNSiteSearchBean = new ObjectMapper().readValue(requestString,
-                    TurSNSiteSearchBean.class);
+            TurSNSiteSearchBean turSNSiteSearchBean = Objects.requireNonNull(
+                    new ObjectMapper().readValue(requestString, TurSNSiteSearchBean.class), "Empty result");
             return createTuringResponse(turSNSiteSearchBean);
         }
         return new QueryTurSNResponse();

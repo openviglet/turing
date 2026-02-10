@@ -54,7 +54,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteMetricsTopTermsBean result = api.turSNSiteMetricsTopTermsAllTime("site", 10);
 
         assertThat(result.getTopTerms()).isEmpty();
-        assertThat(result.getTotalTermsPeriod()).isEqualTo(0);
+        assertThat(result.getTotalTermsPeriod()).isZero();
     }
 
     @Test
