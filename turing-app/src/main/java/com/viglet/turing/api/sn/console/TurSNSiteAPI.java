@@ -48,7 +48,6 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
 import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.properties.TurConfigProperties;
@@ -73,7 +72,6 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSNSiteAPI {
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
-    private final TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;
     private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
     private final TurSNSiteExport turSNSiteExport;
     private final TurSNTemplate turSNTemplate;
@@ -84,7 +82,6 @@ public class TurSNSiteAPI {
 
     public TurSNSiteAPI(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-            TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository,
             TurSNSiteGenAiRepository turSNSiteGenAiRepository,
             TurSNSiteExport turSNSiteExport,
             TurSNTemplate turSNTemplate,
@@ -94,7 +91,6 @@ public class TurSNSiteAPI {
             TurConfigProperties turConfigProperties) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
-        this.turSNSiteFieldExtFacetRepository = turSNSiteFieldExtFacetRepository;
         this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
         this.turSNSiteExport = turSNSiteExport;
         this.turSNTemplate = turSNTemplate;

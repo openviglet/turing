@@ -121,7 +121,7 @@ public class TurElasticsearch {
     }
 
     private TurSEResults buildTurSEResults(@UnknownNullability SearchResponse<Map<String, Object>> response, TurSEParameters turSEParameters) {
-        long numFound = response.hits().total() != null ? response.hits().total().value() : 0;
+        long numFound = response.hits().total() != null ? response.hits().total().value() : 0L;
         int rows = turSEParameters.getRows();
         int pageCount = (int) Math.ceil((double) numFound / rows);
         

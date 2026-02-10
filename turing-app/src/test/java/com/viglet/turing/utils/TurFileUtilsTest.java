@@ -16,23 +16,26 @@
 
 package com.viglet.turing.utils;
 
-import com.viglet.turing.api.ocr.TurTikaFileAttributes;
-import com.viglet.turing.commons.file.TurFileAttributes;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.springframework.mock.web.MockMultipartFile;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.mock.web.MockMultipartFile;
+
+import com.viglet.turing.api.ocr.TurTikaFileAttributes;
+import com.viglet.turing.commons.file.TurFileAttributes;
 
 /**
  * Unit tests for TurFileUtils.
@@ -44,14 +47,16 @@ class TurFileUtilsTest {
 
     @Test
     void testConstructorThrowsException() {
-        assertThatThrownBy(() -> {
-            var constructor = TurFileUtils.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        })
-        .cause()
-        .isInstanceOf(IllegalStateException.class)
-        .hasMessageContaining("Turing File Utilities class");
+        assertThatThrownBy(this::instantiateTurFileUtilsConstructor)
+                .cause()
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Turing File Utilities class");
+    }
+
+    private void instantiateTurFileUtilsConstructor() throws Exception {
+        var constructor = TurFileUtils.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        constructor.newInstance();
     }
 
     @Test
@@ -98,8 +103,7 @@ class TurFileUtilsTest {
                 "file",
                 "test.txt",
                 "text/plain",
-                "Multipart test content".getBytes()
-        );
+                "Multipart test content".getBytes());
 
         TurTikaFileAttributes result = TurFileUtils.parseFile(multipartFile);
 
@@ -113,8 +117,7 @@ class TurFileUtilsTest {
                 "file",
                 "document.txt",
                 "text/plain",
-                "Document content".getBytes()
-        );
+                "Document content".getBytes());
 
         TurFileAttributes result = TurFileUtils.documentToText(multipartFile);
 
@@ -130,27 +133,22 @@ class TurFileUtilsTest {
 
         boolean result = TurFileUtils.isAllowedRemoteUrlString(validUrl);
 
-        // Empty allowed domains list allows all domains (subject to protocol/IP safety checks)
+        // Empty allowed domains list allows all domains (subject to protocol/IP safety
+        // checks)
         assertThat(result).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "   " })
+    void testIsAllowedRemoteUrlStringNullEmptyOrBlank(String input) {
+        boolean result = TurFileUtils.isAllowedRemoteUrlString(input);
+
+        assertThat(result).isFalse();
     }
 
     @Test
     void testIsAllowedRemoteUrlStringNull() {
         boolean result = TurFileUtils.isAllowedRemoteUrlString(null);
-
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    void testIsAllowedRemoteUrlStringEmpty() {
-        boolean result = TurFileUtils.isAllowedRemoteUrlString("");
-
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    void testIsAllowedRemoteUrlStringBlank() {
-        boolean result = TurFileUtils.isAllowedRemoteUrlString("   ");
 
         assertThat(result).isFalse();
     }
@@ -176,72 +174,55 @@ class TurFileUtilsTest {
     @Test
     void testIsSafeLoopbackAddress() throws Exception {
         InetAddress loopback = InetAddress.getByName("127.0.0.1");
-        
+
         boolean result = TurFileUtils.isSafe(loopback);
-        
+
         assertThat(result).isFalse();
     }
 
     @Test
     void testIsSafeSiteLocalAddress() throws Exception {
         InetAddress siteLocal = InetAddress.getByName("192.168.1.1");
-        
+
         boolean result = TurFileUtils.isSafe(siteLocal);
-        
+
         assertThat(result).isFalse();
     }
 
-    @Test
-    void testIsSafePrivateNetworkTenDotZero() throws Exception {
-        InetAddress privateNetwork = InetAddress.getByName("10.0.0.1");
-        
-        boolean result = TurFileUtils.isSafe(privateNetwork);
-        
-        assertThat(result).isFalse();
-    }
+    @ParameterizedTest
+    @ValueSource(strings = { "10.0.0.1", "172.16.0.1", "172.31.255.255" })
+    void testIsSafePrivateNetwork(String ipAddress) throws Exception {
+        InetAddress privateNetwork = InetAddress.getByName(ipAddress);
 
-    @Test
-    void testIsSafePrivateNetwork172() throws Exception {
-        InetAddress privateNetwork = InetAddress.getByName("172.16.0.1");
-        
         boolean result = TurFileUtils.isSafe(privateNetwork);
-        
-        assertThat(result).isFalse();
-    }
 
-    @Test
-    void testIsSafePrivateNetwork172Range() throws Exception {
-        InetAddress privateNetwork = InetAddress.getByName("172.31.255.255");
-        
-        boolean result = TurFileUtils.isSafe(privateNetwork);
-        
         assertThat(result).isFalse();
     }
 
     @Test
     void testIsSafeCGNAT() throws Exception {
         InetAddress cgnat = InetAddress.getByName("100.64.0.1");
-        
+
         boolean result = TurFileUtils.isSafe(cgnat);
-        
+
         assertThat(result).isFalse();
     }
 
     @Test
     void testIsSafeCGNATRange() throws Exception {
         InetAddress cgnat = InetAddress.getByName("100.127.255.255");
-        
+
         boolean result = TurFileUtils.isSafe(cgnat);
-        
+
         assertThat(result).isFalse();
     }
 
     @Test
     void testIsSafePublicAddress() throws Exception {
         InetAddress publicAddress = InetAddress.getByName("8.8.8.8");
-        
+
         boolean result = TurFileUtils.isSafe(publicAddress);
-        
+
         assertThat(result).isTrue();
     }
 
@@ -265,7 +246,8 @@ class TurFileUtilsTest {
         // Parsing can fail with empty stream, resulting in Optional.empty()
         // The actual behavior depends on Tika's parser behavior
         assertThat(result).isNotNull();
-        // Note: Empty stream may result in Optional.empty() or Optional with empty string
+        // Note: Empty stream may result in Optional.empty() or Optional with empty
+        // string
     }
 
     @Test
@@ -281,54 +263,28 @@ class TurFileUtilsTest {
     @Test
     void testIsSafeLinkLocalAddress() throws Exception {
         InetAddress linkLocal = InetAddress.getByName("169.254.1.1");
-        
+
         boolean result = TurFileUtils.isSafe(linkLocal);
-        
+
         assertThat(result).isFalse();
     }
 
     @Test
     void testIsSafeMulticastAddress() throws Exception {
         InetAddress multicast = InetAddress.getByName("224.0.0.1");
-        
+
         boolean result = TurFileUtils.isSafe(multicast);
-        
+
         assertThat(result).isFalse();
     }
 
-    @Test
-    void testIsSafeEdgeCases172Dot15() throws Exception {
-        InetAddress edge = InetAddress.getByName("172.15.0.1");
-        
-        boolean result = TurFileUtils.isSafe(edge);
-        
-        assertThat(result).isTrue();
-    }
+    @ParameterizedTest
+    @ValueSource(strings = { "172.15.0.1", "172.32.0.1", "100.63.0.1", "100.128.0.1" })
+    void testIsSafeEdgeCases(String ipAddress) throws Exception {
+        InetAddress edge = InetAddress.getByName(ipAddress);
 
-    @Test
-    void testIsSafeEdgeCases172Dot32() throws Exception {
-        InetAddress edge = InetAddress.getByName("172.32.0.1");
-        
         boolean result = TurFileUtils.isSafe(edge);
-        
-        assertThat(result).isTrue();
-    }
 
-    @Test
-    void testIsSafeCGNATEdge100Dot63() throws Exception {
-        InetAddress edge = InetAddress.getByName("100.63.0.1");
-        
-        boolean result = TurFileUtils.isSafe(edge);
-        
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    void testIsSafeCGNATEdge100Dot128() throws Exception {
-        InetAddress edge = InetAddress.getByName("100.128.0.1");
-        
-        boolean result = TurFileUtils.isSafe(edge);
-        
         assertThat(result).isTrue();
     }
 }

@@ -21,12 +21,13 @@
 
 package com.viglet.turing.solr;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurSolrConstants.
@@ -40,10 +41,10 @@ class TurSolrConstantsTest {
     void testConstructorThrowsException() throws NoSuchMethodException {
         Constructor<TurSolrConstants> constructor = TurSolrConstants.class.getDeclaredConstructor();
         constructor.setAccessible(true);
-        
+
         assertThatThrownBy(constructor::newInstance)
                 .isInstanceOf(InvocationTargetException.class)
-                .getCause()
+                .cause()
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Solr Constants class");
     }
@@ -83,8 +84,9 @@ class TurSolrConstantsTest {
 
     @Test
     void testRecentDatesConstant() {
-        assertThat(TurSolrConstants.RECENT_DATES).isEqualTo("{!func}recip(ms(NOW/DAY,%s),3.16e-11,1,1)");
-        assertThat(TurSolrConstants.RECENT_DATES).contains("%s");
+        assertThat(TurSolrConstants.RECENT_DATES)
+                .isEqualTo("{!func}recip(ms(NOW/DAY,%s),3.16e-11,1,1)")
+                .contains("%s");
     }
 
     @Test
@@ -115,56 +117,60 @@ class TurSolrConstantsTest {
 
     @Test
     void testAllConstantsAreNotNull() {
-        assertThat(TurSolrConstants.NEWEST).isNotNull();
-        assertThat(TurSolrConstants.OLDEST).isNotNull();
-        assertThat(TurSolrConstants.ASC).isNotNull();
-        assertThat(TurSolrConstants.COUNT).isNotNull();
-        assertThat(TurSolrConstants.SCORE).isNotNull();
-        assertThat(TurSolrConstants.VERSION).isNotNull();
-        assertThat(TurSolrConstants.BOOST).isNotNull();
-        assertThat(TurSolrConstants.TURING_ENTITY).isNotNull();
-        assertThat(TurSolrConstants.ID).isNotNull();
-        assertThat(TurSolrConstants.TITLE).isNotNull();
-        assertThat(TurSolrConstants.TYPE).isNotNull();
-        assertThat(TurSolrConstants.URL).isNotNull();
-        assertThat(TurSolrConstants.MORE_LIKE_THIS).isNotNull();
-        assertThat(TurSolrConstants.BOOST_QUERY).isNotNull();
-        assertThat(TurSolrConstants.QUERY).isNotNull();
-        assertThat(TurSolrConstants.TRUE).isNotNull();
-        assertThat(TurSolrConstants.EDISMAX).isNotNull();
-        assertThat(TurSolrConstants.DEF_TYPE).isNotNull();
-        assertThat(TurSolrConstants.AND).isNotNull();
-        assertThat(TurSolrConstants.Q_OP).isNotNull();
-        assertThat(TurSolrConstants.RECENT_DATES).isNotNull();
-        assertThat(TurSolrConstants.TUR_SUGGEST).isNotNull();
-        assertThat(TurSolrConstants.TUR_SPELL).isNotNull();
-        assertThat(TurSolrConstants.FILTER_QUERY_OR).isNotNull();
-        assertThat(TurSolrConstants.FACET_OR).isNotNull();
-        assertThat(TurSolrConstants.PLUS_ONE).isNotNull();
-        assertThat(TurSolrConstants.EMPTY).isNotNull();
-        assertThat(TurSolrConstants.SOLR_DATE_PATTERN).isNotNull();
-        assertThat(TurSolrConstants.INDEX).isNotNull();
-        assertThat(TurSolrConstants.ROWS).isNotNull();
-        assertThat(TurSolrConstants.OR).isNotNull();
-        assertThat(TurSolrConstants.NO_FACET_NAME).isNotNull();
-        assertThat(TurSolrConstants.OR_OR).isNotNull();
-        assertThat(TurSolrConstants.OR_AND).isNotNull();
-        assertThat(TurSolrConstants.ALL).isNotNull();
-        assertThat(TurSolrConstants.HYPHEN).isNotNull();
+        assertThat(java.util.Arrays.asList(
+                TurSolrConstants.NEWEST,
+                TurSolrConstants.OLDEST,
+                TurSolrConstants.ASC,
+                TurSolrConstants.COUNT,
+                TurSolrConstants.SCORE,
+                TurSolrConstants.VERSION,
+                TurSolrConstants.BOOST,
+                TurSolrConstants.TURING_ENTITY,
+                TurSolrConstants.ID,
+                TurSolrConstants.TITLE,
+                TurSolrConstants.TYPE,
+                TurSolrConstants.URL,
+                TurSolrConstants.MORE_LIKE_THIS,
+                TurSolrConstants.BOOST_QUERY,
+                TurSolrConstants.QUERY,
+                TurSolrConstants.TRUE,
+                TurSolrConstants.EDISMAX,
+                TurSolrConstants.DEF_TYPE,
+                TurSolrConstants.AND,
+                TurSolrConstants.Q_OP,
+                TurSolrConstants.RECENT_DATES,
+                TurSolrConstants.TUR_SUGGEST,
+                TurSolrConstants.TUR_SPELL,
+                TurSolrConstants.FILTER_QUERY_OR,
+                TurSolrConstants.FACET_OR,
+                TurSolrConstants.PLUS_ONE,
+                TurSolrConstants.EMPTY,
+                TurSolrConstants.SOLR_DATE_PATTERN,
+                TurSolrConstants.INDEX,
+                TurSolrConstants.ROWS,
+                TurSolrConstants.OR,
+                TurSolrConstants.NO_FACET_NAME,
+                TurSolrConstants.OR_OR,
+                TurSolrConstants.OR_AND,
+                TurSolrConstants.ALL,
+                TurSolrConstants.HYPHEN)).doesNotContainNull();
     }
 
     @Test
     void testConstantValuePatterns() {
-        assertThat(TurSolrConstants.VERSION).startsWith("_");
-        assertThat(TurSolrConstants.VERSION).endsWith("_");
+        assertThat(TurSolrConstants.VERSION)
+                .startsWith("_")
+                .endsWith("_");
         assertThat(TurSolrConstants.TURING_ENTITY).endsWith("_");
         assertThat(TurSolrConstants.TUR_SUGGEST).startsWith("/");
         assertThat(TurSolrConstants.TUR_SPELL).startsWith("/");
         assertThat(TurSolrConstants.FILTER_QUERY_OR).contains("tag=");
         assertThat(TurSolrConstants.FACET_OR).contains("ex=");
-        assertThat(TurSolrConstants.NO_FACET_NAME).startsWith("__");
-        assertThat(TurSolrConstants.NO_FACET_NAME).endsWith("__");
-        assertThat(TurSolrConstants.ALL).startsWith("_");
-        assertThat(TurSolrConstants.ALL).endsWith("_");
+        assertThat(TurSolrConstants.NO_FACET_NAME)
+                .startsWith("__")
+                .endsWith("__");
+        assertThat(TurSolrConstants.ALL)
+                .startsWith("_")
+                .endsWith("_");
     }
 }

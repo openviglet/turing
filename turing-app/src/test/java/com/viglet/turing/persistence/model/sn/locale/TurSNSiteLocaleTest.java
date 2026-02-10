@@ -21,16 +21,17 @@
 
 package com.viglet.turing.persistence.model.sn.locale;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Locale;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.*;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
 
 /**
  * Unit tests for TurSNSiteLocale.
@@ -106,7 +107,7 @@ class TurSNSiteLocaleTest {
 
     @Test
     void testWithCustomLocale() {
-        Locale customLocale = new Locale("pt", "BR");
+        Locale customLocale = Locale.of("pt", "BR");
         turSNSiteLocale.setLanguage(customLocale);
         turSNSiteLocale.setCore("pt_BR_core");
 

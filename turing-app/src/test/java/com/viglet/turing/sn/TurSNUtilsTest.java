@@ -21,31 +21,38 @@
 
 package com.viglet.turing.sn;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
-import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.se.result.TurSEResult;
+
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.quality.Strictness;
-import org.mockito.junit.jupiter.MockitoSettings;
-
-import java.net.URI;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for TurSNUtils.
@@ -78,15 +85,13 @@ class TurSNUtilsTest {
     }
 
     @Test
-    void testConstructorThrowsException() {
-        assertThatThrownBy(() -> {
-            var constructor = TurSNUtils.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        })
-        .cause()
-        .isInstanceOf(IllegalStateException.class)
-        .hasMessageContaining("SN Utility class");
+    void testConstructorThrowsException() throws NoSuchMethodException {
+        var constructor = TurSNUtils.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        assertThatThrownBy(constructor::newInstance)
+                .cause()
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("SN Utility class");
     }
 
     @Test
@@ -116,9 +121,9 @@ class TurSNUtilsTest {
     @Test
     void testGetCacheKey() {
         String siteName = "testSite";
-        
+
         String result = TurSNUtils.getCacheKey(siteName, request);
-        
+
         assertThat(result).isEqualTo("testSite_q=test&page=1");
     }
 
@@ -126,19 +131,19 @@ class TurSNUtilsTest {
     void testGetCacheKeyWithNullQueryString() {
         when(request.getQueryString()).thenReturn(null);
         String siteName = "testSite";
-        
+
         String result = TurSNUtils.getCacheKey(siteName, request);
-        
+
         assertThat(result).isEqualTo("testSite_null");
     }
 
     @Test
     void testGetTurSNSiteSearchContext() {
         String siteName = "testSite";
-        
+
         TurSNSiteSearchContext result = TurSNUtils.getTurSNSiteSearchContext(
                 turSNConfig, siteName, turSNSearchParams, request);
-        
+
         assertThat(result).isNotNull();
         assertThat(result.getSiteName()).isEqualTo(siteName);
         assertThat(result.getLocale()).hasToString("en_US");
@@ -148,10 +153,10 @@ class TurSNUtilsTest {
     void testGetTurSNSiteSearchContextWithPostParams() {
         String siteName = "testSite";
         TurSNSitePostParamsBean postParams = new TurSNSitePostParamsBean();
-        
+
         TurSNSiteSearchContext result = TurSNUtils.getTurSNSiteSearchContext(
                 turSNConfig, siteName, turSNSearchParams, postParams, request);
-        
+
         assertThat(result).isNotNull();
         assertThat(result.getSiteName()).isEqualTo(siteName);
     }
@@ -161,9 +166,9 @@ class TurSNUtilsTest {
         TurSESpellCheckResult spellCheckResult = new TurSESpellCheckResult();
         spellCheckResult.setCorrected(true);
         spellCheckResult.setCorrectedText("corrected query");
-        
+
         boolean result = TurSNUtils.hasCorrectedText(spellCheckResult);
-        
+
         assertThat(result).isTrue();
     }
 
@@ -172,9 +177,9 @@ class TurSNUtilsTest {
         TurSESpellCheckResult spellCheckResult = new TurSESpellCheckResult();
         spellCheckResult.setCorrected(true);
         spellCheckResult.setCorrectedText("");
-        
+
         boolean result = TurSNUtils.hasCorrectedText(spellCheckResult);
-        
+
         assertThat(result).isFalse();
     }
 
@@ -183,9 +188,9 @@ class TurSNUtilsTest {
         TurSESpellCheckResult spellCheckResult = new TurSESpellCheckResult();
         spellCheckResult.setCorrected(false);
         spellCheckResult.setCorrectedText("text");
-        
+
         boolean result = TurSNUtils.hasCorrectedText(spellCheckResult);
-        
+
         assertThat(result).isFalse();
     }
 
@@ -193,15 +198,15 @@ class TurSNUtilsTest {
     void testIsAutoCorrectionEnabledWhenEnabled() {
         TurSNSiteSearchContext context = mock(TurSNSiteSearchContext.class);
         TurSEParameters params = mock(TurSEParameters.class);
-        
+
         when(context.getTurSEParameters()).thenReturn(params);
         when(params.getAutoCorrectionDisabled()).thenReturn(0);
         when(params.getCurrentPage()).thenReturn(1);
         when(turSNSite.getSpellCheck()).thenReturn(1);
         when(turSNSite.getSpellCheckFixes()).thenReturn(1);
-        
+
         boolean result = TurSNUtils.isAutoCorrectionEnabled(context, turSNSite);
-        
+
         assertThat(result).isTrue();
     }
 
@@ -209,12 +214,12 @@ class TurSNUtilsTest {
     void testIsAutoCorrectionEnabledWhenDisabled() {
         TurSNSiteSearchContext context = mock(TurSNSiteSearchContext.class);
         TurSEParameters params = mock(TurSEParameters.class);
-        
+
         when(context.getTurSEParameters()).thenReturn(params);
         when(params.getAutoCorrectionDisabled()).thenReturn(1);
-        
+
         boolean result = TurSNUtils.isAutoCorrectionEnabled(context, turSNSite);
-        
+
         assertThat(result).isFalse();
     }
 
@@ -222,13 +227,13 @@ class TurSNUtilsTest {
     void testIsAutoCorrectionEnabledWhenNotFirstPage() {
         TurSNSiteSearchContext context = mock(TurSNSiteSearchContext.class);
         TurSEParameters params = mock(TurSEParameters.class);
-        
+
         when(context.getTurSEParameters()).thenReturn(params);
         when(params.getAutoCorrectionDisabled()).thenReturn(0);
         when(params.getCurrentPage()).thenReturn(2);
-        
+
         boolean result = TurSNUtils.isAutoCorrectionEnabled(context, turSNSite);
-        
+
         assertThat(result).isFalse();
     }
 
@@ -236,9 +241,9 @@ class TurSNUtilsTest {
     void testAddFilterQuery() {
         URI uri = URI.create("http://example.com/search?q=test");
         String fq = "category:books";
-        
+
         URI result = TurSNUtils.addFilterQuery(uri, fq);
-        
+
         assertThat(result.toString()).contains("fq");
         assertThat(result.toString()).contains("category");
         assertThat(result.toString()).contains("q=test");
@@ -248,9 +253,9 @@ class TurSNUtilsTest {
     void testAddFilterQueryWhenAlreadyExists() {
         URI uri = URI.create("http://example.com/search?q=test&fq=category:books");
         String fq = "category:books";
-        
+
         URI result = TurSNUtils.addFilterQuery(uri, fq);
-        
+
         assertThat(result.toString()).contains("fq");
         assertThat(result.toString()).contains("category");
     }
@@ -259,38 +264,39 @@ class TurSNUtilsTest {
     void testRemoveFilterQuery() {
         URI uri = URI.create("http://example.com/search?q=test&fq=category:books");
         String fq = "category:books";
-        
+
         URI result = TurSNUtils.removeFilterQuery(uri, fq);
-        
+
         assertThat(result.toString()).contains("q=test");
     }
 
     @Test
     void testRemoveFilterQueryByFieldName() {
         URI uri = URI.create("http://example.com/search?q=test&fq=category:books");
-        
+
         URI result = TurSNUtils.removeFilterQueryByFieldName(uri, "category");
-        
+
         assertThat(result.toString()).contains("q=test");
     }
 
     @Test
     void testFilterQueryByFieldName() {
         URI uri = URI.create("http://example.com/search?fq[]=category:books&fq[]=author:smith");
-        
+
         List<String> result = TurSNUtils.filterQueryByFieldName(uri, "category");
-        
-        assertThat(result).hasSize(1);
-        assertThat(result).contains("category:books");
-        assertThat(result).doesNotContain("author:smith");
+
+        assertThat(result)
+                .hasSize(1)
+                .contains("category:books")
+                .doesNotContain("author:smith");
     }
 
     @Test
     void testRemoveQueryStringParameter() {
         URI uri = URI.create("http://example.com/search?q=test&page=2&sort=date");
-        
+
         URI result = TurSNUtils.removeQueryStringParameter(uri, "page");
-        
+
         assertThat(result.toString()).doesNotContain("page=");
         assertThat(result.toString()).contains("q=test");
         assertThat(result.toString()).contains("sort=date");
@@ -302,15 +308,15 @@ class TurSNUtilsTest {
         Map<String, TurSNSiteFieldExtDto> fieldExtMap = new HashMap<>();
         Map<String, TurSNSiteFieldExtDto> facetMap = new HashMap<>();
         List<TurSNSiteSearchDocumentBean> documents = new ArrayList<>();
-        
+
         TurSEResult result = TurSEResult.builder()
                 .fields(new HashMap<>())
                 .build();
         result.getFields().put("title", "Test Title");
         result.getFields().put("url", "http://example.com/doc");
-        
+
         TurSNUtils.addSNDocument(uri, fieldExtMap, facetMap, documents, result, false);
-        
+
         assertThat(documents).hasSize(1);
         assertThat(documents.get(0).isElevate()).isFalse();
     }
@@ -322,14 +328,14 @@ class TurSNUtilsTest {
         Map<String, TurSNSiteFieldExtDto> facetMap = new HashMap<>();
         List<TurSNSiteSearchDocumentBean> documents = new ArrayList<>();
         documents.add(TurSNSiteSearchDocumentBean.builder().build());
-        
+
         TurSEResult result = TurSEResult.builder()
                 .fields(new HashMap<>())
                 .build();
         result.getFields().put("title", "New Title");
-        
+
         TurSNUtils.addSNDocumentWithPosition(uri, fieldExtMap, facetMap, documents, result, true, 0);
-        
+
         assertThat(documents).hasSize(2);
         assertThat(documents.get(0).isElevate()).isTrue();
     }
@@ -344,20 +350,21 @@ class TurSNUtilsTest {
     @Test
     void testRemoveFilterQueryByFieldNames() {
         URI uri = URI.create("http://example.com/search?fq=cat:books&fq=author:smith&q=test");
-        
+
         URI result = TurSNUtils.removeFilterQueryByFieldNames(uri, List.of("cat", "author"));
-        
+
         assertThat(result.toString()).contains("q=test");
     }
 
     @Test
     void testFilterQueryByFieldNames() {
         URI uri = URI.create("http://example.com/search?fq[]=category:books&fq[]=author:smith&fq[]=year:2024");
-        
+
         List<String> result = TurSNUtils.filterQueryByFieldNames(uri, List.of("category", "year"));
-        
-        assertThat(result).hasSize(2);
-        assertThat(result).contains("category:books", "year:2024");
-        assertThat(result).doesNotContain("author:smith");
+
+        assertThat(result)
+                .hasSize(2)
+                .contains("category:books", "year:2024")
+                .doesNotContain("author:smith");
     }
 }

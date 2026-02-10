@@ -21,11 +21,11 @@
 
 package com.viglet.turing.persistence.model.system;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurLocale.
@@ -38,7 +38,7 @@ class TurLocaleTest {
     @Test
     void testNoArgsConstructor() {
         TurLocale turLocale = new TurLocale();
-        
+
         assertThat(turLocale).isNotNull();
         assertThat(turLocale.getInitials()).isNull();
         assertThat(turLocale.getEn()).isNull();
@@ -49,7 +49,7 @@ class TurLocaleTest {
     void testAllArgsConstructor() {
         Locale locale = Locale.US;
         TurLocale turLocale = new TurLocale(locale, "English", "Inglês");
-        
+
         assertThat(turLocale.getInitials()).isEqualTo(locale);
         assertThat(turLocale.getEn()).isEqualTo("English");
         assertThat(turLocale.getPt()).isEqualTo("Inglês");
@@ -59,11 +59,11 @@ class TurLocaleTest {
     void testGettersAndSetters() {
         TurLocale turLocale = new TurLocale();
         Locale locale = Locale.FRANCE;
-        
+
         turLocale.setInitials(locale);
         turLocale.setEn("French");
         turLocale.setPt("Francês");
-        
+
         assertThat(turLocale.getInitials()).isEqualTo(locale);
         assertThat(turLocale.getEn()).isEqualTo("French");
         assertThat(turLocale.getPt()).isEqualTo("Francês");
@@ -72,11 +72,11 @@ class TurLocaleTest {
     @Test
     void testSettersWithNullValues() {
         TurLocale turLocale = new TurLocale(Locale.US, "English", "Inglês");
-        
+
         turLocale.setInitials(null);
         turLocale.setEn(null);
         turLocale.setPt(null);
-        
+
         assertThat(turLocale.getInitials()).isNull();
         assertThat(turLocale.getEn()).isNull();
         assertThat(turLocale.getPt()).isNull();
@@ -85,12 +85,12 @@ class TurLocaleTest {
     @Test
     void testMultipleLocales() {
         TurLocale enLocale = new TurLocale(Locale.US, "English", "Inglês");
-        TurLocale ptLocale = new TurLocale(new Locale("pt", "BR"), "Portuguese", "Português");
-        TurLocale esLocale = new TurLocale(new Locale("es"), "Spanish", "Espanhol");
-        
+        TurLocale ptLocale = new TurLocale(Locale.of("pt", "BR"), "Portuguese", "Português");
+        TurLocale esLocale = new TurLocale(Locale.of("es"), "Spanish", "Espanhol");
+
         assertThat(enLocale.getInitials()).isEqualTo(Locale.US);
-        assertThat(ptLocale.getInitials()).isEqualTo(new Locale("pt", "BR"));
-        assertThat(esLocale.getInitials()).isEqualTo(new Locale("es"));
+        assertThat(ptLocale.getInitials()).isEqualTo(Locale.of("pt", "BR"));
+        assertThat(esLocale.getInitials()).isEqualTo(Locale.of("es"));
     }
 
     @Test

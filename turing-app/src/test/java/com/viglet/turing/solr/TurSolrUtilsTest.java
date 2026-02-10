@@ -21,20 +21,22 @@
 
 package com.viglet.turing.solr;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.se.result.TurSEResult;
-import org.apache.solr.common.SolrDocument;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for TurSolrUtils.
@@ -54,15 +56,13 @@ class TurSolrUtilsTest {
     }
 
     @Test
-    void testConstructorThrowsException() {
-        assertThatThrownBy(() -> {
-            var constructor = TurSolrUtils.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        })
-        .cause()
-        .isInstanceOf(IllegalStateException.class)
-        .hasMessageContaining("Solr Utility class");
+    void testConstructorThrowsException() throws NoSuchMethodException {
+        var constructor = TurSolrUtils.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        assertThatThrownBy(constructor::newInstance)
+                .cause()
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Solr Utility class");
     }
 
     @Test
@@ -107,97 +107,51 @@ class TurSolrUtilsTest {
         assertThat(result).isEqualTo("strings");
     }
 
-    @Test
-    void testGetValueFromQuerySimple() {
-        String query = "test query";
+    @ParameterizedTest
+    @CsvSource({
+            "test query, test query",
+            "field:value, value",
+            "field:value:extra, value:extra",
+            "'', ''",
+            ":, :"
+    })
+    void testGetValueFromQuery(String query, String expected) {
         String result = TurSolrUtils.getValueFromQuery(query);
-        assertThat(result).isEqualTo("test query");
+        assertThat(result).isEqualTo(expected);
     }
 
-    @Test
-    void testGetValueFromQueryWithColon() {
-        String query = "field:value";
-        String result = TurSolrUtils.getValueFromQuery(query);
-        assertThat(result).isEqualTo("value");
-    }
-
-    @Test
-    void testGetValueFromQueryWithMultipleColons() {
-        String query = "field:value:extra";
-        String result = TurSolrUtils.getValueFromQuery(query);
-        assertThat(result).isEqualTo("value:extra");
-    }
-
-    @Test
-    void testFirstRowPositionFromCurrentPageFirstPage() {
+    @ParameterizedTest
+    @CsvSource({
+            "10, 1, 0",
+            "10, 2, 10",
+            "20, 3, 40"
+    })
+    void testFirstRowPositionFromCurrentPage(int rows, int page, int expected) {
         TurSNSearchParams searchParams = new TurSNSearchParams();
-        searchParams.setRows(10);
-        searchParams.setP(1);
+        searchParams.setRows(rows);
+        searchParams.setP(page);
         TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
-        
+
         int result = TurSolrUtils.firstRowPositionFromCurrentPage(parameters);
-        
-        assertThat(result).isEqualTo(0);
+
+        assertThat(result).isEqualTo(expected);
     }
 
-    @Test
-    void testFirstRowPositionFromCurrentPageSecondPage() {
+    @ParameterizedTest
+    @CsvSource({
+            "10, 1, 10",
+            "10, 2, 20",
+            "25, 3, 75"
+    })
+    void testLastRowPositionFromCurrentPage(int rows, int page, int expected) {
         TurSNSearchParams searchParams = new TurSNSearchParams();
-        searchParams.setRows(10);
-        searchParams.setP(2);
+        searchParams.setRows(rows);
+        searchParams.setP(page);
         TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
-        
-        int result = TurSolrUtils.firstRowPositionFromCurrentPage(parameters);
-        
-        assertThat(result).isEqualTo(10);
-    }
 
-    @Test
-    void testFirstRowPositionFromCurrentPageThirdPage() {
-        TurSNSearchParams searchParams = new TurSNSearchParams();
-        searchParams.setRows(20);
-        searchParams.setP(3);
-        TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
-        
-        int result = TurSolrUtils.firstRowPositionFromCurrentPage(parameters);
-        
-        assertThat(result).isEqualTo(40);
-    }
-
-    @Test
-    void testLastRowPositionFromCurrentPageFirstPage() {
-        TurSNSearchParams searchParams = new TurSNSearchParams();
-        searchParams.setRows(10);
-        searchParams.setP(1);
-        TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
-        
         int result = TurSolrUtils.lastRowPositionFromCurrentPage(parameters);
-        
-        assertThat(result).isEqualTo(10);
-    }
 
-    @Test
-    void testLastRowPositionFromCurrentPageSecondPage() {
-        TurSNSearchParams searchParams = new TurSNSearchParams();
-        searchParams.setRows(10);
-        searchParams.setP(2);
-        TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
-        
-        int result = TurSolrUtils.lastRowPositionFromCurrentPage(parameters);
-        
-        assertThat(result).isEqualTo(20);
-    }
-
-    @Test
-    void testLastRowPositionFromCurrentPageThirdPage() {
-        TurSNSearchParams searchParams = new TurSNSearchParams();
-        searchParams.setRows(25);
-        searchParams.setP(3);
-        TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
-        
-        int result = TurSolrUtils.lastRowPositionFromCurrentPage(parameters);
-        
-        assertThat(result).isEqualTo(75);
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -206,17 +160,4 @@ class TurSolrUtilsTest {
         assertThat(TurSolrUtils.SCHEMA_API_URL).isEqualTo("%s/solr/%s/schema");
     }
 
-    @Test
-    void testGetValueFromQueryEmptyString() {
-        String query = "";
-        String result = TurSolrUtils.getValueFromQuery(query);
-        assertThat(result).isEmpty();
-    }
-
-    @Test
-    void testGetValueFromQueryOnlyColon() {
-        String query = ":";
-        String result = TurSolrUtils.getValueFromQuery(query);
-        assertThat(result).isEqualTo(":");
-    }
 }

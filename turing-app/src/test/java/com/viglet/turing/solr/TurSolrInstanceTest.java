@@ -21,6 +21,19 @@
 
 package com.viglet.turing.solr;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,13 +41,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for TurSolrInstance.
@@ -53,7 +59,7 @@ class TurSolrInstanceTest {
 
     @BeforeEach
     void setUp() throws MalformedURLException {
-        solrUrl = new URL("http://localhost:8983/solr");
+        solrUrl = URI.create("http://localhost:8983/solr").toURL();
         core = "testCore";
     }
 
@@ -86,7 +92,7 @@ class TurSolrInstanceTest {
         SolrClient newSolrClient = mock(SolrClient.class);
         URL newUrl = null;
         try {
-            newUrl = new URL("http://localhost:9000/solr");
+            newUrl = URI.create("http://localhost:9000/solr").toURL();
         } catch (MalformedURLException e) {
             fail("Failed to create URL");
         }
@@ -147,7 +153,7 @@ class TurSolrInstanceTest {
         instance.setSolrClient(null);
         instance.setHttpJdkSolrClient(null);
 
-        assertThatCode(() -> instance.close()).doesNotThrowAnyException();
+        assertThatCode(instance::close).doesNotThrowAnyException();
     }
 
     @Test
@@ -158,7 +164,7 @@ class TurSolrInstanceTest {
         TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
         instance.setSolrClient(mockSolrClient);
 
-        assertThatCode(() -> instance.close()).doesNotThrowAnyException();
+        assertThatCode(instance::close).doesNotThrowAnyException();
     }
 
     @Test
@@ -198,7 +204,7 @@ class TurSolrInstanceTest {
 
     @Test
     void testConstructorWithDifferentUrl() throws MalformedURLException {
-        URL customUrl = new URL("http://custom-solr:8080/solr");
+        URL customUrl = URI.create("http://custom-solr:8080/solr").toURL();
         TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, customUrl, core);
 
         assertThat(instance.getSolrUrl()).isEqualTo(customUrl);

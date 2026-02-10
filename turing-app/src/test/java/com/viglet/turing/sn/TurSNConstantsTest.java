@@ -21,12 +21,13 @@
 
 package com.viglet.turing.sn;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurSNConstants.
@@ -76,10 +77,10 @@ class TurSNConstantsTest {
     void testConstructorThrowsException() throws NoSuchMethodException {
         Constructor<TurSNConstants> constructor = TurSNConstants.class.getDeclaredConstructor();
         constructor.setAccessible(true);
-        
+
         assertThatThrownBy(constructor::newInstance)
                 .isInstanceOf(InvocationTargetException.class)
-                .getCause()
+                .cause()
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Semantic Navigation Constants class");
     }

@@ -21,10 +21,10 @@
 
 package com.viglet.turing.persistence.bean.storage;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for TurDataGroupSentenceBean.
@@ -65,11 +65,11 @@ class TurDataGroupSentenceBeanTest {
     @Test
     void testDefaultConstructor() {
         assertThat(turDataGroupSentenceBean).isNotNull();
-        assertThat(turDataGroupSentenceBean.getId()).isEqualTo(0);
+        assertThat(turDataGroupSentenceBean.getId()).isZero();
         assertThat(turDataGroupSentenceBean.getSentence()).isNull();
-        assertThat(turDataGroupSentenceBean.getTurData()).isEqualTo(0);
-        assertThat(turDataGroupSentenceBean.getTurDataGroup()).isEqualTo(0);
-        assertThat(turDataGroupSentenceBean.getTurMLCategory()).isEqualTo(0);
+        assertThat(turDataGroupSentenceBean.getTurData()).isZero();
+        assertThat(turDataGroupSentenceBean.getTurDataGroup()).isZero();
+        assertThat(turDataGroupSentenceBean.getTurMLCategory()).isZero();
     }
 
     @Test
@@ -174,10 +174,10 @@ class TurDataGroupSentenceBeanTest {
         turDataGroupSentenceBean.setTurDataGroup(0);
         turDataGroupSentenceBean.setTurMLCategory(0);
 
-        assertThat(turDataGroupSentenceBean.getId()).isEqualTo(0);
-        assertThat(turDataGroupSentenceBean.getTurData()).isEqualTo(0);
-        assertThat(turDataGroupSentenceBean.getTurDataGroup()).isEqualTo(0);
-        assertThat(turDataGroupSentenceBean.getTurMLCategory()).isEqualTo(0);
+        assertThat(turDataGroupSentenceBean.getId()).isZero();
+        assertThat(turDataGroupSentenceBean.getTurData()).isZero();
+        assertThat(turDataGroupSentenceBean.getTurDataGroup()).isZero();
+        assertThat(turDataGroupSentenceBean.getTurMLCategory()).isZero();
     }
 
     @Test

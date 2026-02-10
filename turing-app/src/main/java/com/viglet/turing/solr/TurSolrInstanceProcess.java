@@ -26,9 +26,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.persistence.model.se.TurSEInstance;

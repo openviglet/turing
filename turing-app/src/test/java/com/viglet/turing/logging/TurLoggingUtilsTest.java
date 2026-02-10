@@ -21,18 +21,21 @@
 
 package com.viglet.turing.logging;
 
-import com.viglet.turing.client.sn.job.TurSNJobItem;
-import com.viglet.turing.commons.indexing.TurIndexingStatus;
-import com.viglet.turing.commons.indexing.TurLoggingStatus;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.viglet.turing.client.sn.job.TurSNJobItem;
+import com.viglet.turing.commons.indexing.TurIndexingStatus;
+import com.viglet.turing.commons.indexing.TurLoggingStatus;
 
 /**
  * Unit tests for TurLoggingUtils.
@@ -65,14 +68,16 @@ class TurLoggingUtilsTest {
 
     @Test
     void testConstructorThrowsException() {
-        assertThatThrownBy(() -> {
-            var constructor = TurLoggingUtils.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        })
-        .cause()
-        .isInstanceOf(IllegalStateException.class)
-        .hasMessageContaining("Logging utility provider");
+        assertThatThrownBy(this::instantiateTurLoggingUtilsConstructor)
+                .cause()
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Logging utility provider");
+    }
+
+    private void instantiateTurLoggingUtilsConstructor() throws Exception {
+        var constructor = TurLoggingUtils.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        constructor.newInstance();
     }
 
     @Test
@@ -82,8 +87,7 @@ class TurLoggingUtilsTest {
                     turSNJobItem,
                     TurIndexingStatus.INDEXED,
                     TurLoggingStatus.SUCCESS,
-                    "Test details"
-            );
+                    "Test details");
         });
     }
 
@@ -94,8 +98,7 @@ class TurLoggingUtilsTest {
                     turSNJobItem,
                     TurIndexingStatus.INDEXED,
                     TurLoggingStatus.SUCCESS,
-                    null
-            );
+                    null);
         });
     }
 
@@ -106,8 +109,7 @@ class TurLoggingUtilsTest {
                     turSNJobItem,
                     TurIndexingStatus.INDEXED,
                     TurLoggingStatus.ERROR,
-                    "Error occurred during indexing"
-            );
+                    "Error occurred during indexing");
         });
     }
 
@@ -116,8 +118,7 @@ class TurLoggingUtilsTest {
         assertThatNoException().isThrownBy(() -> {
             TurLoggingUtils.setSuccessStatus(
                     turSNJobItem,
-                    TurIndexingStatus.INDEXED
-            );
+                    TurIndexingStatus.INDEXED);
         });
     }
 
@@ -126,21 +127,19 @@ class TurLoggingUtilsTest {
         assertThatNoException().isThrownBy(() -> {
             TurLoggingUtils.setSuccessStatus(
                     turSNJobItem,
-                    TurIndexingStatus.DEINDEXED
-            );
+                    TurIndexingStatus.DEINDEXED);
         });
     }
 
     @Test
     void testSetErrorStatusWithDetails() {
         String errorDetails = "Connection timeout while indexing";
-        
+
         assertThatNoException().isThrownBy(() -> {
             TurLoggingUtils.setErrorStatus(
                     turSNJobItem,
                     TurIndexingStatus.INDEXED,
-                    errorDetails
-            );
+                    errorDetails);
         });
     }
 
@@ -150,8 +149,7 @@ class TurLoggingUtilsTest {
             TurLoggingUtils.setErrorStatus(
                     turSNJobItem,
                     TurIndexingStatus.INDEXED,
-                    null
-            );
+                    null);
         });
     }
 
@@ -161,8 +159,7 @@ class TurLoggingUtilsTest {
             TurLoggingUtils.setErrorStatus(
                     turSNJobItem,
                     TurIndexingStatus.INDEXED,
-                    ""
-            );
+                    "");
         });
     }
 
@@ -177,64 +174,59 @@ class TurLoggingUtilsTest {
         TurSNJobItem itemWithoutUrl = new TurSNJobItem();
         itemWithoutUrl.setEnvironment("test");
         itemWithoutUrl.setLocale(java.util.Locale.ENGLISH);
-        
+
         assertThatNoException().isThrownBy(() -> {
             TurLoggingUtils.setLoggingStatus(
                     itemWithoutUrl,
                     TurIndexingStatus.INDEXED,
                     TurLoggingStatus.SUCCESS,
-                    null
-            );
+                    null);
         });
     }
 
     @Test
     void testSetLoggingStatusWithMultipleSites() {
         turSNJobItem.setSiteNames(List.of("site1", "site2", "site3"));
-        
+
         assertThatNoException().isThrownBy(() -> {
             TurLoggingUtils.setSuccessStatus(
                     turSNJobItem,
-                    TurIndexingStatus.INDEXED
-            );
+                    TurIndexingStatus.INDEXED);
         });
     }
 
     @Test
     void testSetLoggingStatusWithEmptySites() {
         turSNJobItem.setSiteNames(List.of());
-        
+
         assertThatNoException().isThrownBy(() -> {
             TurLoggingUtils.setSuccessStatus(
                     turSNJobItem,
-                    TurIndexingStatus.INDEXED
-            );
+                    TurIndexingStatus.INDEXED);
         });
     }
 
     @Test
     void testSetLoggingStatusWithLongDetails() {
         String longDetails = "A".repeat(1000);
-        
+
         assertThatNoException().isThrownBy(() -> {
             TurLoggingUtils.setErrorStatus(
                     turSNJobItem,
                     TurIndexingStatus.INDEXED,
-                    longDetails
-            );
+                    longDetails);
         });
     }
 
     @Test
     void testSetLoggingStatusWithSpecialCharactersInDetails() {
         String specialDetails = "Error: <test> & \"quotes\" 'single' \n newline \t tab";
-        
+
         assertThatNoException().isThrownBy(() -> {
             TurLoggingUtils.setErrorStatus(
                     turSNJobItem,
                     TurIndexingStatus.INDEXED,
-                    specialDetails
-            );
+                    specialDetails);
         });
     }
 }

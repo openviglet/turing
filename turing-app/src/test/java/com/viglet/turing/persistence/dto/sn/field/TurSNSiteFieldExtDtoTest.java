@@ -21,6 +21,16 @@
 
 package com.viglet.turing.persistence.dto.sn.field;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+import org.junit.jupiter.api.Test;
+
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
@@ -28,14 +38,6 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.sn.TurSNFieldType;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for TurSNSiteFieldExtDto.
@@ -48,7 +50,7 @@ class TurSNSiteFieldExtDtoTest {
     @Test
     void testNoArgsConstructor() {
         TurSNSiteFieldExtDto dto = new TurSNSiteFieldExtDto();
-        
+
         assertThat(dto).isNotNull();
         assertThat(dto.getFacetLocales()).isNotNull().isEmpty();
     }
@@ -57,31 +59,30 @@ class TurSNSiteFieldExtDtoTest {
     void testAllArgsConstructor() {
         Set<TurSNSiteFieldExtFacetDto> facetLocales = new HashSet<>();
         TurSNSite turSNSite = mock(TurSNSite.class);
-        
+
         TurSNSiteFieldExtDto dto = new TurSNSiteFieldExtDto(
-            "id-123",
-            "ext-id",
-            "fieldName",
-            "Field Description",
-            "Facet Name",
-            facetLocales,
-            TurSNFieldType.SE,
-            TurSEFieldType.STRING,
-            1,
-            1,
-            TurSNSiteFacetRangeEnum.DAY,
-            TurSNSiteFacetFieldEnum.DEFAULT,
-            TurSNSiteFacetFieldEnum.DEFAULT,
-            true,
-            false,
-            1,
-            1,
-            1,
-            1,
-            "default",
-            turSNSite
-        );
-        
+                "id-123",
+                "ext-id",
+                "fieldName",
+                "Field Description",
+                "Facet Name",
+                facetLocales,
+                TurSNFieldType.SE,
+                TurSEFieldType.STRING,
+                1,
+                1,
+                TurSNSiteFacetRangeEnum.DAY,
+                TurSNSiteFacetFieldEnum.DEFAULT,
+                TurSNSiteFacetFieldEnum.DEFAULT,
+                true,
+                false,
+                1,
+                1,
+                1,
+                1,
+                "default",
+                turSNSite);
+
         assertThat(dto.getId()).isEqualTo("id-123");
         assertThat(dto.getExternalId()).isEqualTo("ext-id");
         assertThat(dto.getName()).isEqualTo("fieldName");
@@ -108,30 +109,30 @@ class TurSNSiteFieldExtDtoTest {
     @Test
     void testBuilder() {
         TurSNSite turSNSite = mock(TurSNSite.class);
-        
+
         TurSNSiteFieldExtDto dto = TurSNSiteFieldExtDto.builder()
-            .id("id-456")
-            .externalId("ext-456")
-            .name("title")
-            .description("Title field")
-            .facetName("Title Facet")
-            .snType(TurSNFieldType.NER)
-            .type(TurSEFieldType.TEXT)
-            .multiValued(0)
-            .facet(1)
-            .facetRange(TurSNSiteFacetRangeEnum.YEAR)
-            .facetType(TurSNSiteFacetFieldEnum.AND)
-            .facetItemType(TurSNSiteFacetFieldEnum.OR)
-            .secondaryFacet(false)
-            .showAllFacetItems(true)
-            .hl(1)
-            .mlt(0)
-            .enabled(1)
-            .required(0)
-            .defaultValue("")
-            .turSNSite(turSNSite)
-            .build();
-        
+                .id("id-456")
+                .externalId("ext-456")
+                .name("title")
+                .description("Title field")
+                .facetName("Title Facet")
+                .snType(TurSNFieldType.NER)
+                .type(TurSEFieldType.TEXT)
+                .multiValued(0)
+                .facet(1)
+                .facetRange(TurSNSiteFacetRangeEnum.YEAR)
+                .facetType(TurSNSiteFacetFieldEnum.AND)
+                .facetItemType(TurSNSiteFacetFieldEnum.OR)
+                .secondaryFacet(false)
+                .showAllFacetItems(true)
+                .hl(1)
+                .mlt(0)
+                .enabled(1)
+                .required(0)
+                .defaultValue("")
+                .turSNSite(turSNSite)
+                .build();
+
         assertThat(dto.getId()).isEqualTo("id-456");
         assertThat(dto.getExternalId()).isEqualTo("ext-456");
         assertThat(dto.getName()).isEqualTo("title");
@@ -157,9 +158,9 @@ class TurSNSiteFieldExtDtoTest {
     @Test
     void testBuilderWithDefaults() {
         TurSNSiteFieldExtDto dto = TurSNSiteFieldExtDto.builder()
-            .name("testField")
-            .build();
-        
+                .name("testField")
+                .build();
+
         assertThat(dto.getName()).isEqualTo("testField");
         assertThat(dto.getFacetLocales()).isNotNull().isEmpty();
     }
@@ -167,15 +168,15 @@ class TurSNSiteFieldExtDtoTest {
     @Test
     void testToBuilder() {
         TurSNSiteFieldExtDto original = TurSNSiteFieldExtDto.builder()
-            .id("original-id")
-            .name("originalName")
-            .description("Original Description")
-            .build();
-        
+                .id("original-id")
+                .name("originalName")
+                .description("Original Description")
+                .build();
+
         TurSNSiteFieldExtDto modified = original.toBuilder()
-            .description("Modified Description")
-            .build();
-        
+                .description("Modified Description")
+                .build();
+
         assertThat(modified.getId()).isEqualTo("original-id");
         assertThat(modified.getName()).isEqualTo("originalName");
         assertThat(modified.getDescription()).isEqualTo("Modified Description");
@@ -185,7 +186,7 @@ class TurSNSiteFieldExtDtoTest {
     void testEntityConstructor() {
         TurSNSiteFieldExt entity = mock(TurSNSiteFieldExt.class);
         TurSNSite turSNSite = mock(TurSNSite.class);
-        
+
         when(entity.getId()).thenReturn("entity-id");
         when(entity.getExternalId()).thenReturn("entity-ext-id");
         when(entity.getName()).thenReturn("entityField");
@@ -206,9 +207,9 @@ class TurSNSiteFieldExtDtoTest {
         when(entity.getRequired()).thenReturn(0);
         when(entity.getDefaultValue()).thenReturn("default-value");
         when(entity.getTurSNSite()).thenReturn(turSNSite);
-        
+
         TurSNSiteFieldExtDto dto = new TurSNSiteFieldExtDto(entity);
-        
+
         assertThat(dto.getId()).isEqualTo("entity-id");
         assertThat(dto.getExternalId()).isEqualTo("entity-ext-id");
         assertThat(dto.getName()).isEqualTo("entityField");
@@ -235,8 +236,7 @@ class TurSNSiteFieldExtDtoTest {
     void testGettersAndSetters() {
         TurSNSiteFieldExtDto dto = new TurSNSiteFieldExtDto();
         TurSNSite turSNSite = mock(TurSNSite.class);
-        Set<TurSNSiteFieldExtFacetDto> facetLocales = new HashSet<>();
-        
+
         dto.setId("test-id");
         dto.setExternalId("test-ext-id");
         dto.setName("testName");
@@ -257,7 +257,7 @@ class TurSNSiteFieldExtDtoTest {
         dto.setRequired(1);
         dto.setDefaultValue("42");
         dto.setTurSNSite(turSNSite);
-        
+
         assertThat(dto.getId()).isEqualTo("test-id");
         assertThat(dto.getExternalId()).isEqualTo("test-ext-id");
         assertThat(dto.getName()).isEqualTo("testName");
@@ -283,50 +283,50 @@ class TurSNSiteFieldExtDtoTest {
     @Test
     void testSetFacetLocalesWithNull() {
         TurSNSiteFieldExtDto dto = new TurSNSiteFieldExtDto();
-        
+
         Set<TurSNSiteFieldExtFacet> nullSet = null;
         dto.setFacetLocales(nullSet);
-        
+
         assertThat(dto.getFacetLocales()).isNotNull().isEmpty();
     }
 
     @Test
     void testSetFacetLocalesWithExistingData() {
         TurSNSiteFieldExtDto dto = new TurSNSiteFieldExtDto();
-        
+
         TurSNSiteFieldExtFacet facet1 = mock(TurSNSiteFieldExtFacet.class);
         when(facet1.getId()).thenReturn("facet-1");
         when(facet1.getLocale()).thenReturn(Locale.US);
         when(facet1.getLabel()).thenReturn("English Label");
-        
+
         TurSNSiteFieldExtFacet facet2 = mock(TurSNSiteFieldExtFacet.class);
         when(facet2.getId()).thenReturn("facet-2");
         when(facet2.getLocale()).thenReturn(Locale.FRENCH);
         when(facet2.getLabel()).thenReturn("French Label");
-        
+
         Set<TurSNSiteFieldExtFacet> facetSet = new HashSet<>();
         facetSet.add(facet1);
         facetSet.add(facet2);
-        
+
         dto.setFacetLocales(facetSet);
-        
+
         assertThat(dto.getFacetLocales()).hasSize(2);
     }
 
     @Test
     void testSetFacetLocalesConvertsFromEntity() {
         TurSNSiteFieldExtDto dto = new TurSNSiteFieldExtDto();
-        
+
         TurSNSiteFieldExtFacet facet = mock(TurSNSiteFieldExtFacet.class);
         when(facet.getId()).thenReturn("facet-id");
         when(facet.getLocale()).thenReturn(Locale.GERMAN);
         when(facet.getLabel()).thenReturn("German Label");
-        
+
         Set<TurSNSiteFieldExtFacet> facetSet = new HashSet<>();
         facetSet.add(facet);
-        
+
         dto.setFacetLocales(facetSet);
-        
+
         assertThat(dto.getFacetLocales()).hasSize(1);
         TurSNSiteFieldExtFacetDto facetDto = dto.getFacetLocales().iterator().next();
         assertThat(facetDto.getId()).isEqualTo("facet-id");
@@ -338,9 +338,9 @@ class TurSNSiteFieldExtDtoTest {
     void testAllFieldTypes() {
         for (TurSNFieldType snType : TurSNFieldType.values()) {
             TurSNSiteFieldExtDto dto = TurSNSiteFieldExtDto.builder()
-                .snType(snType)
-                .build();
-            
+                    .snType(snType)
+                    .build();
+
             assertThat(dto.getSnType()).isEqualTo(snType);
         }
     }
@@ -349,9 +349,9 @@ class TurSNSiteFieldExtDtoTest {
     void testAllSEFieldTypes() {
         for (TurSEFieldType seType : TurSEFieldType.values()) {
             TurSNSiteFieldExtDto dto = TurSNSiteFieldExtDto.builder()
-                .type(seType)
-                .build();
-            
+                    .type(seType)
+                    .build();
+
             assertThat(dto.getType()).isEqualTo(seType);
         }
     }
@@ -359,16 +359,16 @@ class TurSNSiteFieldExtDtoTest {
     @Test
     void testBooleanFields() {
         TurSNSiteFieldExtDto dto = TurSNSiteFieldExtDto.builder()
-            .secondaryFacet(null)
-            .showAllFacetItems(null)
-            .build();
-        
+                .secondaryFacet(null)
+                .showAllFacetItems(null)
+                .build();
+
         assertThat(dto.getSecondaryFacet()).isNull();
         assertThat(dto.getShowAllFacetItems()).isNull();
-        
+
         dto.setSecondaryFacet(true);
         dto.setShowAllFacetItems(false);
-        
+
         assertThat(dto.getSecondaryFacet()).isTrue();
         assertThat(dto.getShowAllFacetItems()).isFalse();
     }

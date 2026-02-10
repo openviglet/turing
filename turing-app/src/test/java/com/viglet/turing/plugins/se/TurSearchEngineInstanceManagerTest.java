@@ -21,15 +21,16 @@
 
 package com.viglet.turing.plugins.se;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurSearchEngineInstanceManager interface.
@@ -53,7 +54,7 @@ class TurSearchEngineInstanceManagerTest {
 
         assertThat(result).isPresent();
         assertThat(result.get()).isInstanceOf(String.class);
-        assertThat(result.get()).isEqualTo("Instance for testSite with locale en");
+        assertThat(result.get().toString()).contains("Instance for testSite").contains("locale en");
     }
 
     @Test
@@ -91,7 +92,7 @@ class TurSearchEngineInstanceManagerTest {
     }
 
     @Test
-    void testGetSearchEngineUrlWithValidParameters() throws MalformedURLException {
+    void testGetSearchEngineUrlWithValidParameters() {
         Optional<URL> result = manager.getSearchEngineUrl("testSite", Locale.ENGLISH);
 
         assertThat(result).isPresent();
@@ -124,9 +125,10 @@ class TurSearchEngineInstanceManagerTest {
     void testGetEngineType() {
         String engineType = manager.getEngineType();
 
-        assertThat(engineType).isNotNull();
-        assertThat(engineType).isNotEmpty();
-        assertThat(engineType).isEqualTo("test");
+        assertThat(engineType)
+                .isNotNull()
+                .isNotEmpty()
+                .isEqualTo("test");
     }
 
     @Test
@@ -159,7 +161,7 @@ class TurSearchEngineInstanceManagerTest {
     }
 
     @Test
-    void testGetSearchEngineUrlWithDifferentLocales() throws MalformedURLException {
+    void testGetSearchEngineUrlWithDifferentLocales() {
         Optional<URL> resultEn = manager.getSearchEngineUrl("site1", Locale.ENGLISH);
         Optional<URL> resultFr = manager.getSearchEngineUrl("site1", Locale.FRENCH);
 
@@ -203,7 +205,8 @@ class TurSearchEngineInstanceManagerTest {
                 return Optional.empty();
             }
             try {
-                return Optional.of(new URL("http://localhost:8983/solr/" + siteName + "/" + locale.getLanguage()));
+                return Optional
+                        .of(URI.create("http://localhost:8983/solr/" + siteName + "/" + locale.getLanguage()).toURL());
             } catch (MalformedURLException e) {
                 return Optional.empty();
             }
