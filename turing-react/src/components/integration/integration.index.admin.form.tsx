@@ -18,7 +18,7 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model"
-import type { TurIntegrationIndexAdmin } from "@/models/integration/integration-index-admin.model"
+import type { TurIntegrationIndexingManager } from "@/models/integration/integration-indexing-manager.model"
 import { TurIntegrationAemSourceService } from "@/services/integration/integration-aem-source.service"
 import { TurIntegrationIndexAdminService } from "@/services/integration/integration-index-admin.service"
 import { useEffect, useMemo, useState } from "react"
@@ -26,23 +26,23 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { DynamicIndexingRuleFields } from "./dynamic.indexing.rule.field"
 
-interface IndexAdminFormValues {
+interface IndexingManagerFormValues {
   source: string;
   attribute?: "id" | "url";
   values: string[];
   recursive: boolean;
 }
 
-interface IntegrationIndexAdminFormProps {
+interface IntegrationIndexingManagerFormProps {
   integrationId: string;
   mode: "PUBLISHING" | "UNPUBLISHING" | "INDEXING" | "DEINDEXING";
 }
 
-export const IntegrationIndexAdminForm: React.FC<IntegrationIndexAdminFormProps> = ({ integrationId, mode }) => {
+export const IntegrationIndexAdminForm: React.FC<IntegrationIndexingManagerFormProps> = ({ integrationId, mode }) => {
   const turIntegrationIndexAdminService = useMemo(() => new TurIntegrationIndexAdminService(integrationId), [integrationId]);
   const turIntegrationAemSourceService = useMemo(() => new TurIntegrationAemSourceService(integrationId), [integrationId]);
 
-  const form = useForm<IndexAdminFormValues>({
+  const form = useForm<IndexingManagerFormValues>({
     defaultValues: {
       source: "",
       attribute: undefined,
@@ -57,7 +57,7 @@ export const IntegrationIndexAdminForm: React.FC<IntegrationIndexAdminFormProps>
     turIntegrationAemSourceService.query().then(setSources)
   }, [turIntegrationAemSourceService])
 
-  async function onSubmit(data: IndexAdminFormValues) {
+  async function onSubmit(data: IndexingManagerFormValues) {
     try {
       if (!data.attribute) {
         toast.error("Please select Target Attribute")
@@ -65,9 +65,9 @@ export const IntegrationIndexAdminForm: React.FC<IntegrationIndexAdminFormProps>
       }
 
       const isRecursive = data.attribute === "id" && data.recursive;
-      
-      const payload: TurIntegrationIndexAdmin = {
-        attribute: data.attribute!.toUpperCase() as "ID" | "URL",
+
+      const payload: TurIntegrationIndexingManager = {
+        attribute: data.attribute.toUpperCase() as "ID" | "URL",
         paths: data.values,
         event: mode,
         ...(isRecursive && { recursive: true }),
@@ -75,7 +75,7 @@ export const IntegrationIndexAdminForm: React.FC<IntegrationIndexAdminFormProps>
 
       await turIntegrationIndexAdminService.submit(data.source, payload);
       toast.success(`${mode} requested successfully`)
-      
+
       form.reset({
         source: "",
         attribute: undefined,

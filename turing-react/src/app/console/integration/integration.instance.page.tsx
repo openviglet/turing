@@ -3,6 +3,7 @@ import { SubPage } from "@/components/sub.page";
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
 import { TurIntegrationInstanceService } from "@/services/integration/integration.service";
 import {
+    IconAdjustmentsSearch,
     IconGitCommit,
     IconGraph,
     IconSearch,
@@ -32,9 +33,9 @@ const data = {
             icon: IconTools,
         },
         {
-            title: "Index Admin",
-            url: "/index-admin",
-            icon: IconTools,
+            title: "Indexing Manager",
+            url: "/indexing-manager",
+            icon: IconAdjustmentsSearch,
         },
         {
             title: "Monitoring",

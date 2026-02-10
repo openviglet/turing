@@ -3,11 +3,11 @@ import { SubPageHeader } from "@/components/sub.page.header";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  IconAdjustmentsSearch,
   IconCloudDownload,
   IconCloudUpload,
   IconInfoCircle,
   IconPlus,
-  IconTools,
   IconTrash
 } from "@tabler/icons-react";
 import { useParams } from "react-router-dom";
@@ -60,7 +60,7 @@ export default function IntegrationInstanceIndexAdminPage() {
 
   return (
     <>
-      <SubPageHeader icon={IconTools} feature="Index Admin" name="Index Admin" description="Request indexing or deindexing of content" />
+      <SubPageHeader icon={IconAdjustmentsSearch} feature="Indexing Manager" name="Indexing Manager" description="Directly manage and override content indexing states to ensure search accuracy." />
       <div className="w-full mx-auto mt-6 px-6">
         <Tabs defaultValue="INDEXING" className="w-full">
           <TabsList className="w-full h-auto bg-transparent p-0 gap-4 flex-wrap justify-start">

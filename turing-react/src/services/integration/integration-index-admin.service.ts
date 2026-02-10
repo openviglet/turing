@@ -1,4 +1,4 @@
-import type { TurIntegrationIndexAdmin } from "@/models/integration/integration-index-admin.model";
+import type { TurIntegrationIndexAdmin } from "@/models/integration/integration-indexing-manager.model";
 import axios, { type AxiosInstance } from "axios";
 
 export class TurIntegrationIndexAdminService {
@@ -19,15 +19,24 @@ export class TurIntegrationIndexAdminService {
     return `/v2/integration/${this.integrationId}/aem/index/${sourceName}`;
   }
 
-  async index(sourceName: string, payload: TurIntegrationIndexAdmin): Promise<void> {
+  async index(
+    sourceName: string,
+    payload: TurIntegrationIndexAdmin,
+  ): Promise<void> {
     await this.axiosInstance.post(this.getUrl(sourceName), payload);
   }
 
-  async deindex(sourceName: string, payload: TurIntegrationIndexAdmin): Promise<void> {
+  async deindex(
+    sourceName: string,
+    payload: TurIntegrationIndexAdmin,
+  ): Promise<void> {
     await this.axiosInstance.post(this.getUrl(sourceName), payload);
   }
 
-  async submit(sourceName: string, payload: TurIntegrationIndexAdmin): Promise<void> {
+  async submit(
+    sourceName: string,
+    payload: TurIntegrationIndexAdmin,
+  ): Promise<void> {
     await this.axiosInstance.post(this.getUrl(sourceName), payload);
   }
 }

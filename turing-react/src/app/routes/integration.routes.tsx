@@ -1,6 +1,6 @@
 import { Navigate, Route, useParams } from "react-router-dom"
 import IntegrationInstanceDetailPage from "../console/integration/integration.instance.detail.page"
-import IntegrationInstanceIndexAdminPage from "../console/integration/integration.instance.index.admin.page"
+import IntegrationInstanceIndexAdminPage from "../console/integration/integration.instance.indexing.manager.page"
 import IntegrationInstanceIndexingRulesListPage from "../console/integration/integration.instance.indexing.rules.list.page"
 import IntegrationInstanceIndexingRulesPage from "../console/integration/integration.instance.indexing.rules.page"
 import IntegrationInstanceListPage from "../console/integration/integration.instance.list.page"
@@ -27,7 +27,7 @@ export const IntegrationRoutes = (
             <Route path="source/:sourceId" element={<IntegrationInstanceSourcePage />} />
             <Route path="indexing-rule" element={<IntegrationInstanceIndexingRulesListPage />} />
             <Route path="indexing-rule/:ruleId" element={<IntegrationInstanceIndexingRulesPage />} />
-            <Route path="index-admin" element={<IntegrationInstanceIndexAdminPage />} />
+            <Route path="indexing-manager" element={<IntegrationInstanceIndexAdminPage />} />
             <Route path="monitoring">
                 <Route index element={<Navigate to="all" replace />} />
                 <Route path=":source" element={<IntegrationInstanceMonitoringPage />} />
