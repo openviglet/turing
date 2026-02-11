@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { SubPageHeader } from "@/components/sub.page.header"
 import {
   Button
 } from "@/components/ui/button"
@@ -22,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import {
   Textarea
 } from "@/components/ui/textarea"
@@ -36,9 +38,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { SubPageHeader } from "../sub.page.header"
-import { Switch } from "../ui/switch"
-import { DynamicLanguageFields } from "./fields/dynamic-language-field"
+import { DynamicLanguageFields } from "./dynamic-language-field"
 const turSNFieldService = new TurSNFieldService();
 const turSNFieldTypeService = new TurSNFieldTypeService();
 interface Props {

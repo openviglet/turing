@@ -97,6 +97,7 @@ public class TurSNRankingExpressionAPI {
             @PathVariable String snSiteId) {
         return turSNSiteRepository.findById(snSiteId)
                 .map(site -> turSNRankingExpressionRepository.findById(id).map(turSNRankingExpressionEdit -> {
+                    turSNRankingExpressionEdit.setTurSNSite(site);
                     turSNRankingExpressionEdit.setWeight(turSNRankingExpression.getWeight());
                     turSNRankingExpressionEdit.setName(turSNRankingExpression.getName());
                     return getTurSNRankingExpression(turSNRankingExpression, turSNRankingExpressionEdit);
@@ -136,7 +137,10 @@ public class TurSNRankingExpressionAPI {
     public TurSNRankingExpression turSNRankingExpressionAdd(@RequestBody TurSNRankingExpression turSNRankingExpression,
             @PathVariable String snSiteId) {
         return turSNSiteRepository.findById(snSiteId)
-                .map(site -> getTurSNRankingExpression(turSNRankingExpression, turSNRankingExpression))
+                .map(turSNSite -> {
+                    turSNRankingExpression.setTurSNSite(turSNSite);
+                    return getTurSNRankingExpression(turSNRankingExpression, turSNRankingExpression);
+                })
                 .orElse(new TurSNRankingExpression());
     }
 

@@ -89,6 +89,11 @@
       "name": "turing.url",
       "type": "java.lang.String",
       "description": "Base URL of the Turing application (e.g., http://localhost:2700)."
+    },
+    {
+      "name": "turing.solr.commit.enabled",
+      "type": "java.lang.String",
+      "description": "A description for 'turing.solr.commit.enabled'"
     }
   ]
 }

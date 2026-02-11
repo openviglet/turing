@@ -1,4 +1,5 @@
 "use client"
+import { ROUTES } from "@/app/routes.const"
 import {
   Button
 } from "@/components/ui/button"
@@ -18,47 +19,59 @@ import {
   Textarea
 } from "@/components/ui/textarea"
 import type { TurSNRankingExpression } from "@/models/sn/sn-ranking-expression.model"
-import type { TurSNSite } from "@/models/sn/sn-site.model.ts"
-import { TurSNSiteService } from "@/services/sn/sn.service"
+import { TurSNRankingExpressionService } from "@/services/sn/sn.site.result.ranking.service"
 import React, { useEffect } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Label } from "../ui/label"
-import { Slider } from "../ui/slider"
-import { DynamicResultRankingFields } from "./result-ranking/dynamic-result-ranking-field"
-const turSNSiteService = new TurSNSiteService();
+import { Label } from "../../ui/label"
+import { Slider } from "../../ui/slider"
+import { DynamicResultRankingFields } from "./dynamic-result-ranking-field"
+const turSNRankingExpressionService = new TurSNRankingExpressionService();
 interface Props {
-  siteId: string
+  snSiteId: string
   value: TurSNRankingExpression;
   isNew: boolean;
 }
 
-export const SNSiteResultRankingForm: React.FC<Props> = ({ siteId, value, isNew }) => {
-  const form = useForm<TurSNSite>();
-  const { control, register, setValue } = form;
+export const SNSiteResultRankingForm: React.FC<Props> = ({ snSiteId, value, isNew }) => {
+  const form = useForm<TurSNRankingExpression>({
+    defaultValues: value
+  });
+  const { control, register } = form;
   const [slideValue, setSlideValue] = React.useState([4]);
-  const urlBase = "/admin/sn/instance";
+  const urlBase = `${ROUTES.SN_INSTANCE}/${snSiteId}/result-ranking`;;
   const navigate = useNavigate()
   useEffect(() => {
-    setValue("id", value.id)
-    setValue("name", value.name);
-    setValue("description", value.description);
-  }, [setValue, value]);
+    const nextValue = isNew
+      ? { ...value, weight: value.weight ?? 4 }
+      : value;
+
+    form.reset(nextValue);
+    setSlideValue([nextValue.weight ?? 4]);
+  }, [value, isNew]);
 
 
-  function onSubmit(snSite: TurSNSite) {
+  async function onSubmit(snRankingExpression: TurSNRankingExpression) {
     try {
       if (isNew) {
-        turSNSiteService.create(snSite);
-        toast.success(`The ${snSite.name} SN Site was saved`);
-        navigate(urlBase);
+        const result = await turSNRankingExpressionService.create(snSiteId, snRankingExpression);
+        if (result) {
+          toast.success(`The ${snRankingExpression.name} Ranking Expression was created`);
+          navigate(urlBase);
+        } else {
+          toast.error("Failed to create the Ranking Expression. Please try again.");
+        }
       }
       else {
-        turSNSiteService.update(snSite);
-        toast.success(`The ${snSite.name} SN Site was updated`);
+        const result = await turSNRankingExpressionService.update(snSiteId, snRankingExpression);
+        if (result) {
+          toast.success(`The ${snRankingExpression.name} Ranking Expression was updated`);
+        } else {
+          toast.error("Failed to update the Ranking Expression. Please try again.");
+        }
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -111,10 +124,10 @@ export const SNSiteResultRankingForm: React.FC<Props> = ({ siteId, value, isNew 
           <FormDescription>Create simple filter expressions to target specific content.</FormDescription>
           <FormControl>
             <DynamicResultRankingFields
-              fieldName="facetLocales"
+              fieldName="turSNRankingConditions"
               control={control}
               register={register}
-              siteId={siteId}
+              snSiteId={snSiteId}
             />
           </FormControl>
 
@@ -124,19 +137,28 @@ export const SNSiteResultRankingForm: React.FC<Props> = ({ siteId, value, isNew 
             Will have its weight changed by
           </Label>
           <div className="flex items-center gap-4 mt-3">
-
-            <Slider
-              id="weight-slider"
-              value={slideValue}
-              onValueChange={setSlideValue}
-              max={10}
-              min={0}
-              step={1}
+            <FormField
+              control={form.control}
+              name="weight"
+              render={({ field }) => (
+                <>
+                  <Slider
+                    id="weight-slider"
+                    value={[field.value ?? slideValue[0]]}
+                    onValueChange={(value) => {
+                      setSlideValue(value);
+                      field.onChange(value[0]);
+                    }}
+                    max={10}
+                    min={0}
+                    step={1}
+                  />
+                  <span className="w-10 text-right">
+                    + {slideValue[0]}
+                  </span>
+                </>
+              )}
             />
-            <span className="w-10 text-right">
-              + {slideValue[0]}
-            </span>
-
           </div>
         </div>
         <Button type="submit">Save</Button>

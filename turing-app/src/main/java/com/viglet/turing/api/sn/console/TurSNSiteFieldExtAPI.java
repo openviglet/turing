@@ -76,7 +76,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/sn/{ignoredSnSiteId}/field/ext")
+@RequestMapping("/api/sn/{snSiteId}/field/ext")
 @Tag(name = "Semantic Navigation Field Ext", description = "Semantic Navigation Field Ext API")
 public class TurSNSiteFieldExtAPI {
     public static final String TEXT_GENERAL = "text_general";
@@ -117,8 +117,8 @@ public class TurSNSiteFieldExtAPI {
     @Operation(summary = "Semantic Navigation Site Field Ext List")
     @Transactional
     @GetMapping
-    public List<TurSNSiteFieldExt> turSNSiteFieldExtList(@PathVariable String ignoredSnSiteId) {
-        return turSNSiteRepository.findById(ignoredSnSiteId).map(turSNSite -> {
+    public List<TurSNSiteFieldExt> turSNSiteFieldExtList(@PathVariable String snSiteId) {
+        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
             updateFieldExtFromSNSite(turSNSite);
             return turSNSiteFieldExtRepository
                     .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
@@ -184,7 +184,7 @@ public class TurSNSiteFieldExtAPI {
 
     @Operation(summary = "Show a Semantic Navigation Site Field Ext")
     @GetMapping("/{id}")
-    public TurSNSiteFieldExt turSNSiteFieldExtGet(@PathVariable String ignoredSnSiteId, @PathVariable String id) {
+    public TurSNSiteFieldExt turSNSiteFieldExtGet(@PathVariable String snSiteId, @PathVariable String id) {
         TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtRepository.findById(id)
                 .orElse(TurSNSiteFieldExt.builder().build());
         turSNSiteFieldExt.setFacetLocales(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(turSNSiteFieldExt));
@@ -193,7 +193,7 @@ public class TurSNSiteFieldExtAPI {
 
     @Operation(summary = "Update a Semantic Navigation Site Field Ext")
     @PutMapping("/{id}")
-    public TurSNSiteFieldExt turSNSiteFieldExtUpdate(@PathVariable String ignoredSnSiteId, @PathVariable String id,
+    public TurSNSiteFieldExt turSNSiteFieldExtUpdate(@PathVariable String snSiteId, @PathVariable String id,
             @RequestBody TurSNSiteFieldExt turSNSiteFieldExt) {
         return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExtEdit -> {
             turSNSiteFieldExtEdit.setFacetName(turSNSiteFieldExt.getFacetName());
@@ -258,7 +258,7 @@ public class TurSNSiteFieldExtAPI {
     @Transactional
     @Operation(summary = "Delete a Semantic Navigation Site Field Ext")
     @DeleteMapping("/{id}")
-    public boolean turSNSiteFieldExtDelete(@PathVariable String ignoredSnSiteId, @PathVariable String id) {
+    public boolean turSNSiteFieldExtDelete(@PathVariable String snSiteId, @PathVariable String id) {
         return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExtEdit -> {
             if (turSNSiteFieldExtEdit.getSnType().equals(TurSNFieldType.SE)) {
                 this.turSNSiteFieldRepository.delete(turSNSiteFieldExtEdit.getExternalId());
@@ -270,15 +270,15 @@ public class TurSNSiteFieldExtAPI {
 
     @Operation(summary = "Create a Semantic Navigation Site Field Ext")
     @PostMapping
-    public TurSNSiteFieldExt turSNSiteFieldExtAdd(@PathVariable String ignoredSnSiteId,
+    public TurSNSiteFieldExt turSNSiteFieldExtAdd(@PathVariable String snSiteId,
             @RequestBody TurSNSiteFieldExt turSNSiteFieldExt) {
-        return createSEField(ignoredSnSiteId, turSNSiteFieldExt);
+        return createSEField(snSiteId, turSNSiteFieldExt);
     }
 
     @Operation(summary = "Semantic Navigation Site Field Ext structure")
     @GetMapping("structure")
-    public TurSNSiteFieldExt urSNSiteFieldExtStructure(@PathVariable String ignoredSnSiteId) {
-        return turSNSiteRepository.findById(ignoredSnSiteId).map(turSNSite -> {
+    public TurSNSiteFieldExt urSNSiteFieldExtStructure(@PathVariable String snSiteId) {
+        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
             TurSNSiteFieldExt turSNSiteFieldExt = new TurSNSiteFieldExt();
             turSNSiteFieldExt.setTurSNSite(turSNSite);
             return turSNSiteFieldExt;
@@ -324,10 +324,10 @@ public class TurSNSiteFieldExtAPI {
     }
 
     @GetMapping("/create/{localeRequest}")
-    public List<TurSNSite> turSNSiteFieldExtCreate(@PathVariable String ignoredSnSiteId,
+    public List<TurSNSite> turSNSiteFieldExtCreate(@PathVariable String snSiteId,
             @PathVariable String localeRequest) {
         Locale locale = LocaleUtils.toLocale(localeRequest);
-        return turSNSiteRepository.findById(ignoredSnSiteId).map(turSNSite -> {
+        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
             List<TurSNSiteFieldExt> turSNSiteFieldExtList = turSNSiteFieldExtRepository
                     .findByTurSNSiteAndEnabled(turSNSite, 1);
             turSNSiteFieldExtList.forEach(turSNSiteFieldExt -> this.createField(turSNSite, locale, turSNSiteFieldExt));

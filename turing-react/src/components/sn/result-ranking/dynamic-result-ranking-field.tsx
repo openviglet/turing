@@ -7,6 +7,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import type { TurSNRankingExpression } from '@/models/sn/sn-ranking-expression.model';
 import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
 import { TurSNFieldService } from '@/services/sn/sn.field.service';
 import { PlusCircle, Trash2 } from 'lucide-react';
@@ -16,23 +17,23 @@ import { Controller, useFieldArray, type Control, type UseFormRegister } from 'r
 interface DynamicResultRankingFieldsProps {
     control: Control<any>;
     register: UseFormRegister<any>;
-    fieldName: keyof TurSNSiteField;
-    siteId: string;
+    fieldName: keyof TurSNRankingExpression;
+    snSiteId: string;
 }
 const turSNFieldService = new TurSNFieldService();
 
-export function DynamicResultRankingFields({ control, register, fieldName, siteId }: DynamicResultRankingFieldsProps) {
+export function DynamicResultRankingFields({ control, register, fieldName, snSiteId }: Readonly<DynamicResultRankingFieldsProps>) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: fieldName,
     });
     const [snFields, setSNFields] = useState<TurSNSiteField[]>([]);
     useEffect(() => {
-        turSNFieldService.query(siteId).then(setSNFields)
-    }, []);
+        turSNFieldService.query(snSiteId).then(setSNFields)
+    }, [snSiteId]);
 
     const handleAddField = () => {
-        append({ id: '', name: '' });
+        append({ attribute: '', condition: '', value: '' });
     };
 
     return (
@@ -41,11 +42,11 @@ export function DynamicResultRankingFields({ control, register, fieldName, siteI
                 <div key={field.id} className="flex items-center gap-2">
                     <Controller
                         control={control}
-                        name={`${fieldName}.${index}.locale`}
+                        name={`${fieldName}.${index}.attribute`}
                         render={({ field: controllerField }) => (
                             <Select
                                 onValueChange={controllerField.onChange}
-                                defaultValue={controllerField.value}
+                                value={controllerField.value === null ? '' : String(controllerField.value)}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Choose the field" />
@@ -60,20 +61,28 @@ export function DynamicResultRankingFields({ control, register, fieldName, siteI
                             </Select>
                         )}
                     />
-
-                    <Select>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem key="IS" value="IS">Is</SelectItem>
-                            <SelectItem key="IS_NOT" value="IS_NOT">Is not</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <Controller
+                        control={control}
+                        name={`${fieldName}.${index}.condition`}
+                        render={({ field: controllerField }) => (
+                            <Select
+                                onValueChange={(value) => controllerField.onChange(Number(value))}
+                                value={controllerField.value === null ? '' : String(controllerField.value)}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Choose..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem key="1" value="1">Is</SelectItem>
+                                    <SelectItem key="2" value="2">Is not</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
                     <Input
-                        className="flex-grow"
+                        className="grow"
                         placeholder="Value"
-                        {...register(`${fieldName}.${index}.label`)}
+                        {...register(`${fieldName}.${index}.value`)}
                     />
                     <Button
                         variant="ghost"

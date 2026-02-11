@@ -22,8 +22,11 @@ export default function SNSiteResultRankingListPage() {
         <>
             {rankingList.length > 0 ? (
                 <>
-                    <SubPageHeader icon={IconNumber123} name="Result Ranking" feature="Result Ranking"
-                        description="Define content that will be featured in the term-based search." />
+                    <SubPageHeader icon={IconNumber123}
+                        name="Result Ranking"
+                        feature="Result Ranking"
+                        description="Define content that will be featured in the term-based search."
+                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/result-ranking/new`} />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
                         {rankingList.map((ranking) => (
                             <Card key={ranking.id} className="flex flex-col justify-between hover:border-primary transition-colors">
@@ -33,7 +36,7 @@ export default function SNSiteResultRankingListPage() {
                                 </CardHeader>
                                 <CardFooter>
                                     <a
-                                        href={"result-ranking/" + ranking.id}
+                                        href={`${ROUTES.SN_INSTANCE}/${id}/result-ranking/${ranking.id}`}
                                         className={buttonVariants({ variant: "ghost" })}
                                     >
                                         Edit
