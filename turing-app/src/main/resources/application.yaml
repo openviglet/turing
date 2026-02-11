@@ -25,17 +25,17 @@ spring:
   jpa:
     properties:
       hibernate:
-        globally_quoted_identifiers: true
-        format_sql: false
-        enable_lazy_load_no_trans: true
-        generate_statistics: false
-      jakarta.persistence.sharedCache.mode: ALL
+        "[globally_quoted_identifiers]": true
+        "[format_sql]": false
+        "[enable_lazy_load_no_trans]": true
+        "[generate_statistics]": false
+      "[jakarta.persistence.sharedCache.mode]": ALL
     hibernate:
       ddl-auto: validate
     show-sql: false
   jackson:
     mapper:
-      DEFAULT_VIEW_INCLUSION: true
+      "[DEFAULT_VIEW_INCLUSION]": true
   thymeleaf:
     mode: HTML
     check-template: true
