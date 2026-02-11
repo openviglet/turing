@@ -9,9 +9,9 @@
     "prebuild": "npm run check-node",
     "dev": "vite",
     "dev:search": "vite --config vite.config.search.ts --port 5174",
-    "compile": "npm install && tsc -b && vite build && vite build --config vite.config.search.ts",
-    "compile:console": "npm install && tsc -b && vite build",
-    "compile:search": "npm install && tsc -b && vite build --config vite.config.search.ts",
+    "compile": "npm ci && tsc -b && vite build && vite build --config vite.config.search.ts",
+    "compile:console": "npm ci && tsc -b && vite build",
+    "compile:search": "npm ci && tsc -b && vite build --config vite.config.search.ts",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -8,7 +8,7 @@
     "preng": "npm run check-node",
     "ng": "ng",
     "start": "ng serve",
-    "compile": "npm install && ng build welcome && ng build console",
+    "compile": "npm ci && ng build welcome && ng build console",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "sonar": "sonar-scanner"
