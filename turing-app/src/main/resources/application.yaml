@@ -14,10 +14,14 @@ spring:
       settings:
         web-allow-others: true
   datasource:
-    url: jdbc:h2:file:./store/db/turingDB
+    url: jdbc:h2:file:./store/db/turingDB;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=true
     username: sa
     password: ""
     driver-class-name: org.h2.Driver
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+    default-schema: PUBLIC
   jpa:
     properties:
       hibernate:
@@ -27,7 +31,7 @@ spring:
         generate_statistics: false
       jakarta.persistence.sharedCache.mode: ALL
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
   jackson:
     mapper:
