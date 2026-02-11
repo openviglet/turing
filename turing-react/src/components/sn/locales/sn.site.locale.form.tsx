@@ -2,6 +2,7 @@
 import {
   Button
 } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -36,6 +37,7 @@ const turSNSiteLocaleService = new TurSNSiteLocaleService();
 
 export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew }) => {
   const [locales, setLocales] = useState<TurLocale[]>([]);
+  const [useCustomCore, setUseCustomCore] = useState(isNew && !!snLocale.core);
   const form = useForm<TurSNSiteLocale>({
     defaultValues: snLocale
   });
@@ -44,7 +46,8 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
 
   useEffect(() => {
     form.reset(snLocale);
-  }, [form, snLocale]);
+    setUseCustomCore(isNew && !!snLocale.core);
+  }, [form, isNew, snLocale]);
 
   useEffect(() => {
     const fetchLocales = async () => {
@@ -55,9 +58,13 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
   }, []);
 
   async function onSubmit(snLocale: TurSNSiteLocale) {
+    const payload = {
+      ...snLocale,
+      core: isNew && !useCustomCore ? "" : snLocale.core
+    };
     try {
       if (isNew) {
-        const result = await turSNSiteLocaleService.create(snSiteId, snLocale);
+        const result = await turSNSiteLocaleService.create(snSiteId, payload);
         if (result) {
           toast.success(`The ${snLocale.language} SN Locale was created`);
           navigate(urlBase);
@@ -67,7 +74,7 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
         }
       }
       else {
-        const result = await turSNSiteLocaleService.update(snSiteId, snLocale);
+        const result = await turSNSiteLocaleService.update(snSiteId, payload);
         if (result) {
           toast.success(`The ${snLocale.language} SN Locale was updated`);
         }
@@ -87,6 +94,7 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
         <FormField
           control={form.control}
           name="language"
+          rules={{ required: "Language is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Language</FormLabel>
@@ -112,24 +120,49 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="core"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Core</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Core"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Core will appear on semantic navigation site locale list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {isNew && (
+          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+            <FormControl>
+              <Checkbox
+                checked={useCustomCore}
+                onCheckedChange={(value) => {
+                  const nextValue = !!value;
+                  setUseCustomCore(nextValue);
+                  if (!nextValue) {
+                    form.setValue("core", "", { shouldDirty: true });
+                  }
+                }}
+              />
+            </FormControl>
+            <div className="space-y-1 leading-none">
+              <FormLabel>Define core manually</FormLabel>
+              <FormDescription>
+                Enable to inform the core; otherwise it will be created automatically.
+              </FormDescription>
+            </div>
+          </FormItem>
+        )}
+
+        {(!isNew || useCustomCore) && (
+          <FormField
+            control={form.control}
+            name="core"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Core</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Core"
+                    type="text"
+                  />
+                </FormControl>
+                <FormDescription>Core will appear on semantic navigation site locale list.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <Button type="submit">Save</Button>
       </form>
     </Form>

@@ -1,8 +1,9 @@
-import type {ColumnDef} from "@tanstack/react-table";
-import type {TurSNSiteLocale} from "@/models/sn/sn-site-locale.model.ts";
-import {Checkbox} from "@radix-ui/react-checkbox";
-import {Button} from "@/components/ui/button.tsx";
-import {ArrowUpDown} from "lucide-react";
+import { ROUTES } from "@/app/routes.const";
+import { Button } from "@/components/ui/button.tsx";
+import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model.ts";
+import { Checkbox } from "@radix-ui/react-checkbox";
+import type { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
 
 export const columns: ColumnDef<TurSNSiteLocale>[] = [
     {
@@ -55,13 +56,21 @@ export const columns: ColumnDef<TurSNSiteLocale>[] = [
         accessorKey: "action",
         header: () => <div className="text-right">Action</div>,
         cell: ({ row }) => {
-            return <div className="text-right font-medium">
-                <Button asChild>
-                    <a href={"/sn/" + row.getValue("turSNSite.id") + "?_setlocale=" + row.getValue("language")}>
-                        Open Search
-                    </a>
-                </Button>
-            </div>
+            const locale = row.original;
+            return (
+                <div className="flex justify-end gap-2">
+                    <Button asChild variant="outline">
+                        <a href={`${ROUTES.SN_INSTANCE}/${locale.turSNSite.id}/locale/${locale.id}`}>
+                            Edit
+                        </a>
+                    </Button>
+                    <Button asChild>
+                        <a href={`/sn/${locale.turSNSite.id}?_setlocale=${locale.language}`}>
+                            Open Search
+                        </a>
+                    </Button>
+                </div>
+            )
         },
     }
 ]
