@@ -31,7 +31,7 @@ spring:
         "[generate_statistics]": false
       "[jakarta.persistence.sharedCache.mode]": ALL
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     show-sql: false
   jackson:
     mapper:
