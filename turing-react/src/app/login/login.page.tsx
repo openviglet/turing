@@ -1,12 +1,13 @@
 import { LoginForm } from "@/components/login/login-form"
 import { TurLogo } from "@/components/logo/tur-logo"
+import { ModeToggle } from "@/components/mode-toggle"
 import { Globe, Search, Sparkles } from "lucide-react"
 
 const LoginPage = () => {
     return (
         <div className="grid min-h-svh lg:grid-cols-2">
             {/* Left panel - Branding / Hero */}
-            <div className="relative hidden lg:flex flex-col items-center justify-center overflow-hidden bg-linear-to-br from-violet-600 via-indigo-600 to-blue-700">
+            <div className="relative hidden lg:flex flex-col items-center justify-center overflow-hidden bg-linear-to-br from-blue-600 via-indigo-600 to-blue-700">
                 {/* Animated background pattern */}
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,white_1px,transparent_1px),radial-gradient(circle_at_75%_75%,white_1px,transparent_1px)] bg-size-[50px_50px]" />
@@ -44,11 +45,14 @@ const LoginPage = () => {
             </div>
 
             {/* Right panel - Login Form */}
-            <div className="flex flex-col items-center justify-center bg-background px-6 py-12">
+            <div className="relative flex flex-col items-center justify-center bg-background px-6 py-12">
+                <div className="absolute top-4 right-4">
+                    <ModeToggle />
+                </div>
                 <div className="w-full max-w-sm">
                     {/* Mobile-only branding */}
                     <div className="mb-8 flex flex-col items-center gap-3 lg:hidden">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-violet-600 to-indigo-600 shadow-lg">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 shadow-lg">
                             <TurLogo size={56} />
                         </div>
                         <span className="text-xl font-bold tracking-tight">Viglet Turing ES</span>
