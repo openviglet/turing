@@ -15,6 +15,13 @@ interface QueryOptions {
 export class TurSNSearchService {
   static query(
     turSiteName: string,
+    q: string,
+    p: string,
+    _setlocale: string,
+    sort: string,
+    fq: string[],
+    tr: string[],
+    nfpr: string,
     options: QueryOptions,
   ): Promise<TurSNSearch> {
     const queryString = this.generateQueryString(

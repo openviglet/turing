@@ -160,14 +160,17 @@ public class TurSNSiteAPI {
             turSNSiteEdit.setDefaultImageField(turSNSite.getDefaultImageField());
             turSNSiteEdit.setDefaultURLField(turSNSite.getDefaultURLField());
             turSNSiteEdit.setExactMatch(turSNSite.getExactMatch());
-            turSNSiteEdit.setTurSNSiteGenAi(turSNSite.getTurSNSiteGenAi());
-            turSNSiteRepository.save(turSNSiteEdit);
-            Optional.ofNullable(turSNSiteEdit.getTurSNSiteGenAi()).ifPresent(turSNSiteGenAi -> {
-                turSNSiteGenAi.setEnabled(turSNSite.getTurSNSiteGenAi().isEnabled());
-                turSNSiteGenAi.setTurLLMInstance(turSNSite.getTurSNSiteGenAi().getTurLLMInstance());
-                turSNSiteGenAi.setTurStoreInstance(turSNSite.getTurSNSiteGenAi().getTurStoreInstance());
+            Optional.ofNullable(turSNSite.getTurSNSiteGenAi()).ifPresent(genAi -> {
+                TurSNSiteGenAi turSNSiteGenAi = Optional.ofNullable(turSNSiteEdit.getTurSNSiteGenAi())
+                        .orElse(new TurSNSiteGenAi());
+                turSNSiteGenAi.setEnabled(genAi.isEnabled());
+                turSNSiteGenAi.setTurLLMInstance(genAi.getTurLLMInstance());
+                turSNSiteGenAi.setTurStoreInstance(genAi.getTurStoreInstance());
+                turSNSiteGenAi.setSystemPrompt(genAi.getSystemPrompt());
                 turSNSiteGenAiRepository.save(turSNSiteGenAi);
+                turSNSiteEdit.setTurSNSiteGenAi(turSNSiteGenAi);
             });
+            turSNSiteRepository.save(turSNSiteEdit);
             return turSNSiteEdit;
         }).orElse(new TurSNSite());
 
