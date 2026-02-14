@@ -49,6 +49,7 @@ import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.ocr.TesseractOCRConfig;
 import org.apache.tika.parser.pdf.PDFParserConfig;
 import org.apache.tika.sax.BodyContentHandler;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -254,7 +255,7 @@ public class TurFileUtils {
         String host = url.getHost();
         String protocol = url.getProtocol();
 
-        if (host == null || host.isEmpty() || protocol == null) {
+        if (!StringUtils.hasText(host) || !StringUtils.hasText(protocol)) {
             return false;
         }
 

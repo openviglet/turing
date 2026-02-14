@@ -1,5 +1,30 @@
 package com.viglet.turing.solr;
 
+import static com.viglet.turing.solr.TurSolrConstants.AND;
+import static com.viglet.turing.solr.TurSolrConstants.ASC;
+import static com.viglet.turing.solr.TurSolrConstants.BOOST_QUERY;
+import static com.viglet.turing.solr.TurSolrConstants.COUNT;
+import static com.viglet.turing.solr.TurSolrConstants.DEF_TYPE;
+import static com.viglet.turing.solr.TurSolrConstants.EDISMAX;
+import static com.viglet.turing.solr.TurSolrConstants.EMPTY;
+import static com.viglet.turing.solr.TurSolrConstants.FACET_OR;
+import static com.viglet.turing.solr.TurSolrConstants.FILTER_QUERY_OR;
+import static com.viglet.turing.solr.TurSolrConstants.HYPHEN;
+import static com.viglet.turing.solr.TurSolrConstants.INDEX;
+import static com.viglet.turing.solr.TurSolrConstants.NEWEST;
+import static com.viglet.turing.solr.TurSolrConstants.NO_FACET_NAME;
+import static com.viglet.turing.solr.TurSolrConstants.OLDEST;
+import static com.viglet.turing.solr.TurSolrConstants.OR;
+import static com.viglet.turing.solr.TurSolrConstants.OR_AND;
+import static com.viglet.turing.solr.TurSolrConstants.OR_OR;
+import static com.viglet.turing.solr.TurSolrConstants.PLUS_ONE;
+import static com.viglet.turing.solr.TurSolrConstants.Q_OP;
+import static com.viglet.turing.solr.TurSolrConstants.RECENT_DATES;
+import static com.viglet.turing.solr.TurSolrConstants.ROWS;
+import static com.viglet.turing.solr.TurSolrConstants.SOLR_DATE_PATTERN;
+import static com.viglet.turing.solr.TurSolrConstants.TRUE;
+import static com.viglet.turing.solr.TurSolrConstants.TURING_ENTITY;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,9 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.KeyValue;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.common.params.GroupParams;
@@ -27,6 +50,7 @@ import org.apache.solr.common.params.MoreLikeThisParams;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
@@ -56,7 +80,7 @@ import com.viglet.turing.sn.tr.TurSNTargetingRuleMethod;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
-import static com.viglet.turing.solr.TurSolrConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -113,7 +137,7 @@ public class TurSolrQueryBuilder {
     private static boolean usesExactMatch(TurSNSite turSNSite, TurSEParameters turSEParameters) {
         return turSEParameters.getQuery().trim().startsWith("\"")
                 && turSEParameters.getQuery().trim().endsWith("\"")
-                && !StringUtils.isEmpty(turSNSite.getExactMatchField())
+                && !StringUtils.hasText(turSNSite.getExactMatchField())
                 && turSNSite.getExactMatch() != null && turSNSite.getExactMatch().equals(1);
     }
 
@@ -165,7 +189,7 @@ public class TurSolrQueryBuilder {
     }
 
     public boolean hasGroup(TurSEParameters turSEParameters) {
-        return !StringUtils.isEmpty(turSEParameters.getGroup());
+        return !StringUtils.hasText(turSEParameters.getGroup());
     }
 
     private void prepareQueryFilterQuery(TurSNFilterParams turSNFilterParams, SolrQuery query,
@@ -545,7 +569,7 @@ public class TurSolrQueryBuilder {
 
     @NotNull
     public static String getFacetTypeAndFacetItemTypeValues(TurSNFacetTypeContext context) {
-        return getFacetType(context).toString() + HYPHEN +  getFacetItemType(context).toString();
+        return getFacetType(context).toString() + HYPHEN + getFacetItemType(context).toString();
     }
 
     public List<String> getFacetFieldsInFilterQuery(TurSNFacetTypeContext context) {

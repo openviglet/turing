@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.UnknownNullability;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
@@ -71,7 +72,7 @@ public class TurElasticsearch {
                                 .size(turSEParameters.getRows());
 
                         // Add sorting if specified
-                        if (turSEParameters.getSort() != null && !turSEParameters.getSort().isEmpty()) {
+                        if (StringUtils.hasText(turSEParameters.getSort())) {
                             addSorting(searchBuilder, turSEParameters.getSort());
                         }
 
@@ -96,7 +97,7 @@ public class TurElasticsearch {
 
     private Query buildQuery(TurSEParameters turSEParameters) {
         String queryString = turSEParameters.getQuery();
-        if (queryString == null || queryString.trim().isEmpty() || "*".equals(queryString.trim())) {
+        if (!StringUtils.hasText(queryString) || "*".equals(queryString.trim())) {
             // Match all query
             return Query.of(q -> q.matchAll(m -> m));
         }

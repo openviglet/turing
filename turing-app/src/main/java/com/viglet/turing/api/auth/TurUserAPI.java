@@ -29,6 +29,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -146,7 +147,7 @@ public class TurUserAPI {
             userEdit.setFirstName(turUser.getFirstName());
             userEdit.setLastName(turUser.getLastName());
             userEdit.setEmail(turUser.getEmail());
-            if (turUser.getPassword() != null && !turUser.getPassword().trim().isEmpty()) {
+            if (StringUtils.hasText(turUser.getPassword())) {
                 userEdit.setPassword(passwordEncoder.encode(turUser.getPassword()));
             }
             userEdit.setTurGroups(turUser.getTurGroups());
@@ -168,7 +169,7 @@ public class TurUserAPI {
 
     @PostMapping
     public TurUser turUserAdd(@RequestBody TurUser turUser) {
-        if (turUser.getPassword() != null && !turUser.getPassword().trim().isEmpty()) {
+        if (StringUtils.hasText(turUser.getPassword())) {
             turUser.setPassword(passwordEncoder.encode(turUser.getPassword()));
             turUserRepository.save(turUser);
         }

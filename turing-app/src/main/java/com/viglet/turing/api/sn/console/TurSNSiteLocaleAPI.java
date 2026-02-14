@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -112,7 +113,11 @@ public class TurSNSiteLocaleAPI {
 			@PathVariable String snSiteId) {
 		return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
 			turSNSiteLocale.setTurSNSite(turSNSite);
-			turSNSiteLocale.setCore(turSNTemplate.createSolrCore(turSNSiteLocale, principal.getName()));
+			if (StringUtils.hasText(turSNSiteLocale.getCore())) {
+				turSNSiteLocale.setCore(turSNTemplate.createSolrCore(turSNSiteLocale, principal.getName()));
+			} else {
+				turSNTemplate.createSolrCore(turSNSiteLocale, principal.getName());
+			}
 			turSNSiteLocaleRepository.save(turSNSiteLocale);
 			return turSNSiteLocale;
 		}).orElse(new TurSNSiteLocale());
