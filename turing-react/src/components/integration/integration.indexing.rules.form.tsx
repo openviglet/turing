@@ -179,6 +179,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
         <FormField
           control={control}
           name="name"
+          rules={{ required: "Rule Name is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Rule Name</FormLabel>
@@ -223,6 +224,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
         <FormField
           control={control}
           name="source"
+          rules={{ required: "Semantic Navigation Site is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Semantic Navigation Site</FormLabel>
@@ -252,6 +254,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
         <FormField
           control={control}
           name="attribute"
+          rules={{ required: "Field is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Field</FormLabel>
@@ -287,6 +290,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
         <FormField
           control={control}
           name="ruleType"
+          rules={{ required: "Action Type is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Action Type</FormLabel>

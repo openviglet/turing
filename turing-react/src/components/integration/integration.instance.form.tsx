@@ -38,17 +38,13 @@ interface Props {
 }
 
 export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurIntegrationInstance>();
-  const { setValue } = form;
+  const form = useForm<TurIntegrationInstance>({
+    defaultValues: value
+  });
   const navigate = useNavigate()
   useEffect(() => {
-    setValue("id", value.id)
-    setValue("title", value.title);
-    setValue("description", value.description);
-    setValue("vendor", value.vendor);
-    setValue("endpoint", value.endpoint);
-    setValue("enabled", value.enabled);
-  }, [setValue, value]);
+    form.reset(value);
+  }, [value]);
 
 
   function onSubmit(integrationInstance: TurIntegrationInstance) {
@@ -74,6 +70,7 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
         <FormField
           control={form.control}
           name="title"
+          rules={{ required: "Title is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Title</FormLabel>
@@ -112,6 +109,7 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
         <FormField
           control={form.control}
           name="vendor"
+          rules={{ required: "Vendor is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Vendor</FormLabel>
@@ -135,6 +133,7 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
         <FormField
           control={form.control}
           name="endpoint"
+          rules={{ required: "Endpoint is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Endpoint</FormLabel>

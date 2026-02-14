@@ -103,9 +103,10 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
             <FormField
               control={form.control}
               name="name"
+              rules={{ required: "Name is required." }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name *</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="My AEM Source" type="text" />
                   </FormControl>
@@ -118,9 +119,10 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
             <FormField
               control={form.control}
               name="endpoint"
+              rules={{ required: "Endpoint is required." }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Endpoint *</FormLabel>
+                  <FormLabel>Endpoint</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="https://aem.example.com" type="url" />
                   </FormControl>
@@ -134,9 +136,10 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
               <FormField
                 control={form.control}
                 name="username"
+                rules={{ required: "Username is required." }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username *</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="admin" type="text" />
                     </FormControl>
@@ -149,9 +152,10 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
               <FormField
                 control={form.control}
                 name="password"
+                rules={{ required: "Password is required." }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password *</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="••••••••" type="password" />
                     </FormControl>
@@ -165,9 +169,10 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
             <FormField
               control={form.control}
               name="rootPath"
+              rules={{ required: "Root Path is required." }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Root Path *</FormLabel>
+                  <FormLabel>Root Path</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="/content/mysite" type="text" />
                   </FormControl>

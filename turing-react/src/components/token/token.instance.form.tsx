@@ -137,6 +137,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="title"
+                rules={{ required: "Title is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title</FormLabel>
