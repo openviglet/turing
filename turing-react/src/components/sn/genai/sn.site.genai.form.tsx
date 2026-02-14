@@ -114,7 +114,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                         <FormField
                             control={form.control}
                             name="turLLMInstance"
-                            rules={{ required: "Language model is required." }}
+                            rules={{ required: enabled && "Language model is required." }}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Language Model</FormLabel>
@@ -152,7 +152,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                         <FormField
                             control={form.control}
                             name="turStoreInstance"
-                            rules={{ required: "Embedding store is required." }}
+                            rules={{ required: enabled && "Embedding store is required." }}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Embedding Store</FormLabel>
@@ -190,7 +190,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                         <FormField
                             control={form.control}
                             name="systemPrompt"
-                            rules={{ required: "System prompt is required." }}
+                            rules={{ required: enabled && "System prompt is required." }}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>System Prompt</FormLabel>

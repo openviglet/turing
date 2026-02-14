@@ -43,7 +43,15 @@ export default function SearchPage() {
 
       const [searchResult, chatResult] = await Promise.all([
 
-        TurSNSearchService.query(turSiteName, q, p, _setlocale, sort, fq, tr, nfpr),
+        TurSNSearchService.query(turSiteName, {
+          q,
+          p,
+          _setlocale,
+          sort,
+          fq,
+          tr,
+          nfpr,
+        }),
         q !== "*" ? TurSNSearchService.chat(turSiteName, q, _setlocale) : Promise.resolve(null),
       ]);
 
