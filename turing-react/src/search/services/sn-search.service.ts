@@ -1,29 +1,46 @@
-import axios from 'axios';
-import type { TurSNSearch } from '../models/sn-search.model';
-import type { TurSNChat } from '../models/sn-chat.model';
+import axios from "axios";
+import type { TurSNChat } from "../models/sn-chat.model";
+import type { TurSNSearch } from "../models/sn-search.model";
+
+interface QueryOptions {
+  q: string;
+  p?: string;
+  _setlocale?: string;
+  sort?: string;
+  fq?: string[];
+  tr?: string[];
+  nfpr?: string;
+}
 
 export class TurSNSearchService {
-  
   static query(
     turSiteName: string,
-    q: string,
-    p: string,
-    _setlocale: string,
-    sort: string,
-    fq: string[],
-    tr: string[],
-    nfpr: string
+    options: QueryOptions,
   ): Promise<TurSNSearch> {
-    const queryString = this.generateQueryString(q, p, _setlocale, sort, fq, tr, nfpr);
+    const queryString = this.generateQueryString(
+      options.q,
+      options.p || "",
+      options._setlocale || "",
+      options.sort || "",
+      options.fq || [],
+      options.tr || [],
+      options.nfpr || "",
+    );
     return axios
-      .get<TurSNSearch>(`/api/sn/${turSiteName}/search?${queryString}`)
-      .then(response => response.data);
+      .get<TurSNSearch>(`/sn/${turSiteName}/search?${queryString}`)
+      .then((response) => response.data);
   }
 
-  static chat(turSiteName: string, q: string, _setlocale: string): Promise<TurSNChat> {
+  static chat(
+    turSiteName: string,
+    q: string,
+    _setlocale: string,
+  ): Promise<TurSNChat> {
     return axios
-      .get<TurSNChat>(`/api/sn/${turSiteName}/chat?q=${q}&_setlocale=${_setlocale}`)
-      .then(response => response.data);
+      .get<TurSNChat>(
+        `/api/sn/${turSiteName}/chat?q=${q}&_setlocale=${_setlocale}`,
+      )
+      .then((response) => response.data);
   }
 
   static autoComplete(
@@ -34,12 +51,20 @@ export class TurSNSearchService {
     sort: string,
     fq: string[],
     tr: string[],
-    nfpr: string
+    nfpr: string,
   ): Promise<string[]> {
-    const queryString = this.generateQueryString(q, p, _setlocale, sort, fq, tr, nfpr);
+    const queryString = this.generateQueryString(
+      q,
+      p,
+      _setlocale,
+      sort,
+      fq,
+      tr,
+      nfpr,
+    );
     return axios
       .get<string[]>(`/api/sn/${turSiteName}/ac?${queryString}`)
-      .then(response => response.data);
+      .then((response) => response.data);
   }
 
   static generateQueryString(
@@ -49,7 +74,7 @@ export class TurSNSearchService {
     sort: string,
     fq: string[],
     tr: string[],
-    nfpr: string
+    nfpr: string,
   ): string {
     let queryString = "";
 
