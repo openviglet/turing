@@ -1,35 +1,62 @@
 import { ROUTES } from "@/app/routes.const";
-import { BlankSlate } from "@/components/blank-slate.tsx";
+import { SNSiteMergeForm } from "@/components/sn/merge/sn.site.merge.form";
 import { SubPageHeader } from "@/components/sub.page.header";
-import type { TurSNSiteMerge } from "@/models/sn/sn-site-merge.model.ts";
+import type { TurSNSiteMerge } from "@/models/sn/sn-site-merge.model";
 import { TurSNSiteMergeService } from "@/services/sn/sn.site.merge.service";
 import { IconGitMerge } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const turSNSiteMergeService = new TurSNSiteMergeService();
+
 export default function SNSiteMergeProvidersPage() {
-    const { id } = useParams() as { id: string };
-    const [mergeList, setMergeList] = useState<TurSNSiteMerge[]>({} as TurSNSiteMerge[]);
+    const navigate = useNavigate();
+    const { id, mergeProviderId } = useParams() as { id: string; mergeProviderId: string };
+    const [mergeProvider, setMergeProvider] = useState<TurSNSiteMerge>({} as TurSNSiteMerge);
+    const [isNew, setIsNew] = useState<boolean>(true);
+    const [open, setOpen] = useState(false);
+
     useEffect(() => {
-        turSNSiteMergeService.query(id).then(setMergeList);
-    }, [id])
+        if (mergeProviderId === "new") {
+            turSNSiteMergeService.getStructure(id).then(setMergeProvider);
+        } else {
+            turSNSiteMergeService.get(id, mergeProviderId).then(setMergeProvider);
+            setIsNew(false);
+        }
+    }, [id, mergeProviderId]);
+
+    async function onDelete() {
+        try {
+            if (await turSNSiteMergeService.delete(mergeProvider)) {
+                toast.success(`The merge provider was deleted`);
+                navigate(`${ROUTES.SN_INSTANCE}/${id}/merge-providers`);
+            } else {
+                toast.error(`The merge provider was not deleted`);
+            }
+        } catch (error) {
+            console.error("Delete error", error);
+            toast.error(`The merge provider was not deleted`);
+        }
+        setOpen(false);
+    }
+
+    const name = mergeProvider.providerFrom && mergeProvider.providerTo
+        ? `${mergeProvider.providerFrom} → ${mergeProvider.providerTo}`
+        : "New Merge Provider";
+
     return (
         <>
-            {mergeList.length > 0 ? (
-                <SubPageHeader icon={IconGitMerge} name="Merge Providers" feature="Merge Providers"
-                    description="Unify different sources contents." />
-            )
-                : (
-
-                    <BlankSlate
-                        icon={IconGitMerge}
-                        title="You don’t seem to have any merge provider."
-                        description="Create a new merge provider and allow to merge documents from different providers during indexing."
-                        buttonText="New merge provider"
-                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/merge/new`} />
-                )
-            }
+            <SubPageHeader
+                icon={IconGitMerge}
+                name={name}
+                feature="Merge Provider"
+                description="Unify different sources contents."
+                onDelete={isNew ? undefined : onDelete}
+                open={open}
+                setOpen={setOpen}
+            />
+            <SNSiteMergeForm snSiteId={id} value={mergeProvider} isNew={isNew} />
         </>
-    )
+    );
 }
