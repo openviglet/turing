@@ -39,11 +39,11 @@ export default function SNSiteMultiLanguagePage() {
   }
   return (
     <>
-      {isNew && <SubPageHeader icon={IconLanguage} name="Multi Language" feature="Multi Language" description="Define Multi Languages." />}
+      {isNew && <SubPageHeader icon={IconLanguage} name="Language" feature="Language" description="Define Multi Languages." />}
       {!isNew && <SubPageHeader
         icon={IconLanguage}
         name={snLocale.language}
-        feature="Multi Language"
+        feature="Language"
         description={snLocale.core}
         onDelete={onDelete}
         open={open}

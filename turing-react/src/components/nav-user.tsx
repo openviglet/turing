@@ -6,11 +6,6 @@ import {
 
 import { ROUTES } from "@/app/routes.const"
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -29,12 +24,13 @@ import type { TurUser } from "@/models/auth/user"
 import { MD5 } from "crypto-js"
 import React from "react"
 import { NavLink } from "react-router-dom"
+import { GradientAvatar, GradientAvatarFallback, GradientAvatarImage } from "./ui/gradient-avatar"
 
 export function NavUser({
   user
-}: {
+}: Readonly<{
   user: TurUser
-}) {
+}>) {
   const { isMobile } = useSidebar()
   const handleClick = () => {
     console.log('NavLink clicked!');
@@ -75,10 +71,10 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={gravatarUrl} alt={user.username} />
-                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-              </Avatar>
+              <GradientAvatar className="h-8 w-8 rounded-lg">
+                <GradientAvatarImage src={gravatarUrl} alt={user.username} />
+                <GradientAvatarFallback className="rounded-lg">{initials}</GradientAvatarFallback>
+              </GradientAvatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.firstName} {user.lastName}</span>
                 <span className="text-muted-foreground truncate text-xs">
@@ -96,10 +92,10 @@ export function NavUser({
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={gravatarUrl} alt={user.username} />
-                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-                </Avatar>
+                <GradientAvatar className="h-8 w-8 rounded-lg">
+                  <GradientAvatarImage src={gravatarUrl} alt={user.username} />
+                  <GradientAvatarFallback className="rounded-lg">{initials}</GradientAvatarFallback>
+                </GradientAvatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.firstName} {user.lastName}</span>
                   <span className="text-muted-foreground truncate text-xs">

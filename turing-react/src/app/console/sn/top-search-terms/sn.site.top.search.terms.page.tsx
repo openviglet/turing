@@ -1,8 +1,8 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
 import { SubPageHeader } from "@/components/sub.page.header";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GradientAvatar, GradientAvatarFallback } from "@/components/ui/gradient-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -149,11 +149,11 @@ export default function SNSiteTopSearchTermsPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6">
-                          <AvatarFallback className="text-xs">
+                        <GradientAvatar className="h-6 w-6">
+                          <GradientAvatarFallback variant="default">
                             {getTermInitial(item.term)}
-                          </AvatarFallback>
-                        </Avatar>
+                          </GradientAvatarFallback>
+                        </GradientAvatar>
                         <span className="font-medium">{item.term}</span>
                       </div>
                     </TableCell>

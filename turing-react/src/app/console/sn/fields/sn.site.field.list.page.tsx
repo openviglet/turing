@@ -436,8 +436,8 @@ export default function SNSiteFieldListPage() {
         <div className="w-full">
             <SubPageHeader
                 icon={IconAlignBoxCenterStretch}
-                name="Search Engine Field"
-                feature="Search Engine Field"
+                name="Field"
+                feature="Field"
                 description="Custom Search Engine Fields."
                 urlNew={`${ROUTES.SN_INSTANCE}/${id}/field/new`} />
             <div className="px-6">

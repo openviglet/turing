@@ -25,6 +25,7 @@ import { Switch } from "@/components/ui/switch"
 import {
   Textarea
 } from "@/components/ui/textarea"
+import { Skeleton } from "@/components/ui/skeleton"
 import type { TurSNFieldType } from "@/models/sn/sn-field-type.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
@@ -46,11 +47,32 @@ interface Props {
 }
 
 export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) => {
+  const normalizedField = {
+    ...snField,
+    name: snField.name ?? "",
+    description: snField.description ?? "",
+    defaultValue: snField.defaultValue ?? "",
+    facetName: snField.facetName ?? "",
+    multiValued: snField.multiValued ?? 0,
+    hl: snField.hl ?? 0,
+    mlt: snField.mlt ?? 0,
+    enabled: snField.enabled ?? 0,
+    required: snField.required ?? 0,
+    facet: snField.facet ?? 0,
+    secondaryFacet: snField.secondaryFacet ?? 0,
+    showAllFacetItems: snField.showAllFacetItems ?? 0,
+    facetSort: snField.facetSort ?? "DEFAULT",
+    facetType: snField.facetType ?? "DEFAULT",
+    facetItemType: snField.facetItemType ?? "DEFAULT",
+    facetRange: snField.facetRange ?? "DISABLED"
+  } as TurSNSiteField;
+
   const form = useForm<TurSNSiteField>({
-    defaultValues: snField
+    defaultValues: normalizedField
   });
   const { control, register } = form;
   const [snFieldTypes, setSnFieldTypes] = useState<TurSNFieldType[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const urlBase = `${ROUTES.SN_INSTANCE}/${snSiteId}/field`;
   const navigate = useNavigate()
   const facetRanges = [
@@ -70,30 +92,46 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
     { value: "COUNT", name: "Count" }
   ];
   useEffect(() => {
-    form.reset(snField);
-    turSNFieldTypeService.query().then(setSnFieldTypes);
+    setIsLoading(true);
+    form.reset(normalizedField);
+    turSNFieldTypeService.query().then(setSnFieldTypes).finally(() => setIsLoading(false));
   }, [snField]);
 
 
   async function onSubmit(snField: TurSNSiteField) {
     try {
+      // Normalize all fields: ensure strings are empty strings instead of null/undefined
+      const normalizedData: TurSNSiteField = {
+        ...snField,
+        name: snField.name ?? "",
+        description: snField.description ?? "",
+        defaultValue: snField.defaultValue ?? "",
+        facetName: snField.facetName ?? "",
+        multiValued: snField.multiValued ?? 0,
+        hl: snField.hl ?? 0,
+        mlt: snField.mlt ?? 0,
+        enabled: snField.enabled ?? 0,
+        required: snField.required ?? 0,
+        facet: snField.facet ?? 0,
+      };
+
       if (isNew) {
 
-        const result = await turSNFieldService.create(snSiteId, snField);
+        const result = await turSNFieldService.create(snSiteId, normalizedData);
         if (result) {
-          toast.success(`The ${snField.name} SN Field was saved`);
+          toast.success(`The ${normalizedData.name} SN Field was saved`);
           navigate(urlBase);
         }
         else {
-          toast.error(`The ${snField.name} SN Field was not saved`);
+          toast.error(`The ${normalizedData.name} SN Field was not saved`);
         }
       }
       else {
-        const result = await turSNFieldService.update(snSiteId, snField);
+        const result = await turSNFieldService.update(snSiteId, normalizedData);
         if (result) {
-          toast.success(`The ${snField.name} SN Field was updated`);
+          toast.success(`The ${normalizedData.name} SN Field was updated`);
         } else {
-          toast.error(`The ${snField.name} SN Field was not updated`);
+          toast.error(`The ${normalizedData.name} SN Field was not updated`);
         }
       }
     } catch (error) {
