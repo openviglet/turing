@@ -15,7 +15,6 @@ export default function SNSiteResultRankingPage() {
     const { id, resultRankingId } = useParams() as { id: string, resultRankingId: string };
     const [resultRanking, setResultRanking] = useState<TurSNRankingExpression>({} as TurSNRankingExpression);
     const [isNew, setIsNew] = useState<boolean>(true);
-
     const [open, setOpen] = useState(false);
     useEffect(() => {
 

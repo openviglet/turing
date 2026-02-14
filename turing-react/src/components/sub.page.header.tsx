@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { DialogDelete } from "./dialog.delete";
-import { Button } from "./ui/button";
+import { GradientButton } from "./ui/gradient-button";
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 
@@ -55,11 +55,11 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
         </div>
         <div className="flex items-center gap-2">
           {urlNew !== undefined && (
-            <Button>
+            <GradientButton>
               <NavLink to={urlNew} className="flex items-center gap-2">
                 {Icon && <Icon />} New {feature}
               </NavLink>
-            </Button>
+            </GradientButton>
           )}
           {open !== undefined && onDelete !== undefined && setOpen !== undefined && (
             <DialogDelete feature={feature} name={name} onDelete={onDelete} open={open} setOpen={setOpen} />

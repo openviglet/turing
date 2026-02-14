@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-table";
 import { useState, type PropsWithChildren } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
     Select,
@@ -25,6 +24,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import type { TurIntegrationIndexing } from "@/models/integration/integration-indexing.model";
+import { GradientButton } from "../ui/gradient-button";
 
 interface Props {
     gridItemList: TurIntegrationIndexing[];
@@ -49,7 +49,7 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
         header: "Object ID",
         cell: ({ row }) => {
             const objectId = row.getValue("objectId") as string;
-            const locale = row.getValue("locale") as string;
+            const locale = row.getValue("locale");
             const sites = row.original.sites;
             const siteId = Array.isArray(sites) && sites.length > 0 ? sites[0] : "";
             const href = siteId
@@ -175,7 +175,7 @@ export const AemMonitoringGrid: React.FC<PropsWithChildren<Props>> = ({ gridItem
                         {table.getPageCount()}
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Button
+                        <GradientButton
                             variant="outline"
                             size="sm"
                             onClick={() => table.previousPage()}
@@ -183,8 +183,8 @@ export const AemMonitoringGrid: React.FC<PropsWithChildren<Props>> = ({ gridItem
                             className="h-8 w-8 p-0"
                         >
                             <span>&lt;</span>
-                        </Button>
-                        <Button
+                        </GradientButton>
+                        <GradientButton
                             variant="outline"
                             size="sm"
                             onClick={() => table.nextPage()}
@@ -192,7 +192,7 @@ export const AemMonitoringGrid: React.FC<PropsWithChildren<Props>> = ({ gridItem
                             className="h-8 w-8 p-0"
                         >
                             <span>&gt;</span>
-                        </Button>
+                        </GradientButton>
                     </div>
                 </div>
             </Card>

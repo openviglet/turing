@@ -1,8 +1,5 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
-import {
-  Button
-} from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
@@ -35,6 +32,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { GradientButton } from "../ui/gradient-button"
 import { Switch } from "../ui/switch"
 const turStoreInstanceService = new TurStoreInstanceService();
 const urlBase = ROUTES.STORE_INSTANCE
@@ -98,9 +96,9 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <Dialog open={open} onOpenChange={setOpen}>
                 <form>
                   <DialogTrigger asChild>
-                    <Button variant={"outline"}>Delete</Button>
+                    <GradientButton variant={"outline"}>Delete</GradientButton>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[450px]">
+                  <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>
                       <DialogTitle>Are you absolutely sure?</DialogTitle>
                       <DialogDescription>
@@ -111,7 +109,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                       This action cannot be undone. This will permanently delete the {value.title} embedding store.
                     </p>
                     <DialogFooter>
-                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this embedding store</Button>
+                      <GradientButton onClick={onDelete} variant="destructive">I understand the consequences, delete this embedding store</GradientButton>
                     </DialogFooter>
                   </DialogContent>
                 </form>
@@ -219,7 +217,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Save</Button>
+              <GradientButton type="submit">Save</GradientButton>
             </form>
           </Form>
         </CardContent>

@@ -1,5 +1,4 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
@@ -24,6 +23,7 @@ import { TurIntegrationIndexingManagerService } from "@/services/integration/int
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import { GradientButton } from "../ui/gradient-button"
 import { DynamicIndexingRuleFields } from "./dynamic.indexing.rule.field"
 
 interface IndexingManagerFormValues {
@@ -183,7 +183,7 @@ export const IntegrationIndexAdminForm: React.FC<IntegrationIndexingManagerFormP
         )}
 
         <div className="flex gap-2">
-          <Button type="submit">Submit</Button>
+          <GradientButton type="submit">Submit</GradientButton>
         </div>
       </form>
     </Form>

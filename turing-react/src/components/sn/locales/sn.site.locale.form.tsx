@@ -1,7 +1,4 @@
 "use client"
-import {
-  Button
-} from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
@@ -12,6 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { GradientButton } from "@/components/ui/gradient-button"
 import {
   Input
 } from "@/components/ui/input"
@@ -163,7 +161,7 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
             )}
           />
         )}
-        <Button type="submit">Save</Button>
+        <GradientButton type="submit">Save</GradientButton>
       </form>
     </Form>
   )

@@ -1,9 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
 import {
-  Button
-} from "@/components/ui/button"
-import {
   Form,
   FormControl,
   FormDescription,
@@ -12,6 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { GradientButton } from "@/components/ui/gradient-button"
 import {
   Input
 } from "@/components/ui/input"
@@ -161,7 +159,7 @@ export const SNSiteResultRankingForm: React.FC<Props> = ({ snSiteId, value, isNe
             />
           </div>
         </div>
-        <Button type="submit">Save</Button>
+        <GradientButton type="submit">Save</GradientButton>
       </form>
     </Form>
   )

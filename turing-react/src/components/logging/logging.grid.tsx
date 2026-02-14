@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-table";
 import { useState, type PropsWithChildren } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
     Select,
@@ -25,6 +24,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import type { TurLoggingGeneral } from "@/models/logging/logging-general.model";
+import { GradientButton } from "../ui/gradient-button";
 
 interface Props {
     gridItemList: TurLoggingGeneral[];
@@ -168,7 +168,7 @@ export const LoggingGrid: React.FC<PropsWithChildren<Props>> = ({ gridItemList }
                         {table.getPageCount()}
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Button
+                        <GradientButton
                             variant="outline"
                             size="sm"
                             onClick={() => table.previousPage()}
@@ -176,8 +176,8 @@ export const LoggingGrid: React.FC<PropsWithChildren<Props>> = ({ gridItemList }
                             className="h-8 w-8 p-0"
                         >
                             <span>&lt;</span>
-                        </Button>
-                        <Button
+                        </GradientButton>
+                        <GradientButton
                             variant="outline"
                             size="sm"
                             onClick={() => table.nextPage()}
@@ -185,7 +185,7 @@ export const LoggingGrid: React.FC<PropsWithChildren<Props>> = ({ gridItemList }
                             className="h-8 w-8 p-0"
                         >
                             <span>&gt;</span>
-                        </Button>
+                        </GradientButton>
                     </div>
                 </div>
             </Card>

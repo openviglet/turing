@@ -1,7 +1,7 @@
 import { ROUTES } from "@/app/routes.const";
 import { IntegrationSourceForm } from "@/components/integration/integration.source.form";
 import { SubPageHeader } from "@/components/sub.page.header";
-import { Button } from "@/components/ui/button";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { useAemSourceService, useConnectorService } from "@/contexts/TuringServiceContext";
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model";
 import { IconGitCommit } from "@tabler/icons-react";
@@ -80,22 +80,22 @@ export default function IntegrationInstanceSourcePage() {
 
       <div className="flex justify-end pb-4 px-6">
         <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/50 px-3 py-2">
-          <Button
+          <GradientButton
             type="button"
             variant="outline"
             onClick={onReindexAll}
             disabled={isActionDisabled}
           >
             Reindex all
-          </Button>
-          <Button
+          </GradientButton>
+          <GradientButton
             type="button"
             variant="outline"
             onClick={onIndexAll}
             disabled={isActionDisabled}
           >
             Index all
-          </Button>
+          </GradientButton>
         </div>
       </div>
       <IntegrationSourceForm value={integrationAemSource} isNew={isNew} integrationId={id} />

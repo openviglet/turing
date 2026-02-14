@@ -2,7 +2,6 @@ import {
   IconCode,
   IconCpu2,
   IconDatabase,
-  IconInnerShadowTop,
   IconPlugConnectedX,
   IconReceiptRupee,
   IconSearch,
@@ -25,6 +24,7 @@ import {
 import type { TurUser } from "@/models/auth/user"
 import { TurUserService } from "@/services/auth/user.service"
 import { NavLink } from "react-router-dom"
+import { TurLogo } from "./logo/tur-logo"
 
 const data = {
   navMain: [
@@ -81,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!">
               <NavLink to={ROUTES.CONSOLE}>
-                <IconInnerShadowTop className="size-5!" />
+                <TurLogo size={32} />
                 <span className="text-base font-semibold">Turing ES</span>
               </NavLink>
             </SidebarMenuButton>

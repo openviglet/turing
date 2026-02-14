@@ -1,8 +1,5 @@
 "use client"
 import {
-  Button
-} from "@/components/ui/button"
-import {
   Form,
   FormControl,
   FormDescription,
@@ -34,6 +31,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { GradientButton } from "../ui/gradient-button"
 import { Skeleton } from "../ui/skeleton"
 const turSNSiteService = new TurSNSiteService();
 const turSEInstanceService = new TurSEInstanceService();
@@ -166,7 +164,7 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Save</Button>
+              <GradientButton type="submit">Save</GradientButton>
             </form>
           </Form>
         )}

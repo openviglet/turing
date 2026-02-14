@@ -8,7 +8,6 @@ import {
 import { Pencil } from "lucide-react";
 import { useState, type PropsWithChildren } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
     Select,
@@ -27,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import type { TurGridItem } from "@/models/ui/grid-item";
 import { NavLink } from "react-router-dom";
+import { GradientButton } from "./ui/gradient-button";
 
 interface Props {
     gridItemList: TurGridItem[];
@@ -51,10 +51,10 @@ export const columns: ColumnDef<TurGridItem>[] = [
         cell: ({ row }) => {
             return (
                 // Ícone de lápis azul estilo Google
-                <Button variant="ghost" size="icon" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 w-8">
+                <GradientButton variant="ghost" size="icon" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 w-8">
                     <NavLink to={row.getValue("url")}><Pencil className="h-4 w-4" />
                         <span className="sr-only">Edit</span></NavLink>
-                </Button>
+                </GradientButton>
             );
         },
     },
@@ -152,7 +152,7 @@ export const GridList: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) =
                         {table.getPageCount()}
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Button
+                        <GradientButton
                             variant="outline"
                             size="sm"
                             onClick={() => table.previousPage()}
@@ -160,8 +160,8 @@ export const GridList: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) =
                             className="h-8 w-8 p-0"
                         >
                             <span>&lt;</span>
-                        </Button>
-                        <Button
+                        </GradientButton>
+                        <GradientButton
                             variant="outline"
                             size="sm"
                             onClick={() => table.nextPage()}
@@ -169,7 +169,7 @@ export const GridList: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) =
                             className="h-8 w-8 p-0"
                         >
                             <span>&gt;</span>
-                        </Button>
+                        </GradientButton>
                     </div>
                 </div>
             </Card>

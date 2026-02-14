@@ -1,8 +1,5 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
-import {
-  Button
-} from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
@@ -25,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { GradientButton } from "../ui/gradient-button"
 
 const turSECustomFacetService = new TurSECustomFacetService();
 
@@ -99,7 +97,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
               <Dialog open={open} onOpenChange={setOpen}>
                 <form>
                   <DialogTrigger asChild>
-                    <Button variant={"outline"}>Delete</Button>
+                    <GradientButton variant={"outline"}>Delete</GradientButton>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>
@@ -112,7 +110,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
                       This action cannot be undone. This will permanently delete the {value.label} custom facet.
                     </p>
                     <DialogFooter>
-                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this custom facet</Button>
+                      <GradientButton onClick={onDelete} variant="destructive">I understand the consequences, delete this custom facet</GradientButton>
                     </DialogFooter>
                   </DialogContent>
                 </form>
@@ -206,7 +204,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
                 )}
               />
 
-              <Button type="submit">Save</Button>
+              <GradientButton type="submit">Save</GradientButton>
             </form>
           </Form>
         </CardContent>

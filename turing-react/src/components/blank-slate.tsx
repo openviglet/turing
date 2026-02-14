@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button.tsx";
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { GradientButton } from "./ui/gradient-button";
 
 interface Props {
     icon: React.ElementType
@@ -13,13 +13,15 @@ interface Props {
 export const BlankSlate: React.FC<Props> = ({ icon: Icon, title, description, urlNew, buttonText }) => {
     return (
         <div className="space-y-4 text-center mt-8 px-6">
-            <Icon className="inline-block" size={48} />
+            <div className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-violet-600 to-indigo-600 shadow-lg">
+                <Icon className="text-white" size={28} />
+            </div>
             <h1 className="mb-1">{title}</h1>
             <p className="text-muted-foreground text-sm mt-1">{description}</p>
-            {urlNew && (<Button className="mt-4">
+            {urlNew && (<GradientButton className="mt-4">
                 <NavLink to={urlNew}>
                     {buttonText}
-                </NavLink></Button>)}
+                </NavLink></GradientButton>)}
         </div>
     )
 }

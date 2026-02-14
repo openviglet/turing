@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 
 import { ROUTES } from "@/app/routes.const"
-import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -31,6 +30,7 @@ import type { TurSNSite } from "@/models/sn/sn-site.model"
 import { TurIntegrationIndexingRuleService } from "@/services/integration/integration-indexing-rule.service"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
 import { TurSNSiteService } from "@/services/sn/sn.service"
+import { GradientButton } from "../ui/gradient-button"
 import { DynamicIndexingRuleFields } from "./dynamic.indexing.rule.field"
 
 // Constants
@@ -329,7 +329,7 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
           </FormControl>
         </FormItem>
 
-        <Button type="submit">Save</Button>
+        <GradientButton type="submit">Save</GradientButton>
       </form>
     </Form>
   );

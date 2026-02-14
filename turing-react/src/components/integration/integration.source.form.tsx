@@ -7,9 +7,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import {
-  Button
-} from "@/components/ui/button"
-import {
   Card,
   CardContent,
   CardDescription,
@@ -41,6 +38,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { GradientButton } from "../ui/gradient-button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { DynamicSourceLocales } from "./dynamic.source.locale"
 
@@ -431,12 +429,12 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
         </Accordion>
 
         <div className="flex justify-end gap-4 py-4">
-          <Button type="button" variant="outline" onClick={() => navigate(sourceInstanceRoute)}>
+          <GradientButton type="button" variant="outline" onClick={() => navigate(sourceInstanceRoute)}>
             Cancel
-          </Button>
-          <Button type="submit">
+          </GradientButton>
+          <GradientButton type="submit">
             {isNew ? 'Create Source' : 'Save Changes'}
-          </Button>
+          </GradientButton>
         </div>
       </form>
     </Form>

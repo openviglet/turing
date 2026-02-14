@@ -1,8 +1,5 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
-import {
-  Button
-} from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
@@ -28,6 +25,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { GradientButton } from "../ui/gradient-button"
 const turTokenInstanceService = new TurTokenInstanceService();
 interface Props {
   value: TurTokenInstance;
@@ -109,7 +107,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <Dialog open={open} onOpenChange={setOpen}>
                 <form>
                   <DialogTrigger asChild>
-                    <Button variant={"outline"}>Delete</Button>
+                    <GradientButton variant={"outline"}>Delete</GradientButton>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>
@@ -122,7 +120,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                       This action cannot be undone. This will permanently delete the {value.title} api token.
                     </p>
                     <DialogFooter>
-                      <Button onClick={onDelete} variant="destructive">I understand the consequences, delete this api token</Button>
+                      <GradientButton onClick={onDelete} variant="destructive">I understand the consequences, delete this api token</GradientButton>
                     </DialogFooter>
                   </DialogContent>
                 </form>
@@ -186,7 +184,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                           type="text"
                           readOnly
                           {...field} />
-                        <Button type="button" onClick={handleCopy}>Copy</Button>
+                        <GradientButton type="button" onClick={handleCopy}>Copy</GradientButton>
                       </div>
                     </FormControl>
                     <FormDescription>API Token instance host will be connected.</FormDescription>
@@ -194,7 +192,7 @@ export const TokenInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   </FormItem>
                 )}
               />}
-              <Button type="submit">Save</Button>
+              <GradientButton type="submit">Save</GradientButton>
             </form>
           </Form>
         </CardContent>

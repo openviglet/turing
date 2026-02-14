@@ -1,9 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
 import {
-  Button
-} from "@/components/ui/button"
-import {
   Form,
   FormControl,
   FormDescription,
@@ -32,6 +29,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { SubPageHeader } from "../sub.page.header"
+import { GradientButton } from "../ui/gradient-button"
 import { Switch } from "../ui/switch"
 const turSNSiteService = new TurSNSiteService();
 interface Props {
@@ -538,7 +536,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <Button type="submit">Save</Button>
+        <GradientButton type="submit">Save</GradientButton>
       </form>
     </Form>
   )

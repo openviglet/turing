@@ -1,5 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
-import { Button } from "@/components/ui/button.tsx";
+import { GradientButton } from "@/components/ui/gradient-button";
 import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model.ts";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -32,13 +32,13 @@ export const columns: ColumnDef<TurSNSiteLocale>[] = [
         accessorKey: "language",
         header: ({ column }) => {
             return (
-                <Button
+                <GradientButton
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Language
                     <ArrowUpDown />
-                </Button>
+                </GradientButton>
             )
         },
         cell: ({ row }) => (
@@ -59,16 +59,16 @@ export const columns: ColumnDef<TurSNSiteLocale>[] = [
             const locale = row.original;
             return (
                 <div className="flex justify-end gap-2">
-                    <Button asChild variant="outline">
+                    <GradientButton asChild variant="outline">
                         <a href={`${ROUTES.SN_INSTANCE}/${locale.turSNSite.id}/locale/${locale.id}`}>
                             Edit
                         </a>
-                    </Button>
-                    <Button asChild>
+                    </GradientButton>
+                    <GradientButton asChild>
                         <a href={`/sn/${locale.turSNSite.id}?_setlocale=${locale.language}`}>
                             Open Search
                         </a>
-                    </Button>
+                    </GradientButton>
                 </div>
             )
         },

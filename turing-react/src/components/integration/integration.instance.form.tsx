@@ -1,9 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
 import {
-  Button
-} from "@/components/ui/button"
-import {
   Form,
   FormControl,
   FormDescription,
@@ -33,6 +30,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { GradientButton } from "../ui/gradient-button"
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 interface Props {
   value: TurIntegrationInstance;
@@ -151,7 +149,7 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
             </FormItem>
           )}
         />
-        <Button type="submit">Save</Button>
+        <GradientButton type="submit">Save</GradientButton>
       </form>
     </Form>
   )

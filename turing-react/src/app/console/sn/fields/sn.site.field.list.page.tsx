@@ -21,7 +21,6 @@ import * as React from "react"
 
 import { ROUTES } from "@/app/routes.const"
 import { SubPageHeader } from "@/components/sub.page.header"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
@@ -31,6 +30,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { GradientButton } from "@/components/ui/gradient-button"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -60,14 +60,14 @@ function StatusFieldDropdown({ statusField }: Readonly<StatusFieldDropdownProps>
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-6 w-6 p-0">
+                <GradientButton variant="ghost" size="icon" className="h-6 w-6 p-0">
                     <span className="sr-only">Open field status</span>
                     {statusField.correct ? (
                         <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                     ) : (
                         <AlertTriangle className="h-4 w-4 text-rose-500" />
                     )}
-                </Button>
+                </GradientButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-80">
                 {statusField.correct
@@ -198,13 +198,13 @@ const buildColumns = (
             accessorKey: "name",
             header: ({ column }) => {
                 return (
-                    <Button
+                    <GradientButton
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Field
                         <ArrowUpDown />
-                    </Button>
+                    </GradientButton>
                 )
             },
             cell: ({ row }) => {
@@ -300,10 +300,10 @@ const buildColumns = (
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <GradientButton variant="ghost" className="h-8 w-8 p-0">
                                 <span className="sr-only">Open menu</span>
                                 <MoreHorizontal />
-                            </Button>
+                            </GradientButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -453,9 +453,9 @@ export default function SNSiteFieldListPage() {
                     <div className="ml-auto">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline">
+                                <GradientButton variant="outline">
                                     <IconColumns3Filled /> Columns <ChevronDown />
-                                </Button>
+                                </GradientButton>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 {table
@@ -535,22 +535,22 @@ export default function SNSiteFieldListPage() {
                         {table.getFilteredRowModel().rows.length} row(s) selected.
                     </div>
                     <div className="space-x-2">
-                        <Button
+                        <GradientButton
                             variant="outline"
                             size="sm"
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}
                         >
                             Previous
-                        </Button>
-                        <Button
+                        </GradientButton>
+                        <GradientButton
                             variant="outline"
                             size="sm"
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}
                         >
                             Next
-                        </Button>
+                        </GradientButton>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 import { IconTrash } from "@tabler/icons-react";
 import React, { type Dispatch, type SetStateAction } from "react";
-import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { GradientButton } from "./ui/gradient-button";
 
 interface Props {
   feature: string;
@@ -15,7 +15,7 @@ export const DialogDelete: React.FC<Props> = ({ feature, name, onDelete, open, s
     <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild >
-          <Button variant={"outline"} className="mr-2" ><IconTrash /></Button>
+          <GradientButton variant={"outline"} className="mr-2" ><IconTrash /></GradientButton>
         </DialogTrigger>
         <DialogContent className="sm:max-w-150">
           <DialogHeader>
@@ -26,8 +26,8 @@ export const DialogDelete: React.FC<Props> = ({ feature, name, onDelete, open, s
           </DialogHeader>
           <p>This action cannot be undone. This will permanently delete <span className="font-semibold">{name}</span> {feature}.</p>
           <DialogFooter className="sm:justify-center">
-            <Button onClick={onDelete} variant="destructive">I understand
-              the consequences, delete this {feature}</Button>
+            <GradientButton onClick={onDelete} variant="destructive">I understand
+              the consequences, delete this {feature}</GradientButton>
           </DialogFooter>
         </DialogContent>
       </form>

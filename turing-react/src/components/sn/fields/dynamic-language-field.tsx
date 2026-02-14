@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { GradientButton } from '@/components/ui/gradient-button';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -65,7 +65,7 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
                         placeholder="Facet Name..."
                         {...register(`${fieldName}.${index}.label`)}
                     />
-                    <Button
+                    <GradientButton
                         variant="ghost"
                         size="icon"
                         onClick={() => remove(index)}
@@ -73,15 +73,15 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
                         type="button"
                     >
                         <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                    </GradientButton>
                 </div>
             ))}
 
             <div className="mt-2">
-                <Button variant="outline" onClick={handleAddField} type="button">
+                <GradientButton variant="outline" onClick={handleAddField} type="button">
                     <PlusCircle className="h-4 w-4 mr-2" />
                     Add
-                </Button>
+                </GradientButton>
             </div>
         </div>
     );
