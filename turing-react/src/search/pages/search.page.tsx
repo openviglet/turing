@@ -1,7 +1,29 @@
-import { ChevronDown, Search } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import type { TurSNChat } from "../models/sn-chat.model";
 import type { TurSNSearch } from "../models/sn-search.model";
 import { TurSNSearchService } from "../services/sn-search.service";
@@ -12,8 +34,8 @@ export default function SearchPage() {
   const [snSearch, setSnSearch] = useState<TurSNSearch | null>(null);
   const [llmChat, setLlmChat] = useState<TurSNChat | null>(null);
   const [turQuery, setTurQuery] = useState(searchParams.get("q") || "");
-  const [turLocale] = useState(searchParams.get("_setlocale") || "en_US");
-  const [turSort] = useState(searchParams.get("sort") || "relevance");
+  const [turLocale, setTurLocale] = useState(searchParams.get("_setlocale") || "en_US");
+  const [turSort, setTurSort] = useState(searchParams.get("sort") || "relevance");
   const [autoComplete, setAutoComplete] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +48,8 @@ export default function SearchPage() {
   };
 
   useEffect(() => {
+    setTurLocale(searchParams.get("_setlocale") || "en_US");
+    setTurSort(searchParams.get("sort") || "relevance");
     performSearch();
   }, [searchParams]);
 
@@ -37,8 +61,8 @@ export default function SearchPage() {
       const p = searchParams.get("p") || "1";
       const _setlocale = searchParams.get("_setlocale") || "pt";
       const sort = searchParams.get("sort") || "relevance";
-      const fq = searchParams.getAll("fq") || [];
-      const tr = searchParams.getAll("tr") || [];
+      const fq = [...searchParams.getAll("fq"), ...searchParams.getAll("fq[]")];
+      const tr = [...searchParams.getAll("tr"), ...searchParams.getAll("tr[]")];
       const nfpr = searchParams.get("nfpr") || "";
 
       const [searchResult, chatResult] = await Promise.all([
@@ -52,7 +76,7 @@ export default function SearchPage() {
           tr,
           nfpr,
         }),
-        q !== "*" ? TurSNSearchService.chat(turSiteName, q, _setlocale) : Promise.resolve(null),
+        q === "*" ? Promise.resolve(null) : TurSNSearchService.chat(turSiteName, { q, _setlocale }),
       ]);
 
       setSnSearch(searchResult);
@@ -70,22 +94,22 @@ export default function SearchPage() {
     const params = new URLSearchParams(searchParams);
     params.set("q", turQuery || "*");
     params.set("p", "1");
-    setSearchParams(params);
+    setSearchParams(normalizeSearchString(params));
   };
 
   const retrieveAutoComplete = async () => {
     if (turQuery && turQuery.length > 2) {
       try {
         const results = await TurSNSearchService.autoComplete(
-          turSiteName,
-          turQuery,
-          "1",
-          turLocale,
-          turSort,
-          [],
-          [],
-          ""
-        );
+          turSiteName, {
+          q: turQuery,
+          p: "1",
+          _setlocale: turLocale,
+          sort: turSort,
+          fq: [],
+          tr: [],
+          nfpr: ""
+        });
         setAutoComplete(results);
       } catch (error) {
         console.error("Autocomplete error:", error);
@@ -96,6 +120,7 @@ export default function SearchPage() {
   };
 
   const turRedirect = (href: string) => {
+    console.log("Redirecting to:", href);
     const result: Record<string, string[]> = {};
     const queryString = href.split('?')[1];
 
@@ -114,9 +139,10 @@ export default function SearchPage() {
       values.forEach(val => searchParams.append(key, val));
     });
 
+    const normalizedSearch = normalizeSearchString(searchParams);
     navigate({
       pathname: location.pathname,
-      search: `?${searchParams.toString()}`
+      search: `?${normalizedSearch}`
     });
 
     // performSearch will be triggered by useEffect on searchParams change
@@ -130,13 +156,15 @@ export default function SearchPage() {
   const changeLocale = (locale: string) => {
     const params = new URLSearchParams(searchParams);
     params.set("_setlocale", locale);
-    setSearchParams(params);
+    setTurLocale(locale);
+    setSearchParams(normalizeSearchString(params));
   };
 
   const changeOrderBy = (sort: string) => {
     const params = new URLSearchParams(searchParams);
     params.set("sort", sort);
-    setSearchParams(params);
+    setTurSort(sort);
+    setSearchParams(normalizeSearchString(params));
   };
 
   const camelize = (text: string) => {
@@ -145,6 +173,11 @@ export default function SearchPage() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
+
+  const normalizeSearchString = (params: URLSearchParams) =>
+    params.toString().replaceAll("%5B%5D", "[]");
+
+  const isInternalHref = (href: string) => href.startsWith("/") && !href.startsWith("//");
 
   if (loading) {
     return (
@@ -175,9 +208,9 @@ export default function SearchPage() {
           <div className="text-center py-12">
             <h3 className="text-xl font-semibold mb-2">No content to display</h3>
             <p className="text-muted-foreground mb-4">{error ? "There was an error performing the search." : "Try adjusting your query or locale."}</p>
-            <button className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90" onClick={showAll}>
+            <Button size="lg" onClick={showAll}>
               Show all the available content
-            </button>
+            </Button>
           </div>
         </main>
       </div>
@@ -190,8 +223,9 @@ export default function SearchPage() {
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <button
+            <Button
               onClick={showAll}
+              variant="ghost"
               className="flex items-center gap-2 text-lg font-semibold hover:text-primary"
             >
               <svg className="w-8 h-8" viewBox="0 0 549 549">
@@ -211,68 +245,68 @@ export default function SearchPage() {
                 </text>
               </svg>
               <span>{turSiteName}</span>
-            </button>
+            </Button>
 
             <div className="flex-1 relative">
-              <div className="relative">
-                <input
-                  value={turQuery}
-                  onChange={(e) => {
-                    setTurQuery(e.target.value);
-                    retrieveAutoComplete();
-                  }}
-                  onKeyPress={(e) => e.key === "Enter" && searchIt()}
-                  type="search"
-                  className="w-full px-4 py-2 pr-10 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="Search..."
-                  autoComplete="off"
-                />
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              </div>
-
+              <Input
+                value={turQuery}
+                onChange={(e) => {
+                  setTurQuery(e.target.value);
+                  retrieveAutoComplete();
+                }}
+                onKeyDown={(e) => e.key === "Enter" && searchIt()}
+                onBlur={() => {
+                  globalThis.setTimeout(() => setAutoComplete([]), 100);
+                }}
+                type="search"
+                className="pr-10"
+                placeholder="Search..."
+                autoComplete="off"
+              />
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               {autoComplete.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-card border border-border rounded-md shadow-lg">
-                  {autoComplete.map((term, idx) => (
-                    <div
-                      key={idx}
-                      className="px-4 py-2 hover:bg-accent cursor-pointer"
+                <div className="absolute z-50 mt-2 w-full rounded-md border border-border bg-popover text-popover-foreground shadow-md">
+                  {autoComplete.map((term) => (
+                    <Button
+                      key={term}
+                      type="button"
+                      variant="ghost"
+                      className="w-full justify-start rounded-none"
+                      onMouseDown={(event) => event.preventDefault()}
                       onClick={() => {
                         setTurQuery(term);
                         setAutoComplete([]);
                       }}
                     >
                       {term}
-                    </div>
+                    </Button>
                   ))}
                 </div>
               )}
             </div>
 
             {/* Locale Selector */}
-            <div className="relative group">
-              <button className="px-4 py-2 border border-border rounded-md flex items-center gap-2">
-                <em>Language:</em>
-                <span>{snSearch.queryContext.query.locale}</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              <div className="hidden group-hover:block absolute right-0 mt-1 w-48 bg-card border border-border rounded-md shadow-lg">
-                {snSearch.widget.locales.map((locale) => (
-                  <button
-                    key={locale.locale}
-                    className="w-full px-4 py-2 text-left hover:bg-accent"
-                    onClick={() => changeLocale(locale.locale)}
-                  >
-                    {locale.locale}
-                  </button>
-                ))}
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Language</span>
+              <Select value={turLocale} onValueChange={changeLocale}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {snSearch.widget.locales.map((locale) => (
+                    <SelectItem key={locale.locale} value={locale.locale}>
+                      {locale.locale}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6" style={{ minHeight: "600px" }}>
+      <main className="container mx-auto px-4 py-6 min-h-150">
         {/* Chat/AI Response */}
         {llmChat?.text && (
           <div className="mb-6 p-6 bg-card border border-border rounded-md">
@@ -291,12 +325,13 @@ export default function SearchPage() {
             {snSearch.widget.spellCheck.correctedText && (
               <h3 className="text-lg mb-4">
                 Did you mean{" "}
-                <button
-                  className="text-primary underline font-semibold"
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-primary underline font-semibold"
                   onClick={() => turRedirect(snSearch.widget.spellCheck.corrected.link)}
                 >
                   {snSearch.widget.spellCheck.corrected.text}
-                </button>
+                </Button>
                 ?
               </h3>
             )}
@@ -305,12 +340,12 @@ export default function SearchPage() {
                 <p className="mb-4">
                   You can try to see all the available content, maybe you have a new idea. :-)
                 </p>
-                <button
-                  className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                <Button
+                  size="lg"
                   onClick={showAll}
                 >
                   Show all the available content
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -320,64 +355,82 @@ export default function SearchPage() {
         {snSearch.results.document.length > 0 && (
           <div className="flex gap-6">
             {/* Facets Sidebar */}
-            <aside className="w-64 flex-shrink-0">
-              {/* Applied Filters */}
-              {snSearch.widget.facetToRemove?.facets && (
-                <div className="mb-4 border border-primary rounded-md">
-                  <div className="px-4 py-2 bg-primary/10 border-b border-primary font-semibold flex justify-between items-center">
-                    <span>Applied Filters</span>
-                    <button
-                      className="text-sm text-primary hover:underline"
-                      onClick={() => turRedirect(snSearch.widget.cleanUpFacets)}
-                    >
-                      Clean up all
-                    </button>
-                  </div>
-                  <div>
-                    {snSearch.widget.facetToRemove.facets.map((facet, idx) => (
-                      <button
-                        key={idx}
-                        className="w-full px-4 py-2 text-left hover:bg-accent border-b border-border text-sm"
-                        onClick={() => turRedirect(facet.link)}
-                      >
-                        <span>{facet.label}</span>
-                        <span className="float-right">(Remove)</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+            <aside className="w-64 shrink-0">
+              <Accordion type="multiple" className="space-y-4">
+                {/* Applied Filters */}
+                {snSearch.widget.facetToRemove?.facets && (
+                  <AccordionItem value="applied-filters" className="border border-primary rounded-md">
+                    <AccordionTrigger className="px-4 py-3 text-base">
+                      Applied Filters
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-0">
+                      <div className="px-4 pb-2 flex justify-end border-b border-primary">
+                        <Button
+                          variant="link"
+                          className="p-0 h-auto text-sm text-primary"
+                          onClick={() => turRedirect(snSearch.widget.cleanUpFacets)}
+                        >
+                          Clean up all
+                        </Button>
+                      </div>
+                      <div>
+                        {snSearch.widget.facetToRemove.facets.map((facet) => (
+                          <Button
+                            key={`${facet.label || facet.link}-${facet.link}`}
+                            variant="ghost"
+                            className="w-full px-4 py-2 text-left hover:bg-accent border-b border-border text-sm justify-start"
+                            onClick={() => turRedirect(facet.link)}
+                          >
+                            <span>{facet.label}</span>
+                            <span className="float-right">(Remove)</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
 
-              {/* Facet Groups */}
-              {snSearch.widget.facet.map((facets, idx) => (
-                <div key={idx} className="mb-4 border border-border rounded-md">
-                  <div className="px-4 py-2 bg-card border-b border-border font-semibold flex justify-between items-center">
-                    <span>{facets.label.text}</span>
-                    <button
-                      className="text-sm text-primary hover:underline"
-                      onClick={() => turRedirect(facets.cleanUpLink)}
-                    >
-                      Clean up
-                    </button>
-                  </div>
-                  <div>
-                    {facets.facets.map((facet, fidx) => (
-                      <button
-                        key={fidx}
-                        className="w-full px-4 py-2 text-left hover:bg-accent border-b border-border text-sm flex items-center justify-between"
-                        onClick={() => turRedirect(facet.link)}
-                      >
-                        <span>
-                          {facet.label}{" "}
-                          <span className="inline-block px-2 py-0.5 bg-muted text-muted-foreground rounded-full text-xs">
-                            {facet.count}
-                          </span>
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                {/* Facet Groups */}
+                {snSearch.widget.facet.map((facets) => (
+                  <AccordionItem
+                    key={`${facets.label.text}-${facets.cleanUpLink}`}
+                    value={`facet-${facets.label.text}-${facets.cleanUpLink}`}
+                    className="border border-border rounded-md"
+                  >
+                    <AccordionTrigger className="px-4 py-3 text-base">
+                      {facets.label.text}
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-0">
+                      <div className="px-4 pb-2 flex justify-end border-b border-border">
+                        <Button
+                          variant="link"
+                          className="p-0 h-auto text-sm text-primary"
+                          onClick={() => turRedirect(facets.cleanUpLink)}
+                        >
+                          Clean up
+                        </Button>
+                      </div>
+                      <div>
+                        {facets.facets.map((facet) => (
+                          <Button
+                            key={`${facet.label || facet.link}-${facet.link}`}
+                            variant="ghost"
+                            className="w-full px-4 py-2 text-left hover:bg-accent border-b border-border text-sm flex items-center justify-between"
+                            onClick={() => turRedirect(facet.link)}
+                          >
+                            <span>
+                              {facet.label}{" "}
+                              <span className="inline-block px-2 py-0.5 bg-muted text-muted-foreground rounded-full text-xs">
+                                {facet.count}
+                              </span>
+                            </span>
+                          </Button>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </aside>
 
             {/* Results Column */}
@@ -389,24 +442,20 @@ export default function SearchPage() {
                 </h3>
 
                 {/* Sort Selector */}
-                <div className="relative group">
-                  <button className="px-4 py-2 border border-border rounded-md flex items-center gap-2 text-sm">
-                    <em>Order by:</em>
-                    <span>{camelize(turSort)}</span>
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                  <div className="hidden group-hover:block absolute right-0 mt-1 w-48 bg-card border border-border rounded-md shadow-lg">
-                    {Object.entries(sortOptions).map(([key, value]) => (
-                      <button
-                        key={key}
-                        className="w-full px-4 py-2 text-left hover:bg-accent flex items-center"
-                        onClick={() => changeOrderBy(key)}
-                      >
-                        {turSort === key && <span className="mr-2">✓</span>}
-                        {value}
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Order by</span>
+                  <Select value={turSort} onValueChange={changeOrderBy}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(sortOptions).map(([key, value]) => (
+                        <SelectItem key={key} value={key}>
+                          {value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -416,22 +465,24 @@ export default function SearchPage() {
                   <div className="mb-4">
                     <h4 className="mb-1">
                       Showing results for{" "}
-                      <button
-                        className="text-primary underline font-semibold italic"
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto text-primary underline font-semibold italic"
                         onClick={() => turRedirect(snSearch.widget.spellCheck.corrected.link)}
                       >
                         {snSearch.widget.spellCheck.corrected.text}
-                      </button>
+                      </Button>
                       .
                     </h4>
                     <p>
                       Instead, search for{" "}
-                      <button
-                        className="text-primary underline font-semibold"
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto text-primary underline font-semibold"
                         onClick={() => turRedirect(snSearch.widget.spellCheck.original.link)}
                       >
                         {snSearch.widget.spellCheck.original.text}
-                      </button>
+                      </Button>
                     </p>
                   </div>
                 )}
@@ -440,21 +491,22 @@ export default function SearchPage() {
                 snSearch.widget.spellCheck.correctedText && (
                   <div className="mb-4">
                     <h4 className="mb-1">
-                      Did you mean '
-                      <button
-                        className="text-primary underline font-semibold italic"
+                      Did you mean{" "}
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto text-primary underline font-semibold italic"
                         onClick={() => turRedirect(snSearch.widget.spellCheck.corrected.link)}
                       >
                         {snSearch.widget.spellCheck.corrected.text}
-                      </button>
-                      '?
+                      </Button>
+                      ?
                     </h4>
                   </div>
                 )}
 
               {/* Documents */}
               <div className="space-y-4">
-                {snSearch.results.document.map((document, idx) => {
+                {snSearch.results.document.map((document) => {
                   const url = document.fields[snSearch.queryContext.defaultFields.url];
                   const title = document.fields[snSearch.queryContext.defaultFields.title];
                   const description =
@@ -465,16 +517,26 @@ export default function SearchPage() {
 
                   return (
                     <div
-                      key={idx}
+                      key={url}
                       className="border-t border-border pt-4 flex gap-4"
                     >
                       <div className="flex-1">
                         <h4 className="text-lg mb-1">
-                          <a
-                            href={url}
-                            className="text-primary hover:underline"
-                            dangerouslySetInnerHTML={{ __html: title || url }}
-                          />
+                          {isInternalHref(url) ? (
+                            <NavLink
+                              to={url}
+                              className="text-primary hover:underline"
+                              dangerouslySetInnerHTML={{ __html: title || url }}
+                            />
+                          ) : (
+                            <a
+                              href={url}
+                              className="text-primary hover:underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              dangerouslySetInnerHTML={{ __html: title || url }}
+                            />
+                          )}
                         </h4>
                         {description && (
                           <p
@@ -482,10 +544,12 @@ export default function SearchPage() {
                             dangerouslySetInnerHTML={{ __html: description }}
                           />
                         )}
-                        {document.metadata.map((metadata, midx) => (
-                          <button
-                            key={midx}
-                            className="text-xs px-2 py-1 border border-border rounded mr-2 hover:bg-accent"
+                        {document.metadata.map((metadata) => (
+                          <Button
+                            key={`${metadata.text || metadata.href}-${metadata.href}`}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs h-auto px-2 py-1 border-border rounded mr-2 hover:bg-accent"
                             onClick={() => turRedirect(metadata.href)}
                             title={metadata.text}
                             dangerouslySetInnerHTML={{ __html: metadata.text }}
@@ -503,29 +567,41 @@ export default function SearchPage() {
               </div>
 
               {/* Pagination */}
-              <nav className="mt-6 flex justify-center gap-2">
-                {snSearch.pagination.map((page, idx) => {
-                  if (page.type === "CURRENT") {
+              <Pagination className="mt-6">
+                <PaginationContent>
+                  {snSearch.pagination.map((page) => {
+                    const keyBase = `${page.type}-${page.href || ""}-${page.text}`;
+                    const isEllipsis = page.type === "ELLIPSIS" || page.text === "...";
+                    const isCurrent = page.type === "CURRENT";
+
+                    if (isEllipsis) {
+                      return (
+                        <PaginationItem key={`ellipsis-${keyBase}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+
                     return (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 bg-primary text-primary-foreground rounded"
-                      >
-                        {camelize(page.text)}
-                      </span>
+                      <PaginationItem key={keyBase}>
+                        <PaginationLink
+                          href={page.href || "#"}
+                          isActive={isCurrent}
+                          size="default"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            if (!isCurrent && page.href) {
+                              turRedirect(page.href);
+                            }
+                          }}
+                        >
+                          {camelize(page.text)}
+                        </PaginationLink>
+                      </PaginationItem>
                     );
-                  }
-                  return (
-                    <button
-                      key={idx}
-                      className="px-3 py-1 border border-border rounded hover:bg-accent"
-                      onClick={() => turRedirect(page.href)}
-                    >
-                      {camelize(page.text)}
-                    </button>
-                  );
-                })}
-              </nav>
+                  })}
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         )}
@@ -543,12 +619,12 @@ export default function SearchPage() {
               <a href="https://linkedin.com/company/viglet" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
                 LinkedIn
               </a>
-              <a href="/swagger-ui.html" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+              <NavLink to="/swagger-ui.html" className="hover:text-foreground">
                 API
-              </a>
-              <a href="/console" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+              </NavLink>
+              <NavLink to="/console" className="hover:text-foreground">
                 Console
-              </a>
+              </NavLink>
             </div>
             <div className="flex gap-4">
               <a href="https://viglet.com/#contact" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">

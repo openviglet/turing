@@ -14,6 +14,7 @@ import { ROUTES } from "./app/routes.const"
 import { ThemeProvider } from "./components/theme-provider"
 import { Toaster } from "./components/ui/sonner"
 import { TuringServiceProvider } from "./contexts/TuringServiceContext"
+import SearchPage from "./search/pages/search.page"
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Routes>
             <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.CONSOLE} replace />} />
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+            <Route path={`${ROUTES.SN_SEARCH}/:siteName`} element={<SearchPage />} />
             <Route path={ROUTES.CONSOLE} element={<ConsoleRootPage />}>
               <Route index element={<Navigate to={ROUTES.SN_INSTANCE} replace />} />
               {SERoutes}
