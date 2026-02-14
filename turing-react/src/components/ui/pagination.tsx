@@ -39,6 +39,7 @@ function PaginationLink({
     className,
     isActive,
     size = "icon",
+    children,
     ...props
 }: React.ComponentProps<"a"> & {
     isActive?: boolean
@@ -56,7 +57,9 @@ function PaginationLink({
                 className
             )}
             {...props}
-        />
+        >
+            {children}
+        </a>
     )
 }
 

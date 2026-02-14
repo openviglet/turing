@@ -1,3 +1,4 @@
+import { TurLogo } from "@/components/logo/tur-logo";
 import {
   Accordion,
   AccordionContent,
@@ -196,10 +197,7 @@ export default function SearchPage() {
         <header className="border-b border-border bg-card">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
-              <svg className="w-8 h-8" viewBox="0 0 549 549">
-                <rect className="fill-primary" x="0.063" width="548" height="548.188" rx="100" ry="100" />
-                <text className="fill-primary-foreground font-bold text-6xl" transform="translate(64.825 442.418) scale(2.74 2.741)">Tu</text>
-              </svg>
+              <TurLogo size={24} />
               <span>{turSiteName}</span>
             </div>
           </div>
@@ -228,22 +226,7 @@ export default function SearchPage() {
               variant="ghost"
               className="flex items-center gap-2 text-lg font-semibold hover:text-primary"
             >
-              <svg className="w-8 h-8" viewBox="0 0 549 549">
-                <rect
-                  className="fill-primary"
-                  x="0.063"
-                  width="548"
-                  height="548.188"
-                  rx="100"
-                  ry="100"
-                />
-                <text
-                  className="fill-primary-foreground font-bold text-6xl"
-                  transform="translate(64.825 442.418) scale(2.74 2.741)"
-                >
-                  Tu
-                </text>
-              </svg>
+              <TurLogo size={32} />
               <span>{turSiteName}</span>
             </Button>
 
