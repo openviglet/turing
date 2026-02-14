@@ -55,7 +55,7 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
         </div>
         <div className="flex items-center gap-2">
           {urlNew !== undefined && (
-            <GradientButton>
+            <GradientButton asChild>
               <NavLink to={urlNew} className="flex items-center gap-2">
                 {Icon && <Icon />} New {feature}
               </NavLink>

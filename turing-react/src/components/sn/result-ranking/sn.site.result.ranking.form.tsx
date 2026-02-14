@@ -38,7 +38,7 @@ export const SNSiteResultRankingForm: React.FC<Props> = ({ snSiteId, value, isNe
   const form = useForm<TurSNRankingExpression>({
     defaultValues: value
   });
-  const { control, register } = form;
+  const { control, register, formState: { errors } } = form;
   const [slideValue, setSlideValue] = React.useState([4]);
   const urlBase = `${ROUTES.SN_INSTANCE}/${snSiteId}/result-ranking`;;
   const navigate = useNavigate()
@@ -83,6 +83,7 @@ export const SNSiteResultRankingForm: React.FC<Props> = ({ snSiteId, value, isNe
         <FormField
           control={form.control}
           name="name"
+          rules={{ required: "Name is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
@@ -118,7 +119,7 @@ export const SNSiteResultRankingForm: React.FC<Props> = ({ snSiteId, value, isNe
           )}
         />
         <FormItem>
-          <FormLabel>Content that matches</FormLabel>
+          <FormLabel>Content that matches <span className="text-destructive"> *</span></FormLabel>
           <FormDescription>Create simple filter expressions to target specific content.</FormDescription>
           <FormControl>
             <DynamicResultRankingFields
@@ -126,6 +127,7 @@ export const SNSiteResultRankingForm: React.FC<Props> = ({ snSiteId, value, isNe
               control={control}
               register={register}
               snSiteId={snSiteId}
+              errors={errors}
             />
           </FormControl>
 

@@ -21,14 +21,21 @@
 
 package com.viglet.turing.persistence.model.sn.spotlight;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.io.Serial;
 import java.io.Serializable;
+
+import org.hibernate.annotations.UuidGenerator;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the turSNSiteSpotlightDocument database table.
@@ -40,7 +47,7 @@ import java.io.Serializable;
 @Getter
 @Entity
 @Table(name = "sn_site_spotlight_term")
-@JsonIgnoreProperties({ "turSNSiteSpotlight"})
+@JsonIgnoreProperties({ "turSNSiteSpotlight" })
 public class TurSNSiteSpotlightTerm implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;

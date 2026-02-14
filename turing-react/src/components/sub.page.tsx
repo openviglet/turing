@@ -63,9 +63,11 @@ export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, i
                         <span className="text-base font-semibold">{name}</span>)}
                     </NavLink>
                   </SidebarMenuButton>
-                  <SidebarMenuAction>{!isNew &&
-                    <DialogDelete feature={feature} name={name} onDelete={onDelete} open={open} setOpen={setOpen} />
-                  }</SidebarMenuAction>
+                  {!isNew && (
+                    <SidebarMenuAction className="top-1/2 -translate-y-1.5">
+                      <DialogDelete feature={feature} name={name} onDelete={onDelete} open={open} setOpen={setOpen} />
+                    </SidebarMenuAction>
+                  )}
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarHeader>

@@ -135,6 +135,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="title"
+                rules={{ required: "Title is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title</FormLabel>
@@ -173,6 +174,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="turLLMVendor.id"
+                rules={{ required: "Vendor is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Vendor</FormLabel>
@@ -196,6 +198,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="url"
+                rules={{ required: "Hostname is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Hostname</FormLabel>
@@ -213,6 +216,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="modelName"
+                rules={{ required: "Model Name is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Model Name</FormLabel>

@@ -38,40 +38,14 @@ interface Props {
 }
 
 export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurSNSite>();
-  const { setValue } = form;
+  const form = useForm<TurSNSite>({
+    defaultValues: value
+  });
   const urlBase = ROUTES.SN_INSTANCE;
   const navigate = useNavigate()
   useEffect(() => {
-    setValue("id", value.id)
-    setValue("name", value.name)
-    setValue("description", value.description);
-    setValue("turSEInstance", value.turSEInstance);
-    setValue("rowsPerPage", value.rowsPerPage)
-    setValue("exactMatch", value.exactMatch);
-    setValue("wildcardNoResults", value.wildcardNoResults);
-    setValue("wildcardAlways", value.wildcardAlways);
-    setValue("facet", value.facet);
-    setValue("rowsPerPage", value.rowsPerPage);
-    setValue("facetSort", value.facetSort);
-    setValue("facetType", value.facetType);
-    setValue("facetItemType", value.facetItemType);
-    setValue("hl", value.hl);
-    setValue("hlPre", value.hlPre);
-    setValue("hlPost", value.hlPost);
-    setValue("spellCheck", value.spellCheck);
-    setValue("spellCheckFixes", value.spellCheckFixes);
-    setValue("mlt", value.mlt);
-    setValue("spotlightWithResults", value.spotlightWithResults);
-    setValue("exactMatchField", value.exactMatchField);
-    setValue("defaultField", value.defaultField);
-    setValue("defaultTitleField", value.defaultTitleField);
-    setValue("defaultTextField", value.defaultTextField);
-    setValue("defaultDescriptionField", value.defaultDescriptionField);
-    setValue("defaultDateField", value.defaultDateField);
-    setValue("defaultImageField", value.defaultImageField);
-    setValue("defaultURLField", value.defaultURLField);
-  }, [setValue, value]);
+    form.reset(value);
+  }, [value]);
 
 
   function onSubmit(snSite: TurSNSite) {

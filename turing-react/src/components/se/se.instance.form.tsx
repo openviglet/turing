@@ -133,6 +133,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={control}
                 name="title"
+                rules={{ required: "Title is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title</FormLabel>
@@ -171,6 +172,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={control}
                 name="turSEVendor.id"
+                rules={{ required: "Vendor is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Vendor</FormLabel>
@@ -194,6 +196,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={control}
                 name="host"
+                rules={{ required: "Host is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Host</FormLabel>
@@ -211,6 +214,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={control}
                 name="port"
+                rules={{ required: "Port is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Port</FormLabel>

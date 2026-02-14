@@ -20,13 +20,19 @@
  */
 package com.viglet.turing.persistence.model.se;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.io.Serial;
 import java.io.Serializable;
+
+import org.hibernate.annotations.UuidGenerator;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the TurSEInstance database table.
@@ -48,7 +54,7 @@ public class TurSEInstance implements Serializable {
 	@Column(nullable = false, length = 100)
 	private String title;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = true, length = 250)
 	private String description;
 
 	@Column(nullable = false)

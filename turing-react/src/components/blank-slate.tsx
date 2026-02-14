@@ -1,5 +1,4 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
 import { GradientButton } from "./ui/gradient-button";
 
 interface Props {
@@ -18,10 +17,11 @@ export const BlankSlate: React.FC<Props> = ({ icon: Icon, title, description, ur
             </div>
             <h1 className="mb-1">{title}</h1>
             <p className="text-muted-foreground text-sm mt-1">{description}</p>
-            {urlNew && (<GradientButton className="mt-4">
-                <NavLink to={urlNew}>
+            {urlNew && (
+                <GradientButton className="mt-4" to={urlNew}>
                     {buttonText}
-                </NavLink></GradientButton>)}
+                </GradientButton>
+            )}
         </div>
     )
 }

@@ -126,6 +126,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="title"
+                rules={{ required: "Title is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title</FormLabel>
@@ -164,6 +165,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="turStoreVendor.id"
+                rules={{ required: "Vendor is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Vendor</FormLabel>
@@ -187,6 +189,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="url"
+                rules={{ required: "Endpoint is required." }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Endpoint</FormLabel>

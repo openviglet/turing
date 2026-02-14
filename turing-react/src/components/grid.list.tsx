@@ -25,7 +25,6 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import type { TurGridItem } from "@/models/ui/grid-item";
-import { NavLink } from "react-router-dom";
 import { GradientButton } from "./ui/gradient-button";
 
 interface Props {
@@ -51,9 +50,9 @@ export const columns: ColumnDef<TurGridItem>[] = [
         cell: ({ row }) => {
             return (
                 // Ícone de lápis azul estilo Google
-                <GradientButton variant="ghost" size="icon" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 w-8">
-                    <NavLink to={row.getValue("url")}><Pencil className="h-4 w-4" />
-                        <span className="sr-only">Edit</span></NavLink>
+                <GradientButton variant="ghost" size="icon" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 w-8" to={row.getValue("url")}>
+                    <Pencil className="h-4 w-4" />
+                    <span className="sr-only">Edit</span>
                 </GradientButton>
             );
         },

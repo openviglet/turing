@@ -59,13 +59,11 @@ export const columns: ColumnDef<TurSNSiteLocale>[] = [
             const locale = row.original;
             return (
                 <div className="flex justify-end gap-2">
-                    <GradientButton asChild variant="outline">
-                        <a href={`${ROUTES.SN_INSTANCE}/${locale.turSNSite.id}/locale/${locale.id}`}>
-                            Edit
-                        </a>
+                    <GradientButton asChild variant="outline" to={`${ROUTES.SN_INSTANCE}/${locale.turSNSite.id}/locale/${locale.id}`}>
+                        Edit
                     </GradientButton>
                     <GradientButton asChild>
-                        <a href={`/sn/${locale.turSNSite.id}?_setlocale=${locale.language}`}>
+                        <a href={`/sn/${locale.turSNSite.name}?_setlocale=${locale.language}`} target="_blank">
                             Open Search
                         </a>
                     </GradientButton>

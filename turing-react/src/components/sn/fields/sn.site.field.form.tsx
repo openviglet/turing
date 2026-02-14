@@ -108,6 +108,7 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
         <FormField
           control={form.control}
           name="name"
+          rules={{ required: "Name is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
@@ -146,6 +147,7 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
         <FormField
           control={form.control}
           name="type"
+          rules={{ required: "Type is required." }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Type</FormLabel>
