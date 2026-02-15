@@ -22,7 +22,6 @@
 package com.viglet.turing.sn;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -31,6 +30,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.core.BrowserCallback;
@@ -60,7 +60,8 @@ class TurSNQueueTest {
     @Test
     void testGetQueueSizeCountsMessages() throws Exception {
         when(browser.getEnumeration()).thenReturn(Collections.enumeration(List.of("a", "b", "c")));
-        when(jmsTemplate.browse(eq(TurSNConstants.INDEXING_QUEUE), any(BrowserCallback.class)))
+        when(jmsTemplate.browse(eq(TurSNConstants.INDEXING_QUEUE),
+                ArgumentMatchers.<BrowserCallback<Integer>>any()))
                 .thenAnswer(invocation -> {
                     BrowserCallback<Integer> callback = invocation.getArgument(1);
                     return callback.doInJms(session, browser);

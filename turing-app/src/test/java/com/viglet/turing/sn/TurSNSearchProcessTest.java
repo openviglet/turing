@@ -103,7 +103,7 @@ class TurSNSearchProcessTest {
     void testExistsByTurSNSiteAndLanguage() {
         TurSNSite site = new TurSNSite();
         when(turSNSiteRepository.findByName("site")).thenReturn(Optional.of(site));
-        when(turSNSiteLocaleRepository.existsByTurSNSiteAndLanguage(eq(site), eq(Locale.US)))
+        when(turSNSiteLocaleRepository.existsByTurSNSiteAndLanguage(site, Locale.US))
                 .thenReturn(true);
 
         TurSNSearchProcess process = new TurSNSearchProcess(turSNSiteFieldExtRepository,

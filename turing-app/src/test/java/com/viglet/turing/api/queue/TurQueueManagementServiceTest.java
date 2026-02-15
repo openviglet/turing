@@ -179,7 +179,7 @@ class TurQueueManagementServiceTest {
         }
 
         @Test
-        void testGetQueueMessagesWithNonExistentQueue() throws Exception {
+        void testGetQueueMessagesWithNonExistentQueue() {
                 String queueName = "nonExistentQueue";
 
                 when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))

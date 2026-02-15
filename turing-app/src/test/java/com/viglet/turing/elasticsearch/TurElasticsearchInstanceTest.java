@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +48,7 @@ class TurElasticsearchInstanceTest {
         when(client._transport()).thenReturn(transport);
 
         TurElasticsearchInstance instance = new TurElasticsearchInstance(client,
-                new URL("http://localhost:9200"), "index");
+                URI.create("http://localhost:9200").toURL(), "index");
         instance.close();
 
         verify(transport).close();

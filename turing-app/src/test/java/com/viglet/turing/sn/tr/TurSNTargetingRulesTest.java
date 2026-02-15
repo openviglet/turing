@@ -50,9 +50,10 @@ class TurSNTargetingRulesTest {
 
         String result = rules.orMethod(List.of("group:Admins", "role:Editor"));
 
-        assertThat(result).contains("group:Admins");
-        assertThat(result).contains("role:Editor");
-        assertThat(result).contains("NOT group:*");
-        assertThat(result).contains("NOT role:*");
+        assertThat(result)
+                .contains("group:Admins")
+                .contains("role:Editor")
+                .contains("NOT group:*")
+                .contains("NOT role:*");
     }
 }

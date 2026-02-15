@@ -71,7 +71,7 @@ class TurElasticsearchTest {
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", new TurSNConfig(),
                 new TurSEParameters(searchParams), Locale.US, URI.create("http://example.com"));
         TurElasticsearchInstance instance = new TurElasticsearchInstance(elasticsearchClient,
-                new java.net.URL("http://localhost:9200"), "index");
+                URI.create("http://localhost:9200").toURL(), "index");
 
         Optional<?> result = service.retrieveElasticsearchFromSN(instance, context);
 
@@ -93,7 +93,7 @@ class TurElasticsearchTest {
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", new TurSNConfig(),
                 params, Locale.US, URI.create("http://example.com"));
         TurElasticsearchInstance instance = new TurElasticsearchInstance(elasticsearchClient,
-                new java.net.URL("http://localhost:9200"), "index");
+                URI.create("http://localhost:9200").toURL(), "index");
 
         Optional<?> result = service.retrieveElasticsearchFromSN(instance, context);
 

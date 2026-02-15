@@ -50,7 +50,7 @@ class TurSNTemplateTest {
         assertThat(site.getMlt()).isEqualTo(1);
         assertThat(site.getSpellCheck()).isEqualTo(1);
         assertThat(site.getSpellCheckFixes()).isEqualTo(1);
-        assertThat(site.getThesaurus()).isEqualTo(0);
+        assertThat(site.getThesaurus()).isZero();
         assertThat(site.getExactMatch()).isEqualTo(1);
         assertThat(site.getDefaultField()).isEqualTo(DEFAULT);
     }
