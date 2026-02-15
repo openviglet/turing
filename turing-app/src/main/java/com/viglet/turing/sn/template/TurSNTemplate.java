@@ -47,6 +47,7 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
@@ -165,6 +166,9 @@ public class TurSNTemplate {
         }
 
         private String getCoreName(TurSNSiteLocale turSNSiteLocale, String username) {
+                if (StringUtils.hasText(turSNSiteLocale.getCore())) {
+                        return turSNSiteLocale.getCore();
+                }
                 if (turConfigProperties.isMultiTenant()) {
                         return String.format("%s_%s_%s", username,
                                         turSNSiteLocale.getTurSNSite().getName().toLowerCase().replace(" ", "_"),

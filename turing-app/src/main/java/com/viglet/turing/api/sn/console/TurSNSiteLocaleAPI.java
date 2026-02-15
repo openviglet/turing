@@ -113,7 +113,7 @@ public class TurSNSiteLocaleAPI {
 			@PathVariable String snSiteId) {
 		return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
 			turSNSiteLocale.setTurSNSite(turSNSite);
-			if (StringUtils.hasText(turSNSiteLocale.getCore())) {
+			if (!StringUtils.hasText(turSNSiteLocale.getCore())) {
 				turSNSiteLocale.setCore(turSNTemplate.createSolrCore(turSNSiteLocale, principal.getName()));
 			} else {
 				turSNTemplate.createSolrCore(turSNSiteLocale, principal.getName());

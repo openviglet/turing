@@ -88,7 +88,7 @@ public class TurSNUtils {
 
     public static boolean hasCorrectedText(TurSESpellCheckResult turSESpellCheckResult) {
         return turSESpellCheckResult.isCorrected()
-                && !StringUtils.hasText(turSESpellCheckResult.getCorrectedText());
+                && StringUtils.hasText(turSESpellCheckResult.getCorrectedText());
     }
 
     public static boolean isAutoCorrectionEnabled(TurSNSiteSearchContext context,
