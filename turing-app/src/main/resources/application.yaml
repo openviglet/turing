@@ -118,7 +118,7 @@ turing:
         seconds: 86400000
       enabled: false
   mongodb:
-    enabled: true
+    enabled: false
     uri: mongodb://localhost:27017
     logging:
       database: turingLog

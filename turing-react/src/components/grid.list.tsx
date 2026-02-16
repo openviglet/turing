@@ -31,8 +31,6 @@ interface Props {
     gridItemList: TurGridItem[];
 }
 
-
-// 3. Definição das Colunas
 export const columns: ColumnDef<TurGridItem>[] = [
     {
         accessorKey: "name",
@@ -49,7 +47,6 @@ export const columns: ColumnDef<TurGridItem>[] = [
         header: "Actions",
         cell: ({ row }) => {
             return (
-                // Ícone de lápis azul estilo Google
                 <GradientButton variant="ghost" size="icon" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 w-8" to={row.getValue("url")}>
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Edit</span>

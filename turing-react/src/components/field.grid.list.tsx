@@ -1,31 +1,48 @@
 import {
-    type ColumnDef
+    type ColumnDef,
+    type ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    type SortingState,
+    useReactTable,
+    type VisibilityState,
 } from "@tanstack/react-table"
 import {
     AlertTriangle,
     ArrowUpDown,
-    CheckCircle2
+    CheckCircle2,
+    ChevronDown
 } from "lucide-react"
 import * as React from "react"
 
-import { ROUTES } from "@/app/routes.const"
-import { SNSiteFieldGridList } from "@/components/field.grid.list"
-import { SubPageHeader } from "@/components/sub.page.header"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
+    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { GradientButton } from "@/components/ui/gradient-button"
+import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 import type { TurSNFieldCheck } from "@/models/sn/sn-field-check.model.ts"
 import type { TurSNStatusFields } from "@/models/sn/sn-field-status.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
-import { IconAlignBoxCenterStretch } from "@tabler/icons-react"
-import { useParams } from "react-router-dom"
+import { IconColumns3Filled } from "@tabler/icons-react"
+import type { PropsWithChildren } from "react"
 
 type StatusFieldDropdownProps = {
     statusField?: TurSNFieldCheck;
@@ -289,31 +306,224 @@ const buildColumns = (
     ]
 
 const turSNFieldService = new TurSNFieldService();
-export default function SNSiteFieldListPage() {
-    const { id } = useParams() as { id: string };
-    const [data, setSnField] = React.useState<TurSNSiteField[]>([]);
-    const [statusFields, setStatusFields] = React.useState<TurSNStatusFields | null>(
-        null
+interface Props {
+    statusFields: TurSNStatusFields | null;
+    id: string;
+    data: TurSNSiteField[];
+    setSnField: React.Dispatch<React.SetStateAction<TurSNSiteField[]>>;
+}
+export const SNSiteFieldGridList: React.FC<PropsWithChildren<Props>> = ({ statusFields, id, data, setSnField }) => {
+    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+        []
+    )
+    const [columnVisibility, setColumnVisibility] =
+        React.useState<VisibilityState>({})
+    const [rowSelection, setRowSelection] = React.useState({})
+    const [savingFieldIds, setSavingFieldIds] = React.useState<Set<string>>(
+        new Set()
     );
-    React.useEffect(() => {
-        setStatusFields(null);
-        turSNFieldService.query(id).then(setSnField);
-        turSNFieldService
-            .getStatusFields(id)
-            .then(setStatusFields)
-            .catch((error) => {
-                console.error("Failed to load SN field status", error);
-            });
-    }, [id])
+
+    const statusFieldMap = React.useMemo(() => {
+        const map = new Map<string, TurSNFieldCheck>();
+        statusFields?.fields?.forEach((field) => {
+            map.set(field.id, field);
+        });
+        return map;
+    }, [statusFields]);
+
+    const setFieldSaving = React.useCallback((fieldId: string, saving: boolean) => {
+        setSavingFieldIds((prev) => {
+            const next = new Set(prev);
+            if (saving) {
+                next.add(fieldId);
+            } else {
+                next.delete(fieldId);
+            }
+            return next;
+        });
+    }, []);
+
+    const isSavingField = React.useCallback(
+        (fieldId: string) => savingFieldIds.has(fieldId),
+        [savingFieldIds]
+    );
+
+    const handleToggle = React.useCallback(
+        (fieldId: string, key: FieldToggleKey, checked: boolean) => {
+            const currentField = data.find((field) => field.id === fieldId);
+            if (!currentField) {
+                return;
+            }
+
+            const updatedField: TurSNSiteField = {
+                ...currentField,
+                [key]: checked ? 1 : 0,
+            };
+
+            setSnField((prev) =>
+                prev.map((field) =>
+                    field.id === fieldId ? updatedField : field
+                )
+            );
+
+            setFieldSaving(fieldId, true);
+            turSNFieldService
+                .update(id, updatedField)
+                .catch((error) => {
+                    console.error("Failed to update SN field", error);
+                    setSnField((prev) =>
+                        prev.map((field) =>
+                            field.id === fieldId ? currentField : field
+                        )
+                    );
+                })
+                .finally(() => {
+                    setFieldSaving(fieldId, false);
+                });
+        },
+        [data, id, setFieldSaving]
+    );
+
+    const columns = React.useMemo(
+        () => buildColumns(statusFieldMap, handleToggle, isSavingField),
+        [statusFieldMap, handleToggle, isSavingField]
+    );
+
+    const table = useReactTable({
+        data,
+        columns,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
+        state: {
+            sorting,
+            columnFilters,
+            columnVisibility,
+            rowSelection,
+        },
+    })
+
     return (
-        <>
-            <SubPageHeader
-                icon={IconAlignBoxCenterStretch}
-                name="Field"
-                feature="Field"
-                description="Custom Search Engine Fields."
-                urlNew={`${ROUTES.SN_INSTANCE}/${id}/field/new`} />
-            <SNSiteFieldGridList id={id} statusFields={statusFields} data={data} setSnField={setSnField} />
-        </>
+        <div className="px-6">
+            <div className="flex items-center py-4">
+                <Input
+                    placeholder="Filter fields..."
+                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) =>
+                        table.getColumn("name")?.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm"
+                />
+                <div className="ml-auto">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <GradientButton variant="outline">
+                                <IconColumns3Filled /> Columns <ChevronDown />
+                            </GradientButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {table
+                                .getAllColumns()
+                                .filter((column) => column.getCanHide())
+                                .map((column) => {
+                                    return (
+                                        <DropdownMenuCheckboxItem
+                                            key={column.id}
+                                            className="capitalize"
+                                            checked={column.getIsVisible()}
+                                            onCheckedChange={(value) =>
+                                                column.toggleVisibility(value)
+                                            }
+                                        >
+                                            {column.id}
+                                        </DropdownMenuCheckboxItem>
+                                    )
+                                })}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+            <div className="overflow-hidden rounded-md border">
+                <Table>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                    return (
+                                        <TableHead key={header.id}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                        </TableHead>
+                                    )
+                                })}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+            <div className="flex items-center justify-end space-x-2 py-4">
+                <div className="text-muted-foreground flex-1 text-sm">
+                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                </div>
+                <div className="space-x-2">
+                    <GradientButton
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </GradientButton>
+                    <GradientButton
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </GradientButton>
+                </div>
+            </div>
+        </div>
+
     )
 }

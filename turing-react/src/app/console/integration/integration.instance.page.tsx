@@ -1,4 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
+import { LoadProvider } from "@/components/loading-provider";
 import { SubPage } from "@/components/sub.page";
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
 import { TurIntegrationInstanceService } from "@/services/integration/integration.service";
@@ -46,20 +47,30 @@ const data = {
 }
 export default function IntegrationInstancePage() {
     const { id } = useParams() as { id: string };
-    const [integration, setIntegration] = useState<TurIntegrationInstance>({} as TurIntegrationInstance);
+    const [integration, setIntegration] = useState<TurIntegrationInstance>();
     const [isNew, setIsNew] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate()
     const urlBase = `${ROUTES.INTEGRATION_INSTANCE}/${id}`
     useEffect(() => {
-        if (id !== "new") {
-            turIntegrationInstanceService.get(id).then(setIntegration);
+        if (id === "new") {
+            turIntegrationInstanceService.query().then(() => setIntegration({} as TurIntegrationInstance)).catch(() => setError("Connection error or timeout while fetching Integration service."));
+        } else {
+            turIntegrationInstanceService.get(id).then(setIntegration).catch(() => setError("Connection error or timeout while fetching Integration instance."));
             setIsNew(false);
         }
     }, [id])
 
+
+
     async function onDelete() {
         console.log("delete");
+        if (!integration) {
+            toast.error("Integration instance is not loaded.");
+            setOpen(false);
+            return;
+        }
         try {
             if (await turIntegrationInstanceService.delete(integration)) {
                 toast.success(`The ${integration.title} Integration Instance was deleted`);
@@ -76,7 +87,9 @@ export default function IntegrationInstancePage() {
     }
 
     return (
-        <SubPage icon={IconSearch} feature={"AEM Integration"} name={integration.title}
-            onDelete={onDelete} data={data} isNew={isNew} urlBase={urlBase} open={open} setOpen={setOpen} />
+        <LoadProvider checkIsNotUndefined={integration} error={error} tryAgainUrl={`${ROUTES.INTEGRATION_INSTANCE}/${id}`}>
+            {integration && <SubPage icon={IconSearch} feature={"AEM Integration"} name={integration.title}
+                onDelete={onDelete} data={data} isNew={isNew} urlBase={urlBase} open={open} setOpen={setOpen} />}
+        </LoadProvider>
     )
 }

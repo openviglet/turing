@@ -113,6 +113,12 @@ function GradientButton({
                 to={to}
                 data-slot="gradient-button"
                 className={classes}
+                onClick={e => {
+                    if (globalThis.location.pathname === (typeof to === "string" ? to : (to as any).pathname)) {
+                        globalThis.location.reload()
+                    }
+                    if (props.onClick) props.onClick(e as React.MouseEvent<any, MouseEvent>)
+                }}
             >
                 {props.children}
             </NavLink>
