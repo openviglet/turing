@@ -33,6 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
@@ -54,108 +55,108 @@ import com.viglet.turing.sn.tr.TurSNTargetingRules;
 @ExtendWith(MockitoExtension.class)
 class TurSolrQueryBuilderTest {
 
-    @Mock
-    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+        @Mock
+        private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
 
-    @Mock
-    private TurSNRankingExpressionRepository turSNRankingExpressionRepository;
+        @Mock
+        private TurSNRankingExpressionRepository turSNRankingExpressionRepository;
 
-    @Mock
-    private TurSNRankingConditionRepository turSNRankingConditionRepository;
+        @Mock
+        private TurSNRankingConditionRepository turSNRankingConditionRepository;
 
-    @Mock
-    private TurSNTargetingRules turSNTargetingRules;
+        @Mock
+        private TurSNTargetingRules turSNTargetingRules;
 
-    @Test
-    void testHasGroupWhenGroupIsPresent() {
-        TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
-                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
-        TurSNSearchParams searchParams = new TurSNSearchParams();
-        searchParams.setGroup("group");
-        com.viglet.turing.commons.se.TurSEParameters parameters = new com.viglet.turing.commons.se.TurSEParameters(
-                searchParams);
+        @Test
+        void testHasGroupWhenGroupIsPresent() {
+                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
+                                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
+                TurSNSearchParams searchParams = new TurSNSearchParams();
+                searchParams.setGroup("group");
+                TurSEParameters parameters = new TurSEParameters(
+                                searchParams);
 
-        assertThat(builder.hasGroup(parameters)).isFalse();
-    }
+                assertThat(builder.hasGroup(parameters)).isTrue();
+        }
 
-    @Test
-    void testHasGroupWhenGroupIsMissing() {
-        TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
-                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
-        TurSNSearchParams searchParams = new TurSNSearchParams();
-        com.viglet.turing.commons.se.TurSEParameters parameters = new com.viglet.turing.commons.se.TurSEParameters(
-                searchParams);
+        @Test
+        void testHasGroupWhenGroupIsMissing() {
+                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
+                                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
+                TurSNSearchParams searchParams = new TurSNSearchParams();
+                TurSEParameters parameters = new TurSEParameters(
+                                searchParams);
 
-        assertThat(builder.hasGroup(parameters)).isTrue();
-    }
+                assertThat(builder.hasGroup(parameters)).isFalse();
+        }
 
-    @Test
-    void testGetFqFieldsExtractsKeys() {
-        TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
-                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
-        TurSNFilterParams params = TurSNFilterParams.builder()
-                .defaultValues(List.of("category:books", "type:article"))
-                .and(List.of("author:john"))
-                .or(List.of("format:pdf"))
-                .build();
+        @Test
+        void testGetFqFieldsExtractsKeys() {
+                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
+                                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
+                TurSNFilterParams params = TurSNFilterParams.builder()
+                                .defaultValues(List.of("category:books", "type:article"))
+                                .and(List.of("author:john"))
+                                .or(List.of("format:pdf"))
+                                .build();
 
-        List<String> keys = builder.getFqFields(params);
+                List<String> keys = builder.getFqFields(params);
 
-        assertThat(keys).containsExactly("category", "type", "author", "format");
-    }
+                assertThat(keys).containsExactly("category", "type", "author", "format");
+        }
 
-    @Test
-    void testGetFacetTypeAndFacetItemTypeValuesUsesSiteDefaults() {
-        TurSNSite site = new TurSNSite();
-        site.setFacetType(TurSNSiteFacetFieldEnum.AND);
-        site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
-        TurSNFilterParams params = TurSNFilterParams.builder()
-                .operator(TurSNFilterQueryOperator.NONE)
-                .itemOperator(TurSNFilterQueryOperator.NONE)
-                .build();
+        @Test
+        void testGetFacetTypeAndFacetItemTypeValuesUsesSiteDefaults() {
+                TurSNSite site = new TurSNSite();
+                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+                TurSNFilterParams params = TurSNFilterParams.builder()
+                                .operator(TurSNFilterQueryOperator.NONE)
+                                .itemOperator(TurSNFilterQueryOperator.NONE)
+                                .build();
 
-        TurSNFacetTypeContext context = new TurSNFacetTypeContext(site, params);
+                TurSNFacetTypeContext context = new TurSNFacetTypeContext(site, params);
 
-        assertThat(TurSolrQueryBuilder.getFacetTypeAndFacetItemTypeValues(context))
-                .isEqualTo("AND-OR");
-    }
+                assertThat(TurSolrQueryBuilder.getFacetTypeAndFacetItemTypeValues(context))
+                                .isEqualTo("AND-OR");
+        }
 
-    @Test
-    void testGetFacetFieldsInFilterQueryFiltersEnabledFacets() {
-        TurSNSite site = new TurSNSite();
-        TurSNFilterParams params = TurSNFilterParams.builder()
-                .defaultValues(List.of("category:books", "other:1"))
-                .build();
-        TurSNSiteFieldExt categoryFacet = TurSNSiteFieldExt.builder().name("category").build();
-        TurSNSiteFieldExt typeFacet = TurSNSiteFieldExt.builder().name("type").build();
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
-                .thenReturn(List.of(categoryFacet, typeFacet));
+        @Test
+        void testGetFacetFieldsInFilterQueryFiltersEnabledFacets() {
+                TurSNSite site = new TurSNSite();
+                TurSNFilterParams params = TurSNFilterParams.builder()
+                                .defaultValues(List.of("category:books", "other:1"))
+                                .build();
+                TurSNSiteFieldExt categoryFacet = TurSNSiteFieldExt.builder().name("category").build();
+                TurSNSiteFieldExt typeFacet = TurSNSiteFieldExt.builder().name("type").build();
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
+                                .thenReturn(List.of(categoryFacet, typeFacet));
 
-        TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
-                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
-        TurSNFacetTypeContext context = new TurSNFacetTypeContext(site, params);
+                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
+                                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
+                TurSNFacetTypeContext context = new TurSNFacetTypeContext(site, params);
 
-        List<String> fields = builder.getFacetFieldsInFilterQuery(context);
+                List<String> fields = builder.getFacetFieldsInFilterQuery(context);
 
-        assertThat(fields).containsExactly("category");
-    }
+                assertThat(fields).containsExactly("category");
+        }
 
-    @Test
-    void testPrepareQueryMLTConfiguresQueryWhenEnabled() {
-        TurSNSite site = new TurSNSite();
-        site.setMlt(1);
-        TurSNSiteFieldExt mltField = TurSNSiteFieldExt.builder().name("body").build();
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1))
-                .thenReturn(List.of(mltField));
+        @Test
+        void testPrepareQueryMLTConfiguresQueryWhenEnabled() {
+                TurSNSite site = new TurSNSite();
+                site.setMlt(1);
+                TurSNSiteFieldExt mltField = TurSNSiteFieldExt.builder().name("body").build();
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1))
+                                .thenReturn(List.of(mltField));
 
-        TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
-                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
-        SolrQuery query = new SolrQuery();
+                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
+                                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
+                SolrQuery query = new SolrQuery();
 
-        List<TurSNSiteFieldExt> result = builder.prepareQueryMLT(site, query);
+                List<TurSNSiteFieldExt> result = builder.prepareQueryMLT(site, query);
 
-        assertThat(result).containsExactly(mltField);
-        assertThat(query.getBool(MoreLikeThisParams.MLT)).isTrue();
-        assertThat(query.get(MoreLikeThisParams.SIMILARITY_FIELDS)).isEqualTo("body");
-    }
+                assertThat(result).containsExactly(mltField);
+                assertThat(query.getBool(MoreLikeThisParams.MLT)).isTrue();
+                assertThat(query.get(MoreLikeThisParams.SIMILARITY_FIELDS)).isEqualTo("body");
+        }
 }
