@@ -18,9 +18,8 @@ import {
 } from "@/components/ui/select"
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model"
 import type { TurIntegrationIndexingManager } from "@/models/integration/integration-indexing-manager.model"
-import { TurIntegrationAemSourceService } from "@/services/integration/integration-aem-source.service"
 import { TurIntegrationIndexingManagerService } from "@/services/integration/integration-indexing-manager.service"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { GradientButton } from "../ui/gradient-button"
@@ -36,11 +35,12 @@ interface IndexingManagerFormValues {
 interface IntegrationIndexingManagerFormProps {
   integrationId: string;
   mode: "PUBLISHING" | "UNPUBLISHING" | "INDEXING" | "DEINDEXING";
+  sources?: TurIntegrationAemSource[];
 }
 
-export const IntegrationIndexAdminForm: React.FC<IntegrationIndexingManagerFormProps> = ({ integrationId, mode }) => {
+export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManagerFormProps> = ({ integrationId, mode, sources }) => {
   const turIntegrationIndexingManagerService = useMemo(() => new TurIntegrationIndexingManagerService(integrationId), [integrationId]);
-  const turIntegrationAemSourceService = useMemo(() => new TurIntegrationAemSourceService(integrationId), [integrationId]);
+
 
   const form = useForm<IndexingManagerFormValues>({
     defaultValues: {
@@ -51,11 +51,8 @@ export const IntegrationIndexAdminForm: React.FC<IntegrationIndexingManagerFormP
     }
   })
 
-  const [sources, setSources] = useState<TurIntegrationAemSource[]>([])
 
-  useEffect(() => {
-    turIntegrationAemSourceService.query().then(setSources)
-  }, [turIntegrationAemSourceService])
+
 
   async function onSubmit(data: IndexingManagerFormValues) {
     try {
@@ -106,7 +103,7 @@ export const IntegrationIndexAdminForm: React.FC<IntegrationIndexingManagerFormP
                     <SelectValue placeholder="Select a source" />
                   </SelectTrigger>
                   <SelectContent>
-                    {sources.map((s) => (
+                    {sources?.map((s) => (
                       <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>
                     ))}
                   </SelectContent>

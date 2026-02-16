@@ -1,7 +1,11 @@
-import { IntegrationIndexAdminForm } from "@/components/integration/integration.index.admin.form";
+import { ROUTES } from "@/app/routes.const";
+import { IntegrationIndexingManagerForm } from "@/components/integration/integration.index.manager.form";
+import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model";
+import { TurIntegrationAemSourceService } from "@/services/integration/integration-aem-source.service";
 import {
   IconAdjustmentsSearch,
   IconCloudDownload,
@@ -10,10 +14,17 @@ import {
   IconPlus,
   IconTrash
 } from "@tabler/icons-react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function IntegrationInstanceIndexAdminPage() {
   const { id } = useParams() as { id: string };
+  const [error, setError] = useState<string | null>(null);
+  const turIntegrationAemSourceService = useMemo(() => new TurIntegrationAemSourceService(id), [id]);
+  const [sources, setSources] = useState<TurIntegrationAemSource[]>()
+  useEffect(() => {
+    turIntegrationAemSourceService.query().then(setSources).catch(() => setError("Failed to load integration details"));
+  }, [turIntegrationAemSourceService])
 
   const items = [
     {
@@ -59,7 +70,7 @@ export default function IntegrationInstanceIndexAdminPage() {
   ];
 
   return (
-    <>
+    <LoadProvider checkIsNotUndefined={sources} error={error} tryAgainUrl={`${ROUTES.INTEGRATION_INSTANCE}/${id}`} >
       <SubPageHeader icon={IconAdjustmentsSearch} feature="Indexing Manager" name="Indexing Manager" description="Directly manage and override content indexing states to ensure search accuracy." />
       <div className="w-full mx-auto mt-6 px-6">
         <Tabs defaultValue="INDEXING" className="w-full">
@@ -104,12 +115,12 @@ export default function IntegrationInstanceIndexAdminPage() {
                     {item.description}
                   </div>
                 </div>
-                <IntegrationIndexAdminForm integrationId={id} mode={item.mode} />
+                <IntegrationIndexingManagerForm integrationId={id} mode={item.mode} sources={sources} />
               </TabsContent>
             ))}
           </div>
         </Tabs>
       </div>
-    </>
+    </LoadProvider>
   )
 }
