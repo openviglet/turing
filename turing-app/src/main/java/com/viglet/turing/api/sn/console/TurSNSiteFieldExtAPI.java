@@ -193,14 +193,16 @@ public class TurSNSiteFieldExtAPI {
     @Operation(summary = "Delete a Semantic Navigation Site Field Ext")
     @DeleteMapping("/{id}")
     public boolean turSNSiteFieldExtDelete(@PathVariable String snSiteId, @PathVariable String id) {
+
         return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExt -> {
+            turSNSiteRepository.findById(snSiteId)
+                    .ifPresent(turSNSite -> turSNSiteFieldRepository.findById(turSNSiteFieldExt.getExternalId())
+                            .ifPresent(turSNSiteField -> this.deleteSolrSchema(turSNSite, turSNSiteField)));
             if (turSNSiteFieldExt.getSnType().equals(TurSNFieldType.SE)) {
                 this.turSNSiteFieldRepository.delete(turSNSiteFieldExt.getExternalId());
             }
             this.turSNSiteFieldExtRepository.delete(id);
-            turSNSiteRepository.findById(snSiteId)
-                    .ifPresent(turSNSite -> turSNSiteFieldRepository.findById(turSNSiteFieldExt.getExternalId())
-                            .ifPresent(turSNSiteField -> this.deleteSolrSchema(turSNSite, turSNSiteField)));
+
             return true;
         }).orElse(false);
     }
@@ -355,8 +357,12 @@ public class TurSNSiteFieldExtAPI {
     }
 
     private void deleteSolrSchema(TurSNSite turSNSite, TurSNSiteField turSNSiteField) {
+        if (turSNSite.getTurSEInstance() == null || turSNSite.getTurSNSiteLocales() == null
+                || turSNSite.getTurSNSiteLocales().isEmpty()) {
+            return;
+        }
         turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
-                .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().parallelStream()
+                .ifPresent(turSEInstance -> new ArrayList<>(turSNSite.getTurSNSiteLocales()).stream()
                         .forEach(turSNSiteLocale -> TurSolrUtils.deleteField(
                                 turSEInstance,
                                 turSNSiteLocale.getCore(),
@@ -365,8 +371,12 @@ public class TurSNSiteFieldExtAPI {
     }
 
     private void updateSolrSchema(TurSNSite turSNSite, TurSNSiteField turSNSiteField) {
+        if (turSNSite.getTurSEInstance() == null || turSNSite.getTurSNSiteLocales() == null
+                || turSNSite.getTurSNSiteLocales().isEmpty()) {
+            return;
+        }
         turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
-                .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().parallelStream()
+                .ifPresent(turSEInstance -> new ArrayList<>(turSNSite.getTurSNSiteLocales()).stream()
                         .forEach(turSNSiteLocale -> TurSolrUtils.addOrUpdateField(
                                 TurSolrFieldAction.ADD,
                                 turSEInstance,

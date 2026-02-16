@@ -348,4 +348,39 @@ class TurSNSiteFieldExtAPITest {
 
         assertThat(fieldName).isEqualTo("turing_entity_person");
     }
+
+    @Test
+    void testUpdateSolrSchemaSkipsWhenInstanceMissing() throws Exception {
+        TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
+        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                instanceRepository, mock(TurSNTemplate.class));
+        TurSNSite site = new TurSNSite();
+        site.setTurSNSiteLocales(new HashSet<>());
+
+        invokePrivate(api, "updateSolrSchema",
+                new Class<?>[] { TurSNSite.class, TurSNSiteField.class }, site, new TurSNSiteField());
+
+        verify(instanceRepository, never()).findById(ArgumentMatchers.anyString());
+    }
+
+    @Test
+    void testDeleteSolrSchemaSkipsWhenLocalesEmpty() throws Exception {
+        TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
+        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                instanceRepository, mock(TurSNTemplate.class));
+        TurSNSite site = new TurSNSite();
+        TurSEInstance instance = new TurSEInstance();
+        instance.setId("se-id");
+        site.setTurSEInstance(instance);
+        site.setTurSNSiteLocales(new HashSet<>());
+
+        invokePrivate(api, "deleteSolrSchema",
+                new Class<?>[] { TurSNSite.class, TurSNSiteField.class }, site, new TurSNSiteField());
+
+        verify(instanceRepository, never()).findById("se-id");
+    }
 }
