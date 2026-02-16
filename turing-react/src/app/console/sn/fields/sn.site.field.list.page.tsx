@@ -14,8 +14,7 @@ import {
     AlertTriangle,
     ArrowUpDown,
     CheckCircle2,
-    ChevronDown,
-    MoreHorizontal,
+    ChevronDown
 } from "lucide-react"
 import * as React from "react"
 
@@ -27,8 +26,7 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { GradientButton } from "@/components/ui/gradient-button"
 import { Input } from "@/components/ui/input"
@@ -295,24 +293,15 @@ const buildColumns = (
         },
         {
             id: "actions",
+            header: () => <div className="text-center">Actions</div>,
             enableHiding: false,
             cell: ({ row }) => {
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <GradientButton variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal />
-                            </GradientButton>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>
-                                <a href={"field/" + row.original.id}>Edit</a>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="text-center">
+                        <GradientButton asChild variant="outline" to={row.original.id}>
+                            Edit
+                        </GradientButton>
+                    </div>
                 )
             },
         },

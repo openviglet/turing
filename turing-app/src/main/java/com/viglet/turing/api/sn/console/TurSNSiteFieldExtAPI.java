@@ -134,6 +134,77 @@ public class TurSNSiteFieldExtAPI {
 
     }
 
+    @Operation(summary = "Show a Semantic Navigation Site Field Ext")
+    @GetMapping("/{id}")
+    public TurSNSiteFieldExt turSNSiteFieldExtGet(@PathVariable String snSiteId, @PathVariable String id) {
+        TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtRepository.findById(id)
+                .orElse(TurSNSiteFieldExt.builder().build());
+        turSNSiteFieldExt.setFacetLocales(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(turSNSiteFieldExt));
+        return turSNSiteFieldExt;
+    }
+
+    @GetMapping("/create/{localeRequest}")
+    public List<TurSNSite> turSNSiteFieldExtCreate(@PathVariable String snSiteId,
+            @PathVariable String localeRequest) {
+        Locale locale = LocaleUtils.toLocale(localeRequest);
+        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
+            List<TurSNSiteFieldExt> turSNSiteFieldExtList = turSNSiteFieldExtRepository
+                    .findByTurSNSiteAndEnabled(turSNSite, 1);
+            turSNSiteFieldExtList.forEach(turSNSiteFieldExt -> this.createField(turSNSite, locale, turSNSiteFieldExt));
+            return this.turSNSiteRepository.findAll();
+        }).orElse(new ArrayList<>());
+    }
+
+    @Operation(summary = "Semantic Navigation Site Field Ext structure")
+    @GetMapping("structure")
+    public TurSNSiteFieldExt turSNSiteFieldExtStructure(@PathVariable String snSiteId) {
+        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
+            TurSNSiteFieldExt turSNSiteFieldExt = new TurSNSiteFieldExt();
+            turSNSiteFieldExt.setTurSNSite(turSNSite);
+            return turSNSiteFieldExt;
+        }).orElse(new TurSNSiteFieldExt());
+    }
+
+    @Operation(summary = "Create a Semantic Navigation Site Field Ext")
+    @PostMapping
+    public TurSNSiteFieldExt turSNSiteFieldExtAdd(@PathVariable String snSiteId,
+            @RequestBody TurSNSiteFieldExt turSNSiteFieldExt) {
+        return createSEField(snSiteId, turSNSiteFieldExt);
+    }
+
+    @Operation(summary = "Update a Semantic Navigation Site Field Ext")
+    @PutMapping("/{id}")
+    @Transactional
+    public TurSNSiteFieldExt turSNSiteFieldExtUpdate(@PathVariable String snSiteId, @PathVariable String id,
+            @RequestBody TurSNSiteFieldExt turSNSiteFieldExt) {
+        return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExtEdit -> {
+            updateFieldExtProperties(turSNSiteFieldExtEdit, turSNSiteFieldExt);
+            updateFacetPosition(turSNSiteFieldExtEdit, turSNSiteFieldExt);
+
+            this.turSNSiteFieldExtRepository.save(turSNSiteFieldExtEdit);
+            turSNSiteRepository.findById(snSiteId)
+                    .ifPresent(turSNSite -> this.updateExternalField(turSNSiteFieldExt, turSNSite));
+
+            return turSNSiteFieldExtEdit;
+        }).orElse(TurSNSiteFieldExt.builder().build());
+    }
+
+    @Transactional
+    @Operation(summary = "Delete a Semantic Navigation Site Field Ext")
+    @DeleteMapping("/{id}")
+    public boolean turSNSiteFieldExtDelete(@PathVariable String snSiteId, @PathVariable String id) {
+        return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExt -> {
+            if (turSNSiteFieldExt.getSnType().equals(TurSNFieldType.SE)) {
+                this.turSNSiteFieldRepository.delete(turSNSiteFieldExt.getExternalId());
+            }
+            this.turSNSiteFieldExtRepository.delete(id);
+            turSNSiteRepository.findById(snSiteId)
+                    .ifPresent(turSNSite -> turSNSiteFieldRepository.findById(turSNSiteFieldExt.getExternalId())
+                            .ifPresent(turSNSiteField -> this.deleteSolrSchema(turSNSite, turSNSiteField)));
+            return true;
+        }).orElse(false);
+    }
+
     private void updateFieldExtFromSNSite(TurSNSite turSNSite) {
         turSNSiteFieldExtRepository.deleteByTurSNSiteAndSnType(turSNSite, TurSNFieldType.NER);
         Map<String, TurSNSiteField> fieldMap = createFieldMap(turSNSite);
@@ -187,32 +258,6 @@ public class TurSNSiteFieldExtAPI {
                 .snType(TurSNFieldType.SE)
                 .type(turSNSiteField.getType())
                 .turSNSite(turSNSite).build());
-    }
-
-    @Operation(summary = "Show a Semantic Navigation Site Field Ext")
-    @GetMapping("/{id}")
-    public TurSNSiteFieldExt turSNSiteFieldExtGet(@PathVariable String snSiteId, @PathVariable String id) {
-        TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtRepository.findById(id)
-                .orElse(TurSNSiteFieldExt.builder().build());
-        turSNSiteFieldExt.setFacetLocales(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(turSNSiteFieldExt));
-        return turSNSiteFieldExt;
-    }
-
-    @Operation(summary = "Update a Semantic Navigation Site Field Ext")
-    @PutMapping("/{id}")
-    @Transactional
-    public TurSNSiteFieldExt turSNSiteFieldExtUpdate(@PathVariable String snSiteId, @PathVariable String id,
-            @RequestBody TurSNSiteFieldExt turSNSiteFieldExt) {
-        return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExtEdit -> {
-            updateFieldExtProperties(turSNSiteFieldExtEdit, turSNSiteFieldExt);
-            updateFacetPosition(turSNSiteFieldExtEdit, turSNSiteFieldExt);
-
-            this.turSNSiteFieldExtRepository.save(turSNSiteFieldExtEdit);
-            turSNSiteRepository.findById(snSiteId)
-                    .ifPresent(turSNSite -> this.updateExternalField(turSNSiteFieldExt, turSNSite));
-
-            return turSNSiteFieldExtEdit;
-        }).orElse(TurSNSiteFieldExt.builder().build());
     }
 
     private void updateFieldExtProperties(TurSNSiteFieldExt target, TurSNSiteFieldExt source) {
@@ -273,36 +318,6 @@ public class TurSNSiteFieldExtAPI {
         return this.turSNSiteFieldExtRepository.findMaxFacetPosition().map(max -> max + 1).orElse(1);
     }
 
-    @Transactional
-    @Operation(summary = "Delete a Semantic Navigation Site Field Ext")
-    @DeleteMapping("/{id}")
-    public boolean turSNSiteFieldExtDelete(@PathVariable String snSiteId, @PathVariable String id) {
-        return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExtEdit -> {
-            if (turSNSiteFieldExtEdit.getSnType().equals(TurSNFieldType.SE)) {
-                this.turSNSiteFieldRepository.delete(turSNSiteFieldExtEdit.getExternalId());
-            }
-            this.turSNSiteFieldExtRepository.delete(id);
-            return true;
-        }).orElse(false);
-    }
-
-    @Operation(summary = "Create a Semantic Navigation Site Field Ext")
-    @PostMapping
-    public TurSNSiteFieldExt turSNSiteFieldExtAdd(@PathVariable String snSiteId,
-            @RequestBody TurSNSiteFieldExt turSNSiteFieldExt) {
-        return createSEField(snSiteId, turSNSiteFieldExt);
-    }
-
-    @Operation(summary = "Semantic Navigation Site Field Ext structure")
-    @GetMapping("structure")
-    public TurSNSiteFieldExt turSNSiteFieldExtStructure(@PathVariable String snSiteId) {
-        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
-            TurSNSiteFieldExt turSNSiteFieldExt = new TurSNSiteFieldExt();
-            turSNSiteFieldExt.setTurSNSite(turSNSite);
-            return turSNSiteFieldExt;
-        }).orElse(new TurSNSiteFieldExt());
-    }
-
     private TurSNSiteFieldExt createSEField(String snSiteId, TurSNSiteFieldExt turSNSiteFieldExt) {
         return turSNSiteRepository.findById(snSiteId)
                 .map(turSNSite -> createSEFieldForSite(turSNSite, turSNSiteFieldExt))
@@ -339,6 +354,16 @@ public class TurSNSiteFieldExtAPI {
         return isFacetEnabled(turSNSiteFieldExt) ? getFacetPositionIncrement() : 0;
     }
 
+    private void deleteSolrSchema(TurSNSite turSNSite, TurSNSiteField turSNSiteField) {
+        turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
+                .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().parallelStream()
+                        .forEach(turSNSiteLocale -> TurSolrUtils.deleteField(
+                                turSEInstance,
+                                turSNSiteLocale.getCore(),
+                                turSNSiteField.getName(),
+                                turSNSiteField.getType())));
+    }
+
     private void updateSolrSchema(TurSNSite turSNSite, TurSNSiteField turSNSiteField) {
         turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
                 .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().parallelStream()
@@ -363,18 +388,6 @@ public class TurSNSiteFieldExtAPI {
                 updateSolrSchema(turSNSite, turSNSiteField);
             });
         }
-    }
-
-    @GetMapping("/create/{localeRequest}")
-    public List<TurSNSite> turSNSiteFieldExtCreate(@PathVariable String snSiteId,
-            @PathVariable String localeRequest) {
-        Locale locale = LocaleUtils.toLocale(localeRequest);
-        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
-            List<TurSNSiteFieldExt> turSNSiteFieldExtList = turSNSiteFieldExtRepository
-                    .findByTurSNSiteAndEnabled(turSNSite, 1);
-            turSNSiteFieldExtList.forEach(turSNSiteFieldExt -> this.createField(turSNSite, locale, turSNSiteFieldExt));
-            return this.turSNSiteRepository.findAll();
-        }).orElse(new ArrayList<>());
     }
 
     public void createField(TurSNSite turSNSite, Locale locale, TurSNSiteFieldExt turSNSiteFieldExt) {
