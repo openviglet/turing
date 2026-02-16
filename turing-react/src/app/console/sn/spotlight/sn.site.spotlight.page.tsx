@@ -1,4 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
+import { LoadProvider } from "@/components/loading-provider";
 import { SNSiteSpotlightForm } from "@/components/sn/spotlight/sn.site.spotlight.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSiteSpotlight } from "@/models/sn/sn-site-spotlight.model";
@@ -13,20 +14,21 @@ const turSNSiteSpotlightService = new TurSNSiteSpotlightService();
 export default function SNSiteSpotlightPage() {
     const navigate = useNavigate();
     const { id, spotlightId } = useParams() as { id: string; spotlightId: string };
-    const [spotlight, setSpotlight] = useState<TurSNSiteSpotlight>({} as TurSNSiteSpotlight);
+    const [spotlight, setSpotlight] = useState<TurSNSiteSpotlight>();
     const [isNew, setIsNew] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
-
+    const [error, setError] = useState<string | null>(null);
     useEffect(() => {
         if (spotlightId === "new") {
-            turSNSiteSpotlightService.getStructure(id).then(setSpotlight);
+            turSNSiteSpotlightService.getStructure(id).then(setSpotlight).catch(() => setError("Connection error or timeout while fetching spotlight structure."));
         } else {
-            turSNSiteSpotlightService.get(id, spotlightId).then(setSpotlight);
+            turSNSiteSpotlightService.get(id, spotlightId).then(setSpotlight).catch(() => setError("Connection error or timeout while fetching spotlight details."));
             setIsNew(false);
         }
     }, [id, spotlightId]);
 
     async function onDelete() {
+        if (!spotlight) return;
         try {
             if (await turSNSiteSpotlightService.delete(spotlight)) {
                 toast.success("The spotlight was deleted");
@@ -41,10 +43,10 @@ export default function SNSiteSpotlightPage() {
         setOpen(false);
     }
 
-    const name = spotlight.name || "New Spotlight";
+    const name = spotlight?.name || "New Spotlight";
 
     return (
-        <>
+        <LoadProvider checkIsNotUndefined={spotlight} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/spotlight`}>
             <SubPageHeader
                 icon={IconSpeakerphone}
                 name={name}
@@ -54,7 +56,7 @@ export default function SNSiteSpotlightPage() {
                 open={open}
                 setOpen={setOpen}
             />
-            <SNSiteSpotlightForm snSiteId={id} value={spotlight} isNew={isNew} />
-        </>
+            {spotlight && <SNSiteSpotlightForm snSiteId={id} value={spotlight} isNew={isNew} />}
+        </LoadProvider>
     );
 }

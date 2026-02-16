@@ -1,5 +1,6 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate.tsx";
+import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,13 +15,14 @@ const turSNSiteMergeService = new TurSNSiteMergeService();
 
 export default function SNSiteMergeProvidersListPage() {
     const { id } = useParams() as { id: string };
-    const [mergeProviderList, setMergeProviderList] = useState<TurSNSiteMerge[]>([]);
+    const [mergeProviderList, setMergeProviderList] = useState<TurSNSiteMerge[]>();
+    const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        turSNSiteMergeService.query(id).then(setMergeProviderList);
+        turSNSiteMergeService.query(id).then(setMergeProviderList).catch(() => setError("Connection error or timeout while fetching merge providers."));
     }, [id])
     return (
-        <>
-            {mergeProviderList.length > 0 ? (
+        <LoadProvider checkIsNotUndefined={mergeProviderList} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/merge-providers`}>
+            {mergeProviderList && mergeProviderList.length > 0 ? (
                 <>
                     <SubPageHeader icon={IconGitMerge} name="Merge Providers" feature="Merge Providers"
                         description="Unify different sources contents." />
@@ -53,6 +55,6 @@ export default function SNSiteMergeProvidersListPage() {
                     urlNew={`${ROUTES.SN_INSTANCE}/${id}/merge-providers/new`} />
 
             )}
-        </>
+        </LoadProvider>
     )
 }

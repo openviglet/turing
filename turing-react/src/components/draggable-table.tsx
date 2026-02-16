@@ -67,13 +67,13 @@ const DraggableTableRow: React.FC<DraggableTableRowProps> = ({ row }) => {
 
 interface DraggableTableProps {
     id: string;
+    tableData: TurSNSiteField[];
+    setTableData: React.Dispatch<React.SetStateAction<TurSNSiteField[]>>;
 }
 const turSNFacetedFieldService = new TurSNFacetedFieldService();
-export const DraggableTable: React.FC<DraggableTableProps> = ({ id }) => {
-    const [tableData, setTableData] = React.useState<TurSNSiteField[]>([]);
-    React.useEffect(() => {
-        turSNFacetedFieldService.query(id).then(setTableData);
-    }, [id])
+export const DraggableTable: React.FC<DraggableTableProps> = ({ id, tableData, setTableData }) => {
+
+
     const sensors = useSensors(useSensor(PointerSensor));
 
     const handleDragEnd = async (event: DragEndEvent) => {

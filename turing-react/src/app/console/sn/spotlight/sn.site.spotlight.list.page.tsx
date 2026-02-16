@@ -1,5 +1,6 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate.tsx";
+import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,13 +15,14 @@ const turSNSiteSpotlightService = new TurSNSiteSpotlightService();
 
 export default function SNSiteSpotlightListPage() {
     const { id } = useParams() as { id: string };
-    const [spotlightList, setSpotlightList] = useState<TurSNSiteSpotlight[]>([]);
+    const [spotlightList, setSpotlightList] = useState<TurSNSiteSpotlight[]>();
+    const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        turSNSiteSpotlightService.query(id).then(setSpotlightList);
+        turSNSiteSpotlightService.query(id).then(setSpotlightList).catch(() => setError("Connection error or timeout while fetching spotlight."));
     }, [id])
     return (
-        <>
-            {spotlightList.length > 0 ? (
+        <LoadProvider checkIsNotUndefined={spotlightList} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/spotlight`}>
+            {spotlightList && spotlightList.length > 0 ? (
                 <>
                     <SubPageHeader icon={IconSpeakerphone} name="Spotlight" feature="Spotlight"
                         description="Define content that will be featured in the term-based search." />
@@ -52,6 +54,6 @@ export default function SNSiteSpotlightListPage() {
                     buttonText="New spotlight"
                     urlNew={`${ROUTES.SN_INSTANCE}/${id}/spotlight/new`} />
             )}
-        </>
+        </LoadProvider>
     )
 }

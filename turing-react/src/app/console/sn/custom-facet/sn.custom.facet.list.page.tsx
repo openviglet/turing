@@ -1,6 +1,7 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
 import { GridList } from "@/components/grid.list";
+import { LoadProvider } from "@/components/loading-provider";
 import { useGridAdapter } from "@/hooks/use-grid-adapter";
 import type { TurSECustomFacet } from "@/models/se/se-custom-facet.model";
 import { TurSECustomFacetService } from "@/services/se/se.custom.facet.service";
@@ -14,9 +15,10 @@ export default function SNSiteCustomFacetListPage() {
   const { id } = useParams() as { id: string };
   const [customFacets, setCustomFacets] = useState<TurSECustomFacet[]>();
 
-  useEffect(() => {
-    turSECustomFacetService.query().then(setCustomFacets)
+  const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    turSECustomFacetService.query().then(setCustomFacets).catch(() => setError("Connection error or timeout while fetching custom facets."));
   }, [])
   const gridItemList = useGridAdapter(customFacets, {
     name: "label",
@@ -24,7 +26,7 @@ export default function SNSiteCustomFacetListPage() {
     url: (item) => `${ROUTES.SN_INSTANCE}/${id}/custom-facet/${item.id}`
   });
   return (
-    <>
+    <LoadProvider checkIsNotUndefined={customFacets} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/custom-facet`}>
       {gridItemList.length > 0 ? (
         <GridList gridItemList={gridItemList} />
       ) : (
@@ -35,6 +37,6 @@ export default function SNSiteCustomFacetListPage() {
           buttonText="New custom facet"
           urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`} />
       )}
-    </>
+    </LoadProvider>
   )
 }

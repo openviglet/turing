@@ -1,5 +1,6 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate.tsx";
+import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,13 +15,14 @@ const turSNRankingExpressionService = new TurSNRankingExpressionService();
 
 export default function SNSiteResultRankingListPage() {
     const { id } = useParams() as { id: string };
-    const [rankingList, setRankingList] = useState<TurSNRankingExpression[]>([]);
+    const [rankingList, setRankingList] = useState<TurSNRankingExpression[]>();
+    const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        turSNRankingExpressionService.query(id).then(setRankingList);
+        turSNRankingExpressionService.query(id).then(setRankingList).catch(() => setError("Connection error or timeout while fetching result ranking."));
     }, [id])
     return (
-        <>
-            {rankingList.length > 0 ? (
+        <LoadProvider checkIsNotUndefined={rankingList} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/result-ranking`}>
+            {rankingList && rankingList.length > 0 ? (
                 <>
                     <SubPageHeader icon={IconNumber123}
                         name="Result Ranking"
@@ -56,6 +58,6 @@ export default function SNSiteResultRankingListPage() {
                     urlNew={`${ROUTES.SN_INSTANCE}/${id}/result-ranking/new`} />
 
             )}
-        </>
+        </LoadProvider>
     )
 }

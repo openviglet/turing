@@ -1,4 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
+import { LoadProvider } from "@/components/loading-provider";
 import { SNSiteMergeForm } from "@/components/sn/merge/sn.site.merge.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSiteMerge } from "@/models/sn/sn-site-merge.model";
@@ -13,20 +14,21 @@ const turSNSiteMergeService = new TurSNSiteMergeService();
 export default function SNSiteMergeProvidersPage() {
     const navigate = useNavigate();
     const { id, mergeProviderId } = useParams() as { id: string; mergeProviderId: string };
-    const [mergeProvider, setMergeProvider] = useState<TurSNSiteMerge>({} as TurSNSiteMerge);
+    const [mergeProvider, setMergeProvider] = useState<TurSNSiteMerge>();
     const [isNew, setIsNew] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
-
+    const [error, setError] = useState<string | null>(null);
     useEffect(() => {
         if (mergeProviderId === "new") {
-            turSNSiteMergeService.getStructure(id).then(setMergeProvider);
+            turSNSiteMergeService.getStructure(id).then(setMergeProvider).catch(() => setError("Connection error or timeout while fetching merge provider structure."));
         } else {
-            turSNSiteMergeService.get(id, mergeProviderId).then(setMergeProvider);
+            turSNSiteMergeService.get(id, mergeProviderId).then(setMergeProvider).catch(() => setError("Connection error or timeout while fetching merge provider details."));
             setIsNew(false);
         }
     }, [id, mergeProviderId]);
 
     async function onDelete() {
+        if (!mergeProvider) return;
         try {
             if (await turSNSiteMergeService.delete(mergeProvider)) {
                 toast.success(`The merge provider was deleted`);
@@ -41,12 +43,12 @@ export default function SNSiteMergeProvidersPage() {
         setOpen(false);
     }
 
-    const name = mergeProvider.providerFrom && mergeProvider.providerTo
+    const name = mergeProvider?.providerFrom && mergeProvider?.providerTo
         ? `${mergeProvider.providerFrom} → ${mergeProvider.providerTo}`
         : "New Merge Provider";
 
     return (
-        <>
+        <LoadProvider checkIsNotUndefined={mergeProvider} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/merge-providers`}>
             <SubPageHeader
                 icon={IconGitMerge}
                 name={name}
@@ -56,7 +58,7 @@ export default function SNSiteMergeProvidersPage() {
                 open={open}
                 setOpen={setOpen}
             />
-            <SNSiteMergeForm snSiteId={id} value={mergeProvider} isNew={isNew} />
-        </>
+            {mergeProvider && <SNSiteMergeForm snSiteId={id} value={mergeProvider} isNew={isNew} />}
+        </LoadProvider>
     );
 }

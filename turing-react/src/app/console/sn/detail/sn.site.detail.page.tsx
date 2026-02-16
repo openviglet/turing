@@ -1,3 +1,5 @@
+import { ROUTES } from "@/app/routes.const";
+import { LoadProvider } from "@/components/loading-provider";
 import { SNSiteForm } from "@/components/sn/sn.site.form";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
@@ -10,18 +12,19 @@ const turSNSiteService = new TurSNSiteService();
 
 export default function SNSiteDetailPage() {
   const { id } = useParams() as { id: string };
-  const [snSite, setSnSite] = useState<TurSNSite>({} as TurSNSite);
+  const [snSite, setSnSite] = useState<TurSNSite>();
   const [isNew, setIsNew] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (id !== "new") {
-      turSNSiteService.get(id).then(setSnSite);
+      turSNSiteService.get(id).then(setSnSite).catch(() => setError("Connection error or timeout while fetching site details."));
       setIsNew(false);
     }
   }, [id])
   return (
-    <>
+    <LoadProvider checkIsNotUndefined={snSite} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/settings`}>
       <SubPageHeader icon={IconSettings} name="Settings" feature="Settings" description="Configure the Semantic Navigation Site." />
-      <SNSiteForm value={snSite} isNew={isNew} />
-    </>
+      {snSite && <SNSiteForm value={snSite} isNew={isNew} />}
+    </LoadProvider>
   )
 }

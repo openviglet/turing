@@ -1,319 +1,44 @@
-import {
-    type ColumnDef
-} from "@tanstack/react-table"
-import {
-    AlertTriangle,
-    ArrowUpDown,
-    CheckCircle2
-} from "lucide-react"
 import * as React from "react"
 
 import { ROUTES } from "@/app/routes.const"
 import { SNSiteFieldGridList } from "@/components/field.grid.list"
+import { LoadProvider } from "@/components/loading-provider"
 import { SubPageHeader } from "@/components/sub.page.header"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
-import { GradientButton } from "@/components/ui/gradient-button"
-import { Switch } from "@/components/ui/switch"
-import type { TurSNFieldCheck } from "@/models/sn/sn-field-check.model.ts"
 import type { TurSNStatusFields } from "@/models/sn/sn-field-status.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
 import { IconAlignBoxCenterStretch } from "@tabler/icons-react"
 import { useParams } from "react-router-dom"
 
-type StatusFieldDropdownProps = {
-    statusField?: TurSNFieldCheck;
-};
-
-function StatusFieldDropdown({ statusField }: Readonly<StatusFieldDropdownProps>) {
-    if (!statusField) {
-        return null;
-    }
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <GradientButton variant="ghost" size="icon" className="h-6 w-6 p-0">
-                    <span className="sr-only">Open field status</span>
-                    {statusField.correct ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                    ) : (
-                        <AlertTriangle className="h-4 w-4 text-rose-500" />
-                    )}
-                </GradientButton>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-80">
-                {statusField.correct
-                    ? statusField.cores.map((core) => (
-                        <DropdownMenuItem
-                            key={core.name}
-                            className="flex items-center gap-2"
-                        >
-                            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                            <span>{core.name}</span>
-                        </DropdownMenuItem>
-                    ))
-                    : statusField.cores.map((core) => (
-                        <div key={core.name} className="py-1">
-                            {core.correct ? (
-                                <DropdownMenuItem className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                                    <span>{core.name}</span>
-                                </DropdownMenuItem>
-                            ) : (
-                                <>
-                                    <div className="flex items-center justify-between px-2 py-1 text-xs font-semibold text-muted-foreground">
-                                        <span>{core.name}</span>
-                                        <button
-                                            type="button"
-                                            className="text-xs text-primary hover:underline"
-                                        >
-                                            Repair All
-                                        </button>
-                                    </div>
-                                    {!core.exists && (
-                                        <div className="flex items-center justify-between px-2 py-1 text-sm">
-                                            <div className="flex items-center gap-2 text-rose-600">
-                                                <AlertTriangle className="h-4 w-4" />
-                                                <span>Missing field</span>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                className="text-xs text-primary hover:underline"
-                                            >
-                                                Repair
-                                            </button>
-                                        </div>
-                                    )}
-                                    {core.exists && !statusField.facetIsCorrect && (
-                                        <div className="flex items-center justify-between px-2 py-1 text-sm">
-                                            <div className="flex items-center gap-2 text-rose-600">
-                                                <AlertTriangle className="h-4 w-4" />
-                                                <span>Facet Type is incorrect</span>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                className="text-xs text-primary hover:underline"
-                                            >
-                                                Repair
-                                            </button>
-                                        </div>
-                                    )}
-                                    {core.exists && !core.multiValuedIsCorrect && (
-                                        <div className="flex items-center justify-between px-2 py-1 text-sm">
-                                            <div className="flex items-center gap-2 text-rose-600">
-                                                <AlertTriangle className="h-4 w-4" />
-                                                <span>SE MultiValued isn't configured</span>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                className="text-xs text-primary hover:underline"
-                                            >
-                                                Repair
-                                            </button>
-                                        </div>
-                                    )}
-                                    {core.exists &&
-                                        statusField.facetIsCorrect &&
-                                        !core.typeIsCorrect && (
-                                            <div className="flex items-center justify-between px-2 py-1 text-sm">
-                                                <div className="flex items-center gap-2 text-rose-600">
-                                                    <AlertTriangle className="h-4 w-4" />
-                                                    <span>Using {core.type}</span>
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    className="text-xs text-primary hover:underline"
-                                                >
-                                                    Repair
-                                                </button>
-                                            </div>
-                                        )}
-                                </>
-                            )}
-                        </div>
-                    ))}
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
-}
-
-type FieldToggleKey = "enabled" | "mlt" | "facet" | "hl";
-
-const buildColumns = (
-    statusFieldMap: Map<string, TurSNFieldCheck>,
-    onToggle: (fieldId: string, key: FieldToggleKey, checked: boolean) => void,
-    isSavingField: (fieldId: string) => boolean
-): ColumnDef<TurSNSiteField>[] => [
-        {
-            id: "select",
-            header: ({ table }) => (
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label="Select all"
-                />
-            ),
-            cell: ({ row }) => (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label="Select row"
-                />
-            ),
-            enableSorting: false,
-            enableHiding: false,
-        },
-        {
-            accessorKey: "name",
-            header: ({ column }) => {
-                return (
-                    <GradientButton
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Field
-                        <ArrowUpDown />
-                    </GradientButton>
-                )
-            },
-            cell: ({ row }) => {
-                const statusField = statusFieldMap.get(row.original.id);
-                return (
-                    <div className="flex items-center gap-2">
-                        <StatusFieldDropdown statusField={statusField} />
-                        <div className="text-left font-medium">{row.getValue("name")}</div>
-                    </div>
-                )
-            },
-        },
-        {
-            accessorKey: "enabled",
-            header: () => <div className="text-right">Enabled</div>,
-            cell: ({ row }) => {
-                const enabled = row.original.enabled;
-                const fieldId = row.original.id;
-                return (
-                    <div className="text-right font-medium">
-                        <Switch
-                            checked={enabled == 1}
-                            onCheckedChange={(checked) =>
-                                onToggle(fieldId, "enabled", checked)
-                            }
-                            disabled={isSavingField(fieldId)}
-                        />
-                    </div>
-                )
-            },
-        },
-        {
-            accessorKey: "mlt",
-            header: () => <div className="text-right">MLT</div>,
-            cell: ({ row }) => {
-                const mlt = row.original.mlt;
-                const fieldId = row.original.id;
-                return (
-                    <div className="text-right font-medium">
-                        <Switch
-                            checked={mlt == 1}
-                            onCheckedChange={(checked) =>
-                                onToggle(fieldId, "mlt", checked)
-                            }
-                            disabled={isSavingField(fieldId)}
-                        />
-                    </div>
-                )
-            },
-        },
-        {
-            accessorKey: "facet",
-            header: () => <div className="text-right">Facet</div>,
-            cell: ({ row }) => {
-                const facet = row.original.facet;
-                const fieldId = row.original.id;
-                return (
-                    <div className="text-right font-medium">
-                        <Switch
-                            checked={facet == 1}
-                            onCheckedChange={(checked) =>
-                                onToggle(fieldId, "facet", checked)
-                            }
-                            disabled={isSavingField(fieldId)}
-                        />
-                    </div>
-                )
-            },
-        },
-        {
-            accessorKey: "hl",
-            header: () => <div className="text-right">Highlighting</div>,
-            cell: ({ row }) => {
-                const hl = row.original.hl;
-                const fieldId = row.original.id;
-                return (
-                    <div className="text-right font-medium">
-                        <Switch
-                            checked={hl == 1}
-                            onCheckedChange={(checked) =>
-                                onToggle(fieldId, "hl", checked)
-                            }
-                            disabled={isSavingField(fieldId)}
-                        />
-                    </div>
-                )
-            },
-        },
-        {
-            id: "actions",
-            header: () => <div className="text-center">Actions</div>,
-            enableHiding: false,
-            cell: ({ row }) => {
-                return (
-                    <div className="text-center">
-                        <GradientButton asChild variant="outline" to={row.original.id}>
-                            Edit
-                        </GradientButton>
-                    </div>
-                )
-            },
-        },
-    ]
 
 const turSNFieldService = new TurSNFieldService();
 export default function SNSiteFieldListPage() {
     const { id } = useParams() as { id: string };
-    const [data, setSnField] = React.useState<TurSNSiteField[]>([]);
-    const [statusFields, setStatusFields] = React.useState<TurSNStatusFields | null>(
-        null
-    );
+    const [data, setSnField] = React.useState<TurSNSiteField[]>();
+    const [statusFields, setStatusFields] = React.useState<TurSNStatusFields>();
+    const [error, setError] = React.useState<string | null>(null);
     React.useEffect(() => {
-        setStatusFields(null);
-        turSNFieldService.query(id).then(setSnField);
+        turSNFieldService.query(id).then(setSnField).catch(() => setError("Connection error or timeout while fetching SN field data."));
         turSNFieldService
             .getStatusFields(id)
             .then(setStatusFields)
-            .catch((error) => {
-                console.error("Failed to load SN field status", error);
+            .catch(() => {
+                setError("Connection error or timeout while fetching SN field data.");
             });
     }, [id])
     return (
-        <>
-            <SubPageHeader
-                icon={IconAlignBoxCenterStretch}
-                name="Field"
-                feature="Field"
-                description="Custom Search Engine Fields."
-                urlNew={`${ROUTES.SN_INSTANCE}/${id}/field/new`} />
-            <SNSiteFieldGridList id={id} statusFields={statusFields} data={data} setSnField={setSnField} />
-        </>
+        <LoadProvider checkIsNotUndefined={data && statusFields} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/field`}>
+            {data && statusFields && (
+                <>
+                    <SubPageHeader
+                        icon={IconAlignBoxCenterStretch}
+                        name="Field"
+                        feature="Field"
+                        description="Custom Search Engine Fields."
+                        urlNew={`${ROUTES.SN_INSTANCE}/${id}/field/new`} />
+                    <SNSiteFieldGridList id={id} statusFields={statusFields} data={data} setSnField={setSnField as React.Dispatch<React.SetStateAction<TurSNSiteField[]>>} />
+                </>
+            )}
+        </LoadProvider>
     )
 }
