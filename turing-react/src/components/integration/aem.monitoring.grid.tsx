@@ -23,7 +23,12 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { cn, truncateMiddle } from "@/lib/utils";
 import type { TurIntegrationIndexing } from "@/models/integration/integration-indexing.model";
+import { formatDistanceToNow } from 'date-fns';
+import { ArrowRightCircle, Ban, CheckCircle2, Clock, Database, FileSearch, Globe, PencilLine, RefreshCcw, Send, Zap } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { Badge } from "../ui/badge";
 import { GradientButton } from "../ui/gradient-button";
 
 interface Props {
@@ -34,48 +39,210 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
     {
         accessorKey: "modificationDate",
         header: "Date",
-        cell: ({ row }) => <div className="font-mono text-sm">{
-            (new Date(row.getValue("modificationDate"))).toLocaleString(globalThis.navigator.language, {
+        cell: ({ row }) => {
+            const dateValue = new Date(row.getValue("modificationDate"));
+            const formattedDate = dateValue.toLocaleString(undefined, {
                 day: '2-digit',
                 month: '2-digit',
+                year: '2-digit',
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
-            }).replace(',', '')
-        }</div>,
+            });
+            const timeAgo = formatDistanceToNow(dateValue, {
+                addSuffix: true
+            });
+
+            return (
+                <div className="flex flex-col">
+                    <span className="font-mono text-sm">{formattedDate}</span>
+                    <span className="text-xs text-muted-foreground italic">
+                        ({timeAgo})
+                    </span>
+                </div>
+            );
+        },
     },
     {
         accessorKey: "objectId",
         header: "Object ID",
         cell: ({ row }) => {
-            const objectId = row.getValue("objectId") as string;
-            const locale = row.getValue("locale");
-            const sites = row.original.sites;
+            const objectId: string = row.getValue("objectId");
+            const locale: string = row.getValue("locale");
+            const sites: string[] | undefined = row.original.sites;
             const siteId = Array.isArray(sites) && sites.length > 0 ? sites[0] : "";
             const href = siteId
                 ? encodeURI(`/sn/${siteId}/?_setlocale=${locale}&q=id:"${objectId}"`)
                 : "";
             return href
-                ? <a href={href} target="_blank" rel="noreferrer" className="font-mono text-sm text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">{objectId}</a>
-                : <div className="font-mono text-sm">{objectId}</div>;
+                ? <NavLink
+                    to={row.getValue("url")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={() =>
+                        cn(
+                            "text-blue-600 decoration-2 transition-colors hover:text-blue-800"
+                        )
+                    }
+                >{truncateMiddle(objectId, 50)}</NavLink>
+                : <div className="font-mono text-sm">{truncateMiddle(objectId, 50)}</div>;
         },
     },
     {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("status")}</div>,
+        cell: ({ row }) => {
+            const status = String(row.getValue("status"));
+
+            const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
+                PREPARE_INDEX: {
+                    label: "Index",
+                    icon: FileSearch,
+                    className: "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                },
+                PREPARE_UNCHANGED: {
+                    label: "Unchanged",
+                    icon: Clock,
+                    className: "bg-slate-500/10 text-slate-600 border-slate-500/20"
+                },
+                PREPARE_REINDEX: {
+                    label: "Reindex",
+                    icon: RefreshCcw,
+                    className: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20"
+                },
+                PREPARE_FORCED_REINDEX: {
+                    label: "Forced Reindex",
+                    icon: Zap,
+                    className: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20"
+                },
+
+                RECEIVED_AND_SENT_TO_TURING: {
+                    label: "Sent to Turing",
+                    icon: Send,
+                    className: "bg-purple-500/10 text-purple-600 border-purple-500/20"
+                },
+                SENT_TO_QUEUE: {
+                    label: "In Queue",
+                    icon: ArrowRightCircle,
+                    className: "bg-orange-500/10 text-orange-600 border-orange-500/20"
+                },
+                RECEIVED_FROM_QUEUE: {
+                    label: "From Queue",
+                    icon: Database,
+                    className: "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                },
+                INDEXED: {
+                    label: "Indexed",
+                    icon: CheckCircle2,
+                    className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                },
+                FINISHED: {
+                    label: "Finished",
+                    icon: CheckCircle2,
+                    className: "bg-green-500/10 text-green-600 border-green-500/20"
+                },
+                DEINDEXED: {
+                    label: "Deindexed",
+                    icon: Ban,
+                    className: "bg-rose-500/10 text-rose-600 border-rose-500/20"
+                },
+                NOT_PROCESSED: {
+                    label: "Not Processed",
+                    icon: Clock,
+                    className: "bg-gray-500/10 text-gray-600 border-gray-500/20"
+                },
+                IGNORED: {
+                    label: "Ignored",
+                    icon: Ban,
+                    className: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20"
+                },
+            };
+
+            const config = statusConfig[status] || {
+                label: status,
+                icon: Clock,
+                className: "bg-gray-100 text-gray-600"
+            };
+
+            const Icon = config.icon;
+
+            return (
+                <Badge
+                    variant="outline"
+                    className={`flex w-fit items-center gap-1.5 px-2 py-0.5 font-mono text-[10px] font-bold tracking-tight uppercase ${config.className}`}
+                >
+                    <Icon className="h-3 w-3" />
+                    {config.label}
+                </Badge>
+            );
+        },
     },
     {
         accessorKey: "environment",
         header: "Environment",
-        cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("environment")}</div>,
+        cell: ({ row }) => {
+            const env = String(row.getValue("environment")).toUpperCase();
+
+            const isAuthor = env === "AUTHOR";
+
+            return (
+                <Badge
+                    variant="outline"
+                    className={`
+            font-mono font-bold gap-1.5 px-3 py-1 transition-all
+            ${isAuthor
+                            ? "bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/20 dark:text-amber-400"
+                            : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20 dark:text-emerald-400"
+                        }
+          `}
+                >
+                    {isAuthor ? (
+                        <>
+                            <PencilLine className="w-3.5 h-3.5" />
+                            <span>AUTHOR</span>
+                        </>
+                    ) : (
+                        <>
+                            <Globe className="w-3.5 h-3.5" />
+                            <span>PUBLISHING</span>
+                        </>
+                    )}
+                </Badge>
+            );
+        },
     },
     {
         accessorKey: "locale",
         header: "Locale",
-        cell: ({ row }) => <div>{row.getValue("locale")}</div>,
-    }
-    ,
+        cell: ({ row }) => {
+            const locale = String(row.getValue("locale"));
+            const getLocaleCode = (): string => {
+                if (locale.includes('_')) {
+                    return locale.split('_')[1];
+                }
+                if (locale.includes('-')) {
+                    return locale.split('-')[1];
+                }
+                return locale;
+            };
+            const localeCode = getLocaleCode();
+            const countryCode = localeCode.toLowerCase();
+
+            return (
+                <Badge variant="secondary" className="font-mono gap-2 py-1 pl-1">
+                    <img
+                        src={`https://flagcdn.com/w40/${countryCode}.png`}
+                        alt={countryCode}
+                        onError={(e) => { e.currentTarget.style.display = 'none' }}
+                        className="w-5 h-3.5 object-cover rounded-sm shadow-sm"
+                    />
+                    <span className="text-xs font-bold uppercase tracking-tight">
+                        {locale}
+                    </span>
+                </Badge>
+            );
+        },
+    },
     {
         accessorKey: "sites",
         header: "Sites",

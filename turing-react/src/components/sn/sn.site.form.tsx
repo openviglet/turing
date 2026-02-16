@@ -104,7 +104,13 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={form.control}
                 name="name"
-                rules={{ required: "Name is required." }}
+                rules={{
+                  required: "Name is required.",
+                  pattern: {
+                    value: /^[a-zA-Z0-9_-]+$/,
+                    message: "Name can only contain letters, numbers, underscores, and hyphens."
+                  }
+                }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
