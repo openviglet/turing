@@ -137,7 +137,7 @@ public class TurSolrQueryBuilder {
     private static boolean usesExactMatch(TurSNSite turSNSite, TurSEParameters turSEParameters) {
         return turSEParameters.getQuery().trim().startsWith("\"")
                 && turSEParameters.getQuery().trim().endsWith("\"")
-                && !StringUtils.hasText(turSNSite.getExactMatchField())
+                && StringUtils.hasText(turSNSite.getExactMatchField())
                 && turSNSite.getExactMatch() != null && turSNSite.getExactMatch().equals(1);
     }
 
@@ -169,7 +169,8 @@ public class TurSolrQueryBuilder {
                     TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtList.stream()
                             .filter(field -> field.getName().equals(condition.getAttribute()))
                             .findFirst().orElse(TurSNSiteFieldExt.builder().build());
-                    if (turSNSiteFieldExt.getType().equals(TurSEFieldType.DATE)
+                    if (turSNSiteFieldExt.getType() != null
+                            && turSNSiteFieldExt.getType().equals(TurSEFieldType.DATE)
                             && condition.getValue().equalsIgnoreCase(ASC)) {
                         return String.format("_query_:\"" + RECENT_DATES + "\"",
                                 condition.getAttribute());
@@ -189,7 +190,7 @@ public class TurSolrQueryBuilder {
     }
 
     public boolean hasGroup(TurSEParameters turSEParameters) {
-        return !StringUtils.hasText(turSEParameters.getGroup());
+        return StringUtils.hasText(turSEParameters.getGroup());
     }
 
     private void prepareQueryFilterQuery(TurSNFilterParams turSNFilterParams, SolrQuery query,

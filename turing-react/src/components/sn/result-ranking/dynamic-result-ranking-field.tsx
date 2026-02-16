@@ -63,7 +63,7 @@ export function DynamicResultRankingFields({ control, register, fieldName, snSit
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {snFields.map((option) => (
-                                                    <SelectItem key={option.id} value={option.id}>
+                                                    <SelectItem key={option.id} value={option.name}>
                                                         {option.name}
                                                     </SelectItem>
                                                 ))}
