@@ -51,7 +51,11 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   useEffect(() => {
     form.reset(value);
   }, [value])
-
+  const applyVendorDefaults = (vendorId: string) => {
+    if (vendorId === "CHROMA") {
+      form.setValue("url", "http://localhost:8000", { shouldDirty: true });
+    }
+  }
   function onSubmit(storeInstance: TurStoreInstance) {
     try {
       if (isNew) {
@@ -169,7 +173,10 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Vendor</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={(nextValue) => {
+                      field.onChange(nextValue);
+                      applyVendorDefaults(nextValue);
+                    }} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Choose..." />

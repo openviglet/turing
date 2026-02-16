@@ -43,6 +43,8 @@ public interface TurSNSiteFieldRepository extends JpaRepository<TurSNSiteField, 
 	@Cacheable("turSNSiteFieldfindByTurSNSite")
 	List<TurSNSiteField> findByTurSNSite(TurSNSite turSNSite);
 
+	boolean existsByTurSNSiteAndName(TurSNSite turSNSite, String name);
+
 	@CacheEvict(value = { "turSNSiteFieldfindById", "turSNSiteFieldfindByTurSNSite" }, allEntries = true)
 	@NotNull
 	@Override

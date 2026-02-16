@@ -22,6 +22,7 @@
 package com.viglet.turing.api.sn.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -36,6 +37,8 @@ import java.util.Set;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
@@ -282,6 +285,8 @@ class TurSNSiteFieldExtAPITest {
         payload.setType(TurSEFieldType.STRING);
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+        when(fieldExtRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(false);
+        when(fieldRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(false);
         when(instanceRepository.findById("se-id")).thenReturn(Optional.empty());
         when(fieldRepository.save(org.mockito.ArgumentMatchers.any(TurSNSiteField.class)))
                 .thenAnswer(invocation -> {
@@ -296,6 +301,31 @@ class TurSNSiteFieldExtAPITest {
 
         assertThat(result.getSnType()).isEqualTo(TurSNFieldType.SE);
         assertThat(result.getExternalId()).isEqualTo("field-id");
+    }
+
+    @Test
+    void testFieldExtAddReturnsDefaultWhenNameAlreadyExists() {
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
+        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
+                fieldRepository, mock(TurSNSiteLocaleRepository.class),
+                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+        TurSNSite site = new TurSNSite();
+        TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
+        payload.setName("title");
+
+        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+        when(fieldExtRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(true);
+
+        assertThatThrownBy(() -> api.turSNSiteFieldExtAdd("site", payload))
+                .isInstanceOf(ResponseStatusException.class)
+                .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+                .isEqualTo(HttpStatus.CONFLICT);
+
+        verify(fieldRepository, never()).save(ArgumentMatchers.any(TurSNSiteField.class));
+        verify(fieldExtRepository, never()).save(ArgumentMatchers.any(TurSNSiteFieldExt.class));
     }
 
     @Test

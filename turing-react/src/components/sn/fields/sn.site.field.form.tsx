@@ -31,6 +31,7 @@ import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
 import { TurSNFieldTypeService } from "@/services/sn/sn.field.type.service"
 import { IconReorder } from "@tabler/icons-react"
+import axios from "axios"
 import { useEffect, useMemo, useState } from "react"
 import {
   useForm
@@ -141,6 +142,10 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
       }
     } catch (error) {
       console.error("Form submission error", error);
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        toast.error("A field with this name already exists.");
+        return;
+      }
       toast.error("Failed to submit the form. Please try again.");
     }
   }

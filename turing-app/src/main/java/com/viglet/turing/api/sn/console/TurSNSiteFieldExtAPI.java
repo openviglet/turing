@@ -41,6 +41,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,6 +52,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
@@ -327,10 +329,23 @@ public class TurSNSiteFieldExtAPI {
     }
 
     private TurSNSiteFieldExt createSEFieldForSite(TurSNSite turSNSite, TurSNSiteFieldExt turSNSiteFieldExt) {
+        if (isDuplicateFieldName(turSNSite, turSNSiteFieldExt)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Field name already exists for this site");
+        }
         TurSNSiteField turSNSiteField = buildAndSaveSiteField(turSNSite, turSNSiteFieldExt);
         TurSNSiteFieldExt savedFieldExt = buildAndSaveFieldExt(turSNSite, turSNSiteFieldExt, turSNSiteField);
         updateSolrSchema(turSNSite, turSNSiteField);
         return savedFieldExt;
+    }
+
+    private boolean isDuplicateFieldName(TurSNSite turSNSite, TurSNSiteFieldExt turSNSiteFieldExt) {
+        String name = turSNSiteFieldExt.getName();
+        if (name == null || name.isBlank()) {
+            return true;
+        }
+        return turSNSiteFieldExtRepository.existsByTurSNSiteAndName(turSNSite, name)
+                || turSNSiteFieldRepository.existsByTurSNSiteAndName(turSNSite, name);
     }
 
     private TurSNSiteField buildAndSaveSiteField(TurSNSite turSNSite, TurSNSiteFieldExt turSNSiteFieldExt) {

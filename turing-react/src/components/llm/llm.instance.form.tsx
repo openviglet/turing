@@ -53,6 +53,17 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
     form.reset(value);
   }, [value])
 
+  const applyVendorDefaults = (vendorId: string) => {
+    if (vendorId === "OLLAMA") {
+      form.setValue("url", "http://localhost:8000", { shouldDirty: true });
+      form.setValue("modelName", "MISTRAL", { shouldDirty: true });
+      form.setValue("temperature", 0.8, { shouldDirty: true });
+      form.setValue("topK", 6, { shouldDirty: true });
+      form.setValue("supportedCapabilities", "RESPONSE_FORMAT_JSON_SCHEMA", { shouldDirty: true });
+      form.setValue("timeout", "PT60S", { shouldDirty: true });
+    }
+  }
+
   async function onSubmit(llmInstance: TurLLMInstance) {
     try {
       if (isNew) {
@@ -178,7 +189,13 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Vendor</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={(nextValue) => {
+                        field.onChange(nextValue);
+                        applyVendorDefaults(nextValue);
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Choose..." />
