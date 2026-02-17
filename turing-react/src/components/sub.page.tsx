@@ -57,7 +57,7 @@ export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, i
               <SidebarMenu>
                 <SidebarMenuItem className="flex items-center">
                   <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
-                    <NavLink to="/admin">
+                    <NavLink to={urlBase ?? "#"} className="flex items-center gap-2">
                       <Icon className="size-5!" />
                       <span className="text-base font-semibold">
                         {isNew ? `New ${feature}` : name}

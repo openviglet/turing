@@ -76,7 +76,7 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
                 : "";
             return href
                 ? <NavLink
-                    to={row.getValue("url")}
+                    to={href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={() =>

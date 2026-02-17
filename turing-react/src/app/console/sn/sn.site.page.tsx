@@ -151,12 +151,14 @@ export default function SNSitePage() {
     }
     async function onExport() {
         try {
-            const response = await turSNSiteService.export(snSite);
+            const response: Blob | null = await turSNSiteService.export(snSite);
             if (response) {
+                // If the Blob has a name property, use it; otherwise fallback
+                const fileName = (response as any).name || `sn-site-${snSite.name}-${new Date().toISOString()}.zip`;
                 const url = globalThis.URL.createObjectURL(response);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `${snSite.name || 'sn-site'}.zip`;
+                a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
                 globalThis.URL.revokeObjectURL(url);
