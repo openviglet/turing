@@ -1,8 +1,10 @@
+import { IconDownload } from "@tabler/icons-react";
 import React, { type Dispatch, type SetStateAction } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { DialogDelete } from "./dialog.delete";
 import { Card } from "./ui/card";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarProvider } from "./ui/sidebar";
+import { GradientButton } from "./ui/gradient-button";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarProvider } from "./ui/sidebar";
 
 interface NavMainItem {
   title: string;
@@ -31,11 +33,12 @@ interface Props {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>
   onDelete: () => void;
+  onExport?: () => void;
 }
 
 const formatCount = (value?: number) => (value ?? 0).toLocaleString();
 
-export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, isNew, data, onDelete, open, setOpen }) => {
+export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, isNew, data, onDelete, onExport, open, setOpen }) => {
   const location = useLocation();
   const pathname = location.pathname;
   return (
@@ -52,22 +55,29 @@ export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, i
           <Sidebar collapsible="offcanvas" variant="inset" position="absolute" color="black">
             <SidebarHeader>
               <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className="data-[slot=sidebar-menu-button]:p-1.5!">
+                <SidebarMenuItem className="flex items-center">
+                  <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
                     <NavLink to="/admin">
                       <Icon className="size-5!" />
-                      {isNew ? (<span
-                        className="text-base font-semibold">New {feature}</span>) : (
-                        <span className="text-base font-semibold">{name}</span>)}
+                      <span className="text-base font-semibold">
+                        {isNew ? `New ${feature}` : name}
+                      </span>
                     </NavLink>
                   </SidebarMenuButton>
-                  {!isNew && (
-                    <SidebarMenuAction className="top-1/2 -translate-y-1.5">
+                  <div className="flex items-center gap-1 ml-auto">
+                    {onExport && (
+                      <GradientButton
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={onExport}
+                      >
+                        <IconDownload className="size-5!" />
+                      </GradientButton>
+                    )}
+                    {!isNew && (
                       <DialogDelete feature={feature} name={name} onDelete={onDelete} open={open} setOpen={setOpen} />
-                    </SidebarMenuAction>
-                  )}
+                    )}
+                  </div>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarHeader>

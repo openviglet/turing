@@ -202,10 +202,21 @@ public class TurSNSiteAPI {
     }
 
     @GetMapping(value = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public StreamingResponseBody turSNSiteExport(HttpServletResponse response) {
+    public StreamingResponseBody turSNSiteExportAll(HttpServletResponse response) {
 
         try {
-            return turSNSiteExport.exportObject(response);
+            return turSNSiteExport.exportAll(response);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @GetMapping(value = "/{id}/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public StreamingResponseBody turSNSiteExport(@PathVariable String id, HttpServletResponse response) {
+
+        try {
+            return turSNSiteExport.exportBySiteId(id, response);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

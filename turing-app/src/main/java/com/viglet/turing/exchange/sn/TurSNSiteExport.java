@@ -49,14 +49,26 @@ public class TurSNSiteExport {
 		this.exportFileService = exportFileService;
 	}
 
-	public StreamingResponseBody exportObject(HttpServletResponse response) {
+	public StreamingResponseBody exportAll(HttpServletResponse response) {
 		List<TurSNSite> turSNSites = turSNSiteRepository.findAll();
 
-		try {
-			Path zipFilePath = exportFileService.exportSNSitesToZip(turSNSites);
+		return createSNSiteZipResponse(response, turSNSites, "sn-sites-all");
+	}
 
+	public StreamingResponseBody exportBySiteId(String siteId, HttpServletResponse response) {
+		List<TurSNSite> turSNSites = turSNSiteRepository.findById(siteId).map(List::of).orElse(List.of());
+		if (turSNSites.isEmpty()) {
+			return null;
+		}
+		return createSNSiteZipResponse(response, turSNSites, "sn-site-" + turSNSites.get(0).getName());
+	}
+
+	private StreamingResponseBody createSNSiteZipResponse(HttpServletResponse response, List<TurSNSite> turSNSites,
+			String prefixZipFileName) {
+		try {
 			String strDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
-			String zipFileName = "SNSite_" + strDate + ".zip";
+			String zipFileName = prefixZipFileName + "_" + strDate + ".zip";
+			Path zipFilePath = exportFileService.exportSNSitesToZip(turSNSites);
 
 			response.addHeader("Content-disposition", "attachment;filename=" + zipFileName);
 			response.setContentType("application/octet-stream");

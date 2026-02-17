@@ -137,21 +137,43 @@ export default function SNSitePage() {
     async function onDelete() {
         try {
             if (await turSNSiteService.delete(snSite)) {
-                toast.success(`The ${snSite.name} Search Engine was deleted`);
+                toast.success(`The ${snSite.name} Semantic Navigation was deleted`);
                 navigate(`${ROUTES.SN_INSTANCE}`);
             } else {
-                toast.error(`The ${snSite.name} Search Engine was not deleted`);
+                toast.error(`The ${snSite.name} Semantic Navigation was not deleted`);
             }
 
         } catch (error) {
             console.error("Form submission error", error);
-            toast.error(`The ${snSite.name} Search Engine was not deleted`);
+            toast.error(`The ${snSite.name} Semantic Navigation was not deleted`);
+        }
+        setOpen(false);
+    }
+    async function onExport() {
+        try {
+            const response = await turSNSiteService.export(snSite);
+            if (response) {
+                const url = globalThis.URL.createObjectURL(response);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${snSite.name || 'sn-site'}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                globalThis.URL.revokeObjectURL(url);
+                a.remove();
+                toast.success(`The ${snSite.name} Semantic Navigation was exported`);
+            } else {
+                toast.error(`The ${snSite.name} Semantic Navigation was not exported`);
+            }
+        } catch (error) {
+            console.error("Form submission error", error);
+            toast.error(`The ${snSite.name} Semantic Navigation was not exported`);
         }
         setOpen(false);
     }
 
     return (
         <SubPage icon={IconSearch} feature={"Semantic Navigation"} name={snSite.name}
-            onDelete={onDelete} data={data} isNew={isNew} urlBase={urlBase} open={open} setOpen={setOpen} />
+            onDelete={onDelete} data={data} isNew={isNew} urlBase={urlBase} open={open} setOpen={setOpen} onExport={onExport} />
     )
 }

@@ -15,9 +15,9 @@ export const DialogDelete: React.FC<Props> = ({ feature, name, onDelete, open, s
     <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild >
-          <GradientButton asChild variant={"ghost"} size={"icon-sm"} ><IconTrash className="size-5!" /></GradientButton>
+          <GradientButton variant={"ghost"} size={"icon-sm"} ><IconTrash className="size-5!" /></GradientButton>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-150">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
