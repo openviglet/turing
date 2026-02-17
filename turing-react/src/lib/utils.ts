@@ -24,12 +24,10 @@ export const truncateMiddle = (
 };
 
 export const getFlagEmoji = (locale: string) => {
-  // Pega a parte após o underline (ex: en_US -> US)
   const countryCode = locale.split("_")[1]?.toUpperCase();
 
-  if (!countryCode?.length || countryCode.length !== 2) return "🌐"; // Fallback se não encontrar
+  if (!countryCode?.length || countryCode.length !== 2) return "🌐";
 
-  // Converte cada letra para o Regional Indicator Symbol
   return countryCode
     .split("")
     .map((char) => String.fromCodePoint((char.codePointAt(0) ?? 0) + 127397))
@@ -42,8 +40,6 @@ export const getHashedColor = (str: string) => {
     hash = (str.codePointAt(i) ?? 0) + ((hash << 5) - hash);
   }
   const h = Math.abs(hash) % 360;
-
-  // Retornamos as variáveis prontas para uso direto
   return {
     h,
     light: {

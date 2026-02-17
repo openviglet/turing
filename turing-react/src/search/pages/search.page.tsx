@@ -538,11 +538,9 @@ export default function SearchPage() {
                               variant="outline"
                               className="text-xs font-medium px-2 py-0.5 mr-2 cursor-pointer transition-all hover:opacity-80"
                               style={{
-                                // Definimos as cores como variáveis exclusivas deste elemento
                                 "--bg": colors.light.bg,
                                 "--text": colors.light.text,
                                 "--border": colors.light.border,
-                                // Aplicamos as cores
                                 backgroundColor: "var(--bg)",
                                 color: "var(--text)",
                                 borderColor: "var(--border)",
@@ -550,19 +548,11 @@ export default function SearchPage() {
                               onClick={() => turRedirect(metadata.href)}
                               title={metadata.text}
                             >
-                              {/* CSS extra para injetar apenas uma vez ou via global, 
-          que troca as variáveis locais no Dark Mode */}
                               <style dangerouslySetInnerHTML={{
-                                __html: `
-        .dark [data-dynamic-badge] {
-          --bg: ${colors.dark.bg} !important;
-          --text: ${colors.dark.text} !important;
-          --border: ${colors.dark.border} !important;
-        }
-      `}} />
-
+                                __html: `.dark [data-dynamic-badge] { --bg: ${colors.dark.bg} !important; --text: ${colors.dark.text} !important; --border: ${colors.dark.border} !important; }`
+                              }} />
                               <span
-                                data-dynamic-badge // Atributo para o seletor CSS acima
+                                data-dynamic-badge
                                 dangerouslySetInnerHTML={{ __html: metadata.text }}
                               />
                             </Badge>

@@ -216,24 +216,36 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
         header: "Locale",
         cell: ({ row }) => {
             const locale = String(row.getValue("locale"));
-            const getLocaleCode = (): string => {
-                if (locale.includes('_')) {
-                    return locale.split('_')[1];
-                }
-                if (locale.includes('-')) {
-                    return locale.split('-')[1];
-                }
-                return locale;
+
+            const getCountryCode = (): string => {
+                let code = locale;
+                if (locale.includes('_')) code = locale.split('_')[1];
+                else if (locale.includes('-')) code = locale.split('-')[1];
+
+                const upperCode = code.toUpperCase();
+
+                const overrides: Record<string, string> = {
+                    'EN': 'US',
+                    'PT': 'BR',
+                    'ES': 'ES',
+                    'JA': 'JP',
+                    'KO': 'KR'
+                };
+
+                return (overrides[upperCode] || upperCode).toLowerCase();
             };
-            const localeCode = getLocaleCode();
-            const countryCode = localeCode.toLowerCase();
+
+            const countryCode = getCountryCode();
 
             return (
                 <Badge variant="secondary" className="font-mono gap-2 py-1 pl-1">
                     <img
                         src={`https://flagcdn.com/w40/${countryCode}.png`}
                         alt={countryCode}
-                        onError={(e) => { e.currentTarget.style.display = 'none' }}
+                        onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            // Opcional: mostrar um ícone de globo se a bandeira falhar
+                        }}
                         className="w-5 h-3.5 object-cover rounded-sm shadow-sm"
                     />
                     <span className="text-xs font-bold uppercase tracking-tight">
