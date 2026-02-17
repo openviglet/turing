@@ -33,28 +33,31 @@ export function NavUser({
 }>) {
   const { isMobile } = useSidebar()
   const handleClick = () => {
-    console.log('NavLink clicked!');
     localStorage.removeItem('restInfo');
     localStorage.removeItem('user');
   };
   const initials = React.useMemo(() => {
-
     const first = user.firstName || '';
     const last = user.lastName || '';
 
     if (!first && !last) return ' ';
 
     const fullName = `${first} ${last}`.trim();
-    const nameParts = fullName.split(' ');
+    const nameParts = fullName.split(' ').filter(Boolean);
 
-    return nameParts
-      .map((part) => part.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join('');
+    if (nameParts.length === 1) {
+      return nameParts[0].charAt(0).toUpperCase();
+    }
+
+    // Pega a primeira letra da primeira e da última palavra
+    return (
+      nameParts[0].charAt(0).toUpperCase() +
+      (nameParts.at(-1)?.charAt(0).toUpperCase() ?? '')
+    );
   }, [user]);
 
   const gravatarUrl = React.useMemo(() => {
-    if (!user || !user.email) return '';
+    if (!user?.email) return '';
 
 
     const cleanEmail = user.email.trim().toLowerCase();
