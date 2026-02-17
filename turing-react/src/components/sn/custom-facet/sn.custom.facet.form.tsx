@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { DialogDelete } from "@/components/dialog.delete"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
@@ -15,14 +16,12 @@ import {
 } from "@/components/ui/input"
 import type { TurSNSiteCustomFacet } from "@/models/sn/sn-site-custom-facet.model"
 import { TurSNSiteCustomFacetService } from "@/services/sn/sn.site.custom.facet.service"
-import { IconTrash } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/dialog"
 import { GradientButton } from "../../ui/gradient-button"
 
 const turSNSiteCustomFacetService = new TurSNSiteCustomFacetService();
@@ -94,29 +93,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
         <CardHeader>
           <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Custom Facet</CardTitle>
           <CardAction>
-            {!isNew &&
-              <Dialog open={open} onOpenChange={setOpen}>
-                <form>
-                  <DialogTrigger asChild>
-                    <GradientButton variant={"outline"} size={"sm"}><IconTrash /></GradientButton>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-112.5">
-                    <DialogHeader>
-                      <DialogTitle>Are you absolutely sure?</DialogTitle>
-                      <DialogDescription>
-                        Unexpected bad things will happen if you don't read this!
-                      </DialogDescription>
-                    </DialogHeader>
-                    <p className="grid gap-4">
-                      This action cannot be undone. This will permanently delete the {value.label} custom facet.
-                    </p>
-                    <DialogFooter>
-                      <GradientButton onClick={onDelete} variant="destructive">I understand the consequences, delete this custom facet</GradientButton>
-                    </DialogFooter>
-                  </DialogContent>
-                </form>
-              </Dialog>
-            }
+            {!isNew && <DialogDelete feature="Custom Facet" name={value.label} onDelete={onDelete} open={open} setOpen={setOpen} />}
           </CardAction>
           <CardDescription>
             Custom facet settings for creating facets with specific ranges.

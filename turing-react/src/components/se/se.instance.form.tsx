@@ -25,14 +25,13 @@ import {
 } from "@/components/ui/textarea"
 import type { TurSEInstance } from "@/models/se/se-instance.model.ts"
 import { TurSEInstanceService } from "@/services/se/se.service"
-import { IconTrash } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { DialogDelete } from "../dialog.delete"
 import { GradientButton } from "../ui/gradient-button"
 const turSEInstanceService = new TurSEInstanceService();
 interface Props {
@@ -100,34 +99,12 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
         <CardHeader>
           <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Search Engine</CardTitle>
           <CardAction>
-            {!isNew &&
-              <Dialog open={open} onOpenChange={setOpen}>
-                <form>
-                  <DialogTrigger asChild>
-                    <GradientButton variant={"ghost"} size={"icon"}><IconTrash /></GradientButton>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-112.5">
-                    <DialogHeader>
-                      <DialogTitle>Are you absolutely sure?</DialogTitle>
-                      <DialogDescription>
-                        Unexpected bad things will happen if you don't read this!
-                      </DialogDescription>
-                    </DialogHeader>
-                    <p className="grid gap-4">
-                      This action cannot be undone. This will permanently delete the {value.title} search engine.
-                    </p>
-                    <DialogFooter>
-                      <GradientButton onClick={onDelete} variant="destructive">I understand the consequences, delete this search engine</GradientButton>
-                    </DialogFooter>
-                  </DialogContent>
-                </form>
-              </Dialog>
-            }
+            {!isNew && <DialogDelete feature="Search Engine" name={value.title} onDelete={onDelete} open={open} setOpen={setOpen} />}
           </CardAction>
           <CardDescription>
             Search engine settings.
           </CardDescription>
-        </CardHeader>
+        </CardHeader >
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
@@ -234,8 +211,8 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
             </form>
           </Form>
         </CardContent>
-      </Card>
-    </div>
+      </Card >
+    </div >
   )
 }
 
