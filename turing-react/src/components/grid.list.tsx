@@ -1,9 +1,14 @@
 import {
     flexRender,
     getCoreRowModel,
+    getFilteredRowModel,
     getPaginationRowModel,
+    getSortedRowModel,
     useReactTable,
     type ColumnDef,
+    type ColumnFiltersState,
+    type SortingState,
+    type VisibilityState,
 } from "@tanstack/react-table";
 import { useState, type PropsWithChildren } from "react";
 
@@ -24,7 +29,9 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import type { TurGridItem } from "@/models/ui/grid-item";
+import React from "react";
 import { GradientButton } from "./ui/gradient-button";
+import { Input } from "./ui/input";
 
 interface Props {
     gridItemList: TurGridItem[];
@@ -62,22 +69,53 @@ export const GridList: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) =
         pageIndex: 0, // initial page index
         pageSize: 10, // default page size
     });
-
+    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+        []
+    )
+    const [columnVisibility, setColumnVisibility] =
+        React.useState<VisibilityState>({})
+    const [rowSelection, setRowSelection] = React.useState({})
+    const [globalFilter, setGlobalFilter] = useState("")
     const table = useReactTable({
         data: gridItemList,
         columns,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onPaginationChange: setPagination,
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
         state: {
+            globalFilter,
             pagination,
+            sorting,
+            columnFilters,
+            columnVisibility,
+            rowSelection,
         },
+        onGlobalFilterChange: setGlobalFilter,
+        getColumnCanGlobalFilter: (column) =>
+            column.id === "name" || column.id === "description",
+        onPaginationChange: setPagination
     });
 
     return (
         <div className="px-6">
             <Card>
                 <div className="rounded-md">
+                    <div className="flex items-center py-4 px-4">
+                        <Input
+                            placeholder="Filter by name or description..."
+                            value={globalFilter ?? ""}
+                            onChange={(event) => {
+                                setGlobalFilter(event.target.value);
+                            }}
+                            className="max-w-sm"
+                        />
+                    </div>
                     <Table>
                         <TableHeader >
                             {table.getHeaderGroups().map((headerGroup) => (

@@ -229,50 +229,55 @@ const buildColumns = (
                     INT: {
                         label: "Integer",
                         icon: Hash,
-                        className: "bg-blue-100 text-blue-700 hover:bg-blue-100 border-blue-200"
+                        className: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800"
                     },
                     LONG: {
                         label: "Long",
                         icon: Binary,
-                        className: "bg-cyan-100 text-cyan-700 hover:bg-cyan-100 border-cyan-200"
+                        className: "bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-400 dark:border-cyan-800"
                     },
                     STRING: {
                         label: "String",
                         icon: Type,
-                        className: "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200"
+                        className: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800"
                     },
                     TEXT: {
                         label: "Text",
                         icon: AlignLeft,
-                        className: "bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200"
+                        className: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800"
                     },
                     ARRAY: {
                         label: "Array",
                         icon: List,
-                        className: "bg-purple-100 text-purple-700 hover:bg-purple-100 border-purple-200"
+                        className: "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800"
                     },
                     DATE: {
                         label: "Date",
                         icon: Calendar,
-                        className: "bg-orange-100 text-orange-700 hover:bg-orange-100 border-orange-200"
+                        className: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800"
                     },
                     BOOL: {
                         label: "Boolean",
                         icon: CheckCircle2,
-                        className: "bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-indigo-200"
+                        className: "bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800"
                     },
                 };
-                const typeValue: string = row.getValue("type")
+
+                const typeValue: string = row.getValue("type");
                 const cleanType = typeValue?.split('(')[0].toUpperCase();
                 const config = typeConfig[cleanType as keyof typeof typeConfig] || {
                     label: typeValue,
                     icon: null,
-                    className: "bg-gray-100 text-gray-700"
+                    className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
                 };
                 const Icon = config.icon;
+
                 return (
-                    <div className="text-center">
-                        <Badge variant="outline" className={`w-20 justify-center inline-flex items-center gap-2 py-1 font-semibold whitespace-nowrap ${config.className}`}                        >
+                    <div className="flex justify-center">
+                        <Badge
+                            variant="outline"
+                            className={`w-24 justify-center inline-flex items-center gap-2 py-1 font-semibold whitespace-nowrap transition-colors ${config.className}`}
+                        >
                             {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
                             <span>{config.label}</span>
                         </Badge>
