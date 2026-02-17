@@ -1,4 +1,4 @@
-export interface TurSECustomFacet {
+export interface TurSNSiteCustomFacet {
   id: string;
   label: string;
   field: string;

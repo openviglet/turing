@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/textarea"
 import type { TurStoreInstance } from "@/models/store/store-instance.model.ts"
 import { TurStoreInstanceService } from "@/services/store/store.service"
+import { IconTrash } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import {
   useForm
@@ -100,7 +101,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <Dialog open={open} onOpenChange={setOpen}>
                 <form>
                   <DialogTrigger asChild>
-                    <GradientButton variant={"outline"}>Delete</GradientButton>
+                    <GradientButton variant={"outline"} size={"sm"}><IconTrash /></GradientButton>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>

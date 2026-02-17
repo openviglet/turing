@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/textarea"
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model.ts"
 import { TurLLMInstanceService } from "@/services/llm/llm.service"
+import { IconTrash } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import {
   useForm
@@ -116,7 +117,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <Dialog open={open} onOpenChange={setOpen}>
                 <form>
                   <DialogTrigger asChild>
-                    <GradientButton variant={"outline"}>Delete</GradientButton>
+                    <GradientButton variant={"outline"} size={"sm"}><IconTrash /></GradientButton>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>

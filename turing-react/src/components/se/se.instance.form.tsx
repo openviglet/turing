@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/textarea"
 import type { TurSEInstance } from "@/models/se/se-instance.model.ts"
 import { TurSEInstanceService } from "@/services/se/se.service"
+import { IconTrash } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import {
   useForm
@@ -103,7 +104,7 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <Dialog open={open} onOpenChange={setOpen}>
                 <form>
                   <DialogTrigger asChild>
-                    <GradientButton variant={"outline"}>Delete</GradientButton>
+                    <GradientButton variant={"ghost"} size={"icon"}><IconTrash /></GradientButton>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>

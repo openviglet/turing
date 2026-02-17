@@ -5,7 +5,6 @@ import {
     useReactTable,
     type ColumnDef,
 } from "@tanstack/react-table";
-import { Pencil } from "lucide-react";
 import { useState, type PropsWithChildren } from "react";
 
 import { Card } from "@/components/ui/card";
@@ -44,13 +43,14 @@ export const columns: ColumnDef<TurGridItem>[] = [
     },
     {
         accessorKey: "url",
-        header: "Actions",
+        header: () => <div className="text-center">Actions</div>,
         cell: ({ row }) => {
             return (
-                <GradientButton variant="ghost" size="icon" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 w-8" to={row.getValue("url")}>
-                    <Pencil className="h-4 w-4" />
-                    <span className="sr-only">Edit</span>
-                </GradientButton>
+                <div className="text-center">
+                    <GradientButton variant="outline" to={row.getValue("url")}>
+                        Edit
+                    </GradientButton>
+                </div>
             );
         },
     },

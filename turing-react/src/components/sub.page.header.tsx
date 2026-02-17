@@ -27,7 +27,7 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
             className="mx-2 data-[orientation=vertical]:h-4"
           />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 pt-1">
           {urlBase ? (
             <NavLink
               to={urlBase}
@@ -46,16 +46,15 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
               <span className="flex items-center gap-2">
                 {Icon && <Icon />}
                 <h1 className="text-base font-semibold leading-none text-foreground">{feature}</h1>
-              </span>
-              <span className="translate-y-0.5 text-sm text-muted-foreground leading-relaxed">
-                {description}
+                <span className="text-muted-foreground leading-none"> {description}
+                </span>
               </span>
             </div>
           )}
         </div>
         <div className="flex items-center gap-2">
           {urlNew !== undefined && (
-            <GradientButton asChild>
+            <GradientButton asChild size={"sm"}>
               <NavLink to={urlNew} className="flex items-center gap-2">
                 {Icon && <Icon />} New {feature}
               </NavLink>

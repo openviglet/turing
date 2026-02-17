@@ -13,26 +13,27 @@ import {
 import {
   Input
 } from "@/components/ui/input"
-import type { TurSECustomFacet } from "@/models/se/se-custom-facet.model"
-import { TurSECustomFacetService } from "@/services/se/se.custom.facet.service"
+import type { TurSNSiteCustomFacet } from "@/models/sn/sn-site-custom-facet.model"
+import { TurSNSiteCustomFacetService } from "@/services/sn/sn.site.custom.facet.service"
+import { IconTrash } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { GradientButton } from "../ui/gradient-button"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/dialog"
+import { GradientButton } from "../../ui/gradient-button"
 
-const turSECustomFacetService = new TurSECustomFacetService();
+const turSNSiteCustomFacetService = new TurSNSiteCustomFacetService();
 
 interface Props {
-  value: TurSECustomFacet;
+  value: TurSNSiteCustomFacet;
   isNew: boolean;
 }
 
 export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
-  const form = useForm<TurSECustomFacet>({
+  const form = useForm<TurSNSiteCustomFacet>({
     defaultValues: value
   });
   const { control } = form;
@@ -43,19 +44,19 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
     form.reset(value);
   }, [value])
 
-  async function onSubmit(customFacet: TurSECustomFacet) {
+  async function onSubmit(customFacet: TurSNSiteCustomFacet) {
     try {
       if (isNew) {
-        const result = await turSECustomFacetService.create(customFacet);
+        const result = await turSNSiteCustomFacetService.create(customFacet);
         if (result) {
           toast.success(`The ${customFacet.label} Custom Facet was saved`);
-          navigate(`${ROUTES.SE_INSTANCE}/custom-facet`);
+          navigate(`${ROUTES.SN_INSTANCE}/custom-facet`);
         } else {
           toast.error(`The ${customFacet.label} Custom Facet was not saved`);
         }
       }
       else {
-        const result = await turSECustomFacetService.update(customFacet);
+        const result = await turSNSiteCustomFacetService.update(customFacet);
         if (result) {
           toast.success(`The ${customFacet.label} Custom Facet was updated`);
         } else {
@@ -71,9 +72,9 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
 
   async function onDelete() {
     try {
-      if (await turSECustomFacetService.delete(value)) {
+      if (await turSNSiteCustomFacetService.delete(value)) {
         toast.success(`The ${value.label} Custom Facet was deleted`);
-        navigate(`${ROUTES.SE_INSTANCE}/custom-facet`);
+        navigate(`${ROUTES.SN_INSTANCE}/custom-facet`);
       }
       else {
         toast.error(`The ${value.label} Custom Facet was not deleted`);
@@ -97,7 +98,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
               <Dialog open={open} onOpenChange={setOpen}>
                 <form>
                   <DialogTrigger asChild>
-                    <GradientButton variant={"outline"}>Delete</GradientButton>
+                    <GradientButton variant={"outline"} size={"sm"}><IconTrash /></GradientButton>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-112.5">
                     <DialogHeader>
