@@ -1,4 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
+import { BadgeColorful } from "@/components/badge-colorful";
 import { BadgeLocale } from "@/components/badge-locale";
 import { GradientButton } from "@/components/ui/gradient-button";
 import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model.ts";
@@ -50,7 +51,12 @@ export const columns: ColumnDef<TurSNSiteLocale>[] = [
         accessorKey: "core",
         header: () => <div className="text-left">Core</div>,
         cell: ({ row }) => {
-            return <div className="text-left font-medium">{row.getValue("core")}</div>
+            return <div className="text-left font-medium">
+                <BadgeColorful
+                    key={row.getValue("core")}
+                    text={row.getValue("core")}
+                />
+            </div>
         },
     },
     {

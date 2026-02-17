@@ -1,3 +1,4 @@
+import { BadgeColorful } from "@/components/badge-colorful";
 import { TurLogo } from "@/components/logo/tur-logo";
 import {
   Accordion,
@@ -5,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getHashedColor } from "@/lib/utils";
 import { Search } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -530,36 +529,19 @@ export default function SearchPage() {
                           />
                         )}
                         {/* Metadata Badges */}
-                        {Array.isArray(document.metadata) && document.metadata.map((metadata) => {
-                          if (!metadata?.text || !metadata?.href) return null;
-                          const colors = getHashedColor(metadata.text);
-                          return (
-                            <Badge
-                              key={`${metadata.text}-${metadata.href}`}
-                              variant="outline"
-                              className="text-xs font-medium px-2 py-0.5 mr-2 cursor-pointer transition-all hover:opacity-80"
-                              style={{
-                                backgroundColor: colors.light.bg,
-                                color: colors.light.text,
-                                borderColor: colors.light.border,
-                              }}
-                              data-dynamic-badge
-                              onClick={() => turRedirect(metadata.href)}
-                              title={metadata.text}
-                            >
-                              <span
-                                dangerouslySetInnerHTML={{ __html: metadata.text }}
+                        <div className="flex flex-wrap gap-2">
+                          {Array.isArray(document.metadata) && document.metadata.map((metadata) => {
+                            if (!metadata?.text || !metadata?.href) return null;
+                            return (
+                              <BadgeColorful
+                                key={`${metadata.text}-${metadata.href}`}
+                                text={metadata.text}
+                                href={metadata.href}
+                                onClick={turRedirect}
                               />
-                              <style>{String.raw`
-                            html.dark [data-dynamic-badge][title="${metadata.text}"] {
-                              background-color: ${colors.dark.bg} !important;
-                              color: ${colors.dark.text} !important;
-                              border-color: ${colors.dark.border} !important;
-                            }
-                            `}</style>
-                            </Badge>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                         {/* Document Date */}
                         {date && (
                           <div className="text-xs text-muted-foreground mt-2">
