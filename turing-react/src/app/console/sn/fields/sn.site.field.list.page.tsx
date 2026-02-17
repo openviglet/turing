@@ -1,8 +1,8 @@
 import * as React from "react"
 
 import { ROUTES } from "@/app/routes.const"
-import { SNSiteFieldGridList } from "@/components/field.grid.list"
 import { LoadProvider } from "@/components/loading-provider"
+import { SNSiteFieldGridList } from "@/components/sn/fields/field.grid.list"
 import { SubPageHeader } from "@/components/sub.page.header"
 import type { TurSNStatusFields } from "@/models/sn/sn-field-status.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model.ts"

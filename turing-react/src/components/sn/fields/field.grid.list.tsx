@@ -12,12 +12,19 @@ import {
 } from "@tanstack/react-table"
 import {
     AlertTriangle,
+    AlignLeft,
     ArrowUpDown,
+    Binary,
+    Calendar,
     CheckCircle2,
-    ChevronDown
+    ChevronDown,
+    Hash,
+    List,
+    Type
 } from "lucide-react"
 import * as React from "react"
 
+import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
@@ -161,7 +168,7 @@ function StatusFieldDropdown({ statusField }: Readonly<StatusFieldDropdownProps>
     )
 }
 
-type FieldToggleKey = "enabled" | "mlt" | "facet" | "hl";
+type FieldToggleKey = "multiValued" | "mlt" | "facet" | "secondaryFacet" | "hl" | "enabled";
 
 const buildColumns = (
     statusFieldMap: Map<string, TurSNFieldCheck>,
@@ -194,37 +201,97 @@ const buildColumns = (
             accessorKey: "name",
             header: ({ column }) => {
                 return (
-                    <GradientButton
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Field
-                        <ArrowUpDown />
-                    </GradientButton>
+                    <div className="w-full">
+                        <GradientButton
+                            variant="ghost"
+                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                        >
+                            Field
+                            <ArrowUpDown />
+                        </GradientButton>
+                    </div>
                 )
             },
             cell: ({ row }) => {
                 const statusField = statusFieldMap.get(row.original.id);
                 return (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-full">
                         <StatusFieldDropdown statusField={statusField} />
                         <div className="text-left font-medium">{row.getValue("name")}</div>
                     </div>
                 )
             },
+        }, {
+            accessorKey: "type",
+            header: () => <div className="text-center">Type</div>,
+            cell: ({ row }) => {
+                const typeConfig = {
+                    INT: {
+                        label: "Integer",
+                        icon: Hash,
+                        className: "bg-blue-100 text-blue-700 hover:bg-blue-100 border-blue-200"
+                    },
+                    LONG: {
+                        label: "Long",
+                        icon: Binary,
+                        className: "bg-cyan-100 text-cyan-700 hover:bg-cyan-100 border-cyan-200"
+                    },
+                    STRING: {
+                        label: "String",
+                        icon: Type,
+                        className: "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200"
+                    },
+                    TEXT: {
+                        label: "Text",
+                        icon: AlignLeft,
+                        className: "bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200"
+                    },
+                    ARRAY: {
+                        label: "Array",
+                        icon: List,
+                        className: "bg-purple-100 text-purple-700 hover:bg-purple-100 border-purple-200"
+                    },
+                    DATE: {
+                        label: "Date",
+                        icon: Calendar,
+                        className: "bg-orange-100 text-orange-700 hover:bg-orange-100 border-orange-200"
+                    },
+                    BOOL: {
+                        label: "Boolean",
+                        icon: CheckCircle2,
+                        className: "bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-indigo-200"
+                    },
+                };
+                const typeValue: string = row.getValue("type")
+                const cleanType = typeValue?.split('(')[0].toUpperCase();
+                const config = typeConfig[cleanType as keyof typeof typeConfig] || {
+                    label: typeValue,
+                    icon: null,
+                    className: "bg-gray-100 text-gray-700"
+                };
+                const Icon = config.icon;
+                return (
+                    <div className="text-center">
+                        <Badge variant="outline" className={`w-20 justify-center inline-flex items-center gap-2 py-1 font-semibold whitespace-nowrap ${config.className}`}                        >
+                            {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
+                            <span>{config.label}</span>
+                        </Badge>
+                    </div>
+                )
+            },
         },
         {
-            accessorKey: "enabled",
-            header: () => <div className="text-right">Enabled</div>,
+            accessorKey: "multiValued",
+            header: () => <div className="text-right">Multi Valued</div>,
             cell: ({ row }) => {
-                const enabled = row.original.enabled;
+                const multiValued = row.original.multiValued;
                 const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
                         <Switch
-                            checked={enabled == 1}
+                            checked={multiValued == 1}
                             onCheckedChange={(checked) =>
-                                onToggle(fieldId, "enabled", checked)
+                                onToggle(fieldId, "multiValued", checked)
                             }
                             disabled={isSavingField(fieldId)}
                         />
@@ -271,6 +338,25 @@ const buildColumns = (
             },
         },
         {
+            accessorKey: "secondaryFacet",
+            header: () => <div className="text-right">Secondary Facet</div>,
+            cell: ({ row }) => {
+                const secondaryFacet = row.original.secondaryFacet;
+                const fieldId = row.original.id;
+                return (
+                    <div className="text-right font-medium">
+                        <Switch
+                            checked={secondaryFacet}
+                            onCheckedChange={(checked) =>
+                                onToggle(fieldId, "secondaryFacet", checked)
+                            }
+                            disabled={isSavingField(fieldId)}
+                        />
+                    </div>
+                )
+            },
+        },
+        {
             accessorKey: "hl",
             header: () => <div className="text-right">Highlighting</div>,
             cell: ({ row }) => {
@@ -290,13 +376,32 @@ const buildColumns = (
             },
         },
         {
+            accessorKey: "enabled",
+            header: () => <div className="text-right">Enabled</div>,
+            cell: ({ row }) => {
+                const enabled = row.original.enabled;
+                const fieldId = row.original.id;
+                return (
+                    <div className="text-right font-medium">
+                        <Switch
+                            checked={enabled == 1}
+                            onCheckedChange={(checked) =>
+                                onToggle(fieldId, "enabled", checked)
+                            }
+                            disabled={isSavingField(fieldId)}
+                        />
+                    </div>
+                )
+            },
+        },
+        {
             id: "actions",
             header: () => <div className="text-center">Actions</div>,
             enableHiding: false,
             cell: ({ row }) => {
                 return (
                     <div className="text-center">
-                        <GradientButton asChild variant="outline" to={row.original.id}>
+                        <GradientButton asChild variant="outline" size={"sm"} to={row.original.id}>
                             Edit
                         </GradientButton>
                     </div>
@@ -407,8 +512,13 @@ export const SNSiteFieldGridList: React.FC<PropsWithChildren<Props>> = ({ status
             columnVisibility,
             rowSelection,
         },
-    })
-
+        initialState: {
+            pagination: {
+                pageSize: 50,
+                pageIndex: 0,
+            },
+        },
+    });
     return (
         <div className="px-6">
             <div className="flex items-center py-4">
@@ -423,7 +533,7 @@ export const SNSiteFieldGridList: React.FC<PropsWithChildren<Props>> = ({ status
                 <div className="ml-auto">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <GradientButton variant="outline">
+                            <GradientButton variant="outline" size="sm">
                                 <IconColumns3Filled /> Columns <ChevronDown />
                             </GradientButton>
                         </DropdownMenuTrigger>
