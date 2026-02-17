@@ -3,6 +3,7 @@ import { AemMonitoringGrid } from "@/components/integration/aem.monitoring.grid"
 import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useBreadcrumb } from "@/contexts/breadcrumb.context";
 import type { TurIntegrationMonitoring } from "@/models/integration/integration-monitoring.model";
 import { TurIntegrationMonitoringService } from "@/services/integration/integration-monitoring.service";
 import { IconGraph } from "@tabler/icons-react";
@@ -19,33 +20,44 @@ export default function IntegrationInstanceMonitoringPage() {
   const monitoringService = useMemo(() => {
     return id ? new TurIntegrationMonitoringService(id) : null;
   }, [id]);
-
+  const { pushItem, popItem } = useBreadcrumb();
   useEffect(() => {
-    if (!monitoringService || !id) return;
+    let isMounted = true;
+    let itemsAdded = 0;
+
     const fetchData = async () => {
+      if (!monitoringService || !id) return;
+
       try {
-        if (source === DEFAULT_SOURCE) {
-          const data = await monitoringService.query();
-          setIntegrationMonitoring({
-            sources: data.sources || [],
-            indexing: data.indexing || [],
-          });
-        } else {
-          const data = await monitoringService.get(source);
-          setIntegrationMonitoring({
-            sources: data.sources || [],
-            indexing: data.indexing || [],
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching monitoring data:", error);
-        setError("Connection error or timeout while fetching monitoring data.");
+        const data = source === DEFAULT_SOURCE
+          ? await monitoringService.query()
+          : await monitoringService.get(source);
+
+        if (!isMounted) return;
+
+        setIntegrationMonitoring({
+          sources: data.sources || [],
+          indexing: data.indexing || [],
+        });
+
+        pushItem({ label: "Monitoring", href: `${ROUTES.INTEGRATION_INSTANCE}/${id}/monitoring` });
+        pushItem({ label: source === DEFAULT_SOURCE ? "All" : source });
+        itemsAdded = 2;
+
+      } catch (err) {
+        console.error(err);
       }
     };
 
     fetchData();
-  }, [monitoringService, id, source]);
 
+    return () => {
+      isMounted = false;
+      for (let i = 0; i < itemsAdded; i++) {
+        popItem();
+      }
+    };
+  }, [source, id]);
   const handleTabChange = useCallback((newSource: string) => {
     navigate(`${ROUTES.INTEGRATION_INSTANCE}/${id}/monitoring/${newSource}`);
   }, [navigate, id]);

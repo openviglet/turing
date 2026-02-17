@@ -4,6 +4,7 @@ import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useBreadcrumb } from "@/contexts/breadcrumb.context";
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model";
 import { TurIntegrationAemSourceService } from "@/services/integration/integration-aem-source.service";
 import {
@@ -22,8 +23,17 @@ export default function IntegrationInstanceIndexAdminPage() {
   const [error, setError] = useState<string | null>(null);
   const turIntegrationAemSourceService = useMemo(() => new TurIntegrationAemSourceService(id), [id]);
   const [sources, setSources] = useState<TurIntegrationAemSource[]>()
+  const { pushItem, popItem } = useBreadcrumb();
   useEffect(() => {
-    turIntegrationAemSourceService.query().then(setSources).catch(() => setError("Failed to load integration details"));
+    let added = false;
+    turIntegrationAemSourceService.query().then((sources) => {
+      setSources(sources);
+      pushItem({ label: "Indexing Manager" });
+      added = true;
+    }).catch(() => setError("Failed to load integration details"));
+    return () => {
+      if (added) popItem();
+    };
   }, [turIntegrationAemSourceService])
 
   const items = [

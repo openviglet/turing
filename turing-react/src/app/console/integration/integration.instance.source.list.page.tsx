@@ -3,6 +3,7 @@ import { BlankSlate } from "@/components/blank-slate";
 import { GridList } from "@/components/grid.list";
 import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
+import { useBreadcrumb } from "@/contexts/breadcrumb.context";
 import { useGridAdapter } from "@/hooks/use-grid-adapter";
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model";
 import { TurIntegrationAemSourceService } from "@/services/integration/integration-aem-source.service";
@@ -15,8 +16,18 @@ export default function IntegrationInstanceSourceListPage() {
   const [integrationAemSources, setIntegrationAemSources] = useState<TurIntegrationAemSource[]>();
   const turIntegrationAemSourceService = new TurIntegrationAemSourceService(id);
   const [error, setError] = useState<string | null>(null);
+  const { pushItem, popItem } = useBreadcrumb();
+
   useEffect(() => {
-    turIntegrationAemSourceService.query().then(setIntegrationAemSources).catch(() => setError("Connection error or timeout while fetching AEM sources."));
+    let added = false;
+    turIntegrationAemSourceService.query().then((sources) => {
+      setIntegrationAemSources(sources);
+      pushItem({ label: "Sources", href: `${ROUTES.INTEGRATION_INSTANCE}/${id}/source` });
+      added = true;
+    }).catch(() => setError("Connection error or timeout while fetching Integration service."));
+    return () => {
+      if (added) popItem();
+    };
   }, [id])
   const gridItemList = useGridAdapter(integrationAemSources, {
     name: "name",

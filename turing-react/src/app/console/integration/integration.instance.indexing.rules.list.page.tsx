@@ -3,6 +3,7 @@ import { BlankSlate } from "@/components/blank-slate";
 import { GridList } from "@/components/grid.list";
 import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
+import { useBreadcrumb } from "@/contexts/breadcrumb.context";
 import { useGridAdapter } from "@/hooks/use-grid-adapter";
 import type { TurIntegrationIndexingRule } from "@/models/integration/integration-indexing-rule.model";
 import { TurIntegrationIndexingRuleService } from "@/services/integration/integration-indexing-rule.service";
@@ -15,8 +16,17 @@ export default function IntegrationInstanceIndexingRulesListPage() {
   const [integrationIndexingRules, setIntegrationIndexingRules] = useState<TurIntegrationIndexingRule[]>();
   const turIntegrationIndexingRuleService = new TurIntegrationIndexingRuleService(id || "");
   const [error, setError] = useState<string | null>(null);
+  const { pushItem, popItem } = useBreadcrumb();
   useEffect(() => {
-    turIntegrationIndexingRuleService.query().then(setIntegrationIndexingRules).catch(() => setError("Connection error or timeout while fetching indexing rules."));
+    let added = false;
+    turIntegrationIndexingRuleService.query().then((rules) => {
+      setIntegrationIndexingRules(rules);
+      pushItem({ label: "Indexing Rules", href: `${ROUTES.INTEGRATION_INSTANCE}/${id}/indexing-rule` });
+      added = true;
+    }).catch(() => setError("Connection error or timeout while fetching Integration service."));
+    return () => {
+      if (added) popItem();
+    };
   }, [id])
   const gridItemList = useGridAdapter(integrationIndexingRules, {
     name: "name",

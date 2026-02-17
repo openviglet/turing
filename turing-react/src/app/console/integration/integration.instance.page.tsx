@@ -76,7 +76,7 @@ export default function IntegrationInstancePage() {
         return () => {
             if (added) popItem();
         };
-    }, [id])
+    }, [])
 
 
 
