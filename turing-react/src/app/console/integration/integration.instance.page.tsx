@@ -1,6 +1,7 @@
 import { ROUTES } from "@/app/routes.const";
 import { LoadProvider } from "@/components/loading-provider";
 import { SubPage } from "@/components/sub.page";
+import { useBreadcrumb } from "@/contexts/breadcrumb.context";
 import type { TurIntegrationInstance } from "@/models/integration/integration-instance.model";
 import { TurIntegrationInstanceService } from "@/services/integration/integration.service";
 import {
@@ -45,6 +46,7 @@ const data = {
         },
     ],
 }
+
 export default function IntegrationInstancePage() {
     const { id } = useParams() as { id: string };
     const [integration, setIntegration] = useState<TurIntegrationInstance>();
@@ -53,13 +55,27 @@ export default function IntegrationInstancePage() {
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate()
     const urlBase = `${ROUTES.INTEGRATION_INSTANCE}/${id}`
+    const { pushItem, popItem } = useBreadcrumb();
     useEffect(() => {
+        let added = false;
         if (id === "new") {
-            turIntegrationInstanceService.query().then(() => setIntegration({} as TurIntegrationInstance)).catch(() => setError("Connection error or timeout while fetching Integration service."));
+            turIntegrationInstanceService.query().then(() => {
+                setIntegration({} as TurIntegrationInstance);
+                pushItem({ label: "New Integration" });
+                added = true;
+            }).catch(() => setError("Connection error or timeout while fetching Integration instances."));
+            setIsNew(true);
         } else {
-            turIntegrationInstanceService.get(id).then(setIntegration).catch(() => setError("Connection error or timeout while fetching Integration instance."));
+            turIntegrationInstanceService.get(id).then((integration) => {
+                setIntegration(integration);
+                pushItem({ label: integration.title, href: `${ROUTES.INTEGRATION_INSTANCE}/${integration.id}` });
+                added = true;
+            }).catch(() => setError("Connection error or timeout while fetching Integration instance."));
             setIsNew(false);
         }
+        return () => {
+            if (added) popItem();
+        };
     }, [id])
 
 

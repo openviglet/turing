@@ -28,6 +28,7 @@ import type { TurIntegrationIndexing } from "@/models/integration/integration-in
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowRightCircle, Ban, CheckCircle2, Clock, Database, FileSearch, Globe, PencilLine, RefreshCcw, Send, Zap } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { BadgeLocale } from "../badge-locale";
 import { Badge } from "../ui/badge";
 import { GradientButton } from "../ui/gradient-button";
 
@@ -213,46 +214,9 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
     },
     {
         accessorKey: "locale",
-        header: "Locale",
+        header: "Language",
         cell: ({ row }) => {
-            const locale = String(row.getValue("locale"));
-
-            const getCountryCode = (): string => {
-                let code = locale;
-                if (locale.includes('_')) code = locale.split('_')[1];
-                else if (locale.includes('-')) code = locale.split('-')[1];
-
-                const upperCode = code.toUpperCase();
-
-                const overrides: Record<string, string> = {
-                    'EN': 'US',
-                    'PT': 'BR',
-                    'ES': 'ES',
-                    'JA': 'JP',
-                    'KO': 'KR'
-                };
-
-                return (overrides[upperCode] || upperCode).toLowerCase();
-            };
-
-            const countryCode = getCountryCode();
-
-            return (
-                <Badge variant="secondary" className="font-mono gap-2 py-1 pl-1">
-                    <img
-                        src={`https://flagcdn.com/w40/${countryCode}.png`}
-                        alt={countryCode}
-                        onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            // Opcional: mostrar um ícone de globo se a bandeira falhar
-                        }}
-                        className="w-5 h-3.5 object-cover rounded-sm shadow-sm"
-                    />
-                    <span className="text-xs font-bold uppercase tracking-tight">
-                        {locale}
-                    </span>
-                </Badge>
-            );
+            return (<BadgeLocale locale={row.getValue("locale")} />);
         },
     },
     {

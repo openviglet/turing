@@ -1,4 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
+import { BadgeLocale } from "@/components/badge-locale";
 import { GradientButton } from "@/components/ui/gradient-button";
 import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model.ts";
 import { Checkbox } from "@radix-ui/react-checkbox";
@@ -42,7 +43,7 @@ export const columns: ColumnDef<TurSNSiteLocale>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="text-left font-medium">{row.getValue("language")}</div>
+            <div className="text-left font-medium"><BadgeLocale locale={row.getValue("language")} /></div>
         ),
     },
     {

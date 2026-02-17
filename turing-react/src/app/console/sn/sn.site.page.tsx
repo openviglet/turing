@@ -1,5 +1,6 @@
 import { ROUTES } from "@/app/routes.const";
 import { SubPage } from "@/components/sub.page";
+import { useBreadcrumb } from "@/contexts/breadcrumb.context";
 import type { TurSNSiteStatus } from "@/models/sn/sn-site-monitoring.model.ts";
 import type { TurSNSite } from "@/models/sn/sn-site.model.ts";
 import { TurSNSiteService } from "@/services/sn/sn.service";
@@ -32,6 +33,9 @@ export default function SNSitePage() {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate()
     const urlBase = `${ROUTES.SN_INSTANCE}/${id}`;
+    const { pushItem, popItem } = useBreadcrumb();
+
+
     const data = useMemo(() => {
         if (isNew) {
             return {
@@ -118,21 +122,31 @@ export default function SNSitePage() {
         };
     }, [isNew, snStatus]);
     useEffect(() => {
+        let added = false;
+
         if (id === "new") {
             setSnSite({} as TurSNSite);
             setSnStatus(null);
             setIsNew(true);
+            pushItem({ label: "New Site" });
+            added = true;
         } else {
-            turSNSiteService.get(id).then(setSnSite);
+            turSNSiteService.get(id).then((site) => {
+                setSnSite(site);
+                pushItem({ label: site.name, href: `${ROUTES.SN_INSTANCE}/${site.id}` });
+                added = true;
+            });
+
             turSNSiteService.getStatus(id)
                 .then(setSnStatus)
-                .catch((error) => {
-                    console.error("Failed to load SN site monitoring status", error);
-                });
+                .catch(console.error);
             setIsNew(false);
         }
 
-    }, [id])
+        return () => {
+            if (added) popItem();
+        };
+    }, [id]);
 
     async function onDelete() {
         try {

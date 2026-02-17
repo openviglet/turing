@@ -13,6 +13,7 @@ import {
 import { ROUTES } from "./app/routes.const"
 import { ThemeProvider } from "./components/theme-provider"
 import { Toaster } from "./components/ui/sonner"
+import { BreadcrumbProvider } from "./contexts/breadcrumb.context"
 import { TuringServiceProvider } from "./contexts/TuringServiceContext"
 import SearchPage from "./search/pages/search.page"
 
@@ -20,24 +21,26 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <TuringServiceProvider>
-          <Toaster />
-          <Routes>
-            <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.CONSOLE} replace />} />
-            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-            <Route path={`${ROUTES.SN_SEARCH}/:siteName`} element={<SearchPage />} />
-            <Route path={ROUTES.CONSOLE} element={<ConsoleRootPage />}>
-              <Route index element={<Navigate to={ROUTES.SN_INSTANCE} replace />} />
-              {SERoutes}
-              {SNRoutes}
-              {StoreRoutes}
-              {TokenRoutes}
-              {LLMRoutes}
-              {IntegrationRoutes}
-              {LoggingRoutes}
-            </Route>
-          </Routes>
-        </TuringServiceProvider>
+        <BreadcrumbProvider>
+          <TuringServiceProvider>
+            <Toaster />
+            <Routes>
+              <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.CONSOLE} replace />} />
+              <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+              <Route path={`${ROUTES.SN_SEARCH}/:siteName`} element={<SearchPage />} />
+              <Route path={ROUTES.CONSOLE} element={<ConsoleRootPage />}>
+                <Route index element={<Navigate to={ROUTES.SN_INSTANCE} replace />} />
+                {SERoutes}
+                {SNRoutes}
+                {StoreRoutes}
+                {TokenRoutes}
+                {LLMRoutes}
+                {IntegrationRoutes}
+                {LoggingRoutes}
+              </Route>
+            </Routes>
+          </TuringServiceProvider>
+        </BreadcrumbProvider>
       </ThemeProvider>
     </div>
   )
