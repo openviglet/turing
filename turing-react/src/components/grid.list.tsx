@@ -55,7 +55,7 @@ export const columns: ColumnDef<TurGridItem>[] = [
             return (
                 <div className="text-center">
                     <GradientButton variant="outline" to={row.getValue("url")}>
-                        Edit
+                        Open
                     </GradientButton>
                 </div>
             );

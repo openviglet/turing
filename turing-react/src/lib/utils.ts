@@ -35,3 +35,26 @@ export const getFlagEmoji = (locale: string) => {
     .map((char) => String.fromCodePoint((char.codePointAt(0) ?? 0) + 127397))
     .join("");
 };
+
+export const getHashedColor = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (str.codePointAt(i) ?? 0) + ((hash << 5) - hash);
+  }
+  const h = Math.abs(hash) % 360;
+
+  // Retornamos as variáveis prontas para uso direto
+  return {
+    h,
+    light: {
+      bg: `hsl(${h}, 70%, 95%)`,
+      text: `hsl(${h}, 70%, 20%)`,
+      border: `hsl(${h}, 70%, 90%)`,
+    },
+    dark: {
+      bg: `hsl(${h}, 50%, 15%)`,
+      text: `hsl(${h}, 80%, 80%)`,
+      border: `hsl(${h}, 50%, 25%)`,
+    },
+  };
+};

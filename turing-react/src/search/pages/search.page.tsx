@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getHashedColor } from "@/lib/utils";
 import { Search } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -527,17 +529,45 @@ export default function SearchPage() {
                             dangerouslySetInnerHTML={{ __html: description }}
                           />
                         )}
-                        {document.metadata.map((metadata) => (
-                          <Button
-                            key={`${metadata.text || metadata.href}-${metadata.href}`}
-                            variant="outline"
-                            size="sm"
-                            className="text-xs h-auto px-2 py-1 border-border rounded mr-2 hover:bg-accent"
-                            onClick={() => turRedirect(metadata.href)}
-                            title={metadata.text}
-                            dangerouslySetInnerHTML={{ __html: metadata.text }}
-                          />
-                        ))}
+                        {document.metadata.map((metadata) => {
+                          const colors = getHashedColor(metadata.text || "");
+
+                          return (
+                            <Badge
+                              key={`${metadata.text || metadata.href}-${metadata.href}`}
+                              variant="outline"
+                              className="text-xs font-medium px-2 py-0.5 mr-2 cursor-pointer transition-all hover:opacity-80"
+                              style={{
+                                // Definimos as cores como variáveis exclusivas deste elemento
+                                "--bg": colors.light.bg,
+                                "--text": colors.light.text,
+                                "--border": colors.light.border,
+                                // Aplicamos as cores
+                                backgroundColor: "var(--bg)",
+                                color: "var(--text)",
+                                borderColor: "var(--border)",
+                              } as React.CSSProperties}
+                              onClick={() => turRedirect(metadata.href)}
+                              title={metadata.text}
+                            >
+                              {/* CSS extra para injetar apenas uma vez ou via global, 
+          que troca as variáveis locais no Dark Mode */}
+                              <style dangerouslySetInnerHTML={{
+                                __html: `
+        .dark [data-dynamic-badge] {
+          --bg: ${colors.dark.bg} !important;
+          --text: ${colors.dark.text} !important;
+          --border: ${colors.dark.border} !important;
+        }
+      `}} />
+
+                              <span
+                                data-dynamic-badge // Atributo para o seletor CSS acima
+                                dangerouslySetInnerHTML={{ __html: metadata.text }}
+                              />
+                            </Badge>
+                          );
+                        })}
                         {date && (
                           <div className="text-xs text-muted-foreground mt-2">
                             Updated {moment(date).format("LL")}
