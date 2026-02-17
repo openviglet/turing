@@ -20,7 +20,7 @@ const LoginPage = () => {
                         <TurLogo size={80} />
                     </div>
                     <div className="space-y-3">
-                        <h1 className="text-4xl font-bold tracking-tight">Viglet Turing</h1>
+                        <h1 className="text-4xl font-bold tracking-tight">Viglet Turing ES</h1>
                         <p className="text-lg text-white/80 max-w-md leading-relaxed">
                             Enterprise Search Intelligence Platform powered by AI
                         </p>
