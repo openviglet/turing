@@ -529,35 +529,38 @@ export default function SearchPage() {
                             dangerouslySetInnerHTML={{ __html: description }}
                           />
                         )}
-                        {document.metadata.map((metadata) => {
-                          const colors = getHashedColor(metadata.text || "");
-
+                        {/* Metadata Badges */}
+                        {Array.isArray(document.metadata) && document.metadata.map((metadata) => {
+                          if (!metadata?.text || !metadata?.href) return null;
+                          const colors = getHashedColor(metadata.text);
                           return (
                             <Badge
-                              key={`${metadata.text || metadata.href}-${metadata.href}`}
+                              key={`${metadata.text}-${metadata.href}`}
                               variant="outline"
                               className="text-xs font-medium px-2 py-0.5 mr-2 cursor-pointer transition-all hover:opacity-80"
                               style={{
-                                "--bg": colors.light.bg,
-                                "--text": colors.light.text,
-                                "--border": colors.light.border,
-                                backgroundColor: "var(--bg)",
-                                color: "var(--text)",
-                                borderColor: "var(--border)",
-                              } as React.CSSProperties}
+                                backgroundColor: colors.light.bg,
+                                color: colors.light.text,
+                                borderColor: colors.light.border,
+                              }}
+                              data-dynamic-badge
                               onClick={() => turRedirect(metadata.href)}
                               title={metadata.text}
                             >
-                              <style dangerouslySetInnerHTML={{
-                                __html: `.dark [data-dynamic-badge] { --bg: ${colors.dark.bg} !important; --text: ${colors.dark.text} !important; --border: ${colors.dark.border} !important; }`
-                              }} />
                               <span
-                                data-dynamic-badge
                                 dangerouslySetInnerHTML={{ __html: metadata.text }}
                               />
+                              <style>{String.raw`
+                            html.dark [data-dynamic-badge][title="${metadata.text}"] {
+                              background-color: ${colors.dark.bg} !important;
+                              color: ${colors.dark.text} !important;
+                              border-color: ${colors.dark.border} !important;
+                            }
+                            `}</style>
                             </Badge>
                           );
                         })}
+                        {/* Document Date */}
                         {date && (
                           <div className="text-xs text-muted-foreground mt-2">
                             Updated {moment(date).format("LL")}
