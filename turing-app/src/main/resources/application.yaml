@@ -101,6 +101,7 @@ turing:
   keycloak: false
   url: http://localhost:2700
   open-browser: true
+  jms.concurrency: 1-1
   solr:
     timeout: 30000
     cloud: false
