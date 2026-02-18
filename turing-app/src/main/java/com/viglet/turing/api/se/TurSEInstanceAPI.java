@@ -17,6 +17,7 @@
 package com.viglet.turing.api.se;
 
 import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
@@ -38,6 +40,7 @@ import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.solr.TurSolr;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -111,23 +114,26 @@ public class TurSEInstanceAPI {
 
         }
 
-        @GetMapping("/select")
-        public ResponseEntity<TurSEResults> turSEInstanceSelect(
+        @GetMapping("/{id}/{core}/select")
+        public ResponseEntity<TurSEResults> turSEInstanceSelect(@PathVariable String id, @PathVariable String core,
                         @ModelAttribute TurSNSearchParams turSNSearchParams) {
-                int page = (turSNSearchParams.getP() != null && turSNSearchParams.getP() > 0)
-                                ? turSNSearchParams.getP()
-                                : 1;
-                int rows = (turSNSearchParams.getRows() != null && turSNSearchParams.getRows() > 0)
-                                ? turSNSearchParams.getRows()
-                                : 10;
-                turSNSearchParams.setP(page);
-                turSNSearchParams.setRows(rows);
-                TurSEParameters turSEParameters = new TurSEParameters(turSNSearchParams);
+                return turSEInstanceRepository.findById(id).map(turSEInstance -> {
 
-                return turSolrInstanceProcess.initSolrInstance().map(turSolrInstance -> {
-                        TurSEResults results = turSolr.retrieveSolr(turSolrInstance,
-                                        turSEParameters, "text");
-                        return ResponseEntity.ok(results);
+                        int page = (turSNSearchParams.getP() != null && turSNSearchParams.getP() > 0)
+                                        ? turSNSearchParams.getP()
+                                        : 1;
+                        int rows = (turSNSearchParams.getRows() != null && turSNSearchParams.getRows() > 0)
+                                        ? turSNSearchParams.getRows()
+                                        : 10;
+                        turSNSearchParams.setP(page);
+                        turSNSearchParams.setRows(rows);
+                        TurSEParameters turSEParameters = new TurSEParameters(turSNSearchParams);
+
+                        return turSolrInstanceProcess.initSolrInstance(turSEInstance, core).map(turSolrInstance -> {
+                                TurSEResults results = turSolr.retrieveSolr(turSolrInstance,
+                                                turSEParameters, "text");
+                                return ResponseEntity.ok(results);
+                        }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
                 }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         }
 

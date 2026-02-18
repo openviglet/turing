@@ -31,9 +31,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +43,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.model.system.TurConfigVar;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
@@ -95,9 +92,7 @@ class TurSolrInstanceProcessTest {
                 turSEInstanceRepository,
                 turSNSiteLocaleRepository,
                 turSNSiteRepository,
-                turSolrCache,
-                turConfigProperties,
-                Map.of());
+                turSolrCache);
     }
 
     @Test
@@ -186,60 +181,6 @@ class TurSolrInstanceProcessTest {
 
         assertThat(result).isEmpty();
         verify(turSolrCache).isSolrCoreExists("http://localhost:8983/solr/localeCore");
-    }
-
-    @Test
-    void testInitSolrInstanceDefaultWithConfigVar() {
-        TurConfigVar turConfigVar = mock(TurConfigVar.class);
-        when(turConfigVar.getValue()).thenReturn("seInstance1");
-
-        TurSEInstance turSEInstance = mock(TurSEInstance.class);
-        when(turSEInstance.getHost()).thenReturn("localhost");
-        when(turSEInstance.getPort()).thenReturn(8983);
-
-        when(turConfigVarRepository.findById("DEFAULT_SE")).thenReturn(Optional.of(turConfigVar));
-        when(turSEInstanceRepository.findById("seInstance1")).thenReturn(Optional.of(turSEInstance));
-        when(turSolrCache.isSolrCoreExists("http://localhost:8983/solr/turing")).thenReturn(false);
-
-        Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance();
-
-        assertThat(result).isEmpty();
-        verify(turConfigVarRepository).findById("DEFAULT_SE");
-        verify(turSEInstanceRepository).findById("seInstance1");
-        verify(turSolrCache).isSolrCoreExists("http://localhost:8983/solr/turing");
-    }
-
-    @Test
-    void testInitSolrInstanceDefaultWithoutConfigVar() {
-        TurSEInstance turSEInstance = mock(TurSEInstance.class);
-        when(turSEInstance.getHost()).thenReturn("localhost");
-        when(turSEInstance.getPort()).thenReturn(8983);
-
-        when(turConfigVarRepository.findById("DEFAULT_SE")).thenReturn(Optional.empty());
-        when(turSEInstanceRepository.findAll()).thenReturn(List.of(turSEInstance));
-        when(turSolrCache.isSolrCoreExists("http://localhost:8983/solr/turing")).thenReturn(false);
-
-        Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance();
-
-        assertThat(result).isEmpty();
-        verify(turConfigVarRepository).findById("DEFAULT_SE");
-        verify(turSEInstanceRepository).findAll();
-        verify(turSolrCache).isSolrCoreExists("http://localhost:8983/solr/turing");
-    }
-
-    @Test
-    void testInitSolrInstanceDefaultNoInstancesAvailable() {
-        when(turConfigVarRepository.findById("DEFAULT_SE")).thenReturn(Optional.empty());
-        when(turSEInstanceRepository.findAll()).thenReturn(List.of());
-
-        Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance();
-
-        // Production code returns null instead of Optional.empty() when no instances
-        // available
-        // This is a design issue but test reflects current behavior
-        assertThat(result).isNull();
-        verify(turConfigVarRepository).findById("DEFAULT_SE");
-        verify(turSEInstanceRepository).findAll();
     }
 
     @Test

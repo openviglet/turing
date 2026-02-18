@@ -22,14 +22,9 @@
 package com.viglet.turing.solr;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -67,7 +62,6 @@ class TurSolrInstanceTest {
     void testConstructor() {
         TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
 
-        assertThat(instance.getHttpJdkSolrClient()).isEqualTo(httpJdkSolrClient);
         assertThat(instance.getSolrUrl()).isEqualTo(solrUrl);
         assertThat(instance.getCore()).isEqualTo(core);
         assertThat(instance.getSolrClient()).isNotNull();
@@ -84,11 +78,9 @@ class TurSolrInstanceTest {
     void testGettersAndSetters() {
         TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
 
-        assertThat(instance.getHttpJdkSolrClient()).isEqualTo(httpJdkSolrClient);
         assertThat(instance.getSolrUrl()).isEqualTo(solrUrl);
         assertThat(instance.getCore()).isEqualTo(core);
 
-        HttpJdkSolrClient newHttpClient = mock(HttpJdkSolrClient.class);
         SolrClient newSolrClient = mock(SolrClient.class);
         URL newUrl = null;
         try {
@@ -98,100 +90,13 @@ class TurSolrInstanceTest {
         }
         String newCore = "newCore";
 
-        instance.setHttpJdkSolrClient(newHttpClient);
         instance.setSolrClient(newSolrClient);
         instance.setSolrUrl(newUrl);
         instance.setCore(newCore);
 
-        assertThat(instance.getHttpJdkSolrClient()).isEqualTo(newHttpClient);
         assertThat(instance.getSolrClient()).isEqualTo(newSolrClient);
         assertThat(instance.getSolrUrl()).isEqualTo(newUrl);
         assertThat(instance.getCore()).isEqualTo(newCore);
-    }
-
-    @Test
-    void testCloseWithBothClientsNotNull() throws IOException {
-        SolrClient mockSolrClient = mock(SolrClient.class);
-        TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
-        instance.setSolrClient(mockSolrClient);
-
-        instance.close();
-
-        verify(mockSolrClient, times(1)).close();
-        verify(httpJdkSolrClient, times(1)).close();
-        assertThat(instance.getSolrClient()).isNull();
-        assertThat(instance.getHttpJdkSolrClient()).isNull();
-    }
-
-    @Test
-    void testCloseWithOnlySolrClient() throws IOException {
-        SolrClient mockSolrClient = mock(SolrClient.class);
-        TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
-        instance.setSolrClient(mockSolrClient);
-        instance.setHttpJdkSolrClient(null);
-
-        instance.close();
-
-        verify(mockSolrClient, times(1)).close();
-        assertThat(instance.getSolrClient()).isNull();
-    }
-
-    @Test
-    void testCloseWithOnlyHttpJdkClient() throws IOException {
-        TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
-        instance.setSolrClient(null);
-
-        instance.close();
-
-        verify(httpJdkSolrClient, times(1)).close();
-        assertThat(instance.getHttpJdkSolrClient()).isNull();
-    }
-
-    @Test
-    void testCloseWithNullClients() {
-        TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
-        instance.setSolrClient(null);
-        instance.setHttpJdkSolrClient(null);
-
-        assertThatCode(instance::close).doesNotThrowAnyException();
-    }
-
-    @Test
-    void testCloseHandlesIOException() throws IOException {
-        SolrClient mockSolrClient = mock(SolrClient.class);
-        doThrow(new IOException("Test exception")).when(mockSolrClient).close();
-
-        TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
-        instance.setSolrClient(mockSolrClient);
-
-        assertThatCode(instance::close).doesNotThrowAnyException();
-    }
-
-    @Test
-    void testDestroy() throws IOException {
-        SolrClient mockSolrClient = mock(SolrClient.class);
-        TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
-        instance.setSolrClient(mockSolrClient);
-
-        instance.destroy();
-
-        verify(mockSolrClient, times(1)).close();
-        verify(httpJdkSolrClient, times(1)).close();
-        assertThat(instance.getSolrClient()).isNull();
-        assertThat(instance.getHttpJdkSolrClient()).isNull();
-    }
-
-    @Test
-    void testMultipleCloseCallsAreSafe() throws IOException {
-        SolrClient mockSolrClient = mock(SolrClient.class);
-        TurSolrInstance instance = new TurSolrInstance(httpJdkSolrClient, solrUrl, core);
-        instance.setSolrClient(mockSolrClient);
-
-        instance.close();
-        instance.close();
-
-        verify(mockSolrClient, times(1)).close();
-        verify(httpJdkSolrClient, times(1)).close();
     }
 
     @Test
