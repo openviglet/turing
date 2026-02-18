@@ -69,7 +69,7 @@ export default function IntegrationInstanceMonitoringPage() {
     };
 
     fetchData();
-    let interval: number;
+    let interval: ReturnType<typeof setInterval>;
     if (refreshInterval > 0) {
       interval = setInterval(() => {
         fetchData(true);
