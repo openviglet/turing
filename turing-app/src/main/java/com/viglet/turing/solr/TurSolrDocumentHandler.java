@@ -1,13 +1,10 @@
 package com.viglet.turing.solr;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.common.SolrInputDocument;
-import org.json.JSONArray;
+import static com.viglet.turing.solr.TurSolrConstants.BOOST;
+import static com.viglet.turing.solr.TurSolrConstants.SCORE;
+import static com.viglet.turing.solr.TurSolrConstants.TURING_ENTITY;
+import static com.viglet.turing.solr.TurSolrConstants.TYPE;
+import static com.viglet.turing.solr.TurSolrConstants.VERSION;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +14,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.viglet.turing.solr.TurSolrConstants.*;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.common.SolrInputDocument;
+import org.json.JSONArray;
+
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
+import com.viglet.turing.sn.field.TurSNSiteFieldService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurSolrDocumentHandler {
@@ -30,7 +36,7 @@ public class TurSolrDocumentHandler {
     }
 
     public void indexing(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
-                         Map<String, Object> attributes) {
+            Map<String, Object> attributes) {
         log.debug("Executing indexing ...");
         attributes.remove(SCORE);
         attributes.remove(VERSION);
@@ -53,7 +59,7 @@ public class TurSolrDocumentHandler {
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.deleteById(id);
             updateRequest.setCommitWithin(commitWithin);
-            updateRequest.process(turSolrInstance.getSolrClient());
+            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -64,7 +70,7 @@ public class TurSolrDocumentHandler {
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.deleteByQuery(TYPE + ":" + type);
             updateRequest.setCommitWithin(commitWithin);
-            updateRequest.process(turSolrInstance.getSolrClient());
+            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -82,7 +88,7 @@ public class TurSolrDocumentHandler {
     }
 
     public void addDocument(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
-                            Map<String, Object> attributes) {
+            Map<String, Object> attributes) {
         Map<String, TurSNSiteField> turSNSiteFieldMap = turSNSiteFieldUtils.toMap(turSNSite);
         SolrInputDocument document = new SolrInputDocument();
         Optional.ofNullable(attributes).ifPresent(attr -> {
@@ -93,7 +99,7 @@ public class TurSolrDocumentHandler {
     }
 
     private void processAttribute(Map<String, TurSNSiteField> turSNSiteFieldMap,
-                                  SolrInputDocument document, String key, Object attribute) {
+            SolrInputDocument document, String key, Object attribute) {
         Optional.ofNullable(attribute).ifPresent(attr -> {
             switch (attr) {
                 case Integer integer -> processInteger(document, key, integer);
@@ -115,7 +121,7 @@ public class TurSolrDocumentHandler {
     }
 
     private void processJSONArray(Map<String, TurSNSiteField> turSNSiteFieldMap,
-                                  SolrInputDocument document, String key, Object attribute) {
+            SolrInputDocument document, String key, Object attribute) {
         JSONArray value = (JSONArray) attribute;
         if (key.startsWith(TURING_ENTITY) || isMultiValued(turSNSiteFieldMap, key)) {
             Optional.ofNullable(value).ifPresent(v -> IntStream.range(0, value.length())
@@ -130,13 +136,13 @@ public class TurSolrDocumentHandler {
     }
 
     private static boolean isMultiValued(Map<String, TurSNSiteField> turSNSiteFieldMap,
-                                         String key) {
+            String key) {
         return turSNSiteFieldMap.get(key) != null
                 && turSNSiteFieldMap.get(key).getMultiValued() == 1;
     }
 
     private void processArrayList(Map<String, TurSNSiteField> turSNSiteFieldMap,
-                                  SolrInputDocument document, String key, Object attribute) {
+            SolrInputDocument document, String key, Object attribute) {
         @SuppressWarnings("rawtypes")
         List attributeList = (ArrayList) attribute;
         Optional.ofNullable(attributeList).ifPresent(values -> {
@@ -155,7 +161,7 @@ public class TurSolrDocumentHandler {
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.add(document);
             updateRequest.setCommitWithin(commitWithin);
-            updateRequest.process(turSolrInstance.getSolrClient());
+            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage(), e);
         }

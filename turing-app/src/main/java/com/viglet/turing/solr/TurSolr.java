@@ -243,7 +243,8 @@ public class TurSolr {
     public static Optional<QueryResponse> executeSolrQuery(TurSolrInstance turSolrInstance,
             SolrQuery query) {
         try {
-            return Optional.ofNullable(turSolrInstance.getSolrClient().query(query));
+            String core = turSolrInstance.getCore();
+            return Optional.ofNullable(turSolrInstance.getSolrClient().query(core, query));
         } catch (BaseHttpSolrClient.RemoteSolrException | SolrServerException | IOException e) {
             log.error("{}?{} - {}", query.get("qt"), query.toQueryString(),
                     e.getMessage(), e);
@@ -341,7 +342,7 @@ public class TurSolr {
             return true;
         }
         try {
-            turSolrInstance.getSolrClient().commit();
+            turSolrInstance.getSolrClient().commit(turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage());
         }

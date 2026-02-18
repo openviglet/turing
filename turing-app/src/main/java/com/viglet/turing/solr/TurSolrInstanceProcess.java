@@ -33,10 +33,8 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -49,20 +47,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TurSolrInstanceProcess {
     private final ConcurrentHashMap<String, HttpJdkSolrClient> clientCache = new ConcurrentHashMap<>();
-    private final TurConfigVarRepository turConfigVarRepository;
-    private final TurSEInstanceRepository turSEInstanceRepository;
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSolrCache turSolrCache;
 
-    public TurSolrInstanceProcess(TurConfigVarRepository turConfigVarRepository,
-            TurSEInstanceRepository turSEInstanceRepository,
+    public TurSolrInstanceProcess(
             TurSNSiteLocaleRepository turSNSiteLocaleRepository,
             TurSNSiteRepository turSNSiteRepository,
             TurSolrCache turSolrCache) {
-
-        this.turConfigVarRepository = turConfigVarRepository;
-        this.turSEInstanceRepository = turSEInstanceRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSolrCache = turSolrCache;
@@ -72,11 +64,8 @@ public class TurSolrInstanceProcess {
         String baseUrl = String.format("http://%s:%s/solr",
                 turSEInstance.getHost(),
                 turSEInstance.getPort());
-        String fullUrl = baseUrl + "/" + core;
-
-        if (turSolrCache.isSolrCoreExists(fullUrl)) {
-
-            HttpJdkSolrClient httpSolrClient = clientCache.computeIfAbsent(fullUrl, url -> {
+        if (turSolrCache.isSolrCoreExists(baseUrl, core)) {
+            HttpJdkSolrClient httpSolrClient = clientCache.computeIfAbsent(baseUrl, url -> {
                 log.info("Starting Solr connection pool for URL: {}", url);
                 return new HttpJdkSolrClient.Builder(url)
                         .withConnectionTimeout(5000, TimeUnit.MILLISECONDS)
@@ -85,11 +74,13 @@ public class TurSolrInstanceProcess {
             });
 
             try {
-                return Optional.of(new TurSolrInstance(httpSolrClient, URI.create(fullUrl).toURL(), core));
+                TurSolrInstance solrInstance = new TurSolrInstance(httpSolrClient, URI.create(baseUrl).toURL(), core);
+                return Optional.of(solrInstance);
             } catch (MalformedURLException e) {
                 log.error(e.getMessage(), e);
             }
         }
+
         return Optional.empty();
     }
 

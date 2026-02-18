@@ -114,7 +114,7 @@ public class TurSEStopWord {
         SchemaRequest.FieldType fieldTypeRequest = new SchemaRequest.FieldType(TEXT_GENERAL);
         try {
             SchemaResponse.FieldTypeResponse initialFieldTypeResponse = fieldTypeRequest
-                    .process(turSolrInstance.getSolrClient());
+                    .process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
             if (initialFieldTypeResponse.getFieldType().getAnalyzer() != null) {
                 AnalyzerDefinition analyzer = initialFieldTypeResponse.getFieldType().getAnalyzer();
                 stopwordsStream = getStopWord(turSolrInstance, analyzer);

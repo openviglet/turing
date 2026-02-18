@@ -35,8 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSolrInstance {
 
     private SolrClient solrClient;
-    private String core;
     private URL solrUrl;
+    private String core;
 
     public TurSolrInstance(HttpJdkSolrClient solrClient, URL solrUrl, String core) {
         this.solrClient = solrClient;

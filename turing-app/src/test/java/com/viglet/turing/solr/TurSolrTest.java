@@ -142,7 +142,7 @@ class TurSolrTest {
 
         turSolr.commit(turSolrInstance);
 
-        verify(solrClient, never()).commit();
+        verify(solrClient, never()).commit("core");
     }
 
     @Test
@@ -151,7 +151,7 @@ class TurSolrTest {
 
         turSolr.commit(turSolrInstance);
 
-        verify(solrClient, times(1)).commit();
+        verify(solrClient, times(1)).commit("core");
     }
 
     private TurSolr buildTurSolr(boolean commitEnabled) {
