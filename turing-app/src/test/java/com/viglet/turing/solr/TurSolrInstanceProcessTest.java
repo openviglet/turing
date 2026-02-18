@@ -21,6 +21,27 @@
 
 package com.viglet.turing.solr;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
@@ -31,19 +52,6 @@ import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleReposit
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurSolrProperty;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for TurSolrInstanceProcess.
@@ -81,15 +89,15 @@ class TurSolrInstanceProcessTest {
     void setUp() {
         lenient().when(turConfigProperties.getSolr()).thenReturn(solrProperties);
         lenient().when(solrProperties.getTimeout()).thenReturn(5000);
-        
+
         turSolrInstanceProcess = new TurSolrInstanceProcess(
-            turConfigVarRepository,
-            turSEInstanceRepository,
-            turSNSiteLocaleRepository,
-            turSNSiteRepository,
-            turSolrCache,
-            turConfigProperties
-        );
+                turConfigVarRepository,
+                turSEInstanceRepository,
+                turSNSiteLocaleRepository,
+                turSNSiteRepository,
+                turSolrCache,
+                turConfigProperties,
+                Map.of());
     }
 
     @Test
@@ -135,7 +143,8 @@ class TurSolrInstanceProcessTest {
         when(turSNSiteLocale.getCore()).thenReturn("testCore");
 
         when(turSNSiteRepository.findByName("testSite")).thenReturn(Optional.of(turSNSite));
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, Locale.ENGLISH)).thenReturn(turSNSiteLocale);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, Locale.ENGLISH))
+                .thenReturn(turSNSiteLocale);
         when(turSolrCache.isSolrCoreExists(anyString())).thenReturn(false);
 
         Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance("testSite", Locale.ENGLISH);
@@ -225,7 +234,8 @@ class TurSolrInstanceProcessTest {
 
         Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance();
 
-        // Production code returns null instead of Optional.empty() when no instances available
+        // Production code returns null instead of Optional.empty() when no instances
+        // available
         // This is a design issue but test reflects current behavior
         assertThat(result).isNull();
         verify(turConfigVarRepository).findById("DEFAULT_SE");

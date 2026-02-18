@@ -20,9 +20,11 @@
  */
 package com.viglet.turing.solr;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -38,6 +40,7 @@ import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleReposit
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -53,19 +56,23 @@ public class TurSolrInstanceProcess {
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSolrCache turSolrCache;
     private final TurConfigProperties turConfigProperties;
+    private final Map<String, HttpJdkSolrClient> solrClientCache;
 
     public TurSolrInstanceProcess(TurConfigVarRepository turConfigVarRepository,
             TurSEInstanceRepository turSEInstanceRepository,
             TurSNSiteLocaleRepository turSNSiteLocaleRepository,
             TurSNSiteRepository turSNSiteRepository,
             TurSolrCache turSolrCache,
-            TurConfigProperties turConfigProperties) {
+            TurConfigProperties turConfigProperties,
+            Map<String, HttpJdkSolrClient> solrClientCache) {
+
         this.turConfigVarRepository = turConfigVarRepository;
         this.turSEInstanceRepository = turSEInstanceRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSolrCache = turSolrCache;
         this.turConfigProperties = turConfigProperties;
+        this.solrClientCache = solrClientCache;
     }
 
     private Optional<TurSolrInstance> getSolrClient(TurSNSite turSNSite, TurSNSiteLocale turSNSiteLocale) {
@@ -79,10 +86,12 @@ public class TurSolrInstanceProcess {
                 core);
 
         if (turSolrCache.isSolrCoreExists(urlString)) {
-            HttpJdkSolrClient httpSolrClient = new HttpJdkSolrClient.Builder(urlString)
-                    .withConnectionTimeout(turConfigProperties.getSolr().getTimeout(), TimeUnit.MILLISECONDS)
-                    .withIdleTimeout(turConfigProperties.getSolr().getTimeout(), TimeUnit.MILLISECONDS)
-                    .build();
+            HttpJdkSolrClient httpSolrClient = solrClientCache.computeIfAbsent(urlString,
+                    url -> new HttpJdkSolrClient.Builder(url)
+                            .withConnectionTimeout(turConfigProperties.getSolr().getTimeout(), TimeUnit.MILLISECONDS)
+                            .withIdleTimeout(turConfigProperties.getSolr().getTimeout(), TimeUnit.MILLISECONDS)
+                            .build());
+
             try {
                 return Optional.of(
                         new TurSolrInstance(httpSolrClient, URI.create(urlString).toURL(), core));
@@ -91,6 +100,17 @@ public class TurSolrInstanceProcess {
             }
         }
         return Optional.empty();
+    }
+
+    @PreDestroy
+    public void closeClients() {
+        solrClientCache.values().forEach(client -> {
+            try {
+                client.close();
+            } catch (IOException e) {
+                log.error("Error closing Solr client", e);
+            }
+        });
     }
 
     public Optional<TurSolrInstance> initSolrInstance(String siteName, Locale locale) {
