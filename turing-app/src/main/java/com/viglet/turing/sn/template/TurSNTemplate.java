@@ -25,6 +25,7 @@ import static com.viglet.turing.commons.sn.field.TurSNFieldName.ABSTRACT;
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.AUTHOR;
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.DEFAULT;
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.EXACT_MATCH;
+import static com.viglet.turing.commons.sn.field.TurSNFieldName.ID;
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.IMAGE;
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.MODIFICATION_DATE;
 import static com.viglet.turing.commons.sn.field.TurSNFieldName.PUBLICATION_DATE;
@@ -227,6 +228,8 @@ public class TurSNTemplate {
         }
 
         public void createSEFields(TurSNSite turSNSite) {
+                createSNSiteField(turSNSite, ID, "Id Field", TurSEFieldType.STRING, 0,
+                                "Ids", getFacetLocales("Ids"), 1);
                 createSNSiteField(turSNSite, TITLE, "Title Field", TurSEFieldType.TEXT, 0,
                                 "Titles", getFacetLocales("Titulos"), 1);
                 createSNSiteField(turSNSite, TEXT, "Text Field", TurSEFieldType.TEXT, 0,
@@ -245,11 +248,11 @@ public class TurSNTemplate {
                 createSNSiteField(turSNSite, MODIFICATION_DATE, "Modification Date", TurSEFieldType.DATE,
                                 0, "Modification Dates",
                                 getFacetLocales("Datas de Modificação"), 0);
-                createSNSiteField(turSNSite, SITE, "Site Name", TurSEFieldType.TEXT, 0,
+                createSNSiteField(turSNSite, SITE, "Site Name", TurSEFieldType.STRING, 0,
                                 "Sites", getFacetLocales("Nome dos Sites"), 0);
                 createSNSiteField(turSNSite, AUTHOR, "Author", TurSEFieldType.STRING, 0,
                                 "Authors", getFacetLocales("Autores"), 0);
-                createSNSiteField(turSNSite, SECTION, "Section", TurSEFieldType.STRING, 1,
+                createSNSiteField(turSNSite, SECTION, "Section", TurSEFieldType.STRING, 0,
                                 "Sections", getFacetLocales("Sessões"), 0);
                 createSNSiteField(turSNSite, SOURCE_APPS, "Source Apps", TurSEFieldType.STRING, 1,
                                 "Source Apps", getFacetLocales("Apps de Origem"), 0);
