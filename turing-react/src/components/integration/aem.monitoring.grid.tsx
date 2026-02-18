@@ -5,7 +5,7 @@ import {
     useReactTable,
     type ColumnDef,
 } from "@tanstack/react-table";
-import { useState, type PropsWithChildren } from "react";
+import { useEffect, useState, type PropsWithChildren } from "react";
 
 import { Card } from "@/components/ui/card";
 import {
@@ -35,6 +35,8 @@ import { GradientButton } from "../ui/gradient-button";
 
 interface Props {
     gridItemList: TurIntegrationIndexing[];
+    refreshInterval?: number;
+
 }
 
 export const columns: ColumnDef<TurIntegrationIndexing>[] = [
@@ -240,8 +242,7 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
     },
 ];
 
-
-export const AemMonitoringGrid: React.FC<PropsWithChildren<Props>> = ({ gridItemList }) => {
+export const AemMonitoringGrid: React.FC<PropsWithChildren<Props>> = ({ gridItemList, refreshInterval }) => {
     const [pagination, setPagination] = useState({
         pageIndex: 0, // initial page index
         pageSize: 100, // default page size
@@ -258,8 +259,21 @@ export const AemMonitoringGrid: React.FC<PropsWithChildren<Props>> = ({ gridItem
         },
     });
 
+    const [lastUpdated, setLastUpdated] = useState(Date.now());
+
+    useEffect(() => {
+        const tick = setInterval(() => {
+            setLastUpdated(Date.now());
+        }, refreshInterval);
+
+        return () => clearInterval(tick);
+    }, [refreshInterval]);
     return (
         <div className="px-6">
+            <div className="flex justify-end p-2 items-center gap-2 text-xs text-muted-foreground">
+                <RefreshCcw className="h-3 w-3 animate-spin-slow" />
+                Last sync: {new Date(lastUpdated).toLocaleTimeString()}
+            </div>
             <Card>
                 <div className="rounded-md">
                     <Table>
