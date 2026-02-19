@@ -9,7 +9,7 @@ export const truncateMiddle = (
   text: string,
   maxLength: number = 10,
 ): string => {
-  if (text.length <= maxLength) return text;
+  if (!text || text.length <= maxLength) return text ?? "";
 
   const dots = "...";
   const charsToShow = maxLength - dots.length;
