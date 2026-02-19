@@ -1,5 +1,3 @@
-"use client"
-
 import { Checkbox } from "@/components/ui/checkbox"
 import {
     Form,
@@ -78,14 +76,11 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
         }
     }
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    // Function to insert variable at cursor (or at end)
-    // Insert variable at the current cursor position in the textarea, or at the end if not focused
     const insertVariable = (variable: string) => {
         const textarea = textareaRef.current;
         const currentPrompt = form.getValues("systemPrompt") || "";
 
         if (textarea) {
-            // Pegamos a posição do cursor diretamente da ref do DOM
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
 
@@ -93,17 +88,13 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
             const after = currentPrompt.slice(end);
             const newPrompt = before + variable + after;
 
-            // Atualiza o valor no react-hook-form
             form.setValue("systemPrompt", newPrompt, { shouldValidate: true });
 
-            // Precisamos devolver o foco e posicionar o cursor após a inserção
-            // O setTimeout garante que o React já renderizou o novo valor
             setTimeout(() => {
                 textarea.focus();
                 textarea.setSelectionRange(start + variable.length, start + variable.length);
             }, 0);
         } else {
-            // Fallback apenas se a ref falhar por algum motivo
             form.setValue("systemPrompt", currentPrompt + variable, { shouldValidate: true });
         }
     };
@@ -145,7 +136,9 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                             </FormControl>
                             <div className="space-y-1 leading-none">
                                 <FormLabel>Enabled</FormLabel>
-                                <FormDescription>Enable Generative AI</FormDescription>
+                                <FormDescription>
+                                    Enable Generative AI features for this site. When enabled, AI-powered answers and semantic search will be available.
+                                </FormDescription>
                             </div>
                         </FormItem>
                     )}
@@ -161,6 +154,9 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Language Model</FormLabel>
+                                    <FormDescription>
+                                        Choose the AI language model to generate answers. This model will process user queries and synthesize responses.
+                                    </FormDescription>
                                     <Select
                                         onValueChange={(val) => {
                                             const instance = llmInstances.find((i) => i.id === val);
@@ -195,6 +191,9 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Embedding Store</FormLabel>
+                                    <FormDescription>
+                                        Select the vector embedding store for semantic search. This store holds document embeddings for RAG and similarity queries.
+                                    </FormDescription>
                                     <Select
                                         onValueChange={(val) => {
                                             const instance = storeInstances.find((i) => i.id === val);
@@ -249,15 +248,17 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                                             </button>
                                         </div>
                                     </div>
+                                    <FormDescription>
+                                        Define the prompt template for the AI agent. Use <span className="font-mono font-bold text-amber-600">{'{question}'}</span> and <span className="font-mono font-bold text-amber-600">{'{information}'}</span> to insert user queries and retrieved content. The prompt guides the AI's response style and context.
+                                    </FormDescription>
                                     <FormControl>
                                         <Textarea
                                             {...field}
                                             ref={(e) => {
-                                                field.ref(e); // vincula a ref do react-hook-form
-                                                (textareaRef as any).current = e; // vincula a nossa ref local
+                                                field.ref(e);
+                                                (textareaRef as any).current = e;
                                             }}
                                             rows={8}
-
                                             placeholder="Ex: Use {{information}} to answer {{question}}..."
                                             className="font-mono text-sm leading-relaxed"
                                         />
@@ -272,9 +273,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                                     <div className="flex items-start gap-2 mt-2 p-2 bg-slate-50 rounded-md dark:bg-slate-900 border">
                                         <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                                         <p className="text-[11px] text-muted-foreground">
-                                            For RAG to work, the prompt must necessarily contain the tags
-                                            <span className="font-bold text-amber-600"> {"{{question}}"}</span> and
-                                            <span className="font-bold text-amber-600"> {"{{information}}"}</span>.
+                                            For RAG to work, the prompt must necessarily contain the tags{" "}
+                                            <span className="font-bold text-amber-600">{'{question}'}</span>{" "}
+                                            and{" "}
+                                            <span className="font-bold text-amber-600">{'{information}'}</span>.
                                         </p>
                                     </div>
                                     <FormMessage />
@@ -296,8 +298,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
     );
 };
 
-// Auxiliary component for Status Badges
-function StatusBadge({ label, active }: { label: string; active: boolean }) {
+function StatusBadge({ label, active }: { readonly label: string; readonly active: boolean }) {
     return (
         <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full border text-[10px] font-bold transition-all ${active
             ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
