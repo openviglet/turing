@@ -28,6 +28,7 @@ import type { TurLoggingIndexing } from "@/models/logging/logging-indexing.model
 import { formatDistanceToNow } from "date-fns";
 import { ArrowRightCircle, Ban, CheckCircle2, Clock, Database, FileSearch, Globe, PencilLine, RefreshCcw, Send, Zap } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { BadgeColorful } from "../badge-colorful";
 import { BadgeLocale } from "../badge-locale";
 import { Badge } from "../ui/badge";
 import { GradientButton } from "../ui/gradient-button";
@@ -223,7 +224,7 @@ export const columns: ColumnDef<TurLoggingIndexing>[] = [
                     ) : (
                         <>
                             <Globe className="w-3.5 h-3.5" />
-                            <span>PUBLISH</span>
+                            <span>PUBLISHING</span>
                         </>
                     )}
                 </Badge>
@@ -240,7 +241,20 @@ export const columns: ColumnDef<TurLoggingIndexing>[] = [
     {
         accessorKey: "sites",
         header: "Sites",
-        cell: ({ row }) => <div>{row.getValue("sites")}</div>,
+        cell: ({ row }) => {
+            const sites = row.getValue("sites");
+            const sitesArray = Array.isArray(sites) ? sites : [];
+            return (
+                <div className="flex flex-wrap gap-1.5 min-w-37.5">
+                    {sitesArray.map((site: string, index: number) => (
+                        <BadgeColorful
+                            key={`${site}-${index}`}
+                            text={site}
+                        />
+                    ))}
+                </div>
+            );
+        },
     }
 ];
 
