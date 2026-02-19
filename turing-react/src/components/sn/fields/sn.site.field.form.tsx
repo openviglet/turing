@@ -178,389 +178,496 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10 py-10 px-8">
-            <Accordion type="multiple" defaultValue={["general", "facet"]} className="space-y-6">
+            <Accordion
+              type="multiple"
+              defaultValue={["general", "facet"]}
+              className="w-full space-y-4"
+            >
               {/* General Configuration */}
-              <AccordionItem value="general" className="border rounded-lg px-8 py-6 bg-gray-50">
+              <AccordionItem value="general" className="border rounded-lg px-6">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-semibold">General Configuration</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      rules={{ required: "Name is required." }}
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="Name" type="text" className="w-full" />
-                          </FormControl>
-                          <FormDescription>
-                            Unique identifier for this field. Appears in the semantic navigation site field list and is used for search and indexing.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="type"
-                      rules={{ required: "Type is required." }}
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Type</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Choose..." />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {snFieldTypes.map((snFieldType) => (
-                                <SelectItem key={snFieldType.id} value={snFieldType.id}>
-                                  {snFieldType.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>
-                            Data type for this field (e.g., text, number, date). Determines how values are stored and processed in the search engine.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-2 w-full">
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Description" className="resize-none w-full" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            Brief explanation of the field’s purpose or usage. Helps users understand its role in search and indexing.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="defaultValue"
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-2 w-full">
-                          <FormLabel>Default Value</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="Default value" type="text" className="w-full" />
-                          </FormControl>
-                          <FormDescription>
-                            Value automatically assigned if no value is provided during indexing. Useful for fallback scenarios.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className="flex flex-col gap-4 md:col-span-2">
-                      <div className="flex flex-wrap gap-6">
-                        <FormField
-                          control={form.control}
-                          name="multiValued"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col items-start">
-                              <div className="flex items-center gap-2">
-                                <FormLabel>Multi Value</FormLabel>
-                                <Switch checked={field.value === 1}
-                                  onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                                />
-                              </div>
-                              <FormDescription>
-                                Allows this field to store multiple values (e.g., tags, categories).
-                              </FormDescription>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="hl"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col items-start">
-                              <div className="flex items-center gap-2">
-                                <FormLabel>Highlighting</FormLabel>
-                                <Switch checked={field.value === 1}
-                                  onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                                />
-                              </div>
-                              <FormDescription>
-                                Enables highlighting of matching search terms in results.
-                              </FormDescription>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="mlt"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col items-start">
-                              <div className="flex items-center gap-2">
-                                <FormLabel>MLT</FormLabel>
-                                <Switch checked={field.value === 1}
-                                  onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                                />
-                              </div>
-                              <FormDescription>
-                                Activates “More Like This” functionality.
-                              </FormDescription>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="enabled"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col items-start">
-                              <div className="flex items-center gap-2">
-                                <FormLabel>Enabled</FormLabel>
-                                <Switch checked={field.value === 1}
-                                  onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                                />
-                              </div>
-                              <FormDescription>
-                                If enabled, this field will be included in search queries and indexing operations.
-                              </FormDescription>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="required"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col items-start">
-                              <div className="flex items-center gap-2">
-                                <FormLabel>Required</FormLabel>
-                                <Switch checked={field.value === 1}
-                                  onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                                />
-                              </div>
-                              <FormDescription>
-                                Marks this field as mandatory during indexing.
-                              </FormDescription>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                <AccordionContent className="flex flex-col gap-6 pt-4">
+                  {/* Name */}
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    rules={{ required: "Name is required." }}
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Name</FormLabel>
+                        <FormDescription>
+                          Unique identifier for this field. Used for search and indexing.
+                        </FormDescription>
+                        <FormControl>
+                          <Input {...field} placeholder="Name" type="text" className="w-full" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Type */}
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    rules={{ required: "Type is required." }}
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full gap-4">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Type</FormLabel>
+                            <FormDescription>
+                              Data type for this field (e.g., text, number, date).
+                            </FormDescription>
+                          </div>
+                          <div className="w-1/2 flex justify-end">
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="w-full min-w-45">
+                                  <SelectValue placeholder="Choose..." />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {snFieldTypes.map((snFieldType) => (
+                                  <SelectItem key={snFieldType.id} value={snFieldType.id}>
+                                    {snFieldType.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Description */}
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Description</FormLabel>
+                        <FormDescription>
+                          Brief explanation of the field’s purpose or usage.
+                        </FormDescription>
+                        <FormControl>
+                          <Textarea placeholder="Description" className="resize-none w-full" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Default Value */}
+                  <FormField
+                    control={form.control}
+                    name="defaultValue"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Default Value</FormLabel>
+                        <FormDescription>
+                          Value automatically assigned if no value is provided during indexing.
+                        </FormDescription>
+                        <FormControl>
+                          <Input {...field} placeholder="Default value" type="text" className="w-full" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Multi Value Switch */}
+                  <FormField
+                    control={form.control}
+                    name="multiValued"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Multi Value</FormLabel>
+                            <FormDescription>
+                              Allows this field to store multiple values (e.g., tags).
+                            </FormDescription>
+                          </div>
+                          <div className="flex justify-end w-1/2">
+                            <Switch
+                              checked={field.value === 1}
+                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                            />
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Highlighting Switch */}
+                  <FormField
+                    control={form.control}
+                    name="hl"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Highlighting</FormLabel>
+                            <FormDescription>
+                              Enables highlighting of matching search terms in results.
+                            </FormDescription>
+                          </div>
+                          <div className="flex justify-end w-1/2">
+                            <Switch
+                              checked={field.value === 1}
+                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                            />
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* MLT Switch */}
+                  <FormField
+                    control={form.control}
+                    name="mlt"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>MLT</FormLabel>
+                            <FormDescription>
+                              Activates “More Like This” functionality.
+                            </FormDescription>
+                          </div>
+                          <div className="flex justify-end w-1/2">
+                            <Switch
+                              checked={field.value === 1}
+                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                            />
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Enabled Switch */}
+                  <FormField
+                    control={form.control}
+                    name="enabled"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Enabled</FormLabel>
+                            <FormDescription>
+                              If enabled, this field will be included in search queries and indexing.
+                            </FormDescription>
+                          </div>
+                          <div className="flex justify-end w-1/2">
+                            <Switch
+                              checked={field.value === 1}
+                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                            />
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Required Switch */}
+                  <FormField
+                    control={form.control}
+                    name="required"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Required</FormLabel>
+                            <FormDescription>
+                              Marks this field as mandatory during indexing.
+                            </FormDescription>
+                          </div>
+                          <div className="flex justify-end w-1/2">
+                            <Switch
+                              checked={field.value === 1}
+                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                            />
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </AccordionContent>
               </AccordionItem>
               {/* Facet Configuration */}
-              <AccordionItem value="facet" className="border rounded-lg px-8 py-6 bg-gray-50">
+              <AccordionItem value="facet" className="border rounded-lg px-6">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-2">
                     <IconReorder />
                     <span className="text-lg font-semibold">Facet</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <FormField
-                      control={form.control}
-                      name="facet"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col items-start">
-                          <div className="flex items-center gap-2">
+                <AccordionContent className="flex flex-col gap-6 pt-4">
+                  {/* Facet Switch */}
+                  <FormField
+                    control={form.control}
+                    name="facet"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <div className="flex flex-col w-1/2">
                             <FormLabel>Facet</FormLabel>
-                            <Switch checked={field.value === 1}
+                            <FormDescription>
+                              Enables this field as a filter in the search page.
+                            </FormDescription>
+                          </div>
+                          <div className="flex justify-end w-1/2">
+                            <Switch
+                              checked={field.value === 1}
                               onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
                             />
                           </div>
-                          <FormDescription>
-                            Enables this field as a filter in the search page.
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="secondaryFacet"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col items-start">
-                          <div className="flex items-center gap-2">
-                            <FormLabel>Secondary facet</FormLabel>
-                            <Switch checked={!!field.value}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Secondary Facet Switch */}
+                  <FormField
+                    control={form.control}
+                    name="secondaryFacet"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Secondary Facet</FormLabel>
+                            <FormDescription>
+                              Classifies this field as a secondary facet.
+                            </FormDescription>
+                          </div>
+                          <div className="flex justify-end w-1/2">
+                            <Switch
+                              checked={!!field.value}
                               onCheckedChange={(checked) => field.onChange(checked)}
                             />
                           </div>
-                          <FormDescription>
-                            Classifies this field as a secondary facet.
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="showAllFacetItems"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col items-start">
-                          <div className="flex items-center gap-2">
-                            <FormLabel>Show all facet items</FormLabel>
-                            <Switch checked={!!field.value}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Show All Facet Items Switch */}
+                  <FormField
+                    control={form.control}
+                    name="showAllFacetItems"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Show All Facet Items</FormLabel>
+                            <FormDescription>
+                              Displays all possible facet values, even those with zero results.
+                            </FormDescription>
+                          </div>
+                          <div className="flex justify-end w-1/2">
+                            <Switch
+                              checked={!!field.value}
                               onCheckedChange={(checked) => field.onChange(checked)}
                             />
                           </div>
-                          <FormDescription>
-                            Displays all possible facet values, even those with zero results.
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="facetSort"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Facet Sort</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Choose..." />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {facetSorts.map((facetSort) => (
-                                <SelectItem key={facetSort.value} value={facetSort.value}>
-                                  {facetSort.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>
-                            Determines how facet values are ordered in the filter box.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="facetType"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Operator between Facets</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Choose..." />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {facetTypes.map((facetType) => (
-                                <SelectItem key={facetType.value} value={facetType.value}>
-                                  {facetType.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>
-                            Specifies how multiple facets are combined in search.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="facetItemType"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Operator between Facet Items</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Choose..." />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {facetTypes.map((facetType) => (
-                                <SelectItem key={facetType.value} value={facetType.value}>
-                                  {facetType.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>
-                            Defines how multiple selected facet values are joined.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="facetRange"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Range</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Choose..." />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {facetRanges.map((facetRange) => (
-                                <SelectItem key={facetRange.value} value={facetRange.value}>
-                                  {facetRange.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>
-                            Enables range-based facet filtering.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="facetName"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Default Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="Display name" type="text" className="w-full" />
-                          </FormControl>
-                          <FormDescription>
-                            Display name for this field in the filter box.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormItem className="md:col-span-2 w-full">
-                      <FormLabel>Facet Multi Languages</FormLabel>
-                      <FormControl>
-                        <DynamicLanguageFields
-                          fieldName="facetLocales"
-                          control={control}
-                          register={register}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Configure localized names for this facet to support multi-language filter labels.
-                      </FormDescription>
-                    </FormItem>
-                  </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Facet Sort Select */}
+                  <FormField
+                    control={form.control}
+                    name="facetSort"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full gap-4">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Facet Sort</FormLabel>
+                            <FormDescription>
+                              Determines how facet values are ordered in the filter box.
+                            </FormDescription>
+                          </div>
+                          <div className="w-1/2 flex justify-end">
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="w-full min-w-45">
+                                  <SelectValue placeholder="Choose..." />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {facetSorts.map((facetSort) => (
+                                  <SelectItem key={facetSort.value} value={facetSort.value}>
+                                    {facetSort.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Facet Type Select */}
+                  <FormField
+                    control={form.control}
+                    name="facetType"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full gap-4">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Operator between Facets</FormLabel>
+                            <FormDescription>
+                              Specifies how multiple facets are combined in search.
+                            </FormDescription>
+                          </div>
+                          <div className="w-1/2 flex justify-end">
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="w-full min-w-45">
+                                  <SelectValue placeholder="Choose..." />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {facetTypes.map((facetType) => (
+                                  <SelectItem key={facetType.value} value={facetType.value}>
+                                    {facetType.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Facet Item Type Select */}
+                  <FormField
+                    control={form.control}
+                    name="facetItemType"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full gap-4">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Operator between Facet Items</FormLabel>
+                            <FormDescription>
+                              Defines how multiple selected facet values are joined.
+                            </FormDescription>
+                          </div>
+                          <div className="w-1/2 flex justify-end">
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="w-full min-w-45">
+                                  <SelectValue placeholder="Choose..." />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {facetTypes.map((facetType) => (
+                                  <SelectItem key={facetType.value} value={facetType.value}>
+                                    {facetType.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Facet Range Select */}
+                  <FormField
+                    control={form.control}
+                    name="facetRange"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="flex flex-row items-center justify-between w-full gap-4">
+                          <div className="flex flex-col w-1/2">
+                            <FormLabel>Range</FormLabel>
+                            <FormDescription>
+                              Enables range-based facet filtering.
+                            </FormDescription>
+                          </div>
+                          <div className="w-1/2 flex justify-end">
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="w-full min-w-45">
+                                  <SelectValue placeholder="Choose..." />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {facetRanges.map((facetRange) => (
+                                  <SelectItem key={facetRange.value} value={facetRange.value}>
+                                    {facetRange.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Facet Name */}
+                  <FormField
+                    control={form.control}
+                    name="facetName"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Default Name</FormLabel>
+                        <FormDescription>
+                          Display name for this field in the filter box.
+                        </FormDescription>
+                        <FormControl>
+                          <Input {...field} placeholder="Display name" type="text" className="w-full" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Facet Multi Languages */}
+                  <FormItem className="w-full">
+                    <FormLabel>Facet Multi Languages</FormLabel>
+                    <FormDescription>
+                      Configure localized names for this facet to support multi-language filter labels.
+                    </FormDescription>
+                    <FormControl>
+                      <DynamicLanguageFields
+                        fieldName="facetLocales"
+                        control={control}
+                        register={register}
+                      />
+                    </FormControl>
+                  </FormItem>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            <div className="flex justify-end">
-              <GradientButton type="submit" disabled={isLoading} className="w-full md:w-auto">Save</GradientButton>
+            {/* Action Footer */}
+            <div className="flex justify-end gap-4 pt-6">
+              <GradientButton
+                type="button"
+                variant="outline"
+                className="w-full md:w-auto"
+                onClick={() => navigate(urlBase)}
+              >
+                Cancel
+              </GradientButton>
+              <GradientButton
+                type="submit"
+                disabled={isLoading}
+                className="w-full md:w-auto"
+              >
+                Save Changes
+              </GradientButton>
             </div>
           </form>
         </Form>

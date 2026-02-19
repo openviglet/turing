@@ -1,4 +1,4 @@
-import { Checkbox } from "@/components/ui/checkbox"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import {
     Form,
     FormControl,
@@ -16,6 +16,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model"
 import type { TurSNSiteGenAi } from "@/models/sn/sn-site-genai.model"
@@ -120,181 +121,232 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-6">
-                {/* Activation Checkbox */}
-                <FormField
-                    control={form.control}
-                    name="enabled"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                            <FormControl>
-                                <Checkbox
-                                    checked={field.value}
-                                    onCheckedChange={handleEnabledChange}
+        <div className="px-6">
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-0">
+                    <Accordion
+                        type="multiple"
+                        defaultValue={["section-activation", "section-models", "section-prompt"]}
+                        className="w-full space-y-4"
+                    >
+                        {/* Section 1: Activation */}
+                        <AccordionItem value="section-activation" className="border rounded-lg px-6">
+                            <AccordionTrigger className="hover:no-underline">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-lg font-semibold">Activation</span>
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="flex flex-col gap-6 pt-4">
+                                <FormField
+                                    control={form.control}
+                                    name="enabled"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <div className="flex flex-row items-center justify-between w-full">
+                                                <div className="flex flex-col min-w-0">
+                                                    <FormLabel>Enable Generative AI</FormLabel>
+                                                    <FormDescription>
+                                                        Turn on AI-powered answers and semantic search for this site.
+                                                    </FormDescription>
+                                                </div>
+                                                <FormControl>
+                                                    <Switch
+                                                        checked={field.value}
+                                                        onCheckedChange={handleEnabledChange}
+                                                    />
+                                                </FormControl>
+                                            </div>
+                                        </FormItem>
+                                    )}
                                 />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                                <FormLabel>Enabled</FormLabel>
-                                <FormDescription>
-                                    Enable Generative AI features for this site. When enabled, AI-powered answers and semantic search will be available.
-                                </FormDescription>
-                            </div>
-                        </FormItem>
-                    )}
-                />
+                            </AccordionContent>
+                        </AccordionItem>
 
-                {enabled && (
-                    <div className="space-y-6 animate-in fade-in duration-500">
-                        {/* Select: Language Model */}
-                        <FormField
-                            control={form.control}
-                            name="turLLMInstance"
-                            rules={{ required: enabled && "Language model is required." }}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Language Model</FormLabel>
-                                    <FormDescription>
-                                        Choose the AI language model to generate answers. This model will process user queries and synthesize responses.
-                                    </FormDescription>
-                                    <Select
-                                        onValueChange={(val) => {
-                                            const instance = llmInstances.find((i) => i.id === val);
-                                            field.onChange(instance ?? null);
-                                        }}
-                                        value={field.value?.id || "__none__"}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="-- No Language Model --" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="__none__">-- No Language Model --</SelectItem>
-                                            {llmInstances.map((instance) => (
-                                                <SelectItem key={instance.id} value={instance.id}>
-                                                    {instance.title}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Select: Embedding Store */}
-                        <FormField
-                            control={form.control}
-                            name="turStoreInstance"
-                            rules={{ required: enabled && "Embedding store is required." }}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Embedding Store</FormLabel>
-                                    <FormDescription>
-                                        Select the vector embedding store for semantic search. This store holds document embeddings for RAG and similarity queries.
-                                    </FormDescription>
-                                    <Select
-                                        onValueChange={(val) => {
-                                            const instance = storeInstances.find((i) => i.id === val);
-                                            field.onChange(instance ?? null);
-                                        }}
-                                        value={field.value?.id || "__none__"}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="-- No Embedding Store --" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="__none__">-- No Embedding Store --</SelectItem>
-                                            {storeInstances.map((instance) => (
-                                                <SelectItem key={instance.id} value={instance.id}>
-                                                    {instance.title}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Textarea: System Prompt with Interactive Variables */}
-                        <FormField
-                            control={form.control}
-                            name="systemPrompt"
-                            rules={{ required: enabled && "System prompt is required." }}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <div className="flex items-center justify-between mb-2">
-                                        <FormLabel className="flex items-center gap-2">
-                                            System Prompt
-                                        </FormLabel>
-                                        <div className="flex gap-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => insertVariable("{{question}}")}
-                                                className="text-[10px] flex items-center gap-1 bg-amber-500/10 text-amber-600 border border-amber-500/20 px-2 py-1 rounded hover:bg-amber-500/20 transition-all font-mono"
-                                            >
-                                                <PlusCircle className="w-3 h-3" /> {"{{question}}"}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => insertVariable("{{information}}")}
-                                                className="text-[10px] flex items-center gap-1 bg-amber-500/10 text-amber-600 border border-amber-500/20 px-2 py-1 rounded hover:bg-amber-500/20 transition-all font-mono"
-                                            >
-                                                <PlusCircle className="w-3 h-3" /> {"{{information}}"}
-                                            </button>
-                                        </div>
+                        {/* Section 2: Models */}
+                        {enabled && (
+                            <AccordionItem value="section-models" className="border rounded-lg px-6">
+                                <AccordionTrigger className="hover:no-underline">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-lg font-semibold">AI Model & Embedding Store</span>
                                     </div>
-                                    <FormDescription>
-                                        Define the prompt template for the AI agent. Use <span className="font-mono font-bold text-amber-600">{'{question}'}</span> and <span className="font-mono font-bold text-amber-600">{'{information}'}</span> to insert user queries and retrieved content. The prompt guides the AI's response style and context.
-                                    </FormDescription>
-                                    <FormControl>
-                                        <Textarea
-                                            {...field}
-                                            ref={(e) => {
-                                                field.ref(e);
-                                                (textareaRef as any).current = e;
-                                            }}
-                                            rows={8}
-                                            placeholder="Ex: Use {{information}} to answer {{question}}..."
-                                            className="font-mono text-sm leading-relaxed"
-                                        />
-                                    </FormControl>
+                                </AccordionTrigger>
+                                <AccordionContent className="flex flex-col gap-6 pt-4">
+                                    {/* Language Model */}
+                                    <FormField
+                                        control={form.control}
+                                        name="turLLMInstance"
+                                        rules={{ required: enabled && "Language model is required." }}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <div className="flex flex-row items-center justify-between w-full">
+                                                    <div className="flex flex-col min-w-0">
+                                                        <FormLabel>Language Model</FormLabel>
+                                                        <FormDescription>
+                                                            Choose the AI language model for generating answers.
+                                                        </FormDescription>
+                                                    </div>
+                                                    <div className="flex-1 max-w-55 ml-4">
+                                                        <FormControl>
+                                                            <Select
+                                                                onValueChange={(val) => {
+                                                                    const instance = llmInstances.find((i) => i.id === val);
+                                                                    field.onChange(instance ?? null);
+                                                                }}
+                                                                value={field.value?.id || "__none__"}
+                                                            >
+                                                                <SelectTrigger className="w-full">
+                                                                    <SelectValue placeholder="-- No Language Model --" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="__none__">-- No Language Model --</SelectItem>
+                                                                    {llmInstances.map((instance) => (
+                                                                        <SelectItem key={instance.id} value={instance.id}>
+                                                                            {instance.title}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </div>
+                                                </div>
+                                            </FormItem>
+                                        )}
+                                    />
 
-                                    {/* Status Indicators for Variables */}
-                                    <div className="flex gap-4 mt-2">
-                                        <StatusBadge label="question" active={hasQuestion} />
-                                        <StatusBadge label="information" active={hasInformation} />
-                                    </div>
+                                    {/* Embedding Store */}
+                                    <FormField
+                                        control={form.control}
+                                        name="turStoreInstance"
+                                        rules={{ required: enabled && "Embedding store is required." }}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <div className="flex flex-row items-center justify-between w-full">
+                                                    <div className="flex flex-col min-w-0">
+                                                        <FormLabel>Embedding Store</FormLabel>
+                                                        <FormDescription>
+                                                            Select the vector store for semantic search and RAG.
+                                                        </FormDescription>
+                                                    </div>
+                                                    <div className="flex-1 max-w-55 ml-4">
+                                                        <FormControl>
+                                                            <Select
+                                                                onValueChange={(val) => {
+                                                                    const instance = storeInstances.find((i) => i.id === val);
+                                                                    field.onChange(instance ?? null);
+                                                                }}
+                                                                value={field.value?.id || "__none__"}
+                                                            >
+                                                                <SelectTrigger className="w-full">
+                                                                    <SelectValue placeholder="-- No Embedding Store --" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="__none__">-- No Embedding Store --</SelectItem>
+                                                                    {storeInstances.map((instance) => (
+                                                                        <SelectItem key={instance.id} value={instance.id}>
+                                                                            {instance.title}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </div>
+                                                </div>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </AccordionContent>
+                            </AccordionItem>
+                        )}
 
-                                    <div className="flex items-start gap-2 mt-2 p-2 bg-slate-50 rounded-md dark:bg-slate-900 border">
-                                        <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                                        <p className="text-[11px] text-muted-foreground">
-                                            For RAG to work, the prompt must necessarily contain the tags{" "}
-                                            <span className="font-bold text-amber-600">{'{question}'}</span>{" "}
-                                            and{" "}
-                                            <span className="font-bold text-amber-600">{'{information}'}</span>.
-                                        </p>
+                        {/* Section 3: System Prompt */}
+                        {enabled && (
+                            <AccordionItem value="section-prompt" className="border rounded-lg px-6">
+                                <AccordionTrigger className="hover:no-underline">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-lg font-semibold">System Prompt</span>
                                     </div>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                </AccordionTrigger>
+                                <AccordionContent className="flex flex-col gap-6 pt-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="systemPrompt"
+                                        rules={{ required: enabled && "System prompt is required." }}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Prompt Template</FormLabel>
+                                                <FormDescription>
+                                                    Define the prompt for the AI agent. Use <span className="font-mono font-bold text-amber-600">{'{question}'}</span> and <span className="font-mono font-bold text-amber-600">{'{information}'}</span> to insert user queries and retrieved content. This guides the AI's response style and context.
+                                                </FormDescription>
+                                                <div className="flex gap-2 mt-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => insertVariable("{{question}}")}
+                                                        className="text-[10px] flex items-center gap-1 bg-amber-500/10 text-amber-600 border border-amber-500/20 px-2 py-1 rounded hover:bg-amber-500/20 transition-all font-mono"
+                                                    >
+                                                        <PlusCircle className="w-3 h-3" /> {"{{question}}"}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => insertVariable("{{information}}")}
+                                                        className="text-[10px] flex items-center gap-1 bg-amber-500/10 text-amber-600 border border-amber-500/20 px-2 py-1 rounded hover:bg-amber-500/20 transition-all font-mono"
+                                                    >
+                                                        <PlusCircle className="w-3 h-3" /> {"{{information}}"}
+                                                    </button>
+                                                </div>
+                                                <FormControl>
+                                                    <Textarea
+                                                        {...field}
+                                                        ref={(e) => {
+                                                            field.ref(e);
+                                                            (textareaRef as any).current = e;
+                                                        }}
+                                                        rows={8}
+                                                        placeholder="Ex: Use {{information}} to answer {{question}}..."
+                                                        className="font-mono text-sm leading-relaxed mt-2"
+                                                    />
+                                                </FormControl>
+                                                <div className="flex gap-4 mt-2">
+                                                    <StatusBadge label="question" active={hasQuestion} />
+                                                    <StatusBadge label="information" active={hasInformation} />
+                                                </div>
+                                                <div className="flex items-start gap-2 mt-2 p-2 bg-slate-50 rounded-md dark:bg-slate-900 border">
+                                                    <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                                                    <p className="text-[11px] text-muted-foreground">
+                                                        For RAG to work, the prompt must contain <span className="font-bold text-amber-600">{'{question}'}</span> and <span className="font-bold text-amber-600">{'{information}'}</span>.
+                                                    </p>
+                                                </div>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </AccordionContent>
+                            </AccordionItem>
+                        )}
+                    </Accordion>
+
+                    {/* Action Footer */}
+                    <div className="flex justify-end gap-2 pt-4">
+                        <GradientButton
+                            type="button"
+                            variant="outline"
+                            onClick={() => form.reset(snSite.turSNSiteGenAi)}
+                            className="w-full sm:w-auto"
+                        >
+                            Cancel
+                        </GradientButton>
+                        <GradientButton
+                            type="submit"
+                            disabled={enabled && (!hasQuestion || !hasInformation)}
+                            className="w-full sm:w-auto"
+                        >
+                            Save Changes
+                        </GradientButton>
                     </div>
-                )}
-
-                <GradientButton
-                    type="submit"
-                    disabled={enabled && (!hasQuestion || !hasInformation)}
-                    className="w-full sm:w-auto"
-                >
-                    Save changes
-                </GradientButton>
-            </form>
-        </Form>
+                </form>
+            </Form>
+        </div>
     );
 };
 

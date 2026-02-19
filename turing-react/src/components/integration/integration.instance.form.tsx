@@ -31,6 +31,9 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { GradientButton } from "../ui/gradient-button"
+
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
+
 const turIntegrationInstanceService = new TurIntegrationInstanceService();
 interface Props {
   value: TurIntegrationInstance;
@@ -65,100 +68,156 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-6">
-        <FormField
-          control={form.control}
-          name="title"
-          rules={{ required: "Title is required." }}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Title"
-                  type="text"
+    <div className="px-6 py-8">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Accordion
+            type="multiple"
+            defaultValue={["general", "connection"]}
+            className="space-y-6"
+          >
+            {/* General Information Section */}
+            <AccordionItem value="general" className="border rounded-lg px-6">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold text-foreground">
+                    General Information
+                  </span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-8 pt-4">
+                {/* Title */}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  rules={{ required: "Please give your integration a name." }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Integration Name</FormLabel>
+                      <FormDescription>
+                        Choose a name that helps you and your team quickly recognize this integration.
+                      </FormDescription>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g. Marketing AEM Connector"
+                          type="text"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormDescription>
-                Enter a unique, descriptive name for this integration instance. This title will be shown in the integration list and used to identify the instance.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Description"
-                  className="resize-none"
-                  {...field}
+                {/* Description */}
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Short Description</FormLabel>
+                      <FormDescription>
+                        Briefly explain what this integration does or why you’re setting it up.
+                      </FormDescription>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe the integration’s purpose or what it connects."
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormDescription>
-                Provide a brief summary of the integration instance’s purpose or functionality. This helps users understand its role at a glance.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+              </AccordionContent>
+            </AccordionItem>
 
-        <FormField
-          control={form.control}
-          name="vendor"
-          rules={{ required: "Vendor is required." }}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Vendor</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem key="AEM" value="AEM">AEM</SelectItem>
-                  <SelectItem key="WEB_CRAWLER" value="WEB_CRAWLER">Web Crawler</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                Select the integration vendor or technology this instance connects to, such as Adobe AEM or a web crawler.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            {/* Connection Details Section */}
+            <AccordionItem value="connection" className="border rounded-lg px-6">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold text-foreground">
+                    Connection Details
+                  </span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-8 pt-4">
+                {/* Vendor (50/50 row) */}
+                <FormField
+                  control={form.control}
+                  name="vendor"
+                  rules={{ required: "Please select a vendor." }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex flex-row items-center justify-between w-full">
+                        {/* Left: Label & Description */}
+                        <div className="w-1/2 pr-4">
+                          <FormLabel>Integration Type</FormLabel>
+                          <FormDescription>
+                            Pick the platform or technology you want to connect with. This helps us tailor the setup for you.
+                          </FormDescription>
+                        </div>
+                        {/* Right: Select */}
+                        <div className="w-1/2">
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a type..." />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem key="AEM" value="AEM">Adobe AEM</SelectItem>
+                              <SelectItem key="WEB_CRAWLER" value="WEB_CRAWLER">Web Crawler</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Endpoint */}
+                <FormField
+                  control={form.control}
+                  name="endpoint"
+                  rules={{ required: "Please enter the endpoint URL." }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Endpoint URL</FormLabel>
+                      <FormDescription>
+                        Enter the web address where Turing should connect to your system. Make sure it’s accessible from this environment.
+                      </FormDescription>
+                      <FormControl>
+                        <Input
+                          placeholder="https://your-system.example.com/api"
+                          type="url"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-        <FormField
-          control={form.control}
-          name="endpoint"
-          rules={{ required: "Endpoint is required." }}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Endpoint</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="URL"
-                  type="url"
-                  {...field} />
-              </FormControl>
-              <FormDescription>
-                Specify the base URL or endpoint address for the integration. This is where the platform will connect to access the external system.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <GradientButton type="submit">Save</GradientButton>
-      </form>
-    </Form>
+          {/* Action Footer */}
+          <div className="flex justify-end gap-4 mt-8">
+            <GradientButton
+              type="button"
+              variant="outline"
+              onClick={() => navigate(ROUTES.INTEGRATION_INSTANCE)}
+            >
+              Cancel
+            </GradientButton>
+            <GradientButton type="submit">
+              Save Changes
+            </GradientButton>
+          </div>
+        </form>
+      </Form >
+    </div>
   )
 }
 

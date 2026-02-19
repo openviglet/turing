@@ -66,12 +66,29 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-6">
-        <Accordion type="multiple" defaultValue={["general", "wildcard", "facet", "highlighting", "didYouMean", "mlt", "spotlight", "defaultFields"]} className="space-y-2">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 py-8 px-6"
+      >
+        <Accordion
+          type="multiple"
+          defaultValue={[
+            "general",
+            "wildcard",
+            "facet",
+            "highlighting",
+            "didYouMean",
+            "mlt",
+            "spotlight",
+            "defaultFields",
+          ]}
+          className="space-y-2"
+        >
+          {/* General */}
           <AccordionItem value="general" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold">General Configuration</span>
+                <span className="text-lg font-semibold">General</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="space-y-6 pt-4">
@@ -80,17 +97,17 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="rowsPerPage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of items per page</FormLabel>
+                    <FormLabel>Results per Page</FormLabel>
+                    <FormDescription>
+                      Set the number of search results displayed per page.
+                    </FormDescription>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Number of items per page"
+                        placeholder="e.g. 10"
                         type="number"
                       />
                     </FormControl>
-                    <FormDescription>
-                      Sets the maximum number of search results displayed per page.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -100,22 +117,28 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="exactMatch"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Exact Match</FormLabel>
-                    <FormDescription>
-                      Enables strict matching for queries wrapped in double quotes. Uses the default field for precise searches.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Exact Match</FormLabel>
+                        <FormDescription>
+                          Enable precise search for quoted terms using the default field.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
             </AccordionContent>
           </AccordionItem>
+          {/* Wildcard */}
           <AccordionItem value="wildcard" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
@@ -129,17 +152,22 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="wildcardNoResults"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>No results</FormLabel>
-                    <FormDescription>
-                      If a search returns no results, automatically append a wildcard to the end of the search term to broaden the query.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Add Wildcard on No Results</FormLabel>
+                        <FormDescription>
+                          If no results are found, automatically append a wildcard to the search term.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
@@ -148,27 +176,33 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="wildcardAlways"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>In all searches</FormLabel>
-                    <FormDescription>
-                      Always append a wildcard to the end of every search term, increasing the flexibility of search results.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Always Add Wildcard</FormLabel>
+                        <FormDescription>
+                          Always append a wildcard to each search term.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
             </AccordionContent>
           </AccordionItem>
+          {/* Facet */}
           <AccordionItem value="facet" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
                 <IconLayoutListFilled />
-                <span className="text-lg font-semibold">Facet</span>
+                <span className="text-lg font-semibold">Facets</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="space-y-6 pt-4">
@@ -177,17 +211,22 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="facet"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Facet enabled</FormLabel>
-                    <FormDescription>
-                      Activates faceted search, allowing users to filter results by categories or attributes.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Enable Facets</FormLabel>
+                        <FormDescription>
+                          Allow filtering results by categories or attributes.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
@@ -196,17 +235,17 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="itemsPerFacet"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of items per facet</FormLabel>
+                    <FormLabel>Items per Facet</FormLabel>
+                    <FormDescription>
+                      Maximum number of items displayed per facet category.
+                    </FormDescription>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Number of items per facet"
+                        placeholder="e.g. 5"
                         type="number"
                       />
                     </FormControl>
-                    <FormDescription>
-                      Specifies how many items are shown for each facet category.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -216,21 +255,29 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="facetSort"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Facet Sort</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Facet Sorting</FormLabel>
+                        <FormDescription>
+                          Choose how facet values are sorted.
+                        </FormDescription>
+                      </div>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem key="COUNT" value="COUNT">
+                              By Count
+                            </SelectItem>
+                            <SelectItem key="ALPHABETICAL" value="ALPHABETICAL">
+                              Alphabetical
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem key="COUNT" value="COUNT">Count</SelectItem>
-                        <SelectItem key="ALPHABETICAL" value="ALPHABETICAL">Alphabetical</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Determines how facet values are ordered: by count or alphabetically.
-                    </FormDescription>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -240,21 +287,29 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="facetType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Operator between facets</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Facet Operator</FormLabel>
+                        <FormDescription>
+                          Logical operator (AND/OR) between different facets.
+                        </FormDescription>
+                      </div>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem key="AND" value="AND">
+                              AND
+                            </SelectItem>
+                            <SelectItem key="OR" value="OR">
+                              OR
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem key="AND" value="AND">And</SelectItem>
-                        <SelectItem key="OR" value="OR">Or</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Sets the logical operator (AND/OR) used to combine multiple facet filters.
-                    </FormDescription>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -264,27 +319,36 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="facetItemType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Operator between facets items</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Facet Item Operator</FormLabel>
+                        <FormDescription>
+                          Logical operator (AND/OR) between values within the same facet.
+                        </FormDescription>
+                      </div>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem key="AND" value="AND">
+                              AND
+                            </SelectItem>
+                            <SelectItem key="OR" value="OR">
+                              OR
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem key="AND" value="AND">And</SelectItem>
-                        <SelectItem key="OR" value="OR">Or</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Sets the logical operator (AND/OR) for combining multiple values within a single facet.
-                    </FormDescription>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </AccordionContent>
           </AccordionItem>
+          {/* Highlighting */}
           <AccordionItem value="highlighting" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
@@ -298,17 +362,22 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="hl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Highlighting enabled</FormLabel>
-                    <FormDescription>
-                      Highlights matching terms in search results for better visibility.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Enable Highlighting</FormLabel>
+                        <FormDescription>
+                          Highlight search terms in the results.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
@@ -317,17 +386,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="hlPre"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Pre Tag</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Pre Tag"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Highlight Start Tag</FormLabel>
                     <FormDescription>
-                      HTML or text tag inserted before highlighted terms in results.
+                      HTML/text tag inserted before the highlighted term.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. <mark>" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -337,28 +402,25 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="hlPost"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Post Tag</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Post Tag"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Highlight End Tag</FormLabel>
                     <FormDescription>
-                      HTML or text tag inserted after highlighted terms in results.
+                      HTML/text tag inserted after the highlighted term.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. </mark>" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </AccordionContent>
           </AccordionItem>
+          {/* Did you mean */}
           <AccordionItem value="didYouMean" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
                 <IconProgressHelp />
-                <span className="text-lg font-semibold">Did you mean?</span>
+                <span className="text-lg font-semibold">Spelling Suggestions</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="space-y-6 pt-4">
@@ -367,17 +429,22 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="spellCheck"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>"Did you mean?" enabled</FormLabel>
-                    <FormDescription>
-                      Activates spelling correction suggestions for user queries.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Enable Suggestions</FormLabel>
+                        <FormDescription>
+                          Suggest spelling corrections for user queries.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
@@ -386,27 +453,33 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="spellCheckFixes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Always show the search with the corrected term</FormLabel>
-                    <FormDescription>
-                      If enabled, automatically displays results for the corrected term when a misspelling is detected. If disabled, shows results for the original term.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Always Show Corrected Term</FormLabel>
+                        <FormDescription>
+                          Automatically display results for the corrected term if a typo is detected.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
             </AccordionContent>
           </AccordionItem>
+          {/* MLT */}
           <AccordionItem value="mlt" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
                 <IconCopy />
-                <span className="text-lg font-semibold">MLT</span>
+                <span className="text-lg font-semibold">More Like This (MLT)</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="space-y-6 pt-4">
@@ -415,22 +488,28 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="mlt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>"More Like This" enabled</FormLabel>
-                    <FormDescription>
-                      Enables recommendations for documents similar to the current search result.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Enable Similar Recommendations</FormLabel>
+                        <FormDescription>
+                          Recommend documents similar to the current result.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
             </AccordionContent>
           </AccordionItem>
+          {/* Spotlight */}
           <AccordionItem value="spotlight" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
@@ -444,22 +523,28 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="spotlightWithResults"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>"Spotlight with search results" enabled</FormLabel>
-                    <FormDescription>
-                      Displays spotlighted content alongside search results, using its configured position.
-                    </FormDescription>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
+                    <div className="flex flex-row items-center justify-between gap-4">
+                      <div className="flex flex-col flex-1">
+                        <FormLabel>Show Spotlight with Results</FormLabel>
+                        <FormDescription>
+                          Display featured content alongside search results.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? 1 : 0);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
             </AccordionContent>
           </AccordionItem>
+          {/* Default Fields */}
           <AccordionItem value="defaultFields" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
@@ -473,17 +558,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="exactMatchField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Exact Match</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Exact Match"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Exact Match Field</FormLabel>
                     <FormDescription>
-                      Field used for exact match queries when no field is specified and double quotes are used.
+                      Field used for quoted searches without a specified field.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. title" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -493,17 +574,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="defaultField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Default</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Default"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Default Field</FormLabel>
                     <FormDescription>
-                      Field used for general queries when no field is specified.
+                      Field used for general searches without a specified field.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. content" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -513,17 +590,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="defaultTitleField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Title"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Title Field</FormLabel>
                     <FormDescription>
-                      Field used for document titles in search results.
+                      Field used to display the document title.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. title" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -533,17 +606,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="defaultTextField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Text</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Text"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Text Field</FormLabel>
                     <FormDescription>
-                      Field used for main document content in search results.
+                      Field used for the main document content.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. body" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -553,17 +622,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="defaultDescriptionField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Description"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Description Field</FormLabel>
                     <FormDescription>
-                      Field used for document descriptions in search results.
+                      Field used for the document description.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. description" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -573,17 +638,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="defaultDateField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Date"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Date Field</FormLabel>
                     <FormDescription>
-                      Field used for document dates in search results.
+                      Field used for the document date.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. date" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -593,17 +654,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="defaultImageField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Image"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>Image Field</FormLabel>
                     <FormDescription>
-                      Field used for document images in search results.
+                      Field used for document images.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. image" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -613,17 +670,13 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="defaultURLField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>URL</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="URL"
-                        type="text"
-                      />
-                    </FormControl>
+                    <FormLabel>URL Field</FormLabel>
                     <FormDescription>
-                      Field used for document URLs in search results.
+                      Field used for document URLs.
                     </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. url" type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -631,7 +684,14 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-        <GradientButton type="submit">Save</GradientButton>
+        <div className="flex justify-end gap-4 pt-8">
+          <GradientButton type="button" variant="outline" onClick={() => navigate(urlBase)}>
+            Cancel
+          </GradientButton>
+          <GradientButton type="submit">
+            Save Changes
+          </GradientButton>
+        </div>
       </form>
     </Form>
   )

@@ -31,6 +31,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { GradientButton } from "../ui/gradient-button"
 import { Skeleton } from "../ui/skeleton"
 const turSNSiteService = new TurSNSiteService();
@@ -100,88 +101,130 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-6">
-              <FormField
-                control={form.control}
-                name="name"
-                rules={{
-                  required: "Name is required.",
-                  pattern: {
-                    value: /^[a-zA-Z0-9_-]+$/,
-                    message: "Name can only contain letters, numbers, underscores, and hyphens."
-                  }
-                }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Title"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Unique identifier for this semantic navigation site.
-                      Use only letters, numbers, underscores, or hyphens.
-                      This name will be shown in the site list and used for API access.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <Accordion
+                type="multiple"
+                defaultValue={["section-general", "section-search"]}
+                className="w-full space-y-4"
+              >
+                {/* General Information Section */}
+                <AccordionItem value="section-general" className="border rounded-lg px-6">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">General Information</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-6 pt-4">
+                    {/* Name Field */}
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      rules={{
+                        required: "Site name is required.",
+                        pattern: {
+                          value: /^[a-zA-Z0-9_-]+$/,
+                          message: "Only letters, numbers, underscores, and hyphens are allowed.",
+                        },
+                      }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormDescription>
+                            Enter a unique identifier for this semantic navigation site. Use only letters, numbers, underscores, or hyphens. This name is used for API access and will appear in the site list.
+                          </FormDescription>
+                          <FormControl>
+                            <Input {...field} placeholder="Site Name" type="text" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Description"
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Briefly describe the purpose or scope of this semantic navigation site.
-                      This helps users and agents understand its content focus.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    {/* Description Field */}
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormDescription>
+                            Provide a concise summary describing the purpose or scope of this semantic navigation site. This helps users and agents understand its content focus.
+                          </FormDescription>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Describe this site"
+                              className="resize-none"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
 
-              <FormField
-                control={form.control}
-                name="turSEInstance.id"
-                rules={{ required: "Search engine instance is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Search Engine Instance</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {seInstances.map((seInstance) => (
-                          <SelectItem key={seInstance.id} value={seInstance.id}>{seInstance.title}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Select the search engine instance that powers this semantic navigation site.
-                      This determines which backend is used for indexing and searching content.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <GradientButton type="submit">Save</GradientButton>
+                {/* Search Engine Section */}
+                <AccordionItem value="section-search" className="border rounded-lg px-6">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">Search Engine</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-6 pt-4">
+                    {/* Search Engine Instance (Select) */}
+                    <FormField
+                      control={form.control}
+                      name="turSEInstance.id"
+                      rules={{ required: "Search engine instance is required." }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex flex-row items-center justify-between w-full gap-6">
+                            <div className="flex flex-col min-w-56">
+                              <FormLabel>Search Engine Instance</FormLabel>
+                              <FormDescription>
+                                Select the search engine instance powering this semantic navigation site. This determines which backend is used for indexing and searching content.
+                              </FormDescription>
+                            </div>
+                            <div className="flex-1 max-w-md">
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Choose..." />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {seInstances.map((seInstance) => (
+                                    <SelectItem key={seInstance.id} value={seInstance.id}>
+                                      {seInstance.title}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
+              {/* Action Footer */}
+              <div className="flex justify-end gap-3 pt-4">
+                <GradientButton
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate(urlBase)}
+                >
+                  Cancel
+                </GradientButton>
+                <GradientButton type="submit">
+                  Save Changes
+                </GradientButton>
+              </div>
             </form>
-          </Form >
+          </Form>
         )}
     </>
   )

@@ -32,6 +32,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { DialogDelete } from "../dialog.delete"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { GradientButton } from "../ui/gradient-button"
 const turSEInstanceService = new TurSEInstanceService();
 interface Props {
@@ -108,116 +109,161 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
-              <FormField
-                control={control}
-                name="title"
-                rules={{ required: "Title is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Title"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Enter a unique and descriptive name for this search engine instance. This title will be shown in the list of search engines.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <Accordion
+                type="multiple"
+                defaultValue={["general", "connection"]}
+                className="w-full space-y-4"
+              >
+                {/* General Section */}
+                <AccordionItem value="general" className="border rounded-lg px-6">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">General Information</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-6 pt-4">
+                    <FormField
+                      control={control}
+                      name="title"
+                      rules={{ required: "Title is required." }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Title</FormLabel>
+                          <FormDescription>
+                            Enter a unique, descriptive name for this search engine instance.
+                          </FormDescription>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="e.g. Enterprise Search"
+                              type="text"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormDescription>
+                            Briefly describe the purpose or scope of this search engine.
+                          </FormDescription>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Add a description"
+                              className="resize-none"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
 
-              <FormField
-                control={control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Description"
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Provide a brief summary of this search engine instance. This helps users understand its purpose or any special configuration.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                {/* Connection Section */}
+                <AccordionItem value="connection" className="border rounded-lg px-6">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">Connection Settings</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-6 pt-4">
+                    <FormField
+                      control={control}
+                      name="turSEVendor.id"
+                      rules={{ required: "Vendor is required." }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex flex-row justify-between items-center w-full gap-4">
+                            <div className="flex flex-col flex-1">
+                              <FormLabel>Vendor</FormLabel>
+                              <FormDescription>
+                                Choose the backend technology powering this search engine.
+                              </FormDescription>
+                            </div>
+                            <div className="flex-1 max-w-xs">
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select vendor..." />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem key="SOLR" value="SOLR">Apache Solr</SelectItem>
+                                  <SelectItem key="LUCENE" value="LUCENE">Apache Lucene</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name="host"
+                      rules={{ required: "Host is required." }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Host</FormLabel>
+                          <FormDescription>
+                            Enter the server hostname or IP address (e.g., <code>localhost</code>).
+                          </FormDescription>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g. localhost"
+                              type="text"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name="port"
+                      rules={{ required: "Port is required." }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Port</FormLabel>
+                          <FormDescription>
+                            Specify the network port for the search engine (e.g., <code>8983</code>).
+                          </FormDescription>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g. 8983"
+                              type="number"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
-              <FormField
-                control={control}
-                name="turSEVendor.id"
-                rules={{ required: "Vendor is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vendor</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem key="SOLR" value="SOLR">Apache Solr</SelectItem>
-                        <SelectItem key="LUCENE" value="LUCENE">Apache Lucene</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Select the backend search engine technology that this instance will use. Choose between Apache Solr or Apache Lucene.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="host"
-                rules={{ required: "Host is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Host</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Host"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Specify the hostname or IP address where the search engine server is running. For example: <code>localhost</code> or <code>192.168.1.100</code>.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="port"
-                rules={{ required: "Port is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Port</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Port"
-                        type="number"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Enter the network port number used to connect to the search engine server. Common defaults: <code>8983</code> for Solr, <code>9200</code> for Lucene.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <GradientButton type="submit">Save</GradientButton>
+              {/* Action Footer */}
+              <div className="flex justify-end gap-3 pt-8">
+                <GradientButton
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate(ROUTES.SE_INSTANCE)}
+                >
+                  Cancel
+                </GradientButton>
+                <GradientButton type="submit">
+                  Save Changes
+                </GradientButton>
+              </div>
             </form>
           </Form>
         </CardContent>

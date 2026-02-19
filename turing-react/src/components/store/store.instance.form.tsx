@@ -32,6 +32,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { DialogDelete } from "../dialog.delete"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { GradientButton } from "../ui/gradient-button"
 import { Switch } from "../ui/switch"
 const turStoreInstanceService = new TurStoreInstanceService();
@@ -105,118 +106,202 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
-              <FormField
-                control={form.control}
-                name="title"
-                rules={{ required: "Title is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Title"
-                        type="text"
+              <Accordion
+                type="multiple"
+                defaultValue={["general", "vendor", "endpoint", "status"]}
+                className="w-full space-y-4"
+              >
+                {/* General Information Section */}
+                <AccordionItem value="general" className="border rounded-lg px-6">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">General Information</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-6 pt-4">
+                    <div className="w-full">
+                      <FormField
+                        control={form.control}
+                        name="title"
+                        rules={{ required: "A title is required for this embedding store." }}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Title</FormLabel>
+                            <FormDescription>
+                              Provide a unique, descriptive name for this embedding store instance.
+                            </FormDescription>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Enter store title"
+                                type="text"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </FormControl>
-                    <FormDescription>
-                      Enter a unique and descriptive name for this embedding store instance. This title will be shown in the list of available stores.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Description"
-                        className="resize-none"
-                        {...field}
+                    </div>
+                    <div className="w-full">
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormDescription>
+                              Summarize the purpose or intended use of this embedding store.
+                            </FormDescription>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Enter a brief description"
+                                className="resize-none"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </FormControl>
-                    <FormDescription>
-                      Provide a brief summary of the embedding store’s purpose or usage. This helps users understand its role at a glance.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
 
-              <FormField
-                control={form.control}
-                name="turStoreVendor.id"
-                rules={{ required: "Vendor is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vendor</FormLabel>
-                    <Select onValueChange={(nextValue) => {
-                      field.onChange(nextValue);
-                      applyVendorDefaults(nextValue);
-                    }} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem key="CHROMA" value="CHROMA">Chroma</SelectItem>
-                        <SelectItem key="MILVUS" value="MILVUS">Milvus</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Select the backend technology for this embedding store. The vendor determines how vectors are stored and retrieved.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                {/* Vendor Section - Strict Inline */}
+                <AccordionItem value="vendor" className="border rounded-lg px-6">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">Vendor</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-6 pt-4">
+                    <div className="w-full flex flex-row justify-between items-center gap-4">
+                      <div className="flex flex-col">
+                        <FormLabel>Vendor</FormLabel>
+                        <FormDescription>
+                          Choose the backend technology powering this embedding store.
+                        </FormDescription>
+                      </div>
+                      <div className="flex-1 max-w-xs">
+                        <FormField
+                          control={form.control}
+                          name="turStoreVendor.id"
+                          rules={{ required: "Please select a vendor." }}
+                          render={({ field }) => (
+                            <FormItem className="mb-0">
+                              <Select
+                                onValueChange={(nextValue) => {
+                                  field.onChange(nextValue);
+                                  applyVendorDefaults(nextValue);
+                                }}
+                                value={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select vendor..." />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem key="CHROMA" value="CHROMA">
+                                    Chroma
+                                  </SelectItem>
+                                  <SelectItem key="MILVUS" value="MILVUS">
+                                    Milvus
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
 
-              <FormField
-                control={form.control}
-                name="url"
-                rules={{ required: "Endpoint is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Endpoint</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Endpoint"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Specify the base URL or endpoint where the embedding store service is accessible. Example: http://localhost:8000
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="enabled"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Enabled</FormLabel>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
+                {/* Endpoint Section */}
+                <AccordionItem value="endpoint" className="border rounded-lg px-6">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">Endpoint</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-6 pt-4">
+                    <div className="w-full">
+                      <FormField
+                        control={form.control}
+                        name="url"
+                        rules={{ required: "Endpoint URL is required." }}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Endpoint</FormLabel>
+                            <FormDescription>
+                              Enter the base URL where this embedding store is accessible. Example: http://localhost:8000
+                            </FormDescription>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter endpoint URL"
+                                type="text"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </FormControl>
-                    <FormDescription>
-                      Toggle to activate or deactivate this embedding store instance. Disabled stores will not be available for use.
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-              <GradientButton type="submit">Save</GradientButton>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* Status Section - Strict Inline */}
+                <AccordionItem value="status" className="border rounded-lg px-6">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">Status</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-6 pt-4">
+                    <div className="w-full flex flex-row justify-between items-center gap-4">
+                      <div className="flex flex-col">
+                        <FormLabel>Enabled</FormLabel>
+                        <FormDescription>
+                          Toggle to activate or deactivate this embedding store instance.
+                        </FormDescription>
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name="enabled"
+                          render={({ field }) => (
+                            <FormItem className="mb-0">
+                              <FormControl>
+                                <Switch
+                                  checked={field.value === 1}
+                                  onCheckedChange={(checked) => {
+                                    field.onChange(checked ? 1 : 0);
+                                  }}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+              <div className="flex justify-end gap-3 pt-4">
+                <GradientButton
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate(urlBase)}
+                >
+                  Cancel
+                </GradientButton>
+                <GradientButton type="submit">
+                  Save Changes
+                </GradientButton>
+              </div>
             </form>
           </Form>
         </CardContent>

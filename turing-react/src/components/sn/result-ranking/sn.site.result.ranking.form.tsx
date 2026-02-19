@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import {
   Form,
   FormControl,
@@ -24,7 +25,6 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Label } from "../../ui/label"
 import { Slider } from "../../ui/slider"
 import { DynamicResultRankingFields } from "./dynamic-result-ranking-field"
 const turSNRankingExpressionService = new TurSNRankingExpressionService();
@@ -78,92 +78,152 @@ export const SNSiteResultRankingForm: React.FC<Props> = ({ snSiteId, value, isNe
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 px-6">
-        <FormField
-          control={form.control}
-          name="name"
-          rules={{ required: "Name is required." }}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Title"
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription>Name will appear on semantic navigation site list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <div className="px-6 py-8">
+      <Form {...form}>
+        <Accordion
+          type="multiple"
+          defaultValue={["general", "conditions", "weight"]}
+          className="w-full space-y-4"
+        >
+          {/* General Information Section */}
+          <AccordionItem value="general" className="border rounded-lg px-6">
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold">General Information</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-6 pt-4">
+              <FormField
+                control={form.control}
+                name="name"
+                rules={{ required: "Name is required." }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormDescription>
+                      Enter a clear, descriptive name for this ranking expression.
+                    </FormDescription>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Ranking expression name"
+                        type="text"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormDescription>
+                      Briefly summarize the purpose of this ranking expression.
+                    </FormDescription>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Purpose of this ranking expression"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </AccordionContent>
+          </AccordionItem>
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Description"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>Description will appear on semantic navigation site list.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormItem>
-          <FormLabel>Content that matches <span className="text-destructive"> *</span></FormLabel>
-          <FormDescription>Create simple filter expressions to target specific content.</FormDescription>
-          <FormControl>
-            <DynamicResultRankingFields
-              fieldName="turSNRankingConditions"
-              control={control}
-              register={register}
-              snSiteId={snSiteId}
-              errors={errors}
-            />
-          </FormControl>
-
-        </FormItem>
-        <div>
-          <Label htmlFor="weight-slider" className="mt-6">
-            Will have its weight changed by
-          </Label>
-          <div className="flex items-center gap-4 mt-3">
-            <FormField
-              control={form.control}
-              name="weight"
-              render={({ field }) => (
-                <>
-                  <Slider
-                    id="weight-slider"
-                    value={[field.value ?? slideValue[0]]}
-                    onValueChange={(value) => {
-                      setSlideValue(value);
-                      field.onChange(value[0]);
-                    }}
-                    max={10}
-                    min={0}
-                    step={1}
+          {/* Ranking Conditions Section */}
+          <AccordionItem value="conditions" className="border rounded-lg px-6">
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold">Ranking Conditions</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-6 pt-4">
+              <FormItem>
+                <FormLabel>
+                  Content Filter <span className="text-destructive">*</span>
+                </FormLabel>
+                <FormDescription>
+                  Specify filter expressions to target content for ranking.
+                </FormDescription>
+                <FormControl>
+                  <DynamicResultRankingFields
+                    fieldName="turSNRankingConditions"
+                    control={control}
+                    register={register}
+                    snSiteId={snSiteId}
+                    errors={errors}
                   />
-                  <span className="w-10 text-right">
-                    + {slideValue[0]}
-                  </span>
-                </>
-              )}
-            />
-          </div>
+                </FormControl>
+              </FormItem>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Ranking Weight Section */}
+          <AccordionItem value="weight" className="border rounded-lg px-6">
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold">Ranking Weight</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-6 pt-4">
+              <FormField
+                control={form.control}
+                name="weight"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex flex-row justify-between items-center w-full">
+                      <div className="flex flex-col">
+                        <FormLabel>Weight Adjustment</FormLabel>
+                        <FormDescription>
+                          Adjust the influence of this ranking expression on search results.
+                        </FormDescription>
+                      </div>
+                      <div className="flex items-center gap-4 min-w-[180px]">
+                        <Slider
+                          id="weight-slider"
+                          value={[field.value ?? slideValue[0]]}
+                          onValueChange={(value) => {
+                            setSlideValue(value)
+                            field.onChange(value[0])
+                          }}
+                          max={10}
+                          min={0}
+                          step={1}
+                        />
+                        <span className="w-10 text-right font-medium">
+                          +{slideValue[0]}
+                        </span>
+                      </div>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        {/* Action Footer */}
+        <div className="flex justify-end gap-4 mt-8">
+          <GradientButton
+            type="button"
+            variant="outline"
+            onClick={() => navigate(urlBase)}
+          >
+            Cancel
+          </GradientButton>
+          <GradientButton type="submit">
+            Save Changes
+          </GradientButton>
         </div>
-        <GradientButton type="submit">Save</GradientButton>
-      </form>
-    </Form>
+      </Form>
+    </div>
   )
 }
 

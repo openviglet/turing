@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import {
     Dialog,
     DialogContent,
@@ -19,13 +20,7 @@ import {
 } from "@/components/ui/form"
 import { GradientButton } from "@/components/ui/gradient-button"
 import { Input } from "@/components/ui/input"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
     Table,
     TableBody,
@@ -217,246 +212,291 @@ export const SNSiteSpotlightForm: React.FC<Props> = ({ snSiteId, value, isNew })
     }
 
     return (
+
         <Form {...form}>
-            <form onSubmit={handleFormSubmit} className="space-y-8 py-8 px-6">
-                <FormField
-                    control={form.control}
-                    name="name"
-                    rules={{ required: "Name is required." }}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input {...field} placeholder="Name" type="text" />
-                            </FormControl>
-                            <FormDescription>Name will appear on spotlight list.</FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                                <Input {...field} placeholder="Description" type="text" />
-                            </FormControl>
-                            <FormDescription>Description will appear on spotlight list.</FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="language"
-                    rules={{ required: "Language is required." }}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Language</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value || ""}>
-                                <FormControl>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select a language" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {locales.map((locale) => (
-                                        <SelectItem key={locale.id} value={locale.language}>
-                                            {locale.language}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <FormDescription>Language of semantic navigation site.</FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <div>
-                    <h3 className="text-lg font-semibold mb-2">When searching for the following terms, ...</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                        If any of these terms are searched for, this will trigger documents to display as spotlights.
-                    </p>
-
-                    <div className="space-y-2">
-                        {terms.map((term, index) => (
-                            <div key={term.id || `term-${index}`} className="flex items-center gap-1.5">
-                                <Input
-                                    value={term.name}
-                                    onChange={(e) => updateTermName(index, e.target.value)}
-                                    placeholder="Search term"
-                                    className="grow"
-                                />
-                                <GradientButton
-                                    variant="ghost"
-                                    size="icon"
-                                    type="button"
-                                    onClick={() => removeTerm(index)}
-                                    aria-label="Remove term"
-                                >
-                                    <Trash2 className="h-4 w-4 text-red-500" />
-                                </GradientButton>
+            <form onSubmit={handleFormSubmit}>
+                <Accordion
+                    type="multiple"
+                    defaultValue={["general", "terms", "documents"]}
+                    className="space-y-6 py-8 px-6"
+                >
+                    {/* General Section */}
+                    <AccordionItem value="general" className="border rounded-lg px-6">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-2">
+                                <span className="text-lg font-semibold text-foreground">Spotlight Details</span>
                             </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-4">
-                        <GradientButton variant="outline" type="button" onClick={addTerm}>
-                            <PlusCircle className="h-4 w-4 mr-2" />
-                            Add
-                        </GradientButton>
-                    </div>
-                    {termsError && (
-                        <p className="text-sm font-medium text-destructive mt-2">{termsError}</p>
-                    )}
-                </div>
-
-                {selectedLanguage && (
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">... then will be showing the following documents as spotlight.</h3>
-                        <p className="text-sm text-muted-foreground mb-4">
-                            These documents will display as spotlights when there are search terms.
-                        </p>
-
-                        <div className="mb-4">
-                            <Dialog open={searchDialogOpen} onOpenChange={(open) => {
-                                setSearchDialogOpen(open);
-                                if (!open) {
-                                    setSearchQuery("");
-                                    setSearchResult(null);
-                                }
-                            }}>
-                                <DialogTrigger asChild>
-                                    <GradientButton variant="outline" type="button">
-                                        <PlusCircle className="h-4 w-4 mr-2" />
-                                        Add Document
-                                    </GradientButton>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-2xl">
-                                    <DialogHeader>
-                                        <DialogTitle>Search Document</DialogTitle>
-                                        <DialogDescription>
-                                            Search for documents to add as spotlight.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="flex items-center gap-2">
-                                        <Input
-                                            placeholder="Search..."
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    e.preventDefault();
-                                                    searchDocument(1);
-                                                }
-                                            }}
-                                            className="grow"
-                                        />
-                                        <GradientButton
-                                            type="button"
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={() => searchDocument(1)}
-                                        >
-                                            <Search className="h-4 w-4" />
-                                        </GradientButton>
-                                    </div>
-                                    {searchResult?.results?.document && searchResult.results.document.length > 0 && (
-                                        <div className="max-h-80 overflow-y-auto">
-                                            <Table>
-                                                <TableHeader>
-                                                    <TableRow>
-                                                        <TableHead>Title</TableHead>
-                                                        <TableHead>Type</TableHead>
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {searchResult.results.document.map((searchDoc, index) => (
-                                                        <TableRow
-                                                            key={searchDoc.fields.id || `search-${index}`}
-                                                            className="cursor-pointer"
-                                                            onClick={() => addDocument(searchDoc)}
-                                                        >
-                                                            <TableCell>{searchDoc.fields.title}</TableCell>
-                                                            <TableCell>{searchDoc.fields.type}</TableCell>
-                                                        </TableRow>
+                        </AccordionTrigger>
+                        <AccordionContent className="flex flex-col gap-8 pt-4">
+                            {/* Name */}
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                rules={{ required: "Please give your spotlight a name." }}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormDescription>
+                                            Choose a name to help you recognize this spotlight later.
+                                        </FormDescription>
+                                        <FormControl>
+                                            <Input {...field} placeholder="e.g. AI Best Practices" type="text" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            {/* Description */}
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Description</FormLabel>
+                                        <FormDescription>
+                                            Add a short description so others know what this spotlight is about.
+                                        </FormDescription>
+                                        <FormControl>
+                                            <Input {...field} placeholder="e.g. Curated resources for AI adoption" type="text" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            {/* Language (50/50 row) */}
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                rules={{ required: "Please select a language." }}
+                                render={({ field }) => (
+                                    <div className="flex flex-row items-center justify-between w-full gap-4">
+                                        <div className="w-1/2 flex flex-col">
+                                            <FormLabel>Language</FormLabel>
+                                            <FormDescription>
+                                                Pick the language for this spotlight. This helps show the right content to your users.
+                                            </FormDescription>
+                                        </div>
+                                        <div className="w-1/2">
+                                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Choose language" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {locales.map((locale) => (
+                                                        <SelectItem key={locale.id} value={locale.language}>
+                                                            {locale.language}
+                                                        </SelectItem>
                                                     ))}
-                                                </TableBody>
-                                            </Table>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
                                         </div>
-                                    )}
-                                    {searchResult?.pagination && searchResult.pagination.length > 0 && (
-                                        <div className="flex items-center gap-1 pt-2">
-                                            {searchResult.pagination.map((page) => (
-                                                <GradientButton
-                                                    key={page.page}
-                                                    type="button"
-                                                    variant={page.type === "current" ? "default" : "outline"}
-                                                    size="sm"
-                                                    onClick={() => searchDocument(page.page)}
-                                                >
-                                                    {page.text}
-                                                </GradientButton>
-                                            ))}
-                                        </div>
-                                    )}
-                                </DialogContent>
-                            </Dialog>
-                        </div>
+                                    </div>
+                                )}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
 
-                        {documents.length > 0 && (
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-24">Position</TableHead>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead>Type</TableHead>
-                                        <TableHead className="w-24 text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {documents.map((doc, index) => (
-                                        <TableRow key={doc.id || `doc-${index}`}>
-                                            <TableCell>
-                                                <Input
-                                                    type="number"
-                                                    value={doc.position}
-                                                    onChange={(e) => updateDocumentPosition(index, Number(e.target.value))}
-                                                    className="w-20"
-                                                />
-                                            </TableCell>
-                                            <TableCell>{doc.title}</TableCell>
-                                            <TableCell>{doc.type}</TableCell>
-                                            <TableCell className="text-right">
-                                                <GradientButton
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    type="button"
-                                                    onClick={() => removeDocument(index)}
-                                                >
-                                                    <Trash2 className="h-4 w-4 mr-1" />
-                                                    Delete
-                                                </GradientButton>
-                                            </TableCell>
-                                        </TableRow>
+                    {/* Terms Section */}
+                    <AccordionItem value="terms" className="border rounded-lg px-6">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-2">
+                                <span className="text-lg font-semibold text-foreground">Trigger Terms</span>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="flex flex-col gap-8 pt-4">
+                            <div>
+                                <div className="mb-2 font-medium">When someone searches for these terms...</div>
+                                <div className="text-sm text-muted-foreground mb-4">
+                                    Add keywords or phrases. If a user searches for any of these, this spotlight will appear.
+                                </div>
+                                <div className="space-y-2">
+                                    {terms.map((term, index) => (
+                                        <div key={term.id || `term-${index}`} className="flex items-center gap-1.5">
+                                            <Input
+                                                value={term.name}
+                                                onChange={(e) => updateTermName(index, e.target.value)}
+                                                placeholder="Type a search term"
+                                                className="grow"
+                                            />
+                                            <GradientButton
+                                                variant="ghost"
+                                                size="icon"
+                                                type="button"
+                                                onClick={() => removeTerm(index)}
+                                                aria-label="Remove term"
+                                            >
+                                                <Trash2 className="h-4 w-4 text-red-500" />
+                                            </GradientButton>
+                                        </div>
                                     ))}
-                                </TableBody>
-                            </Table>
-                        )}
-                        {documentsError && (
-                            <p className="text-sm font-medium text-destructive mt-2">{documentsError}</p>
-                        )}
-                    </div>
-                )}
+                                </div>
+                                <div className="mt-4">
+                                    <GradientButton variant="outline" type="button" onClick={addTerm}>
+                                        <PlusCircle className="h-4 w-4 mr-2" />
+                                        Add Term
+                                    </GradientButton>
+                                </div>
+                                {termsError && (
+                                    <p className="text-sm font-medium text-destructive mt-2">{termsError}</p>
+                                )}
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
 
-                <GradientButton type="submit">
-                    {isNew ? "Create spotlight" : "Update spotlight"}
-                </GradientButton>
+                    {/* Documents Section */}
+                    <AccordionItem value="documents" className="border rounded-lg px-6">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-2">
+                                <span className="text-lg font-semibold text-foreground">Spotlight Documents</span>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="flex flex-col gap-8 pt-4">
+                            <div>
+                                <div className="mb-2 font-medium">...show these documents as spotlights</div>
+                                <div className="text-sm text-muted-foreground mb-4">
+                                    Choose which documents will be highlighted when the above terms are searched.
+                                </div>
+                                <div className="mb-4">
+                                    <Dialog open={searchDialogOpen} onOpenChange={(open) => {
+                                        setSearchDialogOpen(open);
+                                        if (!open) {
+                                            setSearchQuery("");
+                                            setSearchResult(null);
+                                        }
+                                    }}>
+                                        <DialogTrigger asChild>
+                                            <GradientButton variant="outline" type="button">
+                                                <PlusCircle className="h-4 w-4 mr-2" />
+                                                Add Document
+                                            </GradientButton>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-2xl">
+                                            <DialogHeader>
+                                                <DialogTitle>Find a Document</DialogTitle>
+                                                <DialogDescription>
+                                                    Search and select a document to feature in this spotlight.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    placeholder="Type to search..."
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") {
+                                                            e.preventDefault();
+                                                            searchDocument(1);
+                                                        }
+                                                    }}
+                                                    className="grow"
+                                                />
+                                                <GradientButton
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => searchDocument(1)}
+                                                >
+                                                    <Search className="h-4 w-4" />
+                                                </GradientButton>
+                                            </div>
+                                            {searchResult?.results?.document && searchResult.results.document.length > 0 && (
+                                                <div className="max-h-80 overflow-y-auto">
+                                                    <Table>
+                                                        <TableHeader>
+                                                            <TableRow>
+                                                                <TableHead>Title</TableHead>
+                                                                <TableHead>Type</TableHead>
+                                                            </TableRow>
+                                                        </TableHeader>
+                                                        <TableBody>
+                                                            {searchResult.results.document.map((searchDoc, index) => (
+                                                                <TableRow
+                                                                    key={searchDoc.fields.id || `search-${index}`}
+                                                                    className="cursor-pointer"
+                                                                    onClick={() => addDocument(searchDoc)}
+                                                                >
+                                                                    <TableCell>{searchDoc.fields.title}</TableCell>
+                                                                    <TableCell>{searchDoc.fields.type}</TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </div>
+                                            )}
+                                            {searchResult?.pagination && searchResult.pagination.length > 0 && (
+                                                <div className="flex items-center gap-1 pt-2">
+                                                    {searchResult.pagination.map((page) => (
+                                                        <GradientButton
+                                                            key={page.page}
+                                                            type="button"
+                                                            variant={page.type === "current" ? "default" : "outline"}
+                                                            size="sm"
+                                                            onClick={() => searchDocument(page.page)}
+                                                        >
+                                                            {page.text}
+                                                        </GradientButton>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+                                {documents.length > 0 && (
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead className="w-24">Order</TableHead>
+                                                <TableHead>Title</TableHead>
+                                                <TableHead>Type</TableHead>
+                                                <TableHead className="w-24 text-right">Actions</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {documents.map((doc, index) => (
+                                                <TableRow key={doc.id || `doc-${index}`}>
+                                                    <TableCell>
+                                                        <Input
+                                                            type="number"
+                                                            value={doc.position}
+                                                            onChange={(e) => updateDocumentPosition(index, Number(e.target.value))}
+                                                            className="w-20"
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>{doc.title}</TableCell>
+                                                    <TableCell>{doc.type}</TableCell>
+                                                    <TableCell className="text-right">
+                                                        <GradientButton
+                                                            variant="destructive"
+                                                            size="sm"
+                                                            type="button"
+                                                            onClick={() => removeDocument(index)}
+                                                        >
+                                                            <Trash2 className="h-4 w-4 mr-1" />
+                                                            Remove
+                                                        </GradientButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                )}
+                                {documentsError && (
+                                    <p className="text-sm font-medium text-destructive mt-2">{documentsError}</p>
+                                )}
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+                {/* Action Footer */}
+                <div className="flex justify-end gap-4 mt-8">
+                    <GradientButton variant="outline" type="button" onClick={() => navigate(urlBase)}>
+                        Cancel
+                    </GradientButton>
+                    <GradientButton type="submit">
+                        {isNew ? "Create Spotlight" : "Save Changes"}
+                    </GradientButton>
+                </div>
             </form>
         </Form>
     );
