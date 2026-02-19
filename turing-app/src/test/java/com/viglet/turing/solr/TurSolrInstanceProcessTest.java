@@ -38,9 +38,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.properties.TurConfigProperties;
@@ -79,8 +77,7 @@ class TurSolrInstanceProcessTest {
 
         turSolrInstanceProcess = new TurSolrInstanceProcess(
                 turSNSiteLocaleRepository,
-                turSNSiteRepository,
-                turSolrCache);
+                turSNSiteRepository);
     }
 
     @Test
@@ -110,65 +107,6 @@ class TurSolrInstanceProcessTest {
         assertThat(result).isEmpty();
         verify(turSNSiteRepository).findByName("testSite");
         verify(turSNSiteLocaleRepository).findByTurSNSiteAndLanguage(turSNSite, Locale.ENGLISH);
-    }
-
-    @Test
-    void testInitSolrInstanceBySiteNameCoreNotExists() {
-        TurSEInstance turSEInstance = mock(TurSEInstance.class);
-        when(turSEInstance.getHost()).thenReturn("localhost");
-        when(turSEInstance.getPort()).thenReturn(8983);
-
-        TurSNSite turSNSite = mock(TurSNSite.class);
-        when(turSNSite.getTurSEInstance()).thenReturn(turSEInstance);
-
-        TurSNSiteLocale turSNSiteLocale = mock(TurSNSiteLocale.class);
-        when(turSNSiteLocale.getTurSNSite()).thenReturn(turSNSite);
-        when(turSNSiteLocale.getCore()).thenReturn("testCore");
-
-        when(turSNSiteRepository.findByName("testSite")).thenReturn(Optional.of(turSNSite));
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, Locale.ENGLISH))
-                .thenReturn(turSNSiteLocale);
-        when(turSolrCache.isSolrCoreExists("http://localhost:8983/solr", "testCore")).thenReturn(false);
-
-        Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance("testSite", Locale.ENGLISH);
-
-        assertThat(result).isEmpty();
-        verify(turSolrCache).isSolrCoreExists("http://localhost:8983/solr", "testCore");
-    }
-
-    @Test
-    void testInitSolrInstanceByTurSEInstanceAndCore() {
-        TurSEInstance turSEInstance = mock(TurSEInstance.class);
-        when(turSEInstance.getHost()).thenReturn("localhost");
-        when(turSEInstance.getPort()).thenReturn(8983);
-
-        when(turSolrCache.isSolrCoreExists("http://localhost:8983/solr", "myCore")).thenReturn(false);
-
-        Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance(turSEInstance, "myCore");
-
-        assertThat(result).isEmpty();
-        verify(turSolrCache).isSolrCoreExists("http://localhost:8983/solr", "myCore");
-    }
-
-    @Test
-    void testInitSolrInstanceByTurSNSiteLocale() {
-        TurSEInstance turSEInstance = mock(TurSEInstance.class);
-        when(turSEInstance.getHost()).thenReturn("localhost");
-        when(turSEInstance.getPort()).thenReturn(8983);
-
-        TurSNSite turSNSite = mock(TurSNSite.class);
-        when(turSNSite.getTurSEInstance()).thenReturn(turSEInstance);
-
-        TurSNSiteLocale turSNSiteLocale = mock(TurSNSiteLocale.class);
-        when(turSNSiteLocale.getTurSNSite()).thenReturn(turSNSite);
-        when(turSNSiteLocale.getCore()).thenReturn("localeCore");
-
-        when(turSolrCache.isSolrCoreExists("http://localhost:8983/solr", "localeCore")).thenReturn(false);
-
-        Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance(turSNSiteLocale);
-
-        assertThat(result).isEmpty();
-        verify(turSolrCache).isSolrCoreExists("http://localhost:8983/solr", "localeCore");
     }
 
     @Test

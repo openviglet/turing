@@ -49,36 +49,34 @@ public class TurSolrInstanceProcess {
     private final ConcurrentHashMap<String, HttpJdkSolrClient> clientCache = new ConcurrentHashMap<>();
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSolrCache turSolrCache;
 
     public TurSolrInstanceProcess(
             TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-            TurSNSiteRepository turSNSiteRepository,
-            TurSolrCache turSolrCache) {
+            TurSNSiteRepository turSNSiteRepository) {
+        System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection");
+        System.setProperty("jdk.httpclient.HttpClient.version", "HTTP_1_1");
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteRepository = turSNSiteRepository;
-        this.turSolrCache = turSolrCache;
     }
 
     private Optional<TurSolrInstance> getSolrClient(TurSEInstance turSEInstance, String core) {
         String baseUrl = String.format("http://%s:%s/solr",
                 turSEInstance.getHost(),
                 turSEInstance.getPort());
-        if (turSolrCache.isSolrCoreExists(baseUrl, core)) {
-            HttpJdkSolrClient httpSolrClient = clientCache.computeIfAbsent(baseUrl, url -> {
-                log.info("Starting Solr connection pool for URL: {}", url);
-                return new HttpJdkSolrClient.Builder(url)
-                        .withConnectionTimeout(5000, TimeUnit.MILLISECONDS)
-                        .withIdleTimeout(15000, TimeUnit.MILLISECONDS)
-                        .build();
-            });
+        HttpJdkSolrClient httpSolrClient = clientCache.computeIfAbsent(baseUrl, url -> {
+            log.info("Starting Solr connection pool for URL: {}", url);
+            return new HttpJdkSolrClient.Builder(url)
+                    .useHttp1_1(true)
+                    .withConnectionTimeout(5000, TimeUnit.MILLISECONDS)
+                    .withIdleTimeout(15000, TimeUnit.MILLISECONDS)
+                    .build();
+        });
 
-            try {
-                TurSolrInstance solrInstance = new TurSolrInstance(httpSolrClient, URI.create(baseUrl).toURL(), core);
-                return Optional.of(solrInstance);
-            } catch (MalformedURLException e) {
-                log.error(e.getMessage(), e);
-            }
+        try {
+            TurSolrInstance solrInstance = new TurSolrInstance(httpSolrClient, URI.create(baseUrl).toURL(), core);
+            return Optional.of(solrInstance);
+        } catch (MalformedURLException e) {
+            log.error(e.getMessage(), e);
         }
 
         return Optional.empty();
