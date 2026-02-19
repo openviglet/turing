@@ -1,4 +1,3 @@
-"use client"
 import { ROUTES } from "@/app/routes.const"
 import {
   Form,
@@ -31,6 +30,7 @@ import { toast } from "sonner"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { GradientButton } from "../ui/gradient-button"
 import { Switch } from "../ui/switch"
+
 const turSNSiteService = new TurSNSiteService();
 interface Props {
   value: TurSNSite;
@@ -46,7 +46,6 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
   useEffect(() => {
     form.reset(value);
   }, [value]);
-
 
   function onSubmit(snSite: TurSNSite) {
     try {
@@ -81,15 +80,17 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="rowsPerPage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number de items per page</FormLabel>
+                    <FormLabel>Number of items per page</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Number de items per page"
+                        placeholder="Number of items per page"
                         type="number"
                       />
                     </FormControl>
-                    <FormDescription>Name will appear on semantic navigation site list.</FormDescription>
+                    <FormDescription>
+                      Sets the maximum number of search results displayed per page.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -100,7 +101,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Exact Match</FormLabel>
-                    <FormDescription>Exact match when using double quotes. Will use default field to execute the query.</FormDescription>
+                    <FormDescription>
+                      Enables strict matching for queries wrapped in double quotes. Uses the default field for precise searches.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -127,7 +130,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>No results</FormLabel>
-                    <FormDescription>When there are no results, the wildcard will be used at the end of the search term.</FormDescription>
+                    <FormDescription>
+                      If a search returns no results, automatically append a wildcard to the end of the search term to broaden the query.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -144,7 +149,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>In all searches</FormLabel>
-                    <FormDescription>The wildcard will always be used at the end of the search term.</FormDescription>
+                    <FormDescription>
+                      Always append a wildcard to the end of every search term, increasing the flexibility of search results.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -171,7 +178,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Facet enabled</FormLabel>
-                    <FormDescription>Use facet in your search.</FormDescription>
+                    <FormDescription>
+                      Activates faceted search, allowing users to filter results by categories or attributes.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -184,7 +193,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
               />
               <FormField
                 control={form.control}
-                name="rowsPerPage"
+                name="itemsPerFacet"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Number of items per facet</FormLabel>
@@ -195,7 +204,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="number"
                       />
                     </FormControl>
-                    <FormDescription>Total of items in facet.</FormDescription>
+                    <FormDescription>
+                      Specifies how many items are shown for each facet category.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -217,7 +228,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         <SelectItem key="ALPHABETICAL" value="ALPHABETICAL">Alphabetical</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>How Turing will sort the facet.</FormDescription>
+                    <FormDescription>
+                      Determines how facet values are ordered: by count or alphabetically.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -239,7 +252,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         <SelectItem key="OR" value="OR">Or</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>How Turing will join the facet attributes, using OR or AND.</FormDescription>
+                    <FormDescription>
+                      Sets the logical operator (AND/OR) used to combine multiple facet filters.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -261,7 +276,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         <SelectItem key="OR" value="OR">Or</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>How Turing will join the facet item attributes, using OR or AND.</FormDescription>
+                    <FormDescription>
+                      Sets the logical operator (AND/OR) for combining multiple values within a single facet.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -282,7 +299,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Highlighting enabled</FormLabel>
-                    <FormDescription>Use highlighting in your search.</FormDescription>
+                    <FormDescription>
+                      Highlights matching terms in search results for better visibility.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -306,7 +325,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Tag before text in highlighting.</FormDescription>
+                    <FormDescription>
+                      HTML or text tag inserted before highlighted terms in results.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -324,7 +345,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Tag after text in highlighting.</FormDescription>
+                    <FormDescription>
+                      HTML or text tag inserted after highlighted terms in results.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -345,7 +368,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>"Did you mean?" enabled</FormLabel>
-                    <FormDescription>Use "did you mean?" feature.</FormDescription>
+                    <FormDescription>
+                      Activates spelling correction suggestions for user queries.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -362,7 +387,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Always show the search with the corrected term</FormLabel>
-                    <FormDescription>If the term is misspelled, it already shows the search with the corrected term. If disabled, it shows the search with the entered term in the search.</FormDescription>
+                    <FormDescription>
+                      If enabled, automatically displays results for the corrected term when a misspelling is detected. If disabled, shows results for the original term.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -389,7 +416,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>"More Like This" enabled</FormLabel>
-                    <FormDescription>Use "More Like This" feature.</FormDescription>
+                    <FormDescription>
+                      Enables recommendations for documents similar to the current search result.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -416,7 +445,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>"Spotlight with search results" enabled</FormLabel>
-                    <FormDescription>Displays the spotlight ones along with the search using its position.</FormDescription>
+                    <FormDescription>
+                      Displays spotlighted content alongside search results, using its configured position.
+                    </FormDescription>
                     <FormControl>
                       <Switch checked={field.value === 1}
                         onCheckedChange={(checked) => {
@@ -450,7 +481,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Exact match field when no field was specified in the query and it uses double quote.</FormDescription>
+                    <FormDescription>
+                      Field used for exact match queries when no field is specified and double quotes are used.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -468,7 +501,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Default field when no field was specified in the query.</FormDescription>
+                    <FormDescription>
+                      Field used for general queries when no field is specified.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -486,7 +521,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Default title field.</FormDescription>
+                    <FormDescription>
+                      Field used for document titles in search results.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -504,7 +541,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Default text field.</FormDescription>
+                    <FormDescription>
+                      Field used for main document content in search results.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -522,7 +561,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Default description field.</FormDescription>
+                    <FormDescription>
+                      Field used for document descriptions in search results.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -540,7 +581,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Default date field.</FormDescription>
+                    <FormDescription>
+                      Field used for document dates in search results.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -550,7 +593,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                 name="defaultImageField"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date</FormLabel>
+                    <FormLabel>Image</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -558,7 +601,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Default image field.</FormDescription>
+                    <FormDescription>
+                      Field used for document images in search results.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -576,7 +621,9 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Default url field.</FormDescription>
+                    <FormDescription>
+                      Field used for document URLs in search results.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -589,4 +636,3 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
     </Form>
   )
 }
-

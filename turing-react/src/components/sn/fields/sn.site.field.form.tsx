@@ -201,7 +201,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             type="text"
                           />
                         </FormControl>
-                        <FormDescription>Name will appear on semantic navigation site field list.</FormDescription>
+                        <FormDescription>
+                          Unique identifier for this field. Appears in the semantic navigation site field list and is used for search and indexing.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -220,7 +222,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>Description will appear on semantic navigation site field list.</FormDescription>
+                        <FormDescription>
+                          Brief explanation of the field’s purpose or usage. Helps users understand its role in search and indexing.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -247,7 +251,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription>Type of Field that is used in Search Engine.</FormDescription>
+                        <FormDescription>
+                          Data type for this field (e.g., text, number, date). Determines how values are stored and processed in the search engine.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -258,7 +264,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Multi Value</FormLabel>
-                        <FormDescription>If the field allows a list of items.</FormDescription>
+                        <FormDescription>
+                          Allows this field to store multiple values (e.g., tags, categories). Useful for fields representing lists or sets.
+                        </FormDescription>
                         <FormControl>
                           <Switch checked={field.value === 1}
                             onCheckedChange={(checked) => {
@@ -275,7 +283,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Highlighting</FormLabel>
-                        <FormDescription>Enable highlighting terms of search on results.</FormDescription>
+                        <FormDescription>
+                          Enables highlighting of matching search terms in results for this field, improving result visibility.
+                        </FormDescription>
                         <FormControl>
                           <Switch checked={field.value === 1}
                             onCheckedChange={(checked) => {
@@ -292,7 +302,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>MLT</FormLabel>
-                        <FormDescription>Enable "more like this" into search on results.</FormDescription>
+                        <FormDescription>
+                          Activates “More Like This” functionality, enabling similarity-based search using this field’s content.
+                        </FormDescription>
                         <FormControl>
                           <Switch checked={field.value === 1}
                             onCheckedChange={(checked) => {
@@ -309,7 +321,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Enabled</FormLabel>
-                        <FormDescription>Enable this field during search and indexing.</FormDescription>
+                        <FormDescription>
+                          If enabled, this field will be included in search queries and indexing operations.
+                        </FormDescription>
                         <FormControl>
                           <Switch checked={field.value === 1}
                             onCheckedChange={(checked) => {
@@ -326,7 +340,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Required</FormLabel>
-                        <FormDescription>If this field is required during indexing.</FormDescription>
+                        <FormDescription>
+                          Marks this field as mandatory during indexing. Documents missing this field may be rejected.
+                        </FormDescription>
                         <FormControl>
                           <Switch checked={field.value === 1}
                             onCheckedChange={(checked) => {
@@ -350,7 +366,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             type="text"
                           />
                         </FormControl>
-                        <FormDescription>Default value used of this field during indexing is empty or null.</FormDescription>
+                        <FormDescription>
+                          Value automatically assigned if no value is provided during indexing. Useful for fallback scenarios.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -371,7 +389,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Facet</FormLabel>
-                        <FormDescription>Enable filter into search page.</FormDescription>
+                        <FormDescription>
+                          Enables this field as a filter in the search page, allowing users to refine results based on its values.
+                        </FormDescription>
                         <FormControl>
                           <Switch checked={field.value === 1}
                             onCheckedChange={(checked) => {
@@ -388,7 +408,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Secondary facet</FormLabel>
-                        <FormDescription>It will be classified as a secondary facet. It can be used separately from the main facets.</FormDescription>
+                        <FormDescription>
+                          Classifies this field as a secondary facet, which can be used separately from main facets for advanced filtering.
+                        </FormDescription>
                         <FormControl>
                           <Switch checked={field.value}
                             onCheckedChange={(checked) => {
@@ -405,7 +427,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Show all facet items</FormLabel>
-                        <FormDescription>Shows all facet items, even if there are no items.</FormDescription>
+                        <FormDescription>
+                          Displays all possible facet values, even those with zero results, to provide a complete filter list.
+                        </FormDescription>
                         <FormControl>
                           <Switch checked={field.value}
                             onCheckedChange={(checked) => {
@@ -436,7 +460,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription>How Turing will sort the facet.</FormDescription>
+                        <FormDescription>
+                          Determines how facet values are ordered in the filter box (e.g., by count, alphabetically, or default).
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -461,7 +487,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription>How Turing will join the facet attributes, using OR or AND.</FormDescription>
+                        <FormDescription>
+                          Specifies how multiple facets are combined in search (e.g., using AND or OR logic).
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -486,7 +514,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription>How Turing will join the facet item attributes, using OR or AND.</FormDescription>
+                        <FormDescription>
+                          Defines how multiple selected facet values are joined (e.g., OR for any match, AND for all).
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -511,7 +541,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription>Facet Range Gap.</FormDescription>
+                        <FormDescription>
+                          Enables range-based facet filtering (e.g., by day, month, year) for date or numeric fields.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -529,7 +561,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                             type="text"
                           />
                         </FormControl>
-                        <FormDescription>Default Name of this field into filter box.</FormDescription>
+                        <FormDescription>
+                          Display name for this field in the filter box. Used as the label for users when filtering.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -543,6 +577,9 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                         register={register}
                       />
                     </FormControl>
+                    <FormDescription>
+                      Configure localized names for this facet to support multi-language filter labels.
+                    </FormDescription>
                   </FormItem>
                 </AccordionContent>
               </AccordionItem>

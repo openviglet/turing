@@ -39,7 +39,6 @@ interface Props {
   value: TurSNSite;
   isNew: boolean;
 }
-
 export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [seInstances, setSeInstances] = useState<TurSEInstance[]>([]);
@@ -121,7 +120,11 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Name will appear on semantic navigation site list.</FormDescription>
+                    <FormDescription>
+                      Unique identifier for this semantic navigation site.
+                      Use only letters, numbers, underscores, or hyphens.
+                      This name will be shown in the site list and used for API access.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -140,7 +143,10 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Description will appear on semantic navigation site list.</FormDescription>
+                    <FormDescription>
+                      Briefly describe the purpose or scope of this semantic navigation site.
+                      This helps users and agents understand its content focus.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -165,16 +171,18 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>Search engine instance that supports semantic navigation site.</FormDescription>
+                    <FormDescription>
+                      Select the search engine instance that powers this semantic navigation site.
+                      This determines which backend is used for indexing and searching content.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <GradientButton type="submit">Save</GradientButton>
             </form>
-          </Form>
+          </Form >
         )}
     </>
   )
 }
-
