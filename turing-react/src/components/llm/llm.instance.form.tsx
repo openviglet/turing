@@ -108,7 +108,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   }
   return (
     <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
-      <Card className="mx-auto max-w-md">
+      <Card className="mx-auto ">
         <CardHeader>
           <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Language Model</CardTitle>
           <CardAction>
@@ -120,26 +120,61 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
-              <FormField
-                control={form.control}
-                name="title"
-                rules={{ required: "Title is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Title"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormDescription>Language model instance title will appear on list.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full max-w-2xl mx-auto py-8 flex flex-col gap-6"
+              autoComplete="off"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  rules={{ required: "Title is required." }}
+                  render={({ field }) => (
+                    <FormItem className="col-span-1">
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Title" type="text" className="w-full" />
+                      </FormControl>
+                      <FormDescription>
+                        Display name for this language model instance.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="turLLMVendor.id"
+                  rules={{ required: "Vendor is required." }}
+                  render={({ field }) => (
+                    <FormItem className="col-span-1">
+                      <FormLabel>Vendor</FormLabel>
+                      <Select
+                        onValueChange={(nextValue) => {
+                          field.onChange(nextValue);
+                          applyVendorDefaults(nextValue);
+                        }}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Choose..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem key="OLLAMA" value="OLLAMA">Ollama</SelectItem>
+                          <SelectItem key="OPENAI" value="OPENAI">OpenAI</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Provider for this language model.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
@@ -150,286 +185,255 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                     <FormControl>
                       <Textarea
                         placeholder="Description"
-                        className="resize-none"
+                        className="resize-none w-full"
+                        rows={2}
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Language model instance description will appear on list.</FormDescription>
+                    <FormDescription>
+                      Brief summary describing this instance.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="turLLMVendor.id"
-                rules={{ required: "Vendor is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vendor</FormLabel>
-                    <Select
-                      onValueChange={(nextValue) => {
-                        field.onChange(nextValue);
-                        applyVendorDefaults(nextValue);
-                      }}
-                      value={field.value}
-                    >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="url"
+                  rules={{ required: "Hostname is required." }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hostname</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose..." />
-                        </SelectTrigger>
+                        <Input placeholder="Hostname" type="text" className="w-full" {...field} />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem key="OLLAMA" value="OLLAMA">Ollama</SelectItem>
-                        <SelectItem key="OPENAI" value="OPENAI">OpenAI</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>Language model vendor that will be used.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormDescription>
+                        Endpoint URL (e.g., http://localhost:8000).
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="modelName"
+                  rules={{ required: "Model Name is required." }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Model Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Model Name" type="text" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Model identifier (e.g., "MISTRAL", "gpt-3.5-turbo").
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="temperature"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Temperature</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Temperature" type="number" step="0.01" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Randomness of responses (0.0 - 1.0).
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="topK"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>TopK</FormLabel>
+                      <FormControl>
+                        <Input placeholder="TopK" type="number" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Top K tokens for generation.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="topP"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>TopP</FormLabel>
+                      <FormControl>
+                        <Input placeholder="TopP" type="number" step="0.01" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Nucleus sampling (e.g., 0.9).
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="repeatPenalty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Repeat penalty</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Repeat penalty" type="number" step="0.01" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Discourages repetition.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="seed"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Seed</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Seed" type="number" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Random seed for reproducibility.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="numPredict"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of predictions</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Number of predictions" type="number" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Number of tokens to generate.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="stop"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stop</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Stop (comma separated)" type="text" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Stop generation on these strings.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="responseFormat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Response format</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Response format" type="text" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Output format, e.g., "TEXT" or "JSON".
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="supportedCapabilities"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Supported capabilities</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Supported capabilities" type="text" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Comma-separated features (e.g., "RESPONSE_FORMAT_JSON_SCHEMA").
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="timeout"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Timeout</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Timeout (e.g., PT60S)" type="text" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Max wait time for response.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="maxRetries"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Max retries</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Maximum number of retries" type="number" className="w-full" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Retry attempts before failing.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <FormField
-                control={form.control}
-                name="url"
-                rules={{ required: "Hostname is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hostname</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Hostname"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>Language model instance URL will be connected.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="modelName"
-                rules={{ required: "Model Name is required." }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Model Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Model Name"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>The name of the model to use from server.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="temperature"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Temperature</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Temperature"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>Controls the randomness of the generated responses. Higher values (e.g., 1.0) result in more diverse output, while lower values (e.g., 0.2) produce more deterministic responses.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="topK"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>TopK</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="TopK"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>Specifies the number of highest probability tokens to consider for each step during generation.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="topP"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>TopP</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="TopP"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>Controls the diversity of the generated responses by setting a threshold for the cumulative probability of top tokens.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="repeatPenalty"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Repeat penalty</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Repeat penalty"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>Penalizes the model for repeating similar tokens in the generated output.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="seed"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Seed</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Seed"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>Sets the random seed for reproducibility of generated responses.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="numPredict"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Number of predictions</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Number of predictions"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>The number of predictions to generate for each input prompt.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="stop"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stop</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Stop"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>A list of strings that, if generated, will mark the end of the response.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="responseFormat"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Response format</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Response format"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>The desired format for the generated output. TEXT or JSON with optional JSON Schema definition.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="supportedCapabilities"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Supported capabilities</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Supported capabilities"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>Set of model capabilities.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="timeout"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Timeout</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Timeout"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>The maximum time allowed for the API call to complete.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="maxRetries"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Maximum number of retries</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Maximum number of retries"
-                        type="text"
-                        {...field} />
-                    </FormControl>
-                    <FormDescription>The maximum number of retries in case of API call failure.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="enabled"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Enabled</FormLabel>
-                    <FormControl>
-                      <Switch checked={field.value === 1}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked ? 1 : 0);
-                        }}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <GradientButton type="submit">Save</GradientButton>
+              <div className="flex items-center justify-between gap-4">
+                <FormField
+                  control={form.control}
+                  name="enabled"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center gap-3 mb-0">
+                      <FormLabel className="mb-0">Enabled</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Enable or disable this instance.
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                <GradientButton type="submit" className="ml-auto w-40">
+                  Save
+                </GradientButton>
+              </div>
             </form>
           </Form>
         </CardContent>

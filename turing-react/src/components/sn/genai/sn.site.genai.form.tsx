@@ -27,7 +27,7 @@ import { TurLLMInstanceService } from "@/services/llm/llm.service"
 import { TurSNSiteService } from "@/services/sn/sn.service"
 import { TurStoreInstanceService } from "@/services/store/store.service"
 import { Info, PlusCircle } from "lucide-react"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -77,11 +77,35 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
             form.setValue("systemPrompt", DEFAULT_SYSTEM_PROMPT);
         }
     }
-
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     // Function to insert variable at cursor (or at end)
+    // Insert variable at the current cursor position in the textarea, or at the end if not focused
     const insertVariable = (variable: string) => {
+        const textarea = textareaRef.current;
         const currentPrompt = form.getValues("systemPrompt") || "";
-        form.setValue("systemPrompt", currentPrompt + variable, { shouldValidate: true });
+
+        if (textarea) {
+            // Pegamos a posição do cursor diretamente da ref do DOM
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+
+            const before = currentPrompt.slice(0, start);
+            const after = currentPrompt.slice(end);
+            const newPrompt = before + variable + after;
+
+            // Atualiza o valor no react-hook-form
+            form.setValue("systemPrompt", newPrompt, { shouldValidate: true });
+
+            // Precisamos devolver o foco e posicionar o cursor após a inserção
+            // O setTimeout garante que o React já renderizou o novo valor
+            setTimeout(() => {
+                textarea.focus();
+                textarea.setSelectionRange(start + variable.length, start + variable.length);
+            }, 0);
+        } else {
+            // Fallback apenas se a ref falhar por algum motivo
+            form.setValue("systemPrompt", currentPrompt + variable, { shouldValidate: true });
+        }
     };
 
     async function onSubmit(data: TurSNSiteGenAi) {
@@ -228,7 +252,12 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                                     <FormControl>
                                         <Textarea
                                             {...field}
+                                            ref={(e) => {
+                                                field.ref(e); // vincula a ref do react-hook-form
+                                                (textareaRef as any).current = e; // vincula a nossa ref local
+                                            }}
                                             rows={8}
+
                                             placeholder="Ex: Use {{information}} to answer {{question}}..."
                                             className="font-mono text-sm leading-relaxed"
                                         />

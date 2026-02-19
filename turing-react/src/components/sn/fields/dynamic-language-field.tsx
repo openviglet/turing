@@ -35,9 +35,9 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
     };
 
     return (
-        <div className="flex flex-col gap-4 w-full max-w-2xl">
+        <div className="flex flex-col gap-4 w-full">
             {fields.map((field, index) => (
-                <div key={field.id} className="flex items-center gap-2">
+                <div key={field.id} className="flex items-center gap-4">
                     <Controller
                         control={control}
                         name={`${fieldName}.${index}.locale`}
@@ -46,7 +46,7 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
                                 onValueChange={controllerField.onChange}
                                 defaultValue={controllerField.value}
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Choose the language" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -61,7 +61,7 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
                     />
 
                     <Input
-                        className="grow"
+                        className="grow w-full"
                         placeholder="Facet Name..."
                         {...register(`${fieldName}.${index}.label`)}
                     />

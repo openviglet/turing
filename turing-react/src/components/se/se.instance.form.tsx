@@ -122,7 +122,9 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Search engine instance title will appear on list.</FormDescription>
+                    <FormDescription>
+                      Enter a unique and descriptive name for this search engine instance. This title will be shown in the list of search engines.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -141,7 +143,9 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Search engine instance description will appear on list.</FormDescription>
+                    <FormDescription>
+                      Provide a brief summary of this search engine instance. This helps users understand its purpose or any special configuration.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -165,7 +169,9 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         <SelectItem key="LUCENE" value="LUCENE">Apache Lucene</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>Search engine vendor that will be used.</FormDescription>
+                    <FormDescription>
+                      Select the backend search engine technology that this instance will use. Choose between Apache Solr or Apache Lucene.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -184,7 +190,9 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                         {...field} />
                     </FormControl>
-                    <FormDescription>Search engine instance host will be connected.</FormDescription>
+                    <FormDescription>
+                      Specify the hostname or IP address where the search engine server is running. For example: <code>localhost</code> or <code>192.168.1.100</code>.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -202,7 +210,9 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="number"
                         {...field} />
                     </FormControl>
-                    <FormDescription>Search engine instance port will be connected.</FormDescription>
+                    <FormDescription>
+                      Enter the network port number used to connect to the search engine server. Common defaults: <code>8983</code> for Solr, <code>9200</code> for Lucene.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

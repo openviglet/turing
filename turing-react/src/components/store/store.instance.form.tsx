@@ -119,7 +119,9 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                       />
                     </FormControl>
-                    <FormDescription>Embedding store instance title will appear on list.</FormDescription>
+                    <FormDescription>
+                      Enter a unique and descriptive name for this embedding store instance. This title will be shown in the list of available stores.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -138,7 +140,9 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Embedding store instance description will appear on list.</FormDescription>
+                    <FormDescription>
+                      Provide a brief summary of the embedding store’s purpose or usage. This helps users understand its role at a glance.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -165,7 +169,9 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         <SelectItem key="MILVUS" value="MILVUS">Milvus</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>Embedding store vendor that will be used.</FormDescription>
+                    <FormDescription>
+                      Select the backend technology for this embedding store. The vendor determines how vectors are stored and retrieved.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -184,7 +190,9 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         type="text"
                         {...field} />
                     </FormControl>
-                    <FormDescription>Embedding store instance host will be connected.</FormDescription>
+                    <FormDescription>
+                      Specify the base URL or endpoint where the embedding store service is accessible. Example: http://localhost:8000
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -202,6 +210,9 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         }}
                       />
                     </FormControl>
+                    <FormDescription>
+                      Toggle to activate or deactivate this embedding store instance. Disabled stores will not be available for use.
+                    </FormDescription>
                   </FormItem>
                 )}
               />

@@ -81,7 +81,9 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   type="text"
                 />
               </FormControl>
-              <FormDescription>Integration instance title will appear on list.</FormDescription>
+              <FormDescription>
+                Enter a unique, descriptive name for this integration instance. This title will be shown in the integration list and used to identify the instance.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -100,7 +102,9 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Integration instance description will appear on list.</FormDescription>
+              <FormDescription>
+                Provide a brief summary of the integration instance’s purpose or functionality. This helps users understand its role at a glance.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -124,7 +128,9 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   <SelectItem key="WEB_CRAWLER" value="WEB_CRAWLER">Web Crawler</SelectItem>
                 </SelectContent>
               </Select>
-              <FormDescription>Integration vendor that will be used.</FormDescription>
+              <FormDescription>
+                Select the integration vendor or technology this instance connects to, such as Adobe AEM or a web crawler.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -140,10 +146,12 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
               <FormControl>
                 <Input
                   placeholder="URL"
-                  type="text"
+                  type="url"
                   {...field} />
               </FormControl>
-              <FormDescription>Integration instance hostname will be connected.</FormDescription>
+              <FormDescription>
+                Specify the base URL or endpoint address for the integration. This is where the platform will connect to access the external system.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
