@@ -103,7 +103,7 @@ export const columns: ColumnDef<TurLoggingGeneral>[] = [
         accessorKey: "message",
         header: "Message",
         size: 500,
-        cell: ({ row }) => <div className="font-mono text-sm w-full wrap-break-word whitespace-pre-wrap"><LogHighlighter text={row.getValue("message")} /></div>,
+        cell: ({ row }) => <div className="font-mono text-sm w-full wrap-break-word whitespace-pre-wrap"><LogHighlighter text={`${row.getValue("message")}\n${row.original.stackTrace}`} /></div>,
     }
 ];
 function truncateLogger(str: string, limite: number): string {

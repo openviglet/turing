@@ -1,4 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
+import { LoadProvider } from "@/components/loading-provider";
 import { SubPage } from "@/components/sub.page";
 import { useBreadcrumb } from "@/contexts/breadcrumb.context";
 import type { TurSNSiteStatus } from "@/models/sn/sn-site-monitoring.model.ts";
@@ -33,6 +34,7 @@ export default function SNSitePage() {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate()
     const urlBase = `${ROUTES.SN_INSTANCE}/${id}`;
+    const [error, setError] = useState<string | null>(null);
     const { pushItem, popItem } = useBreadcrumb();
 
 
@@ -125,21 +127,23 @@ export default function SNSitePage() {
         let added = false;
 
         if (id === "new") {
-            setSnSite({} as TurSNSite);
-            setSnStatus(null);
-            setIsNew(true);
-            pushItem({ label: "New Site" });
-            added = true;
+            turSNSiteService.query().then(() => {
+                setSnSite({} as TurSNSite);
+                setSnStatus(null);
+                setIsNew(true);
+                pushItem({ label: "New Site" });
+                added = true;
+            }).catch(() => setError("Connection error or timeout while fetching Semantic Navigation sites."));
         } else {
             turSNSiteService.get(id).then((site) => {
                 setSnSite(site);
                 pushItem({ label: site.name, href: `${ROUTES.SN_INSTANCE}/${site.id}` });
                 added = true;
-            });
+            }).catch(() => setError("Connection error or timeout while fetching Semantic Navigation site details."));
 
             turSNSiteService.getStatus(id)
                 .then(setSnStatus)
-                .catch(console.error);
+                .catch(() => setError("Connection error or timeout while fetching Semantic Navigation site status."));
             setIsNew(false);
         }
 
@@ -189,7 +193,9 @@ export default function SNSitePage() {
     }
 
     return (
-        <SubPage icon={IconSearch} feature={"Semantic Navigation"} name={snSite.name}
-            onDelete={onDelete} data={data} isNew={isNew} urlBase={urlBase} open={open} setOpen={setOpen} onExport={onExport} />
+        <LoadProvider checkIsNotUndefined={snSite} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}`}>
+            <SubPage icon={IconSearch} feature={"Semantic Navigation"} name={snSite.name}
+                onDelete={onDelete} data={data} isNew={isNew} urlBase={urlBase} open={open} setOpen={setOpen} onExport={onExport} />
+        </LoadProvider>
     )
 }

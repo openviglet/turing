@@ -65,7 +65,7 @@ export const SubPage: React.FC<Props> = ({ icon: Icon, feature, name, urlBase, i
                     </NavLink>
                   </SidebarMenuButton>
                   <div className="flex items-center gap-1 ml-auto">
-                    {onExport && (
+                    {!isNew && onExport && (
                       <GradientButton
                         variant="ghost"
                         size="icon-sm"

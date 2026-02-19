@@ -28,6 +28,7 @@ import type { TurLoggingIndexing } from "@/models/logging/logging-indexing.model
 import { formatDistanceToNow } from "date-fns";
 import { ArrowRightCircle, Ban, CheckCircle2, Clock, Database, FileSearch, Globe, PencilLine, RefreshCcw, Send, Zap } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { BadgeLocale } from "../badge-locale";
 import { Badge } from "../ui/badge";
 import { GradientButton } from "../ui/gradient-button";
 
@@ -77,7 +78,7 @@ export const columns: ColumnDef<TurLoggingIndexing>[] = [
 
             const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
                 PREPARE_INDEX: {
-                    label: "Index",
+                    label: "Indexed",
                     icon: FileSearch,
                     className: "bg-blue-500/10 text-blue-600 border-blue-500/20"
                 },
@@ -87,12 +88,12 @@ export const columns: ColumnDef<TurLoggingIndexing>[] = [
                     className: "bg-slate-500/10 text-slate-600 border-slate-500/20"
                 },
                 PREPARE_REINDEX: {
-                    label: "Reindex",
+                    label: "Reindexed",
                     icon: RefreshCcw,
                     className: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20"
                 },
                 PREPARE_FORCED_REINDEX: {
-                    label: "Forced Reindex",
+                    label: "Forced Reindexing",
                     icon: Zap,
                     className: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20"
                 },
@@ -233,33 +234,7 @@ export const columns: ColumnDef<TurLoggingIndexing>[] = [
         accessorKey: "locale",
         header: "Locale",
         cell: ({ row }) => {
-            const locale = String(row.getValue("locale"));
-            const getLocaleCode = (): string => {
-                if (locale.includes('_')) {
-                    return locale.split('_')[1];
-                }
-                if (locale.includes('-')) {
-                    return locale.split('-')[1];
-                }
-                return locale;
-            };
-            const localeCode = getLocaleCode();
-            const countryCode = localeCode.toLowerCase();
-
-            return (
-                <Badge variant="secondary" className="font-mono gap-2 py-1 pl-1">
-                    <img
-                        src={`https://flagcdn.com/w40/${countryCode}.png`}
-                        alt={countryCode}
-                        // Definimos um fallback para imagens que não carregarem (ex: códigos inválidos)
-                        onError={(e) => { e.currentTarget.style.display = 'none' }}
-                        className="w-5 h-3.5 object-cover rounded-sm shadow-sm"
-                    />
-                    <span className="text-xs font-bold uppercase tracking-tight">
-                        {locale}
-                    </span>
-                </Badge>
-            );
+            return (<BadgeLocale locale={row.getValue("locale")} />);
         },
     },
     {

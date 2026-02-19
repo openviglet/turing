@@ -100,7 +100,7 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
 
             const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
                 PREPARE_INDEX: {
-                    label: "Index",
+                    label: "Indexed",
                     icon: FileSearch,
                     className: "bg-blue-500/10 text-blue-600 border-blue-500/20"
                 },
@@ -110,12 +110,12 @@ export const columns: ColumnDef<TurIntegrationIndexing>[] = [
                     className: "bg-slate-500/10 text-slate-600 border-slate-500/20"
                 },
                 PREPARE_REINDEX: {
-                    label: "Reindex",
+                    label: "Reindexed",
                     icon: RefreshCcw,
                     className: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20"
                 },
                 PREPARE_FORCED_REINDEX: {
-                    label: "Forced Reindex",
+                    label: "Forced Reindexing",
                     icon: Zap,
                     className: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20"
                 },
