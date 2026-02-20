@@ -128,8 +128,12 @@ public class TurSNSiteFieldExt implements Serializable {
 
     public void setFacetLocales(Set<TurSNSiteFieldExtFacet> facetLocales) {
         this.facetLocales.clear();
+
         if (facetLocales != null) {
-            this.facetLocales.addAll(facetLocales);
+            for (TurSNSiteFieldExtFacet facetLocale : facetLocales) {
+                facetLocale.setTurSNSiteFieldExt(this);
+                this.facetLocales.add(facetLocale);
+            }
         }
     }
 }
