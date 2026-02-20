@@ -53,7 +53,6 @@ import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.template.TurSNTemplate;
 import com.viglet.turing.solr.TurSolrFieldAction;
@@ -88,7 +87,6 @@ public class TurSNSiteFieldExtAPI {
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;
     private final TurSNSiteFieldRepository turSNSiteFieldRepository;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
     private final TurSNTemplate turSNTemplate;
 
@@ -96,14 +94,12 @@ public class TurSNSiteFieldExtAPI {
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
             TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository,
             TurSNSiteFieldRepository turSNSiteFieldRepository,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
             TurSEInstanceRepository turSEInstanceRepository,
             TurSNTemplate turSNTemplate) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteFieldExtFacetRepository = turSNSiteFieldExtFacetRepository;
         this.turSNSiteFieldRepository = turSNSiteFieldRepository;
-        this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSEInstanceRepository = turSEInstanceRepository;
         this.turSNTemplate = turSNTemplate;
     }
