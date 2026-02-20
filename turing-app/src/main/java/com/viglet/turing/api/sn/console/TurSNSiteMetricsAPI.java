@@ -20,10 +20,17 @@
  */
 package com.viglet.turing.api.sn.console;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.api.sn.bean.TurSNSiteMetricsTopTermsBean;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 
@@ -55,6 +63,29 @@ public class TurSNSiteMetricsAPI {
 			TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSNSiteMetricAccessRepository = turSNSiteMetricAccessRepository;
+	}
+
+	@GetMapping("live")
+	public List<Map<String, Object>> getLiveMetrics(@PathVariable String snSiteId) {
+		Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
+		List<TurSNSiteMetricAccess> metrics = turSNSiteMetricAccessRepository
+				.findByTurSNSiteIdAndAccessDateAfter(snSiteId, oneHourAgo);
+
+		return metrics.stream()
+				.collect(Collectors.groupingBy(m -> {
+					long epochSecond = m.getAccessDate().getEpochSecond();
+					long bucket = (epochSecond / 30) * 30;
+					return Instant.ofEpochSecond(bucket).toString();
+				}, Collectors.counting()))
+				.entrySet().stream()
+				.map(e -> {
+					Map<String, Object> map = new HashMap<>();
+					map.put("time", e.getKey());
+					map.put("accesses", e.getValue());
+					return map;
+				})
+				.sorted(Comparator.comparing(m -> m.get("time").toString()))
+				.toList();
 	}
 
 	@Operation(summary = "Semantic Navigation Site Metrics Top Terms")

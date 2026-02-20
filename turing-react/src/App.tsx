@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import ConsoleRootPage from "./app/console/console.root.page"
+import RealTimeDashboardPage from "./app/console/dashboard/dashboard.page"
 import LoginPage from "./app/login/login.page"
 import {
   IntegrationRoutes,
@@ -26,6 +27,7 @@ function App() {
             <Toaster />
             <Routes>
               <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.CONSOLE} replace />} />
+              <Route path={ROUTES.DASHBOARD} element={<RealTimeDashboardPage />} />
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
               <Route path={`${ROUTES.SN_SEARCH}/:siteName`} element={<SearchPage />} />
               <Route path={ROUTES.CONSOLE} element={<ConsoleRootPage />}>

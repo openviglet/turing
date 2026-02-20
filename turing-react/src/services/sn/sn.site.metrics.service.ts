@@ -1,3 +1,4 @@
+import type { MetricDataLive } from "@/models/sn/sn-site-metric-live";
 import type { TurSNSiteMetricsTerm } from "@/models/sn/sn-site-metrics-term.model";
 import axios from "axios";
 
@@ -8,6 +9,12 @@ export type TurSNTopTermsPeriod =
   | "all-time";
 
 export class TurSNSiteMetricsService {
+  async live(siteId: string): Promise<MetricDataLive> {
+    const response = await axios.get<MetricDataLive>(
+      `/sn/${siteId}/metrics/live`,
+    );
+    return response.data;
+  }
   async topTermsAllTime(
     siteId: string,
     rows: number,

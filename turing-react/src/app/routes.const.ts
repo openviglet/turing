@@ -19,4 +19,5 @@ export const ROUTES = {
   INTEGRATION_INSTANCE: `${consolePath}/integration/instance`,
   LOGGING_ROOT: `${consolePath}/logging`,
   LOGGING_INSTANCE: `${consolePath}/logging/instance`,
+  DASHBOARD: `${consolePath}/dashboard`,
 };
