@@ -178,17 +178,17 @@ public class TurSNSiteFieldExtAPI {
     @PutMapping("/{id}")
     @Transactional
     public TurSNSiteFieldExt turSNSiteFieldExtUpdate(@PathVariable String snSiteId, @PathVariable String id,
-            @RequestBody TurSNSiteFieldExt turSNSiteFieldExt) {
-        return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExtEdit -> {
-            updateFieldExtProperties(turSNSiteFieldExtEdit, turSNSiteFieldExt);
+            @RequestBody TurSNSiteFieldExt payload) {
+        return this.turSNSiteFieldExtRepository.findById(id).map(existing -> {
+            updateFieldExtProperties(existing, payload);
             turSNSiteRepository.findById(snSiteId)
                     .ifPresent(turSNSite -> {
-                        turSNSiteFieldExtEdit
-                                .setFacetPosition(calculateFacetPositionForUpdate(turSNSiteFieldExt, turSNSite));
-                        this.turSNSiteFieldExtRepository.save(turSNSiteFieldExtEdit);
-                        this.updateExternalField(turSNSiteFieldExt, turSNSite);
+                        existing
+                                .setFacetPosition(calculateFacetPositionForUpdate(payload, turSNSite));
+                        this.turSNSiteFieldExtRepository.save(existing);
+                        this.updateExternalField(payload, turSNSite);
                     });
-            return turSNSiteFieldExtEdit;
+            return existing;
         }).orElse(TurSNSiteFieldExt.builder().build());
     }
 
@@ -265,30 +265,34 @@ public class TurSNSiteFieldExtAPI {
                 .turSNSite(turSNSite).build());
     }
 
-    private void updateFieldExtProperties(TurSNSiteFieldExt target, TurSNSiteFieldExt source) {
-        if (source == null || target == null) {
+    private void updateFieldExtProperties(TurSNSiteFieldExt existing, TurSNSiteFieldExt payload) {
+        if (payload == null || existing == null) {
             return;
         }
-        target.setFacetName(source.getFacetName());
-        target.setMultiValued(source.getMultiValued());
-        target.setName(source.getName());
-        target.setDescription(source.getDescription());
-        target.setType(source.getType());
-        target.setFacet(source.getFacet());
-        target.setFacetLocales(getTurSNSiteFieldExtFacets(source));
-        target.setFacetRange(source.getFacetRange());
-        target.setFacetSort(source.getFacetSort());
-        target.setFacetType(source.getFacetType());
-        target.setFacetItemType(source.getFacetItemType());
-        target.setSecondaryFacet(Boolean.TRUE.equals(source.getSecondaryFacet()));
-        target.setShowAllFacetItems(Boolean.TRUE.equals(source.getShowAllFacetItems()));
-        target.setHl(source.getHl());
-        target.setEnabled(source.getEnabled());
-        target.setMlt(source.getMlt());
-        target.setExternalId(source.getExternalId());
-        target.setRequired(source.getRequired());
-        target.setDefaultValue(source.getDefaultValue());
-        target.setSnType(source.getSnType());
+        List<TurSNSiteFieldExtFacet> facets = turSNSiteFieldExtFacetRepository
+                .saveAll(getTurSNSiteFieldExtFacets(existing, payload));
+
+        existing.setFacetName(payload.getFacetName());
+        existing.setMultiValued(payload.getMultiValued());
+        existing.setName(payload.getName());
+        existing.setDescription(payload.getDescription());
+        existing.setType(payload.getType());
+        existing.setFacet(payload.getFacet());
+        existing.setFacetRange(payload.getFacetRange());
+        existing.setFacetSort(payload.getFacetSort());
+        existing.setFacetType(payload.getFacetType());
+        existing.setFacetItemType(payload.getFacetItemType());
+        existing.setSecondaryFacet(Boolean.TRUE.equals(payload.getSecondaryFacet()));
+        existing.setShowAllFacetItems(Boolean.TRUE.equals(payload.getShowAllFacetItems()));
+        existing.setHl(payload.getHl());
+        existing.setEnabled(payload.getEnabled());
+        existing.setMlt(payload.getMlt());
+        existing.setExternalId(payload.getExternalId());
+        existing.setRequired(payload.getRequired());
+        existing.setDefaultValue(payload.getDefaultValue());
+        existing.setSnType(payload.getSnType());
+        existing.setFacetLocales(new HashSet<>(facets));
+
     }
 
     private Integer calculateFacetPositionForUpdate(TurSNSiteFieldExt turSNSiteFieldExt, TurSNSite turSNSite) {
@@ -302,13 +306,14 @@ public class TurSNSiteFieldExtAPI {
     }
 
     @NotNull
-    private static Set<TurSNSiteFieldExtFacet> getTurSNSiteFieldExtFacets(TurSNSiteFieldExt turSNSiteFieldExt) {
+    private static Set<TurSNSiteFieldExtFacet> getTurSNSiteFieldExtFacets(TurSNSiteFieldExt existing,
+            TurSNSiteFieldExt payload) {
         Set<TurSNSiteFieldExtFacet> facetLocales = new HashSet<>();
-        if (turSNSiteFieldExt.getFacetLocales() == null) {
+        if (payload == null || payload.getFacetLocales() == null) {
             return facetLocales;
         }
-        for (TurSNSiteFieldExtFacet fieldExtFacet : turSNSiteFieldExt.getFacetLocales()) {
-            fieldExtFacet.setTurSNSiteFieldExt(turSNSiteFieldExt);
+        for (TurSNSiteFieldExtFacet fieldExtFacet : payload.getFacetLocales()) {
+            fieldExtFacet.setTurSNSiteFieldExt(existing);
             facetLocales.add(fieldExtFacet);
         }
         return facetLocales;

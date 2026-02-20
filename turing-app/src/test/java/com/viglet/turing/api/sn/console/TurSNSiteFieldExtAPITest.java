@@ -23,12 +23,14 @@ package com.viglet.turing.api.sn.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -189,31 +191,47 @@ class TurSNSiteFieldExtAPITest {
 
         @Test
         void testFieldExtUpdateLinksFacetLocalesToFieldExt() {
-                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
-                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                TurSNSiteFieldExtFacetRepository facetRepo = mock(TurSNSiteFieldExtFacetRepository.class);
+                TurSNSiteFieldExtRepository fieldExtRepo = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteRepository siteRepo = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldRepository fieldRepo = mock(TurSNSiteFieldRepository.class);
+
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(
+                                siteRepo, fieldExtRepo, facetRepo,
+                                fieldRepo, mock(TurSNSiteLocaleRepository.class),
                                 mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+
+                TurSNSite site = new TurSNSite();
 
                 TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
                 existing.setSnType(TurSNFieldType.SE);
+
                 TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
                 payload.setSnType(TurSNFieldType.SE);
-                Set<TurSNSiteFieldExtFacet> facets = new HashSet<>();
-                facets.add(new TurSNSiteFieldExtFacet());
-                facets.add(new TurSNSiteFieldExtFacet());
-                payload.setFacetLocales(facets);
+                payload.setExternalId("ext-id");
 
-                when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
-                when(siteRepository.findById("site")).thenReturn(Optional.empty());
-                when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
-                                .thenAnswer(invocation -> invocation.getArgument(0));
+                Set<TurSNSiteFieldExtFacet> payloadFacets = new HashSet<>();
+                payloadFacets.add(new TurSNSiteFieldExtFacet());
+                payloadFacets.add(new TurSNSiteFieldExtFacet());
+                payload.setFacetLocales(payloadFacets);
+
+                when(fieldExtRepo.findById("id")).thenReturn(Optional.of(existing));
+                when(siteRepo.findById("site")).thenReturn(Optional.of(site));
+                when(fieldExtRepo.findMaxFacetPosition(site)).thenReturn(Optional.of(1));
+                when(facetRepo.saveAll(any())).thenAnswer(inv -> {
+                        Iterable<?> it = inv.getArgument(0);
+                        List<Object> list = new ArrayList<>();
+                        it.forEach(list::add);
+                        return list;
+                });
+
+                when(fieldExtRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+                when(fieldRepo.findById("ext-id")).thenReturn(Optional.of(new TurSNSiteField()));
 
                 TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
 
                 assertThat(result.getFacetLocales()).hasSize(2);
-                result.getFacetLocales().forEach(facet -> assertThat(facet.getTurSNSiteFieldExt()).isSameAs(payload));
+                result.getFacetLocales().forEach(f -> assertThat(f.getTurSNSiteFieldExt()).isSameAs(existing));
         }
 
         @Test
