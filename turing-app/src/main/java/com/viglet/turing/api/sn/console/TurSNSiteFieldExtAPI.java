@@ -21,28 +21,15 @@
 
 package com.viglet.turing.api.sn.console;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,8 +41,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
@@ -63,7 +48,6 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
@@ -99,6 +83,7 @@ public class TurSNSiteFieldExtAPI {
     public static final String PDATE = "pdate";
     public static final String NAME = "name";
     public static final String SOLR_SCHEMA_REQUEST = "http://%s:%d/solr/%s/schema";
+
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;
@@ -127,13 +112,13 @@ public class TurSNSiteFieldExtAPI {
     @Transactional
     @GetMapping
     public List<TurSNSiteFieldExt> turSNSiteFieldExtList(@PathVariable String snSiteId) {
-        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
-            updateFieldExtFromSNSite(turSNSite);
-            return turSNSiteFieldExtRepository
-                    .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
-
-        }).orElse(Collections.emptyList());
-
+        return turSNSiteRepository.findById(snSiteId)
+                .map(turSNSite -> {
+                    updateFieldExtFromSNSite(turSNSite);
+                    return turSNSiteFieldExtRepository
+                            .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
+                })
+                .orElse(Collections.emptyList());
     }
 
     @Operation(summary = "Show a Semantic Navigation Site Field Ext")
@@ -141,30 +126,21 @@ public class TurSNSiteFieldExtAPI {
     public TurSNSiteFieldExt turSNSiteFieldExtGet(@PathVariable String snSiteId, @PathVariable String id) {
         TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtRepository.findById(id)
                 .orElse(TurSNSiteFieldExt.builder().build());
-        turSNSiteFieldExt.setFacetLocales(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(turSNSiteFieldExt));
+        turSNSiteFieldExt.setFacetLocales(
+                new HashSet<>(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(turSNSiteFieldExt)));
         return turSNSiteFieldExt;
-    }
-
-    @GetMapping("/create/{localeRequest}")
-    public List<TurSNSite> turSNSiteFieldExtCreate(@PathVariable String snSiteId,
-            @PathVariable String localeRequest) {
-        Locale locale = LocaleUtils.toLocale(localeRequest);
-        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
-            List<TurSNSiteFieldExt> turSNSiteFieldExtList = turSNSiteFieldExtRepository
-                    .findByTurSNSiteAndEnabled(turSNSite, 1);
-            turSNSiteFieldExtList.forEach(turSNSiteFieldExt -> this.createField(turSNSite, locale, turSNSiteFieldExt));
-            return this.turSNSiteRepository.findAll();
-        }).orElse(new ArrayList<>());
     }
 
     @Operation(summary = "Semantic Navigation Site Field Ext structure")
     @GetMapping("structure")
     public TurSNSiteFieldExt turSNSiteFieldExtStructure(@PathVariable String snSiteId) {
-        return turSNSiteRepository.findById(snSiteId).map(turSNSite -> {
-            TurSNSiteFieldExt turSNSiteFieldExt = new TurSNSiteFieldExt();
-            turSNSiteFieldExt.setTurSNSite(turSNSite);
-            return turSNSiteFieldExt;
-        }).orElse(new TurSNSiteFieldExt());
+        return turSNSiteRepository.findById(snSiteId)
+                .map(turSNSite -> {
+                    TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
+                    fieldExt.setTurSNSite(turSNSite);
+                    return fieldExt;
+                })
+                .orElseGet(TurSNSiteFieldExt::new);
     }
 
     @Operation(summary = "Create a Semantic Navigation Site Field Ext")
@@ -181,13 +157,11 @@ public class TurSNSiteFieldExtAPI {
             @RequestBody TurSNSiteFieldExt payload) {
         return this.turSNSiteFieldExtRepository.findById(id).map(existing -> {
             updateFieldExtProperties(existing, payload);
-            turSNSiteRepository.findById(snSiteId)
-                    .ifPresent(turSNSite -> {
-                        existing
-                                .setFacetPosition(calculateFacetPositionForUpdate(payload, turSNSite));
-                        this.turSNSiteFieldExtRepository.save(existing);
-                        this.updateExternalField(payload, turSNSite);
-                    });
+            turSNSiteRepository.findById(snSiteId).ifPresent(turSNSite -> {
+                existing.setFacetPosition(calculateFacetPositionForUpdate(payload, turSNSite));
+                this.turSNSiteFieldExtRepository.save(existing);
+                this.updateExternalField(payload, turSNSite);
+            });
             return existing;
         }).orElse(TurSNSiteFieldExt.builder().build());
     }
@@ -196,16 +170,14 @@ public class TurSNSiteFieldExtAPI {
     @Operation(summary = "Delete a Semantic Navigation Site Field Ext")
     @DeleteMapping("/{id}")
     public boolean turSNSiteFieldExtDelete(@PathVariable String snSiteId, @PathVariable String id) {
-
         return this.turSNSiteFieldExtRepository.findById(id).map(turSNSiteFieldExt -> {
             turSNSiteRepository.findById(snSiteId)
                     .ifPresent(turSNSite -> turSNSiteFieldRepository.findById(turSNSiteFieldExt.getExternalId())
                             .ifPresent(turSNSiteField -> this.deleteSolrSchema(turSNSite, turSNSiteField)));
-            if (turSNSiteFieldExt.getSnType().equals(TurSNFieldType.SE)) {
+            if (TurSNFieldType.SE.equals(turSNSiteFieldExt.getSnType())) {
                 this.turSNSiteFieldRepository.delete(turSNSiteFieldExt.getExternalId());
             }
             this.turSNSiteFieldExtRepository.delete(id);
-
             return true;
         }).orElse(false);
     }
@@ -213,42 +185,39 @@ public class TurSNSiteFieldExtAPI {
     private void updateFieldExtFromSNSite(TurSNSite turSNSite) {
         turSNSiteFieldExtRepository.deleteByTurSNSiteAndSnType(turSNSite, TurSNFieldType.NER);
         Map<String, TurSNSiteField> fieldMap = createFieldMap(turSNSite);
-        List<TurSNSiteFieldExt> turSNSiteFieldExtList = this.turSNSiteFieldExtRepository
+        List<TurSNSiteFieldExt> fieldExtList = this.turSNSiteFieldExtRepository
                 .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
-        removeDuplicatedFields(fieldMap, turSNSiteFieldExtList);
-        for (TurSNSiteField turSNSiteField : fieldMap.values()) {
-            TurSNSiteFieldExt turSNSiteFieldExt = saveSNSiteFieldExt(turSNSite, turSNSiteField);
-            turSNSiteFieldExtList.add(turSNSiteFieldExt);
-        }
+        removeDuplicatedFields(fieldMap, fieldExtList);
+        fieldMap.values().forEach(field -> {
+            TurSNSiteFieldExt fieldExt = saveSNSiteFieldExt(turSNSite, field);
+            fieldExtList.add(fieldExt);
+        });
     }
 
     private Map<String, TurSNSiteField> createFieldMap(TurSNSite turSNSite) {
-        List<TurSNSiteField> turSNSiteFields = turSNSiteFieldRepository.findByTurSNSite(turSNSite);
-        if (turSNSiteFields.isEmpty()) {
+        List<TurSNSiteField> fields = turSNSiteFieldRepository.findByTurSNSite(turSNSite);
+        if (fields.isEmpty()) {
             turSNTemplate.createSEFields(turSNSite);
-            turSNSiteFields = turSNSiteFieldRepository.findByTurSNSite(turSNSite);
+            fields = turSNSiteFieldRepository.findByTurSNSite(turSNSite);
         }
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        turSNSiteFields.forEach(turSNSiteField -> fieldMap.put(turSNSiteField.getId(), turSNSiteField));
-        return fieldMap;
+        return fields.stream().collect(Collectors.toMap(TurSNSiteField::getId, f -> f));
     }
 
     private void removeDuplicatedFields(Map<String, TurSNSiteField> fieldMap,
-            List<TurSNSiteFieldExt> turSNSiteFieldExtensions) {
-        for (TurSNSiteFieldExt turSNSiteFieldExtension : turSNSiteFieldExtensions) {
-            if (Objects.requireNonNull(turSNSiteFieldExtension.getSnType()) == TurSNFieldType.SE) {
-                fieldMap.remove(turSNSiteFieldExtension.getExternalId());
-            }
-        }
+            List<TurSNSiteFieldExt> fieldExts) {
+        fieldExts.stream()
+                .filter(ext -> TurSNFieldType.SE.equals(ext.getSnType()))
+                .map(TurSNSiteFieldExt::getExternalId)
+                .forEach(fieldMap::remove);
     }
 
-    private TurSNSiteFieldExt saveSNSiteFieldExt(TurSNSite turSNSite, TurSNSiteField turSNSiteField) {
+    private TurSNSiteFieldExt saveSNSiteFieldExt(TurSNSite turSNSite, TurSNSiteField field) {
         return turSNSiteFieldExtRepository.save(TurSNSiteFieldExt.builder()
                 .enabled(0)
-                .name(turSNSiteField.getName())
-                .description(turSNSiteField.getDescription())
+                .name(field.getName())
+                .description(field.getDescription())
                 .facet(0)
-                .facetName(turSNSiteField.getName())
+                .facetName(field.getName())
                 .facetRange(TurSNSiteFacetRangeEnum.DISABLED)
                 .facetType(TurSNSiteFacetFieldEnum.DEFAULT)
                 .facetItemType(TurSNSiteFacetFieldEnum.DEFAULT)
@@ -256,22 +225,21 @@ public class TurSNSiteFieldExtAPI {
                 .showAllFacetItems(false)
                 .secondaryFacet(false)
                 .hl(0)
-                .multiValued(turSNSiteField.getMultiValued())
+                .multiValued(field.getMultiValued())
                 .facetPosition(0)
                 .mlt(0)
-                .externalId(turSNSiteField.getId())
+                .externalId(field.getId())
                 .snType(TurSNFieldType.SE)
-                .type(turSNSiteField.getType())
-                .turSNSite(turSNSite).build());
+                .type(field.getType())
+                .turSNSite(turSNSite)
+                .build());
     }
 
     private void updateFieldExtProperties(TurSNSiteFieldExt existing, TurSNSiteFieldExt payload) {
-        if (payload == null || existing == null) {
+        if (payload == null || existing == null)
             return;
-        }
         List<TurSNSiteFieldExtFacet> facets = turSNSiteFieldExtFacetRepository
                 .saveAll(getTurSNSiteFieldExtFacets(existing, payload));
-
         existing.setFacetName(payload.getFacetName());
         existing.setMultiValued(payload.getMultiValued());
         existing.setName(payload.getName());
@@ -292,15 +260,12 @@ public class TurSNSiteFieldExtAPI {
         existing.setDefaultValue(payload.getDefaultValue());
         existing.setSnType(payload.getSnType());
         existing.setFacetLocales(new HashSet<>(facets));
-
     }
 
-    private Integer calculateFacetPositionForUpdate(TurSNSiteFieldExt turSNSiteFieldExt, TurSNSite turSNSite) {
-        if (isFacetEnabled(turSNSiteFieldExt)) {
-            Integer position = turSNSiteFieldExt.getFacetPosition();
-
-            return (position != null && position > 0) ? position
-                    : getFacetPositionIncrement(turSNSite);
+    private Integer calculateFacetPositionForUpdate(TurSNSiteFieldExt fieldExt, TurSNSite turSNSite) {
+        if (isFacetEnabled(fieldExt)) {
+            Integer position = fieldExt.getFacetPosition();
+            return (position != null && position > 0) ? position : getFacetPositionIncrement(turSNSite);
         }
         return 0;
     }
@@ -309,9 +274,8 @@ public class TurSNSiteFieldExtAPI {
     private static Set<TurSNSiteFieldExtFacet> getTurSNSiteFieldExtFacets(TurSNSiteFieldExt existing,
             TurSNSiteFieldExt payload) {
         Set<TurSNSiteFieldExtFacet> facetLocales = new HashSet<>();
-        if (payload == null || payload.getFacetLocales() == null) {
+        if (payload == null || payload.getFacetLocales() == null)
             return facetLocales;
-        }
         for (TurSNSiteFieldExtFacet fieldExtFacet : payload.getFacetLocales()) {
             fieldExtFacet.setTurSNSiteFieldExt(existing);
             facetLocales.add(fieldExtFacet);
@@ -319,8 +283,8 @@ public class TurSNSiteFieldExtAPI {
         return facetLocales;
     }
 
-    private static boolean isFacetEnabled(TurSNSiteFieldExt turSNSiteFieldExt) {
-        return turSNSiteFieldExt.getFacet() == 1;
+    private static boolean isFacetEnabled(TurSNSiteFieldExt fieldExt) {
+        return fieldExt.getFacet() == 1;
     }
 
     @NotNull
@@ -328,168 +292,92 @@ public class TurSNSiteFieldExtAPI {
         return this.turSNSiteFieldExtRepository.findMaxFacetPosition(turSNSite).map(max -> max + 1).orElse(1);
     }
 
-    private TurSNSiteFieldExt createSEField(String snSiteId, TurSNSiteFieldExt turSNSiteFieldExt) {
+    private TurSNSiteFieldExt createSEField(String snSiteId, TurSNSiteFieldExt fieldExt) {
         return turSNSiteRepository.findById(snSiteId)
-                .map(turSNSite -> createSEFieldForSite(turSNSite, turSNSiteFieldExt))
+                .map(turSNSite -> createSEFieldForSite(turSNSite, fieldExt))
                 .orElse(TurSNSiteFieldExt.builder().build());
     }
 
-    private TurSNSiteFieldExt createSEFieldForSite(TurSNSite turSNSite, TurSNSiteFieldExt turSNSiteFieldExt) {
-        if (isDuplicateFieldName(turSNSite, turSNSiteFieldExt)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Field name already exists for this site");
+    private TurSNSiteFieldExt createSEFieldForSite(TurSNSite turSNSite, TurSNSiteFieldExt fieldExt) {
+        if (isDuplicateFieldName(turSNSite, fieldExt)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Field name already exists for this site");
         }
-        TurSNSiteField turSNSiteField = buildAndSaveSiteField(turSNSite, turSNSiteFieldExt);
-        TurSNSiteFieldExt savedFieldExt = buildAndSaveFieldExt(turSNSite, turSNSiteFieldExt, turSNSiteField);
-        updateSolrSchema(turSNSite, turSNSiteField);
+        TurSNSiteField field = buildAndSaveSiteField(turSNSite, fieldExt);
+        TurSNSiteFieldExt savedFieldExt = buildAndSaveFieldExt(turSNSite, fieldExt, field);
+        updateSolrSchema(turSNSite, field);
         return savedFieldExt;
     }
 
-    private boolean isDuplicateFieldName(TurSNSite turSNSite, TurSNSiteFieldExt turSNSiteFieldExt) {
-        String name = turSNSiteFieldExt.getName();
-        if (name == null || name.isBlank()) {
+    private boolean isDuplicateFieldName(TurSNSite turSNSite, TurSNSiteFieldExt fieldExt) {
+        String name = fieldExt.getName();
+        if (name == null || name.isBlank())
             return true;
-        }
         return turSNSiteFieldExtRepository.existsByTurSNSiteAndName(turSNSite, name)
                 || turSNSiteFieldRepository.existsByTurSNSiteAndName(turSNSite, name);
     }
 
-    private TurSNSiteField buildAndSaveSiteField(TurSNSite turSNSite, TurSNSiteFieldExt turSNSiteFieldExt) {
-        TurSNSiteField turSNSiteField = new TurSNSiteField();
-        turSNSiteField.setDescription(turSNSiteFieldExt.getDescription());
-        turSNSiteField.setMultiValued(turSNSiteFieldExt.getMultiValued());
-        turSNSiteField.setName(turSNSiteFieldExt.getName());
-        turSNSiteField.setType(turSNSiteFieldExt.getType());
-        turSNSiteField.setTurSNSite(turSNSite);
-        return turSNSiteFieldRepository.save(turSNSiteField);
+    private TurSNSiteField buildAndSaveSiteField(TurSNSite turSNSite, TurSNSiteFieldExt fieldExt) {
+        TurSNSiteField field = new TurSNSiteField();
+        field.setDescription(fieldExt.getDescription());
+        field.setMultiValued(fieldExt.getMultiValued());
+        field.setName(fieldExt.getName());
+        field.setType(fieldExt.getType());
+        field.setTurSNSite(turSNSite);
+        return turSNSiteFieldRepository.save(field);
     }
 
-    private TurSNSiteFieldExt buildAndSaveFieldExt(TurSNSite turSNSite, TurSNSiteFieldExt turSNSiteFieldExt,
-            TurSNSiteField turSNSiteField) {
-        turSNSiteFieldExt.setTurSNSite(turSNSite);
-        turSNSiteFieldExt.setSnType(TurSNFieldType.SE);
-        turSNSiteFieldExt.setExternalId(turSNSiteField.getId());
-        turSNSiteFieldExt.setFacetPosition(calculateFacetPosition(turSNSiteFieldExt, turSNSite));
-        return turSNSiteFieldExtRepository.save(turSNSiteFieldExt);
+    private TurSNSiteFieldExt buildAndSaveFieldExt(TurSNSite turSNSite, TurSNSiteFieldExt fieldExt,
+            TurSNSiteField field) {
+        fieldExt.setTurSNSite(turSNSite);
+        fieldExt.setSnType(TurSNFieldType.SE);
+        fieldExt.setExternalId(field.getId());
+        fieldExt.setFacetPosition(calculateFacetPosition(fieldExt, turSNSite));
+        return turSNSiteFieldExtRepository.save(fieldExt);
     }
 
-    private Integer calculateFacetPosition(TurSNSiteFieldExt turSNSiteFieldExt, TurSNSite turSNSite) {
-        return isFacetEnabled(turSNSiteFieldExt) ? getFacetPositionIncrement(turSNSite) : 0;
+    private Integer calculateFacetPosition(TurSNSiteFieldExt fieldExt, TurSNSite turSNSite) {
+        return isFacetEnabled(fieldExt) ? getFacetPositionIncrement(turSNSite) : 0;
     }
 
-    private void deleteSolrSchema(TurSNSite turSNSite, TurSNSiteField turSNSiteField) {
+    private void deleteSolrSchema(TurSNSite turSNSite, TurSNSiteField field) {
         if (turSNSite.getTurSEInstance() == null || turSNSite.getTurSNSiteLocales() == null
-                || turSNSite.getTurSNSiteLocales().isEmpty()) {
+                || turSNSite.getTurSNSiteLocales().isEmpty())
             return;
-        }
         turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
-                .ifPresent(turSEInstance -> new ArrayList<>(turSNSite.getTurSNSiteLocales()).stream()
-                        .forEach(turSNSiteLocale -> TurSolrUtils.deleteField(
+                .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().forEach(
+                        locale -> TurSolrUtils.deleteField(
                                 turSEInstance,
-                                turSNSiteLocale.getCore(),
-                                turSNSiteField.getName(),
-                                turSNSiteField.getType())));
+                                locale.getCore(),
+                                field.getName(),
+                                field.getType())));
     }
 
-    private void updateSolrSchema(TurSNSite turSNSite, TurSNSiteField turSNSiteField) {
+    private void updateSolrSchema(TurSNSite turSNSite, TurSNSiteField field) {
         if (turSNSite.getTurSEInstance() == null || turSNSite.getTurSNSiteLocales() == null
-                || turSNSite.getTurSNSiteLocales().isEmpty()) {
+                || turSNSite.getTurSNSiteLocales().isEmpty())
             return;
-        }
         turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
-                .ifPresent(turSEInstance -> new ArrayList<>(turSNSite.getTurSNSiteLocales()).stream()
-                        .forEach(turSNSiteLocale -> TurSolrUtils.addOrUpdateField(
+                .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().forEach(
+                        locale -> TurSolrUtils.addOrUpdateField(
                                 TurSolrFieldAction.ADD,
                                 turSEInstance,
-                                turSNSiteLocale.getCore(),
-                                turSNSiteField.getName(),
-                                turSNSiteField.getType(),
+                                locale.getCore(),
+                                field.getName(),
+                                field.getType(),
                                 true,
-                                turSNSiteField.getMultiValued() == 1)));
+                                field.getMultiValued() == 1)));
     }
 
-    public void updateExternalField(TurSNSiteFieldExt turSNSiteFieldExt, TurSNSite turSNSite) {
-        if (Objects.requireNonNull(turSNSiteFieldExt.getSnType()) == TurSNFieldType.SE) {
-            turSNSiteFieldRepository.findById(turSNSiteFieldExt.getExternalId()).ifPresent(turSNSiteField -> {
-                turSNSiteField.setDescription(turSNSiteFieldExt.getDescription());
-                turSNSiteField.setMultiValued(turSNSiteFieldExt.getMultiValued());
-                turSNSiteField.setName(turSNSiteFieldExt.getName());
-                turSNSiteField.setType(turSNSiteFieldExt.getType());
-                this.turSNSiteFieldRepository.save(turSNSiteField);
-                updateSolrSchema(turSNSite, turSNSiteField);
+    public void updateExternalField(TurSNSiteFieldExt fieldExt, TurSNSite turSNSite) {
+        if (TurSNFieldType.SE.equals(fieldExt.getSnType())) {
+            turSNSiteFieldRepository.findById(fieldExt.getExternalId()).ifPresent(field -> {
+                field.setDescription(fieldExt.getDescription());
+                field.setMultiValued(fieldExt.getMultiValued());
+                field.setName(fieldExt.getName());
+                field.setType(fieldExt.getType());
+                this.turSNSiteFieldRepository.save(field);
+                updateSolrSchema(turSNSite, field);
             });
-        }
-    }
-
-    public void createField(TurSNSite turSNSite, Locale locale, TurSNSiteFieldExt turSNSiteFieldExt) {
-        TurSNSiteLocale turSNSiteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, locale);
-        String fieldName = getSolrFieldName(turSNSiteFieldExt);
-        JSONObject json = buildAddFieldPayload(turSNSiteFieldExt, fieldName);
-        executeSchemaPost(turSNSiteLocale.getTurSNSite().getTurSEInstance(), turSNSiteLocale.getCore(), json);
-        copyField(turSNSiteLocale, fieldName, TEXT);
-    }
-
-    public void copyField(TurSNSiteLocale turSNSiteLocale, String field, String dest) {
-        JSONObject jsonAddField = new JSONObject();
-        jsonAddField.put(SOURCE, field);
-        jsonAddField.put(DEST, dest);
-        JSONObject json = new JSONObject();
-        json.put(ADD_COPY_FIELD, jsonAddField);
-        TurSEInstance turSEInstance = turSNSiteLocale.getTurSNSite().getTurSEInstance();
-        executeSchemaPost(turSEInstance, turSNSiteLocale.getCore(), json);
-    }
-
-    private String getSolrFieldName(TurSNSiteFieldExt turSNSiteFieldExt) {
-        if (turSNSiteFieldExt.getSnType() == TurSNFieldType.NER) {
-            return String.format("turing_entity_%s", turSNSiteFieldExt.getName());
-        }
-        return turSNSiteFieldExt.getName();
-    }
-
-    private JSONObject buildAddFieldPayload(TurSNSiteFieldExt turSNSiteFieldExt, String fieldName) {
-        JSONObject jsonAddField = new JSONObject();
-        jsonAddField.put(NAME, fieldName);
-        jsonAddField.put(INDEXED, true);
-        jsonAddField.put(STORED, true);
-        boolean multiValued = turSNSiteFieldExt.getMultiValued() == 1;
-        jsonAddField.put(MULTI_VALUED, multiValued);
-        jsonAddField.put(TYPE, resolveSolrType(turSNSiteFieldExt, multiValued));
-
-        JSONObject json = new JSONObject();
-        json.put(ADD_FIELD, jsonAddField);
-        return json;
-    }
-
-    private String resolveSolrType(TurSNSiteFieldExt turSNSiteFieldExt, boolean multiValued) {
-        if (multiValued) {
-            return STRING;
-        }
-        if (turSNSiteFieldExt.getType().equals(TurSEFieldType.DATE)) {
-            return PDATE;
-        }
-        return TEXT_GENERAL;
-    }
-
-    private void executeSchemaPost(TurSEInstance turSEInstance, String core, JSONObject json) {
-        HttpPost httpPost = new HttpPost(String.format(SOLR_SCHEMA_REQUEST, turSEInstance.getHost(),
-                turSEInstance.getPort(), core));
-        executeHttpPost(json, httpPost);
-    }
-
-    private void executeHttpPost(JSONObject json, HttpPost httpPost) {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            StringEntity entity = new StringEntity(json.toString());
-            httpPost.setEntity(entity);
-            httpPost.setHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-            httpPost.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            try (CloseableHttpResponse response = client.execute(httpPost)) {
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode < 200 || statusCode >= 300) {
-                    log.warn("Solr schema request failed with status: {}", statusCode);
-                }
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
         }
     }
 }

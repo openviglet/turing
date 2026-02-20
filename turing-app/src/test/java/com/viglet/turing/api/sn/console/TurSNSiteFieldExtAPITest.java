@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.http.HttpStatus;
@@ -348,57 +347,6 @@ class TurSNSiteFieldExtAPITest {
 
                 verify(fieldRepository, never()).save(ArgumentMatchers.any(TurSNSiteField.class));
                 verify(fieldExtRepository, never()).save(ArgumentMatchers.any(TurSNSiteFieldExt.class));
-        }
-
-        @Test
-        void testBuildAddFieldPayloadUsesStringForMultiValued() throws Exception {
-                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
-                TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-                fieldExt.setMultiValued(1);
-                fieldExt.setType(TurSEFieldType.DATE);
-
-                JSONObject payload = (JSONObject) invokePrivate(api, "buildAddFieldPayload",
-                                new Class<?>[] { TurSNSiteFieldExt.class, String.class }, fieldExt, "title");
-
-                JSONObject addField = payload.getJSONObject(TurSNSiteFieldExtAPI.ADD_FIELD);
-                assertThat(addField.getString(TurSNSiteFieldExtAPI.NAME)).isEqualTo("title");
-                assertThat(addField.getBoolean(TurSNSiteFieldExtAPI.MULTI_VALUED)).isTrue();
-                assertThat(addField.getString(TurSNSiteFieldExtAPI.TYPE))
-                                .isEqualTo(TurSNSiteFieldExtAPI.STRING);
-        }
-
-        @Test
-        void testResolveSolrTypeUsesPdateForDate() throws Exception {
-                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
-                TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-                fieldExt.setType(TurSEFieldType.DATE);
-
-                String type = (String) invokePrivate(api, "resolveSolrType",
-                                new Class<?>[] { TurSNSiteFieldExt.class, boolean.class }, fieldExt, false);
-
-                assertThat(type).isEqualTo(TurSNSiteFieldExtAPI.PDATE);
-        }
-
-        @Test
-        void testGetSolrFieldNamePrefixesNer() throws Exception {
-                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
-                TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-                fieldExt.setSnType(TurSNFieldType.NER);
-                fieldExt.setName("person");
-
-                String fieldName = (String) invokePrivate(api, "getSolrFieldName",
-                                new Class<?>[] { TurSNSiteFieldExt.class }, fieldExt);
-
-                assertThat(fieldName).isEqualTo("turing_entity_person");
         }
 
         @Test
