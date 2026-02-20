@@ -1,68 +1,60 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TurSNSiteMetricsService } from "@/services/sn/sn.site.metrics.service";
 import { useEffect, useState } from 'react';
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
+const turSNSiteMetricsService = new TurSNSiteMetricsService(); // Instância do serviço para buscar métricas de acesso em tempo real
 
-
-const turSNSiteMetricsService = new TurSNSiteMetricsService();
-export default function RealTimeDashboardPage() {
+export default function RealTimeDashboard() {
     const [data, setData] = useState<any[]>([]);
 
-    const fetchMetrics = async () => {
+    const refresh = async () => {
         try {
-            // Chama o endpoint que traz o acumulado da última hora
-            const response = await turSNSiteMetricsService.live('2727a7d5-7450-4a4d-b3dc-01e729103ce4');
-            if (Array.isArray(response)) {
-                setData(response);
+            // Chama o serviço do Turing ES
+            const res = await turSNSiteMetricsService.live('2727a7d5-7450-4a4d-b3dc-01e729103ce4');
+            if (Array.isArray(res)) {
+                setData(res);
             }
         } catch (error) {
-            console.error("Erro ao buscar métricas de 1h", error);
+            console.error("Erro na busca de métricas", error);
         }
     };
 
     useEffect(() => {
-        fetchMetrics();
-        const interval = setInterval(fetchMetrics, 30000); // Atualiza a cada 30s
-        return () => clearInterval(interval);
+        refresh();
+        const t = setInterval(refresh, 1000); // Sincronizado com o balde de 1s do Java
+        return () => clearInterval(t);
     }, []);
 
     return (
-        <Card className="w-full bg-slate-950 text-white">
-            <CardHeader>
-                <CardTitle>Acessos (Última 1 Hora)</CardTitle>
-                <CardDescription>Acumulado a cada 30 segundos</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="h-[400px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={data}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#222" />
-                            <XAxis
-                                dataKey="time"
-                                // Mostra o horário a cada 10 minutos para não poluir
-                                interval={20}
-                                tickFormatter={(str) => new Date(str).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                fontSize={11}
-                                tick={{ fill: '#666' }}
-                            />
-                            <YAxis fontSize={11} tick={{ fill: '#666' }} />
-                            <Tooltip
-                                labelFormatter={(label) => new Date(label).toLocaleTimeString()}
-                                contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155' }}
-                            />
-                            <Line
-                                type="stepAfter" // 'stepAfter' é ótimo para dados acumulados/intervalos
-                                dataKey="accesses"
-                                stroke="#3b82f6"
-                                strokeWidth={2}
-                                dot={false} // Remove pontos para focar na linha de tendência
-                                isAnimationActive={true}
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
-            </CardContent>
-        </Card>
+        <div className="h-[300px] w-full bg-slate-950 p-4 rounded-lg border border-slate-800">
+            <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data}>
+                    <defs>
+                        <linearGradient id="colorAcc" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                        </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                    <XAxis
+                        dataKey="time"
+                        type="number"
+                        domain={['dataMin', 'dataMax']} // Mantém o eixo fixo no tempo do backend
+                        tickFormatter={(unix) => new Date(unix * 1000).toLocaleTimeString([], { second: '2-digit' })}
+                        stroke="#475569"
+                        fontSize={10}
+                    />
+                    <YAxis stroke="#475569" fontSize={10} domain={[0, 'auto']} />
+                    <Area
+                        type="step" // 'step' é excelente para mostrar baldes de tempo sem "minhocas"
+                        dataKey="accesses"
+                        stroke="#3b82f6"
+                        fillOpacity={1}
+                        fill="url(#colorAcc)"
+                        isAnimationActive={false} // CRUCIAL para estabilidade visual
+                    />
+                </AreaChart>
+            </ResponsiveContainer>
+        </div>
     );
 }

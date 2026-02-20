@@ -24,9 +24,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,25 +67,36 @@ public class TurSNSiteMetricsAPI {
 
 	@GetMapping("live")
 	public List<Map<String, Object>> getLiveMetrics(@PathVariable String snSiteId) {
-		Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
-		List<TurSNSiteMetricAccess> metrics = turSNSiteMetricAccessRepository
-				.findByTurSNSiteIdAndAccessDateAfter(snSiteId, oneHourAgo);
+		Instant now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+		Instant sixtySecondsAgo = now.minusSeconds(60);
 
-		return metrics.stream()
-				.collect(Collectors.groupingBy(m -> {
-					long epochSecond = m.getAccessDate().getEpochSecond();
-					long bucket = (epochSecond / 30) * 30;
-					return Instant.ofEpochSecond(bucket).toString();
-				}, Collectors.counting()))
-				.entrySet().stream()
+		// Busca os dados reais do modelo TurSNSiteMetricAccess
+		List<TurSNSiteMetricAccess> rawData = turSNSiteMetricAccessRepository
+				.findLastMinuteMetrics(snSiteId, sixtySecondsAgo);
+
+		// 1. Criamos os baldes de 60 segundos
+		Map<Long, Long> buckets = new LinkedHashMap<>();
+		for (int i = 0; i < 60; i++) {
+			buckets.put(sixtySecondsAgo.plusSeconds(i).getEpochSecond(), 0L);
+		}
+
+		// 2. Preenchemos com os acessos reais
+		rawData.forEach(m -> {
+			long second = m.getAccessDate().truncatedTo(ChronoUnit.SECONDS).getEpochSecond();
+			buckets.computeIfPresent(second, (k, v) -> v + 1);
+		});
+
+		// 3. Conversão segura para evitar o erro de Type Mismatch
+		return buckets.entrySet().stream()
+				.sorted(Map.Entry.comparingByKey())
 				.map(e -> {
-					Map<String, Object> map = new HashMap<>();
-					map.put("time", e.getKey());
-					map.put("accesses", e.getValue());
-					return map;
+					Map<String, Object> item = new HashMap<>();
+					item.put("time", e.getKey()); // Epoch Second
+					item.put("displayTime", Instant.ofEpochSecond(e.getKey()).toString().substring(11, 19));
+					item.put("accesses", e.getValue());
+					return item;
 				})
-				.sorted(Comparator.comparing(m -> m.get("time").toString()))
-				.toList();
+				.collect(Collectors.toList());
 	}
 
 	@Operation(summary = "Semantic Navigation Site Metrics Top Terms")

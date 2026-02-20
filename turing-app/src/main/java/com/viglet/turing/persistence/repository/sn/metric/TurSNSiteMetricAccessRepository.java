@@ -36,11 +36,8 @@ import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
  * @since 0.3.6
  */
 public interface TurSNSiteMetricAccessRepository extends JpaRepository<TurSNSiteMetricAccess, String> {
-	List<TurSNSiteMetricAccess> findByTurSNSiteIdAndAccessDateAfter(String siteId, Instant since);
-
-	@Query("SELECT t.accessDate as time, COUNT(t) as count FROM TurSNSiteMetricAccess t " +
-			"WHERE t.accessDate > :window GROUP BY t.accessDate ORDER BY t.accessDate ASC")
-	List<Object[]> findRecentMetrics(@Param("window") Instant window);
+	@Query("SELECT t FROM TurSNSiteMetricAccess t WHERE t.turSNSite.id = :siteId AND t.accessDate >= :since ORDER BY t.accessDate ASC")
+	List<TurSNSiteMetricAccess> findLastMinuteMetrics(@Param("siteId") String siteId, @Param("since") Instant since);
 
 	@Query(value = "select distinct new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, max(accessDate)) from "
 			+ "TurSNSiteMetricAccess where turSNSite = ?1 and language = ?2 and userId = ?3 GROUP BY sanatizedTerm ORDER BY MAX(accessDate) DESC")
