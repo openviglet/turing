@@ -197,7 +197,6 @@ class TurSNSiteSearchServiceTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getQueryString()).thenReturn("q=hello");
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://example.com/api"));
-        when(request.getHeaderNames()).thenReturn(Collections.emptyEnumeration());
 
         TurSNSearchParams params = new TurSNSearchParams();
         params.setLocale(Locale.US);

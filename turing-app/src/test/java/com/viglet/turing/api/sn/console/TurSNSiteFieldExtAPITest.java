@@ -63,354 +63,358 @@ import com.viglet.turing.sn.template.TurSNTemplate;
  */
 class TurSNSiteFieldExtAPITest {
 
-    private static Object invokePrivate(Object target, String methodName, Class<?>[] parameterTypes,
-            Object... args) throws Exception {
-        Method method = target.getClass().getDeclaredMethod(methodName, parameterTypes);
-        method.setAccessible(true);
-        return method.invoke(target, args);
-    }
+        private static Object invokePrivate(Object target, String methodName, Class<?>[] parameterTypes,
+                        Object... args) throws Exception {
+                Method method = target.getClass().getDeclaredMethod(methodName, parameterTypes);
+                method.setAccessible(true);
+                return method.invoke(target, args);
+        }
 
-    @Test
-    void testFieldExtListReturnsEmptyWhenSiteMissing() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class),
-                mock(TurSNTemplate.class));
+        @Test
+        void testFieldExtListReturnsEmptyWhenSiteMissing() {
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class),
+                                mock(TurSNTemplate.class));
 
-        when(siteRepository.findById("site")).thenReturn(Optional.empty());
+                when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
-        List<TurSNSiteFieldExt> result = api.turSNSiteFieldExtList("site");
+                List<TurSNSiteFieldExt> result = api.turSNSiteFieldExtList("site");
 
-        assertThat(result).isEmpty();
-    }
+                assertThat(result).isEmpty();
+        }
 
-    @Test
-    void testFieldExtGetReturnsFacetLocales() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteFieldExtFacetRepository facetRepository = mock(TurSNSiteFieldExtFacetRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                fieldExtRepository, facetRepository, mock(TurSNSiteFieldRepository.class),
-                mock(TurSNSiteLocaleRepository.class), mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+        @Test
+        void testFieldExtGetReturnsFacetLocales() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteFieldExtFacetRepository facetRepository = mock(TurSNSiteFieldExtFacetRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                                fieldExtRepository, facetRepository, mock(TurSNSiteFieldRepository.class),
+                                mock(TurSNSiteLocaleRepository.class), mock(TurSEInstanceRepository.class),
+                                mock(TurSNTemplate.class));
 
-        when(fieldExtRepository.findById("id")).thenReturn(Optional.empty());
+                when(fieldExtRepository.findById("id")).thenReturn(Optional.empty());
 
-        TurSNSiteFieldExt result = api.turSNSiteFieldExtGet("site", "id");
+                TurSNSiteFieldExt result = api.turSNSiteFieldExtGet("site", "id");
 
-        assertThat(result).isNotNull();
-        verify(facetRepository).findByTurSNSiteFieldExt(result);
-    }
+                assertThat(result).isNotNull();
+                verify(facetRepository).findByTurSNSiteFieldExt(result);
+        }
 
-    @Test
-    void testFieldExtUpdateSetsFacetPositionWhenMissing() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
-                fieldRepository, mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+        @Test
+        void testFieldExtUpdateSetsFacetPositionWhenMissing() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
+                                fieldRepository, mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSite site = new TurSNSite();
+                TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
+                existing.setSnType(TurSNFieldType.SE);
+                existing.setExternalId("ext");
+                existing.setTurSNSite(site);
+                TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
+                payload.setName("title");
+                payload.setFacet(1);
+                payload.setSnType(TurSNFieldType.SE);
+                payload.setExternalId("ext");
+                payload.setTurSNSite(site);
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
+                when(fieldExtRepository.findMaxFacetPosition(site)).thenReturn(Optional.of(3));
+                when(fieldRepository.findById("ext")).thenReturn(Optional.empty());
 
-        TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
-        existing.setSnType(TurSNFieldType.SE);
-        existing.setExternalId("ext");
-        TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
-        payload.setName("title");
-        payload.setFacet(1);
-        payload.setSnType(TurSNFieldType.SE);
-        payload.setExternalId("ext");
+                TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
 
-        when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
-        when(fieldExtRepository.findMaxFacetPosition()).thenReturn(Optional.of(3));
-        when(fieldRepository.findById("ext")).thenReturn(Optional.empty());
-        when(siteRepository.findById("site")).thenReturn(Optional.empty());
+                assertThat(result).isNotNull();
+                assertThat(result.getFacetPosition()).isEqualTo(4);
+        }
 
-        TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
+        @Test
+        void testFieldExtUpdateResetsFacetPositionWhenFacetDisabled() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSite site = new TurSNSite();
+                TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
+                existing.setFacetPosition(7);
+                existing.setSnType(TurSNFieldType.SE);
+                TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
+                payload.setFacet(0);
+                payload.setSnType(TurSNFieldType.SE);
 
-        assertThat(result.getFacetPosition()).isEqualTo(4);
-    }
+                when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
 
-    @Test
-    void testFieldExtUpdateResetsFacetPositionWhenFacetDisabled() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
 
-        TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
-        existing.setFacetPosition(7);
-        existing.setSnType(TurSNFieldType.SE);
-        TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
-        payload.setFacet(0);
-        payload.setSnType(TurSNFieldType.SE);
+                assertThat(result.getFacetPosition()).isZero();
+        }
 
-        when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
-        when(siteRepository.findById("site")).thenReturn(Optional.empty());
-        when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        @Test
+        void testFieldExtUpdateUsesProvidedFacetPosition() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSite site = new TurSNSite();
+                TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
+                existing.setSnType(TurSNFieldType.SE);
+                TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
+                payload.setFacet(1);
+                payload.setFacetPosition(9);
+                payload.setSnType(TurSNFieldType.SE);
 
-        TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
+                when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertThat(result.getFacetPosition()).isZero();
-    }
+                TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
 
-    @Test
-    void testFieldExtUpdateUsesProvidedFacetPosition() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                assertThat(result.getFacetPosition()).isEqualTo(9);
+                verify(fieldExtRepository, never()).findMaxFacetPosition(ArgumentMatchers.any(TurSNSite.class));
+        }
 
-        TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
-        existing.setSnType(TurSNFieldType.SE);
-        TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
-        payload.setFacet(1);
-        payload.setFacetPosition(9);
-        payload.setSnType(TurSNFieldType.SE);
+        @Test
+        void testFieldExtUpdateLinksFacetLocalesToFieldExt() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
 
-        when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
-        when(siteRepository.findById("site")).thenReturn(Optional.empty());
-        when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
+                existing.setSnType(TurSNFieldType.SE);
+                TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
+                payload.setSnType(TurSNFieldType.SE);
+                Set<TurSNSiteFieldExtFacet> facets = new HashSet<>();
+                facets.add(new TurSNSiteFieldExtFacet());
+                facets.add(new TurSNSiteFieldExtFacet());
+                payload.setFacetLocales(facets);
 
-        TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
+                when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
+                when(siteRepository.findById("site")).thenReturn(Optional.empty());
+                when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertThat(result.getFacetPosition()).isEqualTo(9);
-        verify(fieldExtRepository, never()).findMaxFacetPosition();
-    }
+                TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
 
-    @Test
-    void testFieldExtUpdateLinksFacetLocalesToFieldExt() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                assertThat(result.getFacetLocales()).hasSize(2);
+                result.getFacetLocales().forEach(facet -> assertThat(facet.getTurSNSiteFieldExt()).isSameAs(payload));
+        }
 
-        TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
-        existing.setSnType(TurSNFieldType.SE);
-        TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
-        payload.setSnType(TurSNFieldType.SE);
-        Set<TurSNSiteFieldExtFacet> facets = new HashSet<>();
-        facets.add(new TurSNSiteFieldExtFacet());
-        facets.add(new TurSNSiteFieldExtFacet());
-        payload.setFacetLocales(facets);
+        @Test
+        void testFieldExtDeleteDeletesExternalFieldWhenSE() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
+                                fieldRepository, mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class),
+                                mock(TurSNTemplate.class));
+                TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
+                existing.setSnType(TurSNFieldType.SE);
+                existing.setExternalId("ext");
 
-        when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
-        when(siteRepository.findById("site")).thenReturn(Optional.empty());
-        when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
 
-        TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
+                boolean result = api.turSNSiteFieldExtDelete("site", "id");
 
-        assertThat(result.getFacetLocales()).hasSize(2);
-        result.getFacetLocales().forEach(facet -> assertThat(facet.getTurSNSiteFieldExt()).isSameAs(payload));
-    }
+                assertThat(result).isTrue();
+                verify(fieldRepository).delete("ext");
+                verify(fieldExtRepository).delete("id");
+        }
 
-    @Test
-    void testFieldExtDeleteDeletesExternalFieldWhenSE() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
-                fieldRepository, mock(TurSNSiteLocaleRepository.class), mock(TurSEInstanceRepository.class),
-                mock(TurSNTemplate.class));
-        TurSNSiteFieldExt existing = new TurSNSiteFieldExt();
-        existing.setSnType(TurSNFieldType.SE);
-        existing.setExternalId("ext");
+        @Test
+        void testFieldExtAddReturnsDefaultWhenSiteMissing() {
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
 
-        when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
+                when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
-        boolean result = api.turSNSiteFieldExtDelete("site", "id");
+                TurSNSiteFieldExt result = api.turSNSiteFieldExtAdd("site", new TurSNSiteFieldExt());
 
-        assertThat(result).isTrue();
-        verify(fieldRepository).delete("ext");
-        verify(fieldExtRepository).delete("id");
-    }
+                assertThat(result.getId()).isNull();
+        }
 
-    @Test
-    void testFieldExtAddReturnsDefaultWhenSiteMissing() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+        @Test
+        void testFieldExtStructureSetsSite() {
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSite site = new TurSNSite();
 
-        when(siteRepository.findById("site")).thenReturn(Optional.empty());
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
 
-        TurSNSiteFieldExt result = api.turSNSiteFieldExtAdd("site", new TurSNSiteFieldExt());
+                TurSNSiteFieldExt result = api.turSNSiteFieldExtStructure("site");
 
-        assertThat(result.getId()).isNull();
-    }
+                assertThat(result.getTurSNSite()).isSameAs(site);
+        }
 
-    @Test
-    void testFieldExtStructureSetsSite() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
-        TurSNSite site = new TurSNSite();
+        @Test
+        void testFieldExtAddCreatesSEFieldWhenSiteFound() {
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
+                                fieldRepository, mock(TurSNSiteLocaleRepository.class),
+                                instanceRepository, mock(TurSNTemplate.class));
+                TurSNSite site = new TurSNSite();
+                TurSEInstance instance = new TurSEInstance();
+                instance.setId("se-id");
+                site.setTurSEInstance(instance);
+                site.setTurSNSiteLocales(new HashSet<>());
+                TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
+                payload.setName("title");
+                payload.setType(TurSEFieldType.STRING);
 
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(fieldExtRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(false);
+                when(fieldRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(false);
+                when(instanceRepository.findById("se-id")).thenReturn(Optional.empty());
+                when(fieldRepository.save(org.mockito.ArgumentMatchers.any(TurSNSiteField.class)))
+                                .thenAnswer(invocation -> {
+                                        TurSNSiteField field = invocation.getArgument(0);
+                                        field.setId("field-id");
+                                        return field;
+                                });
+                when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        TurSNSiteFieldExt result = api.turSNSiteFieldExtStructure("site");
+                TurSNSiteFieldExt result = api.turSNSiteFieldExtAdd("site", payload);
 
-        assertThat(result.getTurSNSite()).isSameAs(site);
-    }
+                assertThat(result.getSnType()).isEqualTo(TurSNFieldType.SE);
+                assertThat(result.getExternalId()).isEqualTo("field-id");
+        }
 
-    @Test
-    void testFieldExtAddCreatesSEFieldWhenSiteFound() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
-                fieldRepository, mock(TurSNSiteLocaleRepository.class),
-                instanceRepository, mock(TurSNTemplate.class));
-        TurSNSite site = new TurSNSite();
-        TurSEInstance instance = new TurSEInstance();
-        instance.setId("se-id");
-        site.setTurSEInstance(instance);
-        site.setTurSNSiteLocales(new HashSet<>());
-        TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
-        payload.setName("title");
-        payload.setType(TurSEFieldType.STRING);
+        @Test
+        void testFieldExtAddReturnsDefaultWhenNameAlreadyExists() {
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
+                                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
+                                fieldRepository, mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSite site = new TurSNSite();
+                TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
+                payload.setName("title");
 
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(false);
-        when(fieldRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(false);
-        when(instanceRepository.findById("se-id")).thenReturn(Optional.empty());
-        when(fieldRepository.save(org.mockito.ArgumentMatchers.any(TurSNSiteField.class)))
-                .thenAnswer(invocation -> {
-                    TurSNSiteField field = invocation.getArgument(0);
-                    field.setId("field-id");
-                    return field;
-                });
-        when(fieldExtRepository.save(ArgumentMatchers.any(TurSNSiteFieldExt.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(fieldExtRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(true);
 
-        TurSNSiteFieldExt result = api.turSNSiteFieldExtAdd("site", payload);
+                assertThatThrownBy(() -> api.turSNSiteFieldExtAdd("site", payload))
+                                .isInstanceOf(ResponseStatusException.class)
+                                .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+                                .isEqualTo(HttpStatus.CONFLICT);
 
-        assertThat(result.getSnType()).isEqualTo(TurSNFieldType.SE);
-        assertThat(result.getExternalId()).isEqualTo("field-id");
-    }
+                verify(fieldRepository, never()).save(ArgumentMatchers.any(TurSNSiteField.class));
+                verify(fieldExtRepository, never()).save(ArgumentMatchers.any(TurSNSiteFieldExt.class));
+        }
 
-    @Test
-    void testFieldExtAddReturnsDefaultWhenNameAlreadyExists() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(siteRepository,
-                fieldExtRepository, mock(TurSNSiteFieldExtFacetRepository.class),
-                fieldRepository, mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
-        TurSNSite site = new TurSNSite();
-        TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
-        payload.setName("title");
+        @Test
+        void testBuildAddFieldPayloadUsesStringForMultiValued() throws Exception {
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
+                fieldExt.setMultiValued(1);
+                fieldExt.setType(TurSEFieldType.DATE);
 
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.existsByTurSNSiteAndName(site, "title")).thenReturn(true);
+                JSONObject payload = (JSONObject) invokePrivate(api, "buildAddFieldPayload",
+                                new Class<?>[] { TurSNSiteFieldExt.class, String.class }, fieldExt, "title");
 
-        assertThatThrownBy(() -> api.turSNSiteFieldExtAdd("site", payload))
-                .isInstanceOf(ResponseStatusException.class)
-                .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
-                .isEqualTo(HttpStatus.CONFLICT);
+                JSONObject addField = payload.getJSONObject(TurSNSiteFieldExtAPI.ADD_FIELD);
+                assertThat(addField.getString(TurSNSiteFieldExtAPI.NAME)).isEqualTo("title");
+                assertThat(addField.getBoolean(TurSNSiteFieldExtAPI.MULTI_VALUED)).isTrue();
+                assertThat(addField.getString(TurSNSiteFieldExtAPI.TYPE))
+                                .isEqualTo(TurSNSiteFieldExtAPI.STRING);
+        }
 
-        verify(fieldRepository, never()).save(ArgumentMatchers.any(TurSNSiteField.class));
-        verify(fieldExtRepository, never()).save(ArgumentMatchers.any(TurSNSiteFieldExt.class));
-    }
+        @Test
+        void testResolveSolrTypeUsesPdateForDate() throws Exception {
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
+                fieldExt.setType(TurSEFieldType.DATE);
 
-    @Test
-    void testBuildAddFieldPayloadUsesStringForMultiValued() throws Exception {
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
-        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-        fieldExt.setMultiValued(1);
-        fieldExt.setType(TurSEFieldType.DATE);
+                String type = (String) invokePrivate(api, "resolveSolrType",
+                                new Class<?>[] { TurSNSiteFieldExt.class, boolean.class }, fieldExt, false);
 
-        JSONObject payload = (JSONObject) invokePrivate(api, "buildAddFieldPayload",
-                new Class<?>[] { TurSNSiteFieldExt.class, String.class }, fieldExt, "title");
+                assertThat(type).isEqualTo(TurSNSiteFieldExtAPI.PDATE);
+        }
 
-        JSONObject addField = payload.getJSONObject(TurSNSiteFieldExtAPI.ADD_FIELD);
-        assertThat(addField.getString(TurSNSiteFieldExtAPI.NAME)).isEqualTo("title");
-        assertThat(addField.getBoolean(TurSNSiteFieldExtAPI.MULTI_VALUED)).isTrue();
-        assertThat(addField.getString(TurSNSiteFieldExtAPI.TYPE))
-                .isEqualTo(TurSNSiteFieldExtAPI.STRING);
-    }
+        @Test
+        void testGetSolrFieldNamePrefixesNer() throws Exception {
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
+                TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
+                fieldExt.setSnType(TurSNFieldType.NER);
+                fieldExt.setName("person");
 
-    @Test
-    void testResolveSolrTypeUsesPdateForDate() throws Exception {
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
-        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-        fieldExt.setType(TurSEFieldType.DATE);
+                String fieldName = (String) invokePrivate(api, "getSolrFieldName",
+                                new Class<?>[] { TurSNSiteFieldExt.class }, fieldExt);
 
-        String type = (String) invokePrivate(api, "resolveSolrType",
-                new Class<?>[] { TurSNSiteFieldExt.class, boolean.class }, fieldExt, false);
+                assertThat(fieldName).isEqualTo("turing_entity_person");
+        }
 
-        assertThat(type).isEqualTo(TurSNSiteFieldExtAPI.PDATE);
-    }
+        @Test
+        void testUpdateSolrSchemaSkipsWhenInstanceMissing() throws Exception {
+                TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                instanceRepository, mock(TurSNTemplate.class));
+                TurSNSite site = new TurSNSite();
+                site.setTurSNSiteLocales(new HashSet<>());
 
-    @Test
-    void testGetSolrFieldNamePrefixesNer() throws Exception {
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                mock(TurSEInstanceRepository.class), mock(TurSNTemplate.class));
-        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-        fieldExt.setSnType(TurSNFieldType.NER);
-        fieldExt.setName("person");
+                invokePrivate(api, "updateSolrSchema",
+                                new Class<?>[] { TurSNSite.class, TurSNSiteField.class }, site, new TurSNSiteField());
 
-        String fieldName = (String) invokePrivate(api, "getSolrFieldName",
-                new Class<?>[] { TurSNSiteFieldExt.class }, fieldExt);
+                verify(instanceRepository, never()).findById(ArgumentMatchers.anyString());
+        }
 
-        assertThat(fieldName).isEqualTo("turing_entity_person");
-    }
+        @Test
+        void testDeleteSolrSchemaSkipsWhenLocalesEmpty() throws Exception {
+                TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
+                TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
+                                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
+                                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
+                                instanceRepository, mock(TurSNTemplate.class));
+                TurSNSite site = new TurSNSite();
+                TurSEInstance instance = new TurSEInstance();
+                instance.setId("se-id");
+                site.setTurSEInstance(instance);
+                site.setTurSNSiteLocales(new HashSet<>());
 
-    @Test
-    void testUpdateSolrSchemaSkipsWhenInstanceMissing() throws Exception {
-        TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                instanceRepository, mock(TurSNTemplate.class));
-        TurSNSite site = new TurSNSite();
-        site.setTurSNSiteLocales(new HashSet<>());
+                invokePrivate(api, "deleteSolrSchema",
+                                new Class<?>[] { TurSNSite.class, TurSNSiteField.class }, site, new TurSNSiteField());
 
-        invokePrivate(api, "updateSolrSchema",
-                new Class<?>[] { TurSNSite.class, TurSNSiteField.class }, site, new TurSNSiteField());
-
-        verify(instanceRepository, never()).findById(ArgumentMatchers.anyString());
-    }
-
-    @Test
-    void testDeleteSolrSchemaSkipsWhenLocalesEmpty() throws Exception {
-        TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
-        TurSNSiteFieldExtAPI api = new TurSNSiteFieldExtAPI(mock(TurSNSiteRepository.class),
-                mock(TurSNSiteFieldExtRepository.class), mock(TurSNSiteFieldExtFacetRepository.class),
-                mock(TurSNSiteFieldRepository.class), mock(TurSNSiteLocaleRepository.class),
-                instanceRepository, mock(TurSNTemplate.class));
-        TurSNSite site = new TurSNSite();
-        TurSEInstance instance = new TurSEInstance();
-        instance.setId("se-id");
-        site.setTurSEInstance(instance);
-        site.setTurSNSiteLocales(new HashSet<>());
-
-        invokePrivate(api, "deleteSolrSchema",
-                new Class<?>[] { TurSNSite.class, TurSNSiteField.class }, site, new TurSNSiteField());
-
-        verify(instanceRepository, never()).findById("se-id");
-    }
+                verify(instanceRepository, never()).findById("se-id");
+        }
 }

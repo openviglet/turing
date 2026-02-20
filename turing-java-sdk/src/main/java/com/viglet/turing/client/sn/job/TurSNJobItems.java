@@ -21,9 +21,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-
-import org.jspecify.annotations.NonNull;
 
 import com.google.common.collect.Iterators;
 
@@ -52,10 +49,14 @@ public class TurSNJobItems implements Iterable<TurSNJobItem>, Serializable {
 	}
 
 	@Override
-	public @NonNull Iterator<TurSNJobItem> iterator() {
-		return Objects.requireNonNull(snJobItems.iterator());
+	public Iterator<TurSNJobItem> iterator() {
+		if (snJobItems == null) {
+			snJobItems = new ArrayList<>();
+		}
+		return snJobItems.iterator();
 	}
 
+	@SuppressWarnings("null")
 	public int size() {
 		return Iterators.size(this.iterator());
 	}

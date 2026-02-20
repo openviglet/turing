@@ -26,7 +26,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -80,7 +79,6 @@ class TurSNSiteSpellCheckAPITest {
         when(turSolr.spellCheckTerm(instance, "helo")).thenReturn(spellCheckResult);
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://example.com/api"));
         when(request.getQueryString()).thenReturn("q=helo");
-        when(request.getHeaderNames()).thenReturn(Collections.emptyEnumeration());
 
         TurSNSiteSpellCheckBean result = api.turSNSiteSpellCheck("site", "en_US", "helo", request);
 
@@ -104,7 +102,6 @@ class TurSNSiteSpellCheckAPITest {
         when(turSolr.spellCheckTerm(instance, "query")).thenReturn(spellCheckResult);
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://example.com/api"));
         when(request.getQueryString()).thenReturn("q=query");
-        when(request.getHeaderNames()).thenReturn(Collections.emptyEnumeration());
 
         TurSNSiteSpellCheckBean result = api.turSNSiteSpellCheck("site", "en_US", "query", request);
 
