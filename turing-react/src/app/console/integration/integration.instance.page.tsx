@@ -8,7 +8,7 @@ import {
     IconAdjustmentsSearch,
     IconGitCommit,
     IconGraph,
-    IconSearch,
+    IconPlugConnectedX,
     IconSettings,
     IconTools
 } from "@tabler/icons-react";
@@ -104,7 +104,7 @@ export default function IntegrationInstancePage() {
 
     return (
         <LoadProvider checkIsNotUndefined={integration} error={error} tryAgainUrl={`${ROUTES.INTEGRATION_INSTANCE}/${id}`}>
-            {integration && <SubPage icon={IconSearch} feature={"AEM Integration"} name={integration.title}
+            {integration && <SubPage icon={IconPlugConnectedX} feature={"Integration"} name={integration.title}
                 onDelete={onDelete} data={data} isNew={isNew} urlBase={urlBase} open={open} setOpen={setOpen} />}
         </LoadProvider>
     )

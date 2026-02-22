@@ -141,3 +141,39 @@
     height: 0;
   }
 }
+
+[data-slot="sidebar-menu-button"][data-active="true"] {
+  background: linear-gradient(
+    to left,
+    color-mix(in srgb, var(--color-blue-600), transparent 88%),
+    color-mix(in srgb, var(--color-indigo-600), transparent 96%)
+  );
+
+  color: var(--color-blue-600);
+  font-weight: 700;
+
+  border-right: none;
+
+  border-radius: var(--radius-md);
+
+  position: relative;
+  transition: all 0.25s ease-in-out;
+}
+
+.dark [data-slot="sidebar-menu-button"][data-active="true"] {
+  background: linear-gradient(
+    to left,
+    color-mix(in srgb, var(--color-blue-500), transparent 85%),
+    transparent
+  );
+  color: var(--color-blue-400);
+}
+
+[data-slot="sidebar-menu-button"][data-active="true"] svg {
+  color: var(--color-blue-600) !important;
+  stroke-width: 2.5px;
+}
+
+.dark [data-slot="sidebar-menu-button"][data-active="true"] svg {
+  color: var(--color-blue-400) !important;
+}
