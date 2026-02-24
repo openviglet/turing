@@ -61,7 +61,7 @@ export const InternalSidebar: React.FC<InternalSidebarProps> = ({
           <SidebarMenuItem className="flex items-center">
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
               <NavLink to={urlBase ?? "#"} className="flex items-center gap-2">
-                <Icon className="size-5!" />
+                <Icon className="size-7!" />
                 {!isCollapsed && (
                   <span className="text-base font-semibold whitespace-nowrap">
                     {isNew ? `New ${feature}` : name}
@@ -107,7 +107,7 @@ export const InternalSidebar: React.FC<InternalSidebarProps> = ({
                       tooltip={item.title + ": " + formatCount(item.count)}
                       variant="outline"
                     >
-                      {item.icon && <item.icon />}
+                      {item.icon && <item.icon className="size-6!" />}
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                     {!isCollapsed && (
@@ -131,7 +131,7 @@ export const InternalSidebar: React.FC<InternalSidebarProps> = ({
                     asChild
                   >
                     <NavLink to={urlBase + item.url}>
-                      {item.icon && <item.icon />}
+                      {item.icon && <item.icon className="size-6!" />}
                       <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
