@@ -34,8 +34,6 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
@@ -63,6 +61,7 @@ import com.viglet.turing.solr.TurSolrInstanceProcess;
 import com.viglet.turing.solr.TurSolrUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.json.JsonMapper;
 
 @Component
 @Slf4j
@@ -123,13 +122,13 @@ public class TurSNProcessQueue {
     private static void receiveQueueLog(TurSNJobItems turSNJobItems) {
         turSNJobItems.forEach(turSNJobItem -> TurLoggingUtils.setSuccessStatus(turSNJobItem,
                 TurIndexingStatus.RECEIVED_FROM_QUEUE));
+
         if (log.isDebugEnabled()) {
-            try {
-                log.debug("receiveQueue turSNJobItems: {}", new ObjectMapper().writer()
-                        .withDefaultPrettyPrinter().writeValueAsString(turSNJobItems));
-            } catch (JsonProcessingException e) {
-                log.error(e.getMessage(), e);
-            }
+            String json = JsonMapper.builder()
+                    .build()
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(turSNJobItems);
+            log.debug("receiveQueue turSNJobItems: {}", json);
         }
     }
 
