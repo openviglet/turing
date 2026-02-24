@@ -136,68 +136,82 @@ public class TurSNSpotlightProcess {
 	@CacheEvict(value = { "spotlight", "spotlight_term" }, allEntries = true)
 	public boolean createUnmanagedSpotlight(TurSNJobItem turSNJobItem, TurSNSite turSNSite) {
 		String id = (String) turSNJobItem.getAttributes().get(TurSNFieldName.ID);
-		TurSNSiteLocale turSNSiteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite,
-				turSNJobItem.getLocale());
+		TurSNSiteLocale turSNSiteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, turSNJobItem.getLocale());
 
 		if (turSNSiteLocale == null) {
 			logger.warn("Spotlight ID '{}' of '{}' SN Site was not processed, because {} locale did not found.",
-					turSNJobItem.getAttributes().get(TurSNFieldName.ID), turSNSite.getName(),
-					turSNJobItem.getLocale());
+					id, turSNSite.getName(), turSNJobItem.getLocale());
 			return false;
-		} else {
-			Set<TurSNSiteSpotlight> turSNSiteSpotlights = turSNSiteSpotlightRepository
-					.findByUnmanagedIdAndTurSNSiteAndLanguage(id, turSNSite, turSNSiteLocale.getLanguage());
-			TurSNSiteSpotlight turSNSiteSpotlight = new TurSNSiteSpotlight();
+		}
 
-			if (!turSNSiteSpotlights.isEmpty()) {
-				turSNSiteSpotlights.forEach(this::ifExistsDeleteSpotlightDependencies);
-				if (turSNSiteSpotlights.size() > 1) {
-					turSNSiteSpotlightRepository.deleteAllInBatch(turSNSiteSpotlights);
-				} else {
-					turSNSiteSpotlight = turSNSiteSpotlights.iterator().next();
-				}
-			}
+		Set<TurSNSiteSpotlight> existingSpotlights = turSNSiteSpotlightRepository
+				.findByUnmanagedIdAndTurSNSiteAndLanguage(id, turSNSite, turSNSiteLocale.getLanguage());
+		TurSNSiteSpotlight turSNSiteSpotlight = handleExistingSpotlights(existingSpotlights);
 
-			String jsonContent = (String) turSNJobItem.getAttributes().get(CONTENT_ATTRIBUTE);
-			String name = (String) turSNJobItem.getAttributes().get(NAME_ATTRIBUTE);
-			String provider = (String) turSNJobItem.getAttributes().get(TurSNFieldName.SOURCE_APPS);
-			String[] terms = ((String) turSNJobItem.getAttributes().get(TERMS_ATTRIBUTE)).split(",");
-
-			LocalDateTime date = LocalDateTime.parse(
-					(String) turSNJobItem.getAttributes().get(TurSNFieldName.MODIFICATION_DATE),
-					DateTimeFormatter.ISO_DATE_TIME);
-			List<TurSpotlightContent> turSpotlightContents = JsonMapper.builder().build()
-					.readValue(jsonContent, new TypeReference<List<TurSpotlightContent>>() {
-					});
-
-			turSNSiteSpotlight.setUnmanagedId(id);
-			turSNSiteSpotlight.setDescription(name);
-			turSNSiteSpotlight.setName(name);
-			turSNSiteSpotlight.setModificationDate(date);
-			turSNSiteSpotlight.setTurSNSite(turSNSite);
-			turSNSiteSpotlight.setLanguage(turSNSiteLocale.getLanguage());
-			turSNSiteSpotlight.setManaged(0);
-			turSNSiteSpotlight.setProvider(provider);
+		try {
+			populateSpotlightFromJobItem(turSNSiteSpotlight, turSNJobItem, turSNSite, turSNSiteLocale);
 			turSNSiteSpotlightRepository.save(turSNSiteSpotlight);
 
-			for (String term : terms) {
-				TurSNSiteSpotlightTerm turSNSiteSpotlightTerm = new TurSNSiteSpotlightTerm();
-				turSNSiteSpotlightTerm.setName(term.trim());
-				turSNSiteSpotlightTerm.setTurSNSiteSpotlight(turSNSiteSpotlight);
-				turSNSiteSpotlightTermRepository.save(turSNSiteSpotlightTerm);
-			}
-
-			for (TurSpotlightContent turSpotlightContent : turSpotlightContents) {
-				final TurSNSiteSpotlightDocument turSNSiteSpotlightDocument = getTurSNSiteSpotlightDocument(
-						turSpotlightContent, turSNSiteSpotlight);
-				turSNSiteSpotlightDocumentRepository.save(turSNSiteSpotlightDocument);
-			}
+			saveSpotlightTerms(turSNJobItem, turSNSiteSpotlight);
+			saveSpotlightDocuments(turSNJobItem, turSNSiteSpotlight);
 
 			logger.warn("Spotlight ID '{}' of '{}' SN Site ({}) was created.",
-					turSNJobItem.getAttributes().get(TurSNFieldName.ID), turSNSite.getName(),
-					turSNJobItem.getLocale());
-
+					id, turSNSite.getName(), turSNJobItem.getLocale());
 			return true;
+		} catch (Exception e) {
+			logger.error("Error creating unmanaged spotlight: {}", e.getMessage(), e);
+			return false;
+		}
+	}
+
+	private TurSNSiteSpotlight handleExistingSpotlights(Set<TurSNSiteSpotlight> spotlights) {
+		TurSNSiteSpotlight spotlight = new TurSNSiteSpotlight();
+		if (!spotlights.isEmpty()) {
+			spotlights.forEach(this::ifExistsDeleteSpotlightDependencies);
+			if (spotlights.size() > 1) {
+				turSNSiteSpotlightRepository.deleteAllInBatch(spotlights);
+			} else {
+				spotlight = spotlights.iterator().next();
+			}
+		}
+		return spotlight;
+	}
+
+	private void populateSpotlightFromJobItem(TurSNSiteSpotlight spotlight, TurSNJobItem jobItem, TurSNSite site, TurSNSiteLocale locale) {
+		String id = (String) jobItem.getAttributes().get(TurSNFieldName.ID);
+		String name = (String) jobItem.getAttributes().get(NAME_ATTRIBUTE);
+		String provider = (String) jobItem.getAttributes().get(TurSNFieldName.SOURCE_APPS);
+		LocalDateTime date = LocalDateTime.parse(
+				(String) jobItem.getAttributes().get(TurSNFieldName.MODIFICATION_DATE),
+				DateTimeFormatter.ISO_DATE_TIME);
+
+		spotlight.setUnmanagedId(id);
+		spotlight.setDescription(name);
+		spotlight.setName(name);
+		spotlight.setModificationDate(date);
+		spotlight.setTurSNSite(site);
+		spotlight.setLanguage(locale.getLanguage());
+		spotlight.setManaged(0);
+		spotlight.setProvider(provider);
+	}
+
+	private void saveSpotlightTerms(TurSNJobItem jobItem, TurSNSiteSpotlight spotlight) {
+		String[] terms = ((String) jobItem.getAttributes().get(TERMS_ATTRIBUTE)).split(",");
+		for (String term : terms) {
+			TurSNSiteSpotlightTerm spotlightTerm = new TurSNSiteSpotlightTerm();
+			spotlightTerm.setName(term.trim());
+			spotlightTerm.setTurSNSiteSpotlight(spotlight);
+			turSNSiteSpotlightTermRepository.save(spotlightTerm);
+		}
+	}
+
+	private void saveSpotlightDocuments(TurSNJobItem jobItem, TurSNSiteSpotlight spotlight) throws Exception {
+		String jsonContent = (String) jobItem.getAttributes().get(CONTENT_ATTRIBUTE);
+		List<TurSpotlightContent> contents = JsonMapper.builder().build()
+				.readValue(jsonContent, new TypeReference<List<TurSpotlightContent>>() {});
+		for (TurSpotlightContent content : contents) {
+			TurSNSiteSpotlightDocument document = getTurSNSiteSpotlightDocument(content, spotlight);
+			turSNSiteSpotlightDocumentRepository.save(document);
 		}
 	}
 
