@@ -233,8 +233,9 @@ public class TurSNSiteFieldExtAPI {
     }
 
     private void updateFieldExtProperties(TurSNSiteFieldExt existing, TurSNSiteFieldExt payload) {
-        if (payload == null || existing == null)
+        if (payload == null || existing == null) {
             return;
+        }
 
         existing.setName(payload.getName());
         existing.setDescription(payload.getDescription());
@@ -256,13 +257,27 @@ public class TurSNSiteFieldExtAPI {
         existing.setDefaultValue(payload.getDefaultValue());
         existing.setSnType(payload.getSnType());
 
-        existing.getFacetLocales().clear();
         if (payload.getFacetLocales() != null) {
-            payload.getFacetLocales().forEach(facet -> {
-                facet.setId(null);
-                facet.setTurSNSiteFieldExt(existing);
-                existing.getFacetLocales().add(facet);
-            });
+            java.util.Set<java.util.Locale> incomingLocales = payload.getFacetLocales().stream()
+                    .map(TurSNSiteFieldExtFacet::getLocale)
+                    .collect(java.util.stream.Collectors.toSet());
+
+            existing.getFacetLocales().removeIf(facet -> !incomingLocales.contains(facet.getLocale()));
+
+            for (TurSNSiteFieldExtFacet incomingFacet : payload.getFacetLocales()) {
+                existing.getFacetLocales().stream()
+                        .filter(f -> f.getLocale().equals(incomingFacet.getLocale()))
+                        .findFirst()
+                        .ifPresentOrElse(
+                                existingFacet -> existingFacet.setLabel(incomingFacet.getLabel()),
+                                () -> {
+                                    incomingFacet.setId(null);
+                                    incomingFacet.setTurSNSiteFieldExt(existing);
+                                    existing.getFacetLocales().add(incomingFacet);
+                                });
+            }
+        } else {
+            existing.getFacetLocales().clear();
         }
     }
 
