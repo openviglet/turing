@@ -255,8 +255,7 @@ public class TurSNServer {
         return null;
     }
 
-    private List<String> executeAutoCompleteRequest(HttpGet httpGet, CloseableHttpClient client)
-            throws IOException {
+    private List<String> executeAutoCompleteRequest(HttpGet httpGet, CloseableHttpClient client) {
 
         return new ObjectMapper().readValue(getHttpResponse(httpGet, client), new TypeReference<>() {
         });

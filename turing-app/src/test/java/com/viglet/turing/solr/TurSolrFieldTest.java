@@ -56,7 +56,6 @@ class TurSolrFieldTest {
     void testConvertFieldToStringWithNull() {
         String result = TurSolrField.convertFieldToString(null);
 
-        assertThat(result).isEmpty();
         assertThat(result).isEqualTo(TurSolrField.EMPTY_STRING);
     }
 
