@@ -82,8 +82,6 @@ public class TurImportExchange {
 			if (parentExtractFolder != null) {
 				FileUtils.deleteDirectory(parentExtractFolder);
 			}
-
-			return;
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}

@@ -30,7 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -96,7 +95,7 @@ public class TurSNSiteMetricsAPI {
 					item.put("accesses", e.getValue());
 					return item;
 				})
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Operation(summary = "Semantic Navigation Site Metrics Top Terms")
