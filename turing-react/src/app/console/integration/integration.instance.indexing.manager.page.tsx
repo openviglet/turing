@@ -18,6 +18,20 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
+// Type alias for tab values
+type IndexingTabMode = "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING";
+
+type IndexingTabItem = {
+  value: IndexingTabMode;
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  activeBorder: string;
+  description: string;
+  detailedDescription: string;
+  mode: IndexingTabMode;
+};
+
 export default function IntegrationInstanceIndexAdminPage() {
   const { id } = useParams() as { id: string };
   const [error, setError] = useState<string | null>(null);
@@ -27,52 +41,44 @@ export default function IntegrationInstanceIndexAdminPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Mapeamento entre aba e path
-  const tabPathMap = {
+  // Tab path mapping
+  const tabPathMap: Record<IndexingTabMode, string> = {
     INDEXING: "indexing",
     DEINDEXING: "deindexing",
     PUBLISHING: "publishing",
     UNPUBLISHING: "unpublishing",
-  } as const;
+  };
 
-  const pathTabMap = Object.entries(tabPathMap).reduce(
+  // Reverse mapping
+  const pathTabMap: Record<string, IndexingTabMode> = Object.entries(tabPathMap).reduce(
     (acc, [tab, path]) => {
-      acc[path] = tab as "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING";
+      acc[path] = tab as IndexingTabMode;
       return acc;
     },
-    {} as Record<string, "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING">
+    {} as Record<string, IndexingTabMode>
   );
 
-  // Extrai o path da aba da URL
+  // Extract tab from URL
   const pathSegment = location.pathname.split("/").pop();
-  const initialTab =
-    pathTabMap[pathSegment as keyof typeof pathTabMap] || "INDEXING";
+  const initialTab: IndexingTabMode = pathTabMap[pathSegment ?? ""] || "INDEXING";
 
-  const [selectedTab, setSelectedTab] = useState<"INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING">(initialTab);
+  const [selectedTab, setSelectedTab] = useState<IndexingTabMode>(initialTab);
 
   useEffect(() => {
     const path = location.pathname.split("/").pop();
-    const tab = pathTabMap[path as keyof typeof pathTabMap];
+    const tab = pathTabMap[path ?? ""];
     if (tab && tab !== selectedTab) setSelectedTab(tab);
     else if (!tab && selectedTab !== "INDEXING") setSelectedTab("INDEXING");
-  }, [location.pathname]);
+  }, [location.pathname, selectedTab]);
 
   const handleTabChange = (value: string) => {
-    setSelectedTab(value as "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING");
+    const mode = value as IndexingTabMode;
+    setSelectedTab(mode);
     navigate(
-      `/admin/integration/instance/${id}/indexing-manager/${tabPathMap[value as keyof typeof tabPathMap]}`
+      `/admin/integration/instance/${id}/indexing-manager/${tabPathMap[mode]}`
     );
   };
-  type IndexingTabItem = {
-    value: "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING";
-    title: string;
-    icon: React.ComponentType<{ className?: string }>;
-    color: string;
-    activeBorder: string;
-    description: string;
-    detailedDescription: string;
-    mode: "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING";
-  };
+
   useEffect(() => {
     let added = false;
     turIntegrationAemSourceService
@@ -86,13 +92,14 @@ export default function IntegrationInstanceIndexAdminPage() {
     return () => {
       if (added) popItem();
     };
-  }, [turIntegrationAemSourceService]);
+  }, [turIntegrationAemSourceService, pushItem, popItem]);
+
   const items: IndexingTabItem[] = [
     {
       value: "INDEXING",
       title: "Indexing",
       icon: IconPlus,
-      mode: "INDEXING" as const,
+      mode: "INDEXING",
       color: "text-green-500",
       activeBorder: "data-[state=active]:border-green-500",
       description:
@@ -104,7 +111,7 @@ export default function IntegrationInstanceIndexAdminPage() {
       value: "DEINDEXING",
       title: "Deindexing",
       icon: IconTrash,
-      mode: "DEINDEXING" as const,
+      mode: "DEINDEXING",
       color: "text-red-500",
       activeBorder: "data-[state=active]:border-red-500",
       description:
@@ -116,7 +123,7 @@ export default function IntegrationInstanceIndexAdminPage() {
       value: "PUBLISHING",
       title: "Publishing",
       icon: IconCloudUpload,
-      mode: "PUBLISHING" as const,
+      mode: "PUBLISHING",
       color: "text-blue-500",
       activeBorder: "data-[state=active]:border-blue-500",
       description: "Forces the publication of the content in the target environment, regardless of its current status.",
@@ -127,7 +134,7 @@ export default function IntegrationInstanceIndexAdminPage() {
       value: "UNPUBLISHING",
       title: "Unpublishing",
       icon: IconCloudDownload,
-      mode: "UNPUBLISHING" as const,
+      mode: "UNPUBLISHING",
       color: "text-orange-500",
       activeBorder: "data-[state=active]:border-orange-500",
       description: "Forces the unpublishing of the content, removing it from the air in the Publish environment.",
@@ -155,7 +162,7 @@ export default function IntegrationInstanceIndexAdminPage() {
           className="w-full"
         >
           <TabsList className="w-full h-auto bg-transparent p-0 gap-4 flex-wrap justify-start">
-            {items.map((item: IndexingTabItem) => (
+            {items.map((item) => (
               <TabsTrigger
                 key={item.value}
                 value={item.value}
@@ -168,7 +175,7 @@ export default function IntegrationInstanceIndexAdminPage() {
           </TabsList>
 
           <div className="mt-8 border rounded-xl p-8 bg-card shadow-md">
-            {items.map((item: IndexingTabItem) => (
+            {items.map((item) => (
               <TabsContent key={item.value} value={item.value} className="mt-0 focus-visible:ring-0">
                 <div className="mb-8 pb-4 border-b flex flex-col md:flex-row md:items-center  gap-4">
                   <div className="flex items-center gap-3">
