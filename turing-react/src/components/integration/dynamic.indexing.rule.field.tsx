@@ -20,7 +20,7 @@ export function DynamicIndexingRuleFields({
     });
 
     const handleAddField = () => {
-        append('');
+        append({ value: '' });
     };
 
     return (
@@ -30,7 +30,7 @@ export function DynamicIndexingRuleFields({
                     <Input
                         className="grow"
                         placeholder="Value"
-                        {...register(`${fieldName}.${index}`)}
+                        {...register(`${fieldName}.${index}.value`)}
                     />
                     <GradientButton
                         variant="ghost"

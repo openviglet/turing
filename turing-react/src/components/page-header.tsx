@@ -53,7 +53,7 @@ export const PageHeader: React.FC<MyComponentProps> = ({ turIcon: TurIcon, title
         <div className="ml-auto flex items-center gap-2">
           {urlNew !== undefined && (
             <GradientButton asChild size="sm">
-              <NavLink to={urlNew} className="flex items-center gap-2">{TurIcon && <TurIcon />} Add</NavLink>
+              <NavLink to={urlNew} className="flex items-center gap-2">{TurIcon && <TurIcon />} New {title}</NavLink>
             </GradientButton>
           )}
           <ModeToggle></ModeToggle>

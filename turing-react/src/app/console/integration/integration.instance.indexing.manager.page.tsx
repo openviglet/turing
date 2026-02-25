@@ -1,5 +1,5 @@
 import { ROUTES } from "@/app/routes.const";
-import { IntegrationIndexingManagerForm } from "@/components/integration/integration.index.manager.form";
+import { IntegrationIndexingManagerForm } from "@/components/integration/integration.indexing.manager.form";
 import { LoadProvider } from "@/components/loading-provider";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
