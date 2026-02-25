@@ -95,15 +95,15 @@ class TurQueueManagementServiceTest {
                 Set<ObjectInstance> instances = new HashSet<>(Arrays.asList(instance1, instance2));
 
                 when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(instances);
-                when(mbeanServer.getAttribute(eq(queue1Name), eq("MessageCount"))).thenReturn(10L);
-                when(mbeanServer.getAttribute(eq(queue1Name), eq("ConsumerCount"))).thenReturn(2L);
-                when(mbeanServer.getAttribute(eq(queue1Name), eq("Paused"))).thenReturn(false);
-                when(mbeanServer.getAttribute(eq(queue1Name), eq("Temporary"))).thenReturn(false);
+                when(mbeanServer.getAttribute(queue1Name, "MessageCount")).thenReturn(10L);
+                when(mbeanServer.getAttribute(queue1Name, "ConsumerCount")).thenReturn(2L);
+                when(mbeanServer.getAttribute(queue1Name, "Paused")).thenReturn(false);
+                when(mbeanServer.getAttribute(queue1Name, "Temporary")).thenReturn(false);
 
-                when(mbeanServer.getAttribute(eq(queue2Name), eq("MessageCount"))).thenReturn(5L);
-                when(mbeanServer.getAttribute(eq(queue2Name), eq("ConsumerCount"))).thenReturn(1L);
-                when(mbeanServer.getAttribute(eq(queue2Name), eq("Paused"))).thenReturn(true);
-                when(mbeanServer.getAttribute(eq(queue2Name), eq("Temporary"))).thenReturn(false);
+                when(mbeanServer.getAttribute(queue2Name, "MessageCount")).thenReturn(5L);
+                when(mbeanServer.getAttribute(queue2Name, "ConsumerCount")).thenReturn(1L);
+                when(mbeanServer.getAttribute(queue2Name, "Paused")).thenReturn(true);
+                when(mbeanServer.getAttribute(queue2Name, "Temporary")).thenReturn(false);
 
                 List<TurQueueInfo> queues = service.getAllQueues();
 
@@ -327,7 +327,7 @@ class TurQueueManagementServiceTest {
         }
 
         @Test
-        void testClearQueueWithNonExistentQueue() throws Exception {
+        void testClearQueueWithNonExistentQueue() {
                 String queueName = "nonExistentQueue";
 
                 when(mbeanServer.queryMBeans(any(ObjectName.class), isNull()))
@@ -381,10 +381,10 @@ class TurQueueManagementServiceTest {
                 Set<ObjectInstance> instances = Collections.singleton(instance);
 
                 when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(instances);
-                when(mbeanServer.getAttribute(eq(queueName), eq("MessageCount"))).thenReturn(null);
-                when(mbeanServer.getAttribute(eq(queueName), eq("ConsumerCount"))).thenReturn(null);
-                when(mbeanServer.getAttribute(eq(queueName), eq("Paused"))).thenReturn(null);
-                when(mbeanServer.getAttribute(eq(queueName), eq("Temporary"))).thenReturn(null);
+                when(mbeanServer.getAttribute(queueName, "MessageCount")).thenReturn(null);
+                when(mbeanServer.getAttribute(queueName, "ConsumerCount")).thenReturn(null);
+                when(mbeanServer.getAttribute(queueName, "Paused")).thenReturn(null);
+                when(mbeanServer.getAttribute(queueName, "Temporary")).thenReturn(null);
 
                 List<TurQueueInfo> queues = service.getAllQueues();
 
@@ -407,10 +407,10 @@ class TurQueueManagementServiceTest {
                 ObjectInstance instance = new ObjectInstance(queueName, "QueueImpl");
 
                 when(mbeanServer.queryMBeans(eq(pattern), isNull())).thenReturn(Collections.singleton(instance));
-                when(mbeanServer.getAttribute(eq(queueName), eq("MessageCount"))).thenReturn(0L);
-                when(mbeanServer.getAttribute(eq(queueName), eq("ConsumerCount"))).thenReturn(0L);
-                when(mbeanServer.getAttribute(eq(queueName), eq("Paused"))).thenReturn(true);
-                when(mbeanServer.getAttribute(eq(queueName), eq("Temporary"))).thenReturn(true);
+                when(mbeanServer.getAttribute(queueName, "MessageCount")).thenReturn(0L);
+                when(mbeanServer.getAttribute(queueName, "ConsumerCount")).thenReturn(0L);
+                when(mbeanServer.getAttribute(queueName, "Paused")).thenReturn(true);
+                when(mbeanServer.getAttribute(queueName, "Temporary")).thenReturn(true);
 
                 List<TurQueueInfo> queues = service.getAllQueues();
 

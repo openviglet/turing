@@ -21,7 +21,8 @@
 
 package com.viglet.turing.solr;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurSolrField.
@@ -41,14 +42,14 @@ class TurSolrFieldTest {
 
     @Test
     void testConstructorThrowsException() {
-        assertThatThrownBy(() -> {
-            var constructor = TurSolrField.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        })
-        .cause()
-        .isInstanceOf(IllegalStateException.class)
-        .hasMessageContaining("TurSolrField class");
+        assertThatThrownBy(this::instantiateTurSolrField)
+                .cause()
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("TurSolrField class");
+    }
+
+    private Object instantiateTurSolrField() throws Exception {
+        return TurSolrField.class.getDeclaredConstructor().newInstance();
     }
 
     @Test
@@ -110,8 +111,7 @@ class TurSolrFieldTest {
 
         String result = TurSolrField.convertFieldToString(date);
 
-        assertThat(result).isEqualTo(expectedDate);
-        assertThat(result).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z");
+        assertThat(result).isEqualTo(expectedDate).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z");
     }
 
     @Test
@@ -175,7 +175,7 @@ class TurSolrFieldTest {
 
     @Test
     void testConvertFieldToStringWithObjectArrayOfStrings() {
-        Object[] array = new Object[]{"first", "second", "third"};
+        Object[] array = new Object[] { "first", "second", "third" };
 
         String result = TurSolrField.convertFieldToString(array);
 
@@ -184,7 +184,7 @@ class TurSolrFieldTest {
 
     @Test
     void testConvertFieldToStringWithObjectArrayOfStringsWithWhitespace() {
-        Object[] array = new Object[]{"  first  ", "second"};
+        Object[] array = new Object[] { "  first  ", "second" };
 
         String result = TurSolrField.convertFieldToString(array);
 
@@ -193,7 +193,7 @@ class TurSolrFieldTest {
 
     @Test
     void testConvertFieldToStringWithObjectArrayOfLongs() {
-        Object[] array = new Object[]{999L, 888L};
+        Object[] array = new Object[] { 999L, 888L };
 
         String result = TurSolrField.convertFieldToString(array);
 
@@ -203,12 +203,10 @@ class TurSolrFieldTest {
     @Test
     void testConvertFieldToStringWithObjectArrayOfDates() {
         Date date = new Date(1704067200000L);
-        Object[] array = new Object[]{date, new Date()};
+        Object[] array = new Object[] { date, new Date() };
 
         String result = TurSolrField.convertFieldToString(array);
-
-        assertThat(result).isNotEmpty();
-        assertThat(result).contains("2024");
+        assertThat(result).isNotEmpty().contains("2024");
     }
 
     @Test
@@ -293,7 +291,7 @@ class TurSolrFieldTest {
 
     @Test
     void testConvertFieldToStringWithSingleElementStringArray() {
-        Object[] array = new Object[]{"single"};
+        Object[] array = new Object[] { "single" };
 
         String result = TurSolrField.convertFieldToString(array);
 
@@ -302,7 +300,7 @@ class TurSolrFieldTest {
 
     @Test
     void testConvertFieldToStringWithSingleElementLongArray() {
-        Object[] array = new Object[]{777L};
+        Object[] array = new Object[] { 777L };
 
         String result = TurSolrField.convertFieldToString(array);
 
@@ -312,7 +310,7 @@ class TurSolrFieldTest {
     @Test
     void testConvertFieldToStringDateFormatting() {
         Date date = new Date(0L); // Epoch time
-        
+
         String result = TurSolrField.convertFieldToString(date);
 
         assertThat(result).isEqualTo("1970-01-01T00:00:00Z");
@@ -324,8 +322,7 @@ class TurSolrFieldTest {
 
         String result = TurSolrField.convertFieldToString("  " + longString + "  ");
 
-        assertThat(result).hasSize(1000);
-        assertThat(result).isEqualTo(longString);
+        assertThat(result).hasSize(1000).isEqualTo(longString);
     }
 
     @Test

@@ -266,7 +266,8 @@ public class TurSNSiteFieldExtAPI {
 
             for (TurSNSiteFieldExtFacet incomingFacet : payload.getFacetLocales()) {
                 existing.getFacetLocales().stream()
-                        .filter(f -> f.getLocale().equals(incomingFacet.getLocale()))
+                        .filter(f -> f.getLocale() != null && incomingFacet.getLocale() != null
+                                && f.getLocale().equals(incomingFacet.getLocale()))
                         .findFirst()
                         .ifPresentOrElse(
                                 existingFacet -> existingFacet.setLabel(incomingFacet.getLabel()),

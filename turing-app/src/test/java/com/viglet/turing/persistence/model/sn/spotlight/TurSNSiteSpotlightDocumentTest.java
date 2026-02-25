@@ -21,13 +21,13 @@
 
 package com.viglet.turing.persistence.model.sn.spotlight;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for TurSNSiteSpotlightDocument.
@@ -81,7 +81,7 @@ class TurSNSiteSpotlightDocumentTest {
     void testDefaultConstructor() {
         assertThat(turSNSiteSpotlightDocument).isNotNull();
         assertThat(turSNSiteSpotlightDocument.getId()).isNull();
-        assertThat(turSNSiteSpotlightDocument.getPosition()).isEqualTo(0);
+        assertThat(turSNSiteSpotlightDocument.getPosition()).isZero();
         assertThat(turSNSiteSpotlightDocument.getTitle()).isNull();
         assertThat(turSNSiteSpotlightDocument.getType()).isNull();
         assertThat(turSNSiteSpotlightDocument.getReferenceId()).isNull();
@@ -93,7 +93,7 @@ class TurSNSiteSpotlightDocumentTest {
     @Test
     void testPositionField() {
         turSNSiteSpotlightDocument.setPosition(0);
-        assertThat(turSNSiteSpotlightDocument.getPosition()).isEqualTo(0);
+        assertThat(turSNSiteSpotlightDocument.getPosition()).isZero();
 
         turSNSiteSpotlightDocument.setPosition(10);
         assertThat(turSNSiteSpotlightDocument.getPosition()).isEqualTo(10);

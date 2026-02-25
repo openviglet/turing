@@ -21,16 +21,17 @@
 
 package com.viglet.turing.persistence.model.sn;
 
-import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.*;
+import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 
 /**
  * Unit tests for TurSNSite.
@@ -43,7 +44,7 @@ class TurSNSiteTest {
 
     @Mock
     private TurSEInstance turSEInstance;
-    
+
     @Mock
     private TurSNSiteGenAi turSNSiteGenAi;
 
@@ -81,7 +82,7 @@ class TurSNSiteTest {
         Integer spellCheck = 1;
         Integer spellCheckFixes = 3;
         Integer spotlightWithResults = 1;
-        
+
         turSNSite.setId(id);
         turSNSite.setName(name);
         turSNSite.setDescription(description);
@@ -112,32 +113,63 @@ class TurSNSiteTest {
         turSNSite.setSpotlightWithResults(spotlightWithResults);
         turSNSite.setTurSEInstance(turSEInstance);
         turSNSite.setTurSNSiteGenAi(turSNSiteGenAi);
-        
-        assertThat(turSNSite.getId()).isEqualTo(id);
-        assertThat(turSNSite.getName()).isEqualTo(name);
-        assertThat(turSNSite.getDescription()).isEqualTo(description);
-        assertThat(turSNSite.getRowsPerPage()).isEqualTo(rowsPerPage);
-        assertThat(turSNSite.getWildcardNoResults()).isEqualTo(wildcardNoResults);
-        assertThat(turSNSite.getWildcardAlways()).isEqualTo(wildcardAlways);
-        assertThat(turSNSite.getExactMatch()).isEqualTo(exactMatch);
-        assertThat(turSNSite.getFacet()).isEqualTo(facet);
-        assertThat(turSNSite.getItemsPerFacet()).isEqualTo(itemsPerFacet);
-        assertThat(turSNSite.getHl()).isEqualTo(hl);
-        assertThat(turSNSite.getHlPre()).isEqualTo(hlPre);
-        assertThat(turSNSite.getHlPost()).isEqualTo(hlPost);
-        assertThat(turSNSite.getMlt()).isEqualTo(mlt);
-        assertThat(turSNSite.getFacetType()).isEqualTo(TurSNSiteFacetFieldEnum.OR);
-        assertThat(turSNSite.getFacetItemType()).isEqualTo(TurSNSiteFacetFieldEnum.OR);
-        assertThat(turSNSite.getFacetSort()).isEqualTo(TurSNSiteFacetSortEnum.ALPHABETICAL);
-        assertThat(turSNSite.getThesaurus()).isEqualTo(thesaurus);
-        assertThat(turSNSite.getDefaultField()).isEqualTo(defaultField);
-        assertThat(turSNSite.getExactMatchField()).isEqualTo(exactMatchField);
-        assertThat(turSNSite.getDefaultTitleField()).isEqualTo(defaultTitleField);
-        assertThat(turSNSite.getDefaultTextField()).isEqualTo(defaultTextField);
-        assertThat(turSNSite.getDefaultDescriptionField()).isEqualTo(defaultDescriptionField);
-        assertThat(turSNSite.getDefaultDateField()).isEqualTo(defaultDateField);
-        assertThat(turSNSite.getDefaultImageField()).isEqualTo(defaultImageField);
-        assertThat(turSNSite.getDefaultURLField()).isEqualTo(defaultURLField);
+
+        // Grouped assertions for basic fields
+        assertThat(turSNSite)
+                .extracting(
+                        TurSNSite::getId,
+                        TurSNSite::getName,
+                        TurSNSite::getDescription,
+                        TurSNSite::getRowsPerPage,
+                        TurSNSite::getWildcardNoResults,
+                        TurSNSite::getWildcardAlways,
+                        TurSNSite::getExactMatch,
+                        TurSNSite::getFacet,
+                        TurSNSite::getItemsPerFacet,
+                        TurSNSite::getHl,
+                        TurSNSite::getHlPre,
+                        TurSNSite::getHlPost,
+                        TurSNSite::getMlt,
+                        TurSNSite::getFacetType,
+                        TurSNSite::getFacetItemType,
+                        TurSNSite::getFacetSort,
+                        TurSNSite::getThesaurus,
+                        TurSNSite::getDefaultField,
+                        TurSNSite::getExactMatchField,
+                        TurSNSite::getDefaultTitleField,
+                        TurSNSite::getDefaultTextField,
+                        TurSNSite::getDefaultDescriptionField,
+                        TurSNSite::getDefaultDateField,
+                        TurSNSite::getDefaultImageField,
+                        TurSNSite::getDefaultURLField)
+                .containsExactly(
+                        id,
+                        name,
+                        description,
+                        rowsPerPage,
+                        wildcardNoResults,
+                        wildcardAlways,
+                        exactMatch,
+                        facet,
+                        itemsPerFacet,
+                        hl,
+                        hlPre,
+                        hlPost,
+                        mlt,
+                        TurSNSiteFacetFieldEnum.OR,
+                        TurSNSiteFacetFieldEnum.OR,
+                        TurSNSiteFacetSortEnum.ALPHABETICAL,
+                        thesaurus,
+                        defaultField,
+                        exactMatchField,
+                        defaultTitleField,
+                        defaultTextField,
+                        defaultDescriptionField,
+                        defaultDateField,
+                        defaultImageField,
+                        defaultURLField);
+
+        // Additional assertions for remaining fields
         assertThat(turSNSite.getSpellCheck()).isEqualTo(spellCheck);
         assertThat(turSNSite.getSpellCheckFixes()).isEqualTo(spellCheckFixes);
         assertThat(turSNSite.getSpotlightWithResults()).isEqualTo(spotlightWithResults);
@@ -180,10 +212,10 @@ class TurSNSiteTest {
     void testSetRowsPerPageWithDifferentValues() {
         turSNSite.setRowsPerPage(5);
         assertThat(turSNSite.getRowsPerPage()).isEqualTo(5);
-        
+
         turSNSite.setRowsPerPage(25);
         assertThat(turSNSite.getRowsPerPage()).isEqualTo(25);
-        
+
         turSNSite.setRowsPerPage(100);
         assertThat(turSNSite.getRowsPerPage()).isEqualTo(100);
     }
@@ -192,7 +224,7 @@ class TurSNSiteTest {
     void testSetFacetTypeWithDifferentValues() {
         turSNSite.setFacetType(TurSNSiteFacetFieldEnum.AND);
         assertThat(turSNSite.getFacetType()).isEqualTo(TurSNSiteFacetFieldEnum.AND);
-        
+
         turSNSite.setFacetType(TurSNSiteFacetFieldEnum.OR);
         assertThat(turSNSite.getFacetType()).isEqualTo(TurSNSiteFacetFieldEnum.OR);
     }
@@ -201,7 +233,7 @@ class TurSNSiteTest {
     void testSetFacetSortWithDifferentValues() {
         turSNSite.setFacetSort(TurSNSiteFacetSortEnum.COUNT);
         assertThat(turSNSite.getFacetSort()).isEqualTo(TurSNSiteFacetSortEnum.COUNT);
-        
+
         turSNSite.setFacetSort(TurSNSiteFacetSortEnum.ALPHABETICAL);
         assertThat(turSNSite.getFacetSort()).isEqualTo(TurSNSiteFacetSortEnum.ALPHABETICAL);
     }
@@ -211,7 +243,7 @@ class TurSNSiteTest {
         turSNSite.setHl(1);
         turSNSite.setHlPre("<strong>");
         turSNSite.setHlPost("</strong>");
-        
+
         assertThat(turSNSite.getHl()).isEqualTo(1);
         assertThat(turSNSite.getHlPre()).isEqualTo("<strong>");
         assertThat(turSNSite.getHlPost()).isEqualTo("</strong>");
@@ -226,7 +258,7 @@ class TurSNSiteTest {
         turSNSite.setDefaultDateField("published");
         turSNSite.setDefaultImageField("thumbnail");
         turSNSite.setDefaultURLField("link");
-        
+
         assertThat(turSNSite.getDefaultField()).isEqualTo("content");
         assertThat(turSNSite.getDefaultTitleField()).isEqualTo("headline");
         assertThat(turSNSite.getDefaultTextField()).isEqualTo("body");
@@ -244,14 +276,14 @@ class TurSNSiteTest {
         turSNSite.setRowsPerPage(20);
         turSNSite.setTurSEInstance(turSEInstance);
         turSNSite.setTurSNSiteGenAi(turSNSiteGenAi);
-        
+
         turSNSite.setId(null);
         turSNSite.setName(null);
         turSNSite.setDescription(null);
         turSNSite.setRowsPerPage(null);
         turSNSite.setTurSEInstance(null);
         turSNSite.setTurSNSiteGenAi(null);
-        
+
         assertThat(turSNSite.getId()).isNull();
         assertThat(turSNSite.getName()).isNull();
         assertThat(turSNSite.getDescription()).isNull();

@@ -21,20 +21,21 @@
 
 package com.viglet.turing.persistence.model.sn.field;
 
-import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
-import com.viglet.turing.sn.TurSNFieldType;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.*;
+import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
+import com.viglet.turing.sn.TurSNFieldType;
 
 /**
  * Unit tests for TurSNSiteFieldExt.
@@ -242,11 +243,11 @@ class TurSNSiteFieldExtTest {
         turSNSiteFieldExt.setRequired(0);
 
         assertThat(turSNSiteFieldExt.getMultiValued()).isEqualTo(1);
-        assertThat(turSNSiteFieldExt.getFacet()).isEqualTo(0);
+        assertThat(turSNSiteFieldExt.getFacet()).isZero();
         assertThat(turSNSiteFieldExt.getHl()).isEqualTo(1);
-        assertThat(turSNSiteFieldExt.getMlt()).isEqualTo(0);
+        assertThat(turSNSiteFieldExt.getMlt()).isZero();
         assertThat(turSNSiteFieldExt.getEnabled()).isEqualTo(1);
-        assertThat(turSNSiteFieldExt.getRequired()).isEqualTo(0);
+        assertThat(turSNSiteFieldExt.getRequired()).isZero();
     }
 
     @Test

@@ -21,9 +21,10 @@
 
 package com.viglet.turing.api.sn.bean;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurSNFieldRepairType enum.
@@ -36,68 +37,65 @@ class TurSNFieldRepairTypeTest {
     @Test
     void testEnumValues() {
         TurSNFieldRepairType[] values = TurSNFieldRepairType.values();
-        
-        assertThat(values).hasSize(4);
-        assertThat(values).contains(
-            TurSNFieldRepairType.SE_CREATE_FIELD,
-            TurSNFieldRepairType.SE_CHANGE_TYPE,
-            TurSNFieldRepairType.SE_ENABLE_MULTI_VALUE,
-            TurSNFieldRepairType.SN_CHANGE_TYPE
-        );
+        assertThat(values).hasSize(4).contains(
+                TurSNFieldRepairType.SE_CREATE_FIELD,
+                TurSNFieldRepairType.SE_CHANGE_TYPE,
+                TurSNFieldRepairType.SE_ENABLE_MULTI_VALUE,
+                TurSNFieldRepairType.SN_CHANGE_TYPE);
     }
 
     @Test
     void testValueOf() {
         assertThat(TurSNFieldRepairType.valueOf("SE_CREATE_FIELD"))
-            .isEqualTo(TurSNFieldRepairType.SE_CREATE_FIELD);
+                .isEqualTo(TurSNFieldRepairType.SE_CREATE_FIELD);
         assertThat(TurSNFieldRepairType.valueOf("SE_CHANGE_TYPE"))
-            .isEqualTo(TurSNFieldRepairType.SE_CHANGE_TYPE);
+                .isEqualTo(TurSNFieldRepairType.SE_CHANGE_TYPE);
         assertThat(TurSNFieldRepairType.valueOf("SE_ENABLE_MULTI_VALUE"))
-            .isEqualTo(TurSNFieldRepairType.SE_ENABLE_MULTI_VALUE);
+                .isEqualTo(TurSNFieldRepairType.SE_ENABLE_MULTI_VALUE);
         assertThat(TurSNFieldRepairType.valueOf("SN_CHANGE_TYPE"))
-            .isEqualTo(TurSNFieldRepairType.SN_CHANGE_TYPE);
+                .isEqualTo(TurSNFieldRepairType.SN_CHANGE_TYPE);
     }
 
     @Test
     void testValueOfInvalid() {
         assertThatThrownBy(() -> TurSNFieldRepairType.valueOf("INVALID"))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void testSECreateField() {
         TurSNFieldRepairType type = TurSNFieldRepairType.SE_CREATE_FIELD;
-        
+
         assertThat(type).isNotNull();
-        assertThat(type.name()).isEqualTo("SE_CREATE_FIELD");
-        assertThat(type.toString()).isEqualTo("SE_CREATE_FIELD");
+        assertThat(type.name()).hasToString("SE_CREATE_FIELD");
+        assertThat(type.toString()).hasToString("SE_CREATE_FIELD");
     }
 
     @Test
     void testSEChangeType() {
         TurSNFieldRepairType type = TurSNFieldRepairType.SE_CHANGE_TYPE;
-        
+
         assertThat(type).isNotNull();
-        assertThat(type.name()).isEqualTo("SE_CHANGE_TYPE");
-        assertThat(type.toString()).isEqualTo("SE_CHANGE_TYPE");
+        assertThat(type.name()).hasToString("SE_CHANGE_TYPE");
+        assertThat(type.toString()).hasToString("SE_CHANGE_TYPE");
     }
 
     @Test
     void testSEEnableMultiValue() {
         TurSNFieldRepairType type = TurSNFieldRepairType.SE_ENABLE_MULTI_VALUE;
-        
+
         assertThat(type).isNotNull();
-        assertThat(type.name()).isEqualTo("SE_ENABLE_MULTI_VALUE");
-        assertThat(type.toString()).isEqualTo("SE_ENABLE_MULTI_VALUE");
+        assertThat(type.name()).hasToString("SE_ENABLE_MULTI_VALUE");
+        assertThat(type.toString()).hasToString("SE_ENABLE_MULTI_VALUE");
     }
 
     @Test
     void testSNChangeType() {
         TurSNFieldRepairType type = TurSNFieldRepairType.SN_CHANGE_TYPE;
-        
+
         assertThat(type).isNotNull();
-        assertThat(type.name()).isEqualTo("SN_CHANGE_TYPE");
-        assertThat(type.toString()).isEqualTo("SN_CHANGE_TYPE");
+        assertThat(type.name()).hasToString("SN_CHANGE_TYPE");
+        assertThat(type.toString()).hasToString("SN_CHANGE_TYPE");
     }
 
     @Test
@@ -105,7 +103,7 @@ class TurSNFieldRepairTypeTest {
         TurSNFieldRepairType type1 = TurSNFieldRepairType.SE_CREATE_FIELD;
         TurSNFieldRepairType type2 = TurSNFieldRepairType.SE_CREATE_FIELD;
         TurSNFieldRepairType type3 = TurSNFieldRepairType.SE_CHANGE_TYPE;
-        
+
         assertThat(type1).isEqualTo(type2);
         assertThat(type1).isNotEqualTo(type3);
     }
@@ -113,21 +111,21 @@ class TurSNFieldRepairTypeTest {
     @Test
     void testEnumInSwitch() {
         TurSNFieldRepairType type = TurSNFieldRepairType.SE_CREATE_FIELD;
-        
+
         String result = switch (type) {
             case SE_CREATE_FIELD -> "Create Field";
             case SE_CHANGE_TYPE -> "Change Type";
             case SE_ENABLE_MULTI_VALUE -> "Enable Multi Value";
             case SN_CHANGE_TYPE -> "SN Change Type";
         };
-        
+
         assertThat(result).isEqualTo("Create Field");
     }
 
     @Test
     void testAllEnumConstantsAreDifferent() {
         TurSNFieldRepairType[] values = TurSNFieldRepairType.values();
-        
+
         for (int i = 0; i < values.length; i++) {
             for (int j = i + 1; j < values.length; j++) {
                 assertThat(values[i]).isNotEqualTo(values[j]);
@@ -137,7 +135,7 @@ class TurSNFieldRepairTypeTest {
 
     @Test
     void testEnumOrdinals() {
-        assertThat(TurSNFieldRepairType.SE_CREATE_FIELD.ordinal()).isEqualTo(0);
+        assertThat(TurSNFieldRepairType.SE_CREATE_FIELD.ordinal()).isZero();
         assertThat(TurSNFieldRepairType.SE_CHANGE_TYPE.ordinal()).isEqualTo(1);
         assertThat(TurSNFieldRepairType.SE_ENABLE_MULTI_VALUE.ordinal()).isEqualTo(2);
         assertThat(TurSNFieldRepairType.SN_CHANGE_TYPE.ordinal()).isEqualTo(3);
@@ -146,10 +144,10 @@ class TurSNFieldRepairTypeTest {
     @Test
     void testEnumComparison() {
         assertThat(TurSNFieldRepairType.SE_CREATE_FIELD.compareTo(TurSNFieldRepairType.SE_CHANGE_TYPE))
-            .isLessThan(0);
+                .isLessThan(0);
         assertThat(TurSNFieldRepairType.SN_CHANGE_TYPE.compareTo(TurSNFieldRepairType.SE_CREATE_FIELD))
-            .isGreaterThan(0);
+                .isGreaterThan(0);
         assertThat(TurSNFieldRepairType.SE_CHANGE_TYPE.compareTo(TurSNFieldRepairType.SE_CHANGE_TYPE))
-            .isZero();
+                .isZero();
     }
 }
