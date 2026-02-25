@@ -73,7 +73,7 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
 
       const payload: TurIntegrationIndexingManager = {
         attribute: data.attribute.toUpperCase() as "ID" | "URL",
-        paths: data.values,
+        paths: data.values.map((v: any) => typeof v === "object" && v !== null && "value" in v ? v.value : v),
         event: mode,
         ...(isRecursive && { recursive: true }),
       };
@@ -299,7 +299,7 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
           <GradientButton type="button" variant="outline" onClick={() => form.reset()}>
             Cancel
           </GradientButton>
-          <GradientButton type="submit">Save Changes</GradientButton>
+          <GradientButton type="submit">{mode.charAt(0) + mode.slice(1).toLowerCase()}</GradientButton>
         </div>
       </form>
     </Form>
