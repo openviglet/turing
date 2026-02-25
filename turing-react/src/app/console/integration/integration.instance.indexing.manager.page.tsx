@@ -101,7 +101,7 @@ export default function IntegrationInstanceIndexAdminPage() {
         name="Indexing Manager"
         description="Directly manage and override content indexing states to ensure search accuracy."
       />
-      <div className="w-full mx-auto mt-6 px-6">
+      <div className="w-full mx-auto mt-6 px-6 pb-6">
         <Tabs defaultValue="INDEXING" className="w-full">
           <TabsList className="w-full h-auto bg-transparent p-0 gap-4 flex-wrap justify-start">
             {items.map((item) => (
