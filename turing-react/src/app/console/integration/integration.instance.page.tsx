@@ -6,11 +6,15 @@ import type { TurIntegrationInstance } from "@/models/integration/integration-in
 import { TurIntegrationInstanceService } from "@/services/integration/integration.service";
 import {
     IconAdjustmentsSearch,
+    IconCloudDownload,
+    IconCloudUpload,
     IconGitCommit,
     IconGraph,
     IconPlugConnectedX,
+    IconPlus,
     IconSettings,
-    IconTools
+    IconTools,
+    IconTrash
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -38,6 +42,28 @@ const data = {
             title: "Indexing Manager",
             url: "/indexing-manager",
             icon: IconAdjustmentsSearch,
+            children: [
+                {
+                    title: "Indexing",
+                    url: "/indexing-manager/indexing",
+                    icon: IconPlus,
+                },
+                {
+                    title: "Deindexing",
+                    url: "/indexing-manager/deindexing",
+                    icon: IconTrash,
+                },
+                {
+                    title: "Publishing",
+                    url: "/indexing-manager/publishing",
+                    icon: IconCloudUpload,
+                },
+                {
+                    title: "Unpublishing",
+                    url: "/indexing-manager/unpublishing",
+                    icon: IconCloudDownload,
+                }
+            ]
         },
         {
             title: "Monitoring",

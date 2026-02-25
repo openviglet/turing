@@ -16,7 +16,7 @@ import {
   IconTrash
 } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function IntegrationInstanceIndexAdminPage() {
   const { id } = useParams() as { id: string };
@@ -24,7 +24,55 @@ export default function IntegrationInstanceIndexAdminPage() {
   const turIntegrationAemSourceService = useMemo(() => new TurIntegrationAemSourceService(id), [id]);
   const [sources, setSources] = useState<TurIntegrationAemSource[]>();
   const { pushItem, popItem } = useBreadcrumb();
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  // Mapeamento entre aba e path
+  const tabPathMap = {
+    INDEXING: "indexing",
+    DEINDEXING: "deindexing",
+    PUBLISHING: "publishing",
+    UNPUBLISHING: "unpublishing",
+  } as const;
+
+  const pathTabMap = Object.entries(tabPathMap).reduce(
+    (acc, [tab, path]) => {
+      acc[path] = tab as "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING";
+      return acc;
+    },
+    {} as Record<string, "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING">
+  );
+
+  // Extrai o path da aba da URL
+  const pathSegment = location.pathname.split("/").pop();
+  const initialTab =
+    pathTabMap[pathSegment as keyof typeof pathTabMap] || "INDEXING";
+
+  const [selectedTab, setSelectedTab] = useState<"INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING">(initialTab);
+
+  useEffect(() => {
+    const path = location.pathname.split("/").pop();
+    const tab = pathTabMap[path as keyof typeof pathTabMap];
+    if (tab && tab !== selectedTab) setSelectedTab(tab);
+    else if (!tab && selectedTab !== "INDEXING") setSelectedTab("INDEXING");
+  }, [location.pathname]);
+
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value as "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING");
+    navigate(
+      `/admin/integration/instance/${id}/indexing-manager/${tabPathMap[value as keyof typeof tabPathMap]}`
+    );
+  };
+  type IndexingTabItem = {
+    value: "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING";
+    title: string;
+    icon: React.ComponentType<{ className?: string }>;
+    color: string;
+    activeBorder: string;
+    description: string;
+    detailedDescription: string;
+    mode: "INDEXING" | "DEINDEXING" | "PUBLISHING" | "UNPUBLISHING";
+  };
   useEffect(() => {
     let added = false;
     turIntegrationAemSourceService
@@ -39,8 +87,7 @@ export default function IntegrationInstanceIndexAdminPage() {
       if (added) popItem();
     };
   }, [turIntegrationAemSourceService]);
-
-  const items = [
+  const items: IndexingTabItem[] = [
     {
       value: "INDEXING",
       title: "Indexing",
@@ -102,9 +149,13 @@ export default function IntegrationInstanceIndexAdminPage() {
         description="Directly manage and override content indexing states to ensure search accuracy."
       />
       <div className="w-full mx-auto mt-6 px-6 pb-6">
-        <Tabs defaultValue="INDEXING" className="w-full">
+        <Tabs
+          value={selectedTab}
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
           <TabsList className="w-full h-auto bg-transparent p-0 gap-4 flex-wrap justify-start">
-            {items.map((item) => (
+            {items.map((item: IndexingTabItem) => (
               <TabsTrigger
                 key={item.value}
                 value={item.value}
@@ -117,7 +168,7 @@ export default function IntegrationInstanceIndexAdminPage() {
           </TabsList>
 
           <div className="mt-8 border rounded-xl p-8 bg-card shadow-md">
-            {items.map((item) => (
+            {items.map((item: IndexingTabItem) => (
               <TabsContent key={item.value} value={item.value} className="mt-0 focus-visible:ring-0">
                 <div className="mb-8 pb-4 border-b flex flex-col md:flex-row md:items-center  gap-4">
                   <div className="flex items-center gap-3">

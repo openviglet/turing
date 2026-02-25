@@ -1,5 +1,5 @@
 import { IconDownload } from "@tabler/icons-react";
-import React from "react";
+import React, { type ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { DialogDelete } from "./dialog.delete";
 import { GradientButton } from "./ui/gradient-button";
@@ -17,14 +17,23 @@ import {
   useSidebar,
 } from "./ui/sidebar";
 
-// Reutilizando as interfaces do seu arquivo principal
+interface NavMainItem {
+  title: string;
+  url: string;
+  icon?: React.ElementType;
+  children?: NavMainItem[];
+}
+
 interface InternalSidebarProps {
   icon: React.ElementType;
   feature: string;
   name: string;
   urlBase?: string;
   isNew?: boolean;
-  data?: any; // Ajuste para DataType se estiver no mesmo arquivo
+  data?: {
+    counts?: any[];
+    navMain: NavMainItem[];
+  };
   onDelete: () => void;
   onExport?: () => void;
   open: boolean;
@@ -32,6 +41,33 @@ interface InternalSidebarProps {
 }
 
 const formatCount = (value?: number) => (value ?? 0).toLocaleString();
+
+const renderNavItems = (
+  items: NavMainItem[],
+  urlBase: string | undefined,
+  pathname: string,
+  isCollapsed: boolean
+): ReactNode =>
+  items.map((item) => (
+    <SidebarMenuItem key={item.title}>
+      <SidebarMenuButton
+        tooltip={item.title}
+        isActive={pathname.startsWith((urlBase ?? "") + item.url)}
+        asChild
+      >
+        <NavLink to={(urlBase ?? "") + item.url}>
+          {item.icon && <item.icon className="size-5!" />}
+          <span>{item.title}</span>
+        </NavLink>
+      </SidebarMenuButton>
+      {/* Render children recursively if present */}
+      {!isCollapsed && item.children && item.children.length > 0 && (
+        <SidebarMenu className="ml-4">
+          {renderNavItems(item.children, urlBase, pathname, isCollapsed)}
+        </SidebarMenu>
+      )}
+    </SidebarMenuItem>
+  ));
 
 export const InternalSidebar: React.FC<InternalSidebarProps> = ({
   icon: Icon,
@@ -51,11 +87,7 @@ export const InternalSidebar: React.FC<InternalSidebarProps> = ({
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar
-      collapsible="icon"
-      variant="inset"
-      position="absolute"
-    >
+    <Sidebar collapsible="icon" variant="inset" position="absolute">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center">
@@ -111,7 +143,9 @@ export const InternalSidebar: React.FC<InternalSidebarProps> = ({
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                     {!isCollapsed && (
-                      <SidebarMenuBadge>{formatCount(item.count)}</SidebarMenuBadge>
+                      <SidebarMenuBadge>
+                        {formatCount(item.count)}
+                      </SidebarMenuBadge>
                     )}
                   </SidebarMenuItem>
                 ))}
@@ -123,20 +157,8 @@ export const InternalSidebar: React.FC<InternalSidebarProps> = ({
           <SidebarGroupLabel>{feature}</SidebarGroupLabel>
           <SidebarGroupContent className="flex flex-col gap-2">
             <SidebarMenu>
-              {data?.navMain.map((item: any) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    tooltip={item.title}
-                    isActive={pathname.startsWith(urlBase + item.url)}
-                    asChild
-                  >
-                    <NavLink to={urlBase + item.url}>
-                      {item.icon && <item.icon className="size-5!" />}
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {data?.navMain &&
+                renderNavItems(data.navMain, urlBase, pathname, isCollapsed)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
