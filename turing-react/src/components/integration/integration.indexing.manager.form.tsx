@@ -183,7 +183,7 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
                       <div className="w-1/2 flex flex-col">
                         <FormLabel>How should we match?</FormLabel>
                         <FormDescription>
-                          Select how you want to identify items: by their unique ID or by their URL.
+                          Select how you want to identify items: by their unique Identifier or by their URL.
                         </FormDescription>
                       </div>
                       {/* Right: Select */}
@@ -197,7 +197,7 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
                               <SelectValue placeholder="Choose an attribute..." />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="id">ID</SelectItem>
+                              <SelectItem value="id">Identifier</SelectItem>
                               <SelectItem value="url">URL</SelectItem>
                             </SelectContent>
                           </Select>
@@ -226,16 +226,14 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
                 rules={{ required: true }}
                 render={() => (
                   <FormItem>
-                    <div className="flex flex-row items-center w-full">
-                      {/* Left: Label + Description */}
-                      <div className="w-1/2 flex flex-col">
-                        <FormLabel>What are you targeting?</FormLabel>
-                        <FormDescription>
-                          Enter one or more values (IDs or URLs) to match the items you want to process.
-                        </FormDescription>
-                      </div>
+                    {/* Label + Description on top */}
+                    <FormLabel>What are you targeting?</FormLabel>
+                    <FormDescription>
+                      Enter one or more values (Identifiers or URLs) to match the items you want to process.
+                    </FormDescription>
+                    <div className="flex flex-row items-center w-full mt-2">
                       {/* Right: Dynamic Fields */}
-                      <div className="w-1/2 flex justify-end">
+                      <div className="w-full flex justify-end">
                         <FormControl>
                           <DynamicIndexingRuleFields
                             control={form.control}
