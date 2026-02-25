@@ -39,7 +39,7 @@ export const SubPage: React.FC<Props> = (props) => {
     <div className="flex w-full items-center justify-center px-8 py-4">
       <Card className="w-full bg-sidebar py-1 overflow-hidden">
         <SidebarProvider
-          defaultOpen={false}
+          defaultOpen={true}
           style={{
             "--sidebar-width": "calc(var(--spacing) * 72)",
             "--header-height": "calc(var(--spacing) * 12)",

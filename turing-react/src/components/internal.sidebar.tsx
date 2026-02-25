@@ -107,7 +107,7 @@ export const InternalSidebar: React.FC<InternalSidebarProps> = ({
                       tooltip={item.title + ": " + formatCount(item.count)}
                       variant="outline"
                     >
-                      {item.icon && <item.icon className="size-6!" />}
+                      {item.icon && <item.icon className="size-5!" />}
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                     {!isCollapsed && (
@@ -131,7 +131,7 @@ export const InternalSidebar: React.FC<InternalSidebarProps> = ({
                     asChild
                   >
                     <NavLink to={urlBase + item.url}>
-                      {item.icon && <item.icon className="size-6!" />}
+                      {item.icon && <item.icon className="size-5!" />}
                       <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
