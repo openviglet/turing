@@ -28,8 +28,6 @@ import java.lang.annotation.Target;
 
 import org.hibernate.annotations.IdGeneratorType;
 
-import com.viglet.turing.spring.jpa.TurUuidGenerator;
-
 /**
  * Custom UUID generator annotation that supports pre-assigned IDs.
  * <p>

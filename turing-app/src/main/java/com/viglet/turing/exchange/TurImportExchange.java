@@ -28,6 +28,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.viglet.turing.exchange.sn.TurSNSiteExchange;
 import com.viglet.turing.exchange.sn.TurSNSiteImport;
 import com.viglet.turing.spring.utils.TurSpringUtils;
 
@@ -75,15 +76,28 @@ public class TurImportExchange {
 			TurExchange turExchange = mapper.readValue(fis, TurExchange.class);
 
 			if (turExchange.getSnSites() != null && !turExchange.getSnSites().isEmpty()) {
+				for (TurSNSiteExchange site : turExchange.getSnSites()) {
+					log.info(
+							"Deserialized SN Site '{}': fields={}, fieldExts={}, locales={}, spotlights={}, rankings={}",
+							site.getName(),
+							site.getTurSNSiteFields() != null ? site.getTurSNSiteFields().size() : "null",
+							site.getTurSNSiteFieldExts() != null ? site.getTurSNSiteFieldExts().size() : "null",
+							site.getTurSNSiteLocales() != null ? site.getTurSNSiteLocales().size() : "null",
+							site.getTurSNSiteSpotlights() != null ? site.getTurSNSiteSpotlights().size() : "null",
+							site.getTurSNRankingExpressions() != null ? site.getTurSNRankingExpressions().size()
+									: "null");
+				}
 				turSNSiteImport.importSNSite(turExchange);
+			} else {
+				log.warn("No SN Sites found in export file");
 			}
 
 			FileUtils.deleteDirectory(extractFolder);
 			if (parentExtractFolder != null) {
 				FileUtils.deleteDirectory(parentExtractFolder);
 			}
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error("Error importing SN Site: {}", e.getMessage(), e);
 		}
 	}
 

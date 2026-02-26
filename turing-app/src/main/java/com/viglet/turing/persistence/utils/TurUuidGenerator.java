@@ -9,7 +9,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -26,36 +26,39 @@ import java.util.EnumSet;
 import java.util.UUID;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.generator.AnnotationBasedGenerator;
 import org.hibernate.generator.BeforeExecutionGenerator;
 import org.hibernate.generator.EventType;
 import org.hibernate.generator.GeneratorCreationContext;
 
 /**
  * Custom UUID generator that allows pre-assigned identifiers.
- * <p>
- * This generator behaves like Hibernate's built-in {@code UuidGenerator}
- * but returns {@code true} from {@link #allowAssignedIdentifiers()},
- * which tells Hibernate to accept pre-set IDs during {@code persist()} or
- * {@code save()}, instead of treating entities with non-null IDs as "detached".
- * <p>
- * Used via the {@link TurAssignableUuidGenerator} annotation.
+ * * Updated to Hibernate 6 compatibility using AnnotationBasedGenerator.
  *
  * @author Alexandre Oliveira
  * @since 0.3.9
  */
-public class TurUuidGenerator implements BeforeExecutionGenerator {
+public class TurUuidGenerator
+        implements BeforeExecutionGenerator, AnnotationBasedGenerator<TurAssignableUuidGenerator> {
 
-    public TurUuidGenerator(TurAssignableUuidGenerator config, Member idMember,
-            GeneratorCreationContext creationContext) {
-        // Required by @IdGeneratorType
+    public TurUuidGenerator() {
+    }
+
+    @Override
+    public void initialize(TurAssignableUuidGenerator annotation, Member member, GeneratorCreationContext context) {
+        // Método chamado pelo Hibernate para configurar o gerador via anotação
     }
 
     @Override
     public Object generate(SharedSessionContractImplementor session, Object owner,
             Object currentValue, EventType eventType) {
+
+        // Se o objeto já possui um ID (ex: importação de dados), mantém o atual
         if (currentValue != null) {
             return currentValue;
         }
+
+        // Caso contrário, gera um novo UUID aleatório
         return UUID.randomUUID().toString();
     }
 
@@ -66,6 +69,7 @@ public class TurUuidGenerator implements BeforeExecutionGenerator {
 
     @Override
     public boolean allowAssignedIdentifiers() {
+        // Mantém a funcionalidade de aceitar IDs pré-definidos
         return true;
     }
 

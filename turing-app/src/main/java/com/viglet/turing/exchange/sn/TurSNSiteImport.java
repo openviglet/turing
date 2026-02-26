@@ -25,9 +25,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.exchange.TurExchange;
+import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
@@ -36,6 +38,7 @@ import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
+import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
@@ -52,6 +55,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSNSiteImport {
 	private final TurSNSiteRepository turSNSiteRepository;
 	private final TurSEInstanceRepository turSEInstanceRepository;
+	private final TurSEVendorRepository turSEVendorRepository;
 	private final TurSNSiteFieldRepository turSNSiteFieldRepository;
 	private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
 	private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
@@ -62,6 +66,7 @@ public class TurSNSiteImport {
 
 	public TurSNSiteImport(TurSNSiteRepository turSNSiteRepository,
 			TurSEInstanceRepository turSEInstanceRepository,
+			TurSEVendorRepository turSEVendorRepository,
 			TurSNSiteFieldRepository turSNSiteFieldRepository,
 			TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
 			TurSNSiteLocaleRepository turSNSiteLocaleRepository,
@@ -71,6 +76,7 @@ public class TurSNSiteImport {
 			TurSNSiteGenAiRepository turSNSiteGenAiRepository) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSEInstanceRepository = turSEInstanceRepository;
+		this.turSEVendorRepository = turSEVendorRepository;
 		this.turSNSiteFieldRepository = turSNSiteFieldRepository;
 		this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
 		this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -93,10 +99,32 @@ public class TurSNSiteImport {
 
 			TurSNSite turSNSite = createSNSiteFromExchange(turSNSiteExchange);
 
+			if (turSNSite.getTurSEInstance() == null) {
+				log.error("Cannot import SN Site '{}' ({}): no SE Instance available. " +
+						"Please create a Search Engine instance first.",
+						turSNSiteExchange.getName(), turSNSiteExchange.getId());
+				continue;
+			}
+
 			// Save GenAi configuration (preserves original ID)
 			saveGenAi(turSNSiteExchange, turSNSite);
 
 			TurSNSite savedSite = turSNSiteRepository.saveAndFlush(turSNSite);
+			log.info("Saved SN Site: {} ({})", savedSite.getName(), savedSite.getId());
+
+			log.info("Exchange fields: {}, fieldExts: {}, locales: {}, spotlights: {}, rankings: {}",
+					turSNSiteExchange.getTurSNSiteFields() != null ? turSNSiteExchange.getTurSNSiteFields().size()
+							: "null",
+					turSNSiteExchange.getTurSNSiteFieldExts() != null ? turSNSiteExchange.getTurSNSiteFieldExts().size()
+							: "null",
+					turSNSiteExchange.getTurSNSiteLocales() != null ? turSNSiteExchange.getTurSNSiteLocales().size()
+							: "null",
+					turSNSiteExchange.getTurSNSiteSpotlights() != null
+							? turSNSiteExchange.getTurSNSiteSpotlights().size()
+							: "null",
+					turSNSiteExchange.getTurSNRankingExpressions() != null
+							? turSNSiteExchange.getTurSNRankingExpressions().size()
+							: "null");
 
 			saveSNSiteFields(turSNSiteExchange, savedSite);
 			saveSNSiteFieldExts(turSNSiteExchange, savedSite);
@@ -139,19 +167,84 @@ public class TurSNSiteImport {
 		turSNSite.setSpellCheckFixes(turSNSiteExchange.getSpellCheckFixes());
 		turSNSite.setSpotlightWithResults(turSNSiteExchange.getSpotlightWithResults());
 
-		if (turSNSiteExchange.getTurSEInstance() != null) {
-			turSNSite.setTurSEInstance(
-					turSEInstanceRepository.findById(turSNSiteExchange.getTurSEInstance()).orElse(null));
-		}
+		// Resolve SE Instance: try the exported ID first, then fall back to any
+		// available instance
+		resolveSEInstance(turSNSiteExchange, turSNSite);
 
 		return turSNSite;
+	}
+
+	private void resolveSEInstance(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
+		if (turSNSiteExchange.getTurSEInstance() != null) {
+			turSEInstanceRepository.findById(turSNSiteExchange.getTurSEInstance())
+					.ifPresentOrElse(
+							turSNSite::setTurSEInstance,
+							() -> {
+								log.warn("SE Instance '{}' from export not found. " +
+										"Falling back to first available SE Instance.",
+										turSNSiteExchange.getTurSEInstance());
+								assignFirstAvailableSEInstance(turSNSite);
+							});
+		} else {
+			log.warn("No SE Instance specified in export for SN Site '{}'. " +
+					"Falling back to first available SE Instance.",
+					turSNSiteExchange.getName());
+			assignFirstAvailableSEInstance(turSNSite);
+		}
+	}
+
+	private void assignFirstAvailableSEInstance(TurSNSite turSNSite) {
+		turSEInstanceRepository.findAll().stream().findFirst()
+				.ifPresentOrElse(
+						seInstance -> {
+							log.info("Using SE Instance '{}' ({}) as fallback.",
+									seInstance.getTitle(), seInstance.getId());
+							turSNSite.setTurSEInstance(seInstance);
+						},
+						() -> {
+							log.warn("No SE Instance available. Creating a default Solr instance.");
+							TurSEInstance newInstance = createDefaultSEInstance();
+							if (newInstance != null) {
+								turSNSite.setTurSEInstance(newInstance);
+							} else {
+								log.error("Failed to create default SE Instance. " +
+										"Cannot import SN Site without a Search Engine instance.");
+							}
+						});
+	}
+
+	private TurSEInstance createDefaultSEInstance() {
+		return turSEVendorRepository.findById("SOLR")
+				.or(() -> turSEVendorRepository.findAll().stream().findFirst())
+				.map(vendor -> {
+					TurSEInstance seInstance = new TurSEInstance();
+					seInstance.setTitle(vendor.getTitle());
+					seInstance.setDescription("Auto-created during import");
+					seInstance.setTurSEVendor(vendor);
+					seInstance.setHost("localhost");
+					seInstance.setPort(8983);
+					seInstance.setEnabled(1);
+					TurSEInstance saved = turSEInstanceRepository.save(seInstance);
+					log.info("Created default SE Instance '{}' ({}) with vendor '{}'.",
+							saved.getTitle(), saved.getId(), vendor.getTitle());
+					return saved;
+				})
+				.orElseGet(() -> {
+					log.error("No SE Vendor available in the system. Cannot create SE Instance.");
+					return null;
+				});
 	}
 
 	private void saveGenAi(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
 		TurSNSiteGenAi genAi = turSNSiteExchange.getTurSNSiteGenAi();
 		if (genAi != null) {
+			// Clear references to nested entities that may not exist on target system
+			// The LLM and Store instances need to be configured separately after import
+			genAi.setTurLLMInstance(null);
+			genAi.setTurStoreInstance(null);
 			TurSNSiteGenAi savedGenAi = turSNSiteGenAiRepository.save(genAi);
 			turSNSite.setTurSNSiteGenAi(savedGenAi);
+			log.info("Saved GenAi configuration (LLM and Store instances will need to be configured after import).");
 		}
 	}
 
@@ -168,6 +261,11 @@ public class TurSNSiteImport {
 		if (turSNSiteExchange.getTurSNSiteFieldExts() != null) {
 			for (TurSNSiteFieldExt fieldExt : turSNSiteExchange.getTurSNSiteFieldExts()) {
 				fieldExt.setTurSNSite(turSNSite);
+				if (fieldExt.getFacetLocales() != null) {
+					for (TurSNSiteFieldExtFacet facet : fieldExt.getFacetLocales()) {
+						facet.setTurSNSiteFieldExt(fieldExt);
+					}
+				}
 				turSNSiteFieldExtRepository.save(fieldExt);
 			}
 		}
