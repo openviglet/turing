@@ -65,16 +65,16 @@ public class TurIntegrationAPI {
 
     public void proxy(TurIntegrationInstance turIntegrationInstance, HttpServletRequest request,
             HttpServletResponse response) {
-        String endpoint = turIntegrationInstance.getEndpoint() + request.getRequestURI()
-                .replace("/api/v2/integration/" + turIntegrationInstance.getId(), "/api/v2");
-        log.debug("Executing: {}", endpoint);
         URI baseUri = URI.create(turIntegrationInstance.getEndpoint());
-        URI fullUri = URI.create(endpoint);
+        // Build the relative path under /api/v2 based on the incoming request URI
+        String relativePath = request.getRequestURI()
+                .replace("/api/v2/integration/" + turIntegrationInstance.getId(), "/api/v2");
+        URI fullUri = baseUri.resolve(relativePath);
+        log.debug("Executing: {}", fullUri);
 
         try {
             // SSRF Mitigation: Only allow requests to the same host and scheme as the
-            // registered
-            // endpoint
+            // registered endpoint
             if (!baseUri.getHost().equalsIgnoreCase(fullUri.getHost())
                     || !baseUri.getScheme().equalsIgnoreCase(fullUri.getScheme())) {
                 log.warn("Blocked SSRF attempt: attempted host={}, scheme={}", fullUri.getHost(),
@@ -84,18 +84,18 @@ public class TurIntegrationAPI {
                 return;
             }
             // Validate that the path is safe and does not contain traversal or forbidden
-            // segments
+            // segments and that it stays under the expected prefix
 
-            if (!isValidProxyPath(fullUri.getPath())) {
-                log.warn("Blocked SSRF attempt: invalid or unauthorized path: {}",
-                        fullUri.getPath());
+            String proxiedPath = fullUri.getPath();
+            if (!isValidProxyPath(proxiedPath) || !proxiedPath.startsWith("/api/v2")) {
+                log.warn("Blocked SSRF attempt: invalid or unauthorized path: {}", proxiedPath);
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("{\"error\": \"Forbidden proxy path\"}");
                 return;
             }
 
             ClassicHttpRequest proxyRequest = ClassicRequestBuilder.create(request.getMethod())
-                    .setUri(endpoint)
+                    .setUri(fullUri)
                     .setEntity(new InputStreamEntity(request.getInputStream(), ContentType.APPLICATION_JSON))
                     .build();
 
