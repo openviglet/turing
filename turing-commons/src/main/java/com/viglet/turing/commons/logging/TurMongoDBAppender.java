@@ -68,8 +68,7 @@ public class TurMongoDBAppender extends TurMongoDBAppenderBase {
                 String json = MAPPER.writeValueAsString(logEntry);
                 collection.insertOne(Document.parse(json));
             } catch (Exception e) {
-                // Use System.err to avoid recursive logging loops if Mongo is down
-                System.err.println("Failed to log to MongoDB: " + e.getMessage());
+                log.info("Failed to log to MongoDB: " + e.getMessage());
             }
         });
     }

@@ -104,8 +104,7 @@ class TurSNFieldRepairTypeTest {
         TurSNFieldRepairType type2 = TurSNFieldRepairType.SE_CREATE_FIELD;
         TurSNFieldRepairType type3 = TurSNFieldRepairType.SE_CHANGE_TYPE;
 
-        assertThat(type1).isEqualTo(type2);
-        assertThat(type1).isNotEqualTo(type3);
+        assertThat(type1).isEqualTo(type2).isNotEqualTo(type3);
     }
 
     @Test
@@ -148,6 +147,6 @@ class TurSNFieldRepairTypeTest {
         assertThat(TurSNFieldRepairType.SN_CHANGE_TYPE.compareTo(TurSNFieldRepairType.SE_CREATE_FIELD))
                 .isGreaterThan(0);
         assertThat(TurSNFieldRepairType.SE_CHANGE_TYPE.compareTo(TurSNFieldRepairType.SE_CHANGE_TYPE))
-                .isZero();
+            .isEqualByComparingTo(0);
     }
 }

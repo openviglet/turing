@@ -60,7 +60,6 @@ class TurSNSiteFieldServiceTest {
         TurSNSiteFieldService service = new TurSNSiteFieldService(turSNSiteFieldRepository);
         Map<String, TurSNSiteField> map = service.toMap(site);
 
-        assertThat(map).containsEntry("title", field1);
-        assertThat(map).containsEntry("text", field2);
+        assertThat(map).containsEntry("title", field1).containsEntry("text", field2);
     }
 }

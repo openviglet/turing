@@ -136,7 +136,8 @@ public class TurSNSpotlightProcess {
 	@CacheEvict(value = { "spotlight", "spotlight_term" }, allEntries = true)
 	public boolean createUnmanagedSpotlight(TurSNJobItem turSNJobItem, TurSNSite turSNSite) {
 		String id = (String) turSNJobItem.getAttributes().get(TurSNFieldName.ID);
-		TurSNSiteLocale turSNSiteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, turSNJobItem.getLocale());
+		TurSNSiteLocale turSNSiteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite,
+				turSNJobItem.getLocale());
 
 		if (turSNSiteLocale == null) {
 			logger.warn("Spotlight ID '{}' of '{}' SN Site was not processed, because {} locale did not found.",
@@ -177,7 +178,8 @@ public class TurSNSpotlightProcess {
 		return spotlight;
 	}
 
-	private void populateSpotlightFromJobItem(TurSNSiteSpotlight spotlight, TurSNJobItem jobItem, TurSNSite site, TurSNSiteLocale locale) {
+	private void populateSpotlightFromJobItem(TurSNSiteSpotlight spotlight, TurSNJobItem jobItem, TurSNSite site,
+			TurSNSiteLocale locale) {
 		String id = (String) jobItem.getAttributes().get(TurSNFieldName.ID);
 		String name = (String) jobItem.getAttributes().get(NAME_ATTRIBUTE);
 		String provider = (String) jobItem.getAttributes().get(TurSNFieldName.SOURCE_APPS);
@@ -205,10 +207,11 @@ public class TurSNSpotlightProcess {
 		}
 	}
 
-	private void saveSpotlightDocuments(TurSNJobItem jobItem, TurSNSiteSpotlight spotlight) throws Exception {
+	private void saveSpotlightDocuments(TurSNJobItem jobItem, TurSNSiteSpotlight spotlight) {
 		String jsonContent = (String) jobItem.getAttributes().get(CONTENT_ATTRIBUTE);
 		List<TurSpotlightContent> contents = JsonMapper.builder().build()
-				.readValue(jsonContent, new TypeReference<List<TurSpotlightContent>>() {});
+				.readValue(jsonContent, new TypeReference<List<TurSpotlightContent>>() {
+				});
 		for (TurSpotlightContent content : contents) {
 			TurSNSiteSpotlightDocument document = getTurSNSiteSpotlightDocument(content, spotlight);
 			turSNSiteSpotlightDocumentRepository.save(document);
