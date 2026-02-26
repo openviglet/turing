@@ -54,6 +54,7 @@ public class TurIntegrationAPI {
         this.proxyHttpClient = proxyHttpClient;
     }
 
+    @SuppressWarnings("java:S3752")
     @RequestMapping(value = "**", method = { RequestMethod.GET, RequestMethod.POST,
             RequestMethod.PUT, RequestMethod.DELETE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public void indexAnyRequest(HttpServletRequest request, HttpServletResponse response,

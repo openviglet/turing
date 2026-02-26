@@ -75,6 +75,7 @@ public class TurSecurityConfigProduction {
         }
 
         @Bean
+        @SuppressWarnings("java:S4502")
         SecurityFilterChain filterChain(HttpSecurity http,
                         TurAuthTokenHeaderFilter turAuthTokenHeaderFilter,
                         TurLogoutHandler turLogoutHandler,
@@ -88,6 +89,7 @@ public class TurSecurityConfigProduction {
                 http.addFilterBefore(turAuthTokenHeaderFilter, BasicAuthenticationFilter.class);
                 http.userDetailsService(userDetailsService);
                 http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+
                 http.csrf(csrf -> csrf
                                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                                 .csrfTokenRequestHandler(new TurSpaCsrfTokenRequestHandler())

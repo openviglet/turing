@@ -62,6 +62,7 @@ import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -69,6 +70,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/sn")
 @Tag(name = "Semantic Navigation Site", description = "Semantic Navigation Site API")
 @ComponentScan("com.viglet.turing")
+@RequiredArgsConstructor
 public class TurSNSiteAPI {
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
@@ -79,26 +81,6 @@ public class TurSNSiteAPI {
     private final TurSolrInstanceProcess turSolrInstanceProcess;
     private final TurSolr turSolr;
     private final TurConfigProperties turConfigProperties;
-
-    public TurSNSiteAPI(TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-            TurSNSiteGenAiRepository turSNSiteGenAiRepository,
-            TurSNSiteExport turSNSiteExport,
-            TurSNTemplate turSNTemplate,
-            TurSNQueue turSNQueue,
-            TurSolrInstanceProcess turSolrInstanceProcess,
-            TurSolr turSolr,
-            TurConfigProperties turConfigProperties) {
-        this.turSNSiteRepository = turSNSiteRepository;
-        this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
-        this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
-        this.turSNSiteExport = turSNSiteExport;
-        this.turSNTemplate = turSNTemplate;
-        this.turSNQueue = turSNQueue;
-        this.turSolrInstanceProcess = turSolrInstanceProcess;
-        this.turSolr = turSolr;
-        this.turConfigProperties = turConfigProperties;
-    }
 
     @Operation(summary = "Semantic Navigation Site List")
     @GetMapping

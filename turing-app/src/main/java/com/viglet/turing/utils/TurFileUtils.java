@@ -345,21 +345,18 @@ public class TurFileUtils {
     }
 
     public static boolean isSafe(InetAddress address) {
-        if (address.isLoopbackAddress())
+        if (address.isLoopbackAddress() ||
+                address.isSiteLocalAddress() ||
+                address.isLinkLocalAddress() ||
+                address.isAnyLocalAddress() ||
+                address.isMulticastAddress()) {
             return false;
+        }
 
-        if (address.isSiteLocalAddress())
-            return false;
+        return isSafeInet4Address(address);
+    }
 
-        if (address.isLinkLocalAddress())
-            return false;
-
-        if (address.isAnyLocalAddress())
-            return false;
-
-        if (address.isMulticastAddress())
-            return false;
-
+    private static boolean isSafeInet4Address(InetAddress address) {
         if (address instanceof Inet4Address) {
             byte[] addr = address.getAddress();
             int firstOctet = addr[0] & 0xFF;
@@ -381,7 +378,6 @@ public class TurFileUtils {
             if (firstOctet == 100 && (secondOctet >= 64 && secondOctet <= 127))
                 return false;
         }
-
         return true;
     }
 

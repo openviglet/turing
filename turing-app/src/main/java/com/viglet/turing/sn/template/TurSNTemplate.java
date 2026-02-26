@@ -181,13 +181,16 @@ public class TurSNTemplate {
                 }
         }
 
-        private void createSNSiteField(TurSNSite turSNSite, String name, String description, TurSEFieldType type,
-                        int multiValued, String facetName, HashSet<TurSNSiteFieldExtFacet> facetLocales, int hl) {
+        private void sendFieldsToService(TurSNSite turSNSite, List<TurSNFieldDefinition> fieldDefinitions) {
+                fieldDefinitions.forEach(fieldDefinition -> createSNSiteField(fieldDefinition, turSNSite));
+        }
+
+        private void createSNSiteField(TurSNFieldDefinition fieldDefinition, TurSNSite turSNSite) {
                 TurSNSiteField turSNSiteField = new TurSNSiteField();
-                turSNSiteField.setName(name);
-                turSNSiteField.setDescription(description);
-                turSNSiteField.setType(type);
-                turSNSiteField.setMultiValued(multiValued);
+                turSNSiteField.setName(fieldDefinition.name());
+                turSNSiteField.setDescription(fieldDefinition.description());
+                turSNSiteField.setType(fieldDefinition.type());
+                turSNSiteField.setMultiValued(fieldDefinition.multiValued());
                 turSNSiteField.setTurSNSite(turSNSite);
 
                 turSNSiteFieldRepository.save(turSNSiteField);
@@ -196,8 +199,8 @@ public class TurSNTemplate {
                                 .name(turSNSiteField.getName())
                                 .description(turSNSiteField.getDescription())
                                 .facet(0)
-                                .facetName(facetName)
-                                .hl(hl)
+                                .facetName(fieldDefinition.facetName())
+                                .hl(fieldDefinition.hl())
                                 .multiValued(turSNSiteField.getMultiValued())
                                 .mlt(0)
                                 .externalId(turSNSiteField.getId())
@@ -205,12 +208,13 @@ public class TurSNTemplate {
                                 .type(turSNSiteField.getType())
                                 .turSNSite(turSNSite).build();
                 turSNSiteFieldExtRepository.save(turSNSiteFieldExt);
-                facetLocales.forEach(facetLocale -> {
+                fieldDefinition.locales().forEach(facetLocale -> {
                         facetLocale.setTurSNSiteFieldExt(turSNSiteFieldExt);
                         turSNSiteFieldExtFacetRepository.save(facetLocale);
                 });
                 turSNSiteLocaleRepository.findByTurSNSite(turSNSite).forEach(
-                                turSNSiteLocale -> createCopyField(multiValued, turSNSiteLocale, turSNSiteField));
+                                turSNSiteLocale -> createCopyField(fieldDefinition.multiValued(), turSNSiteLocale,
+                                                turSNSiteField));
         }
 
         private void createCopyField(int multiValued, TurSNSiteLocale turSNSiteLocale, TurSNSiteField turSNSiteField) {
@@ -228,34 +232,34 @@ public class TurSNTemplate {
         }
 
         public void createSEFields(TurSNSite turSNSite) {
-                createSNSiteField(turSNSite, ID, "Id Field", TurSEFieldType.STRING, 0,
-                                "Ids", getFacetLocales("Ids"), 1);
-                createSNSiteField(turSNSite, TITLE, "Title Field", TurSEFieldType.TEXT, 0,
-                                "Titles", getFacetLocales("Titulos"), 1);
-                createSNSiteField(turSNSite, TEXT, "Text Field", TurSEFieldType.TEXT, 0,
-                                "Texts", getFacetLocales("Textos"), 1);
-                createSNSiteField(turSNSite, ABSTRACT, "Short Description Field", TurSEFieldType.TEXT,
-                                0, "Abstracts", getFacetLocales("Resumos"), 1);
-                createSNSiteField(turSNSite, TYPE, "Content Type Field", TurSEFieldType.STRING, 0,
-                                "Types", getFacetLocales("Tipos"), 1);
-                createSNSiteField(turSNSite, IMAGE, "Image Field", TurSEFieldType.STRING, 0,
-                                "Images", getFacetLocales("Images"), 0);
-                createSNSiteField(turSNSite, URL, "URL Field", TurSEFieldType.STRING, 0,
-                                "URLs", getFacetLocales("URLs"), 0);
-                createSNSiteField(turSNSite, PUBLICATION_DATE, "Publication Date", TurSEFieldType.DATE,
-                                0, "Publication Dates",
-                                getFacetLocales("Datas de Publicação"), 0);
-                createSNSiteField(turSNSite, MODIFICATION_DATE, "Modification Date", TurSEFieldType.DATE,
-                                0, "Modification Dates",
-                                getFacetLocales("Datas de Modificação"), 0);
-                createSNSiteField(turSNSite, SITE, "Site Name", TurSEFieldType.STRING, 0,
-                                "Sites", getFacetLocales("Nome dos Sites"), 0);
-                createSNSiteField(turSNSite, AUTHOR, "Author", TurSEFieldType.STRING, 0,
-                                "Authors", getFacetLocales("Autores"), 0);
-                createSNSiteField(turSNSite, SECTION, "Section", TurSEFieldType.STRING, 0,
-                                "Sections", getFacetLocales("Sessões"), 0);
-                createSNSiteField(turSNSite, SOURCE_APPS, "Source Apps", TurSEFieldType.STRING, 1,
-                                "Source Apps", getFacetLocales("Apps de Origem"), 0);
+                List<TurSNFieldDefinition> fields = List.of(
+                                new TurSNFieldDefinition(ID, "Id Field", TurSEFieldType.STRING, 0, "Ids",
+                                                getFacetLocales("Ids"), 1),
+                                new TurSNFieldDefinition(TITLE, "Title Field", TurSEFieldType.TEXT, 0, "Titles",
+                                                getFacetLocales("Titulos"), 1),
+                                new TurSNFieldDefinition(TEXT, "Text Field", TurSEFieldType.TEXT, 0, "Texts",
+                                                getFacetLocales("Textos"), 1),
+                                new TurSNFieldDefinition(ABSTRACT, "Short Description Field", TurSEFieldType.TEXT, 0,
+                                                "Abstracts", getFacetLocales("Resumos"), 1),
+                                new TurSNFieldDefinition(TYPE, "Content Type Field", TurSEFieldType.STRING, 0, "Types",
+                                                getFacetLocales("Tipos"), 1),
+                                new TurSNFieldDefinition(IMAGE, "Image Field", TurSEFieldType.STRING, 0, "Images",
+                                                getFacetLocales("Images"), 0),
+                                new TurSNFieldDefinition(URL, "URL Field", TurSEFieldType.STRING, 0, "URLs",
+                                                getFacetLocales("URLs"), 0),
+                                new TurSNFieldDefinition(PUBLICATION_DATE, "Publication Date", TurSEFieldType.DATE, 0,
+                                                "Publication Dates", getFacetLocales("Datas de Publicação"), 0),
+                                new TurSNFieldDefinition(MODIFICATION_DATE, "Modification Date", TurSEFieldType.DATE, 0,
+                                                "Modification Dates", getFacetLocales("Datas de Modificação"), 0),
+                                new TurSNFieldDefinition(SITE, "Site Name", TurSEFieldType.STRING, 0, "Sites",
+                                                getFacetLocales("Nome dos Sites"), 0),
+                                new TurSNFieldDefinition(AUTHOR, "Author", TurSEFieldType.STRING, 0, "Authors",
+                                                getFacetLocales("Autores"), 0),
+                                new TurSNFieldDefinition(SECTION, "Section", TurSEFieldType.STRING, 0, "Sections",
+                                                getFacetLocales("Sessões"), 0),
+                                new TurSNFieldDefinition(SOURCE_APPS, "Source Apps", TurSEFieldType.STRING, 1,
+                                                "Source Apps", getFacetLocales("Apps de Origem"), 0));
+                sendFieldsToService(turSNSite, fields);
         }
 
         public void createLocale(TurSNSite turSNSite, String username, Locale locale) {
