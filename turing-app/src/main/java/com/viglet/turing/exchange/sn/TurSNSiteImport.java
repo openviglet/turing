@@ -22,65 +22,197 @@
 package com.viglet.turing.exchange.sn;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.exchange.TurExchange;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
+import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
+import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
+import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class TurSNSiteImport {
 	private final TurSNSiteRepository turSNSiteRepository;
 	private final TurSEInstanceRepository turSEInstanceRepository;
-
 	private final TurSNSiteFieldRepository turSNSiteFieldRepository;
+	private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+	private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+	private final TurSNSiteSpotlightRepository turSNSiteSpotlightRepository;
+	private final TurSNRankingExpressionRepository turSNRankingExpressionRepository;
+	private final TurSNRankingConditionRepository turSNRankingConditionRepository;
+	private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
 
 	public TurSNSiteImport(TurSNSiteRepository turSNSiteRepository,
 			TurSEInstanceRepository turSEInstanceRepository,
-			TurSNSiteFieldRepository turSNSiteFieldRepository) {
+			TurSNSiteFieldRepository turSNSiteFieldRepository,
+			TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
+			TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+			TurSNSiteSpotlightRepository turSNSiteSpotlightRepository,
+			TurSNRankingExpressionRepository turSNRankingExpressionRepository,
+			TurSNRankingConditionRepository turSNRankingConditionRepository,
+			TurSNSiteGenAiRepository turSNSiteGenAiRepository) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSEInstanceRepository = turSEInstanceRepository;
 		this.turSNSiteFieldRepository = turSNSiteFieldRepository;
+		this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
+		this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
+		this.turSNSiteSpotlightRepository = turSNSiteSpotlightRepository;
+		this.turSNRankingExpressionRepository = turSNRankingExpressionRepository;
+		this.turSNRankingConditionRepository = turSNRankingConditionRepository;
+		this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
 	}
 
+	@Transactional
 	public void importSNSite(TurExchange turExchange) {
 		for (TurSNSiteExchange turSNSiteExchange : turExchange.getSnSites()) {
-			if (turSNSiteRepository.findById(turSNSiteExchange.getId()).isEmpty()) {
+			// Delete existing site if present (handles re-import with same ID)
+			turSNSiteRepository.findById(turSNSiteExchange.getId()).ifPresent(existing -> {
+				log.info("SN Site already exists, deleting for re-import: {} ({})",
+						existing.getName(), existing.getId());
+				turSNSiteRepository.delete(existing);
+				turSNSiteRepository.flush();
+			});
 
-				TurSNSite turSNSite = new TurSNSite();
-				turSNSite.setDefaultDateField(turSNSiteExchange.getDefaultDateField());
-				turSNSite.setDefaultDescriptionField(turSNSiteExchange.getDefaultDescriptionField());
-				turSNSite.setDefaultImageField(turSNSiteExchange.getDefaultImageField());
-				turSNSite.setDefaultTextField(turSNSiteExchange.getDefaultTextField());
-				turSNSite.setDefaultTitleField(turSNSiteExchange.getDefaultTitleField());
-				turSNSite.setDefaultURLField(turSNSiteExchange.getDefaultURLField());
-				turSNSite.setDescription(turSNSiteExchange.getDescription());
-				turSNSite.setFacet(boolToInteger(turSNSiteExchange.isFacet()));
-				turSNSite.setHl(boolToInteger(turSNSiteExchange.getHl()));
-				turSNSite.setHlPost(turSNSiteExchange.getHlPost());
-				turSNSite.setHlPre(turSNSiteExchange.getHlPre());
-				turSNSite.setId(turSNSiteExchange.getId());
-				turSNSite.setItemsPerFacet(turSNSiteExchange.getItemsPerFacet());
-				turSNSite.setMlt(boolToInteger(turSNSiteExchange.isMlt()));
-				turSNSite.setName(turSNSiteExchange.getName());
-				turSNSite.setRowsPerPage(turSNSiteExchange.getRowsPerPage());
-				turSNSite.setThesaurus(boolToInteger(turSNSiteExchange.isThesaurus()));
-				turSNSite.setTurSEInstance(
-						turSEInstanceRepository.findById(turSNSiteExchange.getTurSEInstance()).orElse(null));
+			TurSNSite turSNSite = createSNSiteFromExchange(turSNSiteExchange);
 
-				turSNSiteRepository.save(turSNSite);
+			// Save GenAi configuration (preserves original ID)
+			saveGenAi(turSNSiteExchange, turSNSite);
 
-				saveSNSiteFields(turSNSiteExchange, turSNSite);
-			}
+			TurSNSite savedSite = turSNSiteRepository.saveAndFlush(turSNSite);
+
+			saveSNSiteFields(turSNSiteExchange, savedSite);
+			saveSNSiteFieldExts(turSNSiteExchange, savedSite);
+			saveSNSiteLocales(turSNSiteExchange, savedSite);
+			saveSNSiteSpotlights(turSNSiteExchange, savedSite);
+			saveSNRankingExpressions(turSNSiteExchange, savedSite);
+
+			log.info("Imported SN Site: {} ({})", savedSite.getName(), savedSite.getId());
+		}
+	}
+
+	private TurSNSite createSNSiteFromExchange(TurSNSiteExchange turSNSiteExchange) {
+		TurSNSite turSNSite = new TurSNSite();
+		turSNSite.setId(turSNSiteExchange.getId());
+		turSNSite.setName(turSNSiteExchange.getName());
+		turSNSite.setDescription(turSNSiteExchange.getDescription());
+		turSNSite.setRowsPerPage(turSNSiteExchange.getRowsPerPage());
+		turSNSite.setWildcardNoResults(turSNSiteExchange.getWildcardNoResults());
+		turSNSite.setWildcardAlways(turSNSiteExchange.getWildcardAlways());
+		turSNSite.setExactMatch(turSNSiteExchange.getExactMatch());
+		turSNSite.setFacet(boolToInteger(turSNSiteExchange.isFacet()));
+		turSNSite.setItemsPerFacet(turSNSiteExchange.getItemsPerFacet());
+		turSNSite.setHl(boolToInteger(turSNSiteExchange.getHl()));
+		turSNSite.setHlPre(turSNSiteExchange.getHlPre());
+		turSNSite.setHlPost(turSNSiteExchange.getHlPost());
+		turSNSite.setMlt(boolToInteger(turSNSiteExchange.isMlt()));
+		turSNSite.setFacetType(turSNSiteExchange.getFacetType());
+		turSNSite.setFacetItemType(turSNSiteExchange.getFacetItemType());
+		turSNSite.setFacetSort(turSNSiteExchange.getFacetSort());
+		turSNSite.setThesaurus(boolToInteger(turSNSiteExchange.isThesaurus()));
+		turSNSite.setDefaultField(turSNSiteExchange.getDefaultField());
+		turSNSite.setExactMatchField(turSNSiteExchange.getExactMatchField());
+		turSNSite.setDefaultTitleField(turSNSiteExchange.getDefaultTitleField());
+		turSNSite.setDefaultTextField(turSNSiteExchange.getDefaultTextField());
+		turSNSite.setDefaultDescriptionField(turSNSiteExchange.getDefaultDescriptionField());
+		turSNSite.setDefaultDateField(turSNSiteExchange.getDefaultDateField());
+		turSNSite.setDefaultImageField(turSNSiteExchange.getDefaultImageField());
+		turSNSite.setDefaultURLField(turSNSiteExchange.getDefaultURLField());
+		turSNSite.setSpellCheck(turSNSiteExchange.getSpellCheck());
+		turSNSite.setSpellCheckFixes(turSNSiteExchange.getSpellCheckFixes());
+		turSNSite.setSpotlightWithResults(turSNSiteExchange.getSpotlightWithResults());
+
+		if (turSNSiteExchange.getTurSEInstance() != null) {
+			turSNSite.setTurSEInstance(
+					turSEInstanceRepository.findById(turSNSiteExchange.getTurSEInstance()).orElse(null));
+		}
+
+		return turSNSite;
+	}
+
+	private void saveGenAi(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
+		TurSNSiteGenAi genAi = turSNSiteExchange.getTurSNSiteGenAi();
+		if (genAi != null) {
+			TurSNSiteGenAi savedGenAi = turSNSiteGenAiRepository.save(genAi);
+			turSNSite.setTurSNSiteGenAi(savedGenAi);
 		}
 	}
 
 	private void saveSNSiteFields(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
-		for (TurSNSiteField turSNSiteField : turSNSiteExchange.getTurSNSiteFields()) {
-			turSNSiteField.setTurSNSite(turSNSite);
-			turSNSiteFieldRepository.save(turSNSiteField);
+		if (turSNSiteExchange.getTurSNSiteFields() != null) {
+			for (TurSNSiteField field : turSNSiteExchange.getTurSNSiteFields()) {
+				field.setTurSNSite(turSNSite);
+				turSNSiteFieldRepository.save(field);
+			}
+		}
+	}
+
+	private void saveSNSiteFieldExts(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
+		if (turSNSiteExchange.getTurSNSiteFieldExts() != null) {
+			for (TurSNSiteFieldExt fieldExt : turSNSiteExchange.getTurSNSiteFieldExts()) {
+				fieldExt.setTurSNSite(turSNSite);
+				turSNSiteFieldExtRepository.save(fieldExt);
+			}
+		}
+	}
+
+	private void saveSNSiteLocales(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
+		if (turSNSiteExchange.getTurSNSiteLocales() != null) {
+			for (TurSNSiteLocale locale : turSNSiteExchange.getTurSNSiteLocales()) {
+				locale.setTurSNSite(turSNSite);
+				turSNSiteLocaleRepository.save(locale);
+			}
+		}
+	}
+
+	private void saveSNSiteSpotlights(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
+		if (turSNSiteExchange.getTurSNSiteSpotlights() != null) {
+			for (TurSNSiteSpotlight spotlight : turSNSiteExchange.getTurSNSiteSpotlights()) {
+				spotlight.setTurSNSite(turSNSite);
+				if (spotlight.getTurSNSiteSpotlightTerms() != null) {
+					for (TurSNSiteSpotlightTerm term : spotlight.getTurSNSiteSpotlightTerms()) {
+						term.setTurSNSiteSpotlight(spotlight);
+					}
+				}
+				if (spotlight.getTurSNSiteSpotlightDocuments() != null) {
+					for (TurSNSiteSpotlightDocument doc : spotlight.getTurSNSiteSpotlightDocuments()) {
+						doc.setTurSNSiteSpotlight(spotlight);
+					}
+				}
+				turSNSiteSpotlightRepository.save(spotlight);
+			}
+		}
+	}
+
+	private void saveSNRankingExpressions(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
+		if (turSNSiteExchange.getTurSNRankingExpressions() != null) {
+			for (TurSNRankingExpression expr : turSNSiteExchange.getTurSNRankingExpressions()) {
+				expr.setTurSNSite(turSNSite);
+				turSNRankingExpressionRepository.save(expr);
+				if (expr.getTurSNRankingConditions() != null) {
+					for (TurSNRankingCondition condition : expr.getTurSNRankingConditions()) {
+						condition.setTurSNRankingExpression(expr);
+						turSNRankingConditionRepository.save(condition);
+					}
+				}
+			}
 		}
 	}
 

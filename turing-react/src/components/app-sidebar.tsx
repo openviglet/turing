@@ -2,6 +2,7 @@ import {
   IconCode,
   IconCpu2,
   IconDatabase,
+  IconFileImport,
   IconPlugConnectedX,
   IconReceiptRupee,
   IconSearch,
@@ -57,6 +58,11 @@ const data = {
       title: "Logging",
       url: "/admin/logging/instance",
       icon: IconReceiptRupee,
+    },
+    {
+      title: "Import",
+      url: "/admin/exchange/import",
+      icon: IconFileImport,
     },
     {
       title: "API Token",

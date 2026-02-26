@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -40,6 +39,7 @@ import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.persistence.utils.TurAssignableUuidGenerator;
 import com.viglet.turing.spring.security.TurAuditable;
 
 import jakarta.persistence.CascadeType;
@@ -73,7 +73,7 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@UuidGenerator
+	@TurAssignableUuidGenerator
 	@Column(name = "id", updatable = false, nullable = false)
 	private String id;
 

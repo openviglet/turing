@@ -34,7 +34,9 @@ const getDiscovery = async (): Promise<TurDiscoveryAPI> => {
 
 
 axios.interceptors.request.use(async (config) => {
-  config.headers['Content-Type'] = 'application/json';
+  if (!(config.data instanceof FormData)) {
+    config.headers['Content-Type'] = 'application/json';
+  }
   config.headers['X-Requested-With'] = 'XMLHttpRequest';
   try {
     const discovery = await getDiscovery();

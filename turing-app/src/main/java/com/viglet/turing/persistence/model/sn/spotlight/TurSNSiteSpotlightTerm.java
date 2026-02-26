@@ -24,9 +24,8 @@ package com.viglet.turing.persistence.model.sn.spotlight;
 import java.io.Serial;
 import java.io.Serializable;
 
-import org.hibernate.annotations.UuidGenerator;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.viglet.turing.persistence.utils.TurAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,7 +52,7 @@ public class TurSNSiteSpotlightTerm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@UuidGenerator
+	@TurAssignableUuidGenerator
 	@Column(name = "id", updatable = false, nullable = false)
 	private String id;
 
