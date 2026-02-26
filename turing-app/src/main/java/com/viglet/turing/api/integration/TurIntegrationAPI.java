@@ -66,25 +66,15 @@ public class TurIntegrationAPI {
     public void proxy(TurIntegrationInstance turIntegrationInstance, HttpServletRequest request,
             HttpServletResponse response) {
         URI baseUri = URI.create(turIntegrationInstance.getEndpoint());
-        // Build the relative path under /api/v2 based on the incoming request URI
         String relativePath = request.getRequestURI()
                 .replace("/api/v2/integration/" + turIntegrationInstance.getId(), "/api/v2");
         URI fullUri = baseUri.resolve(relativePath);
         log.debug("Executing: {}", fullUri);
 
         try {
-            // SSRF Mitigation: Only allow requests to the same host and scheme as the
-            // registered endpoint
-            if (!baseUri.getHost().equalsIgnoreCase(fullUri.getHost())
-                    || !baseUri.getScheme().equalsIgnoreCase(fullUri.getScheme())) {
-                log.warn("Blocked SSRF attempt: attempted host={}, scheme={}", fullUri.getHost(),
-                        fullUri.getScheme());
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("{\"error\": \"Forbidden proxy target\"}");
+            if (!isAllowedProxyTarget(baseUri, fullUri, response)) {
                 return;
             }
-            // Validate that the path is safe and does not contain traversal or forbidden
-            // segments and that it stays under the expected prefix
 
             String proxiedPath = fullUri.getPath();
             if (!isValidProxyPath(proxiedPath) || !proxiedPath.startsWith("/api/v2")) {
@@ -99,31 +89,11 @@ public class TurIntegrationAPI {
                     .setEntity(new InputStreamEntity(request.getInputStream(), ContentType.APPLICATION_JSON))
                     .build();
 
-            // Copy headers (except Content-Length which is managed by HttpClient)
-            request.getHeaderNames().asIterator().forEachRemaining(h -> {
-                if (!h.equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH)) {
-                    proxyRequest.addHeader(h, request.getHeader(h));
-                }
-            });
+            copyRequestHeaders(request, proxyRequest);
 
             proxyHttpClient.execute(proxyRequest, proxyResponse -> {
                 response.setStatus(proxyResponse.getCode());
-
-                for (Header header : proxyResponse.getHeaders()) {
-                    String name = header.getName();
-
-                    // List of CORS headers that should be removed from the destination response
-                    // so that Spring (Turing) can control the CORS for the final client
-                    boolean isCorsHeader = name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN) ||
-                            name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS) ||
-                            name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS) ||
-                            name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS) ||
-                            name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_MAX_AGE);
-
-                    if (!name.equalsIgnoreCase(HttpHeaders.TRANSFER_ENCODING) && !isCorsHeader) {
-                        response.setHeader(name, header.getValue());
-                    }
-                }
+                copyResponseHeaders(proxyResponse, response);
 
                 if (proxyResponse.getEntity() != null) {
                     proxyResponse.getEntity().writeTo(response.getOutputStream());
@@ -134,6 +104,46 @@ public class TurIntegrationAPI {
         } catch (Exception e) {
             log.error("Proxy Error: {}", e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
+        }
+    }
+
+    private boolean isAllowedProxyTarget(URI baseUri, URI fullUri, HttpServletResponse response) {
+        if (!baseUri.getHost().equalsIgnoreCase(fullUri.getHost())
+                || !baseUri.getScheme().equalsIgnoreCase(fullUri.getScheme())) {
+            log.warn("Blocked SSRF attempt: attempted host={}, scheme={}", fullUri.getHost(),
+                    fullUri.getScheme());
+            try {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("{\"error\": \"Forbidden proxy target\"}");
+            } catch (Exception e) {
+                log.error("Error writing forbidden proxy target response: {}", e.getMessage(), e);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private void copyRequestHeaders(HttpServletRequest request, ClassicHttpRequest proxyRequest) {
+        request.getHeaderNames().asIterator().forEachRemaining(h -> {
+            if (!h.equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH)) {
+                proxyRequest.addHeader(h, request.getHeader(h));
+            }
+        });
+    }
+
+    private void copyResponseHeaders(org.apache.hc.core5.http.ClassicHttpResponse proxyResponse,
+            HttpServletResponse response) {
+        for (Header header : proxyResponse.getHeaders()) {
+            String name = header.getName();
+            boolean isCorsHeader = name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN) ||
+                    name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS) ||
+                    name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS) ||
+                    name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS) ||
+                    name.equalsIgnoreCase(HttpHeaders.ACCESS_CONTROL_MAX_AGE);
+
+            if (!name.equalsIgnoreCase(HttpHeaders.TRANSFER_ENCODING) && !isCorsHeader) {
+                response.setHeader(name, header.getValue());
+            }
         }
     }
 
