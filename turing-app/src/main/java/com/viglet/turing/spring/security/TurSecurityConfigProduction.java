@@ -91,7 +91,7 @@ public class TurSecurityConfigProduction {
                 http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 
                 http.csrf(csrf -> csrf
-                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                                .csrfTokenRepository(new CookieCsrfTokenRepository())
                                 .csrfTokenRequestHandler(new TurSpaCsrfTokenRequestHandler())
                                 .ignoringRequestMatchers(
                                                 mvc.matcher("/api/genai/chat"),
