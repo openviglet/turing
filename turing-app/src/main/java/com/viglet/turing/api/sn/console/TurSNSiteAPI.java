@@ -163,10 +163,20 @@ public class TurSNSiteAPI {
     @DeleteMapping("/{id}")
     public boolean turSNSiteDelete(@PathVariable String id) {
         Optional<TurSNSite> turSNSite = turSNSiteRepository.findById(id);
-        turSNSite.ifPresent(
-                site -> turSNSiteLocaleRepository.findByTurSNSite(TurPersistenceUtils.orderByLanguageIgnoreCase(), site)
-                        .forEach(locale -> TurSolrUtils.deleteCore(site.getTurSEInstance(), locale.getCore())));
-        turSNSiteRepository.delete(id);
+        turSNSite.ifPresent(site -> {
+            TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
+            turSNSiteLocaleRepository.findByTurSNSite(TurPersistenceUtils.orderByLanguageIgnoreCase(), site)
+                    .forEach(locale -> TurSolrUtils.deleteCore(site.getTurSEInstance(), locale.getCore()));
+            site.getTurSNSiteFields().clear();
+            site.getTurSNSiteFieldExts().clear();
+            site.getTurSNSiteSpotlights().clear();
+            site.getTurSNRankingExpressions().clear();
+            site.getTurSNSiteMergeProviders().clear();
+            site.setTurSNSiteGenAi(null);
+            turSNSiteRepository.flush();
+            turSNSiteRepository.delete(site);
+            Optional.ofNullable(genAi).ifPresent(turSNSiteGenAiRepository::delete);
+        });
 
         return true;
     }

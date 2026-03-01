@@ -29,8 +29,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 
@@ -59,10 +57,4 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindAByCreatedBy", "turSNSitefindById",
 			"turSNSitefindByName" }, allEntries = true)
 	void delete(@NotNull TurSNSite turSNSite);
-
-	@Modifying
-	@Query("delete from  TurSNSite ss where ss.id = ?1")
-	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindAByCreatedBy", "turSNSitefindById",
-			"turSNSitefindByName" }, allEntries = true)
-	void delete(String id);
 }
