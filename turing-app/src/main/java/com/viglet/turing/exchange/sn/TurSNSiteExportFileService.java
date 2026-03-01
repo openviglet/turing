@@ -9,7 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
@@ -17,12 +19,16 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.exchange.TurExchange;
 import com.viglet.turing.exchange.sn.mixin.TurSNSiteExchangeMixin;
+import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.persistence.model.store.TurStoreInstance;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.SerializationFeature;
@@ -118,16 +124,43 @@ public class TurSNSiteExportFileService {
 		String folderName = "SNSite_" + System.currentTimeMillis();
 
 		List<TurSNSiteExchange> shSiteExchanges = new ArrayList<>();
+		Map<String, TurLLMInstance> llmInstances = new LinkedHashMap<>();
+		Map<String, TurStoreInstance> storeInstances = new LinkedHashMap<>();
+		Map<String, TurSEInstance> seInstances = new LinkedHashMap<>();
 
 		for (TurSNSite turSNSite : turSNSites) {
 			shSiteExchanges.add(this.exportSNSite(turSNSite));
+			collectReferences(turSNSite, llmInstances, storeInstances, seInstances);
 		}
 		TurExchange turExchange = new TurExchange();
-		if (!shSiteExchanges.isEmpty()) {
-			turExchange.setSnSites(shSiteExchanges);
-		}
+		turExchange.setSnSites(shSiteExchanges);
+		turExchange.setLlm(new ArrayList<>(llmInstances.values()));
+		turExchange.setStore(new ArrayList<>(storeInstances.values()));
+		turExchange.setSe(new ArrayList<>(seInstances.values()));
 		File exportFile = prepareExportFile(tmpDir, folderName, turExchange);
 		File zipFile = createZipFile(exportFile);
 		return zipFile.toPath();
+	}
+
+	private void collectReferences(TurSNSite turSNSite,
+			Map<String, TurLLMInstance> llmInstances,
+			Map<String, TurStoreInstance> storeInstances,
+			Map<String, TurSEInstance> seInstances) {
+		if (turSNSite.getTurSEInstance() != null && turSNSite.getTurSEInstance().getId() != null) {
+			seInstances.putIfAbsent(turSNSite.getTurSEInstance().getId(), turSNSite.getTurSEInstance());
+		}
+
+		TurSNSiteGenAi genAi = turSNSite.getTurSNSiteGenAi();
+		if (genAi == null) {
+			return;
+		}
+
+		if (genAi.getTurLLMInstance() != null && genAi.getTurLLMInstance().getId() != null) {
+			llmInstances.putIfAbsent(genAi.getTurLLMInstance().getId(), genAi.getTurLLMInstance());
+		}
+
+		if (genAi.getTurStoreInstance() != null && genAi.getTurStoreInstance().getId() != null) {
+			storeInstances.putIfAbsent(genAi.getTurStoreInstance().getId(), genAi.getTurStoreInstance());
+		}
 	}
 }

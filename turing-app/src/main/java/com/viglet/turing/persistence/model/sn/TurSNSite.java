@@ -66,7 +66,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "sn_site")
 @JsonIgnoreProperties({ "turSNSiteFields", "turSNSiteFieldExts", "turSNSiteSpotlights",
-		"turSNSiteLocales", "turSNSiteMetricAccesses", "turSNRankingExpressions" })
+		"turSNSiteLocales", "turSNSiteMetricAccesses", "turSNRankingExpressions", "turSNSiteMergeProviders" })
 @EntityListeners(AuditingEntityListener.class)
 public class TurSNSite extends TurAuditable<String> implements Serializable {
 

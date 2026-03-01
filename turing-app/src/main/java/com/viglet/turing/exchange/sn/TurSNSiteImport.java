@@ -118,6 +118,8 @@ public class TurSNSiteImport {
 
 	@Transactional
 	public void importSNSite(TurExchange turExchange) {
+		importReferencedInstances(turExchange);
+
 		for (TurSNSiteExchange turSNSiteExchange : turExchange.getSnSites()) {
 			// Delete existing site if present (handles re-import with same ID)
 			turSNSiteRepository.findById(turSNSiteExchange.getId()).ifPresent(existing -> {
@@ -137,7 +139,7 @@ public class TurSNSiteImport {
 			}
 
 			// Save GenAi configuration (preserves original ID)
-			saveGenAi(turSNSiteExchange, turSNSite);
+			saveGenAi(turSNSiteExchange, turSNSite, turExchange);
 
 			TurSNSite savedSite = turSNSiteRepository.saveAndFlush(turSNSite);
 			log.info("Saved SN Site: {} ({})", savedSite.getName(), savedSite.getId());
@@ -166,6 +168,42 @@ public class TurSNSiteImport {
 			log.info("Imported SN Site: {} ({})", savedSite.getName(), savedSite.getId());
 		}
 		clearSemanticNavigationCaches();
+	}
+
+	private void importReferencedInstances(TurExchange turExchange) {
+		if (turExchange == null) {
+			return;
+		}
+		importSEInstances(turExchange);
+		importLLMInstances(turExchange);
+		importStoreInstances(turExchange);
+	}
+
+	private void importSEInstances(TurExchange turExchange) {
+		if (turExchange.getSe() == null) {
+			return;
+		}
+		for (TurSEInstance exportedSeInstance : turExchange.getSe()) {
+			resolveOrCreateSEInstance(exportedSeInstance);
+		}
+	}
+
+	private void importLLMInstances(TurExchange turExchange) {
+		if (turExchange.getLlm() == null) {
+			return;
+		}
+		for (TurLLMInstance exportedLlmInstance : turExchange.getLlm()) {
+			resolveOrCreateLLMInstance(exportedLlmInstance, turExchange);
+		}
+	}
+
+	private void importStoreInstances(TurExchange turExchange) {
+		if (turExchange.getStore() == null) {
+			return;
+		}
+		for (TurStoreInstance exportedStoreInstance : turExchange.getStore()) {
+			resolveOrCreateStoreInstance(exportedStoreInstance, turExchange);
+		}
 	}
 
 	private void clearSemanticNavigationCaches() {
@@ -279,11 +317,16 @@ public class TurSNSiteImport {
 				});
 	}
 
-	private void saveGenAi(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
-		TurSNSiteGenAi genAi = turSNSiteExchange.getTurSNSiteGenAi();
-		if (genAi != null) {
-			genAi.setTurLLMInstance(resolveOrCreateLLMInstance(genAi.getTurLLMInstance()));
-			genAi.setTurStoreInstance(resolveOrCreateStoreInstance(genAi.getTurStoreInstance()));
+	private void saveGenAi(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite, TurExchange turExchange) {
+		TurSNSiteGenAiExchange genAiExchange = turSNSiteExchange.getTurSNSiteGenAi();
+		if (genAiExchange != null) {
+			TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+			genAi.setId(genAiExchange.getId());
+			genAi.setEnabled(genAiExchange.isEnabled());
+			genAi.setSystemPrompt(genAiExchange.getSystemPrompt());
+			genAi.setTurLLMInstance(resolveOrCreateLLMInstanceById(genAiExchange.getTurLLMInstance(), turExchange));
+			genAi.setTurStoreInstance(
+					resolveOrCreateStoreInstanceById(genAiExchange.getTurStoreInstance(), turExchange));
 
 			TurSNSiteGenAi savedGenAi = turSNSiteGenAiRepository.save(genAi);
 			turSNSite.setTurSNSiteGenAi(savedGenAi);
@@ -291,16 +334,42 @@ public class TurSNSiteImport {
 		}
 	}
 
-	private TurLLMInstance resolveOrCreateLLMInstance(TurLLMInstance exportedLlmInstance) {
+	private TurLLMInstance resolveOrCreateLLMInstanceById(String llmInstanceId, TurExchange turExchange) {
+		if (llmInstanceId == null) {
+			return null;
+		}
+		TurLLMInstance llmReference = new TurLLMInstance();
+		llmReference.setId(llmInstanceId);
+		return resolveOrCreateLLMInstance(llmReference, turExchange);
+	}
+
+	private TurStoreInstance resolveOrCreateStoreInstanceById(String storeInstanceId, TurExchange turExchange) {
+		if (storeInstanceId == null) {
+			return null;
+		}
+		TurStoreInstance storeReference = new TurStoreInstance();
+		storeReference.setId(storeInstanceId);
+		return resolveOrCreateStoreInstance(storeReference, turExchange);
+	}
+
+	private TurLLMInstance resolveOrCreateLLMInstance(TurLLMInstance exportedLlmInstance, TurExchange turExchange) {
 		if (exportedLlmInstance == null) {
 			return null;
 		}
+
+		exportedLlmInstance = resolveLlmDetailsFromRootReference(exportedLlmInstance, turExchange);
 
 		if (exportedLlmInstance.getId() != null) {
 			var existing = turLLMInstanceRepository.findById(exportedLlmInstance.getId());
 			if (existing.isPresent()) {
 				return existing.get();
 			}
+		}
+
+		if (exportedLlmInstance.getId() == null || exportedLlmInstance.getTitle() == null
+				|| exportedLlmInstance.getUrl() == null) {
+			log.warn("Skipping creation of LLM Instance due to missing required data (id/title/url).");
+			return null;
 		}
 
 		TurLLMVendor vendor = resolveLLMVendor(exportedLlmInstance);
@@ -336,16 +405,25 @@ public class TurSNSiteImport {
 		return created;
 	}
 
-	private TurStoreInstance resolveOrCreateStoreInstance(TurStoreInstance exportedStoreInstance) {
+	private TurStoreInstance resolveOrCreateStoreInstance(TurStoreInstance exportedStoreInstance,
+			TurExchange turExchange) {
 		if (exportedStoreInstance == null) {
 			return null;
 		}
+
+		exportedStoreInstance = resolveStoreDetailsFromRootReference(exportedStoreInstance, turExchange);
 
 		if (exportedStoreInstance.getId() != null) {
 			var existing = turStoreInstanceRepository.findById(exportedStoreInstance.getId());
 			if (existing.isPresent()) {
 				return existing.get();
 			}
+		}
+
+		if (exportedStoreInstance.getId() == null || exportedStoreInstance.getTitle() == null
+				|| exportedStoreInstance.getUrl() == null) {
+			log.warn("Skipping creation of Store Instance due to missing required data (id/title/url).");
+			return null;
 		}
 
 		TurStoreVendor vendor = resolveStoreVendor(exportedStoreInstance);
@@ -395,6 +473,93 @@ public class TurSNSiteImport {
 		}
 
 		return turStoreVendorRepository.findAll().stream().findFirst().orElse(null);
+	}
+
+	private TurLLMInstance resolveLlmDetailsFromRootReference(TurLLMInstance exportedLlmInstance,
+			TurExchange turExchange) {
+		if (exportedLlmInstance == null || exportedLlmInstance.getId() == null || turExchange == null
+				|| turExchange.getLlm() == null) {
+			return exportedLlmInstance;
+		}
+
+		if (exportedLlmInstance.getTitle() != null && exportedLlmInstance.getUrl() != null
+				&& exportedLlmInstance.getTurLLMVendor() != null) {
+			return exportedLlmInstance;
+		}
+
+		for (TurLLMInstance llmInstance : turExchange.getLlm()) {
+			if (exportedLlmInstance.getId().equals(llmInstance.getId())) {
+				return llmInstance;
+			}
+		}
+
+		return exportedLlmInstance;
+	}
+
+	private TurStoreInstance resolveStoreDetailsFromRootReference(TurStoreInstance exportedStoreInstance,
+			TurExchange turExchange) {
+		if (exportedStoreInstance == null || exportedStoreInstance.getId() == null || turExchange == null
+				|| turExchange.getStore() == null) {
+			return exportedStoreInstance;
+		}
+
+		if (exportedStoreInstance.getTitle() != null && exportedStoreInstance.getUrl() != null
+				&& exportedStoreInstance.getTurStoreVendor() != null) {
+			return exportedStoreInstance;
+		}
+
+		for (TurStoreInstance storeInstance : turExchange.getStore()) {
+			if (exportedStoreInstance.getId().equals(storeInstance.getId())) {
+				return storeInstance;
+			}
+		}
+
+		return exportedStoreInstance;
+	}
+
+	private TurSEInstance resolveOrCreateSEInstance(TurSEInstance exportedSeInstance) {
+		if (exportedSeInstance == null || exportedSeInstance.getId() == null) {
+			return null;
+		}
+
+		var existing = turSEInstanceRepository.findById(exportedSeInstance.getId());
+		if (existing.isPresent()) {
+			return existing.get();
+		}
+
+		if (exportedSeInstance.getTitle() == null || exportedSeInstance.getHost() == null) {
+			log.warn("Skipping creation of SE Instance due to missing required data (id/title/host). id={}",
+					exportedSeInstance.getId());
+			return null;
+		}
+
+		if (exportedSeInstance.getTurSEVendor() == null || exportedSeInstance.getTurSEVendor().getId() == null) {
+			log.warn("Skipping creation of SE Instance '{}' because se vendor is missing.",
+					exportedSeInstance.getId());
+			return null;
+		}
+
+		return turSEVendorRepository.findById(exportedSeInstance.getTurSEVendor().getId())
+				.or(() -> turSEVendorRepository.findAll().stream().findFirst())
+				.map(vendor -> {
+					TurSEInstance seToCreate = new TurSEInstance();
+					seToCreate.setId(exportedSeInstance.getId());
+					seToCreate.setTitle(exportedSeInstance.getTitle());
+					seToCreate.setDescription(exportedSeInstance.getDescription());
+					seToCreate.setEnabled(exportedSeInstance.getEnabled());
+					seToCreate.setHost(exportedSeInstance.getHost());
+					seToCreate.setPort(exportedSeInstance.getPort());
+					seToCreate.setTurSEVendor(vendor);
+					TurSEInstance created = turSEInstanceRepository.save(seToCreate);
+					log.info("Created missing SE Instance '{}' ({}) from root exchange references.",
+							created.getTitle(), created.getId());
+					return created;
+				})
+				.orElseGet(() -> {
+					log.warn("No SE Vendor available to create referenced SE Instance '{}' .",
+							exportedSeInstance.getId());
+					return null;
+				});
 	}
 
 	private void saveSNSiteMergeProviders(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {

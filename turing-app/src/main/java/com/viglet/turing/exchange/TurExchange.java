@@ -25,6 +25,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.viglet.turing.exchange.sn.TurSNSiteExchange;
+import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.persistence.model.store.TurStoreInstance;
 
 import lombok.Getter;
 
@@ -35,7 +38,28 @@ public class TurExchange {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private List<TurSNSiteExchange> snSites;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private List<TurLLMInstance> llm;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private List<TurStoreInstance> store;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private List<TurSEInstance> se;
+
 	public void setSnSites(List<TurSNSiteExchange> snSites) {
 		this.snSites = snSites;
+	}
+
+	public void setLlm(List<TurLLMInstance> llm) {
+		this.llm = llm;
+	}
+
+	public void setStore(List<TurStoreInstance> store) {
+		this.store = store;
+	}
+
+	public void setSe(List<TurSEInstance> se) {
+		this.se = se;
 	}
 }
