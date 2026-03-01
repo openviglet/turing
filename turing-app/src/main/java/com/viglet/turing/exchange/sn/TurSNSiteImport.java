@@ -21,10 +21,13 @@
 
 package com.viglet.turing.exchange.sn;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.exchange.TurExchange;
+import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
@@ -32,11 +35,17 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -44,9 +53,12 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtReposi
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
 import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +75,12 @@ public class TurSNSiteImport {
 	private final TurSNRankingExpressionRepository turSNRankingExpressionRepository;
 	private final TurSNRankingConditionRepository turSNRankingConditionRepository;
 	private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+	private final TurLLMInstanceRepository turLLMInstanceRepository;
+	private final TurLLMVendorRepository turLLMVendorRepository;
+	private final TurStoreInstanceRepository turStoreInstanceRepository;
+	private final TurStoreVendorRepository turStoreVendorRepository;
+	private final TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository;
+	private final CacheManager cacheManager;
 
 	public TurSNSiteImport(TurSNSiteRepository turSNSiteRepository,
 			TurSEInstanceRepository turSEInstanceRepository,
@@ -73,7 +91,13 @@ public class TurSNSiteImport {
 			TurSNSiteSpotlightRepository turSNSiteSpotlightRepository,
 			TurSNRankingExpressionRepository turSNRankingExpressionRepository,
 			TurSNRankingConditionRepository turSNRankingConditionRepository,
-			TurSNSiteGenAiRepository turSNSiteGenAiRepository) {
+			TurSNSiteGenAiRepository turSNSiteGenAiRepository,
+			TurLLMInstanceRepository turLLMInstanceRepository,
+			TurLLMVendorRepository turLLMVendorRepository,
+			TurStoreInstanceRepository turStoreInstanceRepository,
+			TurStoreVendorRepository turStoreVendorRepository,
+			TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository,
+			CacheManager cacheManager) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSEInstanceRepository = turSEInstanceRepository;
 		this.turSEVendorRepository = turSEVendorRepository;
@@ -84,6 +108,12 @@ public class TurSNSiteImport {
 		this.turSNRankingExpressionRepository = turSNRankingExpressionRepository;
 		this.turSNRankingConditionRepository = turSNRankingConditionRepository;
 		this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
+		this.turLLMInstanceRepository = turLLMInstanceRepository;
+		this.turLLMVendorRepository = turLLMVendorRepository;
+		this.turStoreInstanceRepository = turStoreInstanceRepository;
+		this.turStoreVendorRepository = turStoreVendorRepository;
+		this.turSNSiteMergeProvidersRepository = turSNSiteMergeProvidersRepository;
+		this.cacheManager = cacheManager;
 	}
 
 	@Transactional
@@ -131,9 +161,23 @@ public class TurSNSiteImport {
 			saveSNSiteLocales(turSNSiteExchange, savedSite);
 			saveSNSiteSpotlights(turSNSiteExchange, savedSite);
 			saveSNRankingExpressions(turSNSiteExchange, savedSite);
+			saveSNSiteMergeProviders(turSNSiteExchange, savedSite);
 
 			log.info("Imported SN Site: {} ({})", savedSite.getName(), savedSite.getId());
 		}
+		clearSemanticNavigationCaches();
+	}
+
+	private void clearSemanticNavigationCaches() {
+		cacheManager.getCacheNames().stream()
+				.filter(cacheName -> cacheName.startsWith("turSN") || cacheName.startsWith("spotlight"))
+				.forEach(cacheName -> {
+					var cache = cacheManager.getCache(cacheName);
+					if (cache != null) {
+						cache.clear();
+					}
+				});
+		log.info("Semantic Navigation caches were cleared after import.");
 	}
 
 	private TurSNSite createSNSiteFromExchange(TurSNSiteExchange turSNSiteExchange) {
@@ -238,13 +282,132 @@ public class TurSNSiteImport {
 	private void saveGenAi(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
 		TurSNSiteGenAi genAi = turSNSiteExchange.getTurSNSiteGenAi();
 		if (genAi != null) {
-			// Clear references to nested entities that may not exist on target system
-			// The LLM and Store instances need to be configured separately after import
-			genAi.setTurLLMInstance(null);
-			genAi.setTurStoreInstance(null);
+			genAi.setTurLLMInstance(resolveOrCreateLLMInstance(genAi.getTurLLMInstance()));
+			genAi.setTurStoreInstance(resolveOrCreateStoreInstance(genAi.getTurStoreInstance()));
+
 			TurSNSiteGenAi savedGenAi = turSNSiteGenAiRepository.save(genAi);
 			turSNSite.setTurSNSiteGenAi(savedGenAi);
-			log.info("Saved GenAi configuration (LLM and Store instances will need to be configured after import).");
+			log.info("Saved GenAi configuration with resolved or created LLM/Store references when available.");
+		}
+	}
+
+	private TurLLMInstance resolveOrCreateLLMInstance(TurLLMInstance exportedLlmInstance) {
+		if (exportedLlmInstance == null) {
+			return null;
+		}
+
+		if (exportedLlmInstance.getId() != null) {
+			var existing = turLLMInstanceRepository.findById(exportedLlmInstance.getId());
+			if (existing.isPresent()) {
+				return existing.get();
+			}
+		}
+
+		TurLLMVendor vendor = resolveLLMVendor(exportedLlmInstance);
+		if (vendor == null) {
+			log.warn("Could not resolve a LLM Vendor for instance '{}'. Keeping GenAI without LLM reference.",
+					exportedLlmInstance.getId());
+			return null;
+		}
+
+		TurLLMInstance llmToCreate = new TurLLMInstance();
+		llmToCreate.setId(exportedLlmInstance.getId());
+		llmToCreate.setTitle(exportedLlmInstance.getTitle());
+		llmToCreate.setDescription(exportedLlmInstance.getDescription());
+		llmToCreate.setEnabled(exportedLlmInstance.getEnabled());
+		llmToCreate.setUrl(exportedLlmInstance.getUrl());
+		llmToCreate.setTurLLMVendor(vendor);
+		llmToCreate.setModelName(exportedLlmInstance.getModelName());
+		llmToCreate.setTemperature(exportedLlmInstance.getTemperature());
+		llmToCreate.setTopK(exportedLlmInstance.getTopK());
+		llmToCreate.setTopP(exportedLlmInstance.getTopP());
+		llmToCreate.setRepeatPenalty(exportedLlmInstance.getRepeatPenalty());
+		llmToCreate.setSeed(exportedLlmInstance.getSeed());
+		llmToCreate.setNumPredict(exportedLlmInstance.getNumPredict());
+		llmToCreate.setStop(exportedLlmInstance.getStop());
+		llmToCreate.setResponseFormat(exportedLlmInstance.getResponseFormat());
+		llmToCreate.setSupportedCapabilities(exportedLlmInstance.getSupportedCapabilities());
+		llmToCreate.setTimeout(exportedLlmInstance.getTimeout());
+		llmToCreate.setMaxRetries(exportedLlmInstance.getMaxRetries());
+
+		TurLLMInstance created = turLLMInstanceRepository.save(llmToCreate);
+		log.info("Created missing LLM Instance '{}' ({}) during GenAI import.",
+				created.getTitle(), created.getId());
+		return created;
+	}
+
+	private TurStoreInstance resolveOrCreateStoreInstance(TurStoreInstance exportedStoreInstance) {
+		if (exportedStoreInstance == null) {
+			return null;
+		}
+
+		if (exportedStoreInstance.getId() != null) {
+			var existing = turStoreInstanceRepository.findById(exportedStoreInstance.getId());
+			if (existing.isPresent()) {
+				return existing.get();
+			}
+		}
+
+		TurStoreVendor vendor = resolveStoreVendor(exportedStoreInstance);
+		if (vendor == null) {
+			log.warn("Could not resolve a Store Vendor for instance '{}'. Keeping GenAI without Store reference.",
+					exportedStoreInstance.getId());
+			return null;
+		}
+
+		TurStoreInstance storeToCreate = new TurStoreInstance();
+		storeToCreate.setId(exportedStoreInstance.getId());
+		storeToCreate.setTitle(exportedStoreInstance.getTitle());
+		storeToCreate.setDescription(exportedStoreInstance.getDescription());
+		storeToCreate.setEnabled(exportedStoreInstance.getEnabled());
+		storeToCreate.setUrl(exportedStoreInstance.getUrl());
+		storeToCreate.setTurStoreVendor(vendor);
+
+		TurStoreInstance created = turStoreInstanceRepository.save(storeToCreate);
+		log.info("Created missing Store Instance '{}' ({}) during GenAI import.",
+				created.getTitle(), created.getId());
+		return created;
+	}
+
+	private TurLLMVendor resolveLLMVendor(TurLLMInstance exportedLlmInstance) {
+		if (exportedLlmInstance.getTurLLMVendor() != null
+				&& exportedLlmInstance.getTurLLMVendor().getId() != null) {
+			var fromId = turLLMVendorRepository.findById(exportedLlmInstance.getTurLLMVendor().getId());
+			if (fromId.isPresent()) {
+				return fromId.get();
+			}
+			log.warn("LLM Vendor '{}' from export not found. Falling back to first available vendor.",
+					exportedLlmInstance.getTurLLMVendor().getId());
+		}
+
+		return turLLMVendorRepository.findAll().stream().findFirst().orElse(null);
+	}
+
+	private TurStoreVendor resolveStoreVendor(TurStoreInstance exportedStoreInstance) {
+		if (exportedStoreInstance.getTurStoreVendor() != null
+				&& exportedStoreInstance.getTurStoreVendor().getId() != null) {
+			var fromId = turStoreVendorRepository.findById(exportedStoreInstance.getTurStoreVendor().getId());
+			if (fromId.isPresent()) {
+				return fromId.get();
+			}
+			log.warn("Store Vendor '{}' from export not found. Falling back to first available vendor.",
+					exportedStoreInstance.getTurStoreVendor().getId());
+		}
+
+		return turStoreVendorRepository.findAll().stream().findFirst().orElse(null);
+	}
+
+	private void saveSNSiteMergeProviders(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite) {
+		if (turSNSiteExchange.getTurSNSiteMergeProviders() != null) {
+			for (TurSNSiteMergeProviders mergeProvider : turSNSiteExchange.getTurSNSiteMergeProviders()) {
+				mergeProvider.setTurSNSite(turSNSite);
+				if (mergeProvider.getOverwrittenFields() != null) {
+					for (TurSNSiteMergeProvidersField overwrittenField : mergeProvider.getOverwrittenFields()) {
+						overwrittenField.setTurSNSiteMergeProviders(mergeProvider);
+					}
+				}
+				turSNSiteMergeProvidersRepository.save(mergeProvider);
+			}
 		}
 	}
 

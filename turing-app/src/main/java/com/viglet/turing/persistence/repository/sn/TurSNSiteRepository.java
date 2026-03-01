@@ -50,16 +50,19 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	@Cacheable("turSNSitefindByName")
 	Optional<TurSNSite> findByName(String name);
 
-	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindById", "turSNSitefindByName" }, allEntries = true)
+	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindAByCreatedBy", "turSNSitefindById",
+			"turSNSitefindByName" }, allEntries = true)
 	@NotNull
 	@Override
 	<S extends TurSNSite> S save(@NotNull S entity);
 
-	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindById", "turSNSitefindByName" }, allEntries = true)
+	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindAByCreatedBy", "turSNSitefindById",
+			"turSNSitefindByName" }, allEntries = true)
 	void delete(@NotNull TurSNSite turSNSite);
 
 	@Modifying
 	@Query("delete from  TurSNSite ss where ss.id = ?1")
-	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindById", "turSNSitefindByName" }, allEntries = true)
+	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindAByCreatedBy", "turSNSitefindById",
+			"turSNSitefindByName" }, allEntries = true)
 	void delete(String id);
 }
