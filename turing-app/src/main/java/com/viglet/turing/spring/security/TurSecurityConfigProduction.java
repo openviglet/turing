@@ -42,6 +42,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
@@ -90,9 +91,11 @@ public class TurSecurityConfigProduction {
                 http.userDetailsService(userDetailsService);
                 http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 
+                CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
+
                 http.csrf(csrf -> csrf
-                                .csrfTokenRepository(new CookieCsrfTokenRepository())
-                                .csrfTokenRequestHandler(new TurSpaCsrfTokenRequestHandler())
+                                .csrfTokenRepository(csrfTokenRepository)
+                                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                                 .ignoringRequestMatchers(
                                                 mvc.matcher("/api/genai/chat"),
                                                 mvc.matcher("/api/v2/integration/**"),
@@ -113,6 +116,7 @@ public class TurSecurityConfigProduction {
                                 authorizeRequests.requestMatchers(
                                                 mvc.matcher(ERROR_PATH),
                                                 mvc.matcher("/api/discovery"),
+                                                mvc.matcher("/api/csrf"),
                                                 mvc.matcher("/assets/**"),
                                                 mvc.matcher("/favicon.ico"),
                                                 mvc.matcher("/*.png"),
@@ -137,6 +141,7 @@ public class TurSecurityConfigProduction {
                                                 authorizeRequests.requestMatchers(
                                                                 mvc.matcher(ERROR_PATH),
                                                                 mvc.matcher("/api/discovery"),
+                                                                mvc.matcher("/api/csrf"),
                                                                 mvc.matcher(LOGOUT_PATH),
                                                                 mvc.matcher("/index.html"),
                                                                 mvc.matcher("/welcome/**"),
