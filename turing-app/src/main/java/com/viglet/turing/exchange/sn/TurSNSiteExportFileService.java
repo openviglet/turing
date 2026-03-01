@@ -19,6 +19,7 @@ import com.viglet.turing.exchange.TurExchange;
 import com.viglet.turing.exchange.sn.mixin.TurSNSiteExchangeMixin;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
@@ -62,6 +63,7 @@ public class TurSNSiteExportFileService {
 					.addMixIn(TurSNRankingExpression.class, TurSNSiteExchangeMixin.class)
 					.addMixIn(TurSNSiteLocale.class, TurSNSiteExchangeMixin.class)
 					.addMixIn(TurSNSiteSpotlight.class, TurSNSiteExchangeMixin.class)
+					.addMixIn(TurSNSiteMergeProviders.class, TurSNSiteExchangeMixin.class)
 					.build();
 			// Write export file atomically
 			Path tempExportFile = Files.createTempFile(exportDir.toPath(), "export-", ".json");

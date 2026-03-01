@@ -36,6 +36,7 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
@@ -191,4 +192,9 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<TurSNRankingExpression> turSNRankingExpressions = new HashSet<>();
+
+	@OneToMany(mappedBy = "turSNSite", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private Set<TurSNSiteMergeProviders> turSNSiteMergeProviders = new HashSet<>();
+
 }

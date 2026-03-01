@@ -89,7 +89,10 @@ public class TurSNRankingExpression extends TurAuditable<String> implements Seri
 	public void setTurSNRankingConditions(Set<TurSNRankingCondition> turSNRankingConditions) {
 		this.turSNRankingConditions.clear();
 		if (turSNRankingConditions != null) {
-			this.turSNRankingConditions.addAll(turSNRankingConditions);
+			for (TurSNRankingCondition turSNRankingCondition : turSNRankingConditions) {
+				turSNRankingCondition.setTurSNRankingExpression(this);
+				this.turSNRankingConditions.add(turSNRankingCondition);
+			}
 		}
 	}
 }

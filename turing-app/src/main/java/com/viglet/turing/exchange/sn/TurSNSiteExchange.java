@@ -31,6 +31,7 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 
@@ -79,6 +80,7 @@ public class TurSNSiteExchange {
 	private Set<TurSNSiteSpotlight> turSNSiteSpotlights;
 	private Set<TurSNSiteLocale> turSNSiteLocales;
 	private Set<TurSNRankingExpression> turSNRankingExpressions;
+	private Set<TurSNSiteMergeProviders> turSNSiteMergeProviders;
 
 	public TurSNSiteExchange(TurSNSite turSNSite) {
 		this.setDefaultDateField(turSNSite.getDefaultDateField());
@@ -118,6 +120,7 @@ public class TurSNSiteExchange {
 		this.setTurSNSiteSpotlights(turSNSite.getTurSNSiteSpotlights());
 		this.setTurSNSiteLocales(turSNSite.getTurSNSiteLocales());
 		this.setTurSNRankingExpressions(turSNSite.getTurSNRankingExpressions());
+		this.setTurSNSiteMergeProviders(turSNSite.getTurSNSiteMergeProviders());
 	}
 
 	public boolean getHl() {
