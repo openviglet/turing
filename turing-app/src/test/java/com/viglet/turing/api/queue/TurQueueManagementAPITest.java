@@ -23,8 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @ExtendWith(MockitoExtension.class)
 class TurQueueManagementAPITest {
 
@@ -35,8 +33,6 @@ class TurQueueManagementAPITest {
 
     @InjectMocks
     private TurQueueManagementAPI turQueueManagementAPI;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
