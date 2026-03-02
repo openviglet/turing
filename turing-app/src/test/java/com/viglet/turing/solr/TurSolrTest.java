@@ -45,12 +45,16 @@ import org.apache.solr.common.SolrDocumentList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
+import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
@@ -244,6 +248,92 @@ class TurSolrTest {
         TurSEParameters parameters = new TurSEParameters(searchParams);
 
         assertThat(TurSolr.firstRowPositionFromCurrentPage(parameters)).isEqualTo(20);
+    }
+
+    @Test
+    void testRetrieveSolrAppliesSortAndFilterQueries() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("java");
+        searchParams.setRows(10);
+        searchParams.setP(1);
+        searchParams.setSort("newest");
+        searchParams.setFq(java.util.List.of("type:article"));
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        docs.setNumFound(1);
+        SolrDocument doc = new SolrDocument();
+        doc.addField("id", "10");
+        docs.add(doc);
+        when(response.getResults()).thenReturn(docs);
+        when(response.getElapsedTime()).thenReturn(11L);
+        when(response.getQTime()).thenReturn(7);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        var results = turSolr.retrieveSolr(turSolrInstance, parameters, "publishedDate");
+
+        assertThat(results.getResults()).hasSize(1);
+        assertThat(results.getResults().getFirst().getFields()).containsEntry("id", "10");
+
+        ArgumentCaptor<SolrQuery> queryCaptor = ArgumentCaptor.forClass(SolrQuery.class);
+        verify(solrClient, times(2)).query(eq("core"), queryCaptor.capture());
+        SolrQuery executed = queryCaptor.getAllValues().stream()
+                .filter(q -> q.get("qt") == null)
+                .findFirst()
+                .orElse(queryCaptor.getAllValues().getFirst());
+        assertThat(executed.getSortField()).contains("publishedDate desc");
+        assertThat(executed.getFilterQueries()).containsExactly("type:article");
+    }
+
+    @Test
+    void testFindByIdBuildsResultFromDocument() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        TurSNSite site = new TurSNSite();
+        site.setHl(1);
+        site.setHlPre("<em>");
+        site.setHlPost("</em>");
+
+        TurSNSiteFieldExt hlField = TurSNSiteFieldExt.builder().name("title")
+                .type(com.viglet.turing.commons.se.field.TurSEFieldType.TEXT).build();
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1))
+                .thenReturn(java.util.List.of(hlField));
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                .thenReturn(java.util.List.of(hlField));
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndRequiredAndEnabled(site, 1, 1))
+                .thenReturn(java.util.List.of());
+
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        SolrDocument doc = new SolrDocument();
+        doc.addField("id", "abc");
+        doc.addField("title", "plain");
+        docs.add(doc);
+        when(response.getResults()).thenReturn(docs);
+        when(response.getHighlighting()).thenReturn(java.util.Map.of("abc", java.util.Map.of("title",
+                java.util.List.of("<em>highlighted</em>"))));
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("abc");
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+        TurSNSiteSearchContext context = new TurSNSiteSearchContext("site",
+                new TurSNConfig(), parameters, java.util.Locale.US, URI.create("http://localhost/search"));
+
+        TurSEResult result = turSolr.findById(turSolrInstance, site, "abc", context);
+
+        assertThat(result.getFields()).containsEntry("id", "abc");
+        assertThat(result.getFields()).containsEntry("title", "<em>highlighted</em>");
+    }
+
+    @Test
+    void testAutoCompleteReturnsNullWhenQueryFails() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenThrow(new SolrServerException("error"));
+
+        assertThat(turSolr.autoComplete(turSolrInstance, "te")).isNull();
     }
 
     private TurSolr buildTurSolr(boolean commitEnabled) {

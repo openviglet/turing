@@ -2,6 +2,7 @@ package com.viglet.turing.exchange.sn;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,7 +29,18 @@ import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
+import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
+import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.persistence.model.store.TurStoreVendor;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
@@ -288,5 +300,124 @@ class TurSNSiteImportTest {
                 turSNSiteImport.importSNSite(exchange);
 
                 verify(cache, times(2)).clear();
+        }
+
+        @Test
+        void shouldCreateDefaultSEInstanceWhenNoInstanceExists() {
+                TurSEVendor vendor = new TurSEVendor();
+                vendor.setId("SOLR");
+                vendor.setTitle("Solr Vendor");
+
+                TurSEInstance createdSe = new TurSEInstance();
+                createdSe.setId("se-new");
+                createdSe.setTitle("Created SE");
+
+                TurSNSiteExchange siteExchange = new TurSNSiteExchange();
+                siteExchange.setId("site-default-se");
+                siteExchange.setName("Site Default");
+
+                TurExchange exchange = new TurExchange();
+                exchange.setSnSites(List.of(siteExchange));
+
+                when(turSNSiteRepository.findById("site-default-se")).thenReturn(Optional.empty());
+                when(turSEInstanceRepository.findAll()).thenReturn(List.of());
+                when(turSEVendorRepository.findById("SOLR")).thenReturn(Optional.of(vendor));
+                when(turSEInstanceRepository.save(any(TurSEInstance.class))).thenReturn(createdSe);
+                when(turSNSiteRepository.saveAndFlush(any(TurSNSite.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
+
+                turSNSiteImport.importSNSite(exchange);
+
+                verify(turSEInstanceRepository).save(any(TurSEInstance.class));
+                ArgumentCaptor<TurSNSite> siteCaptor = ArgumentCaptor.forClass(TurSNSite.class);
+                verify(turSNSiteRepository).saveAndFlush(siteCaptor.capture());
+                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstance()).isNotNull();
+                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstance().getId())
+                                .isEqualTo("se-new");
+        }
+
+        @Test
+        void shouldSkipSiteWhenNoSEInstanceOrVendorAvailable() {
+                TurSNSiteExchange siteExchange = new TurSNSiteExchange();
+                siteExchange.setId("site-no-se");
+                siteExchange.setName("Site No SE");
+
+                TurExchange exchange = new TurExchange();
+                exchange.setSnSites(List.of(siteExchange));
+
+                when(turSNSiteRepository.findById("site-no-se")).thenReturn(Optional.empty());
+                when(turSEInstanceRepository.findAll()).thenReturn(List.of());
+                when(turSEVendorRepository.findById("SOLR")).thenReturn(Optional.empty());
+                when(turSEVendorRepository.findAll()).thenReturn(List.of());
+
+                turSNSiteImport.importSNSite(exchange);
+
+                verify(turSNSiteRepository, never()).saveAndFlush(any(TurSNSite.class));
+        }
+
+        @Test
+        void shouldPersistNestedSiteEntitiesDuringImport() {
+                TurSEInstance seInstance = new TurSEInstance();
+                seInstance.setId("se-1");
+
+                TurSNSiteField field = new TurSNSiteField();
+                field.setName("title");
+
+                TurSNSiteFieldExtFacet facetLocale = new TurSNSiteFieldExtFacet();
+                facetLocale.setLabel("Category");
+                TurSNSiteFieldExt fieldExt = TurSNSiteFieldExt.builder().name("category").build();
+                fieldExt.setFacetLocales(Set.of(facetLocale));
+
+                TurSNSiteLocale locale = new TurSNSiteLocale();
+                locale.setLanguage(java.util.Locale.US);
+
+                TurSNSiteSpotlightTerm spotlightTerm = new TurSNSiteSpotlightTerm();
+                spotlightTerm.setName("java");
+                TurSNSiteSpotlightDocument spotlightDoc = new TurSNSiteSpotlightDocument();
+                spotlightDoc.setTitle("Doc");
+                TurSNSiteSpotlight spotlight = new TurSNSiteSpotlight();
+                spotlight.setTurSNSiteSpotlightTerms(Set.of(spotlightTerm));
+                spotlight.setTurSNSiteSpotlightDocuments(Set.of(spotlightDoc));
+
+                TurSNRankingCondition rankingCondition = new TurSNRankingCondition();
+                rankingCondition.setAttribute("type");
+                rankingCondition.setValue("article");
+                TurSNRankingExpression rankingExpression = new TurSNRankingExpression();
+                rankingExpression.setName("Boost");
+                rankingExpression.setTurSNRankingConditions(Set.of(rankingCondition));
+
+                TurSNSiteMergeProvidersField overwrittenField = new TurSNSiteMergeProvidersField();
+                overwrittenField.setName("title");
+                TurSNSiteMergeProviders mergeProvider = new TurSNSiteMergeProviders();
+                mergeProvider.setOverwrittenFields(Set.of(overwrittenField));
+
+                TurSNSiteExchange siteExchange = new TurSNSiteExchange();
+                siteExchange.setId("site-nested");
+                siteExchange.setName("Site Nested");
+                siteExchange.setTurSEInstance("se-1");
+                siteExchange.setTurSNSiteFields(Set.of(field));
+                siteExchange.setTurSNSiteFieldExts(Set.of(fieldExt));
+                siteExchange.setTurSNSiteLocales(Set.of(locale));
+                siteExchange.setTurSNSiteSpotlights(Set.of(spotlight));
+                siteExchange.setTurSNRankingExpressions(Set.of(rankingExpression));
+                siteExchange.setTurSNSiteMergeProviders(Set.of(mergeProvider));
+
+                TurExchange exchange = new TurExchange();
+                exchange.setSnSites(List.of(siteExchange));
+
+                when(turSNSiteRepository.findById("site-nested")).thenReturn(Optional.empty());
+                when(turSEInstanceRepository.findById("se-1")).thenReturn(Optional.of(seInstance));
+                when(turSNSiteRepository.saveAndFlush(any(TurSNSite.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
+
+                turSNSiteImport.importSNSite(exchange);
+
+                verify(turSNSiteFieldRepository).save(any(TurSNSiteField.class));
+                verify(turSNSiteFieldExtRepository).save(any(TurSNSiteFieldExt.class));
+                verify(turSNSiteLocaleRepository).save(any(TurSNSiteLocale.class));
+                verify(turSNSiteSpotlightRepository).save(any(TurSNSiteSpotlight.class));
+                verify(turSNRankingExpressionRepository).save(any(TurSNRankingExpression.class));
+                verify(turSNRankingConditionRepository).save(any(TurSNRankingCondition.class));
+                verify(turSNSiteMergeProvidersRepository).save(any(TurSNSiteMergeProviders.class));
         }
 }
