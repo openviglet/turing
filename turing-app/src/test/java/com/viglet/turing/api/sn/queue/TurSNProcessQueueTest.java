@@ -1,9 +1,11 @@
 package com.viglet.turing.api.sn.queue;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,14 +23,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.client.sn.job.TurSNJobAction;
+import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
+import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
@@ -37,8 +46,10 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepositor
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
 import com.viglet.turing.solr.TurSolr;
+import com.viglet.turing.solr.TurSolrFieldAction;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
+import com.viglet.turing.solr.TurSolrUtils;
 
 @ExtendWith(MockitoExtension.class)
 class TurSNProcessQueueTest {
@@ -172,5 +183,172 @@ class TurSNProcessQueueTest {
         assertTrue(resultList.contains("term1"));
         assertTrue(resultList.contains("term2"));
         assertTrue(resultList.size() == 2);
+    }
+
+    @Test
+    void testReceiveIndexingQueue_CreateSpotlight() {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        TurSNJobItem item = new TurSNJobItem();
+        item.setTurSNJobAction(TurSNJobAction.CREATE);
+        item.setSiteNames(Collections.singletonList("site1"));
+        item.setLocale(Locale.US);
+        item.setAttributes(Map.of(TurSNFieldName.ID, "1"));
+        item.setSpecs(new ArrayList<>());
+        jobItems.add(item);
+
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        when(turSNSiteRepository.findByName("site1")).thenReturn(Optional.of(site));
+        when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(true);
+        when(turSNSpotlightProcess.createUnmanagedSpotlight(item, site)).thenReturn(true);
+
+        processQueue.receiveIndexingQueue(jobItems);
+
+        verify(turSNSpotlightProcess).createUnmanagedSpotlight(item, site);
+        verify(turSolr, never()).indexing(any(), any(), anyMap());
+    }
+
+    @Test
+    void testReceiveIndexingQueue_DeleteSpotlight() {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        TurSNJobItem item = new TurSNJobItem();
+        item.setTurSNJobAction(TurSNJobAction.DELETE);
+        item.setSiteNames(Collections.singletonList("site1"));
+        item.setLocale(Locale.US);
+        item.setAttributes(Map.of(TurSNFieldName.ID, "1"));
+        jobItems.add(item);
+
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        when(turSNSiteRepository.findByName("site1")).thenReturn(Optional.of(site));
+        when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(true);
+        when(turSNSpotlightProcess.deleteUnmanagedSpotlight(item, site)).thenReturn(true);
+
+        processQueue.receiveIndexingQueue(jobItems);
+
+        verify(turSNSpotlightProcess).deleteUnmanagedSpotlight(item, site);
+        verify(turSolr, never()).deIndexing(any(), any());
+    }
+
+    @Test
+    void testReceiveIndexingQueue_DeleteByType() {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        TurSNJobItem item = new TurSNJobItem();
+        item.setTurSNJobAction(TurSNJobAction.DELETE);
+        item.setSiteNames(Collections.singletonList("site1"));
+        item.setLocale(Locale.US);
+        item.setAttributes(Map.of(TurSNFieldName.TYPE, "news"));
+        jobItems.add(item);
+
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        when(turSNSiteRepository.findByName("site1")).thenReturn(Optional.of(site));
+        when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
+
+        TurSolrInstance solrInstance = mock(TurSolrInstance.class);
+        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), eq(Locale.US))).thenReturn(Optional.of(solrInstance));
+
+        processQueue.receiveIndexingQueue(jobItems);
+
+        verify(turSolr).deIndexingByType(solrInstance, "news");
+        verify(turSolr, never()).deIndexing(solrInstance, item.getId());
+    }
+
+    @Test
+    void testReceiveIndexingQueue_CommitWithoutSolrInstance() {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        TurSNJobItem item = new TurSNJobItem();
+        item.setTurSNJobAction(TurSNJobAction.COMMIT);
+        item.setSiteNames(Collections.singletonList("site1"));
+        item.setLocale(Locale.US);
+        item.setAttributes(new HashMap<>());
+        jobItems.add(item);
+
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        when(turSNSiteRepository.findByName("site1")).thenReturn(Optional.of(site));
+        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), eq(Locale.US))).thenReturn(Optional.empty());
+
+        processQueue.receiveIndexingQueue(jobItems);
+
+        verify(turSolr, never()).commit(any());
+    }
+
+    @Test
+    void testRemoveDuplicateTermsHandlesNullAndSimpleValues() {
+        Map<String, Object> attrs = new HashMap<>();
+        attrs.put("nullField", null);
+        attrs.put("single", "value");
+
+        Map<String, Object> result = processQueue.removeDuplicateTerms(attrs);
+
+        assertTrue(result.containsKey("single"));
+        assertTrue(!result.containsKey("nullField"));
+        assertTrue(processQueue.removeDuplicateTerms(null).isEmpty());
+    }
+
+    @Test
+    void testReceiveIndexingQueue_CreateCreatesMissingFieldAndSearchEngineField() {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        TurSNJobItem item = new TurSNJobItem();
+        item.setTurSNJobAction(TurSNJobAction.CREATE);
+        item.setSiteNames(Collections.singletonList("site1"));
+        item.setLocale(Locale.US);
+        item.setAttributes(Map.of(TurSNFieldName.ID, "1"));
+
+        TurSNJobAttributeSpec spec = TurSNJobAttributeSpec.builder()
+                .name("customField")
+                .type(TurSEFieldType.STRING)
+                .description("Custom")
+                .multiValued(false)
+                .facet(true)
+                .facetName(Map.of("default", "Custom", "pt_BR", "Personalizado"))
+                .build();
+        item.setSpecs(List.of(spec));
+        jobItems.add(item);
+
+        TurSEInstance siteSeInstance = new TurSEInstance();
+        siteSeInstance.setId("se1");
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        site.setTurSEInstance(siteSeInstance);
+
+        TurSEInstance seInstance = new TurSEInstance();
+        seInstance.setId("se1");
+
+        TurSNSiteLocale locale = new TurSNSiteLocale();
+        locale.setCore("core_en");
+        locale.setTurSNSite(site);
+
+        when(turSNSiteRepository.findByName("site1")).thenReturn(Optional.of(site));
+        when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
+        when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US)))
+                .thenReturn(new HashMap<>(item.getAttributes()));
+        when(turSNSiteFieldExtRepository.existsByTurSNSiteAndName(site, "customField")).thenReturn(false);
+        when(turSNSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
+        when(turSEInstanceRepository.findById("se1")).thenReturn(Optional.of(seInstance));
+        when(turSNSiteFieldRepository.save(any(TurSNSiteField.class))).thenAnswer(invocation -> {
+            TurSNSiteField field = invocation.getArgument(0);
+            field.setId("f1");
+            return field;
+        });
+        when(turSNSiteFieldExtRepository.save(any(TurSNSiteFieldExt.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        TurSolrInstance solrInstance = mock(TurSolrInstance.class);
+        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), eq(Locale.US))).thenReturn(Optional.of(solrInstance));
+
+        try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
+            utils.when(() -> TurSolrUtils.existsField(siteSeInstance, "core_en", "customField")).thenReturn(false);
+
+            processQueue.receiveIndexingQueue(jobItems);
+
+            verify(turSNSiteFieldRepository).save(any(TurSNSiteField.class));
+            verify(turSNSiteFieldExtRepository).save(any(TurSNSiteFieldExt.class));
+            verify(turSNSiteFieldExtFacetRepository).saveAll(any());
+            utils.verify(() -> TurSolrUtils.addOrUpdateField(eq(TurSolrFieldAction.ADD), eq(seInstance), eq("core_en"),
+                    eq("customField"), eq(TurSEFieldType.STRING), eq(true), eq(false)));
+            verify(turSolr).indexing(eq(solrInstance), eq(site), anyMap());
+        }
     }
 }
