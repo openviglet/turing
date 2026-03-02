@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,8 +21,6 @@ import com.viglet.turing.properties.TurConfigProperties;
 @ExtendWith(MockitoExtension.class)
 class TurDiscoveryAPITest {
 
-    private MockMvc mockMvc;
-
     @Mock
     private TurAPIBean turAPIBean;
 
@@ -33,20 +30,10 @@ class TurDiscoveryAPITest {
     @InjectMocks
     private TurDiscoveryAPI turDiscoveryAPI;
 
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(turDiscoveryAPI).build();
-    }
-
     @Test
     void testInfo() throws Exception {
         when(turConfigProperties.isKeycloak()).thenReturn(true);
         when(turConfigProperties.isMultiTenant()).thenReturn(false);
-
-        // the controller returns the injected turAPIBean.
-        // Spring MockMvc will try to serialize it. The mocked bean might not serialize
-        // correctly
-        // if not configured. We will verify the behavior manually or configure mock.
 
         TurAPIBean realApiBean = new TurAPIBean();
         TurDiscoveryAPI realController = new TurDiscoveryAPI(realApiBean, turConfigProperties);
