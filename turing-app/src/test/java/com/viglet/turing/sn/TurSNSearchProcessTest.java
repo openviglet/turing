@@ -53,6 +53,7 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
@@ -482,5 +483,232 @@ class TurSNSearchProcessTest {
                 Map<String, Object> first = (Map<String, Object>) list.getFirst();
                 assertThat(first).containsEntry("title", "Java");
                 assertThat(first).containsEntry("url", "/java");
+        }
+
+        @Test
+        void testSearchListUsesDefaultSingleFieldAndSkipsNullValues() {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                when(searchEnginePluginFactory.getDefaultPlugin()).thenReturn(plugin);
+
+                TurSNSite site = new TurSNSite();
+                site.setName("site");
+                when(turSNSiteRepository.findByName("site")).thenReturn(Optional.of(site));
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US))
+                                .thenReturn(Optional.of(org.mockito.Mockito.mock(TurSolrInstance.class)));
+
+                TurSEResult withTitle = TurSEResult.builder().fields(Map.of("title", "OnlyTitle")).build();
+                TurSEResult withoutTitle = TurSEResult.builder().fields(Map.of("url", "/x")).build();
+                TurSEResults seResults = TurSEResults.builder().results(List.of(withTitle, withoutTitle)).build();
+                when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(seResults));
+
+                TurSNSearchParams params = new TurSNSearchParams();
+                params.setQ("java");
+                TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", new TurSNConfig(),
+                                new TurSEParameters(params, new TurSNSitePostParamsBean()), Locale.US,
+                                URI.create("http://localhost/search?q=java"));
+
+                var list = process(false).searchList(context);
+
+                assertThat(list).containsExactly("OnlyTitle");
+        }
+
+        @Test
+        void testSearchWidgetIncludesSpotlights() {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                when(searchEnginePluginFactory.getDefaultPlugin()).thenReturn(plugin);
+
+                TurSNSite site = new TurSNSite();
+                site.setId("site-id");
+                site.setName("site");
+                site.setFacet(0);
+                site.setSpotlightWithResults(1);
+
+                when(turSNSiteRepository.findByName("site")).thenReturn(Optional.of(site));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1)).thenReturn(List.of());
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of());
+                when(turSNSiteLocaleRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of());
+                when(turSolrQueryBuilder.hasGroup(any())).thenReturn(false);
+                when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any())).thenReturn(List.of());
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US))
+                                .thenReturn(Optional.of(org.mockito.Mockito.mock(TurSolrInstance.class)));
+
+                TurSNSiteSpotlightDocument spotlight = new TurSNSiteSpotlightDocument();
+                spotlight.setId("sp1");
+                spotlight.setPosition(1);
+                spotlight.setTitle("Spotlight");
+                spotlight.setContent("Content");
+                spotlight.setLink("/spotlight");
+                spotlight.setReferenceId("ref-1");
+                spotlight.setType("doc");
+                when(turSNSpotlightProcess.getSpotlightsFromQuery(any(), eq(site)))
+                                .thenReturn(Map.of(1, List.of(spotlight)));
+
+                TurSEResults seResults = TurSEResults.builder()
+                                .results(List.of(TurSEResult.builder().fields(Map.of("title", "Doc")).build()))
+                                .spellCheck(new TurSESpellCheckResult())
+                                .numFound(1)
+                                .start(0)
+                                .limit(10)
+                                .currentPage(1)
+                                .pageCount(1)
+                                .queryString("java")
+                                .build();
+                when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(seResults));
+
+                TurSNSearchParams params = new TurSNSearchParams();
+                params.setQ("java");
+                TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", new TurSNConfig(),
+                                new TurSEParameters(params, new TurSNSitePostParamsBean()), Locale.US,
+                                URI.create("http://localhost/search?q=java"));
+
+                var bean = process(false).search(context);
+
+                assertThat(bean.getWidget().getSpotlights()).hasSize(1);
+                assertThat(bean.getWidget().getSpotlights().getFirst().getTitle()).isEqualTo("Spotlight");
+        }
+
+        @Test
+        void testSearchFacetAndOrUsesRetrieveFacetResults() {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                when(searchEnginePluginFactory.getDefaultPlugin()).thenReturn(plugin);
+
+                TurSNSite site = new TurSNSite();
+                site.setId("site-id");
+                site.setName("site");
+                site.setFacet(1);
+                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+                site.setItemsPerFacet(10);
+                site.setSpotlightWithResults(0);
+
+                TurSNSiteFieldExt facetField = TurSNSiteFieldExt.builder()
+                                .name("category")
+                                .facetName("Category")
+                                .snType(TurSNFieldType.SE)
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .enabled(1)
+                                .facet(1)
+                                .build();
+
+                when(turSNSiteRepository.findByName("site")).thenReturn(Optional.of(site));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
+                                .thenReturn(List.of(facetField));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(facetField));
+                when(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExtAndLocale(facetField, Locale.US))
+                                .thenReturn(Set.of());
+                when(turSNSiteLocaleRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of());
+                when(turSolrQueryBuilder.hasGroup(any())).thenReturn(false);
+                when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any())).thenReturn(List.of("category"));
+                when(turSolrQueryBuilder.getFqFields(any())).thenReturn(List.of("category"));
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US))
+                                .thenReturn(Optional.of(org.mockito.Mockito.mock(TurSolrInstance.class)));
+
+                TurSEFacetResult baseFacet = new TurSEFacetResult();
+                baseFacet.setFacet("category");
+                baseFacet.add("books", new TurSEFacetResultAttr("books", 0));
+
+                TurSEFacetResult refreshedFacet = new TurSEFacetResult();
+                refreshedFacet.setFacet("category");
+                refreshedFacet.add("books", new TurSEFacetResultAttr("books", 7));
+                TurSEResults refreshed = TurSEResults.builder().facetResults(List.of(refreshedFacet)).build();
+                when(plugin.retrieveFacetResults(any(), eq("category"))).thenReturn(Optional.of(refreshed));
+
+                TurSEResults searchResults = TurSEResults.builder()
+                                .results(List.of(TurSEResult.builder().fields(Map.of("title", "Doc")).build()))
+                                .facetResults(List.of(baseFacet))
+                                .spellCheck(new TurSESpellCheckResult())
+                                .numFound(1)
+                                .start(0)
+                                .limit(10)
+                                .currentPage(1)
+                                .pageCount(1)
+                                .queryString("java")
+                                .build();
+                when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(searchResults));
+
+                TurSNSearchParams params = new TurSNSearchParams();
+                params.setQ("java");
+                params.setFq(List.of("category:books"));
+                TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", new TurSNConfig(),
+                                new TurSEParameters(params, new TurSNSitePostParamsBean()), Locale.US,
+                                URI.create("http://localhost/search?q=java&fq=category:books"));
+
+                var bean = process(false).search(context);
+
+                assertThat(bean.getWidget().getFacet()).isNotEmpty();
+                verify(plugin).retrieveFacetResults(any(), eq("category"));
+        }
+
+        @Test
+        void testSearchSecondaryFacetAndFacetItemAndLinks() {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                when(searchEnginePluginFactory.getDefaultPlugin()).thenReturn(plugin);
+
+                TurSNSite site = new TurSNSite();
+                site.setId("site-id");
+                site.setName("site");
+                site.setFacet(1);
+                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+                site.setItemsPerFacet(10);
+                site.setSpotlightWithResults(0);
+
+                TurSNSiteFieldExt facetField = TurSNSiteFieldExt.builder()
+                                .name("category")
+                                .facetName("Category")
+                                .snType(TurSNFieldType.SE)
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .facetItemType(TurSNSiteFacetFieldEnum.AND)
+                                .secondaryFacet(true)
+                                .enabled(1)
+                                .facet(1)
+                                .build();
+
+                when(turSNSiteRepository.findByName("site")).thenReturn(Optional.of(site));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
+                                .thenReturn(List.of(facetField));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(facetField));
+                when(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExtAndLocale(facetField, Locale.US))
+                                .thenReturn(Set.of());
+                when(turSNSiteLocaleRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of());
+                when(turSolrQueryBuilder.hasGroup(any())).thenReturn(false);
+                when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any())).thenReturn(List.of("category"));
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US))
+                                .thenReturn(Optional.of(org.mockito.Mockito.mock(TurSolrInstance.class)));
+
+                TurSEFacetResult facet = new TurSEFacetResult();
+                facet.setFacet("category");
+                facet.add("books", new TurSEFacetResultAttr("books", 5));
+                facet.add("music", new TurSEFacetResultAttr("music", 1));
+
+                TurSEResults seResults = TurSEResults.builder()
+                                .results(List.of(TurSEResult.builder().fields(Map.of("title", "Doc")).build()))
+                                .facetResults(List.of(facet))
+                                .spellCheck(new TurSESpellCheckResult())
+                                .numFound(1)
+                                .start(0)
+                                .limit(10)
+                                .currentPage(1)
+                                .pageCount(1)
+                                .queryString("java")
+                                .build();
+                when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(seResults));
+
+                TurSNSearchParams params = new TurSNSearchParams();
+                params.setQ("java");
+                params.setFq(List.of("category:books"));
+                TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", new TurSNConfig(),
+                                new TurSEParameters(params, new TurSNSitePostParamsBean()), Locale.US,
+                                URI.create("http://localhost/search?q=java&fq=category:books"));
+
+                var bean = process(false).search(context);
+
+                assertThat(bean.getWidget().getSecondaryFacet()).isNotEmpty();
+                var items = bean.getWidget().getSecondaryFacet().getFirst().getFacets();
+                assertThat(items).hasSizeGreaterThanOrEqualTo(2);
+                assertThat(items.stream().map(i -> i.getLink()).toList())
+                                .allMatch(link -> link.contains("/search") && link.contains("fq"));
         }
 }
