@@ -22,25 +22,35 @@
 package com.viglet.turing.solr;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
@@ -152,6 +162,89 @@ class TurSolrTest {
         turSolr.commit(turSolrInstance);
 
         verify(solrClient, times(1)).commit("core");
+    }
+
+    @Test
+    void testCommitReturnsTrueWhenCommitThrows() throws Exception {
+        TurSolr turSolr = buildTurSolr(true);
+        org.mockito.Mockito.doThrow(new SolrServerException("fail")).when(solrClient).commit("core");
+
+        boolean result = turSolr.commit(turSolrInstance);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void testExecuteSolrQueryReturnsEmptyOnException() throws Exception {
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenThrow(new SolrServerException("error"));
+
+        var result = TurSolr.executeSolrQuery(turSolrInstance, new SolrQuery().setQuery("test"));
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testGetDocumentTotalReturnsNumFound() throws Exception {
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        docs.setNumFound(42);
+        when(response.getResults()).thenReturn(docs);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        TurSolr turSolr = buildTurSolr(false);
+
+        assertThat(turSolr.getDocumentTotal(turSolrInstance)).isEqualTo(42L);
+    }
+
+    @Test
+    void testSolrResultAndReturnsResults() throws Exception {
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        SolrDocument document = new SolrDocument();
+        document.addField("id", "1");
+        docs.add(document);
+        when(response.getResults()).thenReturn(docs);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        TurSolr turSolr = buildTurSolr(false);
+        SolrDocumentList result = turSolr.solrResultAnd(turSolrInstance, Map.of("id", "1"));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getFieldValue("id")).isEqualTo("1");
+    }
+
+    @Test
+    void testSpellCheckTermCorrectedAndDefault() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+
+        QueryResponse correctedResponse = mock(QueryResponse.class);
+        SpellCheckResponse correctedSpell = mock(SpellCheckResponse.class);
+        when(correctedSpell.getCollatedResult()).thenReturn("hello");
+        when(correctedResponse.getSpellCheckResponse()).thenReturn(correctedSpell);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(correctedResponse);
+
+        var corrected = turSolr.spellCheckTerm(turSolrInstance, "helo");
+        assertThat(corrected.isCorrected()).isTrue();
+        assertThat(corrected.getCorrectedText()).isEqualTo("hello");
+
+        QueryResponse defaultResponse = mock(QueryResponse.class);
+        SpellCheckResponse defaultSpell = mock(SpellCheckResponse.class);
+        when(defaultSpell.getCollatedResult()).thenReturn("");
+        when(defaultResponse.getSpellCheckResponse()).thenReturn(defaultSpell);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(defaultResponse);
+
+        var notCorrected = turSolr.spellCheckTerm(turSolrInstance, "helo");
+        assertThat(notCorrected.isCorrected()).isFalse();
+    }
+
+    @Test
+    void testFirstRowPositionFromCurrentPage() {
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setP(3);
+        searchParams.setRows(10);
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+
+        assertThat(TurSolr.firstRowPositionFromCurrentPage(parameters)).isEqualTo(20);
     }
 
     private TurSolr buildTurSolr(boolean commitEnabled) {
