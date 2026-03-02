@@ -33,7 +33,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 
 public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
-
+	@Override
 	@Cacheable("turSNSitefindAll")
 	@NotNull
 	List<TurSNSite> findAll(@NotNull Sort name);
@@ -41,6 +41,7 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	@Cacheable("turSNSitefindAByCreatedBy")
 	List<TurSNSite> findByCreatedBy(Sort name, String createdBy);
 
+	@Override
 	@Cacheable("turSNSitefindById")
 	@NotNull
 	Optional<TurSNSite> findById(@NotNull String id);
@@ -54,6 +55,7 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	@Override
 	<S extends TurSNSite> S save(@NotNull S entity);
 
+	@Override
 	@CacheEvict(value = { "turSNSitefindAll", "turSNSitefindAByCreatedBy", "turSNSitefindById",
 			"turSNSitefindByName" }, allEntries = true)
 	void delete(@NotNull TurSNSite turSNSite);
