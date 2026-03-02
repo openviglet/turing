@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.common.params.GroupParams;
@@ -51,12 +52,16 @@ import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
@@ -366,5 +371,192 @@ class TurSolrQueryBuilderTest {
 
                 assertThat(query.getFilterQueries()).isNotEmpty();
                 assertThat(String.join(" ", query.getFilterQueries())).contains("user:1");
+        }
+
+        @Test
+        void testPrepareSolrQueryAppliesSortAndDefaultRowsWhenNegative() {
+                TurSNSite site = new TurSNSite();
+                site.setRowsPerPage(0);
+                site.setDefaultDateField("publishedDate");
+                site.setSpellCheck(0);
+                site.setSpellCheckFixes(0);
+
+                when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(Collections.emptyList());
+                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(Collections.emptySet());
+
+                TurSNSearchParams firstParams = new TurSNSearchParams();
+                firstParams.setQ("java");
+                firstParams.setRows(-1);
+                firstParams.setSort("createdAt:asc");
+                TurSEParameters first = new TurSEParameters(firstParams, new TurSNSitePostParamsBean());
+
+                SolrQuery firstQuery = builder().prepareSolrQuery(
+                                contextFrom(first, new TurSNSitePostParamsBean()), site,
+                                first, new TurSESpellCheckResult(false, ""));
+
+                assertThat(first.getRows()).isEqualTo(10);
+                assertThat(firstQuery.getSortField()).contains("createdAt asc");
+
+                TurSNSearchParams newestParams = new TurSNSearchParams();
+                newestParams.setQ("java");
+                newestParams.setRows(10);
+                newestParams.setSort("newest");
+                TurSEParameters newest = new TurSEParameters(newestParams, new TurSNSitePostParamsBean());
+
+                SolrQuery newestQuery = builder().prepareSolrQuery(
+                                contextFrom(newest, new TurSNSitePostParamsBean()), site,
+                                newest, new TurSESpellCheckResult(false, ""));
+
+                assertThat(newestQuery.getSortField()).contains("publishedDate desc");
+
+                TurSNSearchParams oldestParams = new TurSNSearchParams();
+                oldestParams.setQ("java");
+                oldestParams.setRows(10);
+                oldestParams.setSort("oldest");
+                TurSEParameters oldest = new TurSEParameters(oldestParams, new TurSNSitePostParamsBean());
+
+                SolrQuery oldestQuery = builder().prepareSolrQuery(
+                                contextFrom(oldest, new TurSNSitePostParamsBean()), site,
+                                oldest, new TurSESpellCheckResult(false, ""));
+
+                assertThat(oldestQuery.getSortField()).contains("publishedDate asc");
+        }
+
+        @Test
+        void testPrepareSolrQueryFormatsDateRangeAndUnknownFacetInFilterQuery() {
+                TurSNSite site = new TurSNSite();
+                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
+                site.setRowsPerPage(10);
+                site.setSpellCheck(0);
+                site.setSpellCheckFixes(0);
+
+                TurSNSiteFieldExt enabledDate = TurSNSiteFieldExt.builder()
+                                .name("publishDate")
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE)
+                                .facetRange(TurSNSiteFacetRangeEnum.MONTH)
+                                .build();
+                TurSNSiteFieldExt enabledCategory = TurSNSiteFieldExt.builder()
+                                .name("category")
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .build();
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(enabledDate, enabledCategory));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabledAndType(site, 1, 1,
+                                com.viglet.turing.commons.se.field.TurSEFieldType.DATE))
+                                .thenReturn(List.of(enabledDate));
+                when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(Collections.emptyList());
+                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(Collections.emptySet());
+
+                TurSNSearchParams params = new TurSNSearchParams();
+                params.setQ("query");
+                params.setRows(10);
+                params.setFq(List.of("publishDate:2024-01-01T00:00:00Z", "category:books", "other:value"));
+                TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
+
+                SolrQuery query = builder().prepareSolrQuery(
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                seParameters, new TurSESpellCheckResult(false, ""));
+
+                assertThat(query.getFilterQueries()).hasSize(1);
+                String fq = query.getFilterQueries()[0];
+                assertThat(fq).contains("publishDate:[ 2024-01-01T00:00:00Z TO ");
+                assertThat(fq).contains("category:\"books\"");
+                assertThat(fq).contains("other:\"value\"");
+        }
+
+        @Test
+        void testPrepareSolrQueryAddsBoostQueryIncludingRecentDatesExpression() {
+                TurSNSite site = new TurSNSite();
+                site.setRowsPerPage(10);
+                site.setSpellCheck(0);
+                site.setSpellCheckFixes(0);
+
+                TurSNSiteFieldExt dateField = TurSNSiteFieldExt.builder()
+                                .name("published")
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE)
+                                .build();
+                TurSNSiteFieldExt typeField = TurSNSiteFieldExt.builder()
+                                .name("type")
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .build();
+
+                TurSNRankingExpression expression = new TurSNRankingExpression();
+                expression.setId("expr-1");
+                expression.setWeight(5.0f);
+
+                TurSNRankingCondition dateCondition = new TurSNRankingCondition();
+                dateCondition.setAttribute("published");
+                dateCondition.setValue("asc");
+                TurSNRankingCondition typeCondition = new TurSNRankingCondition();
+                typeCondition.setAttribute("type");
+                typeCondition.setValue("article");
+
+                when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(List.of(dateField, typeField));
+                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(Set.of(expression));
+                when(turSNRankingConditionRepository.findByTurSNRankingExpression(expression))
+                                .thenReturn(Set.of(dateCondition, typeCondition));
+
+                TurSNSearchParams params = new TurSNSearchParams();
+                params.setQ("query");
+                params.setRows(10);
+                TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
+
+                SolrQuery query = builder().prepareSolrQuery(
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                seParameters, new TurSESpellCheckResult(false, ""));
+
+                assertThat(query.getParams("bq")).isNotNull();
+                assertThat(String.join(" ", query.getParams("bq"))).contains("_query_:");
+                assertThat(String.join(" ", query.getParams("bq"))).contains("type:\"article\"");
+        }
+
+        @Test
+        void testPrepareQueryFacetWithOneFacetHandlesDateRangeAndEntityPrefix() {
+                TurSNSite site = new TurSNSite();
+                site.setFacet(1);
+                site.setItemsPerFacet(8);
+                site.setFacetSort(null);
+                site.setFacetType(TurSNSiteFacetFieldEnum.OR);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+
+                TurSNSiteFieldExt dateFacet = TurSNSiteFieldExt.builder()
+                                .name("publishDate")
+                                .snType(TurSNFieldType.SE)
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE)
+                                .facetRange(TurSNSiteFacetRangeEnum.YEAR)
+                                .facetSort(TurSNSiteFacetFieldSortEnum.COUNT)
+                                .build();
+
+                TurSNSiteFieldExt entityFacet = TurSNSiteFieldExt.builder()
+                                .name("person")
+                                .snType(TurSNFieldType.NER)
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .facetSort(TurSNSiteFacetFieldSortEnum.ALPHABETICAL)
+                                .build();
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndNameAndFacetAndEnabled(site, "publishDate", 1,
+                                1)).thenReturn(List.of(dateFacet));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndNameAndFacetAndEnabled(site, "person", 1, 1))
+                                .thenReturn(List.of(entityFacet));
+
+                SolrQuery dateQuery = new SolrQuery();
+                builder().prepareQueryFacetWithOneFacet(site, dateQuery, TurSNFilterParams.builder().build(),
+                                "publishDate");
+                assertThat(dateQuery.getParams("facet.range")).isNotNull();
+
+                SolrQuery entityQuery = new SolrQuery();
+                builder().prepareQueryFacetWithOneFacet(site, entityQuery, TurSNFilterParams.builder().build(),
+                                "person");
+                assertThat(entityQuery.getFacetFields()).isNotEmpty();
+                assertThat(String.join(",", entityQuery.getFacetFields())).contains("turing_entity_person");
+                assertThat(entityQuery.get("f.person.facet.sort")).isEqualTo("index");
         }
 }

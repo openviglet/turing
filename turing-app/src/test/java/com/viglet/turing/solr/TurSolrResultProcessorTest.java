@@ -22,13 +22,16 @@
 package com.viglet.turing.solr;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.GroupCommand;
@@ -36,9 +39,11 @@ import org.apache.solr.client.solrj.response.GroupResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.util.SimpleOrderedMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.commons.se.TurSEParameters;
@@ -47,6 +52,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.se.result.TurSEGroup;
 import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.sn.TurSNFieldProcess;
@@ -204,5 +210,159 @@ class TurSolrResultProcessorTest {
                 assertThat(TurSolrResultProcessor.isHL(site, List.of(hlField))).isFalse();
                 assertThat(processor.getHL(site, List.of(hlField), response, document)).isNull();
                 assertThat(processor.getHL(site, Collections.emptyList(), response, document)).isNull();
+        }
+
+        @Test
+        void testGetResultsProcessesMltAndGroups() {
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                                turSNSiteFieldExtRepository);
+                TurSNSite site = new TurSNSite();
+                site.setMlt(1);
+                site.setFacet(0);
+
+                TurSNSiteFieldExt idField = TurSNSiteFieldExt.builder().name("id").build();
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(idField));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndRequiredAndEnabled(site, 1, 1))
+                                .thenReturn(Collections.emptyList());
+
+                SolrDocument doc = new SolrDocument();
+                doc.addField("id", "1");
+                SolrDocumentList results = new SolrDocumentList();
+                results.add(doc);
+                results.setNumFound(1);
+
+                SolrDocument similarDoc = new SolrDocument();
+                similarDoc.addField("id", "S1");
+                similarDoc.addField("title", "Similar");
+                similarDoc.addField("type", "doc");
+                similarDoc.addField("url", "/doc");
+                SolrDocumentList similarDocs = new SolrDocumentList();
+                similarDocs.add(similarDoc);
+
+                SimpleOrderedMap<Object> mltMap = new SimpleOrderedMap<>();
+                mltMap.add("1", similarDocs);
+                SimpleOrderedMap<Object> responseData = new SimpleOrderedMap<>();
+                responseData.add("moreLikeThis", mltMap);
+
+                QueryResponse queryResponse = mock(QueryResponse.class);
+                when(queryResponse.getResults()).thenReturn(results);
+                when(queryResponse.getResponse()).thenReturn(responseData);
+                when(queryResponse.getElapsedTime()).thenReturn(10L);
+                when(queryResponse.getQTime()).thenReturn(3);
+
+                TurSNSearchParams searchParams = new TurSNSearchParams();
+                searchParams.setQ("java");
+                searchParams.setRows(10);
+                searchParams.setP(1);
+                TurSEParameters parameters = new TurSEParameters(searchParams);
+                SolrQuery query = new SolrQuery().setQuery("java");
+
+                TurSolrQueryContext queryContext = TurSolrQueryContext.builder()
+                                .query(query)
+                                .turSEParameters(parameters)
+                                .mltFieldExtList(List.of(TurSNSiteFieldExt.builder().name("body").build()))
+                                .facetFieldExtList(Collections.emptyList())
+                                .hlFieldExtList(Collections.emptyList())
+                                .spellCheckResult(null)
+                                .queryToRenderFacet(false)
+                                .build();
+
+                TurSolrQueryBuilder queryBuilder = mock(TurSolrQueryBuilder.class);
+                when(queryBuilder.hasGroup(parameters)).thenReturn(false);
+
+                TurSEResults seResults = processor.getResults(mock(TurSolrInstance.class), site,
+                                query, queryContext, queryResponse, queryBuilder);
+
+                assertThat(seResults.getResults()).hasSize(1);
+                assertThat(seResults.getSimilarResults()).hasSize(1);
+                assertThat(seResults.getGroups()).isNull();
+        }
+
+        @Test
+        void testGetResultsEnrichesGroupsWithWildcardResponse() {
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                                turSNSiteFieldExtRepository);
+                TurSNSite site = new TurSNSite();
+                site.setMlt(0);
+                site.setFacet(0);
+                site.setWildcardNoResults(1);
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(Collections.emptyList());
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndRequiredAndEnabled(site, 1, 1))
+                                .thenReturn(Collections.emptyList());
+
+                SolrDocumentList emptyResults = new SolrDocumentList();
+                emptyResults.setNumFound(0);
+                SolrDocumentList wildcardResults = new SolrDocumentList();
+                SolrDocument wildcardDoc = new SolrDocument();
+                wildcardDoc.addField("id", "2");
+                wildcardResults.add(wildcardDoc);
+                wildcardResults.setNumFound(1);
+
+                org.apache.solr.client.solrj.response.Group originalGroup = mock(
+                                org.apache.solr.client.solrj.response.Group.class);
+                when(originalGroup.getGroupValue()).thenReturn("g1");
+                when(originalGroup.getResult()).thenReturn(emptyResults);
+
+                GroupCommand originalCommand = mock(GroupCommand.class);
+                when(originalCommand.getValues()).thenReturn(List.of(originalGroup));
+                GroupResponse originalGroupResponse = mock(GroupResponse.class);
+                when(originalGroupResponse.getValues()).thenReturn(List.of(originalCommand));
+
+                QueryResponse originalResponse = mock(QueryResponse.class);
+                when(originalResponse.getResults()).thenReturn(emptyResults);
+                when(originalResponse.getGroupResponse()).thenReturn(originalGroupResponse);
+                when(originalResponse.getElapsedTime()).thenReturn(5L);
+                when(originalResponse.getQTime()).thenReturn(2);
+
+                org.apache.solr.client.solrj.response.Group wildcardGroup = mock(
+                                org.apache.solr.client.solrj.response.Group.class);
+                when(wildcardGroup.getGroupValue()).thenReturn("g1");
+                when(wildcardGroup.getResult()).thenReturn(wildcardResults);
+                GroupCommand wildcardCommand = mock(GroupCommand.class);
+                when(wildcardCommand.getValues()).thenReturn(List.of(wildcardGroup));
+                GroupResponse wildcardGroupResponse = mock(GroupResponse.class);
+                when(wildcardGroupResponse.getValues()).thenReturn(List.of(wildcardCommand));
+                QueryResponse wildcardResponse = mock(QueryResponse.class);
+                when(wildcardResponse.getGroupResponse()).thenReturn(wildcardGroupResponse);
+
+                TurSNSearchParams searchParams = new TurSNSearchParams();
+                searchParams.setQ("java");
+                searchParams.setRows(10);
+                searchParams.setP(1);
+                TurSEParameters parameters = new TurSEParameters(searchParams);
+                SolrQuery query = new SolrQuery().setQuery("java");
+                TurSolrQueryContext queryContext = TurSolrQueryContext.builder()
+                                .query(query)
+                                .turSEParameters(parameters)
+                                .mltFieldExtList(Collections.emptyList())
+                                .facetFieldExtList(Collections.emptyList())
+                                .hlFieldExtList(Collections.emptyList())
+                                .spellCheckResult(null)
+                                .queryToRenderFacet(false)
+                                .build();
+
+                TurSolrQueryBuilder queryBuilder = mock(TurSolrQueryBuilder.class);
+                when(queryBuilder.hasGroup(parameters)).thenReturn(true);
+
+                try (MockedStatic<TurSolr> mockedTurSolr = mockStatic(TurSolr.class)) {
+                        mockedTurSolr.when(() -> TurSolr.enabledWildcardNoResults(site)).thenReturn(true);
+                        mockedTurSolr.when(() -> TurSolr.isNotQueryExpression(query)).thenReturn(true);
+                        mockedTurSolr.when(() -> TurSolr.addAWildcardInQuery(any(SolrQuery.class)))
+                                        .thenAnswer(invocation -> null);
+                        mockedTurSolr.when(() -> TurSolr.executeSolrQuery(any(TurSolrInstance.class),
+                                        any(SolrQuery.class)))
+                                        .thenReturn(Optional.of(wildcardResponse));
+
+                        TurSEResults seResults = processor.getResults(mock(TurSolrInstance.class), site,
+                                        query, queryContext, originalResponse, queryBuilder);
+
+                        assertThat(seResults.getGroups()).hasSize(1);
+                        TurSEGroup group = seResults.getGroups().getFirst();
+                        assertThat(group.getName()).isEqualTo("g1");
+                        assertThat(group.getResults()).hasSize(1);
+                }
         }
 }
