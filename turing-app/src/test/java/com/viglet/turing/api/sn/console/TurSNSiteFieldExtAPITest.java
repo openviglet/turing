@@ -633,7 +633,8 @@ class TurSNSiteFieldExtAPITest {
 
                 when(fieldExtRepository.findById("id")).thenReturn(Optional.of(existing));
                 when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-                when(fieldExtRepository.save(any(TurSNSiteFieldExt.class))).thenAnswer(invocation -> invocation.getArgument(0));
+                when(fieldExtRepository.save(any(TurSNSiteFieldExt.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
 
                 TurSNSiteFieldExt result = api.turSNSiteFieldExtUpdate("site", "id", payload);
 
@@ -713,7 +714,8 @@ class TurSNSiteFieldExtAPITest {
                 seInstance.setId("se-id");
 
                 when(fieldRepository.findById("ext")).thenReturn(Optional.of(field));
-                when(fieldRepository.save(any(TurSNSiteField.class))).thenAnswer(invocation -> invocation.getArgument(0));
+                when(fieldRepository.save(any(TurSNSiteField.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
                 when(instanceRepository.findById("se-id")).thenReturn(Optional.of(seInstance));
 
                 try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
@@ -776,7 +778,8 @@ class TurSNSiteFieldExtAPITest {
                         boolean result = api.turSNSiteFieldExtDelete("site", "id");
 
                         assertThat(result).isTrue();
-                        utils.verify(() -> TurSolrUtils.deleteField(seInstance, "core_en", "title", TurSEFieldType.STRING));
+                        utils.verify(() -> TurSolrUtils.deleteField(seInstance, "core_en", "title",
+                                        TurSEFieldType.STRING));
                         verify(fieldRepository).delete("ext");
                         verify(fieldExtRepository).delete("id");
                 }
