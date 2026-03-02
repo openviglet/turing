@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -41,20 +40,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 
+import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.sn.TurSNConfig;
+import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
+import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
+import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.commons.sn.TurSNConfig;
-import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
-import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
 import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
 import com.viglet.turing.solr.TurSolrQueryBuilder;
@@ -95,18 +96,39 @@ class TurSNSearchProcessTest {
         @Mock
         private TurSolrQueryBuilder turSolrQueryBuilder;
 
+        private TurSNSearchProcess process(boolean metricsEnabled) {
+                return new TurSNSearchProcess(turSNSiteFieldExtRepository,
+                                turSNSiteFieldExtFacetRepository, turSNSiteRepository,
+                                turSNSiteLocaleRepository,
+                                turSolrInstanceProcess, turSNSpotlightProcess,
+                                turSNSiteMetricAccessRepository,
+                                metricsEnabled, searchEnginePluginFactory, turSolrQueryBuilder);
+        }
+
+        private TurSNSiteSearchContext context(String query) {
+                TurSNSearchParams searchParams = new TurSNSearchParams();
+                searchParams.setQ(query);
+                searchParams.setLocale(Locale.US);
+                return new TurSNSiteSearchContext("site", new TurSNConfig(),
+                                new TurSEParameters(searchParams, new TurSNSitePostParamsBean()),
+                                Locale.US,
+                                URI.create("http://localhost/search?q=" + query));
+        }
+
         @Test
         void testGetSNSiteReturnsOptional() {
                 TurSNSite site = new TurSNSite();
                 site.setName("site");
                 when(turSNSiteRepository.findByName("site")).thenReturn(Optional.of(site));
 
-                TurSNSearchProcess process = new TurSNSearchProcess(turSNSiteFieldExtRepository,
-                                turSNSiteFieldExtFacetRepository, turSNSiteRepository, turSNSiteLocaleRepository,
-                                turSolrInstanceProcess, turSNSpotlightProcess, turSNSiteMetricAccessRepository,
-                                false, searchEnginePluginFactory, turSolrQueryBuilder);
+                assertThat(process(false).getSNSite("site")).contains(site);
+        }
 
-                assertThat(process.getSNSite("site")).contains(site);
+        @Test
+        void testGetSNSiteReturnsEmptyWhenMissing() {
+                when(turSNSiteRepository.findByName("site")).thenReturn(Optional.empty());
+
+                assertThat(process(false).getSNSite("site")).isEmpty();
         }
 
         @Test
@@ -116,12 +138,14 @@ class TurSNSearchProcessTest {
                 when(turSNSiteLocaleRepository.existsByTurSNSiteAndLanguage(site, Locale.US))
                                 .thenReturn(true);
 
-                TurSNSearchProcess process = new TurSNSearchProcess(turSNSiteFieldExtRepository,
-                                turSNSiteFieldExtFacetRepository, turSNSiteRepository, turSNSiteLocaleRepository,
-                                turSolrInstanceProcess, turSNSpotlightProcess, turSNSiteMetricAccessRepository,
-                                false, searchEnginePluginFactory, turSolrQueryBuilder);
+                assertThat(process(false).existsByTurSNSiteAndLanguage("site", Locale.US)).isTrue();
+        }
 
-                assertThat(process.existsByTurSNSiteAndLanguage("site", Locale.US)).isTrue();
+        @Test
+        void testExistsByTurSNSiteAndLanguageReturnsFalseWhenSiteMissing() {
+                when(turSNSiteRepository.findByName("site")).thenReturn(Optional.empty());
+
+                assertThat(process(false).existsByTurSNSiteAndLanguage("site", Locale.US)).isFalse();
         }
 
         @Test
@@ -133,24 +157,59 @@ class TurSNSearchProcessTest {
                 when(turSNSiteMetricAccessRepository.findLatestSearches(eq(site), eq("en"), eq("user"),
                                 any(PageRequest.class))).thenReturn(List.of(term1, term2));
 
-                TurSNSearchProcess process = new TurSNSearchProcess(turSNSiteFieldExtRepository,
-                                turSNSiteFieldExtFacetRepository, turSNSiteRepository, turSNSiteLocaleRepository,
-                                turSolrInstanceProcess, turSNSpotlightProcess, turSNSiteMetricAccessRepository,
-                                false, searchEnginePluginFactory, turSolrQueryBuilder);
-
-                List<String> results = process.latestSearches("site", "en", "user", 10);
+                List<String> results = process(false).latestSearches("site", "en", "user", 10);
 
                 assertThat(results).containsExactly("one", "two");
         }
 
         @Test
-        void testRequestTargetingRulesFormatsValues() {
-                TurSNSearchProcess process = new TurSNSearchProcess(turSNSiteFieldExtRepository,
-                                turSNSiteFieldExtFacetRepository, turSNSiteRepository, turSNSiteLocaleRepository,
-                                turSolrInstanceProcess, turSNSpotlightProcess, turSNSiteMetricAccessRepository,
-                                true, searchEnginePluginFactory, turSolrQueryBuilder);
+        void testLatestSearchesReturnsEmptyWhenSiteMissing() {
+                when(turSNSiteRepository.findByName("site")).thenReturn(Optional.empty());
 
-                List<String> result = process.requestTargetingRules(
+                assertThat(process(false).latestSearches("site", "en", "user", 10)).isEmpty();
+        }
+
+        @Test
+        void testSearchReturnsEmptyWhenPluginReturnsEmpty() {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                when(searchEnginePluginFactory.getDefaultPlugin()).thenReturn(plugin);
+                when(plugin.retrieveSearchResults(any())).thenReturn(Optional.empty());
+
+                assertThat(process(false).search(context("java")).getResults()).isNull();
+        }
+
+        @Test
+        void testSearchReturnsEmptyWhenSolrInstanceMissing() {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                when(searchEnginePluginFactory.getDefaultPlugin()).thenReturn(plugin);
+                when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(TurSEResults.builder().build()));
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US)).thenReturn(Optional.empty());
+
+                assertThat(process(false).search(context("java")).getWidget()).isNull();
+        }
+
+        @Test
+        void testSearchListReturnsEmptyWhenPluginReturnsEmpty() {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                when(searchEnginePluginFactory.getDefaultPlugin()).thenReturn(plugin);
+                when(plugin.retrieveSearchResults(any())).thenReturn(Optional.empty());
+
+                assertThat(process(false).searchList(context("java"))).isEmpty();
+        }
+
+        @Test
+        void testSearchListReturnsEmptyWhenSolrInstanceMissing() {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                when(searchEnginePluginFactory.getDefaultPlugin()).thenReturn(plugin);
+                when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(TurSEResults.builder().build()));
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US)).thenReturn(Optional.empty());
+
+                assertThat(process(false).searchList(context("java"))).isEmpty();
+        }
+
+        @Test
+        void testRequestTargetingRulesFormatsValues() {
+                List<String> result = process(true).requestTargetingRules(
                                 List.of("segment:vip", "price:[10 TO 20]", "rawRule"));
 
                 assertThat(result).contains("segment:\"vip\"");
@@ -159,11 +218,12 @@ class TurSNSearchProcessTest {
         }
 
         @Test
+        void testRequestTargetingRulesReturnsEmptyForNull() {
+                assertThat(process(true).requestTargetingRules(null)).isEmpty();
+        }
+
+        @Test
         void testResponseLocalesBuildsLocaleLinks() {
-                TurSNSearchProcess process = new TurSNSearchProcess(turSNSiteFieldExtRepository,
-                                turSNSiteFieldExtFacetRepository, turSNSiteRepository, turSNSiteLocaleRepository,
-                                turSolrInstanceProcess, turSNSpotlightProcess, turSNSiteMetricAccessRepository,
-                                true, searchEnginePluginFactory, turSolrQueryBuilder);
                 TurSNSite site = new TurSNSite();
 
                 TurSNSiteLocale localeEn = new TurSNSiteLocale();
@@ -174,7 +234,7 @@ class TurSNSearchProcessTest {
                 when(turSNSiteLocaleRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(List.of(localeEn, localePt));
 
-                var locales = process.responseLocales(site, URI.create("http://localhost/search?q=test"));
+                var locales = process(true).responseLocales(site, URI.create("http://localhost/search?q=test"));
 
                 assertThat(locales).hasSize(2);
                 assertThat(locales.get(0).getLink()).contains("locale=");
@@ -183,11 +243,6 @@ class TurSNSearchProcessTest {
 
         @Test
         void testPopulateMetricsSavesWhenEnabledAndQueryIsNotWildcard() {
-                TurSNSearchProcess process = new TurSNSearchProcess(turSNSiteFieldExtRepository,
-                                turSNSiteFieldExtFacetRepository, turSNSiteRepository, turSNSiteLocaleRepository,
-                                turSolrInstanceProcess, turSNSpotlightProcess, turSNSiteMetricAccessRepository,
-                                true, searchEnginePluginFactory, turSolrQueryBuilder);
-
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 searchParams.setQ("java");
                 searchParams.setLocale(Locale.US);
@@ -200,7 +255,7 @@ class TurSNSearchProcessTest {
                                 new TurSEParameters(searchParams, post), Locale.US,
                                 URI.create("http://localhost/search?q=java"), post);
 
-                process.populateMetrics(new TurSNSite(), context, 3);
+                process(true).populateMetrics(new TurSNSite(), context, 3);
 
                 verify(turSNSiteMetricAccessRepository).save(any());
         }

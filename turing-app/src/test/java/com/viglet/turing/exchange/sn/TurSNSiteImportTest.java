@@ -2,12 +2,15 @@ package com.viglet.turing.exchange.sn;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -212,5 +215,77 @@ class TurSNSiteImportTest {
 
         verify(turSNSiteRepository).saveAndFlush(any(TurSNSite.class));
         verify(turSEInstanceRepository).findById(eq("se-1"));
+    }
+
+    @Test
+    void shouldAssignFirstAvailableSEInstanceWhenMissingInExchange() {
+        TurSEInstance existingSe = new TurSEInstance();
+        existingSe.setId("se-available");
+        existingSe.setTitle("Default SE");
+
+        TurSNSiteExchange siteExchange = new TurSNSiteExchange();
+        siteExchange.setId("site-1");
+        siteExchange.setName("Site 1");
+
+        TurExchange exchange = new TurExchange();
+        exchange.setSnSites(List.of(siteExchange));
+
+        when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.empty());
+        when(turSEInstanceRepository.findAll()).thenReturn(List.of(existingSe));
+        when(turSNSiteRepository.saveAndFlush(any(TurSNSite.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        turSNSiteImport.importSNSite(exchange);
+
+        ArgumentCaptor<TurSNSite> siteCaptor = ArgumentCaptor.forClass(TurSNSite.class);
+        verify(turSNSiteRepository).saveAndFlush(siteCaptor.capture());
+        org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstance())
+                .isNotNull();
+        org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstance().getId())
+                .isEqualTo("se-available");
+    }
+
+    @Test
+    void shouldDeleteExistingSiteBeforeReimport() {
+        TurSEInstance seInstance = new TurSEInstance();
+        seInstance.setId("se-1");
+
+        TurSNSite existingSite = new TurSNSite();
+        existingSite.setId("site-1");
+        existingSite.setName("Old Site");
+
+        TurSNSiteExchange siteExchange = new TurSNSiteExchange();
+        siteExchange.setId("site-1");
+        siteExchange.setName("Site 1");
+        siteExchange.setTurSEInstance("se-1");
+
+        TurExchange exchange = new TurExchange();
+        exchange.setSnSites(List.of(siteExchange));
+
+        when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.of(existingSite));
+        when(turSEInstanceRepository.findById("se-1")).thenReturn(Optional.of(seInstance));
+        when(turSNSiteRepository.saveAndFlush(any(TurSNSite.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        turSNSiteImport.importSNSite(exchange);
+
+        verify(turSNSiteRepository).delete(existingSite);
+        verify(turSNSiteRepository).flush();
+        verify(turSNSiteRepository).saveAndFlush(any(TurSNSite.class));
+    }
+
+    @Test
+    void shouldClearOnlySemanticNavigationCaches() {
+        TurExchange exchange = new TurExchange();
+        exchange.setSnSites(List.of());
+
+        Set<String> caches = new HashSet<>(Set.of("turSNCache", "spotlightCache", "otherCache"));
+        when(cacheManager.getCacheNames()).thenReturn(caches);
+        when(cacheManager.getCache("turSNCache")).thenReturn(cache);
+        when(cacheManager.getCache("spotlightCache")).thenReturn(cache);
+
+        turSNSiteImport.importSNSite(exchange);
+
+        verify(cache, times(2)).clear();
     }
 }
