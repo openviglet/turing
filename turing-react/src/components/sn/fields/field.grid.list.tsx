@@ -378,12 +378,16 @@ export const SNSiteFieldGridList: React.FC<PropsWithChildren<Props>> = ({ status
         new Set()
     );
 
-    const statusFieldMap = React.useMemo(() => {
+    const buildStatusFieldMap = (fields: TurSNFieldCheck[] | undefined) => {
         const map = new Map<string, TurSNFieldCheck>();
-        statusFields?.fields?.forEach((field) => {
+        fields?.forEach((field) => {
             map.set(field.id, field);
         });
         return map;
+    };
+
+    const statusFieldMap = React.useMemo(() => {
+        return buildStatusFieldMap(statusFields?.fields);
     }, [statusFields]);
 
     const setFieldSaving = React.useCallback((fieldId: string, saving: boolean) => {
@@ -403,6 +407,22 @@ export const SNSiteFieldGridList: React.FC<PropsWithChildren<Props>> = ({ status
         [savingFieldIds]
     );
 
+    const updateFieldList = (fieldId: string, updatedField: TurSNSiteField) => {
+        setSnField((prev) =>
+            prev.map((field) =>
+                field.id === fieldId ? updatedField : field
+            )
+        );
+    };
+
+    const restoreFieldList = (fieldId: string, currentField: TurSNSiteField) => {
+        setSnField((prev) =>
+            prev.map((field) =>
+                field.id === fieldId ? currentField : field
+            )
+        );
+    };
+
     const handleToggle = React.useCallback(
         (fieldId: string, key: FieldToggleKey, checked: boolean) => {
             const currentField = data.find((field) => field.id === fieldId);
@@ -415,22 +435,14 @@ export const SNSiteFieldGridList: React.FC<PropsWithChildren<Props>> = ({ status
                 [key]: checked ? 1 : 0,
             };
 
-            setSnField((prev) =>
-                prev.map((field) =>
-                    field.id === fieldId ? updatedField : field
-                )
-            );
+            updateFieldList(fieldId, updatedField);
 
             setFieldSaving(fieldId, true);
             turSNFieldService
                 .update(id, updatedField)
                 .catch((error) => {
                     console.error("Failed to update SN field", error);
-                    setSnField((prev) =>
-                        prev.map((field) =>
-                            field.id === fieldId ? currentField : field
-                        )
-                    );
+                    restoreFieldList(fieldId, currentField);
                 })
                 .finally(() => {
                     setFieldSaving(fieldId, false);
