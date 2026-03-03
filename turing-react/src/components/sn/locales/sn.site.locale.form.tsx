@@ -10,6 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns"
 import { GradientButton } from "@/components/ui/gradient-button"
 import {
   Input
@@ -145,14 +146,14 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-6 pt-4">
               {isNew && (
-                <FormItem>
-                  <div className="flex flex-row justify-between items-center w-full">
-                    <div className="flex flex-col">
-                      <FormLabel>Define Core Manually</FormLabel>
-                      <FormDescription>
-                        Enable this option to manually specify the core. If disabled, the core will be created automatically.
-                      </FormDescription>
-                    </div>
+                <FormItemTwoColumns>
+                  <FormItemTwoColumns.Left>
+                    <FormItemTwoColumns.Label>Define Core Manually</FormItemTwoColumns.Label>
+                    <FormItemTwoColumns.Description>
+                      Enable this option to manually specify the core. If disabled, the core will be created automatically.
+                    </FormItemTwoColumns.Description>
+                  </FormItemTwoColumns.Left>
+                  <FormItemTwoColumns.Right>
                     <Switch
                       checked={useCustomCore}
                       onCheckedChange={(value) => {
@@ -163,8 +164,8 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
                         }
                       }}
                     />
-                  </div>
-                </FormItem>
+                  </FormItemTwoColumns.Right>
+                </FormItemTwoColumns>
               )}
 
               {(!isNew || useCustomCore) && (
