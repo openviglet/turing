@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns"
 import { GradientButton } from "@/components/ui/gradient-button"
 import {
   Input
@@ -216,21 +217,19 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     name="type"
                     rules={{ required: "Type is required." }}
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full gap-4">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Type</FormLabel>
-                            <FormDescription>
-                              Data type for this field (e.g., text, number, date).
-                            </FormDescription>
-                          </div>
-                          <div className="w-1/2 flex justify-end">
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Type</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Data type for this field (e.g., text, number, date).
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <FormControl>
                             <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="w-full min-w-45">
-                                  <SelectValue placeholder="Choose..." />
-                                </SelectTrigger>
-                              </FormControl>
+                              <SelectTrigger className="w-full min-w-45">
+                                <SelectValue placeholder="Choose..." />
+                              </SelectTrigger>
                               <SelectContent>
                                 {snFieldTypes.map((snFieldType) => (
                                   <SelectItem key={snFieldType.id} value={snFieldType.id}>
@@ -242,10 +241,10 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                                 ))}
                               </SelectContent>
                             </Select>
-                          </div>
-                        </div>
+                          </FormControl>
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Description */}
@@ -287,23 +286,21 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="multiValued"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Multi Value</FormLabel>
-                            <FormDescription>
-                              Allows this field to store multiple values (e.g., tags).
-                            </FormDescription>
-                          </div>
-                          <div className="flex justify-end w-1/2">
-                            <Switch
-                              checked={field.value === 1}
-                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                            />
-                          </div>
-                        </div>
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Multi Value</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Allows this field to store multiple values (e.g., tags).
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                          />
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Highlighting Switch */}
@@ -311,23 +308,21 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="hl"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Highlighting</FormLabel>
-                            <FormDescription>
-                              Enables highlighting of matching search terms in results.
-                            </FormDescription>
-                          </div>
-                          <div className="flex justify-end w-1/2">
-                            <Switch
-                              checked={field.value === 1}
-                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                            />
-                          </div>
-                        </div>
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Highlighting</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Enables highlighting of matching search terms in results.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                          />
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* MLT Switch */}
@@ -335,23 +330,21 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="mlt"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>MLT</FormLabel>
-                            <FormDescription>
-                              Activates “More Like This” functionality.
-                            </FormDescription>
-                          </div>
-                          <div className="flex justify-end w-1/2">
-                            <Switch
-                              checked={field.value === 1}
-                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                            />
-                          </div>
-                        </div>
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>MLT</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Activates “More Like This” functionality.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                          />
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Enabled Switch */}
@@ -359,23 +352,21 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="enabled"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Enabled</FormLabel>
-                            <FormDescription>
-                              If enabled, this field will be included in search queries and indexing.
-                            </FormDescription>
-                          </div>
-                          <div className="flex justify-end w-1/2">
-                            <Switch
-                              checked={field.value === 1}
-                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                            />
-                          </div>
-                        </div>
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Enabled</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            If enabled, this field will be included in search queries and indexing.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                          />
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Required Switch */}
@@ -383,23 +374,21 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="required"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Required</FormLabel>
-                            <FormDescription>
-                              Marks this field as mandatory during indexing.
-                            </FormDescription>
-                          </div>
-                          <div className="flex justify-end w-1/2">
-                            <Switch
-                              checked={field.value === 1}
-                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                            />
-                          </div>
-                        </div>
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Required</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Marks this field as mandatory during indexing.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                          />
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                 </AccordionContent>
@@ -418,23 +407,21 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="facet"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Facet</FormLabel>
-                            <FormDescription>
-                              Enables this field as a filter in the search page.
-                            </FormDescription>
-                          </div>
-                          <div className="flex justify-end w-1/2">
-                            <Switch
-                              checked={field.value === 1}
-                              onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                            />
-                          </div>
-                        </div>
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Facet</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Enables this field as a filter in the search page.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                          />
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Secondary Facet Switch */}
@@ -442,23 +429,21 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="secondaryFacet"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Secondary Facet</FormLabel>
-                            <FormDescription>
-                              Classifies this field as a secondary facet.
-                            </FormDescription>
-                          </div>
-                          <div className="flex justify-end w-1/2">
-                            <Switch
-                              checked={!!field.value}
-                              onCheckedChange={(checked) => field.onChange(checked)}
-                            />
-                          </div>
-                        </div>
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Secondary Facet</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Classifies this field as a secondary facet.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <Switch
+                            checked={!!field.value}
+                            onCheckedChange={(checked) => field.onChange(checked)}
+                          />
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Show All Facet Items Switch */}
@@ -466,23 +451,21 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="showAllFacetItems"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Show All Facet Items</FormLabel>
-                            <FormDescription>
-                              Displays all possible facet values, even those with zero results.
-                            </FormDescription>
-                          </div>
-                          <div className="flex justify-end w-1/2">
-                            <Switch
-                              checked={!!field.value}
-                              onCheckedChange={(checked) => field.onChange(checked)}
-                            />
-                          </div>
-                        </div>
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Show All Facet Items</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Displays all possible facet values, even those with zero results.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <Switch
+                            checked={!!field.value}
+                            onCheckedChange={(checked) => field.onChange(checked)}
+                          />
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Facet Sort Select */}
@@ -490,21 +473,19 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="facetSort"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full gap-4">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Facet Sort</FormLabel>
-                            <FormDescription>
-                              Determines how facet values are ordered in the filter box.
-                            </FormDescription>
-                          </div>
-                          <div className="w-1/2 flex justify-end">
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Facet Sort</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Determines how facet values are ordered in the filter box.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <FormControl>
                             <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="w-full min-w-45">
-                                  <SelectValue placeholder="Choose..." />
-                                </SelectTrigger>
-                              </FormControl>
+                              <SelectTrigger className="w-full min-w-45">
+                                <SelectValue placeholder="Choose..." />
+                              </SelectTrigger>
                               <SelectContent>
                                 {facetSorts.map((facetSort) => (
                                   <SelectItem key={facetSort.value} value={facetSort.value}>
@@ -513,10 +494,10 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                                 ))}
                               </SelectContent>
                             </Select>
-                          </div>
-                        </div>
+                          </FormControl>
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Facet Type Select */}
@@ -524,21 +505,19 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="facetType"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full gap-4">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Operator between Facets</FormLabel>
-                            <FormDescription>
-                              Specifies how multiple facets are combined in search.
-                            </FormDescription>
-                          </div>
-                          <div className="w-1/2 flex justify-end">
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Operator between Facets</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Specifies how multiple facets are combined in search.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <FormControl>
                             <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="w-full min-w-45">
-                                  <SelectValue placeholder="Choose..." />
-                                </SelectTrigger>
-                              </FormControl>
+                              <SelectTrigger className="w-full min-w-45">
+                                <SelectValue placeholder="Choose..." />
+                              </SelectTrigger>
                               <SelectContent>
                                 {facetTypes.map((facetType) => (
                                   <SelectItem key={facetType.value} value={facetType.value}>
@@ -547,10 +526,10 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                                 ))}
                               </SelectContent>
                             </Select>
-                          </div>
-                        </div>
+                          </FormControl>
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Facet Item Type Select */}
@@ -558,21 +537,19 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="facetItemType"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full gap-4">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Operator between Facet Items</FormLabel>
-                            <FormDescription>
-                              Defines how multiple selected facet values are joined.
-                            </FormDescription>
-                          </div>
-                          <div className="w-1/2 flex justify-end">
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Operator between Facet Items</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Defines how multiple selected facet values are joined.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <FormControl>
                             <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="w-full min-w-45">
-                                  <SelectValue placeholder="Choose..." />
-                                </SelectTrigger>
-                              </FormControl>
+                              <SelectTrigger className="w-full min-w-45">
+                                <SelectValue placeholder="Choose..." />
+                              </SelectTrigger>
                               <SelectContent>
                                 {facetTypes.map((facetType) => (
                                   <SelectItem key={facetType.value} value={facetType.value}>
@@ -581,10 +558,10 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                                 ))}
                               </SelectContent>
                             </Select>
-                          </div>
-                        </div>
+                          </FormControl>
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Facet Range Select */}
@@ -592,21 +569,19 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                     control={form.control}
                     name="facetRange"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <div className="flex flex-row items-center justify-between w-full gap-4">
-                          <div className="flex flex-col w-1/2">
-                            <FormLabel>Range</FormLabel>
-                            <FormDescription>
-                              Enables range-based facet filtering.
-                            </FormDescription>
-                          </div>
-                          <div className="w-1/2 flex justify-end">
+                      <FormItemTwoColumns className="w-full">
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Range</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description>
+                            Enables range-based facet filtering.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <FormControl>
                             <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="w-full min-w-45">
-                                  <SelectValue placeholder="Choose..." />
-                                </SelectTrigger>
-                              </FormControl>
+                              <SelectTrigger className="w-full min-w-45">
+                                <SelectValue placeholder="Choose..." />
+                              </SelectTrigger>
                               <SelectContent>
                                 {facetRanges.map((facetRange) => (
                                   <SelectItem key={facetRange.value} value={facetRange.value}>
@@ -615,10 +590,10 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                                 ))}
                               </SelectContent>
                             </Select>
-                          </div>
-                        </div>
+                          </FormControl>
+                        </FormItemTwoColumns.Right>
                         <FormMessage />
-                      </FormItem>
+                      </FormItemTwoColumns>
                     )}
                   />
                   {/* Facet Name */}

@@ -28,6 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns"
 import {
   Input
 } from "@/components/ui/input"
@@ -52,6 +53,7 @@ import type {
   TurSNSiteCustomFacetFieldOption,
   TurSNSiteCustomFacetItem,
 } from "@/models/sn/sn-site-custom-facet.model"
+import type { TurSNSiteFacetFieldTypes } from "@/models/sn/sn-site-facet.field.type"
 import { TurLocaleService } from "@/services/locale/locale.service"
 import { TurSNSiteCustomFacetService } from "@/services/sn/sn.site.custom.facet.service"
 import {
@@ -90,6 +92,12 @@ interface Props {
 const FACET_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 
 const DATE_FIELD_TYPE = "DATE";
+
+const facetTypes: { name: string; value: TurSNSiteFacetFieldTypes }[] = [
+  { name: "Default", value: "DEFAULT" },
+  { name: "And", value: "AND" },
+  { name: "Or", value: "OR" },
+];
 
 function isDateFieldType(fieldType?: string): boolean {
   return (fieldType ?? "").toUpperCase() === DATE_FIELD_TYPE;
@@ -202,7 +210,11 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, index, isDateField, onUpdate, o
 
 export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew }) => {
   const form = useForm<TurSNSiteCustomFacet>({
-    defaultValues: value
+    defaultValues: {
+      ...value,
+      facetType: value.facetType ?? "DEFAULT",
+      facetItemType: value.facetItemType ?? "DEFAULT",
+    }
   });
   const { control, watch, setValue } = form;
   const [open, setOpen] = useState(false);
@@ -219,7 +231,11 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
   const sensors = useSensors(useSensor(PointerSensor));
 
   useEffect(() => {
-    form.reset(value);
+    form.reset({
+      ...value,
+      facetType: value.facetType ?? "DEFAULT",
+      facetItemType: value.facetItemType ?? "DEFAULT",
+    });
     const entries = Object.entries(value.label ?? {}).map(([locale, label]) => ({
       locale,
       label,
@@ -350,6 +366,8 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
 
     const payload: TurSNSiteCustomFacet = {
       ...customFacet,
+      facetType: customFacet.facetType ?? "DEFAULT",
+      facetItemType: customFacet.facetItemType ?? "DEFAULT",
       label: labelEntries
         .filter((entry) => entry.locale.trim() && entry.label.trim())
         .reduce<Record<string, string>>((labelsMap, entry) => {
@@ -453,7 +471,9 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-base">Facet Name</FormLabel>
-                          <FormDescription className="text-sm mb-2">A unique identifier for this facet. Use lowercase letters, numbers, underscores, or hyphens.</FormDescription>
+                          <FormDescription className="text-sm mb-2">
+                            Give your facet a unique ID using lowercase letters, numbers, underscores, or hyphens. This helps organize your search filters.
+                          </FormDescription>
                           <FormControl>
                             <Input
                               {...field}
@@ -471,8 +491,10 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
                       name="defaultLabel"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base">Default Label</FormLabel>
-                          <FormDescription className="text-sm mb-2">The display name shown when no language-specific label is available.</FormDescription>
+                          <FormLabel className="text-base">Display Name</FormLabel>
+                          <FormDescription className="text-sm mb-2">
+                            The name shown to users when browsing filters. Used when no language-specific label is available.
+                          </FormDescription>
                           <FormControl>
                             <Input
                               {...field}
@@ -496,7 +518,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <h3 className="text-base font-medium">Add Translations</h3>
-                          <p className="text-sm text-muted-foreground">Customize labels for different languages and regions.</p>
+                          <p className="text-sm text-muted-foreground">Help users in different regions by providing labels in their language.</p>
                         </div>
                         <Button type="button" variant="outline" onClick={addLabelEntry}>
                           <PlusCircle className="h-4 w-4 mr-2" />
@@ -536,36 +558,101 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
                       control={control}
                       name="fieldExtId"
                       render={({ field }) => (
-                        <FormItem>
-                          <div className="flex gap-4">
-                            <div className="flex-1 flex flex-col justify-start">
-                              <FormLabel className="text-base">Select a Field</FormLabel>
-                              <FormDescription className="text-sm mt-1">Choose the field that will serve as the foundation for this custom facet.</FormDescription>
-                            </div>
-                            <div className="flex-1">
+                        <FormItemTwoColumns>
+                          <FormItemTwoColumns.Left>
+                            <FormItemTwoColumns.Label className="text-base mb-1">Select a Field</FormItemTwoColumns.Label>
+                            <FormItemTwoColumns.Description className="text-sm">Choose the field that will serve as the foundation for this custom facet.</FormItemTwoColumns.Description>
+                          </FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Right>
+                            <FormControl>
+                              <Select onValueChange={onFieldChange} value={field.value || ""}>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select a field" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {fieldOptions.map((fieldOption) => (
+                                    <SelectItem key={fieldOption.id} value={fieldOption.id}>
+                                      <div className="flex items-center justify-between gap-3">
+                                        <BadgeFieldType type={fieldOption.type} variation="short" />
+                                        <span>{fieldOption.name}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItemTwoColumns.Right>
+                        </FormItemTwoColumns>
+                      )}
+                    />
+                    <div className="space-y-6">
+                      {/* Facet Type Row */}
+                      <FormField
+                        control={control}
+                        name="facetType"
+                        render={({ field }) => (
+                          <FormItemTwoColumns>
+                            <FormItemTwoColumns.Left>
+                              <FormItemTwoColumns.Label className="text-base mb-1">Operator between Facets</FormItemTwoColumns.Label>
+                              <FormItemTwoColumns.Description className="text-sm">
+                                Specifies how multiple facets are combined in search.
+                              </FormItemTwoColumns.Description>
+                            </FormItemTwoColumns.Left>
+                            <FormItemTwoColumns.Right>
                               <FormControl>
-                                <Select onValueChange={onFieldChange} value={field.value || ""}>
+                                <Select onValueChange={field.onChange} value={field.value ?? "DEFAULT"}>
                                   <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select a field" />
+                                    <SelectValue placeholder="Select facet type" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {fieldOptions.map((fieldOption) => (
-                                      <SelectItem key={fieldOption.id} value={fieldOption.id}>
-                                        <div className="flex w-full items-center justify-between gap-3">
-                                          <BadgeFieldType type={fieldOption.type} variation="short" />
-                                          <span>{fieldOption.name}</span>
-                                        </div>
+                                    {facetTypes.map((facetType) => (
+                                      <SelectItem key={facetType.value} value={facetType.value}>
+                                        {facetType.name}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
                                 </Select>
                               </FormControl>
-                            </div>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              <FormMessage />
+                            </FormItemTwoColumns.Right>
+                          </FormItemTwoColumns>
+                        )}
+                      />
+
+                      {/* Facet Item Type Row */}
+                      <FormField
+                        control={control}
+                        name="facetItemType"
+                        render={({ field }) => (
+                          <FormItemTwoColumns>
+                            <FormItemTwoColumns.Left>
+                              <FormItemTwoColumns.Label className="text-base mb-1">Operator between Facet Items</FormItemTwoColumns.Label>
+                              <FormItemTwoColumns.Description className="text-sm">
+                                Defines how multiple selected facet values are joined.
+                              </FormItemTwoColumns.Description>
+                            </FormItemTwoColumns.Left>
+                            <FormItemTwoColumns.Right>
+                              <FormControl>
+                                <Select onValueChange={field.onChange} value={field.value ?? "DEFAULT"}>
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select item type" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {facetTypes.map((facetType) => (
+                                      <SelectItem key={facetType.value} value={facetType.value}>
+                                        {facetType.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItemTwoColumns.Right>
+                          </FormItemTwoColumns>
+                        )}
+                      />
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
 
@@ -576,8 +663,8 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <h3 className="text-base font-medium">Range Definitions</h3>
-                          <p className="text-sm text-muted-foreground">Create custom ranges by defining start and end values. Drag to reorder.</p>
+                          <h3 className="text-base font-medium">Define Your Ranges</h3>
+                          <p className="text-sm text-muted-foreground">Create custom range buckets for this filter. Drag items to reorder them—they'll appear in this order to users.</p>
                         </div>
                         <Button type="button" variant="outline" onClick={onAddItem}>
                           <PlusCircle className="h-4 w-4 mr-2" />

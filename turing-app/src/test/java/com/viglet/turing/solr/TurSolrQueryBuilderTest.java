@@ -348,6 +348,110 @@ class TurSolrQueryBuilderTest {
         }
 
         @Test
+        void testPrepareQueryFacetSelectedCustomFacetUsesItsOwnNameForOrAndExclusion() {
+                TurSNSite site = new TurSNSite();
+                site.setFacet(1);
+                site.setItemsPerFacet(5);
+                site.setFacetSort(null);
+                site.setFacetType(TurSNSiteFacetFieldEnum.OR);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
+
+                TurSNSiteCustomFacetItem item = TurSNSiteCustomFacetItem.builder()
+                                .label("101 - 500")
+                                .rangeStart(new BigDecimal("101"))
+                                .rangeEnd(new BigDecimal("500"))
+                                .build();
+                TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder()
+                                .name("price_range")
+                                .items(new java.util.HashSet<>(List.of(item)))
+                                .build();
+
+                TurSNSiteFieldExt nonFacetField = TurSNSiteFieldExt.builder()
+                                .name("id")
+                                .facet(0)
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .customFacets(new java.util.HashSet<>(List.of(customFacet)))
+                                .build();
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(nonFacetField));
+
+                SolrQuery query = new SolrQuery();
+                TurSNFilterParams params = TurSNFilterParams.builder()
+                                .defaultValues(List.of("price_range:101 - 500"))
+                                .operator(TurSNFilterQueryOperator.NONE)
+                                .itemOperator(TurSNFilterQueryOperator.NONE)
+                                .build();
+
+                builder().prepareQueryFacet(site, query, params);
+
+                assertThat(query.getFacetQuery()).isNotEmpty();
+                assertThat(List.of(query.getFacetQuery()))
+                                .allMatch(facetQuery -> !facetQuery.contains("ex=_all_"));
+        }
+
+        @Test
+        void testPrepareSolrQueryUsesCustomFacetSpecificOperatorsInsteadOfFieldOrGlobal() {
+                TurSNSite site = new TurSNSite();
+                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
+                site.setRowsPerPage(10);
+                site.setSpellCheck(0);
+                site.setSpellCheckFixes(0);
+
+                TurSNSiteCustomFacetItem item1 = TurSNSiteCustomFacetItem.builder()
+                                .label("1 - 10")
+                                .rangeStart(new BigDecimal("1"))
+                                .rangeEnd(new BigDecimal("10"))
+                                .build();
+                TurSNSiteCustomFacetItem item2 = TurSNSiteCustomFacetItem.builder()
+                                .label("11 - 20")
+                                .rangeStart(new BigDecimal("11"))
+                                .rangeEnd(new BigDecimal("20"))
+                                .build();
+
+                TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder()
+                                .name("price_range")
+                                .facetType(TurSNSiteFacetFieldEnum.OR)
+                                .facetItemType(TurSNSiteFacetFieldEnum.OR)
+                                .items(new java.util.HashSet<>(List.of(item1, item2)))
+                                .build();
+
+                TurSNSiteFieldExt field = TurSNSiteFieldExt.builder()
+                                .name("id")
+                                .facetType(TurSNSiteFacetFieldEnum.AND)
+                                .facetItemType(TurSNSiteFacetFieldEnum.AND)
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .customFacets(new java.util.HashSet<>(List.of(customFacet)))
+                                .build();
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(field));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabledAndType(site, 1, 1,
+                                com.viglet.turing.commons.se.field.TurSEFieldType.DATE))
+                                .thenReturn(Collections.emptyList());
+                when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(Collections.emptyList());
+                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(Collections.emptySet());
+
+                TurSNSearchParams params = new TurSNSearchParams();
+                params.setQ("query");
+                params.setRows(10);
+                params.setFq(List.of("price_range:1 - 10", "price_range:11 - 20"));
+                TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
+
+                SolrQuery query = builder().prepareSolrQuery(
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                seParameters, new TurSESpellCheckResult(false, ""));
+
+                assertThat(query.getFilterQueries()).hasSize(1);
+                assertThat(query.getFilterQueries()[0]).contains(" OR ");
+                assertThat(query.getFilterQueries()[0]).contains("id:[1 TO 10]");
+                assertThat(query.getFilterQueries()[0]).contains("id:[11 TO 20]");
+        }
+
+        @Test
         void testPrepareSolrQueryAppliesExactMatchAndTargetingRulesAndGroup() {
                 TurSNSite site = new TurSNSite();
                 site.setRowsPerPage(20);

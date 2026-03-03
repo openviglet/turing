@@ -339,6 +339,9 @@ public class TurSNSearchProcess {
                                         TurSNSiteFieldExtDto customFacetFieldExtDto = new TurSNSiteFieldExtDto(
                                                         turSNSiteFieldExt);
                                         customFacetFieldExtDto.setName(customFacet.getName());
+                                        customFacetFieldExtDto.setFacetType(customFacet.getFacetType());
+                                        customFacetFieldExtDto
+                                                        .setFacetItemType(customFacet.getFacetItemType());
                                         customFacetFieldExtDto
                                                         .setFacetName(getCustomFacetLabel(context,
                                                                         customFacet));

@@ -11,6 +11,8 @@ type BackendCustomFacet = {
   defaultLabel?: string;
   label?: Record<string, string>;
   facetPosition?: number;
+  facetType?: "DEFAULT" | "AND" | "OR";
+  facetItemType?: "DEFAULT" | "AND" | "OR";
   items?: BackendCustomFacetItem[];
   fieldExtId?: string;
   fieldExtName?: string;
@@ -69,6 +71,8 @@ export class TurSNSiteCustomFacetService {
       defaultLabel: customFacet.defaultLabel,
       label: customFacet.label ?? {},
       facetPosition: customFacet.facetPosition,
+      facetType: customFacet.facetType,
+      facetItemType: customFacet.facetItemType,
       items,
       fieldExtId: customFacet.fieldExtId ?? field.id,
       fieldExtName: customFacet.fieldExtName ?? field.name,
@@ -121,6 +125,8 @@ export class TurSNSiteCustomFacetService {
       defaultLabel: customFacet.defaultLabel,
       label: customFacet.label,
       facetPosition: customFacet.facetPosition,
+      facetType: customFacet.facetType,
+      facetItemType: customFacet.facetItemType,
       fieldExtId: customFacet.fieldExtId,
       fieldExtName: customFacet.fieldExtName,
       fieldExtType: customFacet.fieldExtType,

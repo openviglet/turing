@@ -80,6 +80,14 @@ public class TurSNSiteCustomFacet implements Serializable {
     private Integer facetPosition;
 
     @Builder.Default
+    @Column(name = "facet_type")
+    private TurSNSiteFacetFieldEnum facetType = TurSNSiteFacetFieldEnum.DEFAULT;
+
+    @Builder.Default
+    @Column(name = "facet_item_type")
+    private TurSNSiteFacetFieldEnum facetItemType = TurSNSiteFacetFieldEnum.DEFAULT;
+
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "sn_site_custom_facet_label", joinColumns = @JoinColumn(name = "custom_facet_id"))
     @MapKeyColumn(name = "locale", length = 20)

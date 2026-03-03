@@ -13,6 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns";
 import { GradientButton } from "@/components/ui/gradient-button";
 import {
   Select,
@@ -126,38 +127,34 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
                 name="source"
                 rules={{ required: true }}
                 render={({ field }) => (
-                  <FormItem>
-                    <div className="flex flex-row items-center w-full">
-                      {/* Left: Label + Description */}
-                      <div className="w-1/2 flex flex-col">
-                        <FormLabel>Where should we look?</FormLabel>
-                        <FormDescription>
-                          Choose the content source you want to manage. This is where your indexing or publishing actions will apply.
-                        </FormDescription>
-                      </div>
-                      {/* Right: Select */}
-                      <div className="w-1/2 flex justify-end">
-                        <FormControl>
-                          <Select
-                            value={field.value || ""}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Pick a source..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {sources?.map((s) => (
-                                <SelectItem key={s.id} value={s.name}>
-                                  {s.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                      </div>
-                    </div>
+                  <FormItemTwoColumns>
+                    <FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Label>Where should we look?</FormItemTwoColumns.Label>
+                      <FormItemTwoColumns.Description>
+                        Choose the content source you want to manage. This is where your indexing or publishing actions will apply.
+                      </FormItemTwoColumns.Description>
+                    </FormItemTwoColumns.Left>
+                    <FormItemTwoColumns.Right>
+                      <FormControl>
+                        <Select
+                          value={field.value || ""}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Pick a source..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {sources?.map((s) => (
+                              <SelectItem key={s.id} value={s.name}>
+                                {s.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormItemTwoColumns.Right>
                     <FormMessage />
-                  </FormItem>
+                  </FormItemTwoColumns>
                 )}
               />
             </AccordionContent>
@@ -177,35 +174,31 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
                 name="attribute"
                 rules={{ required: true }}
                 render={({ field }) => (
-                  <FormItem>
-                    <div className="flex flex-row items-center w-full">
-                      {/* Left: Label + Description */}
-                      <div className="w-1/2 flex flex-col">
-                        <FormLabel>How should we match?</FormLabel>
-                        <FormDescription>
-                          Select how you want to identify items: by their unique Identifier or by their URL.
-                        </FormDescription>
-                      </div>
-                      {/* Right: Select */}
-                      <div className="w-1/2 flex justify-end">
-                        <FormControl>
-                          <Select
-                            value={field.value || ""}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Choose an attribute..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="id">Identifier</SelectItem>
-                              <SelectItem value="url">URL</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                      </div>
-                    </div>
+                  <FormItemTwoColumns>
+                    <FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Label>How should we match?</FormItemTwoColumns.Label>
+                      <FormItemTwoColumns.Description>
+                        Select how you want to identify items: by their unique Identifier or by their URL.
+                      </FormItemTwoColumns.Description>
+                    </FormItemTwoColumns.Left>
+                    <FormItemTwoColumns.Right>
+                      <FormControl>
+                        <Select
+                          value={field.value || ""}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Choose an attribute..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="id">Identifier</SelectItem>
+                            <SelectItem value="url">URL</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormItemTwoColumns.Right>
                     <FormMessage />
-                  </FormItem>
+                  </FormItemTwoColumns>
                 )}
               />
             </AccordionContent>
@@ -264,27 +257,23 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
                   control={form.control}
                   name="recursive"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex flex-row items-center w-full">
-                        {/* Left: Label + Description */}
-                        <div className="w-1/2 flex flex-col">
-                          <FormLabel>Include child items?</FormLabel>
-                          <FormDescription>
-                            Turn this on to also apply the action to all child pages and assets.
-                          </FormDescription>
-                        </div>
-                        {/* Right: Switch */}
-                        <div className="w-1/2 flex justify-end">
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </div>
-                      </div>
+                    <FormItemTwoColumns>
+                      <FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Label>Include child items?</FormItemTwoColumns.Label>
+                        <FormItemTwoColumns.Description>
+                          Turn this on to also apply the action to all child pages and assets.
+                        </FormItemTwoColumns.Description>
+                      </FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Right>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItemTwoColumns.Right>
                       <FormMessage />
-                    </FormItem>
+                    </FormItemTwoColumns>
                   )}
                 />
               </AccordionContent>

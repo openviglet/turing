@@ -31,6 +31,7 @@ import { TurIntegrationIndexingRuleService } from "@/services/integration/integr
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
 import { TurSNSiteService } from "@/services/sn/sn.service"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
+import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
 import { DynamicIndexingRuleFields } from "./dynamic.indexing.rule.field"
 // Constants
@@ -259,31 +260,31 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
                   name="source"
                   rules={{ required: "Please select a site." }}
                   render={({ field }) => (
-                    <div className="flex flex-row items-center w-full gap-4">
-                      <div className="w-1/2 flex flex-col">
-                        <FormLabel>Choose a Site</FormLabel>
-                        <FormDescription>
+                    <FormItemTwoColumns>
+                      <FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Label>Choose a Site</FormItemTwoColumns.Label>
+                        <FormItemTwoColumns.Description>
                           Select the Semantic Navigation site where this rule should be active.
-                        </FormDescription>
-                      </div>
-                      <div className="w-1/2">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
+                        </FormItemTwoColumns.Description>
+                      </FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Right>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select a site..." />
                             </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {turSNSites.map((site) => (
-                              <SelectItem key={site.id} value={site.name}>
-                                {site.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </div>
-                    </div>
+                            <SelectContent>
+                              {turSNSites.map((site) => (
+                                <SelectItem key={site.id} value={site.name}>
+                                  {site.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </FormItemTwoColumns.Right>
+                      <FormMessage />
+                    </FormItemTwoColumns>
                   )}
                 />
 
@@ -293,37 +294,37 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
                   name="attribute"
                   rules={{ required: "Please select a field." }}
                   render={({ field }) => (
-                    <div className="flex flex-row items-center w-full gap-4">
-                      <div className="w-1/2 flex flex-col">
-                        <FormLabel>Pick a Field</FormLabel>
-                        <FormDescription>
+                    <FormItemTwoColumns>
+                      <FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Label>Pick a Field</FormItemTwoColumns.Label>
+                        <FormItemTwoColumns.Description>
                           Choose the content field this rule should check. Only items with matching values will be affected.
-                        </FormDescription>
-                      </div>
-                      <div className="w-1/2">
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          disabled={isAttributeFieldDisabled}
-                        >
-                          <FormControl>
+                        </FormItemTwoColumns.Description>
+                      </FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Right>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            disabled={isAttributeFieldDisabled}
+                          >
                             <SelectTrigger className="w-full">
                               <SelectValue
                                 placeholder={isLoadingFields ? "Loading fields..." : "Select a field..."}
                               />
                             </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {turSNSiteFields.map((siteField) => (
-                              <SelectItem key={siteField.id} value={siteField.name}>
-                                {siteField.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </div>
-                    </div>
+                            <SelectContent>
+                              {turSNSiteFields.map((siteField) => (
+                                <SelectItem key={siteField.id} value={siteField.name}>
+                                  {siteField.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </FormItemTwoColumns.Right>
+                      <FormMessage />
+                    </FormItemTwoColumns>
                   )}
                 />
               </AccordionContent>
@@ -345,31 +346,31 @@ export const IntegrationIndexingRulesForm: React.FC<IntegrationIndexingRulesForm
                   name="ruleType"
                   rules={{ required: "Please choose an action." }}
                   render={({ field }) => (
-                    <div className="flex flex-row items-center w-full gap-4">
-                      <div className="w-1/2 flex flex-col">
-                        <FormLabel>Action for Matching Items</FormLabel>
-                        <FormDescription>
+                    <FormItemTwoColumns>
+                      <FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Label>Action for Matching Items</FormItemTwoColumns.Label>
+                        <FormItemTwoColumns.Description>
                           Decide what should happen when content matches this rule. For example, "Ignore" will skip these items during indexing.
-                        </FormDescription>
-                      </div>
-                      <div className="w-1/2">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
+                        </FormItemTwoColumns.Description>
+                      </FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Right>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Choose an action..." />
                             </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {RULE_TYPES.map((ruleType: typeof RULE_TYPES[number]) => (
-                              <SelectItem key={ruleType.value} value={ruleType.value}>
-                                {ruleType.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </div>
-                    </div>
+                            <SelectContent>
+                              {RULE_TYPES.map((ruleType: typeof RULE_TYPES[number]) => (
+                                <SelectItem key={ruleType.value} value={ruleType.value}>
+                                  {ruleType.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </FormItemTwoColumns.Right>
+                      <FormMessage />
+                    </FormItemTwoColumns>
                   )}
                 />
               </AccordionContent>

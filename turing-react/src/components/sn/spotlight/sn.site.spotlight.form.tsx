@@ -18,6 +18,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns"
 import { GradientButton } from "@/components/ui/gradient-button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -269,29 +270,31 @@ export const SNSiteSpotlightForm: React.FC<Props> = ({ snSiteId, value, isNew })
                                 name="language"
                                 rules={{ required: "Please select a language." }}
                                 render={({ field }) => (
-                                    <div className="flex flex-row items-center justify-between w-full gap-4">
-                                        <div className="w-1/2 flex flex-col">
-                                            <FormLabel>Language</FormLabel>
-                                            <FormDescription>
+                                    <FormItemTwoColumns>
+                                        <FormItemTwoColumns.Left>
+                                            <FormItemTwoColumns.Label>Language</FormItemTwoColumns.Label>
+                                            <FormItemTwoColumns.Description>
                                                 Pick the language for this spotlight. This helps show the right content to your users.
-                                            </FormDescription>
-                                        </div>
-                                        <div className="w-1/2">
-                                            <Select onValueChange={field.onChange} value={field.value || ""}>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Choose language" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {locales.map((locale) => (
-                                                        <SelectItem key={locale.id} value={locale.language}>
-                                                            {locale.language}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </div>
-                                    </div>
+                                            </FormItemTwoColumns.Description>
+                                        </FormItemTwoColumns.Left>
+                                        <FormItemTwoColumns.Right>
+                                            <FormControl>
+                                                <Select onValueChange={field.onChange} value={field.value || ""}>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Choose language" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {locales.map((locale) => (
+                                                            <SelectItem key={locale.id} value={locale.language}>
+                                                                {locale.language}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                        </FormItemTwoColumns.Right>
+                                        <FormMessage />
+                                    </FormItemTwoColumns>
                                 )}
                             />
                         </AccordionContent>

@@ -32,6 +32,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
+import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
 import { Skeleton } from "../ui/skeleton"
 const turSNSiteService = new TurSNSiteService();
@@ -177,21 +178,19 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
                       name="turSEInstance.id"
                       rules={{ required: "Search engine instance is required." }}
                       render={({ field }) => (
-                        <FormItem>
-                          <div className="flex flex-row items-center justify-between w-full gap-6">
-                            <div className="flex flex-col min-w-56">
-                              <FormLabel>Search Engine Instance</FormLabel>
-                              <FormDescription>
-                                Select the search engine instance powering this semantic navigation site. This determines which backend is used for indexing and searching content.
-                              </FormDescription>
-                            </div>
-                            <div className="flex-1 max-w-md">
+                        <FormItemTwoColumns>
+                          <FormItemTwoColumns.Left>
+                            <FormItemTwoColumns.Label>Search Engine Instance</FormItemTwoColumns.Label>
+                            <FormItemTwoColumns.Description>
+                              Select the search engine instance powering this semantic navigation site. This determines which backend is used for indexing and searching content.
+                            </FormItemTwoColumns.Description>
+                          </FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Right>
+                            <FormControl>
                               <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Choose..." />
-                                  </SelectTrigger>
-                                </FormControl>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Choose..." />
+                                </SelectTrigger>
                                 <SelectContent>
                                   {seInstances.map((seInstance) => (
                                     <SelectItem key={seInstance.id} value={seInstance.id}>
@@ -200,10 +199,10 @@ export const SNSiteForm: React.FC<Props> = ({ value, isNew }) => {
                                   ))}
                                 </SelectContent>
                               </Select>
-                            </div>
-                          </div>
+                            </FormControl>
+                          </FormItemTwoColumns.Right>
                           <FormMessage />
-                        </FormItem>
+                        </FormItemTwoColumns>
                       )}
                     />
                   </AccordionContent>

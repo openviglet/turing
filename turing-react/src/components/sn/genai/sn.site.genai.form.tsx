@@ -8,6 +8,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns"
 import { GradientButton } from "@/components/ui/gradient-button"
 import {
     Select,
@@ -141,22 +142,22 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                                     control={form.control}
                                     name="enabled"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex flex-row items-center justify-between w-full">
-                                                <div className="flex flex-col min-w-0">
-                                                    <FormLabel>Enable Generative AI</FormLabel>
-                                                    <FormDescription>
-                                                        Turn on AI-powered answers and semantic search for this site.
-                                                    </FormDescription>
-                                                </div>
+                                        <FormItemTwoColumns>
+                                            <FormItemTwoColumns.Left>
+                                                <FormItemTwoColumns.Label>Enable Generative AI</FormItemTwoColumns.Label>
+                                                <FormItemTwoColumns.Description>
+                                                    Turn on AI-powered answers and semantic search for this site.
+                                                </FormItemTwoColumns.Description>
+                                            </FormItemTwoColumns.Left>
+                                            <FormItemTwoColumns.Right>
                                                 <FormControl>
                                                     <Switch
                                                         checked={field.value}
                                                         onCheckedChange={handleEnabledChange}
                                                     />
                                                 </FormControl>
-                                            </div>
-                                        </FormItem>
+                                            </FormItemTwoColumns.Right>
+                                        </FormItemTwoColumns>
                                     )}
                                 />
                             </AccordionContent>
@@ -177,40 +178,38 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                                         name="turLLMInstance"
                                         rules={{ required: enabled && "Language model is required." }}
                                         render={({ field }) => (
-                                            <FormItem>
-                                                <div className="flex flex-row items-center justify-between w-full">
-                                                    <div className="flex flex-col min-w-0">
-                                                        <FormLabel>Language Model</FormLabel>
-                                                        <FormDescription>
-                                                            Choose the AI language model for generating answers.
-                                                        </FormDescription>
-                                                    </div>
-                                                    <div className="flex-1 max-w-55 ml-4">
-                                                        <FormControl>
-                                                            <Select
-                                                                onValueChange={(val) => {
-                                                                    const instance = llmInstances.find((i) => i.id === val);
-                                                                    field.onChange(instance ?? null);
-                                                                }}
-                                                                value={field.value?.id || "__none__"}
-                                                            >
-                                                                <SelectTrigger className="w-full">
-                                                                    <SelectValue placeholder="-- No Language Model --" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="__none__">-- No Language Model --</SelectItem>
-                                                                    {llmInstances.map((instance) => (
-                                                                        <SelectItem key={instance.id} value={instance.id}>
-                                                                            {instance.title}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </div>
-                                                </div>
-                                            </FormItem>
+                                            <FormItemTwoColumns>
+                                                <FormItemTwoColumns.Left>
+                                                    <FormItemTwoColumns.Label>Language Model</FormItemTwoColumns.Label>
+                                                    <FormItemTwoColumns.Description>
+                                                        Choose the AI language model for generating answers.
+                                                    </FormItemTwoColumns.Description>
+                                                </FormItemTwoColumns.Left>
+                                                <FormItemTwoColumns.Right>
+                                                    <FormControl>
+                                                        <Select
+                                                            onValueChange={(val) => {
+                                                                const instance = llmInstances.find((i) => i.id === val);
+                                                                field.onChange(instance ?? null);
+                                                            }}
+                                                            value={field.value?.id || "__none__"}
+                                                        >
+                                                            <SelectTrigger className="w-full">
+                                                                <SelectValue placeholder="-- No Language Model --" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="__none__">-- No Language Model --</SelectItem>
+                                                                {llmInstances.map((instance) => (
+                                                                    <SelectItem key={instance.id} value={instance.id}>
+                                                                        {instance.title}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItemTwoColumns.Right>
+                                            </FormItemTwoColumns>
                                         )}
                                     />
 
@@ -220,40 +219,38 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                                         name="turStoreInstance"
                                         rules={{ required: enabled && "Embedding store is required." }}
                                         render={({ field }) => (
-                                            <FormItem>
-                                                <div className="flex flex-row items-center justify-between w-full">
-                                                    <div className="flex flex-col min-w-0">
-                                                        <FormLabel>Embedding Store</FormLabel>
-                                                        <FormDescription>
-                                                            Select the vector store for semantic search and RAG.
-                                                        </FormDescription>
-                                                    </div>
-                                                    <div className="flex-1 max-w-55 ml-4">
-                                                        <FormControl>
-                                                            <Select
-                                                                onValueChange={(val) => {
-                                                                    const instance = storeInstances.find((i) => i.id === val);
-                                                                    field.onChange(instance ?? null);
-                                                                }}
-                                                                value={field.value?.id || "__none__"}
-                                                            >
-                                                                <SelectTrigger className="w-full">
-                                                                    <SelectValue placeholder="-- No Embedding Store --" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="__none__">-- No Embedding Store --</SelectItem>
-                                                                    {storeInstances.map((instance) => (
-                                                                        <SelectItem key={instance.id} value={instance.id}>
-                                                                            {instance.title}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </div>
-                                                </div>
-                                            </FormItem>
+                                            <FormItemTwoColumns>
+                                                <FormItemTwoColumns.Left>
+                                                    <FormItemTwoColumns.Label>Embedding Store</FormItemTwoColumns.Label>
+                                                    <FormItemTwoColumns.Description>
+                                                        Select the vector store for semantic search and RAG.
+                                                    </FormItemTwoColumns.Description>
+                                                </FormItemTwoColumns.Left>
+                                                <FormItemTwoColumns.Right>
+                                                    <FormControl>
+                                                        <Select
+                                                            onValueChange={(val) => {
+                                                                const instance = storeInstances.find((i) => i.id === val);
+                                                                field.onChange(instance ?? null);
+                                                            }}
+                                                            value={field.value?.id || "__none__"}
+                                                        >
+                                                            <SelectTrigger className="w-full">
+                                                                <SelectValue placeholder="-- No Embedding Store --" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="__none__">-- No Embedding Store --</SelectItem>
+                                                                {storeInstances.map((instance) => (
+                                                                    <SelectItem key={instance.id} value={instance.id}>
+                                                                        {instance.title}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItemTwoColumns.Right>
+                                            </FormItemTwoColumns>
                                         )}
                                     />
                                 </AccordionContent>

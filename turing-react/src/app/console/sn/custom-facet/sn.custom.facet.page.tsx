@@ -19,6 +19,8 @@ export default function SNSiteCustomFacetPage() {
         name: "",
         defaultLabel: "",
         label: {},
+        facetType: "DEFAULT",
+        facetItemType: "DEFAULT",
         items: [],
         fieldExtId: "",
       } as TurSNSiteCustomFacet);

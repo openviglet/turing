@@ -165,3 +165,16 @@ databaseChangeLog:
               - column:
                   name: range_end_date
                   type: DATETIME
+  - changeSet:
+      id: v2026.1.16-01-add-facet-operators-to-custom-facet
+      author: viglet-team
+      changes:
+        - addColumn:
+            tableName: sn_site_custom_facet
+            columns:
+              - column:
+                  name: facet_type
+                  type: TINYINT
+              - column:
+                  name: facet_item_type
+                  type: TINYINT

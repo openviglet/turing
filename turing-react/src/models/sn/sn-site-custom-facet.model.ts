@@ -1,3 +1,5 @@
+import type { TurSNSiteFacetFieldTypes } from "./sn-site-facet.field.type";
+
 export interface TurSNSiteCustomFacetItem {
   id?: string;
   label: string;
@@ -14,6 +16,8 @@ export interface TurSNSiteCustomFacet {
   defaultLabel?: string;
   label: Record<string, string>;
   facetPosition?: number;
+  facetType?: TurSNSiteFacetFieldTypes;
+  facetItemType?: TurSNSiteFacetFieldTypes;
   items: TurSNSiteCustomFacetItem[];
   fieldExtId: string;
   fieldExtName?: string;

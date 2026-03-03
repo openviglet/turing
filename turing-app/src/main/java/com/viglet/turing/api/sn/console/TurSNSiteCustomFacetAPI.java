@@ -54,6 +54,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
@@ -212,6 +213,10 @@ public class TurSNSiteCustomFacetAPI {
         target.setName(payload.getName());
         target.setDefaultLabel(payload.getDefaultLabel());
         target.setLabel(Optional.ofNullable(payload.getLabel()).orElse(Map.of()));
+        target.setFacetType(Optional.ofNullable(payload.getFacetType())
+                .orElse(TurSNSiteFacetFieldEnum.DEFAULT));
+        target.setFacetItemType(Optional.ofNullable(payload.getFacetItemType())
+                .orElse(TurSNSiteFacetFieldEnum.DEFAULT));
 
         Integer facetPosition = payload.getFacetPosition();
         if (facetPosition == null || facetPosition <= 0) {
@@ -280,6 +285,8 @@ public class TurSNSiteCustomFacetAPI {
         dto.setDefaultLabel(customFacet.getDefaultLabel());
         dto.setLabel(labels);
         dto.setFacetPosition(customFacet.getFacetPosition());
+        dto.setFacetType(customFacet.getFacetType());
+        dto.setFacetItemType(customFacet.getFacetItemType());
         dto.setItems(items);
         dto.setFieldExtId(fieldExt != null ? fieldExt.getId() : null);
         dto.setFieldExtName(fieldExt != null ? fieldExt.getName() : null);
@@ -425,6 +432,8 @@ public class TurSNSiteCustomFacetAPI {
         private String defaultLabel;
         private Map<String, String> label;
         private Integer facetPosition;
+        private TurSNSiteFacetFieldEnum facetType;
+        private TurSNSiteFacetFieldEnum facetItemType;
         private List<TurSNSiteCustomFacetItemDto> items;
         private String fieldExtId;
         private String fieldExtName;

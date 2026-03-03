@@ -39,6 +39,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
 import { DynamicSourceLocales } from "./dynamic.source.locale"
 
@@ -246,20 +247,22 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                 control={form.control}
                 name="author"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Enable Author</FormLabel>
-                      <FormDescription>
+                  <FormItemTwoColumns className="rounded-lg border p-4">
+                    <FormItemTwoColumns.Left className="space-y-0.5">
+                      <FormItemTwoColumns.Label className="text-base">Enable Author</FormItemTwoColumns.Label>
+                      <FormItemTwoColumns.Description>
                         Index content from AEM Author instance
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
+                      </FormItemTwoColumns.Description>
+                    </FormItemTwoColumns.Left>
+                    <FormItemTwoColumns.Right>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItemTwoColumns.Right>
+                  </FormItemTwoColumns>
                 )}
               />
 
@@ -307,20 +310,22 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                 control={form.control}
                 name="publish"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Enable Publish</FormLabel>
-                      <FormDescription>
+                  <FormItemTwoColumns className="rounded-lg border p-4">
+                    <FormItemTwoColumns.Left className="space-y-0.5">
+                      <FormItemTwoColumns.Label className="text-base">Enable Publish</FormItemTwoColumns.Label>
+                      <FormItemTwoColumns.Description>
                         Index content from AEM Publish instance
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
+                      </FormItemTwoColumns.Description>
+                    </FormItemTwoColumns.Left>
+                    <FormItemTwoColumns.Right>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItemTwoColumns.Right>
+                  </FormItemTwoColumns>
                 )}
               />
 
