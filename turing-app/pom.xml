@@ -13,7 +13,7 @@
     <url>https://github.com/openturing/turing</url>
     <packaging>jar</packaging>
     <properties>
-        <elasticsearch.version>9.3.0</elasticsearch.version>
+        <elasticsearch.version>9.3.1</elasticsearch.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>21</maven.compiler.release>
@@ -259,7 +259,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.1</version>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.squins.google.fork.schema-org-client</groupId>
