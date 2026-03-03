@@ -28,5 +28,21 @@ class TurSNSpotlightDocumentTest {
         assertThat(spotlightDocument.getReferenceId()).isEqualTo("ref-1");
         assertThat(spotlightDocument.getContent()).isEqualTo("Highlighted content");
         assertThat(spotlightDocument.getLink()).isEqualTo("http://localhost/doc-1");
+
+        spotlightDocument.setId("doc-2");
+        spotlightDocument.setPosition(8);
+        spotlightDocument.setTitle("Updated");
+        spotlightDocument.setType("blog");
+        spotlightDocument.setReferenceId("ref-2");
+        spotlightDocument.setContent("Updated content");
+        spotlightDocument.setLink("http://localhost/doc-2");
+
+        assertThat(spotlightDocument.getId()).isEqualTo("doc-2");
+        assertThat(spotlightDocument.getPosition()).isEqualTo(8);
+        assertThat(spotlightDocument.getTitle()).isEqualTo("Updated");
+        assertThat(spotlightDocument.getType()).isEqualTo("blog");
+        assertThat(spotlightDocument.getReferenceId()).isEqualTo("ref-2");
+        assertThat(spotlightDocument.getContent()).isEqualTo("Updated content");
+        assertThat(spotlightDocument.getLink()).isEqualTo("http://localhost/doc-2");
     }
 }
