@@ -855,12 +855,28 @@ class TurSNSearchProcessTest {
                 TurSNSite site = new TurSNSite();
                 site.setId("site-id");
                 site.setName("site");
-                site.setFacet(0);
+                site.setFacet(1);
+                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+                site.setItemsPerFacet(10);
                 site.setSpotlightWithResults(0);
 
+                TurSNSiteFieldExt facetField = TurSNSiteFieldExt.builder()
+                                .name("category")
+                                .facetName("Category")
+                                .snType(TurSNFieldType.SE)
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .enabled(1)
+                                .facet(1)
+                                .build();
+
                 when(turSNSiteRepository.findByName("site")).thenReturn(Optional.of(site));
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1)).thenReturn(List.of());
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of());
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
+                                .thenReturn(List.of(facetField));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(facetField));
+                when(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExtAndLocale(facetField, Locale.US))
+                                .thenReturn(Set.of());
                 when(turSNSiteLocaleRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of());
                 when(turSolrQueryBuilder.hasGroup(any())).thenReturn(false);
                 when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any())).thenReturn(List.of("category"));
@@ -1026,5 +1042,23 @@ class TurSNSearchProcessTest {
                 var bean = process(false).search(context);
 
                 assertThat(bean.getWidget().getFacet()).isEmpty();
+        }
+
+        @Test
+        void testHasMltReturnsFalseWhenSimilarResultsNull() throws Exception {
+                TurSNSite site = new TurSNSite();
+                site.setMlt(1);
+
+                TurSEResults seResults = TurSEResults.builder()
+                                .similarResults(null)
+                                .build();
+                var process = process(false);
+                var method = TurSNSearchProcess.class.getDeclaredMethod("hasMLT", TurSNSite.class,
+                                TurSEResults.class);
+                method.setAccessible(true);
+
+                boolean hasMlt = (boolean) method.invoke(process, site, seResults);
+
+                assertThat(hasMlt).isFalse();
         }
 }
