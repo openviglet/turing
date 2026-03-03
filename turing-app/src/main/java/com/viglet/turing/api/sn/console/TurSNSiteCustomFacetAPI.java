@@ -25,6 +25,10 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
@@ -55,7 +60,6 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtReposi
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -104,8 +108,8 @@ public class TurSNSiteCustomFacetAPI {
         TurSNSiteFieldExt targetField = getTargetField(turSNSite, payload.getFieldExtId());
 
         TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder().build();
-        applyPayload(customFacet, payload, turSNSite, true);
         customFacet.setTurSNSiteFieldExt(targetField);
+        applyPayload(customFacet, payload, turSNSite, true);
 
         Set<TurSNSiteCustomFacet> customFacets = new HashSet<>(
                 Optional.ofNullable(targetField.getCustomFacets()).orElse(Set.of()));
@@ -139,21 +143,17 @@ public class TurSNSiteCustomFacetAPI {
                 .map(fieldId -> getTargetField(turSNSite, fieldId))
                 .orElse(sourceField);
 
+        customFacet.setTurSNSiteFieldExt(targetField);
         applyPayload(customFacet, payload, turSNSite, false);
 
         if (!sourceField.getId().equals(targetField.getId())) {
-            sourceField.setCustomFacets(Optional.ofNullable(sourceField.getCustomFacets())
-                    .orElse(Set.of())
-                    .stream()
-                    .filter(item -> !customFacetId.equals(item.getId()))
-                    .collect(Collectors.toSet()));
-            turSNSiteFieldExtRepository.save(sourceField);
-
             Set<TurSNSiteCustomFacet> targetFacets = new HashSet<>(
                     Optional.ofNullable(targetField.getCustomFacets()).orElse(Set.of()));
             customFacet.setTurSNSiteFieldExt(targetField);
             targetFacets.add(customFacet);
+
             targetField.setCustomFacets(targetFacets);
+
             TurSNSiteFieldExt savedTargetField = turSNSiteFieldExtRepository.save(targetField);
             return Optional.ofNullable(savedTargetField.getCustomFacets())
                     .orElse(Set.of())
@@ -219,23 +219,37 @@ public class TurSNSiteCustomFacetAPI {
         }
         target.setFacetPosition(facetPosition);
 
+        TurSEFieldType fieldType = Optional.ofNullable(target.getTurSNSiteFieldExt())
+                .map(TurSNSiteFieldExt::getType)
+                .orElse(TurSEFieldType.INT);
+
         Set<TurSNSiteCustomFacetItem> items = Optional.ofNullable(payload.getItems())
                 .orElse(List.of())
                 .stream()
                 .sorted(Comparator.comparing(this::safeItemPositionDto)
                         .thenComparing(TurSNSiteCustomFacetItemDto::getLabel, Comparator.nullsLast(String::compareTo)))
-                .map(this::toEntity)
+                .map(itemDto -> toEntity(itemDto, fieldType))
                 .collect(Collectors.toCollection(HashSet::new));
         target.setItems(items);
     }
 
-    private TurSNSiteCustomFacetItem toEntity(TurSNSiteCustomFacetItemDto dto) {
+    private TurSNSiteCustomFacetItem toEntity(TurSNSiteCustomFacetItemDto dto, TurSEFieldType fieldType) {
         TurSNSiteCustomFacetItem item = TurSNSiteCustomFacetItem.builder().build();
         item.setId(dto.getId());
         item.setLabel(dto.getLabel());
         item.setPosition(safeItemPositionDto(dto));
-        item.setRangeStart(dto.getRangeStart());
-        item.setRangeEnd(dto.getRangeEnd());
+
+        if (TurSEFieldType.DATE.equals(fieldType)) {
+            item.setRangeStart(null);
+            item.setRangeEnd(null);
+            item.setRangeStartDate(parseIsoDate(dto.getRangeStartDate()));
+            item.setRangeEndDate(parseIsoDate(dto.getRangeEndDate()));
+        } else {
+            item.setRangeStart(dto.getRangeStart());
+            item.setRangeEnd(dto.getRangeEnd());
+            item.setRangeStartDate(null);
+            item.setRangeEndDate(null);
+        }
         return item;
     }
 
@@ -247,25 +261,64 @@ public class TurSNSiteCustomFacetAPI {
                 .stream()
                 .sorted(Comparator.comparing(this::safeItemPositionEntity)
                         .thenComparing(TurSNSiteCustomFacetItem::getLabel, Comparator.nullsLast(String::compareTo)))
-                .map(item -> TurSNSiteCustomFacetItemDto.builder()
-                        .id(item.getId())
-                        .label(item.getLabel())
-                        .position(item.getPosition())
-                        .rangeStart(item.getRangeStart())
-                        .rangeEnd(item.getRangeEnd())
-                        .build())
+                .map(item -> {
+                    TurSNSiteCustomFacetItemDto dto = new TurSNSiteCustomFacetItemDto();
+                    dto.setId(item.getId());
+                    dto.setLabel(item.getLabel());
+                    dto.setPosition(item.getPosition());
+                    dto.setRangeStart(item.getRangeStart());
+                    dto.setRangeEnd(item.getRangeEnd());
+                    dto.setRangeStartDate(formatIsoDate(item.getRangeStartDate()));
+                    dto.setRangeEndDate(formatIsoDate(item.getRangeEndDate()));
+                    return dto;
+                })
                 .toList();
 
-        return TurSNSiteCustomFacetDto.builder()
-                .id(customFacet.getId())
-                .name(customFacet.getName())
-                .defaultLabel(customFacet.getDefaultLabel())
-                .label(labels)
-                .facetPosition(customFacet.getFacetPosition())
-                .items(items)
-                .fieldExtId(fieldExt != null ? fieldExt.getId() : null)
-                .fieldExtName(fieldExt != null ? fieldExt.getName() : null)
-                .build();
+        TurSNSiteCustomFacetDto dto = new TurSNSiteCustomFacetDto();
+        dto.setId(customFacet.getId());
+        dto.setName(customFacet.getName());
+        dto.setDefaultLabel(customFacet.getDefaultLabel());
+        dto.setLabel(labels);
+        dto.setFacetPosition(customFacet.getFacetPosition());
+        dto.setItems(items);
+        dto.setFieldExtId(fieldExt != null ? fieldExt.getId() : null);
+        dto.setFieldExtName(fieldExt != null ? fieldExt.getName() : null);
+        dto.setFieldExtType(fieldExt != null && fieldExt.getType() != null
+                ? fieldExt.getType().toString()
+                : null);
+        return dto;
+    }
+
+    private Instant parseIsoDate(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        try {
+            return Instant.parse(value);
+        } catch (Exception ignored) {
+            // Fallback to ISO_OFFSET_DATE_TIME below.
+        }
+
+        try {
+            return OffsetDateTime.parse(value).toInstant();
+        } catch (Exception ignored) {
+            // Fallback to ISO_LOCAL_DATE below.
+        }
+
+        try {
+            return LocalDate.parse(value).atStartOfDay(ZoneOffset.UTC).toInstant();
+        } catch (Exception ignored) {
+            // Parsed in all accepted ISO formats and failed.
+        }
+
+        throw new ResponseStatusException(BAD_REQUEST, "Invalid ISO date value: " + value);
+    }
+
+    private String formatIsoDate(Instant value) {
+        return Optional.ofNullable(value)
+                .map(Instant::toString)
+                .orElse(null);
     }
 
     private List<TurSNSiteCustomFacet> getAllCustomFacets(TurSNSite turSNSite) {
@@ -352,22 +405,20 @@ public class TurSNSiteCustomFacetAPI {
 
     @Setter
     @Getter
-    @Builder
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class TurSNSiteCustomFacetItemDto {
         private String id;
         private String label;
         private Integer position;
         private BigDecimal rangeStart;
         private BigDecimal rangeEnd;
+        private String rangeStartDate;
+        private String rangeEndDate;
     }
 
     @Setter
     @Getter
-    @Builder
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class TurSNSiteCustomFacetDto {
         private String id;
         private String name;
@@ -377,5 +428,6 @@ public class TurSNSiteCustomFacetAPI {
         private List<TurSNSiteCustomFacetItemDto> items;
         private String fieldExtId;
         private String fieldExtName;
+        private String fieldExtType;
     }
 }

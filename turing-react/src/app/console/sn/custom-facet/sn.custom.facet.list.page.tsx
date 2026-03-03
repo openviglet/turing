@@ -2,6 +2,7 @@ import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
 import { GridList } from "@/components/grid.list";
 import { LoadProvider } from "@/components/loading-provider";
+import { SubPageHeader } from "@/components/sub.page.header";
 import { useGridAdapter } from "@/hooks/use-grid-adapter";
 import type { TurSNSiteCustomFacet } from "@/models/sn/sn-site-custom-facet.model";
 import { TurSNSiteCustomFacetService } from "@/services/sn/sn.site.custom.facet.service";
@@ -27,7 +28,16 @@ export default function SNSiteCustomFacetListPage() {
   return (
     <LoadProvider checkIsNotUndefined={customFacets} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/custom-facet`}>
       {gridItemList.length > 0 ? (
-        <GridList gridItemList={gridItemList} />
+        <>
+          <SubPageHeader
+            icon={IconFilter}
+            name="Custom Facet"
+            feature="Custom Facet"
+            description="Create and manage range-based filters for your search data."
+            urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`}
+          />
+          <GridList gridItemList={gridItemList} />
+        </>
       ) : (
         <BlankSlate
           icon={IconFilter}

@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1770767340033-168
-      author: alexa (generated)
+      author: viglet-team
       changes:
         - createTable:
             tableName: sn_site_custom_facet
@@ -25,7 +25,7 @@ databaseChangeLog:
                     nullable: false
   - changeSet:
       id: 1770767340033-169
-      author: alexa (generated)
+      author: viglet-team
       changes:
         - createTable:
             tableName: sn_site_custom_facet_item
@@ -55,7 +55,7 @@ databaseChangeLog:
                   type: DECIMAL(19,6)
   - changeSet:
       id: 1770767340033-170
-      author: alexa (generated)
+      author: viglet-team
       changes:
         - createTable:
             tableName: sn_site_custom_facet_label
@@ -81,7 +81,7 @@ databaseChangeLog:
             constraintName: pk_sn_site_custom_facet_label
   - changeSet:
       id: 1770767340033-171
-      author: alexa (generated)
+      author: viglet-team
       changes:
         - addForeignKeyConstraint:
             baseTableName: sn_site_custom_facet
@@ -92,7 +92,7 @@ databaseChangeLog:
             onDelete: CASCADE
   - changeSet:
       id: 1770767340033-172
-      author: alexa (generated)
+      author: viglet-team
       changes:
         - addForeignKeyConstraint:
             baseTableName: sn_site_custom_facet_item
@@ -103,7 +103,7 @@ databaseChangeLog:
             onDelete: CASCADE
   - changeSet:
       id: 1770767340033-173
-      author: alexa (generated)
+      author: viglet-team
       changes:
         - addForeignKeyConstraint:
             baseTableName: sn_site_custom_facet_label
@@ -114,7 +114,7 @@ databaseChangeLog:
             onDelete: CASCADE
   - changeSet:
       id: 1770767340033-174
-      author: alexa (generated)
+      author: viglet-team
       changes:
         - createIndex:
             tableName: sn_site_custom_facet
@@ -122,3 +122,46 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
+  - changeSet:
+      id: 1770767340033-175
+      author: viglet-team
+      changes:
+        - addColumn:
+            tableName: sn_site_custom_facet
+            columns:
+              - column:
+                  name: facet_position
+                  type: INT
+  - changeSet:
+      id: 1770767340033-176
+      author: viglet-team
+      changes:
+        - addColumn:
+            tableName: sn_site_custom_facet_item
+            columns:
+              - column:
+                  name: facet_item_position
+                  type: INT
+  - changeSet:
+      id: v2026.1.14-01-add-default-label-to-custom-facet
+      author: viglet-team
+      changes:
+        - addColumn:
+            tableName: sn_site_custom_facet
+            columns:
+              - column:
+                  name: default_label
+                  type: VARCHAR(255)
+  - changeSet:
+      id: v2026.1.15-01-add-date-range-columns-to-custom-facet-item
+      author: viglet-team
+      changes:
+        - addColumn:
+            tableName: sn_site_custom_facet_item
+            columns:
+              - column:
+                  name: range_start_date
+                  type: DATETIME
+              - column:
+                  name: range_end_date
+                  type: DATETIME

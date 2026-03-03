@@ -2,8 +2,22 @@
 import { ROUTES } from "@/app/routes.const"
 import { DialogDelete } from "@/components/dialog.delete"
 import { LanguageSelect } from "@/components/language-select"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -72,27 +86,64 @@ interface Props {
   isNew: boolean;
 }
 
-function normalizeItems(itemsToNormalize: TurSNSiteCustomFacetItem[]): TurSNSiteCustomFacetItem[] {
+const FACET_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
+
+const DATE_FIELD_TYPE = "DATE";
+
+function isDateFieldType(fieldType?: string): boolean {
+  return (fieldType ?? "").toUpperCase() === DATE_FIELD_TYPE;
+}
+
+function parseRangeValue(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") return null;
+  const numericValue = Number.parseFloat(String(value).replace(",", "."));
+  return Number.isNaN(numericValue) ? null : numericValue;
+}
+
+function parseIsoDateValue(value: unknown): string | null {
+  if (value === null || value === undefined || value === "") return null;
+  const parsedDate = new Date(String(value));
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate.toISOString();
+}
+
+function toDateTimeLocalValue(value: string | null | undefined): string {
+  if (!value) return "";
+  const parsedDate = new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) return "";
+  const timezoneOffsetMs = parsedDate.getTimezoneOffset() * 60 * 1000;
+  return new Date(parsedDate.getTime() - timezoneOffsetMs).toISOString().slice(0, 16);
+}
+
+function normalizeItems(itemsToNormalize: TurSNSiteCustomFacetItem[], fieldType?: string): TurSNSiteCustomFacetItem[] {
+  const dateField = isDateFieldType(fieldType);
   return itemsToNormalize.map((item, index) => ({
     ...item,
     position: index + 1,
-    rangeStart: item.rangeStart === null || item.rangeStart === undefined || item.rangeStart === ("" as any)
-      ? null
-      : Number(item.rangeStart),
-    rangeEnd: item.rangeEnd === null || item.rangeEnd === undefined || item.rangeEnd === ("" as any)
-      ? null
-      : Number(item.rangeEnd),
+    rangeStart: dateField ? null : parseRangeValue(item.rangeStart),
+    rangeEnd: dateField ? null : parseRangeValue(item.rangeEnd),
+    rangeStartDate: dateField ? parseIsoDateValue(item.rangeStartDate) : null,
+    rangeEndDate: dateField ? parseIsoDateValue(item.rangeEndDate) : null,
   }));
+}
+
+function hasFilledRangeValues(itemsToCheck: TurSNSiteCustomFacetItem[]): boolean {
+  return itemsToCheck.some((item) => {
+    const hasNumberRange = item.rangeStart !== null && item.rangeStart !== undefined
+      || item.rangeEnd !== null && item.rangeEnd !== undefined;
+    const hasDateRange = Boolean(item.rangeStartDate) || Boolean(item.rangeEndDate);
+    return hasNumberRange || hasDateRange;
+  });
 }
 
 type ItemRowProps = {
   item: TurSNSiteCustomFacetItem;
   index: number;
+  isDateField: boolean;
   onUpdate: (index: number, key: keyof TurSNSiteCustomFacetItem, value: string) => void;
   onRemove: (index: number) => void;
 };
 
-const ItemRow: React.FC<ItemRowProps> = ({ item, index, onUpdate, onRemove }) => {
+const ItemRow: React.FC<ItemRowProps> = ({ item, index, isDateField, onUpdate, onRemove }) => {
   const {
     attributes,
     listeners,
@@ -125,17 +176,19 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, index, onUpdate, onRemove }) =>
       </TableCell>
       <TableCell>
         <Input
-          type="number"
-          value={item.rangeStart ?? ""}
-          onChange={(event) => onUpdate(index, "rangeStart", event.target.value)}
+          type={isDateField ? "datetime-local" : "number"}
+          step={isDateField ? undefined : "any"}
+          value={isDateField ? toDateTimeLocalValue(item.rangeStartDate) : (item.rangeStart ?? "")}
+          onChange={(event) => onUpdate(index, isDateField ? "rangeStartDate" : "rangeStart", event.target.value)}
           placeholder="Start"
         />
       </TableCell>
       <TableCell>
         <Input
-          type="number"
-          value={item.rangeEnd ?? ""}
-          onChange={(event) => onUpdate(index, "rangeEnd", event.target.value)}
+          type={isDateField ? "datetime-local" : "number"}
+          step={isDateField ? undefined : "any"}
+          value={isDateField ? toDateTimeLocalValue(item.rangeEndDate) : (item.rangeEnd ?? "")}
+          onChange={(event) => onUpdate(index, isDateField ? "rangeEndDate" : "rangeEnd", event.target.value)}
           placeholder="End"
         />
       </TableCell>
@@ -155,8 +208,13 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
   const [fieldOptions, setFieldOptions] = useState<TurSNSiteCustomFacetFieldOption[]>([]);
   const [availableLocales, setAvailableLocales] = useState<TurLocale[]>([]);
   const [labelEntries, setLabelEntries] = useState<Array<{ locale: string; label: string }>>([]);
+  const [openFieldChangeDialog, setOpenFieldChangeDialog] = useState(false);
+  const [pendingFieldExtId, setPendingFieldExtId] = useState<string | null>(null);
   const navigate = useNavigate()
   const items = watch("items") ?? [];
+  const selectedFieldExtId = watch("fieldExtId") ?? value.fieldExtId;
+  const selectedFieldType = fieldOptions.find((field) => field.id === selectedFieldExtId)?.type ?? value.fieldExtType;
+  const dateField = isDateFieldType(selectedFieldType);
   const sensors = useSensors(useSensor(PointerSensor));
 
   useEffect(() => {
@@ -181,7 +239,12 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
     if (key === "rangeStart" || key === "rangeEnd") {
       updatedItems[index] = {
         ...updatedItems[index],
-        [key]: rawValue === "" ? null : Number(rawValue),
+        [key]: parseRangeValue(rawValue),
+      };
+    } else if (key === "rangeStartDate" || key === "rangeEndDate") {
+      updatedItems[index] = {
+        ...updatedItems[index],
+        [key]: parseIsoDateValue(rawValue),
       };
     } else {
       updatedItems[index] = {
@@ -189,17 +252,17 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
         [key]: rawValue,
       };
     }
-    setValue("items", normalizeItems(updatedItems), { shouldDirty: true });
+    setValue("items", normalizeItems(updatedItems, selectedFieldType), { shouldDirty: true });
   }
 
   function onAddItem() {
-    const updatedItems = [...items, { label: "", rangeStart: null, rangeEnd: null }];
-    setValue("items", normalizeItems(updatedItems), { shouldDirty: true });
+    const updatedItems = [...items, { label: "", rangeStart: null, rangeEnd: null, rangeStartDate: null, rangeEndDate: null }];
+    setValue("items", normalizeItems(updatedItems, selectedFieldType), { shouldDirty: true });
   }
 
   function onRemoveItem(index: number) {
     const updatedItems = items.filter((_, currentIndex) => currentIndex !== index);
-    setValue("items", normalizeItems(updatedItems), { shouldDirty: true });
+    setValue("items", normalizeItems(updatedItems, selectedFieldType), { shouldDirty: true });
   }
 
   function onDragEnd(event: DragEndEvent) {
@@ -209,7 +272,40 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
     const newIndex = items.findIndex((item, index) => (item.id || `item-${index}`) === over.id);
     if (oldIndex < 0 || newIndex < 0) return;
     const reorderedItems = arrayMove(items, oldIndex, newIndex);
-    setValue("items", normalizeItems(reorderedItems), { shouldDirty: true });
+    setValue("items", normalizeItems(reorderedItems, selectedFieldType), { shouldDirty: true });
+  }
+
+  function applyFieldChange(newFieldExtId: string) {
+    const newFieldType = fieldOptions.find((field) => field.id === newFieldExtId)?.type;
+    setValue("fieldExtId", newFieldExtId, { shouldDirty: true });
+    setValue("items", normalizeItems(items, newFieldType), { shouldDirty: true });
+  }
+
+  function onFieldChange(newFieldExtId: string) {
+    if (newFieldExtId === selectedFieldExtId) {
+      return;
+    }
+
+    if (hasFilledRangeValues(items)) {
+      setPendingFieldExtId(newFieldExtId);
+      setOpenFieldChangeDialog(true);
+      return;
+    }
+
+    applyFieldChange(newFieldExtId);
+  }
+
+  function onConfirmFieldChange() {
+    if (pendingFieldExtId) {
+      applyFieldChange(pendingFieldExtId);
+    }
+    setPendingFieldExtId(null);
+    setOpenFieldChangeDialog(false);
+  }
+
+  function onCancelFieldChange() {
+    setPendingFieldExtId(null);
+    setOpenFieldChangeDialog(false);
   }
 
   function addLabelEntry() {
@@ -229,6 +325,28 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
   }
 
   async function onSubmit(customFacet: TurSNSiteCustomFacet) {
+    if (!FACET_NAME_PATTERN.test(customFacet.name ?? "")) {
+      toast.error("Facet Name must contain only letters, numbers, underscore (_) or hyphen (-).");
+      return;
+    }
+
+    const invalidRange = (customFacet.items ?? []).find((item) => {
+      if (dateField) {
+        const start = parseIsoDateValue(item.rangeStartDate);
+        const end = parseIsoDateValue(item.rangeEndDate);
+        if (!start || !end) return false;
+        return new Date(end).getTime() < new Date(start).getTime();
+      }
+      const start = parseRangeValue(item.rangeStart);
+      const end = parseRangeValue(item.rangeEnd);
+      return start !== null && end !== null && end < start;
+    });
+
+    if (invalidRange) {
+      toast.error(`Invalid range on item "${invalidRange.label || "(without label)"}": Range End must be greater than or equal to Range Start.`);
+      return;
+    }
+
     const payload: TurSNSiteCustomFacet = {
       ...customFacet,
       label: labelEntries
@@ -237,7 +355,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
           labelsMap[entry.locale.trim()] = entry.label;
           return labelsMap;
         }, {}),
-      items: normalizeItems(customFacet.items ?? []),
+      items: normalizeItems(customFacet.items ?? [], selectedFieldType),
     };
 
     try {
@@ -284,8 +402,26 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
   }
 
   return (
-    <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
-      <Card className="mx-auto max-w-md">
+    <div className="flex h-full w-full items-center justify-center px-4">
+      <Dialog open={openFieldChangeDialog} onOpenChange={setOpenFieldChangeDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change field?</DialogTitle>
+            <DialogDescription>
+              There are range values already filled in this custom facet. If you continue, current range values will be lost.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onCancelFieldChange}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={onConfirmFieldChange}>
+              Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Custom Facet</CardTitle>
           <CardAction>
@@ -297,142 +433,204 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
-              <FormField
-                control={control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Facet Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="e.g., price_range"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormDescription>Unique name used as the facet key.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="defaultLabel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Default Label</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value ?? ""}
-                        placeholder="e.g., Price Range"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormDescription>Fallback label when no localized label matches the request locale.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium">Localized Labels</h3>
-                  <Button type="button" variant="outline" onClick={addLabelEntry}>
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Add Label
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {labelEntries.map((entry, index) => (
-                    <div key={`${entry.locale}-${index}`} className="flex items-center gap-2">
-                      <LanguageSelect
-                        value={entry.locale}
-                        onValueChange={(value) => updateLabelEntry(index, "locale", value)}
-                        locales={availableLocales}
-                        extraLocaleValues={labelEntries.map((item) => item.locale)}
-                      />
-                      <Input
-                        placeholder="Localized label"
-                        value={entry.label}
-                        onChange={(event) => updateLabelEntry(index, "label", event.target.value)}
-                      />
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeLabelEntry(index)}>
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <FormField
-                control={control}
-                name="fieldExtId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Field Selection</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value || ""}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a field" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {fieldOptions.map((fieldOption) => (
-                            <SelectItem key={fieldOption.id} value={fieldOption.id}>
-                              {fieldOption.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormDescription>The field used as the base for this custom facet.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium">Facet Items</h3>
-                  <Button type="button" variant="outline" onClick={onAddItem}>Add Item</Button>
-                </div>
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-                  <div className="rounded-md border">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-10" />
-                          <TableHead className="w-16">Pos</TableHead>
-                          <TableHead>Label</TableHead>
-                          <TableHead>Range Start</TableHead>
-                          <TableHead>Range End</TableHead>
-                          <TableHead className="w-24" />
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <SortableContext
-                          items={items.map((item, index) => item.id || `item-${index}`)}
-                          strategy={verticalListSortingStrategy}
-                        >
-                          {items.map((item, index) => (
-                            <ItemRow
-                              key={item.id || `item-${index}`}
-                              item={item}
-                              index={index}
-                              onUpdate={onItemUpdate}
-                              onRemove={onRemoveItem}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mx-auto py-10">
+              <Accordion type="multiple" defaultValue={["basic-info", "labels", "field-config", "facet-items"]} className="space-y-4">
+                {/* Basic Information Section */}
+                <AccordionItem value="basic-info" className="border rounded-lg px-6">
+                  <AccordionTrigger className="text-lg font-semibold">Basic Information</AccordionTrigger>
+                  <AccordionContent className="space-y-6 pt-4">
+                    <FormField
+                      control={control}
+                      name="name"
+                      rules={{
+                        required: "Please enter a facet name.",
+                        pattern: {
+                          value: FACET_NAME_PATTERN,
+                          message: "Use only letters, numbers, underscores (_), or hyphens (-).",
+                        },
+                      }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">Facet Name</FormLabel>
+                          <FormDescription className="text-sm mb-2">A unique identifier for this facet. Use lowercase letters, numbers, underscores, or hyphens.</FormDescription>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="e.g., price_range"
+                              type="text"
                             />
-                          ))}
-                        </SortableContext>
-                      </TableBody>
-                    </Table>
-                  </div>
-                </DndContext>
-              </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              <GradientButton type="submit">Save</GradientButton>
+                    <FormField
+                      control={control}
+                      name="defaultLabel"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">Default Label</FormLabel>
+                          <FormDescription className="text-sm mb-2">The display name shown when no language-specific label is available.</FormDescription>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              value={field.value ?? ""}
+                              placeholder="e.g., Price Range"
+                              type="text"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* Localized Labels Section */}
+                <AccordionItem value="labels" className="border rounded-lg px-6">
+                  <AccordionTrigger className="text-lg font-semibold">Language-Specific Labels</AccordionTrigger>
+                  <AccordionContent className="space-y-6 pt-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-base font-medium">Add Translations</h3>
+                          <p className="text-sm text-muted-foreground">Customize labels for different languages and regions.</p>
+                        </div>
+                        <Button type="button" variant="outline" onClick={addLabelEntry}>
+                          <PlusCircle className="h-4 w-4 mr-2" />
+                          Add Label
+                        </Button>
+                      </div>
+                      <div className="space-y-3">
+                        {labelEntries.map((entry, index) => (
+                          <div key={`${entry.locale}-${index}`} className="flex items-center gap-2">
+                            <LanguageSelect
+                              value={entry.locale}
+                              onValueChange={(value) => updateLabelEntry(index, "locale", value)}
+                              locales={availableLocales}
+                              extraLocaleValues={labelEntries.map((item) => item.locale)}
+                            />
+                            <Input
+                              placeholder="Enter translated label"
+                              value={entry.label}
+                              onChange={(event) => updateLabelEntry(index, "label", event.target.value)}
+                              className="flex-1"
+                            />
+                            <Button type="button" variant="ghost" size="icon" onClick={() => removeLabelEntry(index)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* Field Configuration Section */}
+                <AccordionItem value="field-config" className="border rounded-lg px-6">
+                  <AccordionTrigger className="text-lg font-semibold">Field Configuration</AccordionTrigger>
+                  <AccordionContent className="space-y-6 pt-4">
+                    <FormField
+                      control={control}
+                      name="fieldExtId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex gap-4">
+                            <div className="flex-1 flex flex-col justify-start">
+                              <FormLabel className="text-base">Select a Field</FormLabel>
+                              <FormDescription className="text-sm mt-1">Choose the field that will serve as the foundation for this custom facet.</FormDescription>
+                            </div>
+                            <div className="flex-1">
+                              <FormControl>
+                                <Select onValueChange={onFieldChange} value={field.value || ""}>
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select a field" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {fieldOptions.map((fieldOption) => (
+                                      <SelectItem key={fieldOption.id} value={fieldOption.id}>
+                                        {fieldOption.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                            </div>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* Facet Items Section */}
+                <AccordionItem value="facet-items" className="border rounded-lg px-6">
+                  <AccordionTrigger className="text-lg font-semibold">Facet Range Items</AccordionTrigger>
+                  <AccordionContent className="space-y-6 pt-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-base font-medium">Range Definitions</h3>
+                          <p className="text-sm text-muted-foreground">Create custom ranges by defining start and end values. Drag to reorder.</p>
+                        </div>
+                        <Button type="button" variant="outline" onClick={onAddItem}>
+                          <PlusCircle className="h-4 w-4 mr-2" />
+                          Add Item
+                        </Button>
+                      </div>
+                      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+                        <div className="rounded-md border overflow-hidden">
+                          <Table>
+                            <TableHeader>
+                              <TableRow className="bg-muted/50">
+                                <TableHead className="w-10" />
+                                <TableHead className="w-16">Position</TableHead>
+                                <TableHead>Label</TableHead>
+                                <TableHead>Range Start</TableHead>
+                                <TableHead>Range End</TableHead>
+                                <TableHead className="w-24 text-right" />
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              <SortableContext
+                                items={items.map((item, index) => item.id || `item-${index}`)}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                {items.map((item, index) => (
+                                  <ItemRow
+                                    key={item.id || `item-${index}`}
+                                    item={item}
+                                    index={index}
+                                    isDateField={dateField}
+                                    onUpdate={onItemUpdate}
+                                    onRemove={onRemoveItem}
+                                  />
+                                ))}
+                              </SortableContext>
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </DndContext>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
+              {/* Action Footer */}
+              <div className="flex items-center justify-end gap-3 pt-6 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate(`${ROUTES.SN_INSTANCE}/${snSiteId}/custom-facet`)}
+                >
+                  Cancel
+                </Button>
+                <GradientButton type="submit">
+                  {isNew ? "Create Facet" : "Save Changes"}
+                </GradientButton>
+              </div>
             </form>
           </Form>
         </CardContent>

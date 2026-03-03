@@ -4,6 +4,8 @@ export interface TurSNSiteCustomFacetItem {
   position?: number;
   rangeStart?: number | null;
   rangeEnd?: number | null;
+  rangeStartDate?: string | null;
+  rangeEndDate?: string | null;
 }
 
 export interface TurSNSiteCustomFacet {
@@ -15,9 +17,11 @@ export interface TurSNSiteCustomFacet {
   items: TurSNSiteCustomFacetItem[];
   fieldExtId: string;
   fieldExtName?: string;
+  fieldExtType?: string;
 }
 
 export interface TurSNSiteCustomFacetFieldOption {
   id: string;
   name: string;
+  type?: string;
 }

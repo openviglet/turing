@@ -8,9 +8,13 @@ import axios from "axios";
 type BackendCustomFacet = {
   id?: string;
   name: string;
+  defaultLabel?: string;
   label?: Record<string, string>;
   facetPosition?: number;
   items?: BackendCustomFacetItem[];
+  fieldExtId?: string;
+  fieldExtName?: string;
+  fieldExtType?: string;
 };
 
 type BackendCustomFacetItem = {
@@ -19,11 +23,14 @@ type BackendCustomFacetItem = {
   position?: number;
   rangeStart?: number | null;
   rangeEnd?: number | null;
+  rangeStartDate?: string | null;
+  rangeEndDate?: string | null;
 };
 
 type BackendFieldExt = {
   id: string;
   name: string;
+  type?: string;
   customFacets?: BackendCustomFacet[];
 };
 
@@ -59,11 +66,13 @@ export class TurSNSiteCustomFacetService {
     return {
       id: customFacet.id,
       name: customFacet.name,
+      defaultLabel: customFacet.defaultLabel,
       label: customFacet.label ?? {},
       facetPosition: customFacet.facetPosition,
       items,
-      fieldExtId: field.id,
-      fieldExtName: field.name,
+      fieldExtId: customFacet.fieldExtId ?? field.id,
+      fieldExtName: customFacet.fieldExtName ?? field.name,
+      fieldExtType: customFacet.fieldExtType ?? field.type,
     };
   }
 
@@ -77,6 +86,8 @@ export class TurSNSiteCustomFacetService {
       position: item.position ?? index + 1,
       rangeStart: item.rangeStart ?? null,
       rangeEnd: item.rangeEnd ?? null,
+      rangeStartDate: item.rangeStartDate ?? null,
+      rangeEndDate: item.rangeEndDate ?? null,
     };
   }
 
@@ -96,6 +107,8 @@ export class TurSNSiteCustomFacetService {
         item.rangeEnd === null || item.rangeEnd === undefined
           ? null
           : Number(item.rangeEnd),
+      rangeStartDate: item.rangeStartDate ?? null,
+      rangeEndDate: item.rangeEndDate ?? null,
     };
   }
 
@@ -105,8 +118,12 @@ export class TurSNSiteCustomFacetService {
     return {
       id: customFacet.id,
       name: customFacet.name,
+      defaultLabel: customFacet.defaultLabel,
       label: customFacet.label,
       facetPosition: customFacet.facetPosition,
+      fieldExtId: customFacet.fieldExtId,
+      fieldExtName: customFacet.fieldExtName,
+      fieldExtType: customFacet.fieldExtType,
       items: (customFacet.items ?? []).map((item, index) =>
         this.toBackendItem(item, index),
       ),
@@ -159,7 +176,7 @@ export class TurSNSiteCustomFacetService {
   ): Promise<TurSNSiteCustomFacetFieldOption[]> {
     const fields = await this.getFields(snSiteId);
     return fields
-      .map((field) => ({ id: field.id, name: field.name }))
+      .map((field) => ({ id: field.id, name: field.name, type: field.type }))
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 

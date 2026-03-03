@@ -27,6 +27,7 @@ import static com.viglet.turing.solr.TurSolrConstants.TURING_ENTITY;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -307,8 +308,8 @@ public class TurSolrQueryBuilder {
             addEnabledFacetItem(mapping.customFacetName(), currentFacetType,
                     getFacetItemType(context), facetMapForFilterQuery,
                     setRangeFilterQuery(mapping.turSNSiteFieldExt().getName(),
-                            mapping.customFacetItem().getRangeStart(),
-                            mapping.customFacetItem().getRangeEnd()));
+                            mapping.turSNSiteFieldExt().getType(),
+                            mapping.customFacetItem()));
             return;
         }
 
@@ -752,7 +753,7 @@ public class TurSolrQueryBuilder {
                         .forEach(item -> query.addFacetQuery(getCustomFacetLocalParams(
                                 customFacet, item.getLabel(), excludeFacetValues)
                                 + setRangeFilterQuery(turSNSiteFieldExt.getName(),
-                                        item.getRangeStart(), item.getRangeEnd()))));
+                                        turSNSiteFieldExt.getType(), item))));
     }
 
     private static String getCustomFacetLocalParams(TurSNSiteCustomFacet customFacet,
@@ -769,10 +770,23 @@ public class TurSolrQueryBuilder {
         return value.replace("\\", "\\\\").replace("'", "\\'");
     }
 
-    private static String setRangeFilterQuery(String fieldName, Number rangeStart,
-            Number rangeEnd) {
-        String start = Optional.ofNullable(rangeStart).map(Number::toString).orElse("*");
-        String end = Optional.ofNullable(rangeEnd).map(Number::toString).orElse("*");
+    private static String setRangeFilterQuery(String fieldName, TurSEFieldType fieldType,
+            TurSNSiteCustomFacetItem item) {
+        String start;
+        String end;
+
+        if (TurSEFieldType.DATE.equals(fieldType)) {
+            start = Optional.ofNullable(item.getRangeStartDate())
+                    .map(Instant::toString)
+                    .orElse("*");
+            end = Optional.ofNullable(item.getRangeEndDate())
+                    .map(Instant::toString)
+                    .orElse("*");
+        } else {
+            start = Optional.ofNullable(item.getRangeStart()).map(Number::toString).orElse("*");
+            end = Optional.ofNullable(item.getRangeEnd()).map(Number::toString).orElse("*");
+        }
+
         return String.format("%s:[%s TO %s]", fieldName, start, end);
     }
 

@@ -24,6 +24,7 @@ package com.viglet.turing.persistence.model.sn.field;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.turing.persistence.utils.TurAssignableUuidGenerator;
@@ -68,6 +69,12 @@ public class TurSNSiteCustomFacetItem implements Serializable {
 
     @Column(name = "range_end", precision = 19, scale = 6)
     private BigDecimal rangeEnd;
+
+    @Column(name = "range_start_date")
+    private Instant rangeStartDate;
+
+    @Column(name = "range_end_date")
+    private Instant rangeEndDate;
 
     @ManyToOne
     @JoinColumn(name = "custom_facet_id", nullable = false)
