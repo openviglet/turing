@@ -37,4 +37,27 @@ class HttpTurSNServerTest {
         assertThat(server.getTurSNSitePostParams().getUserId()).isEqualTo("user-42");
         assertThat(server.getTurSNSitePostParams().isPopulateMetrics()).isTrue();
     }
+
+    @Test
+    void shouldCreateServerUsingOtherConstructors() {
+        TurApiKeyCredentials credentials = new TurApiKeyCredentials("api-key-2");
+
+        HttpTurSNServer localeConstructor = new HttpTurSNServer(
+                URI.create("http://localhost:2700"),
+                "MySite",
+                Locale.FRANCE);
+        HttpTurSNServer apiKeyConstructor = new HttpTurSNServer(
+                URI.create("http://localhost:2700"),
+                "MySite",
+                Locale.UK,
+                credentials);
+        HttpTurSNServer shortApiKeyConstructor = new HttpTurSNServer(
+                URI.create("http://localhost:2700"),
+                "MySite",
+                credentials);
+
+        assertThat(localeConstructor.getLocale()).isEqualTo(Locale.FRANCE);
+        assertThat(apiKeyConstructor.getApiKey()).isEqualTo("api-key-2");
+        assertThat(shortApiKeyConstructor.getApiKey()).isEqualTo("api-key-2");
+    }
 }
