@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { LanguageSelect } from "@/components/language-select"
 import {
   Accordion,
   AccordionContent,
@@ -39,7 +40,6 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { GradientButton } from "../ui/gradient-button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { DynamicSourceLocales } from "./dynamic.source.locale"
 
 interface Props {
@@ -370,18 +370,15 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Default Locale</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose the language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {locales.map((option) => (
-                          <SelectItem key={option.initials} value={option.initials}>
-                            {option.en} ({option.initials})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <LanguageSelect
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        locales={locales}
+                        extraLocaleValues={field.value ? [field.value] : []}
+                        className="w-full"
+                      />
+                    </FormControl>
                     <FormDescription>Default locale for content without explicit locale</FormDescription>
                     <FormMessage />
                   </FormItem>

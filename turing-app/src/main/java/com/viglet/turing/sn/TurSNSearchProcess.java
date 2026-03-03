@@ -354,7 +354,9 @@ public class TurSNSearchProcess {
                         TurSNSiteCustomFacet customFacet) {
                 return Optional.ofNullable(customFacet.getLabel())
                                 .map(labels -> labels.get(context.getLocale().toLanguageTag()))
-                                .orElse(customFacet.getName());
+                                .orElse(Optional.ofNullable(customFacet.getDefaultLabel())
+                                                .filter(defaultLabel -> !defaultLabel.isBlank())
+                                                .orElse(customFacet.getName()));
         }
 
         private Set<TurSNSiteFieldExtFacet> getCustomFacetLocales(TurSNSiteSearchContext context,

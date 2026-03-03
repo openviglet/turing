@@ -17,11 +17,11 @@ export default function SNSiteCustomFacetListPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    turSNSiteCustomFacetService.query().then(setCustomFacets).catch(() => setError("Connection error or timeout while fetching custom facets."));
-  }, [])
+    turSNSiteCustomFacetService.query(id).then(setCustomFacets).catch(() => setError("Connection error or timeout while fetching custom facets."));
+  }, [id])
   const gridItemList = useGridAdapter(customFacets, {
-    name: "label",
-    description: "field",
+    name: (item) => item.defaultLabel || item.label?.["en-US"] || item.label?.["en_US"] || item.name,
+    description: (item) => item.fieldExtName || "",
     url: (item) => `${ROUTES.SN_INSTANCE}/${id}/custom-facet/${item.id}`
   });
   return (

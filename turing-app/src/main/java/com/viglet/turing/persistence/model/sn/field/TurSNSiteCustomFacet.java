@@ -73,6 +73,9 @@ public class TurSNSiteCustomFacet implements Serializable {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(name = "default_label", length = 255)
+    private String defaultLabel;
+
     @Column(name = "facet_position")
     private Integer facetPosition;
 

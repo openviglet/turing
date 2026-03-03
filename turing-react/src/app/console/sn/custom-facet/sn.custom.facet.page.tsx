@@ -15,15 +15,21 @@ export default function SNSiteCustomFacetPage() {
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (customFacetId === "new") {
-      turSNSiteCustomFacetService.query().then(() => setCustomFacet({} as TurSNSiteCustomFacet)).catch(() => setError("Connection error or timeout while fetching custom facets."));
+      setCustomFacet({
+        name: "",
+        defaultLabel: "",
+        label: {},
+        items: [],
+        fieldExtId: "",
+      } as TurSNSiteCustomFacet);
     } else {
-      turSNSiteCustomFacetService.get(customFacetId).then(setCustomFacet).catch(() => setError("Connection error or timeout while fetching custom facet details."));
+      turSNSiteCustomFacetService.get(id, customFacetId).then(setCustomFacet).catch(() => setError("Connection error or timeout while fetching custom facet details."));
       setIsNew(false);
     }
-  }, [customFacetId])
+  }, [id, customFacetId])
   return (
     <LoadProvider checkIsNotUndefined={customFacet} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/custom-facet`}>
-      {customFacet && <SNSiteCustomFacetForm value={customFacet} isNew={isNew} />}
+      {customFacet && <SNSiteCustomFacetForm snSiteId={id} value={customFacet} isNew={isNew} />}
     </LoadProvider>
   )
 }

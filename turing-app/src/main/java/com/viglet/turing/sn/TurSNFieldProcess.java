@@ -75,9 +75,11 @@ public class TurSNFieldProcess {
     }
 
     private String getCustomFacetLabel(TurSNSiteCustomFacet customFacet) {
-        return Optional.ofNullable(customFacet.getLabel())
-                .map(labels -> labels.values().stream().findFirst().orElse(customFacet.getName()))
-                .orElse(customFacet.getName());
+        return Optional.ofNullable(customFacet.getDefaultLabel())
+                .filter(defaultLabel -> !defaultLabel.isBlank())
+                .orElseGet(() -> Optional.ofNullable(customFacet.getLabel())
+                        .map(labels -> labels.values().stream().findFirst().orElse(customFacet.getName()))
+                        .orElse(customFacet.getName()));
     }
 
     private Integer getFacetPosition(TurSNSiteFieldExt fieldExtension) {

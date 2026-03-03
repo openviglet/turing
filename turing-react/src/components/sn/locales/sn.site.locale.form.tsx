@@ -1,4 +1,5 @@
 "use client"
+import { LanguageSelect } from "@/components/language-select"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import {
   Form,
@@ -13,7 +14,6 @@ import { GradientButton } from "@/components/ui/gradient-button"
 import {
   Input
 } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import type { TurLocale } from "@/models/locale/locale.model"
 import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model"
@@ -117,20 +117,16 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
                         </FormDescription>
                       </div>
                       <div className="flex-1 max-w-xs">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Choose..." />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {locales.map((locale) => (
-                              <SelectItem key={locale.initials} value={locale.initials}>
-                                {locale.en} ({locale.initials})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <LanguageSelect
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            locales={locales}
+                            extraLocaleValues={field.value ? [field.value] : []}
+                            placeholder="Choose..."
+                            className="w-full"
+                          />
+                        </FormControl>
                       </div>
                     </div>
                     <FormMessage />

@@ -174,6 +174,7 @@ public class TurSNSiteOnStartup {
 
         TurSNSiteCustomFacet customFacet = new TurSNSiteCustomFacet();
         customFacet.setName(SAMPLE_CUSTOM_FACET_NAME);
+        customFacet.setDefaultLabel("Price Range");
         customFacet.setFacetPosition(getSampleCustomFacetPosition(fieldExt));
         customFacet.setLabel(getSampleFacetLabels());
         customFacet.setItems(getSampleFacetItems(customFacet));
