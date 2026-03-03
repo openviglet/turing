@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { BadgeFieldType } from "@/components/badge-field-type"
 import { DialogDelete } from "@/components/dialog.delete"
 import { LanguageSelect } from "@/components/language-select"
 import {
@@ -550,7 +551,10 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
                                   <SelectContent>
                                     {fieldOptions.map((fieldOption) => (
                                       <SelectItem key={fieldOption.id} value={fieldOption.id}>
-                                        {fieldOption.name}
+                                        <div className="flex w-full items-center justify-between gap-3">
+                                          <BadgeFieldType type={fieldOption.type} variation="short" />
+                                          <span>{fieldOption.name}</span>
+                                        </div>
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
