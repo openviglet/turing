@@ -19,10 +19,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedConstruction;
 
+import com.viglet.turing.client.sn.HttpTurSNServer;
 import com.viglet.turing.client.sn.TurSNDocument;
 import com.viglet.turing.client.sn.TurSNDocumentList;
 import com.viglet.turing.client.sn.TurSNGroup;
-import com.viglet.turing.client.sn.HttpTurSNServer;
 import com.viglet.turing.client.sn.TurSNGroupList;
 import com.viglet.turing.client.sn.TurSNLocale;
 import com.viglet.turing.client.sn.TurSNQuery;
@@ -179,8 +179,10 @@ class TurSNClientSampleTest {
 
         TurSNDidYouMean didYouMean = new TurSNDidYouMean();
         didYouMean.setCorrectedText(true);
-        didYouMean.setOriginal(new TurSNDidYouMeanText(new TurSNSiteSpellCheckText(URI.create("http://localhost"), "orig", true)));
-        didYouMean.setCorrected(new TurSNDidYouMeanText(new TurSNSiteSpellCheckText(URI.create("http://localhost"), "corr", false)));
+        didYouMean.setOriginal(
+                new TurSNDidYouMeanText(new TurSNSiteSpellCheckText(URI.create("http://localhost"), "orig", true)));
+        didYouMean.setCorrected(
+                new TurSNDidYouMeanText(new TurSNSiteSpellCheckText(URI.create("http://localhost"), "corr", false)));
         response.setDidYouMean(didYouMean);
 
         TurSNSiteSpotlightDocumentBean spotlightBean = new TurSNSiteSpotlightDocumentBean();

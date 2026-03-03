@@ -105,7 +105,8 @@ class TurSNServerMappingTest {
 
         assertThat(response.getResults()).isNotNull();
         assertThat(response.getResults()).hasSize(1);
-        assertThat(response.getResults().getTurSNDocuments().getFirst().getFieldValue("title")).isEqualTo("Document One");
+        assertThat(response.getResults().getTurSNDocuments().getFirst().getFieldValue("title"))
+                .isEqualTo("Document One");
         assertThat(response.getGroupResponse()).isNotNull();
         assertThat(response.getGroupResponse()).hasSize(1);
         assertThat(response.getFacetFields().getFields()).hasSize(1);
