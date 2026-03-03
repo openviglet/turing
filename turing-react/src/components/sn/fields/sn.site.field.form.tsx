@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { BadgeFieldType } from "@/components/badge-field-type"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import {
   Form,
@@ -233,7 +234,10 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                               <SelectContent>
                                 {snFieldTypes.map((snFieldType) => (
                                   <SelectItem key={snFieldType.id} value={snFieldType.id}>
-                                    {snFieldType.name}
+                                    <div className="flex w-full items-center justify-between gap-3">
+                                      <BadgeFieldType type={snFieldType.id} variation="short" />
+                                      <span>{snFieldType.name}</span>
+                                    </div>
                                   </SelectItem>
                                 ))}
                               </SelectContent>
