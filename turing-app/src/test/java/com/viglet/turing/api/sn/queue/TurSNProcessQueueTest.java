@@ -1,5 +1,6 @@
 package com.viglet.turing.api.sn.queue;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -80,6 +81,7 @@ class TurSNProcessQueueTest {
 
     @BeforeEach
     void setUp() {
+        // Setup common mock behavior if needed
     }
 
     @Test
@@ -182,7 +184,7 @@ class TurSNProcessQueueTest {
 
         assertTrue(resultList.contains("term1"));
         assertTrue(resultList.contains("term2"));
-        assertTrue(resultList.size() == 2);
+        assertEquals(2, resultList.size());
     }
 
     @Test
@@ -336,7 +338,7 @@ class TurSNProcessQueueTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         TurSolrInstance solrInstance = mock(TurSolrInstance.class);
-        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), eq(Locale.US))).thenReturn(Optional.of(solrInstance));
+        when(turSolrInstanceProcess.initSolrInstance("site1", Locale.US)).thenReturn(Optional.of(solrInstance));
 
         try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
             utils.when(() -> TurSolrUtils.existsField(siteSeInstance, "core_en", "customField")).thenReturn(false);

@@ -69,11 +69,12 @@ class TurSNSiteMetricsAPITest {
 
         List<Map<String, Object>> result = api.getLiveMetrics("site");
 
-        assertThat(result).hasSize(60);
-        assertThat(result).allSatisfy(item -> assertThat(item).containsKeys("time", "displayTime", "accesses"));
-        assertThat(result).allSatisfy(item -> assertThat(item.get("displayTime").toString()).hasSize(8));
-        assertThat(result).anySatisfy(item -> assertThat(item.get("accesses")).isEqualTo(2L));
-        assertThat(result).anySatisfy(item -> assertThat(item.get("accesses")).isEqualTo(1L));
+        assertThat(result)
+                .hasSize(60)
+                .allSatisfy(item -> assertThat(item).containsKeys("time", "displayTime", "accesses"))
+                .allSatisfy(item -> assertThat(item.get("displayTime").toString()).hasSize(8))
+                .anySatisfy(item -> assertThat(item).containsEntry("accesses", 2L))
+                .anySatisfy(item -> assertThat(item).containsEntry("accesses", 1L));
     }
 
     @Test

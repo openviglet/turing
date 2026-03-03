@@ -181,8 +181,9 @@ class TurSolrResultProcessorTest {
                 Map<String, Object> requiredMap = processor.getRequiredFields(site);
 
                 assertThat(fieldMap).containsKeys("title", "type");
-                assertThat(requiredMap).containsEntry("title", "default-title");
-                assertThat(requiredMap).containsEntry("type", "doc");
+                assertThat(requiredMap)
+                                .containsEntry("title", "default-title")
+                                .containsEntry("type", "doc");
         }
 
         @Test

@@ -1,7 +1,6 @@
 package com.viglet.turing.exchange.sn;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -227,7 +226,7 @@ class TurSNSiteImportTest {
                                 .isEqualTo("store-1");
 
                 verify(turSNSiteRepository).saveAndFlush(any(TurSNSite.class));
-                verify(turSEInstanceRepository).findById(eq("se-1"));
+                verify(turSEInstanceRepository).findById("se-1");
         }
 
         @Test

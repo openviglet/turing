@@ -194,7 +194,7 @@ class TurSNTemplateTest {
         TurSNSite site = siteWithSEInstance("se-1");
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setTurSNSite(site);
-        locale.setLanguage(new Locale("pt", "BR"));
+        locale.setLanguage(Locale.of("pt", "BR"));
 
         TurSEInstance instance = new TurSEInstance();
         instance.setId("se-1");
@@ -231,7 +231,7 @@ class TurSNTemplateTest {
         when(localeRepository.save(any(TurSNSiteLocale.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-            template.createLocale(site, "alex", new Locale("es", "ES"));
+            template.createLocale(site, "alex", Locale.of("es", "ES"));
             verify(localeRepository).save(any(TurSNSiteLocale.class));
             utils.verify(() -> TurSolrUtils.createCore("http://localhost:8983", "my_site_es_ES", "es"));
         }

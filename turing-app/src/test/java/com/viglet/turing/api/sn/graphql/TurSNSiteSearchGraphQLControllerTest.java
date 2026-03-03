@@ -153,7 +153,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         ArgumentCaptor<TurSNSiteSearchContext> contextCaptor = ArgumentCaptor
                 .forClass(TurSNSiteSearchContext.class);
         verify(searchProcess).search(contextCaptor.capture());
-        assertEquals(new Locale("pt", "BR"), contextCaptor.getValue().getLocale());
+        assertEquals(Locale.of("pt", "BR"), contextCaptor.getValue().getLocale());
     }
 
     @Test

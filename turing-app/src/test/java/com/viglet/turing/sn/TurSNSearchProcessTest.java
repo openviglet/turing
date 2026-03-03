@@ -224,9 +224,10 @@ class TurSNSearchProcessTest {
                 List<String> result = process(true).requestTargetingRules(
                                 List.of("segment:vip", "price:[10 TO 20]", "rawRule"));
 
-                assertThat(result).contains("segment:\"vip\"");
-                assertThat(result).contains("rawRule");
-                assertThat(result).doesNotContain("price:[10 TO 20]");
+                assertThat(result)
+                                .contains("segment:\"vip\"")
+                                .contains("rawRule")
+                                .doesNotContain("price:[10 TO 20]");
         }
 
         @Test
@@ -241,7 +242,7 @@ class TurSNSearchProcessTest {
                 TurSNSiteLocale localeEn = new TurSNSiteLocale();
                 localeEn.setLanguage(Locale.US);
                 TurSNSiteLocale localePt = new TurSNSiteLocale();
-                localePt.setLanguage(new Locale("pt", "BR"));
+                localePt.setLanguage(Locale.of("pt", "BR"));
 
                 when(turSNSiteLocaleRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(List.of(localeEn, localePt));
@@ -481,8 +482,9 @@ class TurSNSearchProcessTest {
                 assertThat(list.getFirst()).isInstanceOf(Map.class);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> first = (Map<String, Object>) list.getFirst();
-                assertThat(first).containsEntry("title", "Java");
-                assertThat(first).containsEntry("url", "/java");
+                assertThat(first)
+                                .containsEntry("title", "Java")
+                                .containsEntry("url", "/java");
         }
 
         @Test
@@ -976,7 +978,7 @@ class TurSNSearchProcessTest {
                 assertThat(bean.getWidget().getFacet()).isNotEmpty();
                 var item = bean.getWidget().getFacet().getFirst().getFacets().getFirst();
                 assertThat(item.isSelected()).isTrue();
-                assertThat(item.getCount()).isEqualTo(0);
+                assertThat(item.getCount()).isZero();
         }
 
         @Test

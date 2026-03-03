@@ -44,243 +44,244 @@ import com.viglet.turing.solr.TurSolrUtils;
 @ExtendWith(MockitoExtension.class)
 class TurSNMergeProvidersProcessTest {
 
-    @Mock
-    private TurSolrInstanceProcess turSolrInstanceProcess;
+        @Mock
+        private TurSolrInstanceProcess turSolrInstanceProcess;
 
-    @Mock
-    private TurSolr turSolr;
+        @Mock
+        private TurSolr turSolr;
 
-    @Mock
-    private TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository;
+        @Mock
+        private TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository;
 
-    @InjectMocks
-    private TurSNMergeProvidersProcess process;
+        @InjectMocks
+        private TurSNMergeProvidersProcess process;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @Test
-    void testMergeDocuments_EmptyProviders() {
-        TurSNSite site = new TurSNSite();
-        Map<String, Object> attrs = new HashMap<>();
-
-        when(turSNSiteMergeProvidersRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
-
-        Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
-        assertEquals(attrs, result);
-    }
-
-    @Test
-    void testMergeDocuments_ProviderFrom() {
-        TurSNSite site = new TurSNSite();
-        site.setName("site1");
-
-        TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
-        mergeProviders.setTurSNSite(site);
-        mergeProviders.setProviderFrom("providerA");
-        mergeProviders.setProviderTo("providerB");
-        mergeProviders.setRelationFrom("relFrom");
-        mergeProviders.setRelationTo("relTo");
-        mergeProviders.setLocale(Locale.US);
-
-        TurSNSiteMergeProvidersField field = new TurSNSiteMergeProvidersField();
-        field.setName("field1");
-        mergeProviders.setOverwrittenFields(new HashSet<>(Collections.singletonList(field)));
-
-        when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
-                .thenReturn(Collections.singletonList(mergeProviders));
-
-        Map<String, Object> attrs = new HashMap<>();
-        attrs.put(TurSNFieldName.SOURCE_APPS, "providerA");
-        attrs.put("relFrom", "value1");
-
-        TurSolrInstance solrInstance = mock(TurSolrInstance.class);
-        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), any(Locale.class)))
-                .thenReturn(Optional.of(solrInstance));
-
-        SolrDocumentList emptyList = new SolrDocumentList();
-        when(turSolr.solrResultAnd(eq(solrInstance), anyMap())).thenReturn(emptyList);
-
-        Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
-        assertEquals(attrs, result);
-    }
-
-    @Test
-    void testMergeDocuments_ProviderTo() {
-        TurSNSite site = new TurSNSite();
-        site.setName("site1");
-
-        TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
-        mergeProviders.setTurSNSite(site);
-        mergeProviders.setProviderFrom("providerA");
-        mergeProviders.setProviderTo("providerB");
-        mergeProviders.setRelationFrom("relFrom");
-        mergeProviders.setRelationTo("relTo");
-        mergeProviders.setLocale(Locale.US);
-
-        when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
-                .thenReturn(Collections.singletonList(mergeProviders));
-
-        Map<String, Object> attrs = new HashMap<>();
-        attrs.put(TurSNFieldName.SOURCE_APPS, "providerB");
-        attrs.put("relTo", "value1");
-        attrs.put(TurSNFieldName.ID, "1");
-
-        TurSolrInstance solrInstance = mock(TurSolrInstance.class);
-        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), any(Locale.class)))
-                .thenReturn(Optional.of(solrInstance));
-
-        SolrDocumentList emptyList = new SolrDocumentList();
-        when(turSolr.solrResultAnd(eq(solrInstance), anyMap())).thenReturn(emptyList);
-
-        Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
-        assertEquals(attrs, result);
-    }
-
-    @Test
-    void testMergeDocuments_ProviderFromMergesFromAndToResultAndOverwritesFields() {
-        TurSNSite site = new TurSNSite();
-        site.setName("site1");
-
-        TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
-        mergeProviders.setTurSNSite(site);
-        mergeProviders.setProviderFrom("providerA");
-        mergeProviders.setProviderTo("providerB");
-        mergeProviders.setRelationFrom("relFrom");
-        mergeProviders.setRelationTo("relTo");
-        mergeProviders.setLocale(Locale.US);
-
-        TurSNSiteMergeProvidersField overwrittenField = new TurSNSiteMergeProvidersField();
-        overwrittenField.setName("title");
-        mergeProviders.setOverwrittenFields(new HashSet<>(Collections.singletonList(overwrittenField)));
-
-        when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
-                .thenReturn(Collections.singletonList(mergeProviders));
-
-        Map<String, Object> attrs = new HashMap<>();
-        attrs.put(TurSNFieldName.SOURCE_APPS, List.of("providerA", "providerX"));
-        attrs.put("relFrom", "value1");
-        attrs.put("title", "queue-title");
-
-        TurSolrInstance solrInstance = mock(TurSolrInstance.class);
-        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), eq(Locale.US)))
-                .thenReturn(Optional.of(solrInstance));
-
-        SolrDocumentList empty1 = new SolrDocumentList();
-        SolrDocumentList empty2 = new SolrDocumentList();
-        SolrDocumentList fromAndTo = new SolrDocumentList();
-        SolrDocument mergedDoc = new SolrDocument();
-        mergedDoc.setField(TurSNFieldName.ID, "doc-1");
-        fromAndTo.add(mergedDoc);
-
-        when(turSolr.solrResultAnd(eq(solrInstance), anyMap())).thenReturn(empty1, empty2, fromAndTo);
-
-        Map<String, Object> fromAndToFields = new HashMap<>();
-        fromAndToFields.put(TurSNFieldName.SOURCE_APPS, List.of("providerB"));
-        fromAndToFields.put("title", "search-title");
-
-        try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-            utils.when(() -> TurSolrUtils.createTurSEResultFromDocument(mergedDoc))
-                    .thenReturn(TurSEResult.builder().fields(fromAndToFields).build());
-
-            Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
-
-            assertEquals("queue-title", result.get("title"));
-            assertTrue(result.containsKey(TurSNFieldName.SOURCE_APPS));
-            @SuppressWarnings("unchecked")
-            List<String> providers = (List<String>) result.get(TurSNFieldName.SOURCE_APPS);
-            assertTrue(providers.contains("providerA"));
-            assertTrue(providers.contains("providerB"));
-            verify(turSolr, never()).deIndexing(any(), any());
+        @BeforeEach
+        void setUp() {
+                // No additional setup required; mocks are injected via @InjectMocks
         }
-    }
 
-    @Test
-    void testMergeDocuments_ProviderToMergesFromResultAndDeindexesPreviousDocument() {
-        TurSNSite site = new TurSNSite();
-        site.setName("site1");
+        @Test
+        void testMergeDocuments_EmptyProviders() {
+                TurSNSite site = new TurSNSite();
+                Map<String, Object> attrs = new HashMap<>();
 
-        TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
-        mergeProviders.setTurSNSite(site);
-        mergeProviders.setProviderFrom("providerA");
-        mergeProviders.setProviderTo("providerB");
-        mergeProviders.setRelationFrom("relFrom");
-        mergeProviders.setRelationTo("relTo");
-        mergeProviders.setLocale(Locale.US);
+                when(turSNSiteMergeProvidersRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
-        TurSNSiteMergeProvidersField overwrittenField = new TurSNSiteMergeProvidersField();
-        overwrittenField.setName("headline");
-        mergeProviders.setOverwrittenFields(new HashSet<>(Collections.singletonList(overwrittenField)));
-
-        when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
-                .thenReturn(Collections.singletonList(mergeProviders));
-
-        Map<String, Object> attrs = new HashMap<>();
-        attrs.put(TurSNFieldName.SOURCE_APPS, "providerB");
-        attrs.put("relTo", "group-1");
-        attrs.put(TurSNFieldName.ID, "id-200");
-
-        TurSolrInstance solrInstance = mock(TurSolrInstance.class);
-        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), eq(Locale.US)))
-                .thenReturn(Optional.of(solrInstance));
-
-        SolrDocumentList fromResults = new SolrDocumentList();
-        SolrDocument fromDoc = new SolrDocument();
-        fromDoc.setField(TurSNFieldName.ID, "old-id");
-        fromResults.add(fromDoc);
-        SolrDocumentList fromAndToResults = new SolrDocumentList();
-
-        when(turSolr.solrResultAnd(eq(solrInstance), anyMap())).thenReturn(fromResults, fromAndToResults);
-
-        Map<String, Object> fromFields = new HashMap<>();
-        fromFields.put("headline", "merged headline");
-        fromFields.put(TurSNFieldName.SOURCE_APPS, "providerA");
-
-        try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-            utils.when(() -> TurSolrUtils.createTurSEResultFromDocument(fromDoc))
-                    .thenReturn(TurSEResult.builder().fields(fromFields).build());
-
-            Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
-
-            assertEquals("merged headline", result.get("headline"));
-            @SuppressWarnings("unchecked")
-            List<String> providers = (List<String>) result.get(TurSNFieldName.SOURCE_APPS);
-            assertTrue(providers.contains("providerA"));
-            assertTrue(providers.contains("providerB"));
-            verify(turSolr).deIndexing(solrInstance, "old-id");
+                Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
+                assertEquals(attrs, result);
         }
-    }
 
-    @Test
-    void testMergeDocuments_UsesMergeLocaleWhenLocaleParameterIsNull() {
-        TurSNSite site = new TurSNSite();
-        site.setName("site1");
+        @Test
+        void testMergeDocuments_ProviderFrom() {
+                TurSNSite site = new TurSNSite();
+                site.setName("site1");
 
-        TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
-        mergeProviders.setTurSNSite(site);
-        mergeProviders.setProviderFrom("providerA");
-        mergeProviders.setProviderTo("providerB");
-        mergeProviders.setRelationFrom("relFrom");
-        mergeProviders.setRelationTo("relTo");
-        mergeProviders.setLocale(Locale.CANADA_FRENCH);
+                TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
+                mergeProviders.setTurSNSite(site);
+                mergeProviders.setProviderFrom("providerA");
+                mergeProviders.setProviderTo("providerB");
+                mergeProviders.setRelationFrom("relFrom");
+                mergeProviders.setRelationTo("relTo");
+                mergeProviders.setLocale(Locale.US);
 
-        when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
-                .thenReturn(Collections.singletonList(mergeProviders));
+                TurSNSiteMergeProvidersField field = new TurSNSiteMergeProvidersField();
+                field.setName("field1");
+                mergeProviders.setOverwrittenFields(new HashSet<>(Collections.singletonList(field)));
 
-        Map<String, Object> attrs = new HashMap<>();
-        attrs.put(TurSNFieldName.SOURCE_APPS, "providerA");
-        attrs.put("relFrom", "value1");
+                when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
+                                .thenReturn(Collections.singletonList(mergeProviders));
 
-        TurSolrInstance solrInstance = mock(TurSolrInstance.class);
-        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), eq(Locale.CANADA_FRENCH)))
-                .thenReturn(Optional.of(solrInstance));
-        when(turSolr.solrResultAnd(eq(solrInstance), anyMap()))
-                .thenReturn(new SolrDocumentList(), new SolrDocumentList(), new SolrDocumentList());
+                Map<String, Object> attrs = new HashMap<>();
+                attrs.put(TurSNFieldName.SOURCE_APPS, "providerA");
+                attrs.put("relFrom", "value1");
 
-        Map<String, Object> result = process.mergeDocuments(site, attrs, null);
+                TurSolrInstance solrInstance = mock(TurSolrInstance.class);
+                when(turSolrInstanceProcess.initSolrInstance(eq("site1"), any(Locale.class)))
+                                .thenReturn(Optional.of(solrInstance));
 
-        assertEquals(attrs, result);
-        verify(turSolrInstanceProcess, times(3)).initSolrInstance("site1", Locale.CANADA_FRENCH);
-    }
+                SolrDocumentList emptyList = new SolrDocumentList();
+                when(turSolr.solrResultAnd(eq(solrInstance), anyMap())).thenReturn(emptyList);
+
+                Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
+                assertEquals(attrs, result);
+        }
+
+        @Test
+        void testMergeDocuments_ProviderTo() {
+                TurSNSite site = new TurSNSite();
+                site.setName("site1");
+
+                TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
+                mergeProviders.setTurSNSite(site);
+                mergeProviders.setProviderFrom("providerA");
+                mergeProviders.setProviderTo("providerB");
+                mergeProviders.setRelationFrom("relFrom");
+                mergeProviders.setRelationTo("relTo");
+                mergeProviders.setLocale(Locale.US);
+
+                when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
+                                .thenReturn(Collections.singletonList(mergeProviders));
+
+                Map<String, Object> attrs = new HashMap<>();
+                attrs.put(TurSNFieldName.SOURCE_APPS, "providerB");
+                attrs.put("relTo", "value1");
+                attrs.put(TurSNFieldName.ID, "1");
+
+                TurSolrInstance solrInstance = mock(TurSolrInstance.class);
+                when(turSolrInstanceProcess.initSolrInstance(eq("site1"), any(Locale.class)))
+                                .thenReturn(Optional.of(solrInstance));
+
+                SolrDocumentList emptyList = new SolrDocumentList();
+                when(turSolr.solrResultAnd(eq(solrInstance), anyMap())).thenReturn(emptyList);
+
+                Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
+                assertEquals(attrs, result);
+        }
+
+        @Test
+        void testMergeDocuments_ProviderFromMergesFromAndToResultAndOverwritesFields() {
+                TurSNSite site = new TurSNSite();
+                site.setName("site1");
+
+                TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
+                mergeProviders.setTurSNSite(site);
+                mergeProviders.setProviderFrom("providerA");
+                mergeProviders.setProviderTo("providerB");
+                mergeProviders.setRelationFrom("relFrom");
+                mergeProviders.setRelationTo("relTo");
+                mergeProviders.setLocale(Locale.US);
+
+                TurSNSiteMergeProvidersField overwrittenField = new TurSNSiteMergeProvidersField();
+                overwrittenField.setName("title");
+                mergeProviders.setOverwrittenFields(new HashSet<>(Collections.singletonList(overwrittenField)));
+
+                when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
+                                .thenReturn(Collections.singletonList(mergeProviders));
+
+                Map<String, Object> attrs = new HashMap<>();
+                attrs.put(TurSNFieldName.SOURCE_APPS, List.of("providerA", "providerX"));
+                attrs.put("relFrom", "value1");
+                attrs.put("title", "queue-title");
+
+                TurSolrInstance solrInstance = mock(TurSolrInstance.class);
+                when(turSolrInstanceProcess.initSolrInstance("site1", Locale.US))
+                                .thenReturn(Optional.of(solrInstance));
+
+                SolrDocumentList empty1 = new SolrDocumentList();
+                SolrDocumentList empty2 = new SolrDocumentList();
+                SolrDocumentList fromAndTo = new SolrDocumentList();
+                SolrDocument mergedDoc = new SolrDocument();
+                mergedDoc.setField(TurSNFieldName.ID, "doc-1");
+                fromAndTo.add(mergedDoc);
+
+                when(turSolr.solrResultAnd(eq(solrInstance), anyMap())).thenReturn(empty1, empty2, fromAndTo);
+
+                Map<String, Object> fromAndToFields = new HashMap<>();
+                fromAndToFields.put(TurSNFieldName.SOURCE_APPS, List.of("providerB"));
+                fromAndToFields.put("title", "search-title");
+
+                try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
+                        utils.when(() -> TurSolrUtils.createTurSEResultFromDocument(mergedDoc))
+                                        .thenReturn(TurSEResult.builder().fields(fromAndToFields).build());
+
+                        Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
+
+                        assertEquals("queue-title", result.get("title"));
+                        assertTrue(result.containsKey(TurSNFieldName.SOURCE_APPS));
+                        @SuppressWarnings("unchecked")
+                        List<String> providers = (List<String>) result.get(TurSNFieldName.SOURCE_APPS);
+                        assertTrue(providers.contains("providerA"));
+                        assertTrue(providers.contains("providerB"));
+                        verify(turSolr, never()).deIndexing(any(), any());
+                }
+        }
+
+        @Test
+        void testMergeDocuments_ProviderToMergesFromResultAndDeindexesPreviousDocument() {
+                TurSNSite site = new TurSNSite();
+                site.setName("site1");
+
+                TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
+                mergeProviders.setTurSNSite(site);
+                mergeProviders.setProviderFrom("providerA");
+                mergeProviders.setProviderTo("providerB");
+                mergeProviders.setRelationFrom("relFrom");
+                mergeProviders.setRelationTo("relTo");
+                mergeProviders.setLocale(Locale.US);
+
+                TurSNSiteMergeProvidersField overwrittenField = new TurSNSiteMergeProvidersField();
+                overwrittenField.setName("headline");
+                mergeProviders.setOverwrittenFields(new HashSet<>(Collections.singletonList(overwrittenField)));
+
+                when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
+                                .thenReturn(Collections.singletonList(mergeProviders));
+
+                Map<String, Object> attrs = new HashMap<>();
+                attrs.put(TurSNFieldName.SOURCE_APPS, "providerB");
+                attrs.put("relTo", "group-1");
+                attrs.put(TurSNFieldName.ID, "id-200");
+
+                TurSolrInstance solrInstance = mock(TurSolrInstance.class);
+                when(turSolrInstanceProcess.initSolrInstance("site1", Locale.US))
+                                .thenReturn(Optional.of(solrInstance));
+
+                SolrDocumentList fromResults = new SolrDocumentList();
+                SolrDocument fromDoc = new SolrDocument();
+                fromDoc.setField(TurSNFieldName.ID, "old-id");
+                fromResults.add(fromDoc);
+                SolrDocumentList fromAndToResults = new SolrDocumentList();
+
+                when(turSolr.solrResultAnd(eq(solrInstance), anyMap())).thenReturn(fromResults, fromAndToResults);
+
+                Map<String, Object> fromFields = new HashMap<>();
+                fromFields.put("headline", "merged headline");
+                fromFields.put(TurSNFieldName.SOURCE_APPS, "providerA");
+
+                try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
+                        utils.when(() -> TurSolrUtils.createTurSEResultFromDocument(fromDoc))
+                                        .thenReturn(TurSEResult.builder().fields(fromFields).build());
+
+                        Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
+
+                        assertEquals("merged headline", result.get("headline"));
+                        @SuppressWarnings("unchecked")
+                        List<String> providers = (List<String>) result.get(TurSNFieldName.SOURCE_APPS);
+                        assertTrue(providers.contains("providerA"));
+                        assertTrue(providers.contains("providerB"));
+                        verify(turSolr).deIndexing(solrInstance, "old-id");
+                }
+        }
+
+        @Test
+        void testMergeDocuments_UsesMergeLocaleWhenLocaleParameterIsNull() {
+                TurSNSite site = new TurSNSite();
+                site.setName("site1");
+
+                TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
+                mergeProviders.setTurSNSite(site);
+                mergeProviders.setProviderFrom("providerA");
+                mergeProviders.setProviderTo("providerB");
+                mergeProviders.setRelationFrom("relFrom");
+                mergeProviders.setRelationTo("relTo");
+                mergeProviders.setLocale(Locale.CANADA_FRENCH);
+
+                when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
+                                .thenReturn(Collections.singletonList(mergeProviders));
+
+                Map<String, Object> attrs = new HashMap<>();
+                attrs.put(TurSNFieldName.SOURCE_APPS, "providerA");
+                attrs.put("relFrom", "value1");
+
+                TurSolrInstance solrInstance = mock(TurSolrInstance.class);
+                when(turSolrInstanceProcess.initSolrInstance("site1", Locale.CANADA_FRENCH))
+                                .thenReturn(Optional.of(solrInstance));
+                when(turSolr.solrResultAnd(eq(solrInstance), anyMap()))
+                                .thenReturn(new SolrDocumentList(), new SolrDocumentList(), new SolrDocumentList());
+
+                Map<String, Object> result = process.mergeDocuments(site, attrs, null);
+
+                assertEquals(attrs, result);
+                verify(turSolrInstanceProcess, times(3)).initSolrInstance("site1", Locale.CANADA_FRENCH);
+        }
 }

@@ -567,7 +567,7 @@ class TurSNSiteFieldExtAPITest {
                 existingEn.setTurSNSiteFieldExt(existing);
 
                 TurSNSiteFieldExtFacet existingPt = new TurSNSiteFieldExtFacet();
-                existingPt.setLocale(new Locale("pt", "BR"));
+                existingPt.setLocale(Locale.of("pt", "BR"));
                 existingPt.setLabel("Old PT");
                 existingPt.setTurSNSiteFieldExt(existing);
 
@@ -603,7 +603,7 @@ class TurSNSiteFieldExtAPITest {
                 assertThat(result.getFacetLocales())
                                 .anySatisfy(facet -> assertThat(facet.getLocale()).isEqualTo(Locale.FRENCH));
                 assertThat(result.getFacetLocales()).allSatisfy(
-                                facet -> assertThat(facet.getLocale()).isNotEqualTo(new Locale("pt", "BR")));
+                                facet -> assertThat(facet.getLocale()).isNotEqualTo(Locale.of("pt", "BR")));
         }
 
         @Test
