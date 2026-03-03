@@ -79,10 +79,6 @@ public class TurSNSiteExport {
 	private void hydrateExportCollections(TurSNSite turSNSite) {
 		var spotlights = turSNSiteSpotlightRepository
 				.findByTurSNSite(Sort.by(Sort.Order.asc("name").ignoreCase()), turSNSite);
-		spotlights.forEach(spotlight -> {
-			spotlight.getTurSNSiteSpotlightTerms().size();
-			spotlight.getTurSNSiteSpotlightDocuments().size();
-		});
 		turSNSite.setTurSNSiteSpotlights(new HashSet<>(spotlights));
 
 		var mergeProviders = turSNSiteMergeProvidersRepository.findByTurSNSite(turSNSite);
