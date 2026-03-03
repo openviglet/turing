@@ -12,10 +12,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.SolrQuery;
@@ -32,6 +36,8 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.se.facet.TurSEFacetResult;
@@ -281,8 +287,11 @@ public class TurSolrResultProcessor {
         private void processSEResultsFacet(TurSNSite turSNSite, TurSEResults turSEResults,
                         QueryResponse queryResponse, List<TurSNSiteFieldExt> turSNSiteFacetFieldExtList) {
                 if (wasFacetConfigured(turSNSite, turSNSiteFacetFieldExtList)) {
+                        List<TurSEFacetResult> facetQueryResults = setFacetQueries(turSNSite,
+                                        queryResponse);
                         List<TurSEFacetResult> facetRangeResults = setFacetRanges(queryResponse);
-                        List<TurSEFacetResult> facetResults = new ArrayList<>(facetRangeResults);
+                        List<TurSEFacetResult> facetResults = new ArrayList<>(facetQueryResults);
+                        facetResults.addAll(facetRangeResults);
                         facetResults.addAll(setFacetFields(queryResponse, facetRangeResults));
                         facetResults.forEach(facet -> {
                                 turSNFieldProcess.getTurSNSiteFieldOrdering(turSNSite.getId())
@@ -300,6 +309,89 @@ public class TurSolrResultProcessor {
                                                 .toList());
                         });
                 }
+        }
+
+        private List<TurSEFacetResult> setFacetQueries(TurSNSite turSNSite,
+                        QueryResponse queryResponse) {
+                Map<String, Integer> facetQueryValues = Optional.ofNullable(queryResponse.getFacetQuery())
+                                .orElse(Collections.emptyMap());
+                if (facetQueryValues.isEmpty()) {
+                        return Collections.emptyList();
+                }
+
+                Map<String, Map<String, Integer>> countsByFacetName = new LinkedHashMap<>();
+                facetQueryValues.forEach((key, count) -> {
+                        String[] keyValue = key.split(Pattern.quote(
+                                        TurSolrQueryBuilder.CUSTOM_FACET_QUERY_SEPARATOR),
+                                        2);
+                        if (keyValue.length == 2) {
+                                countsByFacetName
+                                                .computeIfAbsent(keyValue[0], f -> new LinkedHashMap<>())
+                                                .put(keyValue[1], count);
+                        }
+                });
+
+                List<TurSEFacetResult> facetResults = new ArrayList<>();
+                Set<String> processedFacetNames = new HashSet<>();
+                turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1).forEach(field -> Optional
+                                .ofNullable(field.getCustomFacets())
+                                .orElse(Collections.emptySet()).stream()
+                                .sorted(Comparator.comparing(this::getCustomFacetPosition)
+                                                .thenComparing(TurSNSiteCustomFacet::getName,
+                                                                Comparator.nullsLast(String::compareToIgnoreCase)))
+                                .forEach(customFacet -> {
+                                        Map<String, Integer> itemCounts = countsByFacetName
+                                                        .get(customFacet.getName());
+                                        if (itemCounts != null) {
+                                                TurSEFacetResult result = new TurSEFacetResult();
+                                                result.setFacet(customFacet.getName());
+                                                customFacet.getItems().stream()
+                                                                .sorted(Comparator
+                                                                                .comparing(this::getCustomFacetItemPosition)
+                                                                                .thenComparing(TurSNSiteCustomFacetItem::getLabel,
+                                                                                                Comparator
+                                                                                                                .nullsLast(String::compareToIgnoreCase)))
+                                                                .forEach(item -> {
+                                                                        Integer count = itemCounts
+                                                                                        .get(item.getLabel());
+                                                                        if (count != null) {
+                                                                                result.add(item.getLabel(),
+                                                                                                new TurSEFacetResultAttr(
+                                                                                                                item.getLabel(),
+                                                                                                                count));
+                                                                        }
+                                                                });
+                                                facetResults.add(result);
+                                                processedFacetNames.add(customFacet.getName());
+                                        }
+                                }));
+
+                countsByFacetName.forEach((facetName, itemCounts) -> {
+                        if (!processedFacetNames.contains(facetName)) {
+                                TurSEFacetResult result = new TurSEFacetResult();
+                                result.setFacet(facetName);
+                                itemCounts.entrySet().stream()
+                                                .sorted(Map.Entry.comparingByKey())
+                                                .forEach(item -> result.add(item.getKey(),
+                                                                new TurSEFacetResultAttr(item.getKey(),
+                                                                                item.getValue())));
+                                facetResults.add(result);
+                        }
+                });
+
+                return facetResults;
+        }
+
+        private Integer getCustomFacetPosition(TurSNSiteCustomFacet customFacet) {
+                return Optional.ofNullable(customFacet.getFacetPosition())
+                                .filter(position -> position > 0)
+                                .orElse(Integer.MAX_VALUE);
+        }
+
+        private Integer getCustomFacetItemPosition(TurSNSiteCustomFacetItem customFacetItem) {
+                return Optional.ofNullable(customFacetItem.getPosition())
+                                .filter(position -> position > 0)
+                                .orElse(Integer.MAX_VALUE);
         }
 
         private static List<TurSEFacetResult> setFacetRanges(QueryResponse queryResponse) {

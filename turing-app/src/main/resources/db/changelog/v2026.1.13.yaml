@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1770767340033-176
+      author: alexa (generated)
+      changes:
+        - addColumn:
+            tableName: sn_site_custom_facet_item
+            columns:
+              - column:
+                  name: facet_item_position
+                  type: INT

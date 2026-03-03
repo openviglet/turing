@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -65,6 +66,7 @@ import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtFacetDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
@@ -288,17 +290,17 @@ public class TurSNSearchProcess {
                 return turSNSiteRepository.findByName(context.getSiteName()).map(turSNSite -> {
                         populateMetrics(turSNSite, context, turSEResults.getNumFound());
                         List<TurSNSiteFieldExtDto> turSNSiteFieldExtDtoList = turSNSiteFieldExtRepository
-                                        .findByTurSNSiteAndFacetAndEnabled(
-                                                        turSNSite, 1, 1)
-                                        .stream().map(turSNSiteFieldExt -> {
-                                                TurSNSiteFieldExtDto turSNSiteFieldExtDto = new TurSNSiteFieldExtDto(
-                                                                turSNSiteFieldExt);
-                                                turSNSiteFieldExtDto
-                                                                .setFacetLocales(
-                                                                                getFacetLocales(context,
-                                                                                                turSNSiteFieldExt));
-                                                return turSNSiteFieldExtDto;
-                                        }).toList();
+                                        .findByTurSNSiteAndEnabled(turSNSite, 1)
+                                        .stream()
+                                        .filter(turSNSiteFieldExt -> turSNSiteFieldExt.getFacet() == 1
+                                                        || !CollectionUtils.isEmpty(turSNSiteFieldExt
+                                                                        .getCustomFacets()))
+                                        .flatMap(
+                                                        turSNSiteFieldExt -> getFacetFieldExtDtos(
+                                                                        context,
+                                                                        turSNSiteFieldExt)
+                                                                        .stream())
+                                        .toList();
                         Map<String, TurSNSiteFieldExtDto> facetMap = setFacetMap(turSNSiteFieldExtDtoList);
                         if (turSolrQueryBuilder.hasGroup(context.getTurSEParameters())) {
                                 return getSearchBeanForGroup(context, turSolrInstance, turSEResults,
@@ -319,6 +321,57 @@ public class TurSNSearchProcess {
                                 .stream().findFirst()
                                 .orElse(TurSNSiteFieldExtFacet.builder().locale(context.getLocale())
                                                 .label(turSNSiteFieldExt.getFacetName()).build())));
+        }
+
+        private List<TurSNSiteFieldExtDto> getFacetFieldExtDtos(TurSNSiteSearchContext context,
+                        TurSNSiteFieldExt turSNSiteFieldExt) {
+                List<TurSNSiteFieldExtDto> facetFieldExtDtos = new ArrayList<>();
+                if (turSNSiteFieldExt.getFacet() == 1) {
+                        TurSNSiteFieldExtDto defaultFacetFieldExtDto = new TurSNSiteFieldExtDto(
+                                        turSNSiteFieldExt);
+                        defaultFacetFieldExtDto.setFacetLocales(getFacetLocales(context,
+                                        turSNSiteFieldExt));
+                        facetFieldExtDtos.add(defaultFacetFieldExtDto);
+                }
+
+                Optional.ofNullable(turSNSiteFieldExt.getCustomFacets())
+                                .ifPresent(customFacets -> customFacets.forEach(customFacet -> {
+                                        TurSNSiteFieldExtDto customFacetFieldExtDto = new TurSNSiteFieldExtDto(
+                                                        turSNSiteFieldExt);
+                                        customFacetFieldExtDto.setName(customFacet.getName());
+                                        customFacetFieldExtDto
+                                                        .setFacetName(getCustomFacetLabel(context,
+                                                                        customFacet));
+                                        customFacetFieldExtDto.setFacetLocales(getCustomFacetLocales(
+                                                        context,
+                                                        customFacet));
+                                        facetFieldExtDtos.add(customFacetFieldExtDto);
+                                }));
+                return facetFieldExtDtos;
+        }
+
+        private String getCustomFacetLabel(TurSNSiteSearchContext context,
+                        TurSNSiteCustomFacet customFacet) {
+                return Optional.ofNullable(customFacet.getLabel())
+                                .map(labels -> labels.get(context.getLocale().toLanguageTag()))
+                                .orElse(customFacet.getName());
+        }
+
+        private Set<TurSNSiteFieldExtFacet> getCustomFacetLocales(TurSNSiteSearchContext context,
+                        TurSNSiteCustomFacet customFacet) {
+                Set<TurSNSiteFieldExtFacet> locales = new HashSet<>();
+                Optional.ofNullable(customFacet.getLabel())
+                                .ifPresent(labels -> labels.forEach((locale, label) -> locales
+                                                .add(TurSNSiteFieldExtFacet.builder()
+                                                                .locale(Locale.forLanguageTag(locale))
+                                                                .label(label)
+                                                                .build())));
+                if (locales.isEmpty()) {
+                        locales.add(TurSNSiteFieldExtFacet.builder()
+                                        .locale(context.getLocale())
+                                        .label(customFacet.getName()).build());
+                }
+                return locales;
         }
 
         private TurSNSiteSearchBean getSearchBeanForResults(TurSNSiteSearchContext context,

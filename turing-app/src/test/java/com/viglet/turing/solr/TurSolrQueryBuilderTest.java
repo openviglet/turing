@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,6 +54,8 @@ import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
@@ -175,6 +178,50 @@ class TurSolrQueryBuilderTest {
         }
 
         @Test
+        void testGetFacetFieldsInFilterQueryIncludesCustomFacetNames() {
+                TurSNSite site = new TurSNSite();
+                TurSNFilterParams params = TurSNFilterParams.builder()
+                                .defaultValues(List.of("price_range:101 - 500", "other:1"))
+                                .build();
+
+                TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder().name("price_range").build();
+                TurSNSiteFieldExt idFacet = TurSNSiteFieldExt.builder()
+                                .name("id")
+                                .customFacets(new java.util.HashSet<>(List.of(customFacet)))
+                                .build();
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(idFacet));
+
+                List<String> fields = builder().getFacetFieldsInFilterQuery(new TurSNFacetTypeContext(site, params));
+
+                assertThat(fields).containsExactly("price_range");
+        }
+
+        @Test
+        void testGetFacetFieldsInFilterQueryIncludesCustomFacetWhenBaseFieldIsNotFacet() {
+                TurSNSite site = new TurSNSite();
+                TurSNFilterParams params = TurSNFilterParams.builder()
+                                .defaultValues(List.of("price_range:101 - 500"))
+                                .build();
+
+                TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder().name("price_range").build();
+                TurSNSiteFieldExt nonFacetField = TurSNSiteFieldExt.builder()
+                                .name("id")
+                                .facet(0)
+                                .enabled(1)
+                                .customFacets(new java.util.HashSet<>(List.of(customFacet)))
+                                .build();
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(nonFacetField));
+
+                List<String> fields = builder().getFacetFieldsInFilterQuery(new TurSNFacetTypeContext(site, params));
+
+                assertThat(fields).containsExactly("price_range");
+        }
+
+        @Test
         void testPrepareQueryMLTConfiguresQueryWhenEnabled() {
                 TurSNSite site = new TurSNSite();
                 site.setMlt(1);
@@ -263,6 +310,41 @@ class TurSolrQueryBuilderTest {
                 assertThat(query.getBool("facet")).isTrue();
                 assertThat(query.get("facet.limit")).isEqualTo("5");
                 assertThat(query.getFacetFields()).isNotEmpty();
+        }
+
+        @Test
+        void testPrepareQueryFacetIncludesCustomFacetWhenBaseFieldIsNotFacet() {
+                TurSNSite site = new TurSNSite();
+                site.setFacet(1);
+                site.setItemsPerFacet(5);
+                site.setFacetSort(null);
+
+                TurSNSiteCustomFacetItem item = TurSNSiteCustomFacetItem.builder()
+                                .label("101 - 500")
+                                .rangeStart(new BigDecimal("101"))
+                                .rangeEnd(new BigDecimal("500"))
+                                .build();
+                TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder()
+                                .name("price_range")
+                                .items(new java.util.HashSet<>(List.of(item)))
+                                .build();
+
+                TurSNSiteFieldExt nonFacetField = TurSNSiteFieldExt.builder()
+                                .name("id")
+                                .facet(0)
+                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .customFacets(new java.util.HashSet<>(List.of(customFacet)))
+                                .build();
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(nonFacetField));
+
+                SolrQuery query = new SolrQuery();
+                List<TurSNSiteFieldExt> facets = builder().prepareQueryFacet(site, query,
+                                TurSNFilterParams.builder().build());
+
+                assertThat(facets).hasSize(1);
+                assertThat(query.getFacetQuery()).isNotEmpty();
         }
 
         @Test

@@ -30,6 +30,7 @@ import com.viglet.turing.onstartup.auth.TurRoleOnStartup;
 import com.viglet.turing.onstartup.auth.TurUserOnStartup;
 import com.viglet.turing.onstartup.llm.TurLLMVendorOnStartup;
 import com.viglet.turing.onstartup.se.TurSEVendorOnStartup;
+import com.viglet.turing.onstartup.sn.TurSNSiteOnStartup;
 import com.viglet.turing.onstartup.store.TurStoreVendorOnStartup;
 import com.viglet.turing.onstartup.system.TurConfigVarOnStartup;
 import com.viglet.turing.onstartup.system.TurLocaleOnStartup;
@@ -53,6 +54,7 @@ public class TurOnStartup implements ApplicationRunner {
 	private final TurUserOnStartup turUserOnStartup;
 	private final TurGroupOnStartup turGroupOnStartup;
 	private final TurRoleOnStartup turRoleOnStartup;
+	private final TurSNSiteOnStartup turSNSiteOnStartup;
 
 	public TurOnStartup(TurConfigVarRepository turConfigVarRepository,
 			TurLocaleOnStartup turLocaleOnStartup,
@@ -61,7 +63,8 @@ public class TurOnStartup implements ApplicationRunner {
 			TurConfigVarOnStartup turConfigVarOnStartup,
 			TurUserOnStartup turUserOnStartup,
 			TurGroupOnStartup turGroupOnStartup,
-			TurRoleOnStartup turRoleOnStartup) {
+			TurRoleOnStartup turRoleOnStartup,
+			TurSNSiteOnStartup turSNSiteOnStartup) {
 		this.turConfigVarRepository = turConfigVarRepository;
 		this.turLocaleOnStartup = turLocaleOnStartup;
 		this.turSEVendorOnStartup = turSEVendorOnStartup;
@@ -71,6 +74,7 @@ public class TurOnStartup implements ApplicationRunner {
 		this.turUserOnStartup = turUserOnStartup;
 		this.turGroupOnStartup = turGroupOnStartup;
 		this.turRoleOnStartup = turRoleOnStartup;
+		this.turSNSiteOnStartup = turSNSiteOnStartup;
 	}
 
 	@Override
@@ -88,6 +92,7 @@ public class TurOnStartup implements ApplicationRunner {
 				turSEVendorOnStartup.createDefaultRows();
 				turLLMVendorOnStartup.createDefaultRows();
 				turStoreVendorOnStartup.createDefaultRows();
+				turSNSiteOnStartup.createDefaultRows();
 
 				turConfigVarOnStartup.createDefaultRows();
 
