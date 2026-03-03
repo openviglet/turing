@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -20,9 +21,27 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import com.sun.net.httpserver.HttpServer;
 import com.viglet.turing.solr.TurSolrInstance;
 
 class TurSEStopWordTest {
+
+    @Test
+    void shouldReadStopwordsFromClasspathWhenResourceExists() throws Exception {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        Resource resource = mock(Resource.class);
+        when(resourceLoader.getResource("classpath:/solr/conf/lang/stopwords.txt")).thenReturn(resource);
+        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream("one\ntwo\n".getBytes()));
+
+        TurSEStopWord stopWord = new TurSEStopWord(resourceLoader);
+        Method method = TurSEStopWord.class.getDeclaredMethod("getStopWordsFromClassPath");
+        method.setAccessible(true);
+
+        InputStream stream = (InputStream) method.invoke(stopWord);
+        assertThat(stream).isNotNull();
+        String content = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        assertThat(content).contains("one").contains("two");
+    }
 
     @SuppressWarnings("unchecked")
     @Test
@@ -119,6 +138,60 @@ class TurSEStopWordTest {
         method.setAccessible(true);
 
         Object result = method.invoke(stopWord, turSolrInstance, analyzerDefinition);
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void shouldReturnStreamWhenStopwordDownloadSucceeds() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress(0), 0);
+        server.createContext("/solr/core1/admin/file", exchange -> {
+            byte[] body = "alpha\nbeta\n".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+
+        try {
+            ResourceLoader resourceLoader = mock(ResourceLoader.class);
+            TurSEStopWord stopWord = new TurSEStopWord(resourceLoader);
+
+            AnalyzerDefinition analyzerDefinition = mock(AnalyzerDefinition.class);
+            when(analyzerDefinition.getFilters())
+                    .thenReturn(List.of(Map.of("class", "solr.StopFilterFactory", "words", "stopwords.txt")));
+
+            TurSolrInstance turSolrInstance = mock(TurSolrInstance.class);
+            when(turSolrInstance.getSolrUrl())
+                    .thenReturn(new URI("http://localhost:" + server.getAddress().getPort() + "/solr").toURL());
+            when(turSolrInstance.getCore()).thenReturn("core1");
+
+            Method method = TurSEStopWord.class.getDeclaredMethod("getStopWord", TurSolrInstance.class,
+                    AnalyzerDefinition.class);
+            method.setAccessible(true);
+
+            InputStream result = (InputStream) method.invoke(stopWord, turSolrInstance, analyzerDefinition);
+            assertThat(result).isNotNull();
+            String content = new String(result.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content).contains("alpha").contains("beta");
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void shouldReturnNullWhenAnalyzerFilterIsNotStopFilter() throws Exception {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        TurSEStopWord stopWord = new TurSEStopWord(resourceLoader);
+
+        AnalyzerDefinition analyzerDefinition = mock(AnalyzerDefinition.class);
+        when(analyzerDefinition.getFilters())
+                .thenReturn(List.of(Map.of("class", "solr.LowerCaseFilterFactory", "words", "stopwords.txt")));
+
+        Method method = TurSEStopWord.class.getDeclaredMethod("getStopWord", TurSolrInstance.class,
+                AnalyzerDefinition.class);
+        method.setAccessible(true);
+
+        Object result = method.invoke(stopWord, mock(TurSolrInstance.class), analyzerDefinition);
         assertThat(result).isNull();
     }
 }
