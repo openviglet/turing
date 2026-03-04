@@ -63,13 +63,25 @@ graph TB
 ```
 
 ### Key Technologies
-- **Spring Boot 3.2+**: Microservices foundation for AI agent development
+- **Spring Boot 4**: Microservices foundation for AI agent development
 - **Java 21**: Modern language features for AI algorithm implementation  
 - **LangChain4j**: AI/ML framework integration
 - **Apache Solr**: High-performance search engine
 - **Apache Artemis**: Message queue for asynchronous AI processing
 - **React + TypeScript**: Modern UI for AI agent interfaces
 - **Docker & Kubernetes**: Containerized deployment for scalable AI workloads
+
+## Testing Guidelines
+
+Use the following Maven parameters to optimize the test execution process.
+
+### Skip Frontend Compilation
+When running backend-only tests, use the `-Dskip.npm` flag to bypass the frontend build process and reduce execution time.
+
+**Command:**
+```bash
+mvn test -Dskip.npm
+```
 
 ## SDK and API Support for Agent Development
 

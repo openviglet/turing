@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Pagination,
@@ -180,6 +181,7 @@ export default function SearchPage() {
     params.toString().replaceAll("%5B%5D", "[]");
 
   const isInternalHref = (href: string) => href.startsWith("/") && !href.startsWith("//");
+  const isFacetItemTypeOr = snSearch?.queryContext.facetItemType?.toUpperCase() === "OR";
 
   if (loading) {
     return (
@@ -351,18 +353,21 @@ export default function SearchPage() {
                       <div className="px-4 pb-2 flex justify-end border-b border-primary">
                         <Button
                           variant="link"
-                          className="p-0 h-auto text-sm text-primary"
+                          className="p-0 h-auto text-sm text-primary rounded-none"
                           onClick={() => turRedirect(snSearch.widget.cleanUpFacets)}
                         >
                           Clean up all
                         </Button>
                       </div>
                       <div>
-                        {snSearch.widget.facetToRemove.facets.map((facet) => (
+                        {snSearch.widget.facetToRemove.facets.map((facet, index) => (
                           <Button
                             key={`${facet.label || facet.link}-${facet.link}`}
                             variant="ghost"
-                            className="w-full px-4 py-2 text-left hover:bg-accent border-b border-border text-sm justify-start"
+                            className={`w-full px-4 py-2 text-left hover:bg-accent text-sm justify-start rounded-none ${index < snSearch.widget.facetToRemove.facets.length - 1
+                                ? "border-b border-border"
+                                : ""
+                              }`}
                             onClick={() => turRedirect(facet.link)}
                           >
                             <span>{facet.label}</span>
@@ -384,10 +389,10 @@ export default function SearchPage() {
                     <AccordionTrigger className="px-4 py-3 text-base">
                       {facets.label.text}
                     </AccordionTrigger>
-                    <AccordionContent className="pt-0">
+                    <AccordionContent className="py-0">
                       <div className="px-4 pb-2 flex justify-end border-b border-border">
                         <Button
-                          variant="link"
+                          variant="ghost"
                           className="p-0 h-auto text-sm text-primary"
                           onClick={() => turRedirect(facets.cleanUpLink)}
                         >
@@ -395,18 +400,28 @@ export default function SearchPage() {
                         </Button>
                       </div>
                       <div>
-                        {facets.facets.map((facet) => (
+                        {facets.facets.map((facet, index) => (
                           <Button
                             key={`${facet.label || facet.link}-${facet.link}`}
                             variant="ghost"
-                            className="w-full px-4 py-2 text-left hover:bg-accent border-b border-border text-sm flex items-center justify-between"
+                            className={`w-full px-4 py-2 text-left hover:bg-accent text-sm flex items-center rounded-none ${index < facets.facets.length - 1 ? "border-b border-border" : ""
+                              }`}
                             onClick={() => turRedirect(facet.link)}
                           >
-                            <span>
-                              {facet.label}{" "}
-                              <span className="inline-block px-2 py-0.5 bg-muted text-muted-foreground rounded-full text-xs">
-                                {facet.count}
+                            <span className="w-full flex items-center justify-between">
+                              <span>
+                                {facet.label}{" "}
+                                <span className="inline-block px-2 py-0.5 bg-muted text-muted-foreground rounded-full text-xs">
+                                  {facet.count}
+                                </span>
                               </span>
+                              {isFacetItemTypeOr && (
+                                <Checkbox
+                                  checked={Boolean(facet.selected)}
+                                  aria-label={facet.label}
+                                  className="pointer-events-none"
+                                />
+                              )}
                             </span>
                           </Button>
                         ))}
