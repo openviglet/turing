@@ -1,9 +1,7 @@
 import { Navigate, Route, useParams } from "react-router-dom"
 import SNSiteBehaviorPage from "../console/sn/behavior/sn.site.behavior.page"
-import SNSiteCustomFacetChildListPage from "../console/sn/custom-facet/sn.custom.facet.child.list.page"
+import SNSiteCustomFacetListPage from "../console/sn/custom-facet/sn.custom.facet.list.page"
 import SNSiteCustomFacetPage from "../console/sn/custom-facet/sn.custom.facet.page"
-import SNSiteCustomFacetParentListPage from "../console/sn/custom-facet/sn.custom.facet.parent.list.page"
-import SNSiteCustomFacetParentPage from "../console/sn/custom-facet/sn.custom.facet.parent.page"
 import SNSiteDetailPage from "../console/sn/detail/sn.site.detail.page"
 import SNSiteFacetOrderingPage from "../console/sn/facet-ordering/sn.site.facets.ordering.page"
 import SNSiteFieldListPage from "../console/sn/fields/sn.site.field.list.page"
@@ -49,10 +47,8 @@ export const SNRoutes = (
             <Route path={'top-terms/:period?'} element={<SNSiteTopSearchTermsPage />} />
             <Route path={'result-ranking/:resultRankingId'} element={<SNSiteResultRankingPage />} />
             <Route path={'merge-providers/:mergeProviderId'} element={<SNSiteMergeProvidersPage />} />
-            <Route path={'custom-facet'} element={<SNSiteCustomFacetParentListPage />} />
-            <Route path={'custom-facet/:groupIdName/:childId'} element={<SNSiteCustomFacetPage />} />
-            <Route path={'custom-facet/:groupIdName'} element={<SNSiteCustomFacetChildListPage />} />
-            <Route path={'custom-facet/:groupIdName/edit'} element={<SNSiteCustomFacetParentPage />} />
+            <Route path={'custom-facet'} element={<SNSiteCustomFacetListPage />} />
+            <Route path={'custom-facet/:customFacetId'} element={<SNSiteCustomFacetPage />} />
         </Route>
     </Route>
 )
