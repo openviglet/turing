@@ -20,7 +20,7 @@ import { useEffect, useState } from "react"
 import {
   useForm
 } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 import { GradientButton } from "../../ui/gradient-button"
 
@@ -38,6 +38,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
   const { control } = form;
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
+  const { id, groupIdName } = useParams() as { id: string, groupIdName: string };
 
   useEffect(() => {
     form.reset(value);
@@ -46,18 +47,19 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
   async function onSubmit(customFacet: TurSNSiteCustomFacet) {
     try {
       if (isNew) {
-        const result = await turSNSiteCustomFacetService.create(customFacet);
+        const result = await turSNSiteCustomFacetService.create(customFacet, groupIdName ?? "");
         if (result) {
           toast.success(`The ${customFacet.label} Custom Facet was saved`);
-          navigate(`${ROUTES.SN_INSTANCE}/custom-facet`);
+          navigate(`${ROUTES.SN_INSTANCE}/${id}/custom-facet/${groupIdName}`);
         } else {
           toast.error(`The ${customFacet.label} Custom Facet was not saved`);
         }
       }
       else {
-        const result = await turSNSiteCustomFacetService.update(customFacet);
+        const result = await turSNSiteCustomFacetService.update(customFacet, groupIdName ?? "");
         if (result) {
           toast.success(`The ${customFacet.label} Custom Facet was updated`);
+          navigate(`${ROUTES.SN_INSTANCE}/${id}/custom-facet/${groupIdName}`);
         } else {
           toast.error(`The ${customFacet.label} Custom Facet was not updated`);
         }
@@ -73,7 +75,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
     try {
       if (await turSNSiteCustomFacetService.delete(value)) {
         toast.success(`The ${value.label} Custom Facet was deleted`);
-        navigate(`${ROUTES.SN_INSTANCE}/custom-facet`);
+        navigate(`${ROUTES.SN_INSTANCE}/${id}/custom-facet`);
       }
       else {
         toast.error(`The ${value.label} Custom Facet was not deleted`);
@@ -88,8 +90,8 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
   }
 
   return (
-    <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
-      <Card className="mx-auto max-w-md">
+    <div className="min-h-[60vh] w-full px-4 md:px-8 py-6">
+      <Card className="mx-auto w-full max-w-4xl">
         <CardHeader>
           <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Custom Facet</CardTitle>
           <CardAction>
@@ -105,40 +107,31 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
               <FormField
                 control={control}
                 name="label"
+                rules={{
+                  required: "Required",
+                }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Facet Label</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g., Price Range, Date Range"
+                        placeholder="e.g., 0_<_2000"
                         type="text"
+                        disabled={!isNew}
                       />
                     </FormControl>
-                    <FormDescription>Display name for the facet that will appear to users.</FormDescription>
+                    <FormDescription>
+                      Identificador do item (agora usado na URL e referência).
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <FormField
-                control={control}
-                name="field"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Field Selection</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="e.g., price, created_date, quantity"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormDescription>The underlying data field that this facet will be based on.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              
+
+              
 
               <FormField
                 control={control}

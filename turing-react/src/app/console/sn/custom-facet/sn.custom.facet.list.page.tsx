@@ -1,7 +1,8 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
-import { GridList } from "@/components/grid.list";
 import { LoadProvider } from "@/components/loading-provider";
+import { CustomFacetGrid } from "@/components/sn/custom-facet/custom.facet.grid";
+import { SubPageHeader } from "@/components/sub.page.header";
 import { useGridAdapter } from "@/hooks/use-grid-adapter";
 import type { TurSNSiteCustomFacet } from "@/models/sn/sn-site-custom-facet.model";
 import { TurSNSiteCustomFacetService } from "@/services/sn/sn.site.custom.facet.service";
@@ -21,20 +22,32 @@ export default function SNSiteCustomFacetListPage() {
   }, [])
   const gridItemList = useGridAdapter(customFacets, {
     name: "label",
-    description: "field",
-    url: (item) => `${ROUTES.SN_INSTANCE}/${id}/custom-facet/${item.id}`
+    description: "label",
+    url: (item) => `${ROUTES.SN_INSTANCE}/${id}/custom-facet/${encodeURIComponent(item.parentIdName ?? "")}/${item.id}`
   });
   return (
     <LoadProvider checkIsNotUndefined={customFacets} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/custom-facet`}>
       {gridItemList.length > 0 ? (
-        <GridList gridItemList={gridItemList} />
+        <>
+          <SubPageHeader
+            icon={IconFilter}
+            feature="Custom Facets"
+            name="Custom Facets"
+            description="Manage your custom facets for range-based filters."
+            urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`}
+          />
+          <CustomFacetGrid items={customFacets} />
+        </>
       ) : (
-        <BlankSlate
-          icon={IconFilter}
-          title="You don't seem to have any custom facets."
-          description="Create a new custom facet to define range-based filters for your search data."
-          buttonText="New custom facet"
-          urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`} />
+        <>
+          <BlankSlate
+            icon={IconFilter}
+            title="Custom Facets"
+            description="Nenhuma faceta encontrada. Crie novas facetas personalizadas."
+            buttonText="New Custom Facets"
+            urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`}
+          />
+        </>
       )}
     </LoadProvider>
   )

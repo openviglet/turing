@@ -33,6 +33,7 @@ import com.viglet.turing.onstartup.se.TurSEVendorOnStartup;
 import com.viglet.turing.onstartup.store.TurStoreVendorOnStartup;
 import com.viglet.turing.onstartup.system.TurConfigVarOnStartup;
 import com.viglet.turing.onstartup.system.TurLocaleOnStartup;
+import com.viglet.turing.onstartup.sn.facet.TurSNSiteCustomFacetOnStartup;
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -53,15 +54,18 @@ public class TurOnStartup implements ApplicationRunner {
 	private final TurUserOnStartup turUserOnStartup;
 	private final TurGroupOnStartup turGroupOnStartup;
 	private final TurRoleOnStartup turRoleOnStartup;
+	private final TurSNSiteCustomFacetOnStartup turSNSiteCustomFacetOnStartup;
 
 	public TurOnStartup(TurConfigVarRepository turConfigVarRepository,
 			TurLocaleOnStartup turLocaleOnStartup,
 			TurSEVendorOnStartup turSEVendorOnStartup,
-			TurLLMVendorOnStartup turLLMVendorOnStartup, TurStoreVendorOnStartup turStoreVendorOnStartup,
+			TurLLMVendorOnStartup turLLMVendorOnStartup,
+			TurStoreVendorOnStartup turStoreVendorOnStartup,
 			TurConfigVarOnStartup turConfigVarOnStartup,
 			TurUserOnStartup turUserOnStartup,
 			TurGroupOnStartup turGroupOnStartup,
-			TurRoleOnStartup turRoleOnStartup) {
+			TurRoleOnStartup turRoleOnStartup,
+			TurSNSiteCustomFacetOnStartup turSNSiteCustomFacetOnStartup) {
 		this.turConfigVarRepository = turConfigVarRepository;
 		this.turLocaleOnStartup = turLocaleOnStartup;
 		this.turSEVendorOnStartup = turSEVendorOnStartup;
@@ -71,6 +75,7 @@ public class TurOnStartup implements ApplicationRunner {
 		this.turUserOnStartup = turUserOnStartup;
 		this.turGroupOnStartup = turGroupOnStartup;
 		this.turRoleOnStartup = turRoleOnStartup;
+		this.turSNSiteCustomFacetOnStartup = turSNSiteCustomFacetOnStartup;
 	}
 
 	@Override
@@ -88,6 +93,7 @@ public class TurOnStartup implements ApplicationRunner {
 				turSEVendorOnStartup.createDefaultRows();
 				turLLMVendorOnStartup.createDefaultRows();
 				turStoreVendorOnStartup.createDefaultRows();
+				turSNSiteCustomFacetOnStartup.createDefaultRows();
 
 				turConfigVarOnStartup.createDefaultRows();
 
