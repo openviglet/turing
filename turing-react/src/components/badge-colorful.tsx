@@ -6,12 +6,14 @@ interface BadgeColorfulProps {
     text: string;
     href?: string;
     onClick?: (href: string) => void;
+    className?: string;
 }
 
 export const BadgeColorful: React.FC<BadgeColorfulProps> = ({
     text,
     href,
     onClick,
+    className,
 }) => {
     if (!text) return null;
 
@@ -23,7 +25,7 @@ export const BadgeColorful: React.FC<BadgeColorfulProps> = ({
                 variant="outline"
                 title={text}
                 onClick={() => href && onClick?.(href)}
-                className={`text-xs font-medium px-2 py-0.5 cursor-pointer transition-all hover:opacity-80 dynamic-badge-${text.length}`}
+                className={`text-xs font-medium px-2 py-0.5 cursor-pointer transition-all hover:opacity-80 dynamic-badge-${text.length} ${className ?? ""}`}
                 style={{
                     // Variáveis CSS locais para este badge específico
                     "--badge-bg": colors.light.bg,

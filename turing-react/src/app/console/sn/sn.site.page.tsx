@@ -15,7 +15,6 @@ import {
     IconInbox,
     IconLanguage,
     IconNumber123,
-    IconReorder,
     IconScale,
     IconSearch,
     IconSettings,
@@ -74,14 +73,9 @@ export default function SNSitePage() {
                     icon: IconScale,
                 },
                 {
-                    title: "Custom Facets",
-                    url: "/custom-facet",
+                    title: "Facets",
+                    url: "/facet",
                     icon: IconFilter,
-                },
-                {
-                    title: "Facet Ordering",
-                    url: "/facet-ordering",
-                    icon: IconReorder,
                 },
                 {
                     title: "Generative AI",

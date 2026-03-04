@@ -16,6 +16,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
 import React from 'react';
 
+import { ROUTES } from '@/app/routes.const';
 import {
     Table,
     TableBody,
@@ -27,12 +28,15 @@ import {
 import type { TurSNSiteFacetOrdering } from '@/models/sn/sn-site-facet-ordering.model';
 import { TurSNFacetedFieldService } from '@/services/sn/sn.faceted.field.service';
 import { toast } from 'sonner';
+import { BadgeColorful } from '../../badge-colorful';
+import { GradientButton } from '../../ui/gradient-button';
 
-interface DraggableTableRowProps {
+interface FacetDraggableListRowProps {
     row: TurSNSiteFacetOrdering;
+    siteId: string;
 }
 
-const DraggableTableRow: React.FC<DraggableTableRowProps> = ({ row }) => {
+const FacetDraggableListRow: React.FC<FacetDraggableListRowProps> = ({ row, siteId }) => {
     const {
         attributes,
         listeners,
@@ -53,25 +57,42 @@ const DraggableTableRow: React.FC<DraggableTableRowProps> = ({ row }) => {
     return (
         <TableRow ref={setNodeRef} style={style}>
             <TableCell className="w-12">
-                <button {...attributes} {...listeners} className="p-2 cursor-grab active:cursor-grabbing">
+                <button
+                    {...attributes}
+                    {...listeners}
+                    className="p-2 cursor-grab active:cursor-grabbing hover:bg-accent rounded transition-colors"
+                    aria-label="Drag to reorder"
+                >
                     <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </button>
             </TableCell>
             <TableCell className="w-24 font-medium">{row.facetPosition}</TableCell>
-            <TableCell>{row.facetName}</TableCell>
             <TableCell className="text-muted-foreground">{row.name}</TableCell>
+            <TableCell className="text-muted-foreground text-center"><BadgeColorful text={row.customFacet ? 'Custom Facet' : 'Faceted Field'} className="w-24" /></TableCell>
+            <TableCell>{row.facetName}</TableCell>
+            <TableCell className="text-muted-foreground">
+                <GradientButton
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    to={`${ROUTES.SN_INSTANCE}/${siteId}/${row.customFacet ? 'custom-facet' : 'field'
+                        }/${row.customFacet ? row.id : row.fieldExtId}`}
+                >
+                    Edit
+                </GradientButton>
+            </TableCell>
         </TableRow>
     );
 };
 
 
-interface DraggableTableProps {
-    id: string;
+interface FacetDraggableListProps {
+    siteId: string;
     tableData: TurSNSiteFacetOrdering[];
     setTableData: React.Dispatch<React.SetStateAction<TurSNSiteFacetOrdering[]>>;
 }
 const turSNFacetedFieldService = new TurSNFacetedFieldService();
-export const DraggableTable: React.FC<DraggableTableProps> = ({ id, tableData, setTableData }) => {
+export const FacetDraggableList: React.FC<FacetDraggableListProps> = ({ siteId, tableData, setTableData }) => {
 
 
     const sensors = useSensors(useSensor(PointerSensor));
@@ -92,7 +113,7 @@ export const DraggableTable: React.FC<DraggableTableProps> = ({ id, tableData, s
             setTableData(reorderedItems);
 
             try {
-                await turSNFacetedFieldService.saveOrdering(id, reorderedItems);
+                await turSNFacetedFieldService.saveOrdering(siteId, reorderedItems);
                 toast.success('Facet ordering saved.');
             } catch (error) {
                 console.error('Failed to save facet ordering', error);
@@ -116,8 +137,10 @@ export const DraggableTable: React.FC<DraggableTableProps> = ({ id, tableData, s
                             <TableRow>
                                 <TableHead className="w-12"></TableHead>
                                 <TableHead className="w-24">Position</TableHead>
+                                <TableHead>Identifier</TableHead>
+                                <TableHead className="text-center">Type</TableHead>
                                 <TableHead>Facet Name</TableHead>
-                                <TableHead>Field Name</TableHead>
+                                <TableHead>Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -126,7 +149,7 @@ export const DraggableTable: React.FC<DraggableTableProps> = ({ id, tableData, s
                                 strategy={verticalListSortingStrategy}
                             >
                                 {tableData.map((row) => (
-                                    <DraggableTableRow key={row.id} row={row} />
+                                    <FacetDraggableListRow key={row.id} row={row} siteId={siteId} />
                                 ))}
                             </SortableContext>
                         </TableBody>

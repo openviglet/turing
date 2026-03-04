@@ -1,9 +1,8 @@
 import { Navigate, Route, useParams } from "react-router-dom"
 import SNSiteBehaviorPage from "../console/sn/behavior/sn.site.behavior.page"
-import SNSiteCustomFacetListPage from "../console/sn/custom-facet/sn.custom.facet.list.page"
-import SNSiteCustomFacetPage from "../console/sn/custom-facet/sn.custom.facet.page"
 import SNSiteDetailPage from "../console/sn/detail/sn.site.detail.page"
-import SNSiteFacetOrderingPage from "../console/sn/facet-ordering/sn.site.facets.ordering.page"
+import SNSiteCustomFacetPage from "../console/sn/facet/sn.custom.facet.page"
+import SNSiteFacetListPage from "../console/sn/facet/sn.site.facets.list.page"
 import SNSiteFieldListPage from "../console/sn/fields/sn.site.field.list.page"
 import SNSiteFieldPage from "../console/sn/fields/sn.site.field.page"
 import SNSiteGenAIPage from "../console/sn/genai/sn.site.genai.page"
@@ -38,7 +37,8 @@ export const SNRoutes = (
             <Route path={'field'} element={<SNSiteFieldListPage />} />
             <Route path={'field/:fieldId'} element={<SNSiteFieldPage />} />
             <Route path={'behavior'} element={<SNSiteBehaviorPage />} />
-            <Route path={'facet-ordering'} element={<SNSiteFacetOrderingPage />} />
+            <Route path={'facet'} element={<SNSiteFacetListPage />} />
+            <Route path={'custom-facet/:customFacetId'} element={<SNSiteCustomFacetPage />} />
             <Route path={'ai'} element={<SNSiteGenAIPage />} />
             <Route path={'result-ranking'} element={<SNSiteResultRankingListPage />} />
             <Route path={'merge-providers'} element={<SNSiteMergeProvidersListPage />} />
@@ -47,8 +47,6 @@ export const SNRoutes = (
             <Route path={'top-terms/:period?'} element={<SNSiteTopSearchTermsPage />} />
             <Route path={'result-ranking/:resultRankingId'} element={<SNSiteResultRankingPage />} />
             <Route path={'merge-providers/:mergeProviderId'} element={<SNSiteMergeProvidersPage />} />
-            <Route path={'custom-facet'} element={<SNSiteCustomFacetListPage />} />
-            <Route path={'custom-facet/:customFacetId'} element={<SNSiteCustomFacetPage />} />
         </Route>
     </Route>
 )
