@@ -489,6 +489,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
                     <FormField
                       control={control}
                       name="defaultLabel"
+                      rules={{ required: true }}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-base">Display Name</FormLabel>
@@ -557,6 +558,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
                     <FormField
                       control={control}
                       name="fieldExtId"
+                      rules={{ required: true }}
                       render={({ field }) => (
                         <FormItemTwoColumns>
                           <FormItemTwoColumns.Left>

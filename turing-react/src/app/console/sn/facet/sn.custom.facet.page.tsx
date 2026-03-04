@@ -1,6 +1,6 @@
 import { ROUTES } from "@/app/routes.const";
 import { LoadProvider } from "@/components/loading-provider";
-import { SNSiteCustomFacetForm } from "@/components/sn/custom-facet/sn.custom.facet.form";
+import { SNSiteCustomFacetForm } from "@/components/sn/facet/sn.site.custom.facet.form";
 import type { TurSNSiteCustomFacet } from "@/models/sn/sn-site-custom-facet.model";
 import { TurSNSiteCustomFacetService } from "@/services/sn/sn.site.custom.facet.service";
 import { useEffect, useState } from "react";

@@ -1,6 +1,6 @@
 import { ROUTES } from "@/app/routes.const";
 import { LoadProvider } from "@/components/loading-provider";
-import { FacetDraggableList } from "@/components/sn/facet/facet.draggable.list";
+import { SNSiteFacetDraggableList } from "@/components/sn/facet/sn.site.facet.draggable.list";
 import { SubPageHeader } from "@/components/sub.page.header";
 import type { TurSNSiteFacetOrdering } from "@/models/sn/sn-site-facet-ordering.model";
 import { TurSNFacetedFieldService } from "@/services/sn/sn.faceted.field.service";
@@ -21,11 +21,14 @@ export default function SNSiteFacetListPage() {
       <SubPageHeader
         icon={IconFilter}
         name="Facet"
-        feature="Custom Facet"
+        feature="Facet"
         description="Edit and order the facets of the search."
         urlNew={`${ROUTES.SN_INSTANCE}/${siteId}/custom-facet/new`}
       />
-      {tableData && <FacetDraggableList siteId={siteId} tableData={tableData} setTableData={setTableData as React.Dispatch<React.SetStateAction<TurSNSiteFacetOrdering[]>>} />}
+      {tableData && <SNSiteFacetDraggableList
+        siteId={siteId}
+        tableData={tableData}
+        setTableData={setTableData as React.Dispatch<React.SetStateAction<TurSNSiteFacetOrdering[]>>} />}
     </LoadProvider>
   )
 }

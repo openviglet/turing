@@ -2,7 +2,8 @@ import { Navigate, Route, useParams } from "react-router-dom"
 import SNSiteBehaviorPage from "../console/sn/behavior/sn.site.behavior.page"
 import SNSiteDetailPage from "../console/sn/detail/sn.site.detail.page"
 import SNSiteCustomFacetPage from "../console/sn/facet/sn.custom.facet.page"
-import SNSiteFacetListPage from "../console/sn/facet/sn.site.facets.list.page"
+import SNSiteFacetListPage from "../console/sn/facet/sn.site.facet.list.page"
+import SNSiteFacetedFieldPage from "../console/sn/facet/sn.site.faceted.field.page"
 import SNSiteFieldListPage from "../console/sn/fields/sn.site.field.list.page"
 import SNSiteFieldPage from "../console/sn/fields/sn.site.field.page"
 import SNSiteGenAIPage from "../console/sn/genai/sn.site.genai.page"
@@ -38,7 +39,8 @@ export const SNRoutes = (
             <Route path={'field/:fieldId'} element={<SNSiteFieldPage />} />
             <Route path={'behavior'} element={<SNSiteBehaviorPage />} />
             <Route path={'facet'} element={<SNSiteFacetListPage />} />
-            <Route path={'custom-facet/:customFacetId'} element={<SNSiteCustomFacetPage />} />
+            <Route path={'facet/custom/:customFacetId'} element={<SNSiteCustomFacetPage />} />
+            <Route path={'facet/field/:facetedFieldId'} element={<SNSiteFacetedFieldPage />} />
             <Route path={'ai'} element={<SNSiteGenAIPage />} />
             <Route path={'result-ranking'} element={<SNSiteResultRankingListPage />} />
             <Route path={'merge-providers'} element={<SNSiteMergeProvidersListPage />} />

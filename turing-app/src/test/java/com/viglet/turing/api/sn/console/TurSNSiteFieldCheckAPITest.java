@@ -223,4 +223,47 @@ class TurSNSiteFieldCheckAPITest {
             assertThat(result.getFields().get(0).getCores().get(0).isMultiValuedIsCorrect()).isFalse();
         }
     }
+
+    @Test
+    void testFieldCheckDoesNotThrowWhenSolrFieldTypeIsNull() {
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+        TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
+        TurSNSiteFieldCheckAPI api = new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository);
+
+        TurSEInstance instance = new TurSEInstance();
+        TurSNSite site = new TurSNSite();
+        site.setTurSEInstance(instance);
+
+        TurSNSiteLocale locale = new TurSNSiteLocale();
+        locale.setCore("core_ca");
+
+        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
+        fieldExt.setId("id4");
+        fieldExt.setExternalId("ext4");
+        fieldExt.setName("author");
+        fieldExt.setType(TurSEFieldType.STRING);
+        fieldExt.setMultiValued(0);
+        fieldExt.setFacet(0);
+
+        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+        when(fieldExtRepository.findByTurSNSite(any(), org.mockito.ArgumentMatchers.eq(site)))
+                .thenReturn(List.of(fieldExt));
+        when(localeRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
+
+        TurSolrFieldBean schemaField = TurSolrFieldBean.builder().name("author").multiValued(false).build();
+        try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
+            utils.when(() -> TurSolrUtils.coreExists(instance, "core_ca")).thenReturn(true);
+            utils.when(() -> TurSolrUtils.existsField(instance, "core_ca", "author")).thenReturn(true);
+            utils.when(() -> TurSolrUtils.getField(instance, "core_ca", "author")).thenReturn(schemaField);
+            utils.when(() -> TurSolrUtils.getSolrFieldType(TurSEFieldType.STRING)).thenReturn("string");
+
+            TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
+
+            assertThat(result.getFields()).hasSize(1);
+            assertThat(result.getFields().get(0).isCorrect()).isFalse();
+            assertThat(result.getFields().get(0).getCores()).hasSize(1);
+            assertThat(result.getFields().get(0).getCores().get(0).isTypeIsCorrect()).isFalse();
+        }
+    }
 }

@@ -63,14 +63,14 @@ export default function SNSitePage() {
                     icon: IconLanguage,
                 },
                 {
-                    title: "Fields",
-                    url: "/field",
-                    icon: IconAlignBoxCenterStretch,
-                },
-                {
                     title: "Behavior",
                     url: "/behavior",
                     icon: IconScale,
+                },
+                {
+                    title: "Fields",
+                    url: "/field",
+                    icon: IconAlignBoxCenterStretch,
                 },
                 {
                     title: "Facets",

@@ -31,12 +31,12 @@ import { toast } from 'sonner';
 import { BadgeColorful } from '../../badge-colorful';
 import { GradientButton } from '../../ui/gradient-button';
 
-interface FacetDraggableListRowProps {
+interface SNSiteFacetDraggableListRowProps {
     row: TurSNSiteFacetOrdering;
     siteId: string;
 }
 
-const FacetDraggableListRow: React.FC<FacetDraggableListRowProps> = ({ row, siteId }) => {
+const SNSiteFacetDraggableListRow: React.FC<SNSiteFacetDraggableListRowProps> = ({ row, siteId }) => {
     const {
         attributes,
         listeners,
@@ -75,7 +75,7 @@ const FacetDraggableListRow: React.FC<FacetDraggableListRowProps> = ({ row, site
                     asChild
                     variant="outline"
                     size="sm"
-                    to={`${ROUTES.SN_INSTANCE}/${siteId}/${row.customFacet ? 'custom-facet' : 'field'
+                    to={`${ROUTES.SN_INSTANCE}/${siteId}/${row.customFacet ? 'facet/custom' : 'facet/field'
                         }/${row.customFacet ? row.id : row.fieldExtId}`}
                 >
                     Edit
@@ -86,13 +86,13 @@ const FacetDraggableListRow: React.FC<FacetDraggableListRowProps> = ({ row, site
 };
 
 
-interface FacetDraggableListProps {
+interface SNSiteFacetDraggableListProps {
     siteId: string;
     tableData: TurSNSiteFacetOrdering[];
     setTableData: React.Dispatch<React.SetStateAction<TurSNSiteFacetOrdering[]>>;
 }
 const turSNFacetedFieldService = new TurSNFacetedFieldService();
-export const FacetDraggableList: React.FC<FacetDraggableListProps> = ({ siteId, tableData, setTableData }) => {
+export const SNSiteFacetDraggableList: React.FC<SNSiteFacetDraggableListProps> = ({ siteId, tableData, setTableData }) => {
 
 
     const sensors = useSensors(useSensor(PointerSensor));
@@ -149,7 +149,7 @@ export const FacetDraggableList: React.FC<FacetDraggableListProps> = ({ siteId, 
                                 strategy={verticalListSortingStrategy}
                             >
                                 {tableData.map((row) => (
-                                    <FacetDraggableListRow key={row.id} row={row} siteId={siteId} />
+                                    <SNSiteFacetDraggableListRow key={row.id} row={row} siteId={siteId} />
                                 ))}
                             </SortableContext>
                         </TableBody>
