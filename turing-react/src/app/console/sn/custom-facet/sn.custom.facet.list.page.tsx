@@ -1,7 +1,7 @@
 import { ROUTES } from "@/app/routes.const";
 import { BlankSlate } from "@/components/blank-slate";
+import { GridList } from "@/components/grid.list";
 import { LoadProvider } from "@/components/loading-provider";
-import { CustomFacetGrid } from "@/components/sn/custom-facet/custom.facet.grid";
 import { SubPageHeader } from "@/components/sub.page.header";
 import { useGridAdapter } from "@/hooks/use-grid-adapter";
 import type { TurSNSiteCustomFacet } from "@/models/sn/sn-site-custom-facet.model";
@@ -18,12 +18,12 @@ export default function SNSiteCustomFacetListPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    turSNSiteCustomFacetService.query().then(setCustomFacets).catch(() => setError("Connection error or timeout while fetching custom facets."));
-  }, [])
+    turSNSiteCustomFacetService.query(id).then(setCustomFacets).catch(() => setError("Connection error or timeout while fetching custom facets."));
+  }, [id])
   const gridItemList = useGridAdapter(customFacets, {
-    name: "label",
-    description: "label",
-    url: (item) => `${ROUTES.SN_INSTANCE}/${id}/custom-facet/${encodeURIComponent(item.parentIdName ?? "")}/${item.id}`
+    name: (item) => item.defaultLabel || item.label?.["en-US"] || item.label?.["en_US"] || item.name,
+    description: (item) => item.fieldExtName || "",
+    url: (item) => `${ROUTES.SN_INSTANCE}/${id}/custom-facet/${item.id}`
   });
   return (
     <LoadProvider checkIsNotUndefined={customFacets} error={error} tryAgainUrl={`${ROUTES.SN_INSTANCE}/${id}/custom-facet`}>
@@ -31,23 +31,20 @@ export default function SNSiteCustomFacetListPage() {
         <>
           <SubPageHeader
             icon={IconFilter}
-            feature="Custom Facets"
-            name="Custom Facets"
-            description="Manage your custom facets for range-based filters."
+            name="Custom Facet"
+            feature="Custom Facet"
+            description="Create and manage range-based filters for your search data."
             urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`}
           />
-          <CustomFacetGrid items={customFacets} />
+          <GridList gridItemList={gridItemList} />
         </>
       ) : (
-        <>
-          <BlankSlate
-            icon={IconFilter}
-            title="Custom Facets"
-            description="Nenhuma faceta encontrada. Crie novas facetas personalizadas."
-            buttonText="New Custom Facets"
-            urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`}
-          />
-        </>
+        <BlankSlate
+          icon={IconFilter}
+          title="You don't seem to have any custom facets."
+          description="Create a new custom facet to define range-based filters for your search data."
+          buttonText="New custom facet"
+          urlNew={`${ROUTES.SN_INSTANCE}/${id}/custom-facet/new`} />
       )}
     </LoadProvider>
   )

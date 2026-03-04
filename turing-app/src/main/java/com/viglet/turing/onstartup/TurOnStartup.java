@@ -30,10 +30,10 @@ import com.viglet.turing.onstartup.auth.TurRoleOnStartup;
 import com.viglet.turing.onstartup.auth.TurUserOnStartup;
 import com.viglet.turing.onstartup.llm.TurLLMVendorOnStartup;
 import com.viglet.turing.onstartup.se.TurSEVendorOnStartup;
+import com.viglet.turing.onstartup.sn.TurSNSiteOnStartup;
 import com.viglet.turing.onstartup.store.TurStoreVendorOnStartup;
 import com.viglet.turing.onstartup.system.TurConfigVarOnStartup;
 import com.viglet.turing.onstartup.system.TurLocaleOnStartup;
-import com.viglet.turing.onstartup.sn.facet.TurSNSiteCustomFacetOnStartup;
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,18 +54,17 @@ public class TurOnStartup implements ApplicationRunner {
 	private final TurUserOnStartup turUserOnStartup;
 	private final TurGroupOnStartup turGroupOnStartup;
 	private final TurRoleOnStartup turRoleOnStartup;
-	private final TurSNSiteCustomFacetOnStartup turSNSiteCustomFacetOnStartup;
+	private final TurSNSiteOnStartup turSNSiteOnStartup;
 
 	public TurOnStartup(TurConfigVarRepository turConfigVarRepository,
 			TurLocaleOnStartup turLocaleOnStartup,
 			TurSEVendorOnStartup turSEVendorOnStartup,
-			TurLLMVendorOnStartup turLLMVendorOnStartup,
-			TurStoreVendorOnStartup turStoreVendorOnStartup,
+			TurLLMVendorOnStartup turLLMVendorOnStartup, TurStoreVendorOnStartup turStoreVendorOnStartup,
 			TurConfigVarOnStartup turConfigVarOnStartup,
 			TurUserOnStartup turUserOnStartup,
 			TurGroupOnStartup turGroupOnStartup,
 			TurRoleOnStartup turRoleOnStartup,
-			TurSNSiteCustomFacetOnStartup turSNSiteCustomFacetOnStartup) {
+			TurSNSiteOnStartup turSNSiteOnStartup) {
 		this.turConfigVarRepository = turConfigVarRepository;
 		this.turLocaleOnStartup = turLocaleOnStartup;
 		this.turSEVendorOnStartup = turSEVendorOnStartup;
@@ -75,7 +74,7 @@ public class TurOnStartup implements ApplicationRunner {
 		this.turUserOnStartup = turUserOnStartup;
 		this.turGroupOnStartup = turGroupOnStartup;
 		this.turRoleOnStartup = turRoleOnStartup;
-		this.turSNSiteCustomFacetOnStartup = turSNSiteCustomFacetOnStartup;
+		this.turSNSiteOnStartup = turSNSiteOnStartup;
 	}
 
 	@Override
@@ -93,7 +92,7 @@ public class TurOnStartup implements ApplicationRunner {
 				turSEVendorOnStartup.createDefaultRows();
 				turLLMVendorOnStartup.createDefaultRows();
 				turStoreVendorOnStartup.createDefaultRows();
-				turSNSiteCustomFacetOnStartup.createDefaultRows();
+				turSNSiteOnStartup.createDefaultRows();
 
 				turConfigVarOnStartup.createDefaultRows();
 

@@ -40,6 +40,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
 
 import com.viglet.turing.commons.se.TurSEParameters;
@@ -67,6 +69,7 @@ import com.viglet.turing.se.facet.TurSEFacetResultAttr;
 import com.viglet.turing.se.result.TurSEGroup;
 import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
+import com.viglet.turing.sn.facet.TurSNFacetDefinitionFactory;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
@@ -79,6 +82,7 @@ import com.viglet.turing.solr.TurSolrQueryBuilder;
  * @since 2026.1.10
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class TurSNSearchProcessTest {
 
         @Mock
@@ -108,13 +112,16 @@ class TurSNSearchProcessTest {
         @Mock
         private TurSolrQueryBuilder turSolrQueryBuilder;
 
+        private final TurSNFacetDefinitionFactory turSNFacetDefinitionFactory = new TurSNFacetDefinitionFactory();
+
         private TurSNSearchProcess process(boolean metricsEnabled) {
                 return new TurSNSearchProcess(turSNSiteFieldExtRepository,
                                 turSNSiteFieldExtFacetRepository, turSNSiteRepository,
                                 turSNSiteLocaleRepository,
                                 turSolrInstanceProcess, turSNSpotlightProcess,
                                 turSNSiteMetricAccessRepository,
-                                metricsEnabled, searchEnginePluginFactory, turSolrQueryBuilder);
+                                metricsEnabled, searchEnginePluginFactory, turSolrQueryBuilder,
+                                turSNFacetDefinitionFactory);
         }
 
         private TurSNSiteSearchContext context(String query) {
@@ -278,7 +285,8 @@ class TurSNSearchProcessTest {
                 TurSNSearchProcess processDisabled = new TurSNSearchProcess(turSNSiteFieldExtRepository,
                                 turSNSiteFieldExtFacetRepository, turSNSiteRepository, turSNSiteLocaleRepository,
                                 turSolrInstanceProcess, turSNSpotlightProcess, turSNSiteMetricAccessRepository,
-                                false, searchEnginePluginFactory, turSolrQueryBuilder);
+                                false, searchEnginePluginFactory, turSolrQueryBuilder,
+                                turSNFacetDefinitionFactory);
 
                 TurSNSearchParams searchParamsWildcard = new TurSNSearchParams();
                 searchParamsWildcard.setQ("*");
@@ -295,7 +303,8 @@ class TurSNSearchProcessTest {
                 TurSNSearchProcess processEnabled = new TurSNSearchProcess(turSNSiteFieldExtRepository,
                                 turSNSiteFieldExtFacetRepository, turSNSiteRepository, turSNSiteLocaleRepository,
                                 turSolrInstanceProcess, turSNSpotlightProcess, turSNSiteMetricAccessRepository,
-                                true, searchEnginePluginFactory, turSolrQueryBuilder);
+                                true, searchEnginePluginFactory, turSolrQueryBuilder,
+                                turSNFacetDefinitionFactory);
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 searchParams.setQ("java");

@@ -86,6 +86,10 @@ public class TurSNSiteFieldExt implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<TurSNSiteFieldExtFacet> facetLocales = new HashSet<>();
     @Builder.Default
+    @OneToMany(mappedBy = "turSNSiteFieldExt", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<TurSNSiteCustomFacet> customFacets = new HashSet<>();
+    @Builder.Default
     @Column
     private TurSNSiteFacetRangeEnum facetRange = TurSNSiteFacetRangeEnum.DISABLED;
     @Builder.Default
@@ -136,6 +140,17 @@ public class TurSNSiteFieldExt implements Serializable {
             for (TurSNSiteFieldExtFacet facetLocale : facetLocales) {
                 facetLocale.setTurSNSiteFieldExt(this);
                 this.facetLocales.add(facetLocale);
+            }
+        }
+    }
+
+    public void setCustomFacets(Set<TurSNSiteCustomFacet> customFacets) {
+        this.customFacets.clear();
+
+        if (customFacets != null) {
+            for (TurSNSiteCustomFacet customFacet : customFacets) {
+                customFacet.setTurSNSiteFieldExt(this);
+                this.customFacets.add(customFacet);
             }
         }
     }

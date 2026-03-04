@@ -24,12 +24,12 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
+import type { TurSNSiteFacetOrdering } from '@/models/sn/sn-site-facet-ordering.model';
 import { TurSNFacetedFieldService } from '@/services/sn/sn.faceted.field.service';
 import { toast } from 'sonner';
 
 interface DraggableTableRowProps {
-    row: TurSNSiteField;
+    row: TurSNSiteFacetOrdering;
 }
 
 const DraggableTableRow: React.FC<DraggableTableRowProps> = ({ row }) => {
@@ -67,8 +67,8 @@ const DraggableTableRow: React.FC<DraggableTableRowProps> = ({ row }) => {
 
 interface DraggableTableProps {
     id: string;
-    tableData: TurSNSiteField[];
-    setTableData: React.Dispatch<React.SetStateAction<TurSNSiteField[]>>;
+    tableData: TurSNSiteFacetOrdering[];
+    setTableData: React.Dispatch<React.SetStateAction<TurSNSiteFacetOrdering[]>>;
 }
 const turSNFacetedFieldService = new TurSNFacetedFieldService();
 export const DraggableTable: React.FC<DraggableTableProps> = ({ id, tableData, setTableData }) => {

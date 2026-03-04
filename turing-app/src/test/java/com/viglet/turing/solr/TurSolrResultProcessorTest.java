@@ -27,8 +27,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,8 +53,11 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.se.facet.TurSEFacetResult;
 import com.viglet.turing.se.result.TurSEGroup;
 import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
@@ -71,6 +77,64 @@ class TurSolrResultProcessorTest {
 
         @Mock
         private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+
+        @Test
+        @SuppressWarnings("unchecked")
+        void testSetFacetQueriesOrdersCustomFacetItemsByPosition() throws Exception {
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                                turSNSiteFieldExtRepository);
+                TurSNSite site = new TurSNSite();
+
+                TurSNSiteCustomFacetItem itemPosition3 = TurSNSiteCustomFacetItem.builder()
+                                .label("501+")
+                                .position(3)
+                                .rangeStart(new BigDecimal("501"))
+                                .build();
+                TurSNSiteCustomFacetItem itemPosition1 = TurSNSiteCustomFacetItem.builder()
+                                .label("0 - 100")
+                                .position(1)
+                                .rangeStart(BigDecimal.ZERO)
+                                .rangeEnd(new BigDecimal("100"))
+                                .build();
+                TurSNSiteCustomFacetItem itemPosition2 = TurSNSiteCustomFacetItem.builder()
+                                .label("101 - 500")
+                                .position(2)
+                                .rangeStart(new BigDecimal("101"))
+                                .rangeEnd(new BigDecimal("500"))
+                                .build();
+
+                TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder()
+                                .name("price_range")
+                                .items(new HashSet<>(List.of(itemPosition3, itemPosition1, itemPosition2)))
+                                .build();
+
+                TurSNSiteFieldExt fieldExt = TurSNSiteFieldExt.builder()
+                                .name("id")
+                                .customFacets(new HashSet<>(List.of(customFacet)))
+                                .build();
+
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(fieldExt));
+
+                QueryResponse queryResponse = mock(QueryResponse.class);
+                Map<String, Integer> facetQuery = new HashMap<>();
+                facetQuery.put("price_range::501+", 4);
+                facetQuery.put("price_range::0 - 100", 2);
+                facetQuery.put("price_range::101 - 500", 3);
+                when(queryResponse.getFacetQuery()).thenReturn(facetQuery);
+
+                Method method = TurSolrResultProcessor.class.getDeclaredMethod(
+                                "setFacetQueries", TurSNSite.class, QueryResponse.class);
+                method.setAccessible(true);
+                List<TurSEFacetResult> facetResults = (List<TurSEFacetResult>) method.invoke(processor, site,
+                                queryResponse);
+
+                assertThat(facetResults).hasSize(1);
+                TurSEFacetResult priceRangeResult = facetResults.getFirst();
+                assertThat(priceRangeResult.getFacet()).isEqualTo("price_range");
+                assertThat(priceRangeResult.getTurSEFacetResultAttr().keySet())
+                                .containsExactly("0 - 100", "101 - 500", "501+");
+        }
 
         @Test
         void testCreateTurSEResultAppliesHighlightAndRequiredFields() {
