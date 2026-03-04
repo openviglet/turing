@@ -39,6 +39,8 @@ import com.viglet.turing.sn.TurSNFieldType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -104,6 +106,7 @@ public class TurSNSiteFieldExt implements Serializable {
     @Column(nullable = false)
     private TurSNFieldType snType;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TurSEFieldType type;
     @Column
     private int multiValued;

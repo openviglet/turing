@@ -31,6 +31,8 @@ import com.viglet.turing.persistence.utils.TurAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -63,6 +65,7 @@ public class TurSNSiteField implements Serializable {
 	private String description;
 
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private TurSEFieldType type;
 
 	@Column

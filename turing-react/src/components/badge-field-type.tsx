@@ -4,6 +4,7 @@ import {
     Binary,
     Calendar,
     CheckCircle2,
+    CircleDollarSign,
     CircleDot,
     Hash,
     List,
@@ -40,6 +41,12 @@ const typeConfig = {
         icon: Sigma,
         className:
             "bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800",
+    },
+    CURRENCY: {
+        label: "Currency",
+        icon: CircleDollarSign,
+        className:
+            "bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-900/30 dark:text-teal-400 dark:border-teal-800",
     },
     STRING: {
         label: "String",

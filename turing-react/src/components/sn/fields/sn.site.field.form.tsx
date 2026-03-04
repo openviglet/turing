@@ -28,6 +28,7 @@ import { Switch } from "@/components/ui/switch"
 import {
   Textarea
 } from "@/components/ui/textarea"
+import { useGlobalDecimalSeparator } from "@/hooks/use-global-decimal-separator"
 import type { TurSNFieldType } from "@/models/sn/sn-field-type.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
@@ -76,8 +77,26 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
   const { control, register } = form;
   const [snFieldTypes, setSnFieldTypes] = useState<TurSNFieldType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const {
+    decimalSymbol,
+    normalizeCurrencyString,
+    normalizeDecimalString,
+  } = useGlobalDecimalSeparator();
   const urlBase = `${ROUTES.SN_INSTANCE}/${snSiteId}/field`;
   const navigate = useNavigate()
+  const selectedFieldType = form.watch("type");
+  const isDecimalType = selectedFieldType === "FLOAT" || selectedFieldType === "DOUBLE";
+  const isCurrencyType = selectedFieldType === "CURRENCY";
+
+  const defaultValuePlaceholder = (() => {
+    if (isCurrencyType) {
+      return `e.g. 150${decimalSymbol}75,BRL`;
+    }
+    if (isDecimalType) {
+      return `e.g. 150${decimalSymbol}75`;
+    }
+    return "Default value";
+  })();
   const facetRanges = [
     { value: "DISABLED", name: "Disabled" },
     { value: "DAY", name: "Day" },
@@ -273,9 +292,32 @@ export const SNSiteFieldForm: React.FC<Props> = ({ snSiteId, snField, isNew }) =
                         <FormLabel>Default Value</FormLabel>
                         <FormDescription>
                           Value automatically assigned if no value is provided during indexing.
+                          {isDecimalType
+                            ? ` Use ${decimalSymbol} as decimal separator (example: 150${decimalSymbol}75).`
+                            : null}
+                          {isCurrencyType
+                            ? ` Currency format: amount,ISO-4217 (example: 150${decimalSymbol}75,BRL).`
+                            : null}
                         </FormDescription>
                         <FormControl>
-                          <Input {...field} placeholder="Default value" type="text" className="w-full" />
+                          <Input
+                            {...field}
+                            placeholder={defaultValuePlaceholder}
+                            type="text"
+                            className="w-full"
+                            onBlur={(event) => {
+                              const rawValue = event.target.value ?? "";
+
+                              if (isDecimalType) {
+                                field.onChange(normalizeDecimalString(rawValue));
+                                return;
+                              }
+
+                              if (isCurrencyType) {
+                                field.onChange(normalizeCurrencyString(rawValue));
+                              }
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

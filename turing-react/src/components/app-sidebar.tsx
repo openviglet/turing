@@ -6,6 +6,7 @@ import {
   IconPlugConnectedX,
   IconReceiptRupee,
   IconSearch,
+  IconSettings,
   IconZoomCode
 } from "@tabler/icons-react"
 import * as React from "react"
@@ -63,6 +64,11 @@ const data = {
       title: "Import",
       url: "/admin/exchange/import",
       icon: IconFileImport,
+    },
+    {
+      title: "Global Settings",
+      url: ROUTES.GLOBAL_SETTINGS,
+      icon: IconSettings,
     },
     {
       title: "API Token",

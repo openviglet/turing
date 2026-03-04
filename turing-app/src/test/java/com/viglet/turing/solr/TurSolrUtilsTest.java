@@ -176,6 +176,7 @@ class TurSolrUtilsTest {
     @Test
     void testConstantsAreCorrect() {
         assertThat(TurSolrUtils.STR_SUFFIX).isEqualTo("_str");
+        assertThat(TurSolrUtils.CURRENCY_TXT_SUFFIX).isEqualTo("_currency_txt");
         assertThat(TurSolrUtils.SCHEMA_API_URL).isEqualTo("%s/solr/%s/schema");
     }
 
@@ -382,6 +383,9 @@ class TurSolrUtilsTest {
         assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.DATE)).isEqualTo("pdate");
         assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.LONG)).isEqualTo("plong");
         assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.ARRAY)).isEqualTo("strings");
+        assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.FLOAT)).isEqualTo("pfloat");
+        assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.DOUBLE)).isEqualTo("pdouble");
+        assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.CURRENCY)).isEqualTo("currency");
     }
 
     @ParameterizedTest

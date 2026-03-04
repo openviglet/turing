@@ -4,6 +4,7 @@ import RealTimeDashboardPage from "./app/console/dashboard/dashboard.page"
 import LoginPage from "./app/login/login.page"
 import {
   ExchangeRoutes,
+  GlobalSettingsRoutes,
   IntegrationRoutes,
   LLMRoutes,
   LoggingRoutes,
@@ -41,6 +42,7 @@ function App() {
                 {IntegrationRoutes}
                 {LoggingRoutes}
                 {ExchangeRoutes}
+                {GlobalSettingsRoutes}
               </Route>
             </Routes>
           </TuringServiceProvider>

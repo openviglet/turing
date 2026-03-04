@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "compile": "npm install && tsc -b && vite build",
+    "compile:deps": "npm ci --no-audit --no-fund || npm install --no-audit --no-fund || npm install --no-audit --no-fund --legacy-peer-deps",
+    "compile:build": "tsc -b && vite build",
+    "compile": "npm run compile:deps && npm run compile:build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

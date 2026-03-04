@@ -95,6 +95,9 @@ class TurSolrTest {
     private TurSNFieldProcess turSNFieldProcess;
 
     @Mock
+    private TurDecimalFieldNormalizer turDecimalFieldNormalizer;
+
+    @Mock
     private HttpJdkSolrClient httpJdkSolrClient;
 
     @Mock
@@ -344,6 +347,7 @@ class TurSolrTest {
                 turSNRankingExpressionRepository,
                 turSNRankingConditionRepository,
                 turSNSiteRepository,
-                turSNFieldProcess);
+                turSNFieldProcess,
+                turDecimalFieldNormalizer);
     }
 }

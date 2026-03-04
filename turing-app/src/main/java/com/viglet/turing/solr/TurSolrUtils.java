@@ -27,6 +27,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,6 +58,7 @@ import tools.jackson.databind.ObjectMapper;
 public class TurSolrUtils {
 
     public static final String STR_SUFFIX = "_str";
+    public static final String CURRENCY_TXT_SUFFIX = "_currency_txt";
     public static final String SCHEMA_API_URL = "%s/solr/%s/schema";
 
     private TurSolrUtils() {
@@ -120,6 +122,8 @@ public class TurSolrUtils {
     public static void addOrUpdateField(TurSolrFieldAction turSolrFieldAction, TurSEInstance turSEInstance,
             String coreName, String fieldName, TurSEFieldType turSEFieldType,
             boolean stored, boolean multiValued) {
+        ensureCurrencyFieldTypeByCore(turSEInstance, coreName, turSEFieldType);
+
         Map<String, Object> fieldDetails = Map.of(
                 "name", fieldName,
                 "type", getSolrFieldType(turSEFieldType),
@@ -131,6 +135,27 @@ public class TurSolrUtils {
         if (isCreateCopyFieldByCore(turSEInstance, coreName, fieldName, turSEFieldType)) {
             createCopyFieldByCore(turSEInstance, coreName, fieldName, multiValued);
         }
+
+        if (isCreateCurrencyTextFieldByCore(turSEInstance, coreName, fieldName, turSEFieldType)) {
+            createCurrencyTextFieldByCore(turSEInstance, coreName, fieldName, multiValued);
+        }
+    }
+
+    private static void ensureCurrencyFieldTypeByCore(TurSEInstance turSEInstance,
+            String coreName, TurSEFieldType turSEFieldType) {
+        if (turSEFieldType != TurSEFieldType.CURRENCY) {
+            return;
+        }
+
+        Map<String, Object> currencyFieldTypeDetails = new LinkedHashMap<>();
+        currencyFieldTypeDetails.put("name", "currency");
+        currencyFieldTypeDetails.put("class", "solr.CurrencyFieldType");
+        currencyFieldTypeDetails.put("amountLongSuffix", "_l_ns");
+        currencyFieldTypeDetails.put("codeStrSuffix", "_s_ns");
+        currencyFieldTypeDetails.put("defaultCurrency", "USD");
+        currencyFieldTypeDetails.put("currencyConfig", "currency.xml");
+
+        executeSchemaAction(turSEInstance, coreName, "add-field-type", currencyFieldTypeDetails);
     }
 
     public static void deleteField(TurSEInstance turSEInstance,
@@ -141,6 +166,10 @@ public class TurSolrUtils {
 
         if (isDeleteCopyFieldByCore(turSEInstance, coreName, fieldName, turSEFieldType)) {
             deleteCopyFieldByCore(turSEInstance, coreName, fieldName);
+        }
+
+        if (isDeleteCurrencyTextFieldByCore(turSEInstance, coreName, fieldName, turSEFieldType)) {
+            deleteCurrencyTextFieldByCore(turSEInstance, coreName, fieldName);
         }
     }
 
@@ -158,6 +187,20 @@ public class TurSolrUtils {
                 && existsField(turSEInstance, coreName, fieldName.concat(STR_SUFFIX));
     }
 
+    public static boolean isCreateCurrencyTextFieldByCore(TurSEInstance turSEInstance, String coreName,
+            String fieldName, TurSEFieldType turSEFieldType) {
+        return turSEFieldType.equals(TurSEFieldType.CURRENCY)
+                && !fieldName.endsWith(CURRENCY_TXT_SUFFIX)
+                && !existsField(turSEInstance, coreName, fieldName.concat(CURRENCY_TXT_SUFFIX));
+    }
+
+    public static boolean isDeleteCurrencyTextFieldByCore(TurSEInstance turSEInstance, String coreName,
+            String fieldName, TurSEFieldType turSEFieldType) {
+        return turSEFieldType.equals(TurSEFieldType.CURRENCY)
+                && !fieldName.endsWith(CURRENCY_TXT_SUFFIX)
+                && existsField(turSEInstance, coreName, fieldName.concat(CURRENCY_TXT_SUFFIX));
+    }
+
     public static void deleteCopyFieldByCore(TurSEInstance turSEInstance,
             String coreName, String fieldName) {
         Map<String, Object> copyFieldDetails = createCopyFieldDetails(fieldName);
@@ -173,6 +216,19 @@ public class TurSolrUtils {
 
         Map<String, Object> copyFieldDetails = createCopyFieldDetails(fieldName);
         executeSchemaAction(turSEInstance, coreName, TurSolrFieldAction.ADD_COPY.getSolrAction(), copyFieldDetails);
+    }
+
+    public static void createCurrencyTextFieldByCore(TurSEInstance turSEInstance,
+            String coreName, String fieldName,
+            boolean multiValued) {
+        String currencyTextFieldName = fieldName.concat(CURRENCY_TXT_SUFFIX);
+        addOrUpdateField(TurSolrFieldAction.ADD, turSEInstance, coreName, currencyTextFieldName,
+                TurSEFieldType.STRING, true, multiValued);
+    }
+
+    public static void deleteCurrencyTextFieldByCore(TurSEInstance turSEInstance,
+            String coreName, String fieldName) {
+        deleteField(turSEInstance, coreName, fieldName.concat(CURRENCY_TXT_SUFFIX), TurSEFieldType.STRING);
     }
 
     private static Map<String, Object> createCopyFieldDetails(String fieldName) {
@@ -205,6 +261,9 @@ public class TurSolrUtils {
             case DATE -> "pdate";
             case LONG -> "plong";
             case ARRAY -> "strings";
+            case FLOAT -> "pfloat";
+            case DOUBLE -> "pdouble";
+            case CURRENCY -> "currency";
         };
     }
 

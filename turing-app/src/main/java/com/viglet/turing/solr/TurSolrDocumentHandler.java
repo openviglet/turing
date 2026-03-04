@@ -9,6 +9,7 @@ import static com.viglet.turing.solr.TurSolrConstants.VERSION;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.common.SolrInputDocument;
 import org.json.JSONArray;
 
+import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
@@ -29,10 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSolrDocumentHandler {
     private final int commitWithin;
     private final TurSNSiteFieldService turSNSiteFieldUtils;
+    private final TurDecimalFieldNormalizer turDecimalFieldNormalizer;
 
-    public TurSolrDocumentHandler(int commitWithin, TurSNSiteFieldService turSNSiteFieldUtils) {
+    public TurSolrDocumentHandler(int commitWithin, TurSNSiteFieldService turSNSiteFieldUtils,
+            TurDecimalFieldNormalizer turDecimalFieldNormalizer) {
         this.commitWithin = commitWithin;
         this.turSNSiteFieldUtils = turSNSiteFieldUtils;
+        this.turDecimalFieldNormalizer = turDecimalFieldNormalizer;
     }
 
     public void indexing(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
@@ -101,6 +106,16 @@ public class TurSolrDocumentHandler {
     private void processAttribute(Map<String, TurSNSiteField> turSNSiteFieldMap,
             SolrInputDocument document, String key, Object attribute) {
         Optional.ofNullable(attribute).ifPresent(attr -> {
+            TurSNSiteField turSNSiteField = turSNSiteFieldMap.get(key);
+            TurSEFieldType fieldType = Optional.ofNullable(turSNSiteField)
+                    .map(TurSNSiteField::getType)
+                    .orElse(null);
+
+            if (turDecimalFieldNormalizer.isDecimalFieldType(fieldType)) {
+                processDecimalAttribute(turSNSiteFieldMap, document, key, attr, fieldType);
+                return;
+            }
+
             switch (attr) {
                 case Integer integer -> processInteger(document, key, integer);
                 case JSONArray objects -> processJSONArray(turSNSiteFieldMap, document, key,
@@ -110,6 +125,82 @@ public class TurSolrDocumentHandler {
                 default -> processOtherTypes(document, key, attribute);
             }
         });
+    }
+
+    private void processDecimalAttribute(Map<String, TurSNSiteField> turSNSiteFieldMap,
+            SolrInputDocument document, String key, Object attribute, TurSEFieldType fieldType) {
+        boolean multiValued = isMultiValued(turSNSiteFieldMap, key);
+
+        switch (attribute) {
+            case JSONArray jsonArray -> {
+                if (jsonArray.length() == 0) {
+                    return;
+                }
+
+                if (multiValued) {
+                    IntStream.range(0, jsonArray.length())
+                            .mapToObj(jsonArray::get)
+                            .forEach(value -> addDecimalValue(document, key, value, fieldType));
+                } else {
+                    addDecimalValue(document, key, jsonArray.get(0), fieldType);
+                }
+            }
+            case ArrayList<?> arrayList -> {
+                if (arrayList.isEmpty()) {
+                    return;
+                }
+
+                if (multiValued) {
+                    arrayList.forEach(value -> addDecimalValue(document, key, value, fieldType));
+                } else {
+                    addDecimalValue(document, key, arrayList.getFirst(), fieldType);
+                }
+            }
+            default -> addDecimalValue(document, key, attribute, fieldType);
+        }
+    }
+
+    private void addDecimalValue(SolrInputDocument document, String key, Object value,
+            TurSEFieldType fieldType) {
+        if (fieldType == TurSEFieldType.CURRENCY) {
+            String rawCurrency = TurSolrField.convertFieldToString(value);
+            document.addField(key.concat(TurSolrUtils.CURRENCY_TXT_SUFFIX), rawCurrency);
+
+            toSolrCurrencyValue(rawCurrency)
+                    .ifPresentOrElse(
+                            normalizedCurrency -> document.addField(key, normalizedCurrency),
+                            () -> log.warn("Skipping invalid currency value for field '{}': {}", key,
+                                    rawCurrency));
+            return;
+        }
+
+        turDecimalFieldNormalizer.normalizeNumericValue(fieldType, value)
+                .ifPresentOrElse(
+                        normalizedValue -> document.addField(key, normalizedValue),
+                        () -> log.warn("Skipping invalid decimal value for field '{}': {}", key,
+                                TurSolrField.convertFieldToString(value)));
+    }
+
+    private Optional<String> toSolrCurrencyValue(String rawCurrency) {
+        if (rawCurrency == null) {
+            return Optional.empty();
+        }
+
+        String normalizedCurrency = rawCurrency.trim();
+        int separatorIndex = normalizedCurrency.lastIndexOf(',');
+        if (separatorIndex <= 0 || separatorIndex == normalizedCurrency.length() - 1) {
+            return Optional.empty();
+        }
+
+        String amountPart = normalizedCurrency.substring(0, separatorIndex).trim();
+        String currencyCode = normalizedCurrency.substring(separatorIndex + 1).trim()
+                .toUpperCase(Locale.ROOT);
+        if (!currencyCode.matches("^[A-Z]{3}$")) {
+            return Optional.empty();
+        }
+
+        return turDecimalFieldNormalizer.normalizeCanonicalDecimal(amountPart)
+                .map(amount -> String.format("%s,%s", amount, currencyCode));
     }
 
     private void processOtherTypes(SolrInputDocument document, String key, Object attribute) {

@@ -49,6 +49,7 @@ public class TurSNFieldExtAPI {
 		types.add(new TurSNFieldExtType("LONG", "Long"));
 		types.add(new TurSNFieldExtType("FLOAT", "Float"));
 		types.add(new TurSNFieldExtType("DOUBLE", "Double"));
+		types.add(new TurSNFieldExtType("CURRENCY", "Currency"));
 		return types;
 	}
 }

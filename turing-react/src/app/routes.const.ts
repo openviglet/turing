@@ -20,6 +20,7 @@ export const ROUTES = {
   LOGGING_ROOT: `${consolePath}/logging`,
   LOGGING_INSTANCE: `${consolePath}/logging/instance`,
   DASHBOARD: `${consolePath}/dashboard`,
+  GLOBAL_SETTINGS: `${consolePath}/global-settings`,
   EXCHANGE_ROOT: `${consolePath}/exchange`,
   EXCHANGE_IMPORT: `${consolePath}/exchange/import`,
 };
