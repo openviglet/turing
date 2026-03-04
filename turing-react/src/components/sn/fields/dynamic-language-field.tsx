@@ -1,12 +1,6 @@
+import { LanguageSelect } from '@/components/language-select';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Input } from '@/components/ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import type { TurLocale } from '@/models/locale/locale.model';
 import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
 import { TurLocaleService } from '@/services/locale/locale.service';
@@ -42,21 +36,12 @@ export function DynamicLanguageFields({ control, register, fieldName }: Readonly
                         control={control}
                         name={`${fieldName}.${index}.locale`}
                         render={({ field: controllerField }) => (
-                            <Select
+                            <LanguageSelect
+                                value={controllerField.value}
                                 onValueChange={controllerField.onChange}
-                                defaultValue={controllerField.value}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Choose the language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {locales.map((option) => (
-                                        <SelectItem key={option.initials} value={option.initials}>
-                                            {option.en} ({option.initials})
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                locales={locales}
+                                className="w-full"
+                            />
                         )}
                     />
 

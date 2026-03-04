@@ -21,19 +21,20 @@
 
 package com.viglet.turing.persistence.model.sn.metric;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.viglet.turing.persistence.model.sn.TurSNSite;
 
 /**
  * Unit tests for TurSNSiteMetricAccess.
@@ -91,50 +92,29 @@ class TurSNSiteMetricAccessTest {
         assertThat(turSNSiteMetricAccess.getTurSNSite()).isNull();
     }
 
-    @Test
-    void testSetTermSanitization() {
-        String originalTerm = "Café Français";
-        turSNSiteMetricAccess.setTerm(originalTerm);
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.MethodSource("termSanitizationProvider")
+    void testTermSanitization(String input, String expectedSanitized, boolean shouldNotContainSpecialChar,
+            String specialChar) {
+        turSNSiteMetricAccess.setTerm(input);
 
-        assertThat(turSNSiteMetricAccess.getTerm()).isEqualTo(originalTerm);
-        assertThat(turSNSiteMetricAccess.getSanatizedTerm()).isEqualTo("cafe francais");
+        assertThat(turSNSiteMetricAccess.getTerm()).isEqualTo(input);
+        if (expectedSanitized != null) {
+            assertThat(turSNSiteMetricAccess.getSanatizedTerm()).isEqualTo(expectedSanitized);
+        }
+        if (shouldNotContainSpecialChar && specialChar != null) {
+            assertThat(turSNSiteMetricAccess.getSanatizedTerm()).doesNotContain(specialChar);
+        }
     }
 
-    @Test
-    void testSetTermWithMultipleSpaces() {
-        String term = "search   with    multiple     spaces";
-        turSNSiteMetricAccess.setTerm(term);
-
-        assertThat(turSNSiteMetricAccess.getTerm()).isEqualTo(term);
-        assertThat(turSNSiteMetricAccess.getSanatizedTerm()).isEqualTo("search with multiple spaces");
-    }
-
-    @Test
-    void testSetTermWithSpecialCharacters() {
-        String term = "Søren Kierkegård";
-        turSNSiteMetricAccess.setTerm(term);
-
-        assertThat(turSNSiteMetricAccess.getTerm()).isEqualTo(term);
-        assertThat(turSNSiteMetricAccess.getSanatizedTerm()).isNotNull();
-        assertThat(turSNSiteMetricAccess.getSanatizedTerm()).doesNotContain("ø");
-    }
-
-    @Test
-    void testSetTermWithUpperCase() {
-        String term = "UPPER CASE SEARCH";
-        turSNSiteMetricAccess.setTerm(term);
-
-        assertThat(turSNSiteMetricAccess.getTerm()).isEqualTo(term);
-        assertThat(turSNSiteMetricAccess.getSanatizedTerm()).isEqualTo("upper case search");
-    }
-
-    @Test
-    void testSetTermWithTrailingSpaces() {
-        String term = "  search term  ";
-        turSNSiteMetricAccess.setTerm(term);
-
-        assertThat(turSNSiteMetricAccess.getTerm()).isEqualTo(term);
-        assertThat(turSNSiteMetricAccess.getSanatizedTerm()).isEqualTo("search term");
+    private static java.util.stream.Stream<org.junit.jupiter.params.provider.Arguments> termSanitizationProvider() {
+        return java.util.stream.Stream.of(
+                org.junit.jupiter.params.provider.Arguments.of("Café Français", "cafe francais", false, null),
+                org.junit.jupiter.params.provider.Arguments.of("search   with    multiple     spaces",
+                        "search with multiple spaces", false, null),
+                org.junit.jupiter.params.provider.Arguments.of("Søren Kierkegård", null, true, "ø"),
+                org.junit.jupiter.params.provider.Arguments.of("UPPER CASE SEARCH", "upper case search", false, null),
+                org.junit.jupiter.params.provider.Arguments.of("  search term  ", "search term", false, null));
     }
 
     @Test
@@ -186,7 +166,9 @@ class TurSNSiteMetricAccessTest {
         assertThat(turSNSiteMetricAccess.getNumFound()).isEqualTo(100L);
 
         turSNSiteMetricAccess.setNumFound(0L);
-        assertThat(turSNSiteMetricAccess.getNumFound()).isEqualTo(0L);
+        assertThat(turSNSiteMetricAccess.getNumFound()).isZero();
+
+        turSNSiteMetricAccess.setNumFound(0L);
 
         turSNSiteMetricAccess.setNumFound(999999L);
         assertThat(turSNSiteMetricAccess.getNumFound()).isEqualTo(999999L);

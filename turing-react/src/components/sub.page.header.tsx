@@ -34,7 +34,7 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
               className="flex flex-wrap items-center gap-x-2 gap-y-1"
             >
               <span className="flex items-center gap-2">
-                {Icon && <Icon />}
+                {Icon && <Icon className="size-6!" />}
                 <h1 className="text-base font-semibold leading-none text-foreground">{feature}</h1>
               </span>
               <span className="translate-y-0.5 text-sm text-muted-foreground leading-relaxed">
@@ -44,7 +44,7 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
           ) : (
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="flex items-center gap-2">
-                {Icon && <Icon />}
+                {Icon && <Icon className="size-6!" />}
                 <h1 className="text-base font-semibold leading-none text-foreground">{feature}</h1>
                 <span className="text-muted-foreground leading-none"> {description}
                 </span>
@@ -56,7 +56,7 @@ export const SubPageHeader: React.FC<Props> = ({ icon: Icon, feature, name, desc
           {urlNew !== undefined && (
             <GradientButton asChild size={"sm"}>
               <NavLink to={urlNew} className="flex items-center gap-2">
-                {Icon && <Icon />} New {feature}
+                {Icon && <Icon className="size-6!" />} New {feature}
               </NavLink>
             </GradientButton>
           )}

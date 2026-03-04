@@ -31,14 +31,17 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TurSNSiteExchange {
 
@@ -71,12 +74,13 @@ public class TurSNSiteExchange {
 	private Integer spellCheckFixes;
 	private Integer spotlightWithResults;
 	private String turSEInstance;
-	private TurSNSiteGenAi turSNSiteGenAi;
+	private TurSNSiteGenAiExchange turSNSiteGenAi;
 	private Set<TurSNSiteField> turSNSiteFields;
 	private Set<TurSNSiteFieldExt> turSNSiteFieldExts;
 	private Set<TurSNSiteSpotlight> turSNSiteSpotlights;
 	private Set<TurSNSiteLocale> turSNSiteLocales;
 	private Set<TurSNRankingExpression> turSNRankingExpressions;
+	private Set<TurSNSiteMergeProviders> turSNSiteMergeProviders;
 
 	public TurSNSiteExchange(TurSNSite turSNSite) {
 		this.setDefaultDateField(turSNSite.getDefaultDateField());
@@ -110,12 +114,30 @@ public class TurSNSiteExchange {
 		if (turSNSite.getTurSEInstance() != null) {
 			this.setTurSEInstance(turSNSite.getTurSEInstance().getId());
 		}
-		this.setTurSNSiteGenAi(turSNSite.getTurSNSiteGenAi());
+		this.setTurSNSiteGenAi(this.toReferenceGenAi(turSNSite.getTurSNSiteGenAi()));
 		this.setTurSNSiteFields(turSNSite.getTurSNSiteFields());
 		this.setTurSNSiteFieldExts(turSNSite.getTurSNSiteFieldExts());
 		this.setTurSNSiteSpotlights(turSNSite.getTurSNSiteSpotlights());
 		this.setTurSNSiteLocales(turSNSite.getTurSNSiteLocales());
 		this.setTurSNRankingExpressions(turSNSite.getTurSNRankingExpressions());
+		this.setTurSNSiteMergeProviders(turSNSite.getTurSNSiteMergeProviders());
+	}
+
+	private TurSNSiteGenAiExchange toReferenceGenAi(TurSNSiteGenAi source) {
+		if (source == null) {
+			return null;
+		}
+		TurSNSiteGenAiExchange referenceGenAi = new TurSNSiteGenAiExchange();
+		referenceGenAi.setId(source.getId());
+		referenceGenAi.setEnabled(source.isEnabled());
+		referenceGenAi.setSystemPrompt(source.getSystemPrompt());
+		if (source.getTurLLMInstance() != null && source.getTurLLMInstance().getId() != null) {
+			referenceGenAi.setTurLLMInstance(source.getTurLLMInstance().getId());
+		}
+		if (source.getTurStoreInstance() != null && source.getTurStoreInstance().getId() != null) {
+			referenceGenAi.setTurStoreInstance(source.getTurStoreInstance().getId());
+		}
+		return referenceGenAi;
 	}
 
 	public boolean getHl() {

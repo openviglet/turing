@@ -22,16 +22,24 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
+import org.apache.tika.metadata.Metadata;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.viglet.turing.api.ocr.TurTikaFileAttributes;
@@ -227,6 +235,104 @@ class TurFileUtilsTest {
     }
 
     @Test
+    void testIsRedirectResponseViaReflection() throws Exception {
+        Method method = TurFileUtils.class.getDeclaredMethod("isRedirectResponse", int.class);
+        method.setAccessible(true);
+
+        assertThat((boolean) method.invoke(null, HttpURLConnection.HTTP_MOVED_PERM)).isTrue();
+        assertThat((boolean) method.invoke(null, HttpURLConnection.HTTP_MOVED_TEMP)).isTrue();
+        assertThat((boolean) method.invoke(null, HttpURLConnection.HTTP_SEE_OTHER)).isTrue();
+        assertThat((boolean) method.invoke(null, 307)).isTrue();
+        assertThat((boolean) method.invoke(null, 308)).isTrue();
+        assertThat((boolean) method.invoke(null, 200)).isFalse();
+    }
+
+    @Test
+    void testHandleRedirectMissingLocationThrows() throws Exception {
+        Method method = TurFileUtils.class.getDeclaredMethod("handleRedirect", HttpURLConnection.class, URL.class);
+        method.setAccessible(true);
+
+        HttpURLConnection connection = Mockito.mock(HttpURLConnection.class);
+        Mockito.when(connection.getHeaderField("Location")).thenReturn(null);
+
+        assertThatThrownBy(() -> method.invoke(null, connection, URI.create("https://example.com/a").toURL()))
+                .hasRootCauseInstanceOf(IOException.class)
+                .hasRootCauseMessage("Redirect response missing Location header");
+    }
+
+    @Test
+    void testHandleRedirectToDisallowedHostThrows() throws Exception {
+        Method method = TurFileUtils.class.getDeclaredMethod("handleRedirect", HttpURLConnection.class, URL.class);
+        method.setAccessible(true);
+
+        HttpURLConnection connection = Mockito.mock(HttpURLConnection.class);
+        Mockito.when(connection.getHeaderField("Location")).thenReturn("http://localhost/private");
+
+        assertThatThrownBy(() -> method.invoke(null, connection, URI.create("https://example.com/a").toURL()))
+                .hasRootCauseInstanceOf(IOException.class)
+                .rootCause()
+                .hasMessageContaining("Redirect to disallowed URL blocked");
+    }
+
+    @Test
+    void testGetTitleAndMetadataMapViaReflection() throws Exception {
+        Metadata metadata = new Metadata();
+        metadata.set(PDF_DOC_INFO_TITLE, "PDF Title");
+        metadata.set("author", "Alex");
+        TurTikaFileAttributes attrs = new TurTikaFileAttributes(null, "content", metadata);
+
+        Method titleMethod = TurFileUtils.class.getDeclaredMethod("getTitle", TurTikaFileAttributes.class,
+                String.class);
+        titleMethod.setAccessible(true);
+        Method metadataMethod = TurFileUtils.class.getDeclaredMethod("getMetadataMap", TurTikaFileAttributes.class);
+        metadataMethod.setAccessible(true);
+
+        String title = (String) titleMethod.invoke(null, attrs, "fallback.pdf");
+        @SuppressWarnings("unchecked")
+        Map<String, String> metadataMap = (Map<String, String>) metadataMethod.invoke(null, attrs);
+
+        assertThat(title).isEqualTo("PDF Title");
+        assertThat(metadataMap).containsEntry("author", "Alex");
+    }
+
+    @Test
+    void testGetTitleFallbackWhenMissing() throws Exception {
+        Metadata metadata = new Metadata();
+        TurTikaFileAttributes attrs = new TurTikaFileAttributes(null, "content", metadata);
+        Method titleMethod = TurFileUtils.class.getDeclaredMethod("getTitle", TurTikaFileAttributes.class,
+                String.class);
+        titleMethod.setAccessible(true);
+
+        String title = (String) titleMethod.invoke(null, attrs, "fallback.pdf");
+
+        assertThat(title).isEqualTo("fallback.pdf");
+    }
+
+    @Test
+    void testGetLastModifiedFromUrlBlockedHostReturnsDate() throws Exception {
+        Method method = TurFileUtils.class.getDeclaredMethod("getLastModifiedFromUrl", URL.class);
+        method.setAccessible(true);
+
+        Date date = (Date) method.invoke(null, URI.create("http://localhost/blocked").toURL());
+
+        assertThat(date).isNotNull();
+    }
+
+    @Test
+    void testParseDocumentWithBrokenInputStreamReturnsEmpty() throws IOException {
+        InputStream broken = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("forced read error");
+            }
+        };
+
+        Optional<String> result = TurFileUtils.parseDocument(broken);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void testParseDocumentWithValidInputStream() throws IOException {
         String content = "Test content for parsing";
         ByteArrayInputStream inputStream = new ByteArrayInputStream(content.getBytes());
@@ -287,4 +393,6 @@ class TurFileUtilsTest {
 
         assertThat(result).isTrue();
     }
+
+    private static final String PDF_DOC_INFO_TITLE = "pdf:docinfo:title";
 }

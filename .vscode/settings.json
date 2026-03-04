@@ -32,5 +32,6 @@
   "postman.settings.dotenv-detection-notification-visibility": false,
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.compile.nullAnalysis.mode": "automatic",
-  "java.debug.settings.onBuildFailureProceed": true
+  "java.debug.settings.onBuildFailureProceed": true,
+  "markdown.validate.enabled": true
 }

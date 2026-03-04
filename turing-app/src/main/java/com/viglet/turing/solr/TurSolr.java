@@ -68,10 +68,12 @@ public class TurSolr {
             TurSNTargetingRules turSNTargetingRules, TurSNSiteFieldService turSNSiteFieldUtils,
             TurSNRankingExpressionRepository turSNRankingExpressionRepository,
             TurSNRankingConditionRepository turSNRankingConditionRepository,
-            TurSNSiteRepository turSNSiteRepository, TurSNFieldProcess turSNFieldProcess) {
+            TurSNSiteRepository turSNSiteRepository, TurSNFieldProcess turSNFieldProcess,
+            TurDecimalFieldNormalizer turDecimalFieldNormalizer) {
         this.isCommitEnabled = isCommitEnabled;
         this.turSNSiteRepository = turSNSiteRepository;
-        this.turSolrDocumentHandler = new TurSolrDocumentHandler(commitWithin, turSNSiteFieldUtils);
+        this.turSolrDocumentHandler = new TurSolrDocumentHandler(commitWithin, turSNSiteFieldUtils,
+                turDecimalFieldNormalizer);
         this.turSolrQueryBuilder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
                 turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules);
         this.turSolrResultProcessor = new TurSolrResultProcessor(turSNFieldProcess, turSNSiteFieldExtRepository);

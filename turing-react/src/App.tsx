@@ -1,7 +1,10 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import ConsoleRootPage from "./app/console/console.root.page"
+import RealTimeDashboardPage from "./app/console/dashboard/dashboard.page"
 import LoginPage from "./app/login/login.page"
 import {
+  ExchangeRoutes,
+  GlobalSettingsRoutes,
   IntegrationRoutes,
   LLMRoutes,
   LoggingRoutes,
@@ -13,8 +16,8 @@ import {
 import { ROUTES } from "./app/routes.const"
 import { ThemeProvider } from "./components/theme-provider"
 import { Toaster } from "./components/ui/sonner"
-import { BreadcrumbProvider } from "./contexts/breadcrumb.context"
 import { TuringServiceProvider } from "./contexts/TuringServiceContext"
+import { BreadcrumbProvider } from "./contexts/breadcrumb.context"
 import SearchPage from "./search/pages/search.page"
 
 function App() {
@@ -26,6 +29,7 @@ function App() {
             <Toaster />
             <Routes>
               <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.CONSOLE} replace />} />
+              <Route path={ROUTES.DASHBOARD} element={<RealTimeDashboardPage />} />
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
               <Route path={`${ROUTES.SN_SEARCH}/:siteName`} element={<SearchPage />} />
               <Route path={ROUTES.CONSOLE} element={<ConsoleRootPage />}>
@@ -37,6 +41,8 @@ function App() {
                 {LLMRoutes}
                 {IntegrationRoutes}
                 {LoggingRoutes}
+                {ExchangeRoutes}
+                {GlobalSettingsRoutes}
               </Route>
             </Routes>
           </TuringServiceProvider>

@@ -24,9 +24,15 @@ package com.viglet.turing.solr;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.solr.common.SolrDocument;
 import org.assertj.core.api.InstanceOfAssertFactories;
@@ -39,12 +45,14 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.sun.net.httpserver.HttpServer;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.se.result.TurSEResult;
+import com.viglet.turing.solr.bean.TurSolrFieldBean;
 
 /**
  * Unit tests for TurSolrUtils.
@@ -168,6 +176,7 @@ class TurSolrUtilsTest {
     @Test
     void testConstantsAreCorrect() {
         assertThat(TurSolrUtils.STR_SUFFIX).isEqualTo("_str");
+        assertThat(TurSolrUtils.CURRENCY_TXT_SUFFIX).isEqualTo("_currency_txt");
         assertThat(TurSolrUtils.SCHEMA_API_URL).isEqualTo("%s/solr/%s/schema");
     }
 
@@ -374,6 +383,9 @@ class TurSolrUtilsTest {
         assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.DATE)).isEqualTo("pdate");
         assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.LONG)).isEqualTo("plong");
         assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.ARRAY)).isEqualTo("strings");
+        assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.FLOAT)).isEqualTo("pfloat");
+        assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.DOUBLE)).isEqualTo("pdouble");
+        assertThat(TurSolrUtils.getSolrFieldType(TurSEFieldType.CURRENCY)).isEqualTo("currency");
     }
 
     @ParameterizedTest
@@ -394,6 +406,207 @@ class TurSolrUtilsTest {
 
         // Last position should always be first position + rows
         assertThat(last - first).isEqualTo(rows);
+    }
+
+    @Test
+    void testHttpBasedCoreAndFieldOperations() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress(0), 0);
+        String solrUrl = "http://localhost:" + server.getAddress().getPort();
+
+        server.createContext("/api/cores", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            String body = "{}";
+            int status = 200;
+            if (path.endsWith("/api/cores/core1")) {
+                body = "{\"status\":{\"core1\":{\"name\":\"core1\"}}}";
+            } else if (path.endsWith("/api/cores/coreMissing")) {
+                body = "{\"status\":{\"coreMissing\":{\"name\":null}}}";
+            }
+            byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(status, bytes.length);
+            exchange.getResponseBody().write(bytes);
+            exchange.close();
+        });
+
+        server.createContext("/solr/core1/schema/fields", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            String body;
+            int status;
+            if (path.endsWith("/title")) {
+                status = 200;
+                body = "{\"field\":{\"name\":\"title\",\"type\":\"string\",\"stored\":true}}";
+            } else {
+                status = 404;
+                body = "{}";
+            }
+            byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(status, bytes.length);
+            exchange.getResponseBody().write(bytes);
+            exchange.close();
+        });
+
+        server.start();
+        try {
+            TurSEInstance instance = mock(TurSEInstance.class);
+            when(instance.getHost()).thenReturn("localhost");
+            when(instance.getPort()).thenReturn(server.getAddress().getPort());
+
+            TurSolrUtils.deleteCore(solrUrl, "core1");
+            assertThat(TurSolrUtils.coreExists(instance, "core1")).isTrue();
+            assertThat(TurSolrUtils.coreExists(instance, "coreMissing")).isFalse();
+
+            TurSolrFieldBean field = TurSolrUtils.getField(instance, "core1", "title");
+            assertThat(field.getName()).isEqualTo("title");
+            assertThat(TurSolrUtils.existsField(instance, "core1", "title")).isTrue();
+            assertThat(TurSolrUtils.existsField(instance, "core1", "missing")).isFalse();
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void testCreateCoreAndCollectionRequests() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress(0), 0);
+        String solrUrl = "http://localhost:" + server.getAddress().getPort();
+        AtomicInteger coresCalls = new AtomicInteger(0);
+        AtomicInteger configCalls = new AtomicInteger(0);
+        AtomicInteger collectionsCalls = new AtomicInteger(0);
+
+        server.createContext("/api/cores", exchange -> {
+            coresCalls.incrementAndGet();
+            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.createContext("/api/cluster/configs/coreA", exchange -> {
+            configCalls.incrementAndGet();
+            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.createContext("/api/collections", exchange -> {
+            collectionsCalls.incrementAndGet();
+            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+
+        server.start();
+        try {
+            TurSolrUtils.createCore(solrUrl, "coreA", "_default");
+            TurSolrUtils.createCollection(solrUrl, "coreA",
+                    new ByteArrayInputStream("zip-content".getBytes(StandardCharsets.UTF_8)), 2);
+
+            assertThat(coresCalls.get()).isGreaterThanOrEqualTo(1);
+            assertThat(configCalls.get()).isEqualTo(1);
+            assertThat(collectionsCalls.get()).isEqualTo(1);
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void testAddAndDeleteFieldWithCopyFieldRules() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress(0), 0);
+        AtomicInteger schemaPosts = new AtomicInteger(0);
+
+        server.createContext("/solr/core1/schema", exchange -> {
+            schemaPosts.incrementAndGet();
+            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+
+        server.createContext("/solr/core1/schema/fields", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            int status = path.endsWith("/body_str") ? 404 : 404;
+            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(status, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+
+        server.start();
+        try {
+            TurSEInstance instance = mock(TurSEInstance.class);
+            when(instance.getHost()).thenReturn("localhost");
+            when(instance.getPort()).thenReturn(server.getAddress().getPort());
+
+            TurSolrUtils.addOrUpdateField(TurSolrFieldAction.ADD, instance, "core1",
+                    "body", TurSEFieldType.TEXT, true, false);
+
+            assertThat(schemaPosts.get()).isGreaterThanOrEqualTo(3);
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void testDeleteFieldTriggersDeleteCopyWhenCopyFieldExists() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress(0), 0);
+        AtomicInteger schemaPosts = new AtomicInteger(0);
+
+        server.createContext("/solr/core1/schema", exchange -> {
+            schemaPosts.incrementAndGet();
+            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.createContext("/solr/core1/schema/fields", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            int status = path.endsWith("/body_str") ? 200 : 404;
+            String payload = status == 200
+                    ? "{\"field\":{\"name\":\"body_str\",\"type\":\"string\"}}"
+                    : "{}";
+            byte[] body = payload.getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(status, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+
+        server.start();
+        try {
+            TurSEInstance instance = mock(TurSEInstance.class);
+            when(instance.getHost()).thenReturn("localhost");
+            when(instance.getPort()).thenReturn(server.getAddress().getPort());
+
+            TurSolrUtils.deleteField(instance, "core1", "body", TurSEFieldType.TEXT);
+
+            assertThat(schemaPosts.get()).isGreaterThanOrEqualTo(2);
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void testNetworkFailuresDoNotThrow() throws Exception {
+        TurSEInstance instance = mock(TurSEInstance.class);
+        when(instance.getHost()).thenReturn("localhost");
+        when(instance.getPort()).thenReturn(1);
+
+        TurSolrUtils.deleteCore("http://localhost:1", "coreX");
+        TurSolrUtils.createCore("http://localhost:1", "coreX", "cfg");
+        TurSolrUtils.createCollection("http://localhost:1", "coreX",
+                new ByteArrayInputStream("x".getBytes(StandardCharsets.UTF_8)), 1);
+        assertThat(TurSolrUtils.existsField(instance, "coreX", "fieldX")).isFalse();
+        assertThat(TurSolrUtils.coreExists(instance, "coreX")).isFalse();
+
+        boolean interruptedBefore = Thread.currentThread().isInterrupted();
+        Thread.currentThread().interrupt();
+        try {
+            TurSolrUtils.coreExists(instance, "coreX");
+            assertThat(Thread.currentThread().isInterrupted()).isTrue();
+        } finally {
+            Thread.interrupted();
+            if (interruptedBefore) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
 }

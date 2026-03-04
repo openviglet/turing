@@ -14,6 +14,7 @@ import {
 import {
   Input
 } from "@/components/ui/input"
+import { useGlobalDecimalSeparator } from "@/hooks/use-global-decimal-separator"
 import type { TurSNSiteCustomFacet } from "@/models/sn/sn-site-custom-facet.model"
 import { TurSNSiteCustomFacetService } from "@/services/sn/sn.site.custom.facet.service"
 import { useEffect, useState } from "react"
@@ -37,6 +38,7 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
   });
   const { control } = form;
   const [open, setOpen] = useState(false);
+  const { decimalSymbol, normalizeMaybeDecimalString } = useGlobalDecimalSeparator();
   const navigate = useNavigate()
   const { id, groupIdName } = useParams() as { id: string, groupIdName: string };
 
@@ -142,14 +144,17 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g., 2025-10-01 or 1200.3"
+                        placeholder={`e.g., 2025-10-01 or 1200${decimalSymbol}3`}
                         type="text"
+                        onBlur={(event) => {
+                          field.onChange(normalizeMaybeDecimalString(event.target.value ?? ""));
+                        }}
                       />
                     </FormControl>
                     <FormDescription>
-                      Start value of the range. For dates, use ISO format (e.g., 2025-10-01). For numbers, use decimal format (e.g., 1200.3).
+                      Start value of the range. For dates, use ISO format (e.g., 2025-10-01). For numbers, use decimal format according to global settings (e.g., 1200{decimalSymbol}3).
                     </FormDescription>
-                    <FormMessage />
+                    {`Numeric values use ${decimalSymbol} as decimal separator.`}
                   </FormItem>
                 )}
               />
@@ -163,14 +168,17 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ value, isNew }) => {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g., 2025-11-30 or 1500.0"
+                        placeholder={`e.g., 2025-11-30 or 1500${decimalSymbol}0`}
                         type="text"
+                        onBlur={(event) => {
+                          field.onChange(normalizeMaybeDecimalString(event.target.value ?? ""));
+                        }}
                       />
                     </FormControl>
                     <FormDescription>
-                      End value of the range. For dates, use ISO format (e.g., 2025-11-30). For numbers, use decimal format (e.g., 1500.0).
+                      End value of the range. For dates, use ISO format (e.g., 2025-11-30). For numbers, use decimal format according to global settings (e.g., 1500{decimalSymbol}0).
                     </FormDescription>
-                    <FormMessage />
+                    {`Numeric values use ${decimalSymbol} as decimal separator.`}
                   </FormItem>
                 )}
               />

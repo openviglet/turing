@@ -13,7 +13,16 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            return "vendor";
+            // Force Recharts and D3 into their own "charts" chunk
+            if (id.includes("recharts") || id.includes("d3")) {
+              return "vendor-charts";
+            }
+            // Force UI components (Radix) into their own chunk
+            if (id.includes("@radix-ui")) {
+              return "vendor-ui";
+            }
+            // Everything else in node_modules goes to a general vendor
+            return "vendor-lib";
           }
         },
       },

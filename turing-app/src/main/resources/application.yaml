@@ -113,7 +113,7 @@ turing:
   search:
     engine:
       type: solr
-    metrics.enabled: false
+    metrics.enabled: true
     cache:
       ttl:
         seconds: 86400000

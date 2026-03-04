@@ -81,6 +81,7 @@ public class TurSNJobItems implements Iterable<TurSNJobItem>, Serializable {
 		return snJobItems.remove(turSNJobItem);
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (TurSNJobItem turSNJobItem : this) {

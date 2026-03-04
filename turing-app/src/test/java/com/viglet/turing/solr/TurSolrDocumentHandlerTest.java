@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -46,6 +47,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
@@ -70,13 +72,17 @@ class TurSolrDocumentHandlerTest {
     @Mock
     private TurSNSite turSNSite;
 
+    @Mock
+    private TurDecimalFieldNormalizer turDecimalFieldNormalizer;
+
     private TurSolrDocumentHandler turSolrDocumentHandler;
     private CapturingSolrClient capturingSolrClient;
     private TurSolrInstance turSolrInstance;
 
     @BeforeEach
     void setUp() throws MalformedURLException {
-        turSolrDocumentHandler = new TurSolrDocumentHandler(1000, turSNSiteFieldService);
+        turSolrDocumentHandler = new TurSolrDocumentHandler(1000, turSNSiteFieldService,
+                turDecimalFieldNormalizer);
         capturingSolrClient = new CapturingSolrClient();
         turSolrInstance = new TurSolrInstance(httpJdkSolrClient, URI.create("http://localhost:8983/solr").toURL(),
                 "core");
@@ -119,6 +125,35 @@ class TurSolrDocumentHandlerTest {
         assertThat(document.getFieldValue(TurSolrConstants.SCORE)).isNull();
         assertThat(document.getFieldValue(TurSolrConstants.VERSION)).isNull();
         assertThat(document.getFieldValue(TurSolrConstants.BOOST)).isNull();
+    }
+
+    @Test
+    void testIndexingFormatsCurrencyAsAmountAndIsoCode() {
+        TurSNSiteField currencyField = TurSNSiteField.builder()
+                .name("preco_produto")
+                .type(TurSEFieldType.CURRENCY)
+                .multiValued(0)
+                .build();
+
+        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+        fieldMap.put("preco_produto", currencyField);
+
+        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
+        when(turDecimalFieldNormalizer.normalizeCanonicalDecimal("150.00"))
+                .thenReturn(Optional.of("150.00"));
+
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("preco_produto", "150.00,BRL");
+
+        turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+
+        UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
+        SolrInputDocument document = updateRequest.getDocuments().getFirst();
+
+        assertThat(document.getFieldValue("preco_produto")).isEqualTo("150.00,BRL");
+        assertThat(document.getFieldValue("preco_produto" + TurSolrUtils.CURRENCY_TXT_SUFFIX))
+                .isEqualTo("150.00,BRL");
     }
 
     private static final class CapturingSolrClient extends SolrClient {

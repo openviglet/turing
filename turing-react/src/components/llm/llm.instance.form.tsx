@@ -33,6 +33,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { DialogDelete } from "../dialog.delete"
+import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
 const turLLMInstanceService = new TurLLMInstanceService();
 const urlBase = ROUTES.LLM_INSTANCE
@@ -519,32 +520,29 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="flex flex-col gap-6 pt-4">
-                    {/* Enabled (inline row) */}
-                    <div className="w-full flex flex-row justify-between items-center">
-                      <div className="flex flex-col">
-                        <FormLabel>Enabled</FormLabel>
-                        <div className="text-muted-foreground text-sm font-normal mt-1">
-                          Toggle to enable or disable this language model instance.
-                        </div>
-                      </div>
-                      <div className="flex-1 ml-8 flex justify-end">
-                        <FormField
-                          control={form.control}
-                          name="enabled"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Switch
-                                  checked={field.value === 1}
-                                  onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="enabled"
+                      render={({ field }) => (
+                        <FormItemTwoColumns>
+                          <FormItemTwoColumns.Left>
+                            <FormItemTwoColumns.Label>Enabled</FormItemTwoColumns.Label>
+                            <FormItemTwoColumns.Description className="text-sm font-normal mt-1">
+                              Toggle to enable or disable this language model instance.
+                            </FormItemTwoColumns.Description>
+                          </FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Right>
+                            <FormControl>
+                              <Switch
+                                checked={field.value === 1}
+                                onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                              />
+                            </FormControl>
+                          </FormItemTwoColumns.Right>
+                          <FormMessage />
+                        </FormItemTwoColumns>
+                      )}
+                    />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

@@ -21,9 +21,9 @@
 
 package com.viglet.turing.api.queue;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for TurQueueInfo.
@@ -36,7 +36,7 @@ class TurQueueInfoTest {
     @Test
     void testNoArgsConstructor() {
         TurQueueInfo queueInfo = new TurQueueInfo();
-        
+
         assertThat(queueInfo).isNotNull();
         assertThat(queueInfo.getName()).isNull();
         assertThat(queueInfo.getMessageCount()).isZero();
@@ -50,15 +50,14 @@ class TurQueueInfoTest {
     @Test
     void testAllArgsConstructor() {
         TurQueueInfo queueInfo = new TurQueueInfo(
-            "test.queue",
-            100L,
-            5L,
-            false,
-            "ACTIVE",
-            false,
-            "jms.queue.test"
-        );
-        
+                "test.queue",
+                100L,
+                5L,
+                false,
+                "ACTIVE",
+                false,
+                "jms.queue.test");
+
         assertThat(queueInfo.getName()).isEqualTo("test.queue");
         assertThat(queueInfo.getMessageCount()).isEqualTo(100L);
         assertThat(queueInfo.getConsumerCount()).isEqualTo(5L);
@@ -71,15 +70,15 @@ class TurQueueInfoTest {
     @Test
     void testBuilder() {
         TurQueueInfo queueInfo = TurQueueInfo.builder()
-            .name("indexing.queue")
-            .messageCount(250L)
-            .consumerCount(3L)
-            .paused(true)
-            .status("PAUSED")
-            .temporary(true)
-            .address("jms.queue.indexing")
-            .build();
-        
+                .name("indexing.queue")
+                .messageCount(250L)
+                .consumerCount(3L)
+                .paused(true)
+                .status("PAUSED")
+                .temporary(true)
+                .address("jms.queue.indexing")
+                .build();
+
         assertThat(queueInfo.getName()).isEqualTo("indexing.queue");
         assertThat(queueInfo.getMessageCount()).isEqualTo(250L);
         assertThat(queueInfo.getConsumerCount()).isEqualTo(3L);
@@ -92,7 +91,7 @@ class TurQueueInfoTest {
     @Test
     void testGettersAndSetters() {
         TurQueueInfo queueInfo = new TurQueueInfo();
-        
+
         queueInfo.setName("my.queue");
         queueInfo.setMessageCount(42L);
         queueInfo.setConsumerCount(2L);
@@ -100,7 +99,7 @@ class TurQueueInfoTest {
         queueInfo.setStatus("RUNNING");
         queueInfo.setTemporary(false);
         queueInfo.setAddress("jms.queue.my");
-        
+
         assertThat(queueInfo.getName()).isEqualTo("my.queue");
         assertThat(queueInfo.getMessageCount()).isEqualTo(42L);
         assertThat(queueInfo.getConsumerCount()).isEqualTo(2L);
@@ -113,56 +112,53 @@ class TurQueueInfoTest {
     @Test
     void testEqualsAndHashCode() {
         TurQueueInfo queueInfo1 = TurQueueInfo.builder()
-            .name("queue1")
-            .messageCount(10L)
-            .consumerCount(1L)
-            .paused(false)
-            .status("ACTIVE")
-            .temporary(false)
-            .address("jms.queue.1")
-            .build();
-        
+                .name("queue1")
+                .messageCount(10L)
+                .consumerCount(1L)
+                .paused(false)
+                .status("ACTIVE")
+                .temporary(false)
+                .address("jms.queue.1")
+                .build();
+
         TurQueueInfo queueInfo2 = TurQueueInfo.builder()
-            .name("queue1")
-            .messageCount(10L)
-            .consumerCount(1L)
-            .paused(false)
-            .status("ACTIVE")
-            .temporary(false)
-            .address("jms.queue.1")
-            .build();
-        
+                .name("queue1")
+                .messageCount(10L)
+                .consumerCount(1L)
+                .paused(false)
+                .status("ACTIVE")
+                .temporary(false)
+                .address("jms.queue.1")
+                .build();
+
         TurQueueInfo queueInfo3 = TurQueueInfo.builder()
-            .name("queue2")
-            .messageCount(20L)
-            .consumerCount(2L)
-            .paused(true)
-            .status("PAUSED")
-            .temporary(true)
-            .address("jms.queue.2")
-            .build();
-        
-        assertThat(queueInfo1).isEqualTo(queueInfo2);
-        assertThat(queueInfo1).isNotEqualTo(queueInfo3);
-        assertThat(queueInfo1.hashCode()).isEqualTo(queueInfo2.hashCode());
+                .name("queue2")
+                .messageCount(20L)
+                .consumerCount(2L)
+                .paused(true)
+                .status("PAUSED")
+                .temporary(true)
+                .address("jms.queue.2")
+                .build();
+
+        assertThat(queueInfo1).isEqualTo(queueInfo2).isNotEqualTo(queueInfo3);
+        assertThat(queueInfo1.hashCode()).hasSameHashCodeAs(queueInfo2.hashCode());
     }
 
     @Test
     void testToString() {
         TurQueueInfo queueInfo = TurQueueInfo.builder()
-            .name("test.queue")
-            .messageCount(5L)
-            .consumerCount(1L)
-            .paused(false)
-            .status("ACTIVE")
-            .temporary(false)
-            .address("jms.queue.test")
-            .build();
-        
+                .name("test.queue")
+                .messageCount(5L)
+                .consumerCount(1L)
+                .paused(false)
+                .status("ACTIVE")
+                .temporary(false)
+                .address("jms.queue.test")
+                .build();
+
         String toString = queueInfo.toString();
-        
-        assertThat(toString).contains("test.queue");
-        assertThat(toString).contains("5");
-        assertThat(toString).contains("ACTIVE");
+
+        assertThat(toString).contains("test.queue").contains("5").contains("ACTIVE");
     }
 }

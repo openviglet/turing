@@ -30,6 +30,7 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
@@ -148,32 +149,28 @@ export const IntegrationInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                   name="vendor"
                   rules={{ required: "Please select a vendor." }}
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex flex-row items-center justify-between w-full">
-                        {/* Left: Label & Description */}
-                        <div className="w-1/2 pr-4">
-                          <FormLabel>Integration Type</FormLabel>
-                          <FormDescription>
-                            Pick the platform or technology you want to connect with. This helps us tailor the setup for you.
-                          </FormDescription>
-                        </div>
-                        {/* Right: Select */}
-                        <div className="w-1/2">
+                    <FormItemTwoColumns>
+                      <FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Label>Integration Type</FormItemTwoColumns.Label>
+                        <FormItemTwoColumns.Description>
+                          Pick the platform or technology you want to connect with. This helps us tailor the setup for you.
+                        </FormItemTwoColumns.Description>
+                      </FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Right>
+                        <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a type..." />
-                              </SelectTrigger>
-                            </FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a type..." />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectItem key="AEM" value="AEM">Adobe AEM</SelectItem>
                               <SelectItem key="WEB_CRAWLER" value="WEB_CRAWLER">Web Crawler</SelectItem>
                             </SelectContent>
                           </Select>
-                        </div>
-                      </div>
+                        </FormControl>
+                      </FormItemTwoColumns.Right>
                       <FormMessage />
-                    </FormItem>
+                    </FormItemTwoColumns>
                   )}
                 />
                 {/* Endpoint */}

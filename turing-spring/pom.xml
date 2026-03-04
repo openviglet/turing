@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>26.0.2-1</version>
+            <version>26.1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -48,17 +48,6 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <build>
         <pluginManagement>
             <plugins>

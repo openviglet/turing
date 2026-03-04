@@ -63,13 +63,163 @@ graph TB
 ```
 
 ### Key Technologies
-- **Spring Boot 3.2+**: Microservices foundation for AI agent development
+- **Spring Boot 4**: Microservices foundation for AI agent development
 - **Java 21**: Modern language features for AI algorithm implementation  
 - **LangChain4j**: AI/ML framework integration
 - **Apache Solr**: High-performance search engine
 - **Apache Artemis**: Message queue for asynchronous AI processing
 - **React + TypeScript**: Modern UI for AI agent interfaces
 - **Docker & Kubernetes**: Containerized deployment for scalable AI workloads
+
+## Testing Guidelines
+
+Use the following Maven parameters to optimize the test execution process.
+
+### Skip Frontend Compilation
+When running backend-only tests, use the `-Dskip.npm` flag to bypass the frontend build process and reduce execution time.
+
+**Command:**
+```bash
+mvn test -Dskip.npm
+```
+
+### PowerShell Notes (Important)
+- In Windows PowerShell, pass the Maven property as `"-Dskip.npm"` (quoted).
+- Without quotes, PowerShell may split/parse incorrectly and Maven can fail with: `Unknown lifecycle phase ".npm"`.
+
+**Validated Commands (PowerShell):**
+```powershell
+# From repository root (build dependencies/modules too)
+Set-Location d:\Git\viglet\turing\2026.1; .\mvnw -pl turing-app -am -DskipTests "-Dskip.npm" compile
+
+# From turing-app folder (module-only compile)
+Set-Location d:\Git\viglet\turing\2026.1\turing-app; ..\mvnw -DskipTests "-Dskip.npm" compile
+```
+
+## Compile Frontend Guidelines
+Context: The frontend is a React application located in the turing-react directory. Always ensure dependencies are installed before attempting to compile.
+
+Compilation Command
+```bash
+cd turing-react && npm run compile
+```
+## Isolated Build Strategy (Dynamic node_modules)
+To avoid permission conflicts, file locks, or "dirty" environments, the agent can opt to compile using a temporary, isolated directory for dependencies.
+
+### 1. Workflow for Dynamic Path
+When instructed to perform an isolated build, the agent must:
+
+Generate a unique ID: Use a timestamp or a short hash (e.g., build_171543).
+
+Define the target path: Create a directory outside the project root if the current root has permission issues (e.g., /tmp/react_build/ on Linux or %TEMP%\react_build\ on Windows).
+
+Command Execution: Use the --prefix flag to redirect all npm operations.
+
+### 2. Implementation Command
+The agent should execute the compilation using this pattern:
+
+```bash
+# Example for Linux/macOS
+export BUILD_DIR="/tmp/node_build_$(date +%s)" && \
+mkdir -p "$BUILD_DIR" && \
+npm install --prefix "$BUILD_DIR" && \
+npm run compile --prefix "$BUILD_DIR"
+```
+
+```powershell
+# Example for Windows (PowerShell)
+$BuildDir = "$env:TEMP\node_build_$(Get-Date -Format 'yyyyMMddHHmm')";
+New-Item -ItemType Directory -Path $BuildDir;
+npm install --prefix $BuildDir;
+npm run compile --prefix $BuildDir;
+```
+
+### 3. Cleanup Policy
+Success: After a successful compile, the agent must ask the user: "Build complete. Should I remove the temporary directory?"
+
+Persistence: If the user requires the build artifacts (like a /dist folder), the agent must copy the artifacts back to the project root before deleting the temporary node_modules.
+
+### 4. Safety Constraints
+Disk Space: Before starting, the agent should check if there is at least 1GB of free space to avoid "Disk Full" errors during the npm install in the random path.
+
+Symlink Fallback: If the build tool (Webpack/Vite) fails to find dependencies because of the prefix, the agent should create a temporary symlink: ln -s /node_modules ./node_modules.
+
+### Agent Execution Rules:
+Pre-requisite Check: Before compiling, verify if node_modules exists in turing-react. If missing, run npm install first.
+
+Environment: Always execute commands from the project root. Use the combined cd command above to ensure the agent doesn't get lost in the directory structure.
+
+Validation:
+
+Success: Look for a "Build successful" or "Compiled successfully" message in the terminal output.
+
+Failure: If the compilation fails due to "Missing dependencies," run npm install and retry once. If it fails due to "TypeScript/Lint errors," report the specific file and error line to the user.
+
+### Expected Output Artifacts
+After a successful compilation, a build/ or dist/ folder should be generated/updated inside turing-react/
+
+## Reusable Playbook: Decimal and Currency Demands
+
+Use this checklist whenever a demand involves numeric localization (dot/comma), currency fields, Solr schema updates, and React admin forms.
+
+### Quick Checklist (10 lines)
+1. Confirm `TurSEFieldType`/API/frontend type options are aligned.
+2. Keep enum persistence as `@Enumerated(EnumType.STRING)`.
+3. Map `CURRENCY` to Solr `currency` (`CurrencyFieldType`), never `pdouble`.
+4. Ensure `currency.xml` exists in all configsets and packaged zip configsets.
+5. Index currency as `amount,ISO4217` (example: `150.00,BRL`).
+6. Use one global decimal source (`DOT`/`COMMA`) and normalize centrally.
+7. Normalize decimal-capable React inputs on blur (`FLOAT`/`DOUBLE`/`CURRENCY`).
+8. Preserve date-like values in mixed fields (normalize only numeric-looking strings).
+9. Validate backend first (`mvn test -Dskip.npm`; in PowerShell use `"-Dskip.npm"`), then frontend (`npm run compile`).
+10. For Windows npm issues, use resilient deps fallback (`npm ci` -> `npm install` -> `--legacy-peer-deps` when needed).
+
+### 1) Backend and Persistence Rules
+- Keep field enums aligned end-to-end (`TurSEFieldType`, API type lists, frontend type selectors).
+- Persist enum fields as strings (`@Enumerated(EnumType.STRING)`) to avoid ordinal drift across versions.
+- If introducing global numeric behavior, centralize in a dedicated service (e.g., global settings + normalizer component) and avoid scattered parsing logic.
+
+### 2) Solr Currency Rules (Mandatory)
+- Map `CURRENCY` to Solr `CurrencyFieldType` (`currency`), not `pdouble`.
+- Ensure schema field type exists with these attributes:
+  - `class="solr.CurrencyFieldType"`
+  - `amountLongSuffix="_l_ns"`
+  - `codeStrSuffix="_s_ns"`
+  - `defaultCurrency="USD"`
+  - `currencyConfig="currency.xml"`
+- Ensure `currency.xml` exists in all configsets (`en`, `pt`, `es`, `ca`) and in packaged zip configsets used at runtime.
+- Currency payload format for indexing must be `amount,ISO4217` (example: `150.00,BRL`).
+
+### 3) Decimal Separator Behavior (Global)
+- Use one global config source (`DOT` or `COMMA`) and normalize values before indexing/query persistence.
+- Frontend forms should normalize on blur for decimal-capable fields (`FLOAT`, `DOUBLE`, `CURRENCY`).
+- Keep date-like values untouched in mixed inputs (e.g., custom facet ranges) and only normalize when value looks numeric.
+
+### 4) React/Admin Integration Pattern
+- Add dedicated route + page for global settings.
+- Expose typed model and service for `/api/system/global-settings`.
+- Use a reusable hook for decimal symbol retrieval and normalization helpers.
+- Update placeholders/descriptions dynamically to reflect active separator and expected currency format.
+
+### 5) Validation Workflow
+- Backend-first validation: run focused tests with `mvn test -Dskip.npm`.
+- Frontend validation: prefer `npm run compile`.
+- If Windows `EPERM`/lock affects `npm ci`, use resilient scripts with fallback.
+
+### 6) Resilient npm Script Pattern
+- Prefer split scripts:
+  - `compile:deps` (or `build:deps`) for dependency step.
+  - `compile:build` (or `build:run`) for actual build.
+  - top-level `compile`/`build` chaining both.
+- Recommended deps fallback pattern:
+  - `npm ci --no-audit --no-fund || npm install --no-audit --no-fund`
+- For workspaces with peer-resolution instability, extend fallback with:
+  - `npm install --no-audit --no-fund --legacy-peer-deps`
+
+### 7) Delivery Discipline
+- Prefer targeted fixes over broad refactors.
+- Regenerate only artifacts that must reflect schema/runtime changes.
+- If validation reveals unrelated pre-existing issues, report them separately and keep scope explicit.
 
 ## SDK and API Support for Agent Development
 
@@ -172,22 +322,17 @@ query AIAgentComplexSearch($siteName: String!, $query: String!, $context: AgentC
 ### 1. **Enterprise Knowledge Management**
 - **Research Focus**: How AI agents can automatically organize and contextualize enterprise knowledge
 - **Turing Advantage**: Semantic navigation enables agents to understand document relationships
-- **Implementation**: [PLACEHOLDER - specific research methodologies and metrics]
 
 ### 2. **Intelligent Information Retrieval**
 - **Research Focus**: Beyond traditional search - understanding intent and context
 - **Turing Advantage**: Generative AI integration for query understanding and response synthesis
-- **Implementation**: [PLACEHOLDER - evaluation frameworks for search intelligence]
 
 ### 3. **Multi-Source Data Fusion**
 - **Research Focus**: How AI agents can synthesize information from disparate enterprise systems
 - **Turing Advantage**: Native connectors to CMS, databases, file systems
-- **Implementation**: [PLACEHOLDER - data fusion algorithms and evaluation metrics]
-
 ### 4. **Conversational Enterprise Search**
 - **Research Focus**: Natural language interfaces for complex enterprise queries
 - **Turing Advantage**: Built-in chatbot framework with context awareness
-- **Implementation**: [PLACEHOLDER - conversation flow optimization strategies]
 
 ## Deployment and Scalability for AI Workloads
 
@@ -214,43 +359,24 @@ services:
 - **Horizontal Pod Autoscaling**: Scale AI workloads based on query load
 - **GPU Support**: Integration with CUDA for AI model processing
 - **Service Mesh**: Istio integration for AI agent communication
-- **[PLACEHOLDER - specific K8s configurations for AI workloads]**
 
 ## Performance Characteristics for AI Applications
 
 ### Search Performance
 - **Sub-second Response Times**: Critical for real-time AI agent interactions
 - **Concurrent Query Support**: Handle multiple AI agents simultaneously
-- **Semantic Query Optimization**: [PLACEHOLDER - specific optimization techniques]
-
-### AI Processing Metrics
-- **Vector Embedding Performance**: [PLACEHOLDER - benchmarking data]
-- **RAG Pipeline Latency**: [PLACEHOLDER - performance characteristics]
-- **Model Inference Times**: [PLACEHOLDER - GPU vs CPU performance]
 
 ## Integration with AI/ML Frameworks
 
 ### Supported AI Frameworks
 - **LangChain4j**: Primary integration for AI agent development
 - **Spring AI**: Enterprise AI application development
-- **[PLACEHOLDER - other supported frameworks like Hugging Face, OpenAI API]**
 
 ### Model Integration
 - **Local Model Support**: Run AI models within the Turing infrastructure
 - **Cloud API Integration**: Connect to OpenAI, Claude, Gemini APIs
-- **Custom Model Deployment**: [PLACEHOLDER - guidelines for custom model integration]
 
 ## Research Data and Benchmarks
-
-### Performance Benchmarks
-- **Search Accuracy**: [PLACEHOLDER - precision/recall metrics]
-- **Response Time**: [PLACEHOLDER - latency distributions]
-- **Scalability Metrics**: [PLACEHOLDER - concurrent user/agent limits]
-
-### Research Datasets
-- **Enterprise Content Corpora**: [PLACEHOLDER - anonymized datasets for research]
-- **Query Logs**: [PLACEHOLDER - search behavior analysis data]
-- **Evaluation Frameworks**: [PLACEHOLDER - standardized evaluation methodologies]
 
 ## Security and Privacy for AI Agents
 
@@ -258,38 +384,30 @@ services:
 - **Authentication**: Keycloak integration for AI agent identity management
 - **Authorization**: Role-based access control for AI agent permissions
 - **Audit Logging**: Track AI agent actions and data access
-- **Data Privacy**: [PLACEHOLDER - GDPR/privacy compliance features]
 
 ### AI-Specific Security
 - **Model Security**: Prevent AI model poisoning and adversarial attacks
 - **Data Isolation**: Ensure AI agents only access authorized content
-- **[PLACEHOLDER - additional AI security measures]**
 
 ## Community and Collaboration
 
 ### Research Collaboration Opportunities
 - **Open Source**: Apache 2.0 license enables research collaboration
-- **Academic Partnerships**: [PLACEHOLDER - university collaboration programs]
-- **Research Publication Support**: [PLACEHOLDER - data sharing and publication policies]
 
 ### Developer Community
 - **GitHub**: https://github.com/openviglet/turing
 - **Discussions**: https://github.com/openviglet/turing/discussions
 - **Documentation**: https://docs.viglet.org/turing/
-- **[PLACEHOLDER - research-specific community channels]**
 
 ## Future Roadmap for AI Agent Capabilities
 
 ### Planned AI Features
-- **Advanced Semantic Understanding**: [PLACEHOLDER - upcoming semantic AI features]
 - **Multi-modal Search**: Support for image, video, and audio content analysis
 - **Federated Learning**: Distributed AI model training across enterprise sites
-- **[PLACEHOLDER - other roadmap items]**
 
 ### Research Integration Roadmap
 - **Academic Research APIs**: Specialized endpoints for research applications
 - **Benchmark Suite**: Standardized evaluation tools for enterprise search AI
-- **[PLACEHOLDER - specific research collaboration plans]**
 
 ## Getting Started with AI Agent Development
 
@@ -311,13 +429,6 @@ docker-compose -f docker-compose.ai.yml up -d
 
 ### Development Environment Setup
 1. **Prerequisites**: Java 21+, Docker, AI model access
-2. **Configuration**: [PLACEHOLDER - detailed AI setup instructions]  
-3. **First AI Agent**: [PLACEHOLDER - tutorial for building first agent]
-
-### Research Support
-- **Technical Documentation**: [PLACEHOLDER - research-specific documentation links]
-- **Sample Datasets**: [PLACEHOLDER - research dataset access]
-- **Support Channels**: [PLACEHOLDER - research support contacts]
 
 ## Conclusion
 
@@ -327,7 +438,7 @@ The platform's open-source nature, comprehensive APIs, and scalable architecture
 
 ---
 
-*For research collaborations, technical questions, or contribution opportunities, please contact: [PLACEHOLDER - research contact information]*
+*For research collaborations, technical questions, or contribution opportunities, please contact: 
 
 **License**: Apache 2.0 - enabling open research and collaboration  
 **Repository**: https://github.com/openviglet/turing  

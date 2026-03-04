@@ -43,8 +43,9 @@ class TurSNFieldExtAPITest {
 
         List<TurSNFieldExtType> types = api.turSNFieldExtTypeGet();
 
-        assertThat(types).hasSize(6);
+        assertThat(types).hasSize(9);
         assertThat(types).extracting(TurSNFieldExtType::getId)
-                .containsExactly("BOOL", "DATE", "LONG", "INT", "STRING", "TEXT");
+                .containsExactly("STRING", "TEXT", "INT", "DATE", "BOOL", "LONG", "FLOAT", "DOUBLE",
+                        "CURRENCY");
     }
 }

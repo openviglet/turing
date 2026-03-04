@@ -33,6 +33,7 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { DialogDelete } from "../dialog.delete"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
+import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
 import { Switch } from "../ui/switch"
 const turStoreInstanceService = new TurStoreInstanceService();
@@ -261,32 +262,30 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="flex flex-col gap-6 pt-4">
-                    <div className="w-full flex flex-row justify-between items-center gap-4">
-                      <div className="flex flex-col">
-                        <FormLabel>Enabled</FormLabel>
-                        <FormDescription>
-                          Toggle to activate or deactivate this embedding store instance.
-                        </FormDescription>
-                      </div>
-                      <div>
-                        <FormField
-                          control={form.control}
-                          name="enabled"
-                          render={({ field }) => (
-                            <FormItem className="mb-0">
-                              <FormControl>
-                                <Switch
-                                  checked={field.value === 1}
-                                  onCheckedChange={(checked) => {
-                                    field.onChange(checked ? 1 : 0);
-                                  }}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="enabled"
+                      render={({ field }) => (
+                        <FormItemTwoColumns>
+                          <FormItemTwoColumns.Left>
+                            <FormItemTwoColumns.Label>Enabled</FormItemTwoColumns.Label>
+                            <FormItemTwoColumns.Description>
+                              Toggle to activate or deactivate this embedding store instance.
+                            </FormItemTwoColumns.Description>
+                          </FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Right>
+                            <FormControl>
+                              <Switch
+                                checked={field.value === 1}
+                                onCheckedChange={(checked) => {
+                                  field.onChange(checked ? 1 : 0);
+                                }}
+                              />
+                            </FormControl>
+                          </FormItemTwoColumns.Right>
+                        </FormItemTwoColumns>
+                      )}
+                    />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

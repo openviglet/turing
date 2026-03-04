@@ -27,7 +27,7 @@ public class TurSolrField {
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	public static final String GMT = "GMT";
 
-	private TurSolrField() {
+	TurSolrField() {
 		throw new IllegalStateException("TurSolrField class");
 	}
 

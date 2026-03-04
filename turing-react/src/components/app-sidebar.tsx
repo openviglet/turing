@@ -2,9 +2,11 @@ import {
   IconCode,
   IconCpu2,
   IconDatabase,
+  IconFileImport,
   IconPlugConnectedX,
   IconReceiptRupee,
   IconSearch,
+  IconSettings,
   IconZoomCode
 } from "@tabler/icons-react"
 import * as React from "react"
@@ -59,6 +61,16 @@ const data = {
       icon: IconReceiptRupee,
     },
     {
+      title: "Import",
+      url: "/admin/exchange/import",
+      icon: IconFileImport,
+    },
+    {
+      title: "Global Settings",
+      url: ROUTES.GLOBAL_SETTINGS,
+      icon: IconSettings,
+    },
+    {
       title: "API Token",
       url: "/admin/token/instance",
       icon: IconCode,
@@ -73,7 +85,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     turUserService.get().then(setUser);
   }, [])
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -81,7 +93,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!">
               <NavLink to={ROUTES.CONSOLE}>
-                <TurLogo size={32} />
+                <TurLogo className="size-6!" />
                 <span className="text-base font-semibold">Turing ES</span>
               </NavLink>
             </SidebarMenuButton>

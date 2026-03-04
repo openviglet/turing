@@ -21,19 +21,20 @@
 
 package com.viglet.turing.persistence.model.sn.spotlight;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.viglet.turing.persistence.model.sn.TurSNSite;
 
 /**
  * Unit tests for TurSNSiteSpotlight.
@@ -189,7 +190,7 @@ class TurSNSiteSpotlightTest {
     @Test
     void testManagedField() {
         turSNSiteSpotlight.setManaged(0);
-        assertThat(turSNSiteSpotlight.getManaged()).isEqualTo(0);
+        assertThat(turSNSiteSpotlight.getManaged()).isZero();
 
         turSNSiteSpotlight.setManaged(1);
         assertThat(turSNSiteSpotlight.getManaged()).isEqualTo(1);

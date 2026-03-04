@@ -84,37 +84,23 @@ class TurSNSiteMetricsTopTermsBeanTest {
         assertThat(bean.getVariationPeriod()).isEqualTo(-50);
     }
 
-    @Test
-    void testAllArgsConstructorWithDoubling() {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.MethodSource("provideGrowthScenarios")
+    void testAllArgsConstructorWithGrowthScenarios(int totalTermsPeriod, int totalTermsPreviousPeriod, int expectedVariation) {
         List<TurSNSiteMetricAccessTerm> terms = new ArrayList<>();
-        
-        TurSNSiteMetricsTopTermsBean bean = new TurSNSiteMetricsTopTermsBean(terms, 300, 100);
-        
-        assertThat(bean.getTotalTermsPeriod()).isEqualTo(300);
-        assertThat(bean.getTotalTermsPreviousPeriod()).isEqualTo(100);
-        assertThat(bean.getVariationPeriod()).isEqualTo(200);
+        TurSNSiteMetricsTopTermsBean bean = new TurSNSiteMetricsTopTermsBean(terms, totalTermsPeriod, totalTermsPreviousPeriod);
+
+        assertThat(bean.getTotalTermsPeriod()).isEqualTo(totalTermsPeriod);
+        assertThat(bean.getTotalTermsPreviousPeriod()).isEqualTo(totalTermsPreviousPeriod);
+        assertThat(bean.getVariationPeriod()).isEqualTo(expectedVariation);
     }
 
-    @Test
-    void testAllArgsConstructorWithTripling() {
-        List<TurSNSiteMetricAccessTerm> terms = new ArrayList<>();
-        
-        TurSNSiteMetricsTopTermsBean bean = new TurSNSiteMetricsTopTermsBean(terms, 400, 100);
-        
-        assertThat(bean.getTotalTermsPeriod()).isEqualTo(400);
-        assertThat(bean.getTotalTermsPreviousPeriod()).isEqualTo(100);
-        assertThat(bean.getVariationPeriod()).isEqualTo(300);
-    }
-
-    @Test
-    void testAllArgsConstructorWith25PercentGrowth() {
-        List<TurSNSiteMetricAccessTerm> terms = new ArrayList<>();
-        
-        TurSNSiteMetricsTopTermsBean bean = new TurSNSiteMetricsTopTermsBean(terms, 125, 100);
-        
-        assertThat(bean.getTotalTermsPeriod()).isEqualTo(125);
-        assertThat(bean.getTotalTermsPreviousPeriod()).isEqualTo(100);
-        assertThat(bean.getVariationPeriod()).isEqualTo(25);
+    private static java.util.stream.Stream<org.junit.jupiter.params.provider.Arguments> provideGrowthScenarios() {
+        return java.util.stream.Stream.of(
+            org.junit.jupiter.params.provider.Arguments.of(300, 100, 200), // Doubling
+            org.junit.jupiter.params.provider.Arguments.of(400, 100, 300), // Tripling
+            org.junit.jupiter.params.provider.Arguments.of(125, 100, 25)   // 25% Growth
+        );
     }
 
     @Test

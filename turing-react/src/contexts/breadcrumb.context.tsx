@@ -17,23 +17,22 @@ const BreadcrumbContext = createContext<BreadcrumbContextType | undefined>(undef
 export function BreadcrumbProvider({ children }: { readonly children: ReactNode }) {
     const [items, setItems] = useState<BreadcrumbItem[]>([]);
 
-    // No seu context
     const pushItem = useCallback((newItem: BreadcrumbItem) => {
         setItems((prev) => {
-            // Se o último item já tem o mesmo label, não adiciona de novo
             if (prev.length > 0 && prev[prev.length - 1].label === newItem.label) {
                 return prev;
             }
             return [...prev, newItem];
         });
     }, []);
-    const popItem = () => {
-        setItems((prev) => prev.slice(0, -1));
-    };
 
-    const resetBreadcrumb = (initialItems: BreadcrumbItem[] = []) => {
+    const popItem = useCallback(() => {
+        setItems((prev) => prev.slice(0, -1));
+    }, []);
+
+    const resetBreadcrumb = useCallback((initialItems: BreadcrumbItem[] = []) => {
         setItems(initialItems);
-    };
+    }, []);
 
     const contextValue = useMemo(
         () => ({
@@ -43,7 +42,7 @@ export function BreadcrumbProvider({ children }: { readonly children: ReactNode 
             popItem,
             resetBreadcrumb,
         }),
-        [items]
+        [items, pushItem, popItem, resetBreadcrumb]
     );
 
     return (
@@ -56,7 +55,6 @@ export function BreadcrumbProvider({ children }: { readonly children: ReactNode 
 export const useBreadcrumb = () => {
     const context = useContext(BreadcrumbContext);
     if (!context) {
-        // É AQUI que o erro é gerado
         throw new Error("useBreadcrumb must be used within Provider");
     }
     return context;

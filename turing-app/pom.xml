@@ -13,7 +13,7 @@
     <url>https://github.com/openturing/turing</url>
     <packaging>jar</packaging>
     <properties>
-        <elasticsearch.version>9.3.0</elasticsearch.version>
+        <elasticsearch.version>9.3.1</elasticsearch.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>21</maven.compiler.release>
@@ -137,7 +137,6 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-jms-server</artifactId>
-            <version>2.44.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -173,18 +172,15 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.4.240</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>3.5.7</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.10</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -259,7 +255,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.1</version>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.squins.google.fork.schema-org-client</groupId>
@@ -274,7 +270,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring-boot.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -311,7 +306,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <version>7.0.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -348,17 +342,6 @@
             <version>2.13.2</version>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <build>
         <finalName>viglet-turing</finalName>
         <pluginManagement>
@@ -435,12 +418,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>3.5.5</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>3.5.5</version>
                 <executions>
                     <execution>
                         <goals>
@@ -492,7 +475,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>3.5.5</version>
             </plugin>
         </plugins>
     </reporting>

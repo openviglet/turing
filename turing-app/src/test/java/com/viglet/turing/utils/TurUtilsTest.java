@@ -21,9 +21,13 @@
 
 package com.viglet.turing.utils;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Unit tests for TurUtils.
@@ -34,76 +38,34 @@ import static org.assertj.core.api.Assertions.*;
 class TurUtilsTest {
 
     @Test
-    void testConstructorThrowsException() {
-        assertThatThrownBy(() -> {
-            var constructor = TurUtils.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        })
-        .cause()
-        .isInstanceOf(IllegalStateException.class)
-        .hasMessageContaining("Utility class");
+    void testConstructorThrowsException() throws Exception {
+        var constructor = TurUtils.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        assertThatThrownBy(constructor::newInstance)
+                .hasRootCauseInstanceOf(IllegalStateException.class)
+                .hasRootCauseMessage("Utility class");
     }
 
-    @Test
-    void testGetUrlTemplateWithBasicUrl() {
-        String serviceUrl = "http://example.com";
-        String id = "12345";
-        
+    @ParameterizedTest
+    @MethodSource("urlTemplateProvider")
+    void testGetUrlTemplateParameterized(String serviceUrl, String id, String expected) {
         String result = TurUtils.getUrlTemplate(serviceUrl, id);
-        
-        assertThat(result).isEqualTo("http://example.com/12345");
+        assertThat(result).isEqualTo(expected);
     }
 
-    @Test
-    void testGetUrlTemplateWithTrailingSlash() {
-        String serviceUrl = "http://example.com/";
-        String id = "12345";
-        
-        String result = TurUtils.getUrlTemplate(serviceUrl, id);
-        
-        // Current implementation creates double slash - this encodes existing behavior
-        // Note: This should ideally be normalized to single slash in production code
-        assertThat(result).isEqualTo("http://example.com//12345");
-    }
-
-    @Test
-    void testGetUrlTemplateWithPath() {
-        String serviceUrl = "http://example.com/api";
-        String id = "item-123";
-        
-        String result = TurUtils.getUrlTemplate(serviceUrl, id);
-        
-        assertThat(result).isEqualTo("http://example.com/api/item-123");
-    }
-
-    @Test
-    void testGetUrlTemplateWithEmptyId() {
-        String serviceUrl = "http://example.com";
-        String id = "";
-        
-        String result = TurUtils.getUrlTemplate(serviceUrl, id);
-        
-        assertThat(result).isEqualTo("http://example.com/");
-    }
-
-    @Test
-    void testGetUrlTemplateWithSpecialCharacters() {
-        String serviceUrl = "http://example.com/api";
-        String id = "item-with-dashes_and_underscores";
-        
-        String result = TurUtils.getUrlTemplate(serviceUrl, id);
-        
-        assertThat(result).isEqualTo("http://example.com/api/item-with-dashes_and_underscores");
-    }
-
-    @Test
-    void testGetUrlTemplateWithNumericId() {
-        String serviceUrl = "http://localhost:8080/service";
-        String id = "999";
-        
-        String result = TurUtils.getUrlTemplate(serviceUrl, id);
-        
-        assertThat(result).isEqualTo("http://localhost:8080/service/999");
+    static java.util.stream.Stream<Arguments> urlTemplateProvider() {
+        return java.util.stream.Stream.of(
+                Arguments.of("http://example.com", "12345",
+                        "http://example.com/12345"),
+                Arguments.of("http://example.com/", "12345",
+                        "http://example.com//12345"),
+                Arguments.of("http://example.com/api", "item-123",
+                        "http://example.com/api/item-123"),
+                Arguments.of("http://example.com", "", "http://example.com/"),
+                Arguments.of("http://example.com/api",
+                        "item-with-dashes_and_underscores", "http://example.com/api/item-with-dashes_and_underscores"),
+                Arguments.of("http://localhost:8080/service", "999",
+                        "http://localhost:8080/service/999"));
     }
 }

@@ -33,6 +33,7 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { DialogDelete } from "../dialog.delete"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
+import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
 const turSEInstanceService = new TurSEInstanceService();
 interface Props {
@@ -179,30 +180,28 @@ export const SEInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                       name="turSEVendor.id"
                       rules={{ required: "Vendor is required." }}
                       render={({ field }) => (
-                        <FormItem>
-                          <div className="flex flex-row justify-between items-center w-full gap-4">
-                            <div className="flex flex-col flex-1">
-                              <FormLabel>Vendor</FormLabel>
-                              <FormDescription>
-                                Choose the backend technology powering this search engine.
-                              </FormDescription>
-                            </div>
-                            <div className="flex-1 max-w-xs">
+                        <FormItemTwoColumns>
+                          <FormItemTwoColumns.Left>
+                            <FormItemTwoColumns.Label>Vendor</FormItemTwoColumns.Label>
+                            <FormItemTwoColumns.Description>
+                              Choose the backend technology powering this search engine.
+                            </FormItemTwoColumns.Description>
+                          </FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Right>
+                            <FormControl>
                               <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select vendor..." />
-                                  </SelectTrigger>
-                                </FormControl>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select vendor..." />
+                                </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem key="SOLR" value="SOLR">Apache Solr</SelectItem>
                                   <SelectItem key="LUCENE" value="LUCENE">Apache Lucene</SelectItem>
                                 </SelectContent>
                               </Select>
-                            </div>
-                          </div>
+                            </FormControl>
+                          </FormItemTwoColumns.Right>
                           <FormMessage />
-                        </FormItem>
+                        </FormItemTwoColumns>
                       )}
                     />
                     <FormField

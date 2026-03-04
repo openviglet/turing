@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { LanguageSelect } from "@/components/language-select"
 import {
   Accordion,
   AccordionContent,
@@ -38,8 +39,8 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { DynamicSourceLocales } from "./dynamic.source.locale"
 
 interface Props {
@@ -246,20 +247,22 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                 control={form.control}
                 name="author"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Enable Author</FormLabel>
-                      <FormDescription>
+                  <FormItemTwoColumns className="rounded-lg border p-4">
+                    <FormItemTwoColumns.Left className="space-y-0.5">
+                      <FormItemTwoColumns.Label className="text-base">Enable Author</FormItemTwoColumns.Label>
+                      <FormItemTwoColumns.Description>
                         Index content from AEM Author instance
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
+                      </FormItemTwoColumns.Description>
+                    </FormItemTwoColumns.Left>
+                    <FormItemTwoColumns.Right>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItemTwoColumns.Right>
+                  </FormItemTwoColumns>
                 )}
               />
 
@@ -307,20 +310,22 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                 control={form.control}
                 name="publish"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Enable Publish</FormLabel>
-                      <FormDescription>
+                  <FormItemTwoColumns className="rounded-lg border p-4">
+                    <FormItemTwoColumns.Left className="space-y-0.5">
+                      <FormItemTwoColumns.Label className="text-base">Enable Publish</FormItemTwoColumns.Label>
+                      <FormItemTwoColumns.Description>
                         Index content from AEM Publish instance
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
+                      </FormItemTwoColumns.Description>
+                    </FormItemTwoColumns.Left>
+                    <FormItemTwoColumns.Right>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItemTwoColumns.Right>
+                  </FormItemTwoColumns>
                 )}
               />
 
@@ -370,18 +375,15 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Default Locale</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose the language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {locales.map((option) => (
-                          <SelectItem key={option.initials} value={option.initials}>
-                            {option.en} ({option.initials})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <LanguageSelect
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        locales={locales}
+                        extraLocaleValues={field.value ? [field.value] : []}
+                        className="w-full"
+                      />
+                    </FormControl>
                     <FormDescription>Default locale for content without explicit locale</FormDescription>
                     <FormMessage />
                   </FormItem>

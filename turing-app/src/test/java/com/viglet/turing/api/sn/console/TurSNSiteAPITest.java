@@ -23,6 +23,7 @@ package com.viglet.turing.api.sn.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,6 +35,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -44,8 +46,13 @@ import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
+import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
@@ -180,7 +187,65 @@ class TurSNSiteAPITest {
 
                         assertThat(result).isTrue();
                         utils.verify(() -> TurSolrUtils.deleteCore(instance, "core1"));
-                        verify(siteRepository).delete("site");
+                        verify(siteRepository).delete(site);
+                }
+        }
+
+        @Test
+        void testSiteDeleteComplexRemovesReferencedObjectsBeforeDelete() {
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
+                TurSNSiteGenAiRepository genAiRepository = mock(TurSNSiteGenAiRepository.class);
+                TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, localeRepository,
+                                genAiRepository, mock(TurSNSiteExport.class),
+                                mock(TurSNTemplate.class), mock(TurSNQueue.class), mock(TurSolrInstanceProcess.class),
+                                mock(TurSolr.class), mock(TurConfigProperties.class));
+
+                TurSNSite site = new TurSNSite();
+                TurSEInstance instance = new TurSEInstance();
+                instance.setHost("localhost");
+                instance.setPort(8983);
+                site.setTurSEInstance(instance);
+                TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+                site.setTurSNSiteGenAi(genAi);
+
+                site.getTurSNSiteFields().add(new TurSNSiteField());
+                site.getTurSNSiteFieldExts().add(new TurSNSiteFieldExt());
+                site.getTurSNSiteSpotlights().add(new TurSNSiteSpotlight());
+                site.getTurSNRankingExpressions().add(new TurSNRankingExpression());
+
+                TurSNSiteMergeProviders mergeProvider1 = new TurSNSiteMergeProviders();
+                TurSNSiteMergeProviders mergeProvider2 = new TurSNSiteMergeProviders();
+                site.getTurSNSiteMergeProviders().add(mergeProvider1);
+                site.getTurSNSiteMergeProviders().add(mergeProvider2);
+
+                TurSNSiteLocale locale1 = new TurSNSiteLocale();
+                locale1.setCore("core1");
+                TurSNSiteLocale locale2 = new TurSNSiteLocale();
+                locale2.setCore("core2");
+
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(localeRepository.findByTurSNSite(org.mockito.ArgumentMatchers.any(),
+                                org.mockito.ArgumentMatchers.eq(site)))
+                                .thenReturn(List.of(locale1, locale2));
+
+                try (MockedStatic<TurSolrUtils> utils = org.mockito.Mockito.mockStatic(TurSolrUtils.class)) {
+                        boolean result = api.turSNSiteDelete("site");
+
+                        assertThat(result).isTrue();
+                        assertThat(site.getTurSNSiteFields()).isEmpty();
+                        assertThat(site.getTurSNSiteFieldExts()).isEmpty();
+                        assertThat(site.getTurSNSiteSpotlights()).isEmpty();
+                        assertThat(site.getTurSNRankingExpressions()).isEmpty();
+                        assertThat(site.getTurSNSiteMergeProviders()).isEmpty();
+                        assertThat(site.getTurSNSiteGenAi()).isNull();
+                        utils.verify(() -> TurSolrUtils.deleteCore(instance, "core1"));
+                        utils.verify(() -> TurSolrUtils.deleteCore(instance, "core2"));
+
+                        InOrder inOrder = inOrder(siteRepository);
+                        inOrder.verify(siteRepository).flush();
+                        inOrder.verify(siteRepository).delete(site);
+                        verify(genAiRepository).delete(genAi);
                 }
         }
 

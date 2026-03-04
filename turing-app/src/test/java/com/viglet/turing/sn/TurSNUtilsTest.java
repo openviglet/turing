@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
+import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtFacetDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.se.result.TurSEResult;
 
@@ -366,5 +368,61 @@ class TurSNUtilsTest {
                 .hasSize(2)
                 .contains("category:books", "year:2024")
                 .doesNotContain("author:smith");
+    }
+
+    @Test
+    void testAddFilterQueryResetsPageToOne() {
+        URI uri = URI.create("http://example.com/search?q=test&p=5");
+
+        URI result = TurSNUtils.addFilterQuery(uri, "category:books");
+
+        assertThat(result.toString()).contains("p=1");
+        assertThat(result.toString()).contains("q=test");
+    }
+
+    @Test
+    void testAddSNDocumentWithDuplicateMappedFieldNamesAndMetadataArray() {
+        URI uri = URI.create("http://example.com/search?q=test");
+        Map<String, TurSNSiteFieldExtDto> fieldExtMap = new HashMap<>();
+        fieldExtMap.put("first_attr", TurSNSiteFieldExtDto.builder().name("merged")
+                .facetLocales(Set.of(new TurSNSiteFieldExtFacetDto())).build());
+        fieldExtMap.put("second_attr", TurSNSiteFieldExtDto.builder().name("merged").build());
+
+        Map<String, TurSNSiteFieldExtDto> facetMap = new HashMap<>();
+        facetMap.put("category", TurSNSiteFieldExtDto.builder().name("category").build());
+
+        List<TurSNSiteSearchDocumentBean> documents = new ArrayList<>();
+
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("first_attr", "A");
+        fields.put("second_attr", "B");
+        fields.put("category", new ArrayList<>(List.of("books", "tech")));
+        fields.put("turing_entity_hidden", "ignore");
+        TurSEResult result = TurSEResult.builder().fields(fields).build();
+
+        TurSNUtils.addSNDocument(uri, fieldExtMap, facetMap, documents, result, true);
+
+        assertThat(documents).hasSize(1);
+        TurSNSiteSearchDocumentBean document = documents.get(0);
+        assertThat(document.isElevate()).isTrue();
+        assertThat(document.getFields()).containsKey("merged");
+        assertThat(document.getFields().get("merged")).isInstanceOf(List.class);
+        @SuppressWarnings("unchecked")
+        List<Object> merged = (List<Object>) document.getFields().get("merged");
+        assertThat(merged).containsExactly("A", "B");
+        assertThat(document.getFields().keySet()).noneMatch(k -> k.startsWith("turing_entity"));
+        assertThat(document.getMetadata()).hasSize(2);
+    }
+
+    @Test
+    void testAddSNDocumentWithoutUrlSetsNullSource() {
+        URI uri = URI.create("http://example.com/search");
+        List<TurSNSiteSearchDocumentBean> documents = new ArrayList<>();
+        TurSEResult result = TurSEResult.builder().fields(Map.of("title", "No URL")).build();
+
+        TurSNUtils.addSNDocument(uri, new HashMap<>(), new HashMap<>(), documents, result, false);
+
+        assertThat(documents).hasSize(1);
+        assertThat(documents.get(0).getSource()).isNull();
     }
 }

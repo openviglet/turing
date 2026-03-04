@@ -1,3 +1,4 @@
+import { LanguageSelect } from '@/components/language-select';
 import { Input } from '@/components/ui/input';
 import type { TurLocale } from '@/models/locale/locale.model';
 import { TurLocaleService } from '@/services/locale/locale.service';
@@ -5,7 +6,6 @@ import { PlusCircle, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, type Control, type UseFormRegister } from 'react-hook-form';
 import { GradientButton } from '../ui/gradient-button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface DynamicSourceLocalesProps {
     control: Control<any>;
@@ -38,21 +38,13 @@ export function DynamicSourceLocales({
                         control={control}
                         name={`${fieldName}.${index}.locale`}
                         render={({ field: controllerField }) => (
-                            <Select
+                            <LanguageSelect
+                                value={controllerField.value}
                                 onValueChange={controllerField.onChange}
-                                defaultValue={controllerField.value}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Choose the language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {locales.map((option) => (
-                                        <SelectItem key={option.initials} value={option.initials}>
-                                            {option.en} ({option.initials})
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                locales={locales}
+                                extraLocaleValues={controllerField.value ? [controllerField.value] : []}
+                                className="w-full"
+                            />
                         )}
                     />
                     <Input

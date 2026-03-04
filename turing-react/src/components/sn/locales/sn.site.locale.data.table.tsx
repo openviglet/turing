@@ -67,7 +67,7 @@ export const SNSiteMultiLanguageDataTable: React.FC<Props> = ({ data }) => {
                 <div className="ml-auto">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <GradientButton variant="outline">
+                            <GradientButton variant="outline" size={"sm"}>
                                 <IconColumns3Filled /> Columns <ChevronDown />
                             </GradientButton>
                         </DropdownMenuTrigger>
