@@ -36,7 +36,6 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
@@ -48,6 +47,8 @@ import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.sn.TurSNFieldProcess;
 import com.viglet.turing.sn.TurSNUtils;
+import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
+import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 
 public class TurSolrResultProcessor {
 
@@ -333,38 +334,43 @@ public class TurSolrResultProcessor {
 
                 List<TurSEFacetResult> facetResults = new ArrayList<>();
                 Set<String> processedFacetNames = new HashSet<>();
-                turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1).forEach(field -> Optional
-                                .ofNullable(field.getCustomFacets())
-                                .orElse(Collections.emptySet()).stream()
-                                .sorted(Comparator.comparing(this::getCustomFacetPosition)
-                                                .thenComparing(TurSNSiteCustomFacet::getName,
+                List<TurSNFacetDefinition> customFacetDefinitions = turSNSiteFieldExtRepository
+                                .findByTurSNSiteAndEnabled(turSNSite, 1).stream()
+                                .flatMap(field -> Optional.ofNullable(field.getCustomFacets())
+                                                .orElse(Collections.emptySet()).stream()
+                                                .map(customFacet -> (TurSNFacetDefinition) new TurSNCustomFacetDefinition(
+                                                                field, customFacet, null)))
+                                .sorted(Comparator.comparing(TurSNFacetDefinition::getPosition)
+                                                .thenComparing(TurSNFacetDefinition::getName,
                                                                 Comparator.nullsLast(String::compareToIgnoreCase)))
-                                .forEach(customFacet -> {
-                                        Map<String, Integer> itemCounts = countsByFacetName
-                                                        .get(customFacet.getName());
-                                        if (itemCounts != null) {
-                                                TurSEFacetResult result = new TurSEFacetResult();
-                                                result.setFacet(customFacet.getName());
-                                                customFacet.getItems().stream()
-                                                                .sorted(Comparator
-                                                                                .comparing(this::getCustomFacetItemPosition)
-                                                                                .thenComparing(TurSNSiteCustomFacetItem::getLabel,
-                                                                                                Comparator
-                                                                                                                .nullsLast(String::compareToIgnoreCase)))
-                                                                .forEach(item -> {
-                                                                        Integer count = itemCounts
-                                                                                        .get(item.getLabel());
-                                                                        if (count != null) {
-                                                                                result.add(item.getLabel(),
-                                                                                                new TurSEFacetResultAttr(
-                                                                                                                item.getLabel(),
-                                                                                                                count));
-                                                                        }
-                                                                });
-                                                facetResults.add(result);
-                                                processedFacetNames.add(customFacet.getName());
-                                        }
-                                }));
+                                .toList();
+
+                customFacetDefinitions.forEach(customFacet -> {
+                        Map<String, Integer> itemCounts = countsByFacetName
+                                        .get(customFacet.getName());
+                        if (itemCounts != null) {
+                                TurSEFacetResult result = new TurSEFacetResult();
+                                result.setFacet(customFacet.getName());
+                                customFacet.getItems().stream()
+                                                .sorted(Comparator
+                                                                .comparing(this::getCustomFacetItemPosition)
+                                                                .thenComparing(TurSNSiteCustomFacetItem::getLabel,
+                                                                                Comparator
+                                                                                                .nullsLast(String::compareToIgnoreCase)))
+                                                .forEach(item -> {
+                                                        Integer count = itemCounts
+                                                                        .get(item.getLabel());
+                                                        if (count != null) {
+                                                                result.add(item.getLabel(),
+                                                                                new TurSEFacetResultAttr(
+                                                                                                item.getLabel(),
+                                                                                                count));
+                                                        }
+                                                });
+                                facetResults.add(result);
+                                processedFacetNames.add(customFacet.getName());
+                        }
+                });
 
                 countsByFacetName.forEach((facetName, itemCounts) -> {
                         if (!processedFacetNames.contains(facetName)) {
@@ -380,12 +386,6 @@ public class TurSolrResultProcessor {
                 });
 
                 return facetResults;
-        }
-
-        private Integer getCustomFacetPosition(TurSNSiteCustomFacet customFacet) {
-                return Optional.ofNullable(customFacet.getFacetPosition())
-                                .filter(position -> position > 0)
-                                .orElse(Integer.MAX_VALUE);
         }
 
         private Integer getCustomFacetItemPosition(TurSNSiteCustomFacetItem customFacetItem) {

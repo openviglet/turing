@@ -76,6 +76,8 @@ import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingCondition
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.TurSNUtils;
+import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
+import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNFacetMapForFilterQuery;
 import com.viglet.turing.sn.facet.TurSNFacetProperties;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
@@ -299,14 +301,16 @@ public class TurSolrQueryBuilder {
                 enabledFields);
         if (customFacetFilterMapping.isPresent()) {
             CustomFacetFilterMapping mapping = customFacetFilterMapping.get();
+            TurSNFacetDefinition customFacetDefinition = new TurSNCustomFacetDefinition(
+                    mapping.turSNSiteFieldExt(), mapping.turSNSiteCustomFacet(), null);
             TurSNFacetTypeContext context = new TurSNFacetTypeContext(
                     new TurSNSiteFieldExtDto(mapping.turSNSiteFieldExt()), turSNSite,
                     turSNFilterParams);
             TurSNSiteFacetFieldEnum currentFacetType = isFacetTypeDefault(facetType)
-                    ? getFacetTypeForCustomFacet(context, mapping.turSNSiteCustomFacet())
+                    ? getFacetType(context, customFacetDefinition.getFacetType())
                     : facetType;
-            addEnabledFacetItem(mapping.customFacetName(), currentFacetType,
-                    getFacetItemTypeForCustomFacet(context, mapping.turSNSiteCustomFacet()),
+            addEnabledFacetItem(customFacetDefinition.getName(), currentFacetType,
+                    getFacetItemType(context, customFacetDefinition.getFacetItemType()),
                     facetMapForFilterQuery,
                     setRangeFilterQuery(mapping.turSNSiteFieldExt().getName(),
                             mapping.turSNSiteFieldExt().getType(),
@@ -515,62 +519,39 @@ public class TurSolrQueryBuilder {
     }
 
     private static TurSNSiteFacetFieldEnum getFacetItemType(TurSNFacetTypeContext context) {
-        return Optional.ofNullable(context.getTurSNSiteFacetFieldExtDto()).map(field -> {
-            TurSNSiteFacetFieldEnum facetItemType = field.getFacetItemType();
-            TurSNFilterQueryOperator itemOperator = context.getTurSNFilterParams().getItemOperator();
-            if (operatorIsNotEmpty(itemOperator)) {
-                return getFaceTypeFromOperator(itemOperator);
-            }
-            if (context.isSpecificField() && facetItemType != null
-                    && !isFacetTypeDefault(facetItemType)) {
-                return facetItemType;
-            } else {
-                return getFacetItemTypeFromSite(context.getTurSNSite());
-            }
-        }).orElseGet(() -> getFacetItemTypeFromSite(context.getTurSNSite()));
+        TurSNSiteFacetFieldEnum facetItemType = Optional.ofNullable(context.getTurSNSiteFacetFieldExtDto())
+                .map(TurSNSiteFieldExtDto::getFacetItemType)
+                .orElse(TurSNSiteFacetFieldEnum.DEFAULT);
+        return getFacetItemType(context, facetItemType);
     }
 
-    private static TurSNSiteFacetFieldEnum getFacetType(TurSNFacetTypeContext context) {
-        return Optional.ofNullable(context.getTurSNSiteFacetFieldExtDto()).map(field -> {
-            TurSNSiteFacetFieldEnum facetType = field.getFacetType();
-            TurSNFilterQueryOperator operator = context.getTurSNFilterParams().getOperator();
-            if (operatorIsNotEmpty(operator)) {
-                return getFaceTypeFromOperator(operator);
-            }
-            if (context.isSpecificField() && facetType != null && !isFacetTypeDefault(facetType)) {
-                return facetType;
-            } else {
-                return getFacetTypeFromSite(context.getTurSNSite());
-            }
-        }).orElseGet(() -> getFacetTypeFromSite(context.getTurSNSite()));
-    }
-
-    private static TurSNSiteFacetFieldEnum getFacetItemTypeForCustomFacet(
-            TurSNFacetTypeContext context, TurSNSiteCustomFacet customFacet) {
+    private static TurSNSiteFacetFieldEnum getFacetItemType(TurSNFacetTypeContext context,
+            TurSNSiteFacetFieldEnum facetItemType) {
         TurSNFilterQueryOperator itemOperator = context.getTurSNFilterParams().getItemOperator();
         if (operatorIsNotEmpty(itemOperator)) {
             return getFaceTypeFromOperator(itemOperator);
         }
-        TurSNSiteFacetFieldEnum customFacetItemType = Optional.ofNullable(customFacet)
-                .map(TurSNSiteCustomFacet::getFacetItemType)
-                .orElse(TurSNSiteFacetFieldEnum.DEFAULT);
-        if (!isFacetTypeDefault(customFacetItemType)) {
-            return customFacetItemType;
+        if (context.isSpecificField() && !isFacetTypeDefault(facetItemType)) {
+            return facetItemType;
         }
         return getFacetItemTypeFromSite(context.getTurSNSite());
     }
 
-    private static TurSNSiteFacetFieldEnum getFacetTypeForCustomFacet(
-            TurSNFacetTypeContext context, TurSNSiteCustomFacet customFacet) {
+    private static TurSNSiteFacetFieldEnum getFacetType(TurSNFacetTypeContext context) {
+        TurSNSiteFacetFieldEnum facetType = Optional.ofNullable(context.getTurSNSiteFacetFieldExtDto())
+                .map(TurSNSiteFieldExtDto::getFacetType)
+                .orElse(TurSNSiteFacetFieldEnum.DEFAULT);
+        return getFacetType(context, facetType);
+    }
+
+    private static TurSNSiteFacetFieldEnum getFacetType(TurSNFacetTypeContext context,
+            TurSNSiteFacetFieldEnum facetType) {
         TurSNFilterQueryOperator operator = context.getTurSNFilterParams().getOperator();
         if (operatorIsNotEmpty(operator)) {
             return getFaceTypeFromOperator(operator);
         }
-        TurSNSiteFacetFieldEnum customFacetType = Optional.ofNullable(customFacet)
-                .map(TurSNSiteCustomFacet::getFacetType)
-                .orElse(TurSNSiteFacetFieldEnum.DEFAULT);
-        if (!isFacetTypeDefault(customFacetType)) {
-            return customFacetType;
+        if (context.isSpecificField() && !isFacetTypeDefault(facetType)) {
+            return facetType;
         }
         return getFacetTypeFromSite(context.getTurSNSite());
     }
@@ -782,12 +763,11 @@ public class TurSolrQueryBuilder {
     private void addCustomFacetQuery(TurSNFacetTypeContext context, SolrQuery query,
             TurSNSiteFieldExt turSNSiteFieldExt) {
         turSNSiteFieldExt.getCustomFacets().stream()
+                .map(customFacet -> new TurSNCustomFacetDefinition(turSNSiteFieldExt, customFacet,
+                        null))
                 .filter(customFacet -> StringUtils.hasText(customFacet.getName()))
                 .forEach(customFacet -> {
-                    TurSNSiteFieldExtDto customFacetFieldExtDto = new TurSNSiteFieldExtDto(turSNSiteFieldExt);
-                    customFacetFieldExtDto.setName(customFacet.getName());
-                    customFacetFieldExtDto.setFacetType(customFacet.getFacetType());
-                    customFacetFieldExtDto.setFacetItemType(customFacet.getFacetItemType());
+                    TurSNSiteFieldExtDto customFacetFieldExtDto = customFacet.toFacetFieldExtDto();
                     TurSNFacetTypeContext customFacetContext = new TurSNFacetTypeContext(
                             customFacetFieldExtDto, context.getTurSNSite(),
                             context.getTurSNFilterParams());
@@ -797,15 +777,15 @@ public class TurSolrQueryBuilder {
                     customFacet.getItems().stream()
                             .filter(item -> StringUtils.hasText(item.getLabel()))
                             .forEach(item -> query.addFacetQuery(getCustomFacetLocalParams(
-                                    customFacet, item.getLabel(), excludeFacetValues)
+                                    customFacet.getName(), item.getLabel(), excludeFacetValues)
                                     + setRangeFilterQuery(turSNSiteFieldExt.getName(),
                                             turSNSiteFieldExt.getType(), item)));
                 });
     }
 
-    private static String getCustomFacetLocalParams(TurSNSiteCustomFacet customFacet,
+    private static String getCustomFacetLocalParams(String customFacetName,
             String itemLabel, boolean excludeFacetValues) {
-        String key = String.format("%s%s%s", customFacet.getName(),
+        String key = String.format("%s%s%s", customFacetName,
                 CUSTOM_FACET_QUERY_SEPARATOR, itemLabel);
         if (excludeFacetValues) {
             return String.format("{!key='%s' ex=_all_}", escapeLocalParamValue(key));

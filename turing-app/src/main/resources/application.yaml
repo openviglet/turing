@@ -9,7 +9,7 @@ spring:
     active: production
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2
       settings:
         web-allow-others: true

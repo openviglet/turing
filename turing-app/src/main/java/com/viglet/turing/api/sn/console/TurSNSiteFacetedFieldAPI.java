@@ -37,11 +37,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.viglet.turing.api.sn.bean.TurSNSiteFacetOrderingDto;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.TurSNFieldProcess;
+import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -70,15 +72,15 @@ public class TurSNSiteFacetedFieldAPI {
 
         @Operation(summary = "Semantic Navigation Site Faceted Field List")
         @GetMapping
-        public List<TurSNSiteFieldExt> turSNSiteFacetdFieldExtList(@PathVariable String snSiteId) {
+        public List<TurSNSiteFacetOrderingDto> turSNSiteFacetdFieldExtList(@PathVariable String snSiteId) {
                 return getAllFacetEntries(snSiteId);
         }
 
         @Operation(summary = "Update a Semantic Navigation Site Faceted Field Ordering")
         @PutMapping("/ordering")
         @CacheEvict(value = { "findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition" }, allEntries = true)
-        public List<TurSNSiteFieldExt> turSNSiteFieldUpdate(@PathVariable String snSiteId,
-                        @RequestBody List<TurSNSiteFieldExt> turSNSiteFieldExtensions) {
+        public List<TurSNSiteFacetOrderingDto> turSNSiteFieldUpdate(@PathVariable String snSiteId,
+                        @RequestBody List<TurSNSiteFacetOrderingDto> turSNSiteFacetOrderings) {
                 return turSNSiteRepository.findById(snSiteId)
                                 .map(turSNSite -> {
                                         List<TurSNSiteFieldExt> enabledFields = turSNSiteFieldExtRepository
@@ -100,7 +102,7 @@ public class TurSNSiteFacetedFieldAPI {
                                                         }));
 
                                         Set<TurSNSiteFieldExt> fieldsToSave = new HashSet<>();
-                                        turSNSiteFieldExtensions.stream()
+                                        turSNSiteFacetOrderings.stream()
                                                         .filter(fieldsFromRequest -> fieldsFromRequest
                                                                         .getFacetPosition() != null
                                                                         && fieldsFromRequest
@@ -138,8 +140,23 @@ public class TurSNSiteFacetedFieldAPI {
                                 .orElseGet(Collections::emptyList);
         }
 
-        private List<TurSNSiteFieldExt> getAllFacetEntries(String snSiteId) {
-                return turSNFieldProcess.getTurSNSiteFieldOrdering(snSiteId)
+        private List<TurSNSiteFacetOrderingDto> getAllFacetEntries(String snSiteId) {
+                return turSNFieldProcess.getTurSNSiteFacetOrdering(snSiteId)
+                                .map(facetDefinitions -> facetDefinitions.stream()
+                                                .map(this::toFacetOrderingDto)
+                                                .toList())
                                 .orElseGet(Collections::emptyList);
+        }
+
+        private TurSNSiteFacetOrderingDto toFacetOrderingDto(TurSNFacetDefinition facetDefinition) {
+                TurSNSiteFieldExt fieldExt = facetDefinition.getFieldExt();
+                return new TurSNSiteFacetOrderingDto()
+                                .setId(facetDefinition.getId())
+                                .setName(facetDefinition.getName())
+                                .setFacetName(facetDefinition.getLabel())
+                                .setFacetPosition(facetDefinition.getPosition())
+                                .setFieldExtId(fieldExt != null ? fieldExt.getId() : null)
+                                .setFieldExtName(fieldExt != null ? fieldExt.getName() : null)
+                                .setCustomFacet(facetDefinition.isCustomFacet());
         }
 }

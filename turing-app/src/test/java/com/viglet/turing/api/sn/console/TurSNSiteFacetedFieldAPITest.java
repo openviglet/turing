@@ -28,15 +28,19 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import com.viglet.turing.api.sn.bean.TurSNSiteFacetOrderingDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.TurSNFieldProcess;
+import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
+import com.viglet.turing.sn.facet.TurSNFieldFacetDefinition;
 
 /**
  * Unit tests for TurSNSiteFacetedFieldAPI.
@@ -46,100 +50,100 @@ import com.viglet.turing.sn.TurSNFieldProcess;
  */
 class TurSNSiteFacetedFieldAPITest {
 
-    @Test
-    void testFacetFieldListReturnsEmptyWhenMissing() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNFieldProcess fieldProcess = mock(TurSNFieldProcess.class);
-        TurSNSiteFacetedFieldAPI api = new TurSNSiteFacetedFieldAPI(fieldExtRepository, siteRepository,
-                fieldProcess);
+        @Test
+        void testFacetFieldListReturnsEmptyWhenMissing() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNFieldProcess fieldProcess = mock(TurSNFieldProcess.class);
+                TurSNSiteFacetedFieldAPI api = new TurSNSiteFacetedFieldAPI(fieldExtRepository, siteRepository,
+                                fieldProcess);
 
-        when(fieldProcess.getTurSNSiteFieldOrdering("site")).thenReturn(Optional.empty());
+                when(fieldProcess.getTurSNSiteFacetOrdering("site")).thenReturn(Optional.empty());
 
-        List<TurSNSiteFieldExt> result = api.turSNSiteFacetdFieldExtList("site");
+                List<TurSNSiteFacetOrderingDto> result = api.turSNSiteFacetdFieldExtList("site");
 
-        assertThat(result).isEmpty();
-    }
+                assertThat(result).isEmpty();
+        }
 
-    @Test
-    void testFacetFieldUpdateReordersPositions() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNFieldProcess fieldProcess = mock(TurSNFieldProcess.class);
-        TurSNSiteFacetedFieldAPI api = new TurSNSiteFacetedFieldAPI(fieldExtRepository, siteRepository,
-                fieldProcess);
+        @Test
+        void testFacetFieldUpdateReordersPositions() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNFieldProcess fieldProcess = mock(TurSNFieldProcess.class);
+                TurSNSiteFacetedFieldAPI api = new TurSNSiteFacetedFieldAPI(fieldExtRepository, siteRepository,
+                                fieldProcess);
 
-        TurSNSite site = new TurSNSite();
+                TurSNSite site = new TurSNSite();
 
-        TurSNSiteFieldExt field1 = new TurSNSiteFieldExt();
-        field1.setId("1");
-        field1.setFacet(1);
-        field1.setFacetPosition(1);
-        TurSNSiteFieldExt field2 = new TurSNSiteFieldExt();
-        field2.setId("2");
-        field2.setFacet(1);
-        field2.setFacetPosition(2);
+                TurSNSiteFieldExt field1 = new TurSNSiteFieldExt();
+                field1.setId("1");
+                field1.setName("field_1");
+                field1.setFacet(1);
+                field1.setFacetPosition(1);
+                TurSNSiteFieldExt field2 = new TurSNSiteFieldExt();
+                field2.setId("2");
+                field2.setName("field_2");
+                field2.setFacet(1);
+                field2.setFacetPosition(2);
 
-        TurSNSiteFieldExt update1 = new TurSNSiteFieldExt();
-        update1.setId("1");
-        update1.setFacetPosition(2);
-        TurSNSiteFieldExt update2 = new TurSNSiteFieldExt();
-        update2.setId("2");
-        update2.setFacetPosition(1);
+                TurSNSiteFacetOrderingDto update1 = new TurSNSiteFacetOrderingDto();
+                update1.setId("1");
+                update1.setFacetPosition(2);
+                TurSNSiteFacetOrderingDto update2 = new TurSNSiteFacetOrderingDto();
+                update2.setId("2");
+                update2.setFacetPosition(1);
 
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(field1, field2));
-        lenient().when(fieldProcess.getTurSNSiteFieldOrdering("site")).thenAnswer(invocation -> Optional
-                .of(List.of(field1, field2).stream()
-                        .sorted(java.util.Comparator.comparing(TurSNSiteFieldExt::getFacetPosition))
-                        .toList()));
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(field1, field2));
+                lenient().when(fieldProcess.getTurSNSiteFacetOrdering("site")).thenAnswer(invocation -> Optional
+                                .of(List.of(field1, field2).stream()
+                                                .sorted(java.util.Comparator
+                                                                .comparing(TurSNSiteFieldExt::getFacetPosition))
+                                                .map(field -> new TurSNFieldFacetDefinition(field, Set.of()))
+                                                .toList()));
 
-        List<TurSNSiteFieldExt> result = api.turSNSiteFieldUpdate("site", List.of(update1, update2));
+                List<TurSNSiteFacetOrderingDto> result = api.turSNSiteFieldUpdate("site", List.of(update1, update2));
 
-        assertThat(result).extracting(TurSNSiteFieldExt::getId).containsExactly("2", "1");
-    }
+                assertThat(result).extracting(TurSNSiteFacetOrderingDto::getId).containsExactly("2", "1");
+        }
 
-    @Test
-    void testFacetFieldUpdateCustomFacetPositionIsIndependent() {
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNFieldProcess fieldProcess = mock(TurSNFieldProcess.class);
-        TurSNSiteFacetedFieldAPI api = new TurSNSiteFacetedFieldAPI(fieldExtRepository, siteRepository,
-                fieldProcess);
+        @Test
+        void testFacetFieldUpdateCustomFacetPositionIsIndependent() {
+                TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNFieldProcess fieldProcess = mock(TurSNFieldProcess.class);
+                TurSNSiteFacetedFieldAPI api = new TurSNSiteFacetedFieldAPI(fieldExtRepository, siteRepository,
+                                fieldProcess);
 
-        TurSNSite site = new TurSNSite();
-        TurSNSiteFieldExt idField = new TurSNSiteFieldExt();
-        idField.setId("field-id");
-        idField.setFacet(1);
-        idField.setFacetPosition(3);
+                TurSNSite site = new TurSNSite();
+                TurSNSiteFieldExt idField = new TurSNSiteFieldExt();
+                idField.setId("field-id");
+                idField.setName("id");
+                idField.setFacet(1);
+                idField.setFacetPosition(3);
 
-        TurSNSiteCustomFacet customFacet = new TurSNSiteCustomFacet();
-        customFacet.setId("custom-price-range");
-        customFacet.setName("price_range");
-        customFacet.setFacetPosition(2);
-        idField.setCustomFacets(new java.util.HashSet<>(java.util.List.of(customFacet)));
+                TurSNSiteCustomFacet customFacet = new TurSNSiteCustomFacet();
+                customFacet.setId("custom-price-range");
+                customFacet.setName("price_range");
+                customFacet.setFacetPosition(2);
+                idField.setCustomFacets(new java.util.HashSet<>(java.util.List.of(customFacet)));
 
-        TurSNSiteFieldExt update = new TurSNSiteFieldExt();
-        update.setId("custom-price-range");
-        update.setFacetPosition(1);
+                TurSNSiteFacetOrderingDto update = new TurSNSiteFacetOrderingDto();
+                update.setId("custom-price-range");
+                update.setFacetPosition(1);
 
-        TurSNSiteFieldExt orderedCustom = new TurSNSiteFieldExt();
-        orderedCustom.setId("custom-price-range");
-        orderedCustom.setFacetPosition(1);
-        TurSNSiteFieldExt orderedField = new TurSNSiteFieldExt();
-        orderedField.setId("field-id");
-        orderedField.setFacetPosition(3);
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(idField));
+                when(fieldProcess.getTurSNSiteFacetOrdering("site"))
+                                .thenReturn(Optional.of(List.of(
+                                                new TurSNCustomFacetDefinition(idField, customFacet, null),
+                                                new TurSNFieldFacetDefinition(idField, Set.of()))));
 
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(idField));
-        when(fieldProcess.getTurSNSiteFieldOrdering("site"))
-                .thenReturn(Optional.of(List.of(orderedCustom, orderedField)));
+                List<TurSNSiteFacetOrderingDto> result = api.turSNSiteFieldUpdate("site", List.of(update));
 
-        List<TurSNSiteFieldExt> result = api.turSNSiteFieldUpdate("site", List.of(update));
-
-        assertThat(customFacet.getFacetPosition()).isEqualTo(1);
-        assertThat(idField.getFacetPosition()).isEqualTo(3);
-        assertThat(result).extracting(TurSNSiteFieldExt::getId)
-                .containsExactly("custom-price-range", "field-id");
-    }
+                assertThat(customFacet.getFacetPosition()).isEqualTo(1);
+                assertThat(idField.getFacetPosition()).isEqualTo(3);
+                assertThat(result).extracting(TurSNSiteFacetOrderingDto::getId)
+                                .containsExactly("custom-price-range", "field-id");
+        }
 }

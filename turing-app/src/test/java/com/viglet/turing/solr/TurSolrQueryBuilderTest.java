@@ -163,9 +163,11 @@ class TurSolrQueryBuilderTest {
                 TurSNFilterParams params = TurSNFilterParams.builder()
                                 .defaultValues(List.of("category:books", "other:1"))
                                 .build();
-                TurSNSiteFieldExt categoryFacet = TurSNSiteFieldExt.builder().name("category").build();
-                TurSNSiteFieldExt typeFacet = TurSNSiteFieldExt.builder().name("type").build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
+                TurSNSiteFieldExt categoryFacet = TurSNSiteFieldExt.builder().name("category").facet(1).enabled(1)
+                                .build();
+                TurSNSiteFieldExt typeFacet = TurSNSiteFieldExt.builder().name("type").facet(1).enabled(1)
+                                .build();
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
                                 .thenReturn(List.of(categoryFacet, typeFacet));
 
                 TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
@@ -295,11 +297,13 @@ class TurSolrQueryBuilderTest {
 
                 TurSNSiteFieldExt facet = TurSNSiteFieldExt.builder()
                                 .name("category")
+                                .facet(1)
+                                .enabled(1)
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
                                 .facetSort(com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldSortEnum.DEFAULT)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
                                 .thenReturn(List.of(facet));
 
                 SolrQuery query = new SolrQuery();
@@ -716,6 +720,8 @@ class TurSolrQueryBuilderTest {
                 TurSNSiteFieldExt dateFacet = TurSNSiteFieldExt.builder()
                                 .name("publishDate")
                                 .snType(TurSNFieldType.SE)
+                                .facet(1)
+                                .enabled(1)
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE)
                                 .facetRange(TurSNSiteFacetRangeEnum.YEAR)
                                 .facetSort(TurSNSiteFacetFieldSortEnum.COUNT)
@@ -724,14 +730,14 @@ class TurSolrQueryBuilderTest {
                 TurSNSiteFieldExt entityFacet = TurSNSiteFieldExt.builder()
                                 .name("person")
                                 .snType(TurSNFieldType.NER)
+                                .facet(1)
+                                .enabled(1)
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
                                 .facetSort(TurSNSiteFacetFieldSortEnum.ALPHABETICAL)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndNameAndFacetAndEnabled(site, "publishDate", 1,
-                                1)).thenReturn(List.of(dateFacet));
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndNameAndFacetAndEnabled(site, "person", 1, 1))
-                                .thenReturn(List.of(entityFacet));
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                                .thenReturn(List.of(dateFacet, entityFacet));
 
                 SolrQuery dateQuery = new SolrQuery();
                 builder().prepareQueryFacetWithOneFacet(site, dateQuery, TurSNFilterParams.builder().build(),
