@@ -27,7 +27,7 @@ class GraphQLSchemaContractTest {
 
         ExecutionResult result = graphQL.execute("""
                 query {
-                  siteSearch(siteName: UNKNOWN, searchParams: {}) {
+                  siteSearch(siteName: UNKNOWN, searchParams: {}, locale: "en") {
                     results {
                       document {
                         fields {
@@ -49,7 +49,7 @@ class GraphQLSchemaContractTest {
 
         ExecutionResult result = graphQL.execute("""
                 query {
-                  siteSearch(siteName: UNKNOWN, searchParams: { fl: [\"title\", \"url\"] }) {
+                  siteSearch(siteName: UNKNOWN, searchParams: { fl: [\"title\", \"url\"] }, locale: "en") {
                     results {
                       document {
                         fields {
