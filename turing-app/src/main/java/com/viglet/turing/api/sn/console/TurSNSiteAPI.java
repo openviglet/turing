@@ -41,6 +41,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import com.viglet.turing.api.sn.bean.TurSNSiteMonitoringStatusBean;
 import com.viglet.turing.exchange.sn.TurSNSiteExport;
+import com.viglet.turing.persistence.dto.sn.TurSNSiteDto;
+import com.viglet.turing.persistence.mapper.sn.TurSNSiteMapper;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
@@ -81,38 +83,42 @@ public class TurSNSiteAPI {
     private final TurSolrInstanceProcess turSolrInstanceProcess;
     private final TurSolr turSolr;
     private final TurConfigProperties turConfigProperties;
+    private final TurSNSiteMapper turSNSiteMapper;
 
     @Operation(summary = "Semantic Navigation Site List")
     @GetMapping
-    public List<TurSNSite> turSNSiteList(Principal principal) {
+    public List<TurSNSiteDto> turSNSiteList(Principal principal) {
         if (turConfigProperties.isMultiTenant()) {
-            return this.turSNSiteRepository.findByCreatedBy(TurPersistenceUtils.orderByNameIgnoreCase(),
-                    principal.getName().toLowerCase());
+            return turSNSiteMapper.toDtoList(this.turSNSiteRepository
+                    .findByCreatedBy(TurPersistenceUtils.orderByNameIgnoreCase(),
+                            principal.getName().toLowerCase()));
         } else {
-            return this.turSNSiteRepository.findAll(TurPersistenceUtils.orderByNameIgnoreCase());
+            return turSNSiteMapper
+                    .toDtoList(this.turSNSiteRepository.findAll(TurPersistenceUtils.orderByNameIgnoreCase()));
         }
     }
 
     @Operation(summary = "Semantic Navigation Site structure")
     @GetMapping("/structure")
-    public TurSNSite turSNSiteStructure() {
+    public TurSNSiteDto turSNSiteStructure() {
         TurSNSite turSNSite = new TurSNSite();
         turSNSite.setFacetSort(TurSNSiteFacetSortEnum.COUNT);
         turSNSite.setFacetType(TurSNSiteFacetFieldEnum.AND);
         turSNSite.setTurSEInstance(new TurSEInstance());
         turSNSite.setTurSNSiteGenAi(new TurSNSiteGenAi());
-        return turSNSite;
+        return turSNSiteMapper.toDto(turSNSite);
     }
 
     @Operation(summary = "Show a Semantic Navigation Site")
     @GetMapping("/{id}")
-    public TurSNSite turSNSiteGet(@PathVariable String id) {
-        return this.turSNSiteRepository.findById(id).orElse(new TurSNSite());
+    public TurSNSiteDto turSNSiteGet(@PathVariable String id) {
+        return turSNSiteMapper.toDto(this.turSNSiteRepository.findById(id).orElse(new TurSNSite()));
     }
 
     @Operation(summary = "Update a Semantic Navigation Site")
     @PutMapping("/{id}")
-    public TurSNSite turSNSiteUpdate(@PathVariable String id, @RequestBody TurSNSite turSNSite) {
+    public TurSNSiteDto turSNSiteUpdate(@PathVariable String id, @RequestBody TurSNSiteDto turSNSiteDto) {
+        TurSNSite turSNSite = turSNSiteMapper.toEntity(turSNSiteDto);
         return this.turSNSiteRepository.findById(id).map(turSNSiteEdit -> {
             turSNSiteEdit.setName(turSNSite.getName());
             turSNSiteEdit.setDescription(turSNSite.getDescription());
@@ -153,8 +159,8 @@ public class TurSNSiteAPI {
                 turSNSiteEdit.setTurSNSiteGenAi(turSNSiteGenAi);
             });
             turSNSiteRepository.save(turSNSiteEdit);
-            return turSNSiteEdit;
-        }).orElse(new TurSNSite());
+            return turSNSiteMapper.toDto(turSNSiteEdit);
+        }).orElse(new TurSNSiteDto());
 
     }
 
@@ -183,13 +189,14 @@ public class TurSNSiteAPI {
 
     @Operation(summary = "Create a Semantic Navigation Site")
     @PostMapping
-    public TurSNSite turSNSiteAdd(@RequestBody TurSNSite turSNSite, Principal principal) {
+    public TurSNSiteDto turSNSiteAdd(@RequestBody TurSNSiteDto turSNSiteDto, Principal principal) {
+        TurSNSite turSNSite = turSNSiteMapper.toEntity(turSNSiteDto);
         if (turSNSite.getTurSNSiteGenAi() != null) {
             turSNSiteGenAiRepository.save(turSNSite.getTurSNSiteGenAi());
         }
         turSNSiteRepository.save(turSNSite);
         turSNTemplate.createSNSite(turSNSite, principal.getName(), Locale.US);
-        return turSNSite;
+        return turSNSiteMapper.toDto(turSNSite);
 
     }
 

@@ -22,6 +22,7 @@
 package com.viglet.turing.api.sn.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,7 +34,10 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
+import com.viglet.turing.persistence.dto.sn.locale.TurSNSiteLocaleDto;
+import com.viglet.turing.persistence.mapper.sn.locale.TurSNSiteLocaleMapper;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -53,11 +57,12 @@ class TurSNSiteLocaleAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
         TurSNTemplate template = mock(TurSNTemplate.class);
-        TurSNSiteLocaleAPI api = new TurSNSiteLocaleAPI(siteRepository, localeRepository, template);
+        TurSNSiteLocaleMapper localeMapper = Mappers.getMapper(TurSNSiteLocaleMapper.class);
+        TurSNSiteLocaleAPI api = new TurSNSiteLocaleAPI(siteRepository, localeRepository, template, localeMapper);
 
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
-        List<TurSNSiteLocale> result = api.turSNSiteLocaleList("site");
+        List<TurSNSiteLocaleDto> result = api.turSNSiteLocaleList("site");
 
         assertThat(result).isEqualTo(Collections.emptyList());
     }
@@ -67,17 +72,19 @@ class TurSNSiteLocaleAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
         TurSNTemplate template = mock(TurSNTemplate.class);
-        TurSNSiteLocaleAPI api = new TurSNSiteLocaleAPI(siteRepository, localeRepository, template);
+        TurSNSiteLocaleMapper localeMapper = Mappers.getMapper(TurSNSiteLocaleMapper.class);
+        TurSNSiteLocaleAPI api = new TurSNSiteLocaleAPI(siteRepository, localeRepository, template, localeMapper);
         TurSNSite site = new TurSNSite();
-        TurSNSiteLocale locale = new TurSNSiteLocale();
+        TurSNSiteLocaleDto locale = new TurSNSiteLocaleDto();
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(template.createSolrCore(locale, "admin")).thenReturn("core");
+        when(template.createSolrCore(any(TurSNSiteLocale.class), org.mockito.ArgumentMatchers.eq("admin")))
+                .thenReturn("core");
 
-        TurSNSiteLocale result = api.turSNSiteLocaleAdd(locale, (Principal) () -> "admin", "site");
+        TurSNSiteLocaleDto result = api.turSNSiteLocaleAdd(locale, (Principal) () -> "admin", "site");
 
         assertThat(result.getCore()).isEqualTo("core");
-        verify(localeRepository).save(locale);
+        verify(localeRepository).save(any(TurSNSiteLocale.class));
     }
 
     @Test
@@ -85,7 +92,8 @@ class TurSNSiteLocaleAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
         TurSNTemplate template = mock(TurSNTemplate.class);
-        TurSNSiteLocaleAPI api = new TurSNSiteLocaleAPI(siteRepository, localeRepository, template);
+        TurSNSiteLocaleMapper localeMapper = Mappers.getMapper(TurSNSiteLocaleMapper.class);
+        TurSNSiteLocaleAPI api = new TurSNSiteLocaleAPI(siteRepository, localeRepository, template, localeMapper);
 
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
@@ -99,12 +107,13 @@ class TurSNSiteLocaleAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
         TurSNTemplate template = mock(TurSNTemplate.class);
-        TurSNSiteLocaleAPI api = new TurSNSiteLocaleAPI(siteRepository, localeRepository, template);
+        TurSNSiteLocaleMapper localeMapper = Mappers.getMapper(TurSNSiteLocaleMapper.class);
+        TurSNSiteLocaleAPI api = new TurSNSiteLocaleAPI(siteRepository, localeRepository, template, localeMapper);
         TurSNSite site = new TurSNSite();
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
 
-        TurSNSiteLocale result = api.turSNSiteLocaleStructure("site");
+        TurSNSiteLocaleDto result = api.turSNSiteLocaleStructure("site");
 
         assertThat(result.getLanguage()).isEqualTo(Locale.US);
         assertThat(result.getTurSNSite()).isSameAs(site);

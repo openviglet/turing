@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
+import com.viglet.turing.persistence.mapper.sn.field.TurSNSiteFieldExtMapper;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
@@ -89,68 +91,73 @@ public class TurSNSiteFieldExtAPI {
     private final TurSNSiteFieldRepository turSNSiteFieldRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
     private final TurSNTemplate turSNTemplate;
+    private final TurSNSiteFieldExtMapper turSNSiteFieldExtMapper;
 
     public TurSNSiteFieldExtAPI(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
             TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository,
             TurSNSiteFieldRepository turSNSiteFieldRepository,
             TurSEInstanceRepository turSEInstanceRepository,
-            TurSNTemplate turSNTemplate) {
+            TurSNTemplate turSNTemplate,
+            TurSNSiteFieldExtMapper turSNSiteFieldExtMapper) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteFieldExtFacetRepository = turSNSiteFieldExtFacetRepository;
         this.turSNSiteFieldRepository = turSNSiteFieldRepository;
         this.turSEInstanceRepository = turSEInstanceRepository;
         this.turSNTemplate = turSNTemplate;
+        this.turSNSiteFieldExtMapper = turSNSiteFieldExtMapper;
     }
 
     @Operation(summary = "Semantic Navigation Site Field Ext List")
     @Transactional
     @GetMapping
-    public List<TurSNSiteFieldExt> turSNSiteFieldExtList(@PathVariable String snSiteId) {
+    public List<TurSNSiteFieldExtDto> turSNSiteFieldExtList(@PathVariable String snSiteId) {
         return turSNSiteRepository.findById(snSiteId)
                 .map(turSNSite -> {
                     updateFieldExtFromSNSite(turSNSite);
-                    return turSNSiteFieldExtRepository
-                            .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
+                    return turSNSiteFieldExtMapper.toDtoList(turSNSiteFieldExtRepository
+                            .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite));
                 })
                 .orElse(Collections.emptyList());
     }
 
     @Operation(summary = "Show a Semantic Navigation Site Field Ext")
     @GetMapping("/{id}")
-    public TurSNSiteFieldExt turSNSiteFieldExtGet(@PathVariable String snSiteId, @PathVariable String id) {
+    public TurSNSiteFieldExtDto turSNSiteFieldExtGet(@PathVariable String snSiteId, @PathVariable String id) {
         TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtRepository.findById(id)
                 .orElse(TurSNSiteFieldExt.builder().build());
         turSNSiteFieldExt.setFacetLocales(
                 new HashSet<>(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(turSNSiteFieldExt)));
-        return turSNSiteFieldExt;
+        return turSNSiteFieldExtMapper.toDto(turSNSiteFieldExt);
     }
 
     @Operation(summary = "Semantic Navigation Site Field Ext structure")
     @GetMapping("structure")
-    public TurSNSiteFieldExt turSNSiteFieldExtStructure(@PathVariable String snSiteId) {
+    public TurSNSiteFieldExtDto turSNSiteFieldExtStructure(@PathVariable String snSiteId) {
         return turSNSiteRepository.findById(snSiteId)
                 .map(turSNSite -> {
                     TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
                     fieldExt.setTurSNSite(turSNSite);
-                    return fieldExt;
+                    return turSNSiteFieldExtMapper.toDto(fieldExt);
                 })
-                .orElseGet(TurSNSiteFieldExt::new);
+                .orElseGet(TurSNSiteFieldExtDto::new);
     }
 
     @Operation(summary = "Create a Semantic Navigation Site Field Ext")
     @PostMapping
-    public TurSNSiteFieldExt turSNSiteFieldExtAdd(@PathVariable String snSiteId,
-            @RequestBody TurSNSiteFieldExt turSNSiteFieldExt) {
-        return createSEField(snSiteId, turSNSiteFieldExt);
+    public TurSNSiteFieldExtDto turSNSiteFieldExtAdd(@PathVariable String snSiteId,
+            @RequestBody TurSNSiteFieldExtDto turSNSiteFieldExtDto) {
+        TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtMapper.toEntity(turSNSiteFieldExtDto);
+        return turSNSiteFieldExtMapper.toDto(createSEField(snSiteId, turSNSiteFieldExt));
     }
 
     @Operation(summary = "Update a Semantic Navigation Site Field Ext")
     @PutMapping("/{id}")
     @Transactional
-    public TurSNSiteFieldExt turSNSiteFieldExtUpdate(@PathVariable String snSiteId, @PathVariable String id,
-            @RequestBody TurSNSiteFieldExt payload) {
+    public TurSNSiteFieldExtDto turSNSiteFieldExtUpdate(@PathVariable String snSiteId, @PathVariable String id,
+            @RequestBody TurSNSiteFieldExtDto payloadDto) {
+        TurSNSiteFieldExt payload = turSNSiteFieldExtMapper.toEntity(payloadDto);
         return this.turSNSiteFieldExtRepository.findById(id).map(existing -> {
             updateFieldExtProperties(existing, payload);
 
@@ -159,8 +166,8 @@ public class TurSNSiteFieldExtAPI {
                 this.turSNSiteFieldExtRepository.save(existing);
                 this.updateExternalField(payload, turSNSite);
             });
-            return existing;
-        }).orElseGet(() -> TurSNSiteFieldExt.builder().build());
+            return turSNSiteFieldExtMapper.toDto(existing);
+        }).orElseGet(TurSNSiteFieldExtDto::new);
     }
 
     @Transactional
@@ -398,7 +405,7 @@ public class TurSNSiteFieldExtAPI {
                                 field.getMultiValued() == 1)));
     }
 
-    public void updateExternalField(TurSNSiteFieldExt fieldExt, TurSNSite turSNSite) {
+    private void updateExternalField(TurSNSiteFieldExt fieldExt, TurSNSite turSNSite) {
         if (TurSNFieldType.SE.equals(fieldExt.getSnType())) {
             turSNSiteFieldRepository.findById(fieldExt.getExternalId()).ifPresent(field -> {
                 field.setDescription(fieldExt.getDescription());

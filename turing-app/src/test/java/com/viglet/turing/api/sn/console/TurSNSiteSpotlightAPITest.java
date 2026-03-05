@@ -21,8 +21,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -30,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.persistence.mapper.sn.spotlight.TurSNSiteSpotlightMapper;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
@@ -42,175 +45,178 @@ import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightT
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteSpotlightAPITest {
 
-    private MockMvc mockMvc;
+        private MockMvc mockMvc;
 
-    @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+        @Mock
+        private TurSNSiteRepository turSNSiteRepository;
 
-    @Mock
-    private TurSNSiteSpotlightRepository turSNSiteSpotlightRepository;
+        @Mock
+        private TurSNSiteSpotlightRepository turSNSiteSpotlightRepository;
 
-    @Mock
-    private TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository;
+        @Mock
+        private TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository;
 
-    @Mock
-    private TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository;
+        @Mock
+        private TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository;
 
-    @InjectMocks
-    private TurSNSiteSpotlightAPI api;
+        @Spy
+        private TurSNSiteSpotlightMapper turSNSiteSpotlightMapper = Mappers.getMapper(TurSNSiteSpotlightMapper.class);
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+        @InjectMocks
+        private TurSNSiteSpotlightAPI api;
 
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(api).build();
-    }
+        private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Test
-    void testTurSNSiteSpotlightList() throws Exception {
-        TurSNSite site = new TurSNSite();
-        site.setId("site1");
+        @BeforeEach
+        void setUp() {
+                mockMvc = MockMvcBuilders.standaloneSetup(api).build();
+        }
 
-        TurSNSiteSpotlight spotlight = new TurSNSiteSpotlight();
-        spotlight.setId("spot1");
-        spotlight.setName("Spotlight 1");
+        @Test
+        void testTurSNSiteSpotlightList() throws Exception {
+                TurSNSite site = new TurSNSite();
+                site.setId("site1");
 
-        when(turSNSiteRepository.findById("site1")).thenReturn(Optional.of(site));
-        when(turSNSiteSpotlightRepository.findByTurSNSite(any(Sort.class), eq(site)))
-                .thenReturn(Collections.singletonList(spotlight));
+                TurSNSiteSpotlight spotlight = new TurSNSiteSpotlight();
+                spotlight.setId("spot1");
+                spotlight.setName("Spotlight 1");
 
-        mockMvc.perform(get("/api/sn/site1/spotlight"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value("spot1"))
-                .andExpect(jsonPath("$[0].name").value("Spotlight 1"));
-    }
+                when(turSNSiteRepository.findById("site1")).thenReturn(Optional.of(site));
+                when(turSNSiteSpotlightRepository.findByTurSNSite(any(Sort.class), eq(site)))
+                                .thenReturn(Collections.singletonList(spotlight));
 
-    @Test
-    void testTurSNSiteSpotlightList_SiteNotFound() throws Exception {
-        when(turSNSiteRepository.findById("site1")).thenReturn(Optional.empty());
+                mockMvc.perform(get("/api/sn/site1/spotlight"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].id").value("spot1"))
+                                .andExpect(jsonPath("$[0].name").value("Spotlight 1"));
+        }
 
-        mockMvc.perform(get("/api/sn/site1/spotlight"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
-    }
+        @Test
+        void testTurSNSiteSpotlightList_SiteNotFound() throws Exception {
+                when(turSNSiteRepository.findById("site1")).thenReturn(Optional.empty());
 
-    @Test
-    void testTurSNSiteSpotlightGet() throws Exception {
-        TurSNSiteSpotlight spotlight = new TurSNSiteSpotlight();
-        spotlight.setId("spot1");
+                mockMvc.perform(get("/api/sn/site1/spotlight"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$").isEmpty());
+        }
 
-        TurSNSiteSpotlightDocument doc = new TurSNSiteSpotlightDocument();
-        doc.setId("doc1");
+        @Test
+        void testTurSNSiteSpotlightGet() throws Exception {
+                TurSNSiteSpotlight spotlight = new TurSNSiteSpotlight();
+                spotlight.setId("spot1");
 
-        TurSNSiteSpotlightTerm term = new TurSNSiteSpotlightTerm();
-        term.setId("term1");
+                TurSNSiteSpotlightDocument doc = new TurSNSiteSpotlightDocument();
+                doc.setId("doc1");
 
-        when(turSNSiteSpotlightRepository.findById("spot1")).thenReturn(Optional.of(spotlight));
-        when(turSNSiteSpotlightDocumentRepository.findByTurSNSiteSpotlight(spotlight))
-                .thenReturn(Collections.singleton(doc));
-        when(turSNSiteSpotlightTermRepository.findByTurSNSiteSpotlight(spotlight))
-                .thenReturn(Collections.singleton(term));
+                TurSNSiteSpotlightTerm term = new TurSNSiteSpotlightTerm();
+                term.setId("term1");
 
-        mockMvc.perform(get("/api/sn/site1/spotlight/spot1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("spot1"))
-                .andExpect(jsonPath("$.turSNSiteSpotlightDocuments[0].id").value("doc1"))
-                .andExpect(jsonPath("$.turSNSiteSpotlightTerms[0].id").value("term1"));
-    }
+                when(turSNSiteSpotlightRepository.findById("spot1")).thenReturn(Optional.of(spotlight));
+                when(turSNSiteSpotlightDocumentRepository.findByTurSNSiteSpotlight(spotlight))
+                                .thenReturn(Collections.singleton(doc));
+                when(turSNSiteSpotlightTermRepository.findByTurSNSiteSpotlight(spotlight))
+                                .thenReturn(Collections.singleton(term));
 
-    @Test
-    void testTurSNSiteSpotlightGet_NotFound() throws Exception {
-        when(turSNSiteSpotlightRepository.findById("spot1")).thenReturn(Optional.empty());
+                mockMvc.perform(get("/api/sn/site1/spotlight/spot1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value("spot1"))
+                                .andExpect(jsonPath("$.turSNSiteSpotlightDocuments[0].id").value("doc1"))
+                                .andExpect(jsonPath("$.turSNSiteSpotlightTerms[0].id").value("term1"));
+        }
 
-        mockMvc.perform(get("/api/sn/site1/spotlight/spot1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").doesNotExist());
-    }
+        @Test
+        void testTurSNSiteSpotlightGet_NotFound() throws Exception {
+                when(turSNSiteSpotlightRepository.findById("spot1")).thenReturn(Optional.empty());
 
-    @Test
-    void testTurSNSiteSpotlightUpdate_Found() throws Exception {
-        TurSNSiteSpotlight existingSpot = new TurSNSiteSpotlight();
-        existingSpot.setId("spot1");
+                mockMvc.perform(get("/api/sn/site1/spotlight/spot1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").doesNotExist());
+        }
 
-        TurSNSiteSpotlight updatedSpot = new TurSNSiteSpotlight();
-        updatedSpot.setName("New Name");
+        @Test
+        void testTurSNSiteSpotlightUpdate_Found() throws Exception {
+                TurSNSiteSpotlight existingSpot = new TurSNSiteSpotlight();
+                existingSpot.setId("spot1");
 
-        TurSNSiteSpotlightDocument doc = new TurSNSiteSpotlightDocument();
-        updatedSpot.setTurSNSiteSpotlightDocuments(new HashSet<>(Collections.singletonList(doc)));
+                TurSNSiteSpotlight updatedSpot = new TurSNSiteSpotlight();
+                updatedSpot.setName("New Name");
 
-        TurSNSiteSpotlightTerm term = new TurSNSiteSpotlightTerm();
-        updatedSpot.setTurSNSiteSpotlightTerms(new HashSet<>(Collections.singletonList(term)));
+                TurSNSiteSpotlightDocument doc = new TurSNSiteSpotlightDocument();
+                updatedSpot.setTurSNSiteSpotlightDocuments(new HashSet<>(Collections.singletonList(doc)));
 
-        when(turSNSiteSpotlightRepository.findById("spot1")).thenReturn(Optional.of(existingSpot));
+                TurSNSiteSpotlightTerm term = new TurSNSiteSpotlightTerm();
+                updatedSpot.setTurSNSiteSpotlightTerms(new HashSet<>(Collections.singletonList(term)));
 
-        mockMvc.perform(put("/api/sn/site1/spotlight/spot1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedSpot)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("New Name"));
+                when(turSNSiteSpotlightRepository.findById("spot1")).thenReturn(Optional.of(existingSpot));
 
-        verify(turSNSiteSpotlightRepository, times(1)).save(existingSpot);
-    }
+                mockMvc.perform(put("/api/sn/site1/spotlight/spot1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updatedSpot)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.name").value("New Name"));
 
-    @Test
-    void testTurSNSiteSpotlightUpdate_NotFound() throws Exception {
-        TurSNSiteSpotlight updatedSpot = new TurSNSiteSpotlight();
-        updatedSpot.setName("New Name");
+                verify(turSNSiteSpotlightRepository, times(1)).save(existingSpot);
+        }
 
-        when(turSNSiteSpotlightRepository.findById("spot1")).thenReturn(Optional.empty());
+        @Test
+        void testTurSNSiteSpotlightUpdate_NotFound() throws Exception {
+                TurSNSiteSpotlight updatedSpot = new TurSNSiteSpotlight();
+                updatedSpot.setName("New Name");
 
-        mockMvc.perform(put("/api/sn/site1/spotlight/spot1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedSpot)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").doesNotExist());
+                when(turSNSiteSpotlightRepository.findById("spot1")).thenReturn(Optional.empty());
 
-        verify(turSNSiteSpotlightRepository, never()).save(any());
-    }
+                mockMvc.perform(put("/api/sn/site1/spotlight/spot1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updatedSpot)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").doesNotExist());
 
-    @Test
-    void testTurSNSiteSpotlightDelete() throws Exception {
-        mockMvc.perform(delete("/api/sn/site1/spotlight/spot1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                verify(turSNSiteSpotlightRepository, never()).save(any());
+        }
 
-        verify(turSNSiteSpotlightRepository, times(1)).deleteById("spot1");
-    }
+        @Test
+        void testTurSNSiteSpotlightDelete() throws Exception {
+                mockMvc.perform(delete("/api/sn/site1/spotlight/spot1"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("true"));
 
-    @Test
-    void testTurSNSiteSpotlightAdd() throws Exception {
-        TurSNSiteSpotlight newSpotlight = new TurSNSiteSpotlight();
-        newSpotlight.setName("New Spot");
-        newSpotlight.setTurSNSiteSpotlightDocuments(new HashSet<>());
-        newSpotlight.setTurSNSiteSpotlightTerms(new HashSet<>());
+                verify(turSNSiteSpotlightRepository, times(1)).deleteById("spot1");
+        }
 
-        mockMvc.perform(post("/api/sn/site1/spotlight")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newSpotlight)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("New Spot"));
+        @Test
+        void testTurSNSiteSpotlightAdd() throws Exception {
+                TurSNSiteSpotlight newSpotlight = new TurSNSiteSpotlight();
+                newSpotlight.setName("New Spot");
+                newSpotlight.setTurSNSiteSpotlightDocuments(new HashSet<>());
+                newSpotlight.setTurSNSiteSpotlightTerms(new HashSet<>());
 
-        verify(turSNSiteSpotlightRepository, times(1)).save(any(TurSNSiteSpotlight.class));
-    }
+                mockMvc.perform(post("/api/sn/site1/spotlight")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(newSpotlight)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.name").value("New Spot"));
 
-    @Test
-    void testTurSNSiteSpotlightStructure() throws Exception {
-        TurSNSite site = new TurSNSite();
-        site.setId("site1");
+                verify(turSNSiteSpotlightRepository, times(1)).save(any(TurSNSiteSpotlight.class));
+        }
 
-        when(turSNSiteRepository.findById("site1")).thenReturn(Optional.of(site));
+        @Test
+        void testTurSNSiteSpotlightStructure() throws Exception {
+                TurSNSite site = new TurSNSite();
+                site.setId("site1");
 
-        mockMvc.perform(get("/api/sn/site1/spotlight/structure"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.turSNSite.id").value("site1"));
-    }
+                when(turSNSiteRepository.findById("site1")).thenReturn(Optional.of(site));
 
-    @Test
-    void testTurSNSiteSpotlightStructure_SiteNotFound() throws Exception {
-        when(turSNSiteRepository.findById("site1")).thenReturn(Optional.empty());
+                mockMvc.perform(get("/api/sn/site1/spotlight/structure"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.turSNSite.id").value("site1"));
+        }
 
-        mockMvc.perform(get("/api/sn/site1/spotlight/structure"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").doesNotExist());
-    }
+        @Test
+        void testTurSNSiteSpotlightStructure_SiteNotFound() throws Exception {
+                when(turSNSiteRepository.findById("site1")).thenReturn(Optional.empty());
+
+                mockMvc.perform(get("/api/sn/site1/spotlight/structure"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").doesNotExist());
+        }
 }

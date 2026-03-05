@@ -20,8 +20,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -29,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.persistence.mapper.integration.TurIntegrationInstanceMapper;
 import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
 import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
 
@@ -39,6 +42,10 @@ class TurIntegrationInstanceAPITest {
 
     @Mock
     private TurIntegrationInstanceRepository turIntegrationInstanceRepository;
+
+    @Spy
+    private TurIntegrationInstanceMapper turIntegrationInstanceMapper = Mappers
+            .getMapper(TurIntegrationInstanceMapper.class);
 
     @InjectMocks
     private TurIntegrationInstanceAPI turIntegrationInstanceAPI;

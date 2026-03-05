@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -25,6 +26,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @ExtendWith(MockitoExtension.class)
 class TurIntegrationAPITest {
+
+    private static void invokeProxy(TurIntegrationAPI api, TurIntegrationInstance instance,
+            MockHttpServletRequest request,
+            MockHttpServletResponse response) throws Exception {
+        Method method = TurIntegrationAPI.class.getDeclaredMethod("proxy", TurIntegrationInstance.class,
+                jakarta.servlet.http.HttpServletRequest.class, jakarta.servlet.http.HttpServletResponse.class);
+        method.setAccessible(true);
+        method.invoke(api, instance, request, response);
+    }
 
     @Mock
     private TurIntegrationInstanceRepository turIntegrationInstanceRepository;
@@ -79,7 +89,7 @@ class TurIntegrationAPITest {
         request.setRequestURI("/api/v2/integration/1/../../secret");
         request.setMethod("GET");
 
-        turIntegrationAPI.proxy(instance, request, response);
+        invokeProxy(turIntegrationAPI, instance, request, response);
 
         assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
         assertEquals("{\"error\": \"Forbidden proxy path\"}", response.getContentAsString());
@@ -94,7 +104,7 @@ class TurIntegrationAPITest {
         request.setRequestURI("/api/v1/integration/1/something");
         request.setMethod("GET");
 
-        turIntegrationAPI.proxy(instance, request, response);
+        invokeProxy(turIntegrationAPI, instance, request, response);
 
         assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
         assertEquals("{\"error\": \"Forbidden proxy path\"}", response.getContentAsString());
@@ -115,7 +125,7 @@ class TurIntegrationAPITest {
         request.setRequestURI("http://malicious.com/api/v2/integration/1/something");
         request.setMethod("GET");
 
-        turIntegrationAPI.proxy(instance, request, response);
+        invokeProxy(turIntegrationAPI, instance, request, response);
 
         assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
         assertEquals("{\"error\": \"Forbidden proxy target\"}", response.getContentAsString());

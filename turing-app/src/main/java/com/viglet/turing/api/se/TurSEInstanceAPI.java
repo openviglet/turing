@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
+import com.viglet.turing.persistence.dto.se.TurSEInstanceDto;
+import com.viglet.turing.persistence.mapper.se.TurSEInstanceMapper;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
@@ -49,42 +51,48 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Search Engine", description = "Search Engine API")
 public class TurSEInstanceAPI {
         private final TurSEInstanceRepository turSEInstanceRepository;
+        private final TurSEInstanceMapper turSEInstanceMapper;
         private final TurSolrInstanceProcess turSolrInstanceProcess;
         private final TurSolr turSolr;
 
         public TurSEInstanceAPI(TurSEInstanceRepository turSEInstanceRepository,
+                        TurSEInstanceMapper turSEInstanceMapper,
                         TurSolrInstanceProcess turSolrInstanceProcess, TurSolr turSolr) {
                 this.turSEInstanceRepository = turSEInstanceRepository;
+                this.turSEInstanceMapper = turSEInstanceMapper;
                 this.turSolrInstanceProcess = turSolrInstanceProcess;
                 this.turSolr = turSolr;
         }
 
         @Operation(summary = "Search Engine List")
         @GetMapping
-        public List<TurSEInstance> turSEInstanceList() {
-                return this.turSEInstanceRepository
-                                .findAll(TurPersistenceUtils.orderByTitleIgnoreCase());
+        public List<TurSEInstanceDto> turSEInstanceList() {
+                return turSEInstanceMapper
+                                .toDtoList(this.turSEInstanceRepository
+                                                .findAll(TurPersistenceUtils.orderByTitleIgnoreCase()));
         }
 
         @Operation(summary = "Search Engine structure")
         @GetMapping("/structure")
-        public TurSEInstance turSearchEngineStructure() {
+        public TurSEInstanceDto turSearchEngineStructure() {
                 TurSEInstance turSEInstance = new TurSEInstance();
                 turSEInstance.setTurSEVendor(new TurSEVendor());
-                return turSEInstance;
+                return turSEInstanceMapper.toDto(turSEInstance);
 
         }
 
         @Operation(summary = "Show a Search Engine")
         @GetMapping("/{id}")
-        public TurSEInstance turSEInstanceGet(@PathVariable String id) {
-                return this.turSEInstanceRepository.findById(id).orElse(new TurSEInstance());
+        public TurSEInstanceDto turSEInstanceGet(@PathVariable String id) {
+                return turSEInstanceMapper
+                                .toDto(this.turSEInstanceRepository.findById(id).orElse(new TurSEInstance()));
         }
 
         @Operation(summary = "Update a Search Engine")
         @PutMapping("/{id}")
-        public TurSEInstance turSEInstanceUpdate(@PathVariable String id,
-                        @RequestBody TurSEInstance turSEInstance) {
+        public TurSEInstanceDto turSEInstanceUpdate(@PathVariable String id,
+                        @RequestBody TurSEInstanceDto turSEInstanceDto) {
+                TurSEInstance turSEInstance = turSEInstanceMapper.toEntity(turSEInstanceDto);
                 return turSEInstanceRepository.findById(id).map(turSEInstanceEdit -> {
                         turSEInstanceEdit.setTitle(turSEInstance.getTitle());
                         turSEInstanceEdit.setDescription(turSEInstance.getDescription());
@@ -93,8 +101,8 @@ public class TurSEInstanceAPI {
                         turSEInstanceEdit.setPort(turSEInstance.getPort());
                         turSEInstanceEdit.setEnabled(turSEInstance.getEnabled());
                         this.turSEInstanceRepository.save(turSEInstanceEdit);
-                        return turSEInstanceEdit;
-                }).orElse(new TurSEInstance());
+                        return turSEInstanceMapper.toDto(turSEInstanceEdit);
+                }).orElse(new TurSEInstanceDto());
 
         }
 
@@ -108,9 +116,10 @@ public class TurSEInstanceAPI {
 
         @Operation(summary = "Create a Search Engine")
         @PostMapping
-        public TurSEInstance turSEInstanceAdd(@RequestBody TurSEInstance turSEInstance) {
+        public TurSEInstanceDto turSEInstanceAdd(@RequestBody TurSEInstanceDto turSEInstanceDto) {
+                TurSEInstance turSEInstance = turSEInstanceMapper.toEntity(turSEInstanceDto);
                 this.turSEInstanceRepository.save(turSEInstance);
-                return turSEInstance;
+                return turSEInstanceMapper.toDto(turSEInstance);
 
         }
 

@@ -20,9 +20,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -30,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.persistence.mapper.store.TurStoreInstanceMapper;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -37,151 +40,155 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
 @ExtendWith(MockitoExtension.class)
 class TurStoreInstanceAPITest {
 
-    private MockMvc mockMvc;
+        private MockMvc mockMvc;
 
-    @Mock
-    private TurStoreInstanceRepository turStoreInstanceRepository;
+        @Mock
+        private TurStoreInstanceRepository turStoreInstanceRepository;
 
-    @Mock
-    private TurSecretCryptoService turSecretCryptoService;
+        @Mock
+        private TurSecretCryptoService turSecretCryptoService;
 
-    @InjectMocks
-    private TurStoreInstanceAPI api;
+        @Spy
+        private TurStoreInstanceMapper turStoreInstanceMapper = Mappers.getMapper(TurStoreInstanceMapper.class);
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+        @InjectMocks
+        private TurStoreInstanceAPI api;
 
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(api).build();
-    }
+        private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Test
-    void testTurStoreInstanceList() throws Exception {
-        TurStoreInstance instance = new TurStoreInstance();
-        instance.setId("store1");
-        instance.setTitle("Store 1");
+        @BeforeEach
+        void setUp() {
+                mockMvc = MockMvcBuilders.standaloneSetup(api).build();
+        }
 
-        when(turStoreInstanceRepository.findAll(any(Sort.class)))
-                .thenReturn(Collections.singletonList(instance));
+        @Test
+        void testTurStoreInstanceList() throws Exception {
+                TurStoreInstance instance = new TurStoreInstance();
+                instance.setId("store1");
+                instance.setTitle("Store 1");
 
-        mockMvc.perform(get("/api/store"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value("store1"))
-                .andExpect(jsonPath("$[0].title").value("Store 1"));
-    }
+                when(turStoreInstanceRepository.findAll(any(Sort.class)))
+                                .thenReturn(Collections.singletonList(instance));
 
-    @Test
-    void testTurStoreInstanceGet_Found() throws Exception {
-        TurStoreInstance instance = new TurStoreInstance();
-        instance.setId("store1");
-        instance.setCredentialEncrypted("encrypted-credential");
-        instance.setCredential("plain-credential");
+                mockMvc.perform(get("/api/store"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].id").value("store1"))
+                                .andExpect(jsonPath("$[0].title").value("Store 1"));
+        }
 
-        when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.of(instance));
+        @Test
+        void testTurStoreInstanceGet_Found() throws Exception {
+                TurStoreInstance instance = new TurStoreInstance();
+                instance.setId("store1");
+                instance.setCredentialEncrypted("encrypted-credential");
+                instance.setCredential("plain-credential");
 
-        mockMvc.perform(get("/api/store/store1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("store1"))
-                .andExpect(jsonPath("$.credential").doesNotExist())
-                .andExpect(jsonPath("$.credentialEncrypted").doesNotExist());
-    }
+                when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.of(instance));
 
-    @Test
-    void testTurStoreInstanceGet_NotFound() throws Exception {
-        when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.empty());
+                mockMvc.perform(get("/api/store/store1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value("store1"))
+                                .andExpect(jsonPath("$.credential").doesNotExist())
+                                .andExpect(jsonPath("$.credentialEncrypted").doesNotExist());
+        }
 
-        mockMvc.perform(get("/api/store/store1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").doesNotExist());
-    }
+        @Test
+        void testTurStoreInstanceGet_NotFound() throws Exception {
+                when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.empty());
 
-    @Test
-    void testTurStoreInstanceUpdate_Found() throws Exception {
-        TurStoreInstance instance = new TurStoreInstance();
-        instance.setId("store1");
-        instance.setCredentialEncrypted("old-encrypted-credential");
-        String updatePayload = """
-                {
-                    "title": "New Title",
-                    "credential": "plain-credential"
-                }
-                """;
+                mockMvc.perform(get("/api/store/store1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").doesNotExist());
+        }
 
-        when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.of(instance));
-        when(turSecretCryptoService.encrypt("plain-credential")).thenReturn("new-encrypted-credential");
+        @Test
+        void testTurStoreInstanceUpdate_Found() throws Exception {
+                TurStoreInstance instance = new TurStoreInstance();
+                instance.setId("store1");
+                instance.setCredentialEncrypted("old-encrypted-credential");
+                String updatePayload = """
+                                {
+                                    "title": "New Title",
+                                    "credential": "plain-credential"
+                                }
+                                """;
 
-        mockMvc.perform(put("/api/store/store1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(updatePayload))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("New Title"))
-                .andExpect(jsonPath("$.credential").doesNotExist())
-                .andExpect(jsonPath("$.credentialEncrypted").doesNotExist());
+                when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.of(instance));
+                when(turSecretCryptoService.encrypt("plain-credential")).thenReturn("new-encrypted-credential");
 
-        verify(turStoreInstanceRepository, times(1)).save(instance);
-        verify(turSecretCryptoService, times(1)).encrypt("plain-credential");
-        org.assertj.core.api.Assertions.assertThat(instance.getCredentialEncrypted())
-                .isEqualTo("new-encrypted-credential");
-    }
+                mockMvc.perform(put("/api/store/store1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(updatePayload))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.title").value("New Title"))
+                                .andExpect(jsonPath("$.credential").doesNotExist())
+                                .andExpect(jsonPath("$.credentialEncrypted").doesNotExist());
 
-    @Test
-    void testTurStoreInstanceUpdate_NotFound() throws Exception {
-        TurStoreInstance updatedInstance = new TurStoreInstance();
-        updatedInstance.setTitle("New Title");
+                verify(turStoreInstanceRepository, times(1)).save(instance);
+                verify(turSecretCryptoService, times(1)).encrypt("plain-credential");
+                org.assertj.core.api.Assertions.assertThat(instance.getCredentialEncrypted())
+                                .isEqualTo("new-encrypted-credential");
+        }
 
-        when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.empty());
+        @Test
+        void testTurStoreInstanceUpdate_NotFound() throws Exception {
+                TurStoreInstance updatedInstance = new TurStoreInstance();
+                updatedInstance.setTitle("New Title");
 
-        mockMvc.perform(put("/api/store/store1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedInstance)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").doesNotExist());
+                when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.empty());
 
-        verify(turStoreInstanceRepository, never()).save(any());
-    }
+                mockMvc.perform(put("/api/store/store1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updatedInstance)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").doesNotExist());
 
-    @Test
-    void testTurStoreInstanceDelete() throws Exception {
-        mockMvc.perform(delete("/api/store/store1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                verify(turStoreInstanceRepository, never()).save(any());
+        }
 
-        verify(turStoreInstanceRepository, times(1)).delete("store1"); // Uses old delete(ID) in Spring Data?
-        // Note: Check repository interface; if it uses deleteById, this might fail
-        // compilation or execution.
-    }
+        @Test
+        void testTurStoreInstanceDelete() throws Exception {
+                mockMvc.perform(delete("/api/store/store1"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("true"));
 
-    @Test
-    void testTurStoreInstanceAdd() throws Exception {
-        String createPayload = """
-                {
-                  "title": "New Store",
-                  "credential": "plain-store-credential"
-                }
-                """;
-        when(turSecretCryptoService.encrypt(eq("plain-store-credential"))).thenReturn("encrypted-store-credential");
+                verify(turStoreInstanceRepository, times(1)).delete("store1"); // Uses old delete(ID) in Spring Data?
+                // Note: Check repository interface; if it uses deleteById, this might fail
+                // compilation or execution.
+        }
 
-        mockMvc.perform(post("/api/store")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(createPayload))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("New Store"))
-                .andExpect(jsonPath("$.credential").doesNotExist())
-                .andExpect(jsonPath("$.credentialEncrypted").doesNotExist());
+        @Test
+        void testTurStoreInstanceAdd() throws Exception {
+                String createPayload = """
+                                {
+                                  "title": "New Store",
+                                  "credential": "plain-store-credential"
+                                }
+                                """;
+                when(turSecretCryptoService.encrypt(eq("plain-store-credential")))
+                                .thenReturn("encrypted-store-credential");
 
-        verify(turStoreInstanceRepository, times(1)).save(any(TurStoreInstance.class));
-        verify(turSecretCryptoService, times(1)).encrypt("plain-store-credential");
+                mockMvc.perform(post("/api/store")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(createPayload))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.title").value("New Store"))
+                                .andExpect(jsonPath("$.credential").doesNotExist())
+                                .andExpect(jsonPath("$.credentialEncrypted").doesNotExist());
 
-        ArgumentCaptor<TurStoreInstance> captor = ArgumentCaptor.forClass(TurStoreInstance.class);
-        verify(turStoreInstanceRepository).save(captor.capture());
-        org.assertj.core.api.Assertions.assertThat(captor.getValue().getCredentialEncrypted())
-                .isEqualTo("encrypted-store-credential");
-    }
+                verify(turStoreInstanceRepository, times(1)).save(any(TurStoreInstance.class));
+                verify(turSecretCryptoService, times(1)).encrypt("plain-store-credential");
 
-    @Test
-    void testTurEmbeddingStoreInstanceStructure() throws Exception {
-        mockMvc.perform(get("/api/store/structure"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.turStoreVendor").exists());
-    }
+                ArgumentCaptor<TurStoreInstance> captor = ArgumentCaptor.forClass(TurStoreInstance.class);
+                verify(turStoreInstanceRepository).save(captor.capture());
+                org.assertj.core.api.Assertions.assertThat(captor.getValue().getCredentialEncrypted())
+                                .isEqualTo("encrypted-store-credential");
+        }
+
+        @Test
+        void testTurEmbeddingStoreInstanceStructure() throws Exception {
+                mockMvc.perform(get("/api/store/structure"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.turStoreVendor").exists());
+        }
 }

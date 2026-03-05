@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +36,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,6 +44,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import com.viglet.turing.api.sn.bean.TurSNSiteMonitoringStatusBean;
 import com.viglet.turing.exchange.sn.TurSNSiteExport;
+import com.viglet.turing.persistence.dto.sn.TurSNSiteDto;
+import com.viglet.turing.persistence.mapper.sn.TurSNSiteMapper;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
@@ -86,8 +90,9 @@ class TurSNSiteAPITest {
                 TurSolrInstanceProcess solrInstanceProcess = mock(TurSolrInstanceProcess.class);
                 TurSolr turSolr = mock(TurSolr.class);
                 TurConfigProperties configProperties = mock(TurConfigProperties.class);
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, localeRepository, genAiRepository, export,
-                                template, queue, solrInstanceProcess, turSolr, configProperties);
+                                template, queue, solrInstanceProcess, turSolr, configProperties, siteMapper);
                 Principal principal = () -> "Admin";
                 TurSNSite site = new TurSNSite();
 
@@ -96,20 +101,21 @@ class TurSNSiteAPITest {
                                 org.mockito.ArgumentMatchers.eq("admin")))
                                 .thenReturn(List.of(site));
 
-                List<TurSNSite> result = api.turSNSiteList(principal);
+                List<TurSNSiteDto> result = api.turSNSiteList(principal);
 
-                assertThat(result).containsExactly(site);
+                assertThat(result).hasSize(1);
         }
 
         @Test
         void testSiteStructureHasDefaults() {
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(mock(TurSNSiteRepository.class),
                                 mock(TurSNSiteLocaleRepository.class), mock(TurSNSiteGenAiRepository.class),
                                 mock(TurSNSiteExport.class), mock(TurSNTemplate.class), mock(TurSNQueue.class),
                                 mock(TurSolrInstanceProcess.class), mock(TurSolr.class),
-                                mock(TurConfigProperties.class));
+                                mock(TurConfigProperties.class), siteMapper);
 
-                TurSNSite result = api.turSNSiteStructure();
+                TurSNSiteDto result = api.turSNSiteStructure();
 
                 assertThat(result.getFacetSort()).isEqualTo(TurSNSiteFacetSortEnum.COUNT);
                 assertThat(result.getFacetType()).isEqualTo(TurSNSiteFacetFieldEnum.AND);
@@ -120,15 +126,16 @@ class TurSNSiteAPITest {
         @Test
         void testSiteGetReturnsDefaultWhenMissing() {
                 TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository,
                                 mock(TurSNSiteLocaleRepository.class), mock(TurSNSiteGenAiRepository.class),
                                 mock(TurSNSiteExport.class), mock(TurSNTemplate.class), mock(TurSNQueue.class),
                                 mock(TurSolrInstanceProcess.class), mock(TurSolr.class),
-                                mock(TurConfigProperties.class));
+                                mock(TurConfigProperties.class), siteMapper);
 
                 when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
-                TurSNSite result = api.turSNSiteGet("site");
+                TurSNSiteDto result = api.turSNSiteGet("site");
 
                 assertThat(result.getId()).isNull();
         }
@@ -137,15 +144,16 @@ class TurSNSiteAPITest {
         void testSiteUpdateCopiesFields() {
                 TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
                 TurSNSiteGenAiRepository genAiRepository = mock(TurSNSiteGenAiRepository.class);
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository,
                                 mock(TurSNSiteLocaleRepository.class), genAiRepository,
                                 mock(TurSNSiteExport.class), mock(TurSNTemplate.class), mock(TurSNQueue.class),
                                 mock(TurSolrInstanceProcess.class), mock(TurSolr.class),
-                                mock(TurConfigProperties.class));
+                                mock(TurConfigProperties.class), siteMapper);
                 TurSNSite existing = new TurSNSite();
                 TurSNSiteGenAi genAi = new TurSNSiteGenAi();
                 existing.setTurSNSiteGenAi(genAi);
-                TurSNSite payload = new TurSNSite();
+                TurSNSiteDto payload = new TurSNSiteDto();
                 payload.setName("New");
                 payload.setDescription("Desc");
                 payload.setHl(1);
@@ -153,7 +161,7 @@ class TurSNSiteAPITest {
 
                 when(siteRepository.findById("site")).thenReturn(Optional.of(existing));
 
-                TurSNSite result = api.turSNSiteUpdate("site", payload);
+                TurSNSiteDto result = api.turSNSiteUpdate("site", payload);
 
                 assertThat(result.getName()).isEqualTo("New");
                 assertThat(result.getDescription()).isEqualTo("Desc");
@@ -165,10 +173,11 @@ class TurSNSiteAPITest {
         void testSiteDeleteDeletesCores() {
                 TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
                 TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, localeRepository,
                                 mock(TurSNSiteGenAiRepository.class), mock(TurSNSiteExport.class),
                                 mock(TurSNTemplate.class), mock(TurSNQueue.class), mock(TurSolrInstanceProcess.class),
-                                mock(TurSolr.class), mock(TurConfigProperties.class));
+                                mock(TurSolr.class), mock(TurConfigProperties.class), siteMapper);
                 TurSNSite site = new TurSNSite();
                 TurSEInstance instance = new TurSEInstance();
                 instance.setHost("localhost");
@@ -196,10 +205,11 @@ class TurSNSiteAPITest {
                 TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
                 TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
                 TurSNSiteGenAiRepository genAiRepository = mock(TurSNSiteGenAiRepository.class);
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, localeRepository,
                                 genAiRepository, mock(TurSNSiteExport.class),
                                 mock(TurSNTemplate.class), mock(TurSNQueue.class), mock(TurSolrInstanceProcess.class),
-                                mock(TurSolr.class), mock(TurConfigProperties.class));
+                                mock(TurSolr.class), mock(TurConfigProperties.class), siteMapper);
 
                 TurSNSite site = new TurSNSite();
                 TurSEInstance instance = new TurSEInstance();
@@ -254,31 +264,34 @@ class TurSNSiteAPITest {
                 TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
                 TurSNSiteGenAiRepository genAiRepository = mock(TurSNSiteGenAiRepository.class);
                 TurSNTemplate template = mock(TurSNTemplate.class);
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository,
                                 mock(TurSNSiteLocaleRepository.class), genAiRepository,
                                 mock(TurSNSiteExport.class), template, mock(TurSNQueue.class),
                                 mock(TurSolrInstanceProcess.class), mock(TurSolr.class),
-                                mock(TurConfigProperties.class));
-                TurSNSite site = new TurSNSite();
+                                mock(TurConfigProperties.class), siteMapper);
+                TurSNSiteDto site = new TurSNSiteDto();
                 site.setTurSNSiteGenAi(new TurSNSiteGenAi());
                 Principal principal = () -> "admin";
 
-                TurSNSite result = api.turSNSiteAdd(site, principal);
+                TurSNSiteDto result = api.turSNSiteAdd(site, principal);
 
-                assertThat(result).isSameAs(site);
-                verify(genAiRepository).save(site.getTurSNSiteGenAi());
-                verify(siteRepository).save(site);
-                verify(template).createSNSite(site, "admin", Locale.US);
+                assertThat(result.getTurSNSiteGenAi()).isNotNull();
+                verify(genAiRepository).save(any(TurSNSiteGenAi.class));
+                verify(siteRepository, times(1)).save(any(TurSNSite.class));
+                verify(template).createSNSite(any(TurSNSite.class), org.mockito.ArgumentMatchers.eq("admin"),
+                                org.mockito.ArgumentMatchers.eq(Locale.US));
         }
 
         @Test
         void testSiteExportReturnsStreamingBody() {
                 TurSNSiteExport export = mock(TurSNSiteExport.class);
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(mock(TurSNSiteRepository.class),
                                 mock(TurSNSiteLocaleRepository.class), mock(TurSNSiteGenAiRepository.class),
                                 export, mock(TurSNTemplate.class), mock(TurSNQueue.class),
                                 mock(TurSolrInstanceProcess.class), mock(TurSolr.class),
-                                mock(TurConfigProperties.class));
+                                mock(TurConfigProperties.class), siteMapper);
                 HttpServletResponse response = mock(HttpServletResponse.class);
                 StreamingResponseBody expected = outputStream -> outputStream.write(new byte[0]);
 
@@ -296,10 +309,11 @@ class TurSNSiteAPITest {
                 TurSNQueue queue = mock(TurSNQueue.class);
                 TurSolrInstanceProcess solrInstanceProcess = mock(TurSolrInstanceProcess.class);
                 TurSolr turSolr = mock(TurSolr.class);
+                TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, localeRepository,
                                 mock(TurSNSiteGenAiRepository.class), mock(TurSNSiteExport.class),
                                 mock(TurSNTemplate.class), queue, solrInstanceProcess, turSolr,
-                                mock(TurConfigProperties.class));
+                                mock(TurConfigProperties.class), siteMapper);
                 TurSNSite site = new TurSNSite();
                 TurSNSiteLocale locale = new TurSNSiteLocale();
                 TurSolrInstance instance = mock(TurSolrInstance.class);

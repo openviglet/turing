@@ -1,6 +1,7 @@
 package com.viglet.turing.api.sn.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,9 +13,12 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.viglet.turing.persistence.dto.sn.merge.TurSNSiteMergeProvidersDto;
+import com.viglet.turing.persistence.mapper.sn.merge.TurSNSiteMergeProvidersMapper;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
@@ -32,12 +36,15 @@ class TurSNSiteMergeProvidersAPITest {
     @Mock
     private TurSNSiteMergeProvidersFieldRepository turSNSiteMergeFieldRepository;
 
+    private TurSNSiteMergeProvidersMapper turSNSiteMergeProvidersMapper;
+
     private TurSNSiteMergeProvidersAPI api;
 
     @BeforeEach
     void setUp() {
+        turSNSiteMergeProvidersMapper = Mappers.getMapper(TurSNSiteMergeProvidersMapper.class);
         api = new TurSNSiteMergeProvidersAPI(turSNSiteRepository, turSNSiteMergeRepository,
-                turSNSiteMergeFieldRepository);
+                turSNSiteMergeFieldRepository, turSNSiteMergeProvidersMapper);
     }
 
     @Test
@@ -47,16 +54,16 @@ class TurSNSiteMergeProvidersAPITest {
         when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.of(site));
         when(turSNSiteMergeRepository.findByTurSNSite(site)).thenReturn(List.of(provider));
 
-        List<TurSNSiteMergeProviders> result = api.turSNSiteMergeList("site-1");
+        List<TurSNSiteMergeProvidersDto> result = api.turSNSiteMergeList("site-1");
 
-        assertThat(result).containsExactly(provider);
+        assertThat(result).hasSize(1);
     }
 
     @Test
     void shouldReturnEmptyListWhenSiteDoesNotExist() {
         when(turSNSiteRepository.findById("missing")).thenReturn(Optional.empty());
 
-        List<TurSNSiteMergeProviders> result = api.turSNSiteMergeList("missing");
+        List<TurSNSiteMergeProvidersDto> result = api.turSNSiteMergeList("missing");
 
         assertThat(result).isEmpty();
     }
@@ -64,14 +71,15 @@ class TurSNSiteMergeProvidersAPITest {
     @Test
     void shouldReturnMergeProviderWithOverwrittenFields() {
         TurSNSiteMergeProviders mergeProviders = new TurSNSiteMergeProviders();
+        mergeProviders.setProviderFrom("provider-a");
         TurSNSiteMergeProvidersField overwrittenField = new TurSNSiteMergeProvidersField();
         when(turSNSiteMergeRepository.findById("merge-1")).thenReturn(Optional.of(mergeProviders));
         when(turSNSiteMergeFieldRepository.findByTurSNSiteMergeProviders(mergeProviders))
                 .thenReturn(Set.of(overwrittenField));
 
-        TurSNSiteMergeProviders result = api.turSNSiteFieldExtGet("ignored", "merge-1");
+        TurSNSiteMergeProvidersDto result = api.turSNSiteFieldExtGet("ignored", "merge-1");
 
-        assertThat(result).isSameAs(mergeProviders);
+        assertThat(result.getProviderFrom()).isEqualTo("provider-a");
         assertThat(result.getOverwrittenFields()).containsExactly(overwrittenField);
     }
 
@@ -79,7 +87,7 @@ class TurSNSiteMergeProvidersAPITest {
     void shouldReturnNewMergeProviderWhenIdNotFound() {
         when(turSNSiteMergeRepository.findById("missing")).thenReturn(Optional.empty());
 
-        TurSNSiteMergeProviders result = api.turSNSiteFieldExtGet("ignored", "missing");
+        TurSNSiteMergeProvidersDto result = api.turSNSiteFieldExtGet("ignored", "missing");
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNull();
@@ -94,7 +102,7 @@ class TurSNSiteMergeProvidersAPITest {
         TurSNSiteMergeProvidersField firstField = new TurSNSiteMergeProvidersField();
         TurSNSiteMergeProvidersField secondField = new TurSNSiteMergeProvidersField();
 
-        TurSNSiteMergeProviders request = new TurSNSiteMergeProviders();
+        TurSNSiteMergeProvidersDto request = new TurSNSiteMergeProvidersDto();
         request.setProviderFrom("provider-a");
         request.setProviderTo("provider-b");
         request.setRelationFrom("from");
@@ -106,16 +114,15 @@ class TurSNSiteMergeProvidersAPITest {
 
         when(turSNSiteMergeRepository.findById("merge-1")).thenReturn(Optional.of(existing));
 
-        TurSNSiteMergeProviders result = api.turSNSiteMergeUpdate("merge-1", request, "ignored");
+        TurSNSiteMergeProvidersDto result = api.turSNSiteMergeUpdate("merge-1", request, "ignored");
 
-        assertThat(result).isSameAs(existing);
         assertThat(result.getProviderFrom()).isEqualTo("provider-a");
         assertThat(result.getProviderTo()).isEqualTo("provider-b");
         assertThat(result.getRelationFrom()).isEqualTo("from");
         assertThat(result.getRelationTo()).isEqualTo("to");
         assertThat(result.getDescription()).isEqualTo("updated");
         assertThat(result.getLocale()).isEqualTo(Locale.CANADA);
-        assertThat(result.getTurSNSite()).isSameAs(site);
+        assertThat(result.getTurSNSite()).isNotNull();
 
         verify(turSNSiteMergeRepository).save(existing);
         verify(turSNSiteMergeFieldRepository).save(firstField);
@@ -128,7 +135,8 @@ class TurSNSiteMergeProvidersAPITest {
     void shouldReturnNewMergeProviderWhenUpdateIdNotFound() {
         when(turSNSiteMergeRepository.findById("missing")).thenReturn(Optional.empty());
 
-        TurSNSiteMergeProviders result = api.turSNSiteMergeUpdate("missing", new TurSNSiteMergeProviders(), "ignored");
+        TurSNSiteMergeProvidersDto result = api.turSNSiteMergeUpdate("missing", new TurSNSiteMergeProvidersDto(),
+                "ignored");
 
         assertThat(result.getId()).isNull();
     }
@@ -143,16 +151,17 @@ class TurSNSiteMergeProvidersAPITest {
 
     @Test
     void shouldAddMergeProviderAndPersistFields() {
-        TurSNSiteMergeProviders merge = new TurSNSiteMergeProviders();
+        TurSNSiteMergeProvidersDto merge = new TurSNSiteMergeProvidersDto();
+        merge.setProviderFrom("from-provider");
         TurSNSiteMergeProvidersField field = new TurSNSiteMergeProvidersField();
         merge.setOverwrittenFields(Set.of(field));
 
-        TurSNSiteMergeProviders result = api.turSNSiteMergeAdd(merge, "ignored");
+        TurSNSiteMergeProvidersDto result = api.turSNSiteMergeAdd(merge, "ignored");
 
-        assertThat(result).isSameAs(merge);
-        verify(turSNSiteMergeRepository).save(merge);
+        assertThat(result.getProviderFrom()).isEqualTo("from-provider");
+        verify(turSNSiteMergeRepository).save(any(TurSNSiteMergeProviders.class));
         verify(turSNSiteMergeFieldRepository).save(field);
-        assertThat(field.getTurSNSiteMergeProviders()).isSameAs(merge);
+        assertThat(field.getTurSNSiteMergeProviders()).isNotNull();
     }
 
     @Test
@@ -160,7 +169,7 @@ class TurSNSiteMergeProvidersAPITest {
         TurSNSite site = new TurSNSite();
         when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.of(site));
 
-        TurSNSiteMergeProviders structure = api.turSNSiteMergeStructure("site-1");
+        TurSNSiteMergeProvidersDto structure = api.turSNSiteMergeStructure("site-1");
 
         assertThat(structure.getLocale()).isEqualTo(Locale.US);
         assertThat(structure.getTurSNSite()).isSameAs(site);
@@ -170,7 +179,7 @@ class TurSNSiteMergeProvidersAPITest {
     void shouldReturnEmptyMergeStructureWhenSiteNotFound() {
         when(turSNSiteRepository.findById("missing")).thenReturn(Optional.empty());
 
-        TurSNSiteMergeProviders structure = api.turSNSiteMergeStructure("missing");
+        TurSNSiteMergeProvidersDto structure = api.turSNSiteMergeStructure("missing");
 
         assertThat(structure.getId()).isNull();
         assertThat(structure.getTurSNSite()).isNull();

@@ -63,7 +63,7 @@ public class TurIntegrationAPI {
                 turIntegrationInstance -> proxy(turIntegrationInstance, request, response));
     }
 
-    public void proxy(TurIntegrationInstance turIntegrationInstance, HttpServletRequest request,
+    private void proxy(TurIntegrationInstance turIntegrationInstance, HttpServletRequest request,
             HttpServletResponse response) {
         URI baseUri = URI.create(turIntegrationInstance.getEndpoint());
         String relativePath = request.getRequestURI()

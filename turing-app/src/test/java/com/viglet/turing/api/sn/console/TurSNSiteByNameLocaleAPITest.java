@@ -30,7 +30,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
+import com.viglet.turing.persistence.dto.sn.locale.TurSNSiteLocaleDto;
+import com.viglet.turing.persistence.mapper.sn.locale.TurSNSiteLocaleMapper;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -48,11 +51,12 @@ class TurSNSiteByNameLocaleAPITest {
     void testLocaleByNameReturnsEmptyWhenMissing() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
-        TurSNSiteByNameLocaleAPI api = new TurSNSiteByNameLocaleAPI(siteRepository, localeRepository);
+        TurSNSiteLocaleMapper localeMapper = Mappers.getMapper(TurSNSiteLocaleMapper.class);
+        TurSNSiteByNameLocaleAPI api = new TurSNSiteByNameLocaleAPI(siteRepository, localeRepository, localeMapper);
 
         when(siteRepository.findByName("site")).thenReturn(Optional.empty());
 
-        List<TurSNSiteLocale> result = api.turSNSiteLocaleByNameList("site");
+        List<TurSNSiteLocaleDto> result = api.turSNSiteLocaleByNameList("site");
 
         assertThat(result).isEqualTo(Collections.emptyList());
     }
@@ -61,7 +65,8 @@ class TurSNSiteByNameLocaleAPITest {
     void testLocaleByNameReturnsLocalesWhenFound() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
-        TurSNSiteByNameLocaleAPI api = new TurSNSiteByNameLocaleAPI(siteRepository, localeRepository);
+        TurSNSiteLocaleMapper localeMapper = Mappers.getMapper(TurSNSiteLocaleMapper.class);
+        TurSNSiteByNameLocaleAPI api = new TurSNSiteByNameLocaleAPI(siteRepository, localeRepository, localeMapper);
         TurSNSite site = new TurSNSite();
         TurSNSiteLocale locale = new TurSNSiteLocale();
 
@@ -70,8 +75,8 @@ class TurSNSiteByNameLocaleAPITest {
                 org.mockito.ArgumentMatchers.eq(site)))
                 .thenReturn(List.of(locale));
 
-        List<TurSNSiteLocale> result = api.turSNSiteLocaleByNameList("site");
+        List<TurSNSiteLocaleDto> result = api.turSNSiteLocaleByNameList("site");
 
-        assertThat(result).containsExactly(locale);
+        assertThat(result).hasSize(1);
     }
 }

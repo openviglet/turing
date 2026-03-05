@@ -22,6 +22,7 @@
 package com.viglet.turing.api.sn.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,7 +31,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
+import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldDto;
+import com.viglet.turing.persistence.mapper.sn.field.TurSNSiteFieldMapper;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -48,11 +52,12 @@ class TurSNSiteFieldAPITest {
     void testFieldListReturnsEmptyWhenSiteMissing() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository);
+        TurSNSiteFieldMapper fieldMapper = Mappers.getMapper(TurSNSiteFieldMapper.class);
+        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository, fieldMapper);
 
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
-        List<TurSNSiteField> result = api.turSNSiteFieldList("site");
+        List<TurSNSiteFieldDto> result = api.turSNSiteFieldList("site");
 
         assertThat(result).isEmpty();
     }
@@ -61,30 +66,33 @@ class TurSNSiteFieldAPITest {
     void testFieldGetReturnsExisting() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository);
+        TurSNSiteFieldMapper fieldMapper = Mappers.getMapper(TurSNSiteFieldMapper.class);
+        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository, fieldMapper);
         TurSNSiteField field = new TurSNSiteField();
+        field.setName("title");
 
         when(fieldRepository.findById("field")).thenReturn(Optional.of(field));
 
-        TurSNSiteField result = api.turSNSiteFieldGet("site", "field");
+        TurSNSiteFieldDto result = api.turSNSiteFieldGet("site", "field");
 
-        assertThat(result).isSameAs(field);
+        assertThat(result.getName()).isEqualTo("title");
     }
 
     @Test
     void testFieldUpdateCopiesFields() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository);
+        TurSNSiteFieldMapper fieldMapper = Mappers.getMapper(TurSNSiteFieldMapper.class);
+        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository, fieldMapper);
         TurSNSiteField existing = new TurSNSiteField();
-        TurSNSiteField payload = new TurSNSiteField();
+        TurSNSiteFieldDto payload = new TurSNSiteFieldDto();
         payload.setName("title");
         payload.setDescription("Title");
         payload.setMultiValued(1);
 
         when(fieldRepository.findById("field")).thenReturn(Optional.of(existing));
 
-        TurSNSiteField result = api.turSNSiteFieldUpdate("site", "field", payload);
+        TurSNSiteFieldDto result = api.turSNSiteFieldUpdate("site", "field", payload);
 
         assertThat(result.getName()).isEqualTo("title");
         verify(fieldRepository).save(existing);
@@ -94,7 +102,8 @@ class TurSNSiteFieldAPITest {
     void testFieldDeleteReturnsTrue() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository);
+        TurSNSiteFieldMapper fieldMapper = Mappers.getMapper(TurSNSiteFieldMapper.class);
+        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository, fieldMapper);
 
         boolean result = api.turSNSiteFieldDelete("site", "field");
 
@@ -106,15 +115,17 @@ class TurSNSiteFieldAPITest {
     void testFieldAddSetsSite() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteFieldRepository fieldRepository = mock(TurSNSiteFieldRepository.class);
-        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository);
+        TurSNSiteFieldMapper fieldMapper = Mappers.getMapper(TurSNSiteFieldMapper.class);
+        TurSNSiteFieldAPI api = new TurSNSiteFieldAPI(siteRepository, fieldRepository, fieldMapper);
         TurSNSite site = new TurSNSite();
-        TurSNSiteField field = new TurSNSiteField();
+        TurSNSiteFieldDto field = new TurSNSiteFieldDto();
+        field.setName("title");
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
 
-        TurSNSiteField result = api.turSNSiteFieldAdd("site", field);
+        TurSNSiteFieldDto result = api.turSNSiteFieldAdd("site", field);
 
-        assertThat(result.getTurSNSite()).isSameAs(site);
-        verify(fieldRepository).save(field);
+        assertThat(result.getName()).isEqualTo("title");
+        verify(fieldRepository).save(argThat(saved -> saved.getTurSNSite() == site));
     }
 }

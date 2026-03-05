@@ -20,8 +20,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -29,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.persistence.mapper.dev.token.TurDevTokenMapper;
 import com.viglet.turing.persistence.model.dev.token.TurDevToken;
 import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
 
@@ -39,6 +42,9 @@ class TurDevTokenAPITest {
 
     @Mock
     private TurDevTokenRepository turDevTokenRepository;
+
+    @Spy
+    private TurDevTokenMapper turDevTokenMapper = Mappers.getMapper(TurDevTokenMapper.class);
 
     @InjectMocks
     private TurDevTokenAPI turDevTokenAPI;

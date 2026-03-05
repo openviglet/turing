@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.persistence.dto.llm.TurLLMInstanceDto;
+import com.viglet.turing.persistence.mapper.llm.TurLLMInstanceMapper;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
@@ -46,39 +48,43 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Large Language Model", description = "Large Language Model API")
 public class TurLLMInstanceAPI {
     private final TurLLMInstanceRepository turLLMInstanceRepository;
+    private final TurLLMInstanceMapper turLLMInstanceMapper;
     private final TurSecretCryptoService turSecretCryptoService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TurLLMInstanceAPI(TurLLMInstanceRepository turLLMInstanceRepository,
+            TurLLMInstanceMapper turLLMInstanceMapper,
             TurSecretCryptoService turSecretCryptoService) {
         this.turLLMInstanceRepository = turLLMInstanceRepository;
+        this.turLLMInstanceMapper = turLLMInstanceMapper;
         this.turSecretCryptoService = turSecretCryptoService;
     }
 
     @Operation(summary = "Large Language Model List")
     @GetMapping
-    public List<TurLLMInstance> turLLMInstanceList() {
-        return this.turLLMInstanceRepository.findAll(TurPersistenceUtils.orderByTitleIgnoreCase());
+    public List<TurLLMInstanceDto> turLLMInstanceList() {
+        return turLLMInstanceMapper
+                .toDtoList(this.turLLMInstanceRepository.findAll(TurPersistenceUtils.orderByTitleIgnoreCase()));
     }
 
     @Operation(summary = "Large Language Model structure")
     @GetMapping("/structure")
-    public TurLLMInstance turLLMInstanceStructure() {
+    public TurLLMInstanceDto turLLMInstanceStructure() {
         TurLLMInstance turLLMInstance = new TurLLMInstance();
         turLLMInstance.setTurLLMVendor(new TurLLMVendor());
-        return turLLMInstance;
+        return turLLMInstanceMapper.toDto(turLLMInstance);
 
     }
 
     @Operation(summary = "Show a Large Language Model")
     @GetMapping("/{id}")
-    public TurLLMInstance turLLMInstanceGet(@PathVariable String id) {
-        return this.turLLMInstanceRepository.findById(id).orElse(new TurLLMInstance());
+    public TurLLMInstanceDto turLLMInstanceGet(@PathVariable String id) {
+        return turLLMInstanceMapper.toDto(this.turLLMInstanceRepository.findById(id).orElse(new TurLLMInstance()));
     }
 
     @Operation(summary = "Update a Large Language Model")
     @PutMapping("/{id}")
-    public TurLLMInstance turLLMInstanceUpdate(@PathVariable String id, @RequestBody Map<String, Object> payload) {
+    public TurLLMInstanceDto turLLMInstanceUpdate(@PathVariable String id, @RequestBody Map<String, Object> payload) {
         TurLLMInstance turLLMInstance = objectMapper.convertValue(payload, TurLLMInstance.class);
         String apiKey = payload.get("apiKey") instanceof String apiKeyValue ? apiKeyValue : null;
         return turLLMInstanceRepository.findById(id).map(turLLMInstanceEdit -> {
@@ -104,8 +110,8 @@ public class TurLLMInstanceAPI {
                 turLLMInstanceEdit.setApiKeyEncrypted(turSecretCryptoService.encrypt(apiKey));
             }
             this.turLLMInstanceRepository.save(turLLMInstanceEdit);
-            return turLLMInstanceEdit;
-        }).orElse(new TurLLMInstance());
+            return turLLMInstanceMapper.toDto(turLLMInstanceEdit);
+        }).orElse(new TurLLMInstanceDto());
 
     }
 
@@ -119,14 +125,14 @@ public class TurLLMInstanceAPI {
 
     @Operation(summary = "Create a Large Language Model")
     @PostMapping
-    public TurLLMInstance turLLMInstanceAdd(@RequestBody Map<String, Object> payload) {
+    public TurLLMInstanceDto turLLMInstanceAdd(@RequestBody Map<String, Object> payload) {
         TurLLMInstance turLLMInstance = objectMapper.convertValue(payload, TurLLMInstance.class);
         String apiKey = payload.get("apiKey") instanceof String apiKeyValue ? apiKeyValue : null;
         if (StringUtils.hasText(apiKey)) {
             turLLMInstance.setApiKeyEncrypted(turSecretCryptoService.encrypt(apiKey));
         }
         this.turLLMInstanceRepository.save(turLLMInstance);
-        return turLLMInstance;
+        return turLLMInstanceMapper.toDto(turLLMInstance);
 
     }
 }

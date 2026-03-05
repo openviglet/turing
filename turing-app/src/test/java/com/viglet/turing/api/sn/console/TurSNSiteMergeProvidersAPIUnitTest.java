@@ -32,7 +32,10 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
+import com.viglet.turing.persistence.dto.sn.merge.TurSNSiteMergeProvidersDto;
+import com.viglet.turing.persistence.mapper.sn.merge.TurSNSiteMergeProvidersMapper;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
@@ -53,17 +56,18 @@ class TurSNSiteMergeProvidersAPIUnitTest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMergeProvidersRepository mergeRepository = mock(TurSNSiteMergeProvidersRepository.class);
         TurSNSiteMergeProvidersFieldRepository fieldRepository = mock(TurSNSiteMergeProvidersFieldRepository.class);
+        TurSNSiteMergeProvidersMapper mergeMapper = Mappers.getMapper(TurSNSiteMergeProvidersMapper.class);
         TurSNSiteMergeProvidersAPI api = new TurSNSiteMergeProvidersAPI(siteRepository, mergeRepository,
-                fieldRepository);
+                fieldRepository, mergeMapper);
         TurSNSite site = new TurSNSite();
         TurSNSiteMergeProviders merge = new TurSNSiteMergeProviders();
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
         when(mergeRepository.findByTurSNSite(site)).thenReturn(List.of(merge));
 
-        List<TurSNSiteMergeProviders> result = api.turSNSiteMergeList("site");
+        List<TurSNSiteMergeProvidersDto> result = api.turSNSiteMergeList("site");
 
-        assertThat(result).containsExactly(merge);
+        assertThat(result).hasSize(1);
     }
 
     @Test
@@ -71,15 +75,16 @@ class TurSNSiteMergeProvidersAPIUnitTest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMergeProvidersRepository mergeRepository = mock(TurSNSiteMergeProvidersRepository.class);
         TurSNSiteMergeProvidersFieldRepository fieldRepository = mock(TurSNSiteMergeProvidersFieldRepository.class);
+        TurSNSiteMergeProvidersMapper mergeMapper = Mappers.getMapper(TurSNSiteMergeProvidersMapper.class);
         TurSNSiteMergeProvidersAPI api = new TurSNSiteMergeProvidersAPI(siteRepository, mergeRepository,
-                fieldRepository);
+                fieldRepository, mergeMapper);
         TurSNSiteMergeProviders merge = new TurSNSiteMergeProviders();
         TurSNSiteMergeProvidersField field = new TurSNSiteMergeProvidersField();
 
         when(mergeRepository.findById("id")).thenReturn(Optional.of(merge));
         when(fieldRepository.findByTurSNSiteMergeProviders(merge)).thenReturn(Collections.singleton(field));
 
-        TurSNSiteMergeProviders result = api.turSNSiteFieldExtGet("site", "id");
+        TurSNSiteMergeProvidersDto result = api.turSNSiteFieldExtGet("site", "id");
 
         assertThat(result.getOverwrittenFields()).containsExactly(field);
     }
@@ -89,27 +94,29 @@ class TurSNSiteMergeProvidersAPIUnitTest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMergeProvidersRepository mergeRepository = mock(TurSNSiteMergeProvidersRepository.class);
         TurSNSiteMergeProvidersFieldRepository fieldRepository = mock(TurSNSiteMergeProvidersFieldRepository.class);
+        TurSNSiteMergeProvidersMapper mergeMapper = Mappers.getMapper(TurSNSiteMergeProvidersMapper.class);
         TurSNSiteMergeProvidersAPI api = new TurSNSiteMergeProvidersAPI(siteRepository, mergeRepository,
-                fieldRepository);
+                fieldRepository, mergeMapper);
         TurSNSiteMergeProviders existing = new TurSNSiteMergeProviders();
         existing.setOverwrittenFields(Collections.emptySet());
-        TurSNSiteMergeProviders payload = new TurSNSiteMergeProviders();
+        TurSNSiteMergeProvidersDto payload = new TurSNSiteMergeProvidersDto();
         TurSNSiteMergeProvidersField field = new TurSNSiteMergeProvidersField();
         payload.setOverwrittenFields(Collections.singleton(field));
 
         when(mergeRepository.findById("id")).thenReturn(Optional.of(existing));
 
-        TurSNSiteMergeProviders result = api.turSNSiteMergeUpdate("id", payload, "site");
+        TurSNSiteMergeProvidersDto result = api.turSNSiteMergeUpdate("id", payload, "site");
 
-        assertThat(result).isSameAs(existing);
+        assertThat(result).isNotNull();
         verify(fieldRepository).save(field);
     }
 
     @Test
     void testMergeDeleteAlwaysTrue() {
         TurSNSiteMergeProvidersRepository mergeRepository = mock(TurSNSiteMergeProvidersRepository.class);
+        TurSNSiteMergeProvidersMapper mergeMapper = Mappers.getMapper(TurSNSiteMergeProvidersMapper.class);
         TurSNSiteMergeProvidersAPI api = new TurSNSiteMergeProvidersAPI(mock(TurSNSiteRepository.class),
-                mergeRepository, mock(TurSNSiteMergeProvidersFieldRepository.class));
+                mergeRepository, mock(TurSNSiteMergeProvidersFieldRepository.class), mergeMapper);
 
         boolean result = api.turSNSiteMergeDelete("id", "site");
 
@@ -120,13 +127,15 @@ class TurSNSiteMergeProvidersAPIUnitTest {
     @Test
     void testMergeStructureDefaultsLocale() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteMergeProvidersMapper mergeMapper = Mappers.getMapper(TurSNSiteMergeProvidersMapper.class);
         TurSNSiteMergeProvidersAPI api = new TurSNSiteMergeProvidersAPI(siteRepository,
-                mock(TurSNSiteMergeProvidersRepository.class), mock(TurSNSiteMergeProvidersFieldRepository.class));
+                mock(TurSNSiteMergeProvidersRepository.class), mock(TurSNSiteMergeProvidersFieldRepository.class),
+                mergeMapper);
         TurSNSite site = new TurSNSite();
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
 
-        TurSNSiteMergeProviders result = api.turSNSiteMergeStructure("site");
+        TurSNSiteMergeProvidersDto result = api.turSNSiteMergeStructure("site");
 
         assertThat(result.getLocale()).isEqualTo(Locale.US);
         assertThat(result.getTurSNSite()).isSameAs(site);

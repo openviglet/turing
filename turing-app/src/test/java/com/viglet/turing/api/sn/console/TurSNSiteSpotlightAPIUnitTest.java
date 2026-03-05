@@ -31,7 +31,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
+import com.viglet.turing.persistence.dto.sn.spotlight.TurSNSiteSpotlightDto;
+import com.viglet.turing.persistence.mapper.sn.spotlight.TurSNSiteSpotlightMapper;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
@@ -53,12 +56,14 @@ class TurSNSiteSpotlightAPIUnitTest {
     void testSpotlightListReturnsEmptyWhenMissing() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteSpotlightRepository spotlightRepository = mock(TurSNSiteSpotlightRepository.class);
+        TurSNSiteSpotlightMapper spotlightMapper = Mappers.getMapper(TurSNSiteSpotlightMapper.class);
         TurSNSiteSpotlightAPI api = new TurSNSiteSpotlightAPI(siteRepository, spotlightRepository,
-                mock(TurSNSiteSpotlightDocumentRepository.class), mock(TurSNSiteSpotlightTermRepository.class));
+                mock(TurSNSiteSpotlightDocumentRepository.class), mock(TurSNSiteSpotlightTermRepository.class),
+                spotlightMapper);
 
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
-        List<TurSNSiteSpotlight> result = api.turSNSiteSpotlightList("site");
+        List<TurSNSiteSpotlightDto> result = api.turSNSiteSpotlightList("site");
 
         assertThat(result).isEmpty();
     }
@@ -68,8 +73,9 @@ class TurSNSiteSpotlightAPIUnitTest {
         TurSNSiteSpotlightRepository spotlightRepository = mock(TurSNSiteSpotlightRepository.class);
         TurSNSiteSpotlightDocumentRepository documentRepository = mock(TurSNSiteSpotlightDocumentRepository.class);
         TurSNSiteSpotlightTermRepository termRepository = mock(TurSNSiteSpotlightTermRepository.class);
+        TurSNSiteSpotlightMapper spotlightMapper = Mappers.getMapper(TurSNSiteSpotlightMapper.class);
         TurSNSiteSpotlightAPI api = new TurSNSiteSpotlightAPI(mock(TurSNSiteRepository.class), spotlightRepository,
-                documentRepository, termRepository);
+                documentRepository, termRepository, spotlightMapper);
         TurSNSiteSpotlight spotlight = new TurSNSiteSpotlight();
         TurSNSiteSpotlightDocument doc = new TurSNSiteSpotlightDocument();
         TurSNSiteSpotlightTerm term = new TurSNSiteSpotlightTerm();
@@ -78,7 +84,7 @@ class TurSNSiteSpotlightAPIUnitTest {
         when(documentRepository.findByTurSNSiteSpotlight(spotlight)).thenReturn(Collections.singleton(doc));
         when(termRepository.findByTurSNSiteSpotlight(spotlight)).thenReturn(Collections.singleton(term));
 
-        TurSNSiteSpotlight result = api.turSNSiteSpotlightGet("site", "id");
+        TurSNSiteSpotlightDto result = api.turSNSiteSpotlightGet("site", "id");
 
         assertThat(result.getTurSNSiteSpotlightDocuments()).contains(doc);
         assertThat(result.getTurSNSiteSpotlightTerms()).contains(term);
@@ -87,8 +93,10 @@ class TurSNSiteSpotlightAPIUnitTest {
     @Test
     void testSpotlightDeleteAlwaysTrue() {
         TurSNSiteSpotlightRepository spotlightRepository = mock(TurSNSiteSpotlightRepository.class);
+        TurSNSiteSpotlightMapper spotlightMapper = Mappers.getMapper(TurSNSiteSpotlightMapper.class);
         TurSNSiteSpotlightAPI api = new TurSNSiteSpotlightAPI(mock(TurSNSiteRepository.class), spotlightRepository,
-                mock(TurSNSiteSpotlightDocumentRepository.class), mock(TurSNSiteSpotlightTermRepository.class));
+                mock(TurSNSiteSpotlightDocumentRepository.class), mock(TurSNSiteSpotlightTermRepository.class),
+                spotlightMapper);
 
         boolean result = api.turSNSiteSpotlightDelete("id", "site");
 
@@ -99,14 +107,15 @@ class TurSNSiteSpotlightAPIUnitTest {
     @Test
     void testSpotlightStructureSetsSite() {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteSpotlightMapper spotlightMapper = Mappers.getMapper(TurSNSiteSpotlightMapper.class);
         TurSNSiteSpotlightAPI api = new TurSNSiteSpotlightAPI(siteRepository,
                 mock(TurSNSiteSpotlightRepository.class), mock(TurSNSiteSpotlightDocumentRepository.class),
-                mock(TurSNSiteSpotlightTermRepository.class));
+                mock(TurSNSiteSpotlightTermRepository.class), spotlightMapper);
         TurSNSite site = new TurSNSite();
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
 
-        TurSNSiteSpotlight result = api.turSNSiteSpotlightStructure("site");
+        TurSNSiteSpotlightDto result = api.turSNSiteSpotlightStructure("site");
 
         assertThat(result.getTurSNSite()).isSameAs(site);
     }
