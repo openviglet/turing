@@ -21,9 +21,9 @@ class TurGenAiContextTest {
         Field[] fields = TurGenAiContext.class.getDeclaredFields();
 
         assertTrue(Arrays.stream(fields)
-                .filter(field -> field.getName().equals("chromaEmbeddingStore")
+                .filter(field -> field.getName().equals("vectorStore")
                         || field.getName().equals("embeddingModel")
-                        || field.getName().equals("chatLanguageModel")
+                        || field.getName().equals("chatModel")
                         || field.getName().equals("enabled")
                         || field.getName().equals("systemPrompt"))
                 .allMatch(field -> Modifier.isFinal(field.getModifiers())));

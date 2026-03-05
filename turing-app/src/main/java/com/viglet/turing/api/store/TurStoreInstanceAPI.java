@@ -23,6 +23,7 @@ package com.viglet.turing.api.store;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.persistence.model.store.TurStoreVendor;
 import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
+import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,9 +47,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Embedding Store", description = "Embedding Store API")
 public class TurStoreInstanceAPI {
     private final TurStoreInstanceRepository turStoreInstanceRepository;
+    private final TurSecretCryptoService turSecretCryptoService;
 
-    public TurStoreInstanceAPI(TurStoreInstanceRepository turStoreInstanceRepository) {
+    public TurStoreInstanceAPI(TurStoreInstanceRepository turStoreInstanceRepository,
+            TurSecretCryptoService turSecretCryptoService) {
         this.turStoreInstanceRepository = turStoreInstanceRepository;
+        this.turSecretCryptoService = turSecretCryptoService;
     }
 
     @Operation(summary = "Embedding Store List")
@@ -81,6 +86,12 @@ public class TurStoreInstanceAPI {
             turStoreInstanceEdit.setTurStoreVendor(turStoreInstance.getTurStoreVendor());
             turStoreInstanceEdit.setUrl(turStoreInstance.getUrl());
             turStoreInstanceEdit.setEnabled(turStoreInstance.getEnabled());
+            turStoreInstanceEdit.setCollectionName(turStoreInstance.getCollectionName());
+            turStoreInstanceEdit.setProviderOptionsJson(turStoreInstance.getProviderOptionsJson());
+            if (StringUtils.hasText(turStoreInstance.getCredential())) {
+                turStoreInstanceEdit
+                        .setCredentialEncrypted(turSecretCryptoService.encrypt(turStoreInstance.getCredential()));
+            }
             this.turStoreInstanceRepository.save(turStoreInstanceEdit);
             return turStoreInstanceEdit;
         }).orElse(new TurStoreInstance());
@@ -98,6 +109,9 @@ public class TurStoreInstanceAPI {
     @Operation(summary = "Create a Embedding Store")
     @PostMapping
     public TurStoreInstance turStoreInstanceAdd(@RequestBody TurStoreInstance turStoreInstance) {
+        if (StringUtils.hasText(turStoreInstance.getCredential())) {
+            turStoreInstance.setCredentialEncrypted(turSecretCryptoService.encrypt(turStoreInstance.getCredential()));
+        }
         this.turStoreInstanceRepository.save(turStoreInstance);
         return turStoreInstance;
 

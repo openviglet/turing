@@ -23,14 +23,18 @@ package com.viglet.turing.persistence.model.llm;
 import java.io.Serial;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.viglet.turing.persistence.utils.TurAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -102,4 +106,16 @@ public class TurLLMInstance implements Serializable {
 
 	@Column
 	private Integer maxRetries;
+
+	@Lob
+	@Column
+	private String providerOptionsJson;
+
+	@Column
+	@JsonIgnore
+	private String apiKeyEncrypted;
+
+	@Transient
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private String apiKey;
 }

@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/v2026.1_type_enum_fix.yaml
   - include:
       file: db/changelog/v2026.1.11.yaml
+  - include:
+      file: db/changelog/v2026.1.11_genai_spring_ai.yaml

@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.viglet.turing.genai.TurGenAi;
+import com.viglet.turing.genai.TurGenAiContextFactory;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.TurSNSearchProcess;
@@ -40,6 +41,9 @@ class TurSNSiteGenAiAPITest {
 
     @Mock
     private TurGenAi turGenAi;
+
+    @Mock
+    private TurGenAiContextFactory turGenAiContextFactory;
 
     @InjectMocks
     private TurSNSiteGenAiAPI api;

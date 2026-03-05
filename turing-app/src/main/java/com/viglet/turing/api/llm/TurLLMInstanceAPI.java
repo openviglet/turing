@@ -20,6 +20,7 @@ package com.viglet.turing.api.llm;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
+import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,9 +44,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Large Language Model", description = "Large Language Model API")
 public class TurLLMInstanceAPI {
     private final TurLLMInstanceRepository turLLMInstanceRepository;
+    private final TurSecretCryptoService turSecretCryptoService;
 
-    public TurLLMInstanceAPI(TurLLMInstanceRepository turLLMInstanceRepository) {
+    public TurLLMInstanceAPI(TurLLMInstanceRepository turLLMInstanceRepository,
+            TurSecretCryptoService turSecretCryptoService) {
         this.turLLMInstanceRepository = turLLMInstanceRepository;
+        this.turSecretCryptoService = turSecretCryptoService;
     }
 
     @Operation(summary = "Large Language Model List")
@@ -89,6 +94,10 @@ public class TurLLMInstanceAPI {
             turLLMInstanceEdit.setSupportedCapabilities(turLLMInstance.getSupportedCapabilities());
             turLLMInstanceEdit.setTimeout(turLLMInstance.getTimeout());
             turLLMInstanceEdit.setMaxRetries(turLLMInstance.getMaxRetries());
+            turLLMInstanceEdit.setProviderOptionsJson(turLLMInstance.getProviderOptionsJson());
+            if (StringUtils.hasText(turLLMInstance.getApiKey())) {
+                turLLMInstanceEdit.setApiKeyEncrypted(turSecretCryptoService.encrypt(turLLMInstance.getApiKey()));
+            }
             this.turLLMInstanceRepository.save(turLLMInstanceEdit);
             return turLLMInstanceEdit;
         }).orElse(new TurLLMInstance());
@@ -106,6 +115,9 @@ public class TurLLMInstanceAPI {
     @Operation(summary = "Create a Large Language Model")
     @PostMapping
     public TurLLMInstance turLLMInstanceAdd(@RequestBody TurLLMInstance turLLMInstance) {
+        if (StringUtils.hasText(turLLMInstance.getApiKey())) {
+            turLLMInstance.setApiKeyEncrypted(turSecretCryptoService.encrypt(turLLMInstance.getApiKey()));
+        }
         this.turLLMInstanceRepository.save(turLLMInstance);
         return turLLMInstance;
 

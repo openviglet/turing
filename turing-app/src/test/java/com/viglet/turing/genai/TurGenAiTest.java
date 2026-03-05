@@ -17,7 +17,8 @@ class TurGenAiTest {
     @Test
     void shouldReturnDisabledMessageWhenContextIsDisabled() {
         TurSNSearchProcess turSNSearchProcess = mock(TurSNSearchProcess.class);
-        TurGenAi turGenAi = new TurGenAi(turSNSearchProcess);
+        TurGenAiContextFactory contextFactory = mock(TurGenAiContextFactory.class);
+        TurGenAi turGenAi = new TurGenAi(turSNSearchProcess, contextFactory);
         TurGenAiContext context = mock(TurGenAiContext.class);
         when(context.isEnabled()).thenReturn(false);
 
@@ -31,7 +32,8 @@ class TurGenAiTest {
     @Test
     void shouldReturnEnabledMessageWithNullTextForWildcardSingleToken() {
         TurSNSearchProcess turSNSearchProcess = mock(TurSNSearchProcess.class);
-        TurGenAi turGenAi = new TurGenAi(turSNSearchProcess);
+        TurGenAiContextFactory contextFactory = mock(TurGenAiContextFactory.class);
+        TurGenAi turGenAi = new TurGenAi(turSNSearchProcess, contextFactory);
         TurGenAiContext context = mock(TurGenAiContext.class);
         when(context.isEnabled()).thenReturn(true);
 

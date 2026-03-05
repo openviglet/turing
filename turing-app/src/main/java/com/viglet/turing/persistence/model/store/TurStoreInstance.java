@@ -23,14 +23,18 @@ package com.viglet.turing.persistence.model.store;
 import java.io.Serial;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.viglet.turing.persistence.utils.TurAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,6 +66,21 @@ public class TurStoreInstance implements Serializable {
 
 	@Column(nullable = false)
 	private String url;
+
+	@Column
+	private String collectionName;
+
+	@Lob
+	@Column
+	private String providerOptionsJson;
+
+	@Column
+	@JsonIgnore
+	private String credentialEncrypted;
+
+	@Transient
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private String credential;
 
 	// bi-directional many-to-one association to turStoreVendor
 	@ManyToOne

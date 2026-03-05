@@ -42,7 +42,7 @@ public class TurLLMVendorOnStartup {
 			TurLLMVendor openai = new TurLLMVendor();
 			openai.setId("OPENAI");
 			openai.setDescription("Open AI");
-			openai.setPlugin("");
+			openai.setPlugin("openai");
 			openai.setTitle("Open AI");
 			openai.setWebsite("https://openai.com");
 			turLLMVendorRepository.save(openai);
@@ -50,7 +50,7 @@ public class TurLLMVendorOnStartup {
 			TurLLMVendor ollama = new TurLLMVendor();
 			ollama.setId("OLLAMA");
 			ollama.setDescription("Ollama");
-			ollama.setPlugin("");
+			ollama.setPlugin("ollama");
 			ollama.setTitle("Ollama");
 			ollama.setWebsite("https://ollama.com");
 			turLLMVendorRepository.save(ollama);

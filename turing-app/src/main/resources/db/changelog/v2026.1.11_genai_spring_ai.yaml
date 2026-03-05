@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: v2026.1.11-01-llm-instance-spring-ai-columns
+      author: viglet-team
+      changes:
+        - addColumn:
+            tableName: llm_instance
+            columns:
+              - column:
+                  name: providerOptionsJson
+                  type: TEXT
+              - column:
+                  name: apiKeyEncrypted
+                  type: VARCHAR(4096)
+
+  - changeSet:
+      id: v2026.1.11-02-store-instance-spring-ai-columns
+      author: viglet-team
+      changes:
+        - addColumn:
+            tableName: store_instance
+            columns:
+              - column:
+                  name: collectionName
+                  type: VARCHAR(255)
+              - column:
+                  name: providerOptionsJson
+                  type: TEXT
+              - column:
+                  name: credentialEncrypted
+                  type: VARCHAR(4096)
+
+  - changeSet:
+      id: v2026.1.11-03-update-llm-vendor-plugin
+      author: viglet-team
+      changes:
+        - update:
+            tableName: llm_vendor
+            columns:
+              - column:
+                  name: plugin
+                  value: openai
+            where: id = 'OPENAI'
+        - update:
+            tableName: llm_vendor
+            columns:
+              - column:
+                  name: plugin
+                  value: ollama
+            where: id = 'OLLAMA'
+
+  - changeSet:
+      id: v2026.1.11-04-update-store-vendor-plugin
+      author: viglet-team
+      changes:
+        - update:
+            tableName: store_vendor
+            columns:
+              - column:
+                  name: plugin
+                  value: chroma
+            where: id = 'CHROMA'
+        - update:
+            tableName: store_vendor
+            columns:
+              - column:
+                  name: plugin
+                  value: milvus
+            where: id = 'MILVUS'
