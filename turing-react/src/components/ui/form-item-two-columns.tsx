@@ -29,7 +29,7 @@ const FormItemTwoColumnsLeft: React.FC<React.ComponentProps<"div">> = ({
     className,
     ...props
 }) => (
-    <div className={cn("flex w-1/2 flex-col", className)} {...props} />
+    <div className={cn("flex w-1/2 flex-col gap-1", className)} {...props} />
 )
 
 const FormItemTwoColumnsRight: React.FC<React.ComponentProps<"div">> = ({

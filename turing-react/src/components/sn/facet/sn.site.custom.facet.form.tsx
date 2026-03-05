@@ -1,8 +1,7 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
 import { BadgeFieldType } from "@/components/badge-field-type"
-import { DialogDelete } from "@/components/dialog.delete"
-import { LanguageSelect } from "@/components/language-select"
+import { SNSiteLabelTranslations } from "@/components/sn/facet/sn.site.label.translations"
 import {
   Accordion,
   AccordionContent,
@@ -10,7 +9,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -71,7 +69,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, PlusCircle, Trash2 } from 'lucide-react'
+import { GripVertical, PlusCircle } from 'lucide-react'
 import { useEffect, useState } from "react"
 import {
   useForm
@@ -217,7 +215,6 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
     }
   });
   const { control, watch, setValue } = form;
-  const [open, setOpen] = useState(false);
   const [fieldOptions, setFieldOptions] = useState<TurSNSiteCustomFacetFieldOption[]>([]);
   const [availableLocales, setAvailableLocales] = useState<TurLocale[]>([]);
   const [labelEntries, setLabelEntries] = useState<Array<{ locale: string; label: string }>>([]);
@@ -401,27 +398,8 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
       toast.error(`Failed to submit the form: ${errorMessage}`);
     }
   }
-
-  async function onDelete() {
-    try {
-      if (value.id && await turSNSiteCustomFacetService.delete(snSiteId, value.id)) {
-        toast.success(`The ${value.name} Custom Facet was deleted`);
-        navigate(`${ROUTES.SN_INSTANCE}/${snSiteId}/custom-facet`);
-      }
-      else {
-        toast.error(`The ${value.name} Custom Facet was not deleted`);
-      }
-
-    } catch (error) {
-      console.error("Form deletion error", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-      toast.error(`Failed to delete: ${errorMessage}`);
-    }
-    setOpen(false);
-  }
-
   return (
-    <div className="flex h-full w-full items-center justify-center px-4">
+    <>
       <Dialog open={openFieldChangeDialog} onOpenChange={setOpenFieldChangeDialog}>
         <DialogContent>
           <DialogHeader>
@@ -440,294 +418,259 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew 
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl">{isNew && (<span>New</span>)} Custom Facet</CardTitle>
-          <CardAction>
-            {!isNew && <DialogDelete feature="Custom Facet" name={value.name} onDelete={onDelete} open={open} setOpen={setOpen} />}
-          </CardAction>
-          <CardDescription>
-            Custom facet settings for creating facets with specific ranges.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mx-auto py-10">
-              <Accordion type="multiple" defaultValue={["basic-info", "labels", "field-config", "facet-items"]} className="space-y-4">
-                {/* Basic Information Section */}
-                <AccordionItem value="basic-info" className="border rounded-lg px-6">
-                  <AccordionTrigger className="text-lg font-semibold">Basic Information</AccordionTrigger>
-                  <AccordionContent className="space-y-6 pt-4">
-                    <FormField
-                      control={control}
-                      name="name"
-                      rules={{
-                        required: "Please enter a facet name.",
-                        pattern: {
-                          value: FACET_NAME_PATTERN,
-                          message: "Use only letters, numbers, underscores (_), or hyphens (-).",
-                        },
-                      }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base">Facet Name</FormLabel>
-                          <FormDescription className="text-sm mb-2">
-                            Give your facet a unique ID using lowercase letters, numbers, underscores, or hyphens. This helps organize your search filters.
-                          </FormDescription>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10 py-10 px-8">
+          <Accordion type="multiple" defaultValue={["basic-info", "labels", "facet-config", "facet-items"]} className="space-y-4">
+            {/* Basic Information Section */}
+            <AccordionItem value="basic-info" className="border rounded-lg px-6">
+              <AccordionTrigger className="text-lg font-semibold">Basic Information</AccordionTrigger>
+              <AccordionContent className="space-y-6 pt-4">
+                <FormField
+                  control={control}
+                  name="name"
+                  rules={{
+                    required: "Please enter an identifier.",
+                    pattern: {
+                      value: FACET_NAME_PATTERN,
+                      message: "Use only letters, numbers, underscores (_), or hyphens (-).",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Identifier</FormLabel>
+                      <FormDescription>
+                        Give your facet a unique identifier using lowercase letters, numbers, underscores, or hyphens. This helps organize your search filters.
+                      </FormDescription>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g., price_range"
+                          type="text"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Labels Section */}
+            <AccordionItem value="labels" className="border rounded-lg px-6">
+              <AccordionTrigger className="text-lg font-semibold">Display Labels</AccordionTrigger>
+              <AccordionContent className="space-y-6 pt-4">
+                <div>
+                  <FormField
+                    control={control}
+                    name="defaultLabel"
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Default</FormLabel>
+                        <FormDescription>
+                          The name shown to users when browsing filters. Used when no language-specific label is available.
+                        </FormDescription>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            value={field.value ?? ""}
+                            placeholder="e.g., Price Range"
+                            type="text"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <SNSiteLabelTranslations
+                    entries={labelEntries}
+                    locales={availableLocales}
+                    onAdd={addLabelEntry}
+                    onUpdate={updateLabelEntry}
+                    onRemove={removeLabelEntry}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Facet Configuration Section */}
+            <AccordionItem value="facet-config" className="border rounded-lg px-6">
+              <AccordionTrigger className="text-lg font-semibold">Facet Configuration</AccordionTrigger>
+              <AccordionContent className="space-y-6 pt-4">
+                <FormField
+                  control={control}
+                  name="fieldExtId"
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <FormItemTwoColumns>
+                      <FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Label>Select a Field</FormItemTwoColumns.Label>
+                        <FormItemTwoColumns.Description >Choose the field that will serve as the foundation for this custom facet.</FormItemTwoColumns.Description>
+                      </FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Right>
+                        <FormControl>
+                          <Select onValueChange={onFieldChange} value={field.value || ""}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a field" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {fieldOptions.map((fieldOption) => (
+                                <SelectItem key={fieldOption.id} value={fieldOption.id}>
+                                  <div className="flex items-center justify-between gap-3">
+                                    <BadgeFieldType type={fieldOption.type} variation="short" />
+                                    <span>{fieldOption.name}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItemTwoColumns.Right>
+                    </FormItemTwoColumns>
+                  )}
+                />
+                <div className="space-y-6">
+                  {/* Facet Type Row */}
+                  <FormField
+                    control={control}
+                    name="facetType"
+                    render={({ field }) => (
+                      <FormItemTwoColumns>
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Operator between Facets</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description >
+                            Specifies how multiple facets are combined in search.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
                           <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="e.g., price_range"
-                              type="text"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={control}
-                      name="defaultLabel"
-                      rules={{ required: true }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base">Display Name</FormLabel>
-                          <FormDescription className="text-sm mb-2">
-                            The name shown to users when browsing filters. Used when no language-specific label is available.
-                          </FormDescription>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              value={field.value ?? ""}
-                              placeholder="e.g., Price Range"
-                              type="text"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-
-                {/* Localized Labels Section */}
-                <AccordionItem value="labels" className="border rounded-lg px-6">
-                  <AccordionTrigger className="text-lg font-semibold">Language-Specific Labels</AccordionTrigger>
-                  <AccordionContent className="space-y-6 pt-4">
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <h3 className="text-base font-medium">Add Translations</h3>
-                          <p className="text-sm text-muted-foreground">Help users in different regions by providing labels in their language.</p>
-                        </div>
-                        <Button type="button" variant="outline" onClick={addLabelEntry}>
-                          <PlusCircle className="h-4 w-4 mr-2" />
-                          Add Label
-                        </Button>
-                      </div>
-                      <div className="space-y-3">
-                        {labelEntries.map((entry, index) => (
-                          <div key={`${entry.locale}-${index}`} className="flex items-center gap-2">
-                            <LanguageSelect
-                              value={entry.locale}
-                              onValueChange={(value) => updateLabelEntry(index, "locale", value)}
-                              locales={availableLocales}
-                              extraLocaleValues={labelEntries.map((item) => item.locale)}
-                            />
-                            <Input
-                              placeholder="Enter translated label"
-                              value={entry.label}
-                              onChange={(event) => updateLabelEntry(index, "label", event.target.value)}
-                              className="flex-1"
-                            />
-                            <Button type="button" variant="ghost" size="icon" onClick={() => removeLabelEntry(index)}>
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-
-                {/* Field Configuration Section */}
-                <AccordionItem value="field-config" className="border rounded-lg px-6">
-                  <AccordionTrigger className="text-lg font-semibold">Field Configuration</AccordionTrigger>
-                  <AccordionContent className="space-y-6 pt-4">
-                    <FormField
-                      control={control}
-                      name="fieldExtId"
-                      rules={{ required: true }}
-                      render={({ field }) => (
-                        <FormItemTwoColumns>
-                          <FormItemTwoColumns.Left>
-                            <FormItemTwoColumns.Label className="text-base mb-1">Select a Field</FormItemTwoColumns.Label>
-                            <FormItemTwoColumns.Description className="text-sm">Choose the field that will serve as the foundation for this custom facet.</FormItemTwoColumns.Description>
-                          </FormItemTwoColumns.Left>
-                          <FormItemTwoColumns.Right>
-                            <FormControl>
-                              <Select onValueChange={onFieldChange} value={field.value || ""}>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select a field" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {fieldOptions.map((fieldOption) => (
-                                    <SelectItem key={fieldOption.id} value={fieldOption.id}>
-                                      <div className="flex items-center justify-between gap-3">
-                                        <BadgeFieldType type={fieldOption.type} variation="short" />
-                                        <span>{fieldOption.name}</span>
-                                      </div>
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItemTwoColumns.Right>
-                        </FormItemTwoColumns>
-                      )}
-                    />
-                    <div className="space-y-6">
-                      {/* Facet Type Row */}
-                      <FormField
-                        control={control}
-                        name="facetType"
-                        render={({ field }) => (
-                          <FormItemTwoColumns>
-                            <FormItemTwoColumns.Left>
-                              <FormItemTwoColumns.Label className="text-base mb-1">Operator between Facets</FormItemTwoColumns.Label>
-                              <FormItemTwoColumns.Description className="text-sm">
-                                Specifies how multiple facets are combined in search.
-                              </FormItemTwoColumns.Description>
-                            </FormItemTwoColumns.Left>
-                            <FormItemTwoColumns.Right>
-                              <FormControl>
-                                <Select onValueChange={field.onChange} value={field.value ?? "DEFAULT"}>
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select facet type" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {facetTypes.map((facetType) => (
-                                      <SelectItem key={facetType.value} value={facetType.value}>
-                                        {facetType.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItemTwoColumns.Right>
-                          </FormItemTwoColumns>
-                        )}
-                      />
-
-                      {/* Facet Item Type Row */}
-                      <FormField
-                        control={control}
-                        name="facetItemType"
-                        render={({ field }) => (
-                          <FormItemTwoColumns>
-                            <FormItemTwoColumns.Left>
-                              <FormItemTwoColumns.Label className="text-base mb-1">Operator between Facet Items</FormItemTwoColumns.Label>
-                              <FormItemTwoColumns.Description className="text-sm">
-                                Defines how multiple selected facet values are joined.
-                              </FormItemTwoColumns.Description>
-                            </FormItemTwoColumns.Left>
-                            <FormItemTwoColumns.Right>
-                              <FormControl>
-                                <Select onValueChange={field.onChange} value={field.value ?? "DEFAULT"}>
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select item type" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {facetTypes.map((facetType) => (
-                                      <SelectItem key={facetType.value} value={facetType.value}>
-                                        {facetType.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItemTwoColumns.Right>
-                          </FormItemTwoColumns>
-                        )}
-                      />
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-
-                {/* Facet Items Section */}
-                <AccordionItem value="facet-items" className="border rounded-lg px-6">
-                  <AccordionTrigger className="text-lg font-semibold">Facet Range Items</AccordionTrigger>
-                  <AccordionContent className="space-y-6 pt-4">
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <h3 className="text-base font-medium">Define Your Ranges</h3>
-                          <p className="text-sm text-muted-foreground">Create custom range buckets for this filter. Drag items to reorder them—they'll appear in this order to users.</p>
-                        </div>
-                        <Button type="button" variant="outline" onClick={onAddItem}>
-                          <PlusCircle className="h-4 w-4 mr-2" />
-                          Add Item
-                        </Button>
-                      </div>
-                      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-                        <div className="rounded-md border overflow-hidden">
-                          <Table>
-                            <TableHeader>
-                              <TableRow className="bg-muted/50">
-                                <TableHead className="w-10" />
-                                <TableHead className="w-16">Position</TableHead>
-                                <TableHead>Label</TableHead>
-                                <TableHead>Range Start</TableHead>
-                                <TableHead>Range End</TableHead>
-                                <TableHead className="w-24 text-right" />
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              <SortableContext
-                                items={items.map((item, index) => item.id || `item-${index}`)}
-                                strategy={verticalListSortingStrategy}
-                              >
-                                {items.map((item, index) => (
-                                  <ItemRow
-                                    key={item.id || `item-${index}`}
-                                    item={item}
-                                    index={index}
-                                    isDateField={dateField}
-                                    onUpdate={onItemUpdate}
-                                    onRemove={onRemoveItem}
-                                  />
+                            <Select onValueChange={field.onChange} value={field.value ?? "DEFAULT"}>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select facet type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {facetTypes.map((facetType) => (
+                                  <SelectItem key={facetType.value} value={facetType.value}>
+                                    {facetType.name}
+                                  </SelectItem>
                                 ))}
-                              </SortableContext>
-                            </TableBody>
-                          </Table>
-                        </div>
-                      </DndContext>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItemTwoColumns.Right>
+                      </FormItemTwoColumns>
+                    )}
+                  />
 
-              {/* Action Footer */}
-              <div className="flex items-center justify-end gap-3 pt-6 border-t">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate(`${ROUTES.SN_INSTANCE}/${snSiteId}/custom-facet`)}
-                >
-                  Cancel
-                </Button>
-                <GradientButton type="submit">
-                  {isNew ? "Create Facet" : "Save Changes"}
-                </GradientButton>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+                  {/* Facet Item Type Row */}
+                  <FormField
+                    control={control}
+                    name="facetItemType"
+                    render={({ field }) => (
+                      <FormItemTwoColumns>
+                        <FormItemTwoColumns.Left>
+                          <FormItemTwoColumns.Label>Operator between Facet Items</FormItemTwoColumns.Label>
+                          <FormItemTwoColumns.Description >
+                            Defines how multiple selected facet values are joined.
+                          </FormItemTwoColumns.Description>
+                        </FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Right>
+                          <FormControl>
+                            <Select onValueChange={field.onChange} value={field.value ?? "DEFAULT"}>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select item type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {facetTypes.map((facetType) => (
+                                  <SelectItem key={facetType.value} value={facetType.value}>
+                                    {facetType.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItemTwoColumns.Right>
+                      </FormItemTwoColumns>
+                    )}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Facet Items Section */}
+            <AccordionItem value="facet-items" className="border rounded-lg px-6">
+              <AccordionTrigger className="text-lg font-semibold">Facet Range Items</AccordionTrigger>
+              <AccordionContent className="space-y-6 pt-4">
+                <FormItem>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="grid gap-2">
+                      <FormLabel>Define Your Ranges</FormLabel>
+                      <FormDescription>Create custom range buckets for this filter. Drag items to reorder them—they'll appear in this order to users.</FormDescription>
+                    </div>
+                    <Button type="button" variant="outline" onClick={onAddItem}>
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Add Item
+                    </Button>
+                  </div>
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+                    <div className="rounded-md border overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/50">
+                            <TableHead className="w-10" />
+                            <TableHead className="w-16">Position</TableHead>
+                            <TableHead>Label</TableHead>
+                            <TableHead>Range Start</TableHead>
+                            <TableHead>Range End</TableHead>
+                            <TableHead className="w-24 text-right" />
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <SortableContext
+                            items={items.map((item, index) => item.id || `item-${index}`)}
+                            strategy={verticalListSortingStrategy}
+                          >
+                            {items.map((item, index) => (
+                              <ItemRow
+                                key={item.id || `item-${index}`}
+                                item={item}
+                                index={index}
+                                isDateField={dateField}
+                                onUpdate={onItemUpdate}
+                                onRemove={onRemoveItem}
+                              />
+                            ))}
+                          </SortableContext>
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </DndContext>
+                </FormItem>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          {/* Action Footer */}
+          <div className="flex items-center justify-end gap-3 pt-6 border-t">
+            <GradientButton
+              type="button"
+              variant="outline"
+              className="w-full md:w-auto"
+              onClick={() => navigate(`${ROUTES.SN_INSTANCE}/${snSiteId}/custom-facet`)}
+            >
+              Cancel
+            </GradientButton>
+            <GradientButton type="submit">
+              {isNew ? "Create Facet" : "Save Changes"}
+            </GradientButton>
+          </div>
+        </form>
+      </Form>
+    </>
   )
 }

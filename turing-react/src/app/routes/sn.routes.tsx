@@ -1,7 +1,7 @@
 import { Navigate, Route, useParams } from "react-router-dom"
 import SNSiteBehaviorPage from "../console/sn/behavior/sn.site.behavior.page"
 import SNSiteDetailPage from "../console/sn/detail/sn.site.detail.page"
-import SNSiteCustomFacetPage from "../console/sn/facet/sn.custom.facet.page"
+import SNSiteCustomFacetPage from "../console/sn/facet/sn.site.custom.facet.page"
 import SNSiteFacetListPage from "../console/sn/facet/sn.site.facet.list.page"
 import SNSiteFacetedFieldPage from "../console/sn/facet/sn.site.faceted.field.page"
 import SNSiteFieldListPage from "../console/sn/fields/sn.site.field.list.page"

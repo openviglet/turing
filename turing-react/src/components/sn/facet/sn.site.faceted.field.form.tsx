@@ -1,5 +1,6 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
+import { SNSiteLabelTranslations } from "@/components/sn/facet/sn.site.label.translations"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import {
   Form,
@@ -24,10 +25,11 @@ import {
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Switch } from "@/components/ui/switch"
+import type { TurLocale } from "@/models/locale/locale.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
+import { TurLocaleService } from "@/services/locale/locale.service"
 import { TurSNFieldService } from "@/services/sn/sn.field.service"
 import { TurSNFieldTypeService } from "@/services/sn/sn.field.type.service"
-import { IconReorder } from "@tabler/icons-react"
 import axios from "axios"
 import { useEffect, useMemo, useState } from "react"
 import {
@@ -35,7 +37,8 @@ import {
 } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { DynamicLanguageFields } from "../fields/dynamic-language-field"
+
+const turLocaleService = new TurLocaleService();
 const turSNFieldService = new TurSNFieldService();
 const turSNFieldTypeService = new TurSNFieldTypeService();
 interface Props {
@@ -68,8 +71,10 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
   const form = useForm<TurSNSiteField>({
     defaultValues: normalizedField
   });
-  const { control, register } = form;
+  const { control } = form;
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [availableLocales, setAvailableLocales] = useState<TurLocale[]>([]);
+  const [labelEntries, setLabelEntries] = useState<Array<{ locale: string; label: string }>>([]);
   const urlBase = `${ROUTES.SN_INSTANCE}/${snSiteId}/field`;
   const navigate = useNavigate()
 
@@ -97,7 +102,32 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
 
   useEffect(() => {
     form.reset(normalizedField);
+    const entries = (normalizedField.facetLocales ?? []).map((facetLocale) => ({
+      locale: facetLocale.locale ?? "",
+      label: facetLocale.label ?? "",
+    }));
+    setLabelEntries(entries);
   }, [normalizedField, form]);
+
+  useEffect(() => {
+    turLocaleService.query().then(setAvailableLocales);
+  }, []);
+
+  function addLabelEntry() {
+    setLabelEntries((currentEntries) => [...currentEntries, { locale: "", label: "" }]);
+  }
+
+  function removeLabelEntry(index: number) {
+    setLabelEntries((currentEntries) => currentEntries.filter((_, currentIndex) => currentIndex !== index));
+  }
+
+  function updateLabelEntry(index: number, key: "locale" | "label", inputValue: string) {
+    setLabelEntries((currentEntries) => currentEntries.map((entry, currentIndex) => (
+      currentIndex === index
+        ? { ...entry, [key]: inputValue }
+        : entry
+    )));
+  }
 
 
   async function onSubmit(snField: TurSNSiteField) {
@@ -109,6 +139,13 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
         description: snField.description ?? "",
         defaultValue: snField.defaultValue ?? "",
         facetName: snField.facetName ?? "",
+        facetLocales: labelEntries
+          .filter((entry) => entry.locale.trim() && entry.label.trim())
+          .map((entry) => ({
+            id: "",
+            locale: entry.locale.trim(),
+            label: entry.label.trim(),
+          })),
         multiValued: snField.multiValued ?? 0,
         hl: snField.hl ?? 0,
         mlt: snField.mlt ?? 0,
@@ -176,25 +213,25 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10 py-10 px-8">
             <Accordion
               type="multiple"
-              defaultValue={["general", "facet"]}
+              defaultValue={["general", "labels", "facet"]}
               className="w-full space-y-4"
             >
-              {/* General Configuration */}
+              {/* Basic Information */}
               <AccordionItem value="general" className="border rounded-lg px-6">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-semibold">General Configuration</span>
+                    <span className="text-lg font-semibold">Basic Information</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-6 pt-4">
-                  {/* Name */}
+                  {/* Identifier */}
                   <FormField
                     control={form.control}
                     name="name"
-                    rules={{ required: "Name is required." }}
+                    rules={{ required: "Identifier is required." }}
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel>Identifier</FormLabel>
                         <FormDescription>
                           Unique identifier for this field. Used for search and indexing.
                         </FormDescription>
@@ -203,7 +240,7 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
                             {...field}
                             readOnly
                             aria-readonly="true"
-                            placeholder="Name"
+                            placeholder="Identifier"
                             type="text"
                             className="w-full cursor-not-allowed opacity-70"
                           />
@@ -215,12 +252,48 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
                 </AccordionContent>
 
               </AccordionItem>
+              {/* Labels Section */}
+              <AccordionItem value="labels" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">Display Labels</AccordionTrigger>
+                <AccordionContent className="space-y-6 pt-4">
+                  <div>
+                    <FormField
+                      control={control}
+                      name="facetName"
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Default</FormLabel>
+                          <FormDescription>
+                            The name shown to users when browsing filters. Used when no language-specific label is available.
+                          </FormDescription>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              value={field.value ?? ""}
+                              placeholder="e.g., Price Range"
+                              type="text"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <SNSiteLabelTranslations
+                      entries={labelEntries}
+                      locales={availableLocales}
+                      onAdd={addLabelEntry}
+                      onUpdate={updateLabelEntry}
+                      onRemove={removeLabelEntry}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
               {/* Facet Configuration */}
               <AccordionItem value="facet" className="border rounded-lg px-6">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-2">
-                    <IconReorder />
-                    <span className="text-lg font-semibold">Facet</span>
+                    <span className="text-lg font-semibold">Facet Configuration</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-6 pt-4">
@@ -396,42 +469,11 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
                       </FormItemTwoColumns>
                     )}
                   />
-                  {/* Facet Name */}
-                  <FormField
-                    control={form.control}
-                    name="facetName"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Default Name</FormLabel>
-                        <FormDescription>
-                          Display name for this field in the filter box.
-                        </FormDescription>
-                        <FormControl>
-                          <Input {...field} placeholder="Display name" type="text" className="w-full" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Facet Multi Languages */}
-                  <FormItem className="w-full">
-                    <FormLabel>Facet Multi Languages</FormLabel>
-                    <FormDescription>
-                      Configure localized names for this facet to support multi-language filter labels.
-                    </FormDescription>
-                    <FormControl>
-                      <DynamicLanguageFields
-                        fieldName="facetLocales"
-                        control={control}
-                        register={register}
-                      />
-                    </FormControl>
-                  </FormItem>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
             {/* Action Footer */}
-            <div className="flex justify-end gap-4 pt-6">
+            <div className="flex items-center justify-end gap-3 pt-6 border-t">
               <GradientButton
                 type="button"
                 variant="outline"

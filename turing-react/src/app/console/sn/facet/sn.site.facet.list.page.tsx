@@ -23,7 +23,7 @@ export default function SNSiteFacetListPage() {
         name="Facet"
         feature="Facet"
         description="Edit and order the facets of the search."
-        urlNew={`${ROUTES.SN_INSTANCE}/${siteId}/custom-facet/new`}
+        urlNew={`${ROUTES.SN_INSTANCE}/${siteId}/facet/custom/new`}
       />
       {tableData && <SNSiteFacetDraggableList
         siteId={siteId}
