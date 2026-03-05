@@ -35,7 +35,7 @@ import { DialogDelete } from "../dialog.delete"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
-import { Switch } from "../ui/switch"
+import { GradientSwitch } from "../ui/gradient-switch"
 const turStoreInstanceService = new TurStoreInstanceService();
 const urlBase = ROUTES.STORE_INSTANCE
 interface Props {
@@ -519,7 +519,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                           </FormItemTwoColumns.Description>
                         </FormItemTwoColumns.Left>
                         <FormItemTwoColumns.Right>
-                          <Switch
+                          <GradientSwitch
                             checked={storeProviderOptionsDraft.initializeSchema}
                             onCheckedChange={(checked) => setStoreDraftValue("initializeSchema", checked)}
                           />
@@ -594,7 +594,7 @@ export const StoreInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                           </FormItemTwoColumns.Left>
                           <FormItemTwoColumns.Right>
                             <FormControl>
-                              <Switch
+                              <GradientSwitch
                                 checked={field.value === 1}
                                 onCheckedChange={(checked) => {
                                   field.onChange(checked ? 1 : 0);

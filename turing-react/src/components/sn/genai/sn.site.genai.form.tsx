@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form"
 import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns"
 import { GradientButton } from "@/components/ui/gradient-button"
+import { GradientSwitch } from "@/components/ui/gradient-switch"
 import {
     Select,
     SelectContent,
@@ -17,7 +18,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model"
 import type { TurSNSiteGenAi } from "@/models/sn/sn-site-genai.model"
@@ -151,7 +151,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite }) => {
                                             </FormItemTwoColumns.Left>
                                             <FormItemTwoColumns.Right>
                                                 <FormControl>
-                                                    <Switch
+                                                    <GradientSwitch
                                                         checked={field.value}
                                                         onCheckedChange={handleEnabledChange}
                                                     />

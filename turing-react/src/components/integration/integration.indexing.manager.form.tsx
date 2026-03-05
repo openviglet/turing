@@ -22,13 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model";
 import type { TurIntegrationIndexingManager } from "@/models/integration/integration-indexing-manager.model";
 import { TurIntegrationIndexingManagerService } from "@/services/integration/integration-indexing-manager.service";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { GradientSwitch } from "../ui/gradient-switch";
 import { DynamicIndexingRuleFields } from "./dynamic.indexing.rule.field";
 
 interface IndexingManagerFormValues {
@@ -266,7 +266,7 @@ export const IntegrationIndexingManagerForm: React.FC<IntegrationIndexingManager
                       </FormItemTwoColumns.Left>
                       <FormItemTwoColumns.Right>
                         <FormControl>
-                          <Switch
+                          <GradientSwitch
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />

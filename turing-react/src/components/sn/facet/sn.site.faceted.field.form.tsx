@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form"
 import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns"
 import { GradientButton } from "@/components/ui/gradient-button"
+import { GradientSwitch } from "@/components/ui/gradient-switch"
 import {
   Input
 } from "@/components/ui/input"
@@ -24,7 +25,6 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Switch } from "@/components/ui/switch"
 import type { TurLocale } from "@/models/locale/locale.model"
 import type { TurSNSiteField } from "@/models/sn/sn-site-field.model"
 import { TurLocaleService } from "@/services/locale/locale.service"
@@ -310,7 +310,7 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
                           </FormItemTwoColumns.Description>
                         </FormItemTwoColumns.Left>
                         <FormItemTwoColumns.Right>
-                          <Switch
+                          <GradientSwitch
                             checked={!!field.value}
                             onCheckedChange={(checked) => field.onChange(checked)}
                           />
@@ -332,7 +332,7 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
                           </FormItemTwoColumns.Description>
                         </FormItemTwoColumns.Left>
                         <FormItemTwoColumns.Right>
-                          <Switch
+                          <GradientSwitch
                             checked={!!field.value}
                             onCheckedChange={(checked) => field.onChange(checked)}
                           />

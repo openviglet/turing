@@ -26,9 +26,6 @@ import {
 import {
   Input
 } from "@/components/ui/input"
-import {
-  Switch
-} from "@/components/ui/switch"
 import { useAemSourceService } from "@/contexts/TuringServiceContext"
 import type { TurIntegrationAemSource } from "@/models/integration/integration-aem-source.model"
 import type { TurLocale } from "@/models/locale/locale.model"
@@ -41,6 +38,7 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
+import { GradientSwitch } from "../ui/gradient-switch"
 import { DynamicSourceLocales } from "./dynamic.source.locale"
 
 interface Props {
@@ -256,7 +254,7 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
@@ -319,7 +317,7 @@ export const IntegrationSourceForm: React.FC<Props> = ({ value, isNew, integrati
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />

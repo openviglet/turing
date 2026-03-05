@@ -1,6 +1,5 @@
 "use client"
 import { ROUTES } from "@/app/routes.const"
-import { Switch } from "@/components//ui/switch"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -35,6 +34,7 @@ import { toast } from "sonner"
 import { DialogDelete } from "../dialog.delete"
 import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
+import { GradientSwitch } from "../ui/gradient-switch"
 const turLLMInstanceService = new TurLLMInstanceService();
 const urlBase = ROUTES.LLM_INSTANCE
 interface Props {
@@ -799,7 +799,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                           </FormItemTwoColumns.Left>
                           <FormItemTwoColumns.Right>
                             <FormControl>
-                              <Switch
+                              <GradientSwitch
                                 checked={field.value === 1}
                                 onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
                               />

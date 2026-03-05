@@ -27,8 +27,8 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { GradientButton } from "@/components/ui/gradient-button"
+import { GradientSwitch } from "@/components/ui/gradient-switch"
 import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
 import {
     Table,
     TableBody,
@@ -237,7 +237,7 @@ const buildColumns = (
                 const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch
+                        <GradientSwitch
                             checked={multiValued == 1}
                             onCheckedChange={(checked) =>
                                 onToggle(fieldId, "multiValued", checked)
@@ -256,7 +256,7 @@ const buildColumns = (
                 const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch
+                        <GradientSwitch
                             checked={mlt == 1}
                             onCheckedChange={(checked) =>
                                 onToggle(fieldId, "mlt", checked)
@@ -275,7 +275,7 @@ const buildColumns = (
                 const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch
+                        <GradientSwitch
                             checked={facet == 1}
                             onCheckedChange={(checked) =>
                                 onToggle(fieldId, "facet", checked)
@@ -294,7 +294,7 @@ const buildColumns = (
                 const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch
+                        <GradientSwitch
                             checked={secondaryFacet}
                             onCheckedChange={(checked) =>
                                 onToggle(fieldId, "secondaryFacet", checked)
@@ -313,7 +313,7 @@ const buildColumns = (
                 const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch
+                        <GradientSwitch
                             checked={hl == 1}
                             onCheckedChange={(checked) =>
                                 onToggle(fieldId, "hl", checked)
@@ -332,7 +332,7 @@ const buildColumns = (
                 const fieldId = row.original.id;
                 return (
                     <div className="text-right font-medium">
-                        <Switch
+                        <GradientSwitch
                             checked={enabled == 1}
                             onCheckedChange={(checked) =>
                                 onToggle(fieldId, "enabled", checked)

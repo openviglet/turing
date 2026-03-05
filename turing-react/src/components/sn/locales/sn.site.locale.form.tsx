@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/form"
 import { FormItemTwoColumns } from "@/components/ui/form-item-two-columns"
 import { GradientButton } from "@/components/ui/gradient-button"
+import { GradientSwitch } from "@/components/ui/gradient-switch"
 import {
   Input
 } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
 import type { TurLocale } from "@/models/locale/locale.model"
 import type { TurSNSiteLocale } from "@/models/sn/sn-site-locale.model"
 import { TurLocaleService } from "@/services/locale/locale.service"
@@ -154,7 +154,7 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew })
                     </FormItemTwoColumns.Description>
                   </FormItemTwoColumns.Left>
                   <FormItemTwoColumns.Right>
-                    <Switch
+                    <GradientSwitch
                       checked={useCustomCore}
                       onCheckedChange={(value) => {
                         const nextValue = !!value;

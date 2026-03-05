@@ -30,7 +30,7 @@ import { toast } from "sonner"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { FormItemTwoColumns } from "../ui/form-item-two-columns"
 import { GradientButton } from "../ui/gradient-button"
-import { Switch } from "../ui/switch"
+import { GradientSwitch } from "../ui/gradient-switch"
 
 const turSNSiteService = new TurSNSiteService();
 interface Props {
@@ -126,7 +126,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
@@ -161,7 +161,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
@@ -185,7 +185,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
@@ -220,7 +220,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
@@ -371,7 +371,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
@@ -438,7 +438,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
@@ -462,7 +462,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
@@ -497,7 +497,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
@@ -532,7 +532,7 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew }) => {
                     </FormItemTwoColumns.Left>
                     <FormItemTwoColumns.Right>
                       <FormControl>
-                        <Switch
+                        <GradientSwitch
                           checked={field.value === 1}
                           onCheckedChange={(checked) => {
                             field.onChange(checked ? 1 : 0);
