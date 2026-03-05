@@ -1,4 +1,5 @@
 import {
+  IconBrandGraphql,
   IconCode,
   IconCpu2,
   IconDatabase,
@@ -54,6 +55,11 @@ const data = {
       title: "Integration",
       url: "/admin/integration/instance",
       icon: IconPlugConnectedX,
+    },
+    {
+      title: "GraphQL Explorer",
+      url: ROUTES.GRAPHQL_ROOT,
+      icon: IconBrandGraphql,
     },
     {
       title: "Logging",

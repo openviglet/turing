@@ -100,6 +100,7 @@ public class TurSecurityConfigProduction {
                                                 mvc.matcher("/api/genai/chat"),
                                                 mvc.matcher("/api/v2/integration/**"),
                                                 mvc.matcher("/api/sn/**"),
+                                                mvc.matcher("/graphql"),
                                                 mvc.matcher(ERROR_PATH),
                                                 mvc.matcher(LOGOUT_PATH),
                                                 mvc.matcher("/api/ocr/**"),

@@ -5,6 +5,7 @@ import LoginPage from "./app/login/login.page"
 import {
   ExchangeRoutes,
   GlobalSettingsRoutes,
+  GraphqlRoutes,
   IntegrationRoutes,
   LLMRoutes,
   LoggingRoutes,
@@ -43,6 +44,7 @@ function App() {
                 {LoggingRoutes}
                 {ExchangeRoutes}
                 {GlobalSettingsRoutes}
+                {GraphqlRoutes}
               </Route>
             </Routes>
           </TuringServiceProvider>
