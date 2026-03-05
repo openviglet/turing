@@ -29,15 +29,20 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchGroupBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchResultsBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
@@ -54,6 +59,29 @@ import com.viglet.turing.sn.TurSNSearchProcess;
  */
 
 class TurSNSiteSearchGraphQLControllerTest {
+
+    @Test
+    void testSiteNamesListsAllSitesFromRepository() {
+        TurSNSearchProcess searchProcess = mock(TurSNSearchProcess.class);
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+        TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
+                searchProcess, siteRepository, fieldExtRepository);
+
+        TurSNSite site1 = new TurSNSite();
+        site1.setName("insper-stage-publish");
+        TurSNSite site2 = new TurSNSite();
+        site2.setName("demo-site");
+        TurSNSite site3 = new TurSNSite();
+        site3.setName(" ");
+
+        when(siteRepository.findAll(any(Sort.class))).thenReturn(List.of(site1, site2, site3));
+
+        List<String> result = controller.siteNames();
+
+        assertEquals(List.of("insper-stage-publish", "demo-site"), result);
+        verify(siteRepository).findAll(any(Sort.class));
+    }
 
     @Test
     void testSiteSearchReturnsEmptyWhenLocaleNotSupported() {
@@ -222,6 +250,153 @@ class TurSNSiteSearchGraphQLControllerTest {
         } finally {
             RequestContextHolder.resetRequestAttributes();
         }
+    }
+
+    @Test
+    void testSiteSearchNormalizesDynamicFieldsBySite() {
+        TurSNSearchProcess searchProcess = mock(TurSNSearchProcess.class);
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+        TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
+                searchProcess, siteRepository, fieldExtRepository);
+
+        TurSNSite site = new TurSNSite();
+        site.setName("demo");
+        site.setHl(0);
+
+        TurSNSiteFieldExt titleField = TurSNSiteFieldExt.builder()
+                .name("title")
+                .externalId("title_i")
+                .enabled(1)
+                .build();
+        TurSNSiteFieldExt priceField = TurSNSiteFieldExt.builder()
+                .name("price")
+                .externalId("price_d")
+                .enabled(0)
+                .build();
+        TurSNSiteFieldExt tagsField = TurSNSiteFieldExt.builder()
+                .name("tags")
+                .externalId("tags_ss")
+                .enabled(1)
+                .build();
+
+        TurSNSiteSearchDocumentBean mainDocument = TurSNSiteSearchDocumentBean.builder()
+                .fields(Map.of(
+                        "title_i", "GraphQL Book",
+                        "tags_ss", List.of("java", "graphql"),
+                        "adHoc", 7))
+                .build();
+
+        TurSNSiteSearchDocumentBean groupedDocument = TurSNSiteSearchDocumentBean.builder()
+                .fields(Map.of("price_d", 19.9d))
+                .build();
+
+        TurSNSiteSearchResultsBean mainResults = new TurSNSiteSearchResultsBean()
+                .setDocument(List.of(mainDocument));
+        TurSNSiteSearchResultsBean groupedResults = new TurSNSiteSearchResultsBean()
+                .setDocument(List.of(groupedDocument));
+
+        TurSNSiteSearchGroupBean group = new TurSNSiteSearchGroupBean()
+                .setName("books")
+                .setResults(groupedResults);
+
+        TurSNSiteSearchBean response = new TurSNSiteSearchBean()
+                .setResults(mainResults)
+                .setGroups(List.of(group));
+
+        when(searchProcess.existsByTurSNSiteAndLanguage("demo", Locale.ENGLISH)).thenReturn(true);
+        when(siteRepository.findByName("demo")).thenReturn(Optional.of(site));
+        when(fieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1)).thenReturn(List.of());
+        when(fieldExtRepository.findByTurSNSite(any(), any())).thenReturn(List.of(titleField, priceField, tagsField));
+        when(searchProcess.search(any(TurSNSiteSearchContext.class))).thenReturn(response);
+
+        TurSNSiteSearchBean result = controller.siteSearch("demo", new TurSNSearchParamsInput(), "en");
+
+        Map<String, Object> normalizedMainFields = result.getResults().getDocument().get(0).getFields();
+        assertEquals("GraphQL Book", normalizedMainFields.get("title"));
+        assertNull(normalizedMainFields.get("price"));
+        assertEquals(List.of("java", "graphql"), normalizedMainFields.get("tags"));
+        assertEquals(7, normalizedMainFields.get("adHoc"));
+
+        Map<String, Object> normalizedGroupFields = result.getGroups().get(0).getResults().getDocument().get(0)
+                .getFields();
+        assertNull(normalizedGroupFields.get("title"));
+        assertEquals(19.9d, normalizedGroupFields.get("price"));
+        assertNull(normalizedGroupFields.get("tags"));
+    }
+
+    @Test
+    void testSiteSearchFiltersFieldsWhenFlIsProvided() {
+        TurSNSearchProcess searchProcess = mock(TurSNSearchProcess.class);
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+        TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
+                searchProcess, siteRepository, fieldExtRepository);
+
+        TurSNSite site = new TurSNSite();
+        site.setName("demo");
+        site.setHl(0);
+
+        TurSNSiteFieldExt titleField = TurSNSiteFieldExt.builder()
+                .name("title")
+                .externalId("title_i")
+                .enabled(1)
+                .build();
+        TurSNSiteFieldExt urlField = TurSNSiteFieldExt.builder()
+                .name("url")
+                .externalId("url_s")
+                .enabled(1)
+                .build();
+
+        TurSNSiteSearchDocumentBean document = TurSNSiteSearchDocumentBean.builder()
+                .fields(Map.of(
+                        "title_i", "Course",
+                        "url_s", "https://example.org/course"))
+                .build();
+        TurSNSiteSearchBean response = new TurSNSiteSearchBean()
+                .setResults(new TurSNSiteSearchResultsBean().setDocument(List.of(document)));
+
+        TurSNSearchParamsInput input = new TurSNSearchParamsInput();
+        input.setFl(List.of("title"));
+
+        when(searchProcess.existsByTurSNSiteAndLanguage("demo", Locale.ENGLISH)).thenReturn(true);
+        when(siteRepository.findByName("demo")).thenReturn(Optional.of(site));
+        when(fieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1)).thenReturn(List.of());
+        when(fieldExtRepository.findByTurSNSite(any(), any())).thenReturn(List.of(titleField, urlField));
+        when(searchProcess.search(any(TurSNSiteSearchContext.class))).thenReturn(response);
+
+        TurSNSiteSearchBean result = controller.siteSearch("demo", input, "en");
+
+        Map<String, Object> fields = result.getResults().getDocument().get(0).getFields();
+        assertEquals("Course", fields.get("title"));
+        assertEquals(1, fields.size());
+    }
+
+    @Test
+    void testSiteSearchResolvesEnumSiteNameToHyphenatedSiteName() {
+        TurSNSearchProcess searchProcess = mock(TurSNSearchProcess.class);
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+        TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
+                searchProcess, siteRepository, fieldExtRepository);
+
+        TurSNSite site = new TurSNSite();
+        site.setName("insper-stage-publish");
+        site.setHl(0);
+
+        when(siteRepository.findByName("INSPER_STAGE_PUBLISH")).thenReturn(Optional.empty());
+        when(siteRepository.findAll(any(Sort.class))).thenReturn(List.of(site));
+        when(siteRepository.findByName("insper-stage-publish")).thenReturn(Optional.of(site));
+        when(searchProcess.existsByTurSNSiteAndLanguage("insper-stage-publish", Locale.ENGLISH))
+                .thenReturn(true);
+        when(fieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1)).thenReturn(List.of());
+        when(fieldExtRepository.findByTurSNSite(any(), any())).thenReturn(List.of());
+        when(searchProcess.search(any(TurSNSiteSearchContext.class))).thenReturn(new TurSNSiteSearchBean());
+
+        controller.siteSearch("INSPER_STAGE_PUBLISH", new TurSNSearchParamsInput(), "en");
+
+        verify(searchProcess).existsByTurSNSiteAndLanguage("insper-stage-publish", Locale.ENGLISH);
+        verify(siteRepository).findByName("insper-stage-publish");
     }
 
     @Test
