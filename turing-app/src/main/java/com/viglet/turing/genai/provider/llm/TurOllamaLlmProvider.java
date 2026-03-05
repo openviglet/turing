@@ -2,6 +2,7 @@ package com.viglet.turing.genai.provider.llm;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -13,10 +14,17 @@ import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.viglet.turing.genai.provider.TurProviderOptionsParser;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 
 @Component
 public class TurOllamaLlmProvider implements TurGenAiLlmProvider {
+
+    private final TurProviderOptionsParser optionsParser;
+
+    public TurOllamaLlmProvider(TurProviderOptionsParser optionsParser) {
+        this.optionsParser = optionsParser;
+    }
 
     @Override
     public String getPluginType() {
@@ -25,33 +33,53 @@ public class TurOllamaLlmProvider implements TurGenAiLlmProvider {
 
     @Override
     public ChatModel createChatModel(TurLLMInstance turLLMInstance, String decryptedApiKey) {
+        Map<String, Object> options = optionsParser.parse(turLLMInstance.getProviderOptionsJson());
+        String modelName = firstNonBlank(
+                optionsParser.stringValue(options, "model"),
+                turLLMInstance.getModelName());
+        if (!StringUtils.hasText(modelName)) {
+            throw new IllegalStateException("Missing model name for Ollama instance: " + turLLMInstance.getId());
+        }
+
         OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(turLLMInstance.getUrl())
+                .baseUrl(firstNonBlank(optionsParser.stringValue(options, "baseUrl"), turLLMInstance.getUrl()))
                 .build();
 
         OllamaChatOptions.Builder optionsBuilder = OllamaChatOptions.builder()
-                .model(turLLMInstance.getModelName());
+                .model(modelName);
 
-        if (turLLMInstance.getTemperature() != null) {
-            optionsBuilder.temperature(turLLMInstance.getTemperature());
+        Double temperature = firstNonNull(optionsParser.doubleValue(options, "temperature"),
+                turLLMInstance.getTemperature());
+        if (temperature != null) {
+            optionsBuilder.temperature(temperature);
         }
-        if (turLLMInstance.getTopK() != null) {
-            optionsBuilder.topK(turLLMInstance.getTopK());
+        Integer topK = firstNonNull(optionsParser.intValue(options, "topK"), turLLMInstance.getTopK());
+        if (topK != null) {
+            optionsBuilder.topK(topK);
         }
-        if (turLLMInstance.getTopP() != null) {
-            optionsBuilder.topP(turLLMInstance.getTopP());
+        Double topP = firstNonNull(optionsParser.doubleValue(options, "topP"), turLLMInstance.getTopP());
+        if (topP != null) {
+            optionsBuilder.topP(topP);
         }
-        if (turLLMInstance.getRepeatPenalty() != null) {
-            optionsBuilder.repeatPenalty(turLLMInstance.getRepeatPenalty());
+        Double repeatPenalty = firstNonNull(optionsParser.doubleValue(options, "repeatPenalty"),
+                turLLMInstance.getRepeatPenalty());
+        if (repeatPenalty != null) {
+            optionsBuilder.repeatPenalty(repeatPenalty);
         }
-        if (turLLMInstance.getSeed() != null) {
-            optionsBuilder.seed(turLLMInstance.getSeed());
+        Integer seed = firstNonNull(optionsParser.intValue(options, "seed"), turLLMInstance.getSeed());
+        if (seed != null) {
+            optionsBuilder.seed(seed);
         }
-        if (turLLMInstance.getNumPredict() != null) {
-            optionsBuilder.numPredict(turLLMInstance.getNumPredict());
+        Integer numPredict = firstNonNull(optionsParser.intValue(options, "numPredict"),
+                turLLMInstance.getNumPredict());
+        if (numPredict != null) {
+            optionsBuilder.numPredict(numPredict);
         }
 
-        List<String> stopSequences = parseStopSequences(turLLMInstance.getStop());
+        List<String> stopSequences = optionsParser.stringListValue(options, "stop");
+        if (stopSequences.isEmpty()) {
+            stopSequences = parseStopSequences(turLLMInstance.getStop());
+        }
         if (!stopSequences.isEmpty()) {
             optionsBuilder.stop(stopSequences);
         }
@@ -64,12 +92,22 @@ public class TurOllamaLlmProvider implements TurGenAiLlmProvider {
 
     @Override
     public EmbeddingModel createEmbeddingModel(TurLLMInstance turLLMInstance, String decryptedApiKey) {
+        Map<String, Object> options = optionsParser.parse(turLLMInstance.getProviderOptionsJson());
+        String modelName = firstNonBlank(
+                optionsParser.stringValue(options, "embeddingModel"),
+                optionsParser.stringValue(options, "model"),
+                turLLMInstance.getModelName());
+        if (!StringUtils.hasText(modelName)) {
+            throw new IllegalStateException(
+                    "Missing embedding model name for Ollama instance: " + turLLMInstance.getId());
+        }
+
         OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(turLLMInstance.getUrl())
+                .baseUrl(firstNonBlank(optionsParser.stringValue(options, "baseUrl"), turLLMInstance.getUrl()))
                 .build();
 
         OllamaEmbeddingOptions embeddingOptions = OllamaEmbeddingOptions.builder()
-                .model(turLLMInstance.getModelName())
+                .model(modelName)
                 .build();
 
         return OllamaEmbeddingModel.builder()
@@ -86,5 +124,24 @@ public class TurOllamaLlmProvider implements TurGenAiLlmProvider {
                 .map(String::trim)
                 .filter(StringUtils::hasText)
                 .toList();
+    }
+
+    @SafeVarargs
+    private <T> T firstNonNull(T... values) {
+        for (T value : values) {
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private String firstNonBlank(String... values) {
+        for (String value : values) {
+            if (StringUtils.hasText(value)) {
+                return value;
+            }
+        }
+        return null;
     }
 }

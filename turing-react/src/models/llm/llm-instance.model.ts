@@ -20,4 +20,6 @@ export interface TurLLMInstance {
   supportedCapabilities: string;
   timeout: string;
   maxRetries: number;
+  apiKey?: string;
+  providerOptionsJson?: string;
 }

@@ -42,16 +42,148 @@ interface Props {
   isNew: boolean;
 }
 
+type LlmProviderOptionsDraft = {
+  baseUrl: string;
+  model: string;
+  chatModel: string;
+  embeddingModel: string;
+  temperature: string;
+  topK: string;
+  topP: string;
+  repeatPenalty: string;
+  seed: string;
+  numPredict: string;
+  maxTokens: string;
+  stop: string;
+}
+
+const emptyLlmProviderOptionsDraft = (): LlmProviderOptionsDraft => ({
+  baseUrl: "",
+  model: "",
+  chatModel: "",
+  embeddingModel: "",
+  temperature: "",
+  topK: "",
+  topP: "",
+  repeatPenalty: "",
+  seed: "",
+  numPredict: "",
+  maxTokens: "",
+  stop: ""
+})
+
+const toText = (value: unknown) => value == null ? "" : String(value)
+
+const parseJsonObject = (jsonValue?: string) => {
+  if (!jsonValue?.trim()) {
+    return undefined
+  }
+  try {
+    const parsed = JSON.parse(jsonValue) as unknown
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed as Record<string, unknown>
+    }
+  } catch {
+    // Keep the draft empty for invalid JSON; validation occurs on submit.
+  }
+  return undefined
+}
+
+const parseLlmProviderOptionsDraft = (vendorId: string | undefined, jsonValue?: string): LlmProviderOptionsDraft => {
+  const parsed = parseJsonObject(jsonValue)
+  if (!parsed) {
+    return emptyLlmProviderOptionsDraft()
+  }
+
+  return {
+    baseUrl: toText(parsed.baseUrl),
+    model: vendorId === "OLLAMA" ? toText(parsed.model) : "",
+    chatModel: vendorId === "OPENAI" ? toText(parsed.chatModel ?? parsed.model) : "",
+    embeddingModel: toText(parsed.embeddingModel),
+    temperature: toText(parsed.temperature),
+    topK: toText(parsed.topK),
+    topP: toText(parsed.topP),
+    repeatPenalty: toText(parsed.repeatPenalty),
+    seed: toText(parsed.seed),
+    numPredict: toText(parsed.numPredict),
+    maxTokens: toText(parsed.maxTokens),
+    stop: Array.isArray(parsed.stop) ? parsed.stop.map((item) => String(item)).join(",") : toText(parsed.stop)
+  }
+}
+
+const parseNumber = (value: string) => {
+  const normalized = value.trim()
+  if (!normalized) {
+    return undefined
+  }
+  const parsed = Number(normalized)
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
+const buildLlmProviderOptionsFromDraft = (vendorId: string | undefined, draft: LlmProviderOptionsDraft) => {
+  const options: Record<string, unknown> = {}
+  const putText = (key: string, value: string) => {
+    const normalized = value.trim()
+    if (normalized) {
+      options[key] = normalized
+    }
+  }
+  const putNumber = (key: string, value: string) => {
+    const parsed = parseNumber(value)
+    if (parsed !== undefined) {
+      options[key] = parsed
+    }
+  }
+
+  putText("baseUrl", draft.baseUrl)
+  putText("embeddingModel", draft.embeddingModel)
+  putNumber("temperature", draft.temperature)
+  putNumber("topP", draft.topP)
+  putNumber("seed", draft.seed)
+
+  if (vendorId === "OPENAI") {
+    putText("chatModel", draft.chatModel)
+    putNumber("maxTokens", draft.maxTokens)
+  }
+
+  if (vendorId === "OLLAMA") {
+    putText("model", draft.model)
+    putNumber("topK", draft.topK)
+    putNumber("repeatPenalty", draft.repeatPenalty)
+    putNumber("numPredict", draft.numPredict)
+    const stopItems = draft.stop
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0)
+    if (stopItems.length > 0) {
+      options.stop = stopItems
+    }
+  }
+
+  return options
+}
+
 export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   const form = useForm<TurLLMInstance>({
     defaultValues: value
   });
 
   const [open, setOpen] = useState(false);
+  const [llmProviderOptionsDraft, setLlmProviderOptionsDraft] = useState<LlmProviderOptionsDraft>(
+    emptyLlmProviderOptionsDraft()
+  )
+  const selectedVendorId = form.watch("turLLMVendor.id");
   const navigate = useNavigate()
 
   useEffect(() => {
-    form.reset(value);
+    form.reset({
+      ...value,
+      apiKey: "",
+      providerOptionsJson: value.providerOptionsJson ?? ""
+    });
+    setLlmProviderOptionsDraft(
+      parseLlmProviderOptionsDraft(value.turLLMVendor?.id, value.providerOptionsJson)
+    )
   }, [value])
 
   const applyVendorDefaults = (vendorId: string) => {
@@ -63,25 +195,76 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       form.setValue("supportedCapabilities", "RESPONSE_FORMAT_JSON_SCHEMA", { shouldDirty: true });
       form.setValue("timeout", "PT60S", { shouldDirty: true });
     }
+    if (vendorId === "OPENAI") {
+      form.setValue("url", "https://api.openai.com", { shouldDirty: true });
+      form.setValue("modelName", "gpt-4o-mini", { shouldDirty: true });
+      form.setValue("timeout", "PT60S", { shouldDirty: true });
+    }
+  }
+
+  const setLlmDraftValue = (key: keyof LlmProviderOptionsDraft, fieldValue: string) => {
+    setLlmProviderOptionsDraft((prev) => ({ ...prev, [key]: fieldValue }))
+  }
+
+  const getProviderOptionsPlaceholder = (vendorId?: string) => {
+    if (vendorId === "OPENAI") {
+      return '{\n  "baseUrl": "https://api.openai.com",\n  "chatModel": "gpt-4o-mini",\n  "embeddingModel": "text-embedding-3-small",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "seed": 42,\n  "maxTokens": 1024\n}'
+    }
+    return '{\n  "baseUrl": "http://localhost:11434",\n  "model": "mistral",\n  "embeddingModel": "nomic-embed-text",\n  "temperature": 0.8,\n  "topK": 6,\n  "topP": 0.9,\n  "repeatPenalty": 1.1,\n  "seed": 42,\n  "numPredict": 256,\n  "stop": ["END", "STOP"]\n}'
+  }
+
+  const normalizeJson = (jsonValue?: string) => {
+    const normalized = jsonValue?.trim();
+    if (!normalized) {
+      return undefined;
+    }
+    try {
+      JSON.parse(normalized);
+      return normalized;
+    } catch {
+      toast.error("Provider Options must be valid JSON.");
+      return null;
+    }
   }
 
   async function onSubmit(llmInstance: TurLLMInstance) {
+    const rawProviderOptionsJson = normalizeJson(llmInstance.providerOptionsJson)
+    if (rawProviderOptionsJson === null) {
+      return;
+    }
+
+    const visualProviderOptions = buildLlmProviderOptionsFromDraft(selectedVendorId, llmProviderOptionsDraft)
+    const rawProviderOptions = parseJsonObject(rawProviderOptionsJson)
+    const mergedProviderOptions = {
+      ...visualProviderOptions,
+      ...(rawProviderOptions ?? {})
+    }
+    const providerOptionsJson = Object.keys(mergedProviderOptions).length > 0
+      ? JSON.stringify(mergedProviderOptions, null, 2)
+      : undefined
+
+    const payload: TurLLMInstance = {
+      ...llmInstance,
+      apiKey: llmInstance.apiKey?.trim() || undefined,
+      providerOptionsJson
+    }
+
     try {
       if (isNew) {
-        const result = await turLLMInstanceService.create(llmInstance);
+        const result = await turLLMInstanceService.create(payload);
         if (result) {
-          toast.success(`The ${llmInstance.title} Language Model was saved`);
+          toast.success(`The ${payload.title} Language Model was saved`);
           navigate(urlBase);
         } else {
-          toast.error(`The ${llmInstance.title} Language Model was not saved`);
+          toast.error(`The ${payload.title} Language Model was not saved`);
         }
       }
       else {
-        const result = await turLLMInstanceService.update(llmInstance);
+        const result = await turLLMInstanceService.update(payload);
         if (result) {
-          toast.success(`The ${llmInstance.title} Language Model was updated`);
+          toast.success(`The ${payload.title} Language Model was updated`);
         } else {
-          toast.error(`The ${llmInstance.title} Language Model was not updated`);
+          toast.error(`The ${payload.title} Language Model was not updated`);
         }
       }
     } catch (error) {
@@ -272,6 +455,32 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                             </div>
                             <FormControl>
                               <Input placeholder="Specify the model name" type="text" className="w-full" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    {/* API Key */}
+                    <div className="w-full">
+                      <FormField
+                        control={form.control}
+                        name="apiKey"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>API Key</FormLabel>
+                            <div className="text-muted-foreground text-sm font-normal mt-1">
+                              Optional secret token. Leave blank to keep the existing key when editing.
+                            </div>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter API key"
+                                type="password"
+                                className="w-full"
+                                autoComplete="new-password"
+                                {...field}
+                                value={field.value ?? ""}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -503,6 +712,63 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                             </div>
                             <FormControl>
                               <Input placeholder="e.g., 3" type="number" className="w-full" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    {/* Provider Options JSON */}
+                    <div className="w-full rounded-md border p-4 space-y-4">
+                      <div className="text-sm font-medium">Visual Provider Options</div>
+                      <div className="text-muted-foreground text-sm">
+                        Use these fields for common options. Any value in raw JSON below overrides visual values.
+                      </div>
+                      {selectedVendorId === "OPENAI" && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input placeholder="Base URL" value={llmProviderOptionsDraft.baseUrl} onChange={(event) => setLlmDraftValue("baseUrl", event.target.value)} />
+                          <Input placeholder="Chat Model" value={llmProviderOptionsDraft.chatModel} onChange={(event) => setLlmDraftValue("chatModel", event.target.value)} />
+                          <Input placeholder="Embedding Model" value={llmProviderOptionsDraft.embeddingModel} onChange={(event) => setLlmDraftValue("embeddingModel", event.target.value)} />
+                          <Input placeholder="Temperature" type="number" step="0.01" value={llmProviderOptionsDraft.temperature} onChange={(event) => setLlmDraftValue("temperature", event.target.value)} />
+                          <Input placeholder="Top P" type="number" step="0.01" value={llmProviderOptionsDraft.topP} onChange={(event) => setLlmDraftValue("topP", event.target.value)} />
+                          <Input placeholder="Seed" type="number" value={llmProviderOptionsDraft.seed} onChange={(event) => setLlmDraftValue("seed", event.target.value)} />
+                          <Input placeholder="Max Tokens" type="number" value={llmProviderOptionsDraft.maxTokens} onChange={(event) => setLlmDraftValue("maxTokens", event.target.value)} />
+                        </div>
+                      )}
+                      {selectedVendorId === "OLLAMA" && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input placeholder="Base URL" value={llmProviderOptionsDraft.baseUrl} onChange={(event) => setLlmDraftValue("baseUrl", event.target.value)} />
+                          <Input placeholder="Model" value={llmProviderOptionsDraft.model} onChange={(event) => setLlmDraftValue("model", event.target.value)} />
+                          <Input placeholder="Embedding Model" value={llmProviderOptionsDraft.embeddingModel} onChange={(event) => setLlmDraftValue("embeddingModel", event.target.value)} />
+                          <Input placeholder="Temperature" type="number" step="0.01" value={llmProviderOptionsDraft.temperature} onChange={(event) => setLlmDraftValue("temperature", event.target.value)} />
+                          <Input placeholder="Top K" type="number" value={llmProviderOptionsDraft.topK} onChange={(event) => setLlmDraftValue("topK", event.target.value)} />
+                          <Input placeholder="Top P" type="number" step="0.01" value={llmProviderOptionsDraft.topP} onChange={(event) => setLlmDraftValue("topP", event.target.value)} />
+                          <Input placeholder="Repeat Penalty" type="number" step="0.01" value={llmProviderOptionsDraft.repeatPenalty} onChange={(event) => setLlmDraftValue("repeatPenalty", event.target.value)} />
+                          <Input placeholder="Seed" type="number" value={llmProviderOptionsDraft.seed} onChange={(event) => setLlmDraftValue("seed", event.target.value)} />
+                          <Input placeholder="Num Predict" type="number" value={llmProviderOptionsDraft.numPredict} onChange={(event) => setLlmDraftValue("numPredict", event.target.value)} />
+                          <Input placeholder="Stop (comma-separated)" value={llmProviderOptionsDraft.stop} onChange={(event) => setLlmDraftValue("stop", event.target.value)} />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <FormField
+                        control={form.control}
+                        name="providerOptionsJson"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Provider Options (JSON)</FormLabel>
+                            <div className="text-muted-foreground text-sm font-normal mt-1">
+                              Optional provider-specific overrides. Use valid JSON.
+                            </div>
+                            <FormControl>
+                              <Textarea
+                                placeholder={getProviderOptionsPlaceholder(selectedVendorId)}
+                                className="resize-y w-full min-h-40"
+                                rows={10}
+                                {...field}
+                                value={field.value ?? ""}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

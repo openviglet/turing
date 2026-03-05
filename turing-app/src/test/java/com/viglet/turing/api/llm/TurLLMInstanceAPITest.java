@@ -1,6 +1,7 @@
 package com.viglet.turing.api.llm;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,6 +33,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.system.security.TurSecretCryptoService;
 
 @ExtendWith(MockitoExtension.class)
 class TurLLMInstanceAPITest {
@@ -39,6 +42,9 @@ class TurLLMInstanceAPITest {
 
     @Mock
     private TurLLMInstanceRepository turLLMInstanceRepository;
+
+    @Mock
+    private TurSecretCryptoService turSecretCryptoService;
 
     @InjectMocks
     private TurLLMInstanceAPI turLLMInstanceAPI;
@@ -86,13 +92,17 @@ class TurLLMInstanceAPITest {
         TurLLMInstance instance = new TurLLMInstance();
         instance.setId("1");
         instance.setTitle("Instance 1");
+        instance.setApiKeyEncrypted("encrypted-value");
+        instance.setApiKey("plain-value");
 
         when(turLLMInstanceRepository.findById("1")).thenReturn(Optional.of(instance));
 
         mockMvc.perform(get("/api/llm/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.title").value("Instance 1"));
+                .andExpect(jsonPath("$.title").value("Instance 1"))
+                .andExpect(jsonPath("$.apiKey").doesNotExist())
+                .andExpect(jsonPath("$.apiKeyEncrypted").doesNotExist());
 
         verify(turLLMInstanceRepository, times(1)).findById("1");
     }
@@ -113,28 +123,43 @@ class TurLLMInstanceAPITest {
         TurLLMInstance existingInstance = new TurLLMInstance();
         existingInstance.setId("1");
         existingInstance.setTitle("Old Title");
+        existingInstance.setApiKeyEncrypted("old-encrypted-key");
 
-        TurLLMInstance updatedInstance = new TurLLMInstance();
-        updatedInstance.setTitle("New Title");
-        updatedInstance.setDescription("New Desc");
-        updatedInstance.setUrl("http://newurl");
-        updatedInstance.setEnabled(1);
-        updatedInstance.setModelName("llama2");
+        String updatePayload = """
+                {
+                  "title": "New Title",
+                  "description": "New Desc",
+                  "url": "http://newurl",
+                  "enabled": 1,
+                  "modelName": "llama2",
+                  "apiKey": "new-plain-key",
+                  "turLLMVendor": { "id": "OLLAMA" }
+                }
+                """;
 
         when(turLLMInstanceRepository.findById("1")).thenReturn(Optional.of(existingInstance));
+        when(turSecretCryptoService.encrypt("new-plain-key")).thenReturn("new-encrypted-key");
 
         mockMvc.perform(put("/api/llm/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedInstance)))
+                .content(updatePayload))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("New Title"))
                 .andExpect(jsonPath("$.description").value("New Desc"))
                 .andExpect(jsonPath("$.url").value("http://newurl"))
                 .andExpect(jsonPath("$.enabled").value(1))
-                .andExpect(jsonPath("$.modelName").value("llama2"));
+                .andExpect(jsonPath("$.modelName").value("llama2"))
+                .andExpect(jsonPath("$.apiKey").doesNotExist())
+                .andExpect(jsonPath("$.apiKeyEncrypted").doesNotExist());
 
         verify(turLLMInstanceRepository, times(1)).findById("1");
         verify(turLLMInstanceRepository, times(1)).save(any(TurLLMInstance.class));
+        verify(turSecretCryptoService, times(1)).encrypt("new-plain-key");
+
+        ArgumentCaptor<TurLLMInstance> captor = ArgumentCaptor.forClass(TurLLMInstance.class);
+        verify(turLLMInstanceRepository).save(captor.capture());
+        TurLLMInstance saved = captor.getValue();
+        org.assertj.core.api.Assertions.assertThat(saved.getApiKeyEncrypted()).isEqualTo("new-encrypted-key");
     }
 
     @Test
@@ -165,15 +190,31 @@ class TurLLMInstanceAPITest {
 
     @Test
     void testTurLLMInstanceAdd() throws Exception {
-        TurLLMInstance newInstance = new TurLLMInstance();
-        newInstance.setTitle("New Instance");
+        String createPayload = """
+                {
+                  "title": "New Instance",
+                  "enabled": 1,
+                  "url": "http://localhost:11434",
+                  "apiKey": "plain-api-key",
+                  "turLLMVendor": { "id": "OPENAI" }
+                }
+                """;
+        when(turSecretCryptoService.encrypt(eq("plain-api-key"))).thenReturn("encrypted-api-key");
 
         mockMvc.perform(post("/api/llm")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newInstance)))
+                .content(createPayload))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("New Instance"));
+                .andExpect(jsonPath("$.title").value("New Instance"))
+                .andExpect(jsonPath("$.apiKey").doesNotExist())
+                .andExpect(jsonPath("$.apiKeyEncrypted").doesNotExist());
 
         verify(turLLMInstanceRepository, times(1)).save(any(TurLLMInstance.class));
+        verify(turSecretCryptoService, times(1)).encrypt("plain-api-key");
+
+        ArgumentCaptor<TurLLMInstance> captor = ArgumentCaptor.forClass(TurLLMInstance.class);
+        verify(turLLMInstanceRepository).save(captor.capture());
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().getApiKeyEncrypted())
+                .isEqualTo("encrypted-api-key");
     }
 }
