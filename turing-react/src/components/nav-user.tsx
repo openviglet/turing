@@ -5,6 +5,7 @@ import {
 } from "@tabler/icons-react"
 
 import { ROUTES } from "@/app/routes.const"
+import { TurUserService } from "@/services/auth/user.service"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,13 +57,14 @@ export function NavUser({
     );
   }, [user]);
 
-  const gravatarUrl = React.useMemo(() => {
+  const avatarSrc = React.useMemo(() => {
+    if (user?.hasAvatar && user?.username) {
+      const svc = new TurUserService();
+      return svc.getAvatarUrl(user.username);
+    }
     if (!user?.email) return '';
-
-
     const cleanEmail = user.email.trim().toLowerCase();
     const hash = MD5(cleanEmail).toString();
-
     return `https://www.gravatar.com/avatar/${hash}?d=404`;
   }, [user]);
   return (
@@ -75,7 +77,7 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <GradientAvatar className="h-8 w-8 rounded-lg">
-                <GradientAvatarImage src={gravatarUrl} alt={user.username} />
+                <GradientAvatarImage src={avatarSrc} alt={user.username} />
                 <GradientAvatarFallback className="rounded-lg">{initials}</GradientAvatarFallback>
               </GradientAvatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -96,7 +98,7 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <GradientAvatar className="h-8 w-8 rounded-lg">
-                  <GradientAvatarImage src={gravatarUrl} alt={user.username} />
+                  <GradientAvatarImage src={avatarSrc} alt={user.username} />
                   <GradientAvatarFallback className="rounded-lg">{initials}</GradientAvatarFallback>
                 </GradientAvatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -109,10 +111,12 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Account
-              </DropdownMenuItem>
+              <NavLink to={ROUTES.USER_ACCOUNT} className="w-full">
+                <DropdownMenuItem>
+                  <IconUserCircle />
+                  Account
+                </DropdownMenuItem>
+              </NavLink>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>

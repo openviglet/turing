@@ -13,7 +13,8 @@ import {
   SERoutes,
   SNRoutes,
   StoreRoutes,
-  TokenRoutes
+  TokenRoutes,
+  UserRoutes
 } from "./app/routes"
 import { ROUTES } from "./app/routes.const"
 import { ThemeProvider } from "./components/theme-provider"
@@ -47,6 +48,7 @@ function App() {
                 {GlobalSettingsRoutes}
                 {GraphqlRoutes}
                 {ChatRoutes}
+                {UserRoutes}
               </Route>
             </Routes>
           </TuringServiceProvider>

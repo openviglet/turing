@@ -9,3 +9,4 @@ export { SERoutes } from "./se.routes";
 export { SNRoutes } from "./sn.routes";
 export { StoreRoutes } from "./store.routes";
 export { TokenRoutes } from "./token.routes";
+export { UserRoutes } from "./user.routes";

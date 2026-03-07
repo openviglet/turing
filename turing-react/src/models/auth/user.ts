@@ -7,4 +7,5 @@ export type TurUser = {
   authdata: string;
   admin: boolean;
   email: string;
+  hasAvatar?: boolean;
 };

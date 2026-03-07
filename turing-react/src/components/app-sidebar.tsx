@@ -24,10 +24,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import type { TurUser } from "@/models/auth/user"
 import { TurUserService } from "@/services/auth/user.service"
-import { NavLink } from "react-router-dom"
 import { TurLogo } from "./logo/tur-logo"
 
 const data = {
@@ -92,6 +92,7 @@ const data = {
 const turUserService = new TurUserService();
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [user, setUser] = React.useState<TurUser>({} as TurUser);
+  const { toggleSidebar } = useSidebar();
   React.useEffect(() => {
 
     turUserService.get().then(setUser);
@@ -102,12 +103,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              asChild
+              onClick={toggleSidebar}
               className="data-[slot=sidebar-menu-button]:p-1.5!">
-              <NavLink to={ROUTES.CONSOLE}>
-                <TurLogo className="size-6!" />
-                <span className="text-base font-semibold">Turing ES</span>
-              </NavLink>
+              <TurLogo className="size-6!" />
+              <span className="text-base font-semibold">Turing ES</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
