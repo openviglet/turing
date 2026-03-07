@@ -1,5 +1,5 @@
 "use client"
-import { IconArrowUp, IconBolt, IconCheck, IconCompass, IconCopy, IconCpu2, IconFile, IconLoader2, IconMessageCircle, IconPaperclip, IconUser, IconX } from "@tabler/icons-react"
+import { IconArrowUp, IconBolt, IconCheck, IconCompass, IconCopy, IconCpu2, IconFile, IconLoader2, IconMessageCircle, IconPaperclip, IconTrash, IconUser, IconX, IconHistory } from "@tabler/icons-react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -20,12 +20,14 @@ import { GradientButton } from "@/components/ui/gradient-button"
 import { ModeToggle } from "@/components/mode-toggle"
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model"
 import { type ChatMessageItem, TurChatService } from "@/services/chat/chat.service"
+import { type ChatSession, saveSession, getAllSessions, deleteSession } from "@/services/chat/chat-session.service"
 
 const turChatService = new TurChatService()
 
 const DEFAULT_CONTEXT_WINDOW = 128000
 const contextWindowCache = new Map<string, number>()
 const LLM_STORAGE_KEY = "turing-chat-selected-llm"
+const TITLE_TIMEOUT_MS = 8000
 
 interface ChatAttachment {
   name: string
@@ -55,11 +57,39 @@ function formatTokenCount(tokens: number): string {
   return `${tokens}`
 }
 
+function generateFallbackTitle(messages: ChatMessage[]): string {
+  const firstUser = messages.find((m) => m.role === "user")
+  if (firstUser) {
+    const text = firstUser.content.trim()
+    return text.length > 50 ? `${text.slice(0, 47)}...` : text
+  }
+  return `Chat ${new Date().toLocaleString()}`
+}
+
+function formatRelativeTime(timestamp: number): string {
+  const now = Date.now()
+  const diff = now - timestamp
+  const seconds = Math.floor(diff / 1000)
+  if (seconds < 60) return "just now"
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes} min ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days}d ago`
+  return new Date(timestamp).toLocaleDateString()
+}
+
 export default function ChatPage() {
   const [activeTab, setActiveTab] = useState<"chat" | "semantic">("chat")
   const [llmInstances, setLlmInstances] = useState<TurLLMInstance[]>([])
   const [selectedLlmId, setSelectedLlmId] = useState<string>(() => localStorage.getItem(LLM_STORAGE_KEY) ?? "")
   const [fetchedContextWindow, setFetchedContextWindow] = useState<number | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Sessions
+  const [sessions, setSessions] = useState<ChatSession[]>([])
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
 
   // Chat tab state
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
@@ -80,6 +110,19 @@ export default function ChatPage() {
   const [semCompacting, setSemCompacting] = useState(false)
   const semEndRef = useRef<HTMLDivElement>(null)
   const semTextareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const loadSessions = useCallback(async () => {
+    try {
+      const all = await getAllSessions()
+      setSessions(all)
+    } catch (err) {
+      console.warn("Failed to load sessions:", err)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadSessions()
+  }, [loadSessions])
 
   useEffect(() => {
     turChatService.queryLLMInstances().then((instances) => {
@@ -139,6 +182,56 @@ export default function ChatPage() {
 
   const selectedInstance = llmInstances.find((i) => i.id === selectedLlmId)
   const contextWindow = fetchedContextWindow || selectedInstance?.contextWindow || DEFAULT_CONTEXT_WINDOW
+
+  // ── Session save helpers ──
+
+  const generateAITitle = useCallback(async (msgs: ChatMessage[], llmId: string): Promise<string> => {
+    const text = msgs.slice(0, 4).map((m) => `${m.role}: ${m.content}`).join("\n")
+    return new Promise<string>((resolve) => {
+      let title = ""
+      const timeout = setTimeout(() => resolve(generateFallbackTitle(msgs)), TITLE_TIMEOUT_MS)
+
+      turChatService.sendStream(
+        llmId,
+        [{ role: "user", content: `Generate a very short title (max 6 words, no quotes, no punctuation at end) for this conversation. Reply ONLY with the title, nothing else.\n\n${text}` }],
+        (token) => { title += token },
+        () => {
+          clearTimeout(timeout)
+          const cleaned = title.trim().replace(/^["']|["']$/g, "").trim()
+          resolve(cleaned || generateFallbackTitle(msgs))
+        },
+        () => {
+          clearTimeout(timeout)
+          resolve(generateFallbackTitle(msgs))
+        },
+      )
+    })
+  }, [])
+
+  const saveCurrentSession = useCallback(async (tab: "chat" | "semantic", msgs: ChatMessage[], llmId: string) => {
+    if (msgs.length === 0) return
+
+    let title: string
+    try {
+      title = await generateAITitle(msgs, llmId)
+    } catch {
+      title = generateFallbackTitle(msgs)
+    }
+
+    const instance = llmInstances.find((i) => i.id === llmId)
+    const session: ChatSession = {
+      id: activeSessionId ?? generateId(),
+      title,
+      tab,
+      llmId,
+      llmTitle: instance?.title,
+      modelName: instance?.modelName,
+      messages: msgs,
+      createdAt: Date.now(),
+    }
+    await saveSession(session)
+    await loadSessions()
+  }, [activeSessionId, generateAITitle, loadSessions, llmInstances])
 
   // ── Chat tab handlers ──
 
@@ -262,9 +355,57 @@ export default function ChatPage() {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendFn() }
   }
 
-  const handleNewChat = () => {
-    if (activeTab === "chat") { setChatMessages([]); setChatInput(""); setAttachedFiles([]) }
-    else { setSemMessages([]); setSemInput("") }
+  const handleNewChat = async () => {
+    if (activeTab === "chat" && chatMessages.length > 0) {
+      await saveCurrentSession("chat", chatMessages, selectedLlmId)
+      setChatMessages([]); setChatInput(""); setAttachedFiles([])
+    } else if (activeTab === "semantic" && semMessages.length > 0) {
+      await saveCurrentSession("semantic", semMessages, selectedLlmId)
+      setSemMessages([]); setSemInput("")
+    }
+    setActiveSessionId(null)
+    setSidebarOpen(true)
+  }
+
+  const handleModelChange = async (v: string) => {
+    // Save current sessions before switching
+    if (chatMessages.length > 0) {
+      await saveCurrentSession("chat", chatMessages, selectedLlmId)
+    }
+    if (semMessages.length > 0) {
+      await saveCurrentSession("semantic", semMessages, selectedLlmId)
+    }
+    setSelectedLlmId(v)
+    localStorage.setItem(LLM_STORAGE_KEY, v)
+    setChatMessages([]); setChatInput(""); setAttachedFiles([])
+    setSemMessages([]); setSemInput("")
+    setActiveSessionId(null)
+  }
+
+  const handleRestoreSession = (session: ChatSession) => {
+    setActiveTab(session.tab)
+    setActiveSessionId(session.id)
+    if (session.tab === "chat") {
+      setChatMessages(session.messages as ChatMessage[])
+      setChatInput("")
+      setAttachedFiles([])
+    } else {
+      setSemMessages(session.messages as ChatMessage[])
+      setSemInput("")
+    }
+    // Switch to the model used in the session if it's available
+    if (session.llmId && llmInstances.some((i) => i.id === session.llmId)) {
+      setSelectedLlmId(session.llmId)
+      localStorage.setItem(LLM_STORAGE_KEY, session.llmId)
+    }
+    setSidebarOpen(false)
+  }
+
+  const handleDeleteSession = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    await deleteSession(id)
+    if (activeSessionId === id) setActiveSessionId(null)
+    await loadSessions()
   }
 
   const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragOver(true) }
@@ -346,213 +487,269 @@ export default function ChatPage() {
   )
 
   return (
-    <div
-      className="flex flex-col h-[calc(100vh-2rem)] max-h-screen"
-      onDragOver={activeTab === "chat" ? handleDragOver : undefined}
-      onDragLeave={activeTab === "chat" ? handleDragLeave : undefined}
-      onDrop={activeTab === "chat" ? handleDrop : undefined}
-    >
-      {/* Drag overlay (chat tab only) */}
-      {isDragOver && activeTab === "chat" && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm border-2 border-dashed border-blue-500 rounded-lg m-2">
-          <div className="flex flex-col items-center gap-2 text-blue-500">
-            <IconFile className="size-10" />
-            <span className="text-lg font-medium">Drop files here</span>
-          </div>
+    <div className="flex h-[calc(100vh-2rem)] max-h-screen">
+      {/* Sessions sidebar */}
+      <div className={`shrink-0 border-r bg-muted/30 flex flex-col transition-all duration-200 ${sidebarOpen ? "w-72" : "w-0"} overflow-hidden`}>
+        <div className="flex items-center justify-between px-4 py-3 border-b">
+          <span className="text-sm font-medium">Sessions</span>
+          <button type="button" onClick={() => setSidebarOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
+            <IconX className="size-4" />
+          </button>
         </div>
-      )}
-
-      {/* Header */}
-      <div className="flex items-center justify-between border-b px-6 py-3 shrink-0">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <Select value={selectedLlmId} onValueChange={(v) => { setSelectedLlmId(v); localStorage.setItem(LLM_STORAGE_KEY, v); setChatMessages([]); setChatInput(""); setAttachedFiles([]); setSemMessages([]); setSemInput("") }}>
-            <SelectTrigger className="w-56">
-              <SelectValue placeholder="Select a model..." />
-            </SelectTrigger>
-            <SelectContent>
-              {llmInstances.map((instance) => (
-                <SelectItem key={instance.id} value={instance.id}>{instance.title}</SelectItem>
+        <div className="flex-1 overflow-y-auto">
+          {sessions.length === 0 ? (
+            <div className="px-4 py-8 text-center text-xs text-muted-foreground">No saved sessions</div>
+          ) : (
+            <div className="py-1">
+              {sessions.map((session) => (
+                <button
+                  key={session.id}
+                  type="button"
+                  onClick={() => handleRestoreSession(session)}
+                  title={session.title}
+                  className={`w-full text-left px-4 py-2.5 text-sm hover:bg-muted/60 transition-colors flex items-start gap-2 group/session ${activeSessionId === session.id ? "bg-muted/80" : ""}`}
+                >
+                  <div className="shrink-0 pt-0.5">
+                    {session.tab === "chat" ? <IconMessageCircle className="size-3.5 text-muted-foreground" /> : <IconCompass className="size-3.5 text-emerald-500" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="truncate">{session.title}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      {formatRelativeTime(session.createdAt)} &middot; {session.messages.length} msgs
+                    </div>
+                    {session.llmTitle && (
+                      <div className="text-xs text-muted-foreground/70 mt-0.5 truncate">
+                        {session.llmTitle}{session.modelName ? ` (${session.modelName})` : ""}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => handleDeleteSession(e, session.id)}
+                    title="Delete session"
+                    className="shrink-0 opacity-0 group-hover/session:opacity-100 text-muted-foreground hover:text-destructive transition-all p-0.5"
+                  >
+                    <IconTrash className="size-3.5" />
+                  </button>
+                </button>
               ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Center: pill tab switcher */}
-        <div className="flex items-center rounded-full bg-muted p-1 gap-0.5">
-          <button
-            type="button"
-            onClick={() => setActiveTab("chat")}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${activeTab === "chat" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            <IconMessageCircle className="size-4" />
-            Chat
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("semantic")}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${activeTab === "semantic" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            <IconCompass className="size-4" />
-            Semantic Navigation
-          </button>
-        </div>
-
-        {/* Right: actions */}
-        <div className="flex items-center gap-3 flex-1 min-w-0 justify-end">
-          {messages.length > 0 && (
-            <GradientButton variant="outline" size="sm" onClick={handleNewChat}>
-              New Chat
-            </GradientButton>
+            </div>
           )}
-          <ModeToggle />
         </div>
       </div>
 
-      {/* ── Chat Tab ── */}
-      {activeTab === "chat" && (
-        <>
-          <div className="flex-1 overflow-y-auto">
-            {isEmpty ? (
-              <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-4">
-                <div className="rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 p-4 dark:from-blue-500 dark:to-indigo-500">
-                  <IconCpu2 className="size-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-semibold mb-2">How can I help you today?</h2>
-                  <p className="text-muted-foreground text-sm max-w-md">
-                    {selectedInstance ? `Using ${selectedInstance.title} (${selectedInstance.turLLMVendor?.id ?? ""})` : "Select a language model to start chatting."}
-                  </p>
-                </div>
-              </div>
-            ) : renderMessages(chatMessages, chatLoading, chatEndRef)}
+      {/* Main chat area */}
+      <div
+        className="flex flex-col flex-1 min-w-0"
+        onDragOver={activeTab === "chat" ? handleDragOver : undefined}
+        onDragLeave={activeTab === "chat" ? handleDragLeave : undefined}
+        onDrop={activeTab === "chat" ? handleDrop : undefined}
+      >
+        {/* Drag overlay (chat tab only) */}
+        {isDragOver && activeTab === "chat" && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm border-2 border-dashed border-blue-500 rounded-lg m-2">
+            <div className="flex flex-col items-center gap-2 text-blue-500">
+              <IconFile className="size-10" />
+              <span className="text-lg font-medium">Drop files here</span>
+            </div>
+          </div>
+        )}
+
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-4 py-3 shrink-0 gap-3">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <button type="button" onClick={() => setSidebarOpen(!sidebarOpen)} title="Sessions" className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-md hover:bg-muted">
+              <IconHistory className="size-5" />
+            </button>
+            <Select value={selectedLlmId} onValueChange={handleModelChange}>
+              <SelectTrigger className="w-56">
+                <SelectValue placeholder="Select a model..." />
+              </SelectTrigger>
+              <SelectContent>
+                {llmInstances.map((instance) => (
+                  <SelectItem key={instance.id} value={instance.id}>{instance.title}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Chat Input */}
-          <div className="shrink-0 border-t bg-background">
-            <div className="max-w-3xl mx-auto px-4 py-4">
-              {attachedFiles.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {attachedFiles.map((file, idx) => (
-                    <div key={idx} className="flex items-center gap-1.5 rounded-lg border bg-muted/50 px-2.5 py-1.5 text-xs">
-                      <IconFile className="size-3.5 shrink-0 text-muted-foreground" />
-                      <span className="truncate max-w-[150px]">{file.name}</span>
-                      <span className="text-muted-foreground/60">{formatFileSize(file.size)}</span>
-                      <button type="button" onClick={() => removeFile(idx)} title={`Remove ${file.name}`} className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors">
-                        <IconX className="size-3" />
+          {/* Center: pill tab switcher */}
+          <div className="flex items-center rounded-full bg-muted p-1 gap-0.5">
+            <button
+              type="button"
+              onClick={() => setActiveTab("chat")}
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${activeTab === "chat" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <IconMessageCircle className="size-4" />
+              Chat
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("semantic")}
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${activeTab === "semantic" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <IconCompass className="size-4" />
+              Semantic Navigation
+            </button>
+          </div>
+
+          {/* Right: actions */}
+          <div className="flex items-center gap-3 flex-1 min-w-0 justify-end">
+            {messages.length > 0 && (
+              <GradientButton variant="outline" size="sm" onClick={handleNewChat}>
+                New Chat
+              </GradientButton>
+            )}
+            <ModeToggle />
+          </div>
+        </div>
+
+        {/* ── Chat Tab ── */}
+        {activeTab === "chat" && (
+          <>
+            <div className="flex-1 overflow-y-auto">
+              {isEmpty ? (
+                <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-4">
+                  <div className="rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 p-4 dark:from-blue-500 dark:to-indigo-500">
+                    <IconCpu2 className="size-8 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold mb-2">How can I help you today?</h2>
+                    <p className="text-muted-foreground text-sm max-w-md">
+                      {selectedInstance ? `Using ${selectedInstance.title} (${selectedInstance.turLLMVendor?.id ?? ""})` : "Select a language model to start chatting."}
+                    </p>
+                  </div>
+                </div>
+              ) : renderMessages(chatMessages, chatLoading, chatEndRef)}
+            </div>
+
+            {/* Chat Input */}
+            <div className="shrink-0 border-t bg-background">
+              <div className="max-w-3xl mx-auto px-4 py-4">
+                {attachedFiles.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {attachedFiles.map((file, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5 rounded-lg border bg-muted/50 px-2.5 py-1.5 text-xs">
+                        <IconFile className="size-3.5 shrink-0 text-muted-foreground" />
+                        <span className="truncate max-w-[150px]">{file.name}</span>
+                        <span className="text-muted-foreground/60">{formatFileSize(file.size)}</span>
+                        <button type="button" onClick={() => removeFile(idx)} title={`Remove ${file.name}`} className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors">
+                          <IconX className="size-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="relative flex items-end rounded-xl border bg-muted/50 focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all">
+                  <input ref={fileInputRef} type="file" multiple className="hidden" title="Attach files" onChange={handleFileInputChange} />
+                  <button type="button" onClick={() => fileInputRef.current?.click()} disabled={!selectedLlmId || chatLoading} className="p-3 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 disabled:pointer-events-none" title="Attach files">
+                    <IconPaperclip className="size-5" />
+                  </button>
+                  <Textarea
+                    ref={chatTextareaRef}
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={handleKeyDown(handleChatSend)}
+                    placeholder={selectedLlmId ? "Send a message..." : "Select a model to start..."}
+                    disabled={!selectedLlmId || chatLoading}
+                    className="flex-1 resize-none border-0 bg-transparent px-2 py-3 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[44px] max-h-[200px]"
+                    rows={1}
+                  />
+                  <div className="p-2">
+                    <GradientButton size="icon-sm" disabled={(!chatInput.trim() && attachedFiles.length === 0) || chatLoading || !selectedLlmId} onClick={handleChatSend} className="rounded-lg">
+                      {chatLoading ? <IconLoader2 className="size-4 animate-spin" /> : <IconArrowUp className="size-4" />}
+                    </GradientButton>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mt-2 gap-4">
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {selectedInstance ? `${selectedInstance.turLLMVendor?.id ?? ""} · ${selectedInstance.modelName ?? ""}` : "No model selected"}
+                  </span>
+                  {!isEmpty && (
+                    <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
+                      <div className="flex items-center gap-2 max-w-xs w-full">
+                        <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className={`h-full rounded-full transition-all duration-300 ${contextBarColor}`} style={{ width: `${chatContextUsage.percentage}%` }} />
+                        </div>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">{formatTokenCount(chatContextUsage.tokens)}/{formatTokenCount(contextWindow)}</span>
+                      </div>
+                      <button type="button" onClick={handleChatCompact} disabled={chatLoading || chatCompacting || chatMessages.length < 4} title={`${100 - chatContextUsage.percentage}% of context remaining. Click to compact.`} className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:pointer-events-none shrink-0">
+                        {chatCompacting ? <IconLoader2 className="size-3 animate-spin" /> : <IconBolt className="size-3" />}
+                        Compact
                       </button>
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
-              <div className="relative flex items-end rounded-xl border bg-muted/50 focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all">
-                <input ref={fileInputRef} type="file" multiple className="hidden" title="Attach files" onChange={handleFileInputChange} />
-                <button type="button" onClick={() => fileInputRef.current?.click()} disabled={!selectedLlmId || chatLoading} className="p-3 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 disabled:pointer-events-none" title="Attach files">
-                  <IconPaperclip className="size-5" />
-                </button>
-                <Textarea
-                  ref={chatTextareaRef}
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={handleKeyDown(handleChatSend)}
-                  placeholder={selectedLlmId ? "Send a message..." : "Select a model to start..."}
-                  disabled={!selectedLlmId || chatLoading}
-                  className="flex-1 resize-none border-0 bg-transparent px-2 py-3 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[44px] max-h-[200px]"
-                  rows={1}
-                />
-                <div className="p-2">
-                  <GradientButton size="icon-sm" disabled={(!chatInput.trim() && attachedFiles.length === 0) || chatLoading || !selectedLlmId} onClick={handleChatSend} className="rounded-lg">
-                    {chatLoading ? <IconLoader2 className="size-4 animate-spin" /> : <IconArrowUp className="size-4" />}
-                  </GradientButton>
-                </div>
-              </div>
-              <div className="flex items-center justify-between mt-2 gap-4">
-                <span className="text-xs text-muted-foreground shrink-0">
-                  {selectedInstance ? `${selectedInstance.turLLMVendor?.id ?? ""} · ${selectedInstance.modelName ?? ""}` : "No model selected"}
-                </span>
-                {!isEmpty && (
-                  <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
-                    <div className="flex items-center gap-2 max-w-xs w-full">
-                      <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                        <div className={`h-full rounded-full transition-all duration-300 ${contextBarColor}`} style={{ width: `${chatContextUsage.percentage}%` }} />
-                      </div>
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">{formatTokenCount(chatContextUsage.tokens)}/{formatTokenCount(contextWindow)}</span>
-                    </div>
-                    <button type="button" onClick={handleChatCompact} disabled={chatLoading || chatCompacting || chatMessages.length < 4} title={`${100 - chatContextUsage.percentage}% of context remaining. Click to compact.`} className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:pointer-events-none shrink-0">
-                      {chatCompacting ? <IconLoader2 className="size-3 animate-spin" /> : <IconBolt className="size-3" />}
-                      Compact
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
 
-      {/* ── Semantic Navigation Tab ── */}
-      {activeTab === "semantic" && (
-        <>
-          <div className="flex-1 overflow-y-auto">
-            {semMessages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-4">
-                <div className="rounded-full bg-gradient-to-br from-emerald-600 to-teal-600 p-4 dark:from-emerald-500 dark:to-teal-500">
-                  <IconCompass className="size-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-semibold mb-2">Semantic Navigation</h2>
-                  <p className="text-muted-foreground text-sm max-w-md">
-                    {selectedInstance
-                      ? `Ask questions about your indexed content. Using ${selectedInstance.title}.`
-                      : "Select a language model to start exploring."}
-                  </p>
-                </div>
-              </div>
-            ) : renderMessages(semMessages, semLoading, semEndRef)}
-          </div>
-
-          {/* Semantic Input */}
-          <div className="shrink-0 border-t bg-background">
-            <div className="max-w-3xl mx-auto px-4 py-4">
-              <div className="relative flex items-end rounded-xl border bg-muted/50 focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500/50 transition-all">
-                <Textarea
-                  ref={semTextareaRef}
-                  value={semInput}
-                  onChange={(e) => setSemInput(e.target.value)}
-                  onKeyDown={handleKeyDown(handleSemSend)}
-                  placeholder={selectedLlmId ? "Ask about your semantic navigation content..." : "Select a model to start..."}
-                  disabled={!selectedLlmId || semLoading}
-                  className="flex-1 resize-none border-0 bg-transparent px-4 py-3 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[44px] max-h-[200px]"
-                  rows={1}
-                />
-                <div className="p-2">
-                  <GradientButton size="icon-sm" disabled={!semInput.trim() || semLoading || !selectedLlmId} onClick={handleSemSend} className="rounded-lg">
-                    {semLoading ? <IconLoader2 className="size-4 animate-spin" /> : <IconArrowUp className="size-4" />}
-                  </GradientButton>
-                </div>
-              </div>
-              <div className="flex items-center justify-between mt-2 gap-4">
-                <span className="text-xs text-muted-foreground shrink-0">
-                  {selectedInstance ? `${selectedInstance.turLLMVendor?.id ?? ""} · ${selectedInstance.modelName ?? ""}` : "No model selected"}
-                </span>
-                {semMessages.length > 0 && (
-                  <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
-                    <div className="flex items-center gap-2 max-w-xs w-full">
-                      <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                        <div className={`h-full rounded-full transition-all duration-300 ${contextBarColor}`} style={{ width: `${semContextUsage.percentage}%` }} />
-                      </div>
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">{formatTokenCount(semContextUsage.tokens)}/{formatTokenCount(contextWindow)}</span>
-                    </div>
-                    <button type="button" onClick={handleSemCompact} disabled={semLoading || semCompacting || semMessages.length < 4} title={`${100 - semContextUsage.percentage}% of context remaining. Click to compact.`} className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:pointer-events-none shrink-0">
-                      {semCompacting ? <IconLoader2 className="size-3 animate-spin" /> : <IconBolt className="size-3" />}
-                      Compact
-                    </button>
+        {/* ── Semantic Navigation Tab ── */}
+        {activeTab === "semantic" && (
+          <>
+            <div className="flex-1 overflow-y-auto">
+              {semMessages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-4">
+                  <div className="rounded-full bg-gradient-to-br from-emerald-600 to-teal-600 p-4 dark:from-emerald-500 dark:to-teal-500">
+                    <IconCompass className="size-8 text-white" />
                   </div>
-                )}
+                  <div>
+                    <h2 className="text-2xl font-semibold mb-2">Semantic Navigation</h2>
+                    <p className="text-muted-foreground text-sm max-w-md">
+                      {selectedInstance
+                        ? `Ask questions about your indexed content. Using ${selectedInstance.title}.`
+                        : "Select a language model to start exploring."}
+                    </p>
+                  </div>
+                </div>
+              ) : renderMessages(semMessages, semLoading, semEndRef)}
+            </div>
+
+            {/* Semantic Input */}
+            <div className="shrink-0 border-t bg-background">
+              <div className="max-w-3xl mx-auto px-4 py-4">
+                <div className="relative flex items-end rounded-xl border bg-muted/50 focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500/50 transition-all">
+                  <Textarea
+                    ref={semTextareaRef}
+                    value={semInput}
+                    onChange={(e) => setSemInput(e.target.value)}
+                    onKeyDown={handleKeyDown(handleSemSend)}
+                    placeholder={selectedLlmId ? "Ask about your semantic navigation content..." : "Select a model to start..."}
+                    disabled={!selectedLlmId || semLoading}
+                    className="flex-1 resize-none border-0 bg-transparent px-4 py-3 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[44px] max-h-[200px]"
+                    rows={1}
+                  />
+                  <div className="p-2">
+                    <GradientButton size="icon-sm" disabled={!semInput.trim() || semLoading || !selectedLlmId} onClick={handleSemSend} className="rounded-lg">
+                      {semLoading ? <IconLoader2 className="size-4 animate-spin" /> : <IconArrowUp className="size-4" />}
+                    </GradientButton>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mt-2 gap-4">
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {selectedInstance ? `${selectedInstance.turLLMVendor?.id ?? ""} · ${selectedInstance.modelName ?? ""}` : "No model selected"}
+                  </span>
+                  {semMessages.length > 0 && (
+                    <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
+                      <div className="flex items-center gap-2 max-w-xs w-full">
+                        <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className={`h-full rounded-full transition-all duration-300 ${contextBarColor}`} style={{ width: `${semContextUsage.percentage}%` }} />
+                        </div>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">{formatTokenCount(semContextUsage.tokens)}/{formatTokenCount(contextWindow)}</span>
+                      </div>
+                      <button type="button" onClick={handleSemCompact} disabled={semLoading || semCompacting || semMessages.length < 4} title={`${100 - semContextUsage.percentage}% of context remaining. Click to compact.`} className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:pointer-events-none shrink-0">
+                        {semCompacting ? <IconLoader2 className="size-3 animate-spin" /> : <IconBolt className="size-3" />}
+                        Compact
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   )
 }
