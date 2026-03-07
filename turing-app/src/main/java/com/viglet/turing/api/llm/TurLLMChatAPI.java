@@ -14,10 +14,14 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.content.Media;
+import org.springframework.ai.model.tool.DefaultToolCallingChatOptions;
+import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.util.MimeType;
@@ -39,6 +43,8 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @RestController
@@ -49,16 +55,70 @@ public class TurLLMChatAPI {
     private static final Set<String> IMAGE_MIME_TYPES = Set.of(
             "image/png", "image/jpeg", "image/gif", "image/webp");
 
+    private static final String SYSTEM_PROMPT = """
+            You are a helpful AI assistant with access to the internet, weather data, financial markets, \
+            and a Python code interpreter. You can fetch web pages, check weather, look up stocks, \
+            and execute Python code to solve problems.
+
+            You have access to these tools:
+
+            WEB:
+            1. fetch_webpage — Fetches a web page by URL and returns its text content.
+            2. extract_links — Extracts links from a web page, optionally filtered by keyword.
+
+            WEATHER:
+            3. get_weather — Gets current weather and forecast for any city (powered by Open-Meteo).
+
+            FINANCE:
+            4. get_stock_quote — Gets current stock price, change, and price history for a ticker symbol. \
+            Common symbols: AAPL (Apple), GOOGL (Google), PETR4.SA (Petrobras), ^BVSP (Bovespa), \
+            ^GSPC (S&P 500), ^DJI (Dow Jones), BTC-USD (Bitcoin), BRL=X (USD/BRL).
+            5. search_ticker — Searches for a ticker symbol by company name.
+
+            CODE INTERPRETER:
+            6. execute_python — Executes Python code and returns the output. Use for:
+               - Math calculations, statistics, data analysis
+               - Processing CSV/JSON/Excel files
+               - Generating charts with matplotlib (save to 'output.png', do NOT call plt.show())
+               - Any computation that needs real code execution
+               When generating charts, always use: plt.savefig('output.png', dpi=150, bbox_inches='tight')
+               Generated files are served via URL that will be included in the output.
+
+            RULES:
+            1. When the user provides a URL, use fetch_webpage — do NOT make up content.
+            2. For weather questions, use get_weather with the city name.
+            3. For stock/market questions, use search_ticker first if you don't know the symbol, \
+            then use get_stock_quote with the correct ticker.
+            4. For math, data processing, or chart requests, use execute_python. Write clean, \
+            complete Python code. Always use print() for output.
+            5. When execute_python returns a file URL, include it in your response so the user can access it.
+            6. After fetching data, summarize clearly and highlight key information.
+            7. If the user asks in a specific language, respond in that same language.
+            8. For general questions that don't need tools, respond directly.
+            """;
+
     private final TurLLMInstanceRepository turLLMInstanceRepository;
     private final TurGenAiLlmProviderFactory llmProviderFactory;
     private final TurSecretCryptoService turSecretCryptoService;
+    private final TurWebCrawlerToolService webCrawlerToolService;
+    private final TurWeatherToolService weatherToolService;
+    private final TurFinanceToolService financeToolService;
+    private final TurCodeInterpreterToolService codeInterpreterToolService;
 
     public TurLLMChatAPI(TurLLMInstanceRepository turLLMInstanceRepository,
             TurGenAiLlmProviderFactory llmProviderFactory,
-            TurSecretCryptoService turSecretCryptoService) {
+            TurSecretCryptoService turSecretCryptoService,
+            TurWebCrawlerToolService webCrawlerToolService,
+            TurWeatherToolService weatherToolService,
+            TurFinanceToolService financeToolService,
+            TurCodeInterpreterToolService codeInterpreterToolService) {
         this.turLLMInstanceRepository = turLLMInstanceRepository;
         this.llmProviderFactory = llmProviderFactory;
         this.turSecretCryptoService = turSecretCryptoService;
+        this.webCrawlerToolService = webCrawlerToolService;
+        this.weatherToolService = weatherToolService;
+        this.financeToolService = financeToolService;
+        this.codeInterpreterToolService = codeInterpreterToolService;
     }
 
     public record ChatRequest(List<ChatMessageItem> messages) {
@@ -117,19 +177,43 @@ public class TurLLMChatAPI {
         String decryptedApiKey = turSecretCryptoService.decrypt(turLLMInstance.getApiKeyEncrypted());
         ChatModel chatModel = provider.createChatModel(turLLMInstance, decryptedApiKey);
 
-        List<Message> springMessages = buildMessages(request.messages(), files);
-        Prompt prompt = new Prompt(springMessages);
+        List<Message> springMessages = new ArrayList<>();
+        springMessages.add(new SystemMessage(SYSTEM_PROMPT));
+        springMessages.addAll(buildMessages(request.messages(), files));
 
-        return chatModel.stream(prompt)
-                .map(response -> {
+        ToolCallback[] toolCallbacks = MethodToolCallbackProvider.builder()
+                .toolObjects(webCrawlerToolService, weatherToolService, financeToolService,
+                        codeInterpreterToolService)
+                .build()
+                .getToolCallbacks();
+
+        log.info("[Chat] Registered {} tool callbacks for LLM instance {}", toolCallbacks.length, id);
+
+        var chatOptions = DefaultToolCallingChatOptions.builder()
+                .toolCallbacks(toolCallbacks)
+                .internalToolExecutionEnabled(true)
+                .build();
+
+        Prompt prompt = new Prompt(springMessages, chatOptions);
+
+        // Use call() instead of stream() to ensure tool calling works reliably.
+        // Spring AI's stream() + internalToolExecutionEnabled(true) does not execute
+        // tools correctly with some providers (e.g. Anthropic CONTENT_BLOCK_STOP issue).
+        return Mono.fromCallable(() -> {
+                    log.info("[Chat] Calling LLM with tool support for instance {}", id);
+                    var response = chatModel.call(prompt);
                     String text = response.getResult() != null
                             && response.getResult().getOutput() != null
                             && response.getResult().getOutput().getText() != null
                                     ? response.getResult().getOutput().getText()
                                     : "";
+                    log.info("[Chat] LLM response: {} chars for instance {}", text.length(), id);
                     return new ChatResponse("assistant", text);
                 })
-                .filter(response -> !response.content().isEmpty());
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnError(err -> log.error("[Chat] Call error: {}", err.getMessage(), err))
+                .filter(response -> !response.content().isEmpty())
+                .flux();
     }
 
     private List<Message> buildMessages(List<ChatMessageItem> items, List<MultipartFile> files) {
