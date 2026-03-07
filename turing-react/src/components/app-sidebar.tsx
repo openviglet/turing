@@ -1,5 +1,6 @@
 import {
   IconBrandGraphql,
+  IconChartBar,
   IconCode,
   IconCpu2,
   IconDatabase,
@@ -81,6 +82,11 @@ const data = {
       title: "Global Settings",
       url: ROUTES.GLOBAL_SETTINGS,
       icon: IconSettings,
+    },
+    {
+      title: "Token Usage",
+      url: ROUTES.TOKEN_USAGE,
+      icon: IconChartBar,
     },
     {
       title: "API Token",

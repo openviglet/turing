@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
@@ -28,6 +31,8 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @RestController
@@ -61,15 +66,18 @@ public class TurLLMSemanticChatAPI {
     private final TurGenAiLlmProviderFactory llmProviderFactory;
     private final TurSecretCryptoService turSecretCryptoService;
     private final TurSemanticNavToolService semanticNavToolService;
+    private final TurLLMTokenUsageService tokenUsageService;
 
     public TurLLMSemanticChatAPI(TurLLMInstanceRepository turLLMInstanceRepository,
             TurGenAiLlmProviderFactory llmProviderFactory,
             TurSecretCryptoService turSecretCryptoService,
-            TurSemanticNavToolService semanticNavToolService) {
+            TurSemanticNavToolService semanticNavToolService,
+            TurLLMTokenUsageService tokenUsageService) {
         this.turLLMInstanceRepository = turLLMInstanceRepository;
         this.llmProviderFactory = llmProviderFactory;
         this.turSecretCryptoService = turSecretCryptoService;
         this.semanticNavToolService = semanticNavToolService;
+        this.tokenUsageService = tokenUsageService;
     }
 
     public record ChatRequest(List<ChatMessageItem> messages) {
@@ -93,30 +101,23 @@ public class TurLLMSemanticChatAPI {
         TurLLMInstance turLLMInstance = turLLMInstanceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("LLM instance not found: " + id));
 
+        String username = resolveUsername();
+
         TurGenAiLlmProvider provider = llmProviderFactory.getProvider(turLLMInstance);
         String decryptedApiKey = turSecretCryptoService.decrypt(turLLMInstance.getApiKeyEncrypted());
         ChatModel chatModel = provider.createChatModel(turLLMInstance, decryptedApiKey);
-
-        log.info("[SemanticChat] ChatModel created: {}", chatModel.getClass().getSimpleName());
 
         ToolCallback[] toolCallbacks = MethodToolCallbackProvider.builder()
                 .toolObjects(semanticNavToolService)
                 .build()
                 .getToolCallbacks();
 
-        log.info("[SemanticChat] Registered {} tool callbacks:", toolCallbacks.length);
-        for (ToolCallback tc : toolCallbacks) {
-            log.info("[SemanticChat]   - tool: {} | {}", tc.getToolDefinition().name(),
-                    tc.getToolDefinition().description().substring(0,
-                            Math.min(80, tc.getToolDefinition().description().length())));
-        }
+        log.info("[SemanticChat] Registered {} tool callbacks for instance {}", toolCallbacks.length, id);
 
         var chatOptions = DefaultToolCallingChatOptions.builder()
                 .toolCallbacks(toolCallbacks)
                 .internalToolExecutionEnabled(true)
                 .build();
-
-        log.info("[SemanticChat] internalToolExecutionEnabled={}", chatOptions.getInternalToolExecutionEnabled());
 
         List<Message> messages = new ArrayList<>();
         messages.add(new SystemMessage(SYSTEM_PROMPT));
@@ -128,33 +129,31 @@ public class TurLLMSemanticChatAPI {
             }
         }
 
-        log.info("[SemanticChat] Prompt has {} messages (including system). Streaming...", messages.size());
-
         Prompt prompt = new Prompt(messages, chatOptions);
 
-        return chatModel.stream(prompt)
-                .doOnNext(response -> {
-                    if (response.getResult() != null && response.getResult().getOutput() != null) {
-                        var output = response.getResult().getOutput();
-                        if (output.getToolCalls() != null && !output.getToolCalls().isEmpty()) {
-                            log.info("[SemanticChat] Model requested tool calls: {}",
-                                    output.getToolCalls().stream()
-                                            .map(tc -> tc.name() + "(" + tc.arguments() + ")")
-                                            .toList());
-                        }
-                    }
-                })
-                .doOnError(err -> log.error("[SemanticChat] Stream error: {}", err.getMessage(), err))
-                .doOnComplete(() -> log.info("[SemanticChat] Stream completed"))
-                .map(response -> {
+        return Mono.fromCallable(() -> {
+                    log.info("[SemanticChat] Calling LLM for instance {}", id);
+                    var response = chatModel.call(prompt);
+
+                    tokenUsageService.recordUsage(turLLMInstance, response, username);
+
                     String text = response.getResult() != null
                             && response.getResult().getOutput() != null
                             && response.getResult().getOutput().getText() != null
                                     ? response.getResult().getOutput().getText()
                                     : "";
+                    log.info("[SemanticChat] LLM response: {} chars for instance {}", text.length(), id);
                     return new ChatResponse("assistant", text);
                 })
-                .filter(response -> !response.content().isEmpty());
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnError(err -> log.error("[SemanticChat] Call error: {}", err.getMessage(), err))
+                .filter(response -> !response.content().isEmpty())
+                .flux();
+    }
+
+    private String resolveUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null ? auth.getName() : "anonymous";
     }
 
     @GetMapping("/context-info")

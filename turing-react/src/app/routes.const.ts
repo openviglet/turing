@@ -26,4 +26,5 @@ export const ROUTES = {
   CHAT_ROOT: `${consolePath}/chat`,
   GRAPHQL_ROOT: `${consolePath}/graphql`,
   USER_ACCOUNT: `${consolePath}/user/account`,
+  TOKEN_USAGE: `${consolePath}/token-usage`,
 };

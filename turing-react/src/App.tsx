@@ -14,6 +14,7 @@ import {
   SNRoutes,
   StoreRoutes,
   TokenRoutes,
+  TokenUsageRoutes,
   UserRoutes
 } from "./app/routes"
 import { ROUTES } from "./app/routes.const"
@@ -48,6 +49,7 @@ function App() {
                 {GlobalSettingsRoutes}
                 {GraphqlRoutes}
                 {ChatRoutes}
+                {TokenUsageRoutes}
                 {UserRoutes}
               </Route>
             </Routes>

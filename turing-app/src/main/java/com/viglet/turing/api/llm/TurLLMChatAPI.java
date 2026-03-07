@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.xml.sax.SAXException;
 
 import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
@@ -56,45 +58,29 @@ public class TurLLMChatAPI {
             "image/png", "image/jpeg", "image/gif", "image/webp");
 
     private static final String SYSTEM_PROMPT = """
-            You are a helpful AI assistant with access to the internet, weather data, financial markets, \
-            and a Python code interpreter. You can fetch web pages, check weather, look up stocks, \
-            and execute Python code to solve problems.
+            You are a helpful, friendly AI assistant. Your primary job is to have natural conversations \
+            with the user. For greetings, general questions, opinions, explanations, or any topic that \
+            does NOT require real-time data, just respond directly and naturally — do NOT use any tool.
 
-            You have access to these tools:
+            You also have access to optional tools. ONLY use them when the user's request clearly \
+            requires one. Here is when to use each tool:
 
-            WEB:
-            1. fetch_webpage — Fetches a web page by URL and returns its text content.
-            2. extract_links — Extracts links from a web page, optionally filtered by keyword.
+            - fetch_webpage / extract_links — ONLY when the user gives you a specific URL (http/https). \
+            Never treat normal text as a URL.
+            - get_weather — ONLY when the user explicitly asks about weather or climate for a city.
+            - get_stock_quote / search_ticker — ONLY when the user explicitly asks about stock prices, \
+            market data, or financial quotes.
+            - execute_python — ONLY when the user asks you to calculate, process data, generate charts, \
+            or run code. When generating charts, use: plt.savefig('output.png', dpi=150, bbox_inches='tight'). \
+            Do NOT call plt.show(). Always use print() for output.
 
-            WEATHER:
-            3. get_weather — Gets current weather and forecast for any city (powered by Open-Meteo).
-
-            FINANCE:
-            4. get_stock_quote — Gets current stock price, change, and price history for a ticker symbol. \
-            Common symbols: AAPL (Apple), GOOGL (Google), PETR4.SA (Petrobras), ^BVSP (Bovespa), \
-            ^GSPC (S&P 500), ^DJI (Dow Jones), BTC-USD (Bitcoin), BRL=X (USD/BRL).
-            5. search_ticker — Searches for a ticker symbol by company name.
-
-            CODE INTERPRETER:
-            6. execute_python — Executes Python code and returns the output. Use for:
-               - Math calculations, statistics, data analysis
-               - Processing CSV/JSON/Excel files
-               - Generating charts with matplotlib (save to 'output.png', do NOT call plt.show())
-               - Any computation that needs real code execution
-               When generating charts, always use: plt.savefig('output.png', dpi=150, bbox_inches='tight')
-               Generated files are served via URL that will be included in the output.
-
-            RULES:
-            1. When the user provides a URL, use fetch_webpage — do NOT make up content.
-            2. For weather questions, use get_weather with the city name.
-            3. For stock/market questions, use search_ticker first if you don't know the symbol, \
-            then use get_stock_quote with the correct ticker.
-            4. For math, data processing, or chart requests, use execute_python. Write clean, \
-            complete Python code. Always use print() for output.
-            5. When execute_python returns a file URL, include it in your response so the user can access it.
-            6. After fetching data, summarize clearly and highlight key information.
-            7. If the user asks in a specific language, respond in that same language.
-            8. For general questions that don't need tools, respond directly.
+            IMPORTANT RULES:
+            1. DEFAULT BEHAVIOR: Respond conversationally. Most messages do NOT need tools.
+            2. If the user asks in a specific language, respond in that same language.
+            3. Only use a tool when you are certain the user wants real-time or computed data.
+            4. After using a tool, summarize the results clearly.
+            5. When execute_python returns a file URL, include it in your response.
+            6. For stock queries, use search_ticker first if you don't know the symbol.
             """;
 
     private final TurLLMInstanceRepository turLLMInstanceRepository;
@@ -104,6 +90,7 @@ public class TurLLMChatAPI {
     private final TurWeatherToolService weatherToolService;
     private final TurFinanceToolService financeToolService;
     private final TurCodeInterpreterToolService codeInterpreterToolService;
+    private final TurLLMTokenUsageService tokenUsageService;
 
     public TurLLMChatAPI(TurLLMInstanceRepository turLLMInstanceRepository,
             TurGenAiLlmProviderFactory llmProviderFactory,
@@ -111,7 +98,8 @@ public class TurLLMChatAPI {
             TurWebCrawlerToolService webCrawlerToolService,
             TurWeatherToolService weatherToolService,
             TurFinanceToolService financeToolService,
-            TurCodeInterpreterToolService codeInterpreterToolService) {
+            TurCodeInterpreterToolService codeInterpreterToolService,
+            TurLLMTokenUsageService tokenUsageService) {
         this.turLLMInstanceRepository = turLLMInstanceRepository;
         this.llmProviderFactory = llmProviderFactory;
         this.turSecretCryptoService = turSecretCryptoService;
@@ -119,6 +107,7 @@ public class TurLLMChatAPI {
         this.weatherToolService = weatherToolService;
         this.financeToolService = financeToolService;
         this.codeInterpreterToolService = codeInterpreterToolService;
+        this.tokenUsageService = tokenUsageService;
     }
 
     public record ChatRequest(List<ChatMessageItem> messages) {
@@ -173,6 +162,9 @@ public class TurLLMChatAPI {
         TurLLMInstance turLLMInstance = turLLMInstanceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("LLM instance not found: " + id));
 
+        // Capture username from security context on the request thread
+        String username = resolveUsername();
+
         TurGenAiLlmProvider provider = llmProviderFactory.getProvider(turLLMInstance);
         String decryptedApiKey = turSecretCryptoService.decrypt(turLLMInstance.getApiKeyEncrypted());
         ChatModel chatModel = provider.createChatModel(turLLMInstance, decryptedApiKey);
@@ -202,6 +194,9 @@ public class TurLLMChatAPI {
         return Mono.fromCallable(() -> {
                     log.info("[Chat] Calling LLM with tool support for instance {}", id);
                     var response = chatModel.call(prompt);
+
+                    tokenUsageService.recordUsage(turLLMInstance, response, username);
+
                     String text = response.getResult() != null
                             && response.getResult().getOutput() != null
                             && response.getResult().getOutput().getText() != null
@@ -214,6 +209,11 @@ public class TurLLMChatAPI {
                 .doOnError(err -> log.error("[Chat] Call error: {}", err.getMessage(), err))
                 .filter(response -> !response.content().isEmpty())
                 .flux();
+    }
+
+    private String resolveUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null ? auth.getName() : "anonymous";
     }
 
     private List<Message> buildMessages(List<ChatMessageItem> items, List<MultipartFile> files) {

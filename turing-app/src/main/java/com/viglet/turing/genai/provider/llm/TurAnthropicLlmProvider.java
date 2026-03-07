@@ -2,13 +2,18 @@ package com.viglet.turing.genai.provider.llm;
 
 import java.util.Map;
 
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
+import org.apache.hc.core5.util.TimeValue;
 import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.anthropic.api.AnthropicApi;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClient;
 
 import com.viglet.turing.genai.provider.TurProviderOptionsParser;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
@@ -34,11 +39,19 @@ public class TurAnthropicLlmProvider implements TurGenAiLlmProvider {
     public ChatModel createChatModel(TurLLMInstance turLLMInstance, String decryptedApiKey) {
         Map<String, Object> options = optionsParser.parse(turLLMInstance.getProviderOptionsJson());
 
+        var httpClient = HttpClients.custom()
+                .setRetryStrategy(new DefaultHttpRequestRetryStrategy(
+                        3, TimeValue.ofSeconds(2)))
+                .build();
+        var requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        var restClientBuilder = RestClient.builder().requestFactory(requestFactory);
+
         AnthropicApi anthropicApi = AnthropicApi.builder()
                 .baseUrl(resolveBaseUrl(firstNonBlank(
                         optionsParser.stringValue(options, "baseUrl"),
                         turLLMInstance.getUrl())))
                 .apiKey(requireApiKey(decryptedApiKey, turLLMInstance))
+                .restClientBuilder(restClientBuilder)
                 .build();
 
         AnthropicChatOptions.Builder optionsBuilder = AnthropicChatOptions.builder()

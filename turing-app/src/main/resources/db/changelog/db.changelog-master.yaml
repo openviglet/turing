@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/v2026.1.13_llm_description_nullable.yaml
   - include:
       file: db/changelog/v2026.1.14_gemini_split_providers.yaml
+  - include:
+      file: db/changelog/v2026.1.15_llm_token_usage.yaml
