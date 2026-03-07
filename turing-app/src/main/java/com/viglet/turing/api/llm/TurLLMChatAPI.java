@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
@@ -20,6 +21,7 @@ import org.springframework.ai.content.Media;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.util.MimeType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +70,9 @@ public class TurLLMChatAPI {
     public record ChatResponse(String role, String content) {
     }
 
+    public record ContextInfoResponse(int contextWindow, String source) {
+    }
+
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE,
                  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Flux<ChatResponse> chat(
@@ -83,6 +88,25 @@ public class TurLLMChatAPI {
             @PathVariable String id,
             @org.springframework.web.bind.annotation.RequestBody ChatRequest request) {
         return doChat(id, request, null);
+    }
+
+    @GetMapping("/context-info")
+    public ContextInfoResponse contextInfo(@PathVariable String id) {
+        TurLLMInstance turLLMInstance = turLLMInstanceRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("LLM instance not found: " + id));
+
+        TurGenAiLlmProvider provider = llmProviderFactory.getProvider(turLLMInstance);
+        String decryptedApiKey = turSecretCryptoService.decrypt(turLLMInstance.getApiKeyEncrypted());
+
+        OptionalInt fetched = provider.fetchContextWindow(turLLMInstance, decryptedApiKey);
+        if (fetched.isPresent()) {
+            return new ContextInfoResponse(fetched.getAsInt(), "provider");
+        }
+
+        int stored = turLLMInstance.getContextWindow() != null
+                ? turLLMInstance.getContextWindow()
+                : 128000;
+        return new ContextInfoResponse(stored, "config");
     }
 
     private Flux<ChatResponse> doChat(String id, ChatRequest request, List<MultipartFile> files) {
@@ -134,6 +158,16 @@ public class TurLLMChatAPI {
             String contentType = file.getContentType() != null
                     ? file.getContentType() : "application/octet-stream";
 
+            // Always extract text from all files (works for PDF, DOCX, and images via OCR)
+            String content = extractTextFromFile(file);
+            if (!content.isBlank()) {
+                extractedText.append("\n\n--- File: ")
+                        .append(file.getOriginalFilename())
+                        .append(" ---\n")
+                        .append(content);
+            }
+
+            // Also attach images as Media for vision-capable models
             if (IMAGE_MIME_TYPES.contains(contentType)) {
                 try {
                     imageMedia.add(Media.builder()
@@ -143,14 +177,6 @@ public class TurLLMChatAPI {
                             .build());
                 } catch (IOException e) {
                     log.warn("Failed to read image file: {}", file.getOriginalFilename(), e);
-                }
-            } else {
-                String content = extractTextFromFile(file);
-                if (!content.isBlank()) {
-                    extractedText.append("\n\n--- File: ")
-                            .append(file.getOriginalFilename())
-                            .append(" ---\n")
-                            .append(content);
                 }
             }
         }

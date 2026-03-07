@@ -3,6 +3,7 @@ package com.viglet.turing.genai.provider.llm;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -11,12 +12,17 @@ import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClient;
 
 import com.viglet.turing.genai.provider.TurProviderOptionsParser;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class TurOllamaLlmProvider implements TurGenAiLlmProvider {
 
@@ -114,6 +120,42 @@ public class TurOllamaLlmProvider implements TurGenAiLlmProvider {
                 .ollamaApi(ollamaApi)
                 .defaultOptions(embeddingOptions)
                 .build();
+    }
+
+    @Override
+    public OptionalInt fetchContextWindow(TurLLMInstance turLLMInstance, String decryptedApiKey) {
+        Map<String, Object> options = optionsParser.parse(turLLMInstance.getProviderOptionsJson());
+        String baseUrl = firstNonBlank(optionsParser.stringValue(options, "baseUrl"), turLLMInstance.getUrl());
+        String modelName = firstNonBlank(
+                optionsParser.stringValue(options, "model"),
+                turLLMInstance.getModelName());
+
+        if (!StringUtils.hasText(baseUrl) || !StringUtils.hasText(modelName)) {
+            return OptionalInt.empty();
+        }
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body = RestClient.create(baseUrl)
+                    .post()
+                    .uri("/api/show")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Map.of("name", modelName))
+                    .retrieve()
+                    .body(Map.class);
+
+            if (body != null && body.get("model_info") instanceof Map<?, ?> modelInfo) {
+                for (Map.Entry<?, ?> entry : modelInfo.entrySet()) {
+                    String key = String.valueOf(entry.getKey());
+                    if (key.endsWith(".context_length") && entry.getValue() instanceof Number num) {
+                        return OptionalInt.of(num.intValue());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to fetch context window from Ollama for model '{}': {}", modelName, e.getMessage());
+        }
+        return OptionalInt.empty();
     }
 
     private List<String> parseStopSequences(String rawStop) {

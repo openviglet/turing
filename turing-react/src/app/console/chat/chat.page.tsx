@@ -24,6 +24,7 @@ import { type ChatMessageItem, TurChatService } from "@/services/chat/chat.servi
 const turChatService = new TurChatService()
 
 const DEFAULT_CONTEXT_WINDOW = 128000
+const contextWindowCache = new Map<string, number>()
 
 interface ChatAttachment {
   name: string
@@ -62,6 +63,7 @@ export default function ChatPage() {
   const [selectedLlmId, setSelectedLlmId] = useState<string>("")
   const [attachedFiles, setAttachedFiles] = useState<File[]>([])
   const [isDragOver, setIsDragOver] = useState(false)
+  const [fetchedContextWindow, setFetchedContextWindow] = useState<number | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -75,6 +77,24 @@ export default function ChatPage() {
       }
     })
   }, [])
+
+  useEffect(() => {
+    if (!selectedLlmId) {
+      setFetchedContextWindow(null)
+      return
+    }
+    const cached = contextWindowCache.get(selectedLlmId)
+    if (cached) {
+      setFetchedContextWindow(cached)
+      return
+    }
+    turChatService.fetchContextInfo(selectedLlmId).then((info) => {
+      contextWindowCache.set(selectedLlmId, info.contextWindow)
+      setFetchedContextWindow(info.contextWindow)
+    }).catch(() => {
+      setFetchedContextWindow(null)
+    })
+  }, [selectedLlmId])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -93,7 +113,7 @@ export default function ChatPage() {
   }, [input, adjustTextareaHeight])
 
   const selectedInstance = llmInstances.find((i) => i.id === selectedLlmId)
-  const contextWindow = selectedInstance?.contextWindow || DEFAULT_CONTEXT_WINDOW
+  const contextWindow = fetchedContextWindow || selectedInstance?.contextWindow || DEFAULT_CONTEXT_WINDOW
 
   const contextUsage = useMemo(() => {
     const totalText = messages.map((m) => m.content).join("")

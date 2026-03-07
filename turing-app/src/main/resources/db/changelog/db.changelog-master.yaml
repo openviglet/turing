@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/v2026.1.11_llm_vendor_new_providers.yaml
   - include:
       file: db/changelog/v2026.1.12_llm_context_window.yaml
+  - include:
+      file: db/changelog/v2026.1.13_llm_description_nullable.yaml

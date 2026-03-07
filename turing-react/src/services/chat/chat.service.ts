@@ -11,6 +11,11 @@ export interface ChatResponse {
   content: string;
 }
 
+export interface ContextInfoResponse {
+  contextWindow: number;
+  source: string;
+}
+
 function readCsrfTokenFromCookie(): string | null {
   const match = /(?:^|;\s*)XSRF-TOKEN=([^;]+)/.exec(document.cookie);
   return match ? decodeURIComponent(match[1]) : null;
@@ -132,6 +137,13 @@ export class TurChatService {
 
   async queryLLMInstances(): Promise<TurLLMInstance[]> {
     const response = await axios.get<TurLLMInstance[]>("/llm");
+    return response.data;
+  }
+
+  async fetchContextInfo(llmInstanceId: string): Promise<ContextInfoResponse> {
+    const response = await axios.get<ContextInfoResponse>(
+      `/v2/llm/${llmInstanceId}/chat/context-info`,
+    );
     return response.data;
   }
 }
