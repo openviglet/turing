@@ -4,18 +4,24 @@ import java.util.Map;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
-import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatOptions;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.google.cloud.vertexai.VertexAI;
 import com.viglet.turing.genai.provider.TurProviderOptionsParser;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 
+/**
+ * Gemini provider using Google's OpenAI-compatible API.
+ * Requires only an API key (from ai.google.dev), no GCP project or ADC needed.
+ * Endpoint: https://generativelanguage.googleapis.com/v1beta/openai
+ */
 @Component
 public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
 
+    private static final String DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai";
     private static final String DEFAULT_CHAT_MODEL = "gemini-2.0-flash";
 
     private final TurProviderOptionsParser optionsParser;
@@ -33,20 +39,14 @@ public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
     public ChatModel createChatModel(TurLLMInstance turLLMInstance, String decryptedApiKey) {
         Map<String, Object> options = optionsParser.parse(turLLMInstance.getProviderOptionsJson());
 
-        String projectId = optionsParser.stringValue(options, "projectId");
-        if (!StringUtils.hasText(projectId)) {
-            throw new IllegalStateException(
-                    "Missing 'projectId' in provider options for Gemini instance: " + turLLMInstance.getId());
-        }
-
-        String location = firstNonBlank(optionsParser.stringValue(options, "location"), "us-central1");
-
-        VertexAI vertexAI = new VertexAI.Builder()
-                .setProjectId(projectId)
-                .setLocation(location)
+        OpenAiApi openAiApi = OpenAiApi.builder()
+                .baseUrl(resolveBaseUrl(firstNonBlank(
+                        optionsParser.stringValue(options, "baseUrl"),
+                        turLLMInstance.getUrl())))
+                .apiKey(requireApiKey(decryptedApiKey, turLLMInstance))
                 .build();
 
-        VertexAiGeminiChatOptions.Builder optionsBuilder = VertexAiGeminiChatOptions.builder()
+        OpenAiChatOptions.Builder optionsBuilder = OpenAiChatOptions.builder()
                 .model(resolveChatModelName(firstNonBlank(
                         optionsParser.stringValue(options, "chatModel"),
                         optionsParser.stringValue(options, "model"),
@@ -61,17 +61,13 @@ public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
         if (topP != null) {
             optionsBuilder.topP(topP);
         }
-        Integer topK = firstNonNull(optionsParser.intValue(options, "topK"), turLLMInstance.getTopK());
-        if (topK != null) {
-            optionsBuilder.topK(topK);
-        }
         Integer maxTokens = optionsParser.intValue(options, "maxTokens");
         if (maxTokens != null) {
-            optionsBuilder.maxOutputTokens(maxTokens);
+            optionsBuilder.maxTokens(maxTokens);
         }
 
-        return VertexAiGeminiChatModel.builder()
-                .vertexAI(vertexAI)
+        return OpenAiChatModel.builder()
+                .openAiApi(openAiApi)
                 .defaultOptions(optionsBuilder.build())
                 .build();
     }
@@ -80,6 +76,18 @@ public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
     public EmbeddingModel createEmbeddingModel(TurLLMInstance turLLMInstance, String decryptedApiKey) {
         throw new UnsupportedOperationException(
                 "Gemini embedding is not yet supported. Use a different provider for embeddings.");
+    }
+
+    private String requireApiKey(String decryptedApiKey, TurLLMInstance turLLMInstance) {
+        if (!StringUtils.hasText(decryptedApiKey)) {
+            throw new IllegalStateException(
+                    "Missing API key for Gemini provider in LLM instance: " + turLLMInstance.getId());
+        }
+        return decryptedApiKey;
+    }
+
+    private String resolveBaseUrl(String configuredUrl) {
+        return StringUtils.hasText(configuredUrl) ? configuredUrl : DEFAULT_BASE_URL;
     }
 
     private String resolveChatModelName(String configuredModel) {

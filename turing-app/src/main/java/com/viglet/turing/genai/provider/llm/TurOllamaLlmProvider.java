@@ -134,10 +134,53 @@ public class TurOllamaLlmProvider implements TurGenAiLlmProvider {
             return OptionalInt.empty();
         }
 
+        RestClient client = RestClient.create(baseUrl);
+
+        // 1) Try /api/ps — returns the effective context_length for running models
+        //    (reflects Ollama Settings override like num_ctx)
+        OptionalInt fromPs = fetchFromRunningModels(client, modelName);
+        if (fromPs.isPresent()) {
+            return fromPs;
+        }
+
+        // 2) Fallback to /api/show — returns the model's maximum capability
+        return fetchFromModelInfo(client, modelName);
+    }
+
+    private OptionalInt fetchFromRunningModels(RestClient client, String modelName) {
         try {
             @SuppressWarnings("unchecked")
-            Map<String, Object> body = RestClient.create(baseUrl)
-                    .post()
+            Map<String, Object> body = client.get()
+                    .uri("/api/ps")
+                    .retrieve()
+                    .body(Map.class);
+
+            if (body != null && body.get("models") instanceof List<?> models) {
+                for (Object item : models) {
+                    if (item instanceof Map<?, ?> model) {
+                        String name = String.valueOf(model.get("name"));
+                        // Match by model name (with or without :tag suffix)
+                        if (name.equals(modelName)
+                                || name.startsWith(modelName + ":")
+                                || modelName.equals(String.valueOf(model.get("model")))) {
+                            Object ctxLen = model.get("context_length");
+                            if (ctxLen instanceof Number num && num.intValue() > 0) {
+                                return OptionalInt.of(num.intValue());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.debug("Could not query Ollama /api/ps: {}", e.getMessage());
+        }
+        return OptionalInt.empty();
+    }
+
+    private OptionalInt fetchFromModelInfo(RestClient client, String modelName) {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body = client.post()
                     .uri("/api/show")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(Map.of("name", modelName))

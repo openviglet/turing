@@ -3,7 +3,6 @@ package com.viglet.turing.genai.provider.llm;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
@@ -33,7 +32,7 @@ class TurGeminiLlmProviderTest {
     void setUp() {
         instance = new TurLLMInstance();
         instance.setId("test-id");
-        instance.setUrl("https://us-central1-aiplatform.googleapis.com");
+        instance.setUrl("https://generativelanguage.googleapis.com/v1beta/openai");
     }
 
     @Test
@@ -42,11 +41,11 @@ class TurGeminiLlmProviderTest {
     }
 
     @Test
-    void testCreateChatModel_missingProjectId() {
+    void testCreateChatModel_missingApiKey() {
         when(optionsParser.parse(any())).thenReturn(Map.of());
-        when(optionsParser.stringValue(any(), eq("projectId"))).thenReturn(null);
+        when(optionsParser.stringValue(any(), any())).thenReturn(null);
 
-        assertThrows(IllegalStateException.class, () -> provider.createChatModel(instance, "dummy-key"));
+        assertThrows(IllegalStateException.class, () -> provider.createChatModel(instance, null));
     }
 
     @Test

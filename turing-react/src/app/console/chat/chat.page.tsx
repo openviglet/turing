@@ -89,9 +89,12 @@ export default function ChatPage() {
       return
     }
     turChatService.fetchContextInfo(selectedLlmId).then((info) => {
-      contextWindowCache.set(selectedLlmId, info.contextWindow)
-      setFetchedContextWindow(info.contextWindow)
-    }).catch(() => {
+      if (info.contextWindow > 0) {
+        contextWindowCache.set(selectedLlmId, info.contextWindow)
+        setFetchedContextWindow(info.contextWindow)
+      }
+    }).catch((err) => {
+      console.warn("Failed to fetch context info:", err)
       setFetchedContextWindow(null)
     })
   }, [selectedLlmId])
@@ -476,7 +479,7 @@ export default function ChatPage() {
                     />
                   </div>
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {contextUsage.percentage}%
+                    {formatTokenCount(contextUsage.tokens)}/{formatTokenCount(contextWindow)}
                   </span>
                 </div>
                 {/* Compact button */}

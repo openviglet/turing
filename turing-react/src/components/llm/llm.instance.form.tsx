@@ -108,7 +108,8 @@ const parseLlmProviderOptionsDraft = (vendorId: string | undefined, jsonValue?: 
   return {
     baseUrl: toText(parsed.baseUrl),
     model: vendorId === "OLLAMA" ? toText(parsed.model) : "",
-    chatModel: vendorId === "OPENAI" ? toText(parsed.chatModel ?? parsed.model) : "",
+    chatModel: (vendorId === "OPENAI" || vendorId === "GEMINI" || vendorId === "ANTHROPIC")
+      ? toText(parsed.chatModel ?? parsed.model) : "",
     embeddingModel: toText(parsed.embeddingModel),
     temperature: toText(parsed.temperature),
     topK: toText(parsed.topK),
@@ -183,9 +184,6 @@ const buildLlmProviderOptionsFromDraft = (vendorId: string | undefined, draft: L
 
   if (vendorId === "GEMINI") {
     putText("chatModel", draft.chatModel)
-    putText("projectId", draft.projectId)
-    putText("location", draft.location)
-    putNumber("topK", draft.topK)
     putNumber("maxTokens", draft.maxTokens)
   }
 
@@ -242,7 +240,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       form.setValue("timeout", "PT60S", { shouldDirty: true });
     }
     if (vendorId === "GEMINI") {
-      form.setValue("url", "", { shouldDirty: true });
+      form.setValue("url", "https://generativelanguage.googleapis.com/v1beta/openai", { shouldDirty: true });
       form.setValue("modelName", "gemini-2.0-flash", { shouldDirty: true });
       form.setValue("timeout", "PT60S", { shouldDirty: true });
     }
@@ -265,7 +263,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       return '{\n  "baseUrl": "https://api.anthropic.com",\n  "chatModel": "claude-sonnet-4-20250514",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "topK": 40,\n  "maxTokens": 1024\n}'
     }
     if (vendorId === "GEMINI") {
-      return '{\n  "projectId": "my-gcp-project",\n  "location": "us-central1",\n  "chatModel": "gemini-2.0-flash",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "topK": 40,\n  "maxTokens": 1024\n}'
+      return '{\n  "chatModel": "gemini-2.0-flash",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "maxTokens": 8192\n}'
     }
     if (vendorId === "AZURE_OPENAI") {
       return '{\n  "endpoint": "https://my-resource.openai.azure.com",\n  "deploymentName": "gpt-4o",\n  "embeddingDeploymentName": "text-embedding-ada-002",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "seed": 42,\n  "maxTokens": 1024\n}'
@@ -824,11 +822,8 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                       )}
                       {selectedVendorId === "GEMINI" && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <Input placeholder="GCP Project ID (required)" value={llmProviderOptionsDraft.projectId} onChange={(event) => setLlmDraftValue("projectId", event.target.value)} />
-                          <Input placeholder="Location (e.g., us-central1)" value={llmProviderOptionsDraft.location} onChange={(event) => setLlmDraftValue("location", event.target.value)} />
                           <Input placeholder="Chat Model" value={llmProviderOptionsDraft.chatModel} onChange={(event) => setLlmDraftValue("chatModel", event.target.value)} />
                           <Input placeholder="Temperature" type="number" step="0.01" value={llmProviderOptionsDraft.temperature} onChange={(event) => setLlmDraftValue("temperature", event.target.value)} />
-                          <Input placeholder="Top K" type="number" value={llmProviderOptionsDraft.topK} onChange={(event) => setLlmDraftValue("topK", event.target.value)} />
                           <Input placeholder="Top P" type="number" step="0.01" value={llmProviderOptionsDraft.topP} onChange={(event) => setLlmDraftValue("topP", event.target.value)} />
                           <Input placeholder="Max Tokens" type="number" value={llmProviderOptionsDraft.maxTokens} onChange={(event) => setLlmDraftValue("maxTokens", event.target.value)} />
                         </div>
