@@ -107,6 +107,9 @@ public class TurLLMInstance implements Serializable {
 	@Column
 	private Integer maxRetries;
 
+	@Column(name = "context_window")
+	private Integer contextWindow;
+
 	@Lob
 	@Column
 	private String providerOptionsJson;

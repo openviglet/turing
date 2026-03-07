@@ -1,4 +1,75 @@
-# AI Agents and Turing: Enterprise Search Intelligence Platform
+# Turing: Enterprise Search Intelligence Platform
+
+## Development Guidelines
+
+### Project Structure
+- **turing-app**: Spring Boot 4 backend (Java 21), main module
+- **turing-react**: React + TypeScript frontend (Vite, Tailwind CSS v4, shadcn/ui)
+- **turing-js-sdk**: JavaScript SDK for Turing API
+- **turing-commons**: Shared library
+- Root Maven POM is multi-module
+
+### Key Paths
+- Backend source: `turing-app/src/main/java/com/viglet/turing/`
+- Backend tests: `turing-app/src/test/java/com/viglet/turing/`
+- Frontend source: `turing-react/src/`
+- Liquibase changelogs: `turing-app/src/main/resources/db/changelog/`
+
+### Build & Test Commands
+```bash
+# Backend tests only (skip frontend npm build)
+mvn test -pl turing-app -Dskip.npm=true
+
+# Run specific test class
+mvn test -pl turing-app -Dskip.npm=true -Dtest="ClassName"
+
+# Frontend compile
+cd turing-react && npm run compile
+
+# Full build
+mvn clean install
+```
+> **Windows PowerShell**: quote `-D` flags, e.g. `"-Dskip.npm=true"`
+
+### Backend Conventions
+- **Spring Boot 4** with **Spring AI 1.1.2** for LLM integration
+- Persistence: JPA/Hibernate with H2 (dev) and Liquibase migrations
+- REST controllers in `api/` package, services in dedicated packages
+- Use constructor injection (no `@Autowired` on fields)
+- Records for DTOs/API request-response types
+- Avoid injecting `ObjectMapper` in controllers — use `@RequestBody` / `@RequestPart` for auto-deserialization
+- `TurSecretCryptoService` handles API key encryption/decryption
+
+### Liquibase Conventions
+- Changelog files: `v{version}_{description}.yaml`
+- Include in `db.changelog-master.yaml`
+- Use `preconditions` with `onFail: MARK_RAN` for idempotent changesets
+- Column size changes: use `modifyDataType`; new data: use `insert`
+
+### Frontend Conventions
+- **React 19** + **TypeScript** + **Vite**
+- **Tailwind CSS v4** with `@tailwindcss/typography` plugin
+- **shadcn/ui** components in `src/components/ui/`
+- Custom gradient components: `GradientButton`, `GradientAvatar`, `GradientSwitch`
+- Icons: `@tabler/icons-react` (primary), `lucide-react` (some components)
+- Routing: `react-router-dom` with routes defined in `src/app/routes/`
+- Services: class-based in `src/services/`, use `axios` for REST, native `fetch` for SSE streaming
+- Models: TypeScript interfaces in `src/models/`
+- CSRF: For non-axios requests, read `XSRF-TOKEN` cookie or fetch from `/csrf` endpoint
+
+### Testing Conventions
+- Backend: JUnit 5 + Mockito with `@ExtendWith(MockitoExtension.class)`
+- Mockito strict stubbing: stub all methods that will be called (use `any()` for broad matching)
+- Integration tests use `@SpringBootTest` with full context — keep controllers lean to avoid bean issues
+- Always run `mvn test -pl turing-app -Dskip.npm=true` after backend changes
+
+### Common Pitfalls
+- `@Column(length=N)` must accommodate all enum/ID values (e.g., "AZURE_OPENAI" = 12 chars)
+- Spring AI 1.1.2: `AzureOpenAiEmbeddingModel` has no builder — use constructor
+- Anthropic and Gemini providers don't support embedding — throw `UnsupportedOperationException`
+- Frontend npm builds may fail with EBUSY on Windows if IDE locks files — use `-Dskip.npm=true` for backend-only testing
+
+---
 
 ## Overview
 
@@ -221,6 +292,72 @@ Use this checklist whenever a demand involves numeric localization (dot/comma), 
 - Regenerate only artifacts that must reflect schema/runtime changes.
 - If validation reveals unrelated pre-existing issues, report them separately and keep scope explicit.
 
+## Spring AI Integration (v1.1.2)
+
+### LLM Provider Architecture
+Turing uses a pluggable provider pattern for LLM integration via Spring AI:
+
+- **Interface**: `TurGenAiLlmProvider` — defines `getPluginType()`, `createChatModel()`, `createEmbeddingModel()`
+- **Factory**: `TurGenAiLlmProviderFactory` — resolves the correct provider based on the vendor's plugin type
+- **Supported providers**: OpenAI, Ollama, Anthropic (Claude), Google Gemini (Vertex AI), Azure OpenAI (Copilot)
+
+### Streaming Chat API
+The chat endpoint supports **Server-Sent Events (SSE)** for token-by-token streaming:
+
+```java
+// Backend: Flux-based SSE streaming
+@PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+public Flux<ChatResponse> chat(...) {
+    return chatModel.stream(prompt)
+        .map(response -> new ChatResponse("assistant", response.getResult().getOutput().getText()))
+        .filter(r -> !r.content().isEmpty());
+}
+```
+
+```typescript
+// Frontend: fetch + ReadableStream for SSE consumption
+const response = await fetch(url, { method: "POST", headers, credentials: "include", body });
+const reader = response.body.getReader();
+// Parse "data:" lines, extract JSON, call onToken(parsed.content)
+```
+
+### Multimodal Support (File Attachments)
+The chat API accepts file uploads via multipart form data, using Spring AI's `Media` API:
+
+```java
+// Build UserMessage with media attachments
+UserMessage.builder()
+    .text("Analyze this document")
+    .media(Media.builder()
+        .mimeType(MimeType.valueOf("application/pdf"))
+        .data(new ByteArrayResource(fileBytes))
+        .name("document.pdf")
+        .build())
+    .build();
+```
+
+**Supported formats**: Images (PNG, JPEG, GIF, WebP), Documents (PDF, CSV, DOC/DOCX, XLS/XLSX, HTML, TXT, Markdown), Video formats.
+
+### Spring AI Message Types
+- `UserMessage` — supports text + media attachments via builder
+- `AssistantMessage` — text + tool calls + media
+- `SystemMessage` — system prompts
+- `Prompt` — accepts `List<Message>` for proper conversation history
+
+### Provider-Specific Notes
+| Provider | Chat | Embedding | Notes |
+|----------|------|-----------|-------|
+| OpenAI | Yes | Yes | Full support |
+| Ollama | Yes | Yes | Local models |
+| Anthropic | Yes | No | No embedding API — throws `UnsupportedOperationException` |
+| Gemini | Yes | No | Requires `projectId` in provider options; uses Vertex AI |
+| Azure OpenAI | Yes | Yes | `AzureOpenAiEmbeddingModel` uses constructor (no builder in 1.1.2) |
+
+### API Key Management
+- API keys stored encrypted via `TurSecretCryptoService`
+- Decrypted at runtime when creating provider instances
+- Provider options (JSON) stored in `TurLLMInstance.providerOptionsJson`
+
 ## SDK and API Support for Agent Development
 
 ### Java SDK for AI Agents
@@ -316,6 +453,25 @@ query AIAgentComplexSearch($siteName: String!, $query: String!, $context: AgentC
   }
 }
 ```
+
+## React Chat UI Architecture
+
+### Chat Page (`turing-react/src/app/console/chat/`)
+A Claude AI-inspired conversational interface with:
+- **Model selector**: Dropdown to pick enabled LLM instances
+- **Streaming responses**: Token-by-token display using SSE
+- **Markdown rendering**: `react-markdown` + `remark-gfm` + `rehype-highlight`
+- **Code syntax highlighting**: highlight.js with github/github-dark themes, scoped by `.dark` CSS class
+- **Theme toggle**: Dark / Light / System mode via `ModeToggle` component
+- **File attachments**: Upload button (paperclip icon) + drag & drop + file chips with remove button
+- **CSRF handling**: For non-axios `fetch` calls, reads `XSRF-TOKEN` cookie or fetches from `/csrf` endpoint
+
+### Frontend Component Patterns
+- **Services**: Class-based (e.g., `TurChatService`) — `axios` for REST, native `fetch` for SSE
+- **UI components**: shadcn/ui base + custom gradient variants (`GradientButton`, `GradientAvatar`)
+- **Icons**: `@tabler/icons-react` as primary icon set
+- **State management**: React hooks (`useState`, `useRef`, `useCallback`)
+- **Routing**: `react-router-dom` with lazy-loaded route modules in `src/app/routes/`
 
 ## Research Applications and Use Cases
 

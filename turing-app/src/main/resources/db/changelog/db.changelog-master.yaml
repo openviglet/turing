@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/v2026.1.11_genai_spring_ai.yaml
   - include:
       file: db/changelog/v2026.1.11_llm_vendor_new_providers.yaml
+  - include:
+      file: db/changelog/v2026.1.12_llm_context_window.yaml

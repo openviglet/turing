@@ -37,17 +37,33 @@ export class TurChatService {
     onToken: (token: string) => void,
     onDone: () => void,
     onError: (error: Error) => void,
+    files?: File[],
   ): Promise<void> {
     const baseURL = axios.defaults.baseURL ?? "";
     const url = `${baseURL}/v2/llm/${llmInstanceId}/chat`;
     const csrfToken = await ensureCsrfToken();
 
     const headers: Record<string, string> = {
-      "Content-Type": "application/json",
       Accept: "text/event-stream",
     };
     if (csrfToken) {
       headers["X-XSRF-TOKEN"] = csrfToken;
+    }
+
+    let body: BodyInit;
+    if (files && files.length > 0) {
+      const formData = new FormData();
+      formData.append(
+        "request",
+        new Blob([JSON.stringify({ messages })], { type: "application/json" }),
+      );
+      for (const file of files) {
+        formData.append("files", file);
+      }
+      body = formData;
+    } else {
+      headers["Content-Type"] = "application/json";
+      body = JSON.stringify({ messages });
     }
 
     try {
@@ -55,7 +71,7 @@ export class TurChatService {
         method: "POST",
         headers,
         credentials: "include",
-        body: JSON.stringify({ messages }),
+        body,
       });
 
       if (!response.ok) {
