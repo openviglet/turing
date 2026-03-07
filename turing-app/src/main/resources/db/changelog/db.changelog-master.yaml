@@ -15,3 +15,5 @@ databaseChangeLog:
       file: db/changelog/v2026.1.12_llm_context_window.yaml
   - include:
       file: db/changelog/v2026.1.13_llm_description_nullable.yaml
+  - include:
+      file: db/changelog/v2026.1.14_gemini_split_providers.yaml

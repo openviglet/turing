@@ -148,6 +148,11 @@ const buildLlmProviderOptionsFromDraft = (vendorId: string | undefined, draft: L
   }
 
   if (vendorId === "GEMINI") {
+    putNumber("topK", draft.topK)
+    putNumber("maxTokens", draft.maxTokens)
+  }
+
+  if (vendorId === "GEMINI_OPENAI") {
     putNumber("maxTokens", draft.maxTokens)
   }
 
@@ -218,6 +223,15 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       draft.maxTokens = "1024"
     }
     if (vendorId === "GEMINI") {
+      form.setValue("url", "", { shouldDirty: true });
+      form.setValue("modelName", "gemini-2.0-flash", { shouldDirty: true });
+      form.setValue("temperature", 0.7, { shouldDirty: true });
+      form.setValue("topP", 0.9, { shouldDirty: true });
+      form.setValue("timeout", "PT60S", { shouldDirty: true });
+      draft.topK = "40"
+      draft.maxTokens = "8192"
+    }
+    if (vendorId === "GEMINI_OPENAI") {
       form.setValue("url", "https://generativelanguage.googleapis.com/v1beta/openai", { shouldDirty: true });
       form.setValue("modelName", "gemini-2.0-flash", { shouldDirty: true });
       form.setValue("temperature", 0.7, { shouldDirty: true });
@@ -254,6 +268,9 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       return '{\n  "topK": 40,\n  "maxTokens": 1024\n}'
     }
     if (vendorId === "GEMINI") {
+      return '{\n  "topK": 40,\n  "maxTokens": 8192\n}'
+    }
+    if (vendorId === "GEMINI_OPENAI") {
       return '{\n  "maxTokens": 8192\n}'
     }
     if (vendorId === "AZURE_OPENAI") {
@@ -427,6 +444,7 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                                     <SelectItem key="ANTHROPIC" value="ANTHROPIC">Anthropic (Claude)</SelectItem>
                                     <SelectItem key="AZURE_OPENAI" value="AZURE_OPENAI">Azure OpenAI (Copilot)</SelectItem>
                                     <SelectItem key="GEMINI" value="GEMINI">Google Gemini</SelectItem>
+                                    <SelectItem key="GEMINI_OPENAI" value="GEMINI_OPENAI">Google Gemini (OpenAI Compatible)</SelectItem>
                                     <SelectItem key="OLLAMA" value="OLLAMA">Ollama</SelectItem>
                                     <SelectItem key="OPENAI" value="OPENAI">OpenAI</SelectItem>
                                   </SelectContent>
@@ -724,6 +742,12 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                         </div>
                       )}
                       {selectedVendorId === "GEMINI" && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input placeholder="Top K (e.g., 40)" type="number" value={llmProviderOptionsDraft.topK} onChange={(event) => setLlmDraftValue("topK", event.target.value)} />
+                          <Input placeholder="Max Tokens (e.g., 8192)" type="number" value={llmProviderOptionsDraft.maxTokens} onChange={(event) => setLlmDraftValue("maxTokens", event.target.value)} />
+                        </div>
+                      )}
+                      {selectedVendorId === "GEMINI_OPENAI" && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <Input placeholder="Max Tokens (e.g., 8192)" type="number" value={llmProviderOptionsDraft.maxTokens} onChange={(event) => setLlmDraftValue("maxTokens", event.target.value)} />
                         </div>

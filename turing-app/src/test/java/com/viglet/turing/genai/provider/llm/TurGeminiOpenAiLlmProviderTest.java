@@ -18,13 +18,13 @@ import com.viglet.turing.genai.provider.TurProviderOptionsParser;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 
 @ExtendWith(MockitoExtension.class)
-class TurGeminiLlmProviderTest {
+class TurGeminiOpenAiLlmProviderTest {
 
     @Mock
     private TurProviderOptionsParser optionsParser;
 
     @InjectMocks
-    private TurGeminiLlmProvider provider;
+    private TurGeminiOpenAiLlmProvider provider;
 
     private TurLLMInstance instance;
 
@@ -32,17 +32,18 @@ class TurGeminiLlmProviderTest {
     void setUp() {
         instance = new TurLLMInstance();
         instance.setId("test-id");
-        instance.setUrl("");
+        instance.setUrl("https://generativelanguage.googleapis.com/v1beta/openai");
     }
 
     @Test
     void testGetPluginType() {
-        assertEquals("gemini", provider.getPluginType());
+        assertEquals("gemini-openai", provider.getPluginType());
     }
 
     @Test
     void testCreateChatModel_missingApiKey() {
         when(optionsParser.parse(any())).thenReturn(Map.of());
+        when(optionsParser.stringValue(any(), any())).thenReturn(null);
 
         assertThrows(IllegalStateException.class, () -> provider.createChatModel(instance, null));
     }

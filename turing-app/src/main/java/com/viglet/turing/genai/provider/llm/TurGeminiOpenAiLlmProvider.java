@@ -4,46 +4,54 @@ import java.util.Map;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.ai.google.genai.GoogleGenAiChatModel;
-import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.google.genai.Client;
 import com.viglet.turing.genai.provider.TurProviderOptionsParser;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 
 /**
- * Native Gemini provider using Google's GenAI SDK directly.
- * Requires an API key from ai.google.dev (Google AI Studio).
- * Uses the native Gemini API (not OpenAI-compatible layer) for full
- * multimodal support including images, audio, and video.
+ * Gemini provider using Google's OpenAI-compatible API.
+ * Requires only an API key (from ai.google.dev), no GCP project or ADC needed.
+ * Endpoint: https://generativelanguage.googleapis.com/v1beta/openai
+ *
+ * Supported models (use current names — legacy models like gemini-1.5-pro were
+ * sunset Sep 2025 and return 404): gemini-2.0-flash, gemini-2.5-pro,
+ * gemini-2.5-flash-lite, gemini-3-flash-preview, etc.
  */
 @Component
-public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
+public class TurGeminiOpenAiLlmProvider implements TurGenAiLlmProvider {
 
+    private static final String DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai";
     private static final String DEFAULT_CHAT_MODEL = "gemini-2.0-flash";
 
     private final TurProviderOptionsParser optionsParser;
 
-    public TurGeminiLlmProvider(TurProviderOptionsParser optionsParser) {
+    public TurGeminiOpenAiLlmProvider(TurProviderOptionsParser optionsParser) {
         this.optionsParser = optionsParser;
     }
 
     @Override
     public String getPluginType() {
-        return "gemini";
+        return "gemini-openai";
     }
 
     @Override
     public ChatModel createChatModel(TurLLMInstance turLLMInstance, String decryptedApiKey) {
         Map<String, Object> options = optionsParser.parse(turLLMInstance.getProviderOptionsJson());
 
-        Client genAiClient = Client.builder()
+        OpenAiApi openAiApi = OpenAiApi.builder()
+                .baseUrl(resolveBaseUrl(firstNonBlank(
+                        optionsParser.stringValue(options, "baseUrl"),
+                        turLLMInstance.getUrl())))
+                .completionsPath("/chat/completions")
                 .apiKey(requireApiKey(decryptedApiKey, turLLMInstance))
                 .build();
 
-        GoogleGenAiChatOptions.Builder optionsBuilder = GoogleGenAiChatOptions.builder()
+        OpenAiChatOptions.Builder optionsBuilder = OpenAiChatOptions.builder()
                 .model(resolveChatModelName(firstNonBlank(
                         optionsParser.stringValue(options, "chatModel"),
                         optionsParser.stringValue(options, "model"),
@@ -58,17 +66,13 @@ public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
         if (topP != null) {
             optionsBuilder.topP(topP);
         }
-        Integer topK = firstNonNull(optionsParser.intValue(options, "topK"), turLLMInstance.getTopK());
-        if (topK != null) {
-            optionsBuilder.topK(topK);
-        }
         Integer maxTokens = optionsParser.intValue(options, "maxTokens");
         if (maxTokens != null) {
-            optionsBuilder.maxOutputTokens(maxTokens);
+            optionsBuilder.maxTokens(maxTokens);
         }
 
-        return GoogleGenAiChatModel.builder()
-                .genAiClient(genAiClient)
+        return OpenAiChatModel.builder()
+                .openAiApi(openAiApi)
                 .defaultOptions(optionsBuilder.build())
                 .build();
     }
@@ -76,15 +80,19 @@ public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
     @Override
     public EmbeddingModel createEmbeddingModel(TurLLMInstance turLLMInstance, String decryptedApiKey) {
         throw new UnsupportedOperationException(
-                "Gemini embedding via native API is not yet supported. Use a different provider for embeddings.");
+                "Gemini embedding is not yet supported. Use a different provider for embeddings.");
     }
 
     private String requireApiKey(String decryptedApiKey, TurLLMInstance turLLMInstance) {
         if (!StringUtils.hasText(decryptedApiKey)) {
             throw new IllegalStateException(
-                    "Missing API key for Gemini provider in LLM instance: " + turLLMInstance.getId());
+                    "Missing API key for Gemini (OpenAI-compat) provider in LLM instance: " + turLLMInstance.getId());
         }
         return decryptedApiKey;
+    }
+
+    private String resolveBaseUrl(String configuredUrl) {
+        return StringUtils.hasText(configuredUrl) ? configuredUrl : DEFAULT_BASE_URL;
     }
 
     private String resolveChatModelName(String configuredModel) {
