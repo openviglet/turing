@@ -3,7 +3,6 @@ package com.viglet.turing.genai.provider.llm;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
@@ -44,7 +43,7 @@ class TurAzureOpenAiLlmProviderTest {
     @Test
     void testCreateChatModel_missingApiKey() {
         when(optionsParser.parse(any())).thenReturn(Map.of());
-        when(optionsParser.stringValue(any(), eq("endpoint"))).thenReturn(null);
+        when(optionsParser.stringValue(any(), any())).thenReturn(null);
 
         assertThrows(IllegalStateException.class, () -> provider.createChatModel(instance, null));
     }
@@ -52,7 +51,7 @@ class TurAzureOpenAiLlmProviderTest {
     @Test
     void testCreateEmbeddingModel_missingApiKey() {
         when(optionsParser.parse(any())).thenReturn(Map.of());
-        when(optionsParser.stringValue(any(), eq("endpoint"))).thenReturn(null);
+        when(optionsParser.stringValue(any(), any())).thenReturn(null);
 
         assertThrows(IllegalStateException.class, () -> provider.createEmbeddingModel(instance, ""));
     }

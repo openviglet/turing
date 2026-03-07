@@ -76,28 +76,35 @@ export default function ChatPage() {
       content: trimmed,
     }
 
+    const assistantId = generateId()
     const updatedMessages = [...messages, userMessage]
-    setMessages(updatedMessages)
+    setMessages([...updatedMessages, { id: assistantId, role: "assistant", content: "" }])
     setInput("")
     setIsLoading(true)
 
-    try {
-      const apiMessages: ChatMessageItem[] = updatedMessages.map(({ role, content }) => ({
-        role,
-        content,
-      }))
-      const response = await turChatService.send(selectedLlmId, apiMessages)
-      const assistantMessage: ChatMessage = {
-        id: generateId(),
-        role: "assistant",
-        content: response.content,
-      }
-      setMessages((prev) => [...prev, assistantMessage])
-    } catch {
-      toast.error("Failed to get a response. Please check your LLM configuration.")
-    } finally {
-      setIsLoading(false)
-    }
+    const apiMessages: ChatMessageItem[] = updatedMessages.map(({ role, content }) => ({
+      role,
+      content,
+    }))
+
+    await turChatService.sendStream(
+      selectedLlmId,
+      apiMessages,
+      (token) => {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantId ? { ...msg, content: msg.content + token } : msg
+          )
+        )
+      },
+      () => setIsLoading(false),
+      (error) => {
+        console.error(error)
+        toast.error("Failed to get a response. Please check your LLM configuration.")
+        setMessages((prev) => prev.filter((msg) => msg.id !== assistantId || msg.content !== ""))
+        setIsLoading(false)
+      },
+    )
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -178,10 +185,15 @@ export default function ChatPage() {
                   </GradientAvatar>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
-                    {message.role === "assistant"
-                      ? selectedInstance?.title ?? "Assistant"
-                      : "You"}
+                  <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-1">
+                    <span>
+                      {message.role === "assistant"
+                        ? selectedInstance?.title ?? "Assistant"
+                        : "You"}
+                    </span>
+                    {message.role === "assistant" && isLoading && message === messages.at(-1) && (
+                      <IconLoader2 className="size-3 animate-spin" />
+                    )}
                   </div>
                   {message.role === "assistant" ? (
                     <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none break-words prose-p:my-2 prose-pre:my-2 prose-ul:my-2 prose-ol:my-2 prose-headings:my-3 prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-muted prose-pre:border prose-pre:rounded-lg">
@@ -197,26 +209,6 @@ export default function ChatPage() {
                 </div>
               </div>
             ))}
-            {isLoading && (
-              <div className="flex gap-3">
-                <div className="shrink-0 pt-0.5">
-                  <GradientAvatar className="size-7">
-                    <GradientAvatarFallback variant="info">
-                      <IconCpu2 className="size-4" />
-                    </GradientAvatarFallback>
-                  </GradientAvatar>
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
-                    {selectedInstance?.title ?? "Assistant"}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <IconLoader2 className="size-4 animate-spin" />
-                    <span>Thinking...</span>
-                  </div>
-                </div>
-              </div>
-            )}
             <div ref={messagesEndRef} />
           </div>
         )}

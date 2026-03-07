@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/api/v2/llm/{id}/chat")
@@ -46,8 +48,8 @@ public class TurLLMChatAPI {
     public record ChatResponse(String role, String content) {
     }
 
-    @PostMapping
-    public ChatResponse chat(@PathVariable String id, @RequestBody ChatRequest request) {
+    @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ChatResponse> chat(@PathVariable String id, @RequestBody ChatRequest request) {
         TurLLMInstance turLLMInstance = turLLMInstanceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("LLM instance not found: " + id));
 
@@ -63,7 +65,15 @@ public class TurLLMChatAPI {
         PromptTemplate promptTemplate = new PromptTemplate("{conversation}");
         Prompt prompt = promptTemplate.create(Map.of("conversation", conversationBuilder.toString()));
 
-        String responseText = chatModel.call(prompt).getResult().getOutput().getText();
-        return new ChatResponse("assistant", responseText);
+        return chatModel.stream(prompt)
+                .map(response -> {
+                    String text = response.getResult() != null
+                            && response.getResult().getOutput() != null
+                            && response.getResult().getOutput().getText() != null
+                                    ? response.getResult().getOutput().getText()
+                                    : "";
+                    return new ChatResponse("assistant", text);
+                })
+                .filter(response -> !response.content().isEmpty());
     }
 }
