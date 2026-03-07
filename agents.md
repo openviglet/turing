@@ -32,7 +32,7 @@ mvn clean install
 > **Windows PowerShell**: quote `-D` flags, e.g. `"-Dskip.npm=true"`
 
 ### Backend Conventions
-- **Spring Boot 4** with **Spring AI 1.1.2** for LLM integration
+- **Spring Boot 4** with **Spring AI 2.0.0-M2** for LLM integration
 - Persistence: JPA/Hibernate with H2 (dev) and Liquibase migrations
 - REST controllers in `api/` package, services in dedicated packages
 - Use constructor injection (no `@Autowired` on fields)
@@ -70,7 +70,11 @@ mvn clean install
 - Frontend npm builds may fail with EBUSY on Windows if IDE locks files — use `-Dskip.npm=true` for backend-only testing
 
 ### Frontend TypeScript Check (Windows EBUSY workaround)
-When `node_modules` native binaries are locked by the IDE/Vite dev server, use an **isolated temp build**:
+When `node_modules` native binaries are locked by the IDE/Vite dev server:
+1. **Don't loop** retrying `npm ci`, `npm install`, `npx tsc`, or other install variations — they will all fail with EBUSY/EPERM while the IDE holds locks.
+2. **Rely on IDE diagnostics** from VSCode hook feedback (`ide_diagnostics` in tool responses) — these provide real-time TypeScript error checking without needing `tsc`.
+3. **Backend compile is the primary gate** — run `mvn compile -pl turing-app -Dskip.npm=true` to verify Java code.
+4. **Isolated temp build** (only if IDE diagnostics are unavailable):
 ```bash
 BUILD_DIR="$TEMP/turing_react_build_$(date +%s)"
 mkdir -p "$BUILD_DIR"
@@ -81,10 +85,10 @@ cp -r turing-react/src turing-react/package.json turing-react/package-lock.json 
 cd "$BUILD_DIR"
 npm ci --no-audit --no-fund
 node node_modules/typescript/lib/tsc --noEmit -p tsconfig.app.json
+rm -rf "$BUILD_DIR"
 ```
 - Use `tsconfig.app.json` (not `tsconfig.json`) — the root tsconfig uses project references and `bundler` resolution that requires the full toolchain.
 - Do **not** use `npx tsc` or `./node_modules/.bin/tsc` — these may fail on Windows bash. Use `node node_modules/typescript/lib/tsc` directly.
-- Clean up: `rm -rf "$BUILD_DIR"` after verification.
 
 ---
 
@@ -309,14 +313,14 @@ Use this checklist whenever a demand involves numeric localization (dot/comma), 
 - Regenerate only artifacts that must reflect schema/runtime changes.
 - If validation reveals unrelated pre-existing issues, report them separately and keep scope explicit.
 
-## Spring AI Integration (v1.1.2)
+## Spring AI Integration (v2.0.0-M2)
 
 ### LLM Provider Architecture
 Turing uses a pluggable provider pattern for LLM integration via Spring AI:
 
 - **Interface**: `TurGenAiLlmProvider` — defines `getPluginType()`, `createChatModel()`, `createEmbeddingModel()`
 - **Factory**: `TurGenAiLlmProviderFactory` — resolves the correct provider based on the vendor's plugin type
-- **Supported providers**: OpenAI, Ollama, Anthropic (Claude), Google Gemini (Vertex AI), Azure OpenAI (Copilot)
+- **Supported providers**: OpenAI, Ollama, Anthropic (Claude), Google Gemini (native GenAI SDK), Google Gemini (OpenAI-compatible), Azure OpenAI (Copilot)
 
 ### Streaming Chat API
 The chat endpoint supports **Server-Sent Events (SSE)** for token-by-token streaming:
@@ -367,8 +371,35 @@ UserMessage.builder()
 | OpenAI | Yes | Yes | Full support |
 | Ollama | Yes | Yes | Local models |
 | Anthropic | Yes | No | No embedding API — throws `UnsupportedOperationException` |
-| Gemini | Yes | No | Requires `projectId` in provider options; uses Vertex AI |
-| Azure OpenAI | Yes | Yes | `AzureOpenAiEmbeddingModel` uses constructor (no builder in 1.1.2) |
+| Gemini (native) | Yes | No | Uses `GoogleGenAiChatModel` with `com.google.genai.Client`; plugin type `gemini` |
+| Gemini (OpenAI) | Yes | No | Uses OpenAI-compat endpoint at `generativelanguage.googleapis.com`; plugin type `gemini-openai` |
+| Azure OpenAI | Yes | Yes | `AzureOpenAiEmbeddingModel` uses constructor (no builder) |
+
+### Tool Calling (Semantic Navigation Chat)
+The Semantic Navigation chat uses Spring AI's tool calling with `ToolCallingChatOptions`:
+
+```java
+// Define tools via @Tool annotation in a service
+@Tool(name = "search_site", description = "...")
+public String searchSite(String siteName, String locale, String query, ...) { ... }
+
+// Use MethodToolCallbackProvider to create callbacks
+ToolCallback[] callbacks = MethodToolCallbackProvider.builder()
+    .toolObjects(toolService).build().getToolCallbacks();
+
+// Pass tools via DefaultToolCallingChatOptions with internal execution
+var options = DefaultToolCallingChatOptions.builder()
+    .toolCallbacks(callbacks)
+    .internalToolExecutionEnabled(true)
+    .build();
+
+Prompt prompt = new Prompt(messages, options);
+chatModel.stream(prompt); // Model automatically executes tools
+```
+
+- `internalToolExecutionEnabled(true)` — lets the ChatModel handle the tool call loop internally
+- Tools: `list_sites`, `get_site_fields`, `search_site` (mirrors Turing MCP Server tools)
+- Endpoint: `/api/v2/llm/{id}/semantic-chat`
 
 ### API Key Management
 - API keys stored encrypted via `TurSecretCryptoService`
