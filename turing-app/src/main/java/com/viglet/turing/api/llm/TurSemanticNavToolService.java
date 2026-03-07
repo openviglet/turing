@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.LocaleUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -21,6 +20,8 @@ import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -43,11 +44,20 @@ public class TurSemanticNavToolService {
 
     @Tool(name = "list_sites", description = """
             Lists all Semantic Navigation sites available in Turing.
-            Returns site name, description, and available locales for each site.
-            Use this tool first to discover which sites and locales are available before searching.""")
-    public String listSites() {
-        log.info("[SemanticNav Tool] list_sites called");
+            Returns site name, description, and available locales (_setlocale values) for each site.
+            Use this tool first to discover which sites and locales are available before searching.
+            IMPORTANT: Only the locales listed here can be used as _setlocale when searching.
+            Args:
+                filterName (str): Optional. Filter sites by name (partial match). Use empty string to list all.""")
+    public String listSites(String filterName) {
+        log.info("[SemanticNav Tool] list_sites called with filterName={}", filterName);
         List<TurSNSite> sites = turSNSiteRepository.findAll(Sort.by("name"));
+        if (filterName != null && !filterName.isBlank()) {
+            String filter = filterName.toLowerCase();
+            sites = sites.stream()
+                    .filter(s -> s.getName().toLowerCase().contains(filter))
+                    .toList();
+        }
         if (sites.isEmpty()) {
             log.warn("[SemanticNav Tool] list_sites: No sites found");
             return "No Semantic Navigation sites found.";
@@ -69,7 +79,9 @@ public class TurSemanticNavToolService {
 
     @Tool(name = "get_site_fields", description = """
             Retrieves the field mappings for a Semantic Navigation site.
-            Returns field name, type, and whether it is a facet, searchable, or required.
+            Returns field name, type, whether it is a facet, and description.
+            Use this tool to discover facet fields that can be used as filterQueries in search_site.
+            When a user asks about a specific subject/topic, look for matching facet fields to filter results.
             Args:
                 siteName: Name of the site (e.g., 'samplesite'). Use list_sites to find available sites.""")
     public String getSiteFields(String siteName) {
@@ -81,6 +93,8 @@ public class TurSemanticNavToolService {
                     if (fields.isEmpty()) {
                         return "No enabled fields found for site: " + siteName;
                     }
+                    log.info("[SemanticNav Tool] get_site_fields: found {} enabled fields for site {}", fields.size(),
+                            siteName);
                     StringBuilder sb = new StringBuilder("field_name;type;facet;description\n");
                     for (TurSNSiteFieldExt field : fields) {
                         sb.append(field.getName()).append(";")
@@ -98,51 +112,74 @@ public class TurSemanticNavToolService {
             Executes a search query against a Turing Semantic Navigation site.
             Args:
                 siteName (str): Name of the site to search. Required. Use list_sites to find available sites.
-                locale (str): Locale code for the search. Required. Example: 'en_US' or 'pt_BR'.
+                _setlocale (str): Locale code for the search. Required. Must be the EXACT locale string \
+            returned by list_sites (e.g., 'en', 'pt', 'en_US'). Do NOT guess or modify the locale — copy it exactly.
                 query (str): Search query string. Example: 'machine learning'.
                 rows (int): Number of results per page. Default: 10.
                 page (int): Page number (1-based). Default: 1.
-                filterQueries (list[str]): Filter queries in attribute:value format. Example: ['type:article'].
+                filterQueries (str): Comma-separated filter queries in field:value format. Use get_site_fields \
+            to discover facet fields, then filter by subject/topic. Example: 'type:article,category:technology'.
             Returns:
                 Search results with document fields and metadata.""")
     public String searchSite(String siteName, String locale, String query,
-            int rows, int page, List<String> filterQueries) {
-        HttpTurSNServer turSNServer = new HttpTurSNServer(
-                URI.create("http://localhost:" + serverPort),
-                siteName, LocaleUtils.toLocale(locale));
+            int rows, int page, String filterQueries) {
+        log.info("[SemanticNav Tool] search_site called: siteName={}, locale={}, query='{}', rows={}, page={}, fq={}",
+                siteName, locale, query, rows, page, filterQueries);
 
-        TurSNQuery turSNQuery = new TurSNQuery();
-        turSNQuery.setQuery(query != null ? query : "*");
-        if (filterQueries != null && !filterQueries.isEmpty()) {
-            turSNQuery.addFilterQuery(filterQueries.toArray(String[]::new));
-        }
-        turSNQuery.setRows(rows > 0 ? rows : 10);
-        turSNQuery.setPageNumber(page > 0 ? page : 1);
-        turSNQuery.setSortField(TurSNQuery.Order.asc);
+        try {
+            HttpTurSNServer turSNServer = new HttpTurSNServer(
+                    URI.create("http://localhost:" + serverPort),
+                    siteName, LocaleUtils.toLocale(locale));
 
-        QueryTurSNResponse response = turSNServer.query(turSNQuery);
-        TurSNDocumentList results = response.getResults();
-
-        if (results == null || results.getTurSNDocuments() == null
-                || results.getTurSNDocuments().isEmpty()) {
-            return "No results found for query: " + query;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("Found ").append(results.getQueryContext() != null
-                ? results.getQueryContext().getCount() : results.getTurSNDocuments().size())
-                .append(" results for query: ").append(query).append("\n\n");
-
-        int idx = 0;
-        for (var doc : results.getTurSNDocuments()) {
-            idx++;
-            sb.append("--- Result ").append(idx).append(" ---\n");
-            if (doc.getContent() != null && doc.getContent().getFields() != null) {
-                doc.getContent().getFields().forEach((key, value) ->
-                        sb.append(key).append(": ").append(value).append("\n"));
+            TurSNQuery turSNQuery = new TurSNQuery();
+            turSNQuery.setQuery(query != null ? query : "*");
+            if (filterQueries != null && !filterQueries.isBlank()) {
+                String[] fqs = filterQueries.split(",");
+                turSNQuery.addFilterQuery(fqs);
             }
-            sb.append("\n");
+            turSNQuery.setRows(rows > 0 ? rows : 10);
+            turSNQuery.setPageNumber(page > 0 ? page : 1);
+            turSNQuery.setSortField(TurSNQuery.Order.asc);
+
+            log.info("[SemanticNav Tool] search_site: querying http://localhost:{}/api/sn/{}/search?q={}&_setlocale={}",
+                    serverPort, siteName, turSNQuery.getQuery(), locale);
+
+            QueryTurSNResponse response = turSNServer.query(turSNQuery);
+            TurSNDocumentList results = response.getResults();
+
+            if (results == null || results.getTurSNDocuments() == null
+                    || results.getTurSNDocuments().isEmpty()) {
+                log.warn("[SemanticNav Tool] search_site: No results found for query '{}' on site '{}' _setlocale '{}'",
+                        query, siteName, locale);
+                return "No results found for query: " + query;
+            }
+
+            log.info("[SemanticNav Tool] search_site: found {} documents", results.getTurSNDocuments().size());
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Found ").append(results.getQueryContext() != null
+                    ? results.getQueryContext().getCount()
+                    : results.getTurSNDocuments().size())
+                    .append(" results for query: ").append(query).append("\n\n");
+
+            int idx = 0;
+            for (var doc : results.getTurSNDocuments()) {
+                idx++;
+                sb.append("--- Result ").append(idx).append(" ---\n");
+                if (doc.getContent() != null && doc.getContent().getFields() != null) {
+                    doc.getContent().getFields()
+                            .forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
+                } else {
+                    log.warn("[SemanticNav Tool] search_site: doc #{} has null content or fields", idx);
+                }
+                sb.append("\n");
+            }
+            String result = sb.toString();
+            log.debug("[SemanticNav Tool] search_site result:\n{}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("[SemanticNav Tool] search_site failed: {}", e.getMessage(), e);
+            return "Error executing search: " + e.getMessage();
         }
-        return sb.toString();
     }
 }

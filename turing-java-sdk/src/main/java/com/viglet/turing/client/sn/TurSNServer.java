@@ -359,7 +359,9 @@ public class TurSNServer {
 
     private TurSNGroupList setGroupResponse(TurSNSiteSearchBean turSNSiteSearchBean) {
         List<TurSNGroup> turSNGroups = new ArrayList<>();
-
+        if (turSNSiteSearchBean.getGroups() == null) {
+            return new TurSNGroupList();
+        }
         turSNSiteSearchBean.getGroups().forEach(groups -> {
             TurSNGroup turSNGroup = new TurSNGroup();
             turSNGroup.setCount(groups.getCount());

@@ -149,7 +149,6 @@
                 <module>turing-commons</module>
                 <module>turing-spring</module>
                 <module>turing-java-sdk</module>
-                <module>turing-mcp-server</module>
                 <module>turing-app</module>
             </modules>
         </profile>

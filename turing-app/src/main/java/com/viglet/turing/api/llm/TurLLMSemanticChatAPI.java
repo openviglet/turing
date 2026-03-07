@@ -44,12 +44,17 @@ public class TurLLMSemanticChatAPI {
             2. Get field mappings for a site (get_site_fields)
             3. Search content within a site (search_site)
 
-            When a user asks a question:
-            - First use list_sites to discover available sites if you don't know them yet.
-            - Use get_site_fields to understand the data structure when needed.
-            - Use search_site to find relevant content and provide answers based on the results.
-            - Present search results in a clear, organized format with relevant field values.
-            - If the user asks in a specific language, respond in that same language.
+            CRITICAL RULES:
+            1. ALWAYS call list_sites first to discover available sites and their exact locale codes.
+            2. The _setlocale parameter in search_site is REQUIRED and you MUST use the EXACT locale \
+            string returned by list_sites. For example, if list_sites returns "en" and "pt", you must \
+            use exactly "en" or "pt" — NEVER guess or expand to "en_US", "pt_BR", etc. \
+            Copy the locale value exactly as shown in the list_sites output.
+            3. ALWAYS call get_site_fields before searching to discover facet fields (fields with facet=yes). \
+            When the user asks about a specific subject or topic, look for facet fields that match \
+            (e.g., category, type, department) and use them as filterQueries to narrow results.
+            4. Present search results in a clear, organized format with relevant field values.
+            5. If the user asks in a specific language, respond in that same language.
             """;
 
     private final TurLLMInstanceRepository turLLMInstanceRepository;
@@ -82,6 +87,9 @@ public class TurLLMSemanticChatAPI {
             @PathVariable String id,
             @org.springframework.web.bind.annotation.RequestBody ChatRequest request) {
 
+        log.info("[SemanticChat] Received request with {} messages for LLM instance {}",
+                request.messages().size(), id);
+
         TurLLMInstance turLLMInstance = turLLMInstanceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("LLM instance not found: " + id));
 
@@ -89,15 +97,26 @@ public class TurLLMSemanticChatAPI {
         String decryptedApiKey = turSecretCryptoService.decrypt(turLLMInstance.getApiKeyEncrypted());
         ChatModel chatModel = provider.createChatModel(turLLMInstance, decryptedApiKey);
 
+        log.info("[SemanticChat] ChatModel created: {}", chatModel.getClass().getSimpleName());
+
         ToolCallback[] toolCallbacks = MethodToolCallbackProvider.builder()
                 .toolObjects(semanticNavToolService)
                 .build()
                 .getToolCallbacks();
 
+        log.info("[SemanticChat] Registered {} tool callbacks:", toolCallbacks.length);
+        for (ToolCallback tc : toolCallbacks) {
+            log.info("[SemanticChat]   - tool: {} | {}", tc.getToolDefinition().name(),
+                    tc.getToolDefinition().description().substring(0,
+                            Math.min(80, tc.getToolDefinition().description().length())));
+        }
+
         var chatOptions = DefaultToolCallingChatOptions.builder()
                 .toolCallbacks(toolCallbacks)
                 .internalToolExecutionEnabled(true)
                 .build();
+
+        log.info("[SemanticChat] internalToolExecutionEnabled={}", chatOptions.getInternalToolExecutionEnabled());
 
         List<Message> messages = new ArrayList<>();
         messages.add(new SystemMessage(SYSTEM_PROMPT));
@@ -109,9 +128,24 @@ public class TurLLMSemanticChatAPI {
             }
         }
 
+        log.info("[SemanticChat] Prompt has {} messages (including system). Streaming...", messages.size());
+
         Prompt prompt = new Prompt(messages, chatOptions);
 
         return chatModel.stream(prompt)
+                .doOnNext(response -> {
+                    if (response.getResult() != null && response.getResult().getOutput() != null) {
+                        var output = response.getResult().getOutput();
+                        if (output.getToolCalls() != null && !output.getToolCalls().isEmpty()) {
+                            log.info("[SemanticChat] Model requested tool calls: {}",
+                                    output.getToolCalls().stream()
+                                            .map(tc -> tc.name() + "(" + tc.arguments() + ")")
+                                            .toList());
+                        }
+                    }
+                })
+                .doOnError(err -> log.error("[SemanticChat] Stream error: {}", err.getMessage(), err))
+                .doOnComplete(() -> log.info("[SemanticChat] Stream completed"))
                 .map(response -> {
                     String text = response.getResult() != null
                             && response.getResult().getOutput() != null

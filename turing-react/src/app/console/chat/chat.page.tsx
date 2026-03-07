@@ -1,5 +1,5 @@
 "use client"
-import { IconArrowUp, IconBolt, IconCompass, IconCpu2, IconFile, IconLoader2, IconMessageCircle, IconPaperclip, IconUser, IconX } from "@tabler/icons-react"
+import { IconArrowUp, IconBolt, IconCheck, IconCompass, IconCopy, IconCpu2, IconFile, IconLoader2, IconMessageCircle, IconPaperclip, IconUser, IconX } from "@tabler/icons-react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -25,6 +25,7 @@ const turChatService = new TurChatService()
 
 const DEFAULT_CONTEXT_WINDOW = 128000
 const contextWindowCache = new Map<string, number>()
+const LLM_STORAGE_KEY = "turing-chat-selected-llm"
 
 interface ChatAttachment {
   name: string
@@ -57,7 +58,7 @@ function formatTokenCount(tokens: number): string {
 export default function ChatPage() {
   const [activeTab, setActiveTab] = useState<"chat" | "semantic">("chat")
   const [llmInstances, setLlmInstances] = useState<TurLLMInstance[]>([])
-  const [selectedLlmId, setSelectedLlmId] = useState<string>("")
+  const [selectedLlmId, setSelectedLlmId] = useState<string>(() => localStorage.getItem(LLM_STORAGE_KEY) ?? "")
   const [fetchedContextWindow, setFetchedContextWindow] = useState<number | null>(null)
 
   // Chat tab state
@@ -67,6 +68,7 @@ export default function ChatPage() {
   const [chatCompacting, setChatCompacting] = useState(false)
   const [attachedFiles, setAttachedFiles] = useState<File[]>([])
   const [isDragOver, setIsDragOver] = useState(false)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
   const chatTextareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -83,8 +85,13 @@ export default function ChatPage() {
     turChatService.queryLLMInstances().then((instances) => {
       const enabled = instances.filter((i) => i.enabled === 1)
       setLlmInstances(enabled)
-      if (enabled.length > 0 && !selectedLlmId) {
-        setSelectedLlmId(enabled[0].id)
+      if (enabled.length > 0) {
+        const stored = localStorage.getItem(LLM_STORAGE_KEY)
+        const valid = stored && enabled.some((i) => i.id === stored)
+        if (!valid) {
+          setSelectedLlmId(enabled[0].id)
+          localStorage.setItem(LLM_STORAGE_KEY, enabled[0].id)
+        }
       }
     })
   }, [])
@@ -311,7 +318,19 @@ export default function ChatPage() {
               </div>
             )}
             {message.role === "assistant" ? (
-              <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none break-words prose-p:my-2 prose-pre:my-2 prose-ul:my-2 prose-ol:my-2 prose-headings:my-3 prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-muted prose-pre:border prose-pre:rounded-lg">
+              <div className="relative group/msg text-sm leading-relaxed prose prose-sm dark:prose-invert prose-neutral max-w-none break-words prose-p:my-2 prose-pre:my-2 prose-ul:my-2 prose-ol:my-2 prose-headings:my-3 prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-muted prose-pre:border prose-pre:rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(message.content)
+                    setCopiedId(message.id)
+                    setTimeout(() => setCopiedId((prev) => prev === message.id ? null : prev), 2000)
+                  }}
+                  title="Copy to clipboard"
+                  className={`not-prose absolute top-1 right-1 z-10 rounded-md p-1.5 hover:bg-muted/80 transition-all ${copiedId === message.id ? "opacity-100 text-emerald-500" : "opacity-0 group-hover/msg:opacity-100 text-muted-foreground/60 hover:text-foreground"}`}
+                >
+                  {copiedId === message.id ? <IconCheck className="size-4" /> : <IconCopy className="size-4" />}
+                </button>
                 <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
                   {message.content}
                 </ReactMarkdown>
@@ -346,7 +365,7 @@ export default function ChatPage() {
       {/* Header */}
       <div className="flex items-center justify-between border-b px-6 py-3 shrink-0">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <Select value={selectedLlmId} onValueChange={setSelectedLlmId}>
+          <Select value={selectedLlmId} onValueChange={(v) => { setSelectedLlmId(v); localStorage.setItem(LLM_STORAGE_KEY, v); setChatMessages([]); setChatInput(""); setAttachedFiles([]); setSemMessages([]); setSemInput("") }}>
             <SelectTrigger className="w-56">
               <SelectValue placeholder="Select a model..." />
             </SelectTrigger>
