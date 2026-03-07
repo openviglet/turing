@@ -15,7 +15,7 @@
     <properties>
         <elasticsearch.version>9.3.1</elasticsearch.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <spring-ai.version>1.1.2</spring-ai.version>
+        <spring-ai.version>2.0.0-M2</spring-ai.version>
         <tika.version>3.2.3</tika.version>
         <imageio.version>1.4.0</imageio.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

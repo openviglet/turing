@@ -69,6 +69,23 @@ mvn clean install
 - Anthropic and Gemini providers don't support embedding — throw `UnsupportedOperationException`
 - Frontend npm builds may fail with EBUSY on Windows if IDE locks files — use `-Dskip.npm=true` for backend-only testing
 
+### Frontend TypeScript Check (Windows EBUSY workaround)
+When `node_modules` native binaries are locked by the IDE/Vite dev server, use an **isolated temp build**:
+```bash
+BUILD_DIR="$TEMP/turing_react_build_$(date +%s)"
+mkdir -p "$BUILD_DIR"
+cp -r turing-react/src turing-react/package.json turing-react/package-lock.json \
+      turing-react/tsconfig.json turing-react/tsconfig.app.json \
+      turing-react/tsconfig.node.json turing-react/vite.config.ts \
+      turing-react/index.html "$BUILD_DIR/"
+cd "$BUILD_DIR"
+npm ci --no-audit --no-fund
+node node_modules/typescript/lib/tsc --noEmit -p tsconfig.app.json
+```
+- Use `tsconfig.app.json` (not `tsconfig.json`) — the root tsconfig uses project references and `bundler` resolution that requires the full toolchain.
+- Do **not** use `npx tsc` or `./node_modules/.bin/tsc` — these may fail on Windows bash. Use `node node_modules/typescript/lib/tsc` directly.
+- Clean up: `rm -rf "$BUILD_DIR"` after verification.
+
 ---
 
 ## Overview

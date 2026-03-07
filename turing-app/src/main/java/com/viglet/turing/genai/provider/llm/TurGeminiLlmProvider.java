@@ -17,6 +17,10 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
  * Gemini provider using Google's OpenAI-compatible API.
  * Requires only an API key (from ai.google.dev), no GCP project or ADC needed.
  * Endpoint: https://generativelanguage.googleapis.com/v1beta/openai
+ *
+ * Supported models (use current names — legacy models like gemini-1.5-pro were
+ * sunset Sep 2025 and return 404): gemini-2.0-flash, gemini-2.5-pro,
+ * gemini-2.5-flash-lite, gemini-3-flash-preview, etc.
  */
 @Component
 public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
@@ -43,6 +47,7 @@ public class TurGeminiLlmProvider implements TurGenAiLlmProvider {
                 .baseUrl(resolveBaseUrl(firstNonBlank(
                         optionsParser.stringValue(options, "baseUrl"),
                         turLLMInstance.getUrl())))
+                .completionsPath("/chat/completions")
                 .apiKey(requireApiKey(decryptedApiKey, turLLMInstance))
                 .build();
 
