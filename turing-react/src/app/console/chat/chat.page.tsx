@@ -1,6 +1,10 @@
 "use client"
 import { IconArrowUp, IconCpu2, IconLoader2, IconUser } from "@tabler/icons-react"
 import { useCallback, useEffect, useRef, useState } from "react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+import rehypeHighlight from "rehype-highlight"
+import "./chat-highlight.css"
 import { toast } from "sonner"
 
 import {
@@ -13,6 +17,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { GradientAvatar, GradientAvatarFallback } from "@/components/ui/gradient-avatar"
 import { GradientButton } from "@/components/ui/gradient-button"
+import { ModeToggle } from "@/components/mode-toggle"
 import type { TurLLMInstance } from "@/models/llm/llm-instance.model"
 import { type ChatMessageItem, TurChatService } from "@/services/chat/chat.service"
 
@@ -135,6 +140,7 @@ export default function ChatPage() {
               New Chat
             </GradientButton>
           )}
+          <ModeToggle />
         </div>
       </div>
 
@@ -177,9 +183,17 @@ export default function ChatPage() {
                       ? selectedInstance?.title ?? "Assistant"
                       : "You"}
                   </div>
-                  <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                    {message.content}
-                  </div>
+                  {message.role === "assistant" ? (
+                    <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none break-words prose-p:my-2 prose-pre:my-2 prose-ul:my-2 prose-ol:my-2 prose-headings:my-3 prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-muted prose-pre:border prose-pre:rounded-lg">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+                      {message.content}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

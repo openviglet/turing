@@ -44,3 +44,4 @@ turing-app/src/main/resources/public/favicon.ico
 # Turing JS SDK
 turing-js-sdk/node_modules/
 turing-js-sdk/dist/
+/.claude
