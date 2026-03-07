@@ -55,6 +55,11 @@ type LlmProviderOptionsDraft = {
   numPredict: string;
   maxTokens: string;
   stop: string;
+  endpoint: string;
+  deploymentName: string;
+  embeddingDeploymentName: string;
+  projectId: string;
+  location: string;
 }
 
 const emptyLlmProviderOptionsDraft = (): LlmProviderOptionsDraft => ({
@@ -69,7 +74,12 @@ const emptyLlmProviderOptionsDraft = (): LlmProviderOptionsDraft => ({
   seed: "",
   numPredict: "",
   maxTokens: "",
-  stop: ""
+  stop: "",
+  endpoint: "",
+  deploymentName: "",
+  embeddingDeploymentName: "",
+  projectId: "",
+  location: ""
 })
 
 const toText = (value: unknown) => value == null ? "" : String(value)
@@ -107,7 +117,12 @@ const parseLlmProviderOptionsDraft = (vendorId: string | undefined, jsonValue?: 
     seed: toText(parsed.seed),
     numPredict: toText(parsed.numPredict),
     maxTokens: toText(parsed.maxTokens),
-    stop: Array.isArray(parsed.stop) ? parsed.stop.map((item) => String(item)).join(",") : toText(parsed.stop)
+    stop: Array.isArray(parsed.stop) ? parsed.stop.map((item) => String(item)).join(",") : toText(parsed.stop),
+    endpoint: toText(parsed.endpoint),
+    deploymentName: toText(parsed.deploymentName),
+    embeddingDeploymentName: toText(parsed.embeddingDeploymentName),
+    projectId: toText(parsed.projectId),
+    location: toText(parsed.location)
   }
 }
 
@@ -160,6 +175,27 @@ const buildLlmProviderOptionsFromDraft = (vendorId: string | undefined, draft: L
     }
   }
 
+  if (vendorId === "ANTHROPIC") {
+    putText("chatModel", draft.chatModel)
+    putNumber("topK", draft.topK)
+    putNumber("maxTokens", draft.maxTokens)
+  }
+
+  if (vendorId === "GEMINI") {
+    putText("chatModel", draft.chatModel)
+    putText("projectId", draft.projectId)
+    putText("location", draft.location)
+    putNumber("topK", draft.topK)
+    putNumber("maxTokens", draft.maxTokens)
+  }
+
+  if (vendorId === "AZURE_OPENAI") {
+    putText("endpoint", draft.endpoint)
+    putText("deploymentName", draft.deploymentName)
+    putText("embeddingDeploymentName", draft.embeddingDeploymentName)
+    putNumber("maxTokens", draft.maxTokens)
+  }
+
   return options
 }
 
@@ -200,6 +236,21 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
       form.setValue("modelName", "gpt-4o-mini", { shouldDirty: true });
       form.setValue("timeout", "PT60S", { shouldDirty: true });
     }
+    if (vendorId === "ANTHROPIC") {
+      form.setValue("url", "https://api.anthropic.com", { shouldDirty: true });
+      form.setValue("modelName", "claude-sonnet-4-20250514", { shouldDirty: true });
+      form.setValue("timeout", "PT60S", { shouldDirty: true });
+    }
+    if (vendorId === "GEMINI") {
+      form.setValue("url", "", { shouldDirty: true });
+      form.setValue("modelName", "gemini-2.0-flash", { shouldDirty: true });
+      form.setValue("timeout", "PT60S", { shouldDirty: true });
+    }
+    if (vendorId === "AZURE_OPENAI") {
+      form.setValue("url", "", { shouldDirty: true });
+      form.setValue("modelName", "gpt-4o", { shouldDirty: true });
+      form.setValue("timeout", "PT60S", { shouldDirty: true });
+    }
   }
 
   const setLlmDraftValue = (key: keyof LlmProviderOptionsDraft, fieldValue: string) => {
@@ -209,6 +260,15 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
   const getProviderOptionsPlaceholder = (vendorId?: string) => {
     if (vendorId === "OPENAI") {
       return '{\n  "baseUrl": "https://api.openai.com",\n  "chatModel": "gpt-4o-mini",\n  "embeddingModel": "text-embedding-3-small",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "seed": 42,\n  "maxTokens": 1024\n}'
+    }
+    if (vendorId === "ANTHROPIC") {
+      return '{\n  "baseUrl": "https://api.anthropic.com",\n  "chatModel": "claude-sonnet-4-20250514",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "topK": 40,\n  "maxTokens": 1024\n}'
+    }
+    if (vendorId === "GEMINI") {
+      return '{\n  "projectId": "my-gcp-project",\n  "location": "us-central1",\n  "chatModel": "gemini-2.0-flash",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "topK": 40,\n  "maxTokens": 1024\n}'
+    }
+    if (vendorId === "AZURE_OPENAI") {
+      return '{\n  "endpoint": "https://my-resource.openai.azure.com",\n  "deploymentName": "gpt-4o",\n  "embeddingDeploymentName": "text-embedding-ada-002",\n  "temperature": 0.7,\n  "topP": 0.9,\n  "seed": 42,\n  "maxTokens": 1024\n}'
     }
     return '{\n  "baseUrl": "http://localhost:11434",\n  "model": "mistral",\n  "embeddingModel": "nomic-embed-text",\n  "temperature": 0.8,\n  "topK": 6,\n  "topP": 0.9,\n  "repeatPenalty": 1.1,\n  "seed": 42,\n  "numPredict": 256,\n  "stop": ["END", "STOP"]\n}'
   }
@@ -375,6 +435,9 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                                     <SelectValue placeholder="Choose..." />
                                   </SelectTrigger>
                                   <SelectContent>
+                                    <SelectItem key="ANTHROPIC" value="ANTHROPIC">Anthropic (Claude)</SelectItem>
+                                    <SelectItem key="AZURE_OPENAI" value="AZURE_OPENAI">Azure OpenAI (Copilot)</SelectItem>
+                                    <SelectItem key="GEMINI" value="GEMINI">Google Gemini</SelectItem>
                                     <SelectItem key="OLLAMA" value="OLLAMA">Ollama</SelectItem>
                                     <SelectItem key="OPENAI" value="OPENAI">OpenAI</SelectItem>
                                   </SelectContent>
@@ -747,6 +810,38 @@ export const LLMInstanceForm: React.FC<Props> = ({ value, isNew }) => {
                           <Input placeholder="Seed" type="number" value={llmProviderOptionsDraft.seed} onChange={(event) => setLlmDraftValue("seed", event.target.value)} />
                           <Input placeholder="Num Predict" type="number" value={llmProviderOptionsDraft.numPredict} onChange={(event) => setLlmDraftValue("numPredict", event.target.value)} />
                           <Input placeholder="Stop (comma-separated)" value={llmProviderOptionsDraft.stop} onChange={(event) => setLlmDraftValue("stop", event.target.value)} />
+                        </div>
+                      )}
+                      {selectedVendorId === "ANTHROPIC" && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input placeholder="Base URL" value={llmProviderOptionsDraft.baseUrl} onChange={(event) => setLlmDraftValue("baseUrl", event.target.value)} />
+                          <Input placeholder="Chat Model" value={llmProviderOptionsDraft.chatModel} onChange={(event) => setLlmDraftValue("chatModel", event.target.value)} />
+                          <Input placeholder="Temperature" type="number" step="0.01" value={llmProviderOptionsDraft.temperature} onChange={(event) => setLlmDraftValue("temperature", event.target.value)} />
+                          <Input placeholder="Top K" type="number" value={llmProviderOptionsDraft.topK} onChange={(event) => setLlmDraftValue("topK", event.target.value)} />
+                          <Input placeholder="Top P" type="number" step="0.01" value={llmProviderOptionsDraft.topP} onChange={(event) => setLlmDraftValue("topP", event.target.value)} />
+                          <Input placeholder="Max Tokens" type="number" value={llmProviderOptionsDraft.maxTokens} onChange={(event) => setLlmDraftValue("maxTokens", event.target.value)} />
+                        </div>
+                      )}
+                      {selectedVendorId === "GEMINI" && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input placeholder="GCP Project ID (required)" value={llmProviderOptionsDraft.projectId} onChange={(event) => setLlmDraftValue("projectId", event.target.value)} />
+                          <Input placeholder="Location (e.g., us-central1)" value={llmProviderOptionsDraft.location} onChange={(event) => setLlmDraftValue("location", event.target.value)} />
+                          <Input placeholder="Chat Model" value={llmProviderOptionsDraft.chatModel} onChange={(event) => setLlmDraftValue("chatModel", event.target.value)} />
+                          <Input placeholder="Temperature" type="number" step="0.01" value={llmProviderOptionsDraft.temperature} onChange={(event) => setLlmDraftValue("temperature", event.target.value)} />
+                          <Input placeholder="Top K" type="number" value={llmProviderOptionsDraft.topK} onChange={(event) => setLlmDraftValue("topK", event.target.value)} />
+                          <Input placeholder="Top P" type="number" step="0.01" value={llmProviderOptionsDraft.topP} onChange={(event) => setLlmDraftValue("topP", event.target.value)} />
+                          <Input placeholder="Max Tokens" type="number" value={llmProviderOptionsDraft.maxTokens} onChange={(event) => setLlmDraftValue("maxTokens", event.target.value)} />
+                        </div>
+                      )}
+                      {selectedVendorId === "AZURE_OPENAI" && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input placeholder="Endpoint (e.g., https://my-resource.openai.azure.com)" value={llmProviderOptionsDraft.endpoint} onChange={(event) => setLlmDraftValue("endpoint", event.target.value)} />
+                          <Input placeholder="Chat Deployment Name" value={llmProviderOptionsDraft.deploymentName} onChange={(event) => setLlmDraftValue("deploymentName", event.target.value)} />
+                          <Input placeholder="Embedding Deployment Name" value={llmProviderOptionsDraft.embeddingDeploymentName} onChange={(event) => setLlmDraftValue("embeddingDeploymentName", event.target.value)} />
+                          <Input placeholder="Temperature" type="number" step="0.01" value={llmProviderOptionsDraft.temperature} onChange={(event) => setLlmDraftValue("temperature", event.target.value)} />
+                          <Input placeholder="Top P" type="number" step="0.01" value={llmProviderOptionsDraft.topP} onChange={(event) => setLlmDraftValue("topP", event.target.value)} />
+                          <Input placeholder="Seed" type="number" value={llmProviderOptionsDraft.seed} onChange={(event) => setLlmDraftValue("seed", event.target.value)} />
+                          <Input placeholder="Max Tokens" type="number" value={llmProviderOptionsDraft.maxTokens} onChange={(event) => setLlmDraftValue("maxTokens", event.target.value)} />
                         </div>
                       )}
                     </div>

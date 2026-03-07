@@ -4,6 +4,7 @@ import {
   IconCpu2,
   IconDatabase,
   IconFileImport,
+  IconMessageChatbot,
   IconPlugConnectedX,
   IconReceiptRupee,
   IconSearch,
@@ -45,6 +46,11 @@ const data = {
       title: "Embedding Store",
       url: "/admin/store/instance",
       icon: IconDatabase,
+    },
+    {
+      title: "Chat",
+      url: ROUTES.CHAT_ROOT,
+      icon: IconMessageChatbot,
     },
     {
       title: "Semantic Navigation",

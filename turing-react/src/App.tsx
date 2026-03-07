@@ -3,6 +3,7 @@ import ConsoleRootPage from "./app/console/console.root.page"
 import RealTimeDashboardPage from "./app/console/dashboard/dashboard.page"
 import LoginPage from "./app/login/login.page"
 import {
+  ChatRoutes,
   ExchangeRoutes,
   GlobalSettingsRoutes,
   GraphqlRoutes,
@@ -45,6 +46,7 @@ function App() {
                 {ExchangeRoutes}
                 {GlobalSettingsRoutes}
                 {GraphqlRoutes}
+                {ChatRoutes}
               </Route>
             </Routes>
           </TuringServiceProvider>

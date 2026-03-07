@@ -54,6 +54,30 @@ public class TurLLMVendorOnStartup {
 			ollama.setTitle("Ollama");
 			ollama.setWebsite("https://ollama.com");
 			turLLMVendorRepository.save(ollama);
+
+			TurLLMVendor anthropic = new TurLLMVendor();
+			anthropic.setId("ANTHROPIC");
+			anthropic.setDescription("Anthropic (Claude)");
+			anthropic.setPlugin("anthropic");
+			anthropic.setTitle("Anthropic");
+			anthropic.setWebsite("https://anthropic.com");
+			turLLMVendorRepository.save(anthropic);
+
+			TurLLMVendor gemini = new TurLLMVendor();
+			gemini.setId("GEMINI");
+			gemini.setDescription("Google Gemini");
+			gemini.setPlugin("gemini");
+			gemini.setTitle("Google Gemini");
+			gemini.setWebsite("https://ai.google.dev");
+			turLLMVendorRepository.save(gemini);
+
+			TurLLMVendor azureOpenai = new TurLLMVendor();
+			azureOpenai.setId("AZURE_OPENAI");
+			azureOpenai.setDescription("Azure OpenAI (Copilot)");
+			azureOpenai.setPlugin("azure-openai");
+			azureOpenai.setTitle("Azure OpenAI");
+			azureOpenai.setWebsite("https://azure.microsoft.com/products/ai-services/openai-service");
+			turLLMVendorRepository.save(azureOpenai);
 		}
 	}
 }

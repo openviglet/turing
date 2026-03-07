@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jar tf ~/.m2/repository/org/springframework/ai/spring-ai-azure-openai/1.1.2/spring-ai-azure-openai-1.1.2.jar)",
+      "Bash(javap -public -cp ~/.m2/repository/org/springframework/ai/spring-ai-azure-openai/1.1.2/spring-ai-azure-openai-1.1.2.jar org.springframework.ai.azure.openai.AzureOpenAiEmbeddingModel)",
+      "Bash(javap -public -cp ~/.m2/repository/org/springframework/ai/spring-ai-azure-openai/1.1.2/spring-ai-azure-openai-1.1.2.jar org.springframework.ai.azure.openai.AzureOpenAiChatModel)"
+    ]
+  }
+}

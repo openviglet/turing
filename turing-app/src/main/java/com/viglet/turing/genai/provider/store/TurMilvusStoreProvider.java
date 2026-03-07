@@ -64,7 +64,8 @@ public class TurMilvusStoreProvider implements TurGenAiStoreProvider {
                 optionsParser.stringValue(options, "collectionName"),
                 turStoreInstance.getCollectionName(),
                 DEFAULT_COLLECTION);
-        boolean initializeSchema = firstNonNull(optionsParser.booleanValue(options, "initializeSchema"), Boolean.TRUE);
+        boolean initializeSchema = Boolean.TRUE
+                .equals(firstNonNull(optionsParser.booleanValue(options, "initializeSchema"), Boolean.TRUE));
 
         MilvusVectorStore.Builder builder = MilvusVectorStore.builder(milvusServiceClient, embeddingModel)
                 .collectionName(collectionName)

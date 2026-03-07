@@ -23,5 +23,6 @@ export const ROUTES = {
   GLOBAL_SETTINGS: `${consolePath}/global-settings`,
   EXCHANGE_ROOT: `${consolePath}/exchange`,
   EXCHANGE_IMPORT: `${consolePath}/exchange/import`,
+  CHAT_ROOT: `${consolePath}/chat`,
   GRAPHQL_ROOT: `${consolePath}/graphql`,
 };
