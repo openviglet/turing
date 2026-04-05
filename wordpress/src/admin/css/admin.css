@@ -1,0 +1,518 @@
+/* Viglet Dumont Admin Styles */
+
+:root {
+    --vd-primary: #2271b1;
+    --vd-primary-hover: #135e96;
+    --vd-success: #00a32a;
+    --vd-success-bg: #edfaef;
+    --vd-error: #d63638;
+    --vd-error-bg: #fcf0f1;
+    --vd-warning: #dba617;
+    --vd-warning-bg: #fcf9e8;
+    --vd-border: #c3c4c7;
+    --vd-border-light: #e0e0e0;
+    --vd-bg: #f0f0f1;
+    --vd-white: #fff;
+    --vd-text: #1d2327;
+    --vd-text-muted: #646970;
+    --vd-radius: 8px;
+    --vd-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --vd-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Header */
+.viglet-dumont-header {
+    background: var(--vd-white);
+    border-bottom: 1px solid var(--vd-border-light);
+    margin: -10px -20px 24px;
+    padding: 24px 32px;
+}
+
+.viglet-dumont-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.viglet-dumont-header__inner h1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    color: var(--vd-text);
+}
+
+.viglet-dumont-header__inner h1 .dashicons {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: var(--vd-primary);
+}
+
+.viglet-dumont-version {
+    background: var(--vd-primary);
+    color: var(--vd-white);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.viglet-dumont-header__desc {
+    margin: 8px 0 0;
+    color: var(--vd-text-muted);
+    font-size: 14px;
+}
+
+/* Tabs Navigation */
+.viglet-dumont-tabs__nav {
+    display: flex;
+    gap: 2px;
+    background: var(--vd-white);
+    border: 1px solid var(--vd-border-light);
+    border-radius: var(--vd-radius);
+    padding: 4px;
+    margin-bottom: 24px;
+    box-shadow: var(--vd-shadow);
+}
+
+.viglet-dumont-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: var(--vd-text-muted);
+    font-weight: 500;
+    font-size: 13px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.viglet-dumont-tab:hover {
+    color: var(--vd-text);
+    background: var(--vd-bg);
+}
+
+.viglet-dumont-tab:focus {
+    box-shadow: none;
+    outline: none;
+    color: var(--vd-text);
+}
+
+.viglet-dumont-tab.active {
+    background: var(--vd-primary);
+    color: var(--vd-white);
+}
+
+.viglet-dumont-tab .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Cards */
+.viglet-dumont-card {
+    background: var(--vd-white);
+    border: 1px solid var(--vd-border-light);
+    border-radius: var(--vd-radius);
+    box-shadow: var(--vd-shadow);
+    margin-bottom: 20px;
+}
+
+.viglet-dumont-card__header {
+    padding: 20px 24px 0;
+}
+
+.viglet-dumont-card__header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: var(--vd-text);
+}
+
+.viglet-dumont-card__header p {
+    color: var(--vd-text-muted);
+    font-size: 13px;
+    margin: 0;
+}
+
+.viglet-dumont-card__body {
+    padding: 20px 24px 24px;
+}
+
+.viglet-dumont-card__body h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: var(--vd-text);
+}
+
+.viglet-dumont-card__footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--vd-border-light);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Fields */
+.viglet-dumont-field {
+    margin-bottom: 20px;
+}
+
+.viglet-dumont-field label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: var(--vd-text);
+}
+
+.viglet-dumont-field input[type="text"],
+.viglet-dumont-field input[type="url"],
+.viglet-dumont-field input[type="password"],
+.viglet-dumont-field input[type="number"],
+.viglet-dumont-field select {
+    width: 100%;
+    max-width: 480px;
+    padding: 8px 12px;
+    border: 1px solid var(--vd-border);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.viglet-dumont-field input:focus,
+.viglet-dumont-field select:focus {
+    border-color: var(--vd-primary);
+    box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.15);
+    outline: none;
+}
+
+.viglet-dumont-field .description {
+    margin-top: 6px;
+    color: var(--vd-text-muted);
+    font-size: 12px;
+}
+
+.viglet-dumont-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 782px) {
+    .viglet-dumont-field-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Separator */
+.viglet-dumont-separator {
+    border: none;
+    border-top: 1px solid var(--vd-border-light);
+    margin: 24px 0;
+}
+
+/* Toggle switches */
+.viglet-dumont-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.viglet-dumont-toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px 14px;
+    border: 1px solid var(--vd-border-light);
+    border-radius: 6px;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.viglet-dumont-toggle:hover {
+    border-color: var(--vd-primary);
+    background: rgba(34, 113, 177, 0.02);
+}
+
+.viglet-dumont-toggle input[type="checkbox"] {
+    display: none;
+}
+
+.viglet-dumont-toggle__slider {
+    position: relative;
+    flex-shrink: 0;
+    width: 40px;
+    height: 22px;
+    background: var(--vd-border);
+    border-radius: 11px;
+    transition: background 0.2s;
+    margin-top: 1px;
+}
+
+.viglet-dumont-toggle__slider::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: var(--vd-white);
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.viglet-dumont-toggle input:checked + .viglet-dumont-toggle__slider {
+    background: var(--vd-primary);
+}
+
+.viglet-dumont-toggle input:checked + .viglet-dumont-toggle__slider::after {
+    transform: translateX(18px);
+}
+
+.viglet-dumont-toggle__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--vd-text);
+    line-height: 1.5;
+}
+
+.viglet-dumont-toggle__label small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--vd-text-muted);
+    margin-top: 2px;
+}
+
+/* Save Button */
+.viglet-dumont-save {
+    margin-top: 24px;
+}
+
+.viglet-dumont-save .button-primary {
+    padding: 8px 24px;
+    height: auto;
+    font-size: 14px;
+}
+
+/* Action Sections */
+.viglet-dumont-action-section {
+    margin-bottom: 8px;
+}
+
+.viglet-dumont-action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+}
+
+.viglet-dumont-action-row h3 {
+    margin-bottom: 4px !important;
+}
+
+.viglet-dumont-action-row p {
+    color: var(--vd-text-muted);
+    font-size: 13px;
+    margin: 0;
+}
+
+.viglet-dumont-action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.viglet-dumont-action-buttons select {
+    padding: 6px 10px;
+    border: 1px solid var(--vd-border);
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.viglet-dumont-action-result {
+    margin-top: 12px;
+}
+
+/* Buttons with icons */
+.button .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
+    margin-right: 4px;
+}
+
+.button-link-delete {
+    color: var(--vd-error) !important;
+    border-color: var(--vd-error) !important;
+    background: var(--vd-white) !important;
+    padding: 6px 16px !important;
+    border: 1px solid !important;
+    border-radius: 4px !important;
+    cursor: pointer;
+    text-decoration: none !important;
+    font-size: 13px;
+}
+
+.button-link-delete:hover {
+    background: var(--vd-error-bg) !important;
+    color: var(--vd-error) !important;
+}
+
+/* Progress Bar */
+.viglet-dumont-progress {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--vd-bg);
+    border-radius: 6px;
+}
+
+.viglet-dumont-progress__bar {
+    width: 100%;
+    height: 8px;
+    background: var(--vd-border-light);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.viglet-dumont-progress__fill {
+    height: 100%;
+    background: var(--vd-primary);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.viglet-dumont-progress__text {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--vd-primary);
+}
+
+.viglet-dumont-progress__message {
+    font-size: 13px;
+    color: var(--vd-text-muted);
+    margin-left: 8px;
+}
+
+.viglet-dumont-progress.complete .viglet-dumont-progress__fill {
+    background: var(--vd-success);
+}
+
+.viglet-dumont-progress.complete .viglet-dumont-progress__text {
+    color: var(--vd-success);
+}
+
+/* Status badges */
+.viglet-dumont-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.viglet-dumont-status--success {
+    background: var(--vd-success-bg);
+    color: var(--vd-success);
+}
+
+.viglet-dumont-status--error {
+    background: var(--vd-error-bg);
+    color: var(--vd-error);
+}
+
+.viglet-dumont-status--loading {
+    background: var(--vd-warning-bg);
+    color: var(--vd-warning);
+}
+
+/* Stats Grid */
+.viglet-dumont-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+}
+
+.viglet-dumont-stat {
+    text-align: center;
+    padding: 16px;
+    background: var(--vd-bg);
+    border-radius: 6px;
+}
+
+.viglet-dumont-stat__number {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--vd-primary);
+    line-height: 1.2;
+}
+
+.viglet-dumont-stat__label {
+    display: block;
+    font-size: 12px;
+    color: var(--vd-text-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Loading spinner */
+.viglet-dumont-loading {
+    text-align: center;
+    color: var(--vd-text-muted);
+    padding: 20px;
+}
+
+.viglet-dumont-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--vd-border);
+    border-top-color: var(--vd-primary);
+    border-radius: 50%;
+    animation: vd-spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+@keyframes vd-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+    .viglet-dumont-header {
+        padding: 16px 20px;
+    }
+
+    .viglet-dumont-tabs__nav {
+        flex-wrap: wrap;
+    }
+
+    .viglet-dumont-action-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .viglet-dumont-action-buttons {
+        width: 100%;
+    }
+
+    .viglet-dumont-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
