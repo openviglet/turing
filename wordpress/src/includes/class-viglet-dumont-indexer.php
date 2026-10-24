@@ -73,10 +73,7 @@ class Viglet_Dumont_Indexer {
 	 * @param WP_Post $post The post to index.
 	 */
 	public function index_post( WP_Post $post ): array {
-		$attributes = $this->build_attributes( $post );
-		$job_item   = $this->client->build_create_item( $attributes );
-
-		return $this->client->import( array( $job_item ) );
+		return $this->client->import( array( $this->build_create_item( $post ) ) );
 	}
 
 	/**
@@ -85,10 +82,25 @@ class Viglet_Dumont_Indexer {
 	 * @param int $post_id The post to remove.
 	 */
 	public function deindex_post( int $post_id ): array {
-		$doc_id   = $this->build_doc_id( $post_id );
-		$job_item = $this->client->build_delete_item( $doc_id );
+		return $this->client->deindex( array( $this->build_delete_item( $post_id ) ) );
+	}
 
-		return $this->client->deindex( array( $job_item ) );
+	/**
+	 * The job item that indexes a post.
+	 *
+	 * @param WP_Post $post The post to index.
+	 */
+	public function build_create_item( WP_Post $post ): array {
+		return $this->client->build_create_item( $this->build_attributes( $post ) );
+	}
+
+	/**
+	 * The job item that removes a post from the index.
+	 *
+	 * @param int $post_id The post to remove.
+	 */
+	public function build_delete_item( int $post_id ): array {
+		return $this->client->build_delete_item( $this->build_doc_id( $post_id ) );
 	}
 
 	/**
@@ -96,7 +108,7 @@ class Viglet_Dumont_Indexer {
 	 *
 	 * @param string $post_type Post type to index.
 	 * @param int    $offset    Offset to start from.
-	 * @return array{indexed: int, total: int, offset: int, done: bool, percent: float}
+	 * @return array{indexed: int, total: int, offset: int, done: bool, percent: float, message: string, error?: bool} `error` is set when Turing refused or did not answer the import, and the offset is not advanced.
 	 */
 	public function index_batch( string $post_type = 'post', int $offset = 0 ): array {
 		$batch_size = (int) $this->settings['batch_size'];
@@ -124,19 +136,31 @@ class Viglet_Dumont_Indexer {
 		$query     = new WP_Query( $args );
 		$total     = (int) $query->found_posts;
 		$job_items = array();
+		$result    = array( 'success' => true );
 
 		if ( $query->have_posts() ) {
 			foreach ( $query->posts as $post ) {
-				$attributes  = $this->build_attributes( $post );
-				$job_items[] = $this->client->build_create_item( $attributes );
+				$job_items[] = $this->build_create_item( $post );
 			}
 
 			if ( ! empty( $job_items ) ) {
-				$this->client->import( $job_items );
+				$result = $this->client->import( $job_items );
 			}
 		}
 
 		wp_reset_postdata();
+
+		if ( ! $result['success'] ) {
+			return array(
+				'indexed' => 0,
+				'total'   => $total,
+				'offset'  => $offset,
+				'done'    => false,
+				'percent' => $total > 0 ? round( ( $offset / $total ) * 100, 1 ) : 0,
+				'error'   => true,
+				'message' => $result['message'],
+			);
+		}
 
 		$new_offset = $offset + count( $job_items );
 		$done       = $new_offset >= $total;

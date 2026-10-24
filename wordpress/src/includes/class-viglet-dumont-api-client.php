@@ -106,7 +106,7 @@ class Viglet_Dumont_API_Client {
 	 * Import job items into Turing (index documents).
 	 *
 	 * @param array $job_items Array of TurSNJobItem-compatible arrays.
-	 * @return array{success: bool, message: string}
+	 * @return array{success: bool, message: string, code: int} `code` is 0 when no response arrived.
 	 */
 	public function import( array $job_items ): array {
 		$payload = array( 'snJobItems' => $job_items );
@@ -117,12 +117,14 @@ class Viglet_Dumont_API_Client {
 			return array(
 				'success' => false,
 				'message' => $response->get_error_message(),
+				'code'    => 0,
 			);
 		}
 
-		$code = wp_remote_retrieve_response_code( $response );
+		$code = (int) wp_remote_retrieve_response_code( $response );
 
 		return array(
+			'code'    => $code,
 			'success' => ( $code >= 200 && $code < 300 ),
 			'message' => ( $code >= 200 && $code < 300 )
 				? __( 'Documents imported successfully', 'viglet-dumont' )

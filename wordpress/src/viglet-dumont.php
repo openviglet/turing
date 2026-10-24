@@ -28,9 +28,15 @@ define( 'VIGLET_DUMONT_OPTION', 'viglet_dumont_settings' );
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-api-client.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
+}
+
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli-queue.php';
+	WP_CLI::add_command( 'dumont queue', 'Viglet_Dumont_CLI_Queue' );
 }
 
 /**
@@ -80,18 +86,13 @@ function viglet_dumont_init(): void {
 
 	$settings = viglet_dumont_get_settings();
 
-	// Auto-index on publish.
-	if ( $settings['auto_index'] ) {
-		add_action( 'publish_post', 'viglet_dumont_handle_publish' );
-		add_action( 'publish_page', 'viglet_dumont_handle_publish' );
+	// A save only queues the post; the worker below talks to Turing. save_post fires on every
+	// status change too (publish, unpublish, trash, scheduled publish), so it is the one hook.
+	if ( $settings['auto_index'] || $settings['auto_deindex'] ) {
 		add_action( 'save_post', 'viglet_dumont_handle_save', 10, 2 );
 	}
-
-	// Auto-deindex on delete/trash.
 	if ( $settings['auto_deindex'] ) {
-		add_action( 'trash_post', 'viglet_dumont_handle_delete' );
 		add_action( 'delete_post', 'viglet_dumont_handle_delete' );
-		add_action( 'transition_post_status', 'viglet_dumont_handle_status_transition', 10, 3 );
 	}
 
 	// Search override.
@@ -102,24 +103,7 @@ function viglet_dumont_init(): void {
 add_action( 'init', 'viglet_dumont_init' );
 
 /**
- * Handle post publish — index immediately.
- *
- * @param int $post_id The published post.
- */
-function viglet_dumont_handle_publish( int $post_id ): void {
-	$post = get_post( $post_id );
-	if ( ! $post || wp_is_post_revision( $post_id ) ) {
-		return;
-	}
-
-	$indexer = new Viglet_Dumont_Indexer();
-	if ( $indexer->should_index( $post ) ) {
-		$indexer->index_post( $post );
-	}
-}
-
-/**
- * Handle post save — index if published, deindex otherwise.
+ * Handle post save — queue an index if published, a removal otherwise.
  *
  * @param int     $post_id The saved post's ID.
  * @param WP_Post $post    The saved post.
@@ -132,44 +116,40 @@ function viglet_dumont_handle_save( int $post_id, WP_Post $post ): void {
 		return;
 	}
 
-	$indexer = new Viglet_Dumont_Indexer();
-	if ( 'publish' === $post->post_status && $indexer->should_index( $post ) ) {
-		$indexer->index_post( $post );
-	} elseif ( 'publish' !== $post->post_status ) {
-		$indexer->deindex_post( $post_id );
+	$settings = viglet_dumont_get_settings();
+	$indexer  = new Viglet_Dumont_Indexer( $settings );
+	$queue    = new Viglet_Dumont_Queue( $settings );
+
+	if ( 'publish' === $post->post_status ) {
+		if ( $settings['auto_index'] && $indexer->should_index( $post ) ) {
+			$queue->enqueue( $post_id, 'index' );
+		}
+	} elseif ( $settings['auto_deindex'] && in_array( $post->post_type, viglet_dumont_get_indexable_types(), true ) ) {
+		$queue->enqueue( $post_id, 'delete' );
 	}
 }
 
 /**
- * Handle post deletion.
+ * Handle permanent deletion — queue a removal.
  *
- * @param int $post_id The deleted or trashed post.
+ * @param int $post_id The deleted post.
  */
 function viglet_dumont_handle_delete( int $post_id ): void {
-	$indexer = new Viglet_Dumont_Indexer();
-	$indexer->deindex_post( $post_id );
+	// delete_post fires for revisions, menu items and attachments too; the post is still readable here.
+	$post = get_post( $post_id );
+	if ( ! $post || ! in_array( $post->post_type, viglet_dumont_get_indexable_types(), true ) ) {
+		return;
+	}
+	( new Viglet_Dumont_Queue() )->enqueue( $post_id, 'delete' );
 }
 
 /**
- * Handle post status transitions (e.g., publish -> draft).
- *
- * @param string  $new_status The status the post moves to.
- * @param string  $old_status The status the post had.
- * @param WP_Post $post       The post.
+ * The WP-Cron worker: send one batch of queued jobs.
  */
-function viglet_dumont_handle_status_transition( string $new_status, string $old_status, WP_Post $post ): void {
-	if ( $old_status === $new_status ) {
-		return;
-	}
-
-	$indexer = new Viglet_Dumont_Indexer();
-
-	if ( 'publish' === $new_status && $indexer->should_index( $post ) ) {
-		$indexer->index_post( $post );
-	} elseif ( 'publish' === $old_status && 'publish' !== $new_status ) {
-		$indexer->deindex_post( $post->ID );
-	}
+function viglet_dumont_process_queue(): void {
+	( new Viglet_Dumont_Queue() )->process();
 }
+add_action( Viglet_Dumont_Queue::CRON_HOOK, 'viglet_dumont_process_queue' );
 
 /**
  * Search redirect — replaces default WordPress search with Turing.
@@ -197,6 +177,14 @@ function viglet_dumont_activate(): void {
 	update_option( VIGLET_DUMONT_OPTION, $settings );
 }
 register_activation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_activate' );
+
+/**
+ * Plugin deactivation: stop the worker. Queued jobs stay and resume on reactivation's next save.
+ */
+function viglet_dumont_deactivate(): void {
+	wp_clear_scheduled_hook( Viglet_Dumont_Queue::CRON_HOOK );
+}
+register_deactivation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_deactivate' );
 
 /**
  * Register REST API endpoints for AJAX operations.
@@ -267,7 +255,7 @@ function viglet_dumont_rest_index_batch( WP_REST_Request $request ): WP_REST_Res
 	$indexer = new Viglet_Dumont_Indexer();
 	$result  = $indexer->index_batch( $post_type, $offset );
 
-	return new WP_REST_Response( $result, 200 );
+	return new WP_REST_Response( $result, empty( $result['error'] ) ? 200 : 502 );
 }
 
 /**
@@ -307,6 +295,7 @@ function viglet_dumont_rest_stats(): WP_REST_Response {
 	}
 
 	$stats['batch_size'] = (int) $settings['batch_size'];
+	$stats['queue']      = ( new Viglet_Dumont_Queue( $settings ) )->counts();
 
 	return new WP_REST_Response( $stats, 200 );
 }
