@@ -111,13 +111,14 @@ class Viglet_Dumont_Queue {
 	 * Send the jobs that are due, at most one batch, and record how each one fared.
 	 *
 	 * @param bool $ignore_backoff Send jobs still waiting out a backoff (the WP-CLI runner).
-	 * @return array{sent: int, failed: int, remaining: int, locked: bool}
+	 * @return array{sent: int, failed: int, errors: array<int, string>, remaining: int, locked: bool} `errors` is the failure per post id.
 	 */
 	public function process( bool $ignore_backoff = false ): array {
 		if ( get_transient( self::LOCK ) ) {
 			return array(
 				'sent'      => 0,
 				'failed'    => 0,
+				'errors'    => array(),
 				'remaining' => count( $this->jobs() ),
 				'locked'    => true,
 			);
@@ -153,9 +154,12 @@ class Viglet_Dumont_Queue {
 		$remaining = $this->jobs();
 		$this->schedule_next( $remaining );
 
+		$errors = array_filter( $outcomes, static fn ( $error ) => '' !== $error );
+
 		return array(
-			'sent'      => count( array_filter( $outcomes, static fn ( $error ) => '' === $error ) ),
-			'failed'    => count( array_filter( $outcomes, static fn ( $error ) => '' !== $error ) ),
+			'sent'      => count( $outcomes ) - count( $errors ),
+			'failed'    => count( $errors ),
+			'errors'    => $errors,
 			'remaining' => count( $remaining ),
 			'locked'    => false,
 		);

@@ -181,6 +181,7 @@ final class QueueTest extends PluginTestCase {
 		$result = $this->queue()->process();
 
 		$this->assertSame( 1, $result['failed'] );
+		$this->assertStringContainsString( '503', $result['errors'][1] );
 		$job = $this->queue()->jobs()[1];
 		$this->assertSame( 1, $job['attempts'] );
 		$this->assertGreaterThanOrEqual( $before + Viglet_Dumont_Queue::BASE_DELAY, $job['next_at'] );

@@ -52,10 +52,15 @@ class Viglet_Dumont_CLI_Queue {
 
 		$counts = $queue->counts();
 		/* translators: 1: jobs sent, 2: jobs still waiting, 3: jobs that stopped retrying. */
-		$summary = sprintf( __( '%1$d sent, %2$d waiting, %3$d failed.', 'viglet-dumont' ), $sent, $counts['pending'], $counts['failed'] );
+		$summary = sprintf( __( '%1$d sent, %2$d waiting, %3$d stopped retrying.', 'viglet-dumont' ), $sent, $counts['pending'], $counts['failed'] );
 
 		if ( $result['failed'] > 0 ) {
-			WP_CLI::error( $summary );
+			foreach ( $result['errors'] as $post_id => $error ) {
+				/* translators: 1: the post id, 2: why sending it failed. */
+				WP_CLI::warning( sprintf( __( 'Post %1$d: %2$s', 'viglet-dumont' ), $post_id, $error ) );
+			}
+			/* translators: 1: how many jobs failed, 2: the queue summary. */
+			WP_CLI::error( sprintf( __( 'Stopped after %1$d failed. %2$s', 'viglet-dumont' ), $result['failed'], $summary ) );
 		}
 		WP_CLI::success( $summary );
 	}
