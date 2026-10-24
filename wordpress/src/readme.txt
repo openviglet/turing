@@ -21,6 +21,7 @@ Navigation site and replaces the WordPress search page with Turing's results.
 * A bulk action in the settings page indexes everything already published, batch by batch.
 * Posts, pages and the custom post types you choose are indexed, with categories, tags,
   approved comments and the custom fields you name.
+* Custom taxonomies and meta become typed fields and facets, provisioned in Turing for you.
 * The search page shows Turing's results with facets, spelling suggestions and pagination.
 
 == Installation ==
@@ -38,6 +39,17 @@ Navigation site and replaces the WordPress search page with Turing's results.
 * WP-Cron sends the queue in batches with retry and backoff; a job that fails 8 times waits
   for `wp dumont queue run --retry-failed`. `wp dumont queue status` lists what waits.
 * Each post records when it was last indexed, its last error and its failed attempts.
+* A per-post-type field mapping sends taxonomies, meta keys and core fields as typed Turing
+  fields (STRING, TEXT, INT, LONG, FLOAT, DOUBLE, DATE, BOOL), single or multi-valued, as
+  facets with a label and a search weight. With nothing configured, every public custom
+  taxonomy is a facet. The mapping is read and stored as JSON at `viglet-dumont/v1/mapping`.
+* The mapped fields are provisioned through Turing's manifest before the documents that
+  carry them, so a facet needs no console step. `viglet-dumont/v1/provision` re-sends it.
+* `viglet_dumont_mapping` and `viglet_dumont_document` filters let a theme map in code.
+* A post type can be switched off in the mapping, and a post with `_viglet_dumont_exclude`
+  set stays out of the index.
+* Hidden UI text (screen-reader labels, `hidden` and `aria-hidden` elements, buttons, forms,
+  inline SVG) is no longer indexed as body text.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting
   the batch as indexed.
 

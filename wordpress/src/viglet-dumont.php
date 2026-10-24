@@ -26,6 +26,7 @@ define( 'VIGLET_DUMONT_URL', plugin_dir_url( __FILE__ ) );
 define( 'VIGLET_DUMONT_OPTION', 'viglet_dumont_settings' );
 
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-api-client.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
@@ -85,6 +86,21 @@ function viglet_dumont_init(): void {
 	load_plugin_textdomain( 'viglet-dumont', false, dirname( plugin_basename( VIGLET_DUMONT_FILE ) ) . '/languages' );
 
 	$settings = viglet_dumont_get_settings();
+
+	// Per-post "exclude from search", exposed to the block editor so a sidebar can toggle it.
+	foreach ( viglet_dumont_get_indexable_types() as $post_type ) {
+		register_post_meta(
+			$post_type,
+			Viglet_Dumont_Mapping::EXCLUDE_META,
+			array(
+				'type'          => 'boolean',
+				'single'        => true,
+				'default'       => false,
+				'show_in_rest'  => true,
+				'auth_callback' => static fn ( $allowed, $meta_key, $post_id ) => current_user_can( 'edit_post', $post_id ),
+			)
+		);
+	}
 
 	// A save only queues the post; the worker below talks to Turing. save_post fires on every
 	// status change too (publish, unpublish, trash, scheduled publish), so it is the one hook.
@@ -228,6 +244,39 @@ function viglet_dumont_register_rest_routes(): void {
 
 	register_rest_route(
 		'viglet-dumont/v1',
+		'/mapping',
+		array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => 'viglet_dumont_rest_get_mapping',
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+			),
+			array(
+				'methods'             => 'POST',
+				'callback'            => 'viglet_dumont_rest_save_mapping',
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+			),
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/provision',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'viglet_dumont_rest_provision',
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
 		'/stats',
 		array(
 			'methods'             => 'GET',
@@ -276,6 +325,45 @@ function viglet_dumont_rest_ping(): WP_REST_Response {
 	$result = $client->ping();
 
 	return new WP_REST_Response( $result, $result['success'] ? 200 : 500 );
+}
+
+/**
+ * REST: The field mapping in effect, plus the manifest it provisions. This is the JSON export.
+ */
+function viglet_dumont_rest_get_mapping(): WP_REST_Response {
+	$mapping = new Viglet_Dumont_Mapping();
+
+	return new WP_REST_Response(
+		array(
+			'mapping'     => $mapping->all(),
+			'manifest'    => $mapping->manifest(),
+			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
+		),
+		200
+	);
+}
+
+/**
+ * REST: Store a field mapping (the JSON import). Answers with what was kept after validation.
+ *
+ * @param WP_REST_Request $request Carries `mapping`, keyed by post type.
+ */
+function viglet_dumont_rest_save_mapping( WP_REST_Request $request ): WP_REST_Response {
+	$mapping = $request->get_param( 'mapping' );
+	if ( ! is_array( $mapping ) ) {
+		return new WP_REST_Response( array( 'message' => __( 'The body needs a mapping object keyed by post type.', 'viglet-dumont' ) ), 400 );
+	}
+
+	return new WP_REST_Response( array( 'mapping' => ( new Viglet_Dumont_Mapping() )->save( $mapping ) ), 200 );
+}
+
+/**
+ * REST: Send the mapped fields' manifest to Turing now.
+ */
+function viglet_dumont_rest_provision(): WP_REST_Response {
+	$result = ( new Viglet_Dumont_Indexer() )->provision( true );
+
+	return new WP_REST_Response( $result, $result['success'] ? 200 : 502 );
 }
 
 /**

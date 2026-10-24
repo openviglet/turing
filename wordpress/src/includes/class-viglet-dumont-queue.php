@@ -132,6 +132,11 @@ class Viglet_Dumont_Queue {
 			}
 			$items = array_filter( $items );
 
+			// A mapping change reaches Turing before the documents that carry the new fields.
+			if ( ! empty( $items ) ) {
+				( new Viglet_Dumont_Indexer( $this->settings ) )->provision();
+			}
+
 			$outcomes = $this->send( $items );
 
 			// Jobs that resolved to nothing (an index job for a post that is not indexable while
@@ -143,7 +148,7 @@ class Viglet_Dumont_Queue {
 			$this->record( $batch, $outcomes );
 		} finally {
 			delete_transient( self::LOCK );
-		}
+		}//end try
 
 		$remaining = $this->jobs();
 		$this->schedule_next( $remaining );

@@ -31,6 +31,13 @@ class Viglet_Dumont_Indexer {
 	private array $settings;
 
 	/**
+	 * The per-post-type field mapping.
+	 *
+	 * @var Viglet_Dumont_Mapping
+	 */
+	private Viglet_Dumont_Mapping $mapping;
+
+	/**
 	 * Build an indexer over the given settings, or over the stored ones.
 	 *
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
@@ -38,6 +45,17 @@ class Viglet_Dumont_Indexer {
 	public function __construct( ?array $settings = null ) {
 		$this->settings = $settings ?? viglet_dumont_get_settings();
 		$this->client   = new Viglet_Dumont_API_Client( $this->settings );
+		$this->mapping  = new Viglet_Dumont_Mapping( $this->settings );
+	}
+
+	/**
+	 * Send the mapped fields' manifest to Turing when it changed since the last one.
+	 *
+	 * @param bool $force Send even when the same manifest went through.
+	 * @return array{sent: bool, success: bool, message: string}
+	 */
+	public function provision( bool $force = false ): array {
+		return $this->mapping->provision( $this->client, $force );
 	}
 
 	/**
@@ -64,7 +82,11 @@ class Viglet_Dumont_Indexer {
 			return false;
 		}
 
-		return true;
+		if ( $this->mapping->excludes_type( $post->post_type ) ) {
+			return false;
+		}
+
+		return ! get_post_meta( $post->ID, Viglet_Dumont_Mapping::EXCLUDE_META, true );
 	}
 
 	/**
@@ -114,6 +136,10 @@ class Viglet_Dumont_Indexer {
 		$batch_size = (int) $this->settings['batch_size'];
 		if ( $batch_size <= 0 ) {
 			$batch_size = 50;
+		}
+
+		if ( 0 === $offset ) {
+			$this->provision();
 		}
 
 		$types = ( 'all' === $post_type ) ? viglet_dumont_get_indexable_types() : array( $post_type );
@@ -210,7 +236,7 @@ class Viglet_Dumont_Indexer {
 		$content = $post->post_content;
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core's own filter, applied so the index sees the rendered body.
 		$content = apply_filters( 'the_content', $content );
-		$content = wp_strip_all_tags( strip_shortcodes( $content ) );
+		$content = wp_strip_all_tags( strip_shortcodes( self::strip_non_content( (string) $content ) ) );
 		$content = preg_replace( '/\s+/', ' ', trim( $content ) );
 
 		$attributes = array(
@@ -257,7 +283,61 @@ class Viglet_Dumont_Indexer {
 			}
 		}
 
-		return $attributes;
+		$attributes = array_merge( $attributes, $this->mapping->values( $post ) );
+
+		/**
+		 * Filters the document a post becomes, just before it is sent to Turing.
+		 *
+		 * @param array   $attributes The document's fields.
+		 * @param WP_Post $post       The post.
+		 */
+		return apply_filters( 'viglet_dumont_document', $attributes, $post );
+	}
+
+	/**
+	 * Remove what a rendered body shows no reader: scripts, styles, forms, inline SVG, and any
+	 * element marked hidden (the `hidden` attribute, `aria-hidden="true"`, `screen-reader-text`).
+	 *
+	 * Blocks render UI around the content (a button's label, an icon's title, a "skip to"
+	 * link), and once the tags are stripped that text reads as body copy to the index.
+	 *
+	 * @param string $html The rendered body.
+	 */
+	public static function strip_non_content( string $html ): string {
+		$html = preg_replace( '@<(script|style|noscript|template|svg|form|button|select)\b[^>]*>.*?</\1>@si', '', $html ) ?? $html;
+
+		if ( '' === trim( $html ) || ! class_exists( 'DOMDocument' ) ) {
+			return $html;
+		}
+
+		$dom      = new DOMDocument();
+		$previous = libxml_use_internal_errors( true );
+		$loaded   = $dom->loadHTML( '<?xml encoding="utf-8"?><div id="viglet-dumont-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+		libxml_clear_errors();
+		libxml_use_internal_errors( $previous );
+		if ( ! $loaded ) {
+			return $html;
+		}
+
+		$xpath  = new DOMXPath( $dom );
+		$hidden = $xpath->query( '//*[@hidden or @aria-hidden="true" or contains(concat(" ", normalize-space(@class), " "), " screen-reader-text ")]' );
+		if ( false !== $hidden ) {
+			foreach ( iterator_to_array( $hidden ) as $node ) {
+				$node->parentNode?->removeChild( $node ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DOM's own property.
+			}
+		}
+
+		$root = $dom->getElementById( 'viglet-dumont-root' );
+		if ( null === $root ) {
+			return $html;
+		}
+
+		$out = '';
+		foreach ( $root->childNodes as $child ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DOM's own property.
+			$out .= $dom->saveHTML( $child );
+		}
+
+		return $out;
 	}
 
 	/**

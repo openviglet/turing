@@ -26,12 +26,18 @@ abstract class PluginTestCase extends TestCase {
 		Functions\stubTranslationFunctions();
 		Functions\stubs(
 			array(
-				'untrailingslashit'                => static fn ( $value ) => rtrim( $value, '/' ),
-				'wp_json_encode'                   => static fn ( $value ) => json_encode( $value ),
-				'is_wp_error'                      => static fn ( $value ) => $value instanceof \WP_Error,
-				'add_query_arg'                    => static fn ( array $args, string $url ) => $url . '?' . http_build_query( $args ),
-				'wp_remote_retrieve_response_code' => static fn ( $response ) => $response['response']['code'],
-				'wp_remote_retrieve_body'          => static fn ( $response ) => $response['body'],
+				'untrailingslashit'                 => static fn ( $value ) => rtrim( $value, '/' ),
+				'wp_json_encode'                    => static fn ( $value ) => json_encode( $value ),
+				'is_wp_error'                       => static fn ( $value ) => $value instanceof \WP_Error,
+				'add_query_arg'                     => static fn ( array $args, string $url ) => $url . '?' . http_build_query( $args ),
+				'wp_remote_retrieve_response_code'  => static fn ( $response ) => $response['response']['code'],
+				'wp_remote_retrieve_body'           => static fn ( $response ) => $response['body'],
+				'sanitize_key'                      => static fn ( $key ) => strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', $key ) ),
+				'sanitize_text_field'               => static fn ( $text ) => trim( strip_tags( $text ) ),
+				// No stored mapping and no custom taxonomy: a post sends the fixed document only.
+				'get_option'                        => static fn ( $name, $fallback = false ) => $fallback,
+				'get_object_taxonomies'             => array(),
+				'viglet_dumont_get_indexable_types' => array( 'post', 'page' ),
 			)
 		);
 		Functions\when( 'wp_remote_request' )->alias(

@@ -52,21 +52,20 @@ final class QueueTest extends PluginTestCase {
 
 		Functions\stubs(
 			array(
-				'strip_shortcodes'                  => static fn ( $text ) => $text,
-				'wp_strip_all_tags'                 => static fn ( $text ) => strip_tags( $text ),
-				'wp_trim_words'                     => static fn ( $text ) => $text,
-				'get_permalink'                     => 'https://site.example.org/post/',
-				'get_post_time'                     => '2026-10-01T09:00:00+00:00',
-				'get_post_modified_time'            => '2026-10-02T09:00:00+00:00',
-				'get_bloginfo'                      => 'Institutional',
-				'get_the_post_thumbnail_url'        => false,
-				'wp_get_post_categories'            => array(),
-				'wp_get_post_tags'                  => array(),
-				'get_the_author_meta'               => 'Ana',
-				'is_multisite'                      => false,
-				'wp_is_post_revision'               => false,
-				'viglet_dumont_get_indexable_types' => array( 'post', 'page' ),
-				'wp_cache_delete'                   => true,
+				'strip_shortcodes'           => static fn ( $text ) => $text,
+				'wp_strip_all_tags'          => static fn ( $text ) => strip_tags( $text ),
+				'wp_trim_words'              => static fn ( $text ) => $text,
+				'get_permalink'              => 'https://site.example.org/post/',
+				'get_post_time'              => '2026-10-01T09:00:00+00:00',
+				'get_post_modified_time'     => '2026-10-02T09:00:00+00:00',
+				'get_bloginfo'               => 'Institutional',
+				'get_the_post_thumbnail_url' => false,
+				'wp_get_post_categories'     => array(),
+				'wp_get_post_tags'           => array(),
+				'get_the_author_meta'        => 'Ana',
+				'is_multisite'               => false,
+				'wp_is_post_revision'        => false,
+				'wp_cache_delete'            => true,
 			)
 		);
 

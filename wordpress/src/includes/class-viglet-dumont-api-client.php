@@ -138,6 +138,50 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * Converge the SN site's field schema to a manifest (`POST /api/sn/manifest`).
+	 *
+	 * @param array $manifest `{name, locales, fields}` as Turing's manifest binds it.
+	 * @return array{success: bool, message: string, code: int} `code` is 0 when no response arrived.
+	 */
+	public function provision( array $manifest ): array {
+		$response = $this->request( 'POST', '/api/sn/manifest', null, $manifest );
+
+		if ( is_wp_error( $response ) ) {
+			return array(
+				'success' => false,
+				'message' => $response->get_error_message(),
+				'code'    => 0,
+			);
+		}
+
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+
+		if ( $code >= 200 && $code < 300 ) {
+			$message = __( 'Fields provisioned', 'viglet-dumont' );
+		} elseif ( 409 === $code ) {
+			$message = sprintf(
+				/* translators: %s: the fields whose type Turing would have to change. */
+				__( 'Turing kept the site\'s schema: a mapped field would change an existing field\'s type (%s). Rename the field or migrate it in Turing.', 'viglet-dumont' ),
+				wp_json_encode( $body['breakingChanges'] ?? array() )
+			);
+		} else {
+			$message = sprintf(
+				/* translators: 1: the HTTP status code, 2: Turing's error message. */
+				__( 'Provisioning failed with HTTP %1$d: %2$s', 'viglet-dumont' ),
+				$code,
+				is_array( $body ) && isset( $body['error'] ) ? $body['error'] : ''
+			);
+		}
+
+		return array(
+			'success' => $code >= 200 && $code < 300,
+			'message' => $message,
+			'code'    => $code,
+		);
+	}
+
+	/**
 	 * Delete documents from Turing index.
 	 *
 	 * @param array $job_items Array of TurSNJobItem-compatible arrays with DELETE action.
