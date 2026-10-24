@@ -1,5 +1,3 @@
-SolrPhpClient
-.project
-.buildpath
-.settings
-build/*
+vendor/
+build/
+.phpunit.cache/

@@ -1,0 +1,43 @@
+{
+    "name": "viglet/dumont-wordpress",
+    "description": "Indexes WordPress content into Viglet Turing and serves search from it.",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "homepage": "https://dumont.viglet.org",
+    "support": {
+        "issues": "https://github.com/openviglet/dumont/issues",
+        "source": "https://github.com/openviglet/dumont/tree/2026.3/wordpress"
+    },
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "brain/monkey": "^2.6",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^10.5",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "wp-coding-standards/wpcs": "^3.1"
+    },
+    "autoload-dev": {
+        "classmap": ["src/includes/"],
+        "psr-4": {
+            "Viglet\\Dumont\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "8.1.0"
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "lint": "phpcs",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "test": "phpunit",
+        "check": ["@lint", "@analyse", "@test"]
+    }
+}

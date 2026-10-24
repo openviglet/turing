@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<ruleset name="Viglet Dumont for WordPress">
+    <description>WordPress Coding Standards for the Viglet Dumont plugin.</description>
+
+    <file>src</file>
+    <file>tests</file>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <config name="minimum_wp_version" value="6.5"/>
+    <config name="testVersion" value="8.1-"/>
+
+    <rule ref="WordPress"/>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="viglet-dumont"/>
+            </property>
+        </properties>
+    </rule>
+
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="viglet_dumont"/>
+                <element value="Viglet_Dumont"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Templates and views are included from inside a method (Viglet_Dumont_Search::render_template,
+         Viglet_Dumont_Admin::render_settings_page), so their variables are locals, never globals. -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+        <exclude-pattern>src/templates/*</exclude-pattern>
+        <exclude-pattern>src/admin/views/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.WP.GlobalVariablesOverride.Prohibited">
+        <exclude-pattern>src/templates/*</exclude-pattern>
+        <exclude-pattern>src/admin/views/*</exclude-pattern>
+    </rule>
+
+    <!-- Tests are PHPUnit classes, not WordPress files: PSR-4 names and no ABSPATH guard. -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.Commenting">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Generic.Commenting.DocComment.MissingShort">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <!-- Tests stand in for core functions with plain PHP, and their 'wordpress' strings are
+         source_apps values. -->
+    <rule ref="WordPress.WP.AlternativeFunctions">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.WP.CapitalPDangit">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+</ruleset>
