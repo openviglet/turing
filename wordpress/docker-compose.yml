@@ -1,12 +1,42 @@
-# A throwaway WordPress for trying the plugin by hand: run-docker.cmd drives it.
+# A throwaway WordPress and Turing for trying the plugin end to end: run-docker.cmd drives it.
 #
 # src/ is mounted as the plugin, so an edit shows up on the next page load with no build.
-# WordPress and its database live in named volumes; `run-docker.cmd reset` drops them.
-# Turing runs on the host, reached from the containers as host.docker.internal.
+# WordPress, its database and Turing's store live in named volumes; `run-docker.cmd reset`
+# drops them. The plugin reaches Turing as http://turing:2700; the console is on
+# http://localhost:2700 (admin / the TURING_ADMIN_PASSWORD below).
 
 name: viglet-dumont-wp
 
 services:
+  # Turing as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
+  # single tenant, local login. TURING_IMAGE picks a locally built image (run-docker.cmd uses
+  # turing-ce:local when it exists).
+  turing:
+    image: ${TURING_IMAGE:-ghcr.io/openviglet/turing-ce:latest}
+    ports:
+      - "127.0.0.1:${TURING_PORT:-2700}:2700"
+    environment:
+      PORT: 2700
+      TURING_AI_CRYPTO_KEY: viglet-dumont-wp-dev-only
+      # Applied only while no password is stored: changing it later needs `run-docker.cmd reset`.
+      TURING_ADMIN_PASSWORD: ${TURING_ADMIN_PASSWORD:-dumont-dev}
+      TURING_KEYCLOAK: "false"
+      TURING_TENANCY_ENABLED: "false"
+      TURING_TENANCY_AUTOPROVISION: "false"
+      TURING_OPEN_BROWSER: "false"
+      TURING_URL: http://localhost:${TURING_PORT:-2700}
+      TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${TURING_PORT:-2700}
+      # In-memory broker: no journal lock (AMQ219007) when the container is recreated.
+      SPRING_ARTEMIS_EMBEDDED_PERSISTENT: "false"
+    volumes:
+      - turing:/app/store
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/2700' 2>/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
   db:
     image: mariadb:11.4
     environment:
@@ -57,3 +87,4 @@ services:
 volumes:
   db:
   wp:
+  turing:

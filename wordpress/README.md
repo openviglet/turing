@@ -61,20 +61,26 @@ docker run --rm -v "$PWD:/app" -w /app composer:2 sh -c "composer install && com
 
 ### Try it in a real WordPress
 
-[`run-docker.cmd`](run-docker.cmd) starts WordPress 6.8 with MariaDB
-([`docker-compose.yml`](docker-compose.yml)), mounts `src/` as the plugin, installs WordPress on
-the first run and points the plugin at a Turing on the host
-(`http://host.docker.internal:2700`). Edits under `src/` show on the next page load.
+[`run-docker.cmd`](run-docker.cmd) starts WordPress 6.8 with MariaDB and a local Turing
+([`docker-compose.yml`](docker-compose.yml)), mounts `src/` as the plugin and, on the first run,
+installs WordPress, creates the SN site in Turing and gives the plugin an API key for it
+([`bin/turing-setup.ps1`](bin/turing-setup.ps1)). Edits under `src/` show on the next page load.
 
 ```bat
-run-docker.cmd                         :: http://localhost:8080/wp-admin, admin / admin
-run-docker.cmd wp dumont queue status  :: any WP-CLI command
+run-docker.cmd                         :: WordPress http://localhost:8080/wp-admin (admin / admin)
+                                       :: Turing    http://localhost:2700 (admin / dumont-dev)
+run-docker.cmd wp dumont queue run     :: any WP-CLI command
+run-docker.cmd logs turing             :: follow a log: wordpress, turing or db
 run-docker.cmd stop                    :: keep the data
-run-docker.cmd reset                   :: drop WordPress and its database
+run-docker.cmd reset                   :: drop WordPress, its database and Turing's store
 ```
 
-Set `WP_PORT`, `TURING_URL`, `TURING_API_KEY`, `SN_SITE` or `TURING_LOCALE` before the first
-run to change the defaults; after that, change them in the plugin's settings page.
+Turing runs as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
+local login. When an image `turing-ce:local` exists, it is used instead of the published one,
+which lags the Turing source; build it from a Turing checkout after `mvnw package` with
+`docker build -f Dockerfile.local -t turing-ce:local .` (the published 2026.3.4 image answers
+every API-key import with HTTP 500). Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
+`TURING_ADMIN_PASSWORD` or `TURING_IMAGE` before the first run to change the defaults.
 
 `phpcbf` capitalises `wordpress` wherever it reads it as prose, and the `source_apps` value is
 data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that sniff; keep it.
