@@ -59,6 +59,23 @@ WordPress install. Without PHP locally, the same runs in a container:
 docker run --rm -v "$PWD:/app" -w /app composer:2 sh -c "composer install && composer check"
 ```
 
+### Try it in a real WordPress
+
+[`run-docker.cmd`](run-docker.cmd) starts WordPress 6.8 with MariaDB
+([`docker-compose.yml`](docker-compose.yml)), mounts `src/` as the plugin, installs WordPress on
+the first run and points the plugin at a Turing on the host
+(`http://host.docker.internal:2700`). Edits under `src/` show on the next page load.
+
+```bat
+run-docker.cmd                         :: http://localhost:8080/wp-admin, admin / admin
+run-docker.cmd wp dumont queue status  :: any WP-CLI command
+run-docker.cmd stop                    :: keep the data
+run-docker.cmd reset                   :: drop WordPress and its database
+```
+
+Set `WP_PORT`, `TURING_URL`, `TURING_API_KEY`, `SN_SITE` or `TURING_LOCALE` before the first
+run to change the defaults; after that, change them in the plugin's settings page.
+
 `phpcbf` capitalises `wordpress` wherever it reads it as prose, and the `source_apps` value is
 data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that sniff; keep it.
 

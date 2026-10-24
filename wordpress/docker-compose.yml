@@ -1,0 +1,59 @@
+# A throwaway WordPress for trying the plugin by hand: run-docker.cmd drives it.
+#
+# src/ is mounted as the plugin, so an edit shows up on the next page load with no build.
+# WordPress and its database live in named volumes; `run-docker.cmd reset` drops them.
+# Turing runs on the host, reached from the containers as host.docker.internal.
+
+name: viglet-dumont-wp
+
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress:
+    image: wordpress:6.8-php8.3-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${WP_PORT:-8080}:80"
+    environment: &wp-env
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - wp:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # WP-CLI over the same files and database: `run-docker.cmd wp <command>`.
+  cli:
+    image: wordpress:cli-php8.3
+    profiles: ["cli"]
+    depends_on:
+      - wordpress
+    user: "33:33"
+    environment: *wp-env
+    volumes:
+      - wp:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  db:
+  wp:
