@@ -124,7 +124,7 @@ PHP reads and one `.json` per admin script. After changing a string, regenerate 
 WP-CLI (Docker works where it is not installed):
 
 ```sh
-docker run --rm -v "$PWD:/plugin" -w /plugin wordpress:cli-php8.3 sh -c '
+docker run --rm -v "$PWD:/plugin" -w /plugin wordpress:cli-2.12-php8.5 sh -c '
   wp i18n make-pot . src/languages/viglet-dumont.pot --slug=viglet-dumont --domain=viglet-dumont \
     --exclude=node_modules,vendor,src/admin/build,tests,build &&
   wp i18n update-po src/languages/viglet-dumont.pot src/languages &&
@@ -144,7 +144,7 @@ docker run --rm -v "$PWD:/app" -w /app composer:2 sh -c "composer install && com
 
 ### Try it in a real WordPress
 
-[`run-docker.cmd`](run-docker.cmd) starts WordPress 6.8 with MariaDB and a local Turing
+[`run-docker.cmd`](run-docker.cmd) starts WordPress 7.1.3 on PHP 8.5 with MariaDB and a local Turing
 ([`docker-compose.yml`](docker-compose.yml)), mounts `src/` as the plugin and, on the first run,
 installs WordPress, creates the SN site in Turing and gives the plugin an API key for it
 ([`bin/turing-setup.ps1`](bin/turing-setup.ps1)). Edits under `src/` show on the next page load.

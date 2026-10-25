@@ -52,7 +52,7 @@ services:
       retries: 20
 
   wordpress:
-    image: wordpress:6.8-php8.3-apache
+    image: wordpress:7.1.3-php8.5-apache
     depends_on:
       db:
         condition: service_healthy
@@ -84,7 +84,7 @@ services:
 
   # The system cron: runs due WP-Cron events (the plugin's queue worker among them) every 15s.
   cron:
-    image: wordpress:cli-php8.3
+    image: wordpress:cli-2.12-php8.5
     depends_on:
       - wordpress
     user: "33:33"
@@ -98,7 +98,7 @@ services:
 
   # WP-CLI over the same files and database: `run-docker.cmd wp <command>`.
   cli:
-    image: wordpress:cli-php8.3
+    image: wordpress:cli-2.12-php8.5
     profiles: ["cli"]
     depends_on:
       - wordpress
