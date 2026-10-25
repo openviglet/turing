@@ -125,6 +125,7 @@ function viglet_dumont_init(): void {
 	}
 }
 add_action( 'init', 'viglet_dumont_init' );
+add_filter( 'wp_robots', array( 'Viglet_Dumont_Native_Search', 'robots' ) );
 
 /**
  * Point WordPress at the JS translations: `wp i18n make-json` names each file after the

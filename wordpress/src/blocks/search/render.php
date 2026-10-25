@@ -23,6 +23,18 @@ wp_enqueue_script_module( 'viglet-dumont/search-block' );
 $viglet_dumont_query = sanitize_text_field( wp_unslash( $_GET['q'] ?? ( $_GET['s'] ?? '' ) ) );
 $viglet_dumont_id    = wp_unique_id( 'viglet-dumont-search-' );
 
+// The orders Turing offers; the URL's `sort` picks one (search-block.js reads the rest).
+$viglet_dumont_sorts = array(
+	'relevance' => __( 'Relevance', 'viglet-dumont' ),
+	'newest'    => __( 'Newest', 'viglet-dumont' ),
+	'oldest'    => __( 'Oldest', 'viglet-dumont' ),
+);
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only, as above.
+$viglet_dumont_sort = sanitize_key( wp_unslash( $_GET['sort'] ?? '' ) );
+if ( ! isset( $viglet_dumont_sorts[ $viglet_dumont_sort ] ) ) {
+	$viglet_dumont_sort = 'relevance';
+}
+
 // A result's badge reads the post type's own name, in the site's language.
 $viglet_dumont_types = array();
 foreach ( viglet_dumont_get_indexable_types() as $viglet_dumont_type ) {
@@ -74,6 +86,8 @@ wp_interactivity_state(
 		/* translators: %d: how many more values the facet has. */
 		'moreValues'    => __( 'Show %d more', 'viglet-dumont' ),
 		'fewerLabel'    => __( 'Show fewer', 'viglet-dumont' ),
+		'sort'          => $viglet_dumont_sort,
+		'perPage'       => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
 		'typeLabels'    => $viglet_dumont_types,
 		'homeUrl'       => home_url( '/' ),
 		/* translators: %d: how many results Turing found. */
@@ -146,7 +160,19 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 		<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.applyCorrection" data-wp-text="state.corrected"></button>
 	</p>
 
-	<p class="viglet-dumont-search__summary" aria-live="polite" data-wp-text="state.summary"></p>
+	<div class="viglet-dumont-search__toolbar">
+		<p class="viglet-dumont-search__summary" aria-live="polite" data-wp-text="state.summary"></p>
+		<?php if ( ! empty( $attributes['showSort'] ) ) : ?>
+			<p class="viglet-dumont-search__sort" hidden data-wp-bind--hidden="!state.hasResults">
+				<label for="<?php echo esc_attr( $viglet_dumont_id ); ?>-sort"><?php esc_html_e( 'Sort by', 'viglet-dumont' ); ?></label>
+				<select id="<?php echo esc_attr( $viglet_dumont_id ); ?>-sort" data-wp-bind--value="state.sort" data-wp-on--change="actions.sortBy">
+					<?php foreach ( $viglet_dumont_sorts as $viglet_dumont_value => $viglet_dumont_label ) : ?>
+						<option value="<?php echo esc_attr( $viglet_dumont_value ); ?>" <?php selected( $viglet_dumont_sort, $viglet_dumont_value ); ?>><?php echo esc_html( $viglet_dumont_label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</p>
+		<?php endif; ?>
+	</div>
 
 	<ul class="viglet-dumont-search__applied" hidden data-wp-bind--hidden="!state.hasApplied" aria-label="<?php esc_attr_e( 'Active filters', 'viglet-dumont' ); ?>">
 		<template data-wp-each--filter="state.applied">

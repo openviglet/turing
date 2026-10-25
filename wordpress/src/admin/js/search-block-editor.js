@@ -12,14 +12,19 @@
 	const el = wp.element.createElement;
 	const __ = wp.i18n.__;
 	const { useBlockProps, InspectorControls } = wp.blockEditor;
-	const { PanelBody, Placeholder, TextControl, ToggleControl } =
-		wp.components;
+	const {
+		PanelBody,
+		Placeholder,
+		SelectControl,
+		TextControl,
+		ToggleControl,
+	} = wp.components;
 
 	/**
 	 * The block in the editor.
 	 *
 	 * @param {Object}                       props               The block's props.
-	 * @param {Object}                       props.attributes    placeholder and showFacets.
+	 * @param {Object}                       props.attributes    placeholder, showFacets, showSort, perPage.
 	 * @param {(attributes: Object) => void} props.setAttributes Updates them.
 	 */
 	function Edit( { attributes, setAttributes } ) {
@@ -43,6 +48,24 @@
 						checked: attributes.showFacets,
 						onChange: ( showFacets ) =>
 							setAttributes( { showFacets } ),
+					} ),
+					el( ToggleControl, {
+						label: __(
+							'Let visitors sort (relevance, newest, oldest)',
+							'viglet-dumont'
+						),
+						checked: attributes.showSort,
+						onChange: ( showSort ) => setAttributes( { showSort } ),
+					} ),
+					el( SelectControl, {
+						label: __( 'Results per page', 'viglet-dumont' ),
+						value: String( attributes.perPage ),
+						options: [ 5, 10, 20, 50 ].map( ( n ) => ( {
+							label: String( n ),
+							value: String( n ),
+						} ) ),
+						onChange: ( perPage ) =>
+							setAttributes( { perPage: Number( perPage ) } ),
 					} )
 				)
 			),

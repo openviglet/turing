@@ -57,10 +57,12 @@ export default defineConfig( {
 	timeout: 60_000,
 	expect: {
 		timeout: 15_000,
-		// Visual regression: a small tolerance absorbs antialiasing, not a moved element.
-		// Refresh the baselines on purpose: npm run test:e2e -- --update-snapshots
+		// Visual regression: a few pixels absorb antialiasing, not a new or moved element. A
+		// ratio was tried and was too loose: 1% of a results block let a whole sort control
+		// and every changed date through. Refresh the baselines on purpose:
+		// npm run test:e2e -- --update-snapshots
 		toHaveScreenshot: {
-			maxDiffPixelRatio: 0.01,
+			maxDiffPixels: 50,
 			animations: 'disabled',
 			caret: 'hide',
 		},

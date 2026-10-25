@@ -22,9 +22,13 @@ let client = null;
 let lastQuery = '';
 // The pending instant search, restarted by every keystroke.
 let instant = null;
+// The page's own title, which retitle() puts the query in front of.
+let baseTitle = '';
 
 // Each facet as Turing last described it unfiltered, by field (see facets()).
 const facetMemory = new Map();
+// The search learnFacets() last asked about, so it asks once per search.
+let learning = '';
 // How many values a facet shows before "Show more".
 const facetValuesShown = 5;
 
@@ -109,6 +113,9 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		get hasApplied() {
 			return state.applied.length > 0;
+		},
+		get hasResults() {
+			return 'success' === state.status && state.total > 0;
 		},
 		get hasCorrection() {
 			return '' !== state.corrected;
@@ -242,6 +249,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		toggleFacet() {
 			const { item } = getContext();
 			search.toggleFacet( item.target );
+			writeUrl( true );
 			if ( ! state.drawerOpen ) {
 				focusInput();
 			}
@@ -278,23 +286,27 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		removeFilter() {
 			const { filter } = getContext();
 			search.toggleFacet( filter.target );
+			writeUrl( true );
 			focusInput();
 		},
 		clearFilters() {
 			// The SDK's clearAllFilters would drop the site filter too; keep it.
-			search.searchRequest( {
-				...search.getState().request,
-				fq: [ siteFilter ],
-				page: 1,
-			} );
+			send( { fq: [ siteFilter ], page: 1 } );
+			writeUrl( true );
 		},
 		retry() {
-			run( state.query );
+			send( {} );
 		},
 		goToPage() {
 			const { page } = getContext();
 			search.goToPage( page.page );
+			writeUrl( true );
 			focusInput();
+		},
+		sortBy( event ) {
+			state.sort = event.target.value;
+			send( { page: 1 } );
+			writeUrl( true );
 		},
 	},
 	callbacks: {
@@ -321,9 +333,15 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			autocomplete.subscribe( ( s ) => {
 				state.suggestions = s.suggestions.slice( 0, 8 );
 			} );
-			if ( state.query ) {
-				run( state.query );
+			baseTitle = document.title;
+			const params = new URL( window.location.href ).searchParams;
+			if (
+				state.query ||
+				[ 'fq[]', 'pg', 'sort' ].some( ( key ) => params.has( key ) )
+			) {
+				readUrl();
 			}
+			window.addEventListener( 'popstate', readUrl );
 		},
 	},
 } );
@@ -413,16 +431,85 @@ function focusInput() {
  *                         syntax until Turing matches prefixes itself (T1120, D183).
  */
 function run( query, prefix = false ) {
-	const url = new URL( window.location.href );
-	url.searchParams.set( 'q', query );
-	url.searchParams.delete( 's' );
-	window.history.replaceState( null, '', url );
 	const typed = query.trim();
 	lastQuery = typed || '*';
 	state.corrected = '';
-	search.searchQuery(
-		prefix && /[\p{L}\p{N}]$/u.test( typed ) ? `${ typed }*` : lastQuery
+	send( {
+		q: prefix && /[\p{L}\p{N}]$/u.test( typed ) ? `${ typed }*` : lastQuery,
+		page: 1,
+	} );
+	// A search the visitor settled on is a step Back returns to; typing is not.
+	writeUrl( ! prefix );
+}
+
+/**
+ * Search with these changes to the current request, keeping its filters, sort and page
+ * size.
+ *
+ * @param {Object} changes Fields of the structured request.
+ */
+function send( changes ) {
+	search.searchRequest( {
+		locale: config.locale,
+		...search.getState().request,
+		rows: state.perPage,
+		sort: state.sort,
+		...changes,
+	} );
+}
+
+/**
+ * Put the whole search in the address bar, so it can be shared, reloaded and gone back to:
+ * the query as typed, the filters (the site's own left out), the page and the sort. The page
+ * is pg, since WordPress reads page as a page of the post the block sits in.
+ *
+ * @param {boolean} push A new history entry (a deliberate step) rather than a replacement.
+ */
+function writeUrl( push ) {
+	const request = search.getState().request || {};
+	const url = new URL( window.location.href );
+	[ 'q', 's', 'fq[]', 'pg', 'sort' ].forEach( ( key ) =>
+		url.searchParams.delete( key )
 	);
+	url.searchParams.set( 'q', state.query );
+	( request.fq || [] )
+		.filter( ( fq ) => fq !== siteFilter )
+		.forEach( ( fq ) => url.searchParams.append( 'fq[]', fq ) );
+	if ( Number( request.page ) > 1 ) {
+		url.searchParams.set( 'pg', String( request.page ) );
+	}
+	if ( 'relevance' !== state.sort ) {
+		url.searchParams.set( 'sort', state.sort );
+	}
+	if ( url.href !== window.location.href ) {
+		window.history[ push ? 'pushState' : 'replaceState' ]( null, '', url );
+	}
+	retitle();
+}
+
+/**
+ * Search for what the address bar says: on load, and on Back and Forward.
+ */
+function readUrl() {
+	const params = new URL( window.location.href ).searchParams;
+	state.query = params.get( 'q' ) ?? params.get( 's' ) ?? '';
+	state.sort = params.get( 'sort' ) || 'relevance';
+	lastQuery = state.query.trim() || '*';
+	state.corrected = '';
+	send( {
+		q: lastQuery,
+		fq: [ siteFilter, ...params.getAll( 'fq[]' ) ],
+		page: Math.max( 1, Number( params.get( 'pg' ) ) || 1 ),
+	} );
+	retitle();
+}
+
+/**
+ * The tab's title names the search: "workshop – Search – Site".
+ */
+function retitle() {
+	const typed = state.query.trim();
+	document.title = typed ? `${ typed } – ${ baseTitle }` : baseTitle;
 }
 
 /**
@@ -549,6 +636,16 @@ function facets( answered, applied ) {
 			facetMemory.set( facet.name, facet );
 		}
 	}
+	// A page opened filtered (a shared link, a reload) never saw those facets unfiltered.
+	if (
+		[ ...filtered ].some(
+			( name ) =>
+				! facetMemory.has( name ) &&
+				! answered.some( ( facet ) => facet.name === name )
+		)
+	) {
+		learnFacets();
+	}
 	const byName = new Map(
 		answered
 			.filter( ( facet ) => facet.items?.length )
@@ -589,6 +686,38 @@ function facets( answered, applied ) {
 				selectedCount: items.filter( ( item ) => item.selected ).length,
 			};
 		} );
+}
+
+/**
+ * Ask once, without the filters, for the facets a filtered page has not seen, and redraw
+ * the block when they arrive. Only a page opened already filtered needs this; until T1115
+ * Turing does not describe a facet it filters on.
+ */
+function learnFacets() {
+	const key = `${ lastQuery }|${ ( search.getState().request?.fq || [] ).join( '|' ) }`;
+	if ( learning === key ) {
+		return;
+	}
+	learning = key;
+	const probe = createSiteSearch();
+	const unsubscribe = probe.subscribe( ( s ) => {
+		if ( 'success' !== s.status && 'error' !== s.status ) {
+			return;
+		}
+		unsubscribe?.();
+		for ( const facet of s.structured?.facets || [] ) {
+			if ( facet.items?.length && ! facetMemory.has( facet.name ) ) {
+				facetMemory.set( facet.name, facet );
+			}
+		}
+		sync( search.getState() );
+	} );
+	probe.searchRequest( {
+		locale: config.locale,
+		q: lastQuery,
+		fq: [ siteFilter ],
+		rows: 1,
+	} );
 }
 
 /**

@@ -63,6 +63,39 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertNull( $this->search()->search( 'workshop', 1, 10 ) );
 	}
 
+	public function test_a_refined_search_page_is_noindex_and_the_plain_one_is_not(): void {
+		Functions\when( 'is_singular' )->justReturn( true );
+		Functions\when( 'get_queried_object' )->justReturn( null );
+		Functions\when( 'has_block' )->justReturn( true );
+
+		$_GET = array( 'q' => 'workshop' );
+		$this->assertSame( array(), Viglet_Dumont_Native_Search::robots( array() ) );
+
+		foreach ( array(
+			'fq'   => array( 'seats:40' ),
+			'pg'   => '2',
+			'sort' => 'newest',
+		) as $key => $value ) {
+			$_GET = array(
+				'q'  => 'workshop',
+				$key => $value,
+			);
+			$this->assertSame(
+				array(
+					'noindex' => true,
+					'follow'  => true,
+				),
+				Viglet_Dumont_Native_Search::robots( array() ),
+				$key
+			);
+		}
+
+		// A refined URL on a page without the block is not this plugin's to judge.
+		Functions\when( 'has_block' )->justReturn( false );
+		$this->assertSame( array(), Viglet_Dumont_Native_Search::robots( array() ) );
+		$_GET = array();
+	}
+
 	public function test_the_public_config_carries_no_key_and_lists_the_facets(): void {
 		$options = array(
 			'viglet_dumont_mapping' => array(

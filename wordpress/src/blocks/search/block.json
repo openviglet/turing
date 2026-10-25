@@ -16,6 +16,14 @@
 		"showFacets": {
 			"type": "boolean",
 			"default": true
+		},
+		"showSort": {
+			"type": "boolean",
+			"default": true
+		},
+		"perPage": {
+			"type": "number",
+			"default": 10
 		}
 	},
 	"supports": {

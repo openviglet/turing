@@ -64,6 +64,27 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
+	 * Keep a refined search out of search engines (`wp_robots`): a page holding the Turing
+	 * search block, opened with filters, a results page or a sort in its URL (search-block.js
+	 * writes `fq[]`, `pg` and `sort`), is one of endless variations of that page. The plain
+	 * page stays indexable.
+	 *
+	 * @param array $robots The robots directives WordPress is about to print.
+	 * @return array The directives, with noindex on a refined search.
+	 */
+	public static function robots( array $robots ): array {
+		// A read-only look at the URL: nothing is changed, so there is no nonce to check.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$refined = isset( $_GET['fq'] ) || isset( $_GET['pg'] ) || isset( $_GET['sort'] );
+		if ( $refined && is_singular() && has_block( 'viglet-dumont/search', get_queried_object() ) ) {
+			$robots['noindex'] = true;
+			$robots['follow']  = true;
+		}
+
+		return $robots;
+	}
+
+	/**
 	 * Register the Turing search block (blocks/search): a search box with suggestions,
 	 * did-you-mean, facets, results and pages, built on the modules above. A site with its
 	 * own search blocks turns it off with the `viglet_dumont_register_blocks` filter.

@@ -332,3 +332,18 @@
 .viglet-dumont-search__pages [aria-current="true"] {
 	font-weight: 700;
 }
+
+/* The count, and the sort beside it. */
+.viglet-dumont-search__toolbar {
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.5rem;
+	justify-content: space-between;
+}
+
+.viglet-dumont-search__sort {
+	align-items: baseline;
+	display: flex;
+	gap: 0.5rem;
+}

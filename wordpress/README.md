@@ -142,7 +142,7 @@ Beyond behaviour, the suite also checks:
 - **Viewports**: the site specs run at desktop (1280), tablet (820) and phone (390), as the
   projects `site`, `site-tablet` and `site-phone`.
 - **Visual regression**: the search block and the admin screens against the baselines in
-  `tests/e2e/snapshots/<platform>/<project>/` (1% tolerance; counts and events are masked).
+  `tests/e2e/snapshots/<platform>/<project>/` (50 pixels of tolerance, for antialiasing only; counts and events are masked).
   After a change to the look, refresh them on purpose with
   `npm run test:e2e -- --update-snapshots` and commit the new PNGs.
 - **Speed**: the first results within 1.5 s of the navigation and a suggestion within
