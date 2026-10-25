@@ -90,6 +90,7 @@ const screens = [
 	[ 'Settings, actions', '/wp-admin/admin.php?page=viglet-dumont#actions' ],
 	[ 'Setup', '/wp-admin/admin.php?page=viglet-dumont-setup' ],
 	[ 'Fields', '/wp-admin/admin.php?page=viglet-dumont-fields' ],
+	[ 'Search tuning', '/wp-admin/admin.php?page=viglet-dumont-tuning' ],
 	[
 		'Health',
 		'/wp-admin/admin.php?page=viglet-dumont-health',

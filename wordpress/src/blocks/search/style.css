@@ -441,3 +441,19 @@
 	display: flex;
 	gap: 0.5rem;
 }
+
+/* Promoted results (Search tuning, D172), above the rest with their badge. */
+.viglet-dumont-search__spotlights {
+	display: grid;
+	gap: var(--wp--preset--spacing--40, 1.5rem);
+	list-style: none;
+	margin: 0 0 var(--wp--preset--spacing--40, 1.5rem);
+	padding: 0;
+}
+
+.viglet-dumont-search__featured {
+	background: var(--wp--preset--color--contrast, #000);
+	border-radius: 999px;
+	color: var(--wp--preset--color--base, #fff);
+	padding: 0 0.5rem;
+}

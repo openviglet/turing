@@ -85,6 +85,9 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		get hasQuery() {
 			return '' !== state.query;
 		},
+		get hasSpotlights() {
+			return state.spotlights.length > 0;
+		},
 		get hasFacets() {
 			return state.facets.length > 0;
 		},
@@ -841,6 +844,14 @@ function sync( s ) {
 	state.error = s.error || '';
 	state.total = response?.queryContext?.count ?? 0;
 	state.results = s.documents.map( card );
+	// Promoted results (Search tuning, D172): set for the query in Turing, shown first.
+	state.spotlights = ( response?.spotlights || [] )
+		.filter( ( spot ) => spot.url )
+		.map( ( spot ) => ( {
+			url: spot.url,
+			title: plain( spot.title ) || spot.url,
+			content: plain( spot.content ),
+		} ) );
 	state.facets = facets(
 		response?.facets || [],
 		( s.request?.fq || [] ).filter( ( fq ) => fq !== siteFilter )

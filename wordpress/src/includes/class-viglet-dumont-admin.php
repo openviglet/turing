@@ -70,6 +70,21 @@ class Viglet_Dumont_Admin {
 			'viglet-dumont-health',
 			array( $this, 'render_health_page' )
 		);
+		add_submenu_page(
+			'viglet-dumont',
+			__( 'Search tuning', 'viglet-dumont' ),
+			__( 'Tuning', 'viglet-dumont' ),
+			'manage_options',
+			'viglet-dumont-tuning',
+			array( $this, 'render_tuning_page' )
+		);
+	}
+
+	/**
+	 * The Search tuning page: a mount point for the app in admin/build/tuning.js.
+	 */
+	public function render_tuning_page(): void {
+		echo '<div class="wrap"><h1>' . esc_html__( 'Search tuning', 'viglet-dumont' ) . '</h1><div id="viglet-dumont-tuning"></div></div>';
 	}
 
 	/**
@@ -155,6 +170,7 @@ class Viglet_Dumont_Admin {
 			'viglet-dumont_page_viglet-dumont-health' => 'health',
 			'viglet-dumont_page_viglet-dumont-fields' => 'mapping',
 			'viglet-dumont_page_viglet-dumont-setup'  => 'setup',
+			'viglet-dumont_page_viglet-dumont-tuning' => 'tuning',
 		);
 		if ( isset( $builds[ $hook ] ) ) {
 			$this->enqueue_build( $builds[ $hook ] );

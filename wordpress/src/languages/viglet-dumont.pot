@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T17:31:42+00:00\n"
+"POT-Creation-Date: 2026-10-25T17:52:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -33,10 +33,11 @@ msgid "Indexing"
 msgstr ""
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:132
-#: src/blocks/search/render.php:158
+#: src/blocks/search/render.php:133
+#: src/blocks/search/render.php:159
 #: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
+#: assets/admin/tuning.js:181
 #: src/admin/js/editor-panel.js:151
 #: src/admin/js/search-block-editor.js:42
 msgid "Search"
@@ -44,6 +45,8 @@ msgstr ""
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/mapping.js:228
+#: assets/admin/tuning.js:77
+#: assets/admin/tuning.js:188
 msgid "Actions"
 msgstr ""
 
@@ -340,129 +343,134 @@ msgid "Oldest"
 msgstr ""
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:78
+#: src/blocks/search/render.php:79
 #, php-format
 msgid "%d suggestions. Use the up and down arrows to choose one."
 msgstr ""
 
-#: src/blocks/search/render.php:81
-#: src/blocks/search/render.php:255
+#: src/blocks/search/render.php:82
+#: src/blocks/search/render.php:256
 msgid "Filters"
 msgstr ""
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:83
+#: src/blocks/search/render.php:84
 #, php-format
 msgid "Filters (%d)"
 msgstr ""
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:85
+#: src/blocks/search/render.php:86
 #, php-format
 msgid "Show %d more"
 msgstr ""
 
-#: src/blocks/search/render.php:86
+#: src/blocks/search/render.php:87
 msgid "Show fewer"
 msgstr ""
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:97
+#: src/blocks/search/render.php:98
 #: src/includes/class-viglet-dumont-native-search.php:158
 #, php-format
 msgid "%d results"
 msgstr ""
 
-#: src/blocks/search/render.php:98
+#: src/blocks/search/render.php:99
 #: src/includes/class-viglet-dumont-native-search.php:159
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
-#: src/blocks/search/render.php:99
+#: src/blocks/search/render.php:100
 #: src/includes/class-viglet-dumont-native-search.php:160
 msgid "Search is unavailable right now."
 msgstr ""
 
-#: src/blocks/search/render.php:124
+#: src/blocks/search/render.php:125
 msgid "Search…"
 msgstr ""
 
-#: src/blocks/search/render.php:155
+#: src/blocks/search/render.php:156
 msgid "Clear the search"
 msgstr ""
 
-#: src/blocks/search/render.php:164
+#: src/blocks/search/render.php:165
 msgid "Suggestions"
 msgstr ""
 
-#: src/blocks/search/render.php:177
+#: src/blocks/search/render.php:178
 msgid "Clear recent searches"
 msgstr ""
 
-#: src/blocks/search/render.php:183
+#: src/blocks/search/render.php:184
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr ""
 
-#: src/blocks/search/render.php:191
+#: src/blocks/search/render.php:192
 msgid "Sort by"
 msgstr ""
 
-#: src/blocks/search/render.php:201
+#: src/blocks/search/render.php:202
 msgid "Active filters"
 msgstr ""
 
-#: src/blocks/search/render.php:207
+#: src/blocks/search/render.php:208
 msgid "Remove this filter"
 msgstr ""
 
-#: src/blocks/search/render.php:212
-#: src/blocks/search/render.php:282
+#: src/blocks/search/render.php:213
+#: src/blocks/search/render.php:283
 msgid "Clear all filters"
 msgstr ""
 
-#: src/blocks/search/render.php:232
+#: src/blocks/search/render.php:233
 msgid "Answer generated from this site"
 msgstr ""
 
-#: src/blocks/search/render.php:234
+#: src/blocks/search/render.php:235
 msgid "Sources"
 msgstr ""
 
-#: src/blocks/search/render.php:242
+#: src/blocks/search/render.php:243
 msgid "Was this helpful?"
 msgstr ""
 
-#: src/blocks/search/render.php:243
+#: src/blocks/search/render.php:244
 msgid "Yes"
 msgstr ""
 
-#: src/blocks/search/render.php:244
+#: src/blocks/search/render.php:245
 msgid "No"
 msgstr ""
 
-#: src/blocks/search/render.php:246
+#: src/blocks/search/render.php:247
 msgid "Thank you."
 msgstr ""
 
-#: src/blocks/search/render.php:281
+#: src/blocks/search/render.php:282
 msgid "Show results"
 msgstr ""
 
-#: src/blocks/search/render.php:323
+#: src/blocks/search/render.php:289
+#: src/blocks/search/render.php:293
+msgid "Featured"
+msgstr ""
+
+#: src/blocks/search/render.php:335
 msgid "Or start from the latest posts:"
 msgstr ""
 
-#: src/blocks/search/render.php:333
+#: src/blocks/search/render.php:345
 msgid "Try again"
 msgstr ""
 
-#: src/blocks/search/render.php:334
+#: src/blocks/search/render.php:346
 msgid "Search with WordPress instead"
 msgstr ""
 
-#: src/blocks/search/render.php:339
+#: src/blocks/search/render.php:351
 msgid "Result pages"
 msgstr ""
 
@@ -472,7 +480,7 @@ msgid "Settings"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:51
-#: src/includes/class-viglet-dumont-admin.php:79
+#: src/includes/class-viglet-dumont-admin.php:94
 msgid "Connect to Turing"
 msgstr ""
 
@@ -481,7 +489,7 @@ msgid "Setup"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:59
-#: src/includes/class-viglet-dumont-admin.php:86
+#: src/includes/class-viglet-dumont-admin.php:101
 msgid "Search fields"
 msgstr ""
 
@@ -490,7 +498,7 @@ msgid "Fields"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:67
-#: src/includes/class-viglet-dumont-admin.php:93
+#: src/includes/class-viglet-dumont-admin.php:108
 msgid "Search health"
 msgstr ""
 
@@ -498,39 +506,48 @@ msgstr ""
 msgid "Health"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:189
+#: src/includes/class-viglet-dumont-admin.php:75
+#: src/includes/class-viglet-dumont-admin.php:87
+msgid "Search tuning"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:76
+msgid "Tuning"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:205
 msgid "Indexing..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:190
+#: src/includes/class-viglet-dumont-admin.php:206
 msgid "Complete!"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:191
+#: src/includes/class-viglet-dumont-admin.php:207
 msgid "Error"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:192
+#: src/includes/class-viglet-dumont-admin.php:208
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:193
+#: src/includes/class-viglet-dumont-admin.php:209
 msgid "Deleting..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:194
+#: src/includes/class-viglet-dumont-admin.php:210
 msgid "All indexed content has been deleted."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:195
+#: src/includes/class-viglet-dumont-admin.php:211
 msgid "Testing connection..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:196
+#: src/includes/class-viglet-dumont-admin.php:212
 msgid "Total"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:214
+#: src/includes/class-viglet-dumont-admin.php:230
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr ""
 
@@ -597,20 +614,20 @@ msgid "Invalid JSON response from server"
 msgstr ""
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:432
+#: src/includes/class-viglet-dumont-api-client.php:445
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:456
+#: src/includes/class-viglet-dumont-api-client.php:469
 msgid "Turing did not answer."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:513
+#: src/includes/class-viglet-dumont-api-client.php:526
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:518
+#: src/includes/class-viglet-dumont-api-client.php:531
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
@@ -925,6 +942,24 @@ msgstr ""
 msgid "No such post."
 msgstr ""
 
+#. translators: %s: the SN site's name.
+#: src/includes/class-viglet-dumont-tuning.php:68
+#, php-format
+msgid "Turing has no SN site named %s."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:128
+msgid "A synonym needs two words or more."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:170
+msgid "Name a search and at least one post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:230
+msgid "Only what this plugin added can be removed here; change the rest in Turing's console."
+msgstr ""
+
 #. translators: %s: the search query.
 #: src/templates/search-results.php:51
 #, php-format
@@ -947,33 +982,33 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:82
+#: src/viglet-dumont.php:83
 msgid "Answers with sources"
 msgstr ""
 
-#: src/viglet-dumont.php:83
+#: src/viglet-dumont.php:84
 msgid "Chat"
 msgstr ""
 
-#: src/viglet-dumont.php:84
+#: src/viglet-dumont.php:85
 msgid "Natural-language filters"
 msgstr ""
 
-#: src/viglet-dumont.php:85
+#: src/viglet-dumont.php:86
 msgid "Catalog copilot"
 msgstr ""
 
 #. translators: %s: Turing's console address.
-#: src/viglet-dumont.php:98
+#: src/viglet-dumont.php:99
 #, php-format
 msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
 msgstr ""
 
-#: src/viglet-dumont.php:625
+#: src/viglet-dumont.php:684
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:650
+#: src/viglet-dumont.php:709
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -1188,6 +1223,7 @@ msgid "Remove field"
 msgstr ""
 
 #: assets/admin/mapping.js:154
+#: assets/admin/tuning.js:48
 msgid "Remove"
 msgstr ""
 
@@ -1325,6 +1361,91 @@ msgstr ""
 
 #: assets/admin/setup.js:287
 msgid "Index everything now"
+msgstr ""
+
+#: assets/admin/tuning.js:37
+msgid "Set in Turing’s console"
+msgstr ""
+
+#: assets/admin/tuning.js:59
+msgid "Synonyms"
+msgstr ""
+
+#: assets/admin/tuning.js:63
+msgid "Words a visitor may type for the same thing. A search for any of them finds posts with the others."
+msgstr ""
+
+#: assets/admin/tuning.js:73
+msgid "Words"
+msgstr ""
+
+#. translators: %s: the synonym's words.
+#: assets/admin/tuning.js:91
+#, js-format
+msgid "Remove %s"
+msgstr ""
+
+#: assets/admin/tuning.js:123
+msgid "Words that mean the same, separated by commas"
+msgstr ""
+
+#: assets/admin/tuning.js:132
+msgid "Add synonym"
+msgstr ""
+
+#: assets/admin/tuning.js:167
+msgid "Promoted results"
+msgstr ""
+
+#: assets/admin/tuning.js:171
+msgid "Up to three posts shown first, as featured, when a visitor searches for these words."
+msgstr ""
+
+#: assets/admin/tuning.js:184
+#: assets/admin/tuning.js:298
+msgid "Shown first"
+msgstr ""
+
+#. translators: %s: the search the posts are promoted for.
+#: assets/admin/tuning.js:207
+#, js-format
+msgid "Remove the promotion for %s"
+msgstr ""
+
+#: assets/admin/tuning.js:249
+msgid "When visitors search for"
+msgstr ""
+
+#: assets/admin/tuning.js:259
+msgid "Find a post to show first"
+msgstr ""
+
+#: assets/admin/tuning.js:267
+msgid "Posts found"
+msgstr ""
+
+#. translators: %s: a post's title.
+#: assets/admin/tuning.js:284
+#, js-format
+msgid "Show %s first"
+msgstr ""
+
+#: assets/admin/tuning.js:291
+msgid "Add"
+msgstr ""
+
+#. translators: %s: a post's title.
+#: assets/admin/tuning.js:314
+#, js-format
+msgid "Take %s out"
+msgstr ""
+
+#: assets/admin/tuning.js:321
+msgid "Take out"
+msgstr ""
+
+#: assets/admin/tuning.js:333
+msgid "Promote"
 msgstr ""
 
 #: src/admin/js/editor-panel.js:73

@@ -413,6 +413,19 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * A call to one of Turing's console APIs (`/api/sn/<site id>/...`), JSON both ways, for the
+	 * Search tuning screen (D172).
+	 *
+	 * @param string     $method HTTP method.
+	 * @param string     $path   API path.
+	 * @param array|null $body   Request body.
+	 * @return array|WP_Error The decoded answer.
+	 */
+	public function call( string $method, string $path, ?array $body = null ) {
+		return $this->decoded( $this->request( $method, $path, null, $body ) );
+	}
+
+	/**
 	 * A JSON answer as an array: an error for a failed request, an empty array for a 404
 	 * (Turing's "not in the index").
 	 *

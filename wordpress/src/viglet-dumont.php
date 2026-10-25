@@ -36,6 +36,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-diagnostics.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-tuning.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
@@ -460,6 +461,64 @@ function viglet_dumont_register_rest_routes(): void {
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
+		)
+	);
+
+	// Search tuning (D172): synonyms and promoted results on the SN site.
+	$can_manage = static fn () => current_user_can( 'manage_options' );
+	$answer     = static fn ( $result ) => is_wp_error( $result )
+		? new WP_REST_Response( array( 'message' => $result->get_error_message() ), 'viglet_dumont_not_ours' === $result->get_error_code() ? 403 : 502 )
+		: new WP_REST_Response( true === $result ? ( new Viglet_Dumont_Tuning() )->all() : $result, 200 );
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/tuning',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn () => $answer( ( new Viglet_Dumont_Tuning() )->all() ),
+			'permission_callback' => $can_manage,
+		)
+	);
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/tuning/synonym',
+		array(
+			'methods'             => 'POST',
+			'callback'            => static fn ( WP_REST_Request $request ) => $answer(
+				( new Viglet_Dumont_Tuning() )->add_synonym( array_map( 'sanitize_text_field', (array) $request->get_param( 'terms' ) ) )
+			),
+			'permission_callback' => $can_manage,
+		)
+	);
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/tuning/synonym/(?P<id>[A-Za-z0-9-]+)',
+		array(
+			'methods'             => 'DELETE',
+			'callback'            => static fn ( WP_REST_Request $request ) => $answer( ( new Viglet_Dumont_Tuning() )->remove_synonym( (string) $request['id'] ) ),
+			'permission_callback' => $can_manage,
+		)
+	);
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/tuning/spotlight',
+		array(
+			'methods'             => 'POST',
+			'callback'            => static fn ( WP_REST_Request $request ) => $answer(
+				( new Viglet_Dumont_Tuning() )->add_spotlight(
+					sanitize_text_field( (string) $request->get_param( 'query' ) ),
+					array_map( 'absint', (array) $request->get_param( 'posts' ) )
+				)
+			),
+			'permission_callback' => $can_manage,
+		)
+	);
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/tuning/spotlight/(?P<id>[A-Za-z0-9-]+)',
+		array(
+			'methods'             => 'DELETE',
+			'callback'            => static fn ( WP_REST_Request $request ) => $answer( ( new Viglet_Dumont_Tuning() )->remove_spotlight( (string) $request['id'] ) ),
+			'permission_callback' => $can_manage,
 		)
 	);
 

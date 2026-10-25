@@ -35,10 +35,11 @@ msgid "Indexing"
 msgstr "Indexação"
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:132
-#: src/blocks/search/render.php:158
+#: src/blocks/search/render.php:133
+#: src/blocks/search/render.php:159
 #: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
+#: assets/admin/tuning.js:181
 #: src/admin/js/editor-panel.js:151
 #: src/admin/js/search-block-editor.js:42
 msgid "Search"
@@ -46,6 +47,8 @@ msgstr "Busca"
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/mapping.js:228
+#: assets/admin/tuning.js:77
+#: assets/admin/tuning.js:188
 msgid "Actions"
 msgstr "Ações"
 
@@ -306,51 +309,51 @@ msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:97
+#: src/blocks/search/render.php:98
 #: src/includes/class-viglet-dumont-native-search.php:158
 #, php-format
 msgid "%d results"
 msgstr "%d resultados"
 
-#: src/blocks/search/render.php:98
+#: src/blocks/search/render.php:99
 #: src/includes/class-viglet-dumont-native-search.php:159
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:99
+#: src/blocks/search/render.php:100
 #: src/includes/class-viglet-dumont-native-search.php:160
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
-#: src/blocks/search/render.php:124
+#: src/blocks/search/render.php:125
 msgid "Search…"
 msgstr "Buscar…"
 
-#: src/blocks/search/render.php:183
+#: src/blocks/search/render.php:184
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr "Você quis dizer:"
 
-#: src/blocks/search/render.php:201
+#: src/blocks/search/render.php:202
 msgid "Active filters"
 msgstr "Filtros ativos"
 
-#: src/blocks/search/render.php:207
+#: src/blocks/search/render.php:208
 msgid "Remove this filter"
 msgstr "Remover este filtro"
 
-#: src/blocks/search/render.php:212
-#: src/blocks/search/render.php:282
+#: src/blocks/search/render.php:213
+#: src/blocks/search/render.php:283
 msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
-#: src/blocks/search/render.php:81
-#: src/blocks/search/render.php:255
+#: src/blocks/search/render.php:82
+#: src/blocks/search/render.php:256
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/blocks/search/render.php:339
+#: src/blocks/search/render.php:351
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
@@ -360,7 +363,7 @@ msgid "Settings"
 msgstr "Configurações"
 
 #: src/includes/class-viglet-dumont-admin.php:51
-#: src/includes/class-viglet-dumont-admin.php:79
+#: src/includes/class-viglet-dumont-admin.php:94
 msgid "Connect to Turing"
 msgstr "Conectar ao Turing"
 
@@ -369,7 +372,7 @@ msgid "Setup"
 msgstr "Configuração inicial"
 
 #: src/includes/class-viglet-dumont-admin.php:59
-#: src/includes/class-viglet-dumont-admin.php:86
+#: src/includes/class-viglet-dumont-admin.php:101
 msgid "Search fields"
 msgstr "Campos de busca"
 
@@ -378,7 +381,7 @@ msgid "Fields"
 msgstr "Campos"
 
 #: src/includes/class-viglet-dumont-admin.php:67
-#: src/includes/class-viglet-dumont-admin.php:93
+#: src/includes/class-viglet-dumont-admin.php:108
 msgid "Search health"
 msgstr "Saúde da busca"
 
@@ -386,39 +389,39 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:189
+#: src/includes/class-viglet-dumont-admin.php:205
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:190
+#: src/includes/class-viglet-dumont-admin.php:206
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:191
+#: src/includes/class-viglet-dumont-admin.php:207
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:192
+#: src/includes/class-viglet-dumont-admin.php:208
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:193
+#: src/includes/class-viglet-dumont-admin.php:209
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:194
+#: src/includes/class-viglet-dumont-admin.php:210
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:195
+#: src/includes/class-viglet-dumont-admin.php:211
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:196
+#: src/includes/class-viglet-dumont-admin.php:212
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:214
+#: src/includes/class-viglet-dumont-admin.php:230
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -773,11 +776,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:625
+#: src/viglet-dumont.php:684
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:650
+#: src/viglet-dumont.php:709
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -956,6 +959,7 @@ msgid "Remove field"
 msgstr "Remover campo"
 
 #: assets/admin/mapping.js:154
+#: assets/admin/tuning.js:48
 msgid "Remove"
 msgstr "Remover"
 
@@ -1152,7 +1156,7 @@ msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
 
-#: src/blocks/search/render.php:164
+#: src/blocks/search/render.php:165
 msgid "Suggestions"
 msgstr "Sugestões"
 
@@ -1160,49 +1164,49 @@ msgstr "Sugestões"
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
-#: src/blocks/search/render.php:323
+#: src/blocks/search/render.php:335
 msgid "Or start from the latest posts:"
 msgstr "Ou comece pelos posts mais recentes:"
 
-#: src/blocks/search/render.php:333
+#: src/blocks/search/render.php:345
 msgid "Try again"
 msgstr "Tentar de novo"
 
-#: src/blocks/search/render.php:334
+#: src/blocks/search/render.php:346
 msgid "Search with WordPress instead"
 msgstr "Buscar com o WordPress"
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:78
+#: src/blocks/search/render.php:79
 #, php-format
 msgid "%d suggestions. Use the up and down arrows to choose one."
 msgstr "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
-#: src/blocks/search/render.php:155
+#: src/blocks/search/render.php:156
 msgid "Clear the search"
 msgstr "Limpar a busca"
 
-#: src/blocks/search/render.php:177
+#: src/blocks/search/render.php:178
 msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:83
+#: src/blocks/search/render.php:84
 #, php-format
 msgid "Filters (%d)"
 msgstr "Filtros (%d)"
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:85
+#: src/blocks/search/render.php:86
 #, php-format
 msgid "Show %d more"
 msgstr "Mostrar mais %d"
 
-#: src/blocks/search/render.php:86
+#: src/blocks/search/render.php:87
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
-#: src/blocks/search/render.php:281
+#: src/blocks/search/render.php:282
 msgid "Show results"
 msgstr "Ver resultados"
 
@@ -1218,7 +1222,7 @@ msgstr "Mais recentes"
 msgid "Oldest"
 msgstr "Mais antigos"
 
-#: src/blocks/search/render.php:191
+#: src/blocks/search/render.php:192
 msgid "Sort by"
 msgstr "Ordenar por"
 
@@ -1337,15 +1341,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:456
+#: src/includes/class-viglet-dumont-api-client.php:469
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:513
+#: src/includes/class-viglet-dumont-api-client.php:526
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:518
+#: src/includes/class-viglet-dumont-api-client.php:531
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1365,24 +1369,24 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-dumont.php:82
+#: src/viglet-dumont.php:83
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-dumont.php:83
+#: src/viglet-dumont.php:84
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-dumont.php:84
+#: src/viglet-dumont.php:85
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: src/viglet-dumont.php:85
+#: src/viglet-dumont.php:86
 msgid "Catalog copilot"
 msgstr "Copiloto de catálogo"
 
 #. translators: %s: Turing's console address.
-#: src/viglet-dumont.php:98
+#: src/viglet-dumont.php:99
 #, php-format
 msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
 msgstr "Ative a IA generativa deste site SN no console do Turing (%s), nas configurações de IA generativa do site."
@@ -1423,27 +1427,27 @@ msgstr "Verificar de novo"
 msgid "Check AI features"
 msgstr "Verificar recursos de IA"
 
-#: src/blocks/search/render.php:232
+#: src/blocks/search/render.php:233
 msgid "Answer generated from this site"
 msgstr "Resposta gerada a partir deste site"
 
-#: src/blocks/search/render.php:234
+#: src/blocks/search/render.php:235
 msgid "Sources"
 msgstr "Fontes"
 
-#: src/blocks/search/render.php:242
+#: src/blocks/search/render.php:243
 msgid "Was this helpful?"
 msgstr "Isto ajudou?"
 
-#: src/blocks/search/render.php:243
+#: src/blocks/search/render.php:244
 msgid "Yes"
 msgstr "Sim"
 
-#: src/blocks/search/render.php:244
+#: src/blocks/search/render.php:245
 msgid "No"
 msgstr "Não"
 
-#: src/blocks/search/render.php:246
+#: src/blocks/search/render.php:247
 msgid "Thank you."
 msgstr "Obrigado."
 
@@ -1456,7 +1460,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:432
+#: src/includes/class-viglet-dumont-api-client.php:445
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -1500,3 +1504,120 @@ msgstr "Procurar de novo"
 #: src/admin/js/editor-panel.js:101
 msgid "Find related posts"
 msgstr "Encontrar posts relacionados"
+
+#: src/blocks/search/render.php:289
+#: src/blocks/search/render.php:293
+msgid "Featured"
+msgstr "Destaque"
+
+#: src/includes/class-viglet-dumont-admin.php:75
+#: src/includes/class-viglet-dumont-admin.php:87
+msgid "Search tuning"
+msgstr "Ajuste da busca"
+
+#: src/includes/class-viglet-dumont-admin.php:76
+msgid "Tuning"
+msgstr "Ajuste"
+
+#. translators: %s: the SN site's name.
+#: src/includes/class-viglet-dumont-tuning.php:68
+#, php-format
+msgid "Turing has no SN site named %s."
+msgstr "O Turing não tem um site SN chamado %s."
+
+#: src/includes/class-viglet-dumont-tuning.php:128
+msgid "A synonym needs two words or more."
+msgstr "Um sinônimo precisa de duas palavras ou mais."
+
+#: src/includes/class-viglet-dumont-tuning.php:170
+msgid "Name a search and at least one post."
+msgstr "Informe uma busca e pelo menos um post."
+
+#: src/includes/class-viglet-dumont-tuning.php:230
+msgid "Only what this plugin added can be removed here; change the rest in Turing's console."
+msgstr "Só o que este plugin adicionou pode ser removido aqui; altere o resto no console do Turing."
+
+#: assets/admin/tuning.js:37
+msgid "Set in Turing’s console"
+msgstr "Definido no console do Turing"
+
+#: assets/admin/tuning.js:59
+msgid "Synonyms"
+msgstr "Sinônimos"
+
+#: assets/admin/tuning.js:63
+msgid "Words a visitor may type for the same thing. A search for any of them finds posts with the others."
+msgstr "Palavras que um visitante pode digitar para a mesma coisa. Uma busca por qualquer uma delas encontra posts com as outras."
+
+#: assets/admin/tuning.js:73
+msgid "Words"
+msgstr "Palavras"
+
+#. translators: %s: the synonym's words.
+#: assets/admin/tuning.js:91
+#, js-format
+msgid "Remove %s"
+msgstr "Remover %s"
+
+#: assets/admin/tuning.js:123
+msgid "Words that mean the same, separated by commas"
+msgstr "Palavras com o mesmo sentido, separadas por vírgulas"
+
+#: assets/admin/tuning.js:132
+msgid "Add synonym"
+msgstr "Adicionar sinônimo"
+
+#: assets/admin/tuning.js:167
+msgid "Promoted results"
+msgstr "Resultados em destaque"
+
+#: assets/admin/tuning.js:171
+msgid "Up to three posts shown first, as featured, when a visitor searches for these words."
+msgstr "Até três posts mostrados primeiro, em destaque, quando um visitante busca por estas palavras."
+
+#: assets/admin/tuning.js:184
+#: assets/admin/tuning.js:298
+msgid "Shown first"
+msgstr "Mostrados primeiro"
+
+#. translators: %s: the search the posts are promoted for.
+#: assets/admin/tuning.js:207
+#, js-format
+msgid "Remove the promotion for %s"
+msgstr "Remover o destaque para %s"
+
+#: assets/admin/tuning.js:249
+msgid "When visitors search for"
+msgstr "Quando os visitantes buscarem por"
+
+#: assets/admin/tuning.js:259
+msgid "Find a post to show first"
+msgstr "Encontre um post para mostrar primeiro"
+
+#: assets/admin/tuning.js:267
+msgid "Posts found"
+msgstr "Posts encontrados"
+
+#. translators: %s: a post's title.
+#: assets/admin/tuning.js:284
+#, js-format
+msgid "Show %s first"
+msgstr "Mostrar %s primeiro"
+
+#: assets/admin/tuning.js:291
+msgid "Add"
+msgstr "Adicionar"
+
+#. translators: %s: a post's title.
+#: assets/admin/tuning.js:314
+#, js-format
+msgid "Take %s out"
+msgstr "Tirar %s"
+
+#: assets/admin/tuning.js:321
+msgid "Take out"
+msgstr "Tirar"
+
+#: assets/admin/tuning.js:333
+msgid "Promote"
+msgstr "Destacar"

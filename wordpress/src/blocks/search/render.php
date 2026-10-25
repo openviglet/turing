@@ -62,6 +62,7 @@ $viglet_dumont_state = array(
 	'query'         => $viglet_dumont_query,
 	'status'        => 'idle',
 	'results'       => array(),
+	'spotlights'    => array(),
 	'facets'        => array(),
 	'pages'         => array(),
 	'suggestions'   => array(),
@@ -285,6 +286,17 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 		<?php endif; ?>
 
 		<div class="viglet-dumont-search__main">
+			<ol class="viglet-dumont-search__spotlights" aria-label="<?php esc_attr_e( 'Featured', 'viglet-dumont' ); ?>" hidden data-wp-bind--hidden="!state.hasSpotlights">
+				<template data-wp-each--spot="state.spotlights" data-wp-each-key="context.spot.url">
+					<li class="viglet-dumont-search__result viglet-dumont-search__result--featured">
+						<div class="viglet-dumont-search__body">
+							<p class="viglet-dumont-search__meta"><span class="viglet-dumont-search__featured"><?php esc_html_e( 'Featured', 'viglet-dumont' ); ?></span></p>
+							<h2 class="viglet-dumont-search__title"><a data-wp-bind--href="context.spot.url" data-wp-text="context.spot.title"></a></h2>
+							<p class="viglet-dumont-search__snippet" data-wp-text="context.spot.content"></p>
+						</div>
+					</li>
+				</template>
+			</ol>
 			<ol class="viglet-dumont-search__results" data-wp-bind--aria-busy="state.isLoading" data-wp-class--is-loading="state.isLoading">
 				<template data-wp-each--result="state.results">
 					<li class="viglet-dumont-search__result">
