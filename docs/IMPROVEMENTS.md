@@ -2391,3 +2391,48 @@ tables.
   Both reuse the MCP tools' queries, so the two surfaces cannot disagree.
 - Per-term CTR in top terms, once click tracking is recorded (`/click`).
 - Document them in the REST API page and type them in `@viglet/turing-sdk`.
+
+## CXXXII A prefix match for the last term of an as-you-type search (T1120)
+
+**Where it happened.** Dumont's WordPress search block (Dumont D163) updates its results
+while the visitor types, through the SDK's `createSearchController(...).searchQuery(q)`
+(POST `/api/sn/{site}/search/query`). Against the local stack, site Sample, filtered to
+`site_key:localhost`:
+
+- `{"q":"work"}` answers `queryContext.count` 0;
+- `{"q":"work*"}` answers 4, the four "Workshop on ..." posts.
+
+The search matches whole words only, so every instant search for a half-typed word lands
+on "No results found" until the word is complete. Autocomplete already answers prefixes,
+so the two disagree in the same box.
+
+**Workaround.** `wordpress/src/public/search-block.js` `run( query, prefix )` appends
+`*` to the last word of an instant search when it ends in a letter or digit; submitted
+and picked searches stay exact, and the address bar keeps what was typed. It is a guess
+at the query syntax: a phrase, a quoted term or a field query would break it, and a
+wildcard term loses stemming and highlighting weight.
+
+**What Turing should do.** A search parameter (say `prefixLast: true`, or a `matchMode:
+"as-you-type"`) that treats the last term as a prefix server side, with the analyzer and
+highlighting it uses for whole words, plus the same flag on the SDK's `searchQuery`.
+Then the block drops its `*`.
+
+## CXXXIII Abort a superseded search in the SDK controller (T1121)
+
+**Where it happened.** Dumont's WordPress search block (Dumont D163) runs a search about
+300 ms after each pause in typing, through `@viglet/turing-sdk`'s search controller. The
+controller numbers its requests and drops an answer a newer request has overtaken (the
+`if (p !== v) return;` after the `await` in its structured search), so nothing stale is
+rendered. But the superseded `fetch` is never aborted: each pause in a typed sentence
+leaves a full search running on the server and its body downloading, for an answer that
+is thrown away. The chat controller already holds an `AbortController` per request and
+aborts the previous one; search does not.
+
+**Workaround.** None in the block: the 300 ms pause limits how many pile up, and the SDK
+drops their answers.
+
+**What Turing should do.** The search controller creates an `AbortController` per
+request, passes its signal to the client's `fetch`, and aborts the previous one when a
+new `searchQuery`, `searchRequest`, `toggleFacet` or `goToPage` starts, treating the
+abort as neither an error nor a state change. The client's request helpers accept a
+`signal` for callers who drive the calls directly.
