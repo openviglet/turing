@@ -2294,9 +2294,9 @@ each. Cover it with a test that toggles a value on and off.
 with `POST /api/sn/manifest` and nothing else. On a Turing booted with `OPENAI_API_KEY`,
 the first boot creates the default LLM, the default agent and the local embedding store.
 
-**What came back.** `GET /api/sn/Sample/chat?q=...` answers from the site's content (it
-falls back to the default agent), and `/chat/enabled` says `enabled: true, reason:
-NONE`. `GET /api/sn/Sample/answer?q=...` on the same site streams `event:error
+**What came back.** `GET /api/sn/Sample/chat?q=...` answers, but not from the site's
+posts. It (it falls back to the default agent), and `/chat/enabled` says `enabled: true,
+reason: NONE`. `GET /api/sn/Sample/answer?q=...` on the same site streams `event:error
 data:{"message":"AI is not enabled for site: Sample"}`.
 `TurSNAnswerService.composeAnswer` needs `site.getTurSNSiteGenAi()`, and no API a
 connector holds can create one: the manifest request carries fields, locales, weights
