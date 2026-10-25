@@ -63,6 +63,12 @@ class Viglet_Dumont_Settings {
 		'instant_overlay'     => 1,
 		// The full search page the overlay sends Enter to; 0 finds the page holding the block.
 		'search_page'         => 0,
+		// Opt-in: which result a visitor opened, reported to Turing's click-through rates.
+		'track_clicks'        => 0,
+		// Opt-in: the search events, sent to the site's own Google Analytics (gtag or GTM).
+		'analytics_ga'        => 0,
+		// Stamped on each event as send_to; empty sends to whatever the tag is set up for.
+		'ga_measurement_id'   => '',
 	);
 
 	/**

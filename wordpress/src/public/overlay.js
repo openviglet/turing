@@ -10,7 +10,7 @@
  */
 import { getConfig } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
-import { createSiteSearch } from 'viglet-dumont/search';
+import { createSiteSearch, trackResultClick } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
 const { labels, searchPage, queryParam } = getConfig( 'viglet-dumont/overlay' );
@@ -165,6 +165,7 @@ function render( s ) {
 			? labels.found.replace( '%d', String( total ) )
 			: labels.none;
 		results = s.documents.slice( 0, shown ).map( ( d ) => ( {
+			id: String( d.raw?.fields?.id ?? '' ),
 			url: d.url,
 			title: plainText( d.title ) || d.url,
 		} ) );
@@ -204,9 +205,7 @@ function draw() {
 			option.addEventListener( 'mousedown', ( event ) =>
 				event.preventDefault()
 			);
-			option.addEventListener( 'click', () =>
-				window.location.assign( result.url )
-			);
+			option.addEventListener( 'click', () => openResult( i ) );
 			return option;
 		} )
 	);
@@ -243,11 +242,25 @@ function keydown( event ) {
  * Enter: the chosen result, or the full search for what is typed.
  */
 function go() {
-	window.location.assign(
-		active >= 0
-			? results[ active ].url
-			: fullSearchUrl( input.value.trim() )
-	);
+	if ( active >= 0 ) {
+		openResult( active );
+		return;
+	}
+	window.location.assign( fullSearchUrl( input.value.trim() ) );
+}
+
+/**
+ * Open a result, reporting which one it was (when the site counts clicks).
+ *
+ * @param {number} i Its index in the list.
+ */
+function openResult( i ) {
+	trackResultClick( {
+		documentId: results[ i ].id,
+		position: i + 1,
+		term: input.value.trim(),
+	} );
+	window.location.assign( results[ i ].url );
 }
 
 /**

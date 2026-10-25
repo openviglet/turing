@@ -395,6 +395,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 					</div>
 				</div>
+
+				<div class="viglet-dumont-card">
+					<div class="viglet-dumont-card__header">
+						<h2><?php esc_html_e( 'Search Analytics', 'viglet-dumont' ); ?></h2>
+						<p><?php esc_html_e( 'What the search block and the instant search report about the searches visitors make. Events carry the query, the result and its rank, never who the visitor is. With a consent plugin that supports the WP Consent API, nothing is sent until the visitor allows statistics.', 'viglet-dumont' ); ?></p>
+					</div>
+					<div class="viglet-dumont-card__body">
+						<div class="viglet-dumont-toggles">
+							<label class="viglet-dumont-toggle">
+								<input type="checkbox"
+										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[track_clicks]"
+										value="1" <?php checked( $settings['track_clicks'], 1 ); ?> />
+								<span class="viglet-dumont-toggle__slider"></span>
+								<span class="viglet-dumont-toggle__label">
+									<?php esc_html_e( 'Report result clicks to Turing', 'viglet-dumont' ); ?>
+									<small><?php esc_html_e( 'Turing counts which result was opened for each search, for its click-through rates. Turing records them only with search metrics turned on.', 'viglet-dumont' ); ?></small>
+								</span>
+							</label>
+							<label class="viglet-dumont-toggle">
+								<input type="checkbox"
+										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[analytics_ga]"
+										value="1" <?php checked( $settings['analytics_ga'], 1 ); ?> />
+								<span class="viglet-dumont-toggle__slider"></span>
+								<span class="viglet-dumont-toggle__label">
+									<?php esc_html_e( 'Send search events to Google Analytics', 'viglet-dumont' ); ?>
+									<small><?php esc_html_e( 'Searches, searches with no results, refined searches and result clicks, through the Google tag or Tag Manager the site already loads.', 'viglet-dumont' ); ?></small>
+								</span>
+							</label>
+						</div>
+
+						<div class="viglet-dumont-field">
+							<label for="ga_measurement_id"><?php esc_html_e( 'Measurement ID', 'viglet-dumont' ); ?></label>
+							<input type="text" id="ga_measurement_id"
+									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[ga_measurement_id]"
+									value="<?php echo esc_attr( $settings['ga_measurement_id'] ); ?>"
+									placeholder="G-XXXXXXXXXX" spellcheck="false" autocomplete="off" />
+							<p class="description"><?php esc_html_e( 'Optional. Leave it empty to send to whatever the Google tag is set up for.', 'viglet-dumont' ); ?></p>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<!-- Save Button (visible on settings tabs) -->

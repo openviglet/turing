@@ -166,6 +166,8 @@ function viglet_dumont_init(): void {
 }
 add_action( 'init', 'viglet_dumont_init' );
 add_filter( 'wp_robots', array( 'Viglet_Dumont_Native_Search', 'robots' ) );
+// The WP Consent API's handshake: this plugin asks for statistics consent before reporting.
+add_filter( 'wp_consent_api_registered_' . plugin_basename( VIGLET_DUMONT_FILE ), '__return_true' );
 
 /**
  * Point WordPress at the JS translations: `wp i18n make-json` names each file after the

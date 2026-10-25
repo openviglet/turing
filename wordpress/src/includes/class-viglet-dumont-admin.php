@@ -156,6 +156,9 @@ class Viglet_Dumont_Admin {
 		$sanitized['results_per_page']    = max( 1, min( 100, (int) ( $input['results_per_page'] ?? 10 ) ) );
 		$sanitized['instant_overlay']     = ! empty( $input['instant_overlay'] ) ? 1 : 0;
 		$sanitized['search_page']         = max( 0, (int) ( $input['search_page'] ?? 0 ) );
+		$sanitized['track_clicks']        = ! empty( $input['track_clicks'] ) ? 1 : 0;
+		$sanitized['analytics_ga']        = ! empty( $input['analytics_ga'] ) ? 1 : 0;
+		$sanitized['ga_measurement_id']   = Viglet_Dumont_Native_Search::sanitize_measurement_id( (string) ( $input['ga_measurement_id'] ?? '' ) );
 
 		return Viglet_Dumont_Settings::without_overridden( $sanitized );
 	}

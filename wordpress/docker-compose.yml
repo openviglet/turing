@@ -35,6 +35,9 @@ services:
       TURING_STARTUP_DEFAULT_LLM_MODEL: ${TURING_STARTUP_DEFAULT_LLM_MODEL:-gpt-4o-mini}
       # The OpenAI-compatible gateway (/v1/chat/completions), as trabalharei enables it.
       TURING_GATEWAY_ENABLED: "true"
+      # Keep the searches and the result clicks the search block reports (D176); off, Turing
+      # answers the click with 202 and drops it.
+      TURING_SEARCH_METRICS_ENABLED: "true"
     volumes:
       - turing:/app/store
     healthcheck:

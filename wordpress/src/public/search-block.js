@@ -13,6 +13,8 @@ import {
 	createSiteSearch,
 	fetchSpellCheck,
 	siteFilter,
+	trackResultClick,
+	trackSearch,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
@@ -27,6 +29,8 @@ let lastQuery = '';
 let instant = null;
 // The page's own title, which retitle() puts the query in front of.
 let baseTitle = '';
+// A search the visitor settled on, reported once its answer arrives (see sync()).
+let settled = false;
 
 // Each facet as Turing last described it unfiltered, by field (see facets()).
 const facetMemory = new Map();
@@ -333,6 +337,18 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		citationClicked() {
 			answerer?.signal( 'CITATION_CLICKED' );
 		},
+		// A left click, or a middle click opening it in a new tab.
+		resultClicked( event ) {
+			if ( 'auxclick' === event.type && 1 !== event.button ) {
+				return;
+			}
+			const { result } = getContext();
+			trackResultClick( {
+				documentId: result.id,
+				position: result.position,
+				term: lastQuery,
+			} );
+		},
 		sortBy( event ) {
 			state.sort = event.target.value;
 			send( { page: 1 } );
@@ -523,6 +539,7 @@ function focusInput() {
 function run( query, prefix = false ) {
 	const typed = query.trim();
 	lastQuery = typed || '*';
+	settled = ! prefix;
 	state.corrected = '';
 	send( {
 		q: prefix && /[\p{L}\p{N}]$/u.test( typed ) ? `${ typed }*` : lastQuery,
@@ -585,6 +602,7 @@ function readUrl() {
 	state.query = params.get( 'q' ) ?? params.get( 's' ) ?? '';
 	state.sort = params.get( 'sort' ) || 'relevance';
 	lastQuery = state.query.trim() || '*';
+	settled = true;
 	state.corrected = '';
 	send( {
 		q: lastQuery,
@@ -692,13 +710,16 @@ const dateFormat = new Intl.DateTimeFormat(
 /**
  * A result card from one of the SDK's resolved documents.
  *
- * @param {Object} d A ResolvedDocument.
+ * @param {Object} d        A ResolvedDocument.
+ * @param {number} position Its rank in the results, from 1 across pages.
  */
-function card( d ) {
+function card( d, position ) {
 	const fields = d.raw?.fields || {};
 	const at = new Date( fields.publication_date ?? d.date );
 	const valid = d.date || fields.publication_date ? ! isNaN( at ) : false;
 	return {
+		id: String( fields.id ?? '' ),
+		position,
 		url: d.url,
 		title: plain( d.title ) || d.url,
 		type: state.typeLabels[ fields.type ] || fields.type || '',
@@ -843,7 +864,14 @@ function sync( s ) {
 	state.status = s.status;
 	state.error = s.error || '';
 	state.total = response?.queryContext?.count ?? 0;
-	state.results = s.documents.map( card );
+	const offset =
+		( Math.max( 1, Number( s.request?.page ) || 1 ) - 1 ) *
+		( Number( s.request?.rows ) || state.perPage );
+	state.results = s.documents.map( ( d, i ) => card( d, offset + i + 1 ) );
+	if ( settled && 'success' === s.status ) {
+		settled = false;
+		trackSearch( lastQuery, state.total );
+	}
 	// Promoted results (Search tuning, D172): set for the query in Turing, shown first.
 	state.spotlights = ( response?.spotlights || [] )
 		.filter( ( spot ) => spot.url )

@@ -95,6 +95,25 @@ Turing's public URL, the SN site, the locale, the site key (filter on `site_key`
 mapped facets. It holds no key. For the browser to call Turing, the SN site must allow the
 WordPress origin in Turing's CORS settings (`TURING_ALLOWEDORIGINS` in a container).
 
+### Search analytics
+
+Two opt-in settings under Search, both off on a fresh install:
+
+- **Report result clicks to Turing**: the block and the instant search send each opened
+  result (query, document id, rank) to `POST /api/sn/{site}/click`, with `keepalive` so the
+  navigation never waits for it. Turing keeps clicks only with search metrics on
+  (`TURING_SEARCH_METRICS_ENABLED=true`).
+- **Send search events to Google Analytics**: searches the visitor settled on (not each
+  as-you-type one), no-result searches, refinements and result clicks, as the SDK's
+  `turing_search*` events through the Google tag or Tag Manager the site already loads.
+  The measurement id is optional.
+
+Events carry no visitor data, and the plugin sets no cookie. With a consent plugin that
+speaks the WP Consent API, nothing is sent until the visitor allows `statistics`. Without
+one, the site decides: `add_filter( 'viglet_dumont_tracking_consent', '__return_false' );`
+sends nothing at all. A theme's own blocks report the same way through `trackSearch()` and
+`trackResultClick()` from `viglet-dumont/search`.
+
 ## Develop
 
 PHP 8.1+ and Composer:

@@ -133,6 +133,10 @@ update_option(
 $settings                   = get_option( 'viglet_dumont_settings', array() );
 $settings['search_enabled'] = 1;
 $settings['search_mode']    = 'theme';
+// Search analytics (site/analytics.spec.mjs): clicks to Turing, events to a stubbed gtag.
+$settings['track_clicks']      = 1;
+$settings['analytics_ga']      = 1;
+$settings['ga_measurement_id'] = 'G-E2ETEST';
 update_option( 'viglet_dumont_settings', $settings );
 
 echo wp_json_encode(

@@ -7,6 +7,7 @@
 
 namespace Viglet\Dumont\Tests;
 
+use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use Viglet_Dumont_Native_Search;
 use WP_Error;
@@ -159,5 +160,48 @@ final class NativeSearchTest extends PluginTestCase {
 			$config['facets']
 		);
 		$this->assertStringNotContainsString( 'secret', (string) json_encode( $config ) );
+		$this->assertArrayNotHasKey( 'analytics', $config, 'a site that reports nothing says nothing about it' );
+	}
+
+	public function test_analytics_say_what_is_reported_and_whether_consent_comes_first(): void {
+		$both = new Viglet_Dumont_Native_Search(
+			$this->settings(
+				array(
+					'track_clicks'      => 1,
+					'analytics_ga'      => 1,
+					'ga_measurement_id' => 'G-ABC123',
+				)
+			)
+		);
+		// Without a consent plugin, turning reporting on is the site's answer.
+		$this->assertSame(
+			array(
+				'clicks'         => true,
+				'ga'             => true,
+				'measurementId'  => 'G-ABC123',
+				'requireConsent' => false,
+			),
+			$both->analytics()
+		);
+
+		Filters\expectApplied( 'viglet_dumont_tracking_consent' )->andReturn( false );
+		$this->assertTrue( $both->analytics()['requireConsent'], 'the filter can make every visitor say yes first' );
+
+		$clicks = new Viglet_Dumont_Native_Search(
+			$this->settings(
+				array(
+					'track_clicks'      => 1,
+					'ga_measurement_id' => 'G-ABC123',
+				)
+			)
+		);
+		$this->assertSame( '', $clicks->analytics()['measurementId'], 'no measurement without the Google Analytics sink' );
+		$this->assertNull( $this->search()->analytics() );
+	}
+
+	public function test_only_a_ga4_measurement_id_is_kept(): void {
+		$this->assertSame( 'G-ABC123XYZ', Viglet_Dumont_Native_Search::sanitize_measurement_id( ' g-abc123xyz ' ) );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_measurement_id( 'UA-1234-1' ) );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_measurement_id( 'G-"><script>' ) );
 	}
 }

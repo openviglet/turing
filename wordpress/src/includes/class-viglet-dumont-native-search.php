@@ -392,7 +392,11 @@ class Viglet_Dumont_Native_Search {
 	 * What a browser needs to search this site through Turing itself: never the API key.
 	 * Facets are the mapped fields marked as facets, with their labels and types.
 	 *
-	 * @return array{url: string, site: string, locale: string, siteKey: string, facets: array<int, array{field: string, label: string, type: string, multi: bool}>}
+	 * `analytics` is there only when the site reports something: whether clicks go to Turing,
+	 * whether events go to Google Analytics (and which measurement), and whether the visitor's
+	 * statistics consent is needed first (see analytics()).
+	 *
+	 * @return array{url: string, site: string, locale: string, siteKey: string, facets: array<int, array{field: string, label: string, type: string, multi: bool}>, analytics?: array{clicks: bool, ga: bool, measurementId: string, requireConsent: bool}}
 	 */
 	public function public_config(): array {
 		$facets = array();
@@ -409,12 +413,63 @@ class Viglet_Dumont_Native_Search {
 			}
 		}
 
-		return array(
+		$config    = array(
 			'url'     => untrailingslashit( '' !== (string) $this->settings['public_url'] ? $this->settings['public_url'] : $this->settings['server_url'] ),
 			'site'    => (string) $this->settings['site_name'],
 			'locale'  => (string) $this->settings['locale'],
 			'siteKey' => ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key(),
 			'facets'  => array_values( $facets ),
 		);
+		$analytics = $this->analytics();
+		if ( null !== $analytics ) {
+			$config['analytics'] = $analytics;
+		}
+
+		return $config;
+	}
+
+	/**
+	 * What the browser reports about searches, or null when the site reports nothing.
+	 *
+	 * Events carry the query, a document id and a rank: nothing about the visitor, and no
+	 * cookie of the plugin's is set. Even so, nothing is sent before the visitor allows statistics. A consent
+	 * plugin speaking the WP Consent API answers that in the browser; without one the
+	 * `viglet_dumont_tracking_consent` filter does, and turning reporting on counts as the
+	 * site's answer unless the filter says otherwise.
+	 *
+	 * @return array{clicks: bool, ga: bool, measurementId: string, requireConsent: bool}|null
+	 */
+	public function analytics(): ?array {
+		$clicks = ! empty( $this->settings['track_clicks'] );
+		$ga     = ! empty( $this->settings['analytics_ga'] );
+		if ( ! $clicks && ! $ga ) {
+			return null;
+		}
+
+		/**
+		 * Filters whether visitors count as consenting to statistics when no consent plugin
+		 * speaks the WP Consent API. Ignored when one does: the visitor's choice decides.
+		 *
+		 * @param bool $consent False to send nothing until a consent plugin is installed.
+		 */
+		$consent = (bool) apply_filters( 'viglet_dumont_tracking_consent', true );
+
+		return array(
+			'clicks'         => $clicks,
+			'ga'             => $ga,
+			'measurementId'  => $ga ? (string) $this->settings['ga_measurement_id'] : '',
+			'requireConsent' => function_exists( 'wp_has_consent' ) || ! $consent,
+		);
+	}
+
+	/**
+	 * A GA4 measurement id (`G-` and letters or digits), upper-cased; anything else is empty.
+	 *
+	 * @param string $id What was typed.
+	 */
+	public static function sanitize_measurement_id( string $id ): string {
+		$id = strtoupper( trim( $id ) );
+
+		return 1 === preg_match( '/^G-[A-Z0-9]{4,20}$/', $id ) ? $id : '';
 	}
 }
