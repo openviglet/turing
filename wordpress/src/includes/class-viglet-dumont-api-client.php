@@ -182,6 +182,31 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * What provisioning a manifest would change, without changing it (`POST /api/sn/manifest/plan`).
+	 *
+	 * @param array $manifest `{name, locales, fields}` as Turing's manifest binds it.
+	 * @return array|WP_Error The plan: `fieldsToAdd`, `fieldsUnchanged`, `breakingChanges`, ...
+	 */
+	public function plan( array $manifest ) {
+		$response = $this->request( 'POST', '/api/sn/manifest/plan', null, $manifest );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+		if ( $code < 200 || $code >= 300 || ! is_array( $body ) ) {
+			return new WP_Error(
+				'plan_failed',
+				/* translators: %d: the HTTP status code Turing answered with. */
+				sprintf( __( 'Turing could not plan the fields (HTTP %d).', 'viglet-dumont' ), $code )
+			);
+		}
+
+		return $body;
+	}
+
+	/**
 	 * Delete documents from Turing index.
 	 *
 	 * @param array $job_items Array of TurSNJobItem-compatible arrays with DELETE action.

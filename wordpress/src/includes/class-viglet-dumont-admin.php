@@ -48,12 +48,27 @@ class Viglet_Dumont_Admin {
 		);
 		add_submenu_page(
 			'viglet-dumont',
+			__( 'Search fields', 'viglet-dumont' ),
+			__( 'Fields', 'viglet-dumont' ),
+			'manage_options',
+			'viglet-dumont-fields',
+			array( $this, 'render_fields_page' )
+		);
+		add_submenu_page(
+			'viglet-dumont',
 			__( 'Search health', 'viglet-dumont' ),
 			__( 'Health', 'viglet-dumont' ),
 			'manage_options',
 			'viglet-dumont-health',
 			array( $this, 'render_health_page' )
 		);
+	}
+
+	/**
+	 * The Fields page: a mount point for the app in admin/build/mapping.js.
+	 */
+	public function render_fields_page(): void {
+		echo '<div class="wrap"><h1>' . esc_html__( 'Search fields', 'viglet-dumont' ) . '</h1><div id="viglet-dumont-mapping"></div></div>';
 	}
 
 	/**
@@ -114,8 +129,12 @@ class Viglet_Dumont_Admin {
 	 * @param string $hook The current admin page's hook suffix.
 	 */
 	public function enqueue_assets( string $hook ): void {
-		if ( 'viglet-dumont_page_viglet-dumont-health' === $hook ) {
-			$this->enqueue_build( 'health' );
+		$builds = array(
+			'viglet-dumont_page_viglet-dumont-health' => 'health',
+			'viglet-dumont_page_viglet-dumont-fields' => 'mapping',
+		);
+		if ( isset( $builds[ $hook ] ) ) {
+			$this->enqueue_build( $builds[ $hook ] );
 			return;
 		}
 		if ( 'toplevel_page_viglet-dumont' !== $hook ) {

@@ -266,6 +266,99 @@ class Viglet_Dumont_Mapping {
 	}
 
 	/**
+	 * Where each manifest field stands in Turing, from the manifest's plan: `provisioned`
+	 * (Turing has it as declared), `pending` (the next send adds it) or `conflict` (Turing
+	 * holds it with another type or cardinality, so it is refused until renamed or migrated).
+	 *
+	 * @param Viglet_Dumont_API_Client $client The client to plan through.
+	 * @return array<string, array{status: string, detail: string}>|WP_Error
+	 */
+	public function field_status( Viglet_Dumont_API_Client $client ) {
+		$plan = $client->plan( $this->manifest() );
+		if ( is_wp_error( $plan ) ) {
+			return $plan;
+		}
+
+		$status = array();
+		foreach ( (array) ( $plan['fieldsUnchanged'] ?? array() ) as $name ) {
+			$status[ (string) $name ] = array(
+				'status' => 'provisioned',
+				'detail' => '',
+			);
+		}
+		foreach ( (array) ( $plan['fieldsToAdd'] ?? array() ) as $name ) {
+			$status[ (string) $name ] = array(
+				'status' => 'pending',
+				'detail' => '',
+			);
+		}
+		foreach ( (array) ( $plan['breakingChanges'] ?? array() ) as $change ) {
+			$status[ (string) ( $change['field'] ?? '' ) ] = array(
+				'status' => 'conflict',
+				'detail' => sprintf(
+					/* translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares. */
+					__( '%1$s is %2$s in Turing, %3$s here', 'viglet-dumont' ),
+					(string) ( $change['attribute'] ?? '' ),
+					(string) ( $change['liveValue'] ?? '' ),
+					(string) ( $change['manifestValue'] ?? '' )
+				),
+			);
+		}
+
+		return $status;
+	}
+
+	/**
+	 * The sources a post type's posts can be mapped from: its taxonomies, the meta keys its
+	 * posts carry (protected `_` keys left out), the core fields and the featured image.
+	 *
+	 * @param string $post_type The post type.
+	 * @return array<int, array{source: string, label: string}>
+	 */
+	public static function sources( string $post_type ): array {
+		global $wpdb;
+
+		$sources = array();
+		foreach ( get_object_taxonomies( $post_type, 'objects' ) as $taxonomy ) {
+			$sources[] = array(
+				'source' => 'taxonomy:' . $taxonomy->name,
+				/* translators: %s: the taxonomy's name. */
+				'label'  => sprintf( __( 'Taxonomy: %s', 'viglet-dumont' ), $taxonomy->label ),
+			);
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- a distinct over postmeta, read only on the mapping screen.
+		$keys = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT pm.meta_key FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE p.post_type = %s AND pm.meta_key NOT LIKE %s ORDER BY pm.meta_key LIMIT 200",
+				$post_type,
+				$wpdb->esc_like( '_' ) . '%'
+			)
+		);
+		foreach ( (array) $keys as $key ) {
+			$sources[] = array(
+				'source' => 'meta:' . $key,
+				/* translators: %s: the meta key. */
+				'label'  => sprintf( __( 'Meta: %s', 'viglet-dumont' ), $key ),
+			);
+		}
+
+		foreach ( self::CORE_SOURCES as $core ) {
+			$sources[] = array(
+				'source' => 'core:' . $core,
+				/* translators: %s: the core field, e.g. excerpt. */
+				'label'  => sprintf( __( 'Post: %s', 'viglet-dumont' ), $core ),
+			);
+		}
+		$sources[] = array(
+			'source' => 'thumbnail',
+			'label'  => __( 'Featured image URL', 'viglet-dumont' ),
+		);
+
+		return $sources;
+	}
+
+	/**
 	 * The mapping a post type gets when nothing is stored: its public custom taxonomies.
 	 *
 	 * @param string $post_type The post type.

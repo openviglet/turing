@@ -4,8 +4,8 @@
   "description": "The plugin's admin screens, built with @wordpress/scripts into src/admin/build/.",
   "license": "MIT",
   "scripts": {
-    "build": "wp-scripts build assets/admin/health.js --output-path=src/admin/build",
-    "start": "wp-scripts start assets/admin/health.js --output-path=src/admin/build",
+    "build": "wp-scripts build assets/admin/health.js assets/admin/mapping.js --output-path=src/admin/build",
+    "start": "wp-scripts start assets/admin/health.js assets/admin/mapping.js --output-path=src/admin/build",
     "lint:js": "wp-scripts lint-js assets/admin"
   },
   "devDependencies": {

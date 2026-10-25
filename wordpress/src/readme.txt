@@ -66,6 +66,10 @@ Navigation site and replaces the WordPress search page with Turing's results.
   with the same state, "Exclude from search" and "Reindex now".
 * A Health page (Viglet Dumont > Health) shows the connection, published versus indexed
   documents per type, the queue and its last run, with "Retry failed" and "Send queue now".
+* A Fields page (Viglet Dumont > Fields) edits the field mapping per post type, from the
+  taxonomies and custom fields the posts actually carry. It shows whether Turing has each
+  field, is about to add it, or holds it with another type, previews the document a real
+  post produces, and saving sends the fields to Turing.
 * Requires WordPress 6.6: the admin screens are built with @wordpress/scripts, whose JSX
   runtime script ships with 6.6.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting

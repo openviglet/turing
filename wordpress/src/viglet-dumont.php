@@ -337,6 +337,18 @@ function viglet_dumont_register_rest_routes(): void {
 
 	register_rest_route(
 		'viglet-dumont/v1',
+		'/mapping/preview',
+		array(
+			'methods'             => 'GET',
+			'callback'            => 'viglet_dumont_rest_preview_mapping',
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
 		'/provision',
 		array(
 			'methods'             => 'POST',
@@ -403,13 +415,58 @@ function viglet_dumont_rest_ping(): WP_REST_Response {
  * REST: The field mapping in effect, plus the manifest it provisions. This is the JSON export.
  */
 function viglet_dumont_rest_get_mapping(): WP_REST_Response {
-	$mapping = new Viglet_Dumont_Mapping();
+	$settings = viglet_dumont_get_settings();
+	$mapping  = new Viglet_Dumont_Mapping( $settings );
+	$status   = $mapping->field_status( new Viglet_Dumont_API_Client( $settings ) );
+	$all      = $mapping->all();
+
+	$sources = array();
+	foreach ( array_keys( $all ) as $post_type ) {
+		$sources[ $post_type ] = Viglet_Dumont_Mapping::sources( $post_type );
+	}
 
 	return new WP_REST_Response(
 		array(
-			'mapping'     => $mapping->all(),
-			'manifest'    => $mapping->manifest(),
-			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
+			'mapping'      => $all,
+			'manifest'     => $mapping->manifest(),
+			'provisioned'  => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
+			'field_status' => is_wp_error( $status ) ? null : $status,
+			'status_error' => is_wp_error( $status ) ? $status->get_error_message() : '',
+			'sources'      => $sources,
+			'types'        => Viglet_Dumont_Mapping::TYPES,
+		),
+		200
+	);
+}
+
+/**
+ * REST: The document the newest published post of a type becomes, as it would be sent.
+ *
+ * @param WP_REST_Request $request Carries `post_type`.
+ */
+function viglet_dumont_rest_preview_mapping( WP_REST_Request $request ): WP_REST_Response {
+	$post_type = sanitize_key( (string) $request->get_param( 'post_type' ) );
+	$posts     = get_posts(
+		array(
+			'post_type'   => $post_type,
+			'post_status' => 'publish',
+			'numberposts' => 1,
+			'orderby'     => 'modified',
+		)
+	);
+	if ( empty( $posts ) ) {
+		return new WP_REST_Response( array( 'message' => __( 'No published post of this type to preview.', 'viglet-dumont' ) ), 404 );
+	}
+
+	$item = ( new Viglet_Dumont_Indexer() )->build_create_item( $posts[0] );
+
+	return new WP_REST_Response(
+		array(
+			'post'     => array(
+				'id'    => $posts[0]->ID,
+				'title' => $posts[0]->post_title,
+			),
+			'document' => $item['attributes'],
 		),
 		200
 	);

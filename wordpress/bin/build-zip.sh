@@ -23,10 +23,12 @@ if [ $# -gt 0 ] && [ "$1" != "$version" ]; then
     exit 1
 fi
 
-if [ ! -f src/admin/build/health.asset.php ]; then
-    echo "src/admin/build/ is empty: run npm ci && npm run build first" >&2
-    exit 1
-fi
+for entry in health mapping; do
+    if [ ! -f "src/admin/build/$entry.asset.php" ]; then
+        echo "src/admin/build/$entry is missing: run npm ci && npm run build first" >&2
+        exit 1
+    fi
+done
 
 rm -rf build
 mkdir -p build/viglet-dumont

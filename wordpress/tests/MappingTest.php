@@ -337,6 +337,39 @@ final class MappingTest extends PluginTestCase {
 		$this->assertSame( array( 'site_key' ), array_column( $this->body()['fields'], 'name' ) );
 	}
 
+	public function test_the_plan_says_where_each_field_stands(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode(
+						array(
+							'fieldsUnchanged' => array( 'site_key' ),
+							'fieldsToAdd'     => array( 'seats' ),
+							'breakingChanges' => array(
+								array(
+									'field'         => 'area',
+									'attribute'     => 'type',
+									'liveValue'     => 'TEXT',
+									'manifestValue' => 'STRING',
+								),
+							),
+						)
+					),
+				);
+			}
+		);
+
+		$status = $this->mapping()->field_status( new Viglet_Dumont_API_Client( $this->settings() ) );
+
+		$this->assertStringEndsWith( '/api/sn/manifest/plan', $this->requests[0][0] );
+		$this->assertSame( 'provisioned', $status['site_key']['status'] );
+		$this->assertSame( 'pending', $status['seats']['status'] );
+		$this->assertSame( 'conflict', $status['area']['status'] );
+		$this->assertSame( 'type is TEXT in Turing, STRING here', $status['area']['detail'] );
+	}
+
 	public function test_an_excluded_type_or_post_is_not_indexed(): void {
 		$indexer = new Viglet_Dumont_Indexer( $this->settings() );
 		$this->assertTrue( $indexer->should_index( $this->post ) );
