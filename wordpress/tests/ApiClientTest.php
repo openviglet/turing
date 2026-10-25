@@ -36,6 +36,12 @@ final class ApiClientTest extends PluginTestCase {
 		);
 	}
 
+	public function test_filters_are_sent_as_a_repeated_fq_parameter(): void {
+		( new Viglet_Dumont_API_Client( $this->settings() ) )->search( 'x', 1, 10, array( 'fq[]' => array( 'site_key:a', 'type:post' ) ) );
+
+		$this->assertStringEndsWith( '&fq%5B%5D=site_key%3Aa&fq%5B%5D=type%3Apost', $this->requests[0][0] );
+	}
+
 	public function test_an_import_answered_with_an_error_status_is_a_failure(): void {
 		$this->status = 422;
 

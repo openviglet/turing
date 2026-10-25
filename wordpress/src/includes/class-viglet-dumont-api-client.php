@@ -312,8 +312,16 @@ class Viglet_Dumont_API_Client {
 	private function request( string $method, string $path, ?array $query = null, ?array $body = null ) {
 		$url = $this->server_url . $path;
 
+		// Turing reads filters as a repeated `fq[]`, which add_query_arg cannot spell: it
+		// writes an array as `fq[][0]=`. So they are appended by hand.
+		$filters = (array) ( $query['fq[]'] ?? array() );
+		unset( $query['fq[]'] );
+
 		if ( $query ) {
 			$url = add_query_arg( $query, $url );
+		}
+		foreach ( $filters as $filter ) {
+			$url .= ( str_contains( $url, '?' ) ? '&' : '?' ) . 'fq%5B%5D=' . rawurlencode( (string) $filter );
 		}
 
 		$args = array(

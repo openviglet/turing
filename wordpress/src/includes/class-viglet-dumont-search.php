@@ -88,30 +88,46 @@ class Viglet_Dumont_Search {
 	}
 
 	/**
-	 * Parse Turing search response into template data.
+	 * Parse Turing search response into template data. Public so its reading of the response
+	 * shape is tested on its own.
 	 *
 	 * @param array $response The decoded Turing search response.
 	 * @param array $data     The template data to fill.
 	 */
-	private function parse_results( array $response, array $data ): array {
+	public function parse_results( array $response, array $data ): array {
+		// Only the documents sit under `results`; `queryContext` and `widget` are top-level.
 		if ( isset( $response['results']['document'] ) ) {
 			$data['results'] = $response['results']['document'];
 		}
 
-		if ( isset( $response['results']['queryContext']['count'] ) ) {
-			$data['total'] = (int) $response['results']['queryContext']['count'];
+		if ( isset( $response['queryContext']['count'] ) ) {
+			$data['total'] = (int) $response['queryContext']['count'];
 		}
 
 		$data['total_pages'] = $data['total'] > 0
 			? (int) ceil( $data['total'] / $data['per_page'] )
 			: 0;
 
-		if ( isset( $response['results']['widget']['facet'] ) ) {
-			$data['facets'] = $response['results']['widget']['facet'];
+		// The template reads `label` and `facetValues[]` of {label, count, link}, where `link`
+		// is the filter query a click adds; Turing names those `label.text` and `facets[]`.
+		foreach ( (array) ( $response['widget']['facet'] ?? array() ) as $facet ) {
+			$data['facets'][] = array(
+				'name'        => $facet['name'] ?? '',
+				'label'       => $facet['label']['text'] ?? ( $facet['name'] ?? '' ),
+				'facetValues' => array_map(
+					static fn ( $value ) => array(
+						'label' => $value['label'] ?? '',
+						'count' => $value['count'] ?? 0,
+						'link'  => $value['filterQuery'] ?? '',
+					),
+					(array) ( $facet['facets'] ?? array() )
+				),
+			);
 		}
 
-		if ( isset( $response['results']['widget']['spellCheck']['correctedText'] ) ) {
-			$data['did_you_mean'] = $response['results']['widget']['spellCheck']['correctedText'];
+		// `correctedText` is a flag; the suggestion is `corrected.text`.
+		if ( ! empty( $response['widget']['spellCheck']['correctedText'] ) ) {
+			$data['did_you_mean'] = (string) ( $response['widget']['spellCheck']['corrected']['text'] ?? '' );
 		}
 
 		return $data;

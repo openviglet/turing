@@ -261,7 +261,7 @@ class Viglet_Dumont_Indexer {
 				}
 			}
 
-			$total = (int) ( $response['results']['queryContext']['count'] ?? 0 );
+			$total = (int) ( $response['queryContext']['count'] ?? 0 );
 			if ( count( $documents ) < $rows || count( $ids ) >= $total ) {
 				break;
 			}

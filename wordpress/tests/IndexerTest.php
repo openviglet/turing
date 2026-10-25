@@ -156,9 +156,9 @@ final class IndexerTest extends PluginTestCase {
 					$ids  = $held[ $key ] ?? array();
 					$body = json_encode(
 						array(
-							'results' => array(
-								'queryContext' => array( 'count' => count( $ids ) ),
-								'document'     => array_map( static fn ( $id ) => array( 'fields' => array( 'id' => $id ) ), $ids ),
+							'queryContext' => array( 'count' => count( $ids ) ),
+							'results'      => array(
+								'document' => array_map( static fn ( $id ) => array( 'fields' => array( 'id' => $id ) ), $ids ),
 							),
 						)
 					);
