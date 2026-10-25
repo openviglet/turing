@@ -1,4 +1,9 @@
 /* The Turing search block. Layout only: colours and type come from the theme. */
+
+/* The directives toggle `hidden`; a display rule below must never override it. */
+.viglet-dumont-search [hidden] {
+	display: none !important;
+}
 .viglet-dumont-search__form {
 	display: flex;
 	flex-wrap: wrap;
