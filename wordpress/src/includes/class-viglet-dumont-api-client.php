@@ -371,6 +371,72 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * The documents most like one already in the index (`/search/similar`): semantic on a
+	 * site with vectors, lexical otherwise.
+	 *
+	 * @param string $doc_id The indexed document's id.
+	 * @param int    $rows   How many.
+	 * @return array<int, array{id: string, title: string, url: string}>|WP_Error An empty list when the id is not indexed.
+	 */
+	public function similar( string $doc_id, int $rows = 5 ) {
+		$response = $this->request(
+			'GET',
+			'/api/sn/' . rawurlencode( $this->site_name ) . '/search/similar',
+			array(
+				'id'         => $doc_id,
+				'rows'       => $rows,
+				'_setlocale' => $this->locale,
+			)
+		);
+
+		return $this->decoded( $response );
+	}
+
+	/**
+	 * The documents near-identical to one already in the index (`/search/duplicates`), as a
+	 * cluster; on a site without vectors the cluster is the document alone.
+	 *
+	 * @param string $doc_id The indexed document's id.
+	 * @return array{duplicate?: bool, members?: array<int, array>}|WP_Error
+	 */
+	public function duplicates( string $doc_id ) {
+		$response = $this->request(
+			'GET',
+			'/api/sn/' . rawurlencode( $this->site_name ) . '/search/duplicates',
+			array(
+				'id'         => $doc_id,
+				'_setlocale' => $this->locale,
+			)
+		);
+
+		return $this->decoded( $response );
+	}
+
+	/**
+	 * A JSON answer as an array: an error for a failed request, an empty array for a 404
+	 * (Turing's "not in the index").
+	 *
+	 * @param array|WP_Error $response The response.
+	 * @return array|WP_Error
+	 */
+	private function decoded( $response ) {
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		if ( 404 === $code ) {
+			return array();
+		}
+		if ( $code < 200 || $code >= 300 ) {
+			/* translators: %d: the HTTP status Turing answered with. */
+			return new WP_Error( 'viglet_dumont_http', sprintf( __( 'Turing answered HTTP %d.', 'viglet-dumont' ), $code ) );
+		}
+		$decoded = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+
+		return is_array( $decoded ) ? $decoded : array();
+	}
+
+	/**
 	 * Which of Turing's AI features this SN site can use (D169), each with the reason when it
 	 * is off. Chat and the catalog copilot have a probe; answer and natural-language filters
 	 * do not (Turing T1123), so this reads the start of an answer stream and parses a short

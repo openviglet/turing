@@ -419,7 +419,7 @@ class Viglet_Dumont_Indexer {
 	 *
 	 * @param int $post_id The post.
 	 */
-	private function build_doc_id( int $post_id ): string {
+	public function build_doc_id( int $post_id ): string {
 		return $this->site_key() . ':post:' . $post_id;
 	}
 

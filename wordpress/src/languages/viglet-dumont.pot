@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T17:16:32+00:00\n"
+"POT-Creation-Date: 2026-10-25T17:31:42+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -37,7 +37,7 @@ msgstr ""
 #: src/blocks/search/render.php:158
 #: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
-#: src/admin/js/editor-panel.js:67
+#: src/admin/js/editor-panel.js:151
 #: src/admin/js/search-block-editor.js:42
 msgid "Search"
 msgstr ""
@@ -596,15 +596,21 @@ msgstr ""
 msgid "Invalid JSON response from server"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:390
+#. translators: %d: the HTTP status Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:432
+#, php-format
+msgid "Turing answered HTTP %d."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:456
 msgid "Turing did not answer."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:447
+#: src/includes/class-viglet-dumont-api-client.php:513
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:452
+#: src/includes/class-viglet-dumont-api-client.php:518
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
@@ -896,7 +902,7 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:69
 #: src/includes/class-viglet-dumont-post-state.php:77
 #: assets/admin/health.js:391
-#: src/admin/js/editor-panel.js:58
+#: src/admin/js/editor-panel.js:142
 msgid "Failed"
 msgstr ""
 
@@ -914,7 +920,8 @@ msgstr ""
 msgid "Not indexed yet"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:174
+#: src/includes/class-viglet-dumont-post-state.php:239
+#: src/includes/class-viglet-dumont-post-state.php:253
 msgid "No such post."
 msgstr ""
 
@@ -1320,23 +1327,63 @@ msgstr ""
 msgid "Index everything now"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:42
-msgid "Unknown"
-msgstr ""
-
-#: src/admin/js/editor-panel.js:69
-msgid "Checking…"
+#: src/admin/js/editor-panel.js:73
+msgid "Add a link to"
 msgstr ""
 
 #: src/admin/js/editor-panel.js:74
+msgid "Add a link"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:80
+msgid "Assist"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:83
+msgid "Already covered?"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:86
+msgid "Nothing on the site looks like this post."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:87
+msgid "Link ideas"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:90
+msgid "No related posts yet."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:93
+msgid "Compared by title: once this post is indexed, Turing compares the whole text."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:101
+msgid "Look again"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:101
+msgid "Find related posts"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:126
+msgid "Unknown"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:153
+msgid "Checking…"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:158
 msgid "Exclude from search"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:75
+#: src/admin/js/editor-panel.js:159
 msgid "Takes effect when the post is saved."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:88
+#: src/admin/js/editor-panel.js:172
 msgid "Reindex now"
 msgstr ""
 

@@ -45,6 +45,118 @@ final class PostStateTest extends PluginTestCase {
 		);
 	}
 
+	/**
+	 * Answer each Turing path with its body; anything else is a 404.
+	 *
+	 * @param array<string, string> $bodies Path fragment to JSON body.
+	 */
+	private function turing( array $bodies ): void {
+		Functions\when( 'wp_strip_all_tags' )->alias( 'strip_tags' );
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) use ( $bodies ) {
+				$this->requests[] = array( $url, $args );
+				foreach ( $bodies as $path => $body ) {
+					if ( str_contains( $url, $path ) ) {
+						return array(
+							'response' => array( 'code' => 200 ),
+							'body'     => $body,
+						);
+					}
+				}
+				return array(
+					'response' => array( 'code' => 404 ),
+					'body'     => '',
+				);
+			}
+		);
+	}
+
+	public function test_assist_compares_an_indexed_post_by_turings_similar_and_duplicate_searches(): void {
+		$this->turing(
+			array(
+				'/search/similar'    => json_encode(
+					array(
+						array(
+							'id'    => 'site.example.org:post:7',
+							'title' => 'Workshop on <mark>facets</mark>',
+							'url'   => 'https://site.example.org/?p=7',
+						),
+						array(
+							'id'    => 'site.example.org:post:42',
+							'title' => 'This post',
+							'url'   => 'https://site.example.org/?p=42',
+						),
+					)
+				),
+				'/search/duplicates' => json_encode(
+					array(
+						'duplicate' => true,
+						'members'   => array(
+							array(
+								'id'    => 'site.example.org:post:42',
+								'title' => 'This post',
+								'url'   => 'https://site.example.org/?p=42',
+							),
+							array(
+								'id'    => 'site.example.org:post:9',
+								'title' => 'The same, again',
+								'url'   => 'https://site.example.org/?p=9',
+							),
+						),
+					)
+				),
+			)
+		);
+
+		$assist = ( new Viglet_Dumont_Post_State( $this->settings() ) )->assist( $this->post );
+
+		$this->assertSame( 'similar', $assist['basis'] );
+		$this->assertSame(
+			array(
+				array(
+					'title' => 'Workshop on facets',
+					'url'   => 'https://site.example.org/?p=7',
+				),
+			),
+			$assist['links'],
+			'the post itself is never suggested, and the highlight is dropped'
+		);
+		$this->assertSame( 'The same, again', $assist['covered'][0]['title'] );
+		$this->assertStringContainsString( 'id=site.example.org%3Apost%3A42', $this->requests[0][0] );
+	}
+
+	public function test_assist_compares_a_draft_not_yet_indexed_by_its_title(): void {
+		$this->post->post_title = 'Workshop on facets';
+		$this->turing(
+			array(
+				'/search?' => json_encode(
+					array(
+						'results' => array(
+							'document' => array(
+								array(
+									'fields' => array(
+										'id'    => 'site.example.org:post:7',
+										'title' => 'Workshop on facets',
+										'url'   => 'https://site.example.org/?p=7',
+									),
+								),
+							),
+						),
+					)
+				),
+			)
+		);
+
+		$assist = ( new Viglet_Dumont_Post_State( $this->settings() ) )->assist( $this->post );
+
+		$this->assertSame( 'title', $assist['basis'] );
+		$this->assertSame( 'https://site.example.org/?p=7', $assist['covered'][0]['url'] );
+		$this->assertSame( $assist['covered'], $assist['links'] );
+		$search = end( $this->requests )[0];
+		$this->assertStringContainsString( 'q=Workshop+on+facets', $search );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite.example.org', $search );
+	}
+
 	private function describe(): array {
 		return ( new Viglet_Dumont_Post_State( $this->settings() ) )->describe( $this->post );
 	}

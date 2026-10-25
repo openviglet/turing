@@ -130,7 +130,7 @@ class Viglet_Dumont_Post_State {
 		wp_enqueue_script(
 			'viglet-dumont-editor',
 			VIGLET_DUMONT_URL . 'admin/js/editor-panel.js',
-			array( 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n' ),
+			array( 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n', 'wp-blocks', 'wp-block-editor', 'wp-escape-html' ),
 			VIGLET_DUMONT_VERSION,
 			true
 		);
@@ -138,7 +138,8 @@ class Viglet_Dumont_Post_State {
 	}
 
 	/**
-	 * `GET viglet-dumont/v1/post/<id>/state` and `POST .../reindex`, for whoever can edit the post.
+	 * `GET viglet-dumont/v1/post/<id>/state`, `POST .../reindex` and `GET .../assist`, for
+	 * whoever can edit the post.
 	 */
 	public function register_routes(): void {
 		$can_edit = static fn ( WP_REST_Request $request ) => current_user_can( 'edit_post', (int) $request['id'] );
@@ -161,6 +162,84 @@ class Viglet_Dumont_Post_State {
 				'permission_callback' => $can_edit,
 			)
 		);
+		register_rest_route(
+			'viglet-dumont/v1',
+			'/post/(?P<id>\d+)/assist',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_assist' ),
+				'permission_callback' => $can_edit,
+			)
+		);
+	}
+
+	/**
+	 * What the site already has near a post, for the editor's Assist section (D171): posts that
+	 * may already cover it, and posts to link to. An indexed post is compared by Turing's
+	 * similar-documents and duplicate-cluster searches; a draft not yet in the index, by a
+	 * search for its title. Nothing here writes to the post.
+	 *
+	 * @param WP_Post $post The post being written.
+	 * @return array{basis: string, covered: array<int, array{title: string, url: string}>, links: array<int, array{title: string, url: string}>}
+	 */
+	public function assist( WP_Post $post ): array {
+		$client  = new Viglet_Dumont_API_Client( $this->settings );
+		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$doc_id  = $indexer->build_doc_id( $post->ID );
+		$pick    = static fn ( array $docs ): array => array_values(
+			array_map(
+				static fn ( array $doc ) => array(
+					'title' => wp_strip_all_tags( (string) ( $doc['title'] ?? $doc['url'] ?? '' ) ),
+					'url'   => (string) ( $doc['url'] ?? '' ),
+				),
+				array_filter( $docs, static fn ( array $doc ) => ( $doc['id'] ?? '' ) !== $doc_id && '' !== (string) ( $doc['url'] ?? '' ) )
+			)
+		);
+
+		$similar = $client->similar( $doc_id, 6 );
+		if ( is_array( $similar ) && $similar ) {
+			$cluster = $client->duplicates( $doc_id );
+			$members = is_array( $cluster ) && ! empty( $cluster['duplicate'] ) ? (array) ( $cluster['members'] ?? array() ) : array();
+
+			return array(
+				'basis'   => 'similar',
+				'covered' => $pick( $members ),
+				'links'   => array_slice( $pick( $similar ), 0, 5 ),
+			);
+		}
+
+		if ( '' === trim( $post->post_title ) ) {
+			return array(
+				'basis'   => 'title',
+				'covered' => array(),
+				'links'   => array(),
+			);
+		}
+		$found = $client->search( $post->post_title, 1, 6, array( 'fq[]' => array( 'site_key:' . $indexer->site_key() ) ) );
+		$docs  = is_array( $found )
+			? array_map( static fn ( array $doc ) => (array) ( $doc['fields'] ?? array() ), (array) ( $found['results']['document'] ?? array() ) )
+			: array();
+		$hits  = $pick( $docs );
+
+		return array(
+			'basis'   => 'title',
+			'covered' => array_slice( $hits, 0, 3 ),
+			'links'   => array_slice( $hits, 0, 5 ),
+		);
+	}
+
+	/**
+	 * REST: what the site already has near a post.
+	 *
+	 * @param WP_REST_Request $request Carries `id`.
+	 */
+	public function rest_assist( WP_REST_Request $request ): WP_REST_Response {
+		$post = get_post( (int) $request['id'] );
+		if ( ! $post instanceof WP_Post ) {
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-dumont' ) ), 404 );
+		}
+
+		return new WP_REST_Response( $this->assist( $post ), 200 );
 	}
 
 	/**
