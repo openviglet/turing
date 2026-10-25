@@ -6,7 +6,8 @@
  * - twelve posts with a `seats` meta (20 or 40), four of them titled "Workshop on ..."
  *   (one post, "Only on the second site", with the argument `second`);
  * - a page "Busca" holding the Turing search block;
- * - the `seats` field mapped as an INT facet, and search answered by Turing.
+ * - the `seats` field mapped as an INT facet and `topic` (the title's last word, twelve
+ *   values) as a STRING facet, and search answered by Turing.
  *
  * Prints JSON: { searchPageId, postId } for the specs.
  *
@@ -34,6 +35,8 @@ foreach ( $titles as $i => $title ) {
 		)
 	);
 	update_post_meta( $id, 'seats', 0 === $i % 2 ? '20' : '40' );
+	// A facet with more values than a group shows before "Show more": the title's last word.
+	update_post_meta( $id, 'topic', substr( strrchr( ' ' . $title, ' ' ), 1 ) );
 	delete_post_meta( $id, '_viglet_dumont_exclude' );
 	if ( 0 === $i ) {
 		$post_id = $id;
@@ -64,6 +67,15 @@ update_option(
 					'multi'       => false,
 					'facet'       => true,
 					'facet_label' => 'Seats',
+					'weight'      => null,
+				),
+				array(
+					'source'      => 'meta:topic',
+					'field'       => 'topic',
+					'type'        => 'STRING',
+					'multi'       => false,
+					'facet'       => true,
+					'facet_label' => 'Topic',
 					'weight'      => null,
 				),
 			),

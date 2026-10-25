@@ -130,10 +130,81 @@
 	}
 }
 
+.viglet-dumont-search__facet {
+	margin: 0 0 1rem;
+}
+
+.viglet-dumont-search__facet summary {
+	align-items: center;
+	cursor: pointer;
+	display: flex;
+	gap: 0.5rem;
+	font-weight: 600;
+}
+
+/* How many values of the facet are applied, in the theme's inverted colours. */
+.viglet-dumont-search__badge {
+	background: var(--wp--preset--color--contrast, #000);
+	border-radius: 999px;
+	color: var(--wp--preset--color--base, #fff);
+	font-size: 0.75em;
+	line-height: 1.6;
+	min-width: 1.6em;
+	padding: 0 0.4em;
+	text-align: center;
+}
+
 .viglet-dumont-search__facets fieldset {
 	border: 0;
-	margin: 0 0 1rem;
+	margin: 0.5rem 0 0;
 	padding: 0;
+}
+
+.viglet-dumont-search__facets fieldset > .viglet-dumont-search__link {
+	margin-top: 0.25rem;
+}
+
+/* The drawer's button and actions belong to narrow screens only. */
+.viglet-dumont-search__filters-toggle,
+.viglet-dumont-search__drawer-actions {
+	display: none;
+}
+
+@media (max-width: 781px) {
+	.viglet-dumont-search__filters-toggle {
+		display: inline-block;
+		margin: 0 0 1rem;
+	}
+
+	.viglet-dumont-search__facets {
+		display: none;
+	}
+
+	/* Open: a sheet over the lower part of the screen, the results still visible above. */
+	.viglet-dumont-search__facets.is-open {
+		background: var(--wp--preset--color--base, #fff);
+		border-top: 1px solid currentColor;
+		bottom: 0;
+		box-shadow: 0 -0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+		display: block;
+		left: 0;
+		max-height: 70vh;
+		overflow-y: auto;
+		padding: 1rem;
+		position: fixed;
+		right: 0;
+		z-index: 100;
+	}
+
+	.viglet-dumont-search__facets.is-open .viglet-dumont-search__drawer-actions {
+		align-items: center;
+		background: inherit;
+		bottom: -1rem;
+		display: flex;
+		gap: 1rem;
+		padding: 0.75rem 0;
+		position: sticky;
+	}
 }
 
 .viglet-dumont-search__facets label {

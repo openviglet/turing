@@ -23,13 +23,18 @@ let lastQuery = '';
 // The pending instant search, restarted by every keystroke.
 let instant = null;
 
+// Each facet as Turing last described it unfiltered, by field (see facets()).
+const facetMemory = new Map();
+// How many values a facet shows before "Show more".
+const facetValuesShown = 5;
+
 // How long typing must pause before the results follow it.
 const instantMs = 300;
 // Recent searches live in this browser only and are never sent anywhere.
 const recentKey = 'viglet-dumont-recent-searches';
 const recentMax = 5;
 
-const { state } = store( 'viglet-dumont/search', {
+const { state, actions } = store( 'viglet-dumont/search', {
 	state: {
 		// What the list offers: suggestions for what is typed, or recent searches for an
 		// empty box. The part already typed is split off so it can be shown in bold.
@@ -75,6 +80,29 @@ const { state } = store( 'viglet-dumont/search', {
 		},
 		get hasFacets() {
 			return state.facets.length > 0;
+		},
+		get filtersLabel() {
+			return state.applied.length
+				? state.filtersLabelN.replace(
+						'%d',
+						String( state.applied.length )
+					)
+				: state.filtersLabel0;
+		},
+		// Read inside a facet's template: whether this one shows all its values.
+		get facetExpanded() {
+			return state.expanded.includes( getContext().facet.name );
+		},
+		get itemHidden() {
+			return getContext().item.extra && ! state.facetExpanded;
+		},
+		get moreLabel() {
+			return state.facetExpanded
+				? state.fewerLabel
+				: state.moreValues.replace(
+						'%d',
+						String( getContext().facet.more )
+					);
 		},
 		get hasPages() {
 			return state.pages.length > 1;
@@ -209,11 +237,43 @@ const { state } = store( 'viglet-dumont/search', {
 			run( state.corrected );
 		},
 		// The facets re-render from the answer, which would leave the focus nowhere; the
-		// search box is where the next step starts.
+		// search box is where the next step starts. In the drawer the visitor may pick more
+		// than one, so the focus stays there.
 		toggleFacet() {
 			const { item } = getContext();
 			search.toggleFacet( item.target );
-			focusInput();
+			if ( ! state.drawerOpen ) {
+				focusInput();
+			}
+		},
+		toggleMore() {
+			const { facet } = getContext();
+			state.expanded = state.facetExpanded
+				? state.expanded.filter( ( name ) => name !== facet.name )
+				: [ ...state.expanded, facet.name ];
+		},
+		openDrawer() {
+			state.drawerOpen = true;
+			// The first control in the drawer, once it shows.
+			window.requestAnimationFrame( () =>
+				document
+					.querySelector(
+						`#${ state.inputId }-facets summary, #${ state.inputId }-facets input`
+					)
+					?.focus()
+			);
+		},
+		closeDrawer() {
+			state.drawerOpen = false;
+			document
+				.querySelector( '.viglet-dumont-search__filters-toggle' )
+				?.focus();
+		},
+		drawerKeydown( event ) {
+			if ( 'Escape' === event.key && state.drawerOpen ) {
+				event.preventDefault();
+				actions.closeDrawer();
+			}
 		},
 		removeFilter() {
 			const { filter } = getContext();
@@ -474,6 +534,64 @@ function card( d ) {
 }
 
 /**
+ * The facets to show, in the order they were first answered. Turing stops describing a
+ * facet once the search filters on it (T1115), so a filtered facet is rebuilt from the last
+ * answer that described it: its applied values checked (and removable), the others still
+ * there to switch to, with the counts they had before the filter.
+ *
+ * @param {Object[]} answered The response's facets.
+ * @param {string[]} applied  The request's filters, the site's own left out.
+ */
+function facets( answered, applied ) {
+	const filtered = new Set( applied.map( ( fq ) => fq.split( ':' )[ 0 ] ) );
+	for ( const facet of answered ) {
+		if ( facet.items?.length && ! filtered.has( facet.name ) ) {
+			facetMemory.set( facet.name, facet );
+		}
+	}
+	const byName = new Map(
+		answered
+			.filter( ( facet ) => facet.items?.length )
+			.map( ( facet ) => [ facet.name, facet ] )
+	);
+	const names = [ ...new Set( [ ...facetMemory.keys(), ...byName.keys() ] ) ];
+	return names
+		.map(
+			( name ) =>
+				byName.get( name ) ||
+				( filtered.has( name ) ? facetMemory.get( name ) : null )
+		)
+		.filter( Boolean )
+		.map( ( facet ) => {
+			const items = facet.items.map( ( i ) => {
+				const selected =
+					i.selected || applied.includes( i.filterQuery );
+				return {
+					label: i.label,
+					count: i.count,
+					selected,
+					target: {
+						action: selected ? 'REMOVE' : i.action,
+						field: i.field,
+						filterQuery: i.filterQuery,
+					},
+				};
+			} );
+			return {
+				name: facet.name,
+				label: facet.label || facet.name,
+				items: items.map( ( item, index ) => ( {
+					...item,
+					extra: index >= facetValuesShown && ! item.selected,
+				} ) ),
+				hasMore: items.length > facetValuesShown,
+				more: items.length - facetValuesShown,
+				selectedCount: items.filter( ( item ) => item.selected ).length,
+			};
+		} );
+}
+
+/**
  * Copy what the SDK's search controller holds into the block's state.
  *
  * @param {Object} s The SearchControllerState.
@@ -484,21 +602,10 @@ function sync( s ) {
 	state.error = s.error || '';
 	state.total = response?.queryContext?.count ?? 0;
 	state.results = s.documents.map( card );
-	state.facets = ( response?.facets || [] )
-		.filter( ( f ) => f.items && f.items.length )
-		.map( ( f ) => ( {
-			label: f.label || f.name,
-			items: f.items.map( ( i ) => ( {
-				label: i.label,
-				count: i.count,
-				selected: i.selected,
-				target: {
-					action: i.action,
-					field: i.field,
-					filterQuery: i.filterQuery,
-				},
-			} ) ),
-		} ) );
+	state.facets = facets(
+		response?.facets || [],
+		( s.request?.fq || [] ).filter( ( fq ) => fq !== siteFilter )
+	);
 	// Turing's response stops describing a facet once it filters on it (T1115), so the
 	// applied filters come from the request: every filter but the site's own.
 	state.applied = ( s.request?.fq || [] )

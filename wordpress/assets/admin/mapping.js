@@ -287,7 +287,9 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 								preview.post.title
 							) }
 						</p>
+						{ /* It scrolls, so the keyboard must be able to reach it. */ }
 						<pre
+							tabIndex={ 0 }
 							style={ {
 								maxHeight: 360,
 								overflow: 'auto',

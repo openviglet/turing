@@ -35,8 +35,8 @@ msgid "Indexing"
 msgstr "Indexação"
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:86
-#: src/blocks/search/render.php:112
+#: src/blocks/search/render.php:94
+#: src/blocks/search/render.php:120
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: src/admin/js/editor-panel.js:67
 #: src/admin/js/search-block-editor.js:34
@@ -305,46 +305,48 @@ msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:72
+#: src/blocks/search/render.php:80
 #, php-format
 msgid "%d results"
 msgstr "%d resultados"
 
-#: src/blocks/search/render.php:73
+#: src/blocks/search/render.php:81
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:74
+#: src/blocks/search/render.php:82
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
-#: src/blocks/search/render.php:78
+#: src/blocks/search/render.php:86
 msgid "Search…"
 msgstr "Buscar…"
 
-#: src/blocks/search/render.php:137
+#: src/blocks/search/render.php:145
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr "Você quis dizer:"
 
-#: src/blocks/search/render.php:143
+#: src/blocks/search/render.php:151
 msgid "Active filters"
 msgstr "Filtros ativos"
 
-#: src/blocks/search/render.php:149
+#: src/blocks/search/render.php:157
 msgid "Remove this filter"
 msgstr "Remover este filtro"
 
-#: src/blocks/search/render.php:154
+#: src/blocks/search/render.php:162
+#: src/blocks/search/render.php:213
 msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
-#: src/blocks/search/render.php:160
+#: src/blocks/search/render.php:71
+#: src/blocks/search/render.php:186
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/blocks/search/render.php:218
+#: src/blocks/search/render.php:260
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
@@ -1149,7 +1151,7 @@ msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
 
-#: src/blocks/search/render.php:118
+#: src/blocks/search/render.php:126
 msgid "Suggestions"
 msgstr "Sugestões"
 
@@ -1157,15 +1159,15 @@ msgstr "Sugestões"
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
-#: src/blocks/search/render.php:202
+#: src/blocks/search/render.php:244
 msgid "Or start from the latest posts:"
 msgstr "Ou comece pelos posts mais recentes:"
 
-#: src/blocks/search/render.php:212
+#: src/blocks/search/render.php:254
 msgid "Try again"
 msgstr "Tentar de novo"
 
-#: src/blocks/search/render.php:213
+#: src/blocks/search/render.php:255
 msgid "Search with WordPress instead"
 msgstr "Buscar com o WordPress"
 
@@ -1175,10 +1177,30 @@ msgstr "Buscar com o WordPress"
 msgid "%d suggestions. Use the up and down arrows to choose one."
 msgstr "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
-#: src/blocks/search/render.php:109
+#: src/blocks/search/render.php:117
 msgid "Clear the search"
 msgstr "Limpar a busca"
 
-#: src/blocks/search/render.php:131
+#: src/blocks/search/render.php:139
 msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
+
+#. translators: %d: how many filters are applied.
+#: src/blocks/search/render.php:73
+#, php-format
+msgid "Filters (%d)"
+msgstr "Filtros (%d)"
+
+#. translators: %d: how many more values the facet has.
+#: src/blocks/search/render.php:75
+#, php-format
+msgid "Show %d more"
+msgstr "Mostrar mais %d"
+
+#: src/blocks/search/render.php:76
+msgid "Show fewer"
+msgstr "Mostrar menos"
+
+#: src/blocks/search/render.php:212
+msgid "Show results"
+msgstr "Ver resultados"

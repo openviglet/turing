@@ -49,29 +49,37 @@ $viglet_dumont_recent = array_map(
 wp_interactivity_state(
 	'viglet-dumont/search',
 	array(
-		'query'        => $viglet_dumont_query,
-		'status'       => 'idle',
-		'results'      => array(),
-		'facets'       => array(),
-		'pages'        => array(),
-		'suggestions'  => array(),
-		'applied'      => array(),
-		'total'        => 0,
-		'corrected'    => '',
-		'error'        => '',
-		'open'         => false,
-		'active'       => -1,
-		'recent'       => array(),
-		'inputId'      => $viglet_dumont_id,
-		'listId'       => $viglet_dumont_id . '-suggestions',
+		'query'         => $viglet_dumont_query,
+		'status'        => 'idle',
+		'results'       => array(),
+		'facets'        => array(),
+		'pages'         => array(),
+		'suggestions'   => array(),
+		'applied'       => array(),
+		'total'         => 0,
+		'corrected'     => '',
+		'error'         => '',
+		'open'          => false,
+		'active'        => -1,
+		'recent'        => array(),
+		'inputId'       => $viglet_dumont_id,
+		'listId'        => $viglet_dumont_id . '-suggestions',
 		/* translators: %d: how many suggestions the search box offers. */
-		'optionsLabel' => __( '%d suggestions. Use the up and down arrows to choose one.', 'viglet-dumont' ),
-		'typeLabels'   => $viglet_dumont_types,
-		'homeUrl'      => home_url( '/' ),
+		'optionsLabel'  => __( '%d suggestions. Use the up and down arrows to choose one.', 'viglet-dumont' ),
+		'drawerOpen'    => false,
+		'expanded'      => array(),
+		'filtersLabel0' => __( 'Filters', 'viglet-dumont' ),
+		/* translators: %d: how many filters are applied. */
+		'filtersLabelN' => __( 'Filters (%d)', 'viglet-dumont' ),
+		/* translators: %d: how many more values the facet has. */
+		'moreValues'    => __( 'Show %d more', 'viglet-dumont' ),
+		'fewerLabel'    => __( 'Show fewer', 'viglet-dumont' ),
+		'typeLabels'    => $viglet_dumont_types,
+		'homeUrl'       => home_url( '/' ),
 		/* translators: %d: how many results Turing found. */
-		'foundLabel'   => __( '%d results', 'viglet-dumont' ),
-		'noneLabel'    => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
-		'errorLabel'   => __( 'Search is unavailable right now.', 'viglet-dumont' ),
+		'foundLabel'    => __( '%d results', 'viglet-dumont' ),
+		'noneLabel'     => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
+		'errorLabel'    => __( 'Search is unavailable right now.', 'viglet-dumont' ),
 	)
 );
 
@@ -155,21 +163,54 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 		</li>
 	</ul>
 
+	<?php if ( ! empty( $attributes['showFacets'] ) ) : ?>
+		<button
+			type="button"
+			class="viglet-dumont-search__filters-toggle wp-element-button"
+			aria-controls="<?php echo esc_attr( $viglet_dumont_id ); ?>-facets"
+			aria-expanded="false"
+			hidden
+			data-wp-bind--hidden="!state.hasFacets"
+			data-wp-bind--aria-expanded="state.drawerOpen"
+			data-wp-on--click="actions.openDrawer"
+			data-wp-text="state.filtersLabel"
+		></button>
+	<?php endif; ?>
+
 	<div class="viglet-dumont-search__layout">
 		<?php if ( ! empty( $attributes['showFacets'] ) ) : ?>
-			<aside class="viglet-dumont-search__facets" hidden data-wp-bind--hidden="!state.hasFacets" aria-label="<?php esc_attr_e( 'Filters', 'viglet-dumont' ); ?>">
-				<template data-wp-each--facet="state.facets">
-					<fieldset>
-						<legend data-wp-text="context.facet.label"></legend>
-						<template data-wp-each--item="context.facet.items">
-							<label>
-								<input type="checkbox" data-wp-bind--checked="context.item.selected" data-wp-on--change="actions.toggleFacet" />
-								<span data-wp-text="context.item.label"></span>
-								<span class="viglet-dumont-search__count" data-wp-text="context.item.count"></span>
-							</label>
-						</template>
-					</fieldset>
+			<aside
+				id="<?php echo esc_attr( $viglet_dumont_id ); ?>-facets"
+				class="viglet-dumont-search__facets"
+				aria-label="<?php esc_attr_e( 'Filters', 'viglet-dumont' ); ?>"
+				hidden
+				data-wp-bind--hidden="!state.hasFacets"
+				data-wp-class--is-open="state.drawerOpen"
+				data-wp-on--keydown="actions.drawerKeydown"
+			>
+				<template data-wp-each--facet="state.facets" data-wp-each-key="context.facet.name">
+					<details class="viglet-dumont-search__facet" open>
+						<summary>
+							<span data-wp-text="context.facet.label"></span>
+							<span class="viglet-dumont-search__badge" hidden data-wp-bind--hidden="!context.facet.selectedCount" data-wp-text="context.facet.selectedCount"></span>
+						</summary>
+						<fieldset>
+							<legend class="screen-reader-text" data-wp-text="context.facet.label"></legend>
+							<template data-wp-each--item="context.facet.items" data-wp-each-key="context.item.target.filterQuery">
+								<label data-wp-bind--hidden="state.itemHidden">
+									<input type="checkbox" data-wp-bind--checked="context.item.selected" data-wp-on--change="actions.toggleFacet" />
+									<span data-wp-text="context.item.label"></span>
+									<span class="viglet-dumont-search__count" data-wp-text="context.item.count"></span>
+								</label>
+							</template>
+							<button type="button" class="viglet-dumont-search__link" hidden data-wp-bind--hidden="!context.facet.hasMore" data-wp-bind--aria-expanded="state.facetExpanded" data-wp-on--click="actions.toggleMore" data-wp-text="state.moreLabel"></button>
+						</fieldset>
+					</details>
 				</template>
+				<div class="viglet-dumont-search__drawer-actions">
+					<button type="button" class="wp-element-button" data-wp-on--click="actions.closeDrawer"><?php esc_html_e( 'Show results', 'viglet-dumont' ); ?></button>
+					<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.clearFilters"><?php esc_html_e( 'Clear all filters', 'viglet-dumont' ); ?></button>
+				</div>
 			</aside>
 		<?php endif; ?>
 

@@ -10,6 +10,30 @@ const results = ( page ) =>
 const summary = ( page ) =>
 	block( page ).locator( '.viglet-dumont-search__summary' );
 const inBlock = { include: '.viglet-dumont-search' };
+const facet = ( page, label ) =>
+	block( page )
+		.locator( '.viglet-dumont-search__facet' )
+		.filter( { has: page.locator( 'summary', { hasText: label } ) } );
+const seatsValue = ( page, value ) =>
+	facet( page, 'Seats' )
+		.locator( 'label' )
+		.filter( { hasText: value } )
+		.locator( 'input' );
+const drawerToggle = ( page ) =>
+	block( page ).locator( '.viglet-dumont-search__filters-toggle' );
+
+// On a phone the facets wait in a drawer; elsewhere these do nothing.
+async function openFilters( page ) {
+	if ( await drawerToggle( page ).isVisible() ) {
+		await drawerToggle( page ).click();
+	}
+}
+async function closeFilters( page ) {
+	const done = block( page ).getByRole( 'button', { name: 'Show results' } );
+	if ( await done.isVisible() ) {
+		await done.click();
+	}
+}
 
 test( "the block answers a query with this site's results, as plain text", async ( {
 	page,
@@ -39,13 +63,17 @@ test( 'a facet narrows the results, shows as a removable filter, and removing it
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
 	await expect( summary( page ) ).toHaveText( '4 results' );
 
+	await openFilters( page );
 	// click(), not check(): the facets re-render from the new answer.
-	await block( page )
-		.locator( '.viglet-dumont-search__facets label' )
-		.filter( { hasText: '40' } )
-		.locator( 'input' )
-		.click();
+	await seatsValue( page, '40' ).click();
 	await expect( summary( page ) ).toHaveText( '3 results' );
+	// The filtered facet stays, its value checked and counted, the other value still there.
+	await expect( seatsValue( page, '40' ) ).toBeChecked();
+	await expect( seatsValue( page, '20' ) ).not.toBeChecked();
+	await expect(
+		facet( page, 'Seats' ).locator( '.viglet-dumont-search__badge' )
+	).toHaveText( '1' );
+	await closeFilters( page );
 	const chip = block( page ).locator( '.viglet-dumont-search__chip' );
 	await expect( chip ).toHaveCount( 1 );
 	await expect( chip ).toContainText( 'Seats: 40' );
@@ -56,6 +84,56 @@ test( 'a facet narrows the results, shows as a removable filter, and removing it
 	await chip.click();
 	await expect( summary( page ) ).toHaveText( '4 results' );
 	await expect( chip ).toHaveCount( 0 );
+} );
+
+test( 'a long facet shows five values and the rest on demand', async ( {
+	page,
+	seed,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=*` );
+	await openFilters( page );
+	const topic = facet( page, 'Topic' );
+	const values = topic.locator( 'label:visible' );
+	await expect( values ).toHaveCount( 5 );
+	const more = topic.getByRole( 'button', { name: 'Show 7 more' } );
+	await expect( more ).toHaveAttribute( 'aria-expanded', 'false' );
+	await more.click();
+	await expect( values ).toHaveCount( 12 );
+	await topic.getByRole( 'button', { name: 'Show fewer' } ).click();
+	await expect( values ).toHaveCount( 5 );
+
+	// A group folds away under its heading.
+	await topic.locator( 'summary' ).click();
+	await expect( values ).toHaveCount( 0 );
+} );
+
+test( 'on a phone the facets open in a drawer over the results', async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	test.skip(
+		( page.viewportSize()?.width ?? 0 ) >= 782,
+		'the drawer is for narrow screens'
+	);
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	const toggle = drawerToggle( page );
+	await expect( toggle ).toHaveText( 'Filters' );
+	await expect( facet( page, 'Seats' ) ).toBeHidden();
+
+	await toggle.click();
+	await expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
+	await expect( facet( page, 'Seats' ) ).toBeVisible();
+	await seatsValue( page, '40' ).click();
+	await expect( summary( page ) ).toHaveText( '3 results' );
+	await look( 'search-block-drawer' );
+	await axe( 'search block with the filter drawer open', inBlock );
+
+	await block( page ).getByRole( 'button', { name: 'Show results' } ).click();
+	await expect( facet( page, 'Seats' ) ).toBeHidden();
+	await expect( toggle ).toBeFocused();
+	await expect( toggle ).toHaveText( 'Filters (1)' );
 } );
 
 test( 'typing suggests, and picking a suggestion searches it', async ( {
