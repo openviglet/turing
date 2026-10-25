@@ -59,6 +59,35 @@ test( 'Fields shows the seats facet in Turing and previews a document', async ( 
 	);
 } );
 
+test( 'Health checks the AI features on demand, and every one that is off says why', async ( {
+	page,
+	look,
+	axe,
+} ) => {
+	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
+	const card = page
+		.locator( '.components-card' )
+		.filter( { hasText: 'AI features' } );
+	await card.getByRole( 'button', { name: 'Check AI features' } ).click();
+	const rows = card.locator( 'tbody tr' );
+	await expect( rows ).toHaveCount( 4 );
+	await expect( rows.locator( 'th' ) ).toHaveText( [
+		'Answers with sources',
+		'Chat',
+		'Natural-language filters',
+		'Catalog copilot',
+	] );
+	for ( const row of await rows.all() ) {
+		const [ state, why ] = await row.locator( 'td' ).allTextContents();
+		expect( [ 'On', 'Off' ] ).toContain( state );
+		if ( 'Off' === state ) {
+			expect( why, 'an off feature gives its reason' ).not.toBe( '—' );
+		}
+	}
+	await look( 'health-ai' );
+	await axe( 'Health, AI features', plugin );
+} );
+
 test( 'Health shows published and indexed counts that agree, and the events', async ( {
 	page,
 	look,

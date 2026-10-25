@@ -332,9 +332,10 @@ class Viglet_Dumont_API_Client {
 	 * @param string     $path   API path.
 	 * @param array|null $query  Query parameters.
 	 * @param array|null $body   Request body (JSON-encoded).
+	 * @param array      $extra  More wp_remote_request arguments, merged over the defaults.
 	 * @return array|WP_Error Response or error.
 	 */
-	private function request( string $method, string $path, ?array $query = null, ?array $body = null ) {
+	private function request( string $method, string $path, ?array $query = null, ?array $body = null, array $extra = array() ) {
 		$url = $this->server_url . $path;
 
 		// Turing reads filters as a repeated `fq[]`, which add_query_arg cannot spell: it
@@ -366,7 +367,91 @@ class Viglet_Dumont_API_Client {
 			$args['body'] = wp_json_encode( $body );
 		}
 
-		return wp_remote_request( $url, $args );
+		return wp_remote_request( $url, array_replace_recursive( $args, $extra ) );
+	}
+
+	/**
+	 * Which of Turing's AI features this SN site can use (D169), each with the reason when it
+	 * is off. Chat and the catalog copilot have a probe; answer and natural-language filters
+	 * do not (Turing T1123), so this reads the start of an answer stream and parses a short
+	 * phrase, which spends LLM calls when they are on. Call it on demand, never per page.
+	 *
+	 * @return array<int, array{feature: string, on: bool, reason: string}>
+	 */
+	public function ai_features(): array {
+		$site        = '/api/sn/' . rawurlencode( $this->site_name );
+		$json        = static function ( $response ): ?array {
+			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+				return null;
+			}
+			$decoded = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+			return is_array( $decoded ) ? $decoded : null;
+		};
+		$unreachable = __( 'Turing did not answer.', 'viglet-dumont' );
+
+		$chat = $json( $this->request( 'GET', $site . '/chat/enabled' ) );
+
+		// The first event of the stream says whether the site may answer at all.
+		$answer = $this->request(
+			'GET',
+			$site . '/answer',
+			array(
+				'q'          => 'test',
+				'_setlocale' => $this->locale,
+			),
+			null,
+			array(
+				'timeout'             => 15,
+				'limit_response_size' => 512,
+				'headers'             => array( 'Accept' => 'text/event-stream' ),
+			)
+		);
+		$stream = is_wp_error( $answer ) ? '' : (string) wp_remote_retrieve_body( $answer );
+		preg_match( '/event:\s*error\s*\ndata:\s*(\{.*\})/', $stream, $error );
+		$answer_reason = '';
+		if ( is_wp_error( $answer ) ) {
+			$answer_reason = $answer->get_error_message();
+		} elseif ( $error ) {
+			$answer_reason = (string) ( json_decode( $error[1], true )['message'] ?? '' );
+		} elseif ( '' === $stream ) {
+			$answer_reason = $unreachable;
+		}
+
+		$nl      = $json(
+			$this->request(
+				'POST',
+				$site . '/nl-filters',
+				null,
+				array(
+					'text'   => 'last week',
+					'locale' => $this->locale,
+				)
+			)
+		);
+		$copilot = $json( $this->request( 'GET', $site . '/copilot/available' ) );
+
+		return array(
+			array(
+				'feature' => 'answer',
+				'on'      => '' === $answer_reason,
+				'reason'  => $answer_reason,
+			),
+			array(
+				'feature' => 'chat',
+				'on'      => ! empty( $chat['enabled'] ),
+				'reason'  => null === $chat ? $unreachable : ( empty( $chat['enabled'] ) ? (string) ( $chat['reason'] ?? '' ) : '' ),
+			),
+			array(
+				'feature' => 'nl_filters',
+				'on'      => ! empty( $nl['available'] ),
+				'reason'  => null === $nl ? $unreachable : ( empty( $nl['available'] ) ? __( 'No language model is set up for it in Turing.', 'viglet-dumont' ) : '' ),
+			),
+			array(
+				'feature' => 'copilot',
+				'on'      => ! empty( $copilot['available'] ),
+				'reason'  => null === $copilot ? $unreachable : ( empty( $copilot['available'] ) ? __( 'Turing has no catalog copilot set up.', 'viglet-dumont' ) : '' ),
+			),
+		);
 	}
 
 	/**

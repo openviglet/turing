@@ -42,6 +42,47 @@ final class ApiClientTest extends PluginTestCase {
 		$this->assertStringEndsWith( '&fq%5B%5D=site_key%3Aa&fq%5B%5D=type%3Apost', $this->requests[0][0] );
 	}
 
+	public function test_ai_features_read_each_probe_and_the_answer_streams_first_event(): void {
+		$bodies = array(
+			'/chat/enabled'      => '{"enabled":true,"reason":"NONE"}',
+			'/answer'            => "event:error\ndata:{\"message\":\"AI is not enabled for site: Sample\"}\n\n",
+			'/nl-filters'        => '{"available":false,"text":"last week","q":"last week"}',
+			'/copilot/available' => '{"available":true}',
+		);
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) use ( $bodies ) {
+				$this->requests[] = array( $url, $args );
+				foreach ( $bodies as $path => $body ) {
+					if ( str_contains( $url, $path ) ) {
+						return array(
+							'response' => array( 'code' => 200 ),
+							'body'     => $body,
+						);
+					}
+				}
+				return new WP_Error( 'http_request_failed', 'unexpected ' . $url );
+			}
+		);
+
+		$rows = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ai_features();
+
+		$this->assertSame(
+			array(
+				'answer'     => array( false, 'AI is not enabled for site: Sample' ),
+				'chat'       => array( true, '' ),
+				'nl_filters' => array( false, 'No language model is set up for it in Turing.' ),
+				'copilot'    => array( true, '' ),
+			),
+			array_combine(
+				array_column( $rows, 'feature' ),
+				array_map( static fn ( $row ) => array( $row['on'], $row['reason'] ), $rows )
+			)
+		);
+		// The answer stream is read only as far as its first event.
+		$answer = array_values( array_filter( $this->requests, static fn ( $r ) => str_contains( $r[0], '/answer' ) ) )[0];
+		$this->assertSame( 512, $answer[1]['limit_response_size'] );
+	}
+
 	public function test_an_import_answered_with_an_error_status_is_a_failure(): void {
 		$this->status = 422;
 

@@ -35,6 +35,93 @@ function formatTime( timestamp ) {
 		: __( 'never', 'viglet-dumont' );
 }
 
+/**
+ * Which of Turing's AI features this site can use. Checked on demand: Turing has no cheap
+ * probe for answers and natural-language filters (T1123), so a check spends a short LLM
+ * call on each one that is on.
+ */
+function AiFeatures() {
+	const [ rows, setRows ] = useState( null );
+	const [ busy, setBusy ] = useState( false );
+	const [ error, setError ] = useState( '' );
+
+	const check = () => {
+		setBusy( true );
+		setError( '' );
+		apiFetch( { path: '/viglet-dumont/v1/ai' } )
+			.then( setRows )
+			.catch( ( e ) => setError( e.message || String( e ) ) )
+			.finally( () => setBusy( false ) );
+	};
+
+	return (
+		<Card>
+			<CardHeader>
+				<h2>{ __( 'AI features', 'viglet-dumont' ) }</h2>
+			</CardHeader>
+			<CardBody>
+				<p>
+					{ __(
+						'Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off.',
+						'viglet-dumont'
+					) }
+				</p>
+				{ error && (
+					<Notice status="error" isDismissible={ false }>
+						{ error }
+					</Notice>
+				) }
+				{ rows && (
+					<table className="widefat striped">
+						<thead>
+							<tr>
+								<th scope="col">
+									{ __( 'Feature', 'viglet-dumont' ) }
+								</th>
+								<th scope="col">
+									{ __( 'State', 'viglet-dumont' ) }
+								</th>
+								<th scope="col">
+									{ __( 'Why', 'viglet-dumont' ) }
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							{ rows.map( ( row ) => (
+								<tr key={ row.feature }>
+									<th scope="row">{ row.label }</th>
+									<td>
+										{ row.on
+											? __( 'On', 'viglet-dumont' )
+											: __( 'Off', 'viglet-dumont' ) }
+									</td>
+									<td>
+										{ [ row.reason, row.fix ]
+											.filter( Boolean )
+											.join( ' ' ) || '—' }
+									</td>
+								</tr>
+							) ) }
+						</tbody>
+					</table>
+				) }
+				<p>
+					<Button
+						variant="secondary"
+						isBusy={ busy }
+						disabled={ busy }
+						onClick={ check }
+					>
+						{ rows
+							? __( 'Check again', 'viglet-dumont' )
+							: __( 'Check AI features', 'viglet-dumont' ) }
+					</Button>
+				</p>
+			</CardBody>
+		</Card>
+	);
+}
+
 function Health() {
 	const [ status, setStatus ] = useState( null );
 	const [ error, setError ] = useState( '' );
@@ -263,6 +350,8 @@ function Health() {
 					</Flex>
 				</CardBody>
 			</Card>
+
+			<AiFeatures />
 
 			<Card>
 				<CardHeader>

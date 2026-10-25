@@ -25,7 +25,7 @@ msgid "Integrate WordPress with Viglet Turing search engine for powerful content
 msgstr "Integre o WordPress ao mecanismo de busca Viglet Turing para indexar e buscar o seu conteúdo."
 
 #: src/admin/views/settings-page.php:40
-#: assets/admin/health.js:94
+#: assets/admin/health.js:181
 msgid "Connection"
 msgstr "Conexão"
 
@@ -35,12 +35,12 @@ msgid "Indexing"
 msgstr "Indexação"
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:119
-#: src/blocks/search/render.php:145
+#: src/blocks/search/render.php:127
+#: src/blocks/search/render.php:153
 #: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: src/admin/js/editor-panel.js:67
-#: src/admin/js/search-block-editor.js:40
+#: src/admin/js/search-block-editor.js:42
 msgid "Search"
 msgstr "Busca"
 
@@ -306,51 +306,51 @@ msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:94
+#: src/blocks/search/render.php:92
 #: src/includes/class-viglet-dumont-native-search.php:158
 #, php-format
 msgid "%d results"
 msgstr "%d resultados"
 
-#: src/blocks/search/render.php:95
+#: src/blocks/search/render.php:93
 #: src/includes/class-viglet-dumont-native-search.php:159
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:96
+#: src/blocks/search/render.php:94
 #: src/includes/class-viglet-dumont-native-search.php:160
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
-#: src/blocks/search/render.php:111
+#: src/blocks/search/render.php:119
 msgid "Search…"
 msgstr "Buscar…"
 
-#: src/blocks/search/render.php:170
+#: src/blocks/search/render.php:178
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr "Você quis dizer:"
 
-#: src/blocks/search/render.php:188
+#: src/blocks/search/render.php:196
 msgid "Active filters"
 msgstr "Filtros ativos"
 
-#: src/blocks/search/render.php:194
+#: src/blocks/search/render.php:202
 msgid "Remove this filter"
 msgstr "Remover este filtro"
 
-#: src/blocks/search/render.php:199
-#: src/blocks/search/render.php:249
+#: src/blocks/search/render.php:207
+#: src/blocks/search/render.php:257
 msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
-#: src/blocks/search/render.php:83
-#: src/blocks/search/render.php:222
+#: src/blocks/search/render.php:81
+#: src/blocks/search/render.php:230
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/blocks/search/render.php:306
+#: src/blocks/search/render.php:314
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
@@ -727,7 +727,7 @@ msgstr "Excluído da busca"
 
 #: src/includes/class-viglet-dumont-post-state.php:69
 #: src/includes/class-viglet-dumont-post-state.php:77
-#: assets/admin/health.js:302
+#: assets/admin/health.js:391
 #: src/admin/js/editor-panel.js:58
 msgid "Failed"
 msgstr "Falhou"
@@ -772,11 +772,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:577
+#: src/viglet-dumont.php:625
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:602
+#: src/viglet-dumont.php:650
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -801,106 +801,106 @@ msgid "never"
 msgstr "nunca"
 
 #. translators: 1: the SN site, 2: the site key.
-#: assets/admin/health.js:106
+#: assets/admin/health.js:193
 #, js-format
 msgid "SN site %1$s, site key %2$s."
 msgstr "Site SN %1$s, chave do site %2$s."
 
 #. translators: %s: why Turing refused the fields.
-#: assets/admin/health.js:118
+#: assets/admin/health.js:205
 #, js-format
 msgid "The mapped fields are not provisioned: %s"
 msgstr "Os campos mapeados não estão no Turing: %s"
 
-#: assets/admin/health.js:131
+#: assets/admin/health.js:218
 msgid "Documents"
 msgstr "Documentos"
 
-#: assets/admin/health.js:138
+#: assets/admin/health.js:225
 msgid "Post type"
 msgstr "Tipo de post"
 
-#: assets/admin/health.js:141
+#: assets/admin/health.js:228
 msgid "Published in WordPress"
 msgstr "Publicados no WordPress"
 
-#: assets/admin/health.js:147
+#: assets/admin/health.js:234
 msgid "Indexed in Turing"
 msgstr "Indexados no Turing"
 
-#: assets/admin/health.js:162
+#: assets/admin/health.js:249
 msgid "unknown"
 msgstr "desconhecido"
 
-#: assets/admin/health.js:172
+#: assets/admin/health.js:259
 msgid "(differs: run a reindex)"
 msgstr "(diferente: rode uma reindexação)"
 
-#: assets/admin/health.js:189
+#: assets/admin/health.js:276
 msgid "Queue"
 msgstr "Fila"
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:195
+#: assets/admin/health.js:282
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr "%1$d aguardando, %2$d desistiram de tentar."
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:207
+#: assets/admin/health.js:294
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr "Última execução %1$s: %2$d enviados, %3$d falharam."
 
-#: assets/admin/health.js:215
+#: assets/admin/health.js:302
 msgid "The queue has not sent anything yet."
 msgstr "A fila ainda não enviou nada."
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:229
+#: assets/admin/health.js:316
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr "%d tarefas com falha voltaram para a fila."
 
-#: assets/admin/health.js:238
+#: assets/admin/health.js:325
 msgid "Retry failed"
 msgstr "Tentar de novo as que falharam"
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:251
+#: assets/admin/health.js:338
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr "%1$d enviados, %2$d falharam."
 
-#: assets/admin/health.js:261
+#: assets/admin/health.js:348
 msgid "Send queue now"
 msgstr "Enviar a fila agora"
 
-#: assets/admin/health.js:269
+#: assets/admin/health.js:358
 msgid "Last events"
 msgstr "Últimos eventos"
 
-#: assets/admin/health.js:277
+#: assets/admin/health.js:366
 msgid "When"
 msgstr "Quando"
 
-#: assets/admin/health.js:280
+#: assets/admin/health.js:369
 msgid "What"
 msgstr "O quê"
 
-#: assets/admin/health.js:283
+#: assets/admin/health.js:372
 msgid "Post"
 msgstr "Post"
 
-#: assets/admin/health.js:286
+#: assets/admin/health.js:375
 msgid "Result"
 msgstr "Resultado"
 
-#: assets/admin/health.js:301
+#: assets/admin/health.js:390
 msgid "OK"
 msgstr "OK"
 
-#: assets/admin/health.js:316
+#: assets/admin/health.js:405
 msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
@@ -1114,21 +1114,17 @@ msgstr "Vale quando o post for salvo."
 msgid "Reindex now"
 msgstr "Reindexar agora"
 
-#: src/admin/js/search-block-editor.js:42
+#: src/admin/js/search-block-editor.js:44
 msgid "Placeholder"
 msgstr "Texto de exemplo"
 
-#: src/admin/js/search-block-editor.js:48
+#: src/admin/js/search-block-editor.js:50
 msgid "Show filters (facets)"
 msgstr "Mostrar filtros (facetas)"
 
-#: src/admin/js/search-block-editor.js:134
+#: src/admin/js/search-block-editor.js:145
 msgid "Turing search"
 msgstr "Busca Turing"
-
-#: src/admin/js/search-block-editor.js:135
-msgid "A search box with suggestions, filters and results from Turing. It shows live on the published page."
-msgstr "Uma caixa de busca com sugestões, filtros e resultados do Turing. Ela funciona na página publicada."
 
 #: src/blocks/search/block.json
 msgctxt "block title"
@@ -1155,7 +1151,7 @@ msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
 
-#: src/blocks/search/render.php:151
+#: src/blocks/search/render.php:159
 msgid "Suggestions"
 msgstr "Sugestões"
 
@@ -1163,49 +1159,49 @@ msgstr "Sugestões"
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
-#: src/blocks/search/render.php:290
+#: src/blocks/search/render.php:298
 msgid "Or start from the latest posts:"
 msgstr "Ou comece pelos posts mais recentes:"
 
-#: src/blocks/search/render.php:300
+#: src/blocks/search/render.php:308
 msgid "Try again"
 msgstr "Tentar de novo"
 
-#: src/blocks/search/render.php:301
+#: src/blocks/search/render.php:309
 msgid "Search with WordPress instead"
 msgstr "Buscar com o WordPress"
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:80
+#: src/blocks/search/render.php:78
 #, php-format
 msgid "%d suggestions. Use the up and down arrows to choose one."
 msgstr "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
-#: src/blocks/search/render.php:142
+#: src/blocks/search/render.php:150
 msgid "Clear the search"
 msgstr "Limpar a busca"
 
-#: src/blocks/search/render.php:164
+#: src/blocks/search/render.php:172
 msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:85
+#: src/blocks/search/render.php:83
 #, php-format
 msgid "Filters (%d)"
 msgstr "Filtros (%d)"
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:87
+#: src/blocks/search/render.php:85
 #, php-format
 msgid "Show %d more"
 msgstr "Mostrar mais %d"
 
-#: src/blocks/search/render.php:88
+#: src/blocks/search/render.php:86
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
-#: src/blocks/search/render.php:248
+#: src/blocks/search/render.php:256
 msgid "Show results"
 msgstr "Ver resultados"
 
@@ -1221,15 +1217,15 @@ msgstr "Mais recentes"
 msgid "Oldest"
 msgstr "Mais antigos"
 
-#: src/blocks/search/render.php:178
+#: src/blocks/search/render.php:186
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: src/admin/js/search-block-editor.js:54
+#: src/admin/js/search-block-editor.js:56
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 
-#: src/admin/js/search-block-editor.js:121
+#: src/admin/js/search-block-editor.js:123
 msgid "Results per page"
 msgstr "Resultados por página"
 
@@ -1281,47 +1277,47 @@ msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
-#: src/admin/js/search-block-editor.js:62
+#: src/admin/js/search-block-editor.js:64
 msgid "Where the filters sit"
 msgstr "Onde ficam os filtros"
 
-#: src/admin/js/search-block-editor.js:66
+#: src/admin/js/search-block-editor.js:68
 msgid "Left"
 msgstr "À esquerda"
 
-#: src/admin/js/search-block-editor.js:70
+#: src/admin/js/search-block-editor.js:72
 msgid "Right"
 msgstr "À direita"
 
-#: src/admin/js/search-block-editor.js:74
+#: src/admin/js/search-block-editor.js:76
 msgid "Above the results"
 msgstr "Acima dos resultados"
 
-#: src/admin/js/search-block-editor.js:85
+#: src/admin/js/search-block-editor.js:87
 msgid "Results as"
 msgstr "Resultados em"
 
-#: src/admin/js/search-block-editor.js:89
+#: src/admin/js/search-block-editor.js:91
 msgid "A list"
 msgstr "Lista"
 
-#: src/admin/js/search-block-editor.js:93
+#: src/admin/js/search-block-editor.js:95
 msgid "A grid"
 msgstr "Grade"
 
-#: src/admin/js/search-block-editor.js:103
+#: src/admin/js/search-block-editor.js:105
 msgid "Show the image"
 msgstr "Mostrar a imagem"
 
-#: src/admin/js/search-block-editor.js:105
+#: src/admin/js/search-block-editor.js:107
 msgid "Show the type"
 msgstr "Mostrar o tipo"
 
-#: src/admin/js/search-block-editor.js:106
+#: src/admin/js/search-block-editor.js:108
 msgid "Show the date"
 msgstr "Mostrar a data"
 
-#: src/admin/js/search-block-editor.js:109
+#: src/admin/js/search-block-editor.js:111
 msgid "Show the snippet"
 msgstr "Mostrar o trecho"
 
@@ -1339,3 +1335,89 @@ msgstr "Mínimo"
 msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
+
+#: src/includes/class-viglet-dumont-api-client.php:390
+msgid "Turing did not answer."
+msgstr "O Turing não respondeu."
+
+#: src/includes/class-viglet-dumont-api-client.php:447
+msgid "No language model is set up for it in Turing."
+msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
+
+#: src/includes/class-viglet-dumont-api-client.php:452
+msgid "Turing has no catalog copilot set up."
+msgstr "O Turing não tem copiloto de catálogo configurado."
+
+#: src/includes/class-viglet-dumont-cli-ai.php:48
+msgid "yes"
+msgstr "sim"
+
+#: src/includes/class-viglet-dumont-cli-ai.php:48
+msgid "no"
+msgstr "não"
+
+#. translators: %d: how many AI features are off.
+#: src/includes/class-viglet-dumont-cli-ai.php:60
+#, php-format
+msgid "%d AI feature is off."
+msgid_plural "%d AI features are off."
+msgstr[0] "%d recurso de IA está desligado."
+msgstr[1] "%d recursos de IA estão desligados."
+
+#: src/viglet-dumont.php:82
+msgid "Answers with sources"
+msgstr "Respostas com fontes"
+
+#: src/viglet-dumont.php:83
+msgid "Chat"
+msgstr "Chat"
+
+#: src/viglet-dumont.php:84
+msgid "Natural-language filters"
+msgstr "Filtros em linguagem natural"
+
+#: src/viglet-dumont.php:85
+msgid "Catalog copilot"
+msgstr "Copiloto de catálogo"
+
+#. translators: %s: Turing's console address.
+#: src/viglet-dumont.php:98
+#, php-format
+msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
+msgstr "Ative a IA generativa deste site SN no console do Turing (%s), nas configurações de IA generativa do site."
+
+#: assets/admin/health.js:60
+msgid "AI features"
+msgstr "Recursos de IA"
+
+#: assets/admin/health.js:64
+msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
+msgstr "Quais recursos generativos do Turing este site pode usar. Os blocos que dependem de um ficam ocultos enquanto ele estiver desligado."
+
+#: assets/admin/health.js:79
+msgid "Feature"
+msgstr "Recurso"
+
+#: assets/admin/health.js:82
+msgid "State"
+msgstr "Estado"
+
+#: assets/admin/health.js:85
+msgid "Why"
+msgstr "Por quê"
+
+#: assets/admin/health.js:95
+msgid "On"
+msgstr "Ligado"
+
+#: assets/admin/health.js:96
+msgid "Off"
+msgstr "Desligado"
+
+#: assets/admin/health.js:116
+msgid "Check again"
+msgstr "Verificar de novo"
+
+#: assets/admin/health.js:117
+msgid "Check AI features"
+msgstr "Verificar recursos de IA"

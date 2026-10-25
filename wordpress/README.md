@@ -211,6 +211,8 @@ installs WordPress, creates the SN site in Turing and gives the plugin an API ke
 run-docker.cmd                         :: WordPress http://localhost:8080/wp-admin (admin / admin)
                                        :: Turing    http://localhost:2700 (admin / dumont-dev)
 run-docker.cmd wp dumont queue run     :: any WP-CLI command
+run-docker.cmd wp dumont ai status     :: which of Turing's AI features the site can use (exits 1 if any is off)
+run-docker.cmd multisite               :: also a two-site network on http://localhost:8081
 run-docker.cmd logs turing             :: follow a log: wordpress, turing or db
 run-docker.cmd stop                    :: keep the data
 run-docker.cmd reset                   :: drop WordPress, its database and Turing's store

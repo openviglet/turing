@@ -44,8 +44,10 @@ if ( is_admin() ) {
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli.php';
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli-queue.php';
+	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli-ai.php';
 	WP_CLI::add_command( 'dumont', 'Viglet_Dumont_CLI' );
 	WP_CLI::add_command( 'dumont queue', 'Viglet_Dumont_CLI_Queue' );
+	WP_CLI::add_command( 'dumont ai', 'Viglet_Dumont_CLI_AI' );
 }
 
 /**
@@ -64,6 +66,40 @@ function viglet_dumont_get_settings(): array {
  */
 function viglet_dumont_public_config(): array {
 	return ( new Viglet_Dumont_Native_Search() )->public_config();
+}
+
+/**
+ * Which of Turing's AI features this site can use, for Health and `wp dumont ai status`: each
+ * row with a label, whether it is on, the reason when it is not, and what to do about it.
+ * It spends LLM calls when features are on (Turing T1123), so it runs on demand only.
+ *
+ * @return array<int, array{feature: string, label: string, on: bool, reason: string, fix: string}>
+ */
+function viglet_dumont_ai_status(): array {
+	$settings = viglet_dumont_get_settings();
+	$console  = untrailingslashit( '' !== (string) $settings['public_url'] ? $settings['public_url'] : $settings['server_url'] );
+	$labels   = array(
+		'answer'     => __( 'Answers with sources', 'viglet-dumont' ),
+		'chat'       => __( 'Chat', 'viglet-dumont' ),
+		'nl_filters' => __( 'Natural-language filters', 'viglet-dumont' ),
+		'copilot'    => __( 'Catalog copilot', 'viglet-dumont' ),
+	);
+
+	return array_map(
+		static fn ( array $row ) => array(
+			'feature' => $row['feature'],
+			'label'   => $labels[ $row['feature'] ] ?? $row['feature'],
+			'on'      => $row['on'],
+			// A sentence, so the fix after it reads as the next one.
+			'reason'  => '' === $row['reason'] || preg_match( '/[.!?]$/', $row['reason'] ) ? $row['reason'] : $row['reason'] . '.',
+			// The manifest cannot turn a site's generative AI on yet (Turing T1116): name the step.
+			'fix'     => ! $row['on'] && 'answer' === $row['feature']
+				/* translators: %s: Turing's console address. */
+				? sprintf( __( 'Turn on generative AI for this SN site in Turing\'s console (%s), under the site\'s Generative AI settings.', 'viglet-dumont' ), $console )
+				: '',
+		),
+		( new Viglet_Dumont_API_Client( $settings ) )->ai_features()
+	);
 }
 
 /**
@@ -421,6 +457,18 @@ function viglet_dumont_register_rest_routes(): void {
 		array(
 			'methods'             => 'POST',
 			'callback'            => 'viglet_dumont_rest_provision',
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/ai',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn () => new WP_REST_Response( viglet_dumont_ai_status(), 200 ),
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
