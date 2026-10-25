@@ -3,7 +3,7 @@
  * and autocomplete controllers (from `viglet-dumont/search`, already configured for this
  * site). render.php prints the markup and the directives; this keeps the state they read.
  */
-import { getContext, store } from '@wordpress/interactivity';
+import { getContext, getElement, store } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
 import {
 	config,
@@ -37,6 +37,24 @@ const { state } = store( 'viglet-dumont/search', {
 		},
 		get hasCorrection() {
 			return '' !== state.corrected;
+		},
+		get isLoading() {
+			return 'loading' === state.status;
+		},
+		// Placeholders only for a first search: a later one dims the results it replaces.
+		get showSkeleton() {
+			return state.isLoading && 0 === state.results.length;
+		},
+		get isEmpty() {
+			return 'success' === state.status && 0 === state.total;
+		},
+		get isError() {
+			return 'error' === state.status;
+		},
+		get wordpressSearchUrl() {
+			const url = new URL( state.homeUrl );
+			url.searchParams.set( 's', state.query );
+			return url.toString();
 		},
 		get summary() {
 			if ( 'error' === state.status ) {
@@ -95,12 +113,30 @@ const { state } = store( 'viglet-dumont/search', {
 				page: 1,
 			} );
 		},
+		retry() {
+			run( state.query );
+		},
 		goToPage() {
 			const { page } = getContext();
 			search.goToPage( page.page );
 		},
 	},
 	callbacks: {
+		// The snippet keeps Turing's highlight: built from text nodes and <mark>, never HTML.
+		snippet() {
+			const { result } = getContext();
+			const { ref } = getElement();
+			ref.replaceChildren(
+				...result.snippet.map( ( part ) => {
+					if ( ! part.mark ) {
+						return document.createTextNode( part.text );
+					}
+					const mark = document.createElement( 'mark' );
+					mark.textContent = part.text;
+					return mark;
+				} )
+			);
+		},
 		init() {
 			search = createSiteSearch();
 			autocomplete = createSiteAutoComplete();
@@ -178,6 +214,68 @@ function plain( html ) {
 }
 
 /**
+ * Split a highlighted value into runs of plain and matched text. Turing marks the matched
+ * words with <mark>; every other tag is dropped and only its text kept.
+ *
+ * @param {string} html A highlighted value.
+ * @return {Array<{text: string, mark: boolean}>} The runs, in order.
+ */
+function highlighted( html ) {
+	const body = new window.DOMParser().parseFromString(
+		html || '',
+		'text/html'
+	).body;
+	return [ ...body.childNodes ]
+		.map( ( node ) => ( {
+			text: node.textContent || '',
+			mark: 'MARK' === node.nodeName,
+		} ) )
+		.filter( ( part ) => part.text );
+}
+
+/**
+ * Where a result lives, as a reader scans it: the host, then the path's segments.
+ *
+ * @param {string} url The result's URL.
+ */
+function crumb( url ) {
+	try {
+		const { host, pathname } = new URL( url );
+		return [ host, ...pathname.split( '/' ).filter( Boolean ) ].join(
+			' › '
+		);
+	} catch {
+		return url;
+	}
+}
+
+const dateFormat = new Intl.DateTimeFormat(
+	document.documentElement.lang || undefined,
+	{ dateStyle: 'medium' }
+);
+
+/**
+ * A result card from one of the SDK's resolved documents.
+ *
+ * @param {Object} d A ResolvedDocument.
+ */
+function card( d ) {
+	const fields = d.raw?.fields || {};
+	const at = new Date( fields.publication_date ?? d.date );
+	const valid = d.date || fields.publication_date ? ! isNaN( at ) : false;
+	return {
+		url: d.url,
+		title: plain( d.title ) || d.url,
+		type: state.typeLabels[ fields.type ] || fields.type || '',
+		date: valid ? dateFormat.format( at ) : '',
+		iso: valid ? at.toISOString() : '',
+		crumb: crumb( d.url ),
+		image: d.image || '',
+		snippet: highlighted( d.description ),
+	};
+}
+
+/**
  * Copy what the SDK's search controller holds into the block's state.
  *
  * @param {Object} s The SearchControllerState.
@@ -187,11 +285,7 @@ function sync( s ) {
 	state.status = s.status;
 	state.error = s.error || '';
 	state.total = response?.queryContext?.count ?? 0;
-	state.results = s.documents.map( ( d ) => ( {
-		url: d.url,
-		title: plain( d.title ) || d.url,
-		description: plain( d.description ),
-	} ) );
+	state.results = s.documents.map( card );
 	state.facets = ( response?.facets || [] )
 		.filter( ( f ) => f.items && f.items.length )
 		.map( ( f ) => ( {

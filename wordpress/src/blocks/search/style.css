@@ -95,9 +95,110 @@
 	opacity: 0.7;
 }
 
-.viglet-dumont-search__results {
+/* Result cards. Spacing, colour and type come from the theme's presets where it has them. */
+.viglet-dumont-search__results,
+.viglet-dumont-search__skeleton {
+	display: grid;
+	gap: var(--wp--preset--spacing--40, 1.5rem);
+	list-style: none;
 	margin: 0;
-	padding-left: 1.25rem;
+	padding: 0;
+}
+
+.viglet-dumont-search__results.is-loading {
+	opacity: 0.5;
+	transition: opacity 0.2s;
+}
+
+.viglet-dumont-search__result {
+	display: flex;
+	gap: 1rem;
+}
+
+.viglet-dumont-search__image {
+	aspect-ratio: 4 / 3;
+	border-radius: 4px;
+	flex: 0 0 7rem;
+	height: auto;
+	object-fit: cover;
+	width: 7rem;
+}
+
+.viglet-dumont-search__body {
+	min-width: 0;
+}
+
+.viglet-dumont-search__body > * {
+	margin: 0;
+}
+
+.viglet-dumont-search__meta {
+	display: flex;
+	flex-wrap: wrap;
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+	gap: 0.5rem;
+}
+
+.viglet-dumont-search__type {
+	border: 1px solid currentColor;
+	border-radius: 999px;
+	padding: 0 0.5rem;
+}
+
+.viglet-dumont-search__title {
+	font-size: var(--wp--preset--font-size--large, 1.25rem);
+	margin-block: 0.25rem;
+}
+
+.viglet-dumont-search__crumb {
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+	opacity: 0.75;
+	overflow-wrap: anywhere;
+}
+
+.viglet-dumont-search__snippet {
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+	overflow: hidden;
+}
+
+.viglet-dumont-search__snippet mark {
+	background: none;
+	color: inherit;
+	font-weight: 700;
+}
+
+.viglet-dumont-search__skeleton li {
+	animation: viglet-dumont-pulse 1.2s ease-in-out infinite;
+	background: currentColor;
+	border-radius: 4px;
+	height: 5rem;
+	opacity: 0.08;
+}
+
+@keyframes viglet-dumont-pulse {
+	50% {
+		opacity: 0.16;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.viglet-dumont-search__skeleton li {
+		animation: none;
+	}
+}
+
+.viglet-dumont-search__empty ul {
+	margin: 0.5rem 0 0;
+}
+
+.viglet-dumont-search__error {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
 }
 
 .viglet-dumont-search__pages {

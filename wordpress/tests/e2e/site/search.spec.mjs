@@ -121,6 +121,97 @@ test( 'everything spans pages, and the next page shows other results', async ( {
 	await axe( 'search block on page 2', inBlock );
 } );
 
+test( 'a result is a card: type, date, address and the matched words marked', async ( {
+	page,
+	seed,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	const first = results( page ).first();
+	await expect( first.locator( '.viglet-dumont-search__type' ) ).toHaveText(
+		'Post'
+	);
+	await expect( first.locator( 'time' ) ).toHaveAttribute(
+		'datetime',
+		/^\d{4}-\d{2}-\d{2}T/
+	);
+	await expect(
+		first.locator( '.viglet-dumont-search__crumb' )
+	).toContainText( 'localhost' );
+	await expect(
+		first.locator( '.viglet-dumont-search__snippet mark' )
+	).toHaveText( 'Workshop' );
+} );
+
+test( 'while a search runs the block shows placeholders and says it is busy', async ( {
+	page,
+	seed,
+	look,
+} ) => {
+	// Hold Turing's answer long enough to see the state it leaves the block in.
+	await page.route( '**/api/sn/*/search/**', async ( route ) => {
+		await new Promise( ( resolve ) => setTimeout( resolve, 1500 ) );
+		await route.continue();
+	} );
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__skeleton' )
+	).toBeVisible();
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__results' )
+	).toHaveAttribute( 'aria-busy', 'true' );
+	await look( 'search-block-loading' );
+	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__skeleton' )
+	).toBeHidden();
+} );
+
+test( 'a search that finds nothing offers the latest posts', async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=xqzvbnmw` );
+	await expect( summary( page ) ).toHaveText(
+		'No results found. Try different keywords.'
+	);
+	const empty = block( page ).locator( '.viglet-dumont-search__empty' );
+	await expect( empty ).toBeVisible();
+	await expect( empty.locator( 'li a' ) ).toHaveCount( 3 );
+	await look( 'search-block-empty' );
+	await axe( 'search block with nothing found', inBlock );
+} );
+
+test( 'a failed search offers to try again and WordPress search', async ( {
+	page,
+	seed,
+	look,
+	axe,
+	problems,
+} ) => {
+	// The failure is the point here, so the guard lets Turing's refusals through.
+	problems.allow( /api\/sn\// );
+	problems.allow( /Failed to load resource/ );
+	await page.route( '**/api/sn/*/search/**', ( route ) => route.abort() );
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await expect( summary( page ) ).toHaveText(
+		'Search is unavailable right now.'
+	);
+	const error = block( page ).locator( '.viglet-dumont-search__error' );
+	await expect( error ).toBeVisible();
+	await expect(
+		error.getByRole( 'link', { name: 'Search with WordPress instead' } )
+	).toHaveAttribute( 'href', /[?&]s=workshop/ );
+	await look( 'search-block-error' );
+	await axe( 'search block after a failure', inBlock );
+
+	await page.unroute( '**/api/sn/*/search/**' );
+	await error.getByRole( 'button', { name: 'Try again' } ).click();
+	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect( error ).toBeHidden();
+} );
+
 test( "the theme's own search page shows Turing's results inside the theme", async ( {
 	page,
 	look,

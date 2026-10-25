@@ -35,8 +35,8 @@ msgid "Indexing"
 msgstr "Indexação"
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:54
-#: src/blocks/search/render.php:68
+#: src/blocks/search/render.php:79
+#: src/blocks/search/render.php:93
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: src/admin/js/editor-panel.js:67
 #: src/admin/js/search-block-editor.js:34
@@ -305,46 +305,46 @@ msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:40
+#: src/blocks/search/render.php:65
 #, php-format
 msgid "%d results"
 msgstr "%d resultados"
 
-#: src/blocks/search/render.php:41
+#: src/blocks/search/render.php:66
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:42
+#: src/blocks/search/render.php:67
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
-#: src/blocks/search/render.php:46
+#: src/blocks/search/render.php:71
 msgid "Search…"
 msgstr "Buscar…"
 
-#: src/blocks/search/render.php:85
+#: src/blocks/search/render.php:110
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr "Você quis dizer:"
 
-#: src/blocks/search/render.php:91
+#: src/blocks/search/render.php:116
 msgid "Active filters"
 msgstr "Filtros ativos"
 
-#: src/blocks/search/render.php:97
+#: src/blocks/search/render.php:122
 msgid "Remove this filter"
 msgstr "Remover este filtro"
 
-#: src/blocks/search/render.php:102
+#: src/blocks/search/render.php:127
 msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
-#: src/blocks/search/render.php:108
+#: src/blocks/search/render.php:133
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/blocks/search/render.php:134
+#: src/blocks/search/render.php:191
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
@@ -1149,10 +1149,22 @@ msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
 
-#: src/blocks/search/render.php:72
+#: src/blocks/search/render.php:97
 msgid "Suggestions"
 msgstr "Sugestões"
 
 #: src/admin/views/settings-page.php:409
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
+
+#: src/blocks/search/render.php:175
+msgid "Or start from the latest posts:"
+msgstr "Ou comece pelos posts mais recentes:"
+
+#: src/blocks/search/render.php:185
+msgid "Try again"
+msgstr "Tentar de novo"
+
+#: src/blocks/search/render.php:186
+msgid "Search with WordPress instead"
+msgstr "Buscar com o WordPress"
