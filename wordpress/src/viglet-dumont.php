@@ -26,6 +26,7 @@ define( 'VIGLET_DUMONT_URL', plugin_dir_url( __FILE__ ) );
 define( 'VIGLET_DUMONT_OPTION', 'viglet_dumont_settings' );
 
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-api-client.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-events.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
@@ -126,6 +127,27 @@ function viglet_dumont_init(): void {
 	}
 }
 add_action( 'init', 'viglet_dumont_init' );
+
+/**
+ * Point WordPress at the JS translations: `wp i18n make-json` names each file after the
+ * source path the strings were found in (assets/admin/health.js, src/admin/js/...), and
+ * WordPress looks one up by the path of the script it loads (admin/build/health.js).
+ *
+ * @param string|false $relative The script's path relative to the plugin.
+ * @param string       $src      The script's URL.
+ * @return string|false
+ */
+function viglet_dumont_script_translation_path( $relative, $src ) {
+	if ( ! is_string( $relative ) || ! str_starts_with( (string) $src, VIGLET_DUMONT_URL ) ) {
+		return $relative;
+	}
+	if ( preg_match( '#^admin/build/([a-z-]+)\.js$#', $relative, $match ) ) {
+		return 'assets/admin/' . $match[1] . '.js';
+	}
+
+	return 'src/' . $relative;
+}
+add_filter( 'load_script_textdomain_relative_path', 'viglet_dumont_script_translation_path', 10, 2 );
 
 /**
  * Handle post save — queue an index if published, a removal otherwise.

@@ -1,0 +1,1020 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Language: pt_BR\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"POT-Creation-Date: 2026-10-25T00:28:38+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: viglet-dumont\n"
+
+#: src/admin/views/settings-page.php:26
+#: src/includes/class-viglet-dumont-admin.php:33
+#: src/includes/class-viglet-dumont-admin.php:34
+msgid "Viglet Dumont"
+msgstr "Viglet Dumont"
+
+#: src/admin/views/settings-page.php:31
+msgid "Integrate WordPress with Viglet Turing search engine for powerful content indexing and search."
+msgstr "Integre o WordPress ao mecanismo de busca Viglet Turing para indexar e buscar o seu conteúdo."
+
+#: src/admin/views/settings-page.php:40
+#: assets/admin/health.js:94
+msgid "Connection"
+msgstr "Conexão"
+
+#: src/admin/views/settings-page.php:44
+#: src/includes/class-viglet-dumont-cli.php:93
+msgid "Indexing"
+msgstr "Indexação"
+
+#: src/admin/views/settings-page.php:48
+#: src/includes/class-viglet-dumont-post-state.php:96
+#: src/admin/js/editor-panel.js:67
+msgid "Search"
+msgstr "Busca"
+
+#: src/admin/views/settings-page.php:52
+#: assets/admin/mapping.js:228
+msgid "Actions"
+msgstr "Ações"
+
+#: src/admin/views/settings-page.php:64
+msgid "Server Connection"
+msgstr "Conexão com o servidor"
+
+#: src/admin/views/settings-page.php:65
+msgid "Configure the connection to your Viglet Turing server."
+msgstr "Configure a conexão com o seu servidor Viglet Turing."
+
+#: src/admin/views/settings-page.php:69
+msgid "Server URL"
+msgstr "URL do servidor"
+
+#: src/admin/views/settings-page.php:75
+msgid "The full URL of your Turing server (e.g., http://localhost:2700)."
+msgstr "A URL completa do seu servidor Turing (ex.: http://localhost:2700)."
+
+#: src/admin/views/settings-page.php:79
+msgid "Site Name"
+msgstr "Nome do site"
+
+#: src/admin/views/settings-page.php:85
+msgid "The Turing Semantic Navigation site name to use for indexing and search."
+msgstr "O nome do site de Semantic Navigation do Turing usado para indexar e buscar."
+
+#: src/admin/views/settings-page.php:89
+msgid "Site Key"
+msgstr "Chave do site"
+
+#: src/admin/views/settings-page.php:95
+msgid "Starts every document id and fills the site_key field, so several WordPress sites can share one SN site. Empty uses this site's address. Changing it needs an Index All."
+msgstr "Inicia o id de cada documento e preenche o campo site_key, para que vários sites WordPress compartilhem um site SN. Vazio usa o endereço deste site. Ao mudá-la, rode Indexar tudo."
+
+#: src/admin/views/settings-page.php:99
+msgid "API Key"
+msgstr "Chave de API"
+
+#: src/admin/views/settings-page.php:105
+msgid "Optional. API key for authentication with the Turing server."
+msgstr "Opcional. Chave de API para autenticar no servidor Turing."
+
+#: src/admin/views/settings-page.php:110
+#: assets/admin/setup.js:180
+msgid "Locale"
+msgstr "Idioma"
+
+#: src/admin/views/settings-page.php:135
+msgid "Source App Identifier"
+msgstr "Identificador da aplicação de origem"
+
+#: src/admin/views/settings-page.php:148
+#: src/admin/views/settings-page.php:345
+msgid "Test Connection"
+msgstr "Testar conexão"
+
+#: src/admin/views/settings-page.php:159
+msgid "Content Indexing"
+msgstr "Indexação de conteúdo"
+
+#: src/admin/views/settings-page.php:160
+msgid "Choose which content types and metadata to index in Turing."
+msgstr "Escolha quais tipos de conteúdo e metadados indexar no Turing."
+
+#: src/admin/views/settings-page.php:163
+msgid "Post Types"
+msgstr "Tipos de post"
+
+#: src/admin/views/settings-page.php:170
+msgid "Posts"
+msgstr "Posts"
+
+#: src/admin/views/settings-page.php:178
+msgid "Pages"
+msgstr "Páginas"
+
+#: src/admin/views/settings-page.php:195
+msgid "Metadata"
+msgstr "Metadados"
+
+#: src/admin/views/settings-page.php:202
+msgid "Categories"
+msgstr "Categorias"
+
+#: src/admin/views/settings-page.php:210
+msgid "Tags"
+msgstr "Tags"
+
+#: src/admin/views/settings-page.php:218
+msgid "Comments"
+msgstr "Comentários"
+
+#: src/admin/views/settings-page.php:224
+msgid "Advanced"
+msgstr "Avançado"
+
+#: src/admin/views/settings-page.php:227
+msgid "Custom Fields"
+msgstr "Campos personalizados"
+
+#: src/admin/views/settings-page.php:233
+msgid "Comma-separated list of custom field names to include in the index."
+msgstr "Lista, separada por vírgulas, dos campos personalizados a incluir no índice."
+
+#: src/admin/views/settings-page.php:237
+msgid "Exclude Posts/Pages"
+msgstr "Excluir posts/páginas"
+
+#: src/admin/views/settings-page.php:243
+msgid "Comma-separated list of post/page IDs to exclude from indexing."
+msgstr "Lista, separada por vírgulas, dos IDs de posts/páginas que ficam fora da indexação."
+
+#: src/admin/views/settings-page.php:248
+msgid "Batch Size"
+msgstr "Tamanho do lote"
+
+#: src/admin/views/settings-page.php:253
+msgid "Number of documents to send per batch (10-200)."
+msgstr "Quantidade de documentos enviados por lote (10 a 200)."
+
+#: src/admin/views/settings-page.php:259
+msgid "Automation"
+msgstr "Automação"
+
+#: src/admin/views/settings-page.php:267
+msgid "Auto-index on publish"
+msgstr "Indexar ao publicar"
+
+#: src/admin/views/settings-page.php:268
+msgid "Automatically index content when published or updated."
+msgstr "Indexa o conteúdo automaticamente ao publicar ou atualizar."
+
+#: src/admin/views/settings-page.php:278
+msgid "Auto-remove on delete/unpublish"
+msgstr "Remover ao excluir ou despublicar"
+
+#: src/admin/views/settings-page.php:279
+msgid "Automatically remove content from the index when trashed or unpublished."
+msgstr "Remove o conteúdo do índice automaticamente ao ir para a lixeira ou ser despublicado."
+
+#: src/admin/views/settings-page.php:291
+msgid "Search Settings"
+msgstr "Configurações de busca"
+
+#: src/admin/views/settings-page.php:292
+msgid "Configure how Turing search replaces the default WordPress search."
+msgstr "Configure como a busca do Turing substitui a busca padrão do WordPress."
+
+#: src/admin/views/settings-page.php:302
+msgid "Replace WordPress search with Turing"
+msgstr "Substituir a busca do WordPress pelo Turing"
+
+#: src/admin/views/settings-page.php:303
+msgid "When enabled, all search queries will be handled by the Turing search engine."
+msgstr "Quando ativado, todas as buscas são atendidas pelo Turing."
+
+#: src/admin/views/settings-page.php:311
+msgid "Results Per Page"
+msgstr "Resultados por página"
+
+#: src/admin/views/settings-page.php:323
+msgid "Save Settings"
+msgstr "Salvar configurações"
+
+#: src/admin/views/settings-page.php:331
+msgid "Indexing Actions"
+msgstr "Ações de indexação"
+
+#: src/admin/views/settings-page.php:332
+msgid "Manage your Turing search index."
+msgstr "Gerencie o seu índice de busca no Turing."
+
+#: src/admin/views/settings-page.php:340
+msgid "Connection Status"
+msgstr "Status da conexão"
+
+#: src/admin/views/settings-page.php:341
+msgid "Test the connection to your Turing server."
+msgstr "Teste a conexão com o seu servidor Turing."
+
+#: src/admin/views/settings-page.php:357
+msgid "Index All Content"
+msgstr "Indexar todo o conteúdo"
+
+#: src/admin/views/settings-page.php:358
+msgid "Send all published content to the Turing index. This may take a while for large sites."
+msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
+
+#: src/admin/views/settings-page.php:362
+msgid "All Content"
+msgstr "Todo o conteúdo"
+
+#: src/admin/views/settings-page.php:363
+msgid "Posts Only"
+msgstr "Só posts"
+
+#: src/admin/views/settings-page.php:364
+msgid "Pages Only"
+msgstr "Só páginas"
+
+#: src/admin/views/settings-page.php:368
+msgid "Start Indexing"
+msgstr "Iniciar indexação"
+
+#: src/admin/views/settings-page.php:387
+msgid "Delete All Indexed Content"
+msgstr "Excluir todo o conteúdo indexado"
+
+#: src/admin/views/settings-page.php:388
+msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
+msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
+
+#: src/admin/views/settings-page.php:392
+msgid "Delete All"
+msgstr "Excluir tudo"
+
+#: src/admin/views/settings-page.php:403
+msgid "Content Overview"
+msgstr "Visão geral do conteúdo"
+
+#: src/admin/views/settings-page.php:407
+msgid "Loading stats..."
+msgstr "Carregando estatísticas..."
+
+#: src/includes/class-viglet-dumont-admin.php:43
+#: src/includes/class-viglet-dumont-admin.php:44
+msgid "Settings"
+msgstr "Configurações"
+
+#: src/includes/class-viglet-dumont-admin.php:51
+#: src/includes/class-viglet-dumont-admin.php:79
+msgid "Connect to Turing"
+msgstr "Conectar ao Turing"
+
+#: src/includes/class-viglet-dumont-admin.php:52
+msgid "Setup"
+msgstr "Configuração inicial"
+
+#: src/includes/class-viglet-dumont-admin.php:59
+#: src/includes/class-viglet-dumont-admin.php:86
+msgid "Search fields"
+msgstr "Campos de busca"
+
+#: src/includes/class-viglet-dumont-admin.php:60
+msgid "Fields"
+msgstr "Campos"
+
+#: src/includes/class-viglet-dumont-admin.php:67
+#: src/includes/class-viglet-dumont-admin.php:93
+msgid "Search health"
+msgstr "Saúde da busca"
+
+#: src/includes/class-viglet-dumont-admin.php:68
+msgid "Health"
+msgstr "Saúde"
+
+#: src/includes/class-viglet-dumont-admin.php:182
+msgid "Indexing..."
+msgstr "Indexando..."
+
+#: src/includes/class-viglet-dumont-admin.php:183
+msgid "Complete!"
+msgstr "Concluído!"
+
+#: src/includes/class-viglet-dumont-admin.php:184
+msgid "Error"
+msgstr "Erro"
+
+#: src/includes/class-viglet-dumont-admin.php:185
+msgid "Are you sure you want to delete all indexed content? This cannot be undone."
+msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
+
+#: src/includes/class-viglet-dumont-admin.php:186
+msgid "Deleting..."
+msgstr "Excluindo..."
+
+#: src/includes/class-viglet-dumont-admin.php:187
+msgid "All indexed content has been deleted."
+msgstr "Todo o conteúdo indexado foi excluído."
+
+#: src/includes/class-viglet-dumont-admin.php:188
+msgid "Testing connection..."
+msgstr "Testando a conexão..."
+
+#: src/includes/class-viglet-dumont-admin.php:206
+msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
+msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
+
+#: src/includes/class-viglet-dumont-api-client.php:98
+msgid "Connection successful"
+msgstr "Conexão bem-sucedida"
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:100
+#, php-format
+msgid "Server returned HTTP %d"
+msgstr "O servidor respondeu HTTP %d"
+
+#: src/includes/class-viglet-dumont-api-client.php:130
+msgid "Documents imported successfully"
+msgstr "Documentos importados com sucesso"
+
+#. translators: 1: the HTTP status code, 2: the response body.
+#: src/includes/class-viglet-dumont-api-client.php:133
+#, php-format
+msgid "Import failed with HTTP %1$d: %2$s"
+msgstr "A importação falhou com HTTP %1$d: %2$s"
+
+#: src/includes/class-viglet-dumont-api-client.php:161
+msgid "Fields provisioned"
+msgstr "Campos enviados ao Turing"
+
+#. translators: %s: the fields whose type Turing would have to change.
+#: src/includes/class-viglet-dumont-api-client.php:165
+#, php-format
+msgid "Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Turing."
+msgstr "O Turing manteve o esquema do site: um campo mapeado mudaria o tipo de um campo existente (%s). Renomeie o campo ou migre-o no Turing."
+
+#. translators: 1: the HTTP status code, 2: Turing's error message.
+#: src/includes/class-viglet-dumont-api-client.php:171
+#, php-format
+msgid "Provisioning failed with HTTP %1$d: %2$s"
+msgstr "O envio dos campos falhou com HTTP %1$d: %2$s"
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:202
+#, php-format
+msgid "Turing could not plan the fields (HTTP %d)."
+msgstr "O Turing não conseguiu planejar os campos (HTTP %d)."
+
+#: src/includes/class-viglet-dumont-api-client.php:232
+msgid "Documents removed successfully"
+msgstr "Documentos removidos com sucesso"
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:234
+#, php-format
+msgid "Deindex failed with HTTP %d"
+msgstr "A remoção falhou com HTTP %d"
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:276
+#, php-format
+msgid "Search failed with HTTP %d"
+msgstr "A busca falhou com HTTP %d"
+
+#: src/includes/class-viglet-dumont-api-client.php:284
+msgid "Invalid JSON response from server"
+msgstr "Resposta JSON inválida do servidor"
+
+#. translators: %d: how many failed jobs were put back in line.
+#: src/includes/class-viglet-dumont-cli-queue.php:41
+#, php-format
+msgid "Replaying %d failed jobs."
+msgstr "Reenviando %d tarefas com falha."
+
+#: src/includes/class-viglet-dumont-cli-queue.php:48
+msgid "Another worker is sending the queue; try again in a few minutes."
+msgstr "Outro processo está enviando a fila; tente de novo em alguns minutos."
+
+#. translators: 1: jobs sent, 2: jobs still waiting, 3: jobs that stopped retrying.
+#: src/includes/class-viglet-dumont-cli-queue.php:55
+#, php-format
+msgid "%1$d sent, %2$d waiting, %3$d stopped retrying."
+msgstr "%1$d enviados, %2$d aguardando, %3$d desistiram de tentar."
+
+#. translators: 1: the post id, 2: why sending it failed.
+#: src/includes/class-viglet-dumont-cli-queue.php:60
+#: src/includes/class-viglet-dumont-cli.php:177
+#, php-format
+msgid "Post %1$d: %2$s"
+msgstr "Post %1$d: %2$s"
+
+#. translators: 1: how many jobs failed, 2: the queue summary.
+#: src/includes/class-viglet-dumont-cli-queue.php:63
+#, php-format
+msgid "Stopped after %1$d failed. %2$s"
+msgstr "Parou após %1$d falhas. %2$s"
+
+#: src/includes/class-viglet-dumont-cli-queue.php:89
+msgid "The queue is empty."
+msgstr "A fila está vazia."
+
+#. translators: 1: Turing's URL answer, 2: the SN site, 3: the site key.
+#: src/includes/class-viglet-dumont-cli.php:43
+#, php-format
+msgid "Connection: %1$s. SN site: %2$s. Site key: %3$s."
+msgstr "Conexão: %1$s. Site SN: %2$s. Chave do site: %3$s."
+
+#. translators: 1: jobs waiting, 2: jobs that stopped retrying.
+#: src/includes/class-viglet-dumont-cli.php:45
+#, php-format
+msgid "Queue: %1$d waiting, %2$d stopped retrying."
+msgstr "Fila: %1$d aguardando, %2$d desistiram de tentar."
+
+#. translators: %s: why Turing refused the fields.
+#: src/includes/class-viglet-dumont-cli.php:48
+#, php-format
+msgid "Fields not provisioned: %s"
+msgstr "Campos não enviados ao Turing: %s"
+
+#: src/includes/class-viglet-dumont-cli.php:107
+msgid "Reindexing"
+msgstr "Reindexando"
+
+#. translators: %s: why the sweep did not run or failed.
+#: src/includes/class-viglet-dumont-cli.php:111
+#, php-format
+msgid "Sweep: %s"
+msgstr "Limpeza: %s"
+
+#. translators: %d: documents removed from Turing.
+#: src/includes/class-viglet-dumont-cli.php:114
+#, php-format
+msgid "Swept %d documents WordPress no longer publishes."
+msgstr "%d documentos que o WordPress não publica mais foram removidos."
+
+#. translators: %d: documents that would be removed.
+#: src/includes/class-viglet-dumont-cli.php:149
+#, php-format
+msgid "%d documents would be removed."
+msgstr "%d documentos seriam removidos."
+
+#. translators: %d: documents removed.
+#: src/includes/class-viglet-dumont-cli.php:151
+#, php-format
+msgid "%d documents removed."
+msgstr "%d documentos removidos."
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-cli.php:180
+#, php-format
+msgid "%1$d sent, %2$d failed."
+msgstr "%1$d enviados, %2$d falharam."
+
+#: src/includes/class-viglet-dumont-diagnostics.php:49
+msgid "The Turing URL must be a full http:// or https:// address, e.g. https://search.example.org."
+msgstr "A URL do Turing precisa ser um endereço completo http:// ou https://, ex.: https://busca.exemplo.org."
+
+#: src/includes/class-viglet-dumont-diagnostics.php:51
+msgid "The URL is well formed."
+msgstr "A URL está bem formada."
+
+#: src/includes/class-viglet-dumont-diagnostics.php:57
+msgid "The server answers."
+msgstr "O servidor responde."
+
+#. translators: %d: the HTTP status the server answered with.
+#: src/includes/class-viglet-dumont-diagnostics.php:66
+#, php-format
+msgid "The server answered HTTP %d where Turing answers its discovery document: this URL is not a Turing, or a proxy is in the way."
+msgstr "O servidor respondeu HTTP %d onde o Turing responde o seu documento de descoberta: esta URL não é de um Turing, ou há um proxy no caminho."
+
+#: src/includes/class-viglet-dumont-diagnostics.php:69
+msgid "It is a Turing."
+msgstr "É um Turing."
+
+#: src/includes/class-viglet-dumont-diagnostics.php:72
+msgid "No API key is set. Create one in Turing under API Tokens and paste it here."
+msgstr "Nenhuma chave de API definida. Crie uma no Turing em API Tokens e cole aqui."
+
+#: src/includes/class-viglet-dumont-diagnostics.php:85
+msgid "Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites."
+msgstr "O Turing recusou a chave de API: ela está errada, expirou, ou o seu usuário não pode gerenciar sites SN."
+
+#: src/includes/class-viglet-dumont-diagnostics.php:89
+msgid "Turing accepts the API key."
+msgstr "O Turing aceita a chave de API."
+
+#. translators: %s: the SN site's name.
+#: src/includes/class-viglet-dumont-diagnostics.php:96
+#, php-format
+msgid "The SN site %s exists."
+msgstr "O site SN %s existe."
+
+#. translators: %s: the SN site's name.
+#: src/includes/class-viglet-dumont-diagnostics.php:101
+#, php-format
+msgid "There is no SN site named %s in Turing yet. Create it from here, or check the name."
+msgstr "Ainda não há site SN chamado %s no Turing. Crie-o daqui, ou confira o nome."
+
+#. translators: %s: the host name.
+#: src/includes/class-viglet-dumont-diagnostics.php:122
+#, php-format
+msgid "%s does not resolve (DNS): check the address for typos, or whether this server can see that network."
+msgstr "%s não resolve (DNS): confira se o endereço tem erro de digitação, ou se este servidor enxerga essa rede."
+
+#. translators: %s: the transport's own message.
+#: src/includes/class-viglet-dumont-diagnostics.php:126
+#, php-format
+msgid "The secure connection failed (TLS): the certificate is invalid, expired or self-signed. Details: %s"
+msgstr "A conexão segura falhou (TLS): o certificado é inválido, expirou ou é autoassinado. Detalhes: %s"
+
+#. translators: %s: the host name.
+#: src/includes/class-viglet-dumont-diagnostics.php:130
+#, php-format
+msgid "%s did not answer in time: a firewall may be dropping the connection, or Turing is down."
+msgstr "%s não respondeu a tempo: um firewall pode estar descartando a conexão, ou o Turing está fora do ar."
+
+#. translators: %s: the host name.
+#: src/includes/class-viglet-dumont-diagnostics.php:134
+#, php-format
+msgid "Nothing is listening at %s on that port: Turing is down, or the port is wrong."
+msgstr "Nada responde em %s nessa porta: o Turing está fora do ar, ou a porta está errada."
+
+#. translators: %d: how many documents were indexed.
+#: src/includes/class-viglet-dumont-indexer.php:207
+#, php-format
+msgid "Indexing complete. %d documents indexed."
+msgstr "Indexação concluída. %d documentos indexados."
+
+#. translators: 1: documents indexed so far, 2: documents to index in all.
+#: src/includes/class-viglet-dumont-indexer.php:209
+#, php-format
+msgid "Indexed %1$d of %2$d documents..."
+msgstr "%1$d de %2$d documentos indexados..."
+
+#: src/includes/class-viglet-dumont-mapping.php:182
+msgid "Site"
+msgstr "Site"
+
+#: src/includes/class-viglet-dumont-mapping.php:236
+msgid "No mapped field to provision."
+msgstr "Nenhum campo mapeado para enviar."
+
+#: src/includes/class-viglet-dumont-mapping.php:246
+msgid "The fields are already provisioned."
+msgstr "Os campos já estão no Turing."
+
+#. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
+#: src/includes/class-viglet-dumont-mapping.php:301
+#, php-format
+msgid "%1$s is %2$s in Turing, %3$s here"
+msgstr "%1$s é %2$s no Turing, %3$s aqui"
+
+#. translators: %s: the taxonomy's name.
+#: src/includes/class-viglet-dumont-mapping.php:327
+#, php-format
+msgid "Taxonomy: %s"
+msgstr "Taxonomia: %s"
+
+#. translators: %s: the meta key.
+#: src/includes/class-viglet-dumont-mapping.php:343
+#, php-format
+msgid "Meta: %s"
+msgstr "Meta: %s"
+
+#. translators: %s: the core field, e.g. excerpt.
+#: src/includes/class-viglet-dumont-mapping.php:351
+#, php-format
+msgid "Post: %s"
+msgstr "Post: %s"
+
+#: src/includes/class-viglet-dumont-mapping.php:356
+msgid "Featured image URL"
+msgstr "URL da imagem destacada"
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-operations.php:127
+#, php-format
+msgid "Bulk: %1$d sent, %2$d failed."
+msgstr "Em lote: %1$d enviados, %2$d falharam."
+
+#: src/includes/class-viglet-dumont-operations.php:182
+msgid "Turing could not be searched for this site's documents."
+msgstr "Não foi possível buscar no Turing os documentos deste site."
+
+#. translators: %d: documents removed from Turing.
+#: src/includes/class-viglet-dumont-operations.php:207
+#, php-format
+msgid "%d documents WordPress no longer publishes removed."
+msgstr "%d documentos que o WordPress não publica mais foram removidos."
+
+#: src/includes/class-viglet-dumont-operations.php:231
+msgid "Skipped: the reindex had failures."
+msgstr "Ignorada: a reindexação teve falhas."
+
+#: src/includes/class-viglet-dumont-post-state.php:60
+msgid "Not published"
+msgstr "Não publicado"
+
+#: src/includes/class-viglet-dumont-post-state.php:63
+msgid "Excluded"
+msgstr "Excluído da busca"
+
+#: src/includes/class-viglet-dumont-post-state.php:69
+#: src/includes/class-viglet-dumont-post-state.php:77
+#: assets/admin/health.js:302
+#: src/admin/js/editor-panel.js:58
+msgid "Failed"
+msgstr "Falhou"
+
+#: src/includes/class-viglet-dumont-post-state.php:71
+msgid "Queued"
+msgstr "Na fila"
+
+#. translators: %s: how long ago, e.g. "2 mins".
+#: src/includes/class-viglet-dumont-post-state.php:83
+#, php-format
+msgid "Indexed %s ago"
+msgstr "Indexado há %s"
+
+#: src/includes/class-viglet-dumont-post-state.php:87
+msgid "Not indexed yet"
+msgstr "Ainda não indexado"
+
+#: src/includes/class-viglet-dumont-post-state.php:174
+msgid "No such post."
+msgstr "Post não encontrado."
+
+#. translators: %s: the search query.
+#: src/templates/search-results.php:51
+#, php-format
+msgid "Search results for: %s"
+msgstr "Resultados da busca por: %s"
+
+#. translators: %d: how many results the search found.
+#: src/templates/search-results.php:62
+#, php-format
+msgid "%d result found"
+msgid_plural "%d results found"
+msgstr[0] "%d resultado encontrado"
+msgstr[1] "%d resultados encontrados"
+
+#: src/templates/search-results.php:78
+msgid "Did you mean:"
+msgstr "Você quis dizer:"
+
+#: src/templates/search-results.php:113
+msgid "No results found. Try different keywords."
+msgstr "Nenhum resultado. Tente outras palavras."
+
+#: src/templates/search-results.php:177
+msgid "Previous"
+msgstr "Anterior"
+
+#: src/templates/search-results.php:178
+msgid "Next"
+msgstr "Próxima"
+
+#: src/viglet-dumont.php:542
+msgid "No published post of this type to preview."
+msgstr "Não há post publicado deste tipo para pré-visualizar."
+
+#: src/viglet-dumont.php:567
+msgid "The body needs a mapping object keyed by post type."
+msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
+
+#: assets/admin/health.js:26
+msgid "Indexed"
+msgstr "Indexado"
+
+#: assets/admin/health.js:27
+msgid "Removed"
+msgstr "Removido"
+
+#: assets/admin/health.js:28
+msgid "Fields sent"
+msgstr "Campos enviados"
+
+#: assets/admin/health.js:29
+msgid "Sweep"
+msgstr "Limpeza"
+
+#: assets/admin/health.js:35
+msgid "never"
+msgstr "nunca"
+
+#. translators: 1: the SN site, 2: the site key.
+#: assets/admin/health.js:106
+#, js-format
+msgid "SN site %1$s, site key %2$s."
+msgstr "Site SN %1$s, chave do site %2$s."
+
+#. translators: %s: why Turing refused the fields.
+#: assets/admin/health.js:118
+#, js-format
+msgid "The mapped fields are not provisioned: %s"
+msgstr "Os campos mapeados não estão no Turing: %s"
+
+#: assets/admin/health.js:131
+msgid "Documents"
+msgstr "Documentos"
+
+#: assets/admin/health.js:138
+msgid "Post type"
+msgstr "Tipo de post"
+
+#: assets/admin/health.js:141
+msgid "Published in WordPress"
+msgstr "Publicados no WordPress"
+
+#: assets/admin/health.js:147
+msgid "Indexed in Turing"
+msgstr "Indexados no Turing"
+
+#: assets/admin/health.js:162
+msgid "unknown"
+msgstr "desconhecido"
+
+#: assets/admin/health.js:172
+msgid "(differs: run a reindex)"
+msgstr "(diferente: rode uma reindexação)"
+
+#: assets/admin/health.js:189
+msgid "Queue"
+msgstr "Fila"
+
+#. translators: 1: jobs waiting, 2: jobs that stopped retrying.
+#: assets/admin/health.js:195
+#, js-format
+msgid "%1$d waiting, %2$d stopped retrying."
+msgstr "%1$d aguardando, %2$d desistiram de tentar."
+
+#. translators: 1: when, 2: documents sent, 3: documents that failed.
+#: assets/admin/health.js:207
+#, js-format
+msgid "Last run %1$s: %2$d sent, %3$d failed."
+msgstr "Última execução %1$s: %2$d enviados, %3$d falharam."
+
+#: assets/admin/health.js:215
+msgid "The queue has not sent anything yet."
+msgstr "A fila ainda não enviou nada."
+
+#. translators: %d: failed jobs put back in line.
+#: assets/admin/health.js:229
+#, js-format
+msgid "%d failed jobs put back in line."
+msgstr "%d tarefas com falha voltaram para a fila."
+
+#: assets/admin/health.js:238
+msgid "Retry failed"
+msgstr "Tentar de novo as que falharam"
+
+#. translators: 1: sent, 2: failed.
+#: assets/admin/health.js:251
+#, js-format
+msgid "Sent %1$d, %2$d failed."
+msgstr "%1$d enviados, %2$d falharam."
+
+#: assets/admin/health.js:261
+msgid "Send queue now"
+msgstr "Enviar a fila agora"
+
+#: assets/admin/health.js:269
+msgid "Last events"
+msgstr "Últimos eventos"
+
+#: assets/admin/health.js:277
+msgid "When"
+msgstr "Quando"
+
+#: assets/admin/health.js:280
+msgid "What"
+msgstr "O quê"
+
+#: assets/admin/health.js:283
+msgid "Post"
+msgstr "Post"
+
+#: assets/admin/health.js:286
+msgid "Result"
+msgstr "Resultado"
+
+#: assets/admin/health.js:301
+msgid "OK"
+msgstr "OK"
+
+#: assets/admin/health.js:316
+msgid "Nothing has been sent yet."
+msgstr "Nada foi enviado ainda."
+
+#: assets/admin/mapping.js:32
+#: assets/admin/mapping.js:224
+msgid "In Turing"
+msgstr "No Turing"
+
+#: assets/admin/mapping.js:33
+msgid "Added on the next save"
+msgstr "Entra no próximo salvamento"
+
+#: assets/admin/mapping.js:34
+msgid "Conflict"
+msgstr "Conflito"
+
+#: assets/admin/mapping.js:69
+#: assets/admin/mapping.js:206
+msgid "Source"
+msgstr "Origem"
+
+#: assets/admin/mapping.js:79
+#: assets/admin/mapping.js:209
+msgid "Turing field"
+msgstr "Campo no Turing"
+
+#: assets/admin/mapping.js:88
+#: assets/admin/mapping.js:212
+msgid "Type"
+msgstr "Tipo"
+
+#: assets/admin/mapping.js:97
+#: assets/admin/mapping.js:215
+msgid "Multiple"
+msgstr "Múltiplo"
+
+#: assets/admin/mapping.js:105
+#: assets/admin/mapping.js:218
+msgid "Facet"
+msgstr "Faceta"
+
+#: assets/admin/mapping.js:112
+msgid "Facet label"
+msgstr "Rótulo da faceta"
+
+#: assets/admin/mapping.js:122
+msgid "Search weight"
+msgstr "Peso na busca"
+
+#: assets/admin/mapping.js:152
+msgid "Remove field"
+msgstr "Remover campo"
+
+#: assets/admin/mapping.js:154
+msgid "Remove"
+msgstr "Remover"
+
+#: assets/admin/mapping.js:183
+msgid "Leave this type out of search"
+msgstr "Deixar este tipo fora da busca"
+
+#: assets/admin/mapping.js:196
+msgid "Only the standard fields are sent for this type."
+msgstr "Este tipo envia apenas os campos padrão."
+
+#: assets/admin/mapping.js:221
+msgid "Weight"
+msgstr "Peso"
+
+#: assets/admin/mapping.js:267
+msgid "Add field"
+msgstr "Adicionar campo"
+
+#: assets/admin/mapping.js:270
+msgid "Preview document"
+msgstr "Pré-visualizar documento"
+
+#. translators: %s: the post's title.
+#: assets/admin/mapping.js:283
+#, js-format
+msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
+msgstr "O que \"%s\" envia, como está salvo (alterações não salvas não aparecem):"
+
+#: assets/admin/mapping.js:368
+msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them."
+msgstr "Todo tipo de post sempre envia título, texto, URL, datas, autor, categorias e tags. Adicione as taxonomias e os campos personalizados que devem virar campos próprios, com tipo, e marque como faceta os que servem de filtro. Salvar envia os campos ao Turing; depois, rode uma reindexação para que os posts existentes os tenham."
+
+#. translators: %s: why Turing could not say where each field stands.
+#: assets/admin/mapping.js:382
+#, js-format
+msgid "Turing did not say where the fields stand: %s"
+msgstr "O Turing não informou a situação dos campos: %s"
+
+#: assets/admin/mapping.js:418
+msgid "Save and send to Turing"
+msgstr "Salvar e enviar ao Turing"
+
+#: assets/admin/setup.js:25
+msgid "Address"
+msgstr "Endereço"
+
+#: assets/admin/setup.js:26
+msgid "Network"
+msgstr "Rede"
+
+#: assets/admin/setup.js:27
+msgid "Turing"
+msgstr "Turing"
+
+#: assets/admin/setup.js:28
+#: assets/admin/setup.js:151
+msgid "API key"
+msgstr "Chave de API"
+
+#: assets/admin/setup.js:29
+#: assets/admin/setup.js:170
+msgid "SN site"
+msgstr "Site SN"
+
+#: assets/admin/setup.js:97
+msgid "Starting…"
+msgstr "Iniciando…"
+
+#: assets/admin/setup.js:135
+msgid "1. Connection"
+msgstr "1. Conexão"
+
+#: assets/admin/setup.js:140
+msgid "Turing URL"
+msgstr "URL do Turing"
+
+#: assets/admin/setup.js:141
+msgid "The address of your Turing, e.g. https://search.example.org."
+msgstr "O endereço do seu Turing, ex.: https://busca.exemplo.org."
+
+#: assets/admin/setup.js:154
+msgid "A key is stored. Leave this empty to keep it."
+msgstr "Há uma chave salva. Deixe em branco para mantê-la."
+
+#: assets/admin/setup.js:158
+msgid "Create one in Turing under API Tokens."
+msgstr "Crie uma no Turing em API Tokens."
+
+#: assets/admin/setup.js:171
+msgid "The Semantic Navigation site this WordPress publishes to and searches."
+msgstr "O site de Semantic Navigation em que este WordPress publica e busca."
+
+#: assets/admin/setup.js:181
+msgid "The language the content is indexed in, e.g. pt_BR or en_US."
+msgstr "O idioma em que o conteúdo é indexado, ex.: pt_BR ou en_US."
+
+#: assets/admin/setup.js:190
+msgid "Site key"
+msgstr "Chave do site"
+
+#. translators: %s: the key derived from this site's address.
+#: assets/admin/setup.js:193
+#, js-format
+msgid "Keeps this site's documents apart when several sites share one SN site. Empty uses %s."
+msgstr "Separa os documentos deste site quando vários sites compartilham um site SN. Vazio usa %s."
+
+#: assets/admin/setup.js:208
+msgid "Save and test the connection"
+msgstr "Salvar e testar a conexão"
+
+#: assets/admin/setup.js:219
+msgid "2. Test"
+msgstr "2. Teste"
+
+#. translators: %s: the SN site's name.
+#: assets/admin/setup.js:232
+#, js-format
+msgid "Create the SN site %s"
+msgstr "Criar o site SN %s"
+
+#: assets/admin/setup.js:247
+msgid "3. First index"
+msgstr "3. Primeira indexação"
+
+#: assets/admin/setup.js:251
+msgid "Sends every published post of the indexed types now. New and edited posts are sent on their own after that."
+msgstr "Envia agora todos os posts publicados dos tipos indexados. Depois disso, posts novos e editados são enviados sozinhos."
+
+#: assets/admin/setup.js:262
+msgid "Index everything now"
+msgstr "Indexar tudo agora"
+
+#: src/admin/js/editor-panel.js:42
+msgid "Unknown"
+msgstr "Desconhecido"
+
+#: src/admin/js/editor-panel.js:69
+msgid "Checking…"
+msgstr "Verificando…"
+
+#: src/admin/js/editor-panel.js:74
+msgid "Exclude from search"
+msgstr "Excluir da busca"
+
+#: src/admin/js/editor-panel.js:75
+msgid "Takes effect when the post is saved."
+msgstr "Vale quando o post for salvo."
+
+#: src/admin/js/editor-panel.js:88
+msgid "Reindex now"
+msgstr "Reindexar agora"

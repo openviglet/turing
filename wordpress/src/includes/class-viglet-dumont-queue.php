@@ -314,6 +314,7 @@ class Viglet_Dumont_Queue {
 					unset( $jobs[ $post_id ] );
 				}
 				$this->write_state( (int) $post_id, $sent['action'], '', 0, $now );
+				Viglet_Dumont_Events::record( $sent['action'], true, '', (int) $post_id );
 				continue;
 			}
 
@@ -330,6 +331,7 @@ class Viglet_Dumont_Queue {
 				);
 			}
 			$this->write_state( (int) $post_id, $sent['action'], $error, $attempts, null );
+			Viglet_Dumont_Events::record( $sent['action'], false, $error, (int) $post_id );
 		}//end foreach
 
 		$this->save( $jobs );

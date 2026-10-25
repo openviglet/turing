@@ -120,6 +120,13 @@ class Viglet_Dumont_Operations {
 			}
 		}//end foreach
 
+		Viglet_Dumont_Events::record(
+			'index',
+			empty( $errors ),
+			/* translators: 1: posts sent, 2: posts that failed. */
+			sprintf( __( 'Bulk: %1$d sent, %2$d failed.', 'viglet-dumont' ), $sent, count( $errors ) )
+		);
+
 		return array(
 			'sent'   => $sent,
 			'failed' => count( $errors ),
@@ -187,6 +194,7 @@ class Viglet_Dumont_Operations {
 		foreach ( array_chunk( $orphans, $batch_size ) as $chunk ) {
 			$result = $this->client->deindex( array_map( array( $this->client, 'build_delete_item' ), $chunk ) );
 			if ( ! $result['success'] ) {
+				Viglet_Dumont_Events::record( 'sweep', false, $result['message'] );
 				return array(
 					'success' => false,
 					'orphans' => $orphans,
@@ -194,6 +202,9 @@ class Viglet_Dumont_Operations {
 				);
 			}
 		}
+
+		/* translators: %d: documents removed from Turing. */
+		Viglet_Dumont_Events::record( 'sweep', true, sprintf( __( '%d documents WordPress no longer publishes removed.', 'viglet-dumont' ), count( $orphans ) ) );
 
 		return array(
 			'success' => true,
@@ -230,7 +241,7 @@ class Viglet_Dumont_Operations {
 	/**
 	 * The connection, the SN site, published versus indexed documents per type, and the queue.
 	 *
-	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, provisioned: mixed} Per type, `published` is what WordPress publishes and `indexed` what Turing holds; null when it cannot say.
+	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, provisioned: mixed} Per type, `published` is what WordPress publishes and `indexed` what Turing holds; null when it cannot say.
 	 */
 	public function status(): array {
 		$types = array();
@@ -248,6 +259,7 @@ class Viglet_Dumont_Operations {
 			'types'       => $types,
 			'queue'       => ( new Viglet_Dumont_Queue( $this->settings ) )->counts(),
 			'last_run'    => get_option( Viglet_Dumont_Queue::LAST_RUN_OPTION, null ),
+			'events'      => Viglet_Dumont_Events::all(),
 			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
 		);
 	}

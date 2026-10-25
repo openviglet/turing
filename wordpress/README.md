@@ -64,6 +64,24 @@ npm run lint:js
 The release zip and `run-docker.cmd` build them; a checkout without a build shows a notice on
 the Health page instead of a blank one.
 
+### Translations
+
+The plugin ships pt_BR in [`src/languages/`](src/languages/): the `.po` source, the `.mo`
+PHP reads and one `.json` per admin script. After changing a string, regenerate them with
+WP-CLI (Docker works where it is not installed):
+
+```sh
+docker run --rm -v "$PWD:/plugin" -w /plugin wordpress:cli-php8.3 sh -c '
+  wp i18n make-pot . src/languages/viglet-dumont.pot --slug=viglet-dumont --domain=viglet-dumont \
+    --exclude=node_modules,vendor,src/admin/build,tests,build &&
+  wp i18n update-po src/languages/viglet-dumont.pot src/languages &&
+  wp i18n make-mo src/languages && wp i18n make-json src/languages --no-purge'
+```
+
+then translate the new entries in `viglet-dumont-pt_BR.po` and run the last two commands
+again. The JSON files are named after the source script (`assets/admin/health.js`), and
+`viglet_dumont_script_translation_path` maps the built script to it.
+
 The tests run on [Brain Monkey](https://giuseppe-mazzapica.gitbook.io/brain-monkey/), with no
 WordPress install. Without PHP locally, the same runs in a container:
 

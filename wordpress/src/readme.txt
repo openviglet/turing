@@ -74,6 +74,9 @@ Navigation site and replaces the WordPress search page with Turing's results.
   taxonomies and custom fields the posts actually carry. It shows whether Turing has each
   field, is about to add it, or holds it with another type, previews the document a real
   post produces, and saving sends the fields to Turing.
+* The Health page lists the last 50 events: posts sent or removed, fields sent, sweeps,
+  each with its error when it failed.
+* Ships in Brazilian Portuguese (pt_BR), admin screens included.
 * Requires WordPress 6.6: the admin screens are built with @wordpress/scripts, whose JSX
   runtime script ships with 6.6.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting

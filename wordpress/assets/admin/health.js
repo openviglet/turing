@@ -22,6 +22,13 @@ import {
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
+const EVENT_LABEL = {
+	index: __( 'Indexed', 'viglet-dumont' ),
+	delete: __( 'Removed', 'viglet-dumont' ),
+	provision: __( 'Fields sent', 'viglet-dumont' ),
+	sweep: __( 'Sweep', 'viglet-dumont' ),
+};
+
 function formatTime( timestamp ) {
 	return timestamp
 		? new Date( timestamp * 1000 ).toLocaleString()
@@ -254,6 +261,64 @@ function Health() {
 							{ __( 'Send queue now', 'viglet-dumont' ) }
 						</Button>
 					</Flex>
+				</CardBody>
+			</Card>
+
+			<Card>
+				<CardHeader>
+					<h2>{ __( 'Last events', 'viglet-dumont' ) }</h2>
+				</CardHeader>
+				<CardBody>
+					{ status.events && status.events.length ? (
+						<table className="widefat striped">
+							<thead>
+								<tr>
+									<th scope="col">
+										{ __( 'When', 'viglet-dumont' ) }
+									</th>
+									<th scope="col">
+										{ __( 'What', 'viglet-dumont' ) }
+									</th>
+									<th scope="col">
+										{ __( 'Post', 'viglet-dumont' ) }
+									</th>
+									<th scope="col">
+										{ __( 'Result', 'viglet-dumont' ) }
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								{ status.events.map( ( event, index ) => (
+									<tr key={ index }>
+										<td>{ formatTime( event.at ) }</td>
+										<td>
+											{ EVENT_LABEL[ event.type ] ||
+												event.type }
+										</td>
+										<td>{ event.post_id || '—' }</td>
+										<td>
+											{ event.ok
+												? __( 'OK', 'viglet-dumont' )
+												: __(
+														'Failed',
+														'viglet-dumont'
+													) }
+											{ event.message
+												? ': ' + event.message
+												: '' }
+										</td>
+									</tr>
+								) ) }
+							</tbody>
+						</table>
+					) : (
+						<p>
+							{ __(
+								'Nothing has been sent yet.',
+								'viglet-dumont'
+							) }
+						</p>
+					) }
 				</CardBody>
 			</Card>
 		</Flex>
