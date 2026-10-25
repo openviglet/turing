@@ -61,6 +61,21 @@ written to `wp_options`, so the key stays out of database backups.
 `wp dumont status` says where each value came from. The Docker stack below sets the first
 three this way.
 
+## Search
+
+With "Replace WordPress search with Turing" on (off on a fresh install), the default results
+page is the **theme's own**: Turing answers WordPress's main search query and the theme's
+search template renders it, so a block theme keeps its header, footer and styles. Results
+are this site's documents only (its site key), and if Turing does not answer, WordPress
+searches its database as before. The older plugin results page, with facets, stays
+available as "The plugin's results page" for classic themes.
+
+A theme that builds its own search on `@viglet/turing-sdk` gets everything the browser
+needs from `viglet_dumont_public_config()` or `GET /wp-json/viglet-dumont/v1/public-config`:
+Turing's public URL, the SN site, the locale, the site key (filter on `site_key`) and the
+mapped facets. It holds no key. For the browser to call Turing, the SN site must allow the
+WordPress origin in Turing's CORS settings (`TURING_ALLOWEDORIGINS` in a container).
+
 ## Develop
 
 PHP 8.1+ and Composer:

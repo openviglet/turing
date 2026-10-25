@@ -9,7 +9,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"POT-Creation-Date: 2026-10-25T00:36:15+00:00\n"
+"POT-Creation-Date: 2026-10-25T00:40:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -113,7 +113,7 @@ msgid "Source App Identifier"
 msgstr "Identificador da aplicação de origem"
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:384
+#: src/admin/views/settings-page.php:393
 msgid "Test Connection"
 msgstr "Testar conexão"
 
@@ -217,71 +217,87 @@ msgstr "Substituir a busca do WordPress pelo Turing"
 msgid "When enabled, all search queries will be handled by the Turing search engine."
 msgstr "Quando ativado, todas as buscas são atendidas pelo Turing."
 
+#: src/admin/views/settings-page.php:348
+msgid "Results page"
+msgstr "Página de resultados"
+
 #: src/admin/views/settings-page.php:350
+msgid "The theme's own search page (block and classic themes)"
+msgstr "A página de busca do próprio tema (temas de blocos e clássicos)"
+
+#: src/admin/views/settings-page.php:351
+msgid "The plugin's results page, with facets (classic themes)"
+msgstr "A página de resultados do plugin, com facetas (temas clássicos)"
+
+#: src/admin/views/settings-page.php:353
+msgid "With the theme's page, Turing ranks the results and the theme shows them with its own header, footer and styles. If Turing does not answer, WordPress search answers instead."
+msgstr "Com a página do tema, o Turing ordena os resultados e o tema os mostra com o seu próprio cabeçalho, rodapé e estilos. Se o Turing não responder, a busca do WordPress responde no lugar."
+
+#: src/admin/views/settings-page.php:359
 msgid "Results Per Page"
 msgstr "Resultados por página"
 
-#: src/admin/views/settings-page.php:362
+#: src/admin/views/settings-page.php:371
 msgid "Save Settings"
 msgstr "Salvar configurações"
 
-#: src/admin/views/settings-page.php:370
+#: src/admin/views/settings-page.php:379
 msgid "Indexing Actions"
 msgstr "Ações de indexação"
 
-#: src/admin/views/settings-page.php:371
+#: src/admin/views/settings-page.php:380
 msgid "Manage your Turing search index."
 msgstr "Gerencie o seu índice de busca no Turing."
 
-#: src/admin/views/settings-page.php:379
+#: src/admin/views/settings-page.php:388
 msgid "Connection Status"
 msgstr "Status da conexão"
 
-#: src/admin/views/settings-page.php:380
+#: src/admin/views/settings-page.php:389
 msgid "Test the connection to your Turing server."
 msgstr "Teste a conexão com o seu servidor Turing."
 
-#: src/admin/views/settings-page.php:396
+#: src/admin/views/settings-page.php:405
 msgid "Index All Content"
 msgstr "Indexar todo o conteúdo"
 
-#: src/admin/views/settings-page.php:397
+#: src/admin/views/settings-page.php:406
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
 
-#: src/admin/views/settings-page.php:401
+#: src/admin/views/settings-page.php:410
 msgid "All Content"
 msgstr "Todo o conteúdo"
 
-#: src/admin/views/settings-page.php:402
+#: src/admin/views/settings-page.php:411
 msgid "Posts Only"
 msgstr "Só posts"
 
-#: src/admin/views/settings-page.php:403
+#: src/admin/views/settings-page.php:412
 msgid "Pages Only"
 msgstr "Só páginas"
 
-#: src/admin/views/settings-page.php:407
+#: src/admin/views/settings-page.php:416
 msgid "Start Indexing"
 msgstr "Iniciar indexação"
 
-#: src/admin/views/settings-page.php:426
+#: src/admin/views/settings-page.php:435
 msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
-#: src/admin/views/settings-page.php:427
+#: src/admin/views/settings-page.php:436
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
-#: src/admin/views/settings-page.php:431
+#: src/admin/views/settings-page.php:440
 msgid "Delete All"
 msgstr "Excluir tudo"
 
-#: src/admin/views/settings-page.php:442
+#: src/admin/views/settings-page.php:451
 msgid "Content Overview"
 msgstr "Visão geral do conteúdo"
 
-#: src/admin/views/settings-page.php:446
+#: src/admin/views/settings-page.php:455
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
@@ -317,35 +333,35 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:186
+#: src/includes/class-viglet-dumont-admin.php:187
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:187
+#: src/includes/class-viglet-dumont-admin.php:188
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:188
+#: src/includes/class-viglet-dumont-admin.php:189
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:189
+#: src/includes/class-viglet-dumont-admin.php:190
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:190
+#: src/includes/class-viglet-dumont-admin.php:191
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:191
+#: src/includes/class-viglet-dumont-admin.php:192
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:192
+#: src/includes/class-viglet-dumont-admin.php:193
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:210
+#: src/includes/class-viglet-dumont-admin.php:211
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -707,11 +723,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:541
+#: src/viglet-dumont.php:568
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:566
+#: src/viglet-dumont.php:593
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 

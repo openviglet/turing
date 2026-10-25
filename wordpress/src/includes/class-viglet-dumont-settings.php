@@ -53,7 +53,11 @@ class Viglet_Dumont_Settings {
 		'auto_index'          => 1,
 		'auto_deindex'        => 1,
 		'batch_size'          => 50,
-		'search_enabled'      => 1,
+		// Opt-in: a fresh install leaves WordPress search alone until Turing is set up.
+		'search_enabled'      => 0,
+		// theme: Turing answers the query and the theme's search template renders it.
+		// template: the plugin's own results page (classic themes, with facets).
+		'search_mode'         => 'theme',
 		'results_per_page'    => 10,
 	);
 

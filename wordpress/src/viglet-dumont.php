@@ -31,6 +31,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-events.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-native-search.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';
@@ -52,6 +53,17 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
  */
 function viglet_dumont_get_settings(): array {
 	return Viglet_Dumont_Settings::get();
+}
+
+/**
+ * What a theme's own search blocks need to query Turing from the browser: its public URL,
+ * the SN site, the locale, this site's key and the facets the mapping declares. Holds no
+ * secret, so it can be printed into a page or cached.
+ *
+ * @return array{url: string, site: string, locale: string, siteKey: string, facets: array}
+ */
+function viglet_dumont_public_config(): array {
+	return ( new Viglet_Dumont_Native_Search() )->public_config();
 }
 
 /**
@@ -100,7 +112,11 @@ function viglet_dumont_init(): void {
 
 	// Search override.
 	if ( $settings['search_enabled'] ) {
-		add_action( 'template_redirect', 'viglet_dumont_search_redirect', 1 );
+		if ( 'template' === $settings['search_mode'] ) {
+			add_action( 'template_redirect', 'viglet_dumont_search_redirect', 1 );
+		} else {
+			( new Viglet_Dumont_Native_Search( $settings ) )->register();
+		}
 	}
 }
 add_action( 'init', 'viglet_dumont_init' );
@@ -271,6 +287,17 @@ function viglet_dumont_register_rest_routes(): void {
 					return current_user_can( 'manage_options' );
 				},
 			),
+		)
+	);
+
+	// Public on purpose: what a browser needs to search through Turing, never the API key.
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/public-config',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn () => new WP_REST_Response( viglet_dumont_public_config(), 200 ),
+			'permission_callback' => '__return_true',
 		)
 	);
 

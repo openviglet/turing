@@ -344,6 +344,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</label>
 						</div>
 
+						<div class="viglet-dumont-field">
+							<label for="search_mode"><?php esc_html_e( 'Results page', 'viglet-dumont' ); ?></label>
+							<select id="search_mode" name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[search_mode]">
+								<option value="theme" <?php selected( $settings['search_mode'], 'theme' ); ?>><?php esc_html_e( 'The theme\'s own search page (block and classic themes)', 'viglet-dumont' ); ?></option>
+								<option value="template" <?php selected( $settings['search_mode'], 'template' ); ?>><?php esc_html_e( 'The plugin\'s results page, with facets (classic themes)', 'viglet-dumont' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'With the theme\'s page, Turing ranks the results and the theme shows them with its own header, footer and styles. If Turing does not answer, WordPress search answers instead.', 'viglet-dumont' ); ?></p>
+						</div>
+
 						<hr class="viglet-dumont-separator" />
 
 						<div class="viglet-dumont-field">

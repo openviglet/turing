@@ -82,6 +82,12 @@ Navigation site and replaces the WordPress search page with Turing's results.
   VIGLET_DUMONT_TURING_LOCALE, VIGLET_DUMONT_SITE_KEY and VIGLET_DUMONT_PUBLIC_URL. A value
   set that way is read-only in the admin and never stored in the database.
 * The API key is no longer printed back into the settings form.
+* Search is now answered inside the theme: Turing ranks WordPress's own search query and
+  the theme's search template shows the results, so block themes keep their header,
+  footer and styles. WordPress search answers when Turing does not. Replacing search is
+  off on a fresh install; the plugin's own results page remains an option.
+* viglet_dumont_public_config() and GET viglet-dumont/v1/public-config give a theme the
+  browser-side search configuration (no key), for search built on the Turing JS SDK.
 * Requires WordPress 6.6: the admin screens are built with @wordpress/scripts, whose JSX
   runtime script ships with 6.6.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting

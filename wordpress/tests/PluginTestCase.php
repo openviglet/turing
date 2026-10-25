@@ -77,6 +77,7 @@ abstract class PluginTestCase extends TestCase {
 				'exclude_ids'         => '',
 				'batch_size'          => 50,
 				'results_per_page'    => 10,
+				'public_url'          => '',
 			),
 			$overrides
 		);

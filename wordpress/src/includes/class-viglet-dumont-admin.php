@@ -137,6 +137,7 @@ class Viglet_Dumont_Admin {
 		$sanitized['auto_deindex']        = ! empty( $input['auto_deindex'] ) ? 1 : 0;
 		$sanitized['batch_size']          = max( 10, min( 200, (int) ( $input['batch_size'] ?? 50 ) ) );
 		$sanitized['search_enabled']      = ! empty( $input['search_enabled'] ) ? 1 : 0;
+		$sanitized['search_mode']         = 'template' === ( $input['search_mode'] ?? '' ) ? 'template' : 'theme';
 		$sanitized['results_per_page']    = max( 1, min( 100, (int) ( $input['results_per_page'] ?? 10 ) ) );
 
 		return Viglet_Dumont_Settings::without_overridden( $sanitized );

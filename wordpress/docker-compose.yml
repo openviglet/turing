@@ -74,6 +74,8 @@ services:
       VIGLET_DUMONT_TURING_URL: http://turing:2700
       VIGLET_DUMONT_TURING_SITE: ${SN_SITE:-Sample}
       VIGLET_DUMONT_TURING_LOCALE: ${TURING_LOCALE:-en_US}
+      # Browsers reach Turing on the host port, not on the compose network's name.
+      VIGLET_DUMONT_PUBLIC_URL: http://localhost:${TURING_PORT:-2700}
     volumes:
       - wp:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
