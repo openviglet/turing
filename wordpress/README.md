@@ -161,6 +161,16 @@ Beyond behaviour, the suite also checks:
   ("Network"). `E2E_MULTISITE=1 npm run test:e2e` seeds both sites and adds the `network`
   project, which checks that each site's search block finds only its own documents.
 
+**The live-LLM suite** (`npm run test:e2e:ai`, `playwright.ai.config.mjs`) asks Turing's
+generative features real questions, on a stack started with `OPENAI_API_KEY`. It is never
+part of `npm run test:e2e`, which stays free and deterministic. Its seed
+([`fixtures/ai-seed.php`](tests/e2e/fixtures/ai-seed.php)) adds posts holding known facts,
+in English and Portuguese, and one with a planted instruction; the specs check that answers
+come from those posts, ignore the instruction, invent no figure a post does not hold, and
+stay within a p95 time budget (`E2E_AI_P95_MS`, 20 s). Each spec skips, with the reason
+`wp dumont ai status` gives, a feature that is off. The answers land in
+`tests/e2e/artifacts/ai/answers.json`, and the teardown deletes the seeded posts again.
+
 To look at one page in detail, logged in or not:
 
 ```sh
