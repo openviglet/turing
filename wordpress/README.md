@@ -117,6 +117,36 @@ npm run lint:js
 The release zip and `run-docker.cmd` build them; a checkout without a build shows a notice on
 the Health page instead of a blank one.
 
+### Browser tests (Playwright)
+
+[`tests/e2e/`](tests/e2e/) drives the admin screens and the site in a real browser against
+the `run-docker.cmd` stack. It uses the installed Microsoft Edge, so no browser download is
+needed (`E2E_CHANNEL=chromium` after `npx playwright install chromium` to switch).
+
+```sh
+run-docker.cmd                 # the stack, once
+npm run test:e2e               # seed, log in, run every spec
+```
+
+The global setup runs [`fixtures/seed.php`](tests/e2e/fixtures/seed.php) through WP-CLI:
+twelve posts with a `seats` facet, a "Busca" page holding the search block, Turing search
+on. It then reindexes and logs in once. Every test fails on a console error, an uncaught
+page error, a failed request or a 4xx/5xx response, and saves its screens to
+`tests/e2e/artifacts/screens/`. The HTML report is in `tests/e2e/artifacts/report/`.
+`E2E_SKIP_SEED=1` reruns without seeding. It is not in CI, which has no Turing.
+
+To look at one page in detail, logged in or not:
+
+```sh
+npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont-health
+npm run e2e:look -- "/?page_id=7&q=workshop" --anon --mobile
+npm run e2e:look -- /wp-admin/edit.php --script ./my-steps.mjs   # export default async ( page ) => { ... }
+```
+
+It saves a full-page screenshot to `tests/e2e/artifacts/look/` and prints the console
+errors, failed requests, headings, buttons, form fields with their labels, and the
+visible text.
+
 ### Translations
 
 The plugin ships pt_BR in [`src/languages/`](src/languages/): the `.po` source, the `.mo`

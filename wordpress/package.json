@@ -6,9 +6,12 @@
   "scripts": {
     "build": "wp-scripts build assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js --output-path=src/admin/build && node bin/copy-sdk.mjs",
     "start": "wp-scripts start assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js --output-path=src/admin/build && node bin/copy-sdk.mjs",
-    "lint:js": "wp-scripts lint-js assets/admin src/public bin src/admin/js/search-block-editor.js"
+    "lint:js": "wp-scripts lint-js assets/admin src/public bin src/admin/js/search-block-editor.js tests/e2e playwright.config.mjs",
+    "test:e2e": "playwright test",
+    "e2e:look": "node tests/e2e/look.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@wordpress/scripts": "37.0.0"
   },
   "dependencies": {

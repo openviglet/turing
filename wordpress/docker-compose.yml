@@ -97,6 +97,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   # WP-CLI over the same files and database: `run-docker.cmd wp <command>`.
+  # tests/e2e/fixtures is the browser tests' seed data (npm run test:e2e).
   cli:
     image: wordpress:cli-2.12-php8.5
     profiles: ["cli"]
@@ -107,6 +108,7 @@ services:
     volumes:
       - wp:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./tests/e2e/fixtures:/e2e:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

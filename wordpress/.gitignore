@@ -3,3 +3,5 @@ node_modules/
 src/admin/build/
 build/
 .phpunit.cache/
+tests/e2e/artifacts/
+tests/e2e/.auth/
