@@ -26,7 +26,8 @@ export async function axeViolations( page, { include, exclude = [] } = {} ) {
 						Infinity !==
 						animation.effect?.getComputedTiming().iterations
 				)
-				.map( ( animation ) => animation.finished )
+				// A transition the page cancels rejects instead of finishing; either settles it.
+				.map( ( animation ) => animation.finished.catch( () => {} ) )
 		)
 	);
 	let builder = new AxeBuilder( { page } ).withTags( [

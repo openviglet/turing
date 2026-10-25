@@ -69,7 +69,7 @@ test( 'typing suggests, and picking a suggestion searches it', async ( {
 		.locator( 'input[type="search"]' )
 		.pressSequentially( 'work', { delay: 50 } );
 	const suggestion = block( page )
-		.locator( '.viglet-dumont-search__suggestions button' )
+		.locator( '.viglet-dumont-search__suggestions [role="option"]' )
 		.filter( { hasText: 'workshop' } );
 	await expect( suggestion ).toBeVisible();
 	await axe( 'search block suggesting', inBlock );

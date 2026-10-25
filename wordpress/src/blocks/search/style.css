@@ -11,17 +11,44 @@
 	position: relative;
 }
 
-.viglet-dumont-search__form input[type="search"] {
+.viglet-dumont-search__field {
+	display: flex;
 	flex: 1 1 16rem;
 	min-width: 0;
+	position: relative;
 }
 
-.viglet-dumont-search__suggestions {
+.viglet-dumont-search__field input[type="search"] {
+	flex: 1;
+	min-width: 0;
+	padding-right: 2.5rem;
+}
+
+/* The browser's own clear control would sit beside this one. */
+.viglet-dumont-search__field input[type="search"]::-webkit-search-cancel-button {
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.viglet-dumont-search__clear {
+	background: none;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	font-size: 1.25em;
+	line-height: 1;
+	padding: 0 0.75rem;
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.viglet-dumont-search__popup {
 	background: var(--wp--preset--color--base, #fff);
 	border: 1px solid currentColor;
 	left: 0;
-	list-style: none;
-	margin: 0;
 	padding: 0.25rem 0;
 	position: absolute;
 	right: 0;
@@ -29,7 +56,31 @@
 	z-index: 10;
 }
 
-.viglet-dumont-search__suggestions button,
+.viglet-dumont-search__suggestions {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.viglet-dumont-search__suggestions li {
+	cursor: pointer;
+	padding: 0.25rem 0.75rem;
+}
+
+.viglet-dumont-search__suggestions strong {
+	font-weight: 700;
+}
+
+.viglet-dumont-search__suggestions li:hover,
+.viglet-dumont-search__suggestions li.is-active {
+	background: var(--wp--preset--color--contrast, #000);
+	color: var(--wp--preset--color--base, #fff);
+}
+
+.viglet-dumont-search__popup .viglet-dumont-search__link {
+	margin: 0.25rem 0.75rem 0;
+}
+
 .viglet-dumont-search__link {
 	background: none;
 	border: 0;

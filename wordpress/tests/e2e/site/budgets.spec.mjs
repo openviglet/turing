@@ -30,7 +30,7 @@ test.beforeEach( async ( { page } ) => {
 				marks.typed &&
 				! marks.suggested &&
 				document.querySelector(
-					'.viglet-dumont-search__suggestions:not([hidden]) button'
+					'.viglet-dumont-search__popup:not([hidden]) [role="option"]'
 				)
 			) {
 				marks.suggested = now;
@@ -70,17 +70,17 @@ test( `a suggestion shows within ${ suggestionMs } ms of typing`, async ( {
 	// Warm the path once: the first request pays for the connection, not the search.
 	await input.fill( 'wo' );
 	await expect(
-		page.locator( '.viglet-dumont-search__suggestions button' ).first()
+		page
+			.locator( '.viglet-dumont-search__suggestions [role="option"]' )
+			.first()
 	).toBeVisible();
 	await input.fill( '' );
-	await expect(
-		page.locator( '.viglet-dumont-search__suggestions' )
-	).toBeHidden();
+	await expect( page.locator( '.viglet-dumont-search__popup' ) ).toBeHidden();
 
 	await input.fill( 'work' );
 	await expect(
 		page
-			.locator( '.viglet-dumont-search__suggestions button' )
+			.locator( '.viglet-dumont-search__suggestions [role="option"]' )
 			.filter( { hasText: 'workshop' } )
 	).toBeVisible();
 	const { typed, suggested } = await marks( page );
