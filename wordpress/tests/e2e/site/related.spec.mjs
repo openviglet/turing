@@ -12,7 +12,7 @@ test( 'a workshop post is followed by the other workshops, drawn on the server',
 	look,
 	axe,
 } ) => {
-	await page.goto( `/?p=${ seed.postId }` );
+	await page.goto( `/?p=${ seed.relatedPostId }` );
 	const title = ( await page.title() ).split( ' – ' )[ 0 ];
 	const box = related( page );
 	await expect(
@@ -33,7 +33,9 @@ test( 'a workshop post is followed by the other workshops, drawn on the server',
 	} );
 
 	// In the HTML itself, for crawlers and visitors without JavaScript.
-	const html = await ( await request.get( `/?p=${ seed.postId }` ) ).text();
+	const html = await (
+		await request.get( `/?p=${ seed.relatedPostId }` )
+	).text();
 	expect( html ).toContain( 'viglet-dumont-related__title' );
 	expect( html.match( /viglet-dumont-related__title/g ) ).toHaveLength( 3 );
 } );
@@ -42,7 +44,7 @@ test( 'opening a related post reports it to Turing with its rank', async ( {
 	page,
 	seed,
 } ) => {
-	await page.goto( `/?p=${ seed.postId }` );
+	await page.goto( `/?p=${ seed.relatedPostId }` );
 	const links = related( page ).locator( '.viglet-dumont-related__title a' );
 	await expect( links ).toHaveCount( 3 );
 

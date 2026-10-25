@@ -108,7 +108,7 @@ class Viglet_Dumont_Native_Search {
 		wp_register_script(
 			'viglet-dumont-search-block-editor',
 			VIGLET_DUMONT_URL . 'admin/js/search-block-editor.js',
-			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-i18n', 'wp-server-side-render' ),
 			VIGLET_DUMONT_VERSION,
 			true
 		);
@@ -116,6 +116,10 @@ class Viglet_Dumont_Native_Search {
 		wp_register_style( 'viglet-dumont-search-block', VIGLET_DUMONT_URL . 'blocks/search/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/search' );
+		// Its parts, as inner blocks a theme can reorder (D185).
+		foreach ( array_keys( Viglet_Dumont_Search_Block::PARTS ) as $part ) {
+			register_block_type( VIGLET_DUMONT_DIR . 'blocks/search-parts/' . $part );
+		}
 
 		// Related content (D177): drawn on the server; its module only reports clicks.
 		wp_register_script_module(

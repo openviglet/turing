@@ -8,6 +8,16 @@
 	"description": "Search this site through Turing: a search box with suggestions, did-you-mean, facets, results and pages.",
 	"keywords": [ "search", "turing", "facets" ],
 	"textdomain": "viglet-dumont",
+	"providesContext": {
+		"viglet-dumont/search/placeholder": "placeholder",
+		"viglet-dumont/search/showFacets": "showFacets",
+		"viglet-dumont/search/showSort": "showSort",
+		"viglet-dumont/search/showAnswer": "showAnswer",
+		"viglet-dumont/search/showImage": "showImage",
+		"viglet-dumont/search/showDate": "showDate",
+		"viglet-dumont/search/showType": "showType",
+		"viglet-dumont/search/showSnippet": "showSnippet"
+	},
 	"attributes": {
 		"placeholder": {
 			"type": "string",

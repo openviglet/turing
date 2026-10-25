@@ -54,6 +54,10 @@ foreach ( $titles as $i => $title ) {
 	if ( 0 === $i ) {
 		$post_id = $id;
 	}
+	// A workshop whose title shares no word with the seeded pages (related.spec.mjs).
+	if ( 'Workshop on facets' === $title ) {
+		$related_id = $id;
+	}
 }
 
 $page = get_page_by_path( 'busca' );
@@ -87,6 +91,33 @@ $ask_id = $ask ? $ask->ID : (int) wp_insert_post(
 		'post_content' => '<!-- wp:viglet-dumont/search {"showAnswer":true} /-->',
 	)
 );
+
+// The search block with its parts as inner blocks, the pages moved above the results
+// (parts.spec.mjs).
+$parts_content = implode(
+	"\n",
+	array(
+		'<!-- wp:viglet-dumont/search {"perPage":5} -->',
+		'<!-- wp:viglet-dumont/search-box /-->',
+		'<!-- wp:viglet-dumont/search-pages /-->',
+		'<!-- wp:viglet-dumont/search-filters /-->',
+		'<!-- wp:viglet-dumont/search-results /-->',
+		'<!-- /wp:viglet-dumont/search -->',
+	)
+);
+$parts    = get_page_by_path( 'search-parts' );
+$parts_id = $parts ? $parts->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'search-parts',
+		'post_title'   => 'Search parts',
+		'post_status'  => 'publish',
+		'post_content' => $parts_content,
+	)
+);
+if ( $parts_content !== get_post_field( 'post_content', $parts_id ) ) {
+	wp_update_post( array( 'ID' => $parts_id, 'post_content' => $parts_content ) );
+}
 
 // The Related content block on a page no other document resembles (related.spec.mjs).
 $lonely    = get_page_by_path( 'related-none' );
@@ -165,6 +196,8 @@ echo wp_json_encode(
 		'corePageId'   => $core_id,
 		'askPageId'    => $ask_id,
 		'lonelyPageId' => $lonely_id,
+		'partsPageId'  => $parts_id,
+		'relatedPostId' => $related_id ?? 0,
 		'postId'       => $post_id,
 	)
 );

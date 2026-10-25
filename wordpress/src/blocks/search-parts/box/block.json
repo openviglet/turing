@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "viglet-dumont/search-box",
+	"title": "Search box",
+	"category": "widgets",
+	"icon": "search",
+	"description": "The Turing search block’s box: the field, its suggestions and “Did you mean”.",
+	"textdomain": "viglet-dumont",
+	"ancestor": [
+		"viglet-dumont/search"
+	],
+	"usesContext": [
+		"viglet-dumont/search/placeholder",
+		"viglet-dumont/search/showFacets",
+		"viglet-dumont/search/showSort",
+		"viglet-dumont/search/showAnswer",
+		"viglet-dumont/search/showImage",
+		"viglet-dumont/search/showDate",
+		"viglet-dumont/search/showType",
+		"viglet-dumont/search/showSnippet"
+	],
+	"supports": {
+		"html": false,
+		"reusable": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"editorScript": "viglet-dumont-search-block-editor",
+	"render": "file:../render.php"
+}

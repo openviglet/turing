@@ -32,6 +32,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-native-search.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search-block.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';

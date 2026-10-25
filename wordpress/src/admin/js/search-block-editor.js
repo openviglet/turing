@@ -12,9 +12,17 @@
 
 	const el = wp.element.createElement;
 	const __ = wp.i18n.__;
-	const { useBlockProps, InspectorControls } = wp.blockEditor;
+	const {
+		useBlockProps,
+		useInnerBlocksProps,
+		InnerBlocks,
+		InspectorControls,
+		store: blockEditorStore,
+	} = wp.blockEditor;
+	const { useDispatch, useSelect } = wp.data;
 	const ServerSideRender = wp.serverSideRender;
 	const {
+		Button,
 		Disabled,
 		PanelBody,
 		Placeholder,
@@ -23,20 +31,78 @@
 		ToggleControl,
 	} = wp.components;
 
+	// The block's parts as inner blocks (D185), in the order the block draws them by default.
+	const parts = [
+		[ 'viglet-dumont/search-box', 'search' ],
+		[ 'viglet-dumont/search-filters', 'filter' ],
+		[ 'viglet-dumont/search-results', 'list-view' ],
+		[ 'viglet-dumont/search-pages', 'ellipsis' ],
+	];
+
 	/**
-	 * The block in the editor.
+	 * The block in the editor: a live preview of its default order, or, once its parts are
+	 * arranged, the parts themselves to reorder, with any other block between them.
 	 *
 	 * @param {Object}                       props               The block's props.
+	 * @param {string}                       props.clientId      The block's id in the editor.
 	 * @param {Object}                       props.attributes    placeholder, showFacets, showSort, perPage.
 	 * @param {(attributes: Object) => void} props.setAttributes Updates them.
 	 */
-	function Edit( { attributes, setAttributes } ) {
+	function Edit( { clientId, attributes, setAttributes } ) {
+		const arranged = useSelect(
+			( select ) =>
+				select( blockEditorStore ).getBlockCount( clientId ) > 0,
+			[ clientId ]
+		);
+		const { replaceInnerBlocks } = useDispatch( blockEditorStore );
+		const blockProps = useBlockProps();
+		const innerBlocksProps = useInnerBlocksProps( blockProps, {
+			renderAppender: false,
+		} );
+		const arrange = () =>
+			replaceInnerBlocks(
+				clientId,
+				parts.map( ( [ name ] ) => wp.blocks.createBlock( name ) )
+			);
+
 		return el(
 			'div',
-			useBlockProps(),
+			arranged ? innerBlocksProps : blockProps,
 			el(
 				InspectorControls,
 				null,
+				el(
+					PanelBody,
+					{
+						title: __( 'Layout', 'viglet-dumont' ),
+						initialOpen: false,
+					},
+					el(
+						'p',
+						null,
+						arranged
+							? __(
+									'Its parts are blocks: move them, or put other blocks between them.',
+									'viglet-dumont'
+								)
+							: __(
+									'Make its parts (box, filters, results, pages) blocks you can reorder.',
+									'viglet-dumont'
+								)
+					),
+					el(
+						Button,
+						{
+							variant: 'secondary',
+							onClick: arranged
+								? () => replaceInnerBlocks( clientId, [] )
+								: arrange,
+						},
+						arranged
+							? __( 'Back to the default order', 'viglet-dumont' )
+							: __( 'Arrange its parts', 'viglet-dumont' )
+					)
+				),
 				el(
 					PanelBody,
 					{ title: __( 'Search', 'viglet-dumont' ) },
@@ -146,24 +212,50 @@
 			),
 			// What visitors get: the block rendered on the server with Turing's answer to "*",
 			// in the chosen layout and style. Disabled, so a click selects the block.
-			el(
-				Disabled,
-				null,
-				el( ServerSideRender, {
-					block: 'viglet-dumont/search',
-					attributes,
-					LoadingResponsePlaceholder: () =>
-						el( Placeholder, {
-							icon: 'search',
-							label: __( 'Turing search', 'viglet-dumont' ),
-						} ),
-				} )
-			)
+			arranged
+				? innerBlocksProps.children
+				: el(
+						Disabled,
+						null,
+						el( ServerSideRender, {
+							block: 'viglet-dumont/search',
+							attributes,
+							LoadingResponsePlaceholder: () =>
+								el( Placeholder, {
+									icon: 'search',
+									label: __(
+										'Turing search',
+										'viglet-dumont'
+									),
+								} ),
+						} )
+					)
 		);
 	}
 
 	wp.blocks.registerBlockType( 'viglet-dumont/search', {
 		edit: Edit,
-		save: () => null,
+		// The parts, when arranged; a block without them saves nothing, as before.
+		save: () => el( InnerBlocks.Content ),
 	} );
+
+	// Each part in the editor: a labelled box to move. It shows Turing's answer only on the
+	// page, where the whole block's store runs.
+	parts.forEach( ( [ name, icon ] ) =>
+		wp.blocks.registerBlockType( name, {
+			edit: function PartEdit() {
+				return el(
+					'div',
+					useBlockProps(),
+					el( Placeholder, {
+						icon,
+						label: wp.blocks.getBlockType( name )?.title || name,
+						instructions:
+							wp.blocks.getBlockType( name )?.description,
+					} )
+				);
+			},
+			save: () => null,
+		} )
+	);
 } )( window.wp );

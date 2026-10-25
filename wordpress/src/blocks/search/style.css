@@ -171,6 +171,56 @@
 	}
 }
 
+/*
+ * The block's parts as inner blocks (D185), in whatever order the editor gave them: each
+ * spans the block, except the filters and the results, which sit side by side as they do
+ * in the default order. Dense placement keeps them in one row when other parts come
+ * between them.
+ */
+.viglet-dumont-search--parts {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+@media (min-width: 782px) {
+	.viglet-dumont-search--parts:has(.viglet-dumont-search__facets:not([hidden])) {
+		column-gap: 2rem;
+		display: grid;
+		row-gap: 1rem;
+		grid-auto-flow: row dense;
+		grid-template-columns: 14rem minmax(0, 1fr);
+	}
+
+	.viglet-dumont-search--parts > * {
+		grid-column: 1 / -1;
+	}
+
+	.viglet-dumont-search--parts > .wp-block-viglet-dumont-search-filters {
+		grid-column: 1;
+	}
+
+	.viglet-dumont-search--parts > .wp-block-viglet-dumont-search-results {
+		grid-column: 2;
+	}
+
+	.viglet-dumont-search--parts.viglet-dumont-search--facets-right:has(.viglet-dumont-search__facets:not([hidden])) {
+		grid-template-columns: minmax(0, 1fr) 14rem;
+	}
+
+	.viglet-dumont-search--parts.viglet-dumont-search--facets-right > .wp-block-viglet-dumont-search-filters {
+		grid-column: 2;
+	}
+
+	.viglet-dumont-search--parts.viglet-dumont-search--facets-right > .wp-block-viglet-dumont-search-results {
+		grid-column: 1;
+	}
+
+	.viglet-dumont-search--parts.viglet-dumont-search--facets-top > :is(.wp-block-viglet-dumont-search-filters, .wp-block-viglet-dumont-search-results) {
+		grid-column: 1 / -1;
+	}
+}
+
 /* The block's "Results as" setting: a grid of cards, each with its image on top. */
 .viglet-dumont-search--grid .viglet-dumont-search__results {
 	grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));

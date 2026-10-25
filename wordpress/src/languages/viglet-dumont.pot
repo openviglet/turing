@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T20:04:32+00:00\n"
+"POT-Creation-Date: 2026-10-25T20:28:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -33,13 +33,13 @@ msgid "Indexing"
 msgstr ""
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:142
-#: src/blocks/search/render.php:168
-#: src/includes/class-viglet-dumont-native-search.php:172
+#: src/blocks/search/parts/box.php:22
+#: src/blocks/search/parts/box.php:48
+#: src/includes/class-viglet-dumont-native-search.php:176
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: assets/admin/tuning.js:373
 #: src/admin/js/editor-panel.js:152
-#: src/admin/js/search-block-editor.js:42
+#: src/admin/js/search-block-editor.js:108
 msgid "Search"
 msgstr ""
 
@@ -379,156 +379,144 @@ msgstr ""
 msgid "Related posts"
 msgstr ""
 
-#: src/blocks/search/render.php:28
-msgid "Relevance"
+#: src/blocks/search/parts/answer.php:20
+msgid "Answer generated from this site"
 msgstr ""
 
-#: src/blocks/search/render.php:29
-msgid "Newest"
+#: src/blocks/search/parts/answer.php:22
+msgid "Sources"
 msgstr ""
 
-#: src/blocks/search/render.php:30
-msgid "Oldest"
+#: src/blocks/search/parts/answer.php:30
+msgid "Was this helpful?"
+msgstr ""
+
+#: src/blocks/search/parts/answer.php:31
+msgid "Yes"
+msgstr ""
+
+#: src/blocks/search/parts/answer.php:32
+msgid "No"
+msgstr ""
+
+#: src/blocks/search/parts/answer.php:34
+msgid "Thank you."
+msgstr ""
+
+#: src/blocks/search/parts/applied.php:18
+msgid "Active filters"
+msgstr ""
+
+#: src/blocks/search/parts/applied.php:24
+msgid "Remove this filter"
+msgstr ""
+
+#: src/blocks/search/parts/applied.php:29
+#: src/blocks/search/parts/facets.php:49
+msgid "Clear all filters"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:19
+msgid "Search…"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:45
+msgid "Clear the search"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:54
+msgid "Suggestions"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:67
+msgid "Clear recent searches"
+msgstr ""
+
+#: src/blocks/search/parts/correction.php:19
+#: src/templates/search-results.php:78
+msgid "Did you mean:"
+msgstr ""
+
+#: src/blocks/search/parts/facets.php:22
+#: src/blocks/search/render.php:64
+msgid "Filters"
+msgstr ""
+
+#: src/blocks/search/parts/facets.php:48
+msgid "Show results"
+msgstr ""
+
+#: src/blocks/search/parts/main.php:33
+#: src/blocks/search/parts/main.php:37
+msgid "Featured"
+msgstr ""
+
+#: src/blocks/search/parts/main.php:79
+msgid "Or start from the latest posts:"
+msgstr ""
+
+#: src/blocks/search/parts/main.php:89
+msgid "Try again"
+msgstr ""
+
+#: src/blocks/search/parts/main.php:90
+msgid "Search with WordPress instead"
+msgstr ""
+
+#: src/blocks/search/parts/pages.php:18
+msgid "Result pages"
+msgstr ""
+
+#: src/blocks/search/parts/toolbar.php:25
+msgid "Sort by"
 msgstr ""
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:81
-#: src/blocks/search/render.php:83
+#: src/blocks/search/render.php:58
+#: src/blocks/search/render.php:60
 #, php-format
 msgid "%d suggestion. Use the up and down arrows to choose it."
 msgid_plural "%d suggestions. Use the up and down arrows to choose one."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/blocks/search/render.php:87
-#: src/blocks/search/render.php:265
-msgid "Filters"
-msgstr ""
-
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:89
+#: src/blocks/search/render.php:66
 #, php-format
 msgid "Filters (%d)"
 msgstr ""
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:91
+#: src/blocks/search/render.php:68
 #, php-format
 msgid "Show %d more"
 msgstr ""
 
-#: src/blocks/search/render.php:92
+#: src/blocks/search/render.php:69
 msgid "Show fewer"
 msgstr ""
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:104
-#: src/blocks/search/render.php:106
-#: src/includes/class-viglet-dumont-native-search.php:179
-#: src/includes/class-viglet-dumont-native-search.php:181
-#: src/includes/class-viglet-dumont-native-search.php:312
+#: src/blocks/search/render.php:81
+#: src/blocks/search/render.php:83
+#: src/includes/class-viglet-dumont-native-search.php:183
+#: src/includes/class-viglet-dumont-native-search.php:185
+#: src/includes/class-viglet-dumont-native-search.php:316
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/blocks/search/render.php:108
-#: src/includes/class-viglet-dumont-native-search.php:183
+#: src/blocks/search/render.php:85
+#: src/includes/class-viglet-dumont-native-search.php:187
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
-#: src/blocks/search/render.php:109
-#: src/includes/class-viglet-dumont-native-search.php:184
+#: src/blocks/search/render.php:86
+#: src/includes/class-viglet-dumont-native-search.php:188
 msgid "Search is unavailable right now."
-msgstr ""
-
-#: src/blocks/search/render.php:134
-msgid "Search…"
-msgstr ""
-
-#: src/blocks/search/render.php:165
-msgid "Clear the search"
-msgstr ""
-
-#: src/blocks/search/render.php:174
-msgid "Suggestions"
-msgstr ""
-
-#: src/blocks/search/render.php:187
-msgid "Clear recent searches"
-msgstr ""
-
-#: src/blocks/search/render.php:193
-#: src/templates/search-results.php:78
-msgid "Did you mean:"
-msgstr ""
-
-#: src/blocks/search/render.php:201
-msgid "Sort by"
-msgstr ""
-
-#: src/blocks/search/render.php:211
-msgid "Active filters"
-msgstr ""
-
-#: src/blocks/search/render.php:217
-msgid "Remove this filter"
-msgstr ""
-
-#: src/blocks/search/render.php:222
-#: src/blocks/search/render.php:292
-msgid "Clear all filters"
-msgstr ""
-
-#: src/blocks/search/render.php:242
-msgid "Answer generated from this site"
-msgstr ""
-
-#: src/blocks/search/render.php:244
-msgid "Sources"
-msgstr ""
-
-#: src/blocks/search/render.php:252
-msgid "Was this helpful?"
-msgstr ""
-
-#: src/blocks/search/render.php:253
-msgid "Yes"
-msgstr ""
-
-#: src/blocks/search/render.php:254
-msgid "No"
-msgstr ""
-
-#: src/blocks/search/render.php:256
-msgid "Thank you."
-msgstr ""
-
-#: src/blocks/search/render.php:291
-msgid "Show results"
-msgstr ""
-
-#: src/blocks/search/render.php:298
-#: src/blocks/search/render.php:302
-msgid "Featured"
-msgstr ""
-
-#: src/blocks/search/render.php:344
-msgid "Or start from the latest posts:"
-msgstr ""
-
-#: src/blocks/search/render.php:354
-msgid "Try again"
-msgstr ""
-
-#: src/blocks/search/render.php:355
-msgid "Search with WordPress instead"
-msgstr ""
-
-#: src/blocks/search/render.php:360
-msgid "Result pages"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:43
@@ -929,31 +917,31 @@ msgstr ""
 msgid "Featured image URL"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:171
+#: src/includes/class-viglet-dumont-native-search.php:175
 msgid "Search this site"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:173
+#: src/includes/class-viglet-dumont-native-search.php:177
 msgid "Close"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:174
+#: src/includes/class-viglet-dumont-native-search.php:178
 msgid "Results"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:175
+#: src/includes/class-viglet-dumont-native-search.php:179
 msgid "Searching…"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:185
+#: src/includes/class-viglet-dumont-native-search.php:189
 msgid "See all results"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:186
+#: src/includes/class-viglet-dumont-native-search.php:190
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:187
+#: src/includes/class-viglet-dumont-native-search.php:191
 msgid "Search (Ctrl+K)"
 msgstr ""
 
@@ -997,6 +985,18 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:239
 #: src/includes/class-viglet-dumont-post-state.php:253
 msgid "No such post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-search-block.php:78
+msgid "Relevance"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-search-block.php:79
+msgid "Newest"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-search-block.php:80
+msgid "Oldest"
 msgstr ""
 
 #. translators: %s: the SN site's name.
@@ -1047,33 +1047,33 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:84
+#: src/viglet-dumont.php:85
 msgid "Answers with sources"
 msgstr ""
 
-#: src/viglet-dumont.php:85
+#: src/viglet-dumont.php:86
 msgid "Chat"
 msgstr ""
 
-#: src/viglet-dumont.php:86
+#: src/viglet-dumont.php:87
 msgid "Natural-language filters"
 msgstr ""
 
-#: src/viglet-dumont.php:87
+#: src/viglet-dumont.php:88
 msgid "Catalog copilot"
 msgstr ""
 
 #. translators: %s: Turing's console address.
-#: src/viglet-dumont.php:100
+#: src/viglet-dumont.php:101
 #, php-format
 msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
 msgstr ""
 
-#: src/viglet-dumont.php:724
+#: src/viglet-dumont.php:725
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:749
+#: src/viglet-dumont.php:750
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -1673,22 +1673,22 @@ msgid "Show as"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:92
-#: src/admin/js/search-block-editor.js:108
+#: src/admin/js/search-block-editor.js:174
 msgid "A grid"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:96
-#: src/admin/js/search-block-editor.js:104
+#: src/admin/js/search-block-editor.js:170
 msgid "A list"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:105
-#: src/admin/js/search-block-editor.js:118
+#: src/admin/js/search-block-editor.js:184
 msgid "Show the image"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:107
-#: src/admin/js/search-block-editor.js:121
+#: src/admin/js/search-block-editor.js:187
 msgid "Show the date"
 msgstr ""
 
@@ -1696,59 +1696,79 @@ msgstr ""
 msgid "Show the excerpt"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:44
+#: src/admin/js/search-block-editor.js:77
+msgid "Layout"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:84
+msgid "Its parts are blocks: move them, or put other blocks between them."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:88
+msgid "Make its parts (box, filters, results, pages) blocks you can reorder."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:102
+msgid "Back to the default order"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:103
+msgid "Arrange its parts"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:110
 msgid "Placeholder"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:50
+#: src/admin/js/search-block-editor.js:116
 msgid "Show filters (facets)"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:56
+#: src/admin/js/search-block-editor.js:122
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:64
+#: src/admin/js/search-block-editor.js:130
 msgid "Answer questions from this site’s content"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:68
+#: src/admin/js/search-block-editor.js:134
 msgid "A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:77
+#: src/admin/js/search-block-editor.js:143
 msgid "Where the filters sit"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:81
+#: src/admin/js/search-block-editor.js:147
 msgid "Left"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:85
+#: src/admin/js/search-block-editor.js:151
 msgid "Right"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:89
+#: src/admin/js/search-block-editor.js:155
 msgid "Above the results"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:100
+#: src/admin/js/search-block-editor.js:166
 msgid "Results as"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:120
+#: src/admin/js/search-block-editor.js:186
 msgid "Show the type"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:124
+#: src/admin/js/search-block-editor.js:190
 msgid "Show the snippet"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:136
+#: src/admin/js/search-block-editor.js:202
 msgid "Results per page"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:158
+#: src/admin/js/search-block-editor.js:226
 msgid "Turing search"
 msgstr ""
 
@@ -1776,6 +1796,46 @@ msgstr ""
 #: src/blocks/search/block.json
 msgctxt "block keyword"
 msgid "turing"
+msgstr ""
+
+#: src/blocks/search-parts/box/block.json
+msgctxt "block title"
+msgid "Search box"
+msgstr ""
+
+#: src/blocks/search-parts/box/block.json
+msgctxt "block description"
+msgid "The Turing search block’s box: the field, its suggestions and “Did you mean”."
+msgstr ""
+
+#: src/blocks/search-parts/filters/block.json
+msgctxt "block title"
+msgid "Search filters"
+msgstr ""
+
+#: src/blocks/search-parts/filters/block.json
+msgctxt "block description"
+msgid "The Turing search block’s filters: the applied ones and the facets."
+msgstr ""
+
+#: src/blocks/search-parts/pages/block.json
+msgctxt "block title"
+msgid "Search pages"
+msgstr ""
+
+#: src/blocks/search-parts/pages/block.json
+msgctxt "block description"
+msgid "The Turing search block’s result pages."
+msgstr ""
+
+#: src/blocks/search-parts/results/block.json
+msgctxt "block title"
+msgid "Search results"
+msgstr ""
+
+#: src/blocks/search-parts/results/block.json
+msgctxt "block description"
+msgid "The Turing search block’s results: the count, the sort, the answer and the list."
 msgstr ""
 
 #: src/blocks/search/block.json

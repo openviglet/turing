@@ -76,6 +76,13 @@ the Interactivity API on the SDK below and styled by the theme. It reads `?q=` (
 so a page holding it can be the site's search page. A site with its own search blocks
 turns it off: `add_filter( 'viglet_dumont_register_blocks', '__return_false' );`.
 
+Its parts can be blocks of their own: Layout → **Arrange its parts** turns the box, the
+filters, the results and the pages into inner blocks (`viglet-dumont/search-box`,
+`-filters`, `-results`, `-pages`). A theme can then reorder them, put the pages above the
+results, or set its own blocks between them. They stay one search with one store, and the
+filters stay beside the results. A block whose parts were never arranged draws them in the
+default order.
+
 The **Related content** block (`viglet-dumont/related`) lists the posts Turing's
 similar-documents search finds most like the one being read. It never lists the post itself,
 only this site's published posts, and renders nothing when there are none. It is drawn on the

@@ -35,13 +35,13 @@ msgid "Indexing"
 msgstr "Indexação"
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:142
-#: src/blocks/search/render.php:168
-#: src/includes/class-viglet-dumont-native-search.php:172
+#: src/blocks/search/parts/box.php:22
+#: src/blocks/search/parts/box.php:48
+#: src/includes/class-viglet-dumont-native-search.php:176
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: assets/admin/tuning.js:373
 #: src/admin/js/editor-panel.js:152
-#: src/admin/js/search-block-editor.js:42
+#: src/admin/js/search-block-editor.js:108
 msgid "Search"
 msgstr "Busca"
 
@@ -308,45 +308,45 @@ msgstr "Visão geral do conteúdo"
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#: src/blocks/search/render.php:108
-#: src/includes/class-viglet-dumont-native-search.php:183
+#: src/blocks/search/render.php:85
+#: src/includes/class-viglet-dumont-native-search.php:187
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:109
-#: src/includes/class-viglet-dumont-native-search.php:184
+#: src/blocks/search/render.php:86
+#: src/includes/class-viglet-dumont-native-search.php:188
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
-#: src/blocks/search/render.php:134
+#: src/blocks/search/parts/box.php:19
 msgid "Search…"
 msgstr "Buscar…"
 
-#: src/blocks/search/render.php:193
+#: src/blocks/search/parts/correction.php:19
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr "Você quis dizer:"
 
-#: src/blocks/search/render.php:211
+#: src/blocks/search/parts/applied.php:18
 msgid "Active filters"
 msgstr "Filtros ativos"
 
-#: src/blocks/search/render.php:217
+#: src/blocks/search/parts/applied.php:24
 msgid "Remove this filter"
 msgstr "Remover este filtro"
 
-#: src/blocks/search/render.php:222
-#: src/blocks/search/render.php:292
+#: src/blocks/search/parts/applied.php:29
+#: src/blocks/search/parts/facets.php:49
 msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
-#: src/blocks/search/render.php:87
-#: src/blocks/search/render.php:265
+#: src/blocks/search/parts/facets.php:22
+#: src/blocks/search/render.php:64
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/blocks/search/render.php:360
+#: src/blocks/search/parts/pages.php:18
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
@@ -769,11 +769,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:724
+#: src/viglet-dumont.php:725
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:749
+#: src/viglet-dumont.php:750
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1112,15 +1112,15 @@ msgstr "Vale quando o post for salvo."
 msgid "Reindex now"
 msgstr "Reindexar agora"
 
-#: src/admin/js/search-block-editor.js:44
+#: src/admin/js/search-block-editor.js:110
 msgid "Placeholder"
 msgstr "Texto de exemplo"
 
-#: src/admin/js/search-block-editor.js:50
+#: src/admin/js/search-block-editor.js:116
 msgid "Show filters (facets)"
 msgstr "Mostrar filtros (facetas)"
 
-#: src/admin/js/search-block-editor.js:158
+#: src/admin/js/search-block-editor.js:226
 msgid "Turing search"
 msgstr "Busca Turing"
 
@@ -1150,7 +1150,7 @@ msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
 
-#: src/blocks/search/render.php:174
+#: src/blocks/search/parts/box.php:54
 msgid "Suggestions"
 msgstr "Sugestões"
 
@@ -1158,67 +1158,67 @@ msgstr "Sugestões"
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
-#: src/blocks/search/render.php:344
+#: src/blocks/search/parts/main.php:79
 msgid "Or start from the latest posts:"
 msgstr "Ou comece pelos posts mais recentes:"
 
-#: src/blocks/search/render.php:354
+#: src/blocks/search/parts/main.php:89
 msgid "Try again"
 msgstr "Tentar de novo"
 
-#: src/blocks/search/render.php:355
+#: src/blocks/search/parts/main.php:90
 msgid "Search with WordPress instead"
 msgstr "Buscar com o WordPress"
 
-#: src/blocks/search/render.php:165
+#: src/blocks/search/parts/box.php:45
 msgid "Clear the search"
 msgstr "Limpar a busca"
 
-#: src/blocks/search/render.php:187
+#: src/blocks/search/parts/box.php:67
 msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:89
+#: src/blocks/search/render.php:66
 #, php-format
 msgid "Filters (%d)"
 msgstr "Filtros (%d)"
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:91
+#: src/blocks/search/render.php:68
 #, php-format
 msgid "Show %d more"
 msgstr "Mostrar mais %d"
 
-#: src/blocks/search/render.php:92
+#: src/blocks/search/render.php:69
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
-#: src/blocks/search/render.php:291
+#: src/blocks/search/parts/facets.php:48
 msgid "Show results"
 msgstr "Ver resultados"
 
-#: src/blocks/search/render.php:28
+#: src/includes/class-viglet-dumont-search-block.php:78
 msgid "Relevance"
 msgstr "Relevância"
 
-#: src/blocks/search/render.php:29
+#: src/includes/class-viglet-dumont-search-block.php:79
 msgid "Newest"
 msgstr "Mais recentes"
 
-#: src/blocks/search/render.php:30
+#: src/includes/class-viglet-dumont-search-block.php:80
 msgid "Oldest"
 msgstr "Mais antigos"
 
-#: src/blocks/search/render.php:201
+#: src/blocks/search/parts/toolbar.php:25
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: src/admin/js/search-block-editor.js:56
+#: src/admin/js/search-block-editor.js:122
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 
-#: src/admin/js/search-block-editor.js:136
+#: src/admin/js/search-block-editor.js:202
 msgid "Results per page"
 msgstr "Resultados por página"
 
@@ -1242,79 +1242,79 @@ msgstr "Automática: a página com o bloco de busca do Turing"
 msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
 msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
 
-#: src/includes/class-viglet-dumont-native-search.php:171
+#: src/includes/class-viglet-dumont-native-search.php:175
 msgid "Search this site"
 msgstr "Buscar neste site"
 
-#: src/includes/class-viglet-dumont-native-search.php:173
+#: src/includes/class-viglet-dumont-native-search.php:177
 msgid "Close"
 msgstr "Fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:174
+#: src/includes/class-viglet-dumont-native-search.php:178
 msgid "Results"
 msgstr "Resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:175
+#: src/includes/class-viglet-dumont-native-search.php:179
 msgid "Searching…"
 msgstr "Buscando…"
 
-#: src/includes/class-viglet-dumont-native-search.php:185
+#: src/includes/class-viglet-dumont-native-search.php:189
 msgid "See all results"
 msgstr "Ver todos os resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:186
+#: src/includes/class-viglet-dumont-native-search.php:190
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:187
+#: src/includes/class-viglet-dumont-native-search.php:191
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
-#: src/admin/js/search-block-editor.js:77
+#: src/admin/js/search-block-editor.js:143
 msgid "Where the filters sit"
 msgstr "Onde ficam os filtros"
 
-#: src/admin/js/search-block-editor.js:81
+#: src/admin/js/search-block-editor.js:147
 msgid "Left"
 msgstr "À esquerda"
 
-#: src/admin/js/search-block-editor.js:85
+#: src/admin/js/search-block-editor.js:151
 msgid "Right"
 msgstr "À direita"
 
-#: src/admin/js/search-block-editor.js:89
+#: src/admin/js/search-block-editor.js:155
 msgid "Above the results"
 msgstr "Acima dos resultados"
 
-#: src/admin/js/search-block-editor.js:100
+#: src/admin/js/search-block-editor.js:166
 msgid "Results as"
 msgstr "Resultados em"
 
 #: src/admin/js/related-block-editor.js:96
-#: src/admin/js/search-block-editor.js:104
+#: src/admin/js/search-block-editor.js:170
 msgid "A list"
 msgstr "Lista"
 
 #: src/admin/js/related-block-editor.js:92
-#: src/admin/js/search-block-editor.js:108
+#: src/admin/js/search-block-editor.js:174
 msgid "A grid"
 msgstr "Grade"
 
 #: src/admin/js/related-block-editor.js:105
-#: src/admin/js/search-block-editor.js:118
+#: src/admin/js/search-block-editor.js:184
 msgid "Show the image"
 msgstr "Mostrar a imagem"
 
-#: src/admin/js/search-block-editor.js:120
+#: src/admin/js/search-block-editor.js:186
 msgid "Show the type"
 msgstr "Mostrar o tipo"
 
 #: src/admin/js/related-block-editor.js:107
-#: src/admin/js/search-block-editor.js:121
+#: src/admin/js/search-block-editor.js:187
 msgid "Show the date"
 msgstr "Mostrar a data"
 
-#: src/admin/js/search-block-editor.js:124
+#: src/admin/js/search-block-editor.js:190
 msgid "Show the snippet"
 msgstr "Mostrar o trecho"
 
@@ -1361,24 +1361,24 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-dumont.php:84
+#: src/viglet-dumont.php:85
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-dumont.php:85
+#: src/viglet-dumont.php:86
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-dumont.php:86
+#: src/viglet-dumont.php:87
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: src/viglet-dumont.php:87
+#: src/viglet-dumont.php:88
 msgid "Catalog copilot"
 msgstr "Copiloto de catálogo"
 
 #. translators: %s: Turing's console address.
-#: src/viglet-dumont.php:100
+#: src/viglet-dumont.php:101
 #, php-format
 msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
 msgstr "Ative a IA generativa deste site SN no console do Turing (%s), nas configurações de IA generativa do site."
@@ -1419,35 +1419,35 @@ msgstr "Verificar de novo"
 msgid "Check AI features"
 msgstr "Verificar recursos de IA"
 
-#: src/blocks/search/render.php:242
+#: src/blocks/search/parts/answer.php:20
 msgid "Answer generated from this site"
 msgstr "Resposta gerada a partir deste site"
 
-#: src/blocks/search/render.php:244
+#: src/blocks/search/parts/answer.php:22
 msgid "Sources"
 msgstr "Fontes"
 
-#: src/blocks/search/render.php:252
+#: src/blocks/search/parts/answer.php:30
 msgid "Was this helpful?"
 msgstr "Isto ajudou?"
 
-#: src/blocks/search/render.php:253
+#: src/blocks/search/parts/answer.php:31
 msgid "Yes"
 msgstr "Sim"
 
-#: src/blocks/search/render.php:254
+#: src/blocks/search/parts/answer.php:32
 msgid "No"
 msgstr "Não"
 
-#: src/blocks/search/render.php:256
+#: src/blocks/search/parts/answer.php:34
 msgid "Thank you."
 msgstr "Obrigado."
 
-#: src/admin/js/search-block-editor.js:64
+#: src/admin/js/search-block-editor.js:130
 msgid "Answer questions from this site’s content"
 msgstr "Responder perguntas com o conteúdo deste site"
 
-#: src/admin/js/search-block-editor.js:68
+#: src/admin/js/search-block-editor.js:134
 msgid "A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources."
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
@@ -1497,8 +1497,8 @@ msgstr "Procurar de novo"
 msgid "Find related posts"
 msgstr "Encontrar posts relacionados"
 
-#: src/blocks/search/render.php:298
-#: src/blocks/search/render.php:302
+#: src/blocks/search/parts/main.php:33
+#: src/blocks/search/parts/main.php:37
 msgid "Featured"
 msgstr "Destaque"
 
@@ -1795,8 +1795,8 @@ msgid "similar"
 msgstr "semelhante"
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:81
-#: src/blocks/search/render.php:83
+#: src/blocks/search/render.php:58
+#: src/blocks/search/render.php:60
 #, php-format
 msgid "%d suggestion. Use the up and down arrows to choose it."
 msgid_plural "%d suggestions. Use the up and down arrows to choose one."
@@ -1804,13 +1804,73 @@ msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
 msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:104
-#: src/blocks/search/render.php:106
-#: src/includes/class-viglet-dumont-native-search.php:179
-#: src/includes/class-viglet-dumont-native-search.php:181
-#: src/includes/class-viglet-dumont-native-search.php:312
+#: src/blocks/search/render.php:81
+#: src/blocks/search/render.php:83
+#: src/includes/class-viglet-dumont-native-search.php:183
+#: src/includes/class-viglet-dumont-native-search.php:185
+#: src/includes/class-viglet-dumont-native-search.php:316
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
 msgstr[0] "%d resultado"
 msgstr[1] "%d resultados"
+
+#: src/admin/js/search-block-editor.js:77
+msgid "Layout"
+msgstr "Disposição"
+
+#: src/admin/js/search-block-editor.js:84
+msgid "Its parts are blocks: move them, or put other blocks between them."
+msgstr "As partes dele são blocos: mova-as, ou coloque outros blocos entre elas."
+
+#: src/admin/js/search-block-editor.js:88
+msgid "Make its parts (box, filters, results, pages) blocks you can reorder."
+msgstr "Transforme as partes dele (caixa, filtros, resultados, páginas) em blocos que você pode reordenar."
+
+#: src/admin/js/search-block-editor.js:102
+msgid "Back to the default order"
+msgstr "Voltar à ordem padrão"
+
+#: src/admin/js/search-block-editor.js:103
+msgid "Arrange its parts"
+msgstr "Organizar as partes"
+
+#: src/blocks/search-parts/box/block.json
+msgctxt "block title"
+msgid "Search box"
+msgstr "Caixa de busca"
+
+#: src/blocks/search-parts/box/block.json
+msgctxt "block description"
+msgid "The Turing search block’s box: the field, its suggestions and “Did you mean”."
+msgstr "A caixa do bloco de busca do Turing: o campo, as sugestões e o “Você quis dizer”."
+
+#: src/blocks/search-parts/filters/block.json
+msgctxt "block title"
+msgid "Search filters"
+msgstr "Filtros da busca"
+
+#: src/blocks/search-parts/filters/block.json
+msgctxt "block description"
+msgid "The Turing search block’s filters: the applied ones and the facets."
+msgstr "Os filtros do bloco de busca do Turing: os aplicados e as facetas."
+
+#: src/blocks/search-parts/pages/block.json
+msgctxt "block title"
+msgid "Search pages"
+msgstr "Páginas da busca"
+
+#: src/blocks/search-parts/pages/block.json
+msgctxt "block description"
+msgid "The Turing search block’s result pages."
+msgstr "As páginas de resultados do bloco de busca do Turing."
+
+#: src/blocks/search-parts/results/block.json
+msgctxt "block title"
+msgid "Search results"
+msgstr "Resultados da busca"
+
+#: src/blocks/search-parts/results/block.json
+msgctxt "block description"
+msgid "The Turing search block’s results: the count, the sort, the answer and the list."
+msgstr "Os resultados do bloco de busca do Turing: a contagem, a ordenação, a resposta e a lista."
