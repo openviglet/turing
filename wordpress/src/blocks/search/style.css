@@ -98,6 +98,24 @@
 	width: auto;
 }
 
+/*
+ * A classic theme styles every bare `button` in every state, Twenty Twenty-One with up to
+ * four classes and pseudo-classes (`.has-background button:not(:hover):not(:active)...`),
+ * which turns the text buttons, the chips and the box's clear button into dark boxes. They
+ * are not the theme's buttons, so they are reset above any such weight: the
+ * `#viglet-dumont-reset` in `:is()` weighs as an id, and no element carries it.
+ */
+.viglet-dumont-search :is(.viglet-dumont-search__link, .viglet-dumont-search__chip, .viglet-dumont-search__clear):is(button, #viglet-dumont-reset) {
+	background: transparent;
+	box-shadow: none;
+	color: inherit;
+}
+
+.viglet-dumont-search :is(.viglet-dumont-search__link, .viglet-dumont-search__chip, .viglet-dumont-search__clear):is(button, #viglet-dumont-reset):focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
 .viglet-dumont-search__applied {
 	align-items: center;
 	display: flex;
