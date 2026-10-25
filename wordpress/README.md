@@ -52,6 +52,18 @@ composer check      # PHPCS (WordPress Coding Standards), PHPStan and PHPUnit
 composer lint       # PHPCS alone; vendor/bin/phpcbf fixes what it can
 ```
 
+The admin screens (the Health page) are React with `@wordpress/components`, written in
+[`assets/admin/`](assets/admin/) and built into `src/admin/build/`, which is not committed:
+
+```sh
+npm ci
+npm run build       # or npm start to rebuild on change
+npm run lint:js
+```
+
+The release zip and `run-docker.cmd` build them; a checkout without a build shows a notice on
+the Health page instead of a blank one.
+
 The tests run on [Brain Monkey](https://giuseppe-mazzapica.gitbook.io/brain-monkey/), with no
 WordPress install. Without PHP locally, the same runs in a container:
 

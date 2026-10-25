@@ -38,6 +38,29 @@ class Viglet_Dumont_Admin {
 			'dashicons-search',
 			80
 		);
+		add_submenu_page(
+			'viglet-dumont',
+			__( 'Settings', 'viglet-dumont' ),
+			__( 'Settings', 'viglet-dumont' ),
+			'manage_options',
+			'viglet-dumont',
+			array( $this, 'render_settings_page' )
+		);
+		add_submenu_page(
+			'viglet-dumont',
+			__( 'Search health', 'viglet-dumont' ),
+			__( 'Health', 'viglet-dumont' ),
+			'manage_options',
+			'viglet-dumont-health',
+			array( $this, 'render_health_page' )
+		);
+	}
+
+	/**
+	 * The Health page: a mount point for the app in admin/build/health.js.
+	 */
+	public function render_health_page(): void {
+		echo '<div class="wrap"><h1>' . esc_html__( 'Search health', 'viglet-dumont' ) . '</h1><div id="viglet-dumont-health"></div></div>';
 	}
 
 	/**
@@ -91,6 +114,10 @@ class Viglet_Dumont_Admin {
 	 * @param string $hook The current admin page's hook suffix.
 	 */
 	public function enqueue_assets( string $hook ): void {
+		if ( 'viglet-dumont_page_viglet-dumont-health' === $hook ) {
+			$this->enqueue_build( 'health' );
+			return;
+		}
 		if ( 'toplevel_page_viglet-dumont' !== $hook ) {
 			return;
 		}
@@ -127,6 +154,36 @@ class Viglet_Dumont_Admin {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Load one entry of the admin build (`npm run build`), with the dependencies wp-scripts
+	 * wrote beside it. Without a build the page says how to make one instead of staying blank.
+	 *
+	 * @param string $entry The entry name, e.g. health.
+	 */
+	private function enqueue_build( string $entry ): void {
+		$asset_file = VIGLET_DUMONT_DIR . "admin/build/{$entry}.asset.php";
+		if ( ! file_exists( $asset_file ) ) {
+			add_action(
+				'admin_notices',
+				static function () {
+					echo '<div class="notice notice-error"><p>' . esc_html__( 'The plugin\'s admin scripts are not built. Run npm ci && npm run build in the plugin\'s source folder, or install a release zip.', 'viglet-dumont' ) . '</p></div>';
+				}
+			);
+			return;
+		}
+
+		$asset = include $asset_file;
+		wp_enqueue_script(
+			"viglet-dumont-{$entry}",
+			VIGLET_DUMONT_URL . "admin/build/{$entry}.js",
+			$asset['dependencies'],
+			$asset['version'],
+			true
+		);
+		wp_set_script_translations( "viglet-dumont-{$entry}", 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_enqueue_style( 'wp-components' );
 	}
 
 	/**

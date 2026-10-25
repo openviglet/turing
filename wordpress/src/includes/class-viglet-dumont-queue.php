@@ -28,6 +28,9 @@ class Viglet_Dumont_Queue {
 	/** The post meta that records how the post last fared. */
 	public const STATE_META = '_viglet_dumont_index_state';
 
+	/** The option recording the worker's last run that sent anything: when, sent, failed. */
+	public const LAST_RUN_OPTION = 'viglet_dumont_last_run';
+
 	/** The WP-Cron hook the worker runs on. */
 	public const CRON_HOOK = 'viglet_dumont_process_queue';
 
@@ -155,6 +158,19 @@ class Viglet_Dumont_Queue {
 		$this->schedule_next( $remaining );
 
 		$errors = array_filter( $outcomes, static fn ( $error ) => '' !== $error );
+
+		// The health page's "last run": only a run that sent something, so an idle tick does not hide the last real one.
+		if ( ! empty( $outcomes ) ) {
+			update_option(
+				self::LAST_RUN_OPTION,
+				array(
+					'at'     => time(),
+					'sent'   => count( $outcomes ) - count( $errors ),
+					'failed' => count( $errors ),
+				),
+				false
+			);
+		}
 
 		return array(
 			'sent'      => count( $outcomes ) - count( $errors ),

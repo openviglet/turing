@@ -33,6 +33,13 @@ if /i "%~1"=="logs"  goto :logs
 if /i "%~1"=="wp" goto :wp
 if not "%~1"=="" ( echo Unknown command: %~1 & exit /b 1 )
 
+rem The admin screens are built JS (npm run build); src/ is mounted as is, so build it here.
+if not exist src\admin\build\health.asset.php (
+    echo Building the admin screens...
+    call npm ci --no-audit --no-fund || exit /b 1
+    call npm run build || exit /b 1
+)
+
 %DC% up -d || exit /b 1
 
 echo Waiting for WordPress...

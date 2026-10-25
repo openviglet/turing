@@ -23,6 +23,11 @@ if [ $# -gt 0 ] && [ "$1" != "$version" ]; then
     exit 1
 fi
 
+if [ ! -f src/admin/build/health.asset.php ]; then
+    echo "src/admin/build/ is empty: run npm ci && npm run build first" >&2
+    exit 1
+fi
+
 rm -rf build
 mkdir -p build/viglet-dumont
 cp -R src/. build/viglet-dumont/

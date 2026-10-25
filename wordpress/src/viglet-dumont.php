@@ -9,7 +9,7 @@
  * License:     MIT
  * Text Domain: viglet-dumont
  * Domain Path: /languages
- * Requires at least: 6.5
+ * Requires at least: 6.6
  * Requires PHP: 8.1
  *
  * @package Viglet_Dumont
@@ -293,6 +293,30 @@ function viglet_dumont_register_rest_routes(): void {
 		array(
 			'methods'             => 'POST',
 			'callback'            => 'viglet_dumont_rest_index',
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/queue/retry',
+		array(
+			'methods'             => 'POST',
+			'callback'            => static fn () => new WP_REST_Response( array( 'replayed' => ( new Viglet_Dumont_Queue() )->retry_failed() ), 200 ),
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/queue/run',
+		array(
+			'methods'             => 'POST',
+			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Dumont_Queue() )->process( true ), 200 ),
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},

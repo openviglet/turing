@@ -1,7 +1,7 @@
 === Viglet Dumont for WordPress ===
 Contributors: viglet
 Tags: search, turing, indexing, semantic navigation
-Requires at least: 6.5
+Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 8.1
 Stable tag: 2.0.0
@@ -64,6 +64,10 @@ Navigation site and replaces the WordPress search page with Turing's results.
 * A Search column in the post lists says where each post stands: indexed and when, queued,
   failed (with the error), excluded or not published. The block editor has a Search panel
   with the same state, "Exclude from search" and "Reindex now".
+* A Health page (Viglet Dumont > Health) shows the connection, published versus indexed
+  documents per type, the queue and its last run, with "Retry failed" and "Send queue now".
+* Requires WordPress 6.6: the admin screens are built with @wordpress/scripts, whose JSX
+  runtime script ships with 6.6.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting
   the batch as indexed.
 
