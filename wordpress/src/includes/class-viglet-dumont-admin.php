@@ -191,6 +191,7 @@ class Viglet_Dumont_Admin {
 					'deleting'    => __( 'Deleting...', 'viglet-dumont' ),
 					'deleted'     => __( 'All indexed content has been deleted.', 'viglet-dumont' ),
 					'pinging'     => __( 'Testing connection...', 'viglet-dumont' ),
+					'total'       => __( 'Total', 'viglet-dumont' ),
 				),
 			)
 		);

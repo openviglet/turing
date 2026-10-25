@@ -167,8 +167,10 @@
             var total = 0;
 
             Object.keys(data).forEach(function (key) {
-                if (key === 'batch_size') return;
-                total += data[key].total;
+                // Only post types are {total, label}; batch_size and queue ride along.
+                var entry = data[key];
+                if (!entry || typeof entry !== 'object' || typeof entry.total !== 'number') return;
+                total += entry.total;
                 html += '<div class="viglet-dumont-stat">' +
                     '<span class="viglet-dumont-stat__number">' + data[key].total + '</span>' +
                     '<span class="viglet-dumont-stat__label">' + data[key].label + '</span>' +
@@ -177,7 +179,7 @@
 
             html = '<div class="viglet-dumont-stat">' +
                 '<span class="viglet-dumont-stat__number">' + total + '</span>' +
-                '<span class="viglet-dumont-stat__label">Total</span>' +
+                '<span class="viglet-dumont-stat__label">' + api.strings.total + '</span>' +
                 '</div>' + html;
 
             $grid.html(html);

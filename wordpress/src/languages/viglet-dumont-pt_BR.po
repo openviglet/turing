@@ -9,7 +9,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"POT-Creation-Date: 2026-10-25T00:51:58+00:00\n"
+"POT-Creation-Date: 2026-10-25T01:11:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -396,7 +396,11 @@ msgstr "Todo o conteúdo indexado foi excluído."
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:211
+#: src/includes/class-viglet-dumont-admin.php:194
+msgid "Total"
+msgstr "Total"
+
+#: src/includes/class-viglet-dumont-admin.php:212
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
