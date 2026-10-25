@@ -1,0 +1,32 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "viglet-dumont/search",
+	"title": "Turing search",
+	"category": "widgets",
+	"icon": "search",
+	"description": "Search this site through Turing: a search box with suggestions, did-you-mean, facets, results and pages.",
+	"keywords": [ "search", "turing", "facets" ],
+	"textdomain": "viglet-dumont",
+	"attributes": {
+		"placeholder": {
+			"type": "string",
+			"default": ""
+		},
+		"showFacets": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": { "margin": true, "padding": true },
+		"color": { "background": true, "text": true },
+		"typography": { "fontSize": true },
+		"interactivity": true
+	},
+	"editorScript": "viglet-dumont-search-block-editor",
+	"style": "viglet-dumont-search-block",
+	"render": "file:./render.php"
+}

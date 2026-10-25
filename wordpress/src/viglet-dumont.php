@@ -113,6 +113,7 @@ function viglet_dumont_init(): void {
 	// Search override.
 	// The SDK as script modules, for a theme's own search blocks.
 	Viglet_Dumont_Native_Search::register_modules();
+	Viglet_Dumont_Native_Search::register_blocks();
 	add_action( 'wp_enqueue_scripts', array( 'Viglet_Dumont_Native_Search', 'provide_config' ) );
 
 	if ( $settings['search_enabled'] ) {

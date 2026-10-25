@@ -64,6 +64,40 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
+	 * Register the Turing search block (blocks/search): a search box with suggestions,
+	 * did-you-mean, facets, results and pages, built on the modules above. A site with its
+	 * own search blocks turns it off with the `viglet_dumont_register_blocks` filter.
+	 */
+	public static function register_blocks(): void {
+		/**
+		 * Filters whether the plugin's own search block is registered.
+		 *
+		 * @param bool $register False to leave the search UI to the theme's blocks.
+		 */
+		if ( ! apply_filters( 'viglet_dumont_register_blocks', true ) || ! file_exists( VIGLET_DUMONT_DIR . 'admin/build/turing-sdk.asset.php' ) ) {
+			return;
+		}
+
+		wp_register_script_module(
+			'viglet-dumont/search-block',
+			VIGLET_DUMONT_URL . 'public/search-block.js',
+			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
+			VIGLET_DUMONT_VERSION
+		);
+		wp_register_script(
+			'viglet-dumont-search-block-editor',
+			VIGLET_DUMONT_URL . 'admin/js/search-block-editor.js',
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+			VIGLET_DUMONT_VERSION,
+			true
+		);
+		wp_set_script_translations( 'viglet-dumont-search-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_register_style( 'viglet-dumont-search-block', VIGLET_DUMONT_URL . 'blocks/search/style.css', array(), VIGLET_DUMONT_VERSION );
+
+		register_block_type( VIGLET_DUMONT_DIR . 'blocks/search' );
+	}
+
+	/**
 	 * Hand the public config to the modules (read there with getConfig( 'viglet-dumont' )).
 	 * It is printed only on a page that loads the Interactivity API.
 	 */

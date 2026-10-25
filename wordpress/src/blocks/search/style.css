@@ -1,0 +1,86 @@
+/* The Turing search block. Layout only: colours and type come from the theme. */
+.viglet-dumont-search__form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	position: relative;
+}
+
+.viglet-dumont-search__form input[type="search"] {
+	flex: 1 1 16rem;
+	min-width: 0;
+}
+
+.viglet-dumont-search__suggestions {
+	background: var(--wp--preset--color--base, #fff);
+	border: 1px solid currentColor;
+	left: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0.25rem 0;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	z-index: 10;
+}
+
+.viglet-dumont-search__suggestions button,
+.viglet-dumont-search__link {
+	background: none;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	padding: 0.25rem 0.75rem;
+	text-align: left;
+	text-decoration: underline;
+	width: 100%;
+}
+
+.viglet-dumont-search__link {
+	padding: 0;
+	width: auto;
+}
+
+.viglet-dumont-search__layout {
+	display: grid;
+	gap: 2rem;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 782px) {
+	.viglet-dumont-search__layout:has(.viglet-dumont-search__facets:not([hidden])) {
+		grid-template-columns: 14rem minmax(0, 1fr);
+	}
+}
+
+.viglet-dumont-search__facets fieldset {
+	border: 0;
+	margin: 0 0 1rem;
+	padding: 0;
+}
+
+.viglet-dumont-search__facets label {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.viglet-dumont-search__count {
+	margin-left: auto;
+	opacity: 0.7;
+}
+
+.viglet-dumont-search__results {
+	margin: 0;
+	padding-left: 1.25rem;
+}
+
+.viglet-dumont-search__pages {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+}
+
+.viglet-dumont-search__pages [aria-current="true"] {
+	font-weight: 700;
+}

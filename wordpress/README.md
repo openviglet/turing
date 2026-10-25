@@ -70,6 +70,12 @@ are this site's documents only (its site key), and if Turing does not answer, Wo
 searches its database as before. The older plugin results page, with facets, stays
 available as "The plugin's results page" for classic themes.
 
+The **Turing search** block (`viglet-dumont/search`) is a complete search UI for any page: a
+box with suggestions, "did you mean", facets from the mapping, results and pages, built with
+the Interactivity API on the SDK below and styled by the theme. It reads `?q=` (or `?s=`),
+so a page holding it can be the site's search page. A site with its own search blocks
+turns it off: `add_filter( 'viglet_dumont_register_blocks', '__return_false' );`.
+
 A theme that builds its own search on `@viglet/turing-sdk` does not vendor it: the plugin
 registers two script modules, `@viglet/turing-sdk` (the SDK as published) and
 `viglet-dumont/search` (the SDK configured for this site, filtered to its site key):

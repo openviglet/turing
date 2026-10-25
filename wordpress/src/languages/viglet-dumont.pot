@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T00:40:03+00:00\n"
+"POT-Creation-Date: 2026-10-25T00:51:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -33,8 +33,11 @@ msgid "Indexing"
 msgstr ""
 
 #: src/admin/views/settings-page.php:48
+#: src/blocks/search/render.php:53
+#: src/blocks/search/render.php:67
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: src/admin/js/editor-panel.js:67
+#: src/admin/js/search-block-editor.js:34
 msgid "Search"
 msgstr ""
 
@@ -297,6 +300,38 @@ msgstr ""
 
 #: src/admin/views/settings-page.php:455
 msgid "Loading stats..."
+msgstr ""
+
+#. translators: %d: how many results Turing found.
+#: src/blocks/search/render.php:39
+#, php-format
+msgid "%d results"
+msgstr ""
+
+#: src/blocks/search/render.php:40
+#: src/templates/search-results.php:113
+msgid "No results found. Try different keywords."
+msgstr ""
+
+#: src/blocks/search/render.php:41
+msgid "Search is unavailable right now."
+msgstr ""
+
+#: src/blocks/search/render.php:45
+msgid "Search…"
+msgstr ""
+
+#: src/blocks/search/render.php:84
+#: src/templates/search-results.php:78
+msgid "Did you mean:"
+msgstr ""
+
+#: src/blocks/search/render.php:92
+msgid "Filters"
+msgstr ""
+
+#: src/blocks/search/render.php:118
+msgid "Result pages"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:43
@@ -705,14 +740,6 @@ msgid_plural "%d results found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/templates/search-results.php:78
-msgid "Did you mean:"
-msgstr ""
-
-#: src/templates/search-results.php:113
-msgid "No results found. Try different keywords."
-msgstr ""
-
 #: src/templates/search-results.php:177
 msgid "Previous"
 msgstr ""
@@ -721,11 +748,11 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:568
+#: src/viglet-dumont.php:573
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:593
+#: src/viglet-dumont.php:598
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -1061,4 +1088,45 @@ msgstr ""
 
 #: src/admin/js/editor-panel.js:88
 msgid "Reindex now"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:36
+msgid "Placeholder"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:42
+msgid "Show filters (facets)"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:51
+msgid "Turing search"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:52
+msgid "A search box with suggestions, filters and results from Turing. It shows live on the published page."
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block title"
+msgid "Turing search"
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block description"
+msgid "Search this site through Turing: a search box with suggestions, did-you-mean, facets, results and pages."
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block keyword"
+msgid "search"
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block keyword"
+msgid "turing"
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block keyword"
+msgid "facets"
 msgstr ""

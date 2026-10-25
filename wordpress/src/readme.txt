@@ -91,6 +91,10 @@ Navigation site and replaces the WordPress search page with Turing's results.
 * The plugin registers the Turing JS SDK as script modules: @viglet/turing-sdk, and
   viglet-dumont/search, which is the SDK already configured for this site, so a theme's
   search blocks import it instead of bundling their own copy.
+* A "Turing search" block: a search box with suggestions, "did you mean", facets, results
+  and pages, built with the Interactivity API and styled by the theme. It reads ?q= so a
+  page holding it works as the search page. The viglet_dumont_register_blocks filter turns
+  it off for sites with their own search blocks.
 * Requires WordPress 6.6: the admin screens are built with @wordpress/scripts, whose JSX
   runtime script ships with 6.6.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting
