@@ -2366,3 +2366,28 @@ spell-check does, and in `API_KEY` mode take the `Key` header like the rest.
 - Add a security test listing every endpoint the SDK calls without a key, and asserting
   each one answers anonymously in `PUBLIC` mode, so the SDK and the filter chain cannot
   drift again.
+
+## CXXXI Failed searches and content gaps are REST metrics (T1119)
+
+**Where it happened.** Dumont's WordPress plugin plans a "Search insights" admin screen
+(Dumont D178). It reads Turing's metrics through its own REST routes with the stored API
+key, and shows top terms, zero-result queries and content gaps.
+
+**What exists.** Top terms are REST: `GET
+/api/sn/{id}/metrics/top-terms/{period}/{rows}` and `/metrics/live`. Zero-result queries
+and content gaps exist only as MCP tools in `TurMcpAnalyticsToolService`
+(`top_failed_searches`, `content_gaps`). No controller under `api/` exposes them, and
+the MCP server is off by default and loopback-only.
+
+**Expected.** Every metric the console or the MCP tools read is also a REST endpoint a
+connector can call with its `Key`, as top terms are.
+
+**Workaround.** None. D178 waits on this line for its zero-result and content-gap
+tables.
+
+**What Turing should do.**
+- `GET /api/sn/{id}/metrics/failed-searches/{period}/{rows}`: term, count, last seen.
+- `GET /api/sn/{id}/metrics/content-gaps/{period}/{rows}`: term, demand, coverage.
+  Both reuse the MCP tools' queries, so the two surfaces cannot disagree.
+- Per-term CTR in top terms, once click tracking is recorded (`/click`).
+- Document them in the REST API page and type them in `@viglet/turing-sdk`.

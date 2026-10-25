@@ -23,6 +23,7 @@
 - 📋 **T1116** (deps: —) **Chat answers through the default agent while /answer says AI is not enabled, and no manifest can enable it** — A connector that provisions its site as code cannot make the answer engine work, and the two AI endpoints disagree. → §CXXVIII
 - 📋 **T1117** (deps: —) **Natural-language filters resolve last year from the model's training date, returning a 2022 range in 2026** — A visitor asking for recent content gets a filter that hides all of it, with no sign it was guessed. → §CXXIX
 - 📋 **T1118** (deps: —) **related-terms answers 401 to a browser, though the SDK exports it beside the public search calls** — A site cannot offer related searches without a server proxy, and nothing checks the SDK against the filter chain. → §CXXX
+- 📋 **T1119** (deps: —) **Zero-result queries and content gaps are MCP tools only, with no REST endpoint a connector can call** — An admin screen outside the console cannot show what visitors failed to find, the metric that most tells what to write next. → §CXXXI
 
 ## Non-goals (do NOT add as tasks)
 
