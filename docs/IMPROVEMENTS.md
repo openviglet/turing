@@ -2591,3 +2591,96 @@ an operator nor a client can see what a site's chat costs.
 filters, summaries, copilot) in the cost ledger, with the site and the stage, as the
 agents' calls are; and let `cost/summary` filter by site and by a time window short
 enough to bracket a test run (a `from`/`to` instant, not only a date).
+
+## CXL Navigation-safe result clicks from the SDK (T1128)
+
+**Where it happened.** Dumont's WordPress search block (D176) reports the result a
+visitor opens. The SDK offers `postClick(client, site, params)` and the controller's
+`trackResultClick(documentId, position, term)`. Both go through `client.post`, which
+first primes a CSRF token (`GET /api/csrf`) and then sends a plain `fetch` with no
+`keepalive`. The click starts a navigation, which can cancel either request: the click
+is lost, more often on a slow network.
+
+`sendBeacon` cannot replace it. `POST /api/sn/{site}/click` takes `@RequestBody` JSON
+only, so a beacon (`text/plain`) is refused with 415.
+
+**Workaround.** The plugin calls `client.fetchRaw('/sn/{site}/click', { method: 'POST',
+keepalive: true, headers: JSON }, false)` itself, in `wordpress/src/public/search.js`
+(`trackResultClick`). Edge accepted it with a CORS preflight and Turing answered 202.
+
+**What Turing should do.**
+- `postClick` and `trackResultClick` send with `keepalive: true` and skip the CSRF prime.
+  `/click` is public, anonymous and CSRF-exempt, so no token is needed.
+- `/click` also accepts `text/plain` with a JSON body, so `navigator.sendBeacon` works on
+  any browser.
+- A test: a click followed by `location.assign` still reaches the server.
+
+## CXLI Consent-aware search analytics in the SDK controller (T1129)
+
+**Where it happened.** Dumont's WordPress search block (D176) wanted to pass the SDK's
+analytics bus to `createSearchController(..., { analytics })`, as T462 intends. Two
+things stopped it:
+
+- The controller calls `getOrCreateTurSession()` at construction. That writes a 30-day
+  `TUR_SESSION` cookie on page load, before any consent is asked. Under the WP Consent API
+  (and GDPR) nothing that identifies a visitor may be stored before statistics consent.
+  Granting consent later cannot be applied either: the bus is fixed at construction.
+- The controller emits `turing_search` (and `_refined`, `_no_results`) for every request.
+  An as-you-type search sends one per pause, so "work", "works" and "workshop" become three
+  searches and two refinements.
+
+**Workaround.** The plugin never hands the bus to a controller. It emits the three
+search events itself, only for a search the visitor settled on (`trackSearch` in
+`wordpress/src/public/search.js`), and sets no cookie.
+
+**What Turing should do.**
+- A `consent` option: a function asked before each emit and before any cookie is written,
+  or `sessionCookie: false` to stamp no session id at all.
+- An `instant` flag on `searchRequest` / `searchQuery` (or a `report: false` option), so
+  as-you-type requests are not reported as searches.
+
+## CXLII GA4 recommended events and search abandonment (T1130)
+
+**Where it happened.** Dumont's WordPress search block (D176) sends its search events to
+the site's Google Analytics through `googleAnalyticsSink()`. The sink forwards the
+canonical names verbatim: `turing_search`, `turing_search_result_click`, and so on.
+GA4's built-in site-search reports and its recommended-events tooling read `search`
+(with `search_term`) and `select_content` (with `content_type` and `content_id`). A site
+therefore sees nothing in those reports until someone writes custom definitions by hand.
+
+The taxonomy also has no search abandonment event: "searched, saw results, opened none
+and left". `createAbandonmentWatcher` exists, but its only canonical event is
+`turing_chat_abandoned`.
+
+**Workaround.** None. The plugin sends the canonical names and files the abandonment
+signal as a Dumont line that waits on this one.
+
+**What Turing should do.**
+- `googleAnalyticsSink({ recommended: true })`, the default for new sinks: it also sends
+  `search { search_term }` for `turing_search` and `select_content { content_type:
+  'search_result', content_id, index }` for `turing_search_result_click`.
+- A canonical `turing_search_abandoned { query, results, reason }`, with a helper that
+  arms the watcher after a settled search and disarms it on a result click.
+
+## CXLIII Reading click-through rates back (T1131)
+
+**Where it happened.** Dumont's WordPress search block (D176) now reports each result
+click to `POST /api/sn/{site}/click`, so the site can see a click-through rate. Turing
+saves each click in `TurSNSiteMetricClick`, but the only code that touches
+`TurSNSiteMetricClickRepository` is the write in `TurSNSiteClickAPI`. No endpoint,
+console page or MCP tool reports clicks, CTR per term, or "searched and opened nothing".
+The plugin cannot verify that its clicks were kept, and a site owner has nowhere to
+look.
+
+The endpoint also answers 202 when `turing.search.metrics.enabled` is false (the
+default) and drops the click. The SDK and connectors cannot tell the click went nowhere.
+The plugin's docker stack now sets `TURING_SEARCH_METRICS_ENABLED=true` for that reason.
+
+**What Turing should do.**
+- `GET /api/sn/{site}/metrics/clicks?from=&to=&locale=`: per term, searches, clicks, CTR
+  and mean clicked position, plus the terms searched often and clicked never. It reads with
+  the same API-key auth as T1119's content-gap endpoint.
+- A CTR column on the console's search-metrics page.
+- `/click` answers `204` with `X-Turing-Metrics: disabled` (or a `/metrics/status` probe)
+  when metrics are off, so a client can say why nothing is counted.
+- Dumont's search insights screen reads this endpoint.

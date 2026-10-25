@@ -32,6 +32,10 @@
 - 📋 **T1123** (deps: —) **No cheap probe says whether answer or natural-language filters are on for a site** — A client learns it only by starting an LLM answer or parse, so a status screen either spends tokens or guesses. → §CXXXV
 - 📋 **T1125** (deps: T1120) **Synonym mining proposes a query and its own wildcard or half-typed prefix as synonyms** — An as-you-type search fills the log with work and work*, so every mined suggestion is noise an owner must reject. → §CXXXVII
 - 📋 **T1127** (deps: —) **An SN site's chat calls the LLM but the cost ledger records nothing: cost summary stays at zero** — No operator or client can see what a site's generative features cost, so no budget can be held to. → §CXXXIX
+- 📋 **T1128** (deps: —) **The SDK's result-click call can be cut off by the navigation the click starts, and /click refuses a beacon** — Clicks are lost silently, more often on slow networks, so click-through rates undercount. → §CXL
+- 📋 **T1129** (deps: —) **The search controller's analytics option writes a 30-day cookie before consent and reports every as-you-type search** — A consent-respecting site with instant search cannot use the SDK's search analytics and has to re-emit the events itself. → §CXLI
+- 📋 **T1130** (deps: —) **The GA sink sends only turing_* event names, and the taxonomy has no search abandonment event** — GA4's site-search reports stay empty without hand-made custom definitions, and searched-and-left is never measured. → §CXLII
+- 📋 **T1131** (deps: —) **Search-result clicks are stored but nothing reads them, and /click answers 202 with metrics off** — No site can see a click-through rate, and a client cannot tell that its clicks are being dropped. → §CXLIII
 
 ## Non-goals (do NOT add as tasks)
 
