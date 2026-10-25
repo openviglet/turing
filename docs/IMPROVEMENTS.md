@@ -2287,3 +2287,82 @@ with a `REMOVE` toggle. It lives in `wordpress/src/public/search-block.js` (`syn
 `selected: true` and its other values still counted, so a UI can switch between them.
 List the applied ones in `selectedFilterQueries`, with `clearFilterQueries` to drop
 each. Cover it with a test that toggles a value on and off.
+
+## CXXVIII GenAI is part of the site manifest, and chat and answer agree on it (T1116)
+
+**Where it happened.** Dumont's WordPress plugin (Track S, D169) provisions its SN site
+with `POST /api/sn/manifest` and nothing else. On a Turing booted with `OPENAI_API_KEY`,
+the first boot creates the default LLM, the default agent and the local embedding store.
+
+**What came back.** `GET /api/sn/Sample/chat?q=...` answers from the site's content (it
+falls back to the default agent), and `/chat/enabled` says `enabled: true, reason:
+NONE`. `GET /api/sn/Sample/answer?q=...` on the same site streams `event:error
+data:{"message":"AI is not enabled for site: Sample"}`.
+`TurSNAnswerService.composeAnswer` needs `site.getTurSNSiteGenAi()`, and no API a
+connector holds can create one: the manifest request carries fields, locales, weights
+and custom facets and sorts, but no GenAI block.
+
+**Expected.** One answer to "can this site use AI": chat and answer agree, and a
+connector can turn the site's GenAI on as code.
+
+**Workaround.** None in the plugin. An operator enables GenAI in the console by hand.
+
+**What Turing should do.**
+- A `genAi` block in the manifest request (`enabled`, an agent id or "default", and the
+  knowledge-base mode), converged like custom facets and shown in `/plan`.
+- `/answer` falls back to the default agent as chat does, or chat refuses as answer does.
+  Either way, `/chat/enabled` and an `/answer/enabled` give the same reason.
+- `/api/discovery` reports which AI endpoints the site can serve, so a client hides what
+  would fail.
+
+## CXXIX nl-filters resolve relative dates against today (T1117)
+
+**Where it happened.** Probing Turing's AI features for Dumont's WordPress plugin (Track
+S, D173 plans natural-language filters in the search block), on a local Turing with
+`gpt-4o-mini` as the default LLM, on 2026-10-24.
+
+**The request.** `POST /api/sn/Sample/nl-filters` with `{"text":"posts about php from
+last year","locale":"en_US"}`.
+
+**What came back.** `q: "php"` and the filter `publication_date:[2022-01-01 TO
+2023-01-01]`, with `grounded: false` and `confidence: 0.6`. "Last year" is 2025. The
+model filled the range from its own training date, so the filter quietly hides every
+post the visitor asked for.
+
+**Expected.** Relative dates ("last year", "this month", "since March") resolve against
+the server's current date in the site's time zone. When the model cannot ground a range,
+it drops the filter (into `dropped`) rather than returning a guessed one.
+
+**Workaround.** None. The plugin waits on this line before shipping the feature.
+
+**What Turing should do.**
+- Put today's date and the site's time zone into the nl-filters prompt.
+- Resolve the common relative ranges in code before the LLM is asked, so they are exact
+  and cost nothing.
+- Never emit an ungrounded range as an `fq`: return it under `dropped` with the reason.
+- Add a test pinning "last year", "this month" and "since <month>" against a fixed clock.
+
+## CXXX Every endpoint the SDK calls without a key is public (T1118)
+
+**Where it happened.** Dumont's WordPress plugin (Track S) runs every visitor-side call
+in the browser through `@viglet/turing-sdk`, with no key, as search, autocomplete and
+spell-check are.
+
+**The request.** `GET /api/sn/Sample/en_US/related-terms?q=php`, anonymous, from a local
+Turing in the default `PUBLIC` API auth mode.
+
+**What came back.** HTTP 401. The path is not in the production security config's
+`permitAll` list, while its siblings (`/search/**`, `/ac`, `/{locale}/spell-check`) are.
+
+**Expected.** The SDK exports `fetchRelatedTerms` beside the other browser calls, and
+the docs list related terms as a search feature. In `PUBLIC` mode it should answer as
+spell-check does, and in `API_KEY` mode take the `Key` header like the rest.
+
+**Workaround.** None. The plugin leaves "related searches" out until this ships.
+
+**What Turing should do.**
+- Add `/api/sn/*/*/related-terms` to the public matchers, under the same site API-key gate
+  as search.
+- Add a security test listing every endpoint the SDK calls without a key, and asserting
+  each one answers anonymously in `PUBLIC` mode, so the SDK and the filter chain cannot
+  drift again.
