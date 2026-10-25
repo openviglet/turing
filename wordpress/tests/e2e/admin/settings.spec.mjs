@@ -6,12 +6,19 @@ const settingsUrl = '/wp-admin/admin.php?page=viglet-dumont';
 test( 'every settings tab opens and shows its panel', async ( {
 	page,
 	look,
+	axe,
 } ) => {
 	await page.goto( settingsUrl );
 	for ( const tab of [ 'connection', 'indexing', 'search', 'actions' ] ) {
 		await page.click( `.viglet-dumont-tab[data-tab="${ tab }"]` );
 		await expect( page.locator( `#panel-${ tab }` ) ).toBeVisible();
 		await look( `settings-${ tab }` );
+		await axe( `Settings, ${ tab } tab`, { include: '#wpbody-content' } );
+		await expect( page.locator( `#panel-${ tab }` ) ).toHaveScreenshot(
+			`settings-${ tab }.png`,
+			// The overview counts what the seed left; the cards' layout is what is compared.
+			{ mask: [ page.locator( '.viglet-dumont-stat__number' ) ] }
+		);
 	}
 } );
 

@@ -132,8 +132,23 @@ The global setup runs [`fixtures/seed.php`](tests/e2e/fixtures/seed.php) through
 twelve posts with a `seats` facet, a "Busca" page holding the search block, Turing search
 on. It then reindexes and logs in once. Every test fails on a console error, an uncaught
 page error, a failed request or a 4xx/5xx response, and saves its screens to
-`tests/e2e/artifacts/screens/`. The HTML report is in `tests/e2e/artifacts/report/`.
+`tests/e2e/artifacts/screens/<project>/`. The HTML report is in `tests/e2e/artifacts/report/`.
 `E2E_SKIP_SEED=1` reruns without seeding. It is not in CI, which has no Turing.
+
+Beyond behaviour, the suite also checks:
+
+- **Accessibility**: axe (WCAG 2.1 A and AA) on every screen it visits, failing on a serious
+  or critical violation in the plugin's own region.
+- **Viewports**: the site specs run at desktop (1280), tablet (820) and phone (390), as the
+  projects `site`, `site-tablet` and `site-phone`.
+- **Visual regression**: the search block and the admin screens against the baselines in
+  `tests/e2e/snapshots/<platform>/<project>/` (1% tolerance; counts and events are masked).
+  After a change to the look, refresh them on purpose with
+  `npm run test:e2e -- --update-snapshots` and commit the new PNGs.
+- **Speed**: the first results within 1.5 s of the navigation and a suggestion within
+  500 ms of the typing, as the browser measures them (`site/budgets.spec.mjs`).
+- **Keyboard**: every admin action and the search block reached with Tab alone, with a
+  visible focus ring, and used with Enter or Space.
 
 To look at one page in detail, logged in or not:
 
@@ -141,11 +156,13 @@ To look at one page in detail, logged in or not:
 npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont-health
 npm run e2e:look -- "/?page_id=7&q=workshop" --anon --mobile
 npm run e2e:look -- /wp-admin/edit.php --script ./my-steps.mjs   # export default async ( page ) => { ... }
+npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont --a11y
 ```
 
 It saves a full-page screenshot to `tests/e2e/artifacts/look/` and prints the console
 errors, failed requests, headings, buttons, form fields with their labels, and the
-visible text.
+visible text. `--a11y` adds every axe violation on the whole page, marking with `!` the
+serious and critical ones a spec would fail on.
 
 ### Translations
 

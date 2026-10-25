@@ -69,12 +69,12 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 		<ul
 			id="<?php echo esc_attr( $viglet_dumont_id ); ?>-suggestions"
 			class="viglet-dumont-search__suggestions"
-			role="listbox"
+			aria-label="<?php esc_attr_e( 'Suggestions', 'viglet-dumont' ); ?>"
 			hidden
 			data-wp-bind--hidden="!state.hasSuggestions"
 		>
 			<template data-wp-each--suggestion="state.suggestions">
-				<li role="option">
+				<li>
 					<button type="button" data-wp-on--click="actions.pick" data-wp-text="context.suggestion"></button>
 				</li>
 			</template>

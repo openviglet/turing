@@ -17,6 +17,7 @@ test( 'the block editor has a Search panel with the state, Exclude and Reindex n
 	page,
 	seed,
 	look,
+	axe,
 } ) => {
 	await page.goto( `/wp-admin/post.php?post=${ seed.postId }&action=edit` );
 
@@ -54,4 +55,7 @@ test( 'the block editor has a Search panel with the state, Exclude and Reindex n
 	await panel.getByRole( 'button', { name: 'Reindex now' } ).click();
 	await expect( panel.locator( 'strong' ) ).toContainText( 'Indexed' );
 	await look( 'editor-panel' );
+	await axe( "the editor's Search panel", {
+		include: '.viglet-dumont-search-panel',
+	} );
 } );

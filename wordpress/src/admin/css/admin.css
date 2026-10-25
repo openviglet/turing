@@ -103,6 +103,11 @@
     color: var(--vd-text);
 }
 
+/* A keyboard user still needs to see which tab has the focus. */
+.viglet-dumont-tab:focus-visible {
+    box-shadow: 0 0 0 2px var(--vd-white), 0 0 0 4px var(--vd-primary);
+}
+
 .viglet-dumont-tab.active {
     background: var(--vd-primary);
     color: var(--vd-white);

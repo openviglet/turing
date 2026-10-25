@@ -406,6 +406,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<p><?php esc_html_e( 'Send all published content to the Turing index. This may take a while for large sites.', 'viglet-dumont' ); ?></p>
 							</div>
 							<div class="viglet-dumont-action-buttons">
+								<label class="screen-reader-text" for="viglet-dumont-index-type"><?php esc_html_e( 'Content to index', 'viglet-dumont' ); ?></label>
 								<select id="viglet-dumont-index-type">
 									<option value="all"><?php esc_html_e( 'All Content', 'viglet-dumont' ); ?></option>
 									<option value="post"><?php esc_html_e( 'Posts Only', 'viglet-dumont' ); ?></option>

@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T01:25:16+00:00\n"
+"POT-Creation-Date: 2026-10-25T14:20:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -266,39 +266,43 @@ msgstr ""
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr ""
 
-#: src/admin/views/settings-page.php:410
-msgid "All Content"
+#: src/admin/views/settings-page.php:409
+msgid "Content to index"
 msgstr ""
 
 #: src/admin/views/settings-page.php:411
-msgid "Posts Only"
+msgid "All Content"
 msgstr ""
 
 #: src/admin/views/settings-page.php:412
+msgid "Posts Only"
+msgstr ""
+
+#: src/admin/views/settings-page.php:413
 msgid "Pages Only"
 msgstr ""
 
-#: src/admin/views/settings-page.php:416
+#: src/admin/views/settings-page.php:417
 msgid "Start Indexing"
 msgstr ""
 
-#: src/admin/views/settings-page.php:435
+#: src/admin/views/settings-page.php:436
 msgid "Delete All Indexed Content"
 msgstr ""
 
-#: src/admin/views/settings-page.php:436
+#: src/admin/views/settings-page.php:437
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr ""
 
-#: src/admin/views/settings-page.php:440
+#: src/admin/views/settings-page.php:441
 msgid "Delete All"
 msgstr ""
 
-#: src/admin/views/settings-page.php:451
+#: src/admin/views/settings-page.php:452
 msgid "Content Overview"
 msgstr ""
 
-#: src/admin/views/settings-page.php:455
+#: src/admin/views/settings-page.php:456
 msgid "Loading stats..."
 msgstr ""
 
@@ -319,6 +323,10 @@ msgstr ""
 
 #: src/blocks/search/render.php:46
 msgid "Search…"
+msgstr ""
+
+#: src/blocks/search/render.php:72
+msgid "Suggestions"
 msgstr ""
 
 #: src/blocks/search/render.php:85

@@ -13,6 +13,8 @@
 //   --mobile            a 390x844 phone viewport
 //   --width <px>        the viewport width (default 1280); --height <px> (default 900)
 //   --wait <ms>         extra time after the network settles (default 1500)
+//   --a11y              also run axe (WCAG 2.1 A and AA) and print every violation; the ones the
+//                       specs fail on (serious, critical) are marked with !
 //   --script <file.mjs> a module whose default export runs on the page before the capture,
 //                       e.g. async ( page ) => page.getByRole( 'button', { name: 'Search' } ).click()
 //
@@ -21,6 +23,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { chromium } from '@playwright/test';
+import { axeViolations, describe, failingImpacts } from './a11y.mjs';
 
 const root = join( dirname( fileURLToPath( import.meta.url ) ), '..', '..' );
 const authFile = join( root, 'tests', 'e2e', '.auth', 'admin.json' );
@@ -37,7 +40,7 @@ const target = args.find(
 );
 if ( ! target ) {
 	process.stderr.write(
-		'usage: npm run e2e:look -- <path or URL> [--name n] [--anon] [--mobile] [--script f.mjs]\n'
+		'usage: npm run e2e:look -- <path or URL> [--name n] [--anon] [--mobile] [--a11y] [--script f.mjs]\n'
 	);
 	process.exit( 2 );
 }
@@ -172,6 +175,8 @@ const report = await page.evaluate( () => {
 	};
 } );
 
+const violations = flag( 'a11y' ) ? await axeViolations( page ) : null;
+
 const lines = [
 	`URL        ${ page.url() }`,
 	`viewport   ${ viewport.width }x${ viewport.height }`,
@@ -192,5 +197,15 @@ const lines = [
 	'text',
 	`  ${ report.text }`,
 ];
+if ( violations ) {
+	lines.push(
+		'',
+		`accessibility (${ violations.length })`,
+		...violations.map(
+			( v ) =>
+				`  ${ failingImpacts.includes( v.impact ) ? '!' : '-' } ${ describe( v ) }`
+		)
+	);
+}
 process.stdout.write( lines.join( '\n' ) + '\n' );
 await browser.close();

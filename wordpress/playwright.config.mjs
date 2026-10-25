@@ -21,7 +21,19 @@ export default defineConfig( {
 	fullyParallel: false,
 	workers: 1,
 	timeout: 60_000,
-	expect: { timeout: 15_000 },
+	expect: {
+		timeout: 15_000,
+		// Visual regression: a small tolerance absorbs antialiasing, not a moved element.
+		// Refresh the baselines on purpose: npm run test:e2e -- --update-snapshots
+		toHaveScreenshot: {
+			maxDiffPixelRatio: 0.01,
+			animations: 'disabled',
+			caret: 'hide',
+		},
+	},
+	// Fonts render differently per OS, so each platform keeps its own baselines.
+	snapshotPathTemplate:
+		'tests/e2e/snapshots/{platform}/{projectName}/{arg}{ext}',
 	reporter: [
 		[ 'list' ],
 		[
@@ -42,6 +54,18 @@ export default defineConfig( {
 			testMatch: 'admin/**/*.spec.mjs',
 			use: { storageState: authFile },
 		},
+		// The site at desktop, plus the visitor's specs again on a tablet and a phone. Keyboard
+		// paths and timing budgets are desktop-only: a phone has neither Tab nor that network.
 		{ name: 'site', testMatch: 'site/**/*.spec.mjs' },
+		{
+			name: 'site-tablet',
+			testMatch: 'site/search.spec.mjs',
+			use: { viewport: { width: 820, height: 1180 }, isMobile: true },
+		},
+		{
+			name: 'site-phone',
+			testMatch: 'site/search.spec.mjs',
+			use: { viewport: { width: 390, height: 844 }, isMobile: true },
+		},
 	],
 } );

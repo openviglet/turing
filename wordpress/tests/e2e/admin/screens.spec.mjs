@@ -1,15 +1,24 @@
-// The admin screens built with @wordpress/components: Setup, Fields and Health.
+// The admin screens built with @wordpress/components: Setup, Fields and Health, each checked by
+// axe and compared with its stored screenshot.
 import { expect, test } from '../fixtures.mjs';
+
+// The plugin's part of the screen; WordPress's own menu and bar are not under test.
+const plugin = { include: '#wpbody-content' };
 
 test( 'Setup tests the connection and every step passes', async ( {
 	page,
 	look,
+	axe,
 } ) => {
 	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-setup' );
 	await expect(
 		page.getByRole( 'heading', { name: '1. Connection' } )
 	).toBeVisible();
 	await look( 'setup' );
+	await axe( 'Setup', plugin );
+	await expect( page.locator( '#wpbody-content' ) ).toHaveScreenshot(
+		'setup.png'
+	);
 
 	await page
 		.getByRole( 'button', { name: 'Save and test the connection' } )
@@ -21,11 +30,13 @@ test( 'Setup tests the connection and every step passes', async ( {
 		page.getByRole( 'heading', { name: '3. First index' } )
 	).toBeVisible();
 	await look( 'setup-tested' );
+	await axe( 'Setup, tested', plugin );
 } );
 
 test( 'Fields shows the seats facet in Turing and previews a document', async ( {
 	page,
 	look,
+	axe,
 } ) => {
 	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-fields' );
 	const post = page.locator( '.components-card' ).filter( {
@@ -41,11 +52,17 @@ test( 'Fields shows the seats facet in Turing and previews a document', async ( 
 	await expect( json ).toContainText( '"site_key"' );
 	await expect( json ).toContainText( '"seats"' );
 	await look( 'fields' );
+	await axe( 'Fields', plugin );
+	await expect( page.locator( '#wpbody-content' ) ).toHaveScreenshot(
+		'fields.png',
+		{ mask: [ json ] }
+	);
 } );
 
 test( 'Health shows published and indexed counts that agree, and the events', async ( {
 	page,
 	look,
+	axe,
 } ) => {
 	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
 	// The notice, not WordPress's screen-reader echo of it.
@@ -55,10 +72,9 @@ test( 'Health shows published and indexed counts that agree, and the events', as
 			.filter( { hasText: 'Connection successful' } )
 	).toBeVisible();
 
-	const rows = page
-		.locator( '.components-card' )
-		.filter( { hasText: 'Documents' } )
-		.locator( 'tbody tr' );
+	const card = ( title ) =>
+		page.locator( '.components-card' ).filter( { hasText: title } );
+	const rows = card( 'Documents' ).locator( 'tbody tr' );
 	await expect( rows.first() ).toBeVisible();
 	for ( const row of await rows.all() ) {
 		const [ published, indexed ] = await row
@@ -74,4 +90,14 @@ test( 'Health shows published and indexed counts that agree, and the events', as
 		page.getByRole( 'heading', { name: 'Last events' } )
 	).toBeVisible();
 	await look( 'health' );
+	await axe( 'Health', plugin );
+	// The counts and the queue change with every run, and the events table grows; the cards'
+	// layout is what is compared.
+	await expect( card( 'Connection' ) ).toHaveScreenshot(
+		'health-connection.png'
+	);
+	await expect( card( 'Documents' ) ).toHaveScreenshot(
+		'health-documents.png',
+		{ mask: [ card( 'Documents' ).locator( 'tbody td' ) ] }
+	);
 } );

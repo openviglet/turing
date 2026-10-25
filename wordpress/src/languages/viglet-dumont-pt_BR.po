@@ -5,12 +5,12 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Language: pt_BR\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "POT-Creation-Date: 2026-10-25T01:25:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
 
@@ -268,39 +268,39 @@ msgstr "Indexar todo o conteúdo"
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
 
-#: src/admin/views/settings-page.php:410
+#: src/admin/views/settings-page.php:411
 msgid "All Content"
 msgstr "Todo o conteúdo"
 
-#: src/admin/views/settings-page.php:411
+#: src/admin/views/settings-page.php:412
 msgid "Posts Only"
 msgstr "Só posts"
 
-#: src/admin/views/settings-page.php:412
+#: src/admin/views/settings-page.php:413
 msgid "Pages Only"
 msgstr "Só páginas"
 
-#: src/admin/views/settings-page.php:416
+#: src/admin/views/settings-page.php:417
 msgid "Start Indexing"
 msgstr "Iniciar indexação"
 
-#: src/admin/views/settings-page.php:435
+#: src/admin/views/settings-page.php:436
 msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
-#: src/admin/views/settings-page.php:436
+#: src/admin/views/settings-page.php:437
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
-#: src/admin/views/settings-page.php:440
+#: src/admin/views/settings-page.php:441
 msgid "Delete All"
 msgstr "Excluir tudo"
 
-#: src/admin/views/settings-page.php:451
+#: src/admin/views/settings-page.php:452
 msgid "Content Overview"
 msgstr "Visão geral do conteúdo"
 
-#: src/admin/views/settings-page.php:455
+#: src/admin/views/settings-page.php:456
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
@@ -1148,3 +1148,11 @@ msgstr "turing"
 msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
+
+#: src/blocks/search/render.php:72
+msgid "Suggestions"
+msgstr "Sugestões"
+
+#: src/admin/views/settings-page.php:409
+msgid "Content to index"
+msgstr "Conteúdo a indexar"

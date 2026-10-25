@@ -11,6 +11,7 @@
     "e2e:look": "node tests/e2e/look.mjs"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
     "@wordpress/scripts": "37.0.0"
   },
