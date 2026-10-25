@@ -64,6 +64,24 @@ services:
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DEBUG: 1
+      # WP-Cron's loopback calls the site URL, localhost:${WP_PORT}, which nothing answers
+      # inside the container. The cron service below runs due events instead, as a host
+      # with a system cron does.
+      WORDPRESS_CONFIG_EXTRA: define( 'DISABLE_WP_CRON', true );
+    volumes:
+      - wp:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The system cron: runs due WP-Cron events (the plugin's queue worker among them) every 15s.
+  cron:
+    image: wordpress:cli-php8.3
+    depends_on:
+      - wordpress
+    user: "33:33"
+    environment: *wp-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
     volumes:
       - wp:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont

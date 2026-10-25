@@ -48,7 +48,16 @@ function Call([string]$Method, [string]$Path, $Body) {
     return $null
 }
 
-Call 'POST' '/api/login' @{ username = 'admin'; password = $Password } | Out-Null
+# /api/discovery answers before a fresh install has seeded its admin user, so the first logins
+# can fail; retry for a while before giving up.
+$deadline = (Get-Date).AddMinutes(3)
+while ($true) {
+    try { Call 'POST' '/api/login' @{ username = 'admin'; password = $Password } | Out-Null; break }
+    catch {
+        if ((Get-Date) -gt $deadline) { Say "Login to Turing failed: $($_.Exception.Message)"; exit 1 }
+        Start-Sleep -Seconds 3
+    }
+}
 
 $engines = @(Call 'GET' '/api/se' $null)
 $engine = @($engines | Where-Object { $_.enabled }) + $engines | Select-Object -First 1

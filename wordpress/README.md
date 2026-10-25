@@ -75,6 +75,10 @@ run-docker.cmd stop                    :: keep the data
 run-docker.cmd reset                   :: drop WordPress, its database and Turing's store
 ```
 
+WP-Cron's loopback cannot reach the site URL inside the container, so `DISABLE_WP_CRON` is on
+and a `cron` service runs due events every 15 seconds, as a host with a system cron does: a
+saved post reaches Turing without `wp dumont queue run`.
+
 Turing runs as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
 local login. When an image `turing-ce:local` exists, it is used instead of the published one,
 which lags the Turing source; build it from a Turing checkout after `mvnw package` with
