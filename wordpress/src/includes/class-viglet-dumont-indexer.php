@@ -243,7 +243,7 @@ class Viglet_Dumont_Indexer {
 	 *
 	 * @return array<int, string>|null
 	 */
-	private function list_site_ids(): ?array {
+	public function list_site_ids(): ?array {
 		$rows = 100;
 		$ids  = array();
 

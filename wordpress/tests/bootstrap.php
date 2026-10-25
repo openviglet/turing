@@ -12,3 +12,4 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/phpstan-constants.php';
 require_once __DIR__ . '/stubs/class-wp-post.php';
 require_once __DIR__ . '/stubs/class-wp-error.php';
+require_once __DIR__ . '/stubs/class-wp-query.php';

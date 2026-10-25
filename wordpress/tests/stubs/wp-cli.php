@@ -30,4 +30,16 @@ namespace {
 
 namespace WP_CLI\Utils {
 	function format_items( string $format, array $items, array $fields ): void {}
+
+	function make_progress_bar( string $message, int $count ): \cli\progress\Bar {
+		return new \cli\progress\Bar();
+	}
+}
+
+namespace cli\progress {
+	class Bar {
+		public function tick( int $increment = 1 ): void {}
+
+		public function finish(): void {}
+	}
 }

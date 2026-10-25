@@ -56,6 +56,11 @@ Navigation site and replaces the WordPress search page with Turing's results.
   copy indexed under the old `wp-<ID>` id.
 * Delete All removes only this site key's documents. It used to send `id: *`, which Turing
   reads as a document id and which removed nothing.
+* WP-CLI: `wp dumont status` compares published and indexed documents per type,
+  `wp dumont index [--type] [--ids] [--since]` indexes synchronously, `wp dumont reindex`
+  provisions the fields, indexes everything and sweeps, and `wp dumont sweep [--dry-run]`
+  removes what Turing holds for this site key that WordPress no longer publishes. The same
+  operations answer at `viglet-dumont/v1/status`, `/index` and `/sweep`.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting
   the batch as indexed.
 

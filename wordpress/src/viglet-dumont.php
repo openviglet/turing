@@ -30,13 +30,16 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
 }
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli.php';
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli-queue.php';
+	WP_CLI::add_command( 'dumont', 'Viglet_Dumont_CLI' );
 	WP_CLI::add_command( 'dumont queue', 'Viglet_Dumont_CLI_Queue' );
 }
 
@@ -266,6 +269,42 @@ function viglet_dumont_register_rest_routes(): void {
 
 	register_rest_route(
 		'viglet-dumont/v1',
+		'/status',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Dumont_Operations() )->status(), 200 ),
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/index',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'viglet_dumont_rest_index',
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/sweep',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'viglet_dumont_rest_sweep',
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
 		'/provision',
 		array(
 			'methods'             => 'POST',
@@ -356,6 +395,33 @@ function viglet_dumont_rest_save_mapping( WP_REST_Request $request ): WP_REST_Re
 	}
 
 	return new WP_REST_Response( array( 'mapping' => ( new Viglet_Dumont_Mapping() )->save( $mapping ) ), 200 );
+}
+
+/**
+ * REST: Index the posts `type`, `ids` and `since` select, synchronously — `wp dumont index`.
+ *
+ * @param WP_REST_Request $request Carries the optional `type`, `ids` (array) and `since`.
+ */
+function viglet_dumont_rest_index( WP_REST_Request $request ): WP_REST_Response {
+	$operations = new Viglet_Dumont_Operations();
+	$ids        = array_filter( array_map( 'intval', (array) $request->get_param( 'ids' ) ) );
+	$type       = sanitize_key( (string) $request->get_param( 'type' ) );
+	$since      = sanitize_text_field( (string) $request->get_param( 'since' ) );
+	$post_ids   = array_values( array_unique( array_merge( $operations->find_post_ids( $type, $ids, $since ), $ids ) ) );
+	$result     = $operations->index( $post_ids );
+
+	return new WP_REST_Response( $result, 0 === $result['failed'] ? 200 : 502 );
+}
+
+/**
+ * REST: Remove this site key's documents WordPress no longer publishes — `wp dumont sweep`.
+ *
+ * @param WP_REST_Request $request Carries `dry_run`.
+ */
+function viglet_dumont_rest_sweep( WP_REST_Request $request ): WP_REST_Response {
+	$result = ( new Viglet_Dumont_Operations() )->sweep( (bool) $request->get_param( 'dry_run' ) );
+
+	return new WP_REST_Response( $result, $result['success'] ? 200 : 502 );
 }
 
 /**
