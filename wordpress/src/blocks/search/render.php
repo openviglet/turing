@@ -32,6 +32,7 @@ wp_interactivity_state(
 		'facets'      => array(),
 		'pages'       => array(),
 		'suggestions' => array(),
+		'applied'     => array(),
 		'total'       => 0,
 		'corrected'   => '',
 		'error'       => '',
@@ -86,6 +87,21 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 	</p>
 
 	<p class="viglet-dumont-search__summary" aria-live="polite" data-wp-text="state.summary"></p>
+
+	<ul class="viglet-dumont-search__applied" hidden data-wp-bind--hidden="!state.hasApplied" aria-label="<?php esc_attr_e( 'Active filters', 'viglet-dumont' ); ?>">
+		<template data-wp-each--filter="state.applied">
+			<li>
+				<button type="button" class="viglet-dumont-search__chip" data-wp-on--click="actions.removeFilter">
+					<span data-wp-text="context.filter.label"></span>
+					<span aria-hidden="true">×</span>
+					<span class="screen-reader-text"><?php esc_html_e( 'Remove this filter', 'viglet-dumont' ); ?></span>
+				</button>
+			</li>
+		</template>
+		<li>
+			<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.clearFilters"><?php esc_html_e( 'Clear all filters', 'viglet-dumont' ); ?></button>
+		</li>
+	</ul>
 
 	<div class="viglet-dumont-search__layout">
 		<?php if ( ! empty( $attributes['showFacets'] ) ) : ?>

@@ -47,6 +47,26 @@
 	width: auto;
 }
 
+.viglet-dumont-search__applied {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	list-style: none;
+	margin: 0 0 1rem;
+	padding: 0;
+}
+
+.viglet-dumont-search__chip {
+	background: none;
+	border: 1px solid currentColor;
+	border-radius: 999px;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	padding: 0.15rem 0.75rem;
+}
+
 .viglet-dumont-search__layout {
 	display: grid;
 	gap: 2rem;

@@ -11,6 +11,7 @@ import {
 	createSiteAutoComplete,
 	createSiteSearch,
 	fetchSpellCheck,
+	siteFilter,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
@@ -30,6 +31,9 @@ const { state } = store( 'viglet-dumont/search', {
 		},
 		get hasPages() {
 			return state.pages.length > 1;
+		},
+		get hasApplied() {
+			return state.applied.length > 0;
 		},
 		get hasCorrection() {
 			return '' !== state.corrected;
@@ -78,6 +82,18 @@ const { state } = store( 'viglet-dumont/search', {
 		toggleFacet() {
 			const { item } = getContext();
 			search.toggleFacet( item.target );
+		},
+		removeFilter() {
+			const { filter } = getContext();
+			search.toggleFacet( filter.target );
+		},
+		clearFilters() {
+			// The SDK's clearAllFilters would drop the site filter too; keep it.
+			search.searchRequest( {
+				...search.getState().request,
+				fq: [ siteFilter ],
+				page: 1,
+			} );
 		},
 		goToPage() {
 			const { page } = getContext();
@@ -138,6 +154,18 @@ async function suggestCorrection( query ) {
 }
 
 /**
+ * The label the mapping gives a facet field, or the field name.
+ *
+ * @param {string} field A Turing field.
+ */
+function facetLabel( field ) {
+	return (
+		( config.facets || [] ).find( ( f ) => f.field === field )?.label ||
+		field
+	);
+}
+
+/**
  * Turing highlights the matched words with markup; the block shows plain text.
  *
  * @param {string} html A highlighted value.
@@ -179,6 +207,18 @@ function sync( s ) {
 				},
 			} ) ),
 		} ) );
+	// Turing's response stops describing a facet once it filters on it (T1115), so the
+	// applied filters come from the request: every filter but the site's own.
+	state.applied = ( s.request?.fq || [] )
+		.filter( ( fq ) => fq !== siteFilter )
+		.map( ( fq ) => {
+			const [ field, ...rest ] = fq.split( ':' );
+			const value = rest.join( ':' ).replace( /^"|"$/g, '' );
+			return {
+				label: `${ facetLabel( field ) }: ${ value }`,
+				target: { action: 'REMOVE', field, filterQuery: fq },
+			};
+		} );
 	state.pages = ( response?.pagination || [] )
 		.filter( ( p ) => 'PAGE' === p.type || 'CURRENT' === p.type )
 		.map( ( p ) => ( {
