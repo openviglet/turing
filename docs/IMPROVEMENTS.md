@@ -2201,10 +2201,10 @@ same listing.
 - Accept a DELETE item that names fields instead of an id, such as
   `{"attributes":{"site_key":"a.example.org"}}`. Delete by query on every engine (Solr
   `deleteByQuery`, Lucene `deleteDocuments(Query)`, Elasticsearch `delete_by_query`),
-  restricted to the item's site and locale.
+  restricted to the item's site and locale, and evicting the search cache as a write does.
 - Refuse a DELETE that matches nothing it understands (no id, type or declared field)
   with 400 naming the attributes it read, as T1062 does for an empty body. Do the same for
-  `id: "*"`, or make it mean "all documents of this site" on purpose.
+  `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
 ## CXXV Publish turing-ce on every release and from the version branch (T1113)
@@ -2296,8 +2296,8 @@ the first boot creates the default LLM, the default agent and the local embeddin
 
 **What came back.** `GET /api/sn/Sample/chat?q=...` answers, but never from the site's
 posts (only through a title filter): a post stating a deadline gets told it is not
-available (Dumont D174). It (it falls back to the default agent), and `/chat/enabled`
-says `enabled: true, reason: NONE`. `GET /api/sn/Sample/answer?q=...` on the same site
+available (Dumont D174). It falls back to the default agent, and `/chat/enabled` says
+`enabled: true, reason: NONE`. `GET /api/sn/Sample/answer?q=...` on the same site
 streams `event:error data:{"message":"AI is not enabled for site: Sample"}`.
 `TurSNAnswerService.composeAnswer` needs `site.getTurSNSiteGenAi()`, and no API a
 connector holds can create one: the manifest request carries fields, locales, weights
@@ -2313,8 +2313,7 @@ connector can turn the site's GenAI on as code.
   knowledge-base mode), converged like custom facets and shown in `/plan`.
 - `/answer` falls back to the default agent as chat does, or chat refuses as answer does.
   Either way, `/chat/enabled` and an `/answer/enabled` give the same reason.
-- `/api/discovery` reports which AI endpoints the site can serve, so a client hides what
-  would fail.
+- The per-site capability probe is T1123's, which depends on this line.
 
 ## CXXIX nl-filters resolve relative dates against today (T1117)
 
@@ -2366,7 +2365,7 @@ spell-check does, and in `API_KEY` mode take the `Key` header like the rest.
   as search.
 - Add a security test listing every endpoint the SDK calls without a key, and asserting
   each one answers anonymously in `PUBLIC` mode, so the SDK and the filter chain cannot
-  drift again.
+  drift again. The same test asserts that each connector call made with a `Key` header passes CSRF and the auditor, the class T1124 and T1126 belong to. Classify the path in `PUBLIC_SN_CHEAP_MATCHERS`: it reaches no model.
 
 ## CXXXI Failed searches and content gaps are REST metrics (T1119)
 
@@ -2387,10 +2386,10 @@ connector can call with its `Key`, as top terms are.
 tables.
 
 **What Turing should do.**
-- `GET /api/sn/{id}/metrics/failed-searches/{period}/{rows}`: term, count, last seen.
-- `GET /api/sn/{id}/metrics/content-gaps/{period}/{rows}`: term, demand, coverage.
+- `GET /api/sn/{id}/metrics/failed-searches?from=&to=&rows=`: term, count, last seen.
+- `GET /api/sn/{id}/metrics/content-gaps?from=&to=&rows=`: term, demand, coverage.
   Both reuse the MCP tools' queries, so the two surfaces cannot disagree.
-- Per-term CTR in top terms, once click tracking is recorded (`/click`).
+- Per-term CTR is T1131's. These endpoints, T1131's and T1127's cost summary share one window: `from`/`to` ISO-8601 instants plus `rows`, `period` as shorthand.
 - Document them in the REST API page and type them in `@viglet/turing-sdk`.
 
 ## CXXXII A prefix match for the last term of an as-you-type search (T1120)
@@ -2416,7 +2415,10 @@ wildcard term loses stemming and highlighting weight.
 **What Turing should do.** A search parameter (say `prefixLast: true`, or a `matchMode:
 "as-you-type"`) that treats the last term as a prefix server side, with the analyzer and
 highlighting it uses for whole words, plus the same flag on the SDK's `searchQuery`.
-Then the block drops its `*`.
+Then the block drops its `*`. Name it `mode: "instant"`, the one flag T1121, T1125 and
+T1129 also read: the server prefixes the last term and keeps the query out of the search
+log, and the SDK aborts the previous request and reports no search. Same on Solr, Lucene
+and Elasticsearch, with a minimum prefix length.
 
 ## CXXXIII Abort a superseded search in the SDK controller (T1121)
 
@@ -2436,7 +2438,8 @@ drops their answers.
 request, passes its signal to the client's `fetch`, and aborts the previous one when a
 new `searchQuery`, `searchRequest`, `toggleFacet` or `goToPage` starts, treating the
 abort as neither an error nor a state change. The client's request helpers accept a
-`signal` for callers who drive the calls directly.
+`signal` for callers who drive the calls directly. A request in T1120's `mode:
+"instant"` is the usual case.
 
 ## CXXXIV Manifest-provisioned custom facets reach the search answer (T1122)
 
@@ -2491,7 +2494,9 @@ nl-filters. Each check that finds them on spends LLM calls.
 **What Turing should do.** One read-only probe per site, e.g. `GET
 /api/sn/{site}/ai/capabilities`, answering every AI feature (answer, chat, NL filters,
 copilot, similar-by-vector, summaries) with `enabled` and a `reason` code when off, as
-`/chat/enabled` does, and the SDK function that reads it. No LLM call, cacheable.
+`/chat/enabled` does, and the SDK function that reads it. No LLM call, cacheable,
+evicted on a GenAI config change. It is also the `/api/discovery` AI report T1116
+proposes: one contract, shipped after T1116 makes chat and answer agree.
 
 ## CXXXVI The summary endpoint accepts Key-authenticated server calls (T1124)
 
@@ -2538,7 +2543,8 @@ terms are prefixes of one another before offering them.
 the query as the visitor typed it, without the operator), never propose terms that
 differ only by a trailing `*`, and treat a term that is a prefix of another as one typed
 half-way rather than a synonym. T1120's as-you-type parameter would also keep the `*`
-out of the log.
+out of the log: a request in T1120's `mode: "instant"` is never logged, so mining never
+sees it.
 
 ## CXXXVIII The auditor accepts an API-key principal (T1126)
 
@@ -2590,7 +2596,8 @@ an operator nor a client can see what a site's chat costs.
 **What Turing should do.** Record every LLM call an SN site makes (chat, answer, NL
 filters, summaries, copilot) in the cost ledger, with the site and the stage, as the
 agents' calls are; and let `cost/summary` filter by site and by a time window short
-enough to bracket a test run (a `from`/`to` instant, not only a date).
+enough to bracket a test run (a `from`/`to` instant, not only a date), the same window
+T1119's and T1131's metrics take.
 
 ## CXL Navigation-safe result clicks from the SDK (T1128)
 
@@ -2636,7 +2643,7 @@ search events itself, only for a search the visitor settled on (`trackSearch` in
 **What Turing should do.**
 - A `consent` option: a function asked before each emit and before any cookie is written,
   or `sessionCookie: false` to stamp no session id at all.
-- An `instant` flag on `searchRequest` / `searchQuery` (or a `report: false` option), so
+- T1120's `mode: "instant"` on `searchRequest` / `searchQuery` (one flag, not a second one), so
   as-you-type requests are not reported as searches.
 
 ## CXLII GA4 recommended events and search abandonment (T1130)
@@ -2656,7 +2663,7 @@ and left". `createAbandonmentWatcher` exists, but its only canonical event is
 signal as a Dumont line that waits on this one.
 
 **What Turing should do.**
-- `googleAnalyticsSink({ recommended: true })`, the default for new sinks: it also sends
+- `googleAnalyticsSink({ recommended: true })`, opt-in and off by default, as behaviour changes ship: it also sends
   `search { search_term }` for `turing_search` and `select_content { content_type:
   'search_result', content_id, index }` for `turing_search_result_click`.
 - A canonical `turing_search_abandoned { query, results, reason }`, with a helper that
@@ -2679,8 +2686,8 @@ The plugin's docker stack now sets `TURING_SEARCH_METRICS_ENABLED=true` for that
 **What Turing should do.**
 - `GET /api/sn/{site}/metrics/clicks?from=&to=&locale=`: per term, searches, clicks, CTR
   and mean clicked position, plus the terms searched often and clicked never. It reads with
-  the same API-key auth as T1119's content-gap endpoint.
-- A CTR column on the console's search-metrics page.
+  the same API-key auth as T1119's content-gap endpoint, and its `from`/`to`/`rows` window.
+- A CTR column on the console's search-metrics page. `sn_site_metric_click` indexes term and date apart; a site-scoped window needs `(site, date)`.
 - `/click` answers `204` with `X-Turing-Metrics: disabled` (or a `/metrics/status` probe)
   when metrics are off, so a client can say why nothing is counted.
 - Dumont's search insights screen reads this endpoint.
@@ -2709,3 +2716,26 @@ site can still leave it short after filtering.
   counts what passes.
 - The SDK's `fetchSimilar` / `createSimilarController` take `fq`.
 - A test: two site keys in one SN site, and `fq=site_key:a` never answers a `b` document.
+
+T1133's key-bound partition applies here without the caller's `fq`; this line's `fq`
+stays for type and visibility.
+
+## CXLV A shared SN site is partitioned by the server, not by its clients (T1133)
+
+**Where it happened.** Dumont's WordPress plugin writes several WordPress sites into one
+SN site and tells them apart by a `site_key` field. Isolation lives in the client: it
+sends `fq=site_key:<key>` where an endpoint takes one. Search does. Similar and
+duplicates (T1132) and the import DELETE (T1112) do not, and neither do autocomplete,
+spell-check, related terms, chat and answer retrieval, nl-filters or the metrics. And
+the key is not bound to a `site_key`, so site A's key reads and deletes site B's
+documents.
+
+**Decision (review, 2026-10-25).** A shared SN site is a supported model, and the server
+owns the partition. Adding `fq` endpoint by endpoint is the alternative it rules out:
+every new endpoint would repeat the patch, and one that forgot it would leak.
+
+**What Turing should do.**
+- A partition filter bound to an API key (a field and a value, e.g. `site_key` = `a.example.org`), applied by the server to every read and write that key makes: search, autocomplete, spell-check, related terms, similar and duplicates, chat and answer retrieval, nl-filters, import and delete, metrics.
+- An import from a partitioned key gets the partition value stamped on, or is refused when it carries a different one.
+- A partitioned key's delete-all means its own partition (T1112's field delete).
+- A contract test: two partitions in one site, and no endpoint answers or changes the other's documents.
