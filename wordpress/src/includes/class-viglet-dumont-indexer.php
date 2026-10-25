@@ -325,6 +325,8 @@ class Viglet_Dumont_Indexer {
 			'modification_date' => get_post_modified_time( 'c', true, $post ),
 			'site'              => get_bloginfo( 'name' ),
 			'image'             => $this->get_post_thumbnail_url( $post->ID ),
+			// What Search tuning's "sticky posts first" boost matches (D172).
+			'sticky'            => 'post' === $post->post_type && is_sticky( $post->ID ) ? 'true' : 'false',
 		);
 
 		if ( $this->settings['index_categories'] ) {

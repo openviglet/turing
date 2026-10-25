@@ -24,6 +24,14 @@ test( 'a synonym added here makes the search find through it, until it is remove
 	axe,
 } ) => {
 	await page.goto( screen );
+	// Watch "talk" first, so the change shows as before and after.
+	const tryIt = page
+		.locator( '.components-card' )
+		.filter( { hasText: 'Try it' } );
+	await tryIt.getByLabel( 'A search to watch' ).fill( 'talk' );
+	await tryIt.getByRole( 'button', { name: 'Try', exact: true } ).click();
+	await expect( tryIt.getByRole( 'heading', { name: 'Now' } ) ).toBeVisible();
+
 	const card = page
 		.locator( '.components-card' )
 		.filter( { hasText: 'Synonyms' } );
@@ -33,6 +41,13 @@ test( 'a synonym added here makes the search find through it, until it is remove
 	await card.getByRole( 'button', { name: 'Add synonym' } ).click();
 	await expect( card.locator( 'tbody tr' ) ).toHaveText( [
 		/lecture = talk/,
+	] );
+	await expect(
+		tryIt.getByRole( 'heading', { name: 'Before' } )
+	).toBeVisible();
+	await expect( tryIt.locator( 'ol' ).last().locator( 'li' ) ).toHaveText( [
+		/Lecture on/,
+		/Lecture on/,
 	] );
 	await look( 'tuning' );
 	await axe( 'Search tuning', { include: '#wpbody-content' } );
@@ -85,4 +100,58 @@ test( 'a post promoted for a search heads its results as featured', async ( {
 		.getByRole( 'button', { name: 'Remove the promotion for workshop' } )
 		.click();
 	await expect( card.locator( 'tbody tr' ) ).toHaveCount( 0 );
+} );
+
+test( "suggestions come from Turing's mining, without wildcard or half-typed variants", async ( {
+	page,
+} ) => {
+	await page.goto( screen );
+	const card = page
+		.locator( '.components-card' )
+		.filter( { hasText: 'Synonyms' } );
+	await card
+		.getByRole( 'button', { name: 'Suggest from recent searches' } )
+		.click();
+	// This stack's log holds the as-you-type searches, which mining turns into "work* = work"
+	// (Turing T1125): none of that may be offered.
+	await expect(
+		card
+			.getByText( 'No suggestions from recent searches.' )
+			.or( card.getByRole( 'list', { name: 'Suggested synonyms' } ) )
+	).toBeVisible();
+	await expect( card.getByText( /\*/ ) ).toHaveCount( 0 );
+} );
+
+test( 'the editor\'s "Promote for a search" opens the form with the post chosen', async ( {
+	page,
+	seed,
+} ) => {
+	await page.goto( `/wp-admin/post.php?post=${ seed.postId }&action=edit` );
+	const guide = page
+		.getByRole( 'dialog' )
+		.getByRole( 'button', { name: 'Close' } );
+	if ( await guide.isVisible( { timeout: 5000 } ).catch( () => false ) ) {
+		await guide.click();
+	}
+	const promote = page.getByRole( 'link', { name: 'Promote for a search…' } );
+	if ( ! ( await promote.isVisible().catch( () => false ) ) ) {
+		await page
+			.getByRole( 'button', { name: 'Settings', exact: true } )
+			.click();
+		await page.getByRole( 'tab', { name: 'Post' } ).click();
+	}
+	await expect( promote ).toHaveAttribute(
+		'href',
+		new RegExp( `promote=${ seed.postId }$` )
+	);
+
+	await page.goto(
+		`/wp-admin/admin.php?page=viglet-dumont-tuning&promote=${ seed.postId }`
+	);
+	const card = page
+		.locator( '.components-card' )
+		.filter( { hasText: 'Promoted results' } );
+	await expect(
+		card.getByRole( 'list', { name: 'Shown first' } ).locator( 'li' )
+	).toHaveText( [ /Workshop on search/ ] );
 } );

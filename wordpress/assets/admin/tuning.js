@@ -18,6 +18,7 @@ import {
 	createRoot,
 	useCallback,
 	useEffect,
+	useRef,
 	useState,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -47,6 +48,181 @@ function RowAction( { item, onRemove, label } ) {
 		>
 			{ __( 'Remove', 'viglet-dumont' ) }
 		</Button>
+	);
+}
+
+/**
+ * Synonyms Turing mined from the search log, offered one by one: nothing is applied until
+ * the owner accepts it.
+ *
+ * @param {Object}                                props     The props.
+ * @param {(request: Object) => Promise<boolean>} props.act Sends a change.
+ */
+function Suggestions( { act } ) {
+	const [ suggestions, setSuggestions ] = useState( null );
+	const [ busy, setBusy ] = useState( false );
+
+	const suggest = () => {
+		setBusy( true );
+		apiFetch( { path: '/viglet-dumont/v1/tuning/suggestions' } )
+			.then( setSuggestions )
+			.catch( () => setSuggestions( [] ) )
+			.finally( () => setBusy( false ) );
+	};
+
+	return (
+		<div>
+			{ suggestions && suggestions.length === 0 && (
+				<p>
+					{ __(
+						'No suggestions from recent searches.',
+						'viglet-dumont'
+					) }
+				</p>
+			) }
+			{ suggestions && suggestions.length > 0 && (
+				<ul aria-label={ __( 'Suggested synonyms', 'viglet-dumont' ) }>
+					{ suggestions.map( ( suggestion ) => (
+						<li key={ suggestion.terms.join( '|' ) }>
+							{ suggestion.terms.join( ' = ' ) }{ ' ' }
+							<Button
+								variant="link"
+								onClick={ () =>
+									act( {
+										path: '/viglet-dumont/v1/tuning/synonym',
+										method: 'POST',
+										data: { terms: suggestion.terms },
+									} ).then(
+										( ok ) =>
+											ok &&
+											setSuggestions(
+												suggestions.filter(
+													( s ) => s !== suggestion
+												)
+											)
+									)
+								}
+								aria-label={ sprintf(
+									/* translators: %s: the suggested words. */
+									__( 'Accept %s', 'viglet-dumont' ),
+									suggestion.terms.join( ', ' )
+								) }
+							>
+								{ __( 'Accept', 'viglet-dumont' ) }
+							</Button>
+						</li>
+					) ) }
+				</ul>
+			) }
+			<Button variant="tertiary" isBusy={ busy } onClick={ suggest }>
+				{ __( 'Suggest from recent searches', 'viglet-dumont' ) }
+			</Button>
+		</div>
+	);
+}
+
+/**
+ * "Try it": one query's results, and the ones it had before the last change beside them.
+ *
+ * @param {Object} props         The props.
+ * @param {number} props.version Bumped by every change, so the answer is asked again.
+ */
+function TryIt( { version } ) {
+	const [ query, setQuery ] = useState( '' );
+	const [ asked, setAsked ] = useState( '' );
+	const [ before, setBefore ] = useState( null );
+	const [ after, setAfter ] = useState( null );
+
+	const run = useCallback(
+		( q ) =>
+			apiFetch( {
+				path: `/viglet-dumont/v1/tuning/try?q=${ encodeURIComponent( q ) }`,
+			} ).catch( () => [] ),
+		[]
+	);
+
+	// What is on screen now, read by the effect below without making it a dependency.
+	const shown = useRef( null );
+	shown.current = after;
+
+	// A change after a try: what was shown becomes "before", and the query is asked again.
+	useEffect( () => {
+		if ( ! asked || 0 === version ) {
+			return;
+		}
+		setBefore( shown.current );
+		setAfter( null );
+		void ( async () => setAfter( await run( asked ) ) )();
+	}, [ version, asked, run ] );
+
+	const list = ( rows, label ) => (
+		<div style={ { flex: 1 } }>
+			<h3>{ label }</h3>
+			{ rows === null && <Spinner /> }
+			{ rows && rows.length === 0 && (
+				<p>{ __( 'No results.', 'viglet-dumont' ) }</p>
+			) }
+			{ rows && rows.length > 0 && (
+				<ol>
+					{ rows.map( ( row ) => (
+						<li key={ row.url }>
+							{ row.featured && (
+								<strong>
+									{ __(
+										'Featured:',
+										'viglet-dumont'
+									) }{ ' ' }
+								</strong>
+							) }
+							{ row.title }
+						</li>
+					) ) }
+				</ol>
+			) }
+		</div>
+	);
+
+	return (
+		<Card>
+			<CardHeader>
+				<h2>{ __( 'Try it', 'viglet-dumont' ) }</h2>
+			</CardHeader>
+			<CardBody>
+				<form
+					onSubmit={ async ( event ) => {
+						event.preventDefault();
+						setAsked( query );
+						setBefore( null );
+						setAfter( null );
+						setAfter( await run( query ) );
+					} }
+				>
+					<TextControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+						label={ __( 'A search to watch', 'viglet-dumont' ) }
+						help={ __(
+							'Its first results, now and before your last change here.',
+							'viglet-dumont'
+						) }
+						value={ query }
+						onChange={ setQuery }
+					/>
+					<p>
+						<Button variant="secondary" type="submit">
+							{ __( 'Try', 'viglet-dumont' ) }
+						</Button>
+					</p>
+				</form>
+				{ asked && (
+					<Flex align="flex-start" gap={ 6 }>
+						{ before &&
+							list( before, __( 'Before', 'viglet-dumont' ) ) }
+						{ list( after, __( 'Now', 'viglet-dumont' ) ) }
+					</Flex>
+				) }
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -133,6 +309,7 @@ function Synonyms( { rows, act } ) {
 						</Button>
 					</p>
 				</form>
+				<Suggestions act={ act } />
 			</CardBody>
 		</Card>
 	);
@@ -143,6 +320,21 @@ function Promoted( { rows, act } ) {
 	const [ find, setFind ] = useState( '' );
 	const [ found, setFound ] = useState( [] );
 	const [ chosen, setChosen ] = useState( [] );
+
+	// The editor's "Promote for a search…" opens this screen with ?promote=<post id>.
+	useEffect( () => {
+		const id = Number(
+			new URL( window.location.href ).searchParams.get( 'promote' )
+		);
+		if ( ! id ) {
+			return;
+		}
+		apiFetch( {
+			path: `/wp/v2/search?type=post&subtype=any&include=${ id }`,
+		} )
+			.then( ( posts ) => setChosen( posts.slice( 0, 1 ) ) )
+			.catch( () => {} );
+	}, [] );
 
 	// The site's own post search, as the editor's link picker uses it.
 	useEffect( () => {
@@ -342,6 +534,7 @@ function Promoted( { rows, act } ) {
 function Tuning() {
 	const [ data, setData ] = useState( null );
 	const [ error, setError ] = useState( '' );
+	const [ version, setVersion ] = useState( 0 );
 
 	const load = useCallback( () => {
 		apiFetch( { path: '/viglet-dumont/v1/tuning' } )
@@ -356,6 +549,7 @@ function Tuning() {
 			.then( ( next ) => {
 				setData( next );
 				setError( '' );
+				setVersion( ( v ) => v + 1 );
 				return true;
 			} )
 			.catch( ( e ) => {
@@ -380,6 +574,7 @@ function Tuning() {
 					{ error }
 				</Notice>
 			) }
+			<TryIt version={ version } />
 			<Synonyms rows={ data.synonyms } act={ act } />
 			<Promoted rows={ data.spotlights } act={ act } />
 		</Flex>

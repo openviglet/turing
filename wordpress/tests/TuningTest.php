@@ -21,7 +21,7 @@ final class TuningTest extends PluginTestCase {
 				$this->requests[] = array( $url, $args );
 				$path             = (string) parse_url( $url, PHP_URL_PATH );
 				$bodies           = array(
-					'/api/sn'                     => array(
+					'/api/sn'                       => array(
 						array(
 							'id'   => 'other',
 							'name' => 'Another',
@@ -31,13 +31,29 @@ final class TuningTest extends PluginTestCase {
 							'name' => 'sample site',
 						),
 					),
-					'/api/sn/s1/synonym/operator' => array(
+					'/api/sn/s1/synonym/operator'   => array(
 						'id'   => 'operator',
 						'name' => 'set in the console',
 					),
-					'/api/sn/s1/synonym/ours'     => array(
+					'/api/sn/s1/synonym/ours'       => array(
 						'id'   => 'ours',
 						'name' => 'WordPress: lecture, talk',
+					),
+					'/api/sn/s1/ranking-expression' => array(
+						array(
+							'id'   => 'old',
+							'name' => 'WordPress: newer first',
+						),
+						array(
+							'id'   => 'operator',
+							'name' => 'set in the console',
+						),
+					),
+					'/api/sn/s1/synonym/mine'       => array(
+						array( 'terms' => array( 'workshop', 'workshop*' ) ),
+						array( 'terms' => array( 'work', 'workshop' ) ),
+						array( 'terms' => array( 'lecture', 'talk' ) ),
+						array( 'terms' => array( 'talk' ) ),
 					),
 				);
 				return array(
@@ -86,6 +102,38 @@ final class TuningTest extends PluginTestCase {
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'viglet_dumont_not_ours', $result->get_error_code() );
 		$this->assertNotContains( 'DELETE /api/sn/s1/synonym/operator', $this->calls() );
+	}
+
+	public function test_boosts_replace_the_plugins_ranking_expressions_and_leave_an_operators(): void {
+		$result = ( new Viglet_Dumont_Tuning( $this->settings() ) )->set_boosts( true, false, array( 'page' => 'down' ) );
+
+		$this->assertTrue( $result );
+		$this->assertContains( 'DELETE /api/sn/s1/ranking-expression/old', $this->calls() );
+		$this->assertNotContains( 'DELETE /api/sn/s1/ranking-expression/operator', $this->calls() );
+		$posted = array_values(
+			array_filter(
+				array_keys( $this->requests ),
+				fn ( $i ) => 'POST' === $this->requests[ $i ][1]['method']
+			)
+		);
+		$this->assertCount( 2, $posted );
+		$this->assertSame(
+			array(
+				'attribute' => 'publication_date',
+				'condition' => 1,
+				'value'     => 'asc',
+			),
+			$this->body( $posted[0] )['turSNRankingConditions'][0],
+			'newer first is Turing\'s recency form'
+		);
+		$this->assertSame( 2, $this->body( $posted[1] )['turSNRankingConditions'][0]['condition'], 'down is "is not": the others go up' );
+	}
+
+	public function test_suggestions_leave_out_wildcards_prefixes_and_single_words(): void {
+		$this->assertSame(
+			array( array( 'terms' => array( 'lecture', 'talk' ) ) ),
+			( new Viglet_Dumont_Tuning( $this->settings() ) )->suggestions()
+		);
 	}
 
 	public function test_the_plugins_own_synonym_is_removed_and_the_rest_reapplied(): void {

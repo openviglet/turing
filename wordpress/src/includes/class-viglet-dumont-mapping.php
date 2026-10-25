@@ -181,6 +181,14 @@ class Viglet_Dumont_Mapping {
 				'facet'       => true,
 				'facetName'   => array( $locale => __( 'Site', 'viglet-dumont' ) ),
 			),
+			// Whether a post is sticky, for Search tuning's "sticky posts first" boost.
+			'sticky'   => array(
+				'name'        => 'sticky',
+				'type'        => 'STRING',
+				'mandatory'   => false,
+				'multiValued' => false,
+				'facet'       => false,
+			),
 		);
 
 		foreach ( $this->all() as $type_mapping ) {

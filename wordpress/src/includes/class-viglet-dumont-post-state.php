@@ -130,7 +130,7 @@ class Viglet_Dumont_Post_State {
 		wp_enqueue_script(
 			'viglet-dumont-editor',
 			VIGLET_DUMONT_URL . 'admin/js/editor-panel.js',
-			array( 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n', 'wp-blocks', 'wp-block-editor', 'wp-escape-html' ),
+			array( 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n', 'wp-blocks', 'wp-block-editor', 'wp-escape-html', 'wp-core-data' ),
 			VIGLET_DUMONT_VERSION,
 			true
 		);

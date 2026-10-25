@@ -42,6 +42,7 @@ final class IndexerTest extends PluginTestCase {
 				'wp_get_post_tags'           => array( 'jobs' ),
 				'get_post_meta'              => '',
 				'is_multisite'               => false,
+				'is_sticky'                  => true,
 			)
 		);
 		Functions\expect( 'get_the_author_meta' )->with( 'display_name', 7 )->andReturn( 'Ana' );
@@ -76,6 +77,7 @@ final class IndexerTest extends PluginTestCase {
 		$this->assertSame( '2026-10-02T09:00:00+00:00', $attributes['modification_date'] );
 		$this->assertSame( 'Institutional', $attributes['site'] );
 		$this->assertSame( '', $attributes['image'] );
+		$this->assertSame( 'true', $attributes['sticky'] );
 		$this->assertSame( array( 'News', 'Calls' ), $attributes['categories'] );
 		$this->assertSame( 'News', $attributes['section'] );
 		$this->assertSame( array( 'jobs' ), $attributes['tags'] );

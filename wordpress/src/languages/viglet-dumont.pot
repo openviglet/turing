@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T17:52:07+00:00\n"
+"POT-Creation-Date: 2026-10-25T18:13:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -37,16 +37,16 @@ msgstr ""
 #: src/blocks/search/render.php:159
 #: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
-#: assets/admin/tuning.js:181
-#: src/admin/js/editor-panel.js:151
+#: assets/admin/tuning.js:373
+#: src/admin/js/editor-panel.js:152
 #: src/admin/js/search-block-editor.js:42
 msgid "Search"
 msgstr ""
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/mapping.js:228
-#: assets/admin/tuning.js:77
-#: assets/admin/tuning.js:188
+#: assets/admin/tuning.js:253
+#: assets/admin/tuning.js:380
 msgid "Actions"
 msgstr ""
 
@@ -824,39 +824,39 @@ msgstr ""
 msgid "Site"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:236
+#: src/includes/class-viglet-dumont-mapping.php:244
 msgid "No mapped field to provision."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:246
+#: src/includes/class-viglet-dumont-mapping.php:254
 msgid "The fields are already provisioned."
 msgstr ""
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:301
+#: src/includes/class-viglet-dumont-mapping.php:309
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr ""
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:327
+#: src/includes/class-viglet-dumont-mapping.php:335
 #, php-format
 msgid "Taxonomy: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:343
+#: src/includes/class-viglet-dumont-mapping.php:351
 #, php-format
 msgid "Meta: %s"
 msgstr ""
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:351
+#: src/includes/class-viglet-dumont-mapping.php:359
 #, php-format
 msgid "Post: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:356
+#: src/includes/class-viglet-dumont-mapping.php:364
 msgid "Featured image URL"
 msgstr ""
 
@@ -919,7 +919,7 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:69
 #: src/includes/class-viglet-dumont-post-state.php:77
 #: assets/admin/health.js:391
-#: src/admin/js/editor-panel.js:142
+#: src/admin/js/editor-panel.js:143
 msgid "Failed"
 msgstr ""
 
@@ -948,15 +948,23 @@ msgstr ""
 msgid "Turing has no SN site named %s."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-tuning.php:128
+#: src/includes/class-viglet-dumont-tuning.php:132
 msgid "A synonym needs two words or more."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-tuning.php:170
+#: src/includes/class-viglet-dumont-tuning.php:174
 msgid "Name a search and at least one post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-tuning.php:230
+#: src/includes/class-viglet-dumont-tuning.php:285
+msgid "newer first"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:288
+msgid "sticky posts first"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:409
 msgid "Only what this plugin added can be removed here; change the rest in Turing's console."
 msgstr ""
 
@@ -1004,11 +1012,11 @@ msgstr ""
 msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
 msgstr ""
 
-#: src/viglet-dumont.php:684
+#: src/viglet-dumont.php:719
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:709
+#: src/viglet-dumont.php:744
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -1223,7 +1231,7 @@ msgid "Remove field"
 msgstr ""
 
 #: assets/admin/mapping.js:154
-#: assets/admin/tuning.js:48
+#: assets/admin/tuning.js:49
 msgid "Remove"
 msgstr ""
 
@@ -1363,88 +1371,142 @@ msgstr ""
 msgid "Index everything now"
 msgstr ""
 
-#: assets/admin/tuning.js:37
+#: assets/admin/tuning.js:38
 msgid "Set in Turing’s console"
 msgstr ""
 
-#: assets/admin/tuning.js:59
+#: assets/admin/tuning.js:77
+msgid "No suggestions from recent searches."
+msgstr ""
+
+#: assets/admin/tuning.js:84
+msgid "Suggested synonyms"
+msgstr ""
+
+#. translators: %s: the suggested words.
+#: assets/admin/tuning.js:107
+#, js-format
+msgid "Accept %s"
+msgstr ""
+
+#: assets/admin/tuning.js:111
+msgid "Accept"
+msgstr ""
+
+#: assets/admin/tuning.js:118
+msgid "Suggest from recent searches"
+msgstr ""
+
+#: assets/admin/tuning.js:163
+msgid "No results."
+msgstr ""
+
+#: assets/admin/tuning.js:171
+msgid "Featured:"
+msgstr ""
+
+#: assets/admin/tuning.js:188
+msgid "Try it"
+msgstr ""
+
+#: assets/admin/tuning.js:203
+msgid "A search to watch"
+msgstr ""
+
+#: assets/admin/tuning.js:204
+msgid "Its first results, now and before your last change here."
+msgstr ""
+
+#: assets/admin/tuning.js:213
+msgid "Try"
+msgstr ""
+
+#: assets/admin/tuning.js:220
+msgid "Before"
+msgstr ""
+
+#: assets/admin/tuning.js:221
+msgid "Now"
+msgstr ""
+
+#: assets/admin/tuning.js:235
 msgid "Synonyms"
 msgstr ""
 
-#: assets/admin/tuning.js:63
+#: assets/admin/tuning.js:239
 msgid "Words a visitor may type for the same thing. A search for any of them finds posts with the others."
 msgstr ""
 
-#: assets/admin/tuning.js:73
+#: assets/admin/tuning.js:249
 msgid "Words"
 msgstr ""
 
 #. translators: %s: the synonym's words.
-#: assets/admin/tuning.js:91
+#: assets/admin/tuning.js:267
 #, js-format
 msgid "Remove %s"
 msgstr ""
 
-#: assets/admin/tuning.js:123
+#: assets/admin/tuning.js:299
 msgid "Words that mean the same, separated by commas"
 msgstr ""
 
-#: assets/admin/tuning.js:132
+#: assets/admin/tuning.js:308
 msgid "Add synonym"
 msgstr ""
 
-#: assets/admin/tuning.js:167
+#: assets/admin/tuning.js:359
 msgid "Promoted results"
 msgstr ""
 
-#: assets/admin/tuning.js:171
+#: assets/admin/tuning.js:363
 msgid "Up to three posts shown first, as featured, when a visitor searches for these words."
 msgstr ""
 
-#: assets/admin/tuning.js:184
-#: assets/admin/tuning.js:298
+#: assets/admin/tuning.js:376
+#: assets/admin/tuning.js:490
 msgid "Shown first"
 msgstr ""
 
 #. translators: %s: the search the posts are promoted for.
-#: assets/admin/tuning.js:207
+#: assets/admin/tuning.js:399
 #, js-format
 msgid "Remove the promotion for %s"
 msgstr ""
 
-#: assets/admin/tuning.js:249
+#: assets/admin/tuning.js:441
 msgid "When visitors search for"
 msgstr ""
 
-#: assets/admin/tuning.js:259
+#: assets/admin/tuning.js:451
 msgid "Find a post to show first"
 msgstr ""
 
-#: assets/admin/tuning.js:267
+#: assets/admin/tuning.js:459
 msgid "Posts found"
 msgstr ""
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:284
+#: assets/admin/tuning.js:476
 #, js-format
 msgid "Show %s first"
 msgstr ""
 
-#: assets/admin/tuning.js:291
+#: assets/admin/tuning.js:483
 msgid "Add"
 msgstr ""
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:314
+#: assets/admin/tuning.js:506
 #, js-format
 msgid "Take %s out"
 msgstr ""
 
-#: assets/admin/tuning.js:321
+#: assets/admin/tuning.js:513
 msgid "Take out"
 msgstr ""
 
-#: assets/admin/tuning.js:333
+#: assets/admin/tuning.js:525
 msgid "Promote"
 msgstr ""
 
@@ -1488,24 +1550,28 @@ msgstr ""
 msgid "Find related posts"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:126
+#: src/admin/js/editor-panel.js:127
 msgid "Unknown"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:153
+#: src/admin/js/editor-panel.js:154
 msgid "Checking…"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:158
+#: src/admin/js/editor-panel.js:159
 msgid "Exclude from search"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:159
+#: src/admin/js/editor-panel.js:160
 msgid "Takes effect when the post is saved."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:172
+#: src/admin/js/editor-panel.js:173
 msgid "Reindex now"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:178
+msgid "Promote for a search…"
 msgstr ""
 
 #: src/admin/js/search-block-editor.js:44

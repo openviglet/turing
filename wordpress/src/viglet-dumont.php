@@ -514,6 +514,41 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 	register_rest_route(
 		'viglet-dumont/v1',
+		'/tuning/boosts',
+		array(
+			'methods'             => 'POST',
+			'callback'            => static fn ( WP_REST_Request $request ) => $answer(
+				( new Viglet_Dumont_Tuning() )->set_boosts(
+					(bool) $request->get_param( 'recency' ),
+					(bool) $request->get_param( 'sticky' ),
+					array_map( 'sanitize_key', (array) $request->get_param( 'types' ) )
+				)
+			),
+			'permission_callback' => $can_manage,
+		)
+	);
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/tuning/suggestions',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn () => $answer( ( new Viglet_Dumont_Tuning() )->suggestions() ),
+			'permission_callback' => $can_manage,
+		)
+	);
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/tuning/try',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn ( WP_REST_Request $request ) => $answer(
+				( new Viglet_Dumont_Tuning() )->try_query( sanitize_text_field( (string) $request->get_param( 'q' ) ) )
+			),
+			'permission_callback' => $can_manage,
+		)
+	);
+	register_rest_route(
+		'viglet-dumont/v1',
 		'/tuning/spotlight/(?P<id>[A-Za-z0-9-]+)',
 		array(
 			'methods'             => 'DELETE',

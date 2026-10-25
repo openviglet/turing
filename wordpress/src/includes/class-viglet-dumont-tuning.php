@@ -110,9 +110,13 @@ class Viglet_Dumont_Tuning {
 			$spotlights
 		);
 
+		$boosts = $this->boosts();
+
 		return array(
 			'synonyms'   => $synonym_rows,
 			'spotlights' => $spotlight_rows,
+			'boosts'     => is_wp_error( $boosts ) ? null : $boosts,
+			'types'      => array_values( viglet_dumont_get_indexable_types() ),
 		);
 	}
 
@@ -208,6 +212,181 @@ class Viglet_Dumont_Tuning {
 	 */
 	public function remove_spotlight( string $id ) {
 		return $this->remove( 'spotlight', $id );
+	}
+
+	/**
+	 * The boosts the plugin owns, read back from the site's ranking expressions: newer first,
+	 * sticky posts first, and a post type up or down.
+	 *
+	 * @return array{recency: bool, sticky: bool, types: array<string, string>}|WP_Error
+	 */
+	public function boosts() {
+		$site = $this->site_id();
+		if ( is_wp_error( $site ) ) {
+			return $site;
+		}
+		$expressions = $this->client->call( 'GET', "/api/sn/{$site}/ranking-expression" );
+		if ( is_wp_error( $expressions ) ) {
+			return $expressions;
+		}
+		$boosts = array(
+			'recency' => false,
+			'sticky'  => false,
+			'types'   => array(),
+		);
+		foreach ( $expressions as $expression ) {
+			if ( ! $this->is_ours( $expression ) ) {
+				continue;
+			}
+			$condition = (array) ( ( $expression['turSNRankingConditions'] ?? array() )[0] ?? array() );
+			$attribute = (string) ( $condition['attribute'] ?? '' );
+			if ( 'publication_date' === $attribute ) {
+				$boosts['recency'] = true;
+			} elseif ( 'sticky' === $attribute ) {
+				$boosts['sticky'] = true;
+			} elseif ( 'type' === $attribute ) {
+				$boosts['types'][ (string) $condition['value'] ] = 2 === (int) ( $condition['condition'] ?? 1 ) ? 'down' : 'up';
+			}
+		}
+
+		return $boosts;
+	}
+
+	/**
+	 * Make the plugin's boosts what the owner asked for: its ranking expressions are replaced
+	 * whole, so a switch turned off leaves nothing behind. An operator's are not touched.
+	 *
+	 * @param bool                  $recency Newer posts rank higher.
+	 * @param bool                  $sticky  Sticky posts rank higher.
+	 * @param array<string, string> $types   Post type to 'up' or 'down'.
+	 * @return true|WP_Error
+	 */
+	public function set_boosts( bool $recency, bool $sticky, array $types ) {
+		$site = $this->site_id();
+		if ( is_wp_error( $site ) ) {
+			return $site;
+		}
+		$expressions = $this->client->call( 'GET', "/api/sn/{$site}/ranking-expression" );
+		if ( is_wp_error( $expressions ) ) {
+			return $expressions;
+		}
+		foreach ( $expressions as $expression ) {
+			if ( $this->is_ours( $expression ) ) {
+				$removed = $this->client->call( 'DELETE', "/api/sn/{$site}/ranking-expression/" . rawurlencode( (string) $expression['id'] ) );
+				if ( is_wp_error( $removed ) ) {
+					return $removed;
+				}
+			}
+		}
+
+		// A recency boost is Turing's date form, `asc` on a DATE field; the rest match a value.
+		$wanted = array();
+		if ( $recency ) {
+			$wanted[] = array( __( 'newer first', 'viglet-dumont' ), 'publication_date', 1, 'asc', 5.0 );
+		}
+		if ( $sticky ) {
+			$wanted[] = array( __( 'sticky posts first', 'viglet-dumont' ), 'sticky', 1, 'true', 3.0 );
+		}
+		foreach ( $types as $type => $direction ) {
+			$type = sanitize_key( (string) $type );
+			if ( '' === $type || ! in_array( $direction, array( 'up', 'down' ), true ) ) {
+				continue;
+			}
+			// Down is every other type up: Turing boosts, it never sinks.
+			$wanted[] = array( "{$type} {$direction}", 'type', 'down' === $direction ? 2 : 1, $type, 2.0 );
+		}
+		foreach ( $wanted as list( $label, $attribute, $condition, $value, $weight ) ) {
+			$saved = $this->client->call(
+				'POST',
+				"/api/sn/{$site}/ranking-expression",
+				array(
+					'name'                   => self::PREFIX . $label,
+					'weight'                 => $weight,
+					'turSNSite'              => array( 'id' => $site ),
+					'turSNRankingConditions' => array(
+						array(
+							'attribute' => $attribute,
+							'condition' => $condition,
+							'value'     => $value,
+						),
+					),
+				)
+			);
+			if ( is_wp_error( $saved ) ) {
+				return $saved;
+			}
+		}//end foreach
+
+		return true;
+	}
+
+	/**
+	 * Synonyms Turing mined from the search log, to offer one by one; none is applied here.
+	 * A query and its own wildcard or half-typed prefix are not synonyms, though mining
+	 * proposes them (Turing T1125), so those are left out.
+	 *
+	 * @return array<int, array{terms: string[]}>|WP_Error
+	 */
+	public function suggestions() {
+		$site = $this->site_id();
+		if ( is_wp_error( $site ) ) {
+			return $site;
+		}
+		$mined = $this->client->call( 'POST', "/api/sn/{$site}/synonym/mine?locale=" . rawurlencode( (string) $this->settings['locale'] ) . '&limit=50' );
+		if ( is_wp_error( $mined ) ) {
+			return $mined;
+		}
+
+		$suggestions = array();
+		foreach ( $mined as $candidate ) {
+			$terms = array_values( array_unique( array_map( 'strval', (array) ( $candidate['terms'] ?? array() ) ) ) );
+			if ( count( $terms ) < 2 || array_filter( $terms, static fn ( $term ) => str_contains( $term, '*' ) ) ) {
+				continue;
+			}
+			$prefixed = false;
+			foreach ( $terms as $a ) {
+				foreach ( $terms as $b ) {
+					$prefixed = $prefixed || ( $a !== $b && str_starts_with( strtolower( $b ), strtolower( $a ) ) );
+				}
+			}
+			if ( ! $prefixed ) {
+				$suggestions[] = array( 'terms' => $terms );
+			}
+		}
+
+		return $suggestions;
+	}
+
+	/**
+	 * What the site's search answers for a query now, as titles: the "Try it" preview.
+	 *
+	 * @param string $query The query.
+	 * @return array<int, array{title: string, url: string, featured: bool}>|WP_Error
+	 */
+	public function try_query( string $query ) {
+		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
+		$response = $this->client->search( '' === trim( $query ) ? '*' : $query, 1, 5, array( 'fq[]' => array( 'site_key:' . $indexer->site_key() ) ) );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+		$rows = array();
+		foreach ( (array) ( $response['widget']['spotlights'] ?? array() ) as $spot ) {
+			$rows[] = array(
+				'title'    => wp_strip_all_tags( (string) ( $spot['title'] ?? '' ) ),
+				'url'      => (string) ( $spot['link'] ?? $spot['url'] ?? '' ),
+				'featured' => true,
+			);
+		}
+		foreach ( (array) ( $response['results']['document'] ?? array() ) as $document ) {
+			$fields = (array) ( $document['fields'] ?? array() );
+			$rows[] = array(
+				'title'    => wp_strip_all_tags( (string) ( $fields['title'] ?? '' ) ),
+				'url'      => (string) ( $fields['url'] ?? '' ),
+				'featured' => false,
+			);
+		}
+
+		return $rows;
 	}
 
 	/**

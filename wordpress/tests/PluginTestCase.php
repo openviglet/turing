@@ -41,6 +41,7 @@ abstract class PluginTestCase extends TestCase {
 				'viglet_dumont_get_indexable_types' => array( 'post', 'page' ),
 				'home_url'                          => 'https://site.example.org',
 				'wp_parse_url'                      => static fn ( $url ) => parse_url( $url ),
+				'is_sticky'                         => false,
 			)
 		);
 		Functions\when( 'wp_remote_request' )->alias(

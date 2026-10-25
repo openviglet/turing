@@ -108,7 +108,8 @@
             return {
                 id: editor.getCurrentPostId(),
                 meta: editor.getEditedPostAttribute('meta') || {},
-                saving: editor.isSavingPost() && !editor.isAutosavingPost()
+                saving: editor.isSavingPost() && !editor.isAutosavingPost(),
+                canTune: !!select('core').canUser('update', 'settings')
             };
         }, []);
         var editPost = useDispatch('core/editor').editPost;
@@ -170,6 +171,11 @@
                 disabled: busy || !post.id,
                 onClick: reindex
             }, __('Reindex now', 'viglet-dumont')),
+            // Search tuning (D172) opens with this post chosen; only an admin may tune search.
+            post.canTune && post.id ? el('p', null, el(components.Button, {
+                variant: 'link',
+                href: 'admin.php?page=viglet-dumont-tuning&promote=' + post.id
+            }, __('Promote for a search…', 'viglet-dumont'))) : null,
             el(Assist, { postId: post.id })
         );
     }
