@@ -19,6 +19,10 @@ const { labels, searchPage, queryParam } = getConfig( 'viglet-dumont/overlay' );
 const instantMs = 250;
 // How many results the overlay lists before "See all results".
 const shown = 6;
+// The page language's plural rule, for the results count.
+const plurals = new Intl.PluralRules(
+	document.documentElement.lang || undefined
+);
 
 let dialog = null;
 let input = null;
@@ -161,8 +165,13 @@ function render( s ) {
 		results = [];
 	} else if ( 'success' === s.status ) {
 		const total = s.structured?.queryContext?.count ?? s.documents.length;
+		// The form for one or for more, as the page's language counts (D184).
+		const form =
+			'one' === plurals.select( total )
+				? labels.found.one
+				: labels.found.other;
 		status.textContent = total
-			? labels.found.replace( '%d', String( total ) )
+			? form.replace( '%d', String( total ) )
 			: labels.none;
 		results = s.documents.slice( 0, shown ).map( ( d ) => ( {
 			id: String( d.raw?.fields?.id ?? '' ),

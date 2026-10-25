@@ -35,8 +35,8 @@ msgid "Indexing"
 msgstr "Indexação"
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:133
-#: src/blocks/search/render.php:159
+#: src/blocks/search/render.php:142
+#: src/blocks/search/render.php:168
 #: src/includes/class-viglet-dumont-native-search.php:172
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: assets/admin/tuning.js:373
@@ -308,52 +308,45 @@ msgstr "Visão geral do conteúdo"
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:98
-#: src/includes/class-viglet-dumont-native-search.php:177
-#, php-format
-msgid "%d results"
-msgstr "%d resultados"
-
-#: src/blocks/search/render.php:99
-#: src/includes/class-viglet-dumont-native-search.php:178
+#: src/blocks/search/render.php:108
+#: src/includes/class-viglet-dumont-native-search.php:183
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:100
-#: src/includes/class-viglet-dumont-native-search.php:179
+#: src/blocks/search/render.php:109
+#: src/includes/class-viglet-dumont-native-search.php:184
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
-#: src/blocks/search/render.php:125
+#: src/blocks/search/render.php:134
 msgid "Search…"
 msgstr "Buscar…"
 
-#: src/blocks/search/render.php:184
+#: src/blocks/search/render.php:193
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr "Você quis dizer:"
 
-#: src/blocks/search/render.php:202
+#: src/blocks/search/render.php:211
 msgid "Active filters"
 msgstr "Filtros ativos"
 
-#: src/blocks/search/render.php:208
+#: src/blocks/search/render.php:217
 msgid "Remove this filter"
 msgstr "Remover este filtro"
 
-#: src/blocks/search/render.php:213
-#: src/blocks/search/render.php:283
+#: src/blocks/search/render.php:222
+#: src/blocks/search/render.php:292
 msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
-#: src/blocks/search/render.php:82
-#: src/blocks/search/render.php:256
+#: src/blocks/search/render.php:87
+#: src/blocks/search/render.php:265
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/blocks/search/render.php:351
+#: src/blocks/search/render.php:360
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
@@ -1157,7 +1150,7 @@ msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
 
-#: src/blocks/search/render.php:165
+#: src/blocks/search/render.php:174
 msgid "Suggestions"
 msgstr "Sugestões"
 
@@ -1165,49 +1158,43 @@ msgstr "Sugestões"
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
-#: src/blocks/search/render.php:335
+#: src/blocks/search/render.php:344
 msgid "Or start from the latest posts:"
 msgstr "Ou comece pelos posts mais recentes:"
 
-#: src/blocks/search/render.php:345
+#: src/blocks/search/render.php:354
 msgid "Try again"
 msgstr "Tentar de novo"
 
-#: src/blocks/search/render.php:346
+#: src/blocks/search/render.php:355
 msgid "Search with WordPress instead"
 msgstr "Buscar com o WordPress"
 
-#. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:79
-#, php-format
-msgid "%d suggestions. Use the up and down arrows to choose one."
-msgstr "%d sugestões. Use as setas para cima e para baixo para escolher uma."
-
-#: src/blocks/search/render.php:156
+#: src/blocks/search/render.php:165
 msgid "Clear the search"
 msgstr "Limpar a busca"
 
-#: src/blocks/search/render.php:178
+#: src/blocks/search/render.php:187
 msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:84
+#: src/blocks/search/render.php:89
 #, php-format
 msgid "Filters (%d)"
 msgstr "Filtros (%d)"
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:86
+#: src/blocks/search/render.php:91
 #, php-format
 msgid "Show %d more"
 msgstr "Mostrar mais %d"
 
-#: src/blocks/search/render.php:87
+#: src/blocks/search/render.php:92
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
-#: src/blocks/search/render.php:282
+#: src/blocks/search/render.php:291
 msgid "Show results"
 msgstr "Ver resultados"
 
@@ -1223,7 +1210,7 @@ msgstr "Mais recentes"
 msgid "Oldest"
 msgstr "Mais antigos"
 
-#: src/blocks/search/render.php:192
+#: src/blocks/search/render.php:201
 msgid "Sort by"
 msgstr "Ordenar por"
 
@@ -1271,15 +1258,15 @@ msgstr "Resultados"
 msgid "Searching…"
 msgstr "Buscando…"
 
-#: src/includes/class-viglet-dumont-native-search.php:180
+#: src/includes/class-viglet-dumont-native-search.php:185
 msgid "See all results"
 msgstr "Ver todos os resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:181
+#: src/includes/class-viglet-dumont-native-search.php:186
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:182
+#: src/includes/class-viglet-dumont-native-search.php:187
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
@@ -1432,27 +1419,27 @@ msgstr "Verificar de novo"
 msgid "Check AI features"
 msgstr "Verificar recursos de IA"
 
-#: src/blocks/search/render.php:233
+#: src/blocks/search/render.php:242
 msgid "Answer generated from this site"
 msgstr "Resposta gerada a partir deste site"
 
-#: src/blocks/search/render.php:235
+#: src/blocks/search/render.php:244
 msgid "Sources"
 msgstr "Fontes"
 
-#: src/blocks/search/render.php:243
+#: src/blocks/search/render.php:252
 msgid "Was this helpful?"
 msgstr "Isto ajudou?"
 
-#: src/blocks/search/render.php:244
+#: src/blocks/search/render.php:253
 msgid "Yes"
 msgstr "Sim"
 
-#: src/blocks/search/render.php:245
+#: src/blocks/search/render.php:254
 msgid "No"
 msgstr "Não"
 
-#: src/blocks/search/render.php:247
+#: src/blocks/search/render.php:256
 msgid "Thank you."
 msgstr "Obrigado."
 
@@ -1510,8 +1497,8 @@ msgstr "Procurar de novo"
 msgid "Find related posts"
 msgstr "Encontrar posts relacionados"
 
-#: src/blocks/search/render.php:289
-#: src/blocks/search/render.php:293
+#: src/blocks/search/render.php:298
+#: src/blocks/search/render.php:302
 msgid "Featured"
 msgstr "Destaque"
 
@@ -1806,3 +1793,24 @@ msgstr "relacionado"
 msgctxt "block keyword"
 msgid "similar"
 msgstr "semelhante"
+
+#. translators: %d: how many suggestions the search box offers.
+#: src/blocks/search/render.php:81
+#: src/blocks/search/render.php:83
+#, php-format
+msgid "%d suggestion. Use the up and down arrows to choose it."
+msgid_plural "%d suggestions. Use the up and down arrows to choose one."
+msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
+msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
+
+#. translators: %d: how many results Turing found.
+#: src/blocks/search/render.php:104
+#: src/blocks/search/render.php:106
+#: src/includes/class-viglet-dumont-native-search.php:179
+#: src/includes/class-viglet-dumont-native-search.php:181
+#: src/includes/class-viglet-dumont-native-search.php:312
+#, php-format
+msgid "%d result"
+msgid_plural "%d results"
+msgstr[0] "%d resultado"
+msgstr[1] "%d resultados"

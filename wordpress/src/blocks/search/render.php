@@ -75,8 +75,13 @@ $viglet_dumont_state = array(
 	'recent'        => array(),
 	'inputId'       => $viglet_dumont_id,
 	'listId'        => $viglet_dumont_id . '-suggestions',
-	/* translators: %d: how many suggestions the search box offers. */
-	'optionsLabel'  => __( '%d suggestions. Use the up and down arrows to choose one.', 'viglet-dumont' ),
+	// A count's forms for one and for more, which search-block.js picks between (D184).
+	'optionsLabels' => array(
+		/* translators: %d: how many suggestions the search box offers. */
+		'one'   => _n( '%d suggestion. Use the up and down arrows to choose it.', '%d suggestions. Use the up and down arrows to choose one.', 1, 'viglet-dumont' ),
+		/* translators: %d: how many suggestions the search box offers. */
+		'other' => _n( '%d suggestion. Use the up and down arrows to choose it.', '%d suggestions. Use the up and down arrows to choose one.', 2, 'viglet-dumont' ),
+	),
 	'drawerOpen'    => false,
 	'expanded'      => array(),
 	'filtersLabel0' => __( 'Filters', 'viglet-dumont' ),
@@ -94,8 +99,12 @@ $viglet_dumont_state = array(
 	'perPage'       => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
 	'typeLabels'    => $viglet_dumont_types,
 	'homeUrl'       => home_url( '/' ),
-	/* translators: %d: how many results Turing found. */
-	'foundLabel'    => __( '%d results', 'viglet-dumont' ),
+	'foundLabels'   => array(
+		/* translators: %d: how many results Turing found. */
+		'one'   => _n( '%d result', '%d results', 1, 'viglet-dumont' ),
+		/* translators: %d: how many results Turing found. */
+		'other' => _n( '%d result', '%d results', 2, 'viglet-dumont' ),
+	),
 	'noneLabel'     => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
 	'errorLabel'    => __( 'Search is unavailable right now.', 'viglet-dumont' ),
 );

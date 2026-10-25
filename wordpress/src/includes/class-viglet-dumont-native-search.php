@@ -173,8 +173,13 @@ class Viglet_Dumont_Native_Search {
 						'close'    => __( 'Close', 'viglet-dumont' ),
 						'results'  => __( 'Results', 'viglet-dumont' ),
 						'loading'  => __( 'Searching…', 'viglet-dumont' ),
-						/* translators: %d: how many results Turing found. */
-						'found'    => __( '%d results', 'viglet-dumont' ),
+						// A count's forms for one and for more, which overlay.js picks between (D184).
+						'found'    => array(
+							/* translators: %d: how many results Turing found. */
+							'one'   => _n( '%d result', '%d results', 1, 'viglet-dumont' ),
+							/* translators: %d: how many results Turing found. */
+							'other' => _n( '%d result', '%d results', 2, 'viglet-dumont' ),
+						),
 						'none'     => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
 						'error'    => __( 'Search is unavailable right now.', 'viglet-dumont' ),
 						'all'      => __( 'See all results', 'viglet-dumont' ),
@@ -238,7 +243,7 @@ class Viglet_Dumont_Native_Search {
 	 * server-side directive processing then draws it with the block's own markup.
 	 *
 	 * @param int   $rows   How many results to show.
-	 * @param array $labels The block's labels: foundLabel, noneLabel, errorLabel, typeLabels.
+	 * @param array $labels The block's labels: noneLabel, errorLabel, typeLabels.
 	 * @return array State to merge over the block's own.
 	 */
 	public function preview_state( int $rows, array $labels ): array {
@@ -303,7 +308,8 @@ class Viglet_Dumont_Native_Search {
 			'results'    => $results,
 			'facets'     => $facets,
 			'total'      => $total,
-			'summary'    => $total > 0 ? str_replace( '%d', (string) $total, $labels['foundLabel'] ) : $labels['noneLabel'],
+			/* translators: %d: how many results Turing found. */
+			'summary'    => $total > 0 ? sprintf( _n( '%d result', '%d results', $total, 'viglet-dumont' ), $total ) : $labels['noneLabel'],
 			'hasFacets'  => ! empty( $facets ),
 			'hasResults' => $total > 0,
 			'isEmpty'    => 0 === $total,

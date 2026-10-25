@@ -44,6 +44,18 @@ test( 'a reload keeps the filter, the sort and the page', async ( {
 	await expect( titles( page ).first() ).toHaveText( second );
 } );
 
+test( 'one result is counted in the singular (D184)', async ( {
+	page,
+	seed,
+} ) => {
+	// Seats 20 holds one of the four workshops.
+	await page.goto(
+		`/?page_id=${ seed.searchPageId }&q=workshop&fq%5B%5D=seats%3A20`
+	);
+	await expect( summary( page ) ).toHaveText( '1 result' );
+	await expect( titles( page ) ).toHaveCount( 1 );
+} );
+
 test( 'Back undoes a filter, and Forward puts it back', async ( {
 	page,
 	seed,

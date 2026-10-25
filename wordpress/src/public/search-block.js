@@ -80,10 +80,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		get optionsAnnouncement() {
 			return state.isExpanded
-				? state.optionsLabel.replace(
-						'%d',
-						String( state.options.length )
-					)
+				? counted( state.optionsLabels, state.options.length )
 				: '';
 		},
 		get hasQuery() {
@@ -169,7 +166,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 				return '';
 			}
 			return state.total > 0
-				? state.foundLabel.replace( '%d', String( state.total ) )
+				? counted( state.foundLabels, state.total )
 				: state.noneLabel;
 		},
 	},
@@ -413,6 +410,22 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 	},
 } );
+
+// The page language's plural rule, which picks between a count's forms (D184).
+const plurals = new Intl.PluralRules(
+	document.documentElement.lang || undefined
+);
+
+/**
+ * A count in words: the form for one or for more, as the page's language counts.
+ *
+ * @param {{one: string, other: string}} labels Both forms, each with `%d`.
+ * @param {number}                       n      The count.
+ */
+function counted( labels, n ) {
+	const form = 'one' === plurals.select( n ) ? labels.one : labels.other;
+	return form.replace( '%d', String( n ) );
+}
 
 /**
  * Close the list and forget which option was active.

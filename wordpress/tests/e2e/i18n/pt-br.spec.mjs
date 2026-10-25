@@ -129,4 +129,12 @@ test( 'the search block is in Portuguese, results and filters included', async (
 	).toBeVisible();
 	await look( 'pt-br-search-block' );
 	await speaksPortuguese( page, '.viglet-dumont-search', 'search block' );
+
+	// One result is counted in the singular (D184).
+	await page.goto(
+		`/?page_id=${ seed.searchPageId }&q=workshop&fq%5B%5D=seats%3A20`
+	);
+	await expect(
+		block.locator( '.viglet-dumont-search__summary' )
+	).toHaveText( '1 resultado' );
 } );
