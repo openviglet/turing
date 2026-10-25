@@ -48,6 +48,14 @@ class Viglet_Dumont_Admin {
 		);
 		add_submenu_page(
 			'viglet-dumont',
+			__( 'Connect to Turing', 'viglet-dumont' ),
+			__( 'Setup', 'viglet-dumont' ),
+			'manage_options',
+			'viglet-dumont-setup',
+			array( $this, 'render_setup_page' )
+		);
+		add_submenu_page(
+			'viglet-dumont',
 			__( 'Search fields', 'viglet-dumont' ),
 			__( 'Fields', 'viglet-dumont' ),
 			'manage_options',
@@ -62,6 +70,13 @@ class Viglet_Dumont_Admin {
 			'viglet-dumont-health',
 			array( $this, 'render_health_page' )
 		);
+	}
+
+	/**
+	 * The Setup page: a mount point for the app in admin/build/setup.js.
+	 */
+	public function render_setup_page(): void {
+		echo '<div class="wrap"><h1>' . esc_html__( 'Connect to Turing', 'viglet-dumont' ) . '</h1><div id="viglet-dumont-setup"></div></div>';
 	}
 
 	/**
@@ -132,6 +147,7 @@ class Viglet_Dumont_Admin {
 		$builds = array(
 			'viglet-dumont_page_viglet-dumont-health' => 'health',
 			'viglet-dumont_page_viglet-dumont-fields' => 'mapping',
+			'viglet-dumont_page_viglet-dumont-setup'  => 'setup',
 		);
 		if ( isset( $builds[ $hook ] ) ) {
 			$this->enqueue_build( $builds[ $hook ] );

@@ -32,6 +32,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-diagnostics.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
@@ -337,6 +338,39 @@ function viglet_dumont_register_rest_routes(): void {
 
 	register_rest_route(
 		'viglet-dumont/v1',
+		'/connection',
+		array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => 'viglet_dumont_rest_get_connection',
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+			),
+			array(
+				'methods'             => 'POST',
+				'callback'            => 'viglet_dumont_rest_save_connection',
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+			),
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/diagnose',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Dumont_Diagnostics() )->run(), 200 ),
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
 		'/mapping/preview',
 		array(
 			'methods'             => 'GET',
@@ -437,6 +471,55 @@ function viglet_dumont_rest_get_mapping(): WP_REST_Response {
 		),
 		200
 	);
+}
+
+/**
+ * REST: The connection settings the Setup page edits. The key itself is never sent back,
+ * only whether one is set.
+ */
+function viglet_dumont_rest_get_connection(): WP_REST_Response {
+	$settings = viglet_dumont_get_settings();
+
+	return new WP_REST_Response(
+		array(
+			'server_url'  => $settings['server_url'],
+			'site_name'   => $settings['site_name'],
+			'locale'      => $settings['locale'],
+			'site_key'    => $settings['site_key'],
+			'has_api_key' => '' !== (string) $settings['api_key'],
+			'derived_key' => ( new Viglet_Dumont_Indexer( array_merge( $settings, array( 'site_key' => '' ) ) ) )->site_key(),
+		),
+		200
+	);
+}
+
+/**
+ * REST: Store the connection settings. An empty or absent `api_key` keeps the stored one.
+ *
+ * @param WP_REST_Request $request Carries `server_url`, `site_name`, `locale`, `site_key`, `api_key`.
+ */
+function viglet_dumont_rest_save_connection( WP_REST_Request $request ): WP_REST_Response {
+	$settings = viglet_dumont_get_settings();
+
+	foreach ( array( 'site_name', 'locale' ) as $key ) {
+		if ( null !== $request->get_param( $key ) ) {
+			$settings[ $key ] = sanitize_text_field( (string) $request->get_param( $key ) );
+		}
+	}
+	if ( null !== $request->get_param( 'server_url' ) ) {
+		$settings['server_url'] = esc_url_raw( (string) $request->get_param( 'server_url' ) );
+	}
+	if ( null !== $request->get_param( 'site_key' ) ) {
+		$settings['site_key'] = Viglet_Dumont_Indexer::sanitize_site_key( (string) $request->get_param( 'site_key' ) );
+	}
+	$api_key = (string) $request->get_param( 'api_key' );
+	if ( '' !== $api_key ) {
+		$settings['api_key'] = sanitize_text_field( $api_key );
+	}
+
+	viglet_dumont_update_settings( $settings );
+
+	return viglet_dumont_rest_get_connection();
 }
 
 /**

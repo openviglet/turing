@@ -66,6 +66,10 @@ Navigation site and replaces the WordPress search page with Turing's results.
   with the same state, "Exclude from search" and "Reindex now".
 * A Health page (Viglet Dumont > Health) shows the connection, published versus indexed
   documents per type, the queue and its last run, with "Retry failed" and "Send queue now".
+* A Setup page (Viglet Dumont > Setup) takes the Turing URL, key, SN site, locale and site
+  key, then tests the connection step by step and names what failed: a malformed address,
+  DNS, TLS, nothing listening, a server that is not Turing, a refused key or a missing SN
+  site, which it offers to create. Then it runs the first index with live progress.
 * A Fields page (Viglet Dumont > Fields) edits the field mapping per post type, from the
   taxonomies and custom fields the posts actually carry. It shows whether Turing has each
   field, is about to add it, or holds it with another type, previews the document a real
