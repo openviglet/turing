@@ -31,6 +31,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
@@ -114,6 +115,9 @@ function viglet_dumont_init(): void {
 	if ( $settings['auto_deindex'] ) {
 		add_action( 'delete_post', 'viglet_dumont_handle_delete' );
 	}
+
+	// Where each post stands: the Search column in the post lists and the editor panel.
+	( new Viglet_Dumont_Post_State( $settings ) )->register();
 
 	// Search override.
 	if ( $settings['search_enabled'] ) {

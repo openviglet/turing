@@ -61,6 +61,9 @@ Navigation site and replaces the WordPress search page with Turing's results.
   provisions the fields, indexes everything and sweeps, and `wp dumont sweep [--dry-run]`
   removes what Turing holds for this site key that WordPress no longer publishes. The same
   operations answer at `viglet-dumont/v1/status`, `/index` and `/sweep`.
+* A Search column in the post lists says where each post stands: indexed and when, queued,
+  failed (with the error), excluded or not published. The block editor has a Search panel
+  with the same state, "Exclude from search" and "Reindex now".
 * Index All stops and shows Turing's error when an import is refused, instead of reporting
   the batch as indexed.
 
