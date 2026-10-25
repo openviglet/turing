@@ -109,6 +109,24 @@ for ( const [ name, url, skip ] of screens ) {
 	} );
 }
 
+test( "Health's dates are written as the site writes them, in Portuguese (D189)", async ( {
+	page,
+} ) => {
+	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
+	const when = page
+		.locator( '#wpbody-content table' )
+		.last()
+		.locator( 'tbody tr td' )
+		.first();
+	await expect( when ).toBeVisible();
+	// The site's date format names the month, here in Portuguese; the browser's would be
+	// "10/25/2026, 4:40:15 PM".
+	await expect( when ).toHaveText(
+		/janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/
+	);
+	await expect( when ).not.toHaveText( /\d+\/\d+\/\d{4}/ );
+} );
+
 test( 'the search block is in Portuguese, results and filters included', async ( {
 	page,
 	seed,

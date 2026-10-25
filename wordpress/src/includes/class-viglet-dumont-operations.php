@@ -237,6 +237,20 @@ class Viglet_Dumont_Operations {
 	}
 
 	/**
+	 * The worker's last run that sent anything, with its moment as the site writes it.
+	 *
+	 * @return array{at: int, sent: int, failed: int, when: string}|null
+	 */
+	private function last_run(): ?array {
+		$run = get_option( Viglet_Dumont_Queue::LAST_RUN_OPTION, null );
+		if ( ! is_array( $run ) ) {
+			return null;
+		}
+
+		return $run + array( 'when' => Viglet_Dumont_Events::when( (int) ( $run['at'] ?? 0 ) ) );
+	}
+
+	/**
 	 * The connection, the SN site, published versus indexed documents per type, and the queue.
 	 *
 	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed} Per type, `published` is what WordPress publishes and `indexed` what Turing holds; null when it cannot say.
@@ -256,7 +270,7 @@ class Viglet_Dumont_Operations {
 			'site_key'    => $this->indexer->site_key(),
 			'types'       => $types,
 			'queue'       => ( new Viglet_Dumont_Queue( $this->settings ) )->counts(),
-			'last_run'    => get_option( Viglet_Dumont_Queue::LAST_RUN_OPTION, null ),
+			'last_run'    => $this->last_run(),
 			'events'      => Viglet_Dumont_Events::all(),
 			'sources'     => Viglet_Dumont_Settings::sources(),
 			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),

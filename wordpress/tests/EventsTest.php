@@ -38,6 +38,28 @@ final class EventsTest extends PluginTestCase {
 			'Fields provisioned'            => 'Campos provisionados',
 		);
 		Functions\when( '__' )->alias( fn ( $text ) => 'pt_BR' === $this->locale ? ( $pt[ $text ] ?? $text ) : $text );
+		// The site's formats, and wp_date() as the site's time zone would answer.
+		$formats = array(
+			'date_format' => 'j/m/Y',
+			'time_format' => 'H:i',
+		);
+		Functions\when( 'get_option' )->alias(
+			function ( $name, $fallback = false ) use ( $formats ) {
+				if ( Viglet_Dumont_Events::OPTION === $name ) {
+					return $this->stored;
+				}
+				return $formats[ $name ] ?? $fallback;
+			}
+		);
+		Functions\when( 'wp_date' )->alias( static fn ( $format, $at ) => gmdate( $format, $at - 3 * 3600 ) );
+	}
+
+	public function test_a_moment_reads_in_the_sites_formats_and_time_zone_not_the_browsers(): void {
+		Viglet_Dumont_Events::record( 'index', true );
+		$this->stored[0]['at'] = 1792951215; // 2026-10-25 18:00:15 UTC.
+
+		$this->assertSame( '25/10/2026 15:00', Viglet_Dumont_Events::all()[0]['when'] );
+		$this->assertSame( '', Viglet_Dumont_Events::when( 0 ), 'never is said by the screen' );
 	}
 
 	public function test_the_newest_event_comes_first(): void {

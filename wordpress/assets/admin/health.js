@@ -29,10 +29,14 @@ const EVENT_LABEL = {
 	sweep: __( 'Sweep', 'viglet-dumont' ),
 };
 
-function formatTime( timestamp ) {
-	return timestamp
-		? new Date( timestamp * 1000 ).toLocaleString()
-		: __( 'never', 'viglet-dumont' );
+/**
+ * A moment as the site writes it: the server formats it in the site's date and time formats
+ * and time zone, in the reader's language (D189), never the browser's.
+ *
+ * @param {{when?: string}} item An event or the last run.
+ */
+function formatTime( item ) {
+	return item?.when || __( 'never', 'viglet-dumont' );
 }
 
 /**
@@ -295,7 +299,7 @@ function Health() {
 										'Last run %1$s: %2$d sent, %3$d failed.',
 										'viglet-dumont'
 									),
-									formatTime( status.last_run.at ),
+									formatTime( status.last_run ),
 									status.last_run.sent,
 									status.last_run.failed
 								)
@@ -379,7 +383,7 @@ function Health() {
 							<tbody>
 								{ status.events.map( ( event, index ) => (
 									<tr key={ index }>
-										<td>{ formatTime( event.at ) }</td>
+										<td>{ formatTime( event ) }</td>
 										<td>
 											{ EVENT_LABEL[ event.type ] ||
 												event.type }

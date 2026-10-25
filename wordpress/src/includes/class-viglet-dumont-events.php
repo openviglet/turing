@@ -58,9 +58,22 @@ class Viglet_Dumont_Events {
 	 */
 	public static function all(): array {
 		return array_map(
-			static fn ( array $event ) => array( 'message' => self::text( $event['message'] ?? '' ) ) + $event,
+			static fn ( array $event ) => array(
+				'message' => self::text( $event['message'] ?? '' ),
+				'when'    => self::when( (int) ( $event['at'] ?? 0 ) ),
+			) + $event,
 			self::stored()
 		);
+	}
+
+	/**
+	 * A moment as the site writes one (D189): its date and time formats, its time zone and the
+	 * reader's language, never the browser's.
+	 *
+	 * @param int $at A Unix timestamp; 0 for never.
+	 */
+	public static function when( int $at ): string {
+		return $at > 0 ? (string) wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $at ) : '';
 	}
 
 	/**
