@@ -2565,3 +2565,28 @@ fails to save over the API key, while unaudited ones (synonyms, spotlights) save
 principal type (a `TurUser` from the API-key filter, `TurCustomUserDetails` from a
 session), and falls back to the token's owner or a system auditor rather than throwing;
 a test saves an audited entity over a Key request.
+
+## CXXXIX SN-site LLM calls in the cost ledger (T1127)
+
+**Where it happened.** Dumont's WordPress plugin (Dumont D174) runs a live-LLM test
+suite and wants each run to report the tokens and dollars it spent, from Turing's own
+ledger. On the local stack (`turing-ce:local`, OpenAI `gpt-4o-mini`), two SN chat calls
+
+    GET /api/sn/Sample/chat?q=which%20workshop%20covers%20facets
+    → {"enabled":true,"text":"The workshop that covers facets is titled …"}
+
+answered, each after about six seconds of LLM time, and then
+
+    GET /api/v2/llm/cost/summary
+    → {"totalCostUsd":0.0,"totalTokens":0,"totalRequests":0,"byAgent":[],"byModel":[],…}
+
+still reads zero. The SN site's chat path does not write to the cost ledger, so neither
+an operator nor a client can see what a site's chat costs.
+
+**Workaround.** None: the suite reports time only, and its cost half waits on this
+(Dumont D174).
+
+**What Turing should do.** Record every LLM call an SN site makes (chat, answer, NL
+filters, summaries, copilot) in the cost ledger, with the site and the stage, as the
+agents' calls are; and let `cost/summary` filter by site and by a time window short
+enough to bracket a test run (a `from`/`to` instant, not only a date).
