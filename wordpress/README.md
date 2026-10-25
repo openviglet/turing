@@ -70,8 +70,21 @@ are this site's documents only (its site key), and if Turing does not answer, Wo
 searches its database as before. The older plugin results page, with facets, stays
 available as "The plugin's results page" for classic themes.
 
-A theme that builds its own search on `@viglet/turing-sdk` gets everything the browser
-needs from `viglet_dumont_public_config()` or `GET /wp-json/viglet-dumont/v1/public-config`:
+A theme that builds its own search on `@viglet/turing-sdk` does not vendor it: the plugin
+registers two script modules, `@viglet/turing-sdk` (the SDK as published) and
+`viglet-dumont/search` (the SDK configured for this site, filtered to its site key):
+
+```js
+// In a theme's module (registered with 'viglet-dumont/search' as a dependency).
+import { createSiteSearch, createSiteAutoComplete, config } from 'viglet-dumont/search';
+
+const search = createSiteSearch();          // search-only; { controller: { chat: true } } for answers
+search.subscribe( ( state ) => render( state ) );
+await search.searchQuery( 'workshop' );
+```
+
+The configuration it reads is the same one `viglet_dumont_public_config()` and
+`GET /wp-json/viglet-dumont/v1/public-config` return:
 Turing's public URL, the SN site, the locale, the site key (filter on `site_key`) and the
 mapped facets. It holds no key. For the browser to call Turing, the SN site must allow the
 WordPress origin in Turing's CORS settings (`TURING_ALLOWEDORIGINS` in a container).
@@ -142,6 +155,9 @@ run-docker.cmd reset                   :: drop WordPress, its database and Turin
 WP-Cron's loopback cannot reach the site URL inside the container, so `DISABLE_WP_CRON` is on
 and a `cron` service runs due events every 15 seconds, as a host with a system cron does: a
 saved post reaches Turing without `wp dumont queue run`.
+
+Start the stack through `run-docker.cmd`, not a bare `docker compose up`: the script is what
+picks `turing-ce:local`, and a bare `up` recreates Turing on the published image.
 
 Turing runs as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
 local login. When an image `turing-ce:local` exists, it is used instead of the published one,

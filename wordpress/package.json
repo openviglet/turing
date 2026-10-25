@@ -4,17 +4,19 @@
   "description": "The plugin's admin screens, built with @wordpress/scripts into src/admin/build/.",
   "license": "MIT",
   "scripts": {
-    "build": "wp-scripts build assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js --output-path=src/admin/build",
-    "start": "wp-scripts start assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js --output-path=src/admin/build",
-    "lint:js": "wp-scripts lint-js assets/admin"
+    "build": "wp-scripts build assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js --output-path=src/admin/build && node bin/copy-sdk.mjs",
+    "start": "wp-scripts start assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js --output-path=src/admin/build && node bin/copy-sdk.mjs",
+    "lint:js": "wp-scripts lint-js assets/admin src/public bin"
   },
   "devDependencies": {
     "@wordpress/scripts": "37.0.0"
   },
   "dependencies": {
+    "@viglet/turing-sdk": "^2026.3.9",
     "@wordpress/api-fetch": "^7.57.0",
     "@wordpress/components": "^29.12.0",
     "@wordpress/element": "^6.46.0",
-    "@wordpress/i18n": "^5.26.0"
+    "@wordpress/i18n": "^5.26.0",
+    "@wordpress/interactivity": "^6.56.0"
   }
 }

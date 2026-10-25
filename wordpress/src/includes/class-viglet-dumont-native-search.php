@@ -43,6 +43,35 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
+	 * Register the script modules a theme imports to search from the browser:
+	 * `@viglet/turing-sdk` (the SDK, as published) and `viglet-dumont/search` (the SDK
+	 * configured for this site). Nothing is loaded until a theme enqueues or imports them.
+	 */
+	public static function register_modules(): void {
+		$asset = VIGLET_DUMONT_DIR . 'admin/build/turing-sdk.asset.php';
+		if ( ! file_exists( $asset ) ) {
+			return;
+		}
+		$sdk = include $asset;
+
+		wp_register_script_module( '@viglet/turing-sdk', VIGLET_DUMONT_URL . 'admin/build/turing-sdk.js', array(), $sdk['version'] );
+		wp_register_script_module(
+			'viglet-dumont/search',
+			VIGLET_DUMONT_URL . 'public/search.js',
+			array( '@viglet/turing-sdk', '@wordpress/interactivity' ),
+			VIGLET_DUMONT_VERSION
+		);
+	}
+
+	/**
+	 * Hand the public config to the modules (read there with getConfig( 'viglet-dumont' )).
+	 * It is printed only on a page that loads the Interactivity API.
+	 */
+	public static function provide_config(): void {
+		wp_interactivity_config( 'viglet-dumont', viglet_dumont_public_config() );
+	}
+
+	/**
 	 * Answer the front end's main search query from Turing. Any other query, or Turing not
 	 * answering, returns null and WordPress searches its database as it always did.
 	 *
