@@ -1,0 +1,65 @@
+/*
+ * The Related content block (D177). Sizes, fonts and colours come from the theme; this only
+ * lays the cards out.
+ */
+.wp-block-viglet-dumont-related {
+	margin-block: var(--wp--preset--spacing--50, 2.5rem);
+}
+
+.viglet-dumont-related__heading {
+	margin-block: 0 1rem;
+	font-size: var(--wp--preset--font-size--large, 1.5rem);
+}
+
+.viglet-dumont-related__list {
+	display: grid;
+	gap: var(--wp--style--block-gap, 1.5rem);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.viglet-dumont-related--grid .viglet-dumont-related__list {
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+}
+
+.viglet-dumont-related__item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	min-width: 0;
+}
+
+.viglet-dumont-related--list .viglet-dumont-related__item {
+	padding-block-end: 1rem;
+	border-block-end: 1px solid color-mix(in srgb, currentcolor 15%, transparent);
+}
+
+.viglet-dumont-related__image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 16 / 9;
+	object-fit: cover;
+	border-radius: 4px;
+}
+
+.viglet-dumont-related__title {
+	margin: 0;
+	font-size: var(--wp--preset--font-size--medium, 1.125rem);
+	line-height: 1.3;
+	overflow-wrap: anywhere;
+}
+
+.viglet-dumont-related__date,
+.viglet-dumont-related__excerpt {
+	margin: 0;
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+	opacity: 0.8;
+}
+
+.viglet-dumont-related__empty {
+	padding: 1rem;
+	border: 1px dashed currentcolor;
+	opacity: 0.7;
+}

@@ -1,0 +1,60 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "viglet-dumont/related",
+	"title": "Related content",
+	"category": "widgets",
+	"icon": "networking",
+	"description": "The posts Turing finds most like the one being read, from its similar-documents search.",
+	"keywords": [ "related", "similar", "turing" ],
+	"textdomain": "viglet-dumont",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"heading": {
+			"type": "string",
+			"default": ""
+		},
+		"count": {
+			"type": "number",
+			"default": 3
+		},
+		"mode": {
+			"type": "string",
+			"enum": [ "", "MLT", "VECTOR" ],
+			"default": ""
+		},
+		"sameType": {
+			"type": "boolean",
+			"default": false
+		},
+		"layout": {
+			"type": "string",
+			"enum": [ "grid", "list" ],
+			"default": "grid"
+		},
+		"showImage": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDate": {
+			"type": "boolean",
+			"default": true
+		},
+		"showExcerpt": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": { "margin": true, "padding": true, "blockGap": true },
+		"color": { "background": true, "text": true, "link": true },
+		"typography": { "fontSize": true, "lineHeight": true },
+		"interactivity": true
+	},
+	"editorScript": "viglet-dumont-related-block-editor",
+	"style": "viglet-dumont-related-block",
+	"viewScriptModule": "viglet-dumont/related-block",
+	"render": "file:./render.php"
+}

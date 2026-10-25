@@ -88,6 +88,21 @@ $ask_id = $ask ? $ask->ID : (int) wp_insert_post(
 	)
 );
 
+// The Related content block on a page no other document resembles (related.spec.mjs).
+$lonely    = get_page_by_path( 'related-none' );
+$lonely_id = $lonely ? $lonely->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'related-none',
+		'post_title'   => 'Quokkas',
+		'post_status'  => 'publish',
+		'post_content' => "<!-- wp:paragraph --><p>Marsupials of Rottnest.</p><!-- /wp:paragraph -->\n\n<!-- wp:viglet-dumont/related /-->",
+	)
+);
+// Each post's neighbours as Turing answers them now, not as a previous run cached them.
+global $wpdb;
+$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\_transient%viglet\\_dumont\\_related\\_%'" );
+
 // A page with the theme's own Search block, which the instant-search overlay takes over.
 $core    = get_page_by_path( 'header-search' );
 $core_id = $core ? $core->ID : (int) wp_insert_post(
@@ -137,6 +152,8 @@ $settings['search_mode']    = 'theme';
 $settings['track_clicks']      = 1;
 $settings['analytics_ga']      = 1;
 $settings['ga_measurement_id'] = 'G-E2ETEST';
+// Related content after every post (related.spec.mjs).
+$settings['related_after'] = array( 'post' );
 update_option( 'viglet_dumont_settings', $settings );
 
 echo wp_json_encode(
@@ -144,6 +161,7 @@ echo wp_json_encode(
 		'searchPageId' => $page_id,
 		'corePageId'   => $core_id,
 		'askPageId'    => $ask_id,
+		'lonelyPageId' => $lonely_id,
 		'postId'       => $post_id,
 	)
 );

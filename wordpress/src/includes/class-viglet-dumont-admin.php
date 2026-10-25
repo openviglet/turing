@@ -159,6 +159,7 @@ class Viglet_Dumont_Admin {
 		$sanitized['track_clicks']        = ! empty( $input['track_clicks'] ) ? 1 : 0;
 		$sanitized['analytics_ga']        = ! empty( $input['analytics_ga'] ) ? 1 : 0;
 		$sanitized['ga_measurement_id']   = Viglet_Dumont_Native_Search::sanitize_measurement_id( (string) ( $input['ga_measurement_id'] ?? '' ) );
+		$sanitized['related_after']       = array_values( array_intersect( (array) ( $input['related_after'] ?? array() ), get_post_types( array( 'public' => true ) ) ) );
 
 		return Viglet_Dumont_Settings::without_overridden( $sanitized );
 	}

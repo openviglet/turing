@@ -13,6 +13,7 @@ final class WP_Post {
 	public $post_title   = '';
 	public $post_content = '';
 	public $post_status  = 'publish';
+	public $post_password = '';
 	public $post_type    = 'post';
 	public $post_excerpt = '';
 	public $post_name    = '';

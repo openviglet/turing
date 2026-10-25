@@ -116,6 +116,25 @@ class Viglet_Dumont_Native_Search {
 		wp_register_style( 'viglet-dumont-search-block', VIGLET_DUMONT_URL . 'blocks/search/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/search' );
+
+		// Related content (D177): drawn on the server; its module only reports clicks.
+		wp_register_script_module(
+			'viglet-dumont/related-block',
+			VIGLET_DUMONT_URL . 'public/related.js',
+			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
+			VIGLET_DUMONT_VERSION
+		);
+		wp_register_script(
+			'viglet-dumont-related-block-editor',
+			VIGLET_DUMONT_URL . 'admin/js/related-block-editor.js',
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-i18n', 'wp-server-side-render' ),
+			VIGLET_DUMONT_VERSION,
+			true
+		);
+		wp_set_script_translations( 'viglet-dumont-related-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_register_style( 'viglet-dumont-related-block', VIGLET_DUMONT_URL . 'blocks/related/style.css', array(), VIGLET_DUMONT_VERSION );
+
+		register_block_type( VIGLET_DUMONT_DIR . 'blocks/related' );
 	}
 
 	/**

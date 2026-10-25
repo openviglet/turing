@@ -37,6 +37,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-diagnostics.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-tuning.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-related.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
@@ -152,6 +153,8 @@ function viglet_dumont_init(): void {
 	Viglet_Dumont_Native_Search::register_modules();
 	Viglet_Dumont_Native_Search::register_blocks();
 	add_action( 'wp_enqueue_scripts', array( 'Viglet_Dumont_Native_Search', 'provide_config' ) );
+	// Related content after the chosen post types' content (D177).
+	( new Viglet_Dumont_Related( $settings ) )->register();
 
 	if ( $settings['search_enabled'] ) {
 		if ( 'template' === $settings['search_mode'] ) {

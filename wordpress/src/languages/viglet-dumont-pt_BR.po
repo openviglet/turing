@@ -37,7 +37,7 @@ msgstr "Indexação"
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/render.php:133
 #: src/blocks/search/render.php:159
-#: src/includes/class-viglet-dumont-native-search.php:153
+#: src/includes/class-viglet-dumont-native-search.php:172
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: assets/admin/tuning.js:373
 #: src/admin/js/editor-panel.js:152
@@ -120,7 +120,7 @@ msgid "Source App Identifier"
 msgstr "Identificador da aplicação de origem"
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:464
+#: src/admin/views/settings-page.php:490
 msgid "Test Connection"
 msgstr "Testar conexão"
 
@@ -244,85 +244,85 @@ msgstr "Com a página do tema, o Turing ordena os resultados e o tema os mostra 
 msgid "Results Per Page"
 msgstr "Resultados por página"
 
-#: src/admin/views/settings-page.php:442
+#: src/admin/views/settings-page.php:468
 msgid "Save Settings"
 msgstr "Salvar configurações"
 
-#: src/admin/views/settings-page.php:450
+#: src/admin/views/settings-page.php:476
 msgid "Indexing Actions"
 msgstr "Ações de indexação"
 
-#: src/admin/views/settings-page.php:451
+#: src/admin/views/settings-page.php:477
 msgid "Manage your Turing search index."
 msgstr "Gerencie o seu índice de busca no Turing."
 
-#: src/admin/views/settings-page.php:459
+#: src/admin/views/settings-page.php:485
 msgid "Connection Status"
 msgstr "Status da conexão"
 
-#: src/admin/views/settings-page.php:460
+#: src/admin/views/settings-page.php:486
 msgid "Test the connection to your Turing server."
 msgstr "Teste a conexão com o seu servidor Turing."
 
-#: src/admin/views/settings-page.php:476
+#: src/admin/views/settings-page.php:502
 msgid "Index All Content"
 msgstr "Indexar todo o conteúdo"
 
-#: src/admin/views/settings-page.php:477
+#: src/admin/views/settings-page.php:503
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
 
-#: src/admin/views/settings-page.php:482
+#: src/admin/views/settings-page.php:508
 msgid "All Content"
 msgstr "Todo o conteúdo"
 
-#: src/admin/views/settings-page.php:483
+#: src/admin/views/settings-page.php:509
 msgid "Posts Only"
 msgstr "Só posts"
 
-#: src/admin/views/settings-page.php:484
+#: src/admin/views/settings-page.php:510
 msgid "Pages Only"
 msgstr "Só páginas"
 
-#: src/admin/views/settings-page.php:488
+#: src/admin/views/settings-page.php:514
 msgid "Start Indexing"
 msgstr "Iniciar indexação"
 
-#: src/admin/views/settings-page.php:507
+#: src/admin/views/settings-page.php:533
 msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
-#: src/admin/views/settings-page.php:508
+#: src/admin/views/settings-page.php:534
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
-#: src/admin/views/settings-page.php:512
+#: src/admin/views/settings-page.php:538
 msgid "Delete All"
 msgstr "Excluir tudo"
 
-#: src/admin/views/settings-page.php:523
+#: src/admin/views/settings-page.php:549
 msgid "Content Overview"
 msgstr "Visão geral do conteúdo"
 
-#: src/admin/views/settings-page.php:527
+#: src/admin/views/settings-page.php:553
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:98
-#: src/includes/class-viglet-dumont-native-search.php:158
+#: src/includes/class-viglet-dumont-native-search.php:177
 #, php-format
 msgid "%d results"
 msgstr "%d resultados"
 
 #: src/blocks/search/render.php:99
-#: src/includes/class-viglet-dumont-native-search.php:159
+#: src/includes/class-viglet-dumont-native-search.php:178
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
 #: src/blocks/search/render.php:100
-#: src/includes/class-viglet-dumont-native-search.php:160
+#: src/includes/class-viglet-dumont-native-search.php:179
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
@@ -389,39 +389,39 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:208
+#: src/includes/class-viglet-dumont-admin.php:209
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:209
+#: src/includes/class-viglet-dumont-admin.php:210
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:210
+#: src/includes/class-viglet-dumont-admin.php:211
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:211
+#: src/includes/class-viglet-dumont-admin.php:212
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:212
+#: src/includes/class-viglet-dumont-admin.php:213
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:213
+#: src/includes/class-viglet-dumont-admin.php:214
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:214
+#: src/includes/class-viglet-dumont-admin.php:215
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:215
+#: src/includes/class-viglet-dumont-admin.php:216
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:233
+#: src/includes/class-viglet-dumont-admin.php:234
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -776,11 +776,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:721
+#: src/viglet-dumont.php:724
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:746
+#: src/viglet-dumont.php:749
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1146,6 +1146,7 @@ msgctxt "block keyword"
 msgid "search"
 msgstr "busca"
 
+#: src/blocks/related/block.json
 #: src/blocks/search/block.json
 msgctxt "block keyword"
 msgid "turing"
@@ -1160,7 +1161,7 @@ msgstr "facetas"
 msgid "Suggestions"
 msgstr "Sugestões"
 
-#: src/admin/views/settings-page.php:480
+#: src/admin/views/settings-page.php:506
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
@@ -1254,31 +1255,31 @@ msgstr "Automática: a página com o bloco de busca do Turing"
 msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
 msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
 
-#: src/includes/class-viglet-dumont-native-search.php:152
+#: src/includes/class-viglet-dumont-native-search.php:171
 msgid "Search this site"
 msgstr "Buscar neste site"
 
-#: src/includes/class-viglet-dumont-native-search.php:154
+#: src/includes/class-viglet-dumont-native-search.php:173
 msgid "Close"
 msgstr "Fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:155
+#: src/includes/class-viglet-dumont-native-search.php:174
 msgid "Results"
 msgstr "Resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:156
+#: src/includes/class-viglet-dumont-native-search.php:175
 msgid "Searching…"
 msgstr "Buscando…"
 
-#: src/includes/class-viglet-dumont-native-search.php:161
+#: src/includes/class-viglet-dumont-native-search.php:180
 msgid "See all results"
 msgstr "Ver todos os resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:162
+#: src/includes/class-viglet-dumont-native-search.php:181
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:163
+#: src/includes/class-viglet-dumont-native-search.php:182
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
@@ -1302,14 +1303,17 @@ msgstr "Acima dos resultados"
 msgid "Results as"
 msgstr "Resultados em"
 
+#: src/admin/js/related-block-editor.js:96
 #: src/admin/js/search-block-editor.js:104
 msgid "A list"
 msgstr "Lista"
 
+#: src/admin/js/related-block-editor.js:92
 #: src/admin/js/search-block-editor.js:108
 msgid "A grid"
 msgstr "Grade"
 
+#: src/admin/js/related-block-editor.js:105
 #: src/admin/js/search-block-editor.js:118
 msgid "Show the image"
 msgstr "Mostrar a imagem"
@@ -1318,6 +1322,7 @@ msgstr "Mostrar a imagem"
 msgid "Show the type"
 msgstr "Mostrar o tipo"
 
+#: src/admin/js/related-block-editor.js:107
 #: src/admin/js/search-block-editor.js:121
 msgid "Show the date"
 msgstr "Mostrar a data"
@@ -1341,15 +1346,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:469
+#: src/includes/class-viglet-dumont-api-client.php:474
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:526
+#: src/includes/class-viglet-dumont-api-client.php:531
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:531
+#: src/includes/class-viglet-dumont-api-client.php:536
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1369,24 +1374,24 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-dumont.php:83
+#: src/viglet-dumont.php:84
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-dumont.php:84
+#: src/viglet-dumont.php:85
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-dumont.php:85
+#: src/viglet-dumont.php:86
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: src/viglet-dumont.php:86
+#: src/viglet-dumont.php:87
 msgid "Catalog copilot"
 msgstr "Copiloto de catálogo"
 
 #. translators: %s: Turing's console address.
-#: src/viglet-dumont.php:99
+#: src/viglet-dumont.php:100
 #, php-format
 msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
 msgstr "Ative a IA generativa deste site SN no console do Turing (%s), nas configurações de IA generativa do site."
@@ -1460,7 +1465,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:445
+#: src/includes/class-viglet-dumont-api-client.php:450
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -1719,3 +1724,85 @@ msgstr "ID de métricas"
 #: src/admin/views/settings-page.php:434
 msgid "Optional. Leave it empty to send to whatever the Google tag is set up for."
 msgstr "Opcional. Deixe vazio para enviar ao destino configurado na tag do Google."
+
+#: src/admin/views/settings-page.php:441
+msgid "Related Content"
+msgstr "Conteúdo relacionado"
+
+#: src/admin/views/settings-page.php:442
+msgid "The posts Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:"
+msgstr "Os posts que o Turing acha mais parecidos com o que está sendo lido. Adicione o bloco Conteúdo relacionado em qualquer lugar, ou faça-o seguir o conteúdo destes tipos de post:"
+
+#: src/blocks/related/render.php:34
+msgid "Related posts appear here once this post is indexed and Turing finds posts like it."
+msgstr "Os posts relacionados aparecem aqui quando este post estiver indexado e o Turing encontrar posts parecidos."
+
+#: src/blocks/related/render.php:42
+#: src/admin/js/related-block-editor.js:48
+msgid "Related posts"
+msgstr "Posts relacionados"
+
+#: src/admin/js/related-block-editor.js:45
+#: src/admin/js/related-block-editor.js:136
+msgid "Related content"
+msgstr "Conteúdo relacionado"
+
+#: src/admin/js/related-block-editor.js:47
+msgid "Heading"
+msgstr "Título"
+
+#: src/admin/js/related-block-editor.js:53
+msgid "How many"
+msgstr "Quantos"
+
+#: src/admin/js/related-block-editor.js:60
+msgid "Alike by"
+msgstr "Parecidos por"
+
+#: src/admin/js/related-block-editor.js:61
+msgid "Meaning needs a site with embeddings in Turing; without them, shared words are used."
+msgstr "Significado exige um site com embeddings no Turing; sem eles, são usadas as palavras em comum."
+
+#: src/admin/js/related-block-editor.js:68
+msgid "Turing’s choice"
+msgstr "Escolha do Turing"
+
+#: src/admin/js/related-block-editor.js:72
+msgid "Shared words"
+msgstr "Palavras em comum"
+
+#: src/admin/js/related-block-editor.js:76
+msgid "Meaning"
+msgstr "Significado"
+
+#: src/admin/js/related-block-editor.js:83
+msgid "Only the same post type"
+msgstr "Só o mesmo tipo de post"
+
+#: src/admin/js/related-block-editor.js:88
+msgid "Show as"
+msgstr "Mostrar como"
+
+#: src/admin/js/related-block-editor.js:110
+msgid "Show the excerpt"
+msgstr "Mostrar o resumo"
+
+#: src/blocks/related/block.json
+msgctxt "block title"
+msgid "Related content"
+msgstr "Conteúdo relacionado"
+
+#: src/blocks/related/block.json
+msgctxt "block description"
+msgid "The posts Turing finds most like the one being read, from its similar-documents search."
+msgstr "Os posts que o Turing acha mais parecidos com o que está sendo lido, pela busca de documentos semelhantes."
+
+#: src/blocks/related/block.json
+msgctxt "block keyword"
+msgid "related"
+msgstr "relacionado"
+
+#: src/blocks/related/block.json
+msgctxt "block keyword"
+msgid "similar"
+msgstr "semelhante"

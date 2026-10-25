@@ -376,17 +376,22 @@ class Viglet_Dumont_API_Client {
 	 *
 	 * @param string $doc_id The indexed document's id.
 	 * @param int    $rows   How many.
+	 * @param string $mode   `MLT` (lexical) or `VECTOR` (semantic); empty lets Turing choose.
 	 * @return array<int, array{id: string, title: string, url: string}>|WP_Error An empty list when the id is not indexed.
 	 */
-	public function similar( string $doc_id, int $rows = 5 ) {
+	public function similar( string $doc_id, int $rows = 5, string $mode = '' ) {
+		$params = array(
+			'id'         => $doc_id,
+			'rows'       => $rows,
+			'_setlocale' => $this->locale,
+		);
+		if ( in_array( $mode, array( 'MLT', 'VECTOR' ), true ) ) {
+			$params['mode'] = $mode;
+		}
 		$response = $this->request(
 			'GET',
 			'/api/sn/' . rawurlencode( $this->site_name ) . '/search/similar',
-			array(
-				'id'         => $doc_id,
-				'rows'       => $rows,
-				'_setlocale' => $this->locale,
-			)
+			$params
 		);
 
 		return $this->decoded( $response );

@@ -69,6 +69,8 @@ class Viglet_Dumont_Settings {
 		'analytics_ga'        => 0,
 		// Stamped on each event as send_to; empty sends to whatever the tag is set up for.
 		'ga_measurement_id'   => '',
+		// The post types that get the Related content block after their content (D177).
+		'related_after'       => array(),
 	);
 
 	/**

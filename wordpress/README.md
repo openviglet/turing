@@ -76,6 +76,14 @@ the Interactivity API on the SDK below and styled by the theme. It reads `?q=` (
 so a page holding it can be the site's search page. A site with its own search blocks
 turns it off: `add_filter( 'viglet_dumont_register_blocks', '__return_false' );`.
 
+The **Related content** block (`viglet-dumont/related`) lists the posts Turing's
+similar-documents search finds most like the one being read. It never lists the post itself,
+only this site's published posts, and renders nothing when there are none. It is drawn on the
+server, so the links are in the HTML, and each post's neighbours are cached for an hour.
+Settings → Search → Related Content puts it after the content of chosen post types. The
+block chooses how many to show, shared words or meaning (`MLT` / `VECTOR`; meaning falls back
+to shared words on a site without embeddings), same post type only, and grid or list.
+
 A theme that builds its own search on `@viglet/turing-sdk` does not vendor it: the plugin
 registers two script modules, `@viglet/turing-sdk` (the SDK as published) and
 `viglet-dumont/search` (the SDK configured for this site, filtered to its site key):

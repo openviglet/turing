@@ -435,6 +435,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 					</div>
 				</div>
+
+				<div class="viglet-dumont-card">
+					<div class="viglet-dumont-card__header">
+						<h2><?php esc_html_e( 'Related Content', 'viglet-dumont' ); ?></h2>
+						<p><?php esc_html_e( 'The posts Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:', 'viglet-dumont' ); ?></p>
+					</div>
+					<div class="viglet-dumont-card__body">
+						<div class="viglet-dumont-toggles">
+							<?php foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $viglet_dumont_type ) : ?>
+								<?php
+								if ( 'attachment' === $viglet_dumont_type->name ) {
+									continue;
+								}
+								?>
+								<label class="viglet-dumont-toggle">
+									<input type="checkbox"
+											name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[related_after][]"
+											value="<?php echo esc_attr( $viglet_dumont_type->name ); ?>"
+											<?php checked( in_array( $viglet_dumont_type->name, (array) $settings['related_after'], true ) ); ?> />
+									<span class="viglet-dumont-toggle__slider"></span>
+									<span class="viglet-dumont-toggle__label"><?php echo esc_html( $viglet_dumont_type->labels->name ); ?></span>
+								</label>
+							<?php endforeach; ?>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<!-- Save Button (visible on settings tabs) -->
