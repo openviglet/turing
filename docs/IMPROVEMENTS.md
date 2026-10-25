@@ -27,6 +27,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CH — Published container images track the shipped source
 
+## Block BW — What the link-free response and its consumers still lack (§LXX)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2232,3 +2234,28 @@ packages cannot do this.
   in the ledger.
 - Show the image's version and commit at `/api/discovery`, so a user can tell which
   build answers.
+
+## CXXVI Spell-check in the structured search response (Dumont D152) (T1114)
+
+**Where it happened.** Dumont D152: the WordPress plugin's search block runs on
+`@viglet/turing-sdk` 2026.3.9, whose search controller is POST-native by default (`POST
+/api/sn/{site}/search/query`). The block shows "Did you mean" from
+`state.structured.spellCheck`.
+
+**What came back.** Against turing-ce built from 2026.3 (site Sample, en_US), the same
+misspelling gives two different answers:
+- `GET /api/sn/Sample/search?q=worskhop` answers
+  `widget.spellCheck = {correctedText: true, corrected: {text: "workshop"}, ...}`;
+- `POST /api/sn/Sample/search/query` with `{"q":"worskhop","locale":"en_US"}` answers
+  `count: 0` and no `spellCheck` at all.
+
+So `TurStructuredSpellCheck`, which the SDK types and maps, never arrives, and a
+structured-search UI never offers a correction.
+
+**Workaround.** When a query finds nothing, the block calls the SDK's `fetchSpellCheck`
+(`GET /api/sn/{site}/{locale}/spell-check`) on its own: one extra request per empty
+search. It lives in `wordpress/src/public/search-block.js` (`suggestCorrection`).
+
+**What it should do.** Put `spellCheck` in the structured response whenever the GET
+response would carry it (with `correctedText`, `usingCorrectedText`, `originalText` and
+`correctedTextValue`), and cover both endpoints in one test that asserts they agree.

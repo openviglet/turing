@@ -9,3 +9,5 @@
 
 ## Block CH — Published container images track the shipped source
 
+## Block BW — What the link-free response and its consumers still lack (§LXX)
+
