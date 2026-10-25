@@ -11,6 +11,8 @@ rem
 rem On first run the SN site is created in the local Turing and the plugin gets an API key for
 rem it. Override with environment variables before calling: WP_PORT (8080), TURING_PORT (2700),
 rem SN_SITE (Sample), TURING_LOCALE (en_US), TURING_ADMIN_PASSWORD (dumont-dev), TURING_IMAGE.
+rem OPENAI_API_KEY turns on Turing's generative AI (model: TURING_STARTUP_DEFAULT_LLM_MODEL,
+rem gpt-4o-mini); a store that already holds an LLM instance keeps it.
 rem Logins: WordPress admin / admin, Turing admin / %TURING_ADMIN_PASSWORD%.
 
 setlocal

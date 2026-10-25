@@ -28,6 +28,13 @@ services:
       TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${TURING_PORT:-2700}
       # In-memory broker: no journal lock (AMQ219007) when the container is recreated.
       SPRING_ARTEMIS_EMBEDDED_PERSISTENT: "false"
+      # Generative AI (answers, chat, summaries): with a key in the shell, a boot that finds no
+      # LLM instance creates one, a default AI agent with RAG and a local embedding store.
+      # Unset: no AI, search works as before.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      TURING_STARTUP_DEFAULT_LLM_MODEL: ${TURING_STARTUP_DEFAULT_LLM_MODEL:-gpt-4o-mini}
+      # The OpenAI-compatible gateway (/v1/chat/completions), as trabalharei enables it.
+      TURING_GATEWAY_ENABLED: "true"
     volumes:
       - turing:/app/store
     healthcheck:
