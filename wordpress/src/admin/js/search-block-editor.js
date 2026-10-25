@@ -1,5 +1,6 @@
 /**
- * The Turing search block in the editor: a placeholder with the block's two settings.
+ * The Turing search block in the editor: a placeholder with the block's settings (the box, the
+ * filters and where they sit, the results' layout and parts, the sort, the page size).
  * The block renders on the server (render.php), so there is nothing to save.
  *
  * Written against the wp.* globals WordPress already loads, so it needs no build.
@@ -57,6 +58,65 @@
 						checked: attributes.showSort,
 						onChange: ( showSort ) => setAttributes( { showSort } ),
 					} ),
+					el( SelectControl, {
+						label: __( 'Where the filters sit', 'viglet-dumont' ),
+						value: attributes.facetsPosition,
+						options: [
+							{
+								label: __( 'Left', 'viglet-dumont' ),
+								value: 'left',
+							},
+							{
+								label: __( 'Right', 'viglet-dumont' ),
+								value: 'right',
+							},
+							{
+								label: __(
+									'Above the results',
+									'viglet-dumont'
+								),
+								value: 'top',
+							},
+						],
+						onChange: ( facetsPosition ) =>
+							setAttributes( { facetsPosition } ),
+					} ),
+					el( SelectControl, {
+						label: __( 'Results as', 'viglet-dumont' ),
+						value: attributes.resultsLayout,
+						options: [
+							{
+								label: __( 'A list', 'viglet-dumont' ),
+								value: 'list',
+							},
+							{
+								label: __( 'A grid', 'viglet-dumont' ),
+								value: 'grid',
+							},
+						],
+						onChange: ( resultsLayout ) =>
+							setAttributes( { resultsLayout } ),
+					} ),
+					...[
+						[
+							'showImage',
+							__( 'Show the image', 'viglet-dumont' ),
+						],
+						[ 'showType', __( 'Show the type', 'viglet-dumont' ) ],
+						[ 'showDate', __( 'Show the date', 'viglet-dumont' ) ],
+						[
+							'showSnippet',
+							__( 'Show the snippet', 'viglet-dumont' ),
+						],
+					].map( ( [ name, label ] ) =>
+						el( ToggleControl, {
+							key: name,
+							label,
+							checked: attributes[ name ],
+							onChange: ( value ) =>
+								setAttributes( { [ name ]: value } ),
+						} )
+					),
 					el( SelectControl, {
 						label: __( 'Results per page', 'viglet-dumont' ),
 						value: String( attributes.perPage ),

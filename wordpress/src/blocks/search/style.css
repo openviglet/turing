@@ -128,6 +128,66 @@
 	.viglet-dumont-search__layout:has(.viglet-dumont-search__facets:not([hidden])) {
 		grid-template-columns: 14rem minmax(0, 1fr);
 	}
+
+	/* The block's "Filters" setting: right of the results, or above them in a row. */
+	.viglet-dumont-search--facets-right .viglet-dumont-search__layout:has(.viglet-dumont-search__facets:not([hidden])) {
+		grid-template-columns: minmax(0, 1fr) 14rem;
+	}
+
+	.viglet-dumont-search--facets-right .viglet-dumont-search__facets {
+		order: 2;
+	}
+
+	.viglet-dumont-search--facets-top .viglet-dumont-search__layout:has(.viglet-dumont-search__facets:not([hidden])) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.viglet-dumont-search--facets-top .viglet-dumont-search__facets {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0 2rem;
+	}
+
+	.viglet-dumont-search--facets-top .viglet-dumont-search__facet {
+		min-width: 12rem;
+	}
+}
+
+/* The block's "Results as" setting: a grid of cards, each with its image on top. */
+.viglet-dumont-search--grid .viglet-dumont-search__results {
+	grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+}
+
+.viglet-dumont-search--grid .viglet-dumont-search__result {
+	flex-direction: column;
+}
+
+.viglet-dumont-search--grid .viglet-dumont-search__image {
+	aspect-ratio: 16 / 9;
+	flex-basis: auto;
+	width: 100%;
+}
+
+/* Block style "Minimal": the text alone. */
+.is-style-minimal .viglet-dumont-search__image,
+.is-style-minimal .viglet-dumont-search__crumb {
+	display: none;
+}
+
+.is-style-minimal .viglet-dumont-search__type {
+	border: 0;
+	padding: 0;
+}
+
+.is-style-minimal .viglet-dumont-search__results {
+	gap: 1rem;
+}
+
+/* Block style "Cards": each result framed. */
+.is-style-cards .viglet-dumont-search__result {
+	border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+	border-radius: 8px;
+	padding: 1rem;
 }
 
 .viglet-dumont-search__facet {

@@ -97,10 +97,21 @@ wp_interactivity_state(
 	)
 );
 
+// The layout the block's settings chose, as modifier classes style.css reads.
+$viglet_dumont_show    = static fn ( string $part ): bool => (bool) ( $attributes[ $part ] ?? true );
+$viglet_dumont_classes = implode(
+	' ',
+	array(
+		'viglet-dumont-search',
+		'viglet-dumont-search--facets-' . sanitize_html_class( $attributes['facetsPosition'] ?? 'left' ),
+		'viglet-dumont-search--' . sanitize_html_class( $attributes['resultsLayout'] ?? 'list' ),
+	)
+);
+
 $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' ) ? $attributes['placeholder'] : __( 'Search…', 'viglet-dumont' );
 ?>
 <div
-	<?php echo get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-search' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the wrapper attributes. ?>
+	<?php echo get_block_wrapper_attributes( array( 'class' => $viglet_dumont_classes ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the wrapper attributes. ?>
 	data-wp-interactive="viglet-dumont/search"
 	data-wp-init="callbacks.init"
 >
@@ -244,15 +255,25 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 			<ol class="viglet-dumont-search__results" data-wp-bind--aria-busy="state.isLoading" data-wp-class--is-loading="state.isLoading">
 				<template data-wp-each--result="state.results">
 					<li class="viglet-dumont-search__result">
-						<img class="viglet-dumont-search__image" alt="" loading="lazy" hidden data-wp-bind--hidden="!context.result.image" data-wp-bind--src="context.result.image" />
+						<?php if ( $viglet_dumont_show( 'showImage' ) ) : ?>
+							<img class="viglet-dumont-search__image" alt="" loading="lazy" hidden data-wp-bind--hidden="!context.result.image" data-wp-bind--src="context.result.image" />
+						<?php endif; ?>
 						<div class="viglet-dumont-search__body">
-							<p class="viglet-dumont-search__meta">
-								<span class="viglet-dumont-search__type" data-wp-text="context.result.type"></span>
-								<time data-wp-bind--hidden="!context.result.date" data-wp-bind--datetime="context.result.iso" data-wp-text="context.result.date"></time>
-							</p>
+							<?php if ( $viglet_dumont_show( 'showType' ) || $viglet_dumont_show( 'showDate' ) ) : ?>
+								<p class="viglet-dumont-search__meta">
+									<?php if ( $viglet_dumont_show( 'showType' ) ) : ?>
+										<span class="viglet-dumont-search__type" data-wp-text="context.result.type"></span>
+									<?php endif; ?>
+									<?php if ( $viglet_dumont_show( 'showDate' ) ) : ?>
+										<time data-wp-bind--hidden="!context.result.date" data-wp-bind--datetime="context.result.iso" data-wp-text="context.result.date"></time>
+									<?php endif; ?>
+								</p>
+							<?php endif; ?>
 							<h2 class="viglet-dumont-search__title"><a data-wp-bind--href="context.result.url" data-wp-text="context.result.title"></a></h2>
 							<p class="viglet-dumont-search__crumb" data-wp-text="context.result.crumb"></p>
-							<p class="viglet-dumont-search__snippet" data-wp-watch="callbacks.snippet"></p>
+							<?php if ( $viglet_dumont_show( 'showSnippet' ) ) : ?>
+								<p class="viglet-dumont-search__snippet" data-wp-watch="callbacks.snippet"></p>
+							<?php endif; ?>
 						</div>
 					</li>
 				</template>

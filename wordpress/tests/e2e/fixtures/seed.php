@@ -66,6 +66,15 @@ $page_id = $page ? $page->ID : (int) wp_insert_post(
 		'post_content' => '<!-- wp:viglet-dumont/search /-->',
 	)
 );
+// The block with its defaults again: an editor spec changes its settings and saves.
+if ( '<!-- wp:viglet-dumont/search /-->' !== get_post_field( 'post_content', $page_id ) ) {
+	wp_update_post(
+		array(
+			'ID'           => $page_id,
+			'post_content' => '<!-- wp:viglet-dumont/search /-->',
+		)
+	);
+}
 
 // A page with the theme's own Search block, which the instant-search overlay takes over.
 $core    = get_page_by_path( 'header-search' );

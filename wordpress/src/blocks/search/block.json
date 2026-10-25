@@ -24,14 +24,51 @@
 		"perPage": {
 			"type": "number",
 			"default": 10
+		},
+		"facetsPosition": {
+			"type": "string",
+			"enum": [ "left", "right", "top" ],
+			"default": "left"
+		},
+		"resultsLayout": {
+			"type": "string",
+			"enum": [ "list", "grid" ],
+			"default": "list"
+		},
+		"showImage": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDate": {
+			"type": "boolean",
+			"default": true
+		},
+		"showType": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSnippet": {
+			"type": "boolean",
+			"default": true
 		}
 	},
+	"styles": [
+		{ "name": "default", "label": "Default", "isDefault": true },
+		{ "name": "minimal", "label": "Minimal" },
+		{ "name": "cards", "label": "Cards" }
+	],
 	"supports": {
 		"html": false,
 		"align": [ "wide", "full" ],
-		"spacing": { "margin": true, "padding": true },
-		"color": { "background": true, "text": true },
-		"typography": { "fontSize": true },
+		"spacing": { "margin": true, "padding": true, "blockGap": true },
+		"color": { "background": true, "text": true, "link": true },
+		"typography": { "fontSize": true, "lineHeight": true },
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true
+		},
 		"interactivity": true
 	},
 	"editorScript": "viglet-dumont-search-block-editor",

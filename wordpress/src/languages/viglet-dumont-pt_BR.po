@@ -35,12 +35,12 @@ msgid "Indexing"
 msgstr "Indexação"
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:108
-#: src/blocks/search/render.php:134
+#: src/blocks/search/render.php:119
+#: src/blocks/search/render.php:145
 #: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: src/admin/js/editor-panel.js:67
-#: src/admin/js/search-block-editor.js:39
+#: src/admin/js/search-block-editor.js:40
 msgid "Search"
 msgstr "Busca"
 
@@ -323,34 +323,34 @@ msgstr "Nenhum resultado. Tente outras palavras."
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
-#: src/blocks/search/render.php:100
+#: src/blocks/search/render.php:111
 msgid "Search…"
 msgstr "Buscar…"
 
-#: src/blocks/search/render.php:159
+#: src/blocks/search/render.php:170
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr "Você quis dizer:"
 
-#: src/blocks/search/render.php:177
+#: src/blocks/search/render.php:188
 msgid "Active filters"
 msgstr "Filtros ativos"
 
-#: src/blocks/search/render.php:183
+#: src/blocks/search/render.php:194
 msgid "Remove this filter"
 msgstr "Remover este filtro"
 
-#: src/blocks/search/render.php:188
-#: src/blocks/search/render.php:238
+#: src/blocks/search/render.php:199
+#: src/blocks/search/render.php:249
 msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
 #: src/blocks/search/render.php:83
-#: src/blocks/search/render.php:211
+#: src/blocks/search/render.php:222
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/blocks/search/render.php:285
+#: src/blocks/search/render.php:306
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
@@ -1114,19 +1114,19 @@ msgstr "Vale quando o post for salvo."
 msgid "Reindex now"
 msgstr "Reindexar agora"
 
-#: src/admin/js/search-block-editor.js:41
+#: src/admin/js/search-block-editor.js:42
 msgid "Placeholder"
 msgstr "Texto de exemplo"
 
-#: src/admin/js/search-block-editor.js:47
+#: src/admin/js/search-block-editor.js:48
 msgid "Show filters (facets)"
 msgstr "Mostrar filtros (facetas)"
 
-#: src/admin/js/search-block-editor.js:74
+#: src/admin/js/search-block-editor.js:134
 msgid "Turing search"
 msgstr "Busca Turing"
 
-#: src/admin/js/search-block-editor.js:75
+#: src/admin/js/search-block-editor.js:135
 msgid "A search box with suggestions, filters and results from Turing. It shows live on the published page."
 msgstr "Uma caixa de busca com sugestões, filtros e resultados do Turing. Ela funciona na página publicada."
 
@@ -1155,7 +1155,7 @@ msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
 
-#: src/blocks/search/render.php:140
+#: src/blocks/search/render.php:151
 msgid "Suggestions"
 msgstr "Sugestões"
 
@@ -1163,15 +1163,15 @@ msgstr "Sugestões"
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
-#: src/blocks/search/render.php:269
+#: src/blocks/search/render.php:290
 msgid "Or start from the latest posts:"
 msgstr "Ou comece pelos posts mais recentes:"
 
-#: src/blocks/search/render.php:279
+#: src/blocks/search/render.php:300
 msgid "Try again"
 msgstr "Tentar de novo"
 
-#: src/blocks/search/render.php:280
+#: src/blocks/search/render.php:301
 msgid "Search with WordPress instead"
 msgstr "Buscar com o WordPress"
 
@@ -1181,11 +1181,11 @@ msgstr "Buscar com o WordPress"
 msgid "%d suggestions. Use the up and down arrows to choose one."
 msgstr "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
-#: src/blocks/search/render.php:131
+#: src/blocks/search/render.php:142
 msgid "Clear the search"
 msgstr "Limpar a busca"
 
-#: src/blocks/search/render.php:153
+#: src/blocks/search/render.php:164
 msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
@@ -1205,7 +1205,7 @@ msgstr "Mostrar mais %d"
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
-#: src/blocks/search/render.php:237
+#: src/blocks/search/render.php:248
 msgid "Show results"
 msgstr "Ver resultados"
 
@@ -1221,15 +1221,15 @@ msgstr "Mais recentes"
 msgid "Oldest"
 msgstr "Mais antigos"
 
-#: src/blocks/search/render.php:167
+#: src/blocks/search/render.php:178
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: src/admin/js/search-block-editor.js:53
+#: src/admin/js/search-block-editor.js:54
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 
-#: src/admin/js/search-block-editor.js:61
+#: src/admin/js/search-block-editor.js:121
 msgid "Results per page"
 msgstr "Resultados por página"
 
@@ -1280,3 +1280,62 @@ msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 #: src/includes/class-viglet-dumont-native-search.php:163
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
+
+#: src/admin/js/search-block-editor.js:62
+msgid "Where the filters sit"
+msgstr "Onde ficam os filtros"
+
+#: src/admin/js/search-block-editor.js:66
+msgid "Left"
+msgstr "À esquerda"
+
+#: src/admin/js/search-block-editor.js:70
+msgid "Right"
+msgstr "À direita"
+
+#: src/admin/js/search-block-editor.js:74
+msgid "Above the results"
+msgstr "Acima dos resultados"
+
+#: src/admin/js/search-block-editor.js:85
+msgid "Results as"
+msgstr "Resultados em"
+
+#: src/admin/js/search-block-editor.js:89
+msgid "A list"
+msgstr "Lista"
+
+#: src/admin/js/search-block-editor.js:93
+msgid "A grid"
+msgstr "Grade"
+
+#: src/admin/js/search-block-editor.js:103
+msgid "Show the image"
+msgstr "Mostrar a imagem"
+
+#: src/admin/js/search-block-editor.js:105
+msgid "Show the type"
+msgstr "Mostrar o tipo"
+
+#: src/admin/js/search-block-editor.js:106
+msgid "Show the date"
+msgstr "Mostrar a data"
+
+#: src/admin/js/search-block-editor.js:109
+msgid "Show the snippet"
+msgstr "Mostrar o trecho"
+
+#: src/blocks/search/block.json
+msgctxt "block style label"
+msgid "Default"
+msgstr "Padrão"
+
+#: src/blocks/search/block.json
+msgctxt "block style label"
+msgid "Minimal"
+msgstr "Mínimo"
+
+#: src/blocks/search/block.json
+msgctxt "block style label"
+msgid "Cards"
+msgstr "Cartões"
