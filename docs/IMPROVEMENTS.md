@@ -23,6 +23,10 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
+## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
+
+## Block CH — Published container images track the shipped source
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2172,3 +2176,59 @@ but nothing outside the site links to them. Merge each /features/ page into a de
 or give it what only it says (the matching docs.viglet.org pages are the source), link
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
+
+## CXXIV Delete by field on the import API (Dumont D148) (T1112)
+
+**Where it happened.** Dumont D148: the WordPress plugin gives every document a
+`site_key`, so several WordPress sites can share one SN site, and its Delete All must
+remove only its own documents. `POST /api/sn/import` with a DELETE item reaches
+`TurSNProcessQueue.deIndex`, which deletes by `id` when the attributes carry one, else
+by `type`, and does nothing for any other attribute.
+
+**What came back.** The plugin used to send
+`{"turSNJobAction":"DELETE","attributes":{"id":"*","type":"*","source_apps":"wordpress"}}`.
+Turing read `*` as a literal id, `deleteById("*")` matched no document, and the import
+answered 200. Nothing said nothing was deleted.
+
+**Workaround.** `Viglet_Dumont_Indexer::delete_all` (wordpress/src/includes) pages
+through `/api/sn/<site>/search?fq[]=site_key:<key>` and sends one DELETE per id. That is
+one search page per 100 documents plus the deletes. Dumont D149's orphan sweep needs the
+same listing.
+
+**What it should do.**
+- Accept a DELETE item that names fields instead of an id, such as
+  `{"attributes":{"site_key":"a.example.org"}}`. Delete by query on every engine (Solr
+  `deleteByQuery`, Lucene `deleteDocuments(Query)`, Elasticsearch `delete_by_query`),
+  restricted to the item's site and locale.
+- Refuse a DELETE that matches nothing it understands (no id, type or declared field)
+  with 400 naming the attributes it read, as T1062 does for an empty body. Do the same for
+  `id: "*"`, or make it mean "all documents of this site" on purpose.
+- Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
+
+## CXXV Publish turing-ce on every release and from the version branch (T1113)
+
+**Where it happened.** Dumont's WordPress plugin got a local test stack
+(wordpress/docker-compose.yml, run-docker.cmd) that runs Turing the way trabalharei's
+docker-compose.turing.yml does: `ghcr.io/openviglet/turing-ce:latest`. That tag is the
+2026.3.4 build, about two months old, and `docker pull` reports it up to date.
+
+**What came back.** Every `POST /api/sn/import` sent with a `Key` header answered HTTP
+500: `LazyInitializationException: Cannot lazily initialize collection of role
+TurRole.turPrivileges (no session)`. T1061 shipped that fix (TurAuthorityResolver in a
+read-only transaction), but no image carries it. Any connector following the published
+quick start meets a 500 on its first import. T1062's 400 on a malformed body and
+everything shipped since are missing from the image too.
+
+**Workaround.** Build `turing-ce:local` from a checkout with `Dockerfile.local` after
+`mvnw package`. run-docker.cmd prefers that image when it exists, and so does
+trabalharei's run.cmd. A user without a Turing checkout and the private viglet-core
+packages cannot do this.
+
+**What it should do.**
+- Publish `turing-ce` on every release tag, with `latest` moving to it, and add a
+  `2026.3-snapshot` (or nightly) tag built from the version branch. Then a fix is
+  pullable the day it ships.
+- Have the release check fail when the newest tag is older than the last shipped fix
+  in the ledger.
+- Show the image's version and commit at `/api/discovery`, so a user can tell which
+  build answers.

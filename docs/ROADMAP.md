@@ -8,6 +8,14 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
+## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
+
+- 📋 **T1112** (deps: —) **An import DELETE removes by id or type only, so a connector sharing an SN site cannot delete its documents by a field** — Each connector lists its ids through search and deletes them one by one, and an id of * is accepted and deletes nothing. → §CXXIV
+
+## Block CH — Published container images track the shipped source
+
+- 📋 **T1113** (deps: —) **ghcr turing-ce:latest is the two-month-old 2026.3.4 build, so API-key imports fail with a 500 that T1061 already fixed** — A connector that follows the published quick start fails on its first import, and the fix needs a Turing checkout to build an image. → §CXXV
+
 ## Non-goals (do NOT add as tasks)
 
 Binding constraints — see [IMPROVEMENTS.md](IMPROVEMENTS.md) §I.6 (What NOT to
