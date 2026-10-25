@@ -29,6 +29,7 @@
 - 📋 **T1121** (deps: —) **The SDK search controller drops a superseded answer but never aborts the superseded request** — Every pause in a typed query leaves a full search running and downloading on the server for an answer that is thrown away. → §CXXXIII
 - 📋 **T1122** (deps: —) **A custom facet provisioned through the manifest is stored but never appears in the search answer** — A connector that declares range facets as code gets a 200 and a changed facet, and visitors never see a bucket. → §CXXXIV
 - 📋 **T1123** (deps: —) **No cheap probe says whether answer or natural-language filters are on for a site** — A client learns it only by starting an LLM answer or parse, so a status screen either spends tokens or guesses. → §CXXXV
+- 📋 **T1125** (deps: T1120) **Synonym mining proposes a query and its own wildcard or half-typed prefix as synonyms** — An as-you-type search fills the log with work and work*, so every mined suggestion is noise an owner must reject. → §CXXXVII
 
 ## Non-goals (do NOT add as tasks)
 
