@@ -3,7 +3,8 @@
  * The data the browser tests expect, made idempotent: run through WP-CLI by global-setup
  * (`wp eval-file /e2e/seed.php`) on the run-docker.cmd stack, never on a real site.
  *
- * - twelve posts with a `seats` meta (20 or 40), four of them titled "Workshop on ...";
+ * - twelve posts with a `seats` meta (20 or 40), four of them titled "Workshop on ..."
+ *   (one post, "Only on the second site", with the argument `second`);
  * - a page "Busca" holding the Turing search block;
  * - the `seats` field mapped as an INT facet, and search answered by Turing.
  *
@@ -14,7 +15,9 @@
 
 // phpcs:disable -- a test fixture run by WP-CLI, not plugin code.
 
-$titles = array(
+// `wp eval-file seed.php second` seeds the multisite network's second site instead: one post
+// no other site has, so a search that crosses sites shows (multisite.spec.mjs).
+$titles = 'second' === ( $args[0] ?? '' ) ? array( 'Only on the second site' ) : array(
 	'Workshop on search', 'Workshop on facets', 'Seminar on indexing', 'Course on WordPress',
 	'Lecture on Turing', 'Workshop on blocks', 'Seminar on design', 'Course on PHP',
 	'Lecture on React', 'Workshop on testing', 'Seminar on CORS', 'Course on Docker',

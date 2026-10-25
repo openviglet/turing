@@ -3,6 +3,8 @@ rem Run the plugin against a local WordPress and a local Turing (docker-compose.
 rem this file).
 rem
 rem   run-docker.cmd            start both, install WordPress and provision Turing on first run
+rem   run-docker.cmd multisite  also start a two-site multisite network on WP_MS_PORT (8081),
+rem                             sharing the SN site SN_MS_SITE (Network), for the browser tests
 rem   run-docker.cmd stop       stop the containers, keep the data
 rem   run-docker.cmd reset      stop and delete WordPress, its database and Turing's store
 rem   run-docker.cmd logs [svc] follow a log: wordpress (default), turing or db
@@ -29,8 +31,9 @@ if "%TURING_IMAGE%"=="" docker image inspect turing-ce:local >nul 2>&1 && set "T
 set "DC=docker compose"
 set "WP=%DC% run --rm --no-deps cli wp"
 
-if /i "%~1"=="stop"  ( %DC% down & exit /b %ERRORLEVEL% )
-if /i "%~1"=="reset" ( %DC% down -v & exit /b %ERRORLEVEL% )
+if /i "%~1"=="stop"  ( %DC% --profile multisite down & exit /b %ERRORLEVEL% )
+if /i "%~1"=="reset" ( %DC% --profile multisite down -v & exit /b %ERRORLEVEL% )
+if /i "%~1"=="multisite" goto :multisite
 if /i "%~1"=="logs"  goto :logs
 if /i "%~1"=="wp" goto :wp
 if not "%~1"=="" ( echo Unknown command: %~1 & exit /b 1 )
@@ -87,6 +90,49 @@ exit /b 0
 if "%NEWKEY%"=="" ( echo Turing was not provisioned; the plugin has no API key yet. & exit /b 0 )
 %WP% option patch update viglet_dumont_settings api_key "%NEWKEY%" >nul
 echo The plugin has an API key for the local Turing.
+exit /b 0
+
+:multisite
+rem The single site and Turing first: the network shares that Turing.
+call "%~f0" || exit /b 1
+if "%WP_MS_PORT%"=="" set "WP_MS_PORT=8081"
+if "%SN_MS_SITE%"=="" set "SN_MS_SITE=Network"
+set "WPMS=%DC% run --rm --no-deps cli-ms wp"
+set "MSURL=http://localhost:%WP_MS_PORT%"
+%DC% --profile multisite up -d || exit /b 1
+
+echo Waiting for the multisite WordPress...
+set /a TRIES=0
+:waitms
+set /a TRIES+=1
+%WPMS% db check >nul 2>&1 && goto :readyms
+if %TRIES% geq 60 ( echo The multisite WordPress did not come up. See: run-docker.cmd logs wordpress-ms & exit /b 1 )
+timeout /t 2 /nobreak >nul
+goto :waitms
+
+:readyms
+%WPMS% core is-installed --network >nul 2>&1
+if errorlevel 1 (
+    echo Installing the multisite network...
+    %WPMS% core multisite-install --url=%MSURL% --title="Viglet Dumont network" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
+    %DC% run --rm --no-deps --entrypoint sh cli-ms -c "cp /dumont/multisite.htaccess /var/www/html/.htaccess" || exit /b 1
+    %WPMS% site create --slug=second --title="Second site" --email=admin@example.org || exit /b 1
+)
+%WPMS% plugin activate viglet-dumont --network >nul 2>&1
+
+rem One key for the network's SN site, stored on both of its sites.
+set "KEY="
+for /f "delims=" %%k in ('%WPMS% option pluck viglet_dumont_settings api_key 2^>nul') do set "KEY=%%k"
+if "%KEY%"=="" (
+    for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_MS_SITE%" -Locale "%TURING_LOCALE%"') do set "KEY=%%k"
+) else (
+    powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_MS_SITE%" -Locale "%TURING_LOCALE%" -NoToken
+)
+if "%KEY%"=="" ( echo Turing was not provisioned for %SN_MS_SITE%; the network has no API key. & exit /b 1 )
+for %%u in (%MSURL%/ %MSURL%/second/) do %WPMS% --url=%%u eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
+
+echo.
+echo Network:    %MSURL%/wp-admin/network/   (admin / admin), sites / and /second/, SN site %SN_MS_SITE%
 exit /b 0
 
 :logs

@@ -8,16 +8,27 @@ import { chromium } from '@playwright/test';
 
 const root = join( dirname( fileURLToPath( import.meta.url ) ), '..', '..' );
 export const seedFile = join( root, 'tests', 'e2e', '.auth', 'seed.json' );
+export const networkSeedFile = join(
+	root,
+	'tests',
+	'e2e',
+	'.auth',
+	'network.json'
+);
+// The multisite network's two sites (run-docker.cmd multisite), when E2E_MULTISITE is set.
+export const networkURL = process.env.WP_MS_URL || 'http://localhost:8081';
+export const networkSites = [ `${ networkURL }/`, `${ networkURL }/second/` ];
 
 /**
  * Run a WP-CLI command in the stack's cli container and return its output.
  *
- * @param {string[]} args The wp arguments.
+ * @param {string[]} args    The wp arguments.
+ * @param {string}   service The compose service: cli, or cli-ms for the network.
  */
-export function wp( args ) {
+export function wp( args, service = 'cli' ) {
 	return execFileSync(
 		'docker',
-		[ 'compose', 'run', '--rm', '--no-deps', 'cli', 'wp', ...args ],
+		[ 'compose', 'run', '--rm', '--no-deps', service, 'wp', ...args ],
 		{
 			cwd: root,
 			encoding: 'utf8',
@@ -42,6 +53,25 @@ export default async function globalSetup( config ) {
 		const seed = JSON.parse( out.slice( out.indexOf( '{' ) ) );
 		writeFileSync( seedFile, JSON.stringify( seed ) );
 		wp( [ 'dumont', 'reindex' ] );
+		if ( process.env.E2E_MULTISITE ) {
+			const network = networkSites.map( ( url, i ) => {
+				const printed = wp(
+					[
+						`--url=${ url }`,
+						'eval-file',
+						'/e2e/seed.php',
+						...( i ? [ 'second' ] : [] ),
+					],
+					'cli-ms'
+				);
+				wp( [ `--url=${ url }`, 'dumont', 'reindex' ], 'cli-ms' );
+				return {
+					url,
+					...JSON.parse( printed.slice( printed.indexOf( '{' ) ) ),
+				};
+			} );
+			writeFileSync( networkSeedFile, JSON.stringify( network ) );
+		}
 		// Turing commits within a few seconds; the search specs read what was just indexed.
 		await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
 	}

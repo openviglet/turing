@@ -25,7 +25,7 @@ services:
       TURING_TENANCY_AUTOPROVISION: "false"
       TURING_OPEN_BROWSER: "false"
       TURING_URL: http://localhost:${TURING_PORT:-2700}
-      TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${TURING_PORT:-2700}
+      TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${WP_MS_PORT:-8081},http://localhost:${TURING_PORT:-2700}
       # In-memory broker: no journal lock (AMQ219007) when the container is recreated.
       SPRING_ARTEMIS_EMBEDDED_PERSISTENT: "false"
       # Generative AI (answers, chat, summaries): with a key in the shell, a boot that finds no
@@ -119,7 +119,74 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  # A multisite network beside the single site, for the browser tests (D161): its own
+  # WordPress and database on WP_MS_PORT, the same Turing, and its own SN site (SN_MS_SITE)
+  # that both of its sites share, each under its own site key. `run-docker.cmd multisite`
+  # starts and installs it; nothing here runs without that profile.
+  db-ms:
+    image: mariadb:11.4
+    profiles: ["multisite"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-ms:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-ms:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["multisite"]
+    depends_on:
+      db-ms:
+        condition: service_healthy
+    ports:
+      - "${WP_MS_PORT:-8081}:80"
+    environment: &wp-ms-env
+      <<: *wp-env
+      WORDPRESS_DB_HOST: db-ms
+      VIGLET_DUMONT_TURING_SITE: ${SN_MS_SITE:-Network}
+    volumes:
+      - wp-ms:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The system cron for every site of the network, not only the main one.
+  cron-ms:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["multisite"]
+    depends_on:
+      - wordpress-ms
+    user: "33:33"
+    environment: *wp-ms-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed --network 2>/dev/null && for u in $$(wp site list --field=url); do wp --url=$$u cron event run --due-now --quiet; done; sleep 15; done"]
+    volumes:
+      - wp-ms:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-ms:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-ms-env
+    volumes:
+      - wp-ms:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./tests/e2e/fixtures:/e2e:ro
+      - ./bin/multisite.htaccess:/dumont/multisite.htaccess:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   db:
   wp:
   turing:
+  db-ms:
+  wp-ms:

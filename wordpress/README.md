@@ -156,6 +156,10 @@ Beyond behaviour, the suite also checks:
   English string the `.po` translates. One WordPress serves them all, so each variant is a
   `switch:` project chained by dependencies; the global setup puts back Twenty Twenty-Five
   in English at the start of every run. `--project=site` and the like skip the variants.
+- **Multisite**: `run-docker.cmd multisite` adds a two-site network on
+  `localhost:8081` (`/` and `/second/`), sharing the local Turing under its own SN site
+  ("Network"). `E2E_MULTISITE=1 npm run test:e2e` seeds both sites and adds the `network`
+  project, which checks that each site's search block finds only its own documents.
 
 To look at one page in detail, logged in or not:
 

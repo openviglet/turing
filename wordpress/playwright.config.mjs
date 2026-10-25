@@ -102,5 +102,10 @@ export default defineConfig( {
 			use: { viewport: { width: 390, height: 844 }, isMobile: true },
 		},
 		...variants,
+		// The multisite network beside the single site (run-docker.cmd multisite); its specs
+		// address both sites by URL, so it needs no switch and depends on nothing.
+		...( process.env.E2E_MULTISITE
+			? [ { name: 'network', testMatch: 'network/**/*.spec.mjs' } ]
+			: [] ),
 	],
 } );
