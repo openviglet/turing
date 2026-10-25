@@ -149,6 +149,13 @@ Beyond behaviour, the suite also checks:
   500 ms of the typing, as the browser measures them (`site/budgets.spec.mjs`).
 - **Keyboard**: every admin action and the search block reached with Tab alone, with a
   visible focus ring, and used with Enter or Space.
+- **Themes and language**: after the default projects (Twenty Twenty-Five, English), the
+  site specs run again under Twenty Twenty-One (`site-classic`, a classic theme) and Ollie
+  1.6.5 (`site-ollie`, a third-party block theme), then `pt-br` switches the site to
+  Portuguese and checks every admin screen and the block for Portuguese, failing on any
+  English string the `.po` translates. One WordPress serves them all, so each variant is a
+  `switch:` project chained by dependencies; the global setup puts back Twenty Twenty-Five
+  in English at the start of every run. `--project=site` and the like skip the variants.
 
 To look at one page in detail, logged in or not:
 

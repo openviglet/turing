@@ -1,6 +1,7 @@
 // The visitor's side: the Turing search block, and the theme's own search page answered by
 // Turing. Anonymous: no stored session. Runs at desktop, tablet and phone (playwright.config.mjs);
-// every state is checked by axe and compared with its stored screenshot.
+// every state is checked by axe and compared with its stored screenshot. The site-classic and
+// site-ollie projects run it again under a classic and a third-party block theme.
 import { expect, test } from '../fixtures.mjs';
 
 const block = ( page ) => page.locator( '.viglet-dumont-search' );
@@ -124,14 +125,23 @@ test( "the theme's own search page shows Turing's results inside the theme", asy
 	page,
 	look,
 	axe,
-} ) => {
+}, testInfo ) => {
+	// A block theme prints its header as a template part and titles as post-title blocks; a
+	// classic theme (the site-classic project) has its own markup.
+	const classic = 'twentytwentyone' === testInfo.project.metadata.theme;
 	// WordPress's database search matches nothing for "*"; Turing matches everything.
 	await page.goto( '/?s=*' );
 	await expect(
-		page.locator( 'header.wp-block-template-part' )
+		page.locator(
+			classic ? 'header#masthead' : 'header.wp-block-template-part'
+		)
 	).toBeVisible();
 	await expect(
-		page.locator( 'main .wp-block-post-title' ).first()
+		page
+			.locator(
+				classic ? 'main .entry-title' : 'main .wp-block-post-title'
+			)
+			.first()
 	).toBeVisible();
 	await look( 'theme-search' );
 	await axe( 'theme search page', { include: 'main' } );

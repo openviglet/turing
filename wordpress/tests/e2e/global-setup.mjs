@@ -32,6 +32,11 @@ export default async function globalSetup( config ) {
 	).use;
 	mkdirSync( dirname( seedFile ), { recursive: true } );
 
+	// The variant every run starts from, even one that skips the seed: a run stopped half-way
+	// through the theme and language projects (setup/switch.setup.mjs) leaves another.
+	wp( [ 'theme', 'activate', 'twentytwentyfive' ] );
+	wp( [ 'site', 'switch-language', 'en_US' ] );
+
 	if ( ! process.env.E2E_SKIP_SEED ) {
 		const out = wp( [ 'eval-file', '/e2e/seed.php' ] );
 		const seed = JSON.parse( out.slice( out.indexOf( '{' ) ) );

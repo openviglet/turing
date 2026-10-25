@@ -12,6 +12,40 @@ import { defineConfig } from '@playwright/test';
 export const baseURL = process.env.WP_URL || 'http://localhost:8080';
 export const authFile = 'tests/e2e/.auth/admin.json';
 
+// The site again under other themes, then the whole plugin in Portuguese. One WordPress serves
+// them all, so each variant is a `switch:` project (setup/switch.setup.mjs) that changes the
+// stack, chained by dependencies so nothing else runs while it holds: the default projects
+// first, then each variant in this order. A failure skips the variants after it.
+const english = [ 'admin', 'site', 'site-tablet', 'site-phone' ];
+const variantSteps = [
+	{
+		name: 'site-classic',
+		metadata: { theme: 'twentytwentyone' },
+		testMatch: 'site/search.spec.mjs',
+	},
+	{
+		// A third-party block theme, pinned so its markup does not move under the baselines.
+		name: 'site-ollie',
+		metadata: { theme: 'ollie', version: '1.6.5' },
+		testMatch: 'site/search.spec.mjs',
+	},
+	{
+		name: 'pt-br',
+		metadata: { theme: 'twentytwentyfive', locale: 'pt_BR' },
+		testMatch: 'i18n/**/*.spec.mjs',
+		use: { storageState: authFile },
+	},
+];
+const variants = variantSteps.flatMap( ( step, i ) => [
+	{
+		name: `switch:${ step.name }`,
+		testMatch: 'setup/switch.setup.mjs',
+		metadata: step.metadata,
+		dependencies: i ? [ variantSteps[ i - 1 ].name ] : english,
+	},
+	{ ...step, dependencies: [ `switch:${ step.name }` ] },
+] );
+
 export default defineConfig( {
 	testDir: 'tests/e2e',
 	testMatch: '**/*.spec.mjs',
@@ -67,5 +101,6 @@ export default defineConfig( {
 			testMatch: 'site/search.spec.mjs',
 			use: { viewport: { width: 390, height: 844 }, isMobile: true },
 		},
+		...variants,
 	],
 } );
