@@ -2684,3 +2684,28 @@ The plugin's docker stack now sets `TURING_SEARCH_METRICS_ENABLED=true` for that
 - `/click` answers `204` with `X-Turing-Metrics: disabled` (or a `/metrics/status` probe)
   when metrics are off, so a client can say why nothing is counted.
 - Dumont's search insights screen reads this endpoint.
+
+## CXLIV Filters on the similar and duplicate searches (T1132)
+
+**Where it happened.** Dumont's WordPress plugin added a Related content block (D177) on
+`GET /api/sn/{site}/search/similar?id=<site_key>:post:<id>&rows=&mode=`. The endpoint takes
+`id`, `rows`, `_setlocale` and `mode`, and nothing else. There is no `fq[]`, so a caller
+cannot keep the neighbours to:
+- one site of a shared SN site (each WordPress of a multisite network writes its own
+  `site_key`; D153);
+- one content type (a post's related posts, not pages);
+- published or visible documents.
+
+So the answer may be other sites' documents, or types the caller then throws away.
+
+**Workaround.** The plugin asks for 50 (the server's cap) and keeps the ids that start
+with its own `<site_key>:post:` and match the wanted type, in
+`wordpress/src/includes/class-viglet-dumont-related.php` (`neighbours()`). A busy shared
+site can still leave it short after filtering.
+
+**What Turing should do.**
+- `fq[]` on `/search/similar` (and `/search/duplicates`), with the search endpoint's
+  semantics, applied inside the MLT and vector queries rather than after them, so `rows`
+  counts what passes.
+- The SDK's `fetchSimilar` / `createSimilarController` take `fq`.
+- A test: two site keys in one SN site, and `fq=site_key:a` never answers a `b` document.
