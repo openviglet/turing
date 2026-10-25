@@ -19,6 +19,7 @@
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 - 📋 **T1114** (deps: —) **The structured POST search leaves spellCheck out where the GET search returns a correction for the same query** — A UI on the SDK's default POST-native controller never offers did-you-mean, or pays one more request for it. → §CXXVI
+- 📋 **T1115** (deps: —) **A structured search filtered on a facet drops that facet and lists no selectedFilterQueries** — A UI cannot show which value is applied, switch to another value or remove the filter without tracking its own request. → §CXXVII
 
 ## Non-goals (do NOT add as tasks)
 

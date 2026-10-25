@@ -2259,3 +2259,31 @@ search. It lives in `wordpress/src/public/search-block.js` (`suggestCorrection`)
 **What it should do.** Put `spellCheck` in the structured response whenever the GET
 response would carry it (with `correctedText`, `usingCorrectedText`, `originalText` and
 `correctedTextValue`), and cover both endpoints in one test that asserts they agree.
+
+## CXXVII Applied facets in the structured search response (Dumont D159) (T1115)
+
+**Where it happened.** Dumont, WordPress plugin search block, found by its Playwright
+suite (D159). The block runs on `@viglet/turing-sdk` 2026.3.9's POST-native search
+controller. Clicking a facet value calls `toggleFacet`, which adds the item's
+`filterQuery` to `request.fq`.
+
+**What came back.** Against turing-ce built from 2026.3 (site Sample, en_US):
+- `POST /api/sn/Sample/search/query` with `{"q":"workshop","fq":["site_key:localhost"]}`
+  answers 4 results and `facets: [{name: "seats", items: [{label: "40", count: 3},
+  {label: "20", count: 1}]}]`;
+- the same with `"fq":["site_key:localhost","seats:40"]` answers 3 results, **no `facets`
+  at all**, and **no `selectedFilterQueries`**.
+
+So once a visitor picks a value, the structured response no longer says a facet is
+applied, which value, or how to remove it. The
+`TurStructuredFacet.selectedFilterQueries` / `clearFilterQueries` that the SDK types
+never carry it.
+
+**Workaround.** The block derives "applied filters" chips from its own `request.fq`
+(every filter but the site's), labels them from the WordPress mapping, and removes them
+with a `REMOVE` toggle. It lives in `wordpress/src/public/search-block.js` (`sync`).
+
+**What it should do.** Keep a filtered facet in `facets`, with its selected item
+`selected: true` and its other values still counted, so a UI can switch between them.
+List the applied ones in `selectedFilterQueries`, with `clearFilterQueries` to drop
+each. Cover it with a test that toggles a value on and off.
