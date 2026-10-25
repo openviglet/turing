@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T17:04:54+00:00\n"
+"POT-Creation-Date: 2026-10-25T17:16:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -33,8 +33,8 @@ msgid "Indexing"
 msgstr ""
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/render.php:127
-#: src/blocks/search/render.php:153
+#: src/blocks/search/render.php:132
+#: src/blocks/search/render.php:158
 #: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: src/admin/js/editor-panel.js:67
@@ -346,7 +346,7 @@ msgid "%d suggestions. Use the up and down arrows to choose one."
 msgstr ""
 
 #: src/blocks/search/render.php:81
-#: src/blocks/search/render.php:230
+#: src/blocks/search/render.php:255
 msgid "Filters"
 msgstr ""
 
@@ -367,78 +367,102 @@ msgid "Show fewer"
 msgstr ""
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:92
+#: src/blocks/search/render.php:97
 #: src/includes/class-viglet-dumont-native-search.php:158
 #, php-format
 msgid "%d results"
 msgstr ""
 
-#: src/blocks/search/render.php:93
+#: src/blocks/search/render.php:98
 #: src/includes/class-viglet-dumont-native-search.php:159
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
-#: src/blocks/search/render.php:94
+#: src/blocks/search/render.php:99
 #: src/includes/class-viglet-dumont-native-search.php:160
 msgid "Search is unavailable right now."
 msgstr ""
 
-#: src/blocks/search/render.php:119
+#: src/blocks/search/render.php:124
 msgid "Search…"
 msgstr ""
 
-#: src/blocks/search/render.php:150
+#: src/blocks/search/render.php:155
 msgid "Clear the search"
 msgstr ""
 
-#: src/blocks/search/render.php:159
+#: src/blocks/search/render.php:164
 msgid "Suggestions"
 msgstr ""
 
-#: src/blocks/search/render.php:172
+#: src/blocks/search/render.php:177
 msgid "Clear recent searches"
 msgstr ""
 
-#: src/blocks/search/render.php:178
+#: src/blocks/search/render.php:183
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr ""
 
-#: src/blocks/search/render.php:186
+#: src/blocks/search/render.php:191
 msgid "Sort by"
 msgstr ""
 
-#: src/blocks/search/render.php:196
+#: src/blocks/search/render.php:201
 msgid "Active filters"
 msgstr ""
 
-#: src/blocks/search/render.php:202
+#: src/blocks/search/render.php:207
 msgid "Remove this filter"
 msgstr ""
 
-#: src/blocks/search/render.php:207
-#: src/blocks/search/render.php:257
+#: src/blocks/search/render.php:212
+#: src/blocks/search/render.php:282
 msgid "Clear all filters"
 msgstr ""
 
-#: src/blocks/search/render.php:256
+#: src/blocks/search/render.php:232
+msgid "Answer generated from this site"
+msgstr ""
+
+#: src/blocks/search/render.php:234
+msgid "Sources"
+msgstr ""
+
+#: src/blocks/search/render.php:242
+msgid "Was this helpful?"
+msgstr ""
+
+#: src/blocks/search/render.php:243
+msgid "Yes"
+msgstr ""
+
+#: src/blocks/search/render.php:244
+msgid "No"
+msgstr ""
+
+#: src/blocks/search/render.php:246
+msgid "Thank you."
+msgstr ""
+
+#: src/blocks/search/render.php:281
 msgid "Show results"
 msgstr ""
 
-#: src/blocks/search/render.php:298
+#: src/blocks/search/render.php:323
 msgid "Or start from the latest posts:"
 msgstr ""
 
-#: src/blocks/search/render.php:308
+#: src/blocks/search/render.php:333
 msgid "Try again"
 msgstr ""
 
-#: src/blocks/search/render.php:309
+#: src/blocks/search/render.php:334
 msgid "Search with WordPress instead"
 msgstr ""
 
-#: src/blocks/search/render.php:314
+#: src/blocks/search/render.php:339
 msgid "Result pages"
 msgstr ""
 
@@ -1329,54 +1353,62 @@ msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr ""
 
 #: src/admin/js/search-block-editor.js:64
-msgid "Where the filters sit"
+msgid "Answer questions from this site’s content"
 msgstr ""
 
 #: src/admin/js/search-block-editor.js:68
+msgid "A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:77
+msgid "Where the filters sit"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:81
 msgid "Left"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:72
+#: src/admin/js/search-block-editor.js:85
 msgid "Right"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:76
+#: src/admin/js/search-block-editor.js:89
 msgid "Above the results"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:87
+#: src/admin/js/search-block-editor.js:100
 msgid "Results as"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:91
+#: src/admin/js/search-block-editor.js:104
 msgid "A list"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:95
+#: src/admin/js/search-block-editor.js:108
 msgid "A grid"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:105
+#: src/admin/js/search-block-editor.js:118
 msgid "Show the image"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:107
+#: src/admin/js/search-block-editor.js:120
 msgid "Show the type"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:108
+#: src/admin/js/search-block-editor.js:121
 msgid "Show the date"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:111
+#: src/admin/js/search-block-editor.js:124
 msgid "Show the snippet"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:123
+#: src/admin/js/search-block-editor.js:136
 msgid "Results per page"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:145
+#: src/admin/js/search-block-editor.js:158
 msgid "Turing search"
 msgstr ""
 

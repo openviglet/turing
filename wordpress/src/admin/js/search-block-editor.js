@@ -60,6 +60,19 @@
 						checked: attributes.showSort,
 						onChange: ( showSort ) => setAttributes( { showSort } ),
 					} ),
+					el( ToggleControl, {
+						label: __(
+							'Answer questions from this site’s content',
+							'viglet-dumont'
+						),
+						help: __(
+							'A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources.',
+							'viglet-dumont'
+						),
+						checked: attributes.showAnswer,
+						onChange: ( showAnswer ) =>
+							setAttributes( { showAnswer } ),
+					} ),
 					el( SelectControl, {
 						label: __( 'Where the filters sit', 'viglet-dumont' ),
 						value: attributes.facetsPosition,

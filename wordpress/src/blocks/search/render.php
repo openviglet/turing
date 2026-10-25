@@ -84,6 +84,11 @@ $viglet_dumont_state = array(
 	/* translators: %d: how many more values the facet has. */
 	'moreValues'    => __( 'Show %d more', 'viglet-dumont' ),
 	'fewerLabel'    => __( 'Show fewer', 'viglet-dumont' ),
+	'answerEnabled' => ! empty( $attributes['showAnswer'] ),
+	'answer'        => '',
+	'answerSources' => array(),
+	'answerStatus'  => 'idle',
+	'answerRated'   => false,
 	'sort'          => $viglet_dumont_sort,
 	'perPage'       => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
 	'typeLabels'    => $viglet_dumont_types,
@@ -220,6 +225,26 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 			data-wp-on--click="actions.openDrawer"
 			data-wp-text="state.filtersLabel"
 		></button>
+	<?php endif; ?>
+
+	<?php if ( ! empty( $attributes['showAnswer'] ) ) : ?>
+		<section class="viglet-dumont-search__answer" aria-labelledby="<?php echo esc_attr( $viglet_dumont_id ); ?>-answer" hidden data-wp-bind--hidden="!state.showAnswer" data-wp-bind--aria-busy="state.answerStreaming">
+			<h2 class="viglet-dumont-search__answer-label" id="<?php echo esc_attr( $viglet_dumont_id ); ?>-answer"><?php esc_html_e( 'Answer generated from this site', 'viglet-dumont' ); ?></h2>
+			<p class="viglet-dumont-search__answer-text" data-wp-text="state.answer"></p>
+			<ol class="viglet-dumont-search__sources" aria-label="<?php esc_attr_e( 'Sources', 'viglet-dumont' ); ?>">
+				<template data-wp-each--source="state.answerSources" data-wp-each-key="context.source.key">
+					<li data-wp-bind--value="context.source.rank">
+						<a data-wp-bind--href="context.source.url" data-wp-text="context.source.title" data-wp-on--click="actions.citationClicked"></a>
+					</li>
+				</template>
+			</ol>
+			<p class="viglet-dumont-search__answer-feedback" data-wp-bind--hidden="state.answerRated">
+				<?php esc_html_e( 'Was this helpful?', 'viglet-dumont' ); ?>
+				<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.answerHelpful"><?php esc_html_e( 'Yes', 'viglet-dumont' ); ?></button>
+				<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.answerNotHelpful"><?php esc_html_e( 'No', 'viglet-dumont' ); ?></button>
+			</p>
+			<p class="viglet-dumont-search__answer-feedback" role="status" hidden data-wp-bind--hidden="!state.answerRated"><?php esc_html_e( 'Thank you.', 'viglet-dumont' ); ?></p>
+		</section>
 	<?php endif; ?>
 
 	<div class="viglet-dumont-search__layout">

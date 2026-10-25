@@ -182,6 +182,9 @@ class Viglet_Dumont_Native_Search {
 					'post_status' => 'publish',
 					'numberposts' => 1,
 					'fields'      => 'ids',
+					// The first page made for it, not whichever was edited last.
+					'orderby'     => 'ID',
+					'order'       => 'ASC',
 					// The block's comment delimiter, as one term (a search splits on spaces).
 					's'           => 'wp:viglet-dumont/search',
 				)

@@ -76,6 +76,18 @@ if ( '<!-- wp:viglet-dumont/search /-->' !== get_post_field( 'post_content', $pa
 	);
 }
 
+// The search block with Turing's grounded answer turned on (answer.spec.mjs).
+$ask    = get_page_by_path( 'ask' );
+$ask_id = $ask ? $ask->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'ask',
+		'post_title'   => 'Ask',
+		'post_status'  => 'publish',
+		'post_content' => '<!-- wp:viglet-dumont/search {"showAnswer":true} /-->',
+	)
+);
+
 // A page with the theme's own Search block, which the instant-search overlay takes over.
 $core    = get_page_by_path( 'header-search' );
 $core_id = $core ? $core->ID : (int) wp_insert_post(
@@ -127,6 +139,7 @@ echo wp_json_encode(
 	array(
 		'searchPageId' => $page_id,
 		'corePageId'   => $core_id,
+		'askPageId'    => $ask_id,
 		'postId'       => $post_id,
 	)
 );

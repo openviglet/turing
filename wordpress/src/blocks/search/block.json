@@ -50,6 +50,10 @@
 		"showSnippet": {
 			"type": "boolean",
 			"default": true
+		},
+		"showAnswer": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"styles": [

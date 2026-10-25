@@ -7,6 +7,7 @@ import { getContext, getElement, store } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
 import {
 	config,
+	createAnswerController,
 	createClient,
 	createSiteAutoComplete,
 	createSiteSearch,
@@ -18,6 +19,8 @@ import {
 let search = null;
 let autocomplete = null;
 let client = null;
+// Turing's grounded answer, when the block's Answer setting is on (D166).
+let answerer = null;
 // The query last sent, so a late spell-check answer for an older one is dropped.
 let lastQuery = '';
 // The pending instant search, restarted by every keystroke.
@@ -113,6 +116,19 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		get hasApplied() {
 			return state.applied.length > 0;
+		},
+		// An answer is drawn only with the sources it cites: Turing returning none, or the
+		// site having no AI (the stream's error), leaves the panel hidden.
+		get showAnswer() {
+			return (
+				state.answerEnabled &&
+				'error' !== state.answerStatus &&
+				'' !== state.answer &&
+				state.answerSources.length > 0
+			);
+		},
+		get answerStreaming() {
+			return 'loading' === state.answerStatus;
 		},
 		get hasResults() {
 			return 'success' === state.status && state.total > 0;
@@ -303,6 +319,17 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			writeUrl( true );
 			focusInput();
 		},
+		answerHelpful() {
+			answerer?.signal( 'THUMBS_UP' );
+			state.answerRated = true;
+		},
+		answerNotHelpful() {
+			answerer?.signal( 'THUMBS_DOWN' );
+			state.answerRated = true;
+		},
+		citationClicked() {
+			answerer?.signal( 'CITATION_CLICKED' );
+		},
 		sortBy( event ) {
 			state.sort = event.target.value;
 			send( { page: 1 } );
@@ -327,6 +354,26 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		init() {
 			search = createSiteSearch();
+			if ( state.answerEnabled ) {
+				answerer = createAnswerController( createClient(), {
+					site: config.site,
+					locale: config.locale,
+				} );
+				answerer.subscribe( ( s ) => {
+					state.answer = s.answer;
+					state.answerStatus = s.status;
+					state.answerSources = (
+						s.citations.length ? s.citations : s.sources
+					)
+						.filter( ( source ) => source.url )
+						.map( ( source, i ) => ( {
+							key: `${ source.url }#${ i }`,
+							rank: source.rank ?? source.footnote ?? i + 1,
+							title: source.title || source.url,
+							url: source.url,
+						} ) );
+				} );
+			}
 			autocomplete = createSiteAutoComplete();
 			client = createClient();
 			search.subscribe( sync );
@@ -340,6 +387,8 @@ const { state, actions } = store( 'viglet-dumont/search', {
 				[ 'fq[]', 'pg', 'sort' ].some( ( key ) => params.has( key ) )
 			) {
 				readUrl();
+				// Once, for the page as opened; Back and Forward do not ask again.
+				ask( state.query );
 			}
 			window.addEventListener( 'popstate', readUrl );
 		},
@@ -354,6 +403,43 @@ function close() {
 	state.active = -1;
 }
 
+// The words a question starts with, in the languages the plugin ships (en, pt_BR).
+const questionWords =
+	/^(how|what|why|when|where|who|which|can|does|do|is|are|should|como|o que|qual|quais|quando|onde|por que|porque|quem|posso|existe)\b/i;
+
+/**
+ * Whether a query reads as a question worth an answer rather than a lookup: it ends with a
+ * question mark, starts with a question word, or runs to five words or more.
+ *
+ * @param {string} query What the visitor searched for.
+ */
+function isQuestion( query ) {
+	const typed = query.trim();
+	return (
+		/\?$/.test( typed ) ||
+		questionWords.test( typed ) ||
+		typed.split( /\s+/ ).length >= 5
+	);
+}
+
+/**
+ * Ask Turing for a grounded answer to a question the visitor settled on, or clear the
+ * panel for a query that is not one. Never while typing: each answer is an LLM call.
+ *
+ * @param {string} query What the visitor searched for.
+ */
+function ask( query ) {
+	if ( ! answerer ) {
+		return;
+	}
+	state.answerRated = false;
+	if ( isQuestion( query ) ) {
+		answerer.ask( query.trim(), { locale: config.locale } );
+	} else {
+		answerer.reset();
+	}
+}
+
 /**
  * Search for what the visitor settled on (submitted, or picked from the list) and remember
  * it as a recent search.
@@ -361,6 +447,7 @@ function close() {
  * @param {string} query The query.
  */
 function choose( query ) {
+	ask( query );
 	window.clearTimeout( instant );
 	state.query = query;
 	autocomplete.clear();
