@@ -27,6 +27,7 @@
 - 📋 **T1120** (deps: —) **The search matches whole words only, so an as-you-type search for a half-typed word finds nothing** — A search box that updates while typing shows No results until the word is complete, or guesses a wildcard into the query. → §CXXXII
 - 📋 **T1121** (deps: —) **The SDK search controller drops a superseded answer but never aborts the superseded request** — Every pause in a typed query leaves a full search running and downloading on the server for an answer that is thrown away. → §CXXXIII
 - 📋 **T1122** (deps: —) **A custom facet provisioned through the manifest is stored but never appears in the search answer** — A connector that declares range facets as code gets a 200 and a changed facet, and visitors never see a bucket. → §CXXXIV
+- 📋 **T1123** (deps: —) **No cheap probe says whether answer or natural-language filters are on for a site** — A client learns it only by starting an LLM answer or parse, so a status screen either spends tokens or guesses. → §CXXXV
 
 ## Non-goals (do NOT add as tasks)
 

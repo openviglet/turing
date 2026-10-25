@@ -2467,3 +2467,27 @@ facet was deleted again through the console API.
 the answer (the facet definition path in `TurSNSearchProcess`, or
 `TurLuceneCustomFacets` on the Lucene engine), fix it, and add an integration test:
 provision through the manifest, search, and assert the buckets and their counts.
+
+## CXXXV One probe for a site's AI capabilities (T1123)
+
+**Where it happened.** Dumont's WordPress plugin (Dumont D169) shows an admin which of
+Turing's AI features its SN site can use, so that visitor-side AI blocks stay hidden
+when theirs is off. Two features have a probe and two do not:
+
+- chat: `GET /api/sn/{site}/chat/enabled` → `{"enabled":true,"reason":"NONE"}`, cheap;
+- catalog copilot: `GET /api/sn/{site}/copilot/available` → `{"available":…}`, cheap;
+- answer: no probe. `GET /api/sn/{site}/answer?q=…` is an SSE stream; when off, its first
+  event is `event:error` with `AI is not enabled for site: Sample`; when on, it starts an
+  LLM answer the caller then throws away;
+- natural-language filters: no probe. `POST /api/sn/{site}/nl-filters` with a text answers
+  `available: false` cheaply when no model is set, but when one is, it parses the text
+  with the LLM.
+
+**Workaround.** The plugin checks on demand only (a button on Health, `wp dumont ai
+status`), reads the first 512 bytes of the answer stream, and sends `last week` to
+nl-filters. Each check that finds them on spends LLM calls.
+
+**What Turing should do.** One read-only probe per site, e.g. `GET
+/api/sn/{site}/ai/capabilities`, answering every AI feature (answer, chat, NL filters,
+copilot, similar-by-vector, summaries) with `enabled` and a `reason` code when off, as
+`/chat/enabled` does, and the SDK function that reads it. No LLM call, cacheable.
