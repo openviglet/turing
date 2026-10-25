@@ -11,6 +11,7 @@
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
 - 📋 **T1112** (deps: —) **An import DELETE removes by id or type only, so a connector sharing an SN site cannot delete its documents by a field** — Each connector lists its ids through search and deletes them one by one, and an id of * is accepted and deletes nothing. → §CXXIV
+- 📋 **T1124** (deps: —) **POST /api/v2/summary refuses a Key-authenticated server call with 403, as CSRF does not exempt it** — A connector cannot draft a summary with its API key, though agents.md documents that call, and Dumont's own insights use it. → §CXXXVI
 
 ## Block CH — Published container images track the shipped source
 
