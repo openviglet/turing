@@ -123,8 +123,7 @@ class Viglet_Dumont_Operations {
 		Viglet_Dumont_Events::record(
 			'index',
 			empty( $errors ),
-			/* translators: 1: posts sent, 2: posts that failed. */
-			sprintf( __( 'Bulk: %1$d sent, %2$d failed.', 'viglet-dumont' ), $sent, count( $errors ) )
+			Viglet_Dumont_Events::note( 'bulk', array( $sent, count( $errors ) ) )
 		);
 
 		return array(
@@ -194,7 +193,7 @@ class Viglet_Dumont_Operations {
 		foreach ( array_chunk( $orphans, $batch_size ) as $chunk ) {
 			$result = $this->client->deindex( array_map( array( $this->client, 'build_delete_item' ), $chunk ) );
 			if ( ! $result['success'] ) {
-				Viglet_Dumont_Events::record( 'sweep', false, $result['message'] );
+				Viglet_Dumont_Events::record( 'sweep', false, $result['note'] );
 				return array(
 					'success' => false,
 					'orphans' => $orphans,
@@ -203,8 +202,7 @@ class Viglet_Dumont_Operations {
 			}
 		}
 
-		/* translators: %d: documents removed from Turing. */
-		Viglet_Dumont_Events::record( 'sweep', true, sprintf( __( '%d documents WordPress no longer publishes removed.', 'viglet-dumont' ), count( $orphans ) ) );
+		Viglet_Dumont_Events::record( 'sweep', true, Viglet_Dumont_Events::note( 'swept', array( count( $orphans ) ) ) );
 
 		return array(
 			'success' => true,

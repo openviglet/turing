@@ -106,7 +106,8 @@ class Viglet_Dumont_API_Client {
 	 * Import job items into Turing (index documents).
 	 *
 	 * @param array $job_items Array of TurSNJobItem-compatible arrays.
-	 * @return array{success: bool, message: string, code: int} `code` is 0 when no response arrived.
+	 * @return array{success: bool, message: string, note: string|array, code: int} `code` is 0
+	 *         when no response arrived; `note` is the message for the event log (D180).
 	 */
 	public function import( array $job_items ): array {
 		$payload = array( 'snJobItems' => $job_items );
@@ -114,26 +115,33 @@ class Viglet_Dumont_API_Client {
 		$response = $this->request( 'POST', '/api/sn/import', null, $payload );
 
 		if ( is_wp_error( $response ) ) {
-			return array(
-				'success' => false,
-				'message' => $response->get_error_message(),
-				'code'    => 0,
-			);
+			return $this->outcome( false, $response->get_error_message(), 0 );
 		}
 
 		$code = (int) wp_remote_retrieve_response_code( $response );
+		$ok   = $code >= 200 && $code < 300;
 
+		return $this->outcome(
+			$ok,
+			$ok ? Viglet_Dumont_Events::note( 'imported' ) : Viglet_Dumont_Events::note( 'import_failed', array( $code, wp_remote_retrieve_body( $response ) ) ),
+			$code
+		);
+	}
+
+	/**
+	 * A write's result: whether it went through, its message now and as a note.
+	 *
+	 * @param bool         $ok   Whether it went through.
+	 * @param string|array $note A note from Viglet_Dumont_Events::note(), or text as it came.
+	 * @param int          $code The HTTP status, 0 when no response arrived.
+	 * @return array{success: bool, message: string, note: string|array, code: int}
+	 */
+	private function outcome( bool $ok, $note, int $code ): array {
 		return array(
+			'success' => $ok,
+			'message' => Viglet_Dumont_Events::text( $note ),
+			'note'    => $note,
 			'code'    => $code,
-			'success' => ( $code >= 200 && $code < 300 ),
-			'message' => ( $code >= 200 && $code < 300 )
-				? __( 'Documents imported successfully', 'viglet-dumont' )
-				: sprintf(
-					/* translators: 1: the HTTP status code, 2: the response body. */
-					__( 'Import failed with HTTP %1$d: %2$s', 'viglet-dumont' ),
-					$code,
-					wp_remote_retrieve_body( $response )
-				),
 		);
 	}
 
@@ -141,44 +149,27 @@ class Viglet_Dumont_API_Client {
 	 * Converge the SN site's field schema to a manifest (`POST /api/sn/manifest`).
 	 *
 	 * @param array $manifest `{name, locales, fields}` as Turing's manifest binds it.
-	 * @return array{success: bool, message: string, code: int} `code` is 0 when no response arrived.
+	 * @return array{success: bool, message: string, note: string|array, code: int} `code` is 0 when no response arrived.
 	 */
 	public function provision( array $manifest ): array {
 		$response = $this->request( 'POST', '/api/sn/manifest', null, $manifest );
 
 		if ( is_wp_error( $response ) ) {
-			return array(
-				'success' => false,
-				'message' => $response->get_error_message(),
-				'code'    => 0,
-			);
+			return $this->outcome( false, $response->get_error_message(), 0 );
 		}
 
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 
 		if ( $code >= 200 && $code < 300 ) {
-			$message = __( 'Fields provisioned', 'viglet-dumont' );
+			$note = Viglet_Dumont_Events::note( 'provisioned' );
 		} elseif ( 409 === $code ) {
-			$message = sprintf(
-				/* translators: %s: the fields whose type Turing would have to change. */
-				__( 'Turing kept the site\'s schema: a mapped field would change an existing field\'s type (%s). Rename the field or migrate it in Turing.', 'viglet-dumont' ),
-				wp_json_encode( $body['breakingChanges'] ?? array() )
-			);
+			$note = Viglet_Dumont_Events::note( 'provision_breaking', array( wp_json_encode( $body['breakingChanges'] ?? array() ) ) );
 		} else {
-			$message = sprintf(
-				/* translators: 1: the HTTP status code, 2: Turing's error message. */
-				__( 'Provisioning failed with HTTP %1$d: %2$s', 'viglet-dumont' ),
-				$code,
-				is_array( $body ) && isset( $body['error'] ) ? $body['error'] : ''
-			);
+			$note = Viglet_Dumont_Events::note( 'provision_failed', array( $code, is_array( $body ) && isset( $body['error'] ) ? $body['error'] : '' ) );
 		}
 
-		return array(
-			'success' => $code >= 200 && $code < 300,
-			'message' => $message,
-			'code'    => $code,
-		);
+		return $this->outcome( $code >= 200 && $code < 300, $note, $code );
 	}
 
 	/**
@@ -210,7 +201,7 @@ class Viglet_Dumont_API_Client {
 	 * Delete documents from Turing index.
 	 *
 	 * @param array $job_items Array of TurSNJobItem-compatible arrays with DELETE action.
-	 * @return array{success: bool, message: string}
+	 * @return array{success: bool, message: string, note: string|array, code: int}
 	 */
 	public function deindex( array $job_items ): array {
 		$payload = array( 'snJobItems' => $job_items );
@@ -218,21 +209,13 @@ class Viglet_Dumont_API_Client {
 		$response = $this->request( 'POST', '/api/sn/import', null, $payload );
 
 		if ( is_wp_error( $response ) ) {
-			return array(
-				'success' => false,
-				'message' => $response->get_error_message(),
-			);
+			return $this->outcome( false, $response->get_error_message(), 0 );
 		}
 
-		$code = wp_remote_retrieve_response_code( $response );
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		$ok   = $code >= 200 && $code < 300;
 
-		return array(
-			'success' => ( $code >= 200 && $code < 300 ),
-			'message' => ( $code >= 200 && $code < 300 )
-				? __( 'Documents removed successfully', 'viglet-dumont' )
-				/* translators: %d: the HTTP status code Turing answered with. */
-				: sprintf( __( 'Deindex failed with HTTP %d', 'viglet-dumont' ), $code ),
-		);
+		return $this->outcome( $ok, $ok ? Viglet_Dumont_Events::note( 'removed' ) : Viglet_Dumont_Events::note( 'deindex_failed', array( $code ) ), $code );
 	}
 
 	/**

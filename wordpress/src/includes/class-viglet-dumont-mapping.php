@@ -256,7 +256,7 @@ class Viglet_Dumont_Mapping {
 		}
 
 		$result = $client->provision( $manifest );
-		Viglet_Dumont_Events::record( 'provision', $result['success'], $result['message'] );
+		Viglet_Dumont_Events::record( 'provision', $result['success'], $result['note'] );
 		update_option(
 			self::PROVISIONED_OPTION,
 			array(

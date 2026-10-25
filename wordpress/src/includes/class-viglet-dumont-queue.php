@@ -157,7 +157,7 @@ class Viglet_Dumont_Queue {
 		$remaining = $this->jobs();
 		$this->schedule_next( $remaining );
 
-		$errors = array_filter( $outcomes, static fn ( $error ) => '' !== $error );
+		$errors = array_filter( array_map( array( 'Viglet_Dumont_Events', 'text' ), $outcomes ), static fn ( $error ) => '' !== $error );
 
 		// The health page's "last run": only a run that sent something, so an idle tick does not hide the last real one.
 		if ( ! empty( $outcomes ) ) {
@@ -264,7 +264,7 @@ class Viglet_Dumont_Queue {
 	 * the server, not an item, and the batch fails as a whole.
 	 *
 	 * @param array<int, array> $items The items, keyed by post id.
-	 * @return array<int, string>
+	 * @return array<int, string|array> The client's note per post (D180), '' for nothing.
 	 */
 	private function send( array $items ): array {
 		if ( empty( $items ) ) {
@@ -279,13 +279,13 @@ class Viglet_Dumont_Queue {
 
 		$refused = $result['code'] >= 400 && $result['code'] < 500;
 		if ( ! $refused || count( $items ) === 1 ) {
-			return array_fill_keys( array_keys( $items ), $result['message'] );
+			return array_fill_keys( array_keys( $items ), $result['note'] );
 		}
 
 		$outcomes = array();
 		foreach ( $items as $post_id => $item ) {
 			$single               = $client->import( array( $item ) );
-			$outcomes[ $post_id ] = $single['success'] ? '' : $single['message'];
+			$outcomes[ $post_id ] = $single['success'] ? '' : $single['note'];
 		}
 
 		return $outcomes;
@@ -297,17 +297,18 @@ class Viglet_Dumont_Queue {
 	 * The queue is read again here because a save may have replaced a job while it was being
 	 * sent; a job whose `queued_at` changed is newer than what was sent and is left alone.
 	 *
-	 * @param array<int, array>  $batch    The jobs as they were sent.
-	 * @param array<int, string> $outcomes The error per post, '' for success.
+	 * @param array<int, array>        $batch    The jobs as they were sent.
+	 * @param array<int, string|array> $outcomes The error per post as a note, '' for success.
 	 */
 	private function record( array $batch, array $outcomes ): void {
 		$jobs = $this->jobs();
 		$now  = time();
 
-		foreach ( $outcomes as $post_id => $error ) {
+		foreach ( $outcomes as $post_id => $note ) {
 			$sent    = $batch[ $post_id ];
 			$current = $jobs[ $post_id ] ?? null;
 			$same    = null !== $current && $current['queued_at'] === $sent['queued_at'];
+			$error   = Viglet_Dumont_Events::text( $note );
 
 			if ( '' === $error ) {
 				if ( $same ) {
@@ -331,7 +332,7 @@ class Viglet_Dumont_Queue {
 				);
 			}
 			$this->write_state( (int) $post_id, $sent['action'], $error, $attempts, null );
-			Viglet_Dumont_Events::record( $sent['action'], false, $error, (int) $post_id );
+			Viglet_Dumont_Events::record( $sent['action'], false, $note, (int) $post_id );
 		}//end foreach
 
 		$this->save( $jobs );

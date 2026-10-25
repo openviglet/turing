@@ -91,13 +91,8 @@ const screens = [
 	[ 'Setup', '/wp-admin/admin.php?page=viglet-dumont-setup' ],
 	[ 'Fields', '/wp-admin/admin.php?page=viglet-dumont-fields' ],
 	[ 'Search tuning', '/wp-admin/admin.php?page=viglet-dumont-tuning' ],
-	[
-		'Health',
-		'/wp-admin/admin.php?page=viglet-dumont-health',
-		// An event's Result is the message stored in the language it was written in, until D180;
-		// only the events table has a fourth column.
-		[ 'tbody td:nth-child(4)' ],
-	],
+	// Events included: the seed's reindex wrote them in English, and they read in Portuguese.
+	[ 'Health', '/wp-admin/admin.php?page=viglet-dumont-health' ],
 ];
 
 for ( const [ name, url, skip ] of screens ) {

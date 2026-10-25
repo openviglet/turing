@@ -99,6 +99,9 @@ $lonely_id = $lonely ? $lonely->ID : (int) wp_insert_post(
 		'post_content' => "<!-- wp:paragraph --><p>Marsupials of Rottnest.</p><!-- /wp:paragraph -->\n\n<!-- wp:viglet-dumont/related /-->",
 	)
 );
+// An event log this version wrote: older ones stored sentences, in whatever language (D180).
+delete_option( 'viglet_dumont_events' );
+
 // Each post's neighbours as Turing answers them now, not as a previous run cached them.
 global $wpdb;
 $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\_transient%viglet\\_dumont\\_related\\_%'" );

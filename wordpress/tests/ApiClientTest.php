@@ -101,6 +101,8 @@ final class ApiClientTest extends PluginTestCase {
 			array(
 				'success' => false,
 				'message' => 'timed out',
+				'note'    => 'timed out',
+				'code'    => 0,
 			),
 			$result
 		);

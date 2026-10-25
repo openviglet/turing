@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T19:21:30+00:00\n"
+"POT-Creation-Date: 2026-10-25T19:39:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -610,73 +610,37 @@ msgstr ""
 msgid "Server returned HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:130
-msgid "Documents imported successfully"
-msgstr ""
-
-#. translators: 1: the HTTP status code, 2: the response body.
-#: src/includes/class-viglet-dumont-api-client.php:133
-#, php-format
-msgid "Import failed with HTTP %1$d: %2$s"
-msgstr ""
-
-#: src/includes/class-viglet-dumont-api-client.php:161
-msgid "Fields provisioned"
-msgstr ""
-
-#. translators: %s: the fields whose type Turing would have to change.
-#: src/includes/class-viglet-dumont-api-client.php:165
-#, php-format
-msgid "Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Turing."
-msgstr ""
-
-#. translators: 1: the HTTP status code, 2: Turing's error message.
-#: src/includes/class-viglet-dumont-api-client.php:171
-#, php-format
-msgid "Provisioning failed with HTTP %1$d: %2$s"
-msgstr ""
-
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:202
+#: src/includes/class-viglet-dumont-api-client.php:193
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:232
-msgid "Documents removed successfully"
-msgstr ""
-
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:234
-#, php-format
-msgid "Deindex failed with HTTP %d"
-msgstr ""
-
-#. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:276
+#: src/includes/class-viglet-dumont-api-client.php:259
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:284
+#: src/includes/class-viglet-dumont-api-client.php:267
 msgid "Invalid JSON response from server"
 msgstr ""
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:450
+#: src/includes/class-viglet-dumont-api-client.php:433
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:474
+#: src/includes/class-viglet-dumont-api-client.php:457
 msgid "Turing did not answer."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:531
+#: src/includes/class-viglet-dumont-api-client.php:514
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:536
+#: src/includes/class-viglet-dumont-api-client.php:519
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
@@ -857,6 +821,54 @@ msgstr ""
 msgid "Nothing is listening at %s on that port: Turing is down, or the port is wrong."
 msgstr ""
 
+#: src/includes/class-viglet-dumont-events.php:101
+msgid "Documents imported successfully"
+msgstr ""
+
+#. translators: 1: the HTTP status code, 2: the response body.
+#: src/includes/class-viglet-dumont-events.php:104
+#, php-format
+msgid "Import failed with HTTP %1$d: %2$s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-events.php:107
+msgid "Documents removed successfully"
+msgstr ""
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-events.php:110
+#, php-format
+msgid "Deindex failed with HTTP %d"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-events.php:113
+msgid "Fields provisioned"
+msgstr ""
+
+#. translators: %s: the fields whose type Turing would have to change.
+#: src/includes/class-viglet-dumont-events.php:116
+#, php-format
+msgid "Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Turing."
+msgstr ""
+
+#. translators: 1: the HTTP status code, 2: Turing's error message.
+#: src/includes/class-viglet-dumont-events.php:120
+#, php-format
+msgid "Provisioning failed with HTTP %1$d: %2$s"
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-events.php:124
+#, php-format
+msgid "Bulk: %1$d sent, %2$d failed."
+msgstr ""
+
+#. translators: %d: documents removed from Turing.
+#: src/includes/class-viglet-dumont-events.php:128
+#, php-format
+msgid "%d documents WordPress no longer publishes removed."
+msgstr ""
+
 #. translators: %d: how many documents were indexed.
 #: src/includes/class-viglet-dumont-indexer.php:207
 #, php-format
@@ -937,23 +949,11 @@ msgstr ""
 msgid "Search (Ctrl+K)"
 msgstr ""
 
-#. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-operations.php:127
-#, php-format
-msgid "Bulk: %1$d sent, %2$d failed."
-msgstr ""
-
-#: src/includes/class-viglet-dumont-operations.php:182
+#: src/includes/class-viglet-dumont-operations.php:181
 msgid "Turing could not be searched for this site's documents."
 msgstr ""
 
-#. translators: %d: documents removed from Turing.
-#: src/includes/class-viglet-dumont-operations.php:207
-#, php-format
-msgid "%d documents WordPress no longer publishes removed."
-msgstr ""
-
-#: src/includes/class-viglet-dumont-operations.php:231
+#: src/includes/class-viglet-dumont-operations.php:229
 msgid "Skipped: the reindex had failures."
 msgstr ""
 

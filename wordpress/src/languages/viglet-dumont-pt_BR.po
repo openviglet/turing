@@ -435,55 +435,55 @@ msgstr "Conexão bem-sucedida"
 msgid "Server returned HTTP %d"
 msgstr "O servidor respondeu HTTP %d"
 
-#: src/includes/class-viglet-dumont-api-client.php:130
+#: src/includes/class-viglet-dumont-events.php:101
 msgid "Documents imported successfully"
 msgstr "Documentos importados com sucesso"
 
 #. translators: 1: the HTTP status code, 2: the response body.
-#: src/includes/class-viglet-dumont-api-client.php:133
+#: src/includes/class-viglet-dumont-events.php:104
 #, php-format
 msgid "Import failed with HTTP %1$d: %2$s"
 msgstr "A importação falhou com HTTP %1$d: %2$s"
 
-#: src/includes/class-viglet-dumont-api-client.php:161
+#: src/includes/class-viglet-dumont-events.php:113
 msgid "Fields provisioned"
 msgstr "Campos enviados ao Turing"
 
 #. translators: %s: the fields whose type Turing would have to change.
-#: src/includes/class-viglet-dumont-api-client.php:165
+#: src/includes/class-viglet-dumont-events.php:116
 #, php-format
 msgid "Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Turing."
 msgstr "O Turing manteve o esquema do site: um campo mapeado mudaria o tipo de um campo existente (%s). Renomeie o campo ou migre-o no Turing."
 
 #. translators: 1: the HTTP status code, 2: Turing's error message.
-#: src/includes/class-viglet-dumont-api-client.php:171
+#: src/includes/class-viglet-dumont-events.php:120
 #, php-format
 msgid "Provisioning failed with HTTP %1$d: %2$s"
 msgstr "O envio dos campos falhou com HTTP %1$d: %2$s"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:202
+#: src/includes/class-viglet-dumont-api-client.php:193
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr "O Turing não conseguiu planejar os campos (HTTP %d)."
 
-#: src/includes/class-viglet-dumont-api-client.php:232
+#: src/includes/class-viglet-dumont-events.php:107
 msgid "Documents removed successfully"
 msgstr "Documentos removidos com sucesso"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:234
+#: src/includes/class-viglet-dumont-events.php:110
 #, php-format
 msgid "Deindex failed with HTTP %d"
 msgstr "A remoção falhou com HTTP %d"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:276
+#: src/includes/class-viglet-dumont-api-client.php:259
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr "A busca falhou com HTTP %d"
 
-#: src/includes/class-viglet-dumont-api-client.php:284
+#: src/includes/class-viglet-dumont-api-client.php:267
 msgid "Invalid JSON response from server"
 msgstr "Resposta JSON inválida do servidor"
 
@@ -701,22 +701,22 @@ msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-operations.php:127
+#: src/includes/class-viglet-dumont-events.php:124
 #, php-format
 msgid "Bulk: %1$d sent, %2$d failed."
 msgstr "Em lote: %1$d enviados, %2$d falharam."
 
-#: src/includes/class-viglet-dumont-operations.php:182
+#: src/includes/class-viglet-dumont-operations.php:181
 msgid "Turing could not be searched for this site's documents."
 msgstr "Não foi possível buscar no Turing os documentos deste site."
 
 #. translators: %d: documents removed from Turing.
-#: src/includes/class-viglet-dumont-operations.php:207
+#: src/includes/class-viglet-dumont-events.php:128
 #, php-format
 msgid "%d documents WordPress no longer publishes removed."
 msgstr "%d documentos que o WordPress não publica mais foram removidos."
 
-#: src/includes/class-viglet-dumont-operations.php:231
+#: src/includes/class-viglet-dumont-operations.php:229
 msgid "Skipped: the reindex had failures."
 msgstr "Ignorada: a reindexação teve falhas."
 
@@ -1346,15 +1346,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:474
+#: src/includes/class-viglet-dumont-api-client.php:457
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:531
+#: src/includes/class-viglet-dumont-api-client.php:514
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:536
+#: src/includes/class-viglet-dumont-api-client.php:519
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1465,7 +1465,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:450
+#: src/includes/class-viglet-dumont-api-client.php:433
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
