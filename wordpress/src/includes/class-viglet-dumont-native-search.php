@@ -108,7 +108,7 @@ class Viglet_Dumont_Native_Search {
 		wp_register_script(
 			'viglet-dumont-search-block-editor',
 			VIGLET_DUMONT_URL . 'admin/js/search-block-editor.js',
-			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
 			VIGLET_DUMONT_VERSION,
 			true
 		);
@@ -198,6 +198,94 @@ class Viglet_Dumont_Native_Search {
 				'searchPage' => home_url( '/' ),
 				'queryParam' => 's',
 			);
+	}
+
+	/**
+	 * Whether the search block is being drawn for the block editor's preview (ServerSideRender
+	 * asks the block renderer endpoint with `context=edit`), where its script does not run.
+	 */
+	public static function is_editor_preview(): bool {
+		// A read-only look at the request: nothing is changed, so there is no nonce to check.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return defined( 'REST_REQUEST' ) && REST_REQUEST && 'edit' === sanitize_key( wp_unslash( $_GET['context'] ?? '' ) );
+	}
+
+	/**
+	 * The search block's state for the editor's preview: Turing's answer to `*` for this site,
+	 * in the shape search-block.js keeps, with the values its getters would derive. The
+	 * server-side directive processing then draws it with the block's own markup.
+	 *
+	 * @param int   $rows   How many results to show.
+	 * @param array $labels The block's labels: foundLabel, noneLabel, errorLabel, typeLabels.
+	 * @return array State to merge over the block's own.
+	 */
+	public function preview_state( int $rows, array $labels ): array {
+		$site_key = ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key();
+		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->search(
+			'*',
+			1,
+			$rows,
+			array( 'fq[]' => array( 'site_key:' . $site_key ) )
+		);
+		if ( ! is_array( $response ) ) {
+			return array(
+				'status'  => 'error',
+				'summary' => $labels['errorLabel'],
+				'isError' => true,
+			);
+		}
+
+		$results = array();
+		foreach ( (array) ( $response['results']['document'] ?? array() ) as $document ) {
+			$fields    = (array) ( $document['fields'] ?? array() );
+			$url       = (string) ( $fields['url'] ?? '' );
+			$date      = $fields['publication_date'] ?? null;
+			$timestamp = is_numeric( $date ) ? (int) ( $date / 1000 ) : ( $date ? strtotime( (string) $date ) : false );
+			$parts     = wp_parse_url( $url );
+			$results[] = array(
+				'url'   => $url,
+				'title' => wp_strip_all_tags( (string) ( $fields['title'] ?? $url ) ),
+				'type'  => $labels['typeLabels'][ $fields['type'] ?? '' ] ?? (string) ( $fields['type'] ?? '' ),
+				'date'  => $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : '',
+				'iso'   => $timestamp ? gmdate( 'c', $timestamp ) : '',
+				'crumb' => implode( ' › ', array_filter( array_merge( array( $parts['host'] ?? '' ), explode( '/', $parts['path'] ?? '' ) ) ) ),
+				'image' => (string) ( $fields['image'] ?? '' ),
+			);
+		}
+
+		$facets = array();
+		foreach ( (array) ( $response['widget']['facet'] ?? array() ) as $facet ) {
+			if ( 'site_key' === ( $facet['name'] ?? '' ) || empty( $facet['facets'] ) ) {
+				continue;
+			}
+			$facets[] = array(
+				'name'  => (string) $facet['name'],
+				'label' => (string) ( $facet['label']['text'] ?? $facet['name'] ),
+				'items' => array_map(
+					static fn ( $value ) => array(
+						'label'    => (string) ( $value['label'] ?? '' ),
+						'count'    => (int) ( $value['count'] ?? 0 ),
+						'selected' => false,
+						'extra'    => false,
+					),
+					array_slice( (array) $facet['facets'], 0, 5 )
+				),
+			);
+		}
+
+		$total = (int) ( $response['queryContext']['count'] ?? count( $results ) );
+
+		return array(
+			'status'     => 'success',
+			'query'      => '',
+			'results'    => $results,
+			'facets'     => $facets,
+			'total'      => $total,
+			'summary'    => $total > 0 ? str_replace( '%d', (string) $total, $labels['foundLabel'] ) : $labels['noneLabel'],
+			'hasFacets'  => ! empty( $facets ),
+			'hasResults' => $total > 0,
+			'isEmpty'    => 0 === $total,
+		);
 	}
 
 	/**

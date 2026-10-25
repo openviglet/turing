@@ -58,44 +58,52 @@ $viglet_dumont_recent = array_map(
 	)
 );
 
-wp_interactivity_state(
-	'viglet-dumont/search',
-	array(
-		'query'         => $viglet_dumont_query,
-		'status'        => 'idle',
-		'results'       => array(),
-		'facets'        => array(),
-		'pages'         => array(),
-		'suggestions'   => array(),
-		'applied'       => array(),
-		'total'         => 0,
-		'corrected'     => '',
-		'error'         => '',
-		'open'          => false,
-		'active'        => -1,
-		'recent'        => array(),
-		'inputId'       => $viglet_dumont_id,
-		'listId'        => $viglet_dumont_id . '-suggestions',
-		/* translators: %d: how many suggestions the search box offers. */
-		'optionsLabel'  => __( '%d suggestions. Use the up and down arrows to choose one.', 'viglet-dumont' ),
-		'drawerOpen'    => false,
-		'expanded'      => array(),
-		'filtersLabel0' => __( 'Filters', 'viglet-dumont' ),
-		/* translators: %d: how many filters are applied. */
-		'filtersLabelN' => __( 'Filters (%d)', 'viglet-dumont' ),
-		/* translators: %d: how many more values the facet has. */
-		'moreValues'    => __( 'Show %d more', 'viglet-dumont' ),
-		'fewerLabel'    => __( 'Show fewer', 'viglet-dumont' ),
-		'sort'          => $viglet_dumont_sort,
-		'perPage'       => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
-		'typeLabels'    => $viglet_dumont_types,
-		'homeUrl'       => home_url( '/' ),
-		/* translators: %d: how many results Turing found. */
-		'foundLabel'    => __( '%d results', 'viglet-dumont' ),
-		'noneLabel'     => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
-		'errorLabel'    => __( 'Search is unavailable right now.', 'viglet-dumont' ),
-	)
+$viglet_dumont_state = array(
+	'query'         => $viglet_dumont_query,
+	'status'        => 'idle',
+	'results'       => array(),
+	'facets'        => array(),
+	'pages'         => array(),
+	'suggestions'   => array(),
+	'applied'       => array(),
+	'total'         => 0,
+	'corrected'     => '',
+	'error'         => '',
+	'open'          => false,
+	'active'        => -1,
+	'recent'        => array(),
+	'inputId'       => $viglet_dumont_id,
+	'listId'        => $viglet_dumont_id . '-suggestions',
+	/* translators: %d: how many suggestions the search box offers. */
+	'optionsLabel'  => __( '%d suggestions. Use the up and down arrows to choose one.', 'viglet-dumont' ),
+	'drawerOpen'    => false,
+	'expanded'      => array(),
+	'filtersLabel0' => __( 'Filters', 'viglet-dumont' ),
+	/* translators: %d: how many filters are applied. */
+	'filtersLabelN' => __( 'Filters (%d)', 'viglet-dumont' ),
+	/* translators: %d: how many more values the facet has. */
+	'moreValues'    => __( 'Show %d more', 'viglet-dumont' ),
+	'fewerLabel'    => __( 'Show fewer', 'viglet-dumont' ),
+	'sort'          => $viglet_dumont_sort,
+	'perPage'       => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
+	'typeLabels'    => $viglet_dumont_types,
+	'homeUrl'       => home_url( '/' ),
+	/* translators: %d: how many results Turing found. */
+	'foundLabel'    => __( '%d results', 'viglet-dumont' ),
+	'noneLabel'     => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
+	'errorLabel'    => __( 'Search is unavailable right now.', 'viglet-dumont' ),
 );
+
+// In the block editor the script does not run: draw Turing's answer to * on the server instead,
+// through the same markup.
+if ( Viglet_Dumont_Native_Search::is_editor_preview() ) {
+	$viglet_dumont_state = array_merge(
+		$viglet_dumont_state,
+		( new Viglet_Dumont_Native_Search() )->preview_state( $viglet_dumont_state['perPage'], $viglet_dumont_state )
+	);
+}
+
+wp_interactivity_state( 'viglet-dumont/search', $viglet_dumont_state );
 
 // The layout the block's settings chose, as modifier classes style.css reads.
 $viglet_dumont_show    = static fn ( string $part ): bool => (bool) ( $attributes[ $part ] ?? true );

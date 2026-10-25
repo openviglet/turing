@@ -1,5 +1,5 @@
 /**
- * The Turing search block in the editor: a placeholder with the block's settings (the box, the
+ * The Turing search block in the editor: a live preview (rendered on the server) with the block's settings (the box, the
  * filters and where they sit, the results' layout and parts, the sort, the page size).
  * The block renders on the server (render.php), so there is nothing to save.
  *
@@ -13,7 +13,9 @@
 	const el = wp.element.createElement;
 	const __ = wp.i18n.__;
 	const { useBlockProps, InspectorControls } = wp.blockEditor;
+	const ServerSideRender = wp.serverSideRender;
 	const {
+		Disabled,
 		PanelBody,
 		Placeholder,
 		SelectControl,
@@ -129,14 +131,21 @@
 					} )
 				)
 			),
-			el( Placeholder, {
-				icon: 'search',
-				label: __( 'Turing search', 'viglet-dumont' ),
-				instructions: __(
-					'A search box with suggestions, filters and results from Turing. It shows live on the published page.',
-					'viglet-dumont'
-				),
-			} )
+			// What visitors get: the block rendered on the server with Turing's answer to "*",
+			// in the chosen layout and style. Disabled, so a click selects the block.
+			el(
+				Disabled,
+				null,
+				el( ServerSideRender, {
+					block: 'viglet-dumont/search',
+					attributes,
+					LoadingResponsePlaceholder: () =>
+						el( Placeholder, {
+							icon: 'search',
+							label: __( 'Turing search', 'viglet-dumont' ),
+						} ),
+				} )
+			)
 		);
 	}
 

@@ -1,5 +1,6 @@
-// The search block's settings, changed in the block editor and saved, shape the published
-// page: where the filters sit, list or grid, which parts each result shows, and its style.
+// The search block in the block editor: it previews Turing's real answer, and its settings,
+// changed and saved there, shape the published page: where the filters sit, list or grid,
+// which parts each result shows, and its style.
 import { wp } from '../global-setup.mjs';
 import { expect, test } from '../fixtures.mjs';
 
@@ -28,10 +29,16 @@ test( 'layout, parts and style chosen in the editor reach the published page', a
 		await guide.click();
 	}
 
-	await page
-		.frameLocator( 'iframe[name="editor-canvas"]' )
-		.locator( '[data-type="viglet-dumont/search"]' )
-		.click();
+	const canvas = page.frameLocator( 'iframe[name="editor-canvas"]' );
+	const inEditor = canvas.locator( '[data-type="viglet-dumont/search"]' );
+	// The editor previews what visitors get: Turing's answer, as cards.
+	await expect(
+		inEditor.locator( '.viglet-dumont-search__result' ).first()
+	).toBeVisible();
+	await expect(
+		inEditor.locator( '.viglet-dumont-search__summary' )
+	).toHaveText( /^\d+ results$/ );
+	await inEditor.click();
 	const settings = page.getByRole( 'button', {
 		name: 'Settings',
 		exact: true,
