@@ -135,6 +135,10 @@ function viglet_dumont_handle_save( int $post_id, WP_Post $post ): void {
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 		return;
 	}
+	// Opening the editor creates an auto-draft, which was never indexed and has nothing to remove.
+	if ( 'auto-draft' === $post->post_status ) {
+		return;
+	}
 
 	$settings = viglet_dumont_get_settings();
 	$indexer  = new Viglet_Dumont_Indexer( $settings );
