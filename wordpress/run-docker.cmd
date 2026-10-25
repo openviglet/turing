@@ -59,9 +59,6 @@ if errorlevel 1 (
     echo Installing WordPress...
     %WP% core install --url=http://localhost:%WP_PORT% --title="Viglet Dumont test" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
     %WP% plugin activate viglet-dumont || exit /b 1
-    %WP% option patch update viglet_dumont_settings server_url http://turing:2700
-    %WP% option patch update viglet_dumont_settings site_name "%SN_SITE%"
-    %WP% option patch update viglet_dumont_settings locale "%TURING_LOCALE%"
 ) else (
     %WP% plugin activate viglet-dumont >nul 2>&1
 )

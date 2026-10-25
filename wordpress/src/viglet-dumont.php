@@ -25,6 +25,7 @@ define( 'VIGLET_DUMONT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VIGLET_DUMONT_URL', plugin_dir_url( __FILE__ ) );
 define( 'VIGLET_DUMONT_OPTION', 'viglet_dumont_settings' );
 
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-settings.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-api-client.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-events.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
@@ -47,43 +48,19 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 }
 
 /**
- * Get plugin settings with defaults.
+ * The settings in effect: defaults, the stored option, then what the environment sets.
  */
 function viglet_dumont_get_settings(): array {
-	$defaults = array(
-		'server_url'          => 'http://localhost:2700',
-		'site_name'           => 'default',
-		'site_key'            => '',
-		'api_key'             => '',
-		'locale'              => 'en_US',
-		'source_app'          => 'wordpress',
-		'index_posts'         => 1,
-		'index_pages'         => 1,
-		'index_custom_types'  => array(),
-		'index_comments'      => 0,
-		'index_custom_fields' => '',
-		'index_categories'    => 1,
-		'index_tags'          => 1,
-		'exclude_ids'         => '',
-		'auto_index'          => 1,
-		'auto_deindex'        => 1,
-		'batch_size'          => 50,
-		'search_enabled'      => 1,
-		'results_per_page'    => 10,
-	);
-
-	$settings = get_option( VIGLET_DUMONT_OPTION, array() );
-
-	return wp_parse_args( $settings, $defaults );
+	return Viglet_Dumont_Settings::get();
 }
 
 /**
- * Update plugin settings.
+ * Store the settings; a value the environment sets is never written.
  *
  * @param array $settings The full settings array to store.
  */
 function viglet_dumont_update_settings( array $settings ): bool {
-	return update_option( VIGLET_DUMONT_OPTION, $settings );
+	return Viglet_Dumont_Settings::update( $settings );
 }
 
 /**
@@ -224,8 +201,7 @@ function viglet_dumont_search_redirect(): void {
  * Plugin activation.
  */
 function viglet_dumont_activate(): void {
-	$settings = viglet_dumont_get_settings();
-	update_option( VIGLET_DUMONT_OPTION, $settings );
+	viglet_dumont_update_settings( viglet_dumont_get_settings() );
 }
 register_activation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_activate' );
 
@@ -510,6 +486,8 @@ function viglet_dumont_rest_get_connection(): WP_REST_Response {
 			'site_key'    => $settings['site_key'],
 			'has_api_key' => '' !== (string) $settings['api_key'],
 			'derived_key' => ( new Viglet_Dumont_Indexer( array_merge( $settings, array( 'site_key' => '' ) ) ) )->site_key(),
+			// Per setting, what sets it: constant, env or option. The first two are read-only here.
+			'sources'     => Viglet_Dumont_Settings::sources(),
 		),
 		200
 	);

@@ -241,7 +241,7 @@ class Viglet_Dumont_Operations {
 	/**
 	 * The connection, the SN site, published versus indexed documents per type, and the queue.
 	 *
-	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, provisioned: mixed} Per type, `published` is what WordPress publishes and `indexed` what Turing holds; null when it cannot say.
+	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed} Per type, `published` is what WordPress publishes and `indexed` what Turing holds; null when it cannot say.
 	 */
 	public function status(): array {
 		$types = array();
@@ -260,6 +260,7 @@ class Viglet_Dumont_Operations {
 			'queue'       => ( new Viglet_Dumont_Queue( $this->settings ) )->counts(),
 			'last_run'    => get_option( Viglet_Dumont_Queue::LAST_RUN_OPTION, null ),
 			'events'      => Viglet_Dumont_Events::all(),
+			'sources'     => Viglet_Dumont_Settings::sources(),
 			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
 		);
 	}

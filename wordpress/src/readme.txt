@@ -77,6 +77,11 @@ Navigation site and replaces the WordPress search page with Turing's results.
 * The Health page lists the last 50 events: posts sent or removed, fields sent, sweeps,
   each with its error when it failed.
 * Ships in Brazilian Portuguese (pt_BR), admin screens included.
+* The connection can come from wp-config.php constants or environment variables:
+  VIGLET_DUMONT_TURING_URL, VIGLET_DUMONT_TURING_SITE, VIGLET_DUMONT_TURING_API_KEY,
+  VIGLET_DUMONT_TURING_LOCALE, VIGLET_DUMONT_SITE_KEY and VIGLET_DUMONT_PUBLIC_URL. A value
+  set that way is read-only in the admin and never stored in the database.
+* The API key is no longer printed back into the settings form.
 * Requires WordPress 6.6: the admin screens are built with @wordpress/scripts, whose JSX
   runtime script ships with 6.6.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting

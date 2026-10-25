@@ -66,4 +66,8 @@
     <rule ref="WordPress.WP.CapitalPDangit">
         <exclude-pattern>tests/*</exclude-pattern>
     </rule>
+    <!-- SettingsTest sets the environment variables a container would, which is putenv(). -->
+    <rule ref="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
 </ruleset>

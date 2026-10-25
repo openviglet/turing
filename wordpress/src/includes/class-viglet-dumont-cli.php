@@ -43,6 +43,10 @@ class Viglet_Dumont_CLI {
 		WP_CLI::log( sprintf( __( 'Connection: %1$s. SN site: %2$s. Site key: %3$s.', 'viglet-dumont' ), $status['connection']['message'], $status['site_name'], $status['site_key'] ) );
 		/* translators: 1: jobs waiting, 2: jobs that stopped retrying. */
 		WP_CLI::log( sprintf( __( 'Queue: %1$d waiting, %2$d stopped retrying.', 'viglet-dumont' ), $status['queue']['pending'], $status['queue']['failed'] ) );
+		foreach ( $status['sources'] as $key => $source ) {
+			/* translators: 1: the setting, 2: constant, env or option, 3: the constant's or variable's name. */
+			WP_CLI::log( sprintf( __( 'Setting %1$s comes from %2$s (%3$s).', 'viglet-dumont' ), $key, $source['source'], $source['name'] ) );
+		}
 		if ( is_array( $status['provisioned'] ) && '' !== ( $status['provisioned']['error'] ?? '' ) ) {
 			/* translators: %s: why Turing refused the fields. */
 			WP_CLI::warning( sprintf( __( 'Fields not provisioned: %s', 'viglet-dumont' ), $status['provisioned']['error'] ) );

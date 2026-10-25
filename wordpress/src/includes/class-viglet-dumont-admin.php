@@ -117,8 +117,12 @@ class Viglet_Dumont_Admin {
 		$sanitized['server_url'] = esc_url_raw( $input['server_url'] ?? 'http://localhost:2700' );
 		$sanitized['site_name']  = sanitize_text_field( $input['site_name'] ?? 'default' );
 		$sanitized['site_key']   = Viglet_Dumont_Indexer::sanitize_site_key( (string) ( $input['site_key'] ?? '' ) );
-		$sanitized['api_key']    = sanitize_text_field( $input['api_key'] ?? '' );
+		// The key is never printed back into the form, so an empty field means "keep the stored one".
+		$stored                  = get_option( VIGLET_DUMONT_OPTION, array() );
+		$typed_key               = sanitize_text_field( $input['api_key'] ?? '' );
+		$sanitized['api_key']    = '' !== $typed_key ? $typed_key : (string) ( is_array( $stored ) ? ( $stored['api_key'] ?? '' ) : '' );
 		$sanitized['locale']     = sanitize_text_field( $input['locale'] ?? 'en_US' );
+		$sanitized['public_url'] = esc_url_raw( $input['public_url'] ?? '' );
 		// phpcs:ignore WordPress.WP.CapitalPDangit.MisspelledInText -- a source_apps value Turing matches on, not prose.
 		$sanitized['source_app']          = sanitize_text_field( $input['source_app'] ?? 'wordpress' );
 		$sanitized['index_posts']         = ! empty( $input['index_posts'] ) ? 1 : 0;
@@ -135,7 +139,7 @@ class Viglet_Dumont_Admin {
 		$sanitized['search_enabled']      = ! empty( $input['search_enabled'] ) ? 1 : 0;
 		$sanitized['results_per_page']    = max( 1, min( 100, (int) ( $input['results_per_page'] ?? 10 ) ) );
 
-		return $sanitized;
+		return Viglet_Dumont_Settings::without_overridden( $sanitized );
 	}
 
 	/**

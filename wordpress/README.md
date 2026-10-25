@@ -42,6 +42,25 @@ directory:
 
 **With WP-CLI**: `wp plugin install <zip URL> --activate`.
 
+## Configure from the environment
+
+A container deploy can set the connection without a wp-admin step. Each of these is read
+from a `wp-config.php` constant or, failing that, an environment variable of the same name;
+a value set either way wins over the settings page, shows there read-only, and is never
+written to `wp_options`, so the key stays out of database backups.
+
+| Name | Setting |
+|---|---|
+| `VIGLET_DUMONT_TURING_URL` | Turing's URL, as this server reaches it |
+| `VIGLET_DUMONT_TURING_SITE` | The SN site |
+| `VIGLET_DUMONT_TURING_API_KEY` | The API key |
+| `VIGLET_DUMONT_TURING_LOCALE` | The locale content is indexed in |
+| `VIGLET_DUMONT_SITE_KEY` | The site key that starts every document id |
+| `VIGLET_DUMONT_PUBLIC_URL` | Turing's URL as visitors' browsers reach it, when different |
+
+`wp dumont status` says where each value came from. The Docker stack below sets the first
+three this way.
+
 ## Develop
 
 PHP 8.1+ and Composer:

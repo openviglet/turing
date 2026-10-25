@@ -68,6 +68,12 @@ services:
       # inside the container. The cron service below runs due events instead, as a host
       # with a system cron does.
       WORDPRESS_CONFIG_EXTRA: define( 'DISABLE_WP_CRON', true );
+      # The plugin's connection, from the environment as a container deploy sets it (D151):
+      # read-only in the admin and never stored. The API key is minted on the first run and
+      # stored in the option instead, since it does not exist before Turing does.
+      VIGLET_DUMONT_TURING_URL: http://turing:2700
+      VIGLET_DUMONT_TURING_SITE: ${SN_SITE:-Sample}
+      VIGLET_DUMONT_TURING_LOCALE: ${TURING_LOCALE:-en_US}
     volumes:
       - wp:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont

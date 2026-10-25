@@ -121,6 +121,14 @@ function Setup() {
 	}
 
 	const set = ( key ) => ( value ) => setForm( { ...form, [ key ]: value } );
+	// A value set by wp-config.php or the environment is read-only here.
+	const locked = ( key ) =>
+		form.sources &&
+		form.sources[ key ] &&
+		form.sources[ key ].source !== 'option';
+	const lockedNames = Object.keys( form.sources || {} )
+		.filter( locked )
+		.map( ( key ) => form.sources[ key ].name );
 
 	return (
 		<Flex direction="column" gap={ 4 } style={ { maxWidth: 760 } }>
@@ -135,6 +143,18 @@ function Setup() {
 					<h2>{ __( '1. Connection', 'viglet-dumont' ) }</h2>
 				</CardHeader>
 				<CardBody>
+					{ lockedNames.length > 0 && (
+						<Notice status="info" isDismissible={ false }>
+							{ sprintf(
+								/* translators: %s: the constants or environment variables, comma-separated. */
+								__(
+									'Set outside WordPress, read-only here: %s.',
+									'viglet-dumont'
+								),
+								lockedNames.join( ', ' )
+							) }
+						</Notice>
+					) }
 					<TextControl
 						__nextHasNoMarginBottom
 						label={ __( 'Turing URL', 'viglet-dumont' ) }
@@ -144,6 +164,7 @@ function Setup() {
 						) }
 						type="url"
 						value={ form.server_url }
+						disabled={ locked( 'server_url' ) }
 						onChange={ set( 'server_url' ) }
 					/>
 					<TextControl
@@ -163,6 +184,7 @@ function Setup() {
 						type="password"
 						autoComplete="new-password"
 						value={ apiKey }
+						disabled={ locked( 'api_key' ) }
 						onChange={ setApiKey }
 					/>
 					<TextControl
@@ -173,6 +195,7 @@ function Setup() {
 							'viglet-dumont'
 						) }
 						value={ form.site_name }
+						disabled={ locked( 'site_name' ) }
 						onChange={ set( 'site_name' ) }
 					/>
 					<TextControl
@@ -183,6 +206,7 @@ function Setup() {
 							'viglet-dumont'
 						) }
 						value={ form.locale }
+						disabled={ locked( 'locale' ) }
 						onChange={ set( 'locale' ) }
 					/>
 					<TextControl
@@ -197,6 +221,7 @@ function Setup() {
 							form.derived_key
 						) }
 						value={ form.site_key }
+						disabled={ locked( 'site_key' ) }
 						onChange={ set( 'site_key' ) }
 					/>
 					<Button
