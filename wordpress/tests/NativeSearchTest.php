@@ -96,6 +96,34 @@ final class NativeSearchTest extends PluginTestCase {
 		$_GET = array();
 	}
 
+	public function test_the_overlay_sends_enter_to_the_chosen_page_then_the_block_page_then_wordpress_search(): void {
+		Functions\when( 'get_permalink' )->alias( static fn ( $id ) => "https://example.org/?page_id=$id" );
+		Functions\when( 'home_url' )->justReturn( 'https://example.org/' );
+		Functions\when( 'get_post_status' )->justReturn( 'publish' );
+		Functions\when( 'get_posts' )->justReturn( array( 7 ) );
+
+		$chosen = new Viglet_Dumont_Native_Search( $this->settings( array( 'search_page' => 12 ) ) );
+		$this->assertSame(
+			array(
+				'searchPage' => 'https://example.org/?page_id=12',
+				'queryParam' => 'q',
+			),
+			$chosen->search_page()
+		);
+
+		$found = new Viglet_Dumont_Native_Search( $this->settings( array( 'search_page' => 0 ) ) );
+		$this->assertSame( 'https://example.org/?page_id=7', $found->search_page()['searchPage'] );
+
+		Functions\when( 'get_posts' )->justReturn( array() );
+		$this->assertSame(
+			array(
+				'searchPage' => 'https://example.org/',
+				'queryParam' => 's',
+			),
+			$found->search_page()
+		);
+	}
+
 	public function test_the_public_config_carries_no_key_and_lists_the_facets(): void {
 		$options = array(
 			'viglet_dumont_mapping' => array(

@@ -122,6 +122,9 @@ function viglet_dumont_init(): void {
 		} else {
 			( new Viglet_Dumont_Native_Search( $settings ) )->register();
 		}
+		if ( $settings['instant_overlay'] ) {
+			( new Viglet_Dumont_Native_Search( $settings ) )->register_overlay();
+		}
 	}
 }
 add_action( 'init', 'viglet_dumont_init' );

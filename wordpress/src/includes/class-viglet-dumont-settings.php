@@ -59,6 +59,10 @@ class Viglet_Dumont_Settings {
 		// template: the plugin's own results page (classic themes, with facets).
 		'search_mode'         => 'theme',
 		'results_per_page'    => 10,
+		// With Turing search on: Ctrl/⌘+K and the theme's search box open an instant search.
+		'instant_overlay'     => 1,
+		// The full search page the overlay sends Enter to; 0 finds the page holding the block.
+		'search_page'         => 0,
 	);
 
 	/**

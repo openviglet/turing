@@ -139,6 +139,8 @@ class Viglet_Dumont_Admin {
 		$sanitized['search_enabled']      = ! empty( $input['search_enabled'] ) ? 1 : 0;
 		$sanitized['search_mode']         = 'template' === ( $input['search_mode'] ?? '' ) ? 'template' : 'theme';
 		$sanitized['results_per_page']    = max( 1, min( 100, (int) ( $input['results_per_page'] ?? 10 ) ) );
+		$sanitized['instant_overlay']     = ! empty( $input['instant_overlay'] ) ? 1 : 0;
+		$sanitized['search_page']         = max( 0, (int) ( $input['search_page'] ?? 0 ) );
 
 		return Viglet_Dumont_Settings::without_overridden( $sanitized );
 	}

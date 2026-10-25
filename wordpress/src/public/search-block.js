@@ -660,7 +660,7 @@ function facets( answered, applied ) {
 		)
 		.filter( Boolean )
 		.map( ( facet ) => {
-			const items = facet.items.map( ( i ) => {
+			const items = byLabelWithinCount( facet.items ).map( ( i ) => {
 				const selected =
 					i.selected || applied.includes( i.filterQuery );
 				return {
@@ -686,6 +686,29 @@ function facets( answered, applied ) {
 				selectedCount: items.filter( ( item ) => item.selected ).length,
 			};
 		} );
+}
+
+/**
+ * Turing's order, with each run of values that share a count put in label order: Turing
+ * leaves ties in no fixed order, so the same search would list them differently each time.
+ *
+ * @param {Object[]} items A facet's items, in Turing's order.
+ */
+function byLabelWithinCount( items ) {
+	const runs = [];
+	for ( const item of items ) {
+		const last = runs[ runs.length - 1 ];
+		if ( last && last[ 0 ].count === item.count ) {
+			last.push( item );
+		} else {
+			runs.push( [ item ] );
+		}
+	}
+	return runs.flatMap( ( tie ) =>
+		tie.sort( ( a, b ) =>
+			String( a.label ).localeCompare( String( b.label ) )
+		)
+	);
 }
 
 /**

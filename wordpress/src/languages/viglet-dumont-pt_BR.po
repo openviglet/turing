@@ -37,6 +37,7 @@ msgstr "Indexação"
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/render.php:108
 #: src/blocks/search/render.php:134
+#: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: src/admin/js/editor-panel.js:67
 #: src/admin/js/search-block-editor.js:39
@@ -116,7 +117,7 @@ msgid "Source App Identifier"
 msgstr "Identificador da aplicação de origem"
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:393
+#: src/admin/views/settings-page.php:424
 msgid "Test Connection"
 msgstr "Testar conexão"
 
@@ -240,82 +241,85 @@ msgstr "Com a página do tema, o Turing ordena os resultados e o tema os mostra 
 msgid "Results Per Page"
 msgstr "Resultados por página"
 
-#: src/admin/views/settings-page.php:371
+#: src/admin/views/settings-page.php:402
 msgid "Save Settings"
 msgstr "Salvar configurações"
 
-#: src/admin/views/settings-page.php:379
+#: src/admin/views/settings-page.php:410
 msgid "Indexing Actions"
 msgstr "Ações de indexação"
 
-#: src/admin/views/settings-page.php:380
+#: src/admin/views/settings-page.php:411
 msgid "Manage your Turing search index."
 msgstr "Gerencie o seu índice de busca no Turing."
 
-#: src/admin/views/settings-page.php:388
+#: src/admin/views/settings-page.php:419
 msgid "Connection Status"
 msgstr "Status da conexão"
 
-#: src/admin/views/settings-page.php:389
+#: src/admin/views/settings-page.php:420
 msgid "Test the connection to your Turing server."
 msgstr "Teste a conexão com o seu servidor Turing."
 
-#: src/admin/views/settings-page.php:405
+#: src/admin/views/settings-page.php:436
 msgid "Index All Content"
 msgstr "Indexar todo o conteúdo"
 
-#: src/admin/views/settings-page.php:406
+#: src/admin/views/settings-page.php:437
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
 
-#: src/admin/views/settings-page.php:411
+#: src/admin/views/settings-page.php:442
 msgid "All Content"
 msgstr "Todo o conteúdo"
 
-#: src/admin/views/settings-page.php:412
+#: src/admin/views/settings-page.php:443
 msgid "Posts Only"
 msgstr "Só posts"
 
-#: src/admin/views/settings-page.php:413
+#: src/admin/views/settings-page.php:444
 msgid "Pages Only"
 msgstr "Só páginas"
 
-#: src/admin/views/settings-page.php:417
+#: src/admin/views/settings-page.php:448
 msgid "Start Indexing"
 msgstr "Iniciar indexação"
 
-#: src/admin/views/settings-page.php:436
+#: src/admin/views/settings-page.php:467
 msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
-#: src/admin/views/settings-page.php:437
+#: src/admin/views/settings-page.php:468
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
-#: src/admin/views/settings-page.php:441
+#: src/admin/views/settings-page.php:472
 msgid "Delete All"
 msgstr "Excluir tudo"
 
-#: src/admin/views/settings-page.php:452
+#: src/admin/views/settings-page.php:483
 msgid "Content Overview"
 msgstr "Visão geral do conteúdo"
 
-#: src/admin/views/settings-page.php:456
+#: src/admin/views/settings-page.php:487
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:94
+#: src/includes/class-viglet-dumont-native-search.php:158
 #, php-format
 msgid "%d results"
 msgstr "%d resultados"
 
 #: src/blocks/search/render.php:95
+#: src/includes/class-viglet-dumont-native-search.php:159
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
 #: src/blocks/search/render.php:96
+#: src/includes/class-viglet-dumont-native-search.php:160
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
@@ -382,39 +386,39 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:187
+#: src/includes/class-viglet-dumont-admin.php:189
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:188
+#: src/includes/class-viglet-dumont-admin.php:190
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:189
+#: src/includes/class-viglet-dumont-admin.php:191
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:190
+#: src/includes/class-viglet-dumont-admin.php:192
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:191
+#: src/includes/class-viglet-dumont-admin.php:193
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:192
+#: src/includes/class-viglet-dumont-admin.php:194
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:193
+#: src/includes/class-viglet-dumont-admin.php:195
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:194
+#: src/includes/class-viglet-dumont-admin.php:196
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:212
+#: src/includes/class-viglet-dumont-admin.php:214
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -768,11 +772,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:574
+#: src/viglet-dumont.php:577
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:599
+#: src/viglet-dumont.php:602
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1155,7 +1159,7 @@ msgstr "facetas"
 msgid "Suggestions"
 msgstr "Sugestões"
 
-#: src/admin/views/settings-page.php:409
+#: src/admin/views/settings-page.php:440
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
@@ -1228,3 +1232,51 @@ msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 #: src/admin/js/search-block-editor.js:61
 msgid "Results per page"
 msgstr "Resultados por página"
+
+#: src/admin/views/settings-page.php:375
+msgid "Instant search from anywhere"
+msgstr "Busca instantânea de qualquer página"
+
+#: src/admin/views/settings-page.php:376
+msgid "Ctrl+K (⌘K on a Mac) and the theme's own search box open a search that answers as the visitor types."
+msgstr "Ctrl+K (⌘K no Mac) e a caixa de busca do próprio tema abrem uma busca que responde enquanto o visitante digita."
+
+#: src/admin/views/settings-page.php:382
+msgid "Full search page"
+msgstr "Página de busca completa"
+
+#: src/admin/views/settings-page.php:389
+msgid "Automatic: the page with the Turing search block"
+msgstr "Automática: a página com o bloco de busca do Turing"
+
+#: src/admin/views/settings-page.php:394
+msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
+msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
+
+#: src/includes/class-viglet-dumont-native-search.php:152
+msgid "Search this site"
+msgstr "Buscar neste site"
+
+#: src/includes/class-viglet-dumont-native-search.php:154
+msgid "Close"
+msgstr "Fechar"
+
+#: src/includes/class-viglet-dumont-native-search.php:155
+msgid "Results"
+msgstr "Resultados"
+
+#: src/includes/class-viglet-dumont-native-search.php:156
+msgid "Searching…"
+msgstr "Buscando…"
+
+#: src/includes/class-viglet-dumont-native-search.php:161
+msgid "See all results"
+msgstr "Ver todos os resultados"
+
+#: src/includes/class-viglet-dumont-native-search.php:162
+msgid "Enter: all results · Up and Down: choose one · Esc: close"
+msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
+
+#: src/includes/class-viglet-dumont-native-search.php:163
+msgid "Search (Ctrl+K)"
+msgstr "Buscar (Ctrl+K)"

@@ -6,11 +6,11 @@
  * - twelve posts dated 1 to 12 January 2026, with a `seats` meta (20 or 40), four of them
  *   titled "Workshop on ..."
  *   (one post, "Only on the second site", with the argument `second`);
- * - a page "Busca" holding the Turing search block;
+ * - a page "Busca" holding the Turing search block, and "Header search" holding core's;
  * - the `seats` field mapped as an INT facet and `topic` (the title's last word, twelve
  *   values) as a STRING facet, and search answered by Turing.
  *
- * Prints JSON: { searchPageId, postId } for the specs.
+ * Prints JSON: { searchPageId, corePageId, postId } for the specs.
  *
  * @package Viglet_Dumont
  */
@@ -67,6 +67,18 @@ $page_id = $page ? $page->ID : (int) wp_insert_post(
 	)
 );
 
+// A page with the theme's own Search block, which the instant-search overlay takes over.
+$core    = get_page_by_path( 'header-search' );
+$core_id = $core ? $core->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'header-search',
+		'post_title'   => 'Header search',
+		'post_status'  => 'publish',
+		'post_content' => '<!-- wp:search {"label":"Search","buttonText":"Search"} /-->',
+	)
+);
+
 update_option(
 	'viglet_dumont_mapping',
 	array(
@@ -105,6 +117,7 @@ update_option( 'viglet_dumont_settings', $settings );
 echo wp_json_encode(
 	array(
 		'searchPageId' => $page_id,
+		'corePageId'   => $core_id,
 		'postId'       => $post_id,
 	)
 );

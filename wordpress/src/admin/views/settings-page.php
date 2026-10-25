@@ -362,6 +362,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 									value="<?php echo esc_attr( $settings['results_per_page'] ); ?>"
 									min="1" max="100" />
 						</div>
+
+						<hr class="viglet-dumont-separator" />
+
+						<div class="viglet-dumont-toggles">
+							<label class="viglet-dumont-toggle">
+								<input type="checkbox"
+										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[instant_overlay]"
+										value="1" <?php checked( $settings['instant_overlay'], 1 ); ?> />
+								<span class="viglet-dumont-toggle__slider"></span>
+								<span class="viglet-dumont-toggle__label">
+									<?php esc_html_e( 'Instant search from anywhere', 'viglet-dumont' ); ?>
+									<small><?php esc_html_e( 'Ctrl+K (⌘K on a Mac) and the theme\'s own search box open a search that answers as the visitor types.', 'viglet-dumont' ); ?></small>
+								</span>
+							</label>
+						</div>
+
+						<div class="viglet-dumont-field">
+							<label for="search_page"><?php esc_html_e( 'Full search page', 'viglet-dumont' ); ?></label>
+							<?php
+							wp_dropdown_pages(
+								array(
+									'id'                => 'search_page',
+									'name'              => esc_attr( VIGLET_DUMONT_OPTION ) . '[search_page]',
+									'selected'          => (int) $settings['search_page'],
+									'show_option_none'  => esc_html__( 'Automatic: the page with the Turing search block', 'viglet-dumont' ),
+									'option_none_value' => '0',
+								)
+							);
+							?>
+							<p class="description"><?php esc_html_e( 'Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme\'s search page answers.', 'viglet-dumont' ); ?></p>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T15:54:41+00:00\n"
+"POT-Creation-Date: 2026-10-25T16:22:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -35,6 +35,7 @@ msgstr ""
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/render.php:108
 #: src/blocks/search/render.php:134
+#: src/includes/class-viglet-dumont-native-search.php:153
 #: src/includes/class-viglet-dumont-post-state.php:96
 #: src/admin/js/editor-panel.js:67
 #: src/admin/js/search-block-editor.js:39
@@ -114,7 +115,7 @@ msgid "Source App Identifier"
 msgstr ""
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:393
+#: src/admin/views/settings-page.php:424
 msgid "Test Connection"
 msgstr ""
 
@@ -238,71 +239,91 @@ msgstr ""
 msgid "Results Per Page"
 msgstr ""
 
-#: src/admin/views/settings-page.php:371
-msgid "Save Settings"
+#: src/admin/views/settings-page.php:375
+msgid "Instant search from anywhere"
 msgstr ""
 
-#: src/admin/views/settings-page.php:379
-msgid "Indexing Actions"
+#: src/admin/views/settings-page.php:376
+msgid "Ctrl+K (⌘K on a Mac) and the theme's own search box open a search that answers as the visitor types."
 msgstr ""
 
-#: src/admin/views/settings-page.php:380
-msgid "Manage your Turing search index."
-msgstr ""
-
-#: src/admin/views/settings-page.php:388
-msgid "Connection Status"
+#: src/admin/views/settings-page.php:382
+msgid "Full search page"
 msgstr ""
 
 #: src/admin/views/settings-page.php:389
-msgid "Test the connection to your Turing server."
+msgid "Automatic: the page with the Turing search block"
 msgstr ""
 
-#: src/admin/views/settings-page.php:405
-msgid "Index All Content"
+#: src/admin/views/settings-page.php:394
+msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
 msgstr ""
 
-#: src/admin/views/settings-page.php:406
-msgid "Send all published content to the Turing index. This may take a while for large sites."
+#: src/admin/views/settings-page.php:402
+msgid "Save Settings"
 msgstr ""
 
-#: src/admin/views/settings-page.php:409
-msgid "Content to index"
+#: src/admin/views/settings-page.php:410
+msgid "Indexing Actions"
 msgstr ""
 
 #: src/admin/views/settings-page.php:411
-msgid "All Content"
+msgid "Manage your Turing search index."
 msgstr ""
 
-#: src/admin/views/settings-page.php:412
-msgid "Posts Only"
+#: src/admin/views/settings-page.php:419
+msgid "Connection Status"
 msgstr ""
 
-#: src/admin/views/settings-page.php:413
-msgid "Pages Only"
-msgstr ""
-
-#: src/admin/views/settings-page.php:417
-msgid "Start Indexing"
+#: src/admin/views/settings-page.php:420
+msgid "Test the connection to your Turing server."
 msgstr ""
 
 #: src/admin/views/settings-page.php:436
-msgid "Delete All Indexed Content"
+msgid "Index All Content"
 msgstr ""
 
 #: src/admin/views/settings-page.php:437
+msgid "Send all published content to the Turing index. This may take a while for large sites."
+msgstr ""
+
+#: src/admin/views/settings-page.php:440
+msgid "Content to index"
+msgstr ""
+
+#: src/admin/views/settings-page.php:442
+msgid "All Content"
+msgstr ""
+
+#: src/admin/views/settings-page.php:443
+msgid "Posts Only"
+msgstr ""
+
+#: src/admin/views/settings-page.php:444
+msgid "Pages Only"
+msgstr ""
+
+#: src/admin/views/settings-page.php:448
+msgid "Start Indexing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:467
+msgid "Delete All Indexed Content"
+msgstr ""
+
+#: src/admin/views/settings-page.php:468
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr ""
 
-#: src/admin/views/settings-page.php:441
+#: src/admin/views/settings-page.php:472
 msgid "Delete All"
 msgstr ""
 
-#: src/admin/views/settings-page.php:452
+#: src/admin/views/settings-page.php:483
 msgid "Content Overview"
 msgstr ""
 
-#: src/admin/views/settings-page.php:456
+#: src/admin/views/settings-page.php:487
 msgid "Loading stats..."
 msgstr ""
 
@@ -347,16 +368,19 @@ msgstr ""
 
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:94
+#: src/includes/class-viglet-dumont-native-search.php:158
 #, php-format
 msgid "%d results"
 msgstr ""
 
 #: src/blocks/search/render.php:95
+#: src/includes/class-viglet-dumont-native-search.php:159
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
 #: src/blocks/search/render.php:96
+#: src/includes/class-viglet-dumont-native-search.php:160
 msgid "Search is unavailable right now."
 msgstr ""
 
@@ -450,39 +474,39 @@ msgstr ""
 msgid "Health"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:187
+#: src/includes/class-viglet-dumont-admin.php:189
 msgid "Indexing..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:188
+#: src/includes/class-viglet-dumont-admin.php:190
 msgid "Complete!"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:189
+#: src/includes/class-viglet-dumont-admin.php:191
 msgid "Error"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:190
+#: src/includes/class-viglet-dumont-admin.php:192
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:191
+#: src/includes/class-viglet-dumont-admin.php:193
 msgid "Deleting..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:192
+#: src/includes/class-viglet-dumont-admin.php:194
 msgid "All indexed content has been deleted."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:193
+#: src/includes/class-viglet-dumont-admin.php:195
 msgid "Testing connection..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:194
+#: src/includes/class-viglet-dumont-admin.php:196
 msgid "Total"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:212
+#: src/includes/class-viglet-dumont-admin.php:214
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr ""
 
@@ -761,6 +785,34 @@ msgstr ""
 msgid "Featured image URL"
 msgstr ""
 
+#: src/includes/class-viglet-dumont-native-search.php:152
+msgid "Search this site"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:154
+msgid "Close"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:155
+msgid "Results"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:156
+msgid "Searching…"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:161
+msgid "See all results"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:162
+msgid "Enter: all results · Up and Down: choose one · Esc: close"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:163
+msgid "Search (Ctrl+K)"
+msgstr ""
+
 #. translators: 1: posts sent, 2: posts that failed.
 #: src/includes/class-viglet-dumont-operations.php:127
 #, php-format
@@ -836,11 +888,11 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:574
+#: src/viglet-dumont.php:577
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:599
+#: src/viglet-dumont.php:602
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 

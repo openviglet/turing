@@ -119,6 +119,103 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
+	 * The instant-search overlay (public/overlay.js): Ctrl/⌘+K anywhere on the site, and the
+	 * theme's own Search block, open a search that answers as the visitor types. Enter takes
+	 * the query to the full search page.
+	 */
+	public function register_overlay(): void {
+		if ( ! file_exists( VIGLET_DUMONT_DIR . 'admin/build/turing-sdk.asset.php' ) ) {
+			return;
+		}
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_overlay' ) );
+		add_filter( 'render_block_core/search', array( self::class, 'mark_search_form' ) );
+	}
+
+	/**
+	 * Load the overlay on every front-end page, with its labels and where Enter goes.
+	 */
+	public function enqueue_overlay(): void {
+		wp_register_script_module(
+			'viglet-dumont/overlay',
+			VIGLET_DUMONT_URL . 'public/overlay.js',
+			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
+			VIGLET_DUMONT_VERSION
+		);
+		wp_enqueue_script_module( 'viglet-dumont/overlay' );
+		wp_enqueue_style( 'viglet-dumont-overlay', VIGLET_DUMONT_URL . 'public/overlay.css', array(), VIGLET_DUMONT_VERSION );
+		wp_interactivity_config(
+			'viglet-dumont/overlay',
+			array_merge(
+				$this->search_page(),
+				array(
+					'labels' => array(
+						'title'    => __( 'Search this site', 'viglet-dumont' ),
+						'search'   => __( 'Search', 'viglet-dumont' ),
+						'close'    => __( 'Close', 'viglet-dumont' ),
+						'results'  => __( 'Results', 'viglet-dumont' ),
+						'loading'  => __( 'Searching…', 'viglet-dumont' ),
+						/* translators: %d: how many results Turing found. */
+						'found'    => __( '%d results', 'viglet-dumont' ),
+						'none'     => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
+						'error'    => __( 'Search is unavailable right now.', 'viglet-dumont' ),
+						'all'      => __( 'See all results', 'viglet-dumont' ),
+						'hint'     => __( 'Enter: all results · Up and Down: choose one · Esc: close', 'viglet-dumont' ),
+						'shortcut' => __( 'Search (Ctrl+K)', 'viglet-dumont' ),
+					),
+				)
+			)
+		);
+	}
+
+	/**
+	 * Where the overlay sends a query: the chosen page, else the first published page holding
+	 * the Turing search block (it reads `q`), else the theme's search page (`s`).
+	 *
+	 * @return array{searchPage: string, queryParam: string}
+	 */
+	public function search_page(): array {
+		$page_id = (int) ( $this->settings['search_page'] ?? 0 );
+		if ( $page_id <= 0 || 'publish' !== get_post_status( $page_id ) ) {
+			$found   = get_posts(
+				array(
+					'post_type'   => 'page',
+					'post_status' => 'publish',
+					'numberposts' => 1,
+					'fields'      => 'ids',
+					// The block's comment delimiter, as one term (a search splits on spaces).
+					's'           => 'wp:viglet-dumont/search',
+				)
+			);
+			$page_id = $found ? (int) $found[0] : 0;
+		}
+
+		return $page_id > 0
+			? array(
+				'searchPage' => (string) get_permalink( $page_id ),
+				'queryParam' => 'q',
+			)
+			: array(
+				'searchPage' => home_url( '/' ),
+				'queryParam' => 's',
+			);
+	}
+
+	/**
+	 * Mark the theme's Search block form so the overlay opens from it (`render_block_core/search`).
+	 *
+	 * @param string $html The block's markup.
+	 * @return string The markup, its form carrying `data-viglet-dumont-overlay`.
+	 */
+	public static function mark_search_form( string $html ): string {
+		$tags = new WP_HTML_Tag_Processor( $html );
+		if ( $tags->next_tag( array( 'tag_name' => 'form' ) ) ) {
+			$tags->set_attribute( 'data-viglet-dumont-overlay', '' );
+		}
+
+		return $tags->get_updated_html();
+	}
+
+	/**
 	 * Hand the public config to the modules (read there with getConfig( 'viglet-dumont' )).
 	 * It is printed only on a page that loads the Interactivity API.
 	 */

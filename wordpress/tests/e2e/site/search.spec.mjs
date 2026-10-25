@@ -1,7 +1,9 @@
 // The visitor's side: the Turing search block, and the theme's own search page answered by
-// Turing. Anonymous: no stored session. Runs at desktop, tablet and phone (playwright.config.mjs);
-// every state is checked by axe and compared with its stored screenshot. The site-classic and
-// site-ollie projects run it again under a classic and a third-party block theme.
+// Turing. Anonymous: no stored session. Runs at desktop, tablet and phone
+// (playwright.config.mjs); every state is checked by axe and compared with its stored
+// screenshot. The site-classic and site-ollie projects run it again under a classic and a
+// third-party block theme. A test that compares a screenshot pins the order with
+// sort=oldest: Turing leaves equally relevant results in no fixed order.
 import { expect, test } from '../fixtures.mjs';
 
 const block = ( page ) => page.locator( '.viglet-dumont-search' );
@@ -41,7 +43,9 @@ test( "the block answers a query with this site's results, as plain text", async
 	look,
 	axe,
 } ) => {
-	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await page.goto(
+		`/?page_id=${ seed.searchPageId }&q=workshop&sort=oldest`
+	);
 	await expect( summary( page ) ).toHaveText( '4 results' );
 	await expect( results( page ) ).toHaveCount( 4 );
 	await expect( results( page ).first().locator( 'a' ) ).not.toContainText(
@@ -60,7 +64,9 @@ test( 'a facet narrows the results, shows as a removable filter, and removing it
 	look,
 	axe,
 } ) => {
-	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await page.goto(
+		`/?page_id=${ seed.searchPageId }&q=workshop&sort=oldest`
+	);
 	await expect( summary( page ) ).toHaveText( '4 results' );
 
 	await openFilters( page );
