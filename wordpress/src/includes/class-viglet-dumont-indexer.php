@@ -167,6 +167,9 @@ class Viglet_Dumont_Indexer {
 		if ( $query->have_posts() ) {
 			foreach ( $query->posts as $post ) {
 				$job_items[] = $this->build_create_item( $post );
+				// Index All is also the migration: the copy indexed under the id used before the
+				// site key (D148) goes in the same call. Deleting an id that is not there is a no-op.
+				$job_items[] = $this->client->build_delete_item( $this->legacy_doc_id( $post->ID ) );
 			}
 
 			if ( ! empty( $job_items ) ) {
@@ -188,12 +191,13 @@ class Viglet_Dumont_Indexer {
 			);
 		}
 
-		$new_offset = $offset + count( $job_items );
+		$indexed    = count( $query->posts );
+		$new_offset = $offset + $indexed;
 		$done       = $new_offset >= $total;
 		$percent    = $total > 0 ? round( ( $new_offset / $total ) * 100, 1 ) : 100;
 
 		return array(
-			'indexed' => count( $job_items ),
+			'indexed' => $indexed,
 			'total'   => $total,
 			'offset'  => $new_offset,
 			'done'    => $done,
@@ -207,23 +211,92 @@ class Viglet_Dumont_Indexer {
 	}
 
 	/**
-	 * Delete all indexed WordPress content from Turing.
+	 * Delete this site's documents from Turing, and only this site's: the ones whose
+	 * `site_key` is this site key, so other sites sharing the SN site keep theirs.
+	 *
+	 * Turing's import deletes by id or by type and by nothing else, so the ids are listed
+	 * through search (`fq[]=site_key:<key>`) and removed by id until Turing deletes by field
+	 * (T1112). Documents indexed before the
+	 * site key carry no `site_key` and are not found here; Index All removes those.
 	 */
 	public function delete_all(): bool {
-		$job_item = array(
-			'locale'         => $this->settings['locale'] ?? 'en_US',
-			'turSNJobAction' => 'DELETE',
-			'siteNames'      => array( $this->settings['site_name'] ),
-			'attributes'     => array(
-				'id'          => '*',
-				'type'        => '*',
-				'source_apps' => $this->settings['source_app'] ?? 'wordpress',
-			),
-		);
+		$this->provision();
+		$ids = $this->list_site_ids();
+		if ( null === $ids ) {
+			return false;
+		}
 
-		$result = $this->client->deindex( array( $job_item ) );
+		$batch_size = max( 1, (int) $this->settings['batch_size'] );
+		foreach ( array_chunk( $ids, $batch_size ) as $chunk ) {
+			$items  = array_map( array( $this->client, 'build_delete_item' ), $chunk );
+			$result = $this->client->deindex( $items );
+			if ( ! $result['success'] ) {
+				return false;
+			}
+		}
 
-		return $result['success'];
+		return true;
+	}
+
+	/**
+	 * Every document id Turing holds under this site key, or null when the search failed.
+	 *
+	 * @return array<int, string>|null
+	 */
+	private function list_site_ids(): ?array {
+		$rows = 100;
+		$ids  = array();
+
+		// A ceiling, not a limit anyone should meet: 1000 pages of 100 is a site of 100k documents.
+		for ( $page = 1; $page <= 1000; $page++ ) {
+			$response = $this->client->search( '*', $page, $rows, array( 'fq[]' => 'site_key:' . $this->site_key() ) );
+			if ( is_wp_error( $response ) ) {
+				return null;
+			}
+
+			$documents = $response['results']['document'] ?? array();
+			foreach ( $documents as $document ) {
+				if ( isset( $document['fields']['id'] ) ) {
+					$ids[] = (string) $document['fields']['id'];
+				}
+			}
+
+			$total = (int) ( $response['results']['queryContext']['count'] ?? 0 );
+			if ( count( $documents ) < $rows || count( $ids ) >= $total ) {
+				break;
+			}
+		}
+
+		return array_values( array_unique( $ids ) );
+	}
+
+	/**
+	 * The key that starts every document id and fills the `site_key` field: the configured
+	 * one, or this site's host and path (so each site of a multisite network has its own).
+	 */
+	public function site_key(): string {
+		$configured = self::sanitize_site_key( (string) ( $this->settings['site_key'] ?? '' ) );
+		if ( '' !== $configured ) {
+			return $configured;
+		}
+
+		$home = wp_parse_url( home_url() );
+		$key  = self::sanitize_site_key( ( $home['host'] ?? '' ) . ( $home['path'] ?? '' ) );
+
+		return '' !== $key ? $key : 'WordPress';
+	}
+
+	/**
+	 * A site key as ids and filter queries can carry it: lower case letters, digits, dots,
+	 * dashes and underscores, anything else turned into a dash.
+	 *
+	 * @param string $key The key as typed or derived.
+	 */
+	public static function sanitize_site_key( string $key ): string {
+		$key = strtolower( trim( $key ) );
+		$key = (string) preg_replace( '/[^a-z0-9._-]+/', '-', $key );
+
+		return trim( $key, '-.' );
 	}
 
 	/**
@@ -241,6 +314,7 @@ class Viglet_Dumont_Indexer {
 
 		$attributes = array(
 			'id'                => $this->build_doc_id( $post->ID ),
+			'site_key'          => $this->site_key(),
 			'title'             => $post->post_title,
 			'text'              => $content,
 			'abstract'          => wp_trim_words( $content, 55, '...' ),
@@ -341,11 +415,20 @@ class Viglet_Dumont_Indexer {
 	}
 
 	/**
-	 * Build a unique document ID for Turing.
+	 * The document id: `<site key>:post:<post ID>`, unique across every site sharing the SN site.
 	 *
 	 * @param int $post_id The post.
 	 */
 	private function build_doc_id( int $post_id ): string {
+		return $this->site_key() . ':post:' . $post_id;
+	}
+
+	/**
+	 * The id a post was indexed under before the site key, which Index All removes.
+	 *
+	 * @param int $post_id The post.
+	 */
+	private function legacy_doc_id( int $post_id ): string {
 		if ( is_multisite() ) {
 			return get_current_blog_id() . '-' . $post_id;
 		}

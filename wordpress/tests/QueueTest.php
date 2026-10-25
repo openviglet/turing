@@ -123,6 +123,13 @@ final class QueueTest extends PluginTestCase {
 		);
 		Functions\when( 'wp_remote_request' )->alias(
 			function ( string $url, array $args ) {
+				// The manifest the worker provisions first is MappingTest's subject; here only imports count.
+				if ( str_ends_with( $url, '/api/sn/manifest' ) ) {
+					return array(
+						'response' => array( 'code' => 200 ),
+						'body'     => '',
+					);
+				}
 				$this->requests[] = array( $url, $args );
 				if ( $this->during_send ) {
 					( $this->during_send )();

@@ -50,6 +50,12 @@ Navigation site and replaces the WordPress search page with Turing's results.
   set stays out of the index.
 * Hidden UI text (screen-reader labels, `hidden` and `aria-hidden` elements, buttons, forms,
   inline SVG) is no longer indexed as body text.
+* Document ids are `<site key>:post:<ID>` and every document carries a `site_key` field, so
+  several WordPress sites can share one SN site. The key defaults to the site's host and path
+  and can be set in the settings. Run Index All once after upgrading: it also removes the
+  copy indexed under the old `wp-<ID>` id.
+* Delete All removes only this site key's documents. It used to send `id: *`, which Turing
+  reads as a document id and which removed nothing.
 * Index All stops and shows Turing's error when an import is refused, instead of reporting
   the batch as indexed.
 

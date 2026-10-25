@@ -260,6 +260,14 @@ final class MappingTest extends PluginTestCase {
 				'locales' => array( 'pt_BR' ),
 				'fields'  => array(
 					array(
+						'name'        => 'site_key',
+						'type'        => 'STRING',
+						'mandatory'   => false,
+						'multiValued' => false,
+						'facet'       => true,
+						'facetName'   => array( 'pt_BR' => 'Site' ),
+					),
+					array(
 						'name'         => 'area',
 						'type'         => 'STRING',
 						'mandatory'    => false,
@@ -293,7 +301,7 @@ final class MappingTest extends PluginTestCase {
 		$this->assertFalse( $second['sent'] );
 		$this->assertCount( 1, $this->requests );
 		$this->assertSame( 'https://turing.example.org/api/sn/manifest', $this->requests[0][0] );
-		$this->assertSame( 'seats', $this->body()['fields'][0]['name'] );
+		$this->assertSame( array( 'site_key', 'seats' ), array_column( $this->body()['fields'], 'name' ) );
 
 		$this->mapping()->provision( $client, true );
 		$this->assertCount( 2, $this->requests );
@@ -322,11 +330,11 @@ final class MappingTest extends PluginTestCase {
 		$this->assertCount( 2, $this->requests );
 	}
 
-	public function test_no_mapped_field_means_no_manifest_request(): void {
+	public function test_the_site_key_is_provisioned_even_with_no_mapped_field(): void {
 		$result = $this->mapping()->provision( new Viglet_Dumont_API_Client( $this->settings() ) );
 
-		$this->assertFalse( $result['sent'] );
-		$this->assertSame( array(), $this->requests );
+		$this->assertTrue( $result['sent'] );
+		$this->assertSame( array( 'site_key' ), array_column( $this->body()['fields'], 'name' ) );
 	}
 
 	public function test_an_excluded_type_or_post_is_not_indexed(): void {

@@ -86,6 +86,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 
 						<div class="viglet-dumont-field">
+							<label for="site_key"><?php esc_html_e( 'Site Key', 'viglet-dumont' ); ?></label>
+							<input type="text" id="site_key"
+									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[site_key]"
+									value="<?php echo esc_attr( $settings['site_key'] ); ?>"
+									class="regular-text"
+									placeholder="<?php echo esc_attr( ( new Viglet_Dumont_Indexer( array_merge( $settings, array( 'site_key' => '' ) ) ) )->site_key() ); ?>" />
+							<p class="description"><?php esc_html_e( 'Starts every document id and fills the site_key field, so several WordPress sites can share one SN site. Empty uses this site\'s address. Changing it needs an Index All.', 'viglet-dumont' ); ?></p>
+						</div>
+
+						<div class="viglet-dumont-field">
 							<label for="api_key"><?php esc_html_e( 'API Key', 'viglet-dumont' ); ?></label>
 							<input type="password" id="api_key"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[api_key]"

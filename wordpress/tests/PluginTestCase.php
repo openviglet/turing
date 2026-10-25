@@ -36,8 +36,11 @@ abstract class PluginTestCase extends TestCase {
 				'sanitize_text_field'               => static fn ( $text ) => trim( strip_tags( $text ) ),
 				// No stored mapping and no custom taxonomy: a post sends the fixed document only.
 				'get_option'                        => static fn ( $name, $fallback = false ) => $fallback,
+				'update_option'                     => true,
 				'get_object_taxonomies'             => array(),
 				'viglet_dumont_get_indexable_types' => array( 'post', 'page' ),
+				'home_url'                          => 'https://site.example.org',
+				'wp_parse_url'                      => static fn ( $url ) => parse_url( $url ),
 			)
 		);
 		Functions\when( 'wp_remote_request' )->alias(

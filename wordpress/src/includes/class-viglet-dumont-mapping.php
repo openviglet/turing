@@ -45,7 +45,7 @@ class Viglet_Dumont_Mapping {
 	private const CORE_SOURCES = array( 'excerpt', 'slug', 'menu_order', 'parent' );
 
 	/** Fields the indexer always sends; a mapping cannot take their names. */
-	private const RESERVED = array( 'id', 'title', 'text', 'abstract', 'url', 'type', 'author', 'publication_date', 'modification_date', 'site', 'image', 'categories', 'section', 'tags', 'comments', 'source_apps' );
+	private const RESERVED = array( 'id', 'title', 'text', 'abstract', 'url', 'type', 'author', 'publication_date', 'modification_date', 'site', 'image', 'categories', 'section', 'tags', 'comments', 'source_apps', 'site_key' );
 
 	/**
 	 * The plugin settings this mapping was built with.
@@ -165,12 +165,23 @@ class Viglet_Dumont_Mapping {
 	 * The manifest the mapped fields converge to, as `POST /api/sn/manifest` binds it.
 	 *
 	 * A field two post types declare differently is declared once, as the first type has it.
+	 * `site_key` is always declared: delete-all filters on it, and with several sites in one SN
+	 * site it is the facet that tells them apart.
 	 *
 	 * @return array{name: string, locales: array<int, string>, fields: array<int, array>}
 	 */
 	public function manifest(): array {
 		$locale = $this->settings['locale'] ?? 'en_US';
-		$fields = array();
+		$fields = array(
+			'site_key' => array(
+				'name'        => 'site_key',
+				'type'        => 'STRING',
+				'mandatory'   => false,
+				'multiValued' => false,
+				'facet'       => true,
+				'facetName'   => array( $locale => __( 'Site', 'viglet-dumont' ) ),
+			),
+		);
 
 		foreach ( $this->all() as $type_mapping ) {
 			if ( $type_mapping['exclude'] ) {

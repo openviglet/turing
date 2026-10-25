@@ -63,6 +63,7 @@ class Viglet_Dumont_Admin {
 
 		$sanitized['server_url'] = esc_url_raw( $input['server_url'] ?? 'http://localhost:2700' );
 		$sanitized['site_name']  = sanitize_text_field( $input['site_name'] ?? 'default' );
+		$sanitized['site_key']   = Viglet_Dumont_Indexer::sanitize_site_key( (string) ( $input['site_key'] ?? '' ) );
 		$sanitized['api_key']    = sanitize_text_field( $input['api_key'] ?? '' );
 		$sanitized['locale']     = sanitize_text_field( $input['locale'] ?? 'en_US' );
 		// phpcs:ignore WordPress.WP.CapitalPDangit.MisspelledInText -- a source_apps value Turing matches on, not prose.

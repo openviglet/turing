@@ -47,6 +47,7 @@ function viglet_dumont_get_settings(): array {
 	$defaults = array(
 		'server_url'          => 'http://localhost:2700',
 		'site_name'           => 'default',
+		'site_key'            => '',
 		'api_key'             => '',
 		'locale'              => 'en_US',
 		'source_app'          => 'wordpress',
