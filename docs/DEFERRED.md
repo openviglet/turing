@@ -15,3 +15,5 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
+## Block BV — The quality gate stops at the package boundary
+

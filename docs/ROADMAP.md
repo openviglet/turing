@@ -14,6 +14,10 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
+## Block BV — The quality gate stops at the package boundary
+
+- 📋 **T1141** (deps: —) **turing-app does not build at HEAD: a bento test fixture fails tsc -b, so the jar and the image fail too** — A test's type drift blocks every production build and image, and nothing caught it at the commit that changed the type. → §CLIII.1
+
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

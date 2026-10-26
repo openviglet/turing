@@ -29,6 +29,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CF — What the SN site manifest cannot declare
 
+## Block BV — The quality gate stops at the package boundary
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2233,3 +2235,36 @@ the neighbour and retrieval searches. Then:
   lexical half goes through search, which already applies the partition).
 
 Add each to `ENFORCED` and extend the contract test.
+
+## CLIII The quality gate stops at the package boundary
+
+### CLIII.1 A test fixture's type error breaks the production build (T1141)
+
+**Where it happened.** Dumont D164 (WordPress range facets) needed a `turing-ce:local`
+image carrying T1122, so it rebuilt Turing at HEAD `d81f678de5` the way
+`publish-docker.cmd` does: `mvnw.cmd clean install -DskipTests -Dmaven.test.skip=true
+-DskipITs -pl turing-app -am`.
+
+**What came back.** The `pnpm build:app` execution of `frontend-maven-plugin` failed;
+run directly, `pnpm run build` in `frontend/apps/turing-app` stops in `tsc -b`:
+
+    src/app/bento/token/__tests__/bento.token.instance.form.test.tsx(22,11):
+    error TS2739: Type '{ title: string; description: string; }' is missing the
+    following properties from type 'BentoIdentity': icon, enabled
+
+A test file's fixture fell behind a type that gained two required fields, and because
+`tsc -b` type-checks the tests, the production bundle, the jar and the image all fail
+with it. Maven's `-q` output names only "exited (2)", so the cause takes a second run to
+find.
+
+**Workaround used.** `pnpm exec vite build` (no type check) to write the SPA into
+`turing-app/src/main/resources/public/`, then Maven with `-Dskip.npm=true`, then `docker
+build -f Dockerfile.local -t turing-ce:local`. Nothing was changed in Turing.
+
+**What it should do.**
+- Fix the fixture (`icon`, `enabled`) so HEAD builds.
+- Make the gate that ran before this commit type-check the test files too, so a fixture
+  that drifts from its type fails the commit that changed the type, not the next image
+  build.
+- Done when `mvnw install -pl turing-app` succeeds at HEAD and a test fixture missing a
+  required field fails the frontend gate CI runs.
