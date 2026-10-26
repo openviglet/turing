@@ -81,17 +81,28 @@ if ( '<!-- wp:viglet-dumont/search /-->' !== get_post_field( 'post_content', $pa
 	);
 }
 
-// The search block with Turing's grounded answer turned on (answer.spec.mjs).
-$ask    = get_page_by_path( 'ask' );
-$ask_id = $ask ? $ask->ID : (int) wp_insert_post(
+// The search block with Turing's grounded answer and the filters a sentence names turned on
+// (answer.spec.mjs, refine.spec.mjs). Rewritten every run, so a stack seeded before a setting
+// existed gets it.
+$ask_content = '<!-- wp:viglet-dumont/search {"showAnswer":true,"suggestFilters":true} /-->';
+$ask         = get_page_by_path( 'ask' );
+$ask_id      = $ask ? $ask->ID : (int) wp_insert_post(
 	array(
 		'post_type'    => 'page',
 		'post_name'    => 'ask',
 		'post_title'   => 'Ask',
 		'post_status'  => 'publish',
-		'post_content' => '<!-- wp:viglet-dumont/search {"showAnswer":true} /-->',
+		'post_content' => $ask_content,
 	)
 );
+if ( $ask && $ask->post_content !== $ask_content ) {
+	wp_update_post(
+		array(
+			'ID'           => $ask_id,
+			'post_content' => $ask_content,
+		)
+	);
+}
 
 // The search block with its parts as inner blocks, the pages moved above the results
 // (parts.spec.mjs).

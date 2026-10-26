@@ -15,6 +15,7 @@
 		"viglet-dumont/search/showFacets",
 		"viglet-dumont/search/showSort",
 		"viglet-dumont/search/showAnswer",
+		"viglet-dumont/search/suggestFilters",
 		"viglet-dumont/search/showImage",
 		"viglet-dumont/search/showDate",
 		"viglet-dumont/search/showType",

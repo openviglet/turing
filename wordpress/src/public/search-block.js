@@ -31,6 +31,8 @@ let instant = null;
 let baseTitle = '';
 // A search the visitor settled on, reported once its answer arrives (see sync()).
 let settled = false;
+// The sentence last sent to Turing's nl-filters, so a late reading of an older one is dropped.
+let reading = '';
 
 // Each facet as Turing last described it unfiltered, by field (see facets()).
 const facetMemory = new Map();
@@ -131,6 +133,9 @@ const { state, actions } = store( 'viglet-dumont/search', {
 				state.answerSources.length > 0
 			);
 		},
+		get hasSuggested() {
+			return state.suggestEnabled && state.suggested.length > 0;
+		},
 		get answerStreaming() {
 			return 'loading' === state.answerStatus;
 		},
@@ -175,6 +180,9 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			state.query = event.target.value;
 			state.open = true;
 			state.active = -1;
+			// A reading of the previous sentence is not one of this one.
+			reading = '';
+			state.suggested = [];
 			window.clearTimeout( instant );
 			if ( state.query.trim().length > 1 ) {
 				autocomplete.fetch( state.query );
@@ -306,6 +314,27 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		removeFilter() {
 			const { filter } = getContext();
 			search.toggleFacet( filter.target );
+			writeUrl( true );
+			focusInput();
+		},
+		// The words Turing read as the filter leave the query, so they no longer match as text.
+		applySuggestion() {
+			const { suggestion } = getContext();
+			const fq = search.getState().request?.fq || [ siteFilter ];
+			state.suggested = state.suggested.filter(
+				( s ) => s.fq !== suggestion.fq
+			);
+			state.query = suggestion.q;
+			lastQuery = suggestion.q.trim() || '*';
+			settled = true;
+			state.corrected = '';
+			send( {
+				q: lastQuery,
+				fq: fq.includes( suggestion.fq )
+					? fq
+					: [ ...fq, suggestion.fq ],
+				page: 1,
+			} );
 			writeUrl( true );
 			focusInput();
 		},
@@ -461,6 +490,7 @@ function isQuestion( query ) {
  * @param {string} query What the visitor searched for.
  */
 function ask( query ) {
+	void suggestFilters( query );
 	if ( ! answerer ) {
 		return;
 	}
@@ -470,6 +500,140 @@ function ask( query ) {
 	} else {
 		answerer.reset();
 	}
+}
+
+// Words that name a period, in the languages the plugin ships (en, pt_BR).
+const dateWords =
+	/\b(\d{4}|today|yesterday|week|month|year|ago|since|last|hoje|ontem|semana|m[eê]s|ano|desde|passad[oa]|[uú]ltim[oa]s?)\b/iu;
+
+/**
+ * Whether a query reads as a sentence that may name filters rather than a lookup: a
+ * question, three words or more, or a word that names a period or a post type.
+ *
+ * @param {string} query What the visitor searched for.
+ */
+function readsAsSentence( query ) {
+	const words = query.toLowerCase().split( /\s+/ ).filter( Boolean );
+	const types = Object.values( state.typeLabels ).map( ( label ) =>
+		String( label ).toLowerCase()
+	);
+	return (
+		isQuestion( query ) ||
+		words.length >= 3 ||
+		dateWords.test( query ) ||
+		words.some(
+			( word ) =>
+				types.includes( word ) ||
+				types.includes( word.replace( /s$/, '' ) )
+		)
+	);
+}
+
+/**
+ * Ask Turing which filters a sentence names (nl-filters, D170) and offer them as chips: only
+ * the ones it checked against the site's values, on a field the visitor can filter by, and
+ * not already applied. Never while typing and never applied here: each reading is an LLM call,
+ * and a guess is the visitor's to take. The results do not wait for it.
+ *
+ * @param {string} query What the visitor searched for.
+ */
+async function suggestFilters( query ) {
+	const text = query.trim();
+	reading = text;
+	state.suggested = [];
+	if ( ! state.suggestEnabled || '*' === text || ! readsAsSentence( text ) ) {
+		return;
+	}
+	let answer;
+	try {
+		// The SDK's postNlFilters is not published yet; this is its request (T1085).
+		answer = await client.post(
+			`/sn/${ encodeURIComponent( config.site ) }/nl-filters`,
+			{ text, locale: config.locale },
+			{ csrf: false }
+		);
+	} catch {
+		// No reading is not an error the visitor needs to see.
+		return;
+	}
+	// No language model in Turing, or a newer search overtook this one.
+	if ( reading !== text || ! answer?.available ) {
+		return;
+	}
+	const grounded = new Set(
+		( answer.filters || [] )
+			.filter( ( filter ) => filter.grounded )
+			.map( ( filter ) => filter.field )
+	);
+	const applied = search.getState().request?.fq || [];
+	state.suggested = ( answer.fq || [] )
+		.filter( ( fq ) => {
+			const field = fq.split( ':' )[ 0 ];
+			return (
+				grounded.has( field ) &&
+				filterable( field ) &&
+				! applied.includes( fq )
+			);
+		} )
+		.map( ( fq ) => ( {
+			fq,
+			q: answer.q || '',
+			label: filterLabel( fq ),
+		} ) );
+}
+
+/**
+ * Whether the visitor can see a filter on this field: a facet the mapping declares, or one of
+ * the core fields the block names (type, publication date).
+ *
+ * @param {string} field A Turing field.
+ */
+function filterable( field ) {
+	return (
+		( config.facets || [] ).some( ( f ) => f.field === field ) ||
+		field in state.fieldLabels
+	);
+}
+
+/**
+ * A filter query as a chip reads it: "Seats: 40", "Type: Post", "Published: Jan 1, 2026 – Oct
+ * 26, 2026".
+ *
+ * @param {string} fq A filter query, `field:value`.
+ */
+function filterLabel( fq ) {
+	const [ field, ...rest ] = fq.split( ':' );
+	const value = rest.join( ':' ).replace( /^"|"$/g, '' );
+	return `${ facetLabel( field ) }: ${ readable( field, value ) }`;
+}
+
+/**
+ * A filter's value in words: a post type by its name, a range by its bounds, a date by the
+ * page's date format.
+ *
+ * @param {string} field A Turing field.
+ * @param {string} value The value, as the filter query spells it.
+ */
+function readable( field, value ) {
+	if ( 'type' === field ) {
+		return state.typeLabels[ value ] || value;
+	}
+	const range = value.match( /^[[{](\S+) TO (\S+)[\]}]$/ );
+	if ( ! range ) {
+		return value;
+	}
+	const bound = ( b ) => {
+		const at = /^\d{4}-\d{2}-\d{2}/.test( b ) ? new Date( b ) : null;
+		return at && ! isNaN( at ) ? boundFormat.format( at ) : b;
+	};
+	const [ , from, to ] = range;
+	if ( '*' === from ) {
+		return `≤ ${ bound( to ) }`;
+	}
+	if ( '*' === to ) {
+		return `≥ ${ bound( from ) }`;
+	}
+	return `${ bound( from ) } – ${ bound( to ) }`;
 }
 
 /**
@@ -663,6 +827,7 @@ async function suggestCorrection( query ) {
 function facetLabel( field ) {
 	return (
 		( config.facets || [] ).find( ( f ) => f.field === field )?.label ||
+		state.fieldLabels?.[ field ] ||
 		field
 	);
 }
@@ -718,6 +883,12 @@ function crumb( url ) {
 const dateFormat = new Intl.DateTimeFormat(
 	document.documentElement.lang || undefined,
 	{ dateStyle: 'medium' }
+);
+// A filter's date bound is a calendar day at midnight UTC: read in the visitor's own zone, it
+// would show the day before west of Greenwich.
+const boundFormat = new Intl.DateTimeFormat(
+	document.documentElement.lang || undefined,
+	{ dateStyle: 'medium', timeZone: 'UTC' }
 );
 
 /**
@@ -902,14 +1073,14 @@ function sync( s ) {
 	// applied filters come from the request: every filter but the site's own.
 	state.applied = ( s.request?.fq || [] )
 		.filter( ( fq ) => fq !== siteFilter )
-		.map( ( fq ) => {
-			const [ field, ...rest ] = fq.split( ':' );
-			const value = rest.join( ':' ).replace( /^"|"$/g, '' );
-			return {
-				label: `${ facetLabel( field ) }: ${ value }`,
-				target: { action: 'REMOVE', field, filterQuery: fq },
-			};
-		} );
+		.map( ( fq ) => ( {
+			label: filterLabel( fq ),
+			target: {
+				action: 'REMOVE',
+				field: fq.split( ':' )[ 0 ],
+				filterQuery: fq,
+			},
+		} ) );
 	state.pages = ( response?.pagination || [] )
 		.filter( ( p ) => 'PAGE' === p.type || 'CURRENT' === p.type )
 		.map( ( p ) => ( {

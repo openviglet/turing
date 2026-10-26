@@ -136,6 +136,28 @@
 	padding: 0.15rem 0.75rem;
 }
 
+/* The filters a sentence names (D170): offered, not applied, so drawn dashed. */
+.viglet-dumont-search__suggested {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 0 0 1rem;
+}
+
+.viglet-dumont-search__suggested ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.viglet-dumont-search__chip--suggested {
+	border-style: dashed;
+}
+
 .viglet-dumont-search__layout {
 	display: grid;
 	gap: 2rem;

@@ -36,54 +36,61 @@ foreach ( viglet_dumont_get_indexable_types() as $viglet_dumont_type ) {
 }
 
 $viglet_dumont_state = array(
-	'query'         => Viglet_Dumont_Search_Block::query(),
-	'status'        => 'idle',
-	'results'       => array(),
-	'spotlights'    => array(),
-	'facets'        => array(),
-	'pages'         => array(),
-	'suggestions'   => array(),
-	'applied'       => array(),
-	'total'         => 0,
-	'corrected'     => '',
-	'error'         => '',
-	'open'          => false,
-	'active'        => -1,
-	'recent'        => array(),
-	'inputId'       => $viglet_dumont_id,
-	'listId'        => $viglet_dumont_id . '-suggestions',
+	'query'          => Viglet_Dumont_Search_Block::query(),
+	'status'         => 'idle',
+	'results'        => array(),
+	'spotlights'     => array(),
+	'facets'         => array(),
+	'pages'          => array(),
+	'suggestions'    => array(),
+	'applied'        => array(),
+	'total'          => 0,
+	'corrected'      => '',
+	'error'          => '',
+	'open'           => false,
+	'active'         => -1,
+	'recent'         => array(),
+	'inputId'        => $viglet_dumont_id,
+	'listId'         => $viglet_dumont_id . '-suggestions',
 	// A count's forms for one and for more, which search-block.js picks between (D184).
-	'optionsLabels' => array(
+	'optionsLabels'  => array(
 		/* translators: %d: how many suggestions the search box offers. */
 		'one'   => _n( '%d suggestion. Use the up and down arrows to choose it.', '%d suggestions. Use the up and down arrows to choose one.', 1, 'viglet-dumont' ),
 		/* translators: %d: how many suggestions the search box offers. */
 		'other' => _n( '%d suggestion. Use the up and down arrows to choose it.', '%d suggestions. Use the up and down arrows to choose one.', 2, 'viglet-dumont' ),
 	),
-	'drawerOpen'    => false,
-	'expanded'      => array(),
-	'filtersLabel0' => __( 'Filters', 'viglet-dumont' ),
+	'drawerOpen'     => false,
+	'expanded'       => array(),
+	'filtersLabel0'  => __( 'Filters', 'viglet-dumont' ),
 	/* translators: %d: how many filters are applied. */
-	'filtersLabelN' => __( 'Filters (%d)', 'viglet-dumont' ),
+	'filtersLabelN'  => __( 'Filters (%d)', 'viglet-dumont' ),
 	/* translators: %d: how many more values the facet has. */
-	'moreValues'    => __( 'Show %d more', 'viglet-dumont' ),
-	'fewerLabel'    => __( 'Show fewer', 'viglet-dumont' ),
-	'answerEnabled' => ! empty( $attributes['showAnswer'] ),
-	'answer'        => '',
-	'answerSources' => array(),
-	'answerStatus'  => 'idle',
-	'answerRated'   => false,
-	'sort'          => Viglet_Dumont_Search_Block::sort(),
-	'perPage'       => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
-	'typeLabels'    => $viglet_dumont_types,
-	'homeUrl'       => home_url( '/' ),
-	'foundLabels'   => array(
+	'moreValues'     => __( 'Show %d more', 'viglet-dumont' ),
+	'fewerLabel'     => __( 'Show fewer', 'viglet-dumont' ),
+	'answerEnabled'  => ! empty( $attributes['showAnswer'] ),
+	'answer'         => '',
+	'answerSources'  => array(),
+	'answerStatus'   => 'idle',
+	'answerRated'    => false,
+	// The filters a sentence names (D170), and the names of the core fields they may filter.
+	'suggestEnabled' => ! empty( $attributes['suggestFilters'] ),
+	'suggested'      => array(),
+	'fieldLabels'    => array(
+		'type'             => __( 'Type', 'viglet-dumont' ),
+		'publication_date' => __( 'Published', 'viglet-dumont' ),
+	),
+	'sort'           => Viglet_Dumont_Search_Block::sort(),
+	'perPage'        => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
+	'typeLabels'     => $viglet_dumont_types,
+	'homeUrl'        => home_url( '/' ),
+	'foundLabels'    => array(
 		/* translators: %d: how many results Turing found. */
 		'one'   => _n( '%d result', '%d results', 1, 'viglet-dumont' ),
 		/* translators: %d: how many results Turing found. */
 		'other' => _n( '%d result', '%d results', 2, 'viglet-dumont' ),
 	),
-	'noneLabel'     => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
-	'errorLabel'    => __( 'Search is unavailable right now.', 'viglet-dumont' ),
+	'noneLabel'      => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
+	'errorLabel'     => __( 'Search is unavailable right now.', 'viglet-dumont' ),
 );
 
 // In the block editor the script does not run: draw Turing's answer to * on the server instead,
@@ -122,7 +129,7 @@ $viglet_dumont_classes = implode(
 	} else {
 		// The default order, with the filters and the results side by side.
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- the pieces escape their own output.
-		echo Viglet_Dumont_Search_Block::pieces( array( 'box', 'correction', 'toolbar', 'applied', 'toggle', 'answer' ), $attributes );
+		echo Viglet_Dumont_Search_Block::pieces( array( 'box', 'correction', 'toolbar', 'applied', 'suggested', 'toggle', 'answer' ), $attributes );
 		echo '<div class="viglet-dumont-search__layout">';
 		echo Viglet_Dumont_Search_Block::pieces( array( 'facets', 'main' ), $attributes );
 		echo '</div>';

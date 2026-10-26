@@ -139,6 +139,19 @@
 						onChange: ( showAnswer ) =>
 							setAttributes( { showAnswer } ),
 					} ),
+					el( ToggleControl, {
+						label: __(
+							'Suggest the filters a sentence names',
+							'viglet-dumont'
+						),
+						help: __(
+							'“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click.',
+							'viglet-dumont'
+						),
+						checked: attributes.suggestFilters,
+						onChange: ( suggestFilters ) =>
+							setAttributes( { suggestFilters } ),
+					} ),
 					el( SelectControl, {
 						label: __( 'Where the filters sit', 'viglet-dumont' ),
 						value: attributes.facetsPosition,

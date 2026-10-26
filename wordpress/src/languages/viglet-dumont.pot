@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-26T19:54:28+00:00\n"
+"POT-Creation-Date: 2026-10-26T20:45:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -467,6 +467,14 @@ msgstr ""
 msgid "Result pages"
 msgstr ""
 
+#: src/blocks/search/parts/suggested.php:21
+msgid "Filter by what you asked for:"
+msgstr ""
+
+#: src/blocks/search/parts/suggested.php:28
+msgid "Apply this filter"
+msgstr ""
+
 #: src/blocks/search/parts/toolbar.php:25
 msgid "Sort by"
 msgstr ""
@@ -496,9 +504,19 @@ msgstr ""
 msgid "Show fewer"
 msgstr ""
 
+#: src/blocks/search/render.php:79
+#: assets/admin/mapping.js:169
+#: assets/admin/mapping.js:323
+msgid "Type"
+msgstr ""
+
+#: src/blocks/search/render.php:80
+msgid "Published"
+msgstr ""
+
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:81
-#: src/blocks/search/render.php:83
+#: src/blocks/search/render.php:88
+#: src/blocks/search/render.php:90
 #: src/includes/class-viglet-dumont-native-search.php:183
 #: src/includes/class-viglet-dumont-native-search.php:185
 #: src/includes/class-viglet-dumont-native-search.php:316
@@ -508,13 +526,13 @@ msgid_plural "%d results"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/blocks/search/render.php:85
+#: src/blocks/search/render.php:92
 #: src/includes/class-viglet-dumont-native-search.php:187
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
-#: src/blocks/search/render.php:86
+#: src/blocks/search/render.php:93
 #: src/includes/class-viglet-dumont-native-search.php:188
 msgid "Search is unavailable right now."
 msgstr ""
@@ -1327,11 +1345,6 @@ msgstr ""
 msgid "Turing field"
 msgstr ""
 
-#: assets/admin/mapping.js:169
-#: assets/admin/mapping.js:323
-msgid "Type"
-msgstr ""
-
 #: assets/admin/mapping.js:181
 #: assets/admin/mapping.js:326
 msgid "Multiple"
@@ -1744,22 +1757,22 @@ msgid "Show as"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:92
-#: src/admin/js/search-block-editor.js:174
+#: src/admin/js/search-block-editor.js:187
 msgid "A grid"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:96
-#: src/admin/js/search-block-editor.js:170
+#: src/admin/js/search-block-editor.js:183
 msgid "A list"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:105
-#: src/admin/js/search-block-editor.js:184
+#: src/admin/js/search-block-editor.js:197
 msgid "Show the image"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:107
-#: src/admin/js/search-block-editor.js:187
+#: src/admin/js/search-block-editor.js:200
 msgid "Show the date"
 msgstr ""
 
@@ -1808,38 +1821,46 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr ""
 
 #: src/admin/js/search-block-editor.js:143
-msgid "Where the filters sit"
+msgid "Suggest the filters a sentence names"
 msgstr ""
 
 #: src/admin/js/search-block-editor.js:147
+msgid "“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:156
+msgid "Where the filters sit"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:160
 msgid "Left"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:151
+#: src/admin/js/search-block-editor.js:164
 msgid "Right"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:155
+#: src/admin/js/search-block-editor.js:168
 msgid "Above the results"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:166
+#: src/admin/js/search-block-editor.js:179
 msgid "Results as"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:186
+#: src/admin/js/search-block-editor.js:199
 msgid "Show the type"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:190
+#: src/admin/js/search-block-editor.js:203
 msgid "Show the snippet"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:202
+#: src/admin/js/search-block-editor.js:215
 msgid "Results per page"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:226
+#: src/admin/js/search-block-editor.js:239
 msgid "Turing search"
 msgstr ""
 
