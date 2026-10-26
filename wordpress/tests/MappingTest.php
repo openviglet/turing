@@ -485,6 +485,37 @@ final class MappingTest extends PluginTestCase {
 		$this->assertSame( 'type is TEXT in Turing, STRING here', $status['area']['detail'] );
 	}
 
+	public function test_the_manifest_turns_generative_ai_on_only_when_the_setting_does(): void {
+		$this->assertArrayNotHasKey( 'genAi', $this->mapping()->manifest() );
+
+		$manifest = ( new Viglet_Dumont_Mapping( $this->settings( array( 'generative_ai' => 1 ) ) ) )->manifest();
+
+		$this->assertSame( array( 'agentId' => 'default' ), $manifest['genAi'] );
+	}
+
+	public function test_turning_generative_ai_on_sends_the_manifest_again(): void {
+		$client = new Viglet_Dumont_API_Client( $this->settings() );
+		$this->mapping()->provision( $client );
+		( new Viglet_Dumont_Mapping( $this->settings( array( 'generative_ai' => 1 ) ) ) )->provision( $client );
+
+		$this->assertCount( 2, $this->requests );
+		$this->assertSame( array( 'agentId' => 'default' ), $this->body( 1 )['genAi'] );
+	}
+
+	public function test_the_plan_says_whether_the_site_s_generative_ai_changes(): void {
+		Functions\when( 'wp_remote_request' )->justReturn(
+			array(
+				'response' => array( 'code' => 200 ),
+				'body'     => '{"fieldsUnchanged":["site_key"],"genAiToChange":true}',
+			)
+		);
+
+		$plan = $this->mapping()->plan_status( new Viglet_Dumont_API_Client( $this->settings() ) );
+
+		$this->assertTrue( $plan['genai_to_change'] );
+		$this->assertSame( 'provisioned', $plan['fields']['site_key']['status'] );
+	}
+
 	public function test_an_excluded_type_or_post_is_not_indexed(): void {
 		$indexer = new Viglet_Dumont_Indexer( $this->settings() );
 		$this->assertTrue( $indexer->should_index( $this->post ) );

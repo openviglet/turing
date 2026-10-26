@@ -461,6 +461,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 					</div>
 				</div>
+
+				<div class="viglet-dumont-card">
+					<div class="viglet-dumont-card__header">
+						<h2><?php esc_html_e( 'Generative AI', 'viglet-dumont' ); ?></h2>
+						<p><?php esc_html_e( 'Answers with sources and chat over this site\'s content, through Turing\'s Default AI Agent. Each answer is an LLM call billed to whoever runs Turing\'s AI provider.', 'viglet-dumont' ); ?></p>
+					</div>
+					<div class="viglet-dumont-card__body">
+						<div class="viglet-dumont-toggles">
+							<label class="viglet-dumont-toggle">
+								<input type="checkbox"
+										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[generative_ai]"
+										value="1" <?php checked( $settings['generative_ai'], 1 ); ?> />
+								<span class="viglet-dumont-toggle__slider"></span>
+								<span class="viglet-dumont-toggle__label">
+									<?php esc_html_e( 'Turn on generative AI for this site in Turing', 'viglet-dumont' ); ?>
+									<small><?php esc_html_e( 'Sent with the fields: on the next indexing run, or when the Fields screen is saved. It replaces an agent chosen for this site in Turing\'s console, and turning it off here later leaves Turing\'s setting as it is.', 'viglet-dumont' ); ?></small>
+								</span>
+							</label>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<!-- Save Button (visible on settings tabs) -->

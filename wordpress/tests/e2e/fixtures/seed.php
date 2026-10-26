@@ -225,6 +225,8 @@ $settings['analytics_ga']      = 1;
 $settings['ga_measurement_id'] = 'G-E2ETEST';
 // Related content after every post (related.spec.mjs).
 $settings['related_after'] = array( 'post' );
+// The default suite needs no LLM; the AI suite's seed turns it on (D186).
+$settings['generative_ai'] = 0;
 update_option( 'viglet_dumont_settings', $settings );
 
 echo wp_json_encode(

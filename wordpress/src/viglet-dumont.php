@@ -82,7 +82,7 @@ function viglet_dumont_public_config(): array {
  */
 function viglet_dumont_ai_status(): array {
 	$settings = viglet_dumont_get_settings();
-	$console  = untrailingslashit( '' !== (string) $settings['public_url'] ? $settings['public_url'] : $settings['server_url'] );
+	$declared = Viglet_Dumont_Mapping::declares_generative_ai( $settings );
 	$labels   = array(
 		'answer'     => __( 'Answers with sources', 'viglet-dumont' ),
 		'chat'       => __( 'Chat', 'viglet-dumont' ),
@@ -97,10 +97,10 @@ function viglet_dumont_ai_status(): array {
 			'on'      => $row['on'],
 			// A sentence, so the fix after it reads as the next one.
 			'reason'  => '' === $row['reason'] || preg_match( '/[.!?]$/', $row['reason'] ) ? $row['reason'] : $row['reason'] . '.',
-			// The manifest cannot turn a site's generative AI on yet (Turing T1116): name the step.
-			'fix'     => ! $row['on'] && 'answer' === $row['feature']
-				/* translators: %s: Turing's console address. */
-				? sprintf( __( 'Turn on generative AI for this SN site in Turing\'s console (%s), under the site\'s Generative AI settings.', 'viglet-dumont' ), $console )
+			// The manifest turns the site's generative AI on (Turing T1116). Once it does, an
+			// answer still off is Turing's to explain, and its reason stands alone.
+			'fix'     => ! $row['on'] && 'answer' === $row['feature'] && ! $declared
+				? __( 'Turn on Generative AI under Settings › Search, then save the fields on the Fields screen.', 'viglet-dumont' )
 				: '',
 		),
 		( new Viglet_Dumont_API_Client( $settings ) )->ai_features()
@@ -660,7 +660,7 @@ function viglet_dumont_rest_ping(): WP_REST_Response {
 function viglet_dumont_rest_get_mapping(): WP_REST_Response {
 	$settings = viglet_dumont_get_settings();
 	$mapping  = new Viglet_Dumont_Mapping( $settings );
-	$status   = $mapping->field_status( new Viglet_Dumont_API_Client( $settings ) );
+	$plan     = $mapping->plan_status( new Viglet_Dumont_API_Client( $settings ) );
 	$all      = $mapping->all();
 
 	$sources = array();
@@ -673,8 +673,10 @@ function viglet_dumont_rest_get_mapping(): WP_REST_Response {
 			'mapping'      => $all,
 			'manifest'     => $mapping->manifest(),
 			'provisioned'  => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
-			'field_status' => is_wp_error( $status ) ? null : $status,
-			'status_error' => is_wp_error( $status ) ? $status->get_error_message() : '',
+			'field_status' => is_wp_error( $plan ) ? null : $plan['fields'],
+			'status_error' => is_wp_error( $plan ) ? $plan->get_error_message() : '',
+			// Whether the next send creates or changes the site's GenAI binding.
+			'genai_change' => ! is_wp_error( $plan ) && $plan['genai_to_change'],
 			'sources'      => $sources,
 			'types'        => Viglet_Dumont_Mapping::TYPES,
 		),

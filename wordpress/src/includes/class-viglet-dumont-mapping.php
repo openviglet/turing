@@ -242,8 +242,23 @@ class Viglet_Dumont_Mapping {
 		if ( ! empty( $custom ) ) {
 			$manifest['customFacets'] = $custom;
 		}
+		// Declaring the block is what turns the site's GenAI on (Turing T1116), answering
+		// through the Default AI Agent. Left out, Turing keeps whatever binding it has.
+		if ( self::declares_generative_ai( $this->settings ) ) {
+			$manifest['genAi'] = array( 'agentId' => 'default' );
+		}
 
 		return $manifest;
+	}
+
+	/**
+	 * Whether the manifest turns the site's generative AI on. Off by default, since answers
+	 * spend the owner's LLM budget.
+	 *
+	 * @param array $settings The plugin settings.
+	 */
+	public static function declares_generative_ai( array $settings ): bool {
+		return ! empty( $settings['generative_ai'] );
 	}
 
 	/**
@@ -402,6 +417,19 @@ class Viglet_Dumont_Mapping {
 	 * @return array<string, array{status: string, detail: string}>|WP_Error
 	 */
 	public function field_status( Viglet_Dumont_API_Client $client ) {
+		$plan = $this->plan_status( $client );
+
+		return is_wp_error( $plan ) ? $plan : $plan['fields'];
+	}
+
+	/**
+	 * The manifest's plan, read once: where each field stands (as field_status() has it) and
+	 * whether the next send creates or changes the site's GenAI binding.
+	 *
+	 * @param Viglet_Dumont_API_Client $client The client to plan through.
+	 * @return array{fields: array<string, array{status: string, detail: string}>, genai_to_change: bool}|WP_Error
+	 */
+	public function plan_status( Viglet_Dumont_API_Client $client ) {
 		$plan = $client->plan( $this->manifest() );
 		if ( is_wp_error( $plan ) ) {
 			return $plan;
@@ -433,7 +461,10 @@ class Viglet_Dumont_Mapping {
 			);
 		}
 
-		return $status;
+		return array(
+			'fields'          => $status,
+			'genai_to_change' => ! empty( $plan['genAiToChange'] ),
+		);
 	}
 
 	/**
