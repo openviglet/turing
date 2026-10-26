@@ -519,6 +519,27 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
                 "the GET structured response must echo the effective request too");
     }
 
+    /**
+     * T1114 — "did you mean" must reach a POST-native client: the structured POST
+     * body carries the same {@code spellCheck} the GET search computes for the
+     * same misspelling.
+     */
+    @Test
+    void structuredPostCarriesTheSpellCheckTheGetSearchReturns() throws Exception {
+        JsonNode viaGet = json.readTree(get("/sn/" + SITE + "/search?q=dragn&_setlocale=" + LOCALE
+                + "&responseFormat=structured").body()).path("spellCheck");
+        JsonNode viaPost = json.readTree(postJson("/sn/" + SITE + "/search/query",
+                """
+                        {"q":"dragn","locale":"%s","responseFormat":"STRUCTURED"}"""
+                        .formatted(LOCALE)).body()).path("spellCheck");
+
+        assertTrue(viaGet.path("correctedText").asBoolean(false),
+                "the GET search must offer a correction for 'dragn': " + viaGet);
+        assertEquals("dragon", viaPost.path("correctedTextValue").asString(),
+                "the structured POST must carry the correction: " + viaPost);
+        assertEquals(viaGet, viaPost, "both transports must agree on spellCheck");
+    }
+
     /** T857 — the sort options can be inlined instead of separately fetched. */
     @Test
     void structuredResponseCanInlineTheSortOptions() throws Exception {

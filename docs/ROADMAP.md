@@ -17,7 +17,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1114** (deps: —) **The structured POST search leaves spellCheck out where the GET search returns a correction for the same query** — A UI on the SDK's default POST-native controller never offers did-you-mean, or pays one more request for it. → §CXXVI
 - 📋 **T1115** (deps: —) **A structured search filtered on a facet drops that facet and lists no selectedFilterQueries** — A UI cannot show which value is applied, switch to another value or remove the filter without tracking its own request. → §CXXVII
 - 📋 **T1116** (deps: —) **Chat answers through the default agent while /answer says AI is not enabled, and no manifest can enable it** — A connector that provisions its site as code cannot make the answer engine work, and the two AI endpoints disagree. → §CXXVIII
 - 📋 **T1117** (deps: —) **Natural-language filters resolve last year from the model's training date, returning a 2022 range in 2026** — A visitor asking for recent content gets a filter that hides all of it, with no sign it was guessed. → §CXXIX
