@@ -29,6 +29,8 @@ export type {
   // T710 / §XLV — POST-native search: request + link-free response. Owned by
   // the vanilla SDK, re-exported here so both SDKs cannot drift on the shape.
   TurSearchRequest,
+  // T1137 — the as-you-type mode of a search request.
+  TurSearchMode,
   TurResponseFormat,
   TurFacetItemAction,
   TurStructuredSearchResponse,

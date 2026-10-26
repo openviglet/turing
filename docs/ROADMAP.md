@@ -16,7 +16,6 @@
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 - 📋 **T1132** (deps: T1133 🛠) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — A related-content rail must over-fetch and discard, and can come up short on a busy shared site. → §CXLIV
-- 📋 **T1137** (deps: —) **The React SDK's useTuringSearch writes the TUR_SESSION cookie on mount and reports every as-you-type search** — A consent-respecting React site cannot hand the hook its analytics bus, which the vanilla controller now allows. → §CXLIX
 
 ## Block CF — What the SN site manifest cannot declare
 

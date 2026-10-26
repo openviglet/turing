@@ -81,6 +81,38 @@ export interface GoogleAnalyticsSinkOptions {
   readonly gtag?: GtagFn;
   /** Inject a `dataLayer` array. Defaults to `window.dataLayer`. */
   readonly dataLayer?: unknown[];
+  /**
+   * T1130 — also send GA4's recommended events, so the built-in site-search
+   * reports fill without custom definitions: `search { search_term }` next to
+   * `turing_search`, and `select_content { content_type: "search_result",
+   * content_id, index }` next to `turing_search_result_click`. The canonical
+   * event is still sent. Defaults to `false`.
+   */
+  readonly recommended?: boolean;
+}
+
+/** Events sent through `navigator.sendBeacon`: they fire while the page is torn down. */
+const BEACON_EVENTS: ReadonlySet<string> = new Set(["turing_chat_abandoned", "turing_search_abandoned"]);
+
+/** T1130 — the GA4 recommended event a canonical one also maps to, if any. */
+function recommendedEvent(
+  event: TuringAnalyticsEvent,
+): { name: string; params: Record<string, Exclude<TuringAnalyticsValue, undefined>> } | null {
+  const p = event.params;
+  if (event.name === "turing_search" && p.query !== undefined) {
+    return { name: "search", params: { search_term: p.query } };
+  }
+  if (event.name === "turing_search_result_click" && p.document_id !== undefined) {
+    return {
+      name: "select_content",
+      params: {
+        content_type: "search_result",
+        content_id: p.document_id,
+        ...(p.position === undefined ? {} : { index: p.position }),
+      },
+    };
+  }
+  return null;
 }
 
 function resolveGlobals(): AnalyticsGlobals {
@@ -95,7 +127,13 @@ function resolveGlobals(): AnalyticsGlobals {
  * after the bus is constructed. No-ops cleanly when neither transport exists.
  */
 export function googleAnalyticsSink(options: GoogleAnalyticsSinkOptions = {}): TuringAnalyticsSink {
-  const { measurementId, transport = "auto", gtag: injectedGtag, dataLayer: injectedDataLayer } = options;
+  const {
+    measurementId,
+    transport = "auto",
+    gtag: injectedGtag,
+    dataLayer: injectedDataLayer,
+    recommended = false,
+  } = options;
 
   return (event: TuringAnalyticsEvent) => {
     const globals = resolveGlobals();
@@ -104,10 +142,10 @@ export function googleAnalyticsSink(options: GoogleAnalyticsSinkOptions = {}): T
 
     const params = toFlatParams(event);
     if (measurementId) params.send_to = measurementId;
-    // T460 — the abandonment event fires during tab hide / unload, when a
+    // T460 — the abandonment events fire during tab hide / unload, when a
     // normal XHR would be cancelled. GA4 honours `transport_type: 'beacon'` to
     // flush via `navigator.sendBeacon`, which survives the teardown.
-    if (event.name === "turing_chat_abandoned") {
+    if (BEACON_EVENTS.has(event.name)) {
       (params as Record<string, unknown>).transport_type = "beacon";
     }
 
@@ -117,11 +155,24 @@ export function googleAnalyticsSink(options: GoogleAnalyticsSinkOptions = {}): T
       transport === "both" ||
       (transport === "auto" && !gtag && !!dataLayer);
 
-    if (useGtag && gtag) {
-      gtag("event", event.name, params);
-    }
-    if (useDataLayer && dataLayer) {
-      dataLayer.push({ event: event.name, ...params });
+    const send = (name: string, bag: Record<string, unknown>): void => {
+      if (useGtag && gtag) {
+        gtag("event", name, bag);
+      }
+      if (useDataLayer && dataLayer) {
+        dataLayer.push({ event: name, ...bag });
+      }
+    };
+
+    send(event.name, params);
+    const extra = recommended ? recommendedEvent(event) : null;
+    if (extra) {
+      // The envelope (site, session, variant, ...) travels with it too.
+      send(extra.name, {
+        ...toFlatParams({ ...event, params: {} }),
+        ...extra.params,
+        ...(measurementId ? { send_to: measurementId } : {}),
+      });
     }
   };
 }

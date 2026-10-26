@@ -48,6 +48,8 @@ export const TURING_ANALYTICS_EVENTS = {
   searchResultClick: "turing_search_result_click",
   /** A query was reformulated after an earlier search in the same session. */
   searchRefined: "turing_search_refined",
+  /** T1130 — a settled search whose results were left without a click (tab hide / unload / idle). */
+  searchAbandoned: "turing_search_abandoned",
 } as const;
 
 /** Union of the canonical event names. */

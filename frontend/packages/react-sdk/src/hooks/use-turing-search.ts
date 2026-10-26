@@ -14,12 +14,19 @@ import {
 import { useTuringContext } from "../core/use-turing-context";
 import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "../core/resolve";
 import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../core/analytics";
+import {
+  createAbandonmentWatcher,
+  type AbandonmentOptions,
+  type AbandonmentReason,
+  type AbandonmentWatcher,
+} from "../core/analytics-lifecycle";
 import { getOrCreateTurSession } from "../core/session";
 import type {
   ResolvedDocument,
   ResolvedGroup,
   SearchStatus,
   TurChatResponse,
+  TurSearchMode,
   TurSearchRequest,
   TurSearchResponse,
   TurStructuredFacet,
@@ -76,8 +83,12 @@ export interface UseTuringSearchReturn {
   params: SearchParams;
   /** Execute a search with given params */
   search: (params: SearchParams) => Promise<void>;
-  /** Execute a new text query (resets page to 1) */
-  searchQuery: (query: string) => Promise<void>;
+  /**
+   * Execute a new text query (resets page to 1). Pass `{ mode: "instant" }` from
+   * a box that searches while the visitor types: the server matches the last
+   * term as a prefix, and (T1137) no search event is emitted for it.
+   */
+  searchQuery: (query: string, options?: { mode?: TurSearchMode }) => Promise<void>;
   /**
    * Navigate via a Turing href link (facet, pagination, spell check).
    *
@@ -111,6 +122,25 @@ export interface UseTuringSearchOptions {
    * stitching with chat. No-op when absent.
    */
   readonly analytics?: TuringAnalytics;
+  /**
+   * T1137 — asked before every analytics event and before the `TUR_SESSION`
+   * cookie is written. While it returns `false` nothing is emitted and no cookie
+   * is set; the session id is stamped on the first consented event. Omitted,
+   * consent is assumed.
+   */
+  readonly consent?: () => boolean;
+  /**
+   * T1137 — `false` stamps no session id and never writes the `TUR_SESSION`
+   * cookie. Defaults to `true`.
+   */
+  readonly sessionCookie?: boolean;
+  /**
+   * T1137 — search abandonment (opt-in). Each settled search arms a watcher; a
+   * visitor who leaves without opening a result emits one
+   * `turing_search_abandoned { query, results, reason }`. `trackResultClick`
+   * disarms it.
+   */
+  readonly abandonment?: AbandonmentOptions | boolean;
   /**
    * T710 / §XLV — drive search over `POST /sn/{site}/search/query` with a JSON
    * body and the link-free `STRUCTURED` response, instead of `GET …/search`
@@ -151,18 +181,69 @@ export function useTuringSearch(
   options: UseTuringSearchOptions = {},
 ): UseTuringSearchReturn {
   const { config } = useTuringContext();
-  const { analytics, postNative = true } = options;
+  const { analytics, postNative = true, sessionCookie = true, abandonment = false } = options;
   const abortRef = useRef(0);
   // Last real (non-wildcard) query, for refinement detection.
   const lastQueryRef = useRef<string | null>(null);
+  // T1137 — read at emit time, so a consent granted after mount applies.
+  const consentRef = useRef(options.consent);
+  consentRef.current = options.consent;
+  const sessionStampedRef = useRef(!sessionCookie);
+  const abandonmentRef = useRef<AbandonmentWatcher | null>(null);
 
-  // T463 — stamp the cross-surface session id so a later chat lead stitches
-  // back to the originating search (both key off the `TUR_SESSION` cookie).
+  // T463 — the site is known up front. T1137: the `TUR_SESSION` id that
+  // stitches a later chat lead to this search is stamped on the first
+  // consented event, so nothing is stored before the visitor agrees.
   useEffect(() => {
-    if (analytics) {
-      analytics.setContext({ site: config.site, sessionId: getOrCreateTurSession() ?? undefined });
-    }
+    analytics?.setContext({ site: config.site });
   }, [analytics, config.site]);
+
+  /** The bus, when consent allows an event now; stamps the session first. */
+  const consentedAnalytics = useCallback((): TuringAnalytics | null => {
+    if (!analytics || (consentRef.current && !consentRef.current())) return null;
+    if (!sessionStampedRef.current) {
+      sessionStampedRef.current = true;
+      analytics.setContext({ sessionId: getOrCreateTurSession() ?? undefined });
+    }
+    return analytics;
+  }, [analytics]);
+
+  const disarmAbandonment = useCallback(() => {
+    abandonmentRef.current?.stop();
+    abandonmentRef.current = null;
+  }, []);
+
+  useEffect(() => disarmAbandonment, [disarmAbandonment]);
+
+  /** T463 — the search funnel events for a settled query; T1137 arms abandonment. */
+  const emitSearchEvents = useCallback(
+    (q: string, resultCount: number) => {
+      if (!q || q === "*") return;
+      const bus = consentedAnalytics();
+      if (!bus) return;
+      const prev = lastQueryRef.current;
+      if (prev && prev !== q) {
+        bus.emit(TURING_ANALYTICS_EVENTS.searchRefined, { from: prev, to: q });
+      }
+      bus.emit(TURING_ANALYTICS_EVENTS.search, { query: q, results: resultCount });
+      if (resultCount === 0) {
+        bus.emit(TURING_ANALYTICS_EVENTS.searchNoResults, { query: q });
+      }
+      lastQueryRef.current = q;
+      disarmAbandonment();
+      if (abandonment) {
+        abandonmentRef.current = createAbandonmentWatcher((reason: AbandonmentReason) => {
+          disarmAbandonment();
+          consentedAnalytics()?.emit(TURING_ANALYTICS_EVENTS.searchAbandoned, {
+            query: q,
+            results: resultCount,
+            reason,
+          });
+        }, abandonment === true ? {} : abandonment);
+      }
+    },
+    [consentedAnalytics, disarmAbandonment, abandonment],
+  );
 
   const defaultParams: SearchParams = {
     q: "*",
@@ -220,25 +301,14 @@ export function useTuringSearch(
         setStatus("success");
 
         // T463 — search funnel events. `count` is the total hit count.
-        if (analytics && q && q !== "*") {
-          const resultCount = searchResult?.queryContext?.count ?? resolved.length;
-          const prev = lastQueryRef.current;
-          if (prev && prev !== q) {
-            analytics.emit(TURING_ANALYTICS_EVENTS.searchRefined, { from: prev, to: q });
-          }
-          analytics.emit(TURING_ANALYTICS_EVENTS.search, { query: q, results: resultCount });
-          if (resultCount === 0) {
-            analytics.emit(TURING_ANALYTICS_EVENTS.searchNoResults, { query: q });
-          }
-          lastQueryRef.current = q;
-        }
+        emitSearchEvents(q, searchResult?.queryContext?.count ?? resolved.length);
       } catch (err) {
         if (requestId !== abortRef.current) return;
         setError(err instanceof Error ? err.message : "Search failed");
         setStatus("error");
       }
     },
-    [config.site, analytics],
+    [config.site, emitSearchEvents],
   );
 
   /**
@@ -283,17 +353,9 @@ export function useTuringSearch(
         requestRef.current = effective;
         setParams(requestToSearchParams(effective));
 
-        if (analytics && q && q !== "*") {
-          const resultCount = searchResult?.queryContext?.count ?? resolved.length;
-          const prev = lastQueryRef.current;
-          if (prev && prev !== q) {
-            analytics.emit(TURING_ANALYTICS_EVENTS.searchRefined, { from: prev, to: q });
-          }
-          analytics.emit(TURING_ANALYTICS_EVENTS.search, { query: q, results: resultCount });
-          if (resultCount === 0) {
-            analytics.emit(TURING_ANALYTICS_EVENTS.searchNoResults, { query: q });
-          }
-          lastQueryRef.current = q;
+        // T1137 — an as-you-type request is not a search the visitor settled on.
+        if (searchRequest.mode !== "instant") {
+          emitSearchEvents(q, searchResult?.queryContext?.count ?? resolved.length);
         }
       } catch (err) {
         if (requestId !== abortRef.current) return;
@@ -301,7 +363,7 @@ export function useTuringSearch(
         setStatus("error");
       }
     },
-    [config.site, analytics],
+    [config.site, emitSearchEvents],
   );
 
   /** Re-runs the current request with `changes` applied, back on page 1. */
@@ -321,9 +383,9 @@ export function useTuringSearch(
   );
 
   const searchQuery = useCallback(
-    (query: string) =>
+    (query: string, queryOptions?: { mode?: TurSearchMode }) =>
       postNative
-        ? patchRequest({ q: query })
+        ? patchRequest({ q: query, mode: queryOptions?.mode ?? "standard" })
         : executeSearch({ ...params, q: query, p: "1" }),
     [executeSearch, params, patchRequest, postNative],
   );
@@ -389,19 +451,20 @@ export function useTuringSearch(
   const trackResultClick = useCallback(
     (documentId: string, position: number, term?: string) => {
       const query = term ?? params.q ?? "";
+      disarmAbandonment();
       void postClick(config.site, {
         term: query,
         documentId,
         position,
         locale: params._setlocale,
       });
-      analytics?.emit(TURING_ANALYTICS_EVENTS.searchResultClick, {
+      consentedAnalytics()?.emit(TURING_ANALYTICS_EVENTS.searchResultClick, {
         query,
         document_id: documentId,
         position,
       });
     },
-    [config.site, params, analytics],
+    [config.site, params, consentedAnalytics, disarmAbandonment],
   );
 
   return {
