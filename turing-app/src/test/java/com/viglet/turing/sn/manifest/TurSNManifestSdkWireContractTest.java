@@ -243,6 +243,35 @@ class TurSNManifestSdkWireContractTest {
     }
 
     @Test
+    @DisplayName("T1135 - the facet behaviour the SDK declares binds to the server's, and its change reaches the SDK")
+    void facetsSurviveTheWire() {
+        TurSNManifest manifest = TurSNManifest.builder().name("Sample")
+                .facets(com.viglet.turing.client.sn.manifest.TurSNManifestFacets.multiSelect().withItemsPerFacet(25))
+                .build();
+
+        TurSNManifestFacets bound = bind(MAPPER.writeValueAsString(manifest)).facets();
+        assertThat(bound.enabled()).isTrue();
+        assertThat(bound.type())
+                .isEqualTo(com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum.AND);
+        assertThat(bound.itemType())
+                .isEqualTo(com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum.OR);
+        assertThat(bound.itemsPerFacet()).isEqualTo(25);
+
+        var serverResult = new TurSNManifestProvisionResult(new VigletManifestResult("s1", "Sample", false,
+                List.of(), List.of(), List.of(), List.of(), null), List.of(), List.of(), false, true);
+        var serverPlan = new TurSNManifestPlan(new VigletManifestDiff(null, true, List.of(), List.of(),
+                List.of(), List.of()), List.of(), List.of(), false, true);
+        TurSNManifestResult result = MAPPER.readValue(MAPPER.writeValueAsString(serverResult),
+                TurSNManifestResult.class);
+        TurSNManifestDiff plan = MAPPER.readValue(MAPPER.writeValueAsString(serverPlan), TurSNManifestDiff.class);
+
+        assertThat(result.facetSettingsChanged()).isTrue();
+        assertThat(result.isNoOp()).isFalse();
+        assertThat(plan.facetSettingsToChange()).isTrue();
+        assertThat(plan.isNoOp()).isFalse();
+    }
+
+    @Test
     @DisplayName("The SDK's manifest deserialises into the record the endpoint binds, field for field")
     void sdkManifestBindsToTheServerRecord() {
         String payload = MAPPER.writeValueAsString(sdkManifest());

@@ -2260,28 +2260,6 @@ the contract test:
 - metrics;
 - delete-all of the key's own partition (T1112's delete by field).
 
-## CXLVII Site facet behaviour in the SN manifest (T1135)
-
-**Where it showed.** T1115: a Dumont-provisioned SN site (Sample) dropped an applied
-facet from the search answer, while the contract IT's fixture kept it. The difference
-was the site's `facetItemType`: `TurSNFacetRenderer.showFacet` hides a facet the request
-already filters on unless the site's item type is `OR`, and the fixture is `OR` while
-the provisioned site keeps the default.
-
-**The gap.** The SN manifest (`POST /api/sn/manifest`) converges fields, custom facets
-and custom sorts, but not the site-level facet behaviour: `facet`, `facetType`,
-`facetItemType`, `itemsPerFacet`. A connector that provisions its site as code cannot
-choose between drill-down and multi-select facets. It has to open the console, which is
-the manual step the manifest exists to remove. T1115 made the structured response keep
-applied facets either way. The LINKS response and the item counts still follow the
-site's mode.
-
-**What to build.** Add an optional `facets` object to the manifest site block:
-`enabled`, `type` (`AND`/`OR`), `itemType` (`AND`/`OR`/`DEFAULT`) and `itemsPerFacet`.
-Converge it like the other site settings, report `facetSettingsChanged` in the result
-and the plan, and leave an absent object meaning "do not touch", so existing manifests
-keep their behaviour.
-
 ## CXLIX Consent-aware search analytics in the React SDK (T1137)
 
 **Where it happened.** T1129 and T1130 changed the vanilla SDK's search analytics. The

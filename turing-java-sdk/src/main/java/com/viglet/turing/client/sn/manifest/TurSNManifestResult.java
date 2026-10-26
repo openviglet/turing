@@ -38,6 +38,8 @@ import java.util.List;
  *                       (T1104); {@code null} from a server that predates them
  * @param genAiChanged   whether this call created or changed the site's GenAI
  *                       binding (T1116); {@code null} from a server that predates it
+ * @param facetSettingsChanged whether this call changed the site's facet behaviour
+ *                       (T1135); {@code null} from a server that predates it
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -45,7 +47,16 @@ import java.util.List;
 public record TurSNManifestResult(String siteId, String siteName, boolean siteCreated,
         List<String> fieldsCreated, List<String> fieldsSkipped, List<String> fieldsMigrated,
         List<String> localesCreated, String schemaVersion, List<String> customFacetsChanged,
-        List<String> customSortsChanged, Boolean genAiChanged) {
+        List<String> customSortsChanged, Boolean genAiChanged, Boolean facetSettingsChanged) {
+
+    /** The constructor this record had before {@link #facetSettingsChanged}, kept for existing callers. */
+    public TurSNManifestResult(String siteId, String siteName, boolean siteCreated,
+            List<String> fieldsCreated, List<String> fieldsSkipped, List<String> fieldsMigrated,
+            List<String> localesCreated, String schemaVersion, List<String> customFacetsChanged,
+            List<String> customSortsChanged, Boolean genAiChanged) {
+        this(siteId, siteName, siteCreated, fieldsCreated, fieldsSkipped, fieldsMigrated, localesCreated,
+                schemaVersion, customFacetsChanged, customSortsChanged, genAiChanged, null);
+    }
 
     /** The constructor this record had before {@link #genAiChanged}, kept for existing callers. */
     public TurSNManifestResult(String siteId, String siteName, boolean siteCreated,
@@ -79,7 +90,7 @@ public record TurSNManifestResult(String siteId, String siteName, boolean siteCr
     public boolean isNoOp() {
         return !siteCreated && isEmpty(fieldsCreated) && isEmpty(fieldsMigrated)
                 && isEmpty(localesCreated) && isEmpty(customFacetsChanged) && isEmpty(customSortsChanged)
-                && !Boolean.TRUE.equals(genAiChanged);
+                && !Boolean.TRUE.equals(genAiChanged) && !Boolean.TRUE.equals(facetSettingsChanged);
     }
 
     private static boolean isEmpty(List<String> values) {

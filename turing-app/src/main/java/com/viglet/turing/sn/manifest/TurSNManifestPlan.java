@@ -30,18 +30,25 @@ import com.viglet.core.manifest.VigletManifestDiff;
  * What {@code POST /api/sn/manifest/plan} answers (T1084): the neutral
  * {@link VigletManifestDiff}, flattened into the same JSON object it always
  * was, plus the custom facets and (T1104) custom sorts provisioning would create
- * or change, and (T1116) whether it would create or change the GenAI binding.
+ * or change, (T1116) whether it would create or change the GenAI binding and
+ * (T1135) whether it would change the site's facet behaviour.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
 public record TurSNManifestPlan(@JsonUnwrapped VigletManifestDiff diff,
         List<String> customFacetsToChange, List<String> customSortsToChange,
-        boolean genAiToChange) {
+        boolean genAiToChange, boolean facetSettingsToChange) {
+
+    /** The plan as it was before {@link #facetSettingsToChange}, kept for existing callers. */
+    public TurSNManifestPlan(VigletManifestDiff diff, List<String> customFacetsToChange,
+            List<String> customSortsToChange, boolean genAiToChange) {
+        this(diff, customFacetsToChange, customSortsToChange, genAiToChange, false);
+    }
 
     /** The plan as it was before {@link #genAiToChange}, kept for existing callers. */
     public TurSNManifestPlan(VigletManifestDiff diff, List<String> customFacetsToChange,
             List<String> customSortsToChange) {
-        this(diff, customFacetsToChange, customSortsToChange, false);
+        this(diff, customFacetsToChange, customSortsToChange, false, false);
     }
 }

@@ -20,8 +20,6 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-- 📋 **T1135** (deps: —) **The SN manifest cannot set a site's facet behaviour, so provisioning as code cannot choose drill-down or multi-select** — facetType, facetItemType and itemsPerFacet are console-only, so a connector must click through the console to get facets that stay visible. → §CXLVII
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

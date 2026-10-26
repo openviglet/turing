@@ -68,6 +68,8 @@ class TurSNSiteManifestServiceTest {
     private TurSNManifestCustomSortConverger turSNManifestCustomSortConverger;
     @Mock
     private TurSNManifestGenAiConverger turSNManifestGenAiConverger;
+    @org.mockito.Spy
+    private TurSNManifestFacetsConverger turSNManifestFacetsConverger = new TurSNManifestFacetsConverger();
     @Mock
     private ApplicationEventPublisher eventPublisher;
     @InjectMocks

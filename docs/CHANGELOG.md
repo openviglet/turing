@@ -1504,6 +1504,7 @@
 ## Block CF — What the SN site manifest cannot declare
 
 - **T1104** — An SN manifest declares custom sorts, converged by name, with each level placing documents that lack its field first or last on Solr and Lucene (design §CXVII superseded: the JS SDK it named has no manifest types; the Java SDK is the manifest client and gained the shape).
+- **T1135** — The SN manifest's facets block sets a site's facets on or off, its type, its item type (drill-down or multi-select) and items per facet, reported as facetSettingsChanged and facetSettingsToChange, with TurSNManifestFacets in the Java SDK.
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 

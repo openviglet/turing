@@ -38,6 +38,9 @@ import java.util.List;
  * @param genAiToChange   whether provisioning would create or change the site's
  *                        GenAI binding (T1116); {@code null} from a server that
  *                        predates it
+ * @param facetSettingsToChange whether provisioning would change the site's facet
+ *                        behaviour (T1135); {@code null} from a server that
+ *                        predates it
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -45,7 +48,16 @@ import java.util.List;
 public record TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
         List<TurSNManifestFieldChange> breakingChanges, List<String> fieldsUnchanged,
         List<String> localesToAdd, List<String> customFacetsToChange, List<String> customSortsToChange,
-        Boolean genAiToChange) {
+        Boolean genAiToChange, Boolean facetSettingsToChange) {
+
+    /** The constructor this record had before {@link #facetSettingsToChange}, kept for existing callers. */
+    public TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
+            List<TurSNManifestFieldChange> breakingChanges, List<String> fieldsUnchanged,
+            List<String> localesToAdd, List<String> customFacetsToChange, List<String> customSortsToChange,
+            Boolean genAiToChange) {
+        this(schemaVersion, siteExists, fieldsToAdd, breakingChanges, fieldsUnchanged, localesToAdd,
+                customFacetsToChange, customSortsToChange, genAiToChange, null);
+    }
 
     /** The constructor this record had before {@link #genAiToChange}, kept for existing callers. */
     public TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
@@ -90,7 +102,8 @@ public record TurSNManifestDiff(String schemaVersion, boolean siteExists, List<S
     public boolean isNoOp() {
         return siteExists && isEmpty(fieldsToAdd) && isEmpty(localesToAdd)
                 && isEmpty(customFacetsToChange) && isEmpty(customSortsToChange)
-                && !Boolean.TRUE.equals(genAiToChange) && !hasBreakingChanges();
+                && !Boolean.TRUE.equals(genAiToChange) && !Boolean.TRUE.equals(facetSettingsToChange)
+                && !hasBreakingChanges();
     }
 
     private static boolean isEmpty(List<String> values) {
