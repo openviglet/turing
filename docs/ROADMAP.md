@@ -17,7 +17,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1118** (deps: —) **related-terms answers 401 to a browser, though the SDK exports it beside the public search calls** — A site cannot offer related searches without a server proxy, and nothing checks the SDK against the filter chain. → §CXXX
 - 📋 **T1119** (deps: —) **Zero-result queries and content gaps are MCP tools only, with no REST endpoint a connector can call** — An admin screen outside the console cannot show what visitors failed to find, the metric that most tells what to write next. → §CXXXI
 - 📋 **T1120** (deps: —) **The search matches whole words only, so an as-you-type search for a half-typed word finds nothing** — A search box that updates while typing shows No results until the word is complete, or guesses a wildcard into the query. → §CXXXII
 - 📋 **T1121** (deps: —) **The SDK search controller drops a superseded answer but never aborts the superseded request** — Every pause in a typed query leaves a full search running and downloading on the server for an answer that is thrown away. → §CXXXIII

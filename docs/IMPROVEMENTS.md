@@ -2207,31 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXX Every endpoint the SDK calls without a key is public (T1118)
-
-**Where it happened.** Dumont's WordPress plugin (Track S) runs every visitor-side call
-in the browser through `@viglet/turing-sdk`, with no key, as search, autocomplete and
-spell-check are.
-
-**The request.** `GET /api/sn/Sample/en_US/related-terms?q=php`, anonymous, from a local
-Turing in the default `PUBLIC` API auth mode.
-
-**What came back.** HTTP 401. The path is not in the production security config's
-`permitAll` list, while its siblings (`/search/**`, `/ac`, `/{locale}/spell-check`) are.
-
-**Expected.** The SDK exports `fetchRelatedTerms` beside the other browser calls, and
-the docs list related terms as a search feature. In `PUBLIC` mode it should answer as
-spell-check does, and in `API_KEY` mode take the `Key` header like the rest.
-
-**Workaround.** None. The plugin leaves "related searches" out until this ships.
-
-**What Turing should do.**
-- Add `/api/sn/*/*/related-terms` to the public matchers, under the same site API-key gate
-  as search.
-- Add a security test listing every endpoint the SDK calls without a key, and asserting
-  each one answers anonymously in `PUBLIC` mode, so the SDK and the filter chain cannot
-  drift again. The same test asserts that each connector call made with a `Key` header passes CSRF and the auditor, the class T1124 and T1126 belong to. Classify the path in `PUBLIC_SN_CHEAP_MATCHERS`: it reaches no model.
-
 ## CXXXI Failed searches and content gaps are REST metrics (T1119)
 
 **Where it happened.** Dumont's WordPress plugin plans a "Search insights" admin screen

@@ -79,9 +79,12 @@ public class TurSNSiteApiKeyGateFilter extends OncePerRequestFilter {
     private static final Pattern PUBLIC_SN_PATH = Pattern.compile(
             "^/api/sn/([^/]+)/(?:ac|search|_search|click|query|chat|copilot|answer|nl-filters)(?:/.*)?$");
 
-    /** Spell-check carries an extra locale segment: {@code /api/sn/{site}/{locale}/spell-check}. */
+    /**
+     * Spell-check and (T1118) related terms carry an extra locale segment:
+     * {@code /api/sn/{site}/{locale}/spell-check}.
+     */
     private static final Pattern SPELL_CHECK_PATH = Pattern.compile(
-            "^/api/sn/([^/]+)/[^/]+/spell-check$");
+            "^/api/sn/([^/]+)/[^/]+/(?:spell-check|related-terms)$");
 
     /**
      * T634 — the anonymous persona content-fit endpoint
