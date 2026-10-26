@@ -317,6 +317,38 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			writeUrl( true );
 			focusInput();
 		},
+		// One of the product through WooCommerce's Store API, which answers why when it cannot
+		// (out of stock, say); the page and the results stay as they are.
+		async addToCart() {
+			const { result } = getContext();
+			result.adding = true;
+			result.cartStatus = '';
+			try {
+				const response = await window.fetch(
+					`${ config.shop.storeApi }cart/add-item`,
+					{
+						method: 'POST',
+						credentials: 'same-origin',
+						headers: {
+							'Content-Type': 'application/json',
+							Nonce: config.shop.nonce,
+						},
+						body: JSON.stringify( {
+							id: result.productId,
+							quantity: 1,
+						} ),
+					}
+				);
+				const body = await response.json().catch( () => ( {} ) );
+				result.cartStatus = response.ok
+					? state.cartAdded
+					: plain( body.message ) || state.cartFailed;
+			} catch {
+				result.cartStatus = state.cartFailed;
+			} finally {
+				result.adding = false;
+			}
+		},
 		// The words Turing read as the filter leave the query, so they no longer match as text.
 		applySuggestion() {
 			const { suggestion } = getContext();
@@ -903,19 +935,55 @@ function card( d, position ) {
 	const type = plain( String( fields.type ?? '' ) );
 	const at = new Date( fields.publication_date ?? d.date );
 	const valid = d.date || fields.publication_date ? ! isNaN( at ) : false;
+	const title = plain( d.title ) || d.url;
 	return {
 		id: String( fields.id ?? '' ),
 		position,
 		url: d.url,
-		title: plain( d.title ) || d.url,
+		title,
 		type: state.typeLabels[ type ] || type,
 		date: valid ? dateFormat.format( at ) : '',
 		iso: valid ? at.toISOString() : '',
 		crumb: crumb( d.url ),
 		image: d.image || '',
 		snippet: highlighted( d.description ),
+		...product( fields, title ),
 	};
 }
+
+/**
+ * A WooCommerce product's price and its "Add to cart" (D173), for a result whose document
+ * carries a price on a site running WooCommerce; nothing for any other result.
+ *
+ * @param {Object} fields The document's fields.
+ * @param {string} title  The result's title, which names the button for a screen reader.
+ */
+function product( fields, title ) {
+	const price = Number( fields.price );
+	if ( ! config.shop || '' === ( fields.price ?? '' ) || isNaN( price ) ) {
+		return { price: '' };
+	}
+	const regular = Number( fields.regular_price );
+	return {
+		price: money.format( price ),
+		regular: regular > price ? money.format( regular ) : '',
+		// The document id ends in the post id: `<site key>:post:<id>`.
+		productId: Number(
+			String( fields.id ?? '' )
+				.split( ':' )
+				.pop()
+		),
+		cartLabel: state.cartLabel.replace( '%s', title ),
+		cartStatus: '',
+		adding: false,
+	};
+}
+
+// The shop's currency, written as the page's language writes money.
+const money = new Intl.NumberFormat(
+	document.documentElement.lang || undefined,
+	{ style: 'currency', currency: config.shop?.currency || 'USD' }
+);
 
 /**
  * The facets to show, in the order they were first answered. Once the search filters on a

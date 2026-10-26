@@ -136,6 +136,26 @@
 	padding: 0.15rem 0.75rem;
 }
 
+/* A WooCommerce product's price and "Add to cart" (D173). */
+.viglet-dumont-search__shop {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1rem;
+	margin-top: 0.5rem;
+}
+
+.viglet-dumont-search__price {
+	font-weight: 600;
+	margin: 0;
+}
+
+.viglet-dumont-search__price del {
+	font-weight: 400;
+	margin-right: 0.25rem;
+	opacity: 0.7;
+}
+
 /* The filters a sentence names (D170): offered, not applied, so drawn dashed. */
 .viglet-dumont-search__suggested {
 	align-items: center;

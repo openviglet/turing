@@ -308,13 +308,13 @@ msgstr "Visão geral do conteúdo"
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#: src/blocks/search/render.php:92
+#: src/blocks/search/render.php:97
 #: src/includes/class-viglet-dumont-native-search.php:187
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:93
+#: src/blocks/search/render.php:98
 #: src/includes/class-viglet-dumont-native-search.php:188
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
@@ -925,7 +925,7 @@ msgstr "Origem"
 msgid "Turing field"
 msgstr "Campo no Turing"
 
-#: src/blocks/search/render.php:79
+#: src/blocks/search/render.php:84
 #: assets/admin/mapping.js:169
 #: assets/admin/mapping.js:323
 msgid "Type"
@@ -1160,15 +1160,15 @@ msgstr "Sugestões"
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
-#: src/blocks/search/parts/main.php:79
+#: src/blocks/search/parts/main.php:90
 msgid "Or start from the latest posts:"
 msgstr "Ou comece pelos posts mais recentes:"
 
-#: src/blocks/search/parts/main.php:89
+#: src/blocks/search/parts/main.php:100
 msgid "Try again"
 msgstr "Tentar de novo"
 
-#: src/blocks/search/parts/main.php:90
+#: src/blocks/search/parts/main.php:101
 msgid "Search with WordPress instead"
 msgstr "Buscar com o WordPress"
 
@@ -1806,8 +1806,8 @@ msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
 msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:88
-#: src/blocks/search/render.php:90
+#: src/blocks/search/render.php:93
+#: src/blocks/search/render.php:95
 #: src/includes/class-viglet-dumont-native-search.php:183
 #: src/includes/class-viglet-dumont-native-search.php:185
 #: src/includes/class-viglet-dumont-native-search.php:316
@@ -1956,7 +1956,7 @@ msgstr "Filtrar pelo que você pediu:"
 msgid "Apply this filter"
 msgstr "Aplicar este filtro"
 
-#: src/blocks/search/render.php:80
+#: src/blocks/search/render.php:85
 msgid "Published"
 msgstr "Publicado"
 
@@ -2000,37 +2000,59 @@ msgstr "Rascunhar um resumo"
 msgid "Written by Turing’s language model from the saved post. Nothing changes until you use it and save."
 msgstr "Escrito pelo modelo de linguagem do Turing a partir do post salvo. Nada muda até você usá-lo e salvar."
 
-#: src/includes/class-viglet-dumont-woocommerce.php:77
-#: src/includes/class-viglet-dumont-woocommerce.php:109
+#: src/includes/class-viglet-dumont-woocommerce.php:97
+#: src/includes/class-viglet-dumont-woocommerce.php:129
 msgid "Price"
 msgstr "Preço"
 
-#: src/includes/class-viglet-dumont-woocommerce.php:78
+#: src/includes/class-viglet-dumont-woocommerce.php:98
 msgid "Regular price"
 msgstr "Preço normal"
 
-#: src/includes/class-viglet-dumont-woocommerce.php:79
+#: src/includes/class-viglet-dumont-woocommerce.php:99
 msgid "Sale price"
 msgstr "Preço promocional"
 
-#: src/includes/class-viglet-dumont-woocommerce.php:80
+#: src/includes/class-viglet-dumont-woocommerce.php:100
 msgid "Stock status"
 msgstr "Situação do estoque"
 
-#: src/includes/class-viglet-dumont-woocommerce.php:81
+#: src/includes/class-viglet-dumont-woocommerce.php:101
 msgid "SKU"
 msgstr "SKU"
 
-#: src/includes/class-viglet-dumont-woocommerce.php:82
+#: src/includes/class-viglet-dumont-woocommerce.php:102
 msgid "Average rating"
 msgstr "Avaliação média"
 
 #. translators: %s: a product field, e.g. Price.
-#: src/includes/class-viglet-dumont-woocommerce.php:89
+#: src/includes/class-viglet-dumont-woocommerce.php:109
 #, php-format
 msgid "Product: %s"
 msgstr "Produto: %s"
 
-#: src/includes/class-viglet-dumont-woocommerce.php:118
+#: src/includes/class-viglet-dumont-woocommerce.php:148
 msgid "Stock"
 msgstr "Estoque"
+
+#: src/blocks/search/parts/main.php:70
+msgid "Was"
+msgstr "De"
+
+#: src/blocks/search/parts/main.php:73
+msgid "Add to cart"
+msgstr "Adicionar ao carrinho"
+
+#. translators: %s: the product's name.
+#: src/blocks/search/render.php:80
+#, php-format
+msgid "Add to cart: %s"
+msgstr "Adicionar ao carrinho: %s"
+
+#: src/blocks/search/render.php:81
+msgid "Added to your cart."
+msgstr "Adicionado ao seu carrinho."
+
+#: src/blocks/search/render.php:82
+msgid "It could not be added to the cart."
+msgstr "Não foi possível adicionar ao carrinho."

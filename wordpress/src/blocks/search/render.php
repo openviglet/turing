@@ -75,6 +75,11 @@ $viglet_dumont_state = array(
 	// The filters a sentence names (D170), and the names of the core fields they may filter.
 	'suggestEnabled' => ! empty( $attributes['suggestFilters'] ),
 	'suggested'      => array(),
+	// A product result's "Add to cart" (D173): its name for a screen reader, and what it did.
+	/* translators: %s: the product's name. */
+	'cartLabel'      => __( 'Add to cart: %s', 'viglet-dumont' ),
+	'cartAdded'      => __( 'Added to your cart.', 'viglet-dumont' ),
+	'cartFailed'     => __( 'It could not be added to the cart.', 'viglet-dumont' ),
 	'fieldLabels'    => array(
 		'type'             => __( 'Type', 'viglet-dumont' ),
 		'publication_date' => __( 'Published', 'viglet-dumont' ),

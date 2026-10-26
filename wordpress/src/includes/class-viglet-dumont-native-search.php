@@ -465,6 +465,11 @@ class Viglet_Dumont_Native_Search {
 		if ( null !== $analytics ) {
 			$config['analytics'] = $analytics;
 		}
+		// A product result's price and "Add to cart" (D173).
+		$shop = Viglet_Dumont_WooCommerce::shop_config();
+		if ( null !== $shop ) {
+			$config['shop'] = $shop;
+		}
 
 		return $config;
 	}

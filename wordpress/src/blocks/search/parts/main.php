@@ -63,6 +63,19 @@ $viglet_dumont_recent = array_map(
 					<?php if ( $viglet_dumont_show( 'showSnippet' ) ) : ?>
 						<p class="viglet-dumont-search__snippet" data-wp-watch="callbacks.snippet"></p>
 					<?php endif; ?>
+					<?php if ( Viglet_Dumont_WooCommerce::active() ) : ?>
+						<?php
+						// A WooCommerce product's price and "Add to cart" (D173).
+						?>
+						<div class="viglet-dumont-search__shop" hidden data-wp-bind--hidden="!context.result.price">
+							<p class="viglet-dumont-search__price">
+								<del hidden data-wp-bind--hidden="!context.result.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-dumont' ); ?></span> <span data-wp-text="context.result.regular"></span></del>
+								<span data-wp-text="context.result.price"></span>
+							</p>
+							<button type="button" class="wp-element-button viglet-dumont-search__cart" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="context.result.adding" data-wp-bind--aria-label="context.result.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-dumont' ); ?></button>
+							<span class="viglet-dumont-search__cart-status" role="status" data-wp-text="context.result.cartStatus"></span>
+						</div>
+					<?php endif; ?>
 				</div>
 			</li>
 		</template>

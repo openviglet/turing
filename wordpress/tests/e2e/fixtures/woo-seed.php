@@ -79,6 +79,11 @@ $mapping['product'] = array(
 			),
 		),
 		array(
+			'source' => 'woo:regular_price',
+			'field'  => 'regular_price',
+			'type'   => 'FLOAT',
+		),
+		array(
 			'source'      => 'woo:stock_status',
 			'field'       => 'stock_status',
 			'type'        => 'STRING',

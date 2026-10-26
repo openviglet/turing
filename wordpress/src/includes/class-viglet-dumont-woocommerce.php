@@ -68,6 +68,26 @@ class Viglet_Dumont_WooCommerce {
 	}
 
 	/**
+	 * What the search block needs to sell from a result card: the shop's currency, and the
+	 * Store API it adds to the cart through, with the nonce WooCommerce checks. Null without
+	 * WooCommerce.
+	 *
+	 * @return array{currency: string, storeApi: string, nonce: string, cartUrl: string}|null
+	 */
+	public static function shop_config(): ?array {
+		if ( ! self::active() ) {
+			return null;
+		}
+
+		return array(
+			'currency' => function_exists( 'get_woocommerce_currency' ) ? (string) get_woocommerce_currency() : 'USD',
+			'storeApi' => rest_url( 'wc/store/v1/' ),
+			'nonce'    => wp_create_nonce( 'wc_store_api' ),
+			'cartUrl'  => function_exists( 'wc_get_cart_url' ) ? (string) wc_get_cart_url() : '',
+		);
+	}
+
+	/**
 	 * The shop fields the mapping screen offers for products.
 	 *
 	 * @return array<int, array{source: string, label: string}>
@@ -107,6 +127,16 @@ class Viglet_Dumont_WooCommerce {
 				'multi'       => false,
 				'facet'       => false,
 				'facet_label' => __( 'Price', 'viglet-dumont' ),
+				'weight'      => null,
+			),
+			// What a result card strikes through when the product is on sale.
+			array(
+				'source'      => 'woo:regular_price',
+				'field'       => 'regular_price',
+				'type'        => 'FLOAT',
+				'multi'       => false,
+				'facet'       => false,
+				'facet_label' => '',
 				'weight'      => null,
 			),
 			array(

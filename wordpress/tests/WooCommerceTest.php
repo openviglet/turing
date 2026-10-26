@@ -142,11 +142,11 @@ final class WooCommerceTest extends PluginTestCase {
 		$fields = ( new Viglet_Dumont_Mapping( $this->settings() ) )->all()['product']['fields'];
 
 		$this->assertSame(
-			array( 'taxonomy:product_cat', 'woo:price', 'woo:stock_status', 'taxonomy:pa_color' ),
+			array( 'taxonomy:product_cat', 'woo:price', 'woo:regular_price', 'woo:stock_status', 'taxonomy:pa_color' ),
 			array_column( $fields, 'source' )
 		);
-		$this->assertSame( array( true, false, true, true ), array_column( $fields, 'facet' ) );
-		$this->assertSame( 'Color', $fields[3]['facet_label'] );
+		$this->assertSame( array( true, false, false, true, true ), array_column( $fields, 'facet' ) );
+		$this->assertSame( 'Color', $fields[4]['facet_label'] );
 
 		// The meta keys a product carries: none here.
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- a stand-in database, cleared in tearDown().
