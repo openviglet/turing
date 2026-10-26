@@ -10,7 +10,11 @@
  */
 import { getConfig } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
-import { createSiteSearch, trackResultClick } from 'viglet-dumont/search';
+import {
+	config,
+	createSiteSearch,
+	trackResultClick,
+} from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
 const { labels, searchPage, queryParam } = getConfig( 'viglet-dumont/overlay' );
@@ -134,7 +138,8 @@ function build() {
 }
 
 /**
- * Search for what is typed, the last word as a prefix (Turing matches whole words, T1120).
+ * Search for what is typed, as Turing's instant mode (T1120): the last word matches as a
+ * prefix ("work" finds "workshop") and the search stays out of the site's search log.
  */
 function update() {
 	const typed = input.value.trim();
@@ -145,9 +150,13 @@ function update() {
 		status.textContent = '';
 		return;
 	}
-	search.searchQuery(
-		/[\p{L}\p{N}]$/u.test( typed ) ? `${ typed }*` : typed
-	);
+	search.searchRequest( {
+		locale: config.locale,
+		...search.getState().request,
+		q: typed,
+		mode: 'instant',
+		page: 1,
+	} );
 }
 
 /**

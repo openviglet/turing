@@ -142,11 +142,22 @@ test( 'results follow the typing without a submit, a half-typed word included', 
 	page,
 	seed,
 } ) => {
+	const searches = [];
+	page.on( 'request', ( request ) => {
+		if ( request.url().includes( '/search/query' ) ) {
+			searches.push( request.postDataJSON() );
+		}
+	} );
 	await page.goto( `/?page_id=${ seed.searchPageId }` );
 	await block( page )
 		.locator( 'input[role="combobox"]' )
 		.pressSequentially( 'worksh', { delay: 30 } );
 	await expect( summary( page ) ).toHaveText( '4 results' );
-	// The address keeps what was typed, not the prefix query sent for it.
 	await expect( page ).toHaveURL( /q=worksh(&|$)/ );
+	// Sent as typed, in Turing's instant mode (D183): no wildcard guessed into the query, and
+	// the half-typed word stays out of the site's search log.
+	expect( searches.at( -1 ) ).toMatchObject( {
+		q: 'worksh',
+		mode: 'instant',
+	} );
 } );

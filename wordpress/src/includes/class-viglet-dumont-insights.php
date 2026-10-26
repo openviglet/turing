@@ -54,10 +54,10 @@ class Viglet_Dumont_Insights {
 	 * A period's top searches with their clicks, the searches that found nothing, and the ones
 	 * that found results nobody opened.
 	 *
-	 * The search block searches as the visitor types, and every typed prefix reaches Turing's
-	 * metrics as a search ending in the `*` the block adds (D183): those are left out, until a
-	 * search can keep itself out of the metrics (Turing T1145). The totals are the shown terms'
-	 * own, so typing does not skew the click-through rate either.
+	 * The search block searches as the visitor types. Since D183 it does so in Turing's instant
+	 * mode, which keeps those searches out of the metrics; before, each reached them as a typed
+	 * prefix ending in `*`, and the ones still in the log are left out. The totals are the
+	 * shown terms' own, so typing does not skew the click-through rate either.
 	 *
 	 * @param string $period One of self::PERIODS.
 	 * @return array{period: string, searches: int, clicks: int, ctr: float, top: array, failed: array, unopened: array}|WP_Error

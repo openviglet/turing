@@ -740,10 +740,9 @@ function focusInput() {
  * Search, and keep the query in the address bar so the page can be shared or reloaded.
  *
  * @param {string}  query  What to search for; empty searches everything.
- * @param {boolean} prefix Whether the last word is still being typed: Turing matches whole
- *                         words, so it is sent as a prefix ("work" finds "workshop"). The
- *                         address bar keeps what was typed. A guess at the query
- *                         syntax until Turing matches prefixes itself (T1120, D183).
+ * @param {boolean} prefix Whether the last word is still being typed: sent as Turing's
+ *                         instant mode (T1120), it matches as a prefix ("work" finds
+ *                         "workshop") and stays out of the site's search log.
  */
 function run( query, prefix = false ) {
 	const typed = query.trim();
@@ -751,7 +750,8 @@ function run( query, prefix = false ) {
 	settled = ! prefix;
 	state.corrected = '';
 	send( {
-		q: prefix && /[\p{L}\p{N}]$/u.test( typed ) ? `${ typed }*` : lastQuery,
+		q: lastQuery,
+		mode: prefix ? 'instant' : 'standard',
 		page: 1,
 	} );
 	// A search the visitor settled on is a step Back returns to; typing is not.
@@ -760,7 +760,8 @@ function run( query, prefix = false ) {
 
 /**
  * Search with these changes to the current request, keeping its filters, sort and page
- * size.
+ * size. Only run() searches as the visitor types: anything else is a standard search, so a
+ * filter or a page after a pause in the typing is logged like any other.
  *
  * @param {Object} changes Fields of the structured request.
  */
@@ -770,6 +771,7 @@ function send( changes ) {
 		...search.getState().request,
 		rows: state.perPage,
 		sort: state.sort,
+		mode: 'standard',
 		...changes,
 	} );
 }
