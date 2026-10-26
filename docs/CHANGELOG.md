@@ -1359,6 +1359,7 @@
 - **T1131** — GET /api/sn/{siteId}/metrics/clicks reports searches, clicks, CTR and mean clicked position per term plus the found-but-never-opened terms, the console's Top search terms shows a CTR column, fetchClickThrough reads it from the SDK, and /click answers 204 with X-Turing-Metrics: disabled when metrics are off.
 - **T1137** — useTuringSearch takes consent, sessionCookie and abandonment like the vanilla controller, writes no TUR_SESSION cookie on mount, skips instant-mode searches, and the React GA sink sends GA4 recommended events.
 - **T1132 (fq on similar)** — GET /search/similar takes fq[], fq[and] and fq[or] with the search's semantics, applied inside the MLT query on Solr, Lucene and Elasticsearch, and fetchSimilar and createSimilarController take fq.
+- **T1140** — fetchSimilar and fetchStoredDocuments in both SDKs send the locale as _setlocale, so a multi-locale site's related rail and detail page read the visitor's locale.
 
 ## Block BJ — Configurable, per-language NL ranking lexicon (Lucene analysis)
 

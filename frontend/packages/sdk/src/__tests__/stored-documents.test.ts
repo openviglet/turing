@@ -25,6 +25,7 @@ describe("fetchStoredDocuments", () => {
     const url = new URL((fetchMock.mock.calls[0] as unknown[])[0] as string);
     expect(url.pathname).toBe("/api/sn/vagas/search/document");
     expect(url.searchParams.getAll("id")).toEqual(["x-fx-1", "fx-1"]);
-    expect(url.searchParams.get("locale")).toBe("pt_BR");
+    // T1140 — `_setlocale` is the name the endpoint binds; `locale` was dropped.
+    expect(url.searchParams.get("_setlocale")).toBe("pt_BR");
   });
 });

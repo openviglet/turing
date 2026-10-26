@@ -1860,7 +1860,8 @@ export function fetchSimilar(
 ): Promise<TurSimilarResult[]> {
   const qs = new URLSearchParams({ id: params.id });
   if (params.rows != null) qs.append("rows", String(params.rows));
-  if (params.locale) qs.append("locale", params.locale);
+  // T1140 — the server reads the locale as `_setlocale`, like search.
+  if (params.locale) qs.append("_setlocale", params.locale);
   if (params.mode) qs.append("mode", params.mode);
   for (const fq of params.fq ?? []) qs.append("fq[]", fq);
   return client.get<TurSimilarResult[]>(`/sn/${site}/search/similar?${qs}`, {
@@ -1885,7 +1886,7 @@ export function fetchStoredDocuments(
 ): Promise<Record<string, unknown>[]> {
   const qs = new URLSearchParams();
   for (const id of ids) qs.append("id", id);
-  if (locale) qs.append("locale", locale);
+  if (locale) qs.append("_setlocale", locale);
   return client.get<Record<string, unknown>[]>(`/sn/${site}/search/document?${qs}`, {
     signal: options.signal,
   });

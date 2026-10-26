@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchSimilar } from "../api";
+import { fetchSimilar, fetchStoredDocuments } from "../api";
 import { createSimilarController } from "../controllers/similar";
 import type { TuringClient } from "../client";
 
@@ -21,6 +21,19 @@ describe("similar documents with filters (T1132)", () => {
     const url = new URL(get.mock.calls[0][0] as string, "https://turing.example");
     expect(url.pathname).toBe("/sn/shared/search/similar");
     expect(url.searchParams.getAll("fq[]")).toEqual(["type:post", "site_key:a.example.org"]);
+  });
+
+  it("T1140 - sends the locale as _setlocale, the name the server reads", async () => {
+    const { get, client: c } = client();
+
+    await fetchSimilar(c, "shared", { id: "post-7", locale: "pt_BR" });
+    await fetchStoredDocuments(c, "shared", ["post-7"], "pt_BR");
+
+    for (const call of get.mock.calls) {
+      const url = new URL(call[0] as string, "https://turing.example");
+      expect(url.searchParams.get("_setlocale")).toBe("pt_BR");
+      expect(url.searchParams.has("locale")).toBe(false);
+    }
   });
 
   it("sends no filter when none is given", async () => {

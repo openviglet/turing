@@ -12,8 +12,7 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- ⏳ **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — The duplicates search takes no filter: its clusters come from the vector collection, which carries no field to filter on. → §CXLIV
-- 📋 **T1140** (deps: —) **The SDK's fetchSimilar and fetchStoredDocuments send the locale under a name the server ignores** — A multi-locale site's related rail and detail page read the first locale's documents instead of the visitor's. → §CLII
+- 🛠 **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — The duplicates search takes no filter: its clusters come from the vector collection, which carries no field to filter on. → §CXLIV
 
 ## Block CF — What the SN site manifest cannot declare
 
