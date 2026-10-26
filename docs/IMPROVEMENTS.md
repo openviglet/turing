@@ -31,6 +31,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block AI — Persona as a first-class actionable surface (§XXXII)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2289,3 +2291,32 @@ goes away once a release carries the function.
   or at least as a visible "unreleased" count. An SDK whose source runs ahead of npm
   silently sends consumers to hand-written requests.
 - Done when the published SDK exports `postNlFilters` and `TurNLFilters`.
+
+## CLIV Persona as a first-class actionable surface (§XXXII)
+
+### CLIV.1 No read lists a site's audience personas (T1143)
+
+**Where it happened.** Dumont D171 (the WordPress editor's Assist section) wants "Fits
+the audience?": a content-fit score per audience persona of the site, from the anonymous
+`POST /api/sn/{site}/persona/{personaId}/content-fit` (T634). That endpoint takes a
+persona id, but nothing a site's client can call lists which ids it accepts.
+
+**What came back.** No `/api/sn/{site}/...` read names the site's catalog personas. The
+plugin's key does open `/api/persona` and `/api/ai-agent`, so a client could rebuild the
+answer itself: find the site's GenAI binding, fall back to the global Default AI Agent
+the way `TurDefaultAgentResolver` does, then keep the personas `isUsableAsAudience()`.
+That is Turing's resolution copied into every consumer, drifting the first time it
+changes.
+
+**Workaround used.** None: Dumont D171 waits on this line.
+
+**What it should do.**
+- `GET /api/sn/{site}/personas` (or a field on an existing site read) answering the
+  personas of the site's effective agent that content-fit accepts: id, name, a short
+  description, and whether each is usable as an audience, resolved by the same code the
+  content-fit endpoint uses so the two can never disagree.
+- Anonymous like content-fit, gated by the same site API-key filter, carrying no prompt
+  or private persona fields.
+- The JS and Java SDKs expose it beside `fetchPersonaContentFit`.
+- Done when a client lists a site's audience personas and every id it gets is accepted
+  by content-fit.

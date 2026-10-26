@@ -17,3 +17,5 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block AI — Persona as a first-class actionable surface (§XXXII)
+

@@ -19,6 +19,10 @@
 - 📋 **T1141** (deps: —) **turing-app does not build at HEAD: a bento test fixture fails tsc -b, so the jar and the image fail too** — A test's type drift blocks every production build and image, and nothing caught it at the commit that changed the type. → §CLIII.1
 - 📋 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — Every SDK function shipped since the last release is unusable from npm, and nothing shows the gap. → §CLIII.2
 
+## Block AI — Persona as a first-class actionable surface (§XXXII)
+
+- 📋 **T1143** (deps: —) **A site's client cannot list the audience personas its content-fit endpoint accepts, so it cannot offer one** — Every consumer of content-fit would copy Turing's agent and persona resolution to find valid ids, or hardcode them. → §CLIV.1
+
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**
