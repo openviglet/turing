@@ -401,6 +401,32 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * Text Turing's default language model writes from some data and an instruction
+	 * (`POST /api/v2/summary`), cached by Turing under the key until asked to regenerate.
+	 *
+	 * @param string $cache_key     What the answer is cached under.
+	 * @param string $data          The text the model reads.
+	 * @param string $system_prompt What to write from it.
+	 * @param bool   $regenerate    Write it again rather than answer from the cache.
+	 * @return array{success?: bool, error?: ?string, content?: ?string}|WP_Error
+	 */
+	public function summary( string $cache_key, string $data, string $system_prompt, bool $regenerate = false ) {
+		return $this->decoded(
+			$this->request(
+				'POST',
+				'/api/v2/summary',
+				$regenerate ? array( 'regenerate' => 'true' ) : null,
+				array(
+					'cacheKey'     => $cache_key,
+					'data'         => $data,
+					'systemPrompt' => $system_prompt,
+				),
+				array( 'timeout' => 60 )
+			)
+		);
+	}
+
+	/**
 	 * A call to one of Turing's console APIs (`/api/sn/<site id>/...`), JSON both ways, for the
 	 * Search tuning screen (D172).
 	 *

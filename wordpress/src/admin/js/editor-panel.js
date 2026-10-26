@@ -1,7 +1,7 @@
 /**
  * The block editor's "Search" panel: whether this post is in the Turing index, why not,
  * "Exclude from search", "Reindex now", and an Assist section (D171) that finds what the site
- * already has near the post.
+ * already has near the post and drafts its excerpt.
  *
  * Written against the wp.* globals WordPress already loads, so the plugin needs no JS build.
  */
@@ -102,6 +102,65 @@
         );
     }
 
+    /**
+     * An excerpt drafted by Turing from the saved post (D171). "Use" puts it in the excerpt
+     * field like typing would; the post changes only when the author saves it.
+     */
+    function ExcerptDraft(props) {
+        var editPost = useDispatch('core/editor').editPost;
+        var draftHook = useState(null);
+        var draft = draftHook[0];
+        var setDraft = draftHook[1];
+        var busyHook = useState(false);
+        var busy = busyHook[0];
+        var setBusy = busyHook[1];
+        var usedHook = useState(false);
+        var used = usedHook[0];
+        var setUsed = usedHook[1];
+
+        function write(again) {
+            setBusy(true);
+            setUsed(false);
+            wp.apiFetch({
+                path: '/viglet-dumont/v1/post/' + props.postId + '/excerpt',
+                method: 'POST',
+                data: { again: !!again }
+            })
+                .then(setDraft)
+                .catch(function (error) {
+                    setDraft({ excerpt: '', error: error.message || String(error) });
+                })
+                .finally(function () {
+                    setBusy(false);
+                });
+        }
+
+        return el('div', { className: 'viglet-dumont-assist__excerpt' },
+            el('h4', null, __('Excerpt', 'viglet-dumont')),
+            draft && draft.error ? el('p', null, draft.error) : null,
+            draft && draft.excerpt ? el('div', { 'aria-live': 'polite' },
+                el('blockquote', { className: 'viglet-dumont-assist__draft', style: { margin: '0 0 8px', fontStyle: 'italic' } }, draft.excerpt),
+                used
+                    ? el('p', null, __('In the excerpt field. Save the post to keep it.', 'viglet-dumont'))
+                    : el(components.Button, {
+                        variant: 'primary',
+                        onClick: function () {
+                            editPost({ excerpt: draft.excerpt });
+                            setUsed(true);
+                        }
+                    }, __('Use this excerpt', 'viglet-dumont'))
+            ) : null,
+            el('p', null, el(components.Button, {
+                variant: 'secondary',
+                isBusy: busy,
+                disabled: busy || !props.postId,
+                onClick: function () { write(!!draft); }
+            }, draft && draft.excerpt ? __('Draft another', 'viglet-dumont') : __('Draft an excerpt', 'viglet-dumont'))),
+            el('p', { className: 'viglet-dumont-assist__note' },
+                __('Written by Turing’s language model from the saved post. Nothing changes until you use it and save.', 'viglet-dumont'))
+        );
+    }
+
     function SearchPanel() {
         var post = useSelect(function (select) {
             var editor = select('core/editor');
@@ -176,7 +235,8 @@
                 variant: 'link',
                 href: 'admin.php?page=viglet-dumont-tuning&promote=' + post.id
             }, __('Promote for a search…', 'viglet-dumont'))) : null,
-            el(Assist, { postId: post.id })
+            el(Assist, { postId: post.id }),
+            el(ExcerptDraft, { postId: post.id })
         );
     }
 

@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Viglet_Dumont_Post_State {
 
+	/** How much of a post's text the excerpt draft reads: the opening is what an excerpt sums up. */
+	private const EXCERPT_SOURCE_CHARS = 6000;
+
 	/**
 	 * The plugin settings this state is read with.
 	 *
@@ -138,8 +141,8 @@ class Viglet_Dumont_Post_State {
 	}
 
 	/**
-	 * `GET viglet-dumont/v1/post/<id>/state`, `POST .../reindex` and `GET .../assist`, for
-	 * whoever can edit the post.
+	 * `GET viglet-dumont/v1/post/<id>/state`, `POST .../reindex`, `GET .../assist` and
+	 * `POST .../excerpt`, for whoever can edit the post.
 	 */
 	public function register_routes(): void {
 		$can_edit = static fn ( WP_REST_Request $request ) => current_user_can( 'edit_post', (int) $request['id'] );
@@ -171,6 +174,83 @@ class Viglet_Dumont_Post_State {
 				'permission_callback' => $can_edit,
 			)
 		);
+		register_rest_route(
+			'viglet-dumont/v1',
+			'/post/(?P<id>\d+)/excerpt',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'rest_excerpt' ),
+				'permission_callback' => $can_edit,
+				'args'                => array(
+					'again' => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * An excerpt drafted by Turing's language model from the post as saved (D171), for the
+	 * author to use or not: nothing here writes to the post (the D13 non-goal). The call goes
+	 * from this server with the stored key, never from the browser.
+	 *
+	 * @param WP_Post $post  The post being written.
+	 * @param bool    $again Write another draft rather than the one Turing cached.
+	 * @return array{excerpt: string, error: string}
+	 */
+	public function draft_excerpt( WP_Post $post, bool $again = false ): array {
+		$text = trim( wp_strip_all_tags( strip_shortcodes( (string) $post->post_content ) ) );
+		if ( '' === $text ) {
+			return array(
+				'excerpt' => '',
+				'error'   => __( 'Save some text first: the draft is written from the saved post.', 'viglet-dumont' ),
+			);
+		}
+
+		$data   = trim( $post->post_title . "\n\n" . mb_substr( $text, 0, self::EXCERPT_SOURCE_CHARS ) );
+		$locale = get_locale();
+		$prompt = sprintf(
+			'You draft the excerpt of a post: one or two sentences, at most 55 words, saying what the post is about. Write it in the language of the locale %s. Use only what the post says. Answer with the excerpt alone, as plain text: no quotes, no heading, no markdown.',
+			$locale
+		);
+		// Keyed by what was read, so an edited post gets a new draft and an unchanged one the cached.
+		$key = 'viglet-dumont-excerpt-' . md5( $locale . "\n" . $data );
+
+		$result = ( new Viglet_Dumont_API_Client( $this->settings ) )->summary( $key, $data, $prompt, $again );
+		if ( is_wp_error( $result ) ) {
+			return array(
+				'excerpt' => '',
+				'error'   => $result->get_error_message(),
+			);
+		}
+		$excerpt = trim( (string) ( $result['content'] ?? '' ), " \n\r\t\"“”" );
+		if ( empty( $result['success'] ) || '' === $excerpt ) {
+			return array(
+				'excerpt' => '',
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no draft.', 'viglet-dumont' ),
+			);
+		}
+
+		return array(
+			'excerpt' => $excerpt,
+			'error'   => '',
+		);
+	}
+
+	/**
+	 * REST: an excerpt drafted from the saved post.
+	 *
+	 * @param WP_REST_Request $request Carries `id`, and `again` for another draft.
+	 */
+	public function rest_excerpt( WP_REST_Request $request ): WP_REST_Response {
+		$post = get_post( (int) $request['id'] );
+		if ( ! $post instanceof WP_Post ) {
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-dumont' ) ), 404 );
+		}
+
+		return new WP_REST_Response( $this->draft_excerpt( $post, (bool) $request['again'] ), 200 );
 	}
 
 	/**

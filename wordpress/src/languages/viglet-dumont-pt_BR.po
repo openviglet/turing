@@ -38,9 +38,9 @@ msgstr "Indexação"
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
 #: src/includes/class-viglet-dumont-native-search.php:176
-#: src/includes/class-viglet-dumont-post-state.php:96
+#: src/includes/class-viglet-dumont-post-state.php:99
 #: assets/admin/tuning.js:373
-#: src/admin/js/editor-panel.js:152
+#: src/admin/js/editor-panel.js:211
 #: src/admin/js/search-block-editor.js:108
 msgid "Search"
 msgstr "Busca"
@@ -713,37 +713,38 @@ msgstr "%d documentos que o WordPress não publica mais foram removidos."
 msgid "Skipped: the reindex had failures."
 msgstr "Ignorada: a reindexação teve falhas."
 
-#: src/includes/class-viglet-dumont-post-state.php:60
+#: src/includes/class-viglet-dumont-post-state.php:63
 msgid "Not published"
 msgstr "Não publicado"
 
-#: src/includes/class-viglet-dumont-post-state.php:63
+#: src/includes/class-viglet-dumont-post-state.php:66
 msgid "Excluded"
 msgstr "Excluído da busca"
 
-#: src/includes/class-viglet-dumont-post-state.php:69
-#: src/includes/class-viglet-dumont-post-state.php:77
+#: src/includes/class-viglet-dumont-post-state.php:72
+#: src/includes/class-viglet-dumont-post-state.php:80
 #: assets/admin/health.js:395
-#: src/admin/js/editor-panel.js:143
+#: src/admin/js/editor-panel.js:202
 msgid "Failed"
 msgstr "Falhou"
 
-#: src/includes/class-viglet-dumont-post-state.php:71
+#: src/includes/class-viglet-dumont-post-state.php:74
 msgid "Queued"
 msgstr "Na fila"
 
 #. translators: %s: how long ago, e.g. "2 mins".
-#: src/includes/class-viglet-dumont-post-state.php:83
+#: src/includes/class-viglet-dumont-post-state.php:86
 #, php-format
 msgid "Indexed %s ago"
 msgstr "Indexado há %s"
 
-#: src/includes/class-viglet-dumont-post-state.php:87
+#: src/includes/class-viglet-dumont-post-state.php:90
 msgid "Not indexed yet"
 msgstr "Ainda não indexado"
 
-#: src/includes/class-viglet-dumont-post-state.php:239
-#: src/includes/class-viglet-dumont-post-state.php:253
+#: src/includes/class-viglet-dumont-post-state.php:250
+#: src/includes/class-viglet-dumont-post-state.php:319
+#: src/includes/class-viglet-dumont-post-state.php:333
 msgid "No such post."
 msgstr "Post não encontrado."
 
@@ -1093,23 +1094,23 @@ msgstr "Envia agora todos os posts publicados dos tipos indexados. Depois disso,
 msgid "Index everything now"
 msgstr "Indexar tudo agora"
 
-#: src/admin/js/editor-panel.js:127
+#: src/admin/js/editor-panel.js:186
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: src/admin/js/editor-panel.js:154
+#: src/admin/js/editor-panel.js:213
 msgid "Checking…"
 msgstr "Verificando…"
 
-#: src/admin/js/editor-panel.js:159
+#: src/admin/js/editor-panel.js:218
 msgid "Exclude from search"
 msgstr "Excluir da busca"
 
-#: src/admin/js/editor-panel.js:160
+#: src/admin/js/editor-panel.js:219
 msgid "Takes effect when the post is saved."
 msgstr "Vale quando o post for salvo."
 
-#: src/admin/js/editor-panel.js:173
+#: src/admin/js/editor-panel.js:232
 msgid "Reindex now"
 msgstr "Reindexar agora"
 
@@ -1334,15 +1335,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:457
+#: src/includes/class-viglet-dumont-api-client.php:483
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:514
+#: src/includes/class-viglet-dumont-api-client.php:540
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:519
+#: src/includes/class-viglet-dumont-api-client.php:545
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1453,7 +1454,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:433
+#: src/includes/class-viglet-dumont-api-client.php:459
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -1677,7 +1678,7 @@ msgstr "Antes"
 msgid "Now"
 msgstr "Agora"
 
-#: src/admin/js/editor-panel.js:178
+#: src/admin/js/editor-panel.js:237
 msgid "Promote for a search…"
 msgstr "Destacar para uma busca…"
 
@@ -1966,3 +1967,35 @@ msgstr "Sugerir os filtros que uma frase cita"
 #: src/admin/js/search-block-editor.js:147
 msgid "“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click."
 msgstr "“Posts sobre php do ano passado” oferece filtros de Tipo e Publicado para aplicar com um clique. Cada frase é uma chamada ao LLM; nada é aplicado sem um clique."
+
+#: src/includes/class-viglet-dumont-post-state.php:208
+msgid "Save some text first: the draft is written from the saved post."
+msgstr "Salve algum texto antes: o rascunho é escrito a partir do post salvo."
+
+#: src/includes/class-viglet-dumont-post-state.php:232
+msgid "Turing wrote no draft."
+msgstr "O Turing não escreveu nenhum rascunho."
+
+#: src/admin/js/editor-panel.js:139
+msgid "Excerpt"
+msgstr "Resumo"
+
+#: src/admin/js/editor-panel.js:144
+msgid "In the excerpt field. Save the post to keep it."
+msgstr "No campo de resumo. Salve o post para mantê-lo."
+
+#: src/admin/js/editor-panel.js:151
+msgid "Use this excerpt"
+msgstr "Usar este resumo"
+
+#: src/admin/js/editor-panel.js:158
+msgid "Draft another"
+msgstr "Escrever outro"
+
+#: src/admin/js/editor-panel.js:158
+msgid "Draft an excerpt"
+msgstr "Rascunhar um resumo"
+
+#: src/admin/js/editor-panel.js:160
+msgid "Written by Turing’s language model from the saved post. Nothing changes until you use it and save."
+msgstr "Escrito pelo modelo de linguagem do Turing a partir do post salvo. Nada muda até você usá-lo e salvar."

@@ -157,6 +157,83 @@ final class PostStateTest extends PluginTestCase {
 		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite.example.org', $search );
 	}
 
+	public function test_an_excerpt_is_drafted_from_the_saved_post_in_the_sites_language(): void {
+		$this->post->post_title   = 'Research grant';
+		$this->post->post_content = '<p>Applications close on 14 March.</p>[gallery]';
+		Functions\stubs(
+			array(
+				'strip_shortcodes' => static fn ( $text ) => str_replace( '[gallery]', '', $text ),
+				'get_locale'       => 'pt_BR',
+			)
+		);
+		$this->turing(
+			array(
+				'/api/v2/summary' => json_encode(
+					array(
+						'success' => true,
+						'content' => '"As inscriÃ§Ãµes fecham em 14 de marÃ§o."',
+					)
+				),
+			)
+		);
+
+		$state = new Viglet_Dumont_Post_State( $this->settings() );
+		$draft = $state->draft_excerpt( $this->post );
+
+		$this->assertSame(
+			array(
+				'excerpt' => 'As inscriÃ§Ãµes fecham em 14 de marÃ§o.',
+				'error'   => '',
+			),
+			$draft,
+			'the quotes a model wraps a sentence in are dropped'
+		);
+		[ $url, $args ] = $this->requests[0];
+		$body           = json_decode( $args['body'], true );
+		$this->assertSame( 'https://turing.example.org/api/v2/summary', $url );
+		$this->assertSame( "Research grant\n\nApplications close on 14 March.", $body['data'] );
+		$this->assertStringContainsString( 'pt_BR', $body['systemPrompt'] );
+		$this->assertSame( 'secret', $args['headers']['Key'] );
+
+		$state->draft_excerpt( $this->post, true );
+		$this->assertStringContainsString( 'regenerate=true', $this->requests[1][0] );
+		$this->assertSame( $body['cacheKey'], json_decode( $this->requests[1][1]['body'], true )['cacheKey'] );
+	}
+
+	public function test_an_empty_post_or_a_failed_model_gives_a_reason_and_no_draft(): void {
+		Functions\stubs(
+			array(
+				'strip_shortcodes' => static fn ( $text ) => $text,
+				'get_locale'       => 'en_US',
+			)
+		);
+		$this->turing(
+			array(
+				'/api/v2/summary' => json_encode(
+					array(
+						'success' => false,
+						'error'   => 'No default LLM is configured',
+					)
+				),
+			)
+		);
+		$state = new Viglet_Dumont_Post_State( $this->settings() );
+
+		$empty = $state->draft_excerpt( $this->post );
+		$this->assertSame( '', $empty['excerpt'] );
+		$this->assertNotSame( '', $empty['error'] );
+		$this->assertSame( array(), $this->requests, 'an empty post costs no call' );
+
+		$this->post->post_content = 'Some text.';
+		$this->assertSame(
+			array(
+				'excerpt' => '',
+				'error'   => 'No default LLM is configured',
+			),
+			$state->draft_excerpt( $this->post )
+		);
+	}
+
 	private function describe(): array {
 		return ( new Viglet_Dumont_Post_State( $this->settings() ) )->describe( $this->post );
 	}
