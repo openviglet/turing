@@ -9,6 +9,12 @@ import {
   type SearchParams,
 } from "../api";
 import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../analytics";
+import {
+  createAbandonmentWatcher,
+  type AbandonmentOptions,
+  type AbandonmentReason,
+  type AbandonmentWatcher,
+} from "../analytics-lifecycle";
 import { getOrCreateTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../session";
 import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "../resolve";
 import { createStore, type Store } from "../store";
@@ -157,6 +163,14 @@ export interface SearchControllerOptions {
    */
   readonly sessionCookie?: boolean;
   /**
+   * T1130 — search abandonment. When `analytics` is set and this is `true` (or
+   * an {@link AbandonmentOptions}), each settled search arms a watcher, and a
+   * visitor who leaves (tab hide, unload, or the idle timeout) without opening
+   * a result emits one `turing_search_abandoned { query, results, reason }`.
+   * {@link SearchController.trackResultClick} disarms it. Defaults to `false`.
+   */
+  readonly abandonment?: AbandonmentOptions | boolean;
+  /**
    * T484 — whether a non-wildcard query should also fetch the AI chat answer
    * (`GET /sn/{site}/chat`) alongside the search results. Defaults to `true`
    * (the historic behaviour: search + chat in one round-trip). Set `false` for a
@@ -244,6 +258,7 @@ export function createSearchController(
     sessionCookieName = TUR_SESSION_DEFAULT_COOKIE_NAME,
     consent = () => true,
     sessionCookie = true,
+    abandonment = false,
     chat: chatEnabled = true,
     postNative = true,
   } = options;
@@ -287,6 +302,28 @@ export function createSearchController(
   // Last real (non-wildcard) query, for refinement detection.
   let lastNonEmptyQuery: string | null = null;
 
+  // T1130 — one watcher per settled search; a click or the next search
+  // replaces it, and it fires at most once.
+  let abandonmentOptions: AbandonmentOptions | null = null;
+  if (analytics && abandonment) {
+    abandonmentOptions = abandonment === true ? {} : abandonment;
+  }
+  let abandonmentWatcher: AbandonmentWatcher | null = null;
+
+  function disarmAbandonment(): void {
+    abandonmentWatcher?.stop();
+    abandonmentWatcher = null;
+  }
+
+  function armAbandonment(query: string, results: number): void {
+    disarmAbandonment();
+    if (!abandonmentOptions) return;
+    abandonmentWatcher = createAbandonmentWatcher((reason: AbandonmentReason) => {
+      disarmAbandonment();
+      consentedAnalytics()?.emit(TURING_ANALYTICS_EVENTS.searchAbandoned, { query, results, reason });
+    }, abandonmentOptions);
+  }
+
   // Monotonic request id — the closure equivalent of `useRef(0)`. A late
   // response from a superseded request is dropped.
   let latestRequestId = 0;
@@ -317,6 +354,7 @@ export function createSearchController(
       bus.emit(TURING_ANALYTICS_EVENTS.searchNoResults, { query });
     }
     lastNonEmptyQuery = query;
+    armAbandonment(query, resultCount);
   }
 
   async function executeSearch(searchParams: SearchParams): Promise<void> {
@@ -472,6 +510,7 @@ export function createSearchController(
     trackResultClick: (documentId, position, term) => {
       const params = store.getState().params;
       const query = term ?? params.q ?? "";
+      disarmAbandonment();
       // Server CTR (fire-and-forget; swallows its own errors).
       void postClick(client, config.site, {
         term: query,

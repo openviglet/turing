@@ -2207,29 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXLII GA4 recommended events and search abandonment (T1130)
-
-**Where it happened.** Dumont's WordPress search block (D176) sends its search events to
-the site's Google Analytics through `googleAnalyticsSink()`. The sink forwards the
-canonical names verbatim: `turing_search`, `turing_search_result_click`, and so on.
-GA4's built-in site-search reports and its recommended-events tooling read `search`
-(with `search_term`) and `select_content` (with `content_type` and `content_id`). A site
-therefore sees nothing in those reports until someone writes custom definitions by hand.
-
-The taxonomy also has no search abandonment event: "searched, saw results, opened none
-and left". `createAbandonmentWatcher` exists, but its only canonical event is
-`turing_chat_abandoned`.
-
-**Workaround.** None. The plugin sends the canonical names and files the abandonment
-signal as a Dumont line that waits on this one.
-
-**What Turing should do.**
-- `googleAnalyticsSink({ recommended: true })`, opt-in and off by default, as behaviour changes ship: it also sends
-  `search { search_term }` for `turing_search` and `select_content { content_type:
-  'search_result', content_id, index }` for `turing_search_result_click`.
-- A canonical `turing_search_abandoned { query, results, reason }`, with a helper that
-  arms the watcher after a settled search and disarms it on a result click.
-
 ## CXLIII Reading click-through rates back (T1131)
 
 **Where it happened.** Dumont's WordPress search block (D176) now reports each result
@@ -2325,21 +2302,27 @@ keep their behaviour.
 
 ## CXLIX Consent-aware search analytics in the React SDK (T1137)
 
-**Where it happened.** T1129 made the vanilla SDK's search controller consent-aware. The
-React SDK's `useTuringSearch`
-(`frontend/packages/react-sdk/src/hooks/use-turing-search.ts`) still does what the
-controller did before: on mount it calls `getOrCreateTurSession()`, which writes the
-30-day `TUR_SESSION` cookie before any consent banner is answered, and it emits
-`turing_search` and `turing_search_refined` for every request, including the as-you-type
-ones.
+**Where it happened.** T1129 and T1130 changed the vanilla SDK's search analytics. The
+React SDK keeps its own copy of that code: `useTuringSearch`
+(`frontend/packages/react-sdk/src/hooks/use-turing-search.ts`) and `core/analytics*.ts`.
+That copy still behaves as the vanilla SDK did before:
+- On mount the hook calls `getOrCreateTurSession()`, which writes the 30-day
+  `TUR_SESSION` cookie before any consent banner is answered.
+- It emits `turing_search` and `turing_search_refined` for every request, including
+  as-you-type ones.
+- Its `googleAnalyticsSink` has no `recommended` option, and its taxonomy has no
+  `turing_search_abandoned`.
 
-**What Turing should do.** Mirror the controller's options on the hook:
+**What Turing should do.** Port the vanilla behaviour to the hook and its core:
 - `consent?: () => boolean`, asked before each emit and before the cookie is written. The
   session id is stamped on the first consented event, not on mount.
 - `sessionCookie?: boolean` (default `true`). With `false`, no session id is stamped and
   no cookie is written.
 - A request sent with `mode: "instant"` emits no search events.
+- `abandonment` (opt-in), `turing_search_abandoned` in the taxonomy and the beacon
+  transport, and `googleAnalyticsSink({ recommended: true })`.
 
-The vanilla implementation in `frontend/packages/sdk/src/controllers/search.ts`
-(`consentedAnalytics`) and its test `analytics-consent.test.ts` are the reference: port
-both.
+Reference: `frontend/packages/sdk/src/controllers/search.ts` (`consentedAnalytics`,
+`armAbandonment`), `analytics-sinks.ts` (`recommendedEvent`), and the tests
+`analytics-consent.test.ts` and `analytics-search-abandonment.test.ts`. Port the tests
+too.
