@@ -139,4 +139,26 @@ public class TurSNJobUtils {
             log.info("Successfully deleted");
         }
     }
+
+    /**
+     * T1112 — deletes every document of the server's site and locale whose fields
+     * hold all of {@code fields}' values, e.g. {@code Map.of("site_key",
+     * "a.example.org")} for one connector's documents of a shared site. Every
+     * entry is a filter, so only the fields given are sent.
+     *
+     * @since 2026.3.6
+     */
+    public static void deleteItemsByFields(TurSNServer turSNServer, Map<String, String> fields) {
+        if (fields == null || fields.isEmpty()) {
+            throw new IllegalArgumentException("Name at least one field to delete by");
+        }
+        final TurSNJobItems turSNJobItems = new TurSNJobItems();
+        final TurSNJobItem turSNJobItem = new TurSNJobItem(TurSNJobAction.DELETE,
+                Collections.singletonList(turSNServer.getSiteName()), turSNServer.getLocale());
+        turSNJobItem.setAttributes(new HashMap<>(fields));
+        turSNJobItems.add(turSNJobItem);
+        if (importItems(turSNJobItems, turSNServer, false)) {
+            log.info("Successfully deleted by {}", fields.keySet());
+        }
+    }
 }

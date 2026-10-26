@@ -175,6 +175,11 @@ public class TurLucene {
         turLuceneDocumentHandler.deIndexingByType(instance, type);
     }
 
+    /** T1112 — deletes the documents whose fields hold all of these values. */
+    public void deIndexingByFields(TurLuceneInstance instance, java.util.Map<String, String> fields) {
+        turLuceneDocumentHandler.deIndexingByFields(instance, fields);
+    }
+
     // -------------------------------------------------------------------------
     // Wildcard helpers
     // -------------------------------------------------------------------------

@@ -264,6 +264,16 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     }
 
     @Override
+    public boolean deIndexByFields(TurSNSite turSNSite, Locale locale, Map<String, String> fields) {
+        return turElasticsearchInstanceProcess
+                .initElasticsearchInstance(turSNSite.getName(), locale)
+                .map(esInstance -> {
+                    turElasticsearch.deIndexingByFields(esInstance, fields);
+                    return true;
+                }).orElse(false);
+    }
+
+    @Override
     public boolean commit(TurSNSite turSNSite, Locale locale) {
         // Elasticsearch commits are synchronous — nothing extra needed
         return true;

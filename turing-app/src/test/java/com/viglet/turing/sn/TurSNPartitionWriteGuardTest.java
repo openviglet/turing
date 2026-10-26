@@ -129,6 +129,23 @@ class TurSNPartitionWriteGuardTest {
                 .isInstanceOf(AccessDeniedException.class);
     }
 
+    /** T1112 — a delete by fields stays inside the partition; naming the partition is its delete-all. */
+    @Test
+    void confinesADeleteByFieldsToThePartition() {
+        TurSNJobItems deleteAll = item(TurSNJobAction.DELETE, Map.of("site_key", "a.example.org"));
+        guard.check(A, deleteAll);
+        assertThat(deleteAll.getTuringDocuments().get(0).getAttributes())
+                .containsEntry("site_key", "a.example.org");
+
+        TurSNJobItems posts = item(TurSNJobAction.DELETE, Map.of("post_type", "post"));
+        guard.check(A, posts);
+        assertThat(posts.getTuringDocuments().get(0).getAttributes())
+                .containsEntry("site_key", "a.example.org").containsEntry("post_type", "post");
+
+        assertThatThrownBy(() -> guard.check(A, item(TurSNJobAction.DELETE, Map.of("site_key", "b.example.org"))))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
     @Test
     void readsAMultiValuedPartitionField() {
         assertThat(TurSNPartitionWriteGuard.inPartition(List.of("a.example.org"), "a.example.org")).isTrue();

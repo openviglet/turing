@@ -141,6 +141,21 @@ public class TurLuceneDocumentHandler {
         }
     }
 
+    /** T1112 — deletes every document whose fields hold all of {@code fields}' values. */
+    public void deIndexingByFields(TurLuceneInstance instance, java.util.Map<String, String> fields) {
+        log.debug("Lucene deIndexing fields={}", fields);
+        org.apache.lucene.search.BooleanQuery.Builder query = new org.apache.lucene.search.BooleanQuery.Builder();
+        fields.forEach((field, value) -> query.add(new org.apache.lucene.search.TermQuery(new Term(field, value)),
+                org.apache.lucene.search.BooleanClause.Occur.FILTER));
+        try {
+            instance.getWriter().deleteDocuments(query.build());
+            instance.getWriter().commit();
+            syncAfterCommit(instance);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error de-indexing Lucene documents " + fields, e);
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Document building
     // -------------------------------------------------------------------------

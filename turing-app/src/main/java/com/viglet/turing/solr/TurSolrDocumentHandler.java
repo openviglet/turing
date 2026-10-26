@@ -141,6 +141,26 @@ public class TurSolrDocumentHandler {
         }
     }
 
+    /**
+     * T1112 — deletes every document whose fields hold all of {@code fields}'
+     * values. Each value is quoted, so it needs no escaping beyond {@code \} and
+     * {@code "}; the field names were validated at the import API.
+     */
+    public void deleteDocumentsByFields(TurSolrInstance turSolrInstance, Map<String, String> fields) {
+        String query = fields.entrySet().stream()
+                .map(field -> field.getKey() + ":\""
+                        + field.getValue().replace("\\", "\\\\").replace("\"", "\\\"") + "\"")
+                .collect(java.util.stream.Collectors.joining(" AND "));
+        try {
+            UpdateRequest updateRequest = new UpdateRequest();
+            updateRequest.deleteByQuery(query);
+            updateRequest.setCommitWithin(commitWithin);
+            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
+        } catch (SolrServerException | IOException e) {
+            throw new TurSolrIndexException("Error de-indexing Solr documents " + fields, e);
+        }
+    }
+
     private String concatenateString(@SuppressWarnings("rawtypes") List list) {
         int i = 0;
         StringBuilder sb = new StringBuilder();

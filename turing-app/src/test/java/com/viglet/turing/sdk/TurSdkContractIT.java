@@ -779,6 +779,16 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
             assertEquals(200, getWithKey("/sn/" + SITE + "/search/document?id=" + partitionProbeId("a")
                     + "&_setlocale=" + LOCALE, keyA).statusCode(), "key A reads its own document");
 
+            // T1112 — a DELETE naming a field removes every document holding it, on
+            // the real engine: partition B's delete-all leaves A's document alone.
+            Map<String, Object> partitionB = new HashMap<>(Map.of(RESERVED_FACET_FIELD, "t1133-b"));
+            processQueue.processIndexingQueue(new TurSNJobItems(new TurSNJobItem(TurSNJobAction.DELETE,
+                    List.of(SITE), Locale.forLanguageTag("en-US"), partitionB, null)));
+            assertEquals(List.of(), documentIds(postJson("/sn/" + SITE + "/search/query", everything, keyB)),
+                    "the field delete must remove B's documents");
+            assertEquals(List.of(partitionProbeId("a")),
+                    documentIds(postJson("/sn/" + SITE + "/search/query", everything, keyA)));
+
             // Its own document it may rewrite: read from the engine's stored fields, as
             // the import would, without queueing a write that outlives this test.
             partitionWriteGuard.check(new com.viglet.turing.commons.se.TurSEPartition(RESERVED_FACET_FIELD,

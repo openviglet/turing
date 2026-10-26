@@ -393,6 +393,15 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
+    public boolean deIndexByFields(TurSNSite turSNSite, Locale locale, Map<String, String> fields) {
+        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.getName(), locale)
+                .map(luceneInstance -> {
+                    turLucene.deIndexingByFields(luceneInstance, fields);
+                    return true;
+                }).orElse(false);
+    }
+
+    @Override
     public boolean commit(TurSNSite turSNSite, Locale locale) {
         // Lucene commits are synchronous — nothing extra needed
         return true;

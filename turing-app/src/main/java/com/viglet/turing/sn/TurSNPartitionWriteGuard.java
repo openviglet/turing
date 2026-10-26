@@ -72,23 +72,27 @@ public class TurSNPartitionWriteGuard {
     public void check(TurSEPartition partition, TurSNJobItems items) {
         Map<Target, List<String>> ids = new LinkedHashMap<>();
         for (TurSNJobItem item : items) {
-            if (item == null || item.getTurSNJobAction() == TurSNJobAction.COMMIT) {
-                continue;
-            }
-            Object id = item.getAttributes() == null ? null : item.getAttributes().get(TurSNFieldName.ID);
-            if (id == null) {
-                if (item.getTurSNJobAction() == TurSNJobAction.DELETE) {
-                    throw new AccessDeniedException(
-                            "An API key bound to a partition deletes by id only");
-                }
-                continue;
-            }
-            for (String site : Objects.requireNonNullElse(item.getSiteNames(), List.<String>of())) {
-                ids.computeIfAbsent(new Target(site, item.getLocale()), target -> new ArrayList<>())
-                        .add(id.toString());
-            }
+            collect(partition, item, ids);
         }
         ids.forEach((target, targetIds) -> checkStored(partition, target, targetIds));
+    }
+
+    /** Files an item's id under each index it writes to; confines a delete by fields. */
+    private static void collect(TurSEPartition partition, TurSNJobItem item, Map<Target, List<String>> ids) {
+        if (item == null || item.getTurSNJobAction() == TurSNJobAction.COMMIT) {
+            return;
+        }
+        Object id = item.getAttributes() == null ? null : item.getAttributes().get(TurSNFieldName.ID);
+        if (id == null) {
+            if (item.getTurSNJobAction() == TurSNJobAction.DELETE) {
+                confineFieldDelete(partition, item);
+            }
+            return;
+        }
+        for (String site : Objects.requireNonNullElse(item.getSiteNames(), List.<String>of())) {
+            ids.computeIfAbsent(new Target(site, item.getLocale()), target -> new ArrayList<>())
+                    .add(id.toString());
+        }
     }
 
     private void checkStored(TurSEPartition partition, Target target, List<String> ids) {
@@ -106,6 +110,26 @@ public class TurSNPartitionWriteGuard {
                                 + " belongs to another partition of site " + target.site());
                     });
         });
+    }
+
+    /**
+     * T1112 — a DELETE by fields from a partitioned key deletes inside its
+     * partition only: the partition's field is added to the fields it names, so
+     * naming the partition alone is the key's own delete-all. A DELETE by type
+     * spans partitions and is refused.
+     */
+    private static void confineFieldDelete(TurSEPartition partition, TurSNJobItem item) {
+        Map<String, Object> attributes = item.getAttributes();
+        if (attributes == null || attributes.containsKey(TurSNFieldName.TYPE)) {
+            throw new AccessDeniedException(
+                    "An API key bound to a partition deletes by id or by fields, not by type");
+        }
+        Object named = attributes.get(partition.field());
+        if (named != null && !partition.value().equals(String.valueOf(named))) {
+            throw new AccessDeniedException("A DELETE naming " + partition.field() + "=" + named
+                    + " reaches outside this key's partition");
+        }
+        attributes.put(partition.field(), partition.value());
     }
 
     /** A stored value is in the partition when it is the value, alone or in a list. */

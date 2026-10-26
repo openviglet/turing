@@ -126,6 +126,21 @@ public interface TurSearchEnginePlugin {
 
     boolean deIndexByType(TurSNSite turSNSite, Locale locale, String type);
 
+    /**
+     * T1112 — deletes every document of the site's locale whose fields hold all of
+     * {@code fields}' values, e.g. {@code {site_key: a.example.org}}: what a
+     * connector sharing an SN site deletes its own documents with.
+     *
+     * <p>Default: unsupported, so an engine without a delete by query refuses
+     * rather than reporting a delete that did nothing.
+     *
+     * @return {@code true} when the delete was sent
+     * @since 2026.3.6
+     */
+    default boolean deIndexByFields(TurSNSite turSNSite, Locale locale, Map<String, String> fields) {
+        throw new UnsupportedOperationException("deIndexByFields not supported by " + getPluginType());
+    }
+
     boolean commit(TurSNSite turSNSite, Locale locale);
 
     // ---- Standalone index ops (T24b / §III.2 — RAG BM25 cores not tied to a TurSNSite) ----

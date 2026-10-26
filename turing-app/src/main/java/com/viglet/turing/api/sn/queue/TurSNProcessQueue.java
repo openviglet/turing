@@ -402,6 +402,13 @@ public class TurSNProcessQueue {
                 turSNHybridRankingService.deIndexByType(turSNSite, type);
             }
             return deIndexed;
+        } else if (!turSNJobItem.getAttributes().isEmpty()) {
+            // T1112 — a DELETE naming fields deletes every document holding them all,
+            // e.g. one connector's documents of a shared site. The per-site vector
+            // collection keeps its points: hydration through the engine drops them.
+            Map<String, String> fields = new java.util.LinkedHashMap<>();
+            turSNJobItem.getAttributes().forEach((field, value) -> fields.put(field, String.valueOf(value)));
+            return plugin.deIndexByFields(turSNSite, turSNJobItem.getLocale(), fields);
         }
         return false;
     }

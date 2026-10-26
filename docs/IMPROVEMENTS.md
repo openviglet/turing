@@ -2179,34 +2179,6 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
-## CXXIV Delete by field on the import API (Dumont D148) (T1112)
-
-**Where it happened.** Dumont D148: the WordPress plugin gives every document a
-`site_key`, so several WordPress sites can share one SN site, and its Delete All must
-remove only its own documents. `POST /api/sn/import` with a DELETE item reaches
-`TurSNProcessQueue.deIndex`, which deletes by `id` when the attributes carry one, else
-by `type`, and does nothing for any other attribute.
-
-**What came back.** The plugin used to send
-`{"turSNJobAction":"DELETE","attributes":{"id":"*","type":"*","source_apps":"wordpress"}}`.
-Turing read `*` as a literal id, `deleteById("*")` matched no document, and the import
-answered 200. Nothing said nothing was deleted.
-
-**Workaround.** `Viglet_Dumont_Indexer::delete_all` (wordpress/src/includes) pages
-through `/api/sn/<site>/search?fq[]=site_key:<key>` and sends one DELETE per id. That is
-one search page per 100 documents plus the deletes. Dumont D149's orphan sweep needs the
-same listing.
-
-**What it should do.**
-- Accept a DELETE item that names fields instead of an id, such as
-  `{"attributes":{"site_key":"a.example.org"}}`. Delete by query on every engine (Solr
-  `deleteByQuery`, Lucene `deleteDocuments(Query)`, Elasticsearch `delete_by_query`),
-  restricted to the item's site and locale, and evicting the search cache as a write does.
-- Refuse a DELETE that matches nothing it understands (no id, type or declared field)
-  with 400 naming the attributes it read, as T1062 does for an empty body. Do the same for
-  `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
-- Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
-
 ## CXLIV Filters on the similar and duplicate searches (T1132)
 
 **Where it happened.** Dumont's WordPress plugin added a Related content block (D177) on
@@ -2247,15 +2219,15 @@ each endpoint is ruled out: one endpoint that forgot it would leak.
 `TurApiKeyPartitionContext` carries the partition, and `TurApiKeyPartitionGuardFilter`
 refuses the key with 403 outside its `ENFORCED` routes. MCP refuses partitioned keys.
 Search applies `TurSEParameters.partition` in Solr, Lucene and Elasticsearch, and
-imports stamp the value. T1133b: `TurSNPartitionWriteGuard` checks each write's id
-against the stored document. T1133c: similar documents and `/search/document`. T1133d:
-autocomplete suggests from a partitioned search, spell-check answers no correction, and
-`TurSNSiteSearchCachedAPI` skips the cache. `TurSdkContractIT` tests two partitions.
+imports stamp the value. T1133b checks each write's id against the stored document;
+T1133c confines similar documents and `/search/document`; T1133d confines autocomplete
+and spell-check and skips the cache; T1112's delete by field gets the partition added.
+`TurSdkContractIT` tests two partitions.
 
 **What is left.** Add each endpoint to `ENFORCED` once it applies the partition, and extend
 the contract test:
-- duplicates (vector clusters: the vector store needs a metadata filter);
-- chat, answer, nl-filters and copilot (retrieval runs on the same vector store, and the
-  lexical retrieval goes through search);
-- metrics;
-- delete-all of the key's own partition (T1112's delete by field).
+- duplicates: clusters come from the per-site vector collection, so its points need the
+  partition as metadata, written at index time, and the neighbour search a filter on it;
+- chat, answer, nl-filters and copilot: RAG retrieval runs on the same vector store, and
+  its lexical half goes through search, which already applies the partition;
+- metrics: the search and click logs carry no partition, so record it per access first.

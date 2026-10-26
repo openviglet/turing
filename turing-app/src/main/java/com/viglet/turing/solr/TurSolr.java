@@ -177,6 +177,11 @@ public class TurSolr {
         turSolrDocumentHandler.deIndexingByType(turSolrInstance, type);
     }
 
+    /** T1112 — deletes the documents whose fields hold all of these values. */
+    public void deIndexingByFields(TurSolrInstance turSolrInstance, Map<String, String> fields) {
+        turSolrDocumentHandler.deleteDocumentsByFields(turSolrInstance, fields);
+    }
+
     public SolrDocumentList solrResultAnd(TurSolrInstance turSolrInstance,
             Map<String, Object> attributes) {
         return executeSolrQuery(turSolrInstance,

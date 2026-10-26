@@ -1459,6 +1459,7 @@
 - **T1133b** — A partitioned key's import can no longer replace or delete another partition's document: each CREATE and DELETE id is checked against the stored document's partition, in Solr, Lucene and Elasticsearch.
 - **T1133c** — A partitioned key's similar-documents and stored-document reads answer only its partition: Solr, Lucene and Elasticsearch confine the MLT query, a seed outside the partition answers nothing, and the document read drops other partitions' documents.
 - **T1133d** — A partitioned key gets autocomplete suggested from its partition's documents, no spell-check correction, the thesaurus' related terms, and the search cache is skipped for every partitioned request through the cached seam itself.
+- **T1112** — An import DELETE can name the fields its documents share and removes them all on Solr, Lucene and Elasticsearch, confined to a partitioned key's partition, while an empty delete or id * answers 400; TurSNJobUtils.deleteItemsByFields sends one from Java.
 
 ## Block CA — Search response fields arrive as they were indexed
 

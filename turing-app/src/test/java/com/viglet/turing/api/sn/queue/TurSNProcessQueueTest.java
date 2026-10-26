@@ -352,6 +352,34 @@ class TurSNProcessQueueTest {
         verify(plugin, never()).deIndex(any(), any(), any());
     }
 
+    /** T1112 — a DELETE naming fields deletes the documents holding them all. */
+    @Test
+    void testReceiveIndexingQueue_DeleteByFields() {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        TurSNJobItem item = new TurSNJobItem();
+        item.setTurSNJobAction(TurSNJobAction.DELETE);
+        item.setSiteNames(Collections.singletonList("site1"));
+        item.setLocale(Locale.US);
+        item.setAttributes(Map.of("site_key", "a.example.org"));
+        jobItems.add(item);
+
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+
+        TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+
+        when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
+        when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
+        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(plugin.deIndexByFields(site, Locale.US, Map.of("site_key", "a.example.org"))).thenReturn(true);
+
+        processQueue.processIndexingQueue(jobItems);
+
+        verify(plugin).deIndexByFields(site, Locale.US, Map.of("site_key", "a.example.org"));
+        verify(plugin, never()).deIndex(any(), any(), any());
+        verify(plugin, never()).deIndexByType(any(), any(), any());
+    }
+
     @Test
     void testReceiveIndexingQueue_CommitPluginReturnsFalse() {
         TurSNJobItems jobItems = new TurSNJobItems();

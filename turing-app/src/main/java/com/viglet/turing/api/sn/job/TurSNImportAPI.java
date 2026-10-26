@@ -90,7 +90,10 @@ public class TurSNImportAPI {
     @Operation(summary = "Queue documents for indexing",
             description = "Body: {\"turingDocuments\": [{\"turSNJobAction\": \"CREATE\", \"siteNames\": [\"mysite\"], "
                     + "\"locale\": \"en_US\", \"attributes\": {\"id\": \"1\", \"title\": \"...\"}}]}. "
-                    + "\"snJobItems\" is accepted as an alias; a body with no items answers 400.")
+                    + "\"snJobItems\" is accepted as an alias; a body with no items answers 400. "
+                    + "A DELETE names an \"id\", a \"type\", or (T1112) the fields every deleted document "
+                    + "holds, e.g. {\"turSNJobAction\": \"DELETE\", \"attributes\": {\"site_key\": \"a.example.org\"}}; "
+                    + "one that names nothing, or the id \"*\", answers 400.")
     @PostMapping
     public boolean turSNImportBroker(@RequestBody TurSNJobItems turSNJobItems) {
         requireItems(turSNJobItems);
@@ -140,6 +143,45 @@ public class TurSNImportAPI {
             throw new IllegalArgumentException(
                     "Import body has no items: send them as {\"turingDocuments\": [ ... ]}");
         }
+        turSNJobItems.forEach(TurSNImportAPI::validateDelete);
+    }
+
+    /** A field a DELETE may name: the engines take it unquoted. */
+    private static final java.util.regex.Pattern DELETE_FIELD =
+            java.util.regex.Pattern.compile("^[A-Za-z0-9_.\\-]{1,255}$");
+
+    /**
+     * T1112 — a DELETE names an id, a type, or fields whose values every deleted
+     * document holds. One that names nothing, an id of {@code *} (which used to
+     * delete nothing and answer 200) and a field value that is not a single value
+     * are refused with 400.
+     */
+    static void validateDelete(TurSNJobItem item) {
+        if (item == null || item.getTurSNJobAction() != TurSNJobAction.DELETE) {
+            return;
+        }
+        Map<String, Object> attributes = item.getAttributes();
+        if (attributes == null || attributes.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "A DELETE item names nothing to delete: send an id, a type, or the fields to delete by");
+        }
+        if ("*".equals(String.valueOf(attributes.get(TurSNFieldName.ID)))) {
+            throw new IllegalArgumentException("A DELETE with id \"*\" deletes nothing: to delete a set of "
+                    + "documents, name the fields they share instead, e.g. {\"site_key\": \"a.example.org\"}");
+        }
+        if (attributes.containsKey(TurSNFieldName.ID) || attributes.containsKey(TurSNFieldName.TYPE)) {
+            return;
+        }
+        attributes.forEach((field, value) -> {
+            if (!DELETE_FIELD.matcher(field).matches()) {
+                throw new IllegalArgumentException("A DELETE cannot name the field '" + field
+                        + "': use letters, digits, '_', '.' or '-'");
+            }
+            if (value == null || value instanceof java.util.Collection<?> || value instanceof Map<?, ?>) {
+                throw new IllegalArgumentException(
+                        "A DELETE by field takes one value per field; '" + field + "' has " + value);
+            }
+        });
     }
 
     /**

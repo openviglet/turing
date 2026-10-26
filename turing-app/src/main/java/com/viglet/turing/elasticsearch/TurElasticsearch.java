@@ -323,6 +323,21 @@ public class TurElasticsearch {
         }
     }
 
+    /** T1112 — deletes every document whose fields hold all of {@code fields}' values. */
+    public void deIndexingByFields(TurElasticsearchInstance instance, Map<String, String> fields) {
+        log.debug("Elasticsearch deIndexing fields={}", fields);
+        List<Query> terms = fields.entrySet().stream()
+                .map(field -> Query.of(q -> q.term(t -> t.field(field.getKey()).value(field.getValue()))))
+                .toList();
+        try {
+            instance.getClient().deleteByQuery(DeleteByQueryRequest.of(r -> r
+                    .index(instance.getIndex())
+                    .query(q -> q.bool(b -> b.filter(terms)))));
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException("Error deIndexing " + fields + " from Elasticsearch", e);
+        }
+    }
+
     /**
      * The request's text query, narrowed by (T1106) its facet filters and (T1103)
      * semantic recall's ids when it carries them. With neither, the text query

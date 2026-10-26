@@ -308,6 +308,16 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
+    public boolean deIndexByFields(TurSNSite turSNSite, Locale locale, Map<String, String> fields) {
+        return turSolrInstanceProcess
+                .initSolrInstance(turSNSite.getName(), locale)
+                .map(turSolrInstance -> {
+                    turSolr.deIndexingByFields(turSolrInstance, fields);
+                    return true;
+                }).orElse(false);
+    }
+
+    @Override
     public boolean commit(TurSNSite turSNSite, Locale locale) {
         return turSolrInstanceProcess
                 .initSolrInstance(turSNSite.getName(), locale)
