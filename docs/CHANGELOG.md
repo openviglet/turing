@@ -1345,6 +1345,7 @@
 - **T1116** — A manifest genAi block now creates or updates the site's GenAI binding (an agent id or the Default AI Agent, plus the knowledge-base mode), reported as genAiChanged and genAiToChange (design §CXXVIII superseded: its enabled flag has nothing to switch: a site with no binding already answers through the Default AI Agent, so declaring the block is what turns GenAI on).
 - **T1117** — NL filters resolve last year, this month, since March and the like in code against the server's date, give the model TODAY, and drop a date range nothing dates as UNGROUNDED_DATE (design §CXXIX superseded: a site has no time zone to resolve in, so today is the server's date).
 - **T1118** — related-terms answers a browser anonymously under the site API-key gate, and a test reads every SN path from the SDK source and fails when one is not public and gated.
+- **T1136** — The enum-mirror test reads TurSNChatDisabledReason from its own file again, so the SDK suite is green and a drifted ChatDisabledReason union fails it.
 
 ## Block BJ — Configurable, per-language NL ranking lexicon (Lucene analysis)
 

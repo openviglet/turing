@@ -33,8 +33,9 @@ interface MirrorPair {
 const PAIRS: readonly MirrorPair[] = [
   {
     name: "ChatDisabledReason",
-    javaFile: "turing-app/src/main/java/com/viglet/turing/api/sn/genai/TurSNSiteGenAiAPI.java",
-    javaEnum: "ChatDisabledReason",
+    // T1087 moved the enum out of the controller into its own file (T1136).
+    javaFile: "turing-app/src/main/java/com/viglet/turing/genai/TurSNChatDisabledReason.java",
+    javaEnum: "TurSNChatDisabledReason",
     tsFile: "frontend/packages/sdk/src/api.ts",
     tsType: "ChatDisabledReason",
   },
