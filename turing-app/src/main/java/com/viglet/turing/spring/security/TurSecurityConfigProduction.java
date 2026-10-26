@@ -55,6 +55,7 @@ import java.util.stream.Stream;
 
 import com.viglet.core.security.VigletCsrfCookieFilter;
 import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.spring.security.auth.TurApiKeyCsrfExemption;
 import com.viglet.turing.spring.security.auth.TurAuthTokenHeaderFilter;
 import com.viglet.turing.spring.security.auth.TurGatewayKeyAuthFilter;
 import com.viglet.turing.spring.security.auth.TurLogoutHandler;
@@ -362,6 +363,7 @@ public class TurSecurityConfigProduction {
                         TurGatewayKeyAuthFilter turGatewayKeyAuthFilter,
                         TurSNSiteApiKeyGateFilter turSNSiteApiKeyGateFilter,
                         TurTenantResolutionFilter turTenantResolutionFilter,
+                        TurApiKeyCsrfExemption turApiKeyCsrfExemption,
                         TurLogoutHandler turLogoutHandler,
                         TurConfigProperties turConfigProperties,
                         TurAuthenticationEntryPoint turAuthenticationEntryPoint,
@@ -397,6 +399,11 @@ public class TurSecurityConfigProduction {
                                 .csrfTokenRepository(csrfTokenRepository)
                                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                                 .ignoringRequestMatchers(
+                                                // T1124 — a request authenticated by a usable `Key`
+                                                // header, on any path: a connector has no cookie jar
+                                                // to round-trip a CSRF token (POST /api/v2/summary
+                                                // answered it 403).
+                                                turApiKeyCsrfExemption,
                                                 // T966 / §LXXV — `/api/genai/chat` used to be listed
                                                 // here. No controller maps it, and `/api/genai/**`
                                                 // below already covers the prefix, so the line

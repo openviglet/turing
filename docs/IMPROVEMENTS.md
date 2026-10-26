@@ -2207,31 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXXVI The summary endpoint accepts Key-authenticated server calls (T1124)
-
-**Where it happened.** Dumont's WordPress plugin (Dumont D171) drafts a post's excerpt
-through Turing's generic summary endpoint, server to server with the site's API key, as
-`agents.md` documents for Dumont's own `DumConnectorSummaryApi`. On the plugin's local
-stack (`turing-ce:local`, built 2026-10-24):
-
-    POST /api/v2/summary   Key: <developer key>   Content-Type: application/json
-    {"cacheKey":"wp-test-excerpt","data":"About Workshop on facets. …",
-     "systemPrompt":"Write a one-sentence excerpt for this post."}
-
-answers **403**. The same key posts `/api/sn/manifest` and reads `/api/sn/{site}/…`
-without trouble. `TurSecurityConfigProduction` exempts `/api/sn/**`,
-`/api/v2/integration/**` and the AI-agent chat paths from CSRF, but not
-`/api/v2/summary`, so a Key-authenticated POST without a browser's XSRF cookie is
-refused. Dumont's connector insights page calls the same endpoint the same way, so it is
-affected too.
-
-**Workaround.** None: the plugin's "Draft an excerpt" waits on this (Dumont D171 shipped
-its other actions without it).
-
-**What Turing should do.** Exempt `/api/v2/summary` from CSRF for Key-authenticated
-requests, as the AI-agent chat is (auth still required), and add a test that a Key POST
-gets 200.
-
 ## CXXXVII Synonym mining ignores wildcard and half-typed queries (T1125)
 
 **Where it happened.** Dumont's WordPress plugin (Dumont D172) offers Turing's mined

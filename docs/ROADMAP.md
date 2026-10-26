@@ -11,7 +11,6 @@
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
 - 📋 **T1112** (deps: T1133) **An import DELETE removes by id or type only, so a connector sharing an SN site cannot delete its documents by a field** — Each connector lists its ids through search and deletes them one by one, and an id of * is accepted and deletes nothing. → §CXXIV
-- 📋 **T1124** (deps: —) **POST /api/v2/summary refuses a Key-authenticated server call with 403, as CSRF does not exempt it** — A connector cannot draft a summary with its API key, though agents.md documents that call, and Dumont's own insights use it. → §CXXXVI
 - 📋 **T1126** (deps: —) **Saving an audited entity over an API key fails with 500: the auditor casts the key's TurUser to TurCustomUserDetails** — A connector cannot create ranking expressions or any entity with createdBy, though the same key writes synonyms. → §CXXXVIII
 - 📋 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Each endpoint needs its own fq to keep shared sites apart, and any endpoint without one leaks another site's documents. → §CXLV
 
