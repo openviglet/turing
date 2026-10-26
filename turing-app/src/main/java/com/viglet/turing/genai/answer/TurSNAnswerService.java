@@ -142,7 +142,7 @@ public class TurSNAnswerService {
             collectionName = siteLocale.getCore();
         }
 
-        TurGenAiContext context = turGenAiContextFactory.build(genAi, collectionName);
+        TurGenAiContext context = turGenAiContextFactory.build(genAi, collectionName, site.getName());
         // T838 — steerable answers: the active facet filters reach retrieval so the
         // answer is synthesized within the narrowed candidate set (empty = whole KB).
         Map<String, List<String>> effectiveFilters =

@@ -119,6 +119,10 @@ public class TurCatalogCopilotService {
     private final TurDefaultChatModelResolver chatModelResolver;
     private final com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty;
     private final com.viglet.turing.genai.catalog.planning.TurQueryFanOut queryFanOut;
+    private final com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService;
+
+    /** T1127 — the cost stage of a catalog copilot answer. */
+    static final String STAGE_COPILOT = "sn.copilot";
 
     public TurCatalogCopilotService(TurNLFacetParser parser,
             TurCopilotQueryPlannerFactory plannerFactory,
@@ -128,7 +132,9 @@ public class TurCatalogCopilotService {
             TurSNHybridRankingService hybridRankingService,
             TurDefaultChatModelResolver chatModelResolver,
             com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty,
-            com.viglet.turing.genai.catalog.planning.TurQueryFanOut queryFanOut) {
+            com.viglet.turing.genai.catalog.planning.TurQueryFanOut queryFanOut,
+            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService) {
+        this.tokenUsageService = tokenUsageService;
         this.parser = parser;
         this.plannerFactory = plannerFactory;
         this.dslSearchService = dslSearchService;
@@ -248,7 +254,11 @@ public class TurCatalogCopilotService {
                 messages.add(new UserMessage(turn.content()));
             }
         }
-        var result = chatModel.call(new Prompt(messages)).getResult();
+        var response = chatModel.call(new Prompt(messages));
+        // T1127 — record the answer's spend against the site in the cost ledger.
+        chatModelResolver.defaultInstance().ifPresent(instance -> tokenUsageService.recordUsage(instance,
+                response, "system", null, STAGE_COPILOT, null, siteName));
+        var result = response.getResult();
         var output = result != null ? result.getOutput() : null;
         return output != null && output.getText() != null ? output.getText() : "";
     }

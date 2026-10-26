@@ -15,7 +15,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- ⏳ **T1127** (deps: —) **An SN site's chat calls the LLM but the cost ledger records nothing: cost summary stays at zero** — The ledger has no site column, so cost/summary cannot filter by site, and the catalog copilot still records nothing. → §CXXXIX
 - 📋 **T1128** (deps: —) **The SDK's result-click call can be cut off by the navigation the click starts, and /click refuses a beacon** — Clicks are lost silently, more often on slow networks, so click-through rates undercount. → §CXL
 - 📋 **T1129** (deps: —) **The search controller's analytics option writes a 30-day cookie before consent and reports every as-you-type search** — A consent-respecting site with instant search cannot use the SDK's search analytics and has to re-emit the events itself. → §CXLI
 - 📋 **T1130** (deps: —) **The GA sink sends only turing_* event names, and the taxonomy has no search abandonment event** — GA4's site-search reports stay empty without hand-made custom definitions, and searched-and-left is never measured. → §CXLII
@@ -25,12 +24,6 @@
 ## Block CF — What the SN site manifest cannot declare
 
 - 📋 **T1135** (deps: —) **The SN manifest cannot set a site's facet behaviour, so provisioning as code cannot choose drill-down or multi-select** — facetType, facetItemType and itemsPerFacet are console-only, so a connector must click through the console to get facets that stay visible. → §CXLVII
-
-## Done when — T1127
-
-- **cost/summary answers one site's spend, copilot included** Each SN call records its
-  site, GET /api/v2/llm/cost/summary?site=<name> returns only that site's rows, and a
-  catalog copilot answer appears in them.
 
 ## Non-goals (do NOT add as tasks)
 

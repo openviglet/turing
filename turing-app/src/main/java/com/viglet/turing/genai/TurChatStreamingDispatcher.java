@@ -394,7 +394,7 @@ public class TurChatStreamingDispatcher {
         if (lastResp != null) {
             double turnCost = tokenUsageService.recordUsage(llmInstance, lastResp, username,
                     agent == null ? null : agent.getId(),
-                    TurMeterNames.STAGE_CHAT_LIVE);
+                    TurMeterNames.STAGE_CHAT_LIVE, null, turn.siteName());
             costBudgetGate.warnIfTurnOverCap(agent, turnCost);
         }
         recordTurnTelemetry(agent, conversationId, lastUserMessage,
@@ -456,7 +456,7 @@ public class TurChatStreamingDispatcher {
             long tLlmEnd = System.currentTimeMillis();
             double turnCost = tokenUsageService.recordUsage(llmInstance, response, username,
                     agent == null ? null : agent.getId(),
-                    TurMeterNames.STAGE_CHAT_LIVE);
+                    TurMeterNames.STAGE_CHAT_LIVE, null, turn.siteName());
             costBudgetGate.warnIfTurnOverCap(agent, turnCost);
             if (response.getResult() != null
                     && response.getResult().getOutput() != null

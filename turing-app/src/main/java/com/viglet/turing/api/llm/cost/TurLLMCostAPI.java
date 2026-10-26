@@ -92,16 +92,32 @@ public class TurLLMCostAPI {
             List<AgentCostRow> byAgent,
             List<ModelCostRow> byModel,
             List<StageCostRow> byStage,
-            List<TenantCostRow> byTenant) {
+            List<TenantCostRow> byTenant,
+            List<SiteCostRow> bySite,
+            String site) {
     }
 
+    /** T1127 — a Semantic Navigation site's spend in the window. */
+    public record SiteCostRow(String siteName, double costUsd, long totalTokens, long requestCount) {
+    }
+
+    public CostReport summary(String from, String to) {
+        return summary(from, to, null);
+    }
+
+    /**
+     * @param site T1127 — when set, every breakdown counts only the calls made for
+     *             that Semantic Navigation site
+     */
     @GetMapping("/summary")
     public CostReport summary(
             @RequestParam(required = false) String from,
-            @RequestParam(required = false) String to) {
+            @RequestParam(required = false) String to,
+            @RequestParam(required = false) String site) {
 
         LocalDateTime start = parseFrom(from);
         LocalDateTime end = parseTo(to);
+        String onlySite = site == null || site.isBlank() ? null : site.trim();
 
         Map<String, String> agentTitles = agentRepository.findAll().stream()
                 .collect(Collectors.toMap(TurAIAgent::getId, a ->
@@ -111,7 +127,7 @@ public class TurLLMCostAPI {
         double totalCost = 0;
         long totalTokens = 0;
         long totalReqs = 0;
-        for (Object[] row : tokenUsageRepository.findCostByAgent(start, end)) {
+        for (Object[] row : agentRows(start, end, onlySite)) {
             String agentId = (String) row[0];
             double cost = num(row[1]);
             long tokens = lng(row[2]);
@@ -128,7 +144,7 @@ public class TurLLMCostAPI {
         List<ModelCostRow> byModel = new ArrayList<>();
         long totalInputTokens = 0;
         long totalOutputTokens = 0;
-        for (Object[] row : tokenUsageRepository.findCostByModel(start, end)) {
+        for (Object[] row : modelRows(start, end, onlySite)) {
             long inputTokens = lng(row[5]);
             long outputTokens = lng(row[6]);
             // byModel is exhaustive over all rows → its input/output sums are the grand totals.
@@ -138,21 +154,37 @@ public class TurLLMCostAPI {
                     num(row[2]), lng(row[3]), lng(row[4]), inputTokens, outputTokens));
         }
 
-        List<StageCostRow> byStage = new ArrayList<>();
-        for (Object[] row : tokenUsageRepository.findCostByStage(start, end)) {
-            byStage.add(new StageCostRow((String) row[0], num(row[1]), lng(row[2]), lng(row[3])));
-        }
-
-        List<TenantCostRow> byTenant = new ArrayList<>();
-        for (Object[] row : tokenUsageRepository.findCostByTenant(start, end)) {
-            byTenant.add(new TenantCostRow((String) row[0], num(row[1]), lng(row[2]), lng(row[3])));
-        }
-
-        return new CostReport(
-                isInstant(from) ? from.trim() : start.toLocalDate().toString(),
-                isInstant(to) ? to.trim() : end.toLocalDate().minusDays(1).toString(),
+        return new CostReport(periodLabel(from, start.toLocalDate()),
+                periodLabel(to, end.toLocalDate().minusDays(1)),
                 totalCost, totalTokens, totalInputTokens, totalOutputTokens, totalReqs,
-                byAgent, byModel, byStage, byTenant);
+                byAgent, byModel, stageRows(start, end, onlySite), tenantRows(start, end, onlySite),
+                siteRows(start, end, onlySite), onlySite);
+    }
+
+    private static String periodLabel(String bound, LocalDate day) {
+        return isInstant(bound) ? bound.trim() : day.toString();
+    }
+
+    private List<StageCostRow> stageRows(LocalDateTime start, LocalDateTime end, String site) {
+        return (site == null ? tokenUsageRepository.findCostByStage(start, end)
+                : tokenUsageRepository.findCostByStageForSite(start, end, site)).stream()
+                .map(row -> new StageCostRow((String) row[0], num(row[1]), lng(row[2]), lng(row[3])))
+                .toList();
+    }
+
+    private List<TenantCostRow> tenantRows(LocalDateTime start, LocalDateTime end, String site) {
+        return (site == null ? tokenUsageRepository.findCostByTenant(start, end)
+                : tokenUsageRepository.findCostByTenantForSite(start, end, site)).stream()
+                .map(row -> new TenantCostRow((String) row[0], num(row[1]), lng(row[2]), lng(row[3])))
+                .toList();
+    }
+
+    /** T1127 — spend per SN site; only the asked one when {@code site} is set. */
+    private List<SiteCostRow> siteRows(LocalDateTime start, LocalDateTime end, String site) {
+        return tokenUsageRepository.findCostBySite(start, end).stream()
+                .filter(row -> site == null || site.equals(row[0]))
+                .map(row -> new SiteCostRow((String) row[0], num(row[1]), lng(row[2]), lng(row[3])))
+                .toList();
     }
 
     @GetMapping("/timeseries")
@@ -207,6 +239,17 @@ public class TurLLMCostAPI {
         }
         out.sort((a, b) -> Double.compare(b.monthToDateSpendUsd(), a.monthToDateSpendUsd()));
         return out;
+    }
+
+    /** T1127 — the per-agent rows of the window, of one site when {@code site} is set. */
+    private List<Object[]> agentRows(LocalDateTime start, LocalDateTime end, String site) {
+        return site == null ? tokenUsageRepository.findCostByAgent(start, end)
+                : tokenUsageRepository.findCostByAgentForSite(start, end, site);
+    }
+
+    private List<Object[]> modelRows(LocalDateTime start, LocalDateTime end, String site) {
+        return site == null ? tokenUsageRepository.findCostByModel(start, end)
+                : tokenUsageRepository.findCostByModelForSite(start, end, site);
     }
 
     private LocalDateTime parseFrom(String from) {

@@ -53,6 +53,8 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
  *                             policy is off, the executor strips all tool
  *                             callbacks for such a caller. {@code false} for
  *                             authenticated agent/persona chat (default).
+ * @param siteName             nullable — T1127, the Semantic Navigation site the
+ *                             turn answers for, recorded with its cost
  * @author Alexandre Oliveira
  * @since 2026.3.1
  */
@@ -65,13 +67,22 @@ public record TurAgentChatRequest(
         String flowId,
         List<MultipartFile> files,
         String requestPersonaId,
-        boolean untrustedCaller) {
+        boolean untrustedCaller,
+        String siteName) {
+
+    /** The constructor before {@link #siteName}: a turn not made for an SN site. */
+    public TurAgentChatRequest(TurAIAgent agent, TurLLMInstance llmInstance, List<ChatMessageItem> history,
+            String systemPromptOverride, String conversationId, String flowId,
+            List<MultipartFile> files, String requestPersonaId, boolean untrustedCaller) {
+        this(agent, llmInstance, history, systemPromptOverride, conversationId, flowId, files,
+                requestPersonaId, untrustedCaller, null);
+    }
 
     /** Backward-compatible constructor — a trusted (authenticated) caller. */
     public TurAgentChatRequest(TurAIAgent agent, TurLLMInstance llmInstance, List<ChatMessageItem> history,
             String systemPromptOverride, String conversationId, String flowId,
             List<MultipartFile> files, String requestPersonaId) {
         this(agent, llmInstance, history, systemPromptOverride, conversationId, flowId, files,
-                requestPersonaId, false);
+                requestPersonaId, false, null);
     }
 }

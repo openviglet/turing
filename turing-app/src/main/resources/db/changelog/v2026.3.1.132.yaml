@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: v2026.3.1.132-add-llm_token_usage-site_name
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: llm_token_usage
+        - not:
+            - columnExists:
+                tableName: llm_token_usage
+                columnName: site_name
+      changes:
+        - addColumn:
+            tableName: llm_token_usage
+            columns:
+              - column:
+                  name: site_name
+                  type: varchar(255)
+                  remarks: "T1127 Semantic Navigation site a call was made for (null for non-SN calls)."

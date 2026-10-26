@@ -160,7 +160,7 @@ public class TurSNGenAi {
         org.springframework.ai.chat.model.ChatResponse response = context.getChatModel().call(prompt);
         if (tokenUsageService != null && context.getLlmInstance() != null) {
             tokenUsageService.recordUsage(context.getLlmInstance(), response, currentUsername(),
-                    context.getAgentId(), stage);
+                    context.getAgentId(), stage, null, context.getSiteName());
         }
         return response;
     }
@@ -384,7 +384,7 @@ public class TurSNGenAi {
                         // untrusted (anonymous) caller: gate tool invocation by
                         // the anonymous-tools policy in the executor.
                         new TurAgentChatRequest(agent, llmInstance, mapped, augmentedSystemPrompt,
-                                conversationId, flowId, null, requestPersonaId, true),
+                                conversationId, flowId, null, requestPersonaId, true, request.siteName()),
                         forcedVariant);
         reactor.core.publisher.Flux<TurAgentChatExecutor.ChatResponse> grounded =
                 appendGroundednessCaveat(answer, context, latestUserQuery, relevantDocuments, locale);

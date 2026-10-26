@@ -76,6 +76,16 @@ public class TurLLMTokenUsageService {
      */
     public double recordUsage(TurLLMInstance instance, ChatResponse response, String username,
             String agentId, String stage, String keyId) {
+        return recordUsage(instance, response, username, agentId, stage, keyId, null);
+    }
+
+    /**
+     * T1127 — as above, additionally attributing the call to the Semantic
+     * Navigation site it was made for ({@code null} for non-SN calls), so a site's
+     * generative spend can be read on its own.
+     */
+    public double recordUsage(TurLLMInstance instance, ChatResponse response, String username,
+            String agentId, String stage, String keyId, String siteName) {
         try {
             if (response == null || response.getMetadata() == null) {
                 return 0.0;
@@ -116,6 +126,7 @@ public class TurLLMTokenUsageService {
             turLLMTokenUsage.setCostUsd(costUsd);
             // T742 / §XLIX — per-key attribution for the Governed LLM Gateway.
             turLLMTokenUsage.setKeyId(keyId);
+            turLLMTokenUsage.setSiteName(siteName);
 
             tokenUsageRepository.save(turLLMTokenUsage);
 

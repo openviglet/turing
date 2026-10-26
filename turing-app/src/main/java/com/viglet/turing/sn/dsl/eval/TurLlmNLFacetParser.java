@@ -100,7 +100,8 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
                     new UserMessage(userPrompt(request)));
             var response = chatModel.call(new Prompt(messages));
             // T1127 — the parse spends tokens like any SN call: record it in the cost ledger.
-            tokenUsageService.recordUsage(llm, response, "system", null, STAGE_NL_FILTERS);
+            tokenUsageService.recordUsage(llm, response, "system", null, STAGE_NL_FILTERS, null,
+                    request.index());
             var result = response.getResult();
             reply = result != null ? result.getOutput().getText() : null;
         } catch (RuntimeException e) {

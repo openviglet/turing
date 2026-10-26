@@ -46,6 +46,15 @@ public class TurGenAiContextFactory {
     }
 
     public TurGenAiContext build(TurSNSiteGenAi turSNSiteGenAi, String collectionNameOverride) {
+        return build(turSNSiteGenAi, collectionNameOverride, null);
+    }
+
+    /**
+     * @param siteName T1127 — the SN site the context answers for, so its calls are
+     *                 attributed to it in the cost ledger; {@code null} for none
+     */
+    public TurGenAiContext build(TurSNSiteGenAi turSNSiteGenAi, String collectionNameOverride,
+            String siteName) {
         // T622 — fall back to the global Default AI Agent when the site declares
         // none (fail-open, gated on a default being set). Note turSNSiteGenAi may
         // be null here (a site with no GenAI binding at all): the resolver still
@@ -115,6 +124,7 @@ public class TurGenAiContextFactory {
                 .fullContextTokenBudget(turSNSiteGenAi == null ? 0 : turSNSiteGenAi.getFullContextTokenBudget())
                 .llmInstance(llmInstance)
                 .agentId(agent.getId())
+                .siteName(siteName)
                 .build();
     }
 

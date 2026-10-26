@@ -95,13 +95,13 @@ class TurSNGenAiTest {
         when(chatModel.call(any(org.springframework.ai.chat.prompt.Prompt.class))).thenReturn(response);
         var instance = new com.viglet.turing.persistence.model.llm.TurLLMInstance();
         TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel)
-                .llmInstance(instance).agentId("agent-1").build();
+                .llmInstance(instance).agentId("agent-1").siteName("Sample").build();
 
         var returned = recording.callAndRecord(context, new org.springframework.ai.chat.prompt.Prompt("q"),
                 TurSNGenAi.STAGE_SN_CHAT);
 
         assertEquals(response, returned);
-        verify(tokenUsage).recordUsage(instance, response, "anonymous", "agent-1", "sn.chat");
+        verify(tokenUsage).recordUsage(instance, response, "anonymous", "agent-1", "sn.chat", null, "Sample");
     }
 
     @Test

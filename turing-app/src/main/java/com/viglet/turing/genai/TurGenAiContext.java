@@ -58,6 +58,8 @@ public class TurGenAiContext {
      */
     private final com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance;
     private final String agentId;
+    /** T1127 — the SN site the context answers for, recorded with each call's cost. */
+    private final String siteName;
     public static final String COLLECTION_NAME = "turing";
 
     public static TurGenAiContext disabled() {

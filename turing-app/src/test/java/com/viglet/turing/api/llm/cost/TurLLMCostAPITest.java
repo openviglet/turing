@@ -98,6 +98,22 @@ class TurLLMCostAPITest {
         assertThat(report.totalTokens()).isEqualTo(900);
     }
 
+    /** T1127 — one site's spend: every breakdown read from the rows recorded for it. */
+    @Test
+    void summaryNarrowsToOneSite() {
+        when(agentRepository.findAll()).thenReturn(List.of());
+        when(tokenUsageRepository.findCostByAgentForSite(any(), any(), eq("Sample")))
+                .thenReturn(List.<Object[]>of(new Object[] { "agent-1", 0.004, 1200L, 3L }));
+        when(tokenUsageRepository.findCostBySite(any(), any())).thenReturn(List.<Object[]>of(
+                new Object[] { "Sample", 0.004, 1200L, 3L }, new Object[] { "Other", 0.01, 5000L, 9L }));
+
+        TurLLMCostAPI.CostReport report = api.summary(null, null, "Sample");
+
+        assertThat(report.site()).isEqualTo("Sample");
+        assertThat(report.totalRequests()).isEqualTo(3);
+        assertThat(report.bySite()).extracting(TurLLMCostAPI.SiteCostRow::siteName).containsExactly("Sample");
+    }
+
     @Test
     void anUnreadableBoundIsRefused() {
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> api.summary("2026-10-24Tnoon", null))

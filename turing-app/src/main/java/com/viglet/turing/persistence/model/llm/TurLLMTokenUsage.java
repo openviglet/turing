@@ -100,4 +100,11 @@ public class TurLLMTokenUsage implements Serializable {
      */
     @Column(name = "key_id", length = 40)
     private String keyId;
+
+    /**
+     * T1127 — the Semantic Navigation site the call was made for, so a site's
+     * generative spend can be read on its own. {@code null} for non-SN calls.
+     */
+    @Column(name = "site_name", length = 255)
+    private String siteName;
 }

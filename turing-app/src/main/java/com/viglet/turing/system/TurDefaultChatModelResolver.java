@@ -86,6 +86,18 @@ public class TurDefaultChatModelResolver {
         return buildFor(modelLaneService.resolveInstanceId(stage));
     }
 
+    /**
+     * T1127 — the enabled default LLM instance {@link #resolve()} builds its model
+     * from, so a caller can record the model's usage in the cost ledger.
+     */
+    public Optional<TurLLMInstance> defaultInstance() {
+        String llmId = globalSettingsService.getDefaultLlmId();
+        if (!StringUtils.hasText(llmId)) {
+            return Optional.empty();
+        }
+        return llmInstanceRepository.findById(llmId).filter(instance -> instance.getEnabled() == 1);
+    }
+
     /** Looks up, decrypts and builds a resilience-wrapped model for {@code llmId}. */
     private Optional<ChatModel> buildFor(String llmId) {
         if (!StringUtils.hasText(llmId)) {

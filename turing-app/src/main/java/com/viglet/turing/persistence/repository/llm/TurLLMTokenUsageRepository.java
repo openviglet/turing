@@ -119,6 +119,75 @@ public interface TurLLMTokenUsageRepository extends JpaRepository<TurLLMTokenUsa
             """)
     List<Object[]> findCostByStage(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+    // ---- T1127 — the same breakdowns for one Semantic Navigation site ----------
+
+    @Query("""
+            SELECT u.siteName AS siteName,
+                   SUM(u.costUsd) AS costUsd,
+                   SUM(u.totalTokens) AS totalTokens,
+                   COUNT(u) AS requestCount
+            FROM TurLLMTokenUsage u
+            WHERE u.createdAt >= :start AND u.createdAt < :end AND u.siteName IS NOT NULL
+            GROUP BY u.siteName
+            ORDER BY costUsd DESC
+            """)
+    List<Object[]> findCostBySite(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+            SELECT u.agentId AS agentId,
+                   SUM(u.costUsd) AS costUsd,
+                   SUM(u.totalTokens) AS totalTokens,
+                   COUNT(u) AS requestCount
+            FROM TurLLMTokenUsage u
+            WHERE u.createdAt >= :start AND u.createdAt < :end AND u.siteName = :site
+            GROUP BY u.agentId
+            ORDER BY costUsd DESC
+            """)
+    List<Object[]> findCostByAgentForSite(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
+            @Param("site") String site);
+
+    @Query("""
+            SELECT u.tenantId AS tenantId,
+                   SUM(u.costUsd) AS costUsd,
+                   SUM(u.totalTokens) AS totalTokens,
+                   COUNT(u) AS requestCount
+            FROM TurLLMTokenUsage u
+            WHERE u.createdAt >= :start AND u.createdAt < :end AND u.siteName = :site
+            GROUP BY u.tenantId
+            ORDER BY costUsd DESC
+            """)
+    List<Object[]> findCostByTenantForSite(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
+            @Param("site") String site);
+
+    @Query("""
+            SELECT u.vendorId AS vendorId,
+                   u.modelName AS modelName,
+                   SUM(u.costUsd) AS costUsd,
+                   SUM(u.totalTokens) AS totalTokens,
+                   COUNT(u) AS requestCount,
+                   SUM(u.inputTokens) AS inputTokens,
+                   SUM(u.outputTokens) AS outputTokens
+            FROM TurLLMTokenUsage u
+            WHERE u.createdAt >= :start AND u.createdAt < :end AND u.siteName = :site
+            GROUP BY u.vendorId, u.modelName
+            ORDER BY costUsd DESC
+            """)
+    List<Object[]> findCostByModelForSite(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
+            @Param("site") String site);
+
+    @Query("""
+            SELECT u.stage AS stage,
+                   SUM(u.costUsd) AS costUsd,
+                   SUM(u.totalTokens) AS totalTokens,
+                   COUNT(u) AS requestCount
+            FROM TurLLMTokenUsage u
+            WHERE u.createdAt >= :start AND u.createdAt < :end AND u.siteName = :site
+            GROUP BY u.stage
+            ORDER BY costUsd DESC
+            """)
+    List<Object[]> findCostByStageForSite(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
+            @Param("site") String site);
+
     @Query("""
             SELECT CAST(u.createdAt AS date) AS day,
                    SUM(u.costUsd) AS costUsd,

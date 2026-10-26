@@ -305,7 +305,7 @@ public class TurSNSiteGenAiAPI {
 				log.debug("RAG chat (single-turn) building context for SN Site '{}': locale='{}', collection='{}'",
 						siteName, locale, collectionName);
 				TurGenAiContext turGenAiContext = turGenAiContextFactory
-						.build(turSNSiteGenAI, collectionName);
+						.build(turSNSiteGenAI, collectionName, site.getName());
 				return turGenAi.assistant(turGenAiContext, q);
 			}).orElseGet(() -> {
 				log.warn("RAG chat (single-turn) skipped: SN Site '{}' not found", siteName);
@@ -415,7 +415,8 @@ public class TurSNSiteGenAiAPI {
 			}
 			log.debug("RAG chat building context for SN Site '{}': locale='{}', collection='{}', agent='{}', llm='{}'",
 					siteName, locale, collectionName, agent.getTitle(), llmInstance.getTitle());
-			TurGenAiContext context = turGenAiContextFactory.build(turSNSiteGenAI, collectionName);
+			TurGenAiContext context = turGenAiContextFactory.build(turSNSiteGenAI, collectionName,
+					site.getName());
 			Flux<TurAgentChatExecutor.ChatResponse> stream = turGenAi.assistantConversationStreaming(
 					context, agent, llmInstance,
 					new TurSNGenAiChatRequest(request.messages(), request.filters(),

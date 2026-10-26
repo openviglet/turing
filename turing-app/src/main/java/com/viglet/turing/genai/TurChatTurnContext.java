@@ -33,6 +33,7 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
  * @param username        resolved from the {@code SecurityContext} (token usage attribution)
  * @param tStart          turn-start millis (for total-time accounting)
  * @param tSetupEnd       setup-phase end millis (for post-time accounting)
+ * @param siteName        nullable — T1127, the SN site the turn answers for (cost attribution)
  * @author Alexandre Oliveira
  * @since 2026.3.1
  */
@@ -43,5 +44,12 @@ public record TurChatTurnContext(
         String lastUserMessage,
         String username,
         long tStart,
-        long tSetupEnd) {
+        long tSetupEnd,
+        String siteName) {
+
+    /** The context before {@link #siteName}: a turn not made for an SN site. */
+    public TurChatTurnContext(TurAIAgent agent, TurLLMInstance llmInstance, String conversationId,
+            String lastUserMessage, String username, long tStart, long tSetupEnd) {
+        this(agent, llmInstance, conversationId, lastUserMessage, username, tStart, tSetupEnd, null);
+    }
 }
