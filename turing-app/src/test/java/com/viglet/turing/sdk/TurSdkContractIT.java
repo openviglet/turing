@@ -186,6 +186,9 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     @Autowired
     private TurDevTokenRepository devTokenRepository;
 
+    @Autowired
+    private com.viglet.turing.sn.TurSNPartitionWriteGuard partitionWriteGuard;
+
     private final HttpClient http = HttpClient.newHttpClient();
     private final ObjectMapper json = JsonMapper.builder().build();
 
@@ -747,6 +750,23 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
                      "attributes":{"id":"t1133-forged","title":"forged","%s":"t1133-b"}}]}"""
                     .formatted(SITE, RESERVED_FACET_FIELD), keyA);
             assertEquals(403, intoB.statusCode(), "key A must not write into partition B: " + intoB.body());
+
+            // An id is all a write names, so key A cannot take over or delete B's document by it.
+            HttpResponse<String> overwriteB = postJson("/sn/import", """
+                    {"turingDocuments":[{"turSNJobAction":"CREATE","siteNames":["%s"],"locale":"en_US",
+                     "attributes":{"id":"%s","title":"taken over"}}]}"""
+                    .formatted(SITE, partitionProbeId("b")), keyA);
+            assertEquals(403, overwriteB.statusCode(), "key A must not replace B's document: " + overwriteB.body());
+            HttpResponse<String> deleteB = postJson("/sn/import", """
+                    {"turingDocuments":[{"turSNJobAction":"DELETE","siteNames":["%s"],"locale":"en_US",
+                     "attributes":{"id":"%s"}}]}""".formatted(SITE, partitionProbeId("b")), keyA);
+            assertEquals(403, deleteB.statusCode(), "key A must not delete B's document: " + deleteB.body());
+            // Its own document it may rewrite: read from the engine's stored fields, as
+            // the import would, without queueing a write that outlives this test.
+            partitionWriteGuard.check(new com.viglet.turing.commons.se.TurSEPartition(RESERVED_FACET_FIELD,
+                    "t1133-a"), new TurSNJobItems(new TurSNJobItem(TurSNJobAction.CREATE, List.of(SITE),
+                            Locale.forLanguageTag("en-US"),
+                            new HashMap<>(Map.of("id", partitionProbeId("a"))), null)));
         } finally {
             indexPartitionProbe(TurSNJobAction.DELETE, "a");
             indexPartitionProbe(TurSNJobAction.DELETE, "b");

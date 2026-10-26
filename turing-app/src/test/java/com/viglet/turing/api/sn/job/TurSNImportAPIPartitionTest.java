@@ -28,41 +28,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionTestSupport;
+import com.viglet.turing.commons.se.TurSEPartition;
 
 /**
- * T1133 — an import from a partitioned key is stamped with its partition, and
- * cannot write into, or delete from, another.
+ * T1133 — an import from a partitioned key is stamped with its partition, and a
+ * document naming another partition is refused.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.6
  */
 class TurSNImportAPIPartitionTest {
 
-    @AfterEach
-    void clearRequest() {
-        RequestContextHolder.resetRequestAttributes();
-    }
-
-    private static void partitionedRequest() {
-        TurDevToken token = new TurDevToken();
-        token.setPartitionField("site_key");
-        token.setPartitionValue("a.example.org");
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        TurApiKeyPartitionTestSupport.bind(request, token);
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-    }
+    private static final TurSEPartition A = new TurSEPartition("site_key", "a.example.org");
 
     private static TurSNJobItems items(TurSNJobAction action, Map<String, Object> attributes) {
         return new TurSNJobItems(new TurSNJobItem(action, List.of("shared"), Locale.US, attributes, null));
@@ -70,38 +53,27 @@ class TurSNImportAPIPartitionTest {
 
     @Test
     void stampsThePartitionOnEachDocument() {
-        partitionedRequest();
         Map<String, Object> attributes = new HashMap<>(Map.of("id", "post-1"));
 
-        TurSNImportAPI.applyPartition(items(TurSNJobAction.CREATE, attributes));
+        TurSNImportAPI.stamp(A, items(TurSNJobAction.CREATE, attributes));
 
         assertThat(attributes).containsEntry("site_key", "a.example.org");
     }
 
     @Test
     void refusesADocumentFromAnotherPartition() {
-        partitionedRequest();
         Map<String, Object> attributes = new HashMap<>(Map.of("id", "post-1", "site_key", "b.example.org"));
 
-        assertThatThrownBy(() -> TurSNImportAPI.applyPartition(items(TurSNJobAction.CREATE, attributes)))
+        assertThatThrownBy(() -> TurSNImportAPI.stamp(A, items(TurSNJobAction.CREATE, attributes)))
                 .isInstanceOf(AccessDeniedException.class);
     }
 
     @Test
-    void refusesADelete() {
-        partitionedRequest();
+    void leavesADeleteUnstamped() {
+        Map<String, Object> attributes = new HashMap<>(Map.of("id", "post-1"));
 
-        assertThatThrownBy(() -> TurSNImportAPI.applyPartition(
-                items(TurSNJobAction.DELETE, new HashMap<>(Map.of("id", "post-1")))))
-                .isInstanceOf(AccessDeniedException.class);
-    }
+        TurSNImportAPI.stamp(A, items(TurSNJobAction.DELETE, attributes));
 
-    @Test
-    void leavesAnUnpartitionedImportAlone() {
-        Map<String, Object> attributes = new HashMap<>(Map.of("id", "post-1", "site_key", "b.example.org"));
-
-        TurSNImportAPI.applyPartition(items(TurSNJobAction.CREATE, attributes));
-
-        assertThat(attributes).containsEntry("site_key", "b.example.org");
+        assertThat(attributes).doesNotContainKey("site_key");
     }
 }

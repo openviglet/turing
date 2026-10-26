@@ -2243,13 +2243,14 @@ SN site, told apart by a `site_key` field, and isolation lived in the client's `
 **Decision (review, 2026-10-25).** The server owns the partition. Patching `fq` into
 each endpoint is ruled out: one endpoint that forgot it would leak.
 
-**What landed (part 1).** `dev_token.partitionField`/`partitionValue` bind a key.
+**What landed.** Part 1: `dev_token.partitionField`/`partitionValue` bind a key.
 `TurApiKeyPartitionContext` carries the partition, and `TurApiKeyPartitionGuardFilter`
 refuses the key with 403 outside its `ENFORCED` routes. MCP refuses partitioned keys.
 Search applies `TurSEParameters.partition` in Solr, Lucene and Elasticsearch, and skips
-recall, MLT, clusters, `showAllFacetItems` and the cache for it. The JSON imports stamp
-the value, and refuse another value or a DELETE. `TurSdkContractIT` tests two
-partitions.
+recall, MLT, clusters, `showAllFacetItems` and the cache. Imports stamp the value. Part
+2: `TurSNPartitionWriteGuard` reads the stored document of each CREATE and DELETE id,
+and refuses one outside the partition or without a partition. It also refuses a DELETE
+by type. `TurSdkContractIT` tests two partitions.
 
 **What is left.** Add each endpoint to `ENFORCED` once it applies the partition, and extend
 the contract test:
@@ -2257,9 +2258,7 @@ the contract test:
 - similar, duplicates (T1132) and the stored-document read;
 - chat, answer, nl-filters and copilot (the vector store needs a metadata filter too);
 - metrics;
-- DELETE by id checks the document's partition, and delete-all means the key's own
-  partition (T1112);
-- a CREATE that reuses another partition's id must not replace that document.
+- delete-all of the key's own partition (T1112's delete by field).
 
 ## CXLVII Site facet behaviour in the SN manifest (T1135)
 

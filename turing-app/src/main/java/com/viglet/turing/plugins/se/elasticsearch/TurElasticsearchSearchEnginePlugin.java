@@ -606,7 +606,25 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
             return List.of();
         }
         return turElasticsearchInstanceProcess.initElasticsearchInstance(siteLocale)
-                .map(instance -> collectDocumentsByIds(instance, wanted))
+                .map(instance -> collectDocumentsByIds(instance, wanted, false))
+                .orElse(List.of());
+    }
+
+    /**
+     * T1133 — every stored field of the documents with these ids: the whole
+     * {@code _source}, where {@link #getDocumentsByIds} keeps the standard fields.
+     */
+    @Override
+    public List<Map<String, Object>> getStoredDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        List<String> wanted = ids.stream().filter(s -> s != null && !s.isBlank()).toList();
+        if (wanted.isEmpty()) {
+            return List.of();
+        }
+        return turElasticsearchInstanceProcess.initElasticsearchInstance(siteLocale)
+                .map(instance -> collectDocumentsByIds(instance, wanted, true))
                 .orElse(List.of());
     }
 
@@ -615,16 +633,17 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
      * documents in request order (missing ids dropped). Per-call failures are
      * logged and yield an empty list. Extracted from the {@code .map(...)}
      * lambda in {@link #getDocumentsByIds} to keep cognitive complexity low.
+     * {@code whole} returns every stored field instead of the standard ones.
      *
      * @since 2026.3.1
      */
     private List<Map<String, Object>> collectDocumentsByIds(TurElasticsearchInstance instance,
-            List<String> wanted) {
+            List<String> wanted, boolean whole) {
         try {
             var response = instance.getClient().search(s -> s
                     .index(instance.getIndex())
                     .size(wanted.size())
-                    .source(src -> src.filter(f -> f.includes(SIMILAR_FIELDS)))
+                    .source(src -> whole ? src.fetch(true) : src.filter(f -> f.includes(SIMILAR_FIELDS)))
                     .query(q -> q.terms(t -> t
                             .field(TurSNFieldName.ID)
                             .terms(tt -> tt.value(wanted.stream()
@@ -638,7 +657,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
                 if (source == null) {
                     continue;
                 }
-                Map<String, Object> fields = extractSimilarFields(source);
+                Map<String, Object> fields = whole ? new java.util.HashMap<>(source) : extractSimilarFields(source);
                 Object docId = fields.getOrDefault(TurSNFieldName.ID, hit.id());
                 if (docId != null) {
                     byId.put(docId.toString(), fields);
