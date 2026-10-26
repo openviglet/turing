@@ -5,10 +5,10 @@ import { GradientAvatar, GradientAvatarFallback } from "@/components/ui/gradient
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSnTopTerms } from "@/api/queries/sn-site-metrics.queries";
+import { useSnClickThrough, useSnTopTerms } from "@/api/queries/sn-site-metrics.queries";
 import { type TurSNTopTermsPeriod } from "@/services/sn/sn.site.metrics.service";
 import { useSubPageBreadcrumb } from "@/hooks/use-sub-page-breadcrumb";
-import { IconArrowDown, IconArrowUp, IconChartBar, IconSearch } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowUp, IconChartBar, IconClick, IconSearch } from "@tabler/icons-react";
 import { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
@@ -40,6 +40,14 @@ function formatNumber(value: number | undefined): string {
     return "0";
   }
   return value.toLocaleString();
+}
+
+/** Clicks per search as a percentage; a dash when the term has no row. */
+function formatCtr(value: number | undefined): string {
+  if (value === undefined) {
+    return "—";
+  }
+  return value.toLocaleString(undefined, { style: "percent", maximumFractionDigits: 1 });
 }
 
 /**
@@ -74,6 +82,14 @@ export default function SNSiteTopSearchTermsPage({ baseRoute = ROUTES.BENTO_SN_I
   // until there is a site id, which is what the `if (!id) return` guard was.
   const { data: topTerms, isLoading, isError } = useSnTopTerms(id, resolvedPeriod, rows);
   const error = isError ? "Unable to load top search terms right now." : null;
+  // T1131 — click-through per term, joined on the sanitized term both logs share.
+  // A failure here only hides the CTR column, never the terms.
+  const { data: clickThrough } = useSnClickThrough(id, resolvedPeriod, rows);
+  const ctrByTerm = useMemo(
+    () => new Map((clickThrough?.terms ?? []).map((term) => [term.term, term])),
+    [clickThrough],
+  );
+  const neverClicked = (clickThrough?.neverClicked ?? []).slice(0, 5);
 
   const hasResults = (topTerms?.topTerms?.length ?? 0) > 0;
   const variation = topTerms?.variationPeriod ?? 0;
@@ -138,6 +154,9 @@ export default function SNSiteTopSearchTermsPage({ baseRoute = ROUTES.BENTO_SN_I
                   <TableHead>{t("sn.topSearchTerms.term")}</TableHead>
                   <TableHead className="text-center">{t("sn.topSearchTerms.avgResults")}</TableHead>
                   <TableHead className="text-center">{t("sn.topSearchTerms.searchTotal")}</TableHead>
+                  {clickThrough && (
+                    <TableHead className="text-center">{t("sn.topSearchTerms.ctr")}</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -162,6 +181,11 @@ export default function SNSiteTopSearchTermsPage({ baseRoute = ROUTES.BENTO_SN_I
                     <TableCell className="text-center">
                       {formatNumber(item.total)}
                     </TableCell>
+                    {clickThrough && (
+                      <TableCell className="text-center">
+                        {formatCtr(ctrByTerm.get(item.term)?.ctr)}
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
@@ -193,6 +217,27 @@ export default function SNSiteTopSearchTermsPage({ baseRoute = ROUTES.BENTO_SN_I
                   {variation > 0 ? "+" : ""}
                   {variation}%
                 </span>
+              </div>
+            )}
+            {clickThrough && (
+              <div className="flex items-center gap-2 text-foreground">
+                <IconClick className="h-4 w-4 text-muted-foreground" />
+                <span>
+                  <strong>{formatCtr(clickThrough.ctr)}</strong> {t("sn.topSearchTerms.ctrOverall")}
+                </span>
+              </div>
+            )}
+            {neverClicked.length > 0 && (
+              <div className="pt-3">
+                <div className="mb-1 font-medium text-foreground">{t("sn.topSearchTerms.neverClicked")}</div>
+                <ul className="space-y-1">
+                  {neverClicked.map((term) => (
+                    <li key={term.term} className="flex justify-between gap-2">
+                      <span className="truncate">{term.term}</span>
+                      <span>{formatNumber(term.searches)}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </CardContent>

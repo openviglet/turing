@@ -58,6 +58,7 @@ class TurStaticResourceConfigurationTest {
         when(corsRegistration.allowedOrigins(any(String[].class))).thenReturn(corsRegistration);
         when(corsRegistration.allowedMethods(any(String[].class))).thenReturn(corsRegistration);
         when(corsRegistration.allowedHeaders(any(String[].class))).thenReturn(corsRegistration);
+        when(corsRegistration.exposedHeaders(any(String[].class))).thenReturn(corsRegistration);
         when(corsRegistration.allowCredentials(true)).thenReturn(corsRegistration);
         when(corsRegistration.maxAge(3600)).thenReturn(corsRegistration);
 
@@ -67,6 +68,8 @@ class TurStaticResourceConfigurationTest {
         verify(corsRegistration).allowedOrigins("http://one.local", "http://two.local");
         verify(corsRegistration).allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH");
         verify(corsRegistration).allowedHeaders("*");
+        // T1131 — the click endpoint's metrics header is readable cross-origin.
+        verify(corsRegistration).exposedHeaders("X-Turing-Metrics");
         verify(corsRegistration).allowCredentials(true);
         verify(corsRegistration).maxAge(3600);
     }

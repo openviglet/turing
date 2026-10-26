@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchAiCapabilities, fetchContentGaps, fetchFailedSearches, postClick } from "../api";
+import {
+  fetchAiCapabilities,
+  fetchClickThrough,
+  fetchContentGaps,
+  fetchFailedSearches,
+  postClick,
+} from "../api";
 import type { TuringClient } from "../client";
 import type { TurSearchInsightReport } from "../types";
 
@@ -35,6 +41,16 @@ describe("search insights (T1119)", () => {
 
     expect(post.mock.calls[0][0]).toBe("/sn/Sample/click");
     expect(post.mock.calls[0][2]).toMatchObject({ keepalive: true, csrf: false });
+  });
+
+  it("T1131 - reads click-through rates by site id with a locale", async () => {
+    const { get, client: c } = client();
+
+    await fetchClickThrough(c, "site-1", { period: "this-month", locale: "pt-BR", rows: 20 });
+
+    expect(get.mock.calls[0][0]).toBe(
+      "/sn/site-1/metrics/clicks?period=this-month&locale=pt-BR&rows=20",
+    );
   });
 
   it("T1123 - reads a site's AI capabilities from one probe", async () => {

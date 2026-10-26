@@ -66,6 +66,19 @@ class TurSNSiteClickAPITest {
         assertThat(saved.getValue().getPosition()).isEqualTo(2);
     }
 
+    /** T1131 — with metrics off the click is dropped, and the answer says so. */
+    @Test
+    void aClickWithMetricsOffSaysItWasNotKept() {
+        TurSNSiteClickAPI disabled = new TurSNSiteClickAPI(siteRepository, clickRepository, false);
+
+        var response = disabled.trackClick("Sample",
+                new TurSNSiteClickAPI.TurSNClickRequest("workshop", "post-7", 2, null, null));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(204);
+        assertThat(response.getHeaders().getFirst(TurSNSiteClickAPI.METRICS_HEADER)).isEqualTo("disabled");
+        verify(clickRepository, never()).save(any());
+    }
+
     @Test
     void aBeaconThatIsNotJsonIsRefused() {
         assertThat(api.trackClickBeacon("Sample", "documentId=post-7").getStatusCode().value()).isEqualTo(400);

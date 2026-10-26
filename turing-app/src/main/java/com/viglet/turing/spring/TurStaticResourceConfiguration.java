@@ -58,6 +58,8 @@ public class TurStaticResourceConfiguration implements WebMvcConfigurer {
         var mapping = registry.addMapping("/api/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
+                // T1131 — a cross-origin client reads why its click was not kept.
+                .exposedHeaders("X-Turing-Metrics")
                 .allowCredentials(true)
                 .maxAge(3600);
         String[] origins = allowedOrigins.split(",");

@@ -25,6 +25,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +52,14 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.exchange.TurImportExchange;
 import com.viglet.turing.exchange.TurImportExchange.ImportResult;
+import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
+import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricClick;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRepository;
+import com.viglet.turing.sn.insights.TurSNClickThroughService;
+import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
@@ -164,6 +171,15 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
 
     @Autowired
     private org.springframework.cache.CacheManager cacheManager;
+
+    @Autowired
+    private TurSNSiteMetricAccessRepository metricAccessRepository;
+
+    @Autowired
+    private TurSNSiteMetricClickRepository metricClickRepository;
+
+    @Autowired
+    private TurSNClickThroughService clickThroughService;
 
     private final HttpClient http = HttpClient.newHttpClient();
     private final ObjectMapper json = JsonMapper.builder().build();
@@ -689,7 +705,50 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
                 .POST(BodyPublishers.ofString("{\"term\":\"dragon\",\"documentId\":\"myth-001\",\"position\":1}"))
                 .build();
 
-        assertEquals(202, http.send(beacon, BodyHandlers.ofString()).statusCode());
+        // 202 when metrics are on, 204 with X-Turing-Metrics when off (T1131); never 415.
+        HttpResponse<String> res = http.send(beacon, BodyHandlers.ofString());
+        assertEquals(2, res.statusCode() / 100, "a beacon click must be accepted, got " + res.statusCode());
+    }
+
+    /**
+     * T1131 — the click-through report runs its queries against the real schema:
+     * searches and clicks join per term, and the locale narrows both logs.
+     */
+    @Test
+    void clickThroughReportJoinsSearchesAndClicks() {
+        var site = siteRepository.findByName(SITE).orElseThrow();
+        Instant since = Instant.now().minusSeconds(1);
+        // The H2 file outlives a run, so the term is new each time.
+        String term = "ctr-" + java.util.UUID.randomUUID();
+        for (int i = 0; i < 2; i++) {
+            TurSNSiteMetricAccess access = new TurSNSiteMetricAccess();
+            access.setAccessDate(Instant.now());
+            access.setTerm(term);
+            access.setLanguage(Locale.US);
+            access.setNumFound(4);
+            access.setTurSNSite(site);
+            metricAccessRepository.save(access);
+        }
+        TurSNSiteMetricClick click = new TurSNSiteMetricClick();
+        click.setAccessDate(Instant.now());
+        click.setTerm(term);
+        click.setLanguage(Locale.US);
+        click.setDocumentId("myth-001");
+        click.setPosition(3);
+        click.setTurSNSite(site);
+        metricClickRepository.save(click);
+        var window = new TurSNSearchInsightsService.Window(since, Instant.now().plusSeconds(1));
+
+        var report = clickThroughService.report(site, window, null, 50);
+        var row = report.terms().stream().filter(t -> t.term().equals(term)).findFirst().orElseThrow();
+        assertEquals(2, row.searches());
+        assertEquals(1, row.clicks());
+        assertEquals(0.5, row.ctr());
+        assertEquals(3.0, row.avgPosition());
+
+        var otherLocale = clickThroughService.report(site, window, Locale.of("pt", "BR"), 50);
+        assertTrue(otherLocale.terms().stream().noneMatch(t -> t.term().equals(term)),
+                "a pt_BR report must not count en_US searches");
     }
 
     /** T857 — the sort options can be inlined instead of separately fetched. */

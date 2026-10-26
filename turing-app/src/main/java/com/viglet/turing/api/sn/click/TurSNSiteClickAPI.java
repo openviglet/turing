@@ -55,7 +55,8 @@ import tools.jackson.databind.json.JsonMapper;
  *
  * <p>Toggled by the same {@code turing.search.metrics.enabled} property that
  * gates {@code TurSNSiteMetricAccess} writes — disabling search metrics
- * disables click metrics too.
+ * disables click metrics too. With metrics off the click is dropped and the
+ * answer is 204 with {@code X-Turing-Metrics: disabled} (T1131).
  *
  * @author Alexandre Oliveira
  * @since 2026.2.7
@@ -71,6 +72,8 @@ public class TurSNSiteClickAPI {
     private final TurSNSiteMetricClickRepository turSNSiteMetricClickRepository;
     private final boolean metricsEnabled;
     private static final ObjectMapper JSON = JsonMapper.builder().build();
+    /** T1131 — set to {@code disabled} when search metrics are off and the click is dropped. */
+    public static final String METRICS_HEADER = "X-Turing-Metrics";
 
     public TurSNSiteClickAPI(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteMetricClickRepository turSNSiteMetricClickRepository,
@@ -105,9 +108,9 @@ public class TurSNSiteClickAPI {
 
     private ResponseEntity<Void> record(String siteName, TurSNClickRequest request) {
         if (!metricsEnabled) {
-            // Silently accept so the SDK has the same shape regardless of
-            // server-side configuration; the client never knows it's disabled.
-            return ResponseEntity.accepted().build();
+            // T1131 — still a success, so a fire-and-forget client is not
+            // disturbed, but one that looks can tell the click was not kept.
+            return ResponseEntity.noContent().header(METRICS_HEADER, "disabled").build();
         }
         if (request == null || StringUtils.isBlank(request.documentId())) {
             return ResponseEntity.badRequest().build();

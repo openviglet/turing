@@ -135,6 +135,9 @@ export const queryKeys = {
     all: () => ['sn-site-metrics'] as const,
     topTerms: (siteId: string, period: string, rows: number) =>
       [...queryKeys.snSiteMetrics.all(), 'top-terms', siteId, period, rows] as const,
+    // T1131 — click-through rates per term.
+    clicks: (siteId: string, period: string, rows: number) =>
+      [...queryKeys.snSiteMetrics.all(), 'clicks', siteId, period, rows] as const,
   },
   snSiteFieldCoverage: {
     all: () => ['sn-site-field-coverage'] as const,

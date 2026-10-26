@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { TurSNSiteMetricsTerm } from '@/models/sn/sn-site-metrics-term.model';
 import {
   TurSNSiteMetricsService,
+  type TurSNClickThroughReport,
   type TurSNTopTermsPeriod,
 } from '@/services/sn/sn.site.metrics.service';
 import { queryKeys } from './keys';
@@ -24,6 +25,21 @@ export function useSnTopTerms(
       ? queryKeys.snSiteMetrics.topTerms(siteId, period, rows)
       : ['sn-site-metrics', 'pending'],
     queryFn: () => service.topTermsByPeriod(siteId as string, period, rows),
+    enabled: Boolean(siteId),
+  });
+}
+
+/** T1131 — a site's click-through rate per term for one period. */
+export function useSnClickThrough(
+  siteId: string | undefined,
+  period: TurSNTopTermsPeriod,
+  rows: number,
+) {
+  return useQuery<TurSNClickThroughReport>({
+    queryKey: siteId
+      ? queryKeys.snSiteMetrics.clicks(siteId, period, rows)
+      : ['sn-site-metrics', 'pending'],
+    queryFn: () => service.clickThrough(siteId as string, period, rows),
     enabled: Boolean(siteId),
   });
 }

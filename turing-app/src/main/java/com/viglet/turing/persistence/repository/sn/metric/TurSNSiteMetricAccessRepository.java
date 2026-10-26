@@ -22,6 +22,7 @@ package com.viglet.turing.persistence.repository.sn.metric;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -71,6 +72,20 @@ public interface TurSNSiteMetricAccessRepository extends JpaRepository<TurSNSite
 			+ "TurSNSiteMetricAccess where turSNSite = ?1 AND accessDate BETWEEN ?2 AND ?3 GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC")
 	List<TurSNSiteMetricAccessTerm> termsWithLastSeenBetweenDates(TurSNSite turSNSite, Instant startDate,
 			Instant endDate, Pageable pageable);
+
+	// T1131 — the most searched terms in a window, optionally for one locale
+	// (null reads every locale), for the click-through report.
+	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
+			+ "TurSNSiteMetricAccess where turSNSite = :site AND accessDate BETWEEN :start AND :end "
+			+ "AND (:locale is null or language = :locale) GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC")
+	List<TurSNSiteMetricAccessTerm> termsBetweenDatesForLocale(@Param("site") TurSNSite site,
+			@Param("start") Instant start, @Param("end") Instant end, @Param("locale") Locale locale,
+			Pageable pageable);
+
+	@Query(value = "select COUNT(sanatizedTerm) from TurSNSiteMetricAccess where turSNSite = :site "
+			+ "AND accessDate BETWEEN :start AND :end AND (:locale is null or language = :locale)")
+	long countSearchesForLocale(@Param("site") TurSNSite site, @Param("start") Instant start,
+			@Param("end") Instant end, @Param("locale") Locale locale);
 
 	@Query(value = "select COUNT(sanatizedTerm) from "
 			+ "TurSNSiteMetricAccess where turSNSite = ?1")

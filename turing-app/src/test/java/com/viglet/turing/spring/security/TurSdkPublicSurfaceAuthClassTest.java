@@ -47,7 +47,9 @@ class TurSdkPublicSurfaceAuthClassTest {
             "/api/sn/x/answer/share/x",
             // T1119 — search insights are admin metrics, called with the site's key.
             "/api/sn/x/metrics/failed-searches",
-            "/api/sn/x/metrics/content-gaps");
+            "/api/sn/x/metrics/content-gaps",
+            // T1131 — click-through rates, the same kind of admin metric.
+            "/api/sn/x/metrics/clicks");
 
     private static Set<String> sdkPaths;
 

@@ -33,6 +33,8 @@ import type {
   TurSortOption,
   TurSearchInsightReport,
   TurSearchInsightWindow,
+  TurClickThroughReport,
+  TurClickThroughWindow,
   TurAiCapabilities,
   TurSpellCheck,
   TurRelatedTermSuggestion,
@@ -1738,11 +1740,12 @@ export function fetchAiCapabilities(
 
 // ── T1119: Search insights ─────────────────────────────────────────────────
 
-function insightQuery(window: TurSearchInsightWindow): string {
+function insightQuery(window: TurClickThroughWindow): string {
   const params = new URLSearchParams();
   if (window.period) params.set("period", window.period);
   if (window.from) params.set("from", window.from);
   if (window.to) params.set("to", window.to);
+  if (window.locale) params.set("locale", window.locale);
   if (window.rows !== undefined) params.set("rows", String(window.rows));
   const qs = params.toString();
   return qs ? `?${qs}` : "";
@@ -1781,6 +1784,26 @@ export function fetchContentGaps(
 ): Promise<TurSearchInsightReport> {
   return client.get<TurSearchInsightReport>(
     `/sn/${encodeURIComponent(siteId)}/metrics/content-gaps` + insightQuery(window),
+    { signal: options.signal },
+  );
+}
+
+/**
+ * T1131 — click-through rates read back from the clicks {@link postClick}
+ * records: per term, searches, clicks, clicks per search and the mean clicked
+ * position, plus the terms whose results were found but never opened. Same
+ * window and key as {@link fetchFailedSearches}, with an optional `locale`.
+ *
+ * Server endpoint: {@code GET /api/sn/{siteId}/metrics/clicks}.
+ */
+export function fetchClickThrough(
+  client: TuringClient,
+  siteId: string,
+  window: TurClickThroughWindow = {},
+  options: TuringCallOptions = {},
+): Promise<TurClickThroughReport> {
+  return client.get<TurClickThroughReport>(
+    `/sn/${encodeURIComponent(siteId)}/metrics/clicks` + insightQuery(window),
     { signal: options.signal },
   );
 }

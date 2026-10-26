@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: v2026.3.1.133-index-sn_site_metric_click-site-date
+      author: alexandre-oliveira
+      comment: "T1131 the click-through report reads one site's clicks inside a date window."
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sn_site_metric_click
+        - not:
+            - indexExists:
+                tableName: sn_site_metric_click
+                indexName: idx_sn_site_metric_click_site_date
+      changes:
+        - createIndex:
+            indexName: idx_sn_site_metric_click_site_date
+            tableName: sn_site_metric_click
+            columns:
+              - column:
+                  name: sn_site_id
+              - column:
+                  name: accessDate

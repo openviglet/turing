@@ -334,7 +334,10 @@
       "rank": "Posição",
       "term": "Termo",
       "avgResults": "Média de resultados",
-      "searchTotal": "Total de buscas"
+      "searchTotal": "Total de buscas",
+      "ctr": "Taxa de clique",
+      "ctrOverall": "cliques por busca",
+      "neverClicked": "Encontrados, nunca abertos"
     },
     "fieldCoverage": {
       "title": "Cobertura de Campos",

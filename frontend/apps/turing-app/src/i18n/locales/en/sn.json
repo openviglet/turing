@@ -334,7 +334,10 @@
       "rank": "Rank",
       "term": "Term",
       "avgResults": "Average of results",
-      "searchTotal": "Search total"
+      "searchTotal": "Search total",
+      "ctr": "Click-through",
+      "ctrOverall": "clicks per search",
+      "neverClicked": "Found, never opened"
     },
     "fieldCoverage": {
       "title": "Field Coverage",

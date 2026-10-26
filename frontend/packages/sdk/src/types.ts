@@ -492,6 +492,41 @@ export interface TurSearchInsightReport {
   terms: TurSearchInsightTerm[];
 }
 
+// ── T1131: Click-through rates ──
+
+/** The window of a click-through report: a search-insights window plus a locale. */
+export interface TurClickThroughWindow extends TurSearchInsightWindow {
+  /** `pt_BR` or `pt-BR`; narrows searches and clicks to one locale. */
+  locale?: string;
+}
+
+/** One term of a click-through report. */
+export interface TurClickThroughTerm {
+  term: string;
+  searches: number;
+  clicks: number;
+  /** Clicks per search: can pass 1 when a visitor opens several results. */
+  ctr: number;
+  /** Mean 1-based position of the clicked results; `null` when none was clicked. */
+  avgPosition: number | null;
+  avgResults: number;
+}
+
+/**
+ * A click-through report: its window, the site's totals, the most searched
+ * terms, and the terms whose results were found but never opened.
+ */
+export interface TurClickThroughReport {
+  from: string | null;
+  to: string;
+  locale: string | null;
+  searches: number;
+  clicks: number;
+  ctr: number;
+  terms: TurClickThroughTerm[];
+  neverClicked: TurClickThroughTerm[];
+}
+
 // ── LLM Instances ──
 
 export interface TurLlmVendor {

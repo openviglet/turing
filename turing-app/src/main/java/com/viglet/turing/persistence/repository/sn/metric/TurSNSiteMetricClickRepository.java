@@ -16,17 +16,39 @@
  */
 package com.viglet.turing.persistence.repository.sn.metric;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricClick;
 
 /**
- * Repository for {@link TurSNSiteMetricClick}. Insert-only by design — clicks
- * are append-only telemetry; analytics dashboards read the table directly via
- * Grafana/Prometheus rather than going through this repository.
+ * Repository for {@link TurSNSiteMetricClick}. Clicks are append-only
+ * telemetry: the only writer is the {@code /click} endpoint, and the reads are
+ * the aggregates the click-through report (T1131) needs. A {@code null}
+ * {@code locale} reads every locale.
  *
  * @author Alexandre Oliveira
  * @since 2026.2.7
  */
 public interface TurSNSiteMetricClickRepository extends JpaRepository<TurSNSiteMetricClick, String> {
+
+    @Query("select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickTerm("
+            + "c.sanatizedTerm, COUNT(c), AVG(CAST(c.position as double))) from TurSNSiteMetricClick c "
+            + "where c.turSNSite = :site and c.accessDate between :start and :end "
+            + "and (:locale is null or c.language = :locale) and c.sanatizedTerm in :terms "
+            + "group by c.sanatizedTerm")
+    List<TurSNSiteMetricClickTerm> clicksByTerm(@Param("site") TurSNSite site, @Param("start") Instant start,
+            @Param("end") Instant end, @Param("locale") Locale locale, @Param("terms") Collection<String> terms);
+
+    @Query("select COUNT(c) from TurSNSiteMetricClick c where c.turSNSite = :site "
+            + "and c.accessDate between :start and :end and (:locale is null or c.language = :locale)")
+    long countClicks(@Param("site") TurSNSite site, @Param("start") Instant start, @Param("end") Instant end,
+            @Param("locale") Locale locale);
 }

@@ -2207,29 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXLIII Reading click-through rates back (T1131)
-
-**Where it happened.** Dumont's WordPress search block (D176) now reports each result
-click to `POST /api/sn/{site}/click`, so the site can see a click-through rate. Turing
-saves each click in `TurSNSiteMetricClick`, but the only code that touches
-`TurSNSiteMetricClickRepository` is the write in `TurSNSiteClickAPI`. No endpoint,
-console page or MCP tool reports clicks, CTR per term, or "searched and opened nothing".
-The plugin cannot verify that its clicks were kept, and a site owner has nowhere to
-look.
-
-The endpoint also answers 202 when `turing.search.metrics.enabled` is false (the
-default) and drops the click. The SDK and connectors cannot tell the click went nowhere.
-The plugin's docker stack now sets `TURING_SEARCH_METRICS_ENABLED=true` for that reason.
-
-**What Turing should do.**
-- `GET /api/sn/{site}/metrics/clicks?from=&to=&locale=`: per term, searches, clicks, CTR
-  and mean clicked position, plus the terms searched often and clicked never. It reads with
-  the same API-key auth as T1119's content-gap endpoint, and its `from`/`to`/`rows` window.
-- A CTR column on the console's search-metrics page. `sn_site_metric_click` indexes term and date apart; a site-scoped window needs `(site, date)`.
-- `/click` answers `204` with `X-Turing-Metrics: disabled` (or a `/metrics/status` probe)
-  when metrics are off, so a client can say why nothing is counted.
-- Dumont's search insights screen reads this endpoint.
-
 ## CXLIV Filters on the similar and duplicate searches (T1132)
 
 **Where it happened.** Dumont's WordPress plugin added a Related content block (D177) on
@@ -2326,3 +2303,19 @@ Reference: `frontend/packages/sdk/src/controllers/search.ts` (`consentedAnalytic
 `armAbandonment`), `analytics-sinks.ts` (`recommendedEvent`), and the tests
 `analytics-consent.test.ts` and `analytics-search-abandonment.test.ts`. Port the tests
 too.
+
+## CL Pin @tanstack/react-table back to 8.x (T1138)
+
+**Where it happened.** Dependabot's frontend group bump on 2026-10-20 (336bfab6ca) moved
+`@tanstack/react-table` from 8.21.3 to 9.3.1, a major version. Since then `pnpm exec tsc
+-b --noEmit` in `frontend/apps/turing-app` reports 52 errors, none in code that changed:
+`Generic type 'Table' requires 2 type argument(s)` in
+`src/components/ui/grid-column-visibility-menu.tsx`, and implicit `any` on `row`,
+`column`, `header` and `cell` in the grids built on it (`field.grid.list.tsx` and
+others). `pnpm run build` runs `tsc -b` first, so the console no longer builds. The
+backend suite does not compile the frontend, so nothing flagged it.
+
+**What Turing should do.** Pin `@tanstack/react-table` back to `^8.21.3` and add a
+Dependabot `ignore` for its semver-major updates, as T1134 did for okhttp. Then `tsc -b
+--noEmit` must be clean again. Migrating to v9 is its own task: v9 changes the `Table`
+generics, and every grid would have to move to them at once.
