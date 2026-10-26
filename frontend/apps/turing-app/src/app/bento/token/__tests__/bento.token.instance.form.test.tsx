@@ -19,7 +19,7 @@ describe("BentoTokenInstanceForm — partition", () => {
       <MemoryRouter>
         <BentoTokenInstanceForm
           isNew={false}
-          staged={{ title: "Shared site A", description: "" }}
+          staged={{ title: "Shared site A", description: "", icon: null, enabled: 0 }}
           value={{
             id: "t1",
             token: "",

@@ -2268,40 +2268,6 @@ Add each to `ENFORCED` and extend the contract test.
 
 ## CLIII The quality gate stops at the package boundary
 
-### CLIII.1 A test fixture's type error breaks the production build (T1141)
-
-**Where it happened.** Dumont D164 (WordPress range facets) needed a `turing-ce:local`
-image carrying T1122, so it rebuilt Turing at HEAD `d81f678de5` the way
-`publish-docker.cmd` does: `mvnw.cmd clean install -DskipTests -Dmaven.test.skip=true
--DskipITs -pl turing-app -am`.
-
-**What came back.** The `pnpm build:app` execution of `frontend-maven-plugin` failed;
-run directly, `pnpm run build` in `frontend/apps/turing-app` stops in `tsc -b`:
-
-    src/app/bento/token/__tests__/bento.token.instance.form.test.tsx(22,11):
-    error TS2739: Type '{ title: string; description: string; }' is missing the
-    following properties from type 'BentoIdentity': icon, enabled
-
-A test file's fixture fell behind a type that gained two required fields, and because
-`tsc -b` type-checks the tests, the production bundle, the jar and the image all fail
-with it. Maven's `-q` output names only "exited (2)", so the cause takes a second run to
-find.
-
-**Workaround used.** `pnpm exec vite build` (no type check) to write the SPA into
-`turing-app/src/main/resources/public/`, then Maven with `-Dskip.npm=true`, then `docker
-build -f Dockerfile.local -t turing-ce:local`. Nothing was changed in Turing.
-
-**What it should do.**
-- Fix the fixture (`icon`, `enabled`) so HEAD builds.
-- Make the gate that runs before a commit type-check too. Today that gate is
-  `pnpm --filter turing-app test` (vitest, which strips types) and `lint`; nothing runs
-  `tsc` until `build`. The breaking commit (T1133, `9435dcff4d`) passed both. Add a
-  `typecheck` script (`tsc -p tsconfig.app.json --noEmit`, whose `include: ["src"]`
-  covers the tests) and run it from `test` or beside it. CI is manual-dispatch on
-  purpose, so the gate is local, not a push trigger.
-- Done when `mvnw install -pl turing-app` succeeds at HEAD and a test fixture missing a
-  required field fails the local frontend gate.
-
 ### CLIII.2 The published JS SDK lags its source (T1142)
 
 **Where it happened.** Dumont D170 (the WordPress search block suggesting the filters a
@@ -2364,3 +2330,32 @@ changes.
 - The JS and Java SDKs expose it beside `fetchPersonaContentFit`.
 - Done when a client lists a site's audience personas and every id it gets is accepted
   by content-fit.
+
+## CLV What the SN site manifest cannot declare
+
+### CLV.1 The genAi block keeps the live agent when none is named (T1146)
+
+**Where it happened.** Dumont D186 (the WordPress plugin) turns a site's GenAI on by
+declaring `"genAi": {"agentId": "default"}` in the manifest it posts to `POST
+/api/sn/manifest`. On the plugin's dev stack the site already answered, bound in the
+console to an agent of its own, yet `POST /api/sn/manifest/plan` with that block
+returned `genAiToChange: true`: applying it would rebind the site to the Default AI
+Agent.
+
+**Why.** `TurSNManifestGenAi.ownAgentId()` reads both `null` and `"default"` as "no
+agent of the site's own", and `TurSNManifestGenAiConverger` writes that onto a live
+binding. So the manifest can say "this agent" or "the Default AI Agent", but not "GenAI
+on, whichever agent the site already has". A connector that only wants answers on must
+overwrite an admin's console choice to get them.
+
+**Workaround.** None in code. The plugin's setting and its Fields screen warn that
+saving replaces an agent chosen in the console.
+
+**What it should do.**
+- An omitted `agentId` in a declared `genAi` block keeps the live binding's agent, and
+  creates the binding with the Default AI Agent only when the site has none; `"default"`
+  keeps meaning "rebind to the Default AI Agent".
+- `genAiToChange` is false for a site that already has a binding and a block without
+  `agentId` (and no differing `knowledgeBaseMode`).
+- Dumont's plugin then sends `{}` rather than `{"agentId": "default"}` and drops the
+  warning (file it in Dumont when this ships).

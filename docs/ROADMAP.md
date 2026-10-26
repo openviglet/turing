@@ -16,9 +16,10 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
+- 📋 **T1146** (deps: —) **A manifest genAi block cannot turn GenAI on and keep the site's agent; it always rebinds one** — A connector that only wants answers on overwrites the agent an admin chose in the console. → §CLV.1
+
 ## Block BV — The quality gate stops at the package boundary
 
-- 📋 **T1141** (deps: —) **turing-app does not build at HEAD: a bento test fixture fails tsc -b, so the jar and the image fail too** — A test's type drift blocks every production build and image, and nothing caught it at the commit that changed the type. → §CLIII.1
 - 📋 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — 16 sdk/src commits since the 2026-08-24 release (react-sdk: 5) reach no consumer; release is a hand bump plus a manual dispatch, and nothing counts what waits. → §CLIII.2
 
 ## Block AI — Persona as a first-class actionable surface (§XXXII)

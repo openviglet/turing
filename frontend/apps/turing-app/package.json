@@ -12,7 +12,8 @@
     "lint": "eslint . --max-warnings 0",
     "check:duplicates": "viglet-ds-check-duplicates src",
     "preview": "vite preview",
-    "test": "vitest run --project unit",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "test": "pnpm run typecheck && vitest run --project unit",
     "test:parity": "vitest run --project parity",
     "test:watch": "vitest"
   },

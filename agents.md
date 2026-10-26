@@ -110,7 +110,8 @@ pnpm exec tsc -b --noEmit  # type-check only, no emit
 pnpm dev                 # local dev server
 
 # Frontend tests (vitest + React Testing Library), from repo root or frontend
-pnpm --filter turing-app test        # vitest run (CI mode)
+pnpm --filter turing-app test        # typecheck (tsc on src, tests included) + vitest run
+pnpm --filter turing-app typecheck   # tsc only: a test fixture's type error breaks `build`
 pnpm --filter turing-app test:watch  # watch mode
 
 # Full Maven build
