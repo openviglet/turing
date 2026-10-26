@@ -33,6 +33,7 @@ import type {
   TurSortOption,
   TurSearchInsightReport,
   TurSearchInsightWindow,
+  TurAiCapabilities,
   TurSpellCheck,
   TurRelatedTermSuggestion,
 } from "./types";
@@ -1707,6 +1708,24 @@ export function fetchSortOptions(
   options: TuringCallOptions = {},
 ): Promise<TurSortOption[]> {
   return client.get<TurSortOption[]>(`/sn/${site}/search/sort-options`, { signal: options.signal });
+}
+
+// ── T1123: AI capabilities ─────────────────────────────────────────────────
+
+/**
+ * Which AI features the site can use (chat, answer, natural-language filters,
+ * copilot, vector similarity, summaries), each with `enabled` and a `reason`.
+ * Read from configuration: no model is called, so it is cheap to ask on every
+ * page load before showing an AI block.
+ *
+ * Server endpoint: {@code GET /api/sn/{site}/ai/capabilities}.
+ */
+export function fetchAiCapabilities(
+  client: TuringClient,
+  site: string,
+  options: TuringCallOptions = {},
+): Promise<TurAiCapabilities> {
+  return client.get<TurAiCapabilities>(`/sn/${site}/ai/capabilities`, { signal: options.signal });
 }
 
 // ── T1119: Search insights ─────────────────────────────────────────────────

@@ -442,6 +442,26 @@ export interface TurSortOption {
   label: string;
 }
 
+// ── T1123: AI capabilities ──
+
+/** One AI feature of a site: on, or off with the reason (`NONE` when on). */
+export interface TurAiCapability {
+  enabled: boolean;
+  /** `NONE`, or why it is off: `NO_GENAI`, `MISSING_DEFAULT_LLM`, `VECTORLESS`, ... */
+  reason: string;
+}
+
+/** Which AI features a site can use, read from configuration without calling a model. */
+export interface TurAiCapabilities {
+  site: string;
+  chat: TurAiCapability;
+  answer: TurAiCapability;
+  nlFilters: TurAiCapability;
+  copilot: TurAiCapability;
+  similarByVector: TurAiCapability;
+  summaries: TurAiCapability;
+}
+
 // ── T1119: Search insights (failed searches, content gaps) ──
 
 /** The window a search-insights report reads; every field is optional. */

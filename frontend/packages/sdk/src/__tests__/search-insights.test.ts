@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchContentGaps, fetchFailedSearches } from "../api";
+import { fetchAiCapabilities, fetchContentGaps, fetchFailedSearches } from "../api";
 import type { TuringClient } from "../client";
 import type { TurSearchInsightReport } from "../types";
 
@@ -25,6 +25,14 @@ describe("search insights (T1119)", () => {
     await expect(fetchFailedSearches(c, "site-1")).resolves.toEqual(report);
 
     expect(get.mock.calls[0][0]).toBe("/sn/site-1/metrics/failed-searches");
+  });
+
+  it("T1123 - reads a site's AI capabilities from one probe", async () => {
+    const { get, client: c } = client();
+
+    await fetchAiCapabilities(c, "Sample");
+
+    expect(get.mock.calls[0][0]).toBe("/sn/Sample/ai/capabilities");
   });
 
   it("sends the window as query parameters", async () => {

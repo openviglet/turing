@@ -1350,6 +1350,7 @@
 - **T1120** — A POST search with mode instant runs its plain last term as a prefix on every engine, echoes the typed q, stays out of the search log, and the SDK's searchQuery sends it (design §CXXXII superseded: the prefix is a server-side trailing wildcard, the form every engine already accepts, so the last term skips stemming like the client's asterisk did).
 - **T1121** — The SDK search controller aborts the request a newer search, facet toggle or page change supersedes, on both the POST and GET paths and the paired chat call.
 - **T1122** — Stored custom facet bounds are written without the column scale, so integer range facets count and reach the answer; an IT provisions one through the manifest and checks its buckets (design §CXXXIV superseded: the cause was not the manifest: every stored INT or LONG bucket read back as 20.000000, which the Lucene range parse rejected, so console-made facets failed the same way).
+- **T1123** — GET /api/sn/{site}/ai/capabilities reports chat, answer, NL filters, copilot, vector similarity and summaries with enabled and a reason, from configuration alone, typed in the SDK (design §CXXXV superseded: it is not cached: every answer is a config read already as cheap as /chat/enabled, so a cache would only add an eviction to get wrong).
 
 ## Block BJ — Configurable, per-language NL ranking lexicon (Lucene analysis)
 

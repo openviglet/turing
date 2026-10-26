@@ -665,6 +665,22 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         assertEquals("instant", instant.path("request").path("mode").asString());
     }
 
+    /** T1123 — the AI capabilities probe answers anonymously and agrees with /chat/enabled. */
+    @Test
+    void aiCapabilitiesAgreeWithChatEnabled() throws Exception {
+        HttpResponse<String> res = get("/sn/" + SITE + "/ai/capabilities");
+        assertEquals(200, res.statusCode());
+        JsonNode capabilities = json.readTree(res.body());
+        JsonNode chatEnabled = json.readTree(get("/sn/" + SITE + "/chat/enabled").body());
+
+        assertEquals(chatEnabled.path("reason").asString(), capabilities.path("chat").path("reason").asString());
+        assertEquals(capabilities.path("chat"), capabilities.path("answer"),
+                "chat and answer read the same route");
+        for (String feature : List.of("nlFilters", "copilot", "similarByVector", "summaries")) {
+            assertTrue(capabilities.path(feature).has("enabled"), feature + " must be reported: " + capabilities);
+        }
+    }
+
     /** T857 — the sort options can be inlined instead of separately fetched. */
     @Test
     void structuredResponseCanInlineTheSortOptions() throws Exception {

@@ -184,6 +184,8 @@ public class TurSecurityConfigProduction {
                         // T1118 — the SDK's fetchRelatedTerms runs in the browser
                         // beside search and spell-check, keyless.
                         "/api/sn/*/*/related-terms",
+                        // T1123 — which AI features a site has, read from configuration.
+                        "/api/sn/*/ai/capabilities",
                         "/api/ann/*/search",
                         // T119 — token-gated human-approval resolve endpoints (the
                         // opaque token is the capability). The plural
@@ -257,7 +259,8 @@ public class TurSecurityConfigProduction {
                         "/api/sn/*/query",
                         "/api/sn/*/query/**",
                         "/api/sn/*/*/spell-check",
-                        "/api/sn/*/*/related-terms"
+                        "/api/sn/*/*/related-terms",
+                        "/api/sn/*/ai/capabilities"
         );
 
         /**
