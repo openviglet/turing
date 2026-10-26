@@ -7,6 +7,8 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
+- ⏸ **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — set aside (A re-embedding decision, and PgVector, Milvus and Chroma to test on.): Duplicates, chat, answer, nl-filters and copilot need the partition in the vector store. → §CXLV
+
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 ## Block CF — What the SN site manifest cannot declare
