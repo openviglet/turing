@@ -227,7 +227,14 @@ function TryIt( { version } ) {
 }
 
 function Synonyms( { rows, act } ) {
-	const [ terms, setTerms ] = useState( '' );
+	// Search insights' "Add a synonym" opens this screen with ?synonym=<a search that found
+	// nothing>, so the owner only types what it should also mean.
+	const [ terms, setTerms ] = useState( () => {
+		const asked = new URL( window.location.href ).searchParams.get(
+			'synonym'
+		);
+		return asked ? `${ asked }, ` : '';
+	} );
 
 	return (
 		<Card>

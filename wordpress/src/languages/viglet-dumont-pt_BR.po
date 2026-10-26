@@ -15,8 +15,8 @@ msgstr ""
 "X-Domain: viglet-dumont\n"
 
 #: src/admin/views/settings-page.php:26
-#: src/includes/class-viglet-dumont-admin.php:33
-#: src/includes/class-viglet-dumont-admin.php:34
+#: src/includes/class-viglet-dumont-admin.php:48
+#: src/includes/class-viglet-dumont-admin.php:49
 msgid "Viglet Dumont"
 msgstr "Viglet Dumont"
 
@@ -39,18 +39,18 @@ msgstr "Indexação"
 #: src/blocks/search/parts/box.php:48
 #: src/includes/class-viglet-dumont-native-search.php:176
 #: src/includes/class-viglet-dumont-post-state.php:99
-#: assets/admin/insights.js:78
-#: assets/admin/tuning.js:373
+#: assets/admin/insights.js:91
+#: assets/admin/tuning.js:380
 #: src/admin/js/editor-panel.js:211
 #: src/admin/js/search-block-editor.js:108
 msgid "Search"
 msgstr "Busca"
 
 #: src/admin/views/settings-page.php:52
-#: assets/admin/insights.js:88
+#: assets/admin/insights.js:101
 #: assets/admin/mapping.js:339
-#: assets/admin/tuning.js:253
-#: assets/admin/tuning.js:380
+#: assets/admin/tuning.js:260
+#: assets/admin/tuning.js:387
 msgid "Actions"
 msgstr "Ações"
 
@@ -352,71 +352,71 @@ msgstr "Filtros"
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
-#: src/includes/class-viglet-dumont-admin.php:43
-#: src/includes/class-viglet-dumont-admin.php:44
+#: src/includes/class-viglet-dumont-admin.php:58
+#: src/includes/class-viglet-dumont-admin.php:59
 msgid "Settings"
 msgstr "Configurações"
 
-#: src/includes/class-viglet-dumont-admin.php:51
-#: src/includes/class-viglet-dumont-admin.php:109
+#: src/includes/class-viglet-dumont-admin.php:66
+#: src/includes/class-viglet-dumont-admin.php:124
 msgid "Connect to Turing"
 msgstr "Conectar ao Turing"
 
-#: src/includes/class-viglet-dumont-admin.php:52
+#: src/includes/class-viglet-dumont-admin.php:67
 msgid "Setup"
 msgstr "Configuração inicial"
 
-#: src/includes/class-viglet-dumont-admin.php:59
-#: src/includes/class-viglet-dumont-admin.php:116
+#: src/includes/class-viglet-dumont-admin.php:74
+#: src/includes/class-viglet-dumont-admin.php:131
 msgid "Search fields"
 msgstr "Campos de busca"
 
-#: src/includes/class-viglet-dumont-admin.php:60
+#: src/includes/class-viglet-dumont-admin.php:75
 msgid "Fields"
 msgstr "Campos"
 
-#: src/includes/class-viglet-dumont-admin.php:67
-#: src/includes/class-viglet-dumont-admin.php:123
+#: src/includes/class-viglet-dumont-admin.php:82
+#: src/includes/class-viglet-dumont-admin.php:138
 msgid "Search health"
 msgstr "Saúde da busca"
 
-#: src/includes/class-viglet-dumont-admin.php:68
+#: src/includes/class-viglet-dumont-admin.php:83
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:225
+#: src/includes/class-viglet-dumont-admin.php:240
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:226
+#: src/includes/class-viglet-dumont-admin.php:241
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:227
+#: src/includes/class-viglet-dumont-admin.php:242
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:228
+#: src/includes/class-viglet-dumont-admin.php:243
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:229
+#: src/includes/class-viglet-dumont-admin.php:244
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:230
+#: src/includes/class-viglet-dumont-admin.php:245
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:231
+#: src/includes/class-viglet-dumont-admin.php:246
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:232
+#: src/includes/class-viglet-dumont-admin.php:247
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:250
+#: src/includes/class-viglet-dumont-admin.php:265
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -1506,12 +1506,12 @@ msgstr "Encontrar posts relacionados"
 msgid "Featured"
 msgstr "Destaque"
 
-#: src/includes/class-viglet-dumont-admin.php:75
-#: src/includes/class-viglet-dumont-admin.php:102
+#: src/includes/class-viglet-dumont-admin.php:90
+#: src/includes/class-viglet-dumont-admin.php:117
 msgid "Search tuning"
 msgstr "Ajuste da busca"
 
-#: src/includes/class-viglet-dumont-admin.php:76
+#: src/includes/class-viglet-dumont-admin.php:91
 msgid "Tuning"
 msgstr "Ajuste"
 
@@ -1537,84 +1537,84 @@ msgstr "Só o que este plugin adicionou pode ser removido aqui; altere o resto n
 msgid "Set in Turing’s console"
 msgstr "Definido no console do Turing"
 
-#: assets/admin/tuning.js:235
+#: assets/admin/tuning.js:242
 msgid "Synonyms"
 msgstr "Sinônimos"
 
-#: assets/admin/tuning.js:239
+#: assets/admin/tuning.js:246
 msgid "Words a visitor may type for the same thing. A search for any of them finds posts with the others."
 msgstr "Palavras que um visitante pode digitar para a mesma coisa. Uma busca por qualquer uma delas encontra posts com as outras."
 
-#: assets/admin/tuning.js:249
+#: assets/admin/tuning.js:256
 msgid "Words"
 msgstr "Palavras"
 
 #. translators: %s: the synonym's words.
-#: assets/admin/tuning.js:267
+#: assets/admin/tuning.js:274
 #, js-format
 msgid "Remove %s"
 msgstr "Remover %s"
 
-#: assets/admin/tuning.js:299
+#: assets/admin/tuning.js:306
 msgid "Words that mean the same, separated by commas"
 msgstr "Palavras com o mesmo sentido, separadas por vírgulas"
 
-#: assets/admin/tuning.js:308
+#: assets/admin/tuning.js:315
 msgid "Add synonym"
 msgstr "Adicionar sinônimo"
 
-#: assets/admin/tuning.js:359
+#: assets/admin/tuning.js:366
 msgid "Promoted results"
 msgstr "Resultados em destaque"
 
-#: assets/admin/tuning.js:363
+#: assets/admin/tuning.js:370
 msgid "Up to three posts shown first, as featured, when a visitor searches for these words."
 msgstr "Até três posts mostrados primeiro, em destaque, quando um visitante busca por estas palavras."
 
-#: assets/admin/tuning.js:376
-#: assets/admin/tuning.js:490
+#: assets/admin/tuning.js:383
+#: assets/admin/tuning.js:497
 msgid "Shown first"
 msgstr "Mostrados primeiro"
 
 #. translators: %s: the search the posts are promoted for.
-#: assets/admin/tuning.js:399
+#: assets/admin/tuning.js:406
 #, js-format
 msgid "Remove the promotion for %s"
 msgstr "Remover o destaque para %s"
 
-#: assets/admin/tuning.js:441
+#: assets/admin/tuning.js:448
 msgid "When visitors search for"
 msgstr "Quando os visitantes buscarem por"
 
-#: assets/admin/tuning.js:451
+#: assets/admin/tuning.js:458
 msgid "Find a post to show first"
 msgstr "Encontre um post para mostrar primeiro"
 
-#: assets/admin/tuning.js:459
+#: assets/admin/tuning.js:466
 msgid "Posts found"
 msgstr "Posts encontrados"
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:476
+#: assets/admin/tuning.js:483
 #, js-format
 msgid "Show %s first"
 msgstr "Mostrar %s primeiro"
 
-#: assets/admin/tuning.js:483
+#: assets/admin/tuning.js:490
 msgid "Add"
 msgstr "Adicionar"
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:506
+#: assets/admin/tuning.js:513
 #, js-format
 msgid "Take %s out"
 msgstr "Tirar %s"
 
-#: assets/admin/tuning.js:513
+#: assets/admin/tuning.js:520
 msgid "Take out"
 msgstr "Tirar"
 
-#: assets/admin/tuning.js:525
+#: assets/admin/tuning.js:532
 msgid "Promote"
 msgstr "Destacar"
 
@@ -2061,12 +2061,12 @@ msgstr "Adicionado ao seu carrinho."
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
 
-#: src/includes/class-viglet-dumont-admin.php:83
-#: src/includes/class-viglet-dumont-admin.php:95
+#: src/includes/class-viglet-dumont-admin.php:98
+#: src/includes/class-viglet-dumont-admin.php:110
 msgid "Search insights"
 msgstr "Insights de busca"
 
-#: src/includes/class-viglet-dumont-admin.php:84
+#: src/includes/class-viglet-dumont-admin.php:99
 msgid "Insights"
 msgstr "Insights"
 
@@ -2079,69 +2079,93 @@ msgid "All time"
 msgstr "Todo o período"
 
 #. translators: %s: a search visitors made.
-#: assets/admin/insights.js:109
+#: assets/admin/insights.js:122
 #, js-format
 msgid "Write about this: “%s”"
 msgstr "Escrever sobre isto: “%s”"
 
-#: assets/admin/insights.js:116
+#: assets/admin/insights.js:129
 msgid "Write about this"
 msgstr "Escrever sobre isto"
 
-#: assets/admin/insights.js:134
+#: assets/admin/insights.js:170
 msgid "Searches"
 msgstr "Buscas"
 
-#: assets/admin/insights.js:166
+#: assets/admin/insights.js:202
 msgid "What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out."
 msgstr "O que os visitantes buscaram neste site, o que não encontrou nada e o que nunca abriram, a partir das métricas de busca do Turing. Buscas feitas durante a digitação ficam de fora."
 
-#: assets/admin/insights.js:173
+#: assets/admin/insights.js:209
 msgid "Period"
 msgstr "Período"
 
-#: assets/admin/insights.js:186
+#: assets/admin/insights.js:222
 msgid "No searches in this period yet. They appear here once visitors use the site’s search."
 msgstr "Ainda não há buscas neste período. Elas aparecem aqui quando os visitantes usam a busca do site."
 
 #. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
-#: assets/admin/insights.js:197
+#: assets/admin/insights.js:233
 #, js-format
 msgid "%1$s searches, %2$s clicks, %3$s click-through."
 msgstr "%1$s buscas, %2$s cliques, %3$s de taxa de clique."
 
-#: assets/admin/insights.js:207
+#: src/includes/class-viglet-dumont-insights.php:115
+#: assets/admin/insights.js:243
 msgid "Top searches"
 msgstr "Buscas mais feitas"
 
-#: assets/admin/insights.js:208
+#: assets/admin/insights.js:244
 msgid "No searches in this period."
 msgstr "Nenhuma busca neste período."
 
-#: assets/admin/insights.js:216
+#: assets/admin/insights.js:252
 msgid "Clicks"
 msgstr "Cliques"
 
-#: assets/admin/insights.js:220
+#: assets/admin/insights.js:256
 msgid "Click-through"
 msgstr "Taxa de clique"
 
-#: assets/admin/insights.js:226
+#: src/includes/class-viglet-dumont-insights.php:116
+#: assets/admin/insights.js:262
 msgid "Searches that found nothing"
 msgstr "Buscas que não encontraram nada"
 
-#: assets/admin/insights.js:230
+#: assets/admin/insights.js:266
 msgid "Every search found something."
 msgstr "Toda busca encontrou algo."
 
-#: assets/admin/insights.js:238
+#: assets/admin/insights.js:274
 msgid "Last searched"
 msgstr "Última busca"
 
-#: assets/admin/insights.js:250
+#: assets/admin/insights.js:287
 msgid "Found, but never opened"
 msgstr "Encontradas, mas nunca abertas"
 
-#: assets/admin/insights.js:254
+#: assets/admin/insights.js:291
 msgid "Every search that found results led to a click."
 msgstr "Toda busca com resultados levou a um clique."
+
+#: src/includes/class-viglet-dumont-admin.php:38
+msgid "Site search this week"
+msgstr "Busca do site nesta semana"
+
+#: src/includes/class-viglet-dumont-insights.php:120
+msgid "No searches this week yet."
+msgstr "Ainda não há buscas nesta semana."
+
+#: src/includes/class-viglet-dumont-insights.php:136
+msgid "All search insights"
+msgstr "Todos os insights de busca"
+
+#. translators: %s: a search that found nothing.
+#: assets/admin/insights.js:143
+#, js-format
+msgid "Add a synonym: “%s”"
+msgstr "Adicionar um sinônimo: “%s”"
+
+#: assets/admin/insights.js:150
+msgid "Add a synonym"
+msgstr "Adicionar um sinônimo"

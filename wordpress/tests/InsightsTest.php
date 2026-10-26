@@ -102,6 +102,37 @@ final class InsightsTest extends PluginTestCase {
 		$this->assertStringContainsString( '/api/sn/site-uuid/metrics/clicks?period=this-month', $this->requests[1][0] );
 	}
 
+	public function test_the_dashboard_widget_lists_the_weeks_top_and_failed_searches_from_its_cache(): void {
+		$term = static fn ( string $name, int $searches ) => array(
+			'term'     => $name,
+			'searches' => $searches,
+		);
+		Functions\when( 'get_transient' )->justReturn(
+			array(
+				'top'    => array( $term( 'workshop', 1200 ), $term( 'a', 6 ), $term( 'b', 5 ), $term( 'c', 4 ), $term( 'd', 3 ), $term( 'e', 2 ) ),
+				'failed' => array( $term( 'worskhop', 7 ) ),
+			)
+		);
+		Functions\stubEscapeFunctions();
+		Functions\stubs(
+			array(
+				'number_format_i18n' => static fn ( $n ) => number_format( $n ),
+				'admin_url'          => static fn ( $path ) => 'https://site.example.org/wp-admin/' . $path,
+				'esc_url'            => static fn ( $url ) => $url,
+			)
+		);
+
+		ob_start();
+		( new Viglet_Dumont_Insights( $this->settings() ) )->render_widget();
+		$html = (string) ob_get_clean();
+
+		$this->assertSame( array(), $this->requests, 'a cached report asks Turing nothing' );
+		$this->assertSame( 6, substr_count( $html, '<li>' ), 'five top searches and the one that failed' );
+		$this->assertStringContainsString( 'workshop <span class="count">(1,200)</span>', $html );
+		$this->assertStringContainsString( 'worskhop', $html );
+		$this->assertStringContainsString( 'page=viglet-dumont-insights', $html );
+	}
+
 	public function test_an_unknown_period_reads_the_last_week(): void {
 		$this->turing(
 			array(

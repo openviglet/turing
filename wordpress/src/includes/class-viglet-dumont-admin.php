@@ -23,6 +23,21 @@ class Viglet_Dumont_Admin {
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'wp_dashboard_setup', array( $this, 'add_dashboard_widget' ) );
+	}
+
+	/**
+	 * The week's searches on the dashboard (D178), for whoever may read Search insights.
+	 */
+	public function add_dashboard_widget(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		wp_add_dashboard_widget(
+			'viglet_dumont_insights',
+			__( 'Site search this week', 'viglet-dumont' ),
+			array( new Viglet_Dumont_Insights(), 'render_widget' )
+		);
 	}
 
 	/**

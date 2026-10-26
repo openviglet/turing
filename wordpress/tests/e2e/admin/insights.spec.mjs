@@ -32,6 +32,31 @@ test( 'a search that found nothing is listed, with a draft to write about it', a
 	await expect( page.locator( 'th', { hasText: /\*$/ } ) ).toHaveCount( 0 );
 	await look( 'insights' );
 	await axe( 'Search insights', { include: '#wpbody-content' } );
+
+	// "Add a synonym" opens Search tuning with the search already in the field.
+	await row
+		.getByRole( 'link', { name: `Add a synonym: “${ term }”` } )
+		.click();
+	await expect(
+		page.getByLabel( 'Words that mean the same, separated by commas' )
+	).toHaveValue( `${ term }, ` );
+} );
+
+test( 'the dashboard shows the week’s searches', async ( { page, axe } ) => {
+	await page.goto( '/wp-admin/' );
+	const widget = page.locator( '#viglet_dumont_insights' );
+	await expect(
+		widget.getByRole( 'heading', { name: 'Site search this week' } )
+	).toBeVisible();
+	await expect(
+		widget.getByRole( 'heading', { name: 'Top searches' } )
+	).toBeVisible();
+	await expect(
+		widget.getByRole( 'link', { name: 'All search insights' } )
+	).toHaveAttribute( 'href', /page=viglet-dumont-insights/ );
+	await axe( 'the Search insights dashboard widget', {
+		include: '#viglet_dumont_insights',
+	} );
 } );
 
 test( 'a period with no searches says so', async ( { page } ) => {

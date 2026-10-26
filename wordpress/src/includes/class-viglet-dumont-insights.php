@@ -20,6 +20,9 @@ class Viglet_Dumont_Insights {
 	/** The periods Turing's metrics answer for. */
 	public const PERIODS = array( 'today', 'this-week', 'this-month', 'all-time' );
 
+	/** The transient the dashboard widget keeps its report in. */
+	public const WIDGET_CACHE = 'viglet_dumont_insights_widget';
+
 	/** How many terms each table shows. */
 	private const ROWS = 20;
 
@@ -88,6 +91,49 @@ class Viglet_Dumont_Insights {
 			'top'      => $top,
 			'failed'   => self::terms( (array) ( $failed['terms'] ?? array() ) ),
 			'unopened' => self::terms( (array) ( $clicks['neverClicked'] ?? array() ) ),
+		);
+	}
+
+	/**
+	 * The dashboard widget: the week's five top searches and five that found nothing, each a
+	 * link to the screen. The report is kept for a few minutes, so the dashboard does not ask
+	 * Turing on every visit.
+	 */
+	public function render_widget(): void {
+		$report = get_transient( self::WIDGET_CACHE );
+		if ( ! is_array( $report ) ) {
+			$report = $this->report( 'this-week' );
+			if ( is_wp_error( $report ) ) {
+				echo '<p>' . esc_html( $report->get_error_message() ) . '</p>';
+				return;
+			}
+			set_transient( self::WIDGET_CACHE, $report, 10 * MINUTE_IN_SECONDS );
+		}
+
+		$lists = array_filter(
+			array(
+				__( 'Top searches', 'viglet-dumont' ) => array_slice( $report['top'], 0, 5 ),
+				__( 'Searches that found nothing', 'viglet-dumont' ) => array_slice( $report['failed'], 0, 5 ),
+			)
+		);
+		if ( ! $lists ) {
+			echo '<p>' . esc_html__( 'No searches this week yet.', 'viglet-dumont' ) . '</p>';
+		}
+		foreach ( $lists as $title => $terms ) {
+			echo '<h3>' . esc_html( $title ) . '</h3><ul>';
+			foreach ( $terms as $term ) {
+				printf(
+					'<li>%1$s <span class="count">(%2$s)</span></li>',
+					esc_html( $term['term'] ),
+					esc_html( number_format_i18n( $term['searches'] ) )
+				);
+			}
+			echo '</ul>';
+		}
+		printf(
+			'<p><a href="%1$s">%2$s</a></p>',
+			esc_url( admin_url( 'admin.php?page=viglet-dumont-insights' ) ),
+			esc_html__( 'All search insights', 'viglet-dumont' )
 		);
 	}
 

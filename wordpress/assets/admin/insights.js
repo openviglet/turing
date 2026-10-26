@@ -52,6 +52,18 @@ function draftUrl( term ) {
 }
 
 /**
+ * Search tuning (D172) with a search that found nothing typed into its synonym field, so a
+ * word the site does use can be added beside it.
+ *
+ * @param {string} term The search.
+ */
+function synonymUrl( term ) {
+	return `admin.php?page=viglet-dumont-tuning&synonym=${ encodeURIComponent(
+		term
+	) }`;
+}
+
+/**
  * One table of terms, or the sentence that says there are none.
  *
  * @param {Object}   props         The props.
@@ -60,8 +72,9 @@ function draftUrl( term ) {
  * @param {Object[]} props.terms   The rows.
  * @param {Object[]} props.columns `{label, cell(term)}` per column after the term.
  * @param {boolean}  props.write   Whether each row offers "Write about this".
+ * @param {boolean}  props.synonym Whether each row offers "Add a synonym" too.
  */
-function Terms( { title, empty, terms, columns, write } ) {
+function Terms( { title, empty, terms, columns, write, synonym } ) {
 	return (
 		<Card>
 			<CardHeader>
@@ -118,6 +131,29 @@ function Terms( { title, empty, terms, columns, write } ) {
 													'viglet-dumont'
 												) }
 											</a>
+											{ synonym && (
+												<>
+													{ ' · ' }
+													<a
+														href={ synonymUrl(
+															term.term
+														) }
+														aria-label={ sprintf(
+															/* translators: %s: a search that found nothing. */
+															__(
+																'Add a synonym: “%s”',
+																'viglet-dumont'
+															),
+															term.term
+														) }
+													>
+														{ __(
+															'Add a synonym',
+															'viglet-dumont'
+														) }
+													</a>
+												</>
+											) }
 										</td>
 									) }
 								</tr>
@@ -245,6 +281,7 @@ function Insights() {
 							},
 						] }
 						write
+						synonym
 					/>
 					<Terms
 						title={ __(
