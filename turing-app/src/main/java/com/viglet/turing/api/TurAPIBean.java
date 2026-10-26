@@ -33,6 +33,9 @@ import java.util.List;
 @Component
 public class TurAPIBean {
 	private String product;
+	/** T1113: the build answering, so a user can tell a stale image from a current one. */
+	private String version;
+	private String commit;
 	private boolean multiTenant;
 	private boolean keycloak;
 	private boolean authThirdparty;

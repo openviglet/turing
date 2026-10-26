@@ -22,8 +22,10 @@ RUN jar --create --file /defaults.zip --no-manifest -C /seed/defaults .
 # "Cannot clean arbitrary ByteBuffer instances" (CleanerJava25) while loading its
 # NIO journal, which takes down the broker and every JMS listener.
 FROM eclipse-temurin:21-jre
-ARG CACHE_BUST=none
+ARG CACHE_BUST=
 LABEL org.opencontainers.image.revision=$CACHE_BUST
+# T1113 — /api/discovery reports this commit, so a user can tell which build answers.
+ENV TURING_BUILD_COMMIT=$CACHE_BUST
 # ffmpeg — used by Turing for audio/video transcoding (e.g. transcription,
 # multimodal audio slots). Installed as root before dropping to the java user.
 RUN apt-get update \

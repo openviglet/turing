@@ -15,10 +15,6 @@
 - 📋 **T1126** (deps: —) **Saving an audited entity over an API key fails with 500: the auditor casts the key's TurUser to TurCustomUserDetails** — A connector cannot create ranking expressions or any entity with createdBy, though the same key writes synonyms. → §CXXXVIII
 - 📋 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Each endpoint needs its own fq to keep shared sites apart, and any endpoint without one leaks another site's documents. → §CXLV
 
-## Block CH — Published container images track the shipped source
-
-- 📋 **T1113** (deps: —) **ghcr turing-ce:latest is the two-month-old 2026.3.4 build, so API-key imports fail with a 500 that T1061 already fixed** — A connector that follows the published quick start fails on its first import, and the fix needs a Turing checkout to build an image. → §CXXV
-
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 - 📋 **T1114** (deps: —) **The structured POST search leaves spellCheck out where the GET search returns a correction for the same query** — A UI on the SDK's default POST-native controller never offers did-you-mean, or pays one more request for it. → §CXXVI

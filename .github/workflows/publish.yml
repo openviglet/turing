@@ -13,6 +13,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      commit: ${{ steps.bump.outputs.commit }}
     permissions:
       contents: write
       packages: write
@@ -49,12 +52,16 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Increment Version
+        id: bump
         run: |
           mvn build-helper:parse-version versions:set -Dgpg.skip=true -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
           git config user.name alexandre.oliveira
           git config user.email alexandre.oliveira@gmail.com
           git commit -m "Updated version in pom.xml" -a
           git push
+          # T1113: the docker job below tags the image with this release.
+          echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> "$GITHUB_OUTPUT"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Configure Maven Settings
         uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788 # v4.0.0
         with:
@@ -101,3 +108,16 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+  # T1113: every release also publishes ghcr.io/openviglet/turing-ce, so `latest`
+  # carries the fixes the release notes announce instead of an older build.
+  docker:
+    needs: publish
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/publish-docker.yml
+    with:
+      version: ${{ needs.publish.outputs.version }}
+      commit: ${{ needs.publish.outputs.commit }}
+    secrets: inherit

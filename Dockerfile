@@ -51,8 +51,10 @@ RUN jar --create --file /defaults.zip --no-manifest -C /src/seed/defaults .
 
 # Stage 3 — Runtime
 FROM eclipse-temurin:21-jre
-ARG CACHE_BUST=none
+ARG CACHE_BUST=
 LABEL org.opencontainers.image.revision=$CACHE_BUST
+# T1113 — /api/discovery reports this commit, so a user can tell which build answers.
+ENV TURING_BUILD_COMMIT=$CACHE_BUST
 RUN groupadd -r java && useradd -r -g java -u 1001 java
 # Docker CLI (client only — NO daemon) for the opt-in Code Interpreter DOCKER
 # execution mode (T80). At runtime the container talks to a Docker daemon via a

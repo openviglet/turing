@@ -3,11 +3,36 @@
 # and self-contained (it clones + builds the source itself), so this workflow
 # only needs Docker Buildx — no JDK/Node/Maven setup. For more information see:
 # https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
+#
+# T1113 — two modes, so `latest` can no longer fall months behind the releases:
+#   - release: publish.yml calls this after it cuts a release, tagging the
+#     released version and moving `latest` to it (default branch only). A
+#     manual dispatch with `version` set does the same by hand.
+#   - snapshot: a manual dispatch from a version branch tags `<branch>-snapshot`
+#     plus the commit sha. It never touches `latest` or a version tag, because
+#     the branch's pom already names the LAST release and would overwrite it.
+# Both stay on demand: no push/tag trigger (CI is manual-dispatch, T928/T929).
 
 name: Publish Docker Image
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Released version to tag and move latest to (blank = <branch>-snapshot)"
+        type: string
+        required: false
+        default: ""
+  workflow_call:
+    inputs:
+      version:
+        description: "Released version to tag (e.g. 2026.3.6); makes this a release publish"
+        type: string
+        required: true
+      commit:
+        description: "Commit the release landed on, baked in as TURING_BUILD_COMMIT"
+        type: string
+        required: true
 
 env:
   REGISTRY: ghcr.io
@@ -21,9 +46,24 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v7
-      - name: Resolve project version
-        id: version
-        run: echo "version=$(grep -m1 -oP '(?<=<version>)[^<]+' pom.xml)" >> "$GITHUB_OUTPUT"
+      - name: Resolve mode, version and commit
+        id: cfg
+        env:
+          # Bind inputs to env vars (never interpolate them into the script body).
+          IN_VERSION: ${{ inputs.version }}
+          IN_COMMIT: ${{ inputs.commit }}
+          DISPATCH_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          COMMIT="${IN_COMMIT:-$DISPATCH_SHA}"
+          if [ -n "$IN_VERSION" ]; then
+            echo "release=true" >> "$GITHUB_OUTPUT"
+            echo "version=$IN_VERSION" >> "$GITHUB_OUTPUT"
+          else
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
+          echo "short=${COMMIT:0:7}" >> "$GITHUB_OUTPUT"
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Log in to the Container registry
@@ -38,9 +78,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=${{ steps.version.outputs.version }}
-            type=sha
+            type=raw,value=latest,enable=${{ steps.cfg.outputs.release == 'true' && github.ref_name == github.event.repository.default_branch }}
+            type=raw,value=${{ steps.cfg.outputs.version }},enable=${{ steps.cfg.outputs.release == 'true' }}
+            type=raw,value=${{ github.ref_name }}-snapshot,enable=${{ steps.cfg.outputs.release != 'true' }}
+            type=raw,value=sha-${{ steps.cfg.outputs.short }}
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v7
@@ -50,7 +91,7 @@ jobs:
           push: true
           build-args: |
             REPO_BRANCH=${{ github.ref_name }}
-            CACHE_BUST=${{ github.sha }}
+            CACHE_BUST=${{ steps.cfg.outputs.commit }}
           secrets: |
             github_token=${{ secrets.GITHUB_TOKEN }}
           tags: ${{ steps.meta.outputs.tags }}

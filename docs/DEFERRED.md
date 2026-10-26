@@ -7,7 +7,5 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
-## Block CH — Published container images track the shipped source
-
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 

@@ -39,16 +39,31 @@ class TurDiscoveryAPITest {
         when(turConfigProperties.getTenancy()).thenReturn(new TurTenancyProperty());
 
         TurAPIBean realApiBean = new TurAPIBean();
-        TurDiscoveryAPI realController = new TurDiscoveryAPI(realApiBean, turConfigProperties, Optional.empty());
+        TurDiscoveryAPI realController = new TurDiscoveryAPI(realApiBean, turConfigProperties, Optional.empty(), "");
         MockMvc realMockMvc = MockMvcBuilders.standaloneSetup(realController).build();
 
         realMockMvc.perform(get("/api/discovery"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.product").value("Viglet Turing"))
                 .andExpect(jsonPath("$.keycloak").value(true))
-                .andExpect(jsonPath("$.multiTenant").value(false));
+                .andExpect(jsonPath("$.multiTenant").value(false))
+                .andExpect(jsonPath("$.version").value("dev"))
+                .andExpect(jsonPath("$.commit").doesNotExist());
 
         verify(turConfigProperties, times(1)).isKeycloak();
         verify(turConfigProperties, times(1)).getTenancy();
+    }
+
+    @Test
+    void reportsTheBuildCommitWhenTheImageCarriesOne() throws Exception {
+        when(turConfigProperties.getTenancy()).thenReturn(new TurTenancyProperty());
+
+        TurDiscoveryAPI controller = new TurDiscoveryAPI(new TurAPIBean(), turConfigProperties,
+                Optional.empty(), "0123abc");
+
+        MockMvcBuilders.standaloneSetup(controller).build()
+                .perform(get("/api/discovery"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.commit").value("0123abc"));
     }
 }
