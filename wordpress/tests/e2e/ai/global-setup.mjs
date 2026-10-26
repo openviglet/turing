@@ -4,6 +4,7 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import baseSetup, { seedFile, wp } from '../global-setup.mjs';
+import { spent } from './cost.mjs';
 
 export const aiFile = join( seedFile, '..', 'ai.json' );
 
@@ -25,5 +26,8 @@ export default async function aiSetup( config ) {
 	}
 	const features = JSON.parse( status.slice( status.indexOf( '[' ) ) );
 
-	writeFileSync( aiFile, JSON.stringify( { posts, features } ) );
+	// The ledger before the specs ask anything (cost.mjs): the teardown reports the difference.
+	const before = await spent();
+
+	writeFileSync( aiFile, JSON.stringify( { posts, features, before } ) );
 }
