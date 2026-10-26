@@ -12,6 +12,8 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
+- 📋 **T1144** (deps: —) **The LLM cost ledger books a model with no price row at zero dollars, so a dollar budget never trips** — The model Turing creates at boot has no price, so cost/summary reports a paid run as free and nothing tells free from unknown. → §LXX.10
+
 ## Block CF — What the SN site manifest cannot declare
 
 ## Block BV — The quality gate stops at the package boundary

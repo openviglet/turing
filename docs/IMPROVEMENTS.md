@@ -2051,6 +2051,31 @@ What keeps them shipped is `frontend/scripts/search-contract-rules.mjs`: the con
 named rules, each paired with the surfaces it is checked on, run from the app suite, the
 SDK suite and the workspace scripts suite.
 
+### LXX.10 Unpriced models read as free in the cost ledger (T1144)
+
+**Where it happened.** Dumont D174's live-LLM suite reads `GET
+/api/v2/llm/cost/summary?site=Sample` (T1127) before and after a run, to report and
+budget what it spent. On the run-docker.cmd stack (Turing started with `OPENAI_API_KEY`,
+which creates an OpenAI `gpt-4o-mini` instance at boot) every call is booked with its
+tokens and `costUsd: 0.0`: 29,358 tokens over 54 calls read $0.00, and the log says
+`[TokenUsage] Recorded: ... model=gpt-4o-mini ... cost=$0.0`.
+
+**Why.** Turing prices a call from `TurLLMPrice` (input and output price per million
+tokens), and nothing gives the model the boot provisioning creates a price row. A ledger
+that reads $0 for a paid model is worse than none: a budget in dollars never trips.
+
+**Workaround used.** The suite holds a token budget (`AI_TOKEN_BUDGET`) beside its
+dollar budget (`AI_COST_BUDGET`), and the dollar one stays inert until this ships.
+
+**What it should do.**
+- Seed list prices for the models Turing provisions or suggests by default (the startup
+  LLM model, the curated catalog of T-block BC), so a fresh instance is priced.
+- A call whose model has no price is booked as unpriced, not $0: `costUsd: null` per
+  entry and a count of unpriced calls in the summary, so a reader can tell "free" from
+  "unknown".
+- Done when the stack's `gpt-4o-mini` calls show a non-zero `costUsd`, and a model with
+  no price shows as unpriced.
+
 ## XXXVII Security hardening (post-audit)
 
 _Fully shipped — see [CHANGELOG.md](CHANGELOG.md) → Block AN and `git log`._
