@@ -2268,3 +2268,24 @@ build -f Dockerfile.local -t turing-ce:local`. Nothing was changed in Turing.
   build.
 - Done when `mvnw install -pl turing-app` succeeds at HEAD and a test fixture missing a
   required field fails the frontend gate CI runs.
+
+### CLIII.2 The published JS SDK lags its source (T1142)
+
+**Where it happened.** Dumont D170 (the WordPress search block suggesting the filters a
+sentence names) needed `postNlFilters`, which `frontend/packages/sdk/src/api.ts` has
+carried since T1085 together with its `TurNLFilters` types. The newest
+`@viglet/turing-sdk` on npm is 2026.3.9, and its `dist` has neither (`npm view
+@viglet/turing-sdk versions`).
+
+**Workaround used.** `wordpress/src/public/search-block.js` (`suggestFilters()`) posts
+`{text, locale}` to `/sn/<site>/nl-filters` through the client's generic
+`client.post(..., { csrf: false })`, with a comment naming T1085. It is one call and
+goes away once a release carries the function.
+
+**What it should do.**
+- Publish an SDK release with every function the source exports
+  (`postNlFilters`, and whatever else landed since 2026.3.9).
+- Make a source change to `packages/sdk` that a consumer can use show up as a release,
+  or at least as a visible "unreleased" count. An SDK whose source runs ahead of npm
+  silently sends consumers to hand-written requests.
+- Done when the published SDK exports `postNlFilters` and `TurNLFilters`.

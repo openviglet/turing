@@ -17,6 +17,7 @@
 ## Block BV — The quality gate stops at the package boundary
 
 - 📋 **T1141** (deps: —) **turing-app does not build at HEAD: a bento test fixture fails tsc -b, so the jar and the image fail too** — A test's type drift blocks every production build and image, and nothing caught it at the commit that changed the type. → §CLIII.1
+- 📋 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — Every SDK function shipped since the last release is unusable from npm, and nothing shows the gap. → §CLIII.2
 
 ## Done when — T1133
 
