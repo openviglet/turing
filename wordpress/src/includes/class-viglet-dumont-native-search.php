@@ -139,6 +139,25 @@ class Viglet_Dumont_Native_Search {
 		wp_register_style( 'viglet-dumont-related-block', VIGLET_DUMONT_URL . 'blocks/related/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/related' );
+
+		// Ask the catalog (D173): a conversation with Turing's catalog copilot.
+		wp_register_script_module(
+			'viglet-dumont/copilot-block',
+			VIGLET_DUMONT_URL . 'public/copilot.js',
+			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
+			VIGLET_DUMONT_VERSION
+		);
+		wp_register_script(
+			'viglet-dumont-copilot-block-editor',
+			VIGLET_DUMONT_URL . 'admin/js/copilot-block-editor.js',
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+			VIGLET_DUMONT_VERSION,
+			true
+		);
+		wp_set_script_translations( 'viglet-dumont-copilot-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_register_style( 'viglet-dumont-copilot-block', VIGLET_DUMONT_URL . 'blocks/copilot/style.css', array(), VIGLET_DUMONT_VERSION );
+
+		register_block_type( VIGLET_DUMONT_DIR . 'blocks/copilot' );
 	}
 
 	/**

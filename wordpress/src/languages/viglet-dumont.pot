@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-26T23:05:00+00:00\n"
+"POT-Creation-Date: 2026-10-26T23:24:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -35,7 +35,7 @@ msgstr ""
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
-#: src/includes/class-viglet-dumont-native-search.php:176
+#: src/includes/class-viglet-dumont-native-search.php:195
 #: src/includes/class-viglet-dumont-post-state.php:99
 #: assets/admin/insights.js:91
 #: assets/admin/tuning.js:380
@@ -372,6 +372,60 @@ msgstr ""
 msgid "Loading stats..."
 msgstr ""
 
+#: src/blocks/copilot/render.php:16
+#: src/admin/js/copilot-block-editor.js:34
+#: src/admin/js/copilot-block-editor.js:37
+#: src/admin/js/copilot-block-editor.js:57
+msgid "Ask the catalog"
+msgstr ""
+
+#. translators: %s: the product's name.
+#: src/blocks/copilot/render.php:27
+#: src/blocks/search/render.php:80
+#, php-format
+msgid "Add to cart: %s"
+msgstr ""
+
+#: src/blocks/copilot/render.php:28
+#: src/blocks/search/render.php:81
+msgid "Added to your cart."
+msgstr ""
+
+#: src/blocks/copilot/render.php:29
+#: src/blocks/search/render.php:82
+msgid "It could not be added to the cart."
+msgstr ""
+
+#: src/blocks/copilot/render.php:30
+msgid "Looking through the catalog…"
+msgstr ""
+
+#: src/blocks/copilot/render.php:31
+msgid "The catalog could not answer right now."
+msgstr ""
+
+#: src/blocks/copilot/render.php:32
+msgid "Nothing in the catalog matches that."
+msgstr ""
+
+#: src/blocks/copilot/render.php:56
+#: src/blocks/search/parts/main.php:72
+msgid "Was"
+msgstr ""
+
+#: src/blocks/copilot/render.php:58
+#: src/blocks/search/parts/main.php:75
+msgid "Add to cart"
+msgstr ""
+
+#: src/blocks/copilot/render.php:68
+msgid "What are you looking for?"
+msgstr ""
+
+#: src/blocks/copilot/render.php:77
+msgid "Ask"
+msgstr ""
+
 #: src/blocks/related/render.php:34
 msgid "Related posts appear here once this post is indexed and Turing finds posts like it."
 msgstr ""
@@ -453,14 +507,6 @@ msgstr ""
 msgid "Featured"
 msgstr ""
 
-#: src/blocks/search/parts/main.php:72
-msgid "Was"
-msgstr ""
-
-#: src/blocks/search/parts/main.php:75
-msgid "Add to cart"
-msgstr ""
-
 #: src/blocks/search/parts/main.php:92
 msgid "Or start from the latest posts:"
 msgstr ""
@@ -514,20 +560,6 @@ msgstr ""
 msgid "Show fewer"
 msgstr ""
 
-#. translators: %s: the product's name.
-#: src/blocks/search/render.php:80
-#, php-format
-msgid "Add to cart: %s"
-msgstr ""
-
-#: src/blocks/search/render.php:81
-msgid "Added to your cart."
-msgstr ""
-
-#: src/blocks/search/render.php:82
-msgid "It could not be added to the cart."
-msgstr ""
-
 #: src/blocks/search/render.php:84
 #: assets/admin/mapping.js:169
 #: assets/admin/mapping.js:323
@@ -541,9 +573,9 @@ msgstr ""
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:93
 #: src/blocks/search/render.php:95
-#: src/includes/class-viglet-dumont-native-search.php:183
-#: src/includes/class-viglet-dumont-native-search.php:185
-#: src/includes/class-viglet-dumont-native-search.php:316
+#: src/includes/class-viglet-dumont-native-search.php:202
+#: src/includes/class-viglet-dumont-native-search.php:204
+#: src/includes/class-viglet-dumont-native-search.php:335
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -551,13 +583,13 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/blocks/search/render.php:97
-#: src/includes/class-viglet-dumont-native-search.php:187
+#: src/includes/class-viglet-dumont-native-search.php:206
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
 #: src/blocks/search/render.php:98
-#: src/includes/class-viglet-dumont-native-search.php:188
+#: src/includes/class-viglet-dumont-native-search.php:207
 msgid "Search is unavailable right now."
 msgstr ""
 
@@ -1030,31 +1062,31 @@ msgstr ""
 msgid "%1$s – %2$s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:175
+#: src/includes/class-viglet-dumont-native-search.php:194
 msgid "Search this site"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:177
+#: src/includes/class-viglet-dumont-native-search.php:196
 msgid "Close"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:178
+#: src/includes/class-viglet-dumont-native-search.php:197
 msgid "Results"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:179
+#: src/includes/class-viglet-dumont-native-search.php:198
 msgid "Searching…"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:189
+#: src/includes/class-viglet-dumont-native-search.php:208
 msgid "See all results"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:190
+#: src/includes/class-viglet-dumont-native-search.php:209
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:191
+#: src/includes/class-viglet-dumont-native-search.php:210
 msgid "Search (Ctrl+K)"
 msgstr ""
 
@@ -1830,6 +1862,24 @@ msgstr ""
 msgid "Promote"
 msgstr ""
 
+#: src/admin/js/copilot-block-editor.js:36
+#: src/admin/js/related-block-editor.js:47
+msgid "Heading"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:42
+#: src/admin/js/search-block-editor.js:110
+msgid "Placeholder"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:43
+msgid "A waterproof jacket under 200"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:58
+msgid "Visitors ask in plain words and Turing’s catalog copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
+msgstr ""
+
 #: src/admin/js/editor-panel.js:73
 msgid "Add a link to"
 msgstr ""
@@ -1923,10 +1973,6 @@ msgstr ""
 msgid "Related content"
 msgstr ""
 
-#: src/admin/js/related-block-editor.js:47
-msgid "Heading"
-msgstr ""
-
 #: src/admin/js/related-block-editor.js:53
 msgid "How many"
 msgstr ""
@@ -2003,10 +2049,6 @@ msgstr ""
 msgid "Arrange its parts"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:110
-msgid "Placeholder"
-msgstr ""
-
 #: src/admin/js/search-block-editor.js:116
 msgid "Show filters (facets)"
 msgstr ""
@@ -2067,6 +2109,38 @@ msgstr ""
 msgid "Turing search"
 msgstr ""
 
+#: src/blocks/copilot/block.json
+msgctxt "block title"
+msgid "Ask the catalog"
+msgstr ""
+
+#: src/blocks/copilot/block.json
+msgctxt "block description"
+msgid "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart."
+msgstr ""
+
+#: src/blocks/copilot/block.json
+msgctxt "block keyword"
+msgid "copilot"
+msgstr ""
+
+#: src/blocks/copilot/block.json
+msgctxt "block keyword"
+msgid "assistant"
+msgstr ""
+
+#: src/blocks/copilot/block.json
+msgctxt "block keyword"
+msgid "shop"
+msgstr ""
+
+#: src/blocks/copilot/block.json
+#: src/blocks/related/block.json
+#: src/blocks/search/block.json
+msgctxt "block keyword"
+msgid "turing"
+msgstr ""
+
 #: src/blocks/related/block.json
 msgctxt "block title"
 msgid "Related content"
@@ -2085,12 +2159,6 @@ msgstr ""
 #: src/blocks/related/block.json
 msgctxt "block keyword"
 msgid "similar"
-msgstr ""
-
-#: src/blocks/related/block.json
-#: src/blocks/search/block.json
-msgctxt "block keyword"
-msgid "turing"
 msgstr ""
 
 #: src/blocks/search-parts/box/block.json

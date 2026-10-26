@@ -6,12 +6,14 @@
 import { getContext, getElement, store } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
 import {
+	addToCart,
 	config,
 	createAnswerController,
 	createClient,
 	createSiteAutoComplete,
 	createSiteSearch,
 	fetchSpellCheck,
+	postIdOf,
 	siteFilter,
 	trackResultClick,
 	trackSearch,
@@ -323,31 +325,11 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			const { result } = getContext();
 			result.adding = true;
 			result.cartStatus = '';
-			try {
-				const response = await window.fetch(
-					`${ config.shop.storeApi }cart/add-item`,
-					{
-						method: 'POST',
-						credentials: 'same-origin',
-						headers: {
-							'Content-Type': 'application/json',
-							Nonce: config.shop.nonce,
-						},
-						body: JSON.stringify( {
-							id: result.productId,
-							quantity: 1,
-						} ),
-					}
-				);
-				const body = await response.json().catch( () => ( {} ) );
-				result.cartStatus = response.ok
-					? state.cartAdded
-					: plain( body.message ) || state.cartFailed;
-			} catch {
-				result.cartStatus = state.cartFailed;
-			} finally {
-				result.adding = false;
-			}
+			const added = await addToCart( result.productId );
+			result.cartStatus = added.ok
+				? state.cartAdded
+				: plain( added.message ) || state.cartFailed;
+			result.adding = false;
 		},
 		// The words Turing read as the filter leave the query, so they no longer match as text.
 		applySuggestion() {
@@ -969,12 +951,7 @@ function product( fields, title ) {
 	return {
 		price: money.format( price ),
 		regular: regular > price ? money.format( regular ) : '',
-		// The document id ends in the post id: `<site key>:post:<id>`.
-		productId: Number(
-			String( fields.id ?? '' )
-				.split( ':' )
-				.pop()
-		),
+		productId: postIdOf( fields.id ),
 		cartLabel: state.cartLabel.replace( '%s', title ),
 		cartStatus: '',
 		adding: false,

@@ -137,6 +137,94 @@ export function trackSearch( query, results ) {
 }
 
 /**
+ * The WordPress post id a Turing document stands for: its id ends in it,
+ * `<site key>:post:<id>`.
+ *
+ * @param {string} documentId Turing's id of the document.
+ * @return {number} The post id, or 0 for a document the plugin did not index.
+ */
+export function postIdOf( documentId ) {
+	const match = String( documentId || '' ).match( /:post:(\d+)$/ );
+	return match ? Number( match[ 1 ] ) : 0;
+}
+
+/**
+ * Put one of a WooCommerce product in the visitor's cart through the Store API (D173), on a
+ * site running WooCommerce (`config.shop`). WooCommerce says why when it cannot (out of
+ * stock, say); nothing throws.
+ *
+ * @param {number} productId The product's post id.
+ * @return {Promise<{ok: boolean, message: string}>} Whether it was added, and WooCommerce's
+ *                                                    reason when not.
+ */
+export async function addToCart( productId ) {
+	if ( ! config.shop || ! productId ) {
+		return { ok: false, message: '' };
+	}
+	try {
+		const response = await window.fetch(
+			`${ config.shop.storeApi }cart/add-item`,
+			{
+				method: 'POST',
+				credentials: 'same-origin',
+				headers: {
+					'Content-Type': 'application/json',
+					Nonce: config.shop.nonce,
+				},
+				body: JSON.stringify( { id: productId, quantity: 1 } ),
+			}
+		);
+		const body = await response.json().catch( () => ( {} ) );
+		return { ok: response.ok, message: String( body.message || '' ) };
+	} catch {
+		return { ok: false, message: '' };
+	}
+}
+
+/**
+ * A WooCommerce product as the shop sells it now, from the Store API: its price in the
+ * shop's currency (and the regular one when on sale) and whether it can be bought.
+ *
+ * @param {number} productId The product's post id.
+ * @return {Promise<{price: string, regular: string, buyable: boolean}|null>} Null when it
+ *                                                                            is not a product.
+ */
+export async function shopProduct( productId ) {
+	if ( ! config.shop || ! productId ) {
+		return null;
+	}
+	try {
+		const response = await window.fetch(
+			`${ config.shop.storeApi }products/${ productId }`,
+			{ credentials: 'same-origin' }
+		);
+		if ( ! response.ok ) {
+			return null;
+		}
+		const product = await response.json();
+		const prices = product.prices || {};
+		const money = ( minor ) =>
+			new Intl.NumberFormat( document.documentElement.lang || undefined, {
+				style: 'currency',
+				currency: prices.currency_code || config.shop.currency,
+			} ).format(
+				Number( minor ) /
+					10 ** Number( prices.currency_minor_unit ?? 2 )
+			);
+		return {
+			price: money( prices.price ),
+			regular:
+				prices.regular_price && prices.regular_price !== prices.price
+					? money( prices.regular_price )
+					: '',
+			buyable: !! product.is_purchasable && !! product.is_in_stock,
+		};
+	} catch {
+		return null;
+	}
+}
+
+/**
  * Report the result a visitor opened: to Turing (`POST /api/sn/{site}/click`, which its
  * click-through rates read) and to the analytics bus. Sent with `keepalive`, so it outlives
  * the navigation the click starts and never delays it; the SDK's postClick would first ask

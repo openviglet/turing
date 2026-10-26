@@ -1,0 +1,64 @@
+/* The Ask the catalog block (D173): it takes its colours and type from the theme. */
+.viglet-dumont-copilot__turns,
+.viglet-dumont-copilot__items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.viglet-dumont-copilot__turn {
+	margin-bottom: 1.5rem;
+}
+
+.viglet-dumont-copilot__question {
+	font-weight: 600;
+	margin: 0 0 0.25rem;
+}
+
+.viglet-dumont-copilot__answer {
+	margin: 0 0 0.75rem;
+	white-space: pre-line;
+}
+
+.viglet-dumont-copilot__item {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 0.75rem;
+	padding: 0.5rem 0;
+}
+
+.viglet-dumont-copilot__rank::before {
+	content: "[";
+}
+
+.viglet-dumont-copilot__rank::after {
+	content: "]";
+}
+
+.viglet-dumont-copilot__shop {
+	align-items: center;
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.viglet-dumont-copilot__shop del {
+	opacity: 0.7;
+}
+
+.viglet-dumont-copilot__form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.viglet-dumont-copilot__form label {
+	flex-basis: 100%;
+}
+
+.viglet-dumont-copilot__form input {
+	flex: 1 1 16rem;
+	font: inherit;
+	padding: 0.5rem 0.75rem;
+}

@@ -57,7 +57,7 @@ export default async function globalSetup( config ) {
 		'list',
 		'--post_type=page',
 		'--post_status=publish',
-		'--post_name__in=shop,cart,checkout,my-account',
+		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop',
 		'--format=ids',
 	] ).trim();
 	if ( shopPages ) {

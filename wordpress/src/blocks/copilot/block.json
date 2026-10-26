@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "viglet-dumont/copilot",
+	"title": "Ask the catalog",
+	"category": "widgets",
+	"icon": "format-chat",
+	"description": "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart.",
+	"keywords": [ "copilot", "assistant", "shop", "turing" ],
+	"textdomain": "viglet-dumont",
+	"attributes": {
+		"heading": {
+			"type": "string",
+			"default": ""
+		},
+		"placeholder": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": { "margin": true, "padding": true, "blockGap": true },
+		"color": { "background": true, "text": true, "link": true },
+		"typography": { "fontSize": true, "lineHeight": true },
+		"interactivity": true
+	},
+	"editorScript": "viglet-dumont-copilot-block-editor",
+	"style": "viglet-dumont-copilot-block",
+	"viewScriptModule": "viglet-dumont/copilot-block",
+	"render": "file:./render.php"
+}

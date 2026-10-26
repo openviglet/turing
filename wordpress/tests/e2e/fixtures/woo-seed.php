@@ -57,6 +57,25 @@ foreach ( $jackets as $key => list( $name, $sku, $regular, $sale, $stock, $color
 	wp_set_object_terms( $ids[ $key ], array( (int) $term['term_id'] ), 'pa_color' );
 }
 
+// A page with the Ask the catalog block (woo/copilot.spec.mjs); global-setup drafts it again.
+$ask_shop = get_page_by_path( 'ask-the-shop' );
+$ask_id   = $ask_shop ? $ask_shop->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'ask-the-shop',
+		'post_title'   => 'Ask the shop',
+		'post_content' => '<!-- wp:viglet-dumont/copilot {"placeholder":"A jacket under 100"} /-->',
+	)
+);
+wp_update_post(
+	array(
+		'ID'          => $ask_id,
+		'post_status' => 'publish',
+	)
+);
+// Out of the index, so the jacket searches find the jackets alone.
+update_post_meta( $ask_id, '_viglet_dumont_exclude', '1' );
+
 $settings                       = get_option( 'viglet_dumont_settings', array() );
 $settings['index_custom_types'] = array( 'product' );
 update_option( 'viglet_dumont_settings', $settings );
@@ -102,4 +121,9 @@ $mapping['product'] = array(
 );
 update_option( 'viglet_dumont_mapping', $mapping, false );
 
-echo wp_json_encode( array( 'products' => $ids ) );
+echo wp_json_encode(
+	array(
+		'products' => $ids,
+		'askPage'  => $ask_id,
+	)
+);
