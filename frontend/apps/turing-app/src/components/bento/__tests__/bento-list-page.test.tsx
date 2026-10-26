@@ -46,7 +46,9 @@ function renderList(items: Row[] | undefined, listId?: string) {
 }
 
 describe("BentoListPage", () => {
-  it("renders the New tile, item tiles, and sizes the first item LARGE by default", () => {
+  // T1139 — with no saved layout the design system's resolver sizes every tile
+  // MEDIUM; the default is the package's to own, not this page's.
+  it("renders the New tile and item tiles, each MEDIUM by default", () => {
     renderList([
       { id: "a", title: "Alpha" },
       { id: "b", title: "Beta" },
@@ -55,7 +57,7 @@ describe("BentoListPage", () => {
     const newTile = screen.getByRole("link", { name: /New Model/i });
     expect(newTile).toHaveAttribute("href", "/bento/llm/instance/new");
 
-    expect(screen.getByTestId("tile-a")).toHaveAttribute("data-emphasis", "LARGE");
+    expect(screen.getByTestId("tile-a")).toHaveAttribute("data-emphasis", "MEDIUM");
     expect(screen.getByTestId("tile-b")).toHaveAttribute("data-emphasis", "MEDIUM");
     expect(screen.queryByText("Nothing yet")).not.toBeInTheDocument();
   });
@@ -86,8 +88,9 @@ describe("BentoListPage", () => {
     // Each tile gets a direct S/M/L size picker (3 buttons × 2 tiles).
     expect(screen.getAllByLabelText("Small")).toHaveLength(2);
     expect(screen.getAllByLabelText("Large")).toHaveLength(2);
-    // First tile defaults to LARGE (its "Large" button is pressed).
-    expect(screen.getAllByLabelText("Large")[0]).toHaveAttribute("aria-pressed", "true");
+    // The first tile starts MEDIUM (its "Medium" button is pressed).
+    expect(screen.getAllByLabelText("Medium")[0]).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getAllByLabelText("Large")[0]).toHaveAttribute("aria-pressed", "false");
     // One click sets any size directly — no cycling.
     fireEvent.click(screen.getAllByLabelText("Small")[0]);
     expect(screen.getByTestId("tile-a")).toHaveAttribute("data-emphasis", "SMALL");

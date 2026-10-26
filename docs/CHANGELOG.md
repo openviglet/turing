@@ -1453,6 +1453,7 @@
 - **T1124** — A request authenticated by a usable Key header skips CSRF on every endpoint, so a connector can POST /api/v2/summary; an unknown or disabled key still meets CSRF (design §CXXXVI superseded: the exemption is by usable key on any path, not a /api/v2/summary path entry, so the next connector POST needs no list change).
 - **T1126** — The auditor reads the principal by its type, so an API-key request audits as the key owner and audited entities save over a Key, under local auth and Keycloak alike.
 - **T1138** — The console type-checks and builds again: @tanstack/react-table is back on 8.21.3, and Dependabot no longer offers its semver-major updates.
+- **T1139** — The console unit suite is green again: the bento list test asserts the design system's MEDIUM default instead of the LARGE lead tile it no longer gives.
 
 ## Block CA — Search response fields arrive as they were indexed
 

@@ -2303,20 +2303,3 @@ Reference: `frontend/packages/sdk/src/controllers/search.ts` (`consentedAnalytic
 `armAbandonment`), `analytics-sinks.ts` (`recommendedEvent`), and the tests
 `analytics-consent.test.ts` and `analytics-search-abandonment.test.ts`. Port the tests
 too.
-
-## CLI Bento list test against the design system's MEDIUM default (T1139)
-
-**Where it happened.** `src/components/bento/__tests__/bento-list-page.test.tsx` fails
-two cases on the current tree, with `@tanstack/react-table` on 8.x and on 9.x alike.
-Both expect the first tile to default to `LARGE`: "renders the New tile, item tiles, and
-sizes the first item LARGE by default", and the Customize case, whose first "Large"
-button should be pressed. The layout resolver lives in
-`@viglet/viglet-design-system/bento` (re-exported by `bento-layout.ts` since T1002). In
-2026.3.19 it gives every tile `MEDIUM` when no saved layout exists, so `data-emphasis`
-is `MEDIUM` and no size button is pressed for LARGE.
-
-**What Turing should do.** The design system owns the default, and its own suite covers
-the resolver, so update this product test to the default the package now ships: every
-tile `MEDIUM`, and the Customize case checks the pressed "Medium" button before it
-clicks "Small". If the product wants a LARGE lead tile again, that is a request to the
-design system, not a change in this test.
