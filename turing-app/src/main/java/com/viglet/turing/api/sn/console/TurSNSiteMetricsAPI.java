@@ -32,12 +32,16 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.viglet.turing.api.exception.TurNotFoundException;
 import com.viglet.turing.api.sn.bean.TurSNSiteMetricsTopTermsBean;
+import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -57,11 +61,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class TurSNSiteMetricsAPI {
 	private final TurSNSiteRepository turSNSiteRepository;
 	private final TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository;
+	private final TurSNSearchInsightsService turSNSearchInsightsService;
 
 	public TurSNSiteMetricsAPI(TurSNSiteRepository turSNSiteRepository,
-			TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository) {
+			TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository,
+			TurSNSearchInsightsService turSNSearchInsightsService) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSNSiteMetricAccessRepository = turSNSiteMetricAccessRepository;
+		this.turSNSearchInsightsService = turSNSearchInsightsService;
 	}
 
 	@GetMapping("live")
@@ -193,6 +200,49 @@ public class TurSNSiteMetricsAPI {
 			return getTopTermsReport(rows, turSNSite, cal, previousBegin, previousEnd);
 		}
 		return new TurSNSiteMetricsTopTermsBean(new ArrayList<>(), 0, 0);
+	}
+
+	/**
+	 * T1119 — the queries that found nothing, as the MCP {@code top_failed_searches}
+	 * tool reads them. {@code from}/{@code to} are ISO-8601 instants; {@code period}
+	 * ({@code today}, {@code this-week}, {@code this-month}, {@code all-time}) is the
+	 * shorthand for {@code from}.
+	 */
+	@Operation(summary = "Semantic Navigation Site searches that found nothing")
+	@GetMapping("failed-searches")
+	public TurSNSearchInsightsService.Report turSNSiteMetricsFailedSearches(@PathVariable String snSiteId,
+			@RequestParam(required = false) String period,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to,
+			@RequestParam(required = false) Integer rows) {
+		TurSNSite site = requireSite(snSiteId);
+		TurSNSearchInsightsService.Window window = turSNSearchInsightsService.window(period, from, to);
+		return TurSNSearchInsightsService.Report.of(window,
+				turSNSearchInsightsService.failedSearches(site, window, rows));
+	}
+
+	/**
+	 * T1119 — the queries searched often that find little (average results below
+	 * {@value TurSNSearchInsightsService#LOW_COVERAGE_THRESHOLD}), as the MCP
+	 * {@code content_gaps} tool reads them. Same window as
+	 * {@link #turSNSiteMetricsFailedSearches}.
+	 */
+	@Operation(summary = "Semantic Navigation Site content gaps")
+	@GetMapping("content-gaps")
+	public TurSNSearchInsightsService.Report turSNSiteMetricsContentGaps(@PathVariable String snSiteId,
+			@RequestParam(required = false) String period,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to,
+			@RequestParam(required = false) Integer rows) {
+		TurSNSite site = requireSite(snSiteId);
+		TurSNSearchInsightsService.Window window = turSNSearchInsightsService.window(period, from, to);
+		return TurSNSearchInsightsService.Report.of(window,
+				turSNSearchInsightsService.contentGaps(site, window, rows));
+	}
+
+	private TurSNSite requireSite(String snSiteId) {
+		return turSNSiteRepository.findById(snSiteId)
+				.orElseThrow(() -> new TurNotFoundException("SN site not found: " + snSiteId));
 	}
 
 	@GetMapping("top-terms/all-time/{rows}")

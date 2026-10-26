@@ -60,6 +60,18 @@ public interface TurSNSiteMetricAccessRepository extends JpaRepository<TurSNSite
 			+ "TurSNSiteMetricAccess where turSNSite = ?1 GROUP BY sanatizedTerm HAVING MAX(numFound) = 0 ORDER BY COUNT(sanatizedTerm) DESC")
 	List<TurSNSiteMetricAccessTerm> topZeroResultTerms(TurSNSite turSNSite, Pageable pageable);
 
+	// T1119 — the two queries above inside a window, each with the term's last
+	// search, for the failed-searches and content-gaps REST metrics.
+	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
+			+ "TurSNSiteMetricAccess where turSNSite = ?1 AND accessDate BETWEEN ?2 AND ?3 GROUP BY sanatizedTerm HAVING MAX(numFound) = 0 ORDER BY COUNT(sanatizedTerm) DESC")
+	List<TurSNSiteMetricAccessTerm> zeroResultTermsBetweenDates(TurSNSite turSNSite, Instant startDate,
+			Instant endDate, Pageable pageable);
+
+	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
+			+ "TurSNSiteMetricAccess where turSNSite = ?1 AND accessDate BETWEEN ?2 AND ?3 GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC")
+	List<TurSNSiteMetricAccessTerm> termsWithLastSeenBetweenDates(TurSNSite turSNSite, Instant startDate,
+			Instant endDate, Pageable pageable);
+
 	@Query(value = "select COUNT(sanatizedTerm) from "
 			+ "TurSNSiteMetricAccess where turSNSite = ?1")
 	int countTerms(TurSNSite turSNSite);

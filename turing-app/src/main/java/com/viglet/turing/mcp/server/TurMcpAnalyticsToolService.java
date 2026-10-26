@@ -25,6 +25,7 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
@@ -55,21 +56,17 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurMcpAnalyticsToolService {
 
-    private static final int DEFAULT_ROWS = 10;
-    private static final int MAX_ROWS = 50;
-    /** A query is a "content gap" when its average result count is below this. */
-    private static final double LOW_COVERAGE_THRESHOLD = 3.0;
-    /** How wide to scan top queries when filtering for low coverage. */
-    private static final int GAP_SCAN_MULTIPLIER = 5;
-
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteMetricAccessRepository metricAccessRepository;
+    private final TurSNSearchInsightsService searchInsightsService;
     private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
     public TurMcpAnalyticsToolService(TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteMetricAccessRepository metricAccessRepository) {
+            TurSNSiteMetricAccessRepository metricAccessRepository,
+            TurSNSearchInsightsService searchInsightsService) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.metricAccessRepository = metricAccessRepository;
+        this.searchInsightsService = searchInsightsService;
     }
 
     // ==================== search_metrics ====================
@@ -108,15 +105,16 @@ public class TurMcpAnalyticsToolService {
         if (snSite == null) {
             return siteNotFound(site);
         }
-        List<TurSNSiteMetricAccessTerm> terms =
-                metricAccessRepository.topZeroResultTerms(snSite, PageRequest.of(0, clamp(rows)));
+        // T1119 — the same report the REST metric serves.
+        List<TurSNSearchInsightsService.Term> terms = searchInsightsService.failedSearches(snSite,
+                searchInsightsService.window(null, null, null), rows);
         if (terms.isEmpty()) {
             return "No zero-result searches recorded for site '%s'. Either everything users searched "
                     .formatted(snSite.getName()) + "returned hits, or search-metrics logging is disabled.";
         }
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("site", snSite.getName());
-        result.put("failedSearches", termList(terms));
+        result.put("failedSearches", insightList(terms));
         return toJson("Top zero-result searches for '%s'.".formatted(snSite.getName()), result);
     }
 
@@ -128,28 +126,17 @@ public class TurMcpAnalyticsToolService {
         if (snSite == null) {
             return siteNotFound(site);
         }
-        int limit = clamp(rows);
-        // Scan a wider window of popular queries, then keep the high-demand ones
-        // whose average result count is low — searched a lot, answered poorly.
-        List<TurSNSiteMetricAccessTerm> popular =
-                metricAccessRepository.topTerms(snSite, PageRequest.of(0, limit * GAP_SCAN_MULTIPLIER));
-        List<Map<String, Object>> gaps = new ArrayList<>();
-        for (TurSNSiteMetricAccessTerm term : popular) {
-            if (term.getNumFound() < LOW_COVERAGE_THRESHOLD) {
-                gaps.add(term(term));
-                if (gaps.size() >= limit) {
-                    break;
-                }
-            }
-        }
+        // T1119 — high-demand, low-coverage queries, the same report the REST metric serves.
+        List<TurSNSearchInsightsService.Term> gaps = searchInsightsService.contentGaps(snSite,
+                searchInsightsService.window(null, null, null), rows);
         if (gaps.isEmpty()) {
             return "No content gaps detected for site '%s' (popular queries are returning enough results)."
                     .formatted(snSite.getName());
         }
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("site", snSite.getName());
-        result.put("threshold", "avgResults < " + (int) LOW_COVERAGE_THRESHOLD);
-        result.put("gaps", gaps);
+        result.put("threshold", "avgResults < " + (int) TurSNSearchInsightsService.LOW_COVERAGE_THRESHOLD);
+        result.put("gaps", insightList(gaps));
         return toJson("High-demand, low-coverage queries for '%s' — candidate content to create."
                 .formatted(snSite.getName()), result);
     }
@@ -188,6 +175,18 @@ public class TurMcpAnalyticsToolService {
         return out;
     }
 
+    private List<Map<String, Object>> insightList(List<TurSNSearchInsightsService.Term> terms) {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (TurSNSearchInsightsService.Term term : terms) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("term", term.term());
+            m.put("searches", term.searches());
+            m.put("avgResults", term.avgResults());
+            out.add(m);
+        }
+        return out;
+    }
+
     private Map<String, Object> term(TurSNSiteMetricAccessTerm term) {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("term", term.getTerm());
@@ -197,10 +196,7 @@ public class TurMcpAnalyticsToolService {
     }
 
     private int clamp(Integer rows) {
-        if (rows == null || rows < 1) {
-            return DEFAULT_ROWS;
-        }
-        return Math.min(rows, MAX_ROWS);
+        return TurSNSearchInsightsService.clamp(rows);
     }
 
     private String toJson(String header, Map<String, Object> body) {

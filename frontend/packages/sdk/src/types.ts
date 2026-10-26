@@ -433,6 +433,36 @@ export interface TurSortOption {
   label: string;
 }
 
+// ── T1119: Search insights (failed searches, content gaps) ──
+
+/** The window a search-insights report reads; every field is optional. */
+export interface TurSearchInsightWindow {
+  /** `today`, `this-week`, `this-month` or `all-time`; shorthand for `from`. */
+  period?: "today" | "this-week" | "this-month" | "all-time";
+  /** ISO-8601 instant; wins over `period`. */
+  from?: string;
+  /** ISO-8601 instant; defaults to now. */
+  to?: string;
+  /** How many terms (1 to 50, default 10). */
+  rows?: number;
+}
+
+/** One query of a search-insights report. */
+export interface TurSearchInsightTerm {
+  term: string;
+  searches: number;
+  avgResults: number;
+  /** ISO-8601 instant of the term's last search. */
+  lastSeen: string | null;
+}
+
+/** A search-insights report: the window it read (`from` null for all time) and its terms. */
+export interface TurSearchInsightReport {
+  from: string | null;
+  to: string;
+  terms: TurSearchInsightTerm[];
+}
+
 // ── LLM Instances ──
 
 export interface TurLlmVendor {

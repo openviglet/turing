@@ -44,7 +44,10 @@ class TurSdkPublicSurfaceAuthClassTest {
     private static final Set<String> AUTHENTICATED = Set.of(
             // T889 — minting a permalink is a write: an anonymous one is a spam surface.
             "/api/sn/x/answer/share",
-            "/api/sn/x/answer/share/x");
+            "/api/sn/x/answer/share/x",
+            // T1119 — search insights are admin metrics, called with the site's key.
+            "/api/sn/x/metrics/failed-searches",
+            "/api/sn/x/metrics/content-gaps");
 
     private static Set<String> sdkPaths;
 

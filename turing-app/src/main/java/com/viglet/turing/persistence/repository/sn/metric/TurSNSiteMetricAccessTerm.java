@@ -55,4 +55,10 @@ public class TurSNSiteMetricAccessTerm {
 		this.total = total;
 		this.numFound = BigDecimal.valueOf(numFound).setScale(0, RoundingMode.HALF_UP).doubleValue();
 	}
+
+	/** T1119 — the counted form plus the term's last search, kept in {@link #acessDate}. */
+	public TurSNSiteMetricAccessTerm(String term, long total, double numFound, Instant lastSeen) {
+		this(term, total, numFound);
+		this.acessDate = lastSeen;
+	}
 }

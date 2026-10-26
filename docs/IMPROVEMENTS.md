@@ -2207,31 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXXI Failed searches and content gaps are REST metrics (T1119)
-
-**Where it happened.** Dumont's WordPress plugin plans a "Search insights" admin screen
-(Dumont D178). It reads Turing's metrics through its own REST routes with the stored API
-key, and shows top terms, zero-result queries and content gaps.
-
-**What exists.** Top terms are REST: `GET
-/api/sn/{id}/metrics/top-terms/{period}/{rows}` and `/metrics/live`. Zero-result queries
-and content gaps exist only as MCP tools in `TurMcpAnalyticsToolService`
-(`top_failed_searches`, `content_gaps`). No controller under `api/` exposes them, and
-the MCP server is off by default and loopback-only.
-
-**Expected.** Every metric the console or the MCP tools read is also a REST endpoint a
-connector can call with its `Key`, as top terms are.
-
-**Workaround.** None. D178 waits on this line for its zero-result and content-gap
-tables.
-
-**What Turing should do.**
-- `GET /api/sn/{id}/metrics/failed-searches?from=&to=&rows=`: term, count, last seen.
-- `GET /api/sn/{id}/metrics/content-gaps?from=&to=&rows=`: term, demand, coverage.
-  Both reuse the MCP tools' queries, so the two surfaces cannot disagree.
-- Per-term CTR is T1131's. These endpoints, T1131's and T1127's cost summary share one window: `from`/`to` ISO-8601 instants plus `rows`, `period` as shorthand.
-- Document them in the REST API page and type them in `@viglet/turing-sdk`.
-
 ## CXXXII A prefix match for the last term of an as-you-type search (T1120)
 
 **Where it happened.** Dumont's WordPress search block (Dumont D163) updates its results

@@ -21,9 +21,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -31,6 +31,7 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 
 /**
  * Unit tests for {@link TurMcpAnalyticsToolService} — the T252 search-log
@@ -47,8 +48,14 @@ class TurMcpAnalyticsToolServiceTest {
     @Mock
     private TurSNSiteMetricAccessRepository metricAccessRepository;
 
-    @InjectMocks
     private TurMcpAnalyticsToolService service;
+
+    /** T1119 — the failed-searches and gaps tools read through the shared insights service. */
+    @BeforeEach
+    void setUp() {
+        service = new TurMcpAnalyticsToolService(turSNSiteRepository, metricAccessRepository,
+                new TurSNSearchInsightsService(metricAccessRepository));
+    }
 
     private TurSNSite site(String name) {
         TurSNSite site = new TurSNSite();
@@ -100,8 +107,8 @@ class TurMcpAnalyticsToolServiceTest {
     void topFailedSearches_returnsZeroResultTerms() {
         TurSNSite wiki = site("wiki");
         when(turSNSiteRepository.findByNameIgnoreCase("wiki")).thenReturn(Optional.of(wiki));
-        when(metricAccessRepository.topZeroResultTerms(eq(wiki), any()))
-                .thenReturn(List.of(term("foobar widget", 9, 0)));
+        when(metricAccessRepository.zeroResultTermsBetweenDates(eq(wiki), any(Instant.class),
+                any(Instant.class), any())).thenReturn(List.of(term("foobar widget", 9, 0)));
 
         String result = service.topFailedSearches("wiki", 10);
 
@@ -113,7 +120,8 @@ class TurMcpAnalyticsToolServiceTest {
     void topFailedSearches_emptyMessage() {
         TurSNSite wiki = site("wiki");
         when(turSNSiteRepository.findByNameIgnoreCase("wiki")).thenReturn(Optional.of(wiki));
-        when(metricAccessRepository.topZeroResultTerms(eq(wiki), any())).thenReturn(List.of());
+        when(metricAccessRepository.zeroResultTermsBetweenDates(eq(wiki), any(Instant.class),
+                any(Instant.class), any())).thenReturn(List.of());
         assertTrue(service.topFailedSearches("wiki", 10).startsWith("No zero-result searches"));
     }
 
@@ -121,7 +129,8 @@ class TurMcpAnalyticsToolServiceTest {
     void contentGaps_keepsOnlyLowCoverageTerms() {
         TurSNSite wiki = site("wiki");
         when(turSNSiteRepository.findByNameIgnoreCase("wiki")).thenReturn(Optional.of(wiki));
-        lenient().when(metricAccessRepository.topTerms(eq(wiki), any()))
+        lenient().when(metricAccessRepository.termsWithLastSeenBetweenDates(eq(wiki), any(Instant.class),
+                any(Instant.class), any()))
                 .thenReturn(List.of(
                         term("well covered", 100, 25),  // avg 25 → not a gap
                         term("thin topic", 80, 1)));     // avg 1 → gap
@@ -136,8 +145,8 @@ class TurMcpAnalyticsToolServiceTest {
     void contentGaps_noneBelowThreshold() {
         TurSNSite wiki = site("wiki");
         when(turSNSiteRepository.findByNameIgnoreCase("wiki")).thenReturn(Optional.of(wiki));
-        when(metricAccessRepository.topTerms(eq(wiki), any()))
-                .thenReturn(List.of(term("well covered", 100, 25)));
+        when(metricAccessRepository.termsWithLastSeenBetweenDates(eq(wiki), any(Instant.class),
+                any(Instant.class), any())).thenReturn(List.of(term("well covered", 100, 25)));
         assertTrue(service.contentGaps("wiki", 10).startsWith("No content gaps"));
     }
 }

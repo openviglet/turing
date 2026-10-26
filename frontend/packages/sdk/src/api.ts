@@ -31,6 +31,8 @@ import type {
   TurStructuredSearchResponse,
   TurSearchSuggestions,
   TurSortOption,
+  TurSearchInsightReport,
+  TurSearchInsightWindow,
   TurSpellCheck,
   TurRelatedTermSuggestion,
 } from "./types";
@@ -1705,6 +1707,55 @@ export function fetchSortOptions(
   options: TuringCallOptions = {},
 ): Promise<TurSortOption[]> {
   return client.get<TurSortOption[]>(`/sn/${site}/search/sort-options`, { signal: options.signal });
+}
+
+// ── T1119: Search insights ─────────────────────────────────────────────────
+
+function insightQuery(window: TurSearchInsightWindow): string {
+  const params = new URLSearchParams();
+  if (window.period) params.set("period", window.period);
+  if (window.from) params.set("from", window.from);
+  if (window.to) params.set("to", window.to);
+  if (window.rows !== undefined) params.set("rows", String(window.rows));
+  const qs = params.toString();
+  return qs ? `?${qs}` : "";
+}
+
+/**
+ * The queries that found nothing every time they ran, most searched first.
+ * An admin call: the client needs an `apiKey` (or a session). Takes the
+ * site's **id**, like the other metrics endpoints.
+ *
+ * Server endpoint: {@code GET /api/sn/{siteId}/metrics/failed-searches}.
+ */
+export function fetchFailedSearches(
+  client: TuringClient,
+  siteId: string,
+  window: TurSearchInsightWindow = {},
+  options: TuringCallOptions = {},
+): Promise<TurSearchInsightReport> {
+  return client.get<TurSearchInsightReport>(
+    `/sn/${encodeURIComponent(siteId)}/metrics/failed-searches` + insightQuery(window),
+    { signal: options.signal },
+  );
+}
+
+/**
+ * The queries searched often that find little (an average under 3 results):
+ * what to write next. Same window and key as {@link fetchFailedSearches}.
+ *
+ * Server endpoint: {@code GET /api/sn/{siteId}/metrics/content-gaps}.
+ */
+export function fetchContentGaps(
+  client: TuringClient,
+  siteId: string,
+  window: TurSearchInsightWindow = {},
+  options: TuringCallOptions = {},
+): Promise<TurSearchInsightReport> {
+  return client.get<TurSearchInsightReport>(
+    `/sn/${encodeURIComponent(siteId)}/metrics/content-gaps` + insightQuery(window),
+    { signal: options.signal },
+  );
 }
 
 // ── T400: Similar documents ────────────────────────────────────────────────
