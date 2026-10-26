@@ -16,6 +16,7 @@
  */
 package com.viglet.turing.sn.facet;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -50,8 +51,18 @@ public final class TurSNCustomFacetFilterQuery {
                     dateBound(item.getRangeEndExpression(), item.getRangeEndDate()));
         }
         return byOperator(fieldName, operator,
-                Optional.ofNullable(item.getRangeStart()).map(Number::toString).orElse(null),
-                Optional.ofNullable(item.getRangeEnd()).map(Number::toString).orElse(null));
+                Optional.ofNullable(item.getRangeStart()).map(TurSNCustomFacetFilterQuery::plain).orElse(null),
+                Optional.ofNullable(item.getRangeEnd()).map(TurSNCustomFacetFilterQuery::plain).orElse(null));
+    }
+
+    /**
+     * T1122 — a bound as the number it is, without the column's scale: the stored
+     * value reads back as {@code 20.000000}, which an INT or LONG range cannot
+     * parse, so every bucket of a stored integer facet was skipped and the facet
+     * never reached the answer.
+     */
+    private static String plain(BigDecimal bound) {
+        return bound.signum() == 0 ? "0" : bound.stripTrailingZeros().toPlainString();
     }
 
     private static String dateBound(String expression, Instant instant) {

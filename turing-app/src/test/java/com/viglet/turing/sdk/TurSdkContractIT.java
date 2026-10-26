@@ -157,6 +157,9 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     private TurSNProcessQueue processQueue;
 
     @Autowired
+    private com.viglet.turing.sn.manifest.TurSNSiteManifestService manifestService;
+
+    @Autowired
     private TurSNSiteSpotlightRepository spotlightRepository;
 
     @Autowired
@@ -507,6 +510,63 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     }
 
     /** Runs one job item through the real queue processor, transaction and all. */
+    /**
+     * T1122 — a custom facet provisioned through the manifest reaches the search
+     * answer with its buckets counted, as a console-made one does.
+     */
+    @Test
+    void manifestCustomFacetReachesTheSearchAnswer() throws Exception {
+        var risk = com.viglet.core.manifest.VigletFieldSpec.builder()
+                .name("risk").type(com.viglet.core.manifest.VigletFieldType.INT)
+                .mandatory(false).multiValued(false).facet(true).build();
+        var buckets = new com.viglet.turing.sn.manifest.TurSNManifestCustomFacet("risk", "risk_range", "Risk",
+                null, null, List.of(
+                        new com.viglet.turing.sn.manifest.TurSNManifestCustomFacetItem("Low", null, null, null,
+                                java.math.BigDecimal.ZERO, java.math.BigDecimal.valueOf(20), null, null),
+                        new com.viglet.turing.sn.manifest.TurSNManifestCustomFacetItem("High", null, null, null,
+                                java.math.BigDecimal.valueOf(21), java.math.BigDecimal.valueOf(50), null, null)));
+        manifestService.provisionRequest(new com.viglet.turing.sn.manifest.TurSNManifestRequest(SITE, null, null,
+                null, List.of(LOCALE), List.of(risk), null, List.of(buckets), null));
+        Map<String, Integer> probes = Map.of("t1122-low-1", 10, "t1122-low-2", 20, "t1122-high", 40);
+        probes.forEach((id, value) -> indexRisk(TurSNJobAction.CREATE, id, value));
+        try {
+            JsonNode structured = json.readTree(postJson("/sn/" + SITE + "/search/query",
+                    """
+                            {"q":"*","locale":"%s","responseFormat":"STRUCTURED"}"""
+                            .formatted(LOCALE)).body());
+
+            JsonNode facet = facet(structured, "risk_range");
+            assertNotNull(facet, "the manifest custom facet must be in facets: "
+                    + structured.path("facets").findValuesAsString("name"));
+            assertEquals(2, facetItemCount(facet, "Low"), "Low counts the probes at 10 and 20: " + facet);
+            assertEquals(1, facetItemCount(facet, "High"), "High counts the probe at 40: " + facet);
+        } finally {
+            probes.forEach((id, value) -> indexRisk(TurSNJobAction.DELETE, id, value));
+        }
+    }
+
+    private static int facetItemCount(JsonNode facet, String label) {
+        for (JsonNode item : facet.path("items")) {
+            if (label.equals(item.path("label").asString()) || label.equals(item.path("value").asString())) {
+                return item.path("count").asInt(-1);
+            }
+        }
+        return -1;
+    }
+
+    private void indexRisk(TurSNJobAction action, String id, int risk) {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("id", id);
+        if (action == TurSNJobAction.CREATE) {
+            attributes.put("type", "CreatureProbe");
+            attributes.put("title", "T1122 risk probe " + id);
+            attributes.put("risk", risk);
+        }
+        processQueue.processIndexingQueue(new TurSNJobItems(
+                new TurSNJobItem(action, List.of(SITE), Locale.forLanguageTag("en-US"),
+                        attributes, null)));
+    }
+
     private void index(TurSNJobAction action, String id) {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("id", id);

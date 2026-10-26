@@ -37,6 +37,21 @@ class TurSNCustomFacetFilterQueryTest {
                 .isEqualTo("salary:[1000 TO 3000]");
     }
 
+    /** T1122 — a bound read back from the DECIMAL(19,6) column carries its scale. */
+    @Test
+    void aStoredBoundIsWrittenWithoutTheColumnScale() {
+        TurSNSiteCustomFacetItem item = item(TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE);
+        item.setRangeStart(new BigDecimal("0.000000"));
+        item.setRangeEnd(new BigDecimal("100.000000"));
+
+        assertThat(TurSNCustomFacetFilterQuery.of("seats", TurSEFieldType.INT, item))
+                .isEqualTo("seats:[0 TO 100]");
+
+        item.setRangeEnd(new BigDecimal("9.500000"));
+        assertThat(TurSNCustomFacetFilterQuery.of("danger", TurSEFieldType.DOUBLE, item))
+                .isEqualTo("danger:[0 TO 9.5]");
+    }
+
     @Test
     void aFixedDateItemUsesItsInstants() {
         TurSNSiteCustomFacetItem item = item(TurSNSiteCustomFacetOperatorEnum.GREATER_THAN_OR_EQUAL);

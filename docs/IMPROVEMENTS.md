@@ -2207,37 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXXIV Manifest-provisioned custom facets reach the search answer (T1122)
-
-**Where it happened.** Dumont's WordPress plugin (Dumont D164) was to declare range
-facets for its mapped number and date fields through the manifest (T1084). On the
-plugin's local stack (`turing-ce:local`, built 2026-10-24, embedded Lucene, SN site
-Sample), this `POST /api/sn/manifest` answered `customFacetsChanged: ["seats_range"]`:
-
-    {"name":"Sample","locales":["en_US"],
-     "fields":[{"name":"seats","type":"INT","mandatory":false,"multiValued":false,
-                "facet":true,"facetName":{"en_US":"Seats"}}],
-     "customFacets":[{"field":"seats","name":"seats_range","defaultLabel":"Seat range",
-                      "label":{"en_US":"Seat range"},
-                      "items":[{"label":"Up to 20","rangeStart":0,"rangeEnd":20},
-                               {"label":"21 to 50","rangeStart":21,"rangeEnd":50}]}]}
-
-`GET /api/sn/{id}/custom-facet` then lists it with both items (`BETWEEN_INCLUSIVE`). But
-neither `POST /api/sn/Sample/search/query` (STRUCTURED) nor the GET search lists it:
-`facets` holds `seats` and `topic` only, before and after a container restart, so it is
-not the snapshot cache. Thirteen documents carry `seats` 20 or 40.
-
-**Expected.** A `seats_range` facet group with "Up to 20" (6) and "21 to 50" (7), each
-with the filter query that selects its bucket, as a console-made custom facet renders.
-
-**Workaround.** None; the plugin's range facets wait on this (Dumont D164). The test
-facet was deleted again through the console API.
-
-**What Turing should do.** Find why a manifest-provisioned custom facet is not part of
-the answer (the facet definition path in `TurSNSearchProcess`, or
-`TurLuceneCustomFacets` on the Lucene engine), fix it, and add an integration test:
-provision through the manifest, search, and assert the buckets and their counts.
-
 ## CXXXV One probe for a site's AI capabilities (T1123)
 
 **Where it happened.** Dumont's WordPress plugin (Dumont D169) shows an admin which of
