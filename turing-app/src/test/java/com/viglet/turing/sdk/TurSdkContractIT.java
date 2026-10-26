@@ -761,6 +761,19 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
                     {"turingDocuments":[{"turSNJobAction":"DELETE","siteNames":["%s"],"locale":"en_US",
                      "attributes":{"id":"%s"}}]}""".formatted(SITE, partitionProbeId("b")), keyA);
             assertEquals(403, deleteB.statusCode(), "key A must not delete B's document: " + deleteB.body());
+            // The two probes are near-identical, so B is A's most similar document:
+            // a partitioned key must not see it, nor read it, nor seed from it.
+            HttpResponse<String> similar = getWithKey("/sn/" + SITE + "/search/similar?id="
+                    + partitionProbeId("a") + "&_setlocale=" + LOCALE, keyA);
+            assertEquals(200, similar.statusCode(), similar.body());
+            assertTrue(!similar.body().contains(partitionProbeId("b")), "key A saw B as similar: " + similar.body());
+            assertEquals("[]", getWithKey("/sn/" + SITE + "/search/similar?id=" + partitionProbeId("b")
+                    + "&_setlocale=" + LOCALE, keyA).body().replace(" ", ""), "key A seeded from B's document");
+            assertEquals(404, getWithKey("/sn/" + SITE + "/search/document?id=" + partitionProbeId("b")
+                    + "&_setlocale=" + LOCALE, keyA).statusCode(), "key A read B's document");
+            assertEquals(200, getWithKey("/sn/" + SITE + "/search/document?id=" + partitionProbeId("a")
+                    + "&_setlocale=" + LOCALE, keyA).statusCode(), "key A reads its own document");
+
             // Its own document it may rewrite: read from the engine's stored fields, as
             // the import would, without queueing a write that outlives this test.
             partitionWriteGuard.check(new com.viglet.turing.commons.se.TurSEPartition(RESERVED_FACET_FIELD,
@@ -804,6 +817,11 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         json.readTree(response.body()).path("results").path("document")
                 .forEach(document -> ids.add(document.path("fields").path("id").asString()));
         return ids;
+    }
+
+    private HttpResponse<String> getWithKey(String path, String key) throws Exception {
+        return http.send(HttpRequest.newBuilder(URI.create(base() + path)).header("Key", key).GET().build(),
+                BodyHandlers.ofString());
     }
 
     private HttpResponse<String> postJson(String path, String body, String key) throws Exception {

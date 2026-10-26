@@ -1457,6 +1457,7 @@
 - **T1139** — The console unit suite is green again: the bento list test asserts the design system's MEDIUM default instead of the LARGE lead tile it no longer gives.
 - **T1133 (key binding, search, import)** — An API key can be bound to a partition of a shared SN site: its searches see only the partition's documents in Solr, Lucene and Elasticsearch, its imports are stamped with the partition and refused outside it, and every endpoint that does not enforce partitions yet, MCP included, refuses the key.
 - **T1133b** — A partitioned key's import can no longer replace or delete another partition's document: each CREATE and DELETE id is checked against the stored document's partition, in Solr, Lucene and Elasticsearch.
+- **T1133c** — A partitioned key's similar-documents and stored-document reads answer only its partition: Solr, Lucene and Elasticsearch confine the MLT query, a seed outside the partition answers nothing, and the document read drops other partitions' documents.
 
 ## Block CA — Search response fields arrive as they were indexed
 

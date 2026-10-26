@@ -2246,16 +2246,16 @@ each endpoint is ruled out: one endpoint that forgot it would leak.
 **What landed.** Part 1: `dev_token.partitionField`/`partitionValue` bind a key.
 `TurApiKeyPartitionContext` carries the partition, and `TurApiKeyPartitionGuardFilter`
 refuses the key with 403 outside its `ENFORCED` routes. MCP refuses partitioned keys.
-Search applies `TurSEParameters.partition` in Solr, Lucene and Elasticsearch, and skips
-recall, MLT, clusters, `showAllFacetItems` and the cache. Imports stamp the value. Part
-2: `TurSNPartitionWriteGuard` reads the stored document of each CREATE and DELETE id,
-and refuses one outside the partition or without a partition. It also refuses a DELETE
-by type. `TurSdkContractIT` tests two partitions.
+Search applies `TurSEParameters.partition` in Solr, Lucene and Elasticsearch, and
+imports stamp the value. T1133b: `TurSNPartitionWriteGuard` checks each CREATE and
+DELETE id against the stored document. T1133c: `getSimilarDocuments(..., partition)`
+confines MLT in all three engines, and `/search/document` drops other partitions'
+documents. `TurSdkContractIT` tests two partitions.
 
 **What is left.** Add each endpoint to `ENFORCED` once it applies the partition, and extend
 the contract test:
 - autocomplete, spell-check and related terms;
-- similar, duplicates (T1132) and the stored-document read;
-- chat, answer, nl-filters and copilot (the vector store needs a metadata filter too);
+- duplicates (vector clusters: the vector store needs a metadata filter);
+- chat, answer, nl-filters and copilot (retrieval runs on the same vector store);
 - metrics;
 - delete-all of the key's own partition (T1112's delete by field).

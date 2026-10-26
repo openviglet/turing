@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
@@ -27,6 +28,7 @@ import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,6 +104,18 @@ public class TurSNSimilarDocumentsService {
             return List.of();
         }
         TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+
+        // T1133 — a key bound to a partition of a shared site gets neighbours from
+        // its partition only, of a seed in its partition. The vector store holds
+        // the whole site, so the lexical query, which takes the filter, answers.
+        Optional<TurSEPartition> partition = TurApiKeyPartitionContext.current();
+        if (partition.isPresent()) {
+            boolean seedInPartition = plugin.getStoredDocumentsByIds(siteLocale, List.of(id)).stream()
+                    .anyMatch(seed -> TurSNPartitionWriteGuard.inPartition(seed.get(partition.get().field()),
+                            partition.get().value()));
+            return seedInPartition ? plugin.getSimilarDocuments(siteLocale, id, limit, partition.get())
+                    : List.of();
+        }
 
         boolean hybrid = hybridRankingService.isEnabled(site);
         TurSNSimilarMode defaultMode = hybrid ? TurSNSimilarMode.VECTOR : TurSNSimilarMode.MLT;

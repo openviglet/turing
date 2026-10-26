@@ -613,25 +613,34 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
 
     @Override
     public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows) {
+        return getSimilarDocuments(siteLocale, id, rows, null);
+    }
+
+    /** T1133 — the partition is an {@code fq} on both the MLT handler and the BM25 fallback. */
+    @Override
+    public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows,
+            com.viglet.turing.commons.se.TurSEPartition partition) {
         if (id == null || id.isBlank() || rows < 1) {
             return List.of();
         }
         return turSolrInstanceProcess.initSolrInstance(siteLocale)
                 .map(instance -> {
-                    List<TurSESimilarResult> mltHits = trySimilarMltHandler(instance, id, rows);
+                    List<TurSESimilarResult> mltHits = trySimilarMltHandler(instance, id, rows, partition);
                     if (!mltHits.isEmpty()) {
                         return mltHits;
                     }
-                    return trySimilarBm25Fallback(instance, id, rows);
+                    return trySimilarBm25Fallback(instance, id, rows, partition);
                 })
                 .orElse(List.of());
     }
 
     /** Solr {@code /mlt} handler keyed by {@code id:<id>} — the proper MoreLikeThis path. */
     private List<TurSESimilarResult> trySimilarMltHandler(
-            com.viglet.turing.solr.TurSolrInstance instance, String id, int rows) {
+            com.viglet.turing.solr.TurSolrInstance instance, String id, int rows,
+            com.viglet.turing.commons.se.TurSEPartition partition) {
         try {
             SolrQuery query = new SolrQuery();
+            com.viglet.turing.solr.TurSolrQueryBuilder.preparePartition(partition, query);
             query.set("qt", "/mlt");
             query.setQuery(TurSNFieldName.ID + ":" + solrQuotedTerm(id));
             query.set("mlt.fl", SIMILAR_MLT_FIELDS);
@@ -654,7 +663,8 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
 
     /** When the {@code /mlt} handler isn't reachable, emulate MLT with a BM25 disjunction over the seed text. */
     private List<TurSESimilarResult> trySimilarBm25Fallback(
-            com.viglet.turing.solr.TurSolrInstance instance, String id, int rows) {
+            com.viglet.turing.solr.TurSolrInstance instance, String id, int rows,
+            com.viglet.turing.commons.se.TurSEPartition partition) {
         List<Map<String, Object>> seed = fetchByIds(instance, List.of(id));
         if (seed.isEmpty()) {
             return List.of();
@@ -669,6 +679,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                     TurSNFieldName.TITLE, escaped, TurSNFieldName.ABSTRACT, escaped,
                     TurSNFieldName.TEXT, escaped);
             SolrQuery query = new SolrQuery().setQuery(q);
+            com.viglet.turing.solr.TurSolrQueryBuilder.preparePartition(partition, query);
             query.setFields(TurSNFieldName.ID, TurSNFieldName.TITLE, TurSNFieldName.TYPE,
                     TurSNFieldName.URL);
             query.setRows(rows + 1);

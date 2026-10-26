@@ -538,6 +538,13 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
 
     @Override
     public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows) {
+        return getSimilarDocuments(siteLocale, id, rows, null);
+    }
+
+    /** T1133 — the partition is a {@code term} filter beside {@code more_like_this}. */
+    @Override
+    public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows,
+            com.viglet.turing.commons.se.TurSEPartition partition) {
         if (id == null || id.isBlank() || rows < 1) {
             return List.of();
         }
@@ -550,26 +557,32 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
             return List.of();
         }
         return turElasticsearchInstanceProcess.initElasticsearchInstance(siteLocale)
-                .map(instance -> searchSimilarDocuments(instance, like, id, rows))
+                .map(instance -> searchSimilarDocuments(instance, like, id, rows, partition))
                 .orElse(List.of());
     }
 
     private List<TurSESimilarResult> searchSimilarDocuments(TurElasticsearchInstance instance,
-            String like, String id, int rows) {
+            String like, String id, int rows, com.viglet.turing.commons.se.TurSEPartition partition) {
         try {
-            var response = instance.getClient().search(s -> s
-                    .index(instance.getIndex())
-                    .size(rows + 1)
-                    .source(src -> src.filter(f -> f.includes(TurSNFieldName.ID,
-                            TurSNFieldName.TITLE, TurSNFieldName.TYPE, TurSNFieldName.URL)))
-                    .query(q -> q.moreLikeThis(m -> m
+            co.elastic.clients.elasticsearch._types.query_dsl.Query mlt =
+                    co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q -> q.moreLikeThis(m -> m
                             .fields(TurSNFieldName.TITLE, TurSNFieldName.ABSTRACT,
                                     TurSNFieldName.TEXT)
                             .like(l -> l.text(like))
                             .minTermFreq(1)
                             .minDocFreq(1)
                             .minWordLength(3)
-                            .maxQueryTerms(40))),
+                            .maxQueryTerms(40)));
+            co.elastic.clients.elasticsearch._types.query_dsl.Query query = partition == null ? mlt
+                    : co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q -> q.bool(b -> b
+                            .must(mlt)
+                            .filter(f -> f.term(t -> t.field(partition.field()).value(partition.value())))));
+            var response = instance.getClient().search(s -> s
+                    .index(instance.getIndex())
+                    .size(rows + 1)
+                    .source(src -> src.filter(f -> f.includes(TurSNFieldName.ID,
+                            TurSNFieldName.TITLE, TurSNFieldName.TYPE, TurSNFieldName.URL)))
+                    .query(query),
                     (java.lang.reflect.Type) Map.class);
             List<TurSESimilarResult> results = new java.util.ArrayList<>();
             for (var hit : response.hits().hits()) {

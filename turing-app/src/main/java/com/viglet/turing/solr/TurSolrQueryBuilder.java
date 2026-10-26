@@ -287,7 +287,7 @@ public class TurSolrQueryBuilder {
      * bound to, with its own {@code fq}. The value is quoted like an id; the
      * field name was validated as a plain identifier when the key was saved.
      */
-    static void preparePartition(com.viglet.turing.commons.se.TurSEPartition partition, SolrQuery query) {
+    public static void preparePartition(com.viglet.turing.commons.se.TurSEPartition partition, SolrQuery query) {
         if (partition == null) {
             return;
         }
