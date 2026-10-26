@@ -231,6 +231,33 @@ describe("POST-native search (T709)", () => {
     expect(postCalls(c)[1][1]).toMatchObject({ q: "workshop", mode: "standard" });
   });
 
+  it("T1121 - aborts the superseded request and keeps the newer answer", async () => {
+    const signals: AbortSignal[] = [];
+    let releaseFirst: (value: TurStructuredSearchResponse) => void = () => {};
+    const first = new Promise<TurStructuredSearchResponse>((resolve) => {
+      releaseFirst = resolve;
+    });
+    const second = structuredResponse({ request: { q: "workshop", page: 1 } });
+    const post = vi.fn((_path: string, _body: unknown, opts: { signal?: AbortSignal }) => {
+      signals.push(opts.signal as AbortSignal);
+      return signals.length === 1 ? first : Promise.resolve(second);
+    });
+    const c = { get: vi.fn(() => Promise.resolve(null)), post } as unknown as TuringClient;
+    const search = createSearchController(c, { site: "wknd", locale: "en_US" }, undefined, {
+      chat: false,
+    });
+
+    const stale = search.searchQuery("wor", { mode: "instant" });
+    await search.searchQuery("workshop");
+    releaseFirst(structuredResponse({ request: { q: "wor", page: 1 } }));
+    await stale;
+
+    expect(signals[0].aborted).toBe(true);
+    expect(signals[1].aborted).toBe(false);
+    expect(search.getState().request.q).toBe("workshop");
+    expect(search.getState().status).toBe("success");
+  });
+
   it("adopts the server's echoed request so the next toggle starts from truth", async () => {
     // The server resolves defaults the client did not send (here: a site sort of
     // `newest` and a targeting-rule-derived filter). The controller must adopt

@@ -2207,27 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXXIII Abort a superseded search in the SDK controller (T1121)
-
-**Where it happened.** Dumont's WordPress search block (Dumont D163) runs a search about
-300 ms after each pause in typing, through `@viglet/turing-sdk`'s search controller. The
-controller numbers its requests and drops an answer a newer request has overtaken (the
-`if (p !== v) return;` after the `await` in its structured search), so nothing stale is
-rendered. But the superseded `fetch` is never aborted: each pause in a typed sentence
-leaves a full search running on the server and its body downloading, for an answer that
-is thrown away. The chat controller already holds an `AbortController` per request and
-aborts the previous one; search does not.
-
-**Workaround.** None in the block: the 300 ms pause limits how many pile up, and the SDK
-drops their answers.
-
-**What Turing should do.** The search controller creates an `AbortController` per
-request, passes its signal to the client's `fetch`, and aborts the previous one when a
-new `searchQuery`, `searchRequest`, `toggleFacet` or `goToPage` starts, treating the
-abort as neither an error nor a state change. The client's request helpers accept a
-`signal` for callers who drive the calls directly. A request in T1120's `mode:
-"instant"` is the usual case.
-
 ## CXXXIV Manifest-provisioned custom facets reach the search answer (T1122)
 
 **Where it happened.** Dumont's WordPress plugin (Dumont D164) was to declare range

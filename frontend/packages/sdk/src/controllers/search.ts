@@ -264,6 +264,16 @@ export function createSearchController(
   // Monotonic request id — the closure equivalent of `useRef(0)`. A late
   // response from a superseded request is dropped.
   let latestRequestId = 0;
+  // T1121 — the request a newer one supersedes is aborted, not just ignored, so
+  // a pause in typing does not leave a full search running and downloading.
+  let inFlight: AbortController | null = null;
+
+  /** Aborts the request in flight and starts the next one's signal. */
+  function nextSignal(): AbortSignal {
+    inFlight?.abort();
+    inFlight = new AbortController();
+    return inFlight.signal;
+  }
 
   /** Emits the canonical search events after a successful result set. */
   function emitSearchEvents(query: string, resultCount: number): void {
@@ -286,6 +296,7 @@ export function createSearchController(
       return executeRequest(searchParamsToRequest(searchParams));
     }
     const requestId = ++latestRequestId;
+    const signal = nextSignal();
     store.setState({ status: "loading", error: null, params: searchParams });
 
     try {
@@ -293,9 +304,9 @@ export function createSearchController(
       const shouldChat = chatEnabled && q !== "*";
 
       const [searchResult, chatResult] = await Promise.all([
-        fetchSearch(client, config.site, searchParams),
+        fetchSearch(client, config.site, searchParams, { signal }),
         shouldChat
-          ? fetchChat(client, config.site, { q, _setlocale: searchParams._setlocale })
+          ? fetchChat(client, config.site, { q, _setlocale: searchParams._setlocale }, { signal })
           : Promise.resolve(null),
       ]);
 
@@ -330,6 +341,7 @@ export function createSearchController(
    */
   async function executeRequest(searchRequest: TurSearchRequest): Promise<void> {
     const requestId = ++latestRequestId;
+    const signal = nextSignal();
     store.setState({
       status: "loading",
       error: null,
@@ -341,10 +353,12 @@ export function createSearchController(
       const q = searchRequest.q || "*";
       const shouldChat = chatEnabled && q !== "*";
 
+      // An aborted call rejects, and the guard below drops it: a newer request
+      // already owns the state.
       const [searchResult, chatResult] = await Promise.all([
-        postStructuredSearch(client, config.site, searchRequest),
+        postStructuredSearch(client, config.site, searchRequest, { signal }),
         shouldChat
-          ? fetchChat(client, config.site, { q, _setlocale: searchRequest.locale })
+          ? fetchChat(client, config.site, { q, _setlocale: searchRequest.locale }, { signal })
           : Promise.resolve(null),
       ]);
 
