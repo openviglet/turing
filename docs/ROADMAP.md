@@ -15,7 +15,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1128** (deps: —) **The SDK's result-click call can be cut off by the navigation the click starts, and /click refuses a beacon** — Clicks are lost silently, more often on slow networks, so click-through rates undercount. → §CXL
 - 📋 **T1129** (deps: —) **The search controller's analytics option writes a 30-day cookie before consent and reports every as-you-type search** — A consent-respecting site with instant search cannot use the SDK's search analytics and has to re-emit the events itself. → §CXLI
 - 📋 **T1130** (deps: —) **The GA sink sends only turing_* event names, and the taxonomy has no search abandonment event** — GA4's site-search reports stay empty without hand-made custom definitions, and searched-and-left is never measured. → §CXLII
 - 📋 **T1131** (deps: —) **Search-result clicks are stored but nothing reads them, and /click answers 202 with metrics off** — No site can see a click-through rate, and a client cannot tell that its clicks are being dropped. → §CXLIII

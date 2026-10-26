@@ -681,6 +681,17 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         }
     }
 
+    /** T1128 — a click sent with navigator.sendBeacon (text/plain JSON) is accepted. */
+    @Test
+    void clickAcceptsABeaconBody() throws Exception {
+        HttpRequest beacon = HttpRequest.newBuilder(URI.create(base() + "/sn/" + SITE + "/click"))
+                .header("Content-Type", "text/plain;charset=UTF-8")
+                .POST(BodyPublishers.ofString("{\"term\":\"dragon\",\"documentId\":\"myth-001\",\"position\":1}"))
+                .build();
+
+        assertEquals(202, http.send(beacon, BodyHandlers.ofString()).statusCode());
+    }
+
     /** T857 — the sort options can be inlined instead of separately fetched. */
     @Test
     void structuredResponseCanInlineTheSortOptions() throws Exception {

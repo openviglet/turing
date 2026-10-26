@@ -1353,6 +1353,7 @@
 - **T1123** — GET /api/sn/{site}/ai/capabilities reports chat, answer, NL filters, copilot, vector similarity and summaries with enabled and a reason, from configuration alone, typed in the SDK (design §CXXXV superseded: it is not cached: every answer is a config read already as cheap as /chat/enabled, so a cache would only add an eviction to get wrong).
 - **T1125** — Synonym mining skips logged queries that spell search syntax and drops a term another in its group starts with, so a word and its half-typed prefix are no longer proposed.
 - **T1127** — Each SN call, streamed chat and copilot included, records its site in a new site_name column, and cost/summary lists bySite and narrows every breakdown to ?site=.
+- **T1128** — Result clicks from the SDK are sent keepalive with no CSRF prime, so the navigation a click starts no longer cancels them, and /click accepts a text/plain JSON body so navigator.sendBeacon works.
 
 ## Block BJ — Configurable, per-language NL ranking lexicon (Lucene analysis)
 

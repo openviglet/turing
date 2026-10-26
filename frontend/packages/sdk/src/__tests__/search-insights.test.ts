@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchAiCapabilities, fetchContentGaps, fetchFailedSearches } from "../api";
+import { fetchAiCapabilities, fetchContentGaps, fetchFailedSearches, postClick } from "../api";
 import type { TuringClient } from "../client";
 import type { TurSearchInsightReport } from "../types";
 
@@ -25,6 +25,16 @@ describe("search insights (T1119)", () => {
     await expect(fetchFailedSearches(c, "site-1")).resolves.toEqual(report);
 
     expect(get.mock.calls[0][0]).toBe("/sn/site-1/metrics/failed-searches");
+  });
+
+  it("T1128 - sends a result click with keepalive and no CSRF prime", async () => {
+    const post = vi.fn().mockResolvedValue(undefined);
+    const c = { post } as unknown as TuringClient;
+
+    await postClick(c, "Sample", { term: "workshop", documentId: "post-7", position: 2 });
+
+    expect(post.mock.calls[0][0]).toBe("/sn/Sample/click");
+    expect(post.mock.calls[0][2]).toMatchObject({ keepalive: true, csrf: false });
   });
 
   it("T1123 - reads a site's AI capabilities from one probe", async () => {

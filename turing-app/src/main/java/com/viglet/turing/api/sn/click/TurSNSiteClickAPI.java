@@ -23,6 +23,7 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,9 @@ import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRe
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Records a click event tied to a previous search. Called by the React SDK
@@ -66,6 +70,7 @@ public class TurSNSiteClickAPI {
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteMetricClickRepository turSNSiteMetricClickRepository;
     private final boolean metricsEnabled;
+    private static final ObjectMapper JSON = JsonMapper.builder().build();
 
     public TurSNSiteClickAPI(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteMetricClickRepository turSNSiteMetricClickRepository,
@@ -78,6 +83,27 @@ public class TurSNSiteClickAPI {
     @PostMapping
     public ResponseEntity<Void> trackClick(@PathVariable String siteName,
             @RequestBody TurSNClickRequest request) {
+        return record(siteName, request);
+    }
+
+    /**
+     * T1128 — the same click as a {@code text/plain} JSON body, which is what
+     * {@code navigator.sendBeacon} sends: a beacon outlives the navigation the
+     * click starts, and the JSON mapping refused it with 415.
+     */
+    @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<Void> trackClickBeacon(@PathVariable String siteName,
+            @RequestBody String body) {
+        TurSNClickRequest request;
+        try {
+            request = JSON.readValue(body, TurSNClickRequest.class);
+        } catch (JacksonException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return record(siteName, request);
+    }
+
+    private ResponseEntity<Void> record(String siteName, TurSNClickRequest request) {
         if (!metricsEnabled) {
             // Silently accept so the SDK has the same shape regardless of
             // server-side configuration; the client never knows it's disabled.

@@ -2207,29 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXL Navigation-safe result clicks from the SDK (T1128)
-
-**Where it happened.** Dumont's WordPress search block (D176) reports the result a
-visitor opens. The SDK offers `postClick(client, site, params)` and the controller's
-`trackResultClick(documentId, position, term)`. Both go through `client.post`, which
-first primes a CSRF token (`GET /api/csrf`) and then sends a plain `fetch` with no
-`keepalive`. The click starts a navigation, which can cancel either request: the click
-is lost, more often on a slow network.
-
-`sendBeacon` cannot replace it. `POST /api/sn/{site}/click` takes `@RequestBody` JSON
-only, so a beacon (`text/plain`) is refused with 415.
-
-**Workaround.** The plugin calls `client.fetchRaw('/sn/{site}/click', { method: 'POST',
-keepalive: true, headers: JSON }, false)` itself, in `wordpress/src/public/search.js`
-(`trackResultClick`). Edge accepted it with a CORS preflight and Turing answered 202.
-
-**What Turing should do.**
-- `postClick` and `trackResultClick` send with `keepalive: true` and skip the CSRF prime.
-  `/click` is public, anonymous and CSRF-exempt, so no token is needed.
-- `/click` also accepts `text/plain` with a JSON body, so `navigator.sendBeacon` works on
-  any browser.
-- A test: a click followed by `location.assign` still reaches the server.
-
 ## CXLI Consent-aware search analytics in the SDK controller (T1129)
 
 **Where it happened.** Dumont's WordPress search block (D176) wanted to pass the SDK's

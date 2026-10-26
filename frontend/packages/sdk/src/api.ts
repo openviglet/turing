@@ -209,6 +209,10 @@ export interface ClickTrackParams {
  * Records a click-through on a search result. Fire-and-forget by design —
  * errors are swallowed and surfaced via {@code console.warn}.
  *
+ * T1128 — sent with `keepalive`, so the navigation the click starts does not
+ * cancel it, and without the CSRF prime: `/click` is public and CSRF-exempt,
+ * and a second request is one more thing an unloading page can lose.
+ *
  * Server endpoint: {@code POST /api/sn/{site}/click}.
  */
 export async function postClick(
@@ -218,7 +222,11 @@ export async function postClick(
   options: TuringCallOptions = {},
 ): Promise<void> {
   try {
-    await client.post(`/sn/${site}/click`, params, { signal: options.signal });
+    await client.post(`/sn/${site}/click`, params, {
+      signal: options.signal,
+      csrf: false,
+      keepalive: true,
+    });
   } catch (error) {
     if (typeof console !== "undefined") {
       console.warn("[Turing] click tracking failed", error);

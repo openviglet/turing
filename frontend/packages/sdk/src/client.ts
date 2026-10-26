@@ -88,6 +88,11 @@ export interface TuringRequestOptions {
    * methods (POST/PUT/PATCH/DELETE) and {@code false} for GET/HEAD.
    */
   readonly csrf?: boolean;
+  /**
+   * T1128 — keep the request alive when the page unloads, so a call made as a
+   * click starts a navigation (result-click tracking) still reaches the server.
+   */
+  readonly keepalive?: boolean;
 }
 
 export interface TuringClient {
@@ -306,7 +311,13 @@ export function createTuringClient(config: TuringClientConfig): TuringClient {
     const csrf = options.csrf ?? MUTATING.has(upper);
     const res = await send(
       path,
-      { method: upper, headers, body, signal: options.signal },
+      {
+        method: upper,
+        headers,
+        body,
+        signal: options.signal,
+        ...(options.keepalive ? { keepalive: true } : {}),
+      },
       csrf,
     );
 
