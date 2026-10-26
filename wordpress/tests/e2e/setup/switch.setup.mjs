@@ -1,11 +1,20 @@
-// Turns the stack's WordPress into the variant the next project tests: the theme and the
-// language named in that project's `metadata` (playwright.config.mjs). global-setup's seed
-// puts back Twenty Twenty-Five in English at the start of every run.
+// Turns the stack's WordPress into the variant the next project tests: the theme, the language
+// and the plugins named in that project's `metadata` (playwright.config.mjs), then that
+// variant's own seed, reindexed. global-setup puts back Twenty Twenty-Five in English with no
+// other plugin at the start of every run.
 import { test } from '@playwright/test';
 import { wp } from '../global-setup.mjs';
 
-test( 'switch the site', ( {}, testInfo ) => {
-	const { theme, version, locale } = testInfo.project.metadata;
+test( 'switch the site', async ( {}, testInfo ) => {
+	const { theme, version, locale, plugins, seed } = testInfo.project.metadata;
+	for ( const plugin of plugins || [] ) {
+		try {
+			wp( [ 'plugin', 'is-installed', plugin ] );
+		} catch {
+			wp( [ 'plugin', 'install', plugin ] );
+		}
+		wp( [ 'plugin', 'activate', plugin ] );
+	}
 	if ( theme ) {
 		try {
 			wp( [ 'theme', 'is-installed', theme ] );
@@ -30,5 +39,11 @@ test( 'switch the site', ( {}, testInfo ) => {
 		try {
 			wp( [ 'user', 'meta', 'delete', 'admin', 'locale' ] );
 		} catch {}
+	}
+	if ( seed ) {
+		wp( [ 'eval-file', seed ] );
+		wp( [ 'dumont', 'reindex' ] );
+		// Turing commits within a few seconds; the variant's specs read what was just indexed.
+		await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
 	}
 } );

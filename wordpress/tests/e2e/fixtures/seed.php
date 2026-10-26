@@ -216,6 +216,8 @@ update_option(
 
 $settings                   = get_option( 'viglet_dumont_settings', array() );
 $settings['search_enabled'] = 1;
+// The woo project indexes products; the default suite indexes posts and pages alone.
+$settings['index_custom_types'] = array();
 $settings['search_mode']    = 'theme';
 // Search analytics (site/analytics.spec.mjs): clicks to Turing, events to a stubbed gtag.
 $settings['track_clicks']      = 1;

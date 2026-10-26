@@ -448,6 +448,7 @@ class Viglet_Dumont_Native_Search {
 						'label' => $label,
 						'type'  => $field['type'],
 						'multi' => false,
+						'range' => true,
 					);
 				}
 			}//end foreach

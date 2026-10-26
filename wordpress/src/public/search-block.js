@@ -899,6 +899,8 @@ const boundFormat = new Intl.DateTimeFormat(
  */
 function card( d, position ) {
 	const fields = d.raw?.fields || {};
+	// A search filtered by type gets the type back highlighted, as `<mark>post</mark>`.
+	const type = plain( String( fields.type ?? '' ) );
 	const at = new Date( fields.publication_date ?? d.date );
 	const valid = d.date || fields.publication_date ? ! isNaN( at ) : false;
 	return {
@@ -906,7 +908,7 @@ function card( d, position ) {
 		position,
 		url: d.url,
 		title: plain( d.title ) || d.url,
-		type: state.typeLabels[ fields.type ] || fields.type || '',
+		type: state.typeLabels[ type ] || type,
 		date: valid ? dateFormat.format( at ) : '',
 		iso: valid ? at.toISOString() : '',
 		crumb: crumb( d.url ),
@@ -921,10 +923,14 @@ function card( d, position ) {
  * rebuilt from the last answer that described it unfiltered: its applied values checked (and
  * removable), the others still there to switch to, with the counts they had before the filter.
  *
- * @param {Object[]} answered The response's facets.
- * @param {string[]} applied  The request's filters, the site's own left out.
+ * @param {Object[]} everything The response's facets.
+ * @param {string[]} applied    The request's filters, the site's own left out.
  */
-function facets( answered, applied ) {
+function facets( everything, applied ) {
+	// The site's own filter is not the visitor's: Turing describes it as a facet once it
+	// answers filtered facets (T1115), and a one-value group checked by nobody would show.
+	const siteField = siteFilter.split( ':' )[ 0 ];
+	const answered = everything.filter( ( facet ) => facet.name !== siteField );
 	const filtered = new Set( applied.map( ( fq ) => fq.split( ':' )[ 0 ] ) );
 	for ( const facet of answered ) {
 		if ( facet.items?.length && ! filtered.has( facet.name ) ) {
@@ -950,7 +956,14 @@ function facets( answered, applied ) {
 		)
 		.filter( Boolean )
 		.map( ( facet ) => {
-			const all = byLabelWithinCount( facet.items ).map( ( i ) => {
+			// A range facet's order is its ranges' (Turing's); a value facet's ties go by label.
+			const ranged = ( config.facets || [] ).some(
+				( f ) => f.field === facet.name && f.range
+			);
+			const ordered = ranged
+				? facet.items
+				: byLabelWithinCount( facet.items );
+			const all = ordered.map( ( i ) => {
 				const selected =
 					i.selected || applied.includes( i.filterQuery );
 				return {

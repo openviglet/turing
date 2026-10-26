@@ -39,6 +39,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-diagnostics.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-tuning.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-related.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-woocommerce.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
@@ -145,6 +146,8 @@ function viglet_dumont_init(): void {
 	if ( $settings['auto_deindex'] ) {
 		add_action( 'delete_post', 'viglet_dumont_handle_delete' );
 	}
+	// A product whose stock changed from an order, which saves no post (D173).
+	Viglet_Dumont_WooCommerce::register();
 
 	// Where each post stands: the Search column in the post lists and the editor panel.
 	( new Viglet_Dumont_Post_State( $settings ) )->register();

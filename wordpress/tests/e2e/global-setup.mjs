@@ -47,6 +47,27 @@ export default async function globalSetup( config ) {
 	// through the theme and language projects (setup/switch.setup.mjs) leaves another.
 	wp( [ 'theme', 'activate', 'twentytwentyfive' ] );
 	wp( [ 'site', 'switch-language', 'en_US' ] );
+	// The woo project's shop (D173). Its pages outlive the plugin, so they are drafted: in the
+	// theme's page list they would move every screenshot, and indexed they would be counted.
+	try {
+		wp( [ 'plugin', 'deactivate', 'woocommerce' ] );
+	} catch {}
+	const shopPages = wp( [
+		'post',
+		'list',
+		'--post_type=page',
+		'--post_status=publish',
+		'--post_name__in=shop,cart,checkout,my-account',
+		'--format=ids',
+	] ).trim();
+	if ( shopPages ) {
+		wp( [
+			'post',
+			'update',
+			...shopPages.split( /\s+/ ),
+			'--post_status=draft',
+		] );
+	}
 
 	if ( ! process.env.E2E_SKIP_SEED ) {
 		const out = wp( [ 'eval-file', '/e2e/seed.php' ] );

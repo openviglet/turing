@@ -9,3 +9,4 @@ parameters:
     bootstrapFiles:
         - tests/phpstan-constants.php
         - tests/stubs/wp-cli.php
+        - tests/stubs/woocommerce.php

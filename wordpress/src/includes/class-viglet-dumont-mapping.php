@@ -24,9 +24,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *           "multi": false, "facet": true, "facet_label": "Date", "weight": null,
  *           "range": true, "ranges": [] } ] } }
  *
- * A source is `taxonomy:<slug>`, `meta:<key>`, `core:<excerpt|slug|menu_order|parent>` or
- * `thumbnail`. With nothing stored, every public custom taxonomy of an indexed type is
- * mapped as a multi-valued STRING facet, so a custom taxonomy is searchable out of the box.
+ * A source is `taxonomy:<slug>`, `meta:<key>`, `core:<excerpt|slug|menu_order|parent>`,
+ * `thumbnail`, or for a WooCommerce product `woo:<price|regular_price|sale_price|stock_status
+ * |sku|average_rating>` (D173). With nothing stored, every public custom taxonomy of an
+ * indexed type is mapped as a multi-valued STRING facet, so a custom taxonomy is searchable
+ * out of the box, and a product adds its price, its stock and its global attributes.
  *
  * `range` gives a DATE or number field a range facet as well, declared as a Turing custom
  * facet named `<field>_range`: a fixed set of periods for a date, and for a number the
@@ -480,6 +482,9 @@ class Viglet_Dumont_Mapping {
 			'source' => 'thumbnail',
 			'label'  => __( 'Featured image URL', 'viglet-dumont' ),
 		);
+		if ( Viglet_Dumont_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Dumont_WooCommerce::active() ) {
+			$sources = array_merge( $sources, Viglet_Dumont_WooCommerce::sources() );
+		}
 
 		return $sources;
 	}
@@ -506,6 +511,9 @@ class Viglet_Dumont_Mapping {
 				'weight'      => null,
 			);
 		}
+		if ( Viglet_Dumont_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Dumont_WooCommerce::active() ) {
+			$fields = array_merge( $fields, Viglet_Dumont_WooCommerce::default_fields() );
+		}
 
 		return self::sanitize_type( array( 'fields' => $fields ) );
 	}
@@ -530,6 +538,8 @@ class Viglet_Dumont_Mapping {
 			case 'thumbnail':
 				$url = get_the_post_thumbnail_url( $post->ID, 'large' );
 				return is_string( $url ) ? $url : null;
+			case 'woo':
+				return Viglet_Dumont_WooCommerce::value( $post, $name );
 			case 'core':
 				$core = array(
 					'excerpt'    => $post->post_excerpt,
@@ -637,7 +647,8 @@ class Viglet_Dumont_Mapping {
 		[ $kind, $name ] = array_pad( explode( ':', $source, 2 ), 2, '' );
 		$valid_source    = ( 'thumbnail' === $source )
 			|| ( in_array( $kind, array( 'taxonomy', 'meta' ), true ) && '' !== $name )
-			|| ( 'core' === $kind && in_array( $name, self::CORE_SOURCES, true ) );
+			|| ( 'core' === $kind && in_array( $name, self::CORE_SOURCES, true ) )
+			|| ( 'woo' === $kind && isset( Viglet_Dumont_WooCommerce::FIELDS[ $name ] ) );
 
 		$target = preg_replace( '/[^A-Za-z0-9_]/', '', (string) ( $field['field'] ?? '' ) );
 		$type   = strtoupper( (string) ( $field['type'] ?? 'STRING' ) );

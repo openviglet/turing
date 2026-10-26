@@ -35,6 +35,17 @@ const variantSteps = [
 		testMatch: 'i18n/**/*.spec.mjs',
 		use: { storageState: authFile },
 	},
+	{
+		// A shop (D173): WooCommerce on, its products seeded and indexed, back in English.
+		name: 'woo',
+		metadata: {
+			theme: 'twentytwentyfive',
+			locale: 'en_US',
+			plugins: [ 'woocommerce' ],
+			seed: '/e2e/woo-seed.php',
+		},
+		testMatch: 'woo/**/*.spec.mjs',
+	},
 ];
 const variants = variantSteps.flatMap( ( step, i ) => [
 	{

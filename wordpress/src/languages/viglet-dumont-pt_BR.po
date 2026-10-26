@@ -653,43 +653,43 @@ msgstr "Indexação concluída. %d documentos indexados."
 msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
 
-#: src/includes/class-viglet-dumont-mapping.php:193
+#: src/includes/class-viglet-dumont-mapping.php:195
 msgid "Site"
 msgstr "Site"
 
-#: src/includes/class-viglet-dumont-mapping.php:361
+#: src/includes/class-viglet-dumont-mapping.php:363
 msgid "No mapped field to provision."
 msgstr "Nenhum campo mapeado para enviar."
 
-#: src/includes/class-viglet-dumont-mapping.php:371
+#: src/includes/class-viglet-dumont-mapping.php:373
 msgid "The fields are already provisioned."
 msgstr "Os campos já estão no Turing."
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:426
+#: src/includes/class-viglet-dumont-mapping.php:428
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr "%1$s é %2$s no Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:452
+#: src/includes/class-viglet-dumont-mapping.php:454
 #, php-format
 msgid "Taxonomy: %s"
 msgstr "Taxonomia: %s"
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:468
+#: src/includes/class-viglet-dumont-mapping.php:470
 #, php-format
 msgid "Meta: %s"
 msgstr "Meta: %s"
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:476
+#: src/includes/class-viglet-dumont-mapping.php:478
 #, php-format
 msgid "Post: %s"
 msgstr "Post: %s"
 
-#: src/includes/class-viglet-dumont-mapping.php:481
+#: src/includes/class-viglet-dumont-mapping.php:483
 msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
@@ -770,11 +770,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:725
+#: src/viglet-dumont.php:728
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:750
+#: src/viglet-dumont.php:753
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1363,24 +1363,24 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-dumont.php:85
+#: src/viglet-dumont.php:86
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-dumont.php:86
+#: src/viglet-dumont.php:87
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-dumont.php:87
+#: src/viglet-dumont.php:88
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: src/viglet-dumont.php:88
+#: src/viglet-dumont.php:89
 msgid "Catalog copilot"
 msgstr "Copiloto de catálogo"
 
 #. translators: %s: Turing's console address.
-#: src/viglet-dumont.php:101
+#: src/viglet-dumont.php:102
 #, php-format
 msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
 msgstr "Ative a IA generativa deste site SN no console do Turing (%s), nas configurações de IA generativa do site."
@@ -1877,40 +1877,40 @@ msgctxt "block description"
 msgid "The Turing search block’s results: the count, the sort, the answer and the list."
 msgstr "Os resultados do bloco de busca do Turing: a contagem, a ordenação, a resposta e a lista."
 
-#: src/includes/class-viglet-dumont-mapping.php:316
+#: src/includes/class-viglet-dumont-mapping.php:318
 msgid "Upcoming"
 msgstr "Próximos"
 
-#: src/includes/class-viglet-dumont-mapping.php:321
+#: src/includes/class-viglet-dumont-mapping.php:323
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:326
+#: src/includes/class-viglet-dumont-mapping.php:328
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:331
+#: src/includes/class-viglet-dumont-mapping.php:333
 msgid "This year"
 msgstr "Este ano"
 
-#: src/includes/class-viglet-dumont-mapping.php:336
+#: src/includes/class-viglet-dumont-mapping.php:338
 msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:716
+#: src/includes/class-viglet-dumont-mapping.php:727
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:720
+#: src/includes/class-viglet-dumont-mapping.php:731
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:724
+#: src/includes/class-viglet-dumont-mapping.php:735
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
@@ -1999,3 +1999,38 @@ msgstr "Rascunhar um resumo"
 #: src/admin/js/editor-panel.js:160
 msgid "Written by Turing’s language model from the saved post. Nothing changes until you use it and save."
 msgstr "Escrito pelo modelo de linguagem do Turing a partir do post salvo. Nada muda até você usá-lo e salvar."
+
+#: src/includes/class-viglet-dumont-woocommerce.php:77
+#: src/includes/class-viglet-dumont-woocommerce.php:109
+msgid "Price"
+msgstr "Preço"
+
+#: src/includes/class-viglet-dumont-woocommerce.php:78
+msgid "Regular price"
+msgstr "Preço normal"
+
+#: src/includes/class-viglet-dumont-woocommerce.php:79
+msgid "Sale price"
+msgstr "Preço promocional"
+
+#: src/includes/class-viglet-dumont-woocommerce.php:80
+msgid "Stock status"
+msgstr "Situação do estoque"
+
+#: src/includes/class-viglet-dumont-woocommerce.php:81
+msgid "SKU"
+msgstr "SKU"
+
+#: src/includes/class-viglet-dumont-woocommerce.php:82
+msgid "Average rating"
+msgstr "Avaliação média"
+
+#. translators: %s: a product field, e.g. Price.
+#: src/includes/class-viglet-dumont-woocommerce.php:89
+#, php-format
+msgid "Product: %s"
+msgstr "Produto: %s"
+
+#: src/includes/class-viglet-dumont-woocommerce.php:118
+msgid "Stock"
+msgstr "Estoque"

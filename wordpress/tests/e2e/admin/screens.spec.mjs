@@ -106,8 +106,11 @@ test( 'Health shows published and indexed counts that agree, and the events', as
 			.filter( { hasText: 'Connection successful' } )
 	).toBeVisible();
 
+	// By heading: an event can say "documents" too (a sweep's "3 documents ... removed").
 	const card = ( title ) =>
-		page.locator( '.components-card' ).filter( { hasText: title } );
+		page.locator( '.components-card' ).filter( {
+			has: page.getByRole( 'heading', { name: title, exact: true } ),
+		} );
 	const rows = card( 'Documents' ).locator( 'tbody tr' );
 	await expect( rows.first() ).toBeVisible();
 	for ( const row of await rows.all() ) {
