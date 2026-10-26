@@ -2051,30 +2051,33 @@ What keeps them shipped is `frontend/scripts/search-contract-rules.mjs`: the con
 named rules, each paired with the surfaces it is checked on, run from the app suite, the
 SDK suite and the workspace scripts suite.
 
-### LXX.10 Unpriced models read as free in the cost ledger (T1144)
+### LXX.10 Catalog prices never reach the cost ledger (T1144)
 
 **Where it happened.** Dumont D174's live-LLM suite reads `GET
 /api/v2/llm/cost/summary?site=Sample` (T1127) before and after a run, to report and
 budget what it spent. On the run-docker.cmd stack (Turing started with `OPENAI_API_KEY`,
 which creates an OpenAI `gpt-4o-mini` instance at boot) every call is booked with its
-tokens and `costUsd: 0.0`: 29,358 tokens over 54 calls read $0.00, and the log says
-`[TokenUsage] Recorded: ... model=gpt-4o-mini ... cost=$0.0`.
+tokens and `costUsd: 0.0`: 29,358 tokens over 54 calls read $0.00.
 
-**Why.** Turing prices a call from `TurLLMPrice` (input and output price per million
-tokens), and nothing gives the model the boot provisioning creates a price row. A ledger
-that reads $0 for a paid model is worse than none: a budget in dollars never trips.
+**Why (review, 2026-10-26).** The price exists. `TurLLMPriceCatalogReconciler` (T777)
+writes the catalog's `gpt-4o-mini` rate under the catalog's vendor key, the lower-case
+plugin slug `openai`. `TurLLMTokenUsageService` prices a call with the vendor's id,
+`OPENAI`, and `findByVendorIdAndModelName` matches exactly. Only a case-insensitive
+collation (MySQL) hides it; H2 and PostgreSQL miss every row. `GEMINI_OPENAI` vs
+`gemini-openai` shows case folding alone is not the fix. The unit tests use `openai` on
+both sides, so they pass.
 
 **Workaround used.** The suite holds a token budget (`AI_TOKEN_BUDGET`) beside its
 dollar budget (`AI_COST_BUDGET`), and the dollar one stays inert until this ships.
 
 **What it should do.**
-- Seed list prices for the models Turing provisions or suggests by default (the startup
-  LLM model, the curated catalog of T-block BC), so a fresh instance is priced.
-- A call whose model has no price is booked as unpriced, not $0: `costUsd: null` per
-  entry and a count of unpriced calls in the summary, so a reader can tell "free" from
-  "unknown".
-- Done when the stack's `gpt-4o-mini` calls show a non-zero `costUsd`, and a model with
-  no price shows as unpriced.
+- One key on both sides: the reconciler maps a catalog slug to the vendor whose plugin
+  it is (or the lookup resolves the plugin). Slug-keyed `CATALOG` rows are migrated;
+  `MANUAL` rows are never touched.
+- An unpriced call is booked as unpriced, not $0: `costUsd: null` per entry and an
+  unpriced-call count in the summary.
+- Done when the boot-provisioned `gpt-4o-mini` instance books a non-zero `costUsd` on
+  H2 in a test, and a model with no price shows as unpriced.
 
 ## XXXVII Security hardening (post-audit)
 
@@ -2290,32 +2293,45 @@ build -f Dockerfile.local -t turing-ce:local`. Nothing was changed in Turing.
 
 **What it should do.**
 - Fix the fixture (`icon`, `enabled`) so HEAD builds.
-- Make the gate that ran before this commit type-check the test files too, so a fixture
-  that drifts from its type fails the commit that changed the type, not the next image
-  build.
+- Make the gate that runs before a commit type-check too. Today that gate is
+  `pnpm --filter turing-app test` (vitest, which strips types) and `lint`; nothing runs
+  `tsc` until `build`. The breaking commit (T1133, `9435dcff4d`) passed both. Add a
+  `typecheck` script (`tsc -p tsconfig.app.json --noEmit`, whose `include: ["src"]`
+  covers the tests) and run it from `test` or beside it. CI is manual-dispatch on
+  purpose, so the gate is local, not a push trigger.
 - Done when `mvnw install -pl turing-app` succeeds at HEAD and a test fixture missing a
-  required field fails the frontend gate CI runs.
+  required field fails the local frontend gate.
 
 ### CLIII.2 The published JS SDK lags its source (T1142)
 
 **Where it happened.** Dumont D170 (the WordPress search block suggesting the filters a
 sentence names) needed `postNlFilters`, which `frontend/packages/sdk/src/api.ts` has
-carried since T1085 together with its `TurNLFilters` types. The newest
-`@viglet/turing-sdk` on npm is 2026.3.9, and its `dist` has neither (`npm view
-@viglet/turing-sdk versions`).
+carried since T1085 (2026-10-13) together with its `TurNLFilters` types. The newest
+`@viglet/turing-sdk` on npm is 2026.3.9, published 2026-08-24, and its `dist` has
+neither.
+
+**Why (review, 2026-10-26).** Nothing is broken in the pipeline; nobody ran it. Since
+that release 16 commits touched `packages/sdk/src` (T1085 to T1140) and 5 touched
+`packages/react-sdk/src`, whose npm 2026.3.8 is from the same day. The vanilla SDK ships
+by a hand bump of `package.json` plus a dispatch of `publish-sdk.yml`; the React SDK by
+a dispatch of `publish-js-sdk.yml`, which bumps itself. The changesets in
+`frontend/.changeset` (t1005, t1077, t1079, ...) are consumed by neither, so they pile
+up and are no signal. CI is manual-dispatch on purpose, so the fix is not a push
+trigger.
 
 **Workaround used.** `wordpress/src/public/search-block.js` (`suggestFilters()`) posts
 `{text, locale}` to `/sn/<site>/nl-filters` through the client's generic
-`client.post(..., { csrf: false })`, with a comment naming T1085. It is one call and
-goes away once a release carries the function.
+`client.post(..., { csrf: false })`, with a comment naming T1085.
 
 **What it should do.**
-- Publish an SDK release with every function the source exports
-  (`postNlFilters`, and whatever else landed since 2026.3.9).
-- Make a source change to `packages/sdk` that a consumer can use show up as a release,
-  or at least as a visible "unreleased" count. An SDK whose source runs ahead of npm
-  silently sends consumers to hand-written requests.
-- Done when the published SDK exports `postNlFilters` and `TurNLFilters`.
+- Publish both SDKs now.
+- One visible "unreleased" count per published package: commits under its `src` since
+  the published version's commit (`npm view <pkg> gitHead`, or a release tag), reported
+  by a script the frontend suite or the release checklist runs.
+- Either the publish workflows consume the changesets into the release notes, or the
+  changeset folder is retired, so there is one release record.
+- Done when the published SDK exports `postNlFilters` and `TurNLFilters`, and the count
+  reads 0 right after a publish.
 
 ## CLIV Persona as a first-class actionable surface (§XXXII)
 
@@ -2342,6 +2358,9 @@ changes.
   content-fit endpoint uses so the two can never disagree.
 - Anonymous like content-fit, gated by the same site API-key filter, carrying no prompt
   or private persona fields.
+- A partitioned key (T1133, multisite D153) reaches it and content-fit: both join
+  `TurApiKeyPartitionGuardFilter.ENFORCED`. Neither reads the index; today content-fit
+  answers such a key 403.
 - The JS and Java SDKs expose it beside `fetchPersonaContentFit`.
 - Done when a client lists a site's audience personas and every id it gets is accepted
   by content-fit.

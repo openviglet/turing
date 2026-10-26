@@ -12,14 +12,14 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1144** (deps: —) **The LLM cost ledger books a model with no price row at zero dollars, so a dollar budget never trips** — The model Turing creates at boot has no price, so cost/summary reports a paid run as free and nothing tells free from unknown. → §LXX.10
+- 📋 **T1144** (deps: —) **Catalog prices are keyed by plugin slug (openai) but looked up by vendor id (OPENAI), so every call costs $0** — T777 already writes gpt-4o-mini's catalog price; the key mismatch hides it from every instance, and an unpriced model still reads $0 rather than unknown. → §LXX.10
 
 ## Block CF — What the SN site manifest cannot declare
 
 ## Block BV — The quality gate stops at the package boundary
 
 - 📋 **T1141** (deps: —) **turing-app does not build at HEAD: a bento test fixture fails tsc -b, so the jar and the image fail too** — A test's type drift blocks every production build and image, and nothing caught it at the commit that changed the type. → §CLIII.1
-- 📋 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — Every SDK function shipped since the last release is unusable from npm, and nothing shows the gap. → §CLIII.2
+- 📋 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — 16 sdk/src commits since the 2026-08-24 release (react-sdk: 5) reach no consumer; release is a hand bump plus a manual dispatch, and nothing counts what waits. → §CLIII.2
 
 ## Block AI — Persona as a first-class actionable surface (§XXXII)
 
