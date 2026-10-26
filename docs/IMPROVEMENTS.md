@@ -2207,34 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXXII A prefix match for the last term of an as-you-type search (T1120)
-
-**Where it happened.** Dumont's WordPress search block (Dumont D163) updates its results
-while the visitor types, through the SDK's `createSearchController(...).searchQuery(q)`
-(POST `/api/sn/{site}/search/query`). Against the local stack, site Sample, filtered to
-`site_key:localhost`:
-
-- `{"q":"work"}` answers `queryContext.count` 0;
-- `{"q":"work*"}` answers 4, the four "Workshop on ..." posts.
-
-The search matches whole words only, so every instant search for a half-typed word lands
-on "No results found" until the word is complete. Autocomplete already answers prefixes,
-so the two disagree in the same box.
-
-**Workaround.** `wordpress/src/public/search-block.js` `run( query, prefix )` appends
-`*` to the last word of an instant search when it ends in a letter or digit; submitted
-and picked searches stay exact, and the address bar keeps what was typed. It is a guess
-at the query syntax: a phrase, a quoted term or a field query would break it, and a
-wildcard term loses stemming and highlighting weight.
-
-**What Turing should do.** A search parameter (say `prefixLast: true`, or a `matchMode:
-"as-you-type"`) that treats the last term as a prefix server side, with the analyzer and
-highlighting it uses for whole words, plus the same flag on the SDK's `searchQuery`.
-Then the block drops its `*`. Name it `mode: "instant"`, the one flag T1121, T1125 and
-T1129 also read: the server prefixes the last term and keeps the query out of the search
-log, and the SDK aborts the previous request and reports no search. Same on Solr, Lucene
-and Elasticsearch, with a minimum prefix length.
-
 ## CXXXIII Abort a superseded search in the SDK controller (T1121)
 
 **Where it happened.** Dumont's WordPress search block (Dumont D163) runs a search about

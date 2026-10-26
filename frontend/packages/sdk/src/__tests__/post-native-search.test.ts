@@ -218,6 +218,19 @@ describe("POST-native search (T709)", () => {
     expect(search.getState().data).toBeNull();
   });
 
+  it("T1120 - sends mode instant from an as-you-type box, and standard again on submit", async () => {
+    const c = makeClient();
+    const search = createSearchController(c, { site: "wknd", locale: "en_US" }, undefined, {
+      chat: false,
+    });
+
+    await search.searchQuery("wor", { mode: "instant" });
+    await search.searchQuery("workshop");
+
+    expect(postCalls(c)[0][1]).toMatchObject({ q: "wor", mode: "instant" });
+    expect(postCalls(c)[1][1]).toMatchObject({ q: "workshop", mode: "standard" });
+  });
+
   it("adopts the server's echoed request so the next toggle starts from truth", async () => {
     // The server resolves defaults the client did not send (here: a site sort of
     // `newest` and a targeting-rule-derived filter). The controller must adopt

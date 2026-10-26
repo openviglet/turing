@@ -292,6 +292,7 @@ export type {
   TurSpellCheck,
   // T709 / §XLV — POST-native search: request + link-free response.
   TurSearchRequest,
+  TurSearchMode,
   TurResponseFormat,
   TurFacetItemAction,
   TurStructuredSearchResponse,

@@ -1347,6 +1347,7 @@
 - **T1118** — related-terms answers a browser anonymously under the site API-key gate, and a test reads every SN path from the SDK source and fails when one is not public and gated.
 - **T1136** — The enum-mirror test reads TurSNChatDisabledReason from its own file again, so the SDK suite is green and a drifted ChatDisabledReason union fails it.
 - **T1119** — Failed searches and content gaps are REST metrics with a from/to/period/rows window and lastSeen, served by the service the MCP tools now share, and typed in @viglet/turing-sdk.
+- **T1120** — A POST search with mode instant runs its plain last term as a prefix on every engine, echoes the typed q, stays out of the search log, and the SDK's searchQuery sends it (design §CXXXII superseded: the prefix is a server-side trailing wildcard, the form every engine already accepts, so the last term skips stemming like the client's asterisk did).
 
 ## Block BJ — Configurable, per-language NL ranking lexicon (Lucene analysis)
 

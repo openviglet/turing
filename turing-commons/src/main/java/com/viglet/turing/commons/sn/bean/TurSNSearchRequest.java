@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNResponseFormat;
+import com.viglet.turing.commons.sn.search.TurSNSearchMode;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -132,4 +133,13 @@ public class TurSNSearchRequest implements Serializable {
      * @since 2026.3.4
      */
     private boolean includeSortOptions = false;
+
+    /**
+     * T1120 — {@code "instant"} for a search box that updates while the visitor
+     * types: the last term of {@link #q} matches as a prefix, and the query stays
+     * out of the search log. Echoed, so the next keystroke keeps the mode.
+     *
+     * @since 2026.3.6
+     */
+    private TurSNSearchMode mode = TurSNSearchMode.STANDARD;
 }

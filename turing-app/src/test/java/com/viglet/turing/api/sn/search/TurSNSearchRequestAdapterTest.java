@@ -44,6 +44,49 @@ class TurSNSearchRequestAdapterTest {
 
     private static final URI POST_URI = URI.create("/api/sn/wknd/search/query");
 
+    @org.junit.jupiter.params.ParameterizedTest(name = "[{0}] -> [{1}]")
+    @org.junit.jupiter.params.provider.CsvSource(delimiter = '|', value = {
+            "work                 | work*",
+            "php work             | php work*",
+            "São Pau              | São Pau*",
+            "w                    | w",
+            "work*                | work*",
+            "\"workshop on\"      | \"workshop on\"",
+            "title:work           | title:work",
+            "php AND work         | php AND work",
+            "php -work            | php -work",
+            "*                    | *",
+            "work.                | work.",
+    })
+    void testInstantQueryPrefixesOnlyAPlainLastTerm(String typed, String run) {
+        assertThat(TurSNSearchRequestAdapter.instantQuery(typed)).isEqualTo(run);
+    }
+
+    /** T1120 — an instant search runs the prefix, echoes what was typed and stays out of the log. */
+    @Test
+    void testInstantModeRunsThePrefixAndEchoesTheTypedQuery() {
+        TurSNSearchRequest request = new TurSNSearchRequest();
+        request.setQ("work");
+        request.setMode(com.viglet.turing.commons.sn.search.TurSNSearchMode.INSTANT);
+
+        TurSNSearchParams params = TurSNSearchRequestAdapter.toSearchParams(request, Locale.US);
+        TurSNSearchRequest echo = TurSNSearchRequestAdapter.effectiveRequest(request, params, Locale.US);
+
+        assertThat(params.getQ()).isEqualTo("work*");
+        assertThat(echo.getQ()).isEqualTo("work");
+        assertThat(echo.getMode()).isEqualTo(com.viglet.turing.commons.sn.search.TurSNSearchMode.INSTANT);
+        assertThat(TurSNSearchRequestAdapter.toPostParams(request).isPopulateMetrics()).isFalse();
+    }
+
+    @Test
+    void testStandardModeRunsTheQueryAsTypedAndIsLogged() {
+        TurSNSearchRequest request = new TurSNSearchRequest();
+        request.setQ("work");
+
+        assertThat(TurSNSearchRequestAdapter.toSearchParams(request, Locale.US).getQ()).isEqualTo("work");
+        assertThat(TurSNSearchRequestAdapter.toPostParams(request).isPopulateMetrics()).isTrue();
+    }
+
     @Test
     void testEmptyRequestKeepsGetDefaults() {
         TurSNSearchParams params = TurSNSearchRequestAdapter

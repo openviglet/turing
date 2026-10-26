@@ -19,6 +19,7 @@ import type {
   TuringConfig,
   TurChatResponse,
   TurSearchRequest,
+  TurSearchMode,
   TurSearchResponse,
   TurFacetToggleTarget,
   TurStructuredFacet,
@@ -77,8 +78,13 @@ export interface SearchController extends Store<SearchControllerState> {
    * counterpart of {@link SearchController.search}.
    */
   searchRequest(request: TurSearchRequest): Promise<void>;
-  /** Execute a new text query (resets page to 1). */
-  searchQuery(query: string): Promise<void>;
+  /**
+   * Execute a new text query (resets page to 1). Pass `{ mode: "instant" }` from
+   * a box that searches while the visitor types (T1120): the server matches the
+   * last term as a prefix and leaves the query out of the search log. A call
+   * without it is a submitted search again.
+   */
+  searchQuery(query: string, options?: { mode?: TurSearchMode }): Promise<void>;
   /**
    * Navigate via a Turing href link (facet, pagination, spell-check).
    *
@@ -382,9 +388,9 @@ export function createSearchController(
     subscribe: store.subscribe,
     search: (p) => executeSearch(p),
     searchRequest: (r) => executeRequest(r),
-    searchQuery: (query) =>
+    searchQuery: (query, options) =>
       postNative
-        ? patchRequest({ q: query })
+        ? patchRequest({ q: query, mode: options?.mode ?? "standard" })
         : executeSearch({ ...store.getState().params, q: query, p: "1" }),
     // T713 — deprecated calling deprecated, on purpose: `parseHrefToParams` is
     // where the one-time console notice lives, so routing through it keeps the

@@ -580,6 +580,31 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         assertEquals(viaGet, viaPost, "both transports must agree on spellCheck");
     }
 
+    /**
+     * T1120 — an as-you-type search finds the documents a half-typed word starts,
+     * and echoes the word as typed.
+     */
+    @Test
+    void instantSearchMatchesTheLastTermAsAPrefix() throws Exception {
+        JsonNode instant = json.readTree(postJson("/sn/" + SITE + "/search/query",
+                """
+                        {"q":"drag","locale":"%s","responseFormat":"STRUCTURED","mode":"instant"}"""
+                        .formatted(LOCALE)).body());
+        JsonNode whole = json.readTree(postJson("/sn/" + SITE + "/search/query",
+                """
+                        {"q":"dragon","locale":"%s","responseFormat":"STRUCTURED"}"""
+                        .formatted(LOCALE)).body());
+
+        assertTrue(instant.path("queryContext").path("count").asInt(0) >= 1,
+                "'drag' typed into an instant box must find the dragons: " + instant.path("queryContext"));
+        assertTrue(instant.path("queryContext").path("count").asInt(0)
+                        >= whole.path("queryContext").path("count").asInt(0),
+                "the prefix must find at least what the whole word finds");
+        assertEquals("drag", instant.path("request").path("q").asString(),
+                "the echo carries what was typed, not the prefix query");
+        assertEquals("instant", instant.path("request").path("mode").asString());
+    }
+
     /** T857 — the sort options can be inlined instead of separately fetched. */
     @Test
     void structuredResponseCanInlineTheSortOptions() throws Exception {

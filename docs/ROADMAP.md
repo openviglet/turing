@@ -17,11 +17,10 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1120** (deps: —) **The search matches whole words only, so an as-you-type search for a half-typed word finds nothing** — A search box that updates while typing shows No results until the word is complete, or guesses a wildcard into the query. → §CXXXII
 - 📋 **T1121** (deps: —) **The SDK search controller drops a superseded answer but never aborts the superseded request** — Every pause in a typed query leaves a full search running and downloading on the server for an answer that is thrown away. → §CXXXIII
 - 📋 **T1122** (deps: —) **A custom facet provisioned through the manifest is stored but never appears in the search answer** — A connector that declares range facets as code gets a 200 and a changed facet, and visitors never see a bucket. → §CXXXIV
 - 📋 **T1123** (deps: T1116 ✅) **No cheap probe says whether answer or natural-language filters are on for a site** — A client learns it only by starting an LLM answer or parse, so a status screen either spends tokens or guesses. → §CXXXV
-- 📋 **T1125** (deps: T1120) **Synonym mining proposes a query and its own wildcard or half-typed prefix as synonyms** — An as-you-type search fills the log with work and work*, so every mined suggestion is noise an owner must reject. → §CXXXVII
+- 📋 **T1125** (deps: T1120 ✅) **Synonym mining proposes a query and its own wildcard or half-typed prefix as synonyms** — An as-you-type search fills the log with work and work*, so every mined suggestion is noise an owner must reject. → §CXXXVII
 - 📋 **T1127** (deps: —) **An SN site's chat calls the LLM but the cost ledger records nothing: cost summary stays at zero** — No operator or client can see what a site's generative features cost, so no budget can be held to. → §CXXXIX
 - 📋 **T1128** (deps: —) **The SDK's result-click call can be cut off by the navigation the click starts, and /click refuses a beacon** — Clicks are lost silently, more often on slow networks, so click-through rates undercount. → §CXL
 - 📋 **T1129** (deps: —) **The search controller's analytics option writes a 30-day cookie before consent and reports every as-you-type search** — A consent-respecting site with instant search cannot use the SDK's search analytics and has to re-emit the events itself. → §CXLI

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +29,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.sn.search.TurSNResponseFormat;
+import com.viglet.turing.commons.sn.search.TurSNSearchMode;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 
 /**
@@ -65,6 +67,11 @@ public final class TurSNSearchRequestAdapter {
 
     private static final String QUERY_SUFFIX = "/query";
     private static final String DEFAULT_QUERY = "*";
+    /** T1120 — the shortest last term an instant search turns into a prefix. */
+    static final int INSTANT_MIN_PREFIX = 2;
+    private static final Pattern INSTANT_TERM = Pattern.compile("[\\p{L}\\p{N}]+");
+    private static final Pattern INSTANT_SYNTAX = Pattern.compile(
+            "[\"':()\\[\\]{}*?~^\\\\]|(?:^|\\s)(?:AND|OR|NOT)(?:\\s|$)|(?:^|\\s)[+-]");
 
     private TurSNSearchRequestAdapter() {
         throw new IllegalStateException("Utility class");
@@ -76,7 +83,8 @@ public final class TurSNSearchRequestAdapter {
      */
     public static TurSNSearchParams toSearchParams(TurSNSearchRequest request, Locale locale) {
         TurSNSearchParams params = new TurSNSearchParams();
-        params.setQ(StringUtils.defaultIfBlank(request.getQ(), DEFAULT_QUERY));
+        String q = StringUtils.defaultIfBlank(request.getQ(), DEFAULT_QUERY);
+        params.setQ(request.getMode() == TurSNSearchMode.INSTANT ? instantQuery(q) : q);
         params.setFq(nullIfEmpty(request.getFq()));
         params.setFqAnd(nullIfEmpty(request.getFqAnd()));
         params.setFqOr(nullIfEmpty(request.getFqOr()));
@@ -109,7 +117,29 @@ public final class TurSNSearchRequestAdapter {
         TurSNSitePostParamsBean postParams = new TurSNSitePostParamsBean();
         postParams.setTargetingRules(
                 request.getTargetingRules() == null ? List.of() : request.getTargetingRules());
+        // T1120 — a half-typed word is not a search the visitor made: keep it out of the log.
+        postParams.setPopulateMetrics(request.getMode() != TurSNSearchMode.INSTANT);
         return postParams;
+    }
+
+    /**
+     * T1120 — the query an as-you-type search runs: its last term as a prefix, so
+     * {@code work} finds {@code Workshop} before the word is finished. A query that
+     * already spells syntax (a phrase, a field, a group, a wildcard or a boolean
+     * operator) is left as typed, and so is a last term shorter than
+     * {@link #INSTANT_MIN_PREFIX} characters, which would match almost everything.
+     */
+    static String instantQuery(String q) {
+        String trimmed = q.trim();
+        if (trimmed.isEmpty() || INSTANT_SYNTAX.matcher(trimmed).find()) {
+            return q;
+        }
+        int lastSpace = trimmed.lastIndexOf(' ');
+        String last = trimmed.substring(lastSpace + 1);
+        if (last.length() < INSTANT_MIN_PREFIX || !INSTANT_TERM.matcher(last).matches()) {
+            return q;
+        }
+        return trimmed + "*";
     }
 
     /**
@@ -125,6 +155,12 @@ public final class TurSNSearchRequestAdapter {
                 effectiveRequest(params, locale, request.getResponseFormat());
         effective.setTargetingRules(orEmpty(request.getTargetingRules()));
         effective.setAutoCorrectionDisabled(request.isAutoCorrectionDisabled());
+        // T1120 — echo what was typed, not the prefix query it ran, so the next
+        // keystroke does not send an asterisk back.
+        if (request.getMode() == TurSNSearchMode.INSTANT) {
+            effective.setQ(StringUtils.defaultIfBlank(request.getQ(), DEFAULT_QUERY));
+            effective.setMode(TurSNSearchMode.INSTANT);
+        }
         return effective;
     }
 

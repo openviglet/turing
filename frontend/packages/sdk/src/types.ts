@@ -270,7 +270,16 @@ export interface TurSearchRequest {
    * `request`: re-sending the echo asks for results, not for the list again.
    */
   includeSortOptions?: boolean;
+  /**
+   * T1120 — `"instant"` for a search box that updates while the visitor types:
+   * the server matches the last term as a prefix (`work` finds `Workshop`) and
+   * keeps the query out of the search log. Echoed back on `request`.
+   */
+  mode?: TurSearchMode;
 }
+
+/** T1120 — `"standard"` (the default) or `"instant"` for an as-you-type search. */
+export type TurSearchMode = "standard" | "instant";
 
 /** T709 — a facet value in the link-free response. Never carries a URL. */
 export interface TurStructuredFacetItem {
