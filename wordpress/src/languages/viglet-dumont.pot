@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-26T22:26:47+00:00\n"
+"POT-Creation-Date: 2026-10-26T22:53:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -37,6 +37,7 @@ msgstr ""
 #: src/blocks/search/parts/box.php:48
 #: src/includes/class-viglet-dumont-native-search.php:176
 #: src/includes/class-viglet-dumont-post-state.php:99
+#: assets/admin/insights.js:78
 #: assets/admin/tuning.js:373
 #: src/admin/js/editor-panel.js:211
 #: src/admin/js/search-block-editor.js:108
@@ -44,6 +45,7 @@ msgid "Search"
 msgstr ""
 
 #: src/admin/views/settings-page.php:52
+#: assets/admin/insights.js:88
 #: assets/admin/mapping.js:339
 #: assets/admin/tuning.js:253
 #: assets/admin/tuning.js:380
@@ -451,23 +453,23 @@ msgstr ""
 msgid "Featured"
 msgstr ""
 
-#: src/blocks/search/parts/main.php:70
+#: src/blocks/search/parts/main.php:72
 msgid "Was"
 msgstr ""
 
-#: src/blocks/search/parts/main.php:73
+#: src/blocks/search/parts/main.php:75
 msgid "Add to cart"
 msgstr ""
 
-#: src/blocks/search/parts/main.php:90
+#: src/blocks/search/parts/main.php:92
 msgid "Or start from the latest posts:"
 msgstr ""
 
-#: src/blocks/search/parts/main.php:100
+#: src/blocks/search/parts/main.php:102
 msgid "Try again"
 msgstr ""
 
-#: src/blocks/search/parts/main.php:101
+#: src/blocks/search/parts/main.php:103
 msgid "Search with WordPress instead"
 msgstr ""
 
@@ -565,7 +567,7 @@ msgid "Settings"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:51
-#: src/includes/class-viglet-dumont-admin.php:94
+#: src/includes/class-viglet-dumont-admin.php:109
 msgid "Connect to Turing"
 msgstr ""
 
@@ -574,7 +576,7 @@ msgid "Setup"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:59
-#: src/includes/class-viglet-dumont-admin.php:101
+#: src/includes/class-viglet-dumont-admin.php:116
 msgid "Search fields"
 msgstr ""
 
@@ -583,7 +585,7 @@ msgid "Fields"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:67
-#: src/includes/class-viglet-dumont-admin.php:108
+#: src/includes/class-viglet-dumont-admin.php:123
 msgid "Search health"
 msgstr ""
 
@@ -592,7 +594,7 @@ msgid "Health"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-admin.php:75
-#: src/includes/class-viglet-dumont-admin.php:87
+#: src/includes/class-viglet-dumont-admin.php:102
 msgid "Search tuning"
 msgstr ""
 
@@ -600,39 +602,48 @@ msgstr ""
 msgid "Tuning"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:209
+#: src/includes/class-viglet-dumont-admin.php:83
+#: src/includes/class-viglet-dumont-admin.php:95
+msgid "Search insights"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:84
+msgid "Insights"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:225
 msgid "Indexing..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:210
+#: src/includes/class-viglet-dumont-admin.php:226
 msgid "Complete!"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:211
+#: src/includes/class-viglet-dumont-admin.php:227
 msgid "Error"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:212
+#: src/includes/class-viglet-dumont-admin.php:228
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:213
+#: src/includes/class-viglet-dumont-admin.php:229
 msgid "Deleting..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:214
+#: src/includes/class-viglet-dumont-admin.php:230
 msgid "All indexed content has been deleted."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:215
+#: src/includes/class-viglet-dumont-admin.php:231
 msgid "Testing connection..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:216
+#: src/includes/class-viglet-dumont-admin.php:232
 msgid "Total"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:234
+#: src/includes/class-viglet-dumont-admin.php:250
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr ""
 
@@ -926,10 +937,12 @@ msgid "Upcoming"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-mapping.php:323
+#: assets/admin/insights.js:22
 msgid "Last 7 days"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-mapping.php:328
+#: assets/admin/insights.js:23
 msgid "Last 30 days"
 msgstr ""
 
@@ -1169,33 +1182,33 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:86
+#: src/viglet-dumont.php:87
 msgid "Answers with sources"
 msgstr ""
 
-#: src/viglet-dumont.php:87
+#: src/viglet-dumont.php:88
 msgid "Chat"
 msgstr ""
 
-#: src/viglet-dumont.php:88
+#: src/viglet-dumont.php:89
 msgid "Natural-language filters"
 msgstr ""
 
-#: src/viglet-dumont.php:89
+#: src/viglet-dumont.php:90
 msgid "Catalog copilot"
 msgstr ""
 
 #. translators: %s: Turing's console address.
-#: src/viglet-dumont.php:102
+#: src/viglet-dumont.php:103
 #, php-format
 msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
 msgstr ""
 
-#: src/viglet-dumont.php:728
+#: src/viglet-dumont.php:752
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:753
+#: src/viglet-dumont.php:777
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -1357,6 +1370,82 @@ msgstr ""
 
 #: assets/admin/health.js:409
 msgid "Nothing has been sent yet."
+msgstr ""
+
+#: assets/admin/insights.js:21
+msgid "Last 24 hours"
+msgstr ""
+
+#: assets/admin/insights.js:24
+msgid "All time"
+msgstr ""
+
+#. translators: %s: a search visitors made.
+#: assets/admin/insights.js:109
+#, js-format
+msgid "Write about this: “%s”"
+msgstr ""
+
+#: assets/admin/insights.js:116
+msgid "Write about this"
+msgstr ""
+
+#: assets/admin/insights.js:134
+msgid "Searches"
+msgstr ""
+
+#: assets/admin/insights.js:166
+msgid "What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out."
+msgstr ""
+
+#: assets/admin/insights.js:173
+msgid "Period"
+msgstr ""
+
+#: assets/admin/insights.js:186
+msgid "No searches in this period yet. They appear here once visitors use the site’s search."
+msgstr ""
+
+#. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
+#: assets/admin/insights.js:197
+#, js-format
+msgid "%1$s searches, %2$s clicks, %3$s click-through."
+msgstr ""
+
+#: assets/admin/insights.js:207
+msgid "Top searches"
+msgstr ""
+
+#: assets/admin/insights.js:208
+msgid "No searches in this period."
+msgstr ""
+
+#: assets/admin/insights.js:216
+msgid "Clicks"
+msgstr ""
+
+#: assets/admin/insights.js:220
+msgid "Click-through"
+msgstr ""
+
+#: assets/admin/insights.js:226
+msgid "Searches that found nothing"
+msgstr ""
+
+#: assets/admin/insights.js:230
+msgid "Every search found something."
+msgstr ""
+
+#: assets/admin/insights.js:238
+msgid "Last searched"
+msgstr ""
+
+#: assets/admin/insights.js:250
+msgid "Found, but never opened"
+msgstr ""
+
+#: assets/admin/insights.js:254
+msgid "Every search that found results led to a click."
 msgstr ""
 
 #: assets/admin/mapping.js:32

@@ -4,8 +4,8 @@
   "description": "The plugin's admin screens, built with @wordpress/scripts into src/admin/build/.",
   "license": "MIT",
   "scripts": {
-    "build": "wp-scripts build assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js assets/admin/tuning.js --output-path=src/admin/build && node bin/copy-sdk.mjs",
-    "start": "wp-scripts start assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js assets/admin/tuning.js --output-path=src/admin/build && node bin/copy-sdk.mjs",
+    "build": "wp-scripts build assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js assets/admin/tuning.js assets/admin/insights.js --output-path=src/admin/build && node bin/copy-sdk.mjs",
+    "start": "wp-scripts start assets/admin/health.js assets/admin/mapping.js assets/admin/setup.js assets/admin/tuning.js assets/admin/insights.js --output-path=src/admin/build && node bin/copy-sdk.mjs",
     "lint:js": "wp-scripts lint-js assets/admin src/public bin src/admin/js/search-block-editor.js src/admin/js/related-block-editor.js tests/e2e playwright.config.mjs playwright.ai.config.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ai": "playwright test -c playwright.ai.config.mjs",

@@ -40,6 +40,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-diagnostics.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-tuning.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-related.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-woocommerce.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-insights.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
@@ -475,7 +476,30 @@ function viglet_dumont_register_rest_routes(): void {
 
 	// Search tuning (D172): synonyms and promoted results on the SN site.
 	$can_manage = static fn () => current_user_can( 'manage_options' );
-	$answer     = static fn ( $result ) => is_wp_error( $result )
+
+	// Search insights (D178): one period's searches, failures and clicks, read from Turing.
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/insights',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static function ( WP_REST_Request $request ) {
+				$report = ( new Viglet_Dumont_Insights() )->report( (string) $request['period'] );
+				return is_wp_error( $report )
+					? new WP_REST_Response( array( 'message' => $report->get_error_message() ), 502 )
+					: new WP_REST_Response( $report, 200 );
+			},
+			'permission_callback' => $can_manage,
+			'args'                => array(
+				'period' => array(
+					'type'    => 'string',
+					'enum'    => Viglet_Dumont_Insights::PERIODS,
+					'default' => 'this-week',
+				),
+			),
+		)
+	);
+	$answer = static fn ( $result ) => is_wp_error( $result )
 		? new WP_REST_Response( array( 'message' => $result->get_error_message() ), 'viglet_dumont_not_ours' === $result->get_error_code() ? 403 : 502 )
 		: new WP_REST_Response( true === $result ? ( new Viglet_Dumont_Tuning() )->all() : $result, 200 );
 	register_rest_route(

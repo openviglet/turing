@@ -78,6 +78,21 @@ class Viglet_Dumont_Admin {
 			'viglet-dumont-tuning',
 			array( $this, 'render_tuning_page' )
 		);
+		add_submenu_page(
+			'viglet-dumont',
+			__( 'Search insights', 'viglet-dumont' ),
+			__( 'Insights', 'viglet-dumont' ),
+			'manage_options',
+			'viglet-dumont-insights',
+			array( $this, 'render_insights_page' )
+		);
+	}
+
+	/**
+	 * The Search insights page (D178): a mount point for the app in admin/build/insights.js.
+	 */
+	public function render_insights_page(): void {
+		echo '<div class="wrap"><h1>' . esc_html__( 'Search insights', 'viglet-dumont' ) . '</h1><div id="viglet-dumont-insights"></div></div>';
 	}
 
 	/**
@@ -171,10 +186,11 @@ class Viglet_Dumont_Admin {
 	 */
 	public function enqueue_assets( string $hook ): void {
 		$builds = array(
-			'viglet-dumont_page_viglet-dumont-health' => 'health',
-			'viglet-dumont_page_viglet-dumont-fields' => 'mapping',
-			'viglet-dumont_page_viglet-dumont-setup'  => 'setup',
-			'viglet-dumont_page_viglet-dumont-tuning' => 'tuning',
+			'viglet-dumont_page_viglet-dumont-health'   => 'health',
+			'viglet-dumont_page_viglet-dumont-fields'   => 'mapping',
+			'viglet-dumont_page_viglet-dumont-setup'    => 'setup',
+			'viglet-dumont_page_viglet-dumont-tuning'   => 'tuning',
+			'viglet-dumont_page_viglet-dumont-insights' => 'insights',
 		);
 		if ( isset( $builds[ $hook ] ) ) {
 			$this->enqueue_build( $builds[ $hook ] );
