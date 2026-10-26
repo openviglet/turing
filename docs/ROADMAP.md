@@ -20,8 +20,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-- 📋 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — 16 sdk/src commits since the 2026-08-24 release (react-sdk: 5) reach no consumer; release is a hand bump plus a manual dispatch, and nothing counts what waits. → §CLIII.2
-
 ## Block AI — Persona as a first-class actionable surface (§XXXII)
 
 - 📋 **T1143** (deps: —) **A site's client cannot list the audience personas its content-fit endpoint accepts, so it cannot offer one** — Every consumer of content-fit would copy Turing's agent and persona resolution to find valid ids, or hardcode them. → §CLIV.1
@@ -37,6 +35,15 @@
 - **fq[] on /search/duplicates keeps clusters to the documents that match**
   TurSdkContractIT's two-value test also runs on the duplicates endpoint of a hybrid
   site.
+
+## Done when — T1142
+
+- **npm serves postNlFilters and TurNLFilters from @viglet/turing-sdk** After the sdk
+  bump and a publish-sdk.yml dispatch, `pnpm check:unreleased` reads 0 for turing-sdk
+  and turing-react-sdk.
+- **One release record: changesets consumed by the publish or retired**
+  frontend/.changeset either feeds the publish workflows' version and notes, or is
+  deleted along with its README and scripts.
 
 ## Non-goals (do NOT add as tasks)
 
