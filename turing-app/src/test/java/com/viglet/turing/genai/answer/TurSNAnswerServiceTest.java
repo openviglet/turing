@@ -29,6 +29,8 @@ import com.viglet.turing.genai.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.TurGenAiContext;
 import com.viglet.turing.genai.TurGenAiContextFactory;
+import com.viglet.turing.genai.TurSNChatDisabledReason;
+import com.viglet.turing.genai.TurSNChatRouteResolver;
 import com.viglet.turing.genai.TurSNGenAi;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
@@ -66,9 +68,14 @@ class TurSNAnswerServiceTest {
     private TurFollowUpQuestionService followUpQuestionService;
     @Mock
     private com.viglet.turing.system.TurGlobalSettingsService globalSettingsService;
+    @Mock
+    private TurSNChatRouteResolver chatRouteResolver;
 
     @InjectMocks
     private TurSNAnswerService service;
+
+    private static final TurSNChatRouteResolver.Decision RAG = new TurSNChatRouteResolver.Decision(
+            TurSNChatRouteResolver.Route.RAG, TurSNChatDisabledReason.NONE);
 
     private static List<ServerSentEvent<String>> collect(Flux<ServerSentEvent<String>> flux) {
         return flux.collectList().block();
@@ -109,6 +116,7 @@ class TurSNAnswerServiceTest {
         siteLocale.setCore("sn_site1_en");
 
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(genAi)).thenReturn(RAG);
         when(turDefaultAgentResolver.resolveEffectiveAgent(genAi)).thenReturn(agent);
         when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH))
                 .thenReturn(siteLocale);
@@ -139,6 +147,7 @@ class TurSNAnswerServiceTest {
         agent.setLlmInstances(java.util.Set.of(llm));
 
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(genAi)).thenReturn(RAG);
         when(turDefaultAgentResolver.resolveEffectiveAgent(genAi)).thenReturn(agent);
         lenient().when(turGenAiContextFactory.build(any(), any()))
                 .thenReturn(org.mockito.Mockito.mock(TurGenAiContext.class));
@@ -158,5 +167,46 @@ class TurSNAnswerServiceTest {
         org.mockito.Mockito.verify(turGenAi)
                 .assistantConversationStreaming(any(), any(), any(), captor.capture());
         assertThat(captor.getValue().filters()).containsEntry("vendor", List.of("Anthropic"));
+    }
+
+    /**
+     * T1116 — a site with no GenAI binding answers through the Default AI Agent,
+     * as its chat does, instead of reporting AI as off.
+     */
+    @Test
+    void aSiteWithoutGenAiAnswersThroughTheDefaultAgent() {
+        TurSNSite site = new TurSNSite();
+        TurAIAgent agent = new TurAIAgent();
+        TurLLMInstance llm = new TurLLMInstance();
+        llm.setEnabled(1);
+        agent.setLlmInstances(java.util.Set.of(llm));
+
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(null)).thenReturn(RAG);
+        when(turDefaultAgentResolver.resolveEffectiveAgent(null)).thenReturn(agent);
+        lenient().when(turGenAiContextFactory.build(any(), any()))
+                .thenReturn(org.mockito.Mockito.mock(TurGenAiContext.class));
+        when(turGenAi.assistantConversationStreaming(any(), any(), any(), any()))
+                .thenReturn(Flux.just(new ChatResponse("assistant", "From the default agent", "token")));
+        lenient().when(followUpQuestionService.generate(any(), any(), any(), any()))
+                .thenReturn(List.of());
+
+        List<ServerSentEvent<String>> events = collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of()));
+
+        assertThat(eventNames(events)).doesNotContain("error").contains("token");
+    }
+
+    /** T1116 — a refusal names the reason {@code /chat/enabled} reports. */
+    @Test
+    void anUnavailableRouteRefusesWithTheChatReason() {
+        TurSNSite site = new TurSNSite();
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(null)).thenReturn(new TurSNChatRouteResolver.Decision(
+                TurSNChatRouteResolver.Route.UNAVAILABLE, TurSNChatDisabledReason.NO_GENAI));
+
+        List<ServerSentEvent<String>> events = collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of()));
+
+        assertThat(eventNames(events)).containsExactly("error");
+        assertThat(events.get(0).data()).contains("AI is not enabled for site: site1").contains("NO_GENAI");
     }
 }

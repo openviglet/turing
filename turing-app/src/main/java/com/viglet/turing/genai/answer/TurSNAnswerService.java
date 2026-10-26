@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.genai.TurAgentChatExecutor;
 import com.viglet.turing.genai.TurDefaultAgentResolver;
+import com.viglet.turing.genai.TurSNChatRouteResolver;
 import com.viglet.turing.genai.TurGenAiContext;
 import com.viglet.turing.genai.TurGenAiContextFactory;
 import com.viglet.turing.genai.TurSNGenAi;
@@ -64,6 +65,7 @@ public class TurSNAnswerService {
     private final TurSNGenAi turGenAi;
     private final TurFollowUpQuestionService followUpQuestionService;
     private final TurGlobalSettingsService globalSettingsService;
+    private final TurSNChatRouteResolver chatRouteResolver;
 
     public TurSNAnswerService(TurSNSearchProcess turSNSearchProcess,
             TurDefaultAgentResolver turDefaultAgentResolver,
@@ -71,7 +73,9 @@ public class TurSNAnswerService {
             TurSNSiteLocaleRepository turSNSiteLocaleRepository,
             TurSNGenAi turGenAi,
             TurFollowUpQuestionService followUpQuestionService,
-            TurGlobalSettingsService globalSettingsService) {
+            TurGlobalSettingsService globalSettingsService,
+            TurSNChatRouteResolver chatRouteResolver) {
+        this.chatRouteResolver = chatRouteResolver;
         this.turSNSearchProcess = turSNSearchProcess;
         this.turDefaultAgentResolver = turDefaultAgentResolver;
         this.turGenAiContextFactory = turGenAiContextFactory;
@@ -116,8 +120,12 @@ public class TurSNAnswerService {
     private Flux<ServerSentEvent<String>> composeAnswer(TurSNSite site, String siteName,
             String query, Locale locale, Map<String, List<String>> filters) {
         TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
-        if (genAi == null) {
-            return Flux.just(TurAnswerStreamFramer.errorEvent("AI is not enabled for site: " + siteName));
+        // T1116 — the same readiness chat reads, so /answer and /chat/enabled agree:
+        // a site with no GenAI binding answers through the Default AI Agent (T622).
+        TurSNChatRouteResolver.Decision route = chatRouteResolver.resolve(genAi);
+        if (!route.available()) {
+            return Flux.just(TurAnswerStreamFramer.errorEvent(
+                    "AI is not enabled for site: " + siteName + " (" + route.reason() + ")"));
         }
         TurAIAgent agent = turDefaultAgentResolver.resolveEffectiveAgent(genAi);
         if (agent == null || agent.getLlmInstances() == null || agent.getLlmInstances().isEmpty()) {
@@ -155,7 +163,7 @@ public class TurSNAnswerService {
      * site's knowledge-base mode and the SN RAG rerank configuration.
      */
     private TurAnswerProvenance buildProvenance(TurSNSiteGenAi genAi) {
-        String kbMode = genAi.getKnowledgeBaseMode() != null
+        String kbMode = genAi != null && genAi.getKnowledgeBaseMode() != null
                 ? genAi.getKnowledgeBaseMode().name()
                 : null;
         boolean rerankEnabled = globalSettingsService.isRagSnRerankEnabled();

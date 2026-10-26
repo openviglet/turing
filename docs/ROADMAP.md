@@ -17,14 +17,14 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1116** (deps: —) **Chat answers through the default agent while /answer says AI is not enabled, and no manifest can enable it** — A connector that provisions its site as code cannot make the answer engine work, and the two AI endpoints disagree. → §CXXVIII
+- ⏳ **T1116** (deps: —) **Chat answers through the default agent while /answer says AI is not enabled, and no manifest can enable it** — The manifest still has no genAi block, so a connector cannot turn a site's GenAI on as code. → §CXXVIII
 - 📋 **T1117** (deps: —) **Natural-language filters resolve last year from the model's training date, returning a 2022 range in 2026** — A visitor asking for recent content gets a filter that hides all of it, with no sign it was guessed. → §CXXIX
 - 📋 **T1118** (deps: —) **related-terms answers 401 to a browser, though the SDK exports it beside the public search calls** — A site cannot offer related searches without a server proxy, and nothing checks the SDK against the filter chain. → §CXXX
 - 📋 **T1119** (deps: —) **Zero-result queries and content gaps are MCP tools only, with no REST endpoint a connector can call** — An admin screen outside the console cannot show what visitors failed to find, the metric that most tells what to write next. → §CXXXI
 - 📋 **T1120** (deps: —) **The search matches whole words only, so an as-you-type search for a half-typed word finds nothing** — A search box that updates while typing shows No results until the word is complete, or guesses a wildcard into the query. → §CXXXII
 - 📋 **T1121** (deps: —) **The SDK search controller drops a superseded answer but never aborts the superseded request** — Every pause in a typed query leaves a full search running and downloading on the server for an answer that is thrown away. → §CXXXIII
 - 📋 **T1122** (deps: —) **A custom facet provisioned through the manifest is stored but never appears in the search answer** — A connector that declares range facets as code gets a 200 and a changed facet, and visitors never see a bucket. → §CXXXIV
-- 📋 **T1123** (deps: T1116) **No cheap probe says whether answer or natural-language filters are on for a site** — A client learns it only by starting an LLM answer or parse, so a status screen either spends tokens or guesses. → §CXXXV
+- 📋 **T1123** (deps: T1116 ⏳) **No cheap probe says whether answer or natural-language filters are on for a site** — A client learns it only by starting an LLM answer or parse, so a status screen either spends tokens or guesses. → §CXXXV
 - 📋 **T1125** (deps: T1120) **Synonym mining proposes a query and its own wildcard or half-typed prefix as synonyms** — An as-you-type search fills the log with work and work*, so every mined suggestion is noise an owner must reject. → §CXXXVII
 - 📋 **T1127** (deps: —) **An SN site's chat calls the LLM but the cost ledger records nothing: cost summary stays at zero** — No operator or client can see what a site's generative features cost, so no budget can be held to. → §CXXXIX
 - 📋 **T1128** (deps: —) **The SDK's result-click call can be cut off by the navigation the click starts, and /click refuses a beacon** — Clicks are lost silently, more often on slow networks, so click-through rates undercount. → §CXL
@@ -36,6 +36,13 @@
 ## Block CF — What the SN site manifest cannot declare
 
 - 📋 **T1135** (deps: —) **The SN manifest cannot set a site's facet behaviour, so provisioning as code cannot choose drill-down or multi-select** — facetType, facetItemType and itemsPerFacet are console-only, so a connector must click through the console to get facets that stay visible. → §CXLVII
+
+## Done when — T1116
+
+- **A manifest genAi block turns a site's GenAI on** POST /api/sn/manifest with genAi
+  {enabled, agent id or default, knowledge-base mode} creates or updates the site's
+  GenAI binding, /plan reports the change, and an absent block leaves the binding
+  untouched.
 
 ## Non-goals (do NOT add as tasks)
 
