@@ -11,5 +11,7 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
+- ⏸ **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — set aside (Needs filterable fields on vector points, as T1133 does.): The duplicates search takes no filter: vector points carry no field to filter on. → §CXLIV
+
 ## Block CF — What the SN site manifest cannot declare
 
