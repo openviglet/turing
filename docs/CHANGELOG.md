@@ -1343,6 +1343,7 @@
 - **T1114** — A contract IT now proves the structured POST search carries the same spellCheck the GET search returns for a misspelt query, on the Lucene sample site (design §CXXVI superseded: the gap does not exist on 2026.3: the structured POST already maps widget.spellCheck, and the report's probe sent no responseFormat, so its LINKS body kept the correction under widget).
 - **T1115** — A structured search now keeps an applied facet on drill-down sites too, its value selected and clearable, while the LINKS response keeps the legacy drill-down (design §CXXVII superseded: the facet was dropped by the site's facetItemType, not by the transport: only OR sites kept it, which is why the OR contract fixture passed).
 - **T1116** — A manifest genAi block now creates or updates the site's GenAI binding (an agent id or the Default AI Agent, plus the knowledge-base mode), reported as genAiChanged and genAiToChange (design §CXXVIII superseded: its enabled flag has nothing to switch: a site with no binding already answers through the Default AI Agent, so declaring the block is what turns GenAI on).
+- **T1117** — NL filters resolve last year, this month, since March and the like in code against the server's date, give the model TODAY, and drop a date range nothing dates as UNGROUNDED_DATE (design §CXXIX superseded: a site has no time zone to resolve in, so today is the server's date).
 
 ## Block BJ — Configurable, per-language NL ranking lexicon (Lucene analysis)
 

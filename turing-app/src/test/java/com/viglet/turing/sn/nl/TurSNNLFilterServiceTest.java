@@ -179,6 +179,75 @@ class TurSNNLFilterServiceTest {
         assertThat(result.q()).isEqualTo("vaga com carteira assinada");
     }
 
+    private void siteWithADateField() {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(parser.isAvailable()).thenReturn(true);
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("publication_date", TurSEFieldType.DATE, false)));
+        service.setClockForTest(java.time.Clock.fixed(java.time.Instant.parse("2026-10-24T12:00:00Z"),
+                java.time.ZoneOffset.UTC));
+    }
+
+    @Test
+    @DisplayName("T1117 - 'last year' is resolved against today, whatever range the model guessed")
+    void lastYearIsResolvedAgainstToday() {
+        siteWithADateField();
+        parserAnswers("""
+                {"query":{"bool":{
+                  "filter":[{"range":{"publication_date":{"gte":"2022-01-01","lte":"2023-01-01"}}}],
+                  "must":[{"match":{"_text_":"php"}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "en_US", "posts about php from last year");
+
+        assertThat(result.q()).isEqualTo("php");
+        assertThat(result.fq()).containsExactly("publication_date:[2025-01-01 TO 2025-12-31]");
+        assertThat(result.filters().get(0).sourceWords()).containsExactly("last year");
+        assertThat(result.filters().get(0).confidence()).isEqualTo(TurSNNLFilterService.LITERAL);
+        assertThat(result.dropped()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("T1117 - a resolved range keeps the instant form the model used")
+    void resolvedRangeKeepsTheInstantForm() {
+        siteWithADateField();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"range":{"publication_date":{"gte":"2023-05-01T00:00:00Z"}}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "en_US", "news this month");
+
+        assertThat(result.fq()).containsExactly("publication_date:[2026-10-01T00:00:00Z TO 2026-10-24T23:59:59Z]");
+    }
+
+    @Test
+    @DisplayName("T1117 - a date range nothing in the text dates is dropped, never sent as a filter")
+    void anUngroundedDateRangeIsDropped() {
+        siteWithADateField();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"range":{"publication_date":{"gte":"2022-01-01","lte":"2023-01-01"}}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "en_US", "recent posts about php");
+
+        assertThat(result.fq()).isEmpty();
+        assertThat(result.dropped()).singleElement().satisfies(d -> {
+            assertThat(d.field()).isEqualTo("publication_date");
+            assertThat(d.reason()).isEqualTo(TurSNNLFilterService.UNGROUNDED_DATE);
+        });
+    }
+
+    @Test
+    @DisplayName("T1117 - a range the text dates by year is kept")
+    void aRangeDatedByYearIsKept() {
+        siteWithADateField();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"range":{"publication_date":{"gte":"2024-01-01","lte":"2024-12-31"}}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "en_US", "posts from 2024");
+
+        assertThat(result.fq()).containsExactly("publication_date:[2024-01-01 TO 2024-12-31]");
+        assertThat(result.filters().get(0).sourceWords()).containsExactly("2024");
+        assertThat(result.filters().get(0).confidence()).isEqualTo(TurSNNLFilterService.INFERRED);
+    }
+
     @Test
     @DisplayName("A range becomes a range filter query, open where the request names no bound")
     void rangeBecomesARangeFilterQuery() {

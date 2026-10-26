@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.sn.dsl.eval;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +57,11 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
     private final TurLLMInstanceRepository llmInstanceRepository;
     private final TurLlmModelFactory llmModelFactory;
     private final TurSecretCryptoService secretCryptoService;
+    private Clock clock = Clock.systemDefaultZone();
+
+    void setClockForTest(Clock clock) {
+        this.clock = clock;
+    }
 
     public TurLlmNLFacetParser(TurGlobalSettingsService globalSettingsService,
             TurLLMInstanceRepository llmInstanceRepository,
@@ -123,6 +130,9 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
                   for a minimum, descending for a maximum. NEVER put the superlative \
                   word itself into a term/match filter: there is no facet value for \
                   it, so that returns zero results.
+                - Resolve a relative date ("last year", "this month", "since March") \
+                  against TODAY, never against your own knowledge of the date. If a \
+                  date cannot be resolved from the query and TODAY, OMIT the range.
                 - Facet/term values are matched case-insensitively, so casing need \
                   not be exact; still prefer the value as written in the query.
 
@@ -137,6 +147,8 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
         if (StringUtils.hasText(request.locale())) {
             sb.append("\nLOCALE: ").append(request.locale());
         }
+        // T1117 — without it the model dates "last year" from its training data.
+        sb.append("\nTODAY: ").append(LocalDate.now(clock));
         sb.append("\nQUERY: ").append(request.query());
         sb.append("\n\nReturn the Query DSL JSON body.");
         return sb.toString();

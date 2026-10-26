@@ -2207,33 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXIX nl-filters resolve relative dates against today (T1117)
-
-**Where it happened.** Probing Turing's AI features for Dumont's WordPress plugin (Track
-S, D173 plans natural-language filters in the search block), on a local Turing with
-`gpt-4o-mini` as the default LLM, on 2026-10-24.
-
-**The request.** `POST /api/sn/Sample/nl-filters` with `{"text":"posts about php from
-last year","locale":"en_US"}`.
-
-**What came back.** `q: "php"` and the filter `publication_date:[2022-01-01 TO
-2023-01-01]`, with `grounded: false` and `confidence: 0.6`. "Last year" is 2025. The
-model filled the range from its own training date, so the filter quietly hides every
-post the visitor asked for.
-
-**Expected.** Relative dates ("last year", "this month", "since March") resolve against
-the server's current date in the site's time zone. When the model cannot ground a range,
-it drops the filter (into `dropped`) rather than returning a guessed one.
-
-**Workaround.** None. The plugin waits on this line before shipping the feature.
-
-**What Turing should do.**
-- Put today's date and the site's time zone into the nl-filters prompt.
-- Resolve the common relative ranges in code before the LLM is asked, so they are exact
-  and cost nothing.
-- Never emit an ungrounded range as an `fq`: return it under `dropped` with the reason.
-- Add a test pinning "last year", "this month" and "since <month>" against a fixed clock.
-
 ## CXXX Every endpoint the SDK calls without a key is public (T1118)
 
 **Where it happened.** Dumont's WordPress plugin (Track S) runs every visitor-side call

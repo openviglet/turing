@@ -22,6 +22,8 @@
 package com.viglet.turing.sn.nl;
 
 import java.text.Normalizer;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -38,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -76,6 +79,8 @@ public class TurSNNLFilterService {
     static final String TEXT_FIELD = "_text_";
     static final String UNKNOWN_FIELD = "UNKNOWN_FIELD";
     static final String NOT_IN_SITE = "NOT_IN_SITE";
+    /** T1117 — a date range nothing in the text dates: a guess, never sent as a filter. */
+    static final String UNGROUNDED_DATE = "UNGROUNDED_DATE";
     static final double LITERAL = 1.0;
     static final double INFERRED = 0.6;
     static final double UNCHECKED = 0.3;
@@ -87,6 +92,11 @@ public class TurSNNLFilterService {
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurNLFacetParser parser;
     private final TurDslSearchService dslSearchService;
+    private Clock clock = Clock.systemDefaultZone();
+
+    void setClockForTest(Clock clock) {
+        this.clock = clock;
+    }
 
     public TurSNNLFilterService(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
@@ -371,7 +381,7 @@ public class TurSNNLFilterService {
         return spelledInText ? LITERAL : INFERRED;
     }
 
-    private static Optional<TurSNNLFilters.Filter> rangeFilter(String field, String[] range,
+    private Optional<TurSNNLFilters.Filter> rangeFilter(String field, String[] range,
             Map<String, TurNLFacetField> schema, String text, List<TurSNNLFilters.Dropped> dropped) {
         if (!schema.containsKey(field)) {
             dropped.add(new TurSNNLFilters.Dropped(field, "[" + range[0] + " TO " + range[1] + "]",
@@ -380,6 +390,9 @@ public class TurSNNLFilterService {
         }
         if (range[0] == null && range[1] == null) {
             return Optional.empty();
+        }
+        if (schema.get(field).type() == TurSEFieldType.DATE) {
+            return dateRangeFilter(field, range, text, dropped);
         }
         List<String> sourceWords = new ArrayList<>();
         boolean literal = true;
@@ -392,6 +405,54 @@ public class TurSNNLFilterService {
         }
         return Optional.of(new TurSNNLFilters.Filter(field, List.of(), range[0], range[1], sourceWords,
                 literal ? LITERAL : INFERRED, false));
+    }
+
+    /**
+     * T1117 — a date range from a relative phrase is resolved against today, not
+     * read from the model, which fills it from its training date. A range the text
+     * neither phrases relatively nor dates by year is a guess, and is dropped
+     * rather than sent as a filter that hides what the visitor asked for.
+     */
+    private Optional<TurSNNLFilters.Filter> dateRangeFilter(String field, String[] range, String text,
+            List<TurSNNLFilters.Dropped> dropped) {
+        Optional<TurRelativeDateRange> relative = TurRelativeDateRange.resolve(text, LocalDate.now(clock));
+        if (relative.isPresent()) {
+            return Optional.of(relativeFilter(field, range, relative.get()));
+        }
+        List<String> sourceWords = new ArrayList<>();
+        for (String bound : range) {
+            Optional<String> words = bound == null ? Optional.of("") : datedBy(text, bound);
+            if (words.isEmpty()) {
+                dropped.add(new TurSNNLFilters.Dropped(field,
+                        "[" + orStar(range[0]) + " TO " + orStar(range[1]) + "]", UNGROUNDED_DATE));
+                return Optional.empty();
+            }
+            words.filter(StringUtils::hasText).filter(w -> !sourceWords.contains(w)).ifPresent(sourceWords::add);
+        }
+        boolean literal = java.util.Arrays.stream(range).filter(java.util.Objects::nonNull)
+                .allMatch(bound -> sourceWords(text, bound).isPresent());
+        return Optional.of(new TurSNNLFilters.Filter(field, List.of(), range[0], range[1], sourceWords,
+                literal ? LITERAL : INFERRED, false));
+    }
+
+    /** The resolved range, spelled like the bounds the model used (a date or an instant). */
+    private static TurSNNLFilters.Filter relativeFilter(String field, String[] range,
+            TurRelativeDateRange resolved) {
+        boolean instant = isInstant(range[0]) || isInstant(range[1]);
+        return new TurSNNLFilters.Filter(field, List.of(),
+                instant ? resolved.start() + "T00:00:00Z" : resolved.start().toString(),
+                instant ? resolved.end() + "T23:59:59Z" : resolved.end().toString(),
+                List.of(resolved.phrase()), LITERAL, true);
+    }
+
+    /** The words that date {@code bound}: the bound itself, or the year it starts with. */
+    private static Optional<String> datedBy(String text, String bound) {
+        return sourceWords(text, bound)
+                .or(() -> bound.length() >= 4 ? sourceWords(text, bound.substring(0, 4)) : Optional.empty());
+    }
+
+    private static boolean isInstant(String bound) {
+        return bound != null && bound.contains("T");
     }
 
     /** The site's own spelling of a value, matched without case or accents; {@code null} when it holds none. */
