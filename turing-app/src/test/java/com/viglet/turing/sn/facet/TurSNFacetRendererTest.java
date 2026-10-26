@@ -37,6 +37,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 import com.viglet.turing.se.facet.TurSEFacetResult;
@@ -124,6 +125,41 @@ class TurSNFacetRendererTest {
         assertThat(mainResult).isEmpty();
         assertThat(secondaryResult).hasSize(1);
         assertThat(secondaryResult.getFirst().getName()).isEqualTo("category");
+    }
+
+    /**
+     * T1115 — a drill-down site hides an applied facet from the legacy list, and
+     * the structured list keeps it.
+     */
+    @Test
+    void responseStructuredFacet_keepsTheAppliedFacetADrillDownSiteHides() {
+        TurSEResults results = resultsWithFacet("category", "books", 5);
+        Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", false);
+        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
+                .thenReturn(Collections.emptyList());
+        List<String> applied = List.of("category");
+
+        List<TurSNSiteSearchFacetBean> legacy = renderer.responseFacet(
+                context(), site, applied, facetMap, results);
+        List<TurSNSiteSearchFacetBean> structured = renderer.responseStructuredFacet(
+                context(), site, applied, facetMap, results);
+
+        assertThat(legacy).isEmpty();
+        assertThat(structured).extracting(TurSNSiteSearchFacetBean::getName)
+                .containsExactly("category");
+    }
+
+    /** T1115 — nothing to hand off when the legacy list already holds every facet. */
+    @Test
+    void responseStructuredFacet_isNullWhenTheLegacyListAlreadyKeepsEveryFacet() {
+        TurSEResults results = resultsWithFacet("category", "books", 5);
+        Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", false);
+
+        assertThat(renderer.responseStructuredFacet(context(), site, List.of(), facetMap,
+                results)).isNull();
+        site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+        assertThat(renderer.responseStructuredSecondaryFacet(context(), site,
+                List.of("category"), facetMap, results)).isNull();
     }
 
     @Test

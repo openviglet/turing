@@ -9,3 +9,5 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
+## Block CF — What the SN site manifest cannot declare
+

@@ -17,7 +17,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1115** (deps: —) **A structured search filtered on a facet drops that facet and lists no selectedFilterQueries** — A UI cannot show which value is applied, switch to another value or remove the filter without tracking its own request. → §CXXVII
 - 📋 **T1116** (deps: —) **Chat answers through the default agent while /answer says AI is not enabled, and no manifest can enable it** — A connector that provisions its site as code cannot make the answer engine work, and the two AI endpoints disagree. → §CXXVIII
 - 📋 **T1117** (deps: —) **Natural-language filters resolve last year from the model's training date, returning a 2022 range in 2026** — A visitor asking for recent content gets a filter that hides all of it, with no sign it was guessed. → §CXXIX
 - 📋 **T1118** (deps: —) **related-terms answers 401 to a browser, though the SDK exports it beside the public search calls** — A site cannot offer related searches without a server proxy, and nothing checks the SDK against the filter chain. → §CXXX
@@ -33,6 +32,10 @@
 - 📋 **T1130** (deps: —) **The GA sink sends only turing_* event names, and the taxonomy has no search abandonment event** — GA4's site-search reports stay empty without hand-made custom definitions, and searched-and-left is never measured. → §CXLII
 - 📋 **T1131** (deps: —) **Search-result clicks are stored but nothing reads them, and /click answers 202 with metrics off** — No site can see a click-through rate, and a client cannot tell that its clicks are being dropped. → §CXLIII
 - 📋 **T1132** (deps: T1133) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — A related-content rail must over-fetch and discard, and can come up short on a busy shared site. → §CXLIV
+
+## Block CF — What the SN site manifest cannot declare
+
+- 📋 **T1135** (deps: —) **The SN manifest cannot set a site's facet behaviour, so provisioning as code cannot choose drill-down or multi-select** — facetType, facetItemType and itemsPerFacet are console-only, so a connector must click through the console to get facets that stay visible. → §CXLVII
 
 ## Non-goals (do NOT add as tasks)
 

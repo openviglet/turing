@@ -643,6 +643,11 @@ public class TurSNSearchProcess {
                                                 facetsInFilterQueries, facetMap, turSEResults))
                                 .setSecondaryFacet(facetRenderer.responseSecondaryFacet(context,
                                                 turSNSite, facetsInFilterQueries, facetMap, turSEResults))
+                                .setStructuredFacet(facetRenderer.responseStructuredFacet(context,
+                                                turSNSite, facetsInFilterQueries, facetMap, turSEResults))
+                                .setStructuredSecondaryFacet(facetRenderer.responseStructuredSecondaryFacet(
+                                                context, turSNSite, facetsInFilterQueries, facetMap,
+                                                turSEResults))
                                 .setFacetToRemove(facetRenderer.responseFacetToRemove(context, turSNSite))
                                 .setSimilar(responseMLT(turSNSite, turSEResults))
                                 .setSpellCheck(turSEResults.getSpellCheck() != null

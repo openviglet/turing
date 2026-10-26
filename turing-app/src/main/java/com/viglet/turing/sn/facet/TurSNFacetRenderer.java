@@ -101,8 +101,44 @@ public class TurSNFacetRenderer {
     }
 
     /**
+     * T1115 — the main facets with the applied ones kept in, for the structured
+     * response; {@code null} when that list is the one {@link #responseFacet}
+     * already returns (nothing applied, or an {@code OR} site that keeps them).
+     */
+    public List<TurSNSiteSearchFacetBean> responseStructuredFacet(TurSNSiteSearchContext context,
+            TurSNSite turSNSite,
+            List<String> facetsInFilterQueries,
+            Map<String, TurSNSiteFieldExtDto> facetMap,
+            TurSEResults turSEResults) {
+        return dropsAppliedFacets(turSNSite, facetsInFilterQueries)
+                ? responseFacets(context, turSNSite, List.of(), facetMap, turSEResults,
+                        Visibility.MAIN)
+                : null;
+    }
+
+    /** T1115 — {@link #responseStructuredFacet} for the secondary facets. */
+    public List<TurSNSiteSearchFacetBean> responseStructuredSecondaryFacet(
+            TurSNSiteSearchContext context,
+            TurSNSite turSNSite,
+            List<String> facetsInFilterQueries,
+            Map<String, TurSNSiteFieldExtDto> facetMap,
+            TurSEResults turSEResults) {
+        return dropsAppliedFacets(turSNSite, facetsInFilterQueries)
+                ? responseFacets(context, turSNSite, List.of(), facetMap, turSEResults,
+                        Visibility.SECONDARY)
+                : null;
+    }
+
+    private static boolean dropsAppliedFacets(TurSNSite turSNSite,
+            List<String> facetsInFilterQueries) {
+        return !facetsInFilterQueries.isEmpty() && !showFacetByFacetItemType(turSNSite);
+    }
+
+    /**
      * Internal de-duplicated implementation. The two public entry points only
-     * differ in the visibility predicate applied to facet results.
+     * differ in the visibility predicate applied to facet results. A facet named
+     * in {@code facetsInFilterQueries} is hidden unless the site keeps applied
+     * facets; passing an empty list keeps every one of them.
      */
     private List<TurSNSiteSearchFacetBean> responseFacets(TurSNSiteSearchContext context,
             TurSNSite turSNSite,

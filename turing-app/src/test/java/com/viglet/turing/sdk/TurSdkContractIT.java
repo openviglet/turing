@@ -348,6 +348,46 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     }
 
     /**
+     * T1115 — selecting a facet value keeps the facet in the structured body, says
+     * which value is applied and how to clear it; deselecting it restores the
+     * unfiltered facet.
+     */
+    @Test
+    void structuredFacetStaysAppliedAndClearableWhenToggled() throws Exception {
+        JsonNode all = json.readTree(postJson("/sn/" + SITE + "/search/query",
+                """
+                        {"q":"*","locale":"%s","responseFormat":"STRUCTURED"}"""
+                        .formatted(LOCALE)).body());
+        JsonNode item = facetItem(all, RESERVED_FACET_FIELD, RESERVED_FACET_VALUE);
+        assertNotNull(item, "the facet value must be offered by the site");
+        String filterQuery = item.path("filterQuery").asString();
+
+        JsonNode on = json.readTree(postJson("/sn/" + SITE + "/search/query",
+                """
+                        {"q":"*","locale":"%s","responseFormat":"STRUCTURED","fq":["%s"]}"""
+                        .formatted(LOCALE, filterQuery)).body());
+        JsonNode facet = facet(on, RESERVED_FACET_FIELD);
+        assertNotNull(facet, "a filtered facet must stay in facets: " + on.path("facets"));
+        JsonNode selected = facetItem(on, RESERVED_FACET_FIELD, RESERVED_FACET_VALUE);
+        assertNotNull(selected, "the applied value must still be listed: " + facet);
+        assertTrue(selected.path("selected").asBoolean(false),
+                "the applied value must be marked selected: " + selected);
+        assertTrue(on.path("selectedFilterQueries").toString().contains(RESERVED_FACET_VALUE),
+                "the response must list the applied filter: " + on.path("selectedFilterQueries"));
+        assertTrue(facet.path("clearFilterQueries").toString().contains(RESERVED_FACET_VALUE),
+                "the facet must say what to remove to clear it: " + facet);
+
+        JsonNode off = json.readTree(postJson("/sn/" + SITE + "/search/query",
+                """
+                        {"q":"*","locale":"%s","responseFormat":"STRUCTURED"}"""
+                        .formatted(LOCALE)).body());
+        JsonNode cleared = facetItem(off, RESERVED_FACET_FIELD, RESERVED_FACET_VALUE);
+        assertNotNull(cleared, "the value must be offered again once the filter is removed");
+        assertTrue(!cleared.path("selected").asBoolean(false),
+                "a removed filter must no longer read as selected: " + cleared);
+    }
+
+    /**
      * T858 regression guard, and the exact shape a mocked unit suite cannot
      * express: with the cache <em>enabled</em>, two distinct bodies must not
      * share a cached response. The old key read the (absent) POST query string
@@ -638,14 +678,22 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
 
     /** Finds a facet item by field + value in a structured response. */
     private static JsonNode facetItem(JsonNode structured, String field, String value) {
-        for (JsonNode facet : structured.path("facets")) {
-            if (!field.equals(facet.path("name").asString())) {
-                continue;
+        JsonNode facet = facet(structured, field);
+        if (facet == null) {
+            return null;
+        }
+        for (JsonNode item : facet.path("items")) {
+            if (value.equals(item.path("value").asString())) {
+                return item;
             }
-            for (JsonNode item : facet.path("items")) {
-                if (value.equals(item.path("value").asString())) {
-                    return item;
-                }
+        }
+        return null;
+    }
+
+    private static JsonNode facet(JsonNode structured, String field) {
+        for (JsonNode facet : structured.path("facets")) {
+            if (field.equals(facet.path("name").asString())) {
+                return facet;
             }
         }
         return null;

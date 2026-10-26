@@ -109,13 +109,30 @@ public final class TurSNStructuredResponseMapper {
                 // T879 — the icon is a plain Iconify name, not a link, so it
                 // crosses unchanged.
                 .setIcon(widget.getIcon())
-                .setFacets(facets(widget.getFacet()))
-                .setSecondaryFacets(facets(widget.getSecondaryFacet()))
+                .setFacets(facets(mainFacets(widget)))
+                .setSecondaryFacets(facets(secondaryFacets(widget)))
                 .setSelectedFilterQueries(widget.getSelectedFilterQueries())
                 .setSpellCheck(spellCheck(widget.getSpellCheck()))
                 .setLocales(locales(widget.getLocales(), locale))
                 .setSimilar(widget.getSimilar())
                 .setSpotlights(spotlights(widget.getSpotlights()));
+    }
+
+    /**
+     * T1115 — a drill-down site drops an applied facet from the legacy list; the
+     * structured response keeps it, so a client can see the applied value, switch
+     * it and clear it without tracking its own request.
+     */
+    private static List<TurSNSiteSearchFacetBean> mainFacets(TurSNSiteSearchWidgetBean widget) {
+        return widget.getStructuredFacet() != null ? widget.getStructuredFacet()
+                : widget.getFacet();
+    }
+
+    private static List<TurSNSiteSearchFacetBean> secondaryFacets(
+            TurSNSiteSearchWidgetBean widget) {
+        return widget.getStructuredSecondaryFacet() != null
+                ? widget.getStructuredSecondaryFacet()
+                : widget.getSecondaryFacet();
     }
 
     /**
@@ -260,8 +277,8 @@ public final class TurSNStructuredResponseMapper {
             Set<String> selected = widget.getSelectedFilterQueries() == null ? Set.of()
                     : new HashSet<>(widget.getSelectedFilterQueries());
             Map<String, TurSNFacetItemAction> actions = new HashMap<>();
-            collectActions(widget.getFacet(), actions);
-            collectActions(widget.getSecondaryFacet(), actions);
+            collectActions(mainFacets(widget), actions);
+            collectActions(secondaryFacets(widget), actions);
             return new ChipState(selected, actions);
         }
 

@@ -27,6 +27,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
+## Block CF — What the SN site manifest cannot declare
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2205,34 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXVII Applied facets in the structured search response (Dumont D159) (T1115)
-
-**Where it happened.** Dumont, WordPress plugin search block, found by its Playwright
-suite (D159). The block runs on `@viglet/turing-sdk` 2026.3.9's POST-native search
-controller. Clicking a facet value calls `toggleFacet`, which adds the item's
-`filterQuery` to `request.fq`.
-
-**What came back.** Against turing-ce built from 2026.3 (site Sample, en_US):
-- `POST /api/sn/Sample/search/query` with `{"q":"workshop","fq":["site_key:localhost"]}`
-  answers 4 results and `facets: [{name: "seats", items: [{label: "40", count: 3},
-  {label: "20", count: 1}]}]`;
-- the same with `"fq":["site_key:localhost","seats:40"]` answers 3 results, **no `facets`
-  at all**, and **no `selectedFilterQueries`**.
-
-So once a visitor picks a value, the structured response no longer says a facet is
-applied, which value, or how to remove it. The
-`TurStructuredFacet.selectedFilterQueries` / `clearFilterQueries` that the SDK types
-never carry it.
-
-**Workaround.** The block derives "applied filters" chips from its own `request.fq`
-(every filter but the site's), labels them from the WordPress mapping, and removes them
-with a `REMOVE` toggle. It lives in `wordpress/src/public/search-block.js` (`sync`).
-
-**What it should do.** Keep a filtered facet in `facets`, with its selected item
-`selected: true` and its other values still counted, so a UI can switch between them.
-List the applied ones in `selectedFilterQueries`, with `clearFilterQueries` to drop
-each. Cover it with a test that toggles a value on and off.
-
 ## CXXVIII GenAI is part of the site manifest, and chat and answer agree on it (T1116)
 
 **Where it happened.** Dumont's WordPress plugin (Track S, D169) provisions its SN site
@@ -2684,3 +2658,25 @@ every new endpoint would repeat the patch, and one that forgot it would leak.
 - An import from a partitioned key gets the partition value stamped on, or is refused when it carries a different one.
 - A partitioned key's delete-all means its own partition (T1112's field delete).
 - A contract test: two partitions in one site, and no endpoint answers or changes the other's documents.
+
+## CXLVII Site facet behaviour in the SN manifest (T1135)
+
+**Where it showed.** T1115: a Dumont-provisioned SN site (Sample) dropped an applied
+facet from the search answer, while the contract IT's fixture kept it. The difference
+was the site's `facetItemType`: `TurSNFacetRenderer.showFacet` hides a facet the request
+already filters on unless the site's item type is `OR`, and the fixture is `OR` while
+the provisioned site keeps the default.
+
+**The gap.** The SN manifest (`POST /api/sn/manifest`) converges fields, custom facets
+and custom sorts, but not the site-level facet behaviour: `facet`, `facetType`,
+`facetItemType`, `itemsPerFacet`. A connector that provisions its site as code cannot
+choose between drill-down and multi-select facets. It has to open the console, which is
+the manual step the manifest exists to remove. T1115 made the structured response keep
+applied facets either way. The LINKS response and the item counts still follow the
+site's mode.
+
+**What to build.** Add an optional `facets` object to the manifest site block:
+`enabled`, `type` (`AND`/`OR`), `itemType` (`AND`/`OR`/`DEFAULT`) and `itemsPerFacet`.
+Converge it like the other site settings, report `facetSettingsChanged` in the result
+and the plan, and leave an absent object meaning "do not touch", so existing manifests
+keep their behaviour.

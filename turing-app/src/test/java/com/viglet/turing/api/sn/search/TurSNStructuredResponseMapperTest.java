@@ -273,6 +273,38 @@ class TurSNStructuredResponseMapperTest {
         assertThat(map().getSelectedFilterQueries()).containsExactly(RESERVED_FQ);
     }
 
+    /**
+     * T1115 — a drill-down site drops the applied facet from the legacy list, and
+     * the structured response takes the list that keeps it.
+     */
+    @Test
+    void testAppliedFacetDroppedByADrillDownSiteStaysInTheStructuredResponse() {
+        TurSNSiteSearchBean bean = legacyBean();
+        TurSNSiteSearchWidgetBean widget = bean.getWidget();
+        widget.setStructuredFacet(widget.getFacet()).setFacet(List.of());
+
+        TurSNStructuredSearchBean structured = TurSNStructuredResponseMapper
+                .toStructured(bean, new TurSNSearchRequest(), Locale.US);
+
+        assertThat(structured.getFacets()).singleElement()
+                .satisfies(facet -> {
+                    assertThat(facet.getName()).isEqualTo("section");
+                    assertThat(facet.getClearFilterQueries()).containsExactly(RESERVED_FQ);
+                    assertThat(facet.getItems().getFirst().isSelected()).isTrue();
+                });
+    }
+
+    /** T1115 — the hand-off never reaches the legacy JSON. */
+    @Test
+    void testStructuredFacetHandOffStaysOutOfTheLegacyJson() throws JsonProcessingException {
+        TurSNSiteSearchBean bean = legacyBean();
+        bean.getWidget().setStructuredFacet(bean.getWidget().getFacet());
+
+        assertThat(new ObjectMapper().writeValueAsString(bean))
+                .doesNotContain("structuredFacet")
+                .doesNotContain("structuredSecondaryFacet");
+    }
+
     @Test
     void testFacetItemActionsAreCarriedThrough() {
         List<com.viglet.turing.commons.sn.bean.structured.TurSNStructuredFacetItemBean> items =

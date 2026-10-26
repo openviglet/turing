@@ -16,6 +16,7 @@ package com.viglet.turing.commons.sn.bean;
 
 import java.io.Serializable;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.bean.spellcheck.TurSNSiteSpellCheckBean;
@@ -55,5 +56,20 @@ public class TurSNSiteSearchWidgetBean implements Serializable {
 	private TurSNSiteSpellCheckBean spellCheck;
 	private List<TurSNSiteLocaleBean> locales;
 	private List<TurSNSiteSpotlightDocumentBean> spotlights;
+	/**
+	 * T1115 — {@link #facet} with the facets the request already filters on kept
+	 * in. A site whose facet item type is not {@code OR} drills down: the legacy
+	 * list drops an applied facet and lists it under {@link #facetToRemove}, which
+	 * the structured response has no place for. This is an in-process hand-off to
+	 * the structured mapper, so the legacy JSON stays unchanged; {@code null} when
+	 * it would equal {@link #facet}.
+	 *
+	 * @since 2026.3.6
+	 */
+	@JsonIgnore
+	private List<TurSNSiteSearchFacetBean> structuredFacet;
+	/** T1115 — {@link #secondaryFacet}, kept the same way. @see #structuredFacet */
+	@JsonIgnore
+	private List<TurSNSiteSearchFacetBean> structuredSecondaryFacet;
 
 }
