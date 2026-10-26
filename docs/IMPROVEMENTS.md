@@ -2207,33 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXXVIII The auditor accepts an API-key principal (T1126)
-
-**Where it happened.** Dumont's WordPress plugin (Dumont D172) writes boosts as ranking
-expressions with the site's API key:
-
-    POST /api/sn/{siteId}/ranking-expression   Key: <developer key>
-    {"name":"WordPress: newer first","weight":5,"turSNSite":{"id":"…"},
-     "turSNRankingConditions":[{"attribute":"publication_date","condition":1,"value":"asc"}]}
-
-answers **500**. Turing's log (`turing-ce:local`, 2026-10-24):
-
-    java.lang.ClassCastException: class com.viglet.turing.persistence.model.auth.TurUser
-      cannot be cast to class com.viglet.turing.spring.security.TurCustomUserDetails
-        at com.viglet.turing.spring.security.TurAuditorAwareImpl.getCurrentAuditor(TurAuditorAwareImpl.java:42)
-        at …TurSNRankingExpressionAPI.getTurSNRankingExpression(TurSNRankingExpressionAPI.java:126)
-
-A Key-authenticated request carries a `TurUser` principal, and the auditor casts every
-principal to `TurCustomUserDetails`. So every audited entity (one with `createdBy`)
-fails to save over the API key, while unaudited ones (synonyms, spotlights) save fine.
-
-**Workaround.** None: the plugin's boosts wait on this (Dumont D187).
-
-**What Turing should do.** `TurAuditorAwareImpl` resolves the auditor from either
-principal type (a `TurUser` from the API-key filter, `TurCustomUserDetails` from a
-session), and falls back to the token's owner or a system auditor rather than throwing;
-a test saves an audited entity over a Key request.
-
 ## CXXXIX SN-site LLM calls in the cost ledger (T1127)
 
 **Where it happened.** Dumont's WordPress plugin (Dumont D174) runs a live-LLM test

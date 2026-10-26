@@ -3,26 +3,23 @@ package com.viglet.turing.spring.security;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.properties.TurConfigProperties;
 
-@ExtendWith(MockitoExtension.class)
 class TurAuditorAwareImplTest {
 
-    @Mock
-    private TurConfigProperties turConfigProperties;
+    private final TurAuditorAwareImpl auditorAware = new TurAuditorAwareImpl();
 
     @BeforeEach
     void setUp() {
@@ -34,43 +31,46 @@ class TurAuditorAwareImplTest {
         SecurityContextHolder.clearContext();
     }
 
+    private static void signIn(Object principal) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(principal, null, List.of()));
+    }
+
     @Test
     void shouldReturnAdminWhenAuthenticationIsNull() {
-        TurAuditorAwareImpl auditorAware = new TurAuditorAwareImpl(turConfigProperties);
-
-        Optional<String> auditor = auditorAware.getCurrentAuditor();
-
-        assertEquals(Optional.of("admin"), auditor);
+        assertEquals(Optional.of("admin"), auditorAware.getCurrentAuditor());
     }
 
     @Test
-    void shouldReturnLowercasePreferredUsernameWhenKeycloakIsEnabled() {
-        when(turConfigProperties.isKeycloak()).thenReturn(true);
+    void shouldReturnLowercasePreferredUsernameForAnOAuth2User() {
         OAuth2User oauth2User = org.mockito.Mockito.mock(OAuth2User.class);
         when(oauth2User.getAttribute(TurAuditorAwareImpl.PREFERRED_USERNAME)).thenReturn("John.DOE");
+        signIn(oauth2User);
 
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(oauth2User, null));
-
-        TurAuditorAwareImpl auditorAware = new TurAuditorAwareImpl(turConfigProperties);
-        Optional<String> auditor = auditorAware.getCurrentAuditor();
-
-        assertEquals(Optional.of("john.doe"), auditor);
+        assertEquals(Optional.of("john.doe"), auditorAware.getCurrentAuditor());
     }
 
     @Test
-    void shouldReturnLowercaseUsernameWhenKeycloakIsDisabled() {
-        when(turConfigProperties.isKeycloak()).thenReturn(false);
-
+    void shouldReturnLowercaseUsernameForASession() {
         TurUser turUser = TurUser.builder().username("ADMIN.User").build();
-        TurCustomUserDetails principal = new TurCustomUserDetails(turUser, java.util.List.of("ROLE_USER"));
+        signIn(new TurCustomUserDetails(turUser, List.of("ROLE_USER")));
 
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(principal, null));
+        assertEquals(Optional.of("admin.user"), auditorAware.getCurrentAuditor());
+    }
 
-        TurAuditorAwareImpl auditorAware = new TurAuditorAwareImpl(turConfigProperties);
-        Optional<String> auditor = auditorAware.getCurrentAuditor();
+    /** T1126 — a Key request carries the key owner's TurUser, which was cast and threw. */
+    @Test
+    void shouldReturnTheKeyOwnerForAnApiKeyRequest() {
+        signIn(TurUser.builder().username("Connector").build());
 
-        assertEquals(Optional.of("admin.user"), auditor);
+        assertEquals(Optional.of("connector"), auditorAware.getCurrentAuditor());
+    }
+
+    @Test
+    void shouldFallBackToAdminForAnAnonymousRequest() {
+        SecurityContextHolder.getContext().setAuthentication(new AnonymousAuthenticationToken("key",
+                "anonymousUser", List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))));
+
+        assertEquals(Optional.of("admin"), auditorAware.getCurrentAuditor());
     }
 }

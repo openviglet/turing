@@ -1446,6 +1446,7 @@
 - **T1072** — A field manifest now declares searchWeight (viglet-core 2026.3.13): provision applies it to the field, 1 to 100 as in the console, and the planner reads a weight change as non-breaking.
 - **T1134** — Anthropic chat models build again: the okhttp client is back on 2.52.0, the core spring-ai-anthropic resolves, and Dependabot now leaves it to move with Spring AI.
 - **T1124** — A request authenticated by a usable Key header skips CSRF on every endpoint, so a connector can POST /api/v2/summary; an unknown or disabled key still meets CSRF (design §CXXXVI superseded: the exemption is by usable key on any path, not a /api/v2/summary path entry, so the next connector POST needs no list change).
+- **T1126** — The auditor reads the principal by its type, so an API-key request audits as the key owner and audited entities save over a Key, under local auth and Keycloak alike.
 
 ## Block CA — Search response fields arrive as they were indexed
 
