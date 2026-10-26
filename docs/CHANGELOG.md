@@ -1354,6 +1354,7 @@
 - **T1125** — Synonym mining skips logged queries that spell search syntax and drops a term another in its group starts with, so a word and its half-typed prefix are no longer proposed.
 - **T1127** — Each SN call, streamed chat and copilot included, records its site in a new site_name column, and cost/summary lists bySite and narrows every breakdown to ?site=.
 - **T1128** — Result clicks from the SDK are sent keepalive with no CSRF prime, so the navigation a click starts no longer cancels them, and /click accepts a text/plain JSON body so navigator.sendBeacon works.
+- **T1129** — The search controller takes a consent function and sessionCookie: false, so nothing is emitted and no TUR_SESSION cookie is written before the visitor agrees, and instant-mode searches are no longer reported as searches.
 
 ## Block BJ — Configurable, per-language NL ranking lexicon (Lucene analysis)
 

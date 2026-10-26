@@ -143,6 +143,20 @@ export interface SearchControllerOptions {
   /** Cookie used for cross-surface session stitching. Defaults to `TUR_SESSION`. */
   readonly sessionCookieName?: string;
   /**
+   * T1129 — asked before every analytics event and before the session cookie is
+   * written. While it returns `false` nothing is emitted and no cookie is set, so
+   * a site can hand over the bus before the visitor has answered a consent
+   * banner. Once it returns `true` the session id is stamped on the next event.
+   * Omitted, consent is assumed (the historic behaviour).
+   */
+  readonly consent?: () => boolean;
+  /**
+   * T1129 — `false` stamps no session id on the bus and never writes the
+   * `TUR_SESSION` cookie. Search events are then not stitched to a later chat
+   * lead. Defaults to `true`.
+   */
+  readonly sessionCookie?: boolean;
+  /**
    * T484 — whether a non-wildcard query should also fetch the AI chat answer
    * (`GET /sn/{site}/chat`) alongside the search results. Defaults to `true`
    * (the historic behaviour: search + chat in one round-trip). Set `false` for a
@@ -228,6 +242,8 @@ export function createSearchController(
   const {
     analytics,
     sessionCookieName = TUR_SESSION_DEFAULT_COOKIE_NAME,
+    consent = () => true,
+    sessionCookie = true,
     chat: chatEnabled = true,
     postNative = true,
   } = options;
@@ -252,11 +268,21 @@ export function createSearchController(
   });
 
   // T462 — stamp the cross-surface session id so search events stitch to a
-  // later chat lead (both key off the same `TUR_SESSION` cookie). Minting here
-  // means a search-first visitor's session is already established when chat
-  // starts. No-op (null id) outside a browser.
-  if (analytics) {
-    analytics.setContext({ site: config.site, sessionId: getOrCreateTurSession({ name: sessionCookieName }) ?? undefined });
+  // later chat lead (both key off the same `TUR_SESSION` cookie). T1129: the
+  // cookie is minted on the first consented event, not at construction, so
+  // nothing is stored before the visitor agrees. No-op (null id) outside a
+  // browser.
+  analytics?.setContext({ site: config.site });
+  let sessionStamped = !sessionCookie;
+
+  /** The bus, when consent allows an event now; stamps the session first. */
+  function consentedAnalytics(): TuringAnalytics | null {
+    if (!analytics || !consent()) return null;
+    if (!sessionStamped) {
+      sessionStamped = true;
+      analytics.setContext({ sessionId: getOrCreateTurSession({ name: sessionCookieName }) ?? undefined });
+    }
+    return analytics;
   }
   // Last real (non-wildcard) query, for refinement detection.
   let lastNonEmptyQuery: string | null = null;
@@ -277,16 +303,18 @@ export function createSearchController(
 
   /** Emits the canonical search events after a successful result set. */
   function emitSearchEvents(query: string, resultCount: number): void {
-    if (!analytics || !query || query === "*") return;
+    if (!query || query === "*") return;
+    const bus = consentedAnalytics();
+    if (!bus) return;
     if (lastNonEmptyQuery && lastNonEmptyQuery !== query) {
-      analytics.emit(TURING_ANALYTICS_EVENTS.searchRefined, {
+      bus.emit(TURING_ANALYTICS_EVENTS.searchRefined, {
         from: lastNonEmptyQuery,
         to: query,
       });
     }
-    analytics.emit(TURING_ANALYTICS_EVENTS.search, { query, results: resultCount });
+    bus.emit(TURING_ANALYTICS_EVENTS.search, { query, results: resultCount });
     if (resultCount === 0) {
-      analytics.emit(TURING_ANALYTICS_EVENTS.searchNoResults, { query });
+      bus.emit(TURING_ANALYTICS_EVENTS.searchNoResults, { query });
     }
     lastNonEmptyQuery = query;
   }
@@ -379,8 +407,12 @@ export function createSearchController(
         params: requestToSearchParams(searchResult.request ?? searchRequest),
       });
 
-      const resultCount = searchResult?.queryContext?.count ?? documents.length;
-      emitSearchEvents(q, resultCount);
+      // T1129 — an as-you-type request is not a search the visitor settled on:
+      // "work", "works", "workshop" must not report three searches.
+      if (searchRequest.mode !== "instant") {
+        const resultCount = searchResult?.queryContext?.count ?? documents.length;
+        emitSearchEvents(q, resultCount);
+      }
     } catch (err) {
       if (requestId !== latestRequestId) return;
       store.setState({
@@ -447,7 +479,7 @@ export function createSearchController(
         position,
         locale: params._setlocale,
       });
-      analytics?.emit(TURING_ANALYTICS_EVENTS.searchResultClick, {
+      consentedAnalytics()?.emit(TURING_ANALYTICS_EVENTS.searchResultClick, {
         query,
         document_id: documentId,
         position,

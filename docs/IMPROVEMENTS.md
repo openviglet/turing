@@ -2207,30 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXLI Consent-aware search analytics in the SDK controller (T1129)
-
-**Where it happened.** Dumont's WordPress search block (D176) wanted to pass the SDK's
-analytics bus to `createSearchController(..., { analytics })`, as T462 intends. Two
-things stopped it:
-
-- The controller calls `getOrCreateTurSession()` at construction. That writes a 30-day
-  `TUR_SESSION` cookie on page load, before any consent is asked. Under the WP Consent API
-  (and GDPR) nothing that identifies a visitor may be stored before statistics consent.
-  Granting consent later cannot be applied either: the bus is fixed at construction.
-- The controller emits `turing_search` (and `_refined`, `_no_results`) for every request.
-  An as-you-type search sends one per pause, so "work", "works" and "workshop" become three
-  searches and two refinements.
-
-**Workaround.** The plugin never hands the bus to a controller. It emits the three
-search events itself, only for a search the visitor settled on (`trackSearch` in
-`wordpress/src/public/search.js`), and sets no cookie.
-
-**What Turing should do.**
-- A `consent` option: a function asked before each emit and before any cookie is written,
-  or `sessionCookie: false` to stamp no session id at all.
-- T1120's `mode: "instant"` on `searchRequest` / `searchQuery` (one flag, not a second one), so
-  as-you-type requests are not reported as searches.
-
 ## CXLII GA4 recommended events and search abandonment (T1130)
 
 **Where it happened.** Dumont's WordPress search block (D176) sends its search events to
@@ -2346,3 +2322,24 @@ site's mode.
 Converge it like the other site settings, report `facetSettingsChanged` in the result
 and the plan, and leave an absent object meaning "do not touch", so existing manifests
 keep their behaviour.
+
+## CXLIX Consent-aware search analytics in the React SDK (T1137)
+
+**Where it happened.** T1129 made the vanilla SDK's search controller consent-aware. The
+React SDK's `useTuringSearch`
+(`frontend/packages/react-sdk/src/hooks/use-turing-search.ts`) still does what the
+controller did before: on mount it calls `getOrCreateTurSession()`, which writes the
+30-day `TUR_SESSION` cookie before any consent banner is answered, and it emits
+`turing_search` and `turing_search_refined` for every request, including the as-you-type
+ones.
+
+**What Turing should do.** Mirror the controller's options on the hook:
+- `consent?: () => boolean`, asked before each emit and before the cookie is written. The
+  session id is stamped on the first consented event, not on mount.
+- `sessionCookie?: boolean` (default `true`). With `false`, no session id is stamped and
+  no cookie is written.
+- A request sent with `mode: "instant"` emits no search events.
+
+The vanilla implementation in `frontend/packages/sdk/src/controllers/search.ts`
+(`consentedAnalytics`) and its test `analytics-consent.test.ts` are the reference: port
+both.
