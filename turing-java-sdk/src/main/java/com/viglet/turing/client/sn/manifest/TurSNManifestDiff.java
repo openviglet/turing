@@ -35,19 +35,32 @@ import java.util.List;
  *                        predates them
  * @param customSortsToChange custom sorts provisioning would create or rewrite
  *                        (T1104); {@code null} from a server that predates them
+ * @param genAiToChange   whether provisioning would create or change the site's
+ *                        GenAI binding (T1116); {@code null} from a server that
+ *                        predates it
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
 public record TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
         List<TurSNManifestFieldChange> breakingChanges, List<String> fieldsUnchanged,
-        List<String> localesToAdd, List<String> customFacetsToChange, List<String> customSortsToChange) {
+        List<String> localesToAdd, List<String> customFacetsToChange, List<String> customSortsToChange,
+        Boolean genAiToChange) {
+
+    /** The constructor this record had before {@link #genAiToChange}, kept for existing callers. */
+    public TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
+            List<TurSNManifestFieldChange> breakingChanges, List<String> fieldsUnchanged,
+            List<String> localesToAdd, List<String> customFacetsToChange, List<String> customSortsToChange) {
+        this(schemaVersion, siteExists, fieldsToAdd, breakingChanges, fieldsUnchanged, localesToAdd,
+                customFacetsToChange, customSortsToChange, null);
+    }
 
     /** The constructor this record had before {@link #customFacetsToChange}, kept for existing callers. */
     public TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
             List<TurSNManifestFieldChange> breakingChanges, List<String> fieldsUnchanged,
             List<String> localesToAdd) {
-        this(schemaVersion, siteExists, fieldsToAdd, breakingChanges, fieldsUnchanged, localesToAdd, null, null);
+        this(schemaVersion, siteExists, fieldsToAdd, breakingChanges, fieldsUnchanged, localesToAdd, null, null,
+                null);
     }
 
     /** The constructor this record had before {@link #customSortsToChange}, kept for existing callers. */
@@ -55,7 +68,7 @@ public record TurSNManifestDiff(String schemaVersion, boolean siteExists, List<S
             List<TurSNManifestFieldChange> breakingChanges, List<String> fieldsUnchanged,
             List<String> localesToAdd, List<String> customFacetsToChange) {
         this(schemaVersion, siteExists, fieldsToAdd, breakingChanges, fieldsUnchanged, localesToAdd,
-                customFacetsToChange, null);
+                customFacetsToChange, null, null);
     }
 
     /** Whether any breaking change exists, declared or not. */
@@ -76,7 +89,8 @@ public record TurSNManifestDiff(String schemaVersion, boolean siteExists, List<S
     /** True when applying this manifest would change nothing. */
     public boolean isNoOp() {
         return siteExists && isEmpty(fieldsToAdd) && isEmpty(localesToAdd)
-                && isEmpty(customFacetsToChange) && isEmpty(customSortsToChange) && !hasBreakingChanges();
+                && isEmpty(customFacetsToChange) && isEmpty(customSortsToChange)
+                && !Boolean.TRUE.equals(genAiToChange) && !hasBreakingChanges();
     }
 
     private static boolean isEmpty(List<String> values) {

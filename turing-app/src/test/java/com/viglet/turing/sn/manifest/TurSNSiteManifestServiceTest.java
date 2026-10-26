@@ -67,6 +67,8 @@ class TurSNSiteManifestServiceTest {
     @Mock
     private TurSNManifestCustomSortConverger turSNManifestCustomSortConverger;
     @Mock
+    private TurSNManifestGenAiConverger turSNManifestGenAiConverger;
+    @Mock
     private ApplicationEventPublisher eventPublisher;
     @InjectMocks
     private TurSNSiteManifestService service;

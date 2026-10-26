@@ -88,6 +88,7 @@ public class TurSNSiteManifestService {
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNManifestCustomFacetConverger turSNManifestCustomFacetConverger;
     private final TurSNManifestCustomSortConverger turSNManifestCustomSortConverger;
+    private final TurSNManifestGenAiConverger turSNManifestGenAiConverger;
     private final ApplicationEventPublisher eventPublisher;
 
     /**
@@ -115,9 +116,11 @@ public class TurSNSiteManifestService {
         TurSNSite site = turSNSiteRepository.findByNameIgnoreCase(manifest.name()).orElse(null);
         turSNManifestCustomFacetConverger.validate(site, manifest, request.customFacetsOrEmpty());
         turSNManifestCustomSortConverger.validate(site, manifest, request.customSortsOrEmpty());
+        turSNManifestGenAiConverger.validate(request.genAi());
         return new TurSNManifestPlan(diff,
                 turSNManifestCustomFacetConverger.plan(site, manifest, request.customFacetsOrEmpty()),
-                turSNManifestCustomSortConverger.plan(site, request.customSortsOrEmpty()));
+                turSNManifestCustomSortConverger.plan(site, request.customSortsOrEmpty()),
+                turSNManifestGenAiConverger.plan(site, request.genAi()));
     }
 
     @Transactional
@@ -138,6 +141,7 @@ public class TurSNSiteManifestService {
         TurSNSite liveSite = turSNSiteRepository.findByNameIgnoreCase(manifest.name()).orElse(null);
         turSNManifestCustomFacetConverger.validate(liveSite, manifest, customFacets);
         turSNManifestCustomSortConverger.validate(liveSite, manifest, customSorts);
+        turSNManifestGenAiConverger.validate(request.genAi());
 
         List<Locale> locales = parseLocales(manifest.locales());
         List<String> localesCreated = new ArrayList<>();
@@ -176,6 +180,7 @@ public class TurSNSiteManifestService {
         applySearchWeights(site, manifest);
         List<String> customFacetsChanged = turSNManifestCustomFacetConverger.converge(site, customFacets);
         List<String> customSortsChanged = turSNManifestCustomSortConverger.converge(site, customSorts);
+        boolean genAiChanged = turSNManifestGenAiConverger.converge(site, request.genAi());
 
         eventPublisher.publishEvent(siteCreated
                 ? SnSiteIndexInvalidatedEvent.created(site.getId(), site.getName())
@@ -183,14 +188,14 @@ public class TurSNSiteManifestService {
 
         log.info("[T386] Provisioned site '{}' (created={}, schemaVersion={}): {} field(s) added, "
                         + "{} migrated, {} skipped, {} locale(s) added, {} custom facet(s) and "
-                        + "{} custom sort(s) changed",
+                        + "{} custom sort(s) changed, GenAI changed={}",
                 site.getName(), siteCreated, manifest.schemaVersion(), fieldsCreated.size(),
                 fieldsMigrated.size(), fieldsSkipped.size(), localesCreated.size(),
-                customFacetsChanged.size(), customSortsChanged.size());
+                customFacetsChanged.size(), customSortsChanged.size(), genAiChanged);
 
         return new TurSNManifestProvisionResult(new VigletManifestResult(site.getId(), site.getName(),
                 siteCreated, fieldsCreated, fieldsSkipped, fieldsMigrated, localesCreated,
-                manifest.schemaVersion()), customFacetsChanged, customSortsChanged);
+                manifest.schemaVersion()), customFacetsChanged, customSortsChanged, genAiChanged);
     }
 
     private static VigletFieldManifest requireManifest(TurSNManifestRequest request) {

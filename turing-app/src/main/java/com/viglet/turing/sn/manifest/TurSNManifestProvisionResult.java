@@ -30,11 +30,17 @@ import com.viglet.core.manifest.VigletManifestResult;
  * What {@code POST /api/sn/manifest} answers (T1084): the neutral
  * {@link VigletManifestResult}, flattened into the same JSON object it always
  * was, plus the custom facets and (T1104) custom sorts this call created or
- * changed.
+ * changed, and (T1116) whether it created or changed the GenAI binding.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
 public record TurSNManifestProvisionResult(@JsonUnwrapped VigletManifestResult result,
-        List<String> customFacetsChanged, List<String> customSortsChanged) {
+        List<String> customFacetsChanged, List<String> customSortsChanged, boolean genAiChanged) {
+
+    /** The result as it was before {@link #genAiChanged}, kept for existing callers. */
+    public TurSNManifestProvisionResult(VigletManifestResult result, List<String> customFacetsChanged,
+            List<String> customSortsChanged) {
+        this(result, customFacetsChanged, customSortsChanged, false);
+    }
 }

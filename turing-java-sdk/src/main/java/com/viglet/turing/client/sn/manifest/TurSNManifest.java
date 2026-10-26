@@ -53,6 +53,8 @@ import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
  *                      the site's custom facets as they are
  * @param customSorts   custom sorts to converge (T1104); {@code null} leaves
  *                      the site's custom sorts as they are
+ * @param genAi         the GenAI binding to converge (T1116); {@code null}
+ *                      leaves the site's GenAI as it is
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -60,19 +62,28 @@ import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 public record TurSNManifest(String name, String description, String seInstanceId,
         String schemaVersion, List<String> locales, List<TurSNJobAttributeSpec> fields,
         List<TurSNManifestMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
-        List<TurSNManifestCustomSort> customSorts) {
+        List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi) {
+
+    /** The constructor this record had before {@link #genAi}, kept for existing callers. */
+    public TurSNManifest(String name, String description, String seInstanceId, String schemaVersion,
+            List<String> locales, List<TurSNJobAttributeSpec> fields, List<TurSNManifestMigration> migrations,
+            List<TurSNManifestCustomFacet> customFacets, List<TurSNManifestCustomSort> customSorts) {
+        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets,
+                customSorts, null);
+    }
 
     /** The constructor this record had before {@link #customFacets}, kept for existing callers. */
     public TurSNManifest(String name, String description, String seInstanceId, String schemaVersion,
             List<String> locales, List<TurSNJobAttributeSpec> fields, List<TurSNManifestMigration> migrations) {
-        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, null, null);
+        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, null, null, null);
     }
 
     /** The constructor this record had before {@link #customSorts}, kept for existing callers. */
     public TurSNManifest(String name, String description, String seInstanceId, String schemaVersion,
             List<String> locales, List<TurSNJobAttributeSpec> fields, List<TurSNManifestMigration> migrations,
             List<TurSNManifestCustomFacet> customFacets) {
-        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets, null);
+        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets, null,
+                null);
     }
 
     public static Builder builder() {
@@ -110,6 +121,7 @@ public record TurSNManifest(String name, String description, String seInstanceId
         private final List<TurSNManifestMigration> migrations = new ArrayList<>();
         private final List<TurSNManifestCustomFacet> customFacets = new ArrayList<>();
         private final List<TurSNManifestCustomSort> customSorts = new ArrayList<>();
+        private TurSNManifestGenAi genAi;
 
         public Builder name(String name) {
             this.name = name;
@@ -188,6 +200,15 @@ public record TurSNManifest(String name, String description, String seInstanceId
             return this;
         }
 
+        /**
+         * Turns the site's GenAI on (T1116), e.g.
+         * {@code genAi(TurSNManifestGenAi.defaultAgent())}.
+         */
+        public Builder genAi(TurSNManifestGenAi genAi) {
+            this.genAi = genAi;
+            return this;
+        }
+
         public TurSNManifest build() {
             // An empty migrations list and a null one mean the same thing to the
             // server ("nothing is authorised"); null keeps the payload honest
@@ -197,7 +218,7 @@ public record TurSNManifest(String name, String description, String seInstanceId
                     List.copyOf(locales), List.copyOf(fields),
                     migrations.isEmpty() ? null : List.copyOf(migrations),
                     customFacets.isEmpty() ? null : List.copyOf(customFacets),
-                    customSorts.isEmpty() ? null : List.copyOf(customSorts));
+                    customSorts.isEmpty() ? null : List.copyOf(customSorts), genAi);
         }
     }
 }

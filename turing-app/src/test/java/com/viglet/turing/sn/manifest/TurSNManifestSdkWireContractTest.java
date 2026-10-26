@@ -216,6 +216,33 @@ class TurSNManifestSdkWireContractTest {
     }
 
     @Test
+    @DisplayName("T1116 - a GenAI block the SDK declares binds to the server's, and its changes reach the SDK")
+    void genAiSurvivesTheWire() {
+        TurSNManifest manifest = TurSNManifest.builder().name("Sample")
+                .genAi(com.viglet.turing.client.sn.manifest.TurSNManifestGenAi.defaultAgent()
+                        .withKnowledgeBaseMode("HYBRID"))
+                .build();
+
+        TurSNManifestGenAi bound = bind(MAPPER.writeValueAsString(manifest)).genAi();
+        assertThat(bound.ownAgentId()).isNull();
+        assertThat(bound.knowledgeBaseMode())
+                .isEqualTo(com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.HYBRID);
+
+        var serverResult = new TurSNManifestProvisionResult(new VigletManifestResult("s1", "Sample", false,
+                List.of(), List.of(), List.of(), List.of(), null), List.of(), List.of(), true);
+        var serverPlan = new TurSNManifestPlan(new VigletManifestDiff(null, true, List.of(), List.of(),
+                List.of(), List.of()), List.of(), List.of(), true);
+        TurSNManifestResult result = MAPPER.readValue(MAPPER.writeValueAsString(serverResult),
+                TurSNManifestResult.class);
+        TurSNManifestDiff plan = MAPPER.readValue(MAPPER.writeValueAsString(serverPlan), TurSNManifestDiff.class);
+
+        assertThat(result.genAiChanged()).isTrue();
+        assertThat(result.isNoOp()).isFalse();
+        assertThat(plan.genAiToChange()).isTrue();
+        assertThat(plan.isNoOp()).isFalse();
+    }
+
+    @Test
     @DisplayName("The SDK's manifest deserialises into the record the endpoint binds, field for field")
     void sdkManifestBindsToTheServerRecord() {
         String payload = MAPPER.writeValueAsString(sdkManifest());

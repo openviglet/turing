@@ -2207,33 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXVIII GenAI is part of the site manifest, and chat and answer agree on it (T1116)
-
-**Where it happened.** Dumont's WordPress plugin (Track S, D169) provisions its SN site
-with `POST /api/sn/manifest` and nothing else. On a Turing booted with `OPENAI_API_KEY`,
-the first boot creates the default LLM, the default agent and the local embedding store.
-
-**What came back.** `GET /api/sn/Sample/chat?q=...` answers, but never from the site's
-posts (only through a title filter): a post stating a deadline gets told it is not
-available (Dumont D174). It falls back to the default agent, and `/chat/enabled` says
-`enabled: true, reason: NONE`. `GET /api/sn/Sample/answer?q=...` on the same site
-streams `event:error data:{"message":"AI is not enabled for site: Sample"}`.
-`TurSNAnswerService.composeAnswer` needs `site.getTurSNSiteGenAi()`, and no API a
-connector holds can create one: the manifest request carries fields, locales, weights
-and custom facets and sorts, but no GenAI block.
-
-**Expected.** One answer to "can this site use AI": chat and answer agree, and a
-connector can turn the site's GenAI on as code.
-
-**Workaround.** None in the plugin. An operator enables GenAI in the console by hand.
-
-**What Turing should do.**
-- A `genAi` block in the manifest request (`enabled`, an agent id or "default", and the
-  knowledge-base mode), converged like custom facets and shown in `/plan`.
-- `/answer` falls back to the default agent as chat does, or chat refuses as answer does.
-  Either way, `/chat/enabled` and an `/answer/enabled` give the same reason.
-- The per-site capability probe is T1123's, which depends on this line.
-
 ## CXXIX nl-filters resolve relative dates against today (T1117)
 
 **Where it happened.** Probing Turing's AI features for Dumont's WordPress plugin (Track
