@@ -143,6 +143,34 @@ public class TurSNGenAi {
     private final com.viglet.turing.genai.safety.TurModerationService moderationService;
     private final TurSNFullContextService fullContextService;
     private final com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService;
+    private final com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService;
+
+    /** T1127 — the cost stages of the SN calls this class makes outside the agent executor. */
+    static final String STAGE_SN_CHAT = "sn.chat";
+    static final String STAGE_SN_CHECK = "sn.chat.check";
+    static final String STAGE_SN_FOLLOWUPS = "sn.chat.followups";
+
+    /**
+     * T1127 — calls the context's model and records the call in the cost ledger,
+     * as the agent executor does for the streamed answer. Recording never fails
+     * the call.
+     */
+    org.springframework.ai.chat.model.ChatResponse callAndRecord(TurGenAiContext context,
+            Prompt prompt, String stage) {
+        org.springframework.ai.chat.model.ChatResponse response = context.getChatModel().call(prompt);
+        if (tokenUsageService != null && context.getLlmInstance() != null) {
+            tokenUsageService.recordUsage(context.getLlmInstance(), response, currentUsername(),
+                    context.getAgentId(), stage);
+        }
+        return response;
+    }
+
+    private static String currentUsername() {
+        var authentication = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication();
+        return authentication != null && authentication.getName() != null ? authentication.getName()
+                : "anonymous";
+    }
 
     /** The constructor before T1085, kept for callers that build this class by hand. */
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
@@ -161,10 +189,30 @@ public class TurSNGenAi {
                 moderationService, fullContextService, null);
     }
 
+    /** The constructor before T1127, kept for callers that build this class by hand. */
+    public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
+            TurGenAiContextFactory turGenAiContextFactory,
+            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurRagContextBuilder turRagContextBuilder,
+            TurRagFacetExtractor facetExtractor,
+            TurAgentChatExecutor agentChatExecutor,
+            com.viglet.turing.system.TurGlobalSettingsService globalSettingsService,
+            com.viglet.turing.genai.rag.TurRagReranker ragReranker,
+            com.viglet.turing.genai.flow.TurChatFlowEngineService chatFlowEngineService,
+            com.viglet.turing.genai.safety.TurModerationService moderationService,
+            TurSNFullContextService fullContextService,
+            com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService) {
+        this(turSNSearchProcess, turGenAiContextFactory, turSNSiteLocaleRepository, turRagContextBuilder,
+                facetExtractor, agentChatExecutor, globalSettingsService, ragReranker, chatFlowEngineService,
+                moderationService, fullContextService, nlFilterService, null);
+    }
+
     /**
-     * @param nlFilterService T1085 — the shared NL filter extractor; {@code @Lazy}
-     *                        because it reaches the search engines, which this
-     *                        class must not wait on at startup
+     * @param nlFilterService   T1085 — the shared NL filter extractor; {@code @Lazy}
+     *                          because it reaches the search engines, which this
+     *                          class must not wait on at startup
+     * @param tokenUsageService T1127 — records the calls this class makes outside
+     *                          the agent executor in the cost ledger
      */
     @org.springframework.beans.factory.annotation.Autowired
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
@@ -178,7 +226,9 @@ public class TurSNGenAi {
             com.viglet.turing.genai.flow.TurChatFlowEngineService chatFlowEngineService,
             com.viglet.turing.genai.safety.TurModerationService moderationService,
             TurSNFullContextService fullContextService,
-            @org.springframework.context.annotation.Lazy com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService) {
+            @org.springframework.context.annotation.Lazy com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService,
+            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService) {
+        this.tokenUsageService = tokenUsageService;
         this.turSNSearchProcess = turSNSearchProcess;
         this.turGenAiContextFactory = turGenAiContextFactory;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -473,8 +523,7 @@ public class TurSNGenAi {
 
                     CONTEXT:
                     %s""".formatted(query, answerText, snippets);
-            String raw = context.getChatModel()
-                    .call(new Prompt(prompt))
+            String raw = callAndRecord(context, new Prompt(prompt), STAGE_SN_CHECK)
                     .getResult().getOutput().getText();
             if (raw == null) {
                 return true;
@@ -545,8 +594,7 @@ public class TurSNGenAi {
 
                     Context snippets:
                     %s""".formatted(query, snippets);
-            String raw = context.getChatModel()
-                    .call(new Prompt(prompt))
+            String raw = callAndRecord(context, new Prompt(prompt), STAGE_SN_FOLLOWUPS)
                     .getResult().getOutput().getText();
             if (raw == null || raw.isBlank()) {
                 return List.of();
@@ -826,7 +874,7 @@ public class TurSNGenAi {
 
         Prompt prompt = new Prompt(messages);
         dumpPromptIfEnabled(messages);
-        String answer = context.getChatModel().call(prompt).getResult().getOutput().getText();
+        String answer = callAndRecord(context, prompt, STAGE_SN_CHAT).getResult().getOutput().getText();
         log.debug("RAG chat LLM answer=<<<\n{}\n>>>", answer);
         return TurChatMessage.builder().text(answer).enabled(true).build();
     }
@@ -1029,8 +1077,7 @@ public class TurSNGenAi {
 
                     CONTEXT:
                     %s""".formatted(query, snippets);
-            String raw = context.getChatModel()
-                    .call(new Prompt(prompt))
+            String raw = callAndRecord(context, new Prompt(prompt), STAGE_SN_CHECK)
                     .getResult().getOutput().getText();
             if (raw == null || raw.isBlank()) {
                 return true;
@@ -1068,7 +1115,7 @@ public class TurSNGenAi {
         messages.add(new UserMessage(q));
         Prompt prompt = new Prompt(messages);
         dumpPromptIfEnabled(messages);
-        String answer = context.getChatModel().call(prompt).getResult().getOutput().getText();
+        String answer = callAndRecord(context, prompt, STAGE_SN_CHAT).getResult().getOutput().getText();
         log.debug("RAG chat (single-turn) LLM answer=<<<\n{}\n>>>", answer);
         return TurChatMessage.builder()
                 .text(answer)

@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -57,7 +58,11 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
     private final TurLLMInstanceRepository llmInstanceRepository;
     private final TurLlmModelFactory llmModelFactory;
     private final TurSecretCryptoService secretCryptoService;
+    private final TurLLMTokenUsageService tokenUsageService;
     private Clock clock = Clock.systemDefaultZone();
+
+    /** T1127 — the cost stage of a natural-language filter parse. */
+    static final String STAGE_NL_FILTERS = "sn.nl-filters";
 
     void setClockForTest(Clock clock) {
         this.clock = clock;
@@ -66,7 +71,9 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
     public TurLlmNLFacetParser(TurGlobalSettingsService globalSettingsService,
             TurLLMInstanceRepository llmInstanceRepository,
             TurLlmModelFactory llmModelFactory,
-            TurSecretCryptoService secretCryptoService) {
+            TurSecretCryptoService secretCryptoService,
+            TurLLMTokenUsageService tokenUsageService) {
+        this.tokenUsageService = tokenUsageService;
         this.globalSettingsService = globalSettingsService;
         this.llmInstanceRepository = llmInstanceRepository;
         this.llmModelFactory = llmModelFactory;
@@ -91,7 +98,10 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
             List<Message> messages = List.of(
                     new SystemMessage(systemPrompt(request.schema())),
                     new UserMessage(userPrompt(request)));
-            var result = chatModel.call(new Prompt(messages)).getResult();
+            var response = chatModel.call(new Prompt(messages));
+            // T1127 — the parse spends tokens like any SN call: record it in the cost ledger.
+            tokenUsageService.recordUsage(llm, response, "system", null, STAGE_NL_FILTERS);
+            var result = response.getResult();
             reply = result != null ? result.getOutput().getText() : null;
         } catch (RuntimeException e) {
             throw new TurNLFacetParseException("LLM call failed: " + e.getMessage(), e);

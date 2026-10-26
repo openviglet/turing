@@ -149,8 +149,8 @@ public class TurLLMCostAPI {
         }
 
         return new CostReport(
-                start.toLocalDate().toString(),
-                end.toLocalDate().minusDays(1).toString(),
+                isInstant(from) ? from.trim() : start.toLocalDate().toString(),
+                isInstant(to) ? to.trim() : end.toLocalDate().minusDays(1).toString(),
                 totalCost, totalTokens, totalInputTokens, totalOutputTokens, totalReqs,
                 byAgent, byModel, byStage, byTenant);
     }
@@ -210,6 +210,9 @@ public class TurLLMCostAPI {
     }
 
     private LocalDateTime parseFrom(String from) {
+        if (isInstant(from)) {
+            return atServerTime(from);
+        }
         if (from != null && !from.isBlank()) {
             return LocalDate.parse(from, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
         }
@@ -217,12 +220,33 @@ public class TurLLMCostAPI {
     }
 
     private LocalDateTime parseTo(String to) {
+        if (isInstant(to)) {
+            return atServerTime(to);
+        }
         // Exclusive upper bound at the START of the day AFTER `to` so the whole
         // `to` day is included; default = start of tomorrow (covers all of today).
         if (to != null && !to.isBlank()) {
             return LocalDate.parse(to, DateTimeFormatter.ISO_LOCAL_DATE).plusDays(1).atTime(LocalTime.MIN);
         }
         return LocalDate.now(ZoneId.systemDefault()).plusDays(1).atStartOfDay();
+    }
+
+    /**
+     * T1127 — a bound may be an ISO-8601 instant ({@code 2026-10-24T13:05:00Z})
+     * instead of a date, so a window can bracket one test run. A date keeps its
+     * whole-day meaning.
+     */
+    private static boolean isInstant(String value) {
+        return value != null && value.contains("T");
+    }
+
+    /** The instant on the server's clock, the zone {@code createdAt} is stored in. */
+    private static LocalDateTime atServerTime(String instant) {
+        try {
+            return LocalDateTime.ofInstant(java.time.Instant.parse(instant.trim()), ZoneId.systemDefault());
+        } catch (java.time.format.DateTimeParseException e) {
+            throw new IllegalArgumentException("'" + instant + "' is neither a date nor an ISO-8601 instant", e);
+        }
     }
 
     private static double num(Object o) {

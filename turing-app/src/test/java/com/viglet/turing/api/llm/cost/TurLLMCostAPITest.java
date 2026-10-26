@@ -78,4 +78,29 @@ class TurLLMCostAPITest {
         assertThat(second.overBudget()).isFalse();
         assertThat(second.projectedOverBudget()).isFalse();
     }
+
+    /** T1127 — instants bracket one test run, read on the server's clock like createdAt. */
+    @Test
+    void summaryTakesAnInstantWindow() {
+        String from = "2026-10-24T13:05:00Z";
+        String to = "2026-10-24T13:06:00Z";
+        LocalDateTime start = LocalDateTime.ofInstant(java.time.Instant.parse(from), java.time.ZoneId.systemDefault());
+        LocalDateTime end = LocalDateTime.ofInstant(java.time.Instant.parse(to), java.time.ZoneId.systemDefault());
+        when(agentRepository.findAll()).thenReturn(List.of());
+        when(tokenUsageRepository.findCostByAgent(start, end))
+                .thenReturn(List.<Object[]>of(new Object[] { "agent-1", 0.002, 900L, 2L }));
+
+        TurLLMCostAPI.CostReport report = api.summary(from, to);
+
+        assertThat(report.periodStart()).isEqualTo(from);
+        assertThat(report.periodEnd()).isEqualTo(to);
+        assertThat(report.totalRequests()).isEqualTo(2);
+        assertThat(report.totalTokens()).isEqualTo(900);
+    }
+
+    @Test
+    void anUnreadableBoundIsRefused() {
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> api.summary("2026-10-24Tnoon", null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

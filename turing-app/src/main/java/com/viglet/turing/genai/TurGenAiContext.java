@@ -51,6 +51,13 @@ public class TurGenAiContext {
     private final boolean fullContextEnabled;
     /** T500 — max estimated corpus tokens that still qualify for full-context. */
     private final int fullContextTokenBudget;
+    /**
+     * T1127 — the instance {@link #chatModel} was built from, and the agent it
+     * belongs to, so the SN calls made with this context land in the cost ledger.
+     * {@code null} on the {@link #disabled()} context.
+     */
+    private final com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance;
+    private final String agentId;
     public static final String COLLECTION_NAME = "turing";
 
     public static TurGenAiContext disabled() {

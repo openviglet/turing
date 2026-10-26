@@ -82,6 +82,39 @@ class TurSNGenAiTest {
                 moderationService, new TurSNFullContextService());
     }
 
+    /** T1127 — an SN call outside the agent executor lands in the cost ledger. */
+    @Test
+    void anSnCallIsRecordedInTheCostLedger() {
+        var tokenUsage = org.mockito.Mockito.mock(
+                com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService.class);
+        TurSNGenAi recording = new TurSNGenAi(turSNSearchProcess, contextFactory, localeRepository,
+                ragContextBuilder, facetExtractor, agentChatExecutor, globalSettingsService, ragReranker,
+                chatFlowEngineService, moderationService, new TurSNFullContextService(), null, tokenUsage);
+        var chatModel = org.mockito.Mockito.mock(org.springframework.ai.chat.model.ChatModel.class);
+        var response = org.mockito.Mockito.mock(org.springframework.ai.chat.model.ChatResponse.class);
+        when(chatModel.call(any(org.springframework.ai.chat.prompt.Prompt.class))).thenReturn(response);
+        var instance = new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel)
+                .llmInstance(instance).agentId("agent-1").build();
+
+        var returned = recording.callAndRecord(context, new org.springframework.ai.chat.prompt.Prompt("q"),
+                TurSNGenAi.STAGE_SN_CHAT);
+
+        assertEquals(response, returned);
+        verify(tokenUsage).recordUsage(instance, response, "anonymous", "agent-1", "sn.chat");
+    }
+
+    @Test
+    void anSnCallWithoutALedgerStillAnswers() {
+        var chatModel = org.mockito.Mockito.mock(org.springframework.ai.chat.model.ChatModel.class);
+        var response = org.mockito.Mockito.mock(org.springframework.ai.chat.model.ChatResponse.class);
+        when(chatModel.call(any(org.springframework.ai.chat.prompt.Prompt.class))).thenReturn(response);
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel).build();
+
+        assertEquals(response, turSNGenAi.callAndRecord(context,
+                new org.springframework.ai.chat.prompt.Prompt("q"), TurSNGenAi.STAGE_SN_CHAT));
+    }
+
     // T647 / §XXXVII.9 — retrieved content is framed as untrusted data.
     @Test
     void buildSystemPromptFramesRetrievedContentAsUntrusted() {
