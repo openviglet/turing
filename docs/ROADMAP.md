@@ -11,7 +11,7 @@
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
 - 📋 **T1112** (deps: T1133 🛠) **An import DELETE removes by id or type only, so a connector sharing an SN site cannot delete its documents by a field** — Each connector lists its ids through search and deletes them one by one, and an id of * is accepted and deletes nothing. → §CXXIV
-- 🛠 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Autocomplete, spell-check, duplicates, chat, nl-filters, metrics and delete-all still refuse a partitioned key. → §CXLV
+- 🛠 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Duplicates, chat, answer, nl-filters, copilot, metrics and delete-all still refuse a partitioned key. → §CXLV
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 

@@ -99,9 +99,13 @@ public class TurSNSiteSearchCachedAPI {
      * (derived from the search context) and begins with the SN site name, which is
      * unique only within a tenant, so without the wrapper two tenants owning a site
      * of the same name would serve each other's documents.
+     *
+     * <p>T1133 — a request bound to a partition of a shared site neither reads
+     * nor fills the cache, whose key does not carry the partition.
      */
     @Cacheable(value = TurSNSearchCacheEvictor.SEARCH_CACHE,
-            key = "@turTenantCacheKey.scoped(#cacheKey)")
+            key = "@turTenantCacheKey.scoped(#cacheKey)",
+            condition = "T(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext).current().isEmpty()")
     public TurSNSiteSearchBean searchCached(String cacheKey,
             TurSNSiteSearchContext turSNSiteSearchContext) {
         log.info("Search cache key: {}", cacheKey);

@@ -63,13 +63,18 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
     /**
      * Where a partitioned key may go: search (its results are filtered to the
      * partition), its configuration reads, similar documents and the stored
-     * document read (both confined to the partition), result clicks, and the
-     * JSON imports (each document is stamped with the partition).
+     * document read (both confined to the partition), autocomplete (suggested
+     * from the partition's documents), spell-check (no correction), the
+     * thesaurus' related terms, result clicks, and the JSON imports (each
+     * document is stamped with the partition).
      */
     static final List<Route> ENFORCED = List.of(
             new Route("GET", Pattern.compile(
                     "^/api/sn/[^/]+/search(?:/list|/locales|/sort-options|/similar|/document)?$")),
             new Route("POST", Pattern.compile("^/api/sn/[^/]+/search(?:/query|/list/query)?$")),
+            new Route("GET", Pattern.compile("^/api/sn/[^/]+/ac$")),
+            new Route("POST", Pattern.compile("^/api/sn/[^/]+/ac/query$")),
+            new Route("GET", Pattern.compile("^/api/sn/[^/]+/[^/]+/(?:spell-check|related-terms)$")),
             new Route("POST", Pattern.compile("^/api/sn/[^/]+/click$")),
             new Route("POST", Pattern.compile("^/api/sn/import(?:/bulk)?$")));
 

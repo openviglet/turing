@@ -1458,6 +1458,7 @@
 - **T1133 (key binding, search, import)** — An API key can be bound to a partition of a shared SN site: its searches see only the partition's documents in Solr, Lucene and Elasticsearch, its imports are stamped with the partition and refused outside it, and every endpoint that does not enforce partitions yet, MCP included, refuses the key.
 - **T1133b** — A partitioned key's import can no longer replace or delete another partition's document: each CREATE and DELETE id is checked against the stored document's partition, in Solr, Lucene and Elasticsearch.
 - **T1133c** — A partitioned key's similar-documents and stored-document reads answer only its partition: Solr, Lucene and Elasticsearch confine the MLT query, a seed outside the partition answers nothing, and the document read drops other partitions' documents.
+- **T1133d** — A partitioned key gets autocomplete suggested from its partition's documents, no spell-check correction, the thesaurus' related terms, and the search cache is skipped for every partitioned request through the cached seam itself.
 
 ## Block CA — Search response fields arrive as they were indexed
 

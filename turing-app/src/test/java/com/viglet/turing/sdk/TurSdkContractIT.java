@@ -740,10 +740,15 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
             assertTrue(unpartitioned.containsAll(List.of(partitionProbeId("a"), partitionProbeId("b"))),
                     "a request without a partitioned key sees the whole site");
 
-            HttpResponse<String> autocomplete = http.send(HttpRequest.newBuilder(
-                    URI.create(base() + "/sn/" + SITE + "/ac?q=dra&_setlocale=" + LOCALE))
-                    .header("Key", keyA).GET().build(), BodyHandlers.ofString());
-            assertEquals(403, autocomplete.statusCode(), "autocomplete does not enforce partitions yet");
+            // Autocomplete suggests from the partition's own documents.
+            HttpResponse<String> autocomplete = getWithKey("/sn/" + SITE + "/ac?q=partition&_setlocale=" + LOCALE,
+                    keyA);
+            assertEquals(200, autocomplete.statusCode(), autocomplete.body());
+            assertTrue(autocomplete.body().contains("probe a") && !autocomplete.body().contains("probe b"),
+                    "key A's suggestions must be its own titles only: " + autocomplete.body());
+
+            assertEquals(403, getWithKey("/sn/" + SITE + "/search/duplicates?id=" + partitionProbeId("a")
+                    + "&_setlocale=" + LOCALE, keyA).statusCode(), "duplicates does not enforce partitions yet");
 
             HttpResponse<String> intoB = postJson("/sn/import", """
                     {"turingDocuments":[{"turSNJobAction":"CREATE","siteNames":["%s"],"locale":"en_US",

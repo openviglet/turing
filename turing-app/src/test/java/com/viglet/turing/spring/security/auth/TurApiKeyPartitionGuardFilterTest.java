@@ -50,11 +50,13 @@ class TurApiKeyPartitionGuardFilterTest {
             "POST, /api/sn/shared/click, true",
             "POST, /api/sn/import, true",
             "POST, /api/sn/import/bulk, true",
-            "GET, /api/sn/shared/ac, false",
+            "GET, /api/sn/shared/ac, true",
+            "POST, /api/sn/shared/ac/query, true",
+            "GET, /api/sn/shared/en_US/related-terms, true",
             "GET, /api/sn/shared/search/similar, true",
             "GET, /api/sn/shared/search/document, true",
             "GET, /api/sn/shared/search/duplicates, false",
-            "GET, /api/sn/shared/en_US/spell-check, false",
+            "GET, /api/sn/shared/en_US/spell-check, true",
             "POST, /api/sn/shared/chat, false",
             "POST, /api/sn/import/zip, false",
             "POST, /api/sn/deindex, false",
@@ -67,7 +69,7 @@ class TurApiKeyPartitionGuardFilterTest {
 
     @Test
     void refusesAPartitionedKeyWithA403() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/sn/shared/ac");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/sn/shared/chat");
         TurApiKeyPartitionContext.bind(request, partitioned());
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain chain = new MockFilterChain();

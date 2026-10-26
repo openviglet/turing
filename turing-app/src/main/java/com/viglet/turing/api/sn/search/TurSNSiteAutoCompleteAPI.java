@@ -127,8 +127,14 @@ public class TurSNSiteAutoCompleteAPI {
                                 resolvedLocale, turSNSearchParams.getRows());
         }
 
+        /**
+         * Whether to suggest from a search. T1133: always for a key bound to a
+         * partition of a shared site, because the search is confined to the
+         * partition and the engine's term suggester reads the whole index.
+         */
         private static boolean hasFilterQueries(TurSNSearchParams turSNSearchParams) {
-                return !CollectionUtils.isEmpty(turSNSearchParams.getFq())
+                return com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current().isPresent()
+                                || !CollectionUtils.isEmpty(turSNSearchParams.getFq())
                                 || !CollectionUtils.isEmpty(turSNSearchParams.getFqAnd())
                                 || !CollectionUtils.isEmpty(turSNSearchParams.getFqOr());
         }
