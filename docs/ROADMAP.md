@@ -13,6 +13,7 @@
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 - 📋 **T1144** (deps: —) **The LLM cost ledger books a model with no price row at zero dollars, so a dollar budget never trips** — The model Turing creates at boot has no price, so cost/summary reports a paid run as free and nothing tells free from unknown. → §LXX.10
+- 📋 **T1145** (deps: —) **A search sent through the SDK cannot opt out of metrics, so typed prefixes fill top terms and failed searches** — A client that searches while typing records every half-word as a search, and the insights show those instead of what visitors settled on. → §LXX.11
 
 ## Block CF — What the SN site manifest cannot declare
 

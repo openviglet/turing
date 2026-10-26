@@ -2076,6 +2076,33 @@ dollar budget (`AI_COST_BUDGET`), and the dollar one stays inert until this ship
 - Done when the stack's `gpt-4o-mini` calls show a non-zero `costUsd`, and a model with
   no price shows as unpriced.
 
+### LXX.11 The SDK cannot keep a typeahead search out of the metrics (T1145)
+
+**Where it happened.** Dumont's WordPress search block searches as the visitor types
+(D163, 300 ms after the last key) through the JS SDK's search controller, and D178's
+Search insights screen reads `GET /api/sn/{siteId}/metrics/clicks` and
+`failed-searches`. Every typed prefix is recorded as a search: on the local stack this
+week, "work*" 497 times, "worksh*" 196, "wo*" 107, beside "workshop" 5,272. Top terms
+and never-clicked terms fill up with half-words nobody settled on.
+
+**What came back.** Turing already has the switch:
+`TurSNSitePostParamsBean.populateMetrics` (`useMetrics()` in `TurSNSearchProcess`). But
+neither the published `@viglet/turing-sdk` 2026.3.9 nor `frontend/packages/sdk/src` lets
+a search request set it, so a client that searches while typing cannot keep those
+searches out of the metrics.
+
+**Workaround used.** The plugin's insights drop terms that end in the `*` its instant
+search adds (D183), naming this id. A client that does not add a wildcard has no such
+marker.
+
+**What it should do.**
+- `SearchParams` (structured search and `searchRequest`) accepts `populateMetrics: false`,
+  sent as the body field Turing reads; the search controller can set it per call, so a
+  typeahead search is not recorded and the settled one is.
+- The Java SDK's search request gets the same field.
+- Done when a search sent with `populateMetrics: false` appears in neither `top-terms`,
+  `clicks` nor `failed-searches`.
+
 ## XXXVII Security hardening (post-audit)
 
 _Fully shipped — see [CHANGELOG.md](CHANGELOG.md) → Block AN and `git log`._
