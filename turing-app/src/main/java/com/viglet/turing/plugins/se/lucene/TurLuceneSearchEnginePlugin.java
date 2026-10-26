@@ -685,27 +685,34 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
         return getSimilarDocuments(siteLocale, id, rows, null);
     }
 
-    /** T1133 — the partition is a filter clause beside the MoreLikeThis query. */
+    /**
+     * T1133 / T1132 — the constraints (filters and partition) are one filter
+     * clause beside the MoreLikeThis query, built by the search's own query
+     * builder so a filter reads its field's type as it does on search.
+     */
     @Override
     public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows,
-            com.viglet.turing.commons.se.TurSEPartition partition) {
+            com.viglet.turing.commons.se.TurSEParameters constraints) {
         if (id == null || id.isBlank() || rows < 1) {
             return List.of();
         }
-        String[] mltFields = resolveMltFields(siteLocale == null ? null : siteLocale.getTurSNSite());
+        TurSNSite site = siteLocale == null ? null : siteLocale.getTurSNSite();
+        String[] mltFields = resolveMltFields(site);
+        Query filter = constraints == null || site == null ? null
+                : turLuceneQueryBuilder.buildQuery(site, constraints);
         return turLuceneInstanceProcess.initLuceneInstance(siteLocale)
                 .map(instance -> {
                     String like = seedText(instance, id, mltFields);
                     return like.isBlank()
                             ? List.<TurSESimilarResult>of()
-                            : searchSimilarDocuments(instance, like, id, rows, mltFields, partition);
+                            : searchSimilarDocuments(instance, like, id, rows, mltFields, filter);
                 })
                 .orElse(List.of());
     }
 
     /** Runs a Lucene {@link MoreLikeThis} query built from the seed text, excluding the seed and capping at {@code rows}. */
     private List<TurSESimilarResult> searchSimilarDocuments(TurLuceneInstance instance, String like,
-            String id, int rows, String[] mltFields, com.viglet.turing.commons.se.TurSEPartition partition) {
+            String id, int rows, String[] mltFields, Query filter) {
         try {
             IndexReader reader = instance.getReader();
             IndexSearcher searcher = instance.getSearcher();
@@ -719,12 +726,10 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
             // Seed the interesting-term extraction from the first configured MLT
             // field; setFieldNames above is what actually scans all MLT fields.
             Query query = mlt.like(mltFields[0], new StringReader(like));
-            if (partition != null) {
+            if (filter != null) {
                 query = new org.apache.lucene.search.BooleanQuery.Builder()
                         .add(query, org.apache.lucene.search.BooleanClause.Occur.MUST)
-                        .add(com.viglet.turing.lucene.TurLuceneFilterQueries.build(partition.field(),
-                                partition.value(), null, java.time.Instant.now()),
-                                org.apache.lucene.search.BooleanClause.Occur.FILTER)
+                        .add(filter, org.apache.lucene.search.BooleanClause.Occur.FILTER)
                         .build();
             }
             TopDocs topDocs = searcher.search(query, rows + 1);

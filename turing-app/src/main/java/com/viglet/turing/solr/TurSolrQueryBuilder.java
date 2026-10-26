@@ -283,6 +283,21 @@ public class TurSolrQueryBuilder {
     }
 
     /**
+     * T1132 — the search's own filters (facet selections and the key's partition)
+     * on a query that is not a search, such as the similar-documents one, with
+     * the semantics they have on search.
+     */
+    public void prepareConstraints(TurSEParameters constraints, SolrQuery query, TurSNSite turSNSite) {
+        if (constraints == null) {
+            return;
+        }
+        if (constraints.getTurSNFilterParams() != null) {
+            prepareQueryFilterQuery(constraints.getTurSNFilterParams(), query, turSNSite);
+        }
+        preparePartition(constraints.getPartition(), query);
+    }
+
+    /**
      * T1133 — confines the result set to the partition the request's API key is
      * bound to, with its own {@code fq}. The value is quoted like an id; the
      * field name was validated as a plain identifier when the key was saved.

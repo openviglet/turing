@@ -18,7 +18,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.TurSEPartition;
+import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
+import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
@@ -90,6 +93,20 @@ public class TurSNSimilarDocumentsService {
      */
     public List<TurSESimilarResult> findSimilar(String siteName, String id, int rows,
             Locale locale, TurSNSimilarMode mode) {
+        return findSimilar(siteName, id, rows, locale, mode, null);
+    }
+
+    /**
+     * T1132 — {@link #findSimilar(String, String, int, Locale, TurSNSimilarMode)}
+     * narrowed by the search's own filters ({@code fq}, {@code fqAnd},
+     * {@code fqOr} and their operators), applied inside the similarity query so
+     * {@code rows} counts what passes. The vector collection takes no filter, so
+     * a filtered request is answered by the lexical (MLT) query.
+     *
+     * @param filters the filters, or {@code null} for none
+     */
+    public List<TurSESimilarResult> findSimilar(String siteName, String id, int rows,
+            Locale locale, TurSNSimilarMode mode, TurSNFilterParams filters) {
         if (!StringUtils.hasText(siteName) || !StringUtils.hasText(id)) {
             return List.of();
         }
@@ -107,14 +124,20 @@ public class TurSNSimilarDocumentsService {
 
         // T1133 — a key bound to a partition of a shared site gets neighbours from
         // its partition only, of a seed in its partition. The vector store holds
-        // the whole site, so the lexical query, which takes the filter, answers.
+        // the whole site, so the lexical query, which takes the filter, answers;
+        // T1132's request filters take the same path.
         Optional<TurSEPartition> partition = TurApiKeyPartitionContext.current();
-        if (partition.isPresent()) {
-            boolean seedInPartition = plugin.getStoredDocumentsByIds(siteLocale, List.of(id)).stream()
-                    .anyMatch(seed -> TurSNPartitionWriteGuard.inPartition(seed.get(partition.get().field()),
-                            partition.get().value()));
-            return seedInPartition ? plugin.getSimilarDocuments(siteLocale, id, limit, partition.get())
-                    : List.of();
+        if (partition.isPresent() && plugin.getStoredDocumentsByIds(siteLocale, List.of(id)).stream()
+                .noneMatch(seed -> TurSNPartitionWriteGuard.inPartition(seed.get(partition.get().field()),
+                        partition.get().value()))) {
+            return List.of();
+        }
+        if (partition.isPresent() || hasFilters(filters)) {
+            TurSEParameters constraints = new TurSEParameters(new TurSNSearchParams());
+            constraints.setQuery("*");
+            constraints.setTurSNFilterParams(filters);
+            constraints.setPartition(partition.orElse(null));
+            return plugin.getSimilarDocuments(siteLocale, id, limit, constraints);
         }
 
         boolean hybrid = hybridRankingService.isEnabled(site);
@@ -158,6 +181,12 @@ public class TurSNSimilarDocumentsService {
                     .build());
         }
         return results;
+    }
+
+    private static boolean hasFilters(TurSNFilterParams filters) {
+        return filters != null && (!org.springframework.util.CollectionUtils.isEmpty(filters.getDefaultValues())
+                || !org.springframework.util.CollectionUtils.isEmpty(filters.getAnd())
+                || !org.springframework.util.CollectionUtils.isEmpty(filters.getOr()));
     }
 
     /** Picks the {@link TurSNSiteLocale} matching the request locale, else the first available. */

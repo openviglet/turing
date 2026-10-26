@@ -341,19 +341,21 @@ public interface TurSearchEnginePlugin {
     }
 
     /**
-     * T1133 — {@link #getSimilarDocuments(TurSNSiteLocale, String, int)} confined
-     * to one partition of a shared site, inside the query so {@code rows} counts
-     * what passes. {@code null} is the unconfined call.
+     * T1133 / T1132 — {@link #getSimilarDocuments(TurSNSiteLocale, String, int)}
+     * confined by {@code constraints}: their facet filters ({@code fq},
+     * {@code fqAnd}, {@code fqOr} with search's semantics) and the request key's
+     * partition, inside the query so {@code rows} counts what passes. {@code null}
+     * is the unconfined call.
      *
-     * <p>Default: the unconfined call when there is no partition, and nothing when
-     * there is one, so an engine that cannot confine the query leaks nothing.
+     * <p>Default: the unconfined call when nothing constrains it, and nothing when
+     * something does, so an engine that cannot confine the query leaks nothing.
      *
      * @since 2026.3.6
      */
     default List<com.viglet.turing.commons.se.similar.TurSESimilarResult> getSimilarDocuments(
             TurSNSiteLocale siteLocale, String id, int rows,
-            com.viglet.turing.commons.se.TurSEPartition partition) {
-        return partition == null ? getSimilarDocuments(siteLocale, id, rows) : List.of();
+            com.viglet.turing.commons.se.TurSEParameters constraints) {
+        return constraints == null ? getSimilarDocuments(siteLocale, id, rows) : List.of();
     }
 
     /**

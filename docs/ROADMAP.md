@@ -12,7 +12,8 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — A related-content rail must over-fetch and discard, and can come up short on a busy shared site. → §CXLIV
+- ⏳ **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — The duplicates search takes no filter: its clusters come from the vector collection, which carries no field to filter on. → §CXLIV
+- 📋 **T1140** (deps: —) **The SDK's fetchSimilar and fetchStoredDocuments send the locale under a name the server ignores** — A multi-locale site's related rail and detail page read the first locale's documents instead of the visitor's. → §CLII
 
 ## Block CF — What the SN site manifest cannot declare
 
@@ -21,6 +22,12 @@
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**
   TurSdkContractIT's two-partition test covers every endpoint, and the guard's ENFORCED
   list matches every SN route.
+
+## Done when — T1132
+
+- **fq[] on /search/duplicates keeps clusters to the documents that match**
+  TurSdkContractIT's two-value test also runs on the duplicates endpoint of a hybrid
+  site.
 
 ## Non-goals (do NOT add as tasks)
 

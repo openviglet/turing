@@ -774,6 +774,16 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
             assertTrue(!similar.body().contains(partitionProbeId("b")), "key A saw B as similar: " + similar.body());
             assertEquals("[]", getWithKey("/sn/" + SITE + "/search/similar?id=" + partitionProbeId("b")
                     + "&_setlocale=" + LOCALE, keyA).body().replace(" ", ""), "key A seeded from B's document");
+            // T1132 — the request's own filters narrow the neighbours, with no key at all.
+            HttpResponse<String> filtered = get("/sn/" + SITE + "/search/similar?id=" + partitionProbeId("a")
+                    + "&_setlocale=" + LOCALE + "&fq%5B%5D=" + RESERVED_FACET_FIELD + ":t1133-a");
+            assertEquals(200, filtered.statusCode(), filtered.body());
+            assertTrue(!filtered.body().contains(partitionProbeId("b")),
+                    "fq[] must keep B out of A's neighbours: " + filtered.body());
+            assertTrue(get("/sn/" + SITE + "/search/similar?id=" + partitionProbeId("a") + "&_setlocale=" + LOCALE)
+                    .body().contains(partitionProbeId("b")), "without a filter B is A's neighbour, or this "
+                            + "test asserts nothing");
+
             assertEquals(404, getWithKey("/sn/" + SITE + "/search/document?id=" + partitionProbeId("b")
                     + "&_setlocale=" + LOCALE, keyA).statusCode(), "key A read B's document");
             assertEquals(200, getWithKey("/sn/" + SITE + "/search/document?id=" + partitionProbeId("a")

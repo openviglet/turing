@@ -1838,6 +1838,13 @@ export interface FetchSimilarParams {
   readonly locale?: string;
   /** Force {@code VECTOR} or {@code MLT}; omit for server auto-selection. */
   readonly mode?: TurSimilarMode;
+  /**
+   * T1132 — filter queries ({@code field:value}) the neighbours must match, with
+   * the search's semantics: e.g. {@code ["type:post"]} keeps a post's related
+   * posts. Applied inside the similarity query, so {@code rows} counts what
+   * passes; a filtered request is answered by the lexical (MLT) query.
+   */
+  readonly fq?: readonly string[];
 }
 
 /**
@@ -1855,6 +1862,7 @@ export function fetchSimilar(
   if (params.rows != null) qs.append("rows", String(params.rows));
   if (params.locale) qs.append("locale", params.locale);
   if (params.mode) qs.append("mode", params.mode);
+  for (const fq of params.fq ?? []) qs.append("fq[]", fq);
   return client.get<TurSimilarResult[]>(`/sn/${site}/search/similar?${qs}`, {
     signal: options.signal,
   });

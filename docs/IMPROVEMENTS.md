@@ -2233,3 +2233,18 @@ the neighbour and retrieval searches. Then:
   lexical half goes through search, which already applies the partition).
 
 Add each to `ENFORCED` and extend the contract test.
+
+## CLII SDK similar and document calls drop the locale (T1140)
+
+**Where it happened.** Found while adding `fq` to `fetchSimilar` (T1132). In
+`frontend/packages/sdk/src/api.ts`, `fetchSimilar` and `fetchStoredDocuments` send the
+locale as `locale`. `/api/sn/{site}/search/similar` and `/search/document` bind it as
+`@RequestParam(name = TurSNParamType.LOCALE)`, which is `_setlocale`. Spring therefore
+drops the value, and the server falls back to the site's first locale. On a site with
+several locales, a related-content rail or a detail page reads the wrong locale's
+documents, or finds none and answers 404.
+
+**What Turing should do.** Send `_setlocale` from both calls, as `fetchSpellCheck` and
+the search calls already do, and keep the SDK's own option name `locale`. Add a test
+that reads the query string each call sends. Check the React SDK's copies of the two
+calls for the same mistake.

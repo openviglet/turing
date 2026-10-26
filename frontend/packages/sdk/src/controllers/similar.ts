@@ -42,6 +42,8 @@ export interface SimilarControllerOptions {
   readonly locale?: string;
   /** Default strategy; omit for server auto-selection. */
   readonly mode?: TurSimilarMode;
+  /** T1132 — default filter queries the neighbours must match, e.g. {@code ["type:post"]}. */
+  readonly fq?: readonly string[];
 }
 
 export interface SimilarController extends Store<SimilarControllerState> {
@@ -78,6 +80,7 @@ export function createSimilarController(
         rows: overrides?.rows ?? options.rows,
         locale: overrides?.locale ?? options.locale,
         mode: overrides?.mode ?? options.mode,
+        fq: overrides?.fq ?? options.fq,
       });
       if (requestId !== latestRequestId) return;
       store.setState({ results, status: "success" });

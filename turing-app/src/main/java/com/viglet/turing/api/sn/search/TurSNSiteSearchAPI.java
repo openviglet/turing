@@ -393,9 +393,18 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(name = "id") String id,
                         @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "10") int rows,
                         @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
-                        @RequestParam(required = false, name = "mode") TurSNSimilarMode mode) {
+                        @RequestParam(required = false, name = "mode") TurSNSimilarMode mode,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_DEFAULT) List<String> fq,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_AND) List<String> fqAnd,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> fqOr,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR,
+                                        defaultValue = "NONE") com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator fqOperator) {
+                // T1132 — the neighbours are narrowed with the search's filter semantics.
+                com.viglet.turing.commons.sn.bean.TurSNFilterParams filters =
+                                com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder()
+                                                .defaultValues(fq).and(fqAnd).or(fqOr).operator(fqOperator).build();
                 return ResponseEntity.ok(
-                                similarDocumentsService.findSimilar(siteName, id, rows, locale, mode));
+                                similarDocumentsService.findSimilar(siteName, id, rows, locale, mode, filters));
         }
 
         /**

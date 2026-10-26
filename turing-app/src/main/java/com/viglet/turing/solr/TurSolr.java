@@ -177,6 +177,12 @@ public class TurSolr {
         turSolrDocumentHandler.deIndexingByType(turSolrInstance, type);
     }
 
+    /** T1132 — the search's filters and partition on a query that is not a search. */
+    public void prepareConstraints(com.viglet.turing.commons.se.TurSEParameters constraints, SolrQuery query,
+            TurSNSite turSNSite) {
+        turSolrQueryBuilder.prepareConstraints(constraints, query, turSNSite);
+    }
+
     /** T1112 — deletes the documents whose fields hold all of these values. */
     public void deIndexingByFields(TurSolrInstance turSolrInstance, Map<String, String> fields) {
         turSolrDocumentHandler.deleteDocumentsByFields(turSolrInstance, fields);

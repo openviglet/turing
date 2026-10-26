@@ -551,10 +551,13 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
         return getSimilarDocuments(siteLocale, id, rows, null);
     }
 
-    /** T1133 — the partition is a {@code term} filter beside {@code more_like_this}. */
+    /**
+     * T1133 / T1132 — the constraints (filters and partition) are the search's
+     * own filters beside {@code more_like_this}.
+     */
     @Override
     public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows,
-            com.viglet.turing.commons.se.TurSEPartition partition) {
+            com.viglet.turing.commons.se.TurSEParameters constraints) {
         if (id == null || id.isBlank() || rows < 1) {
             return List.of();
         }
@@ -567,12 +570,15 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
             return List.of();
         }
         return turElasticsearchInstanceProcess.initElasticsearchInstance(siteLocale)
-                .map(instance -> searchSimilarDocuments(instance, like, id, rows, partition))
+                .map(instance -> searchSimilarDocuments(instance, like, id, rows,
+                        constraints == null || siteLocale.getTurSNSite() == null ? List.of()
+                                : turElasticsearch.filters(siteLocale.getTurSNSite(), constraints)))
                 .orElse(List.of());
     }
 
     private List<TurSESimilarResult> searchSimilarDocuments(TurElasticsearchInstance instance,
-            String like, String id, int rows, com.viglet.turing.commons.se.TurSEPartition partition) {
+            String like, String id, int rows,
+            List<co.elastic.clients.elasticsearch._types.query_dsl.Query> filters) {
         try {
             co.elastic.clients.elasticsearch._types.query_dsl.Query mlt =
                     co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q -> q.moreLikeThis(m -> m
@@ -583,10 +589,10 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
                             .minDocFreq(1)
                             .minWordLength(3)
                             .maxQueryTerms(40)));
-            co.elastic.clients.elasticsearch._types.query_dsl.Query query = partition == null ? mlt
+            co.elastic.clients.elasticsearch._types.query_dsl.Query query = filters.isEmpty() ? mlt
                     : co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q -> q.bool(b -> b
                             .must(mlt)
-                            .filter(f -> f.term(t -> t.field(partition.field()).value(partition.value())))));
+                            .filter(filters)));
             var response = instance.getClient().search(s -> s
                     .index(instance.getIndex())
                     .size(rows + 1)

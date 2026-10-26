@@ -345,6 +345,20 @@ public class TurElasticsearch {
      */
     private Query buildQuery(TurSNSite turSNSite, TurSEParameters turSEParameters) {
         Query query = buildTextQuery(turSEParameters);
+        List<Query> filters = filters(turSNSite, turSEParameters);
+        if (filters.isEmpty()) {
+            return query;
+        }
+        return Query.of(q -> q.bool(b -> b.must(query).filter(filters)));
+    }
+
+    /**
+     * The filters a search applies beside its text query: (T1106) its facet
+     * selections, (T1103) semantic recall's ids and (T1133) the key's partition.
+     * T1132: public so a query that is not a search, such as similar documents,
+     * filters the same way.
+     */
+    public List<Query> filters(TurSNSite turSNSite, TurSEParameters turSEParameters) {
         List<Query> filters = new ArrayList<>();
         TurElasticsearchFilterQueries.build(turSNSite, turSEParameters.getTurSNFilterParams(),
                 enabledFieldsByName(turSNSite),
@@ -366,10 +380,7 @@ public class TurElasticsearch {
                     enabledFieldsByName(turSNSite), (facet, label) -> Optional.empty(), Instant.now())
                     .ifPresent(filters::add);
         }
-        if (filters.isEmpty()) {
-            return query;
-        }
-        return Query.of(q -> q.bool(b -> b.must(query).filter(filters)));
+        return filters;
     }
 
     private Map<String, TurSNSiteFieldExt> enabledFieldsByName(TurSNSite turSNSite) {
