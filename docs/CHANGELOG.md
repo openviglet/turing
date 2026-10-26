@@ -1452,6 +1452,7 @@
 - **T1134** — Anthropic chat models build again: the okhttp client is back on 2.52.0, the core spring-ai-anthropic resolves, and Dependabot now leaves it to move with Spring AI.
 - **T1124** — A request authenticated by a usable Key header skips CSRF on every endpoint, so a connector can POST /api/v2/summary; an unknown or disabled key still meets CSRF (design §CXXXVI superseded: the exemption is by usable key on any path, not a /api/v2/summary path entry, so the next connector POST needs no list change).
 - **T1126** — The auditor reads the principal by its type, so an API-key request audits as the key owner and audited entities save over a Key, under local auth and Keycloak alike.
+- **T1138** — The console type-checks and builds again: @tanstack/react-table is back on 8.21.3, and Dependabot no longer offers its semver-major updates.
 
 ## Block CA — Search response fields arrive as they were indexed
 

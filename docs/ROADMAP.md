@@ -12,7 +12,7 @@
 
 - 📋 **T1112** (deps: T1133) **An import DELETE removes by id or type only, so a connector sharing an SN site cannot delete its documents by a field** — Each connector lists its ids through search and deletes them one by one, and an id of * is accepted and deletes nothing. → §CXXIV
 - 📋 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Each endpoint needs its own fq to keep shared sites apart, and any endpoint without one leaks another site's documents. → §CXLV
-- 📋 **T1138** (deps: —) **The console no longer type-checks or builds since Dependabot moved @tanstack/react-table to 9.x** — A major bump changed the Table generics under every grid, and the backend suite never compiles the frontend. → §CL
+- 📋 **T1139** (deps: —) **The bento list page test expects a LARGE first tile that the design system no longer gives** — The console's unit suite is red, which hides any new failure behind an old one. → §CLI
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 

@@ -2304,18 +2304,19 @@ Reference: `frontend/packages/sdk/src/controllers/search.ts` (`consentedAnalytic
 `analytics-consent.test.ts` and `analytics-search-abandonment.test.ts`. Port the tests
 too.
 
-## CL Pin @tanstack/react-table back to 8.x (T1138)
+## CLI Bento list test against the design system's MEDIUM default (T1139)
 
-**Where it happened.** Dependabot's frontend group bump on 2026-10-20 (336bfab6ca) moved
-`@tanstack/react-table` from 8.21.3 to 9.3.1, a major version. Since then `pnpm exec tsc
--b --noEmit` in `frontend/apps/turing-app` reports 52 errors, none in code that changed:
-`Generic type 'Table' requires 2 type argument(s)` in
-`src/components/ui/grid-column-visibility-menu.tsx`, and implicit `any` on `row`,
-`column`, `header` and `cell` in the grids built on it (`field.grid.list.tsx` and
-others). `pnpm run build` runs `tsc -b` first, so the console no longer builds. The
-backend suite does not compile the frontend, so nothing flagged it.
+**Where it happened.** `src/components/bento/__tests__/bento-list-page.test.tsx` fails
+two cases on the current tree, with `@tanstack/react-table` on 8.x and on 9.x alike.
+Both expect the first tile to default to `LARGE`: "renders the New tile, item tiles, and
+sizes the first item LARGE by default", and the Customize case, whose first "Large"
+button should be pressed. The layout resolver lives in
+`@viglet/viglet-design-system/bento` (re-exported by `bento-layout.ts` since T1002). In
+2026.3.19 it gives every tile `MEDIUM` when no saved layout exists, so `data-emphasis`
+is `MEDIUM` and no size button is pressed for LARGE.
 
-**What Turing should do.** Pin `@tanstack/react-table` back to `^8.21.3` and add a
-Dependabot `ignore` for its semver-major updates, as T1134 did for okhttp. Then `tsc -b
---noEmit` must be clean again. Migrating to v9 is its own task: v9 changes the `Table`
-generics, and every grid would have to move to them at once.
+**What Turing should do.** The design system owns the default, and its own suite covers
+the resolver, so update this product test to the default the package now ships: every
+tile `MEDIUM`, and the Customize case checks the pressed "Medium" button before it
+clicks "Small". If the product wants a LARGE lead tile again, that is a request to the
+design system, not a change in this test.

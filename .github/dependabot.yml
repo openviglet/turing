@@ -43,6 +43,10 @@ updates:
       - dependency-name: "typescript"
       - dependency-name: "vite"
       - dependency-name: "@module-federation/vite"
+      # T1138 — 9.x changed the Table generics under every console grid and broke
+      # `tsc -b`; moving to it is a migration of all grids at once, done by hand.
+      - dependency-name: "@tanstack/react-table"
+        update-types: ["version-update:semver-major"]
     groups:
       # T1071 — vitest loads @vitest/browser* as plugins that must share its
       # version: a major bump of vitest alone aborted the whole test run. Listed
