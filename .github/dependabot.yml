@@ -19,6 +19,10 @@ updates:
       # resolves; a lone bump (4.69.3 over core 4.49.0) broke every OpenAI-family
       # model with NoClassDefFoundError. Raise it by hand alongside Spring AI.
       - dependency-name: "com.openai:openai-java-client-okhttp"
+      # T1134 — the same rule for anthropic-java-core, which spring-ai-anthropic
+      # resolves: a lone bump (2.73.0 over core 2.52.0) broke every Anthropic
+      # model with NoSuchMethodError on Backend.openTelemetryProviderName().
+      - dependency-name: "com.anthropic:anthropic-java-client-okhttp"
     groups:
       java:
         applies-to: version-updates
