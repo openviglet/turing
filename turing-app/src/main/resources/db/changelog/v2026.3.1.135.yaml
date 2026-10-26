@@ -1,0 +1,40 @@
+databaseChangeLog:
+  # T1133 — the search and click logs record the partition of a shared site the
+  # request's API key was bound to ("field=value"), so a partitioned key's
+  # metrics read its own partition. Null for an unpartitioned request.
+  - changeSet:
+      id: v2026.3.1.135-add-sn_site_metric_access-partitionKey
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sn_site_metric_access
+        - not:
+            - columnExists:
+                tableName: sn_site_metric_access
+                columnName: partitionKey
+      changes:
+        - addColumn:
+            tableName: sn_site_metric_access
+            columns:
+              - column:
+                  name: partitionKey
+                  type: varchar(512)
+  - changeSet:
+      id: v2026.3.1.135-add-sn_site_metric_click-partitionKey
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sn_site_metric_click
+        - not:
+            - columnExists:
+                tableName: sn_site_metric_click
+                columnName: partitionKey
+      changes:
+        - addColumn:
+            tableName: sn_site_metric_click
+            columns:
+              - column:
+                  name: partitionKey
+                  type: varchar(512)

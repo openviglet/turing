@@ -76,6 +76,8 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
             new Route("POST", Pattern.compile("^/api/sn/[^/]+/ac/query$")),
             new Route("GET", Pattern.compile("^/api/sn/[^/]+/[^/]+/(?:spell-check|related-terms)$")),
             new Route("POST", Pattern.compile("^/api/sn/[^/]+/click$")),
+            // T1133 — the insight reports a connector reads, over its partition's logs.
+            new Route("GET", Pattern.compile("^/api/sn/[^/]+/metrics/(?:failed-searches|content-gaps|clicks)$")),
             new Route("POST", Pattern.compile("^/api/sn/import(?:/bulk)?$")));
 
     @Override

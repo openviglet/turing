@@ -102,6 +102,14 @@ public class TurSNSiteMetricClick implements Serializable {
     private TurSNSite turSNSite;
 
     /**
+     * T1133 — the partition of a shared site ({@code field=value}) the request's
+     * API key was bound to, or {@code null}.
+     */
+    @Setter
+    @Column(length = 512)
+    private String partitionKey;
+
+    /**
      * Setting the term also derives the {@code sanatizedTerm} so admin
      * dashboards group equivalent queries (case/accent-insensitive). Mirrors
      * the contract of {@link TurSNSiteMetricAccess#setTerm(String)}.

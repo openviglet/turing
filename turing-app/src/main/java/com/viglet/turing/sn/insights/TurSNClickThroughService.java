@@ -35,11 +35,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickTerm;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 /**
  * Click-through rates read back from the click log (T1131): per term, how often
@@ -102,13 +104,15 @@ public class TurSNClickThroughService {
         int limit = TurSNSearchInsightsService.clamp(rows);
         Instant start = window.from() != null ? window.from() : Instant.EPOCH;
         Instant end = window.to();
+        // T1133 — a key bound to a partition of a shared site reads its partition's logs.
+        String partition = TurApiKeyPartitionContext.current().map(TurSEPartition::key).orElse(null);
 
         List<TurSNSiteMetricAccessTerm> searched = accessRepository.termsBetweenDatesForLocale(site, start, end,
-                locale, PageRequest.of(0, limit * SCAN_MULTIPLIER));
+                locale, partition, PageRequest.of(0, limit * SCAN_MULTIPLIER));
         List<String> names = searched.stream().map(TurSNSiteMetricAccessTerm::getTerm).filter(Objects::nonNull)
                 .toList();
         Map<String, TurSNSiteMetricClickTerm> clicks = names.isEmpty() ? Map.of()
-                : clickRepository.clicksByTerm(site, start, end, locale, names).stream()
+                : clickRepository.clicksByTerm(site, start, end, locale, partition, names).stream()
                         .collect(Collectors.toMap(TurSNSiteMetricClickTerm::term, Function.identity(),
                                 (a, b) -> a));
 
@@ -116,8 +120,8 @@ public class TurSNClickThroughService {
         List<Term> neverClicked = all.stream().filter(t -> t.clicks() == 0 && t.avgResults() > 0).limit(limit)
                 .toList();
 
-        long totalSearches = accessRepository.countSearchesForLocale(site, start, end, locale);
-        long totalClicks = clickRepository.countClicks(site, start, end, locale);
+        long totalSearches = accessRepository.countSearchesForLocale(site, start, end, locale, partition);
+        long totalClicks = clickRepository.countClicks(site, start, end, locale, partition);
         return new Report(window.from(), end, locale == null ? null : locale.toString(), totalSearches,
                 totalClicks, ratio(totalClicks, totalSearches), all.stream().limit(limit).toList(), neverClicked);
     }

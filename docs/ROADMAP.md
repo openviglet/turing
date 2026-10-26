@@ -10,7 +10,7 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
-- 🛠 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Duplicates, chat, answer, nl-filters, copilot and metrics still refuse a partitioned key. → §CXLV
+- 🛠 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Duplicates, chat, answer, nl-filters and copilot still refuse a partitioned key: the vector store carries no partition. → §CXLV
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 

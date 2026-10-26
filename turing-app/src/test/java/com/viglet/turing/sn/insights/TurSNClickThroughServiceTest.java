@@ -63,15 +63,15 @@ class TurSNClickThroughServiceTest {
 
     @Test
     void joinsSearchesAndClicksPerTerm() {
-        when(accessRepository.termsBetweenDatesForLocale(eq(site), eq(Instant.EPOCH), eq(TO), isNull(),
+        when(accessRepository.termsBetweenDatesForLocale(eq(site), eq(Instant.EPOCH), eq(TO), isNull(), isNull(),
                 any(Pageable.class))).thenReturn(List.of(
                         new TurSNSiteMetricAccessTerm("workshop", 10, 8.0, TO),
                         new TurSNSiteMetricAccessTerm("php 9", 6, 0.0, TO),
                         new TurSNSiteMetricAccessTerm("pricing", 4, 2.5, TO)));
-        when(clickRepository.clicksByTerm(eq(site), eq(Instant.EPOCH), eq(TO), isNull(), anyCollection()))
+        when(clickRepository.clicksByTerm(eq(site), eq(Instant.EPOCH), eq(TO), isNull(), isNull(), anyCollection()))
                 .thenReturn(List.of(new TurSNSiteMetricClickTerm("workshop", 3, 1.6666)));
-        when(accessRepository.countSearchesForLocale(site, Instant.EPOCH, TO, null)).thenReturn(20L);
-        when(clickRepository.countClicks(site, Instant.EPOCH, TO, null)).thenReturn(3L);
+        when(accessRepository.countSearchesForLocale(site, Instant.EPOCH, TO, null, null)).thenReturn(20L);
+        when(clickRepository.countClicks(site, Instant.EPOCH, TO, null, null)).thenReturn(3L);
 
         var report = service.report(site, new TurSNSearchInsightsService.Window(null, TO), null, 10);
 
@@ -92,7 +92,7 @@ class TurSNClickThroughServiceTest {
 
     @Test
     void anEmptyWindowAsksForNoClicks() {
-        when(accessRepository.termsBetweenDatesForLocale(any(), any(), any(), any(), any(Pageable.class)))
+        when(accessRepository.termsBetweenDatesForLocale(any(), any(), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(List.of());
 
         var report = service.report(site, new TurSNSearchInsightsService.Window(null, TO), Locale.US, 5);
@@ -100,7 +100,7 @@ class TurSNClickThroughServiceTest {
         assertThat(report.terms()).isEmpty();
         assertThat(report.ctr()).isZero();
         assertThat(report.locale()).isEqualTo("en_US");
-        verify(clickRepository, never()).clicksByTerm(any(), any(), any(), any(), anyCollection());
+        verify(clickRepository, never()).clicksByTerm(any(), any(), any(), any(), any(), anyCollection());
     }
 
     @Test

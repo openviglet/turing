@@ -119,8 +119,19 @@ public class TurSNSearchInsightsService {
     /** Queries that returned nothing every time they ran, most searched first. */
     @Transactional(readOnly = true)
     public List<Term> failedSearches(TurSNSite site, Window window, Integer rows) {
-        return metricAccessRepository.zeroResultTermsBetweenDates(site, start(window), window.to(),
-                PageRequest.of(0, clamp(rows))).stream().map(Term::of).toList();
+        PageRequest page = PageRequest.of(0, clamp(rows));
+        // T1133 — a key bound to a partition of a shared site reads its partition's searches.
+        List<TurSNSiteMetricAccessTerm> terms = partitionKey()
+                .map(partition -> metricAccessRepository.zeroResultTermsBetweenDatesInPartition(site,
+                        start(window), window.to(), partition, page))
+                .orElseGet(() -> metricAccessRepository.zeroResultTermsBetweenDates(site, start(window),
+                        window.to(), page));
+        return terms.stream().map(Term::of).toList();
+    }
+
+    private static java.util.Optional<String> partitionKey() {
+        return com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+                .map(com.viglet.turing.commons.se.TurSEPartition::key);
     }
 
     /**
@@ -131,8 +142,13 @@ public class TurSNSearchInsightsService {
     public List<Term> contentGaps(TurSNSite site, Window window, Integer rows) {
         int limit = clamp(rows);
         List<Term> gaps = new ArrayList<>();
-        for (TurSNSiteMetricAccessTerm term : metricAccessRepository.termsWithLastSeenBetweenDates(site,
-                start(window), window.to(), PageRequest.of(0, limit * GAP_SCAN_MULTIPLIER))) {
+        PageRequest page = PageRequest.of(0, limit * GAP_SCAN_MULTIPLIER);
+        List<TurSNSiteMetricAccessTerm> searched = partitionKey()
+                .map(partition -> metricAccessRepository.termsWithLastSeenBetweenDatesInPartition(site,
+                        start(window), window.to(), partition, page))
+                .orElseGet(() -> metricAccessRepository.termsWithLastSeenBetweenDates(site, start(window),
+                        window.to(), page));
+        for (TurSNSiteMetricAccessTerm term : searched) {
             if (term.getNumFound() < LOW_COVERAGE_THRESHOLD) {
                 gaps.add(Term.of(term));
                 if (gaps.size() >= limit) {

@@ -779,6 +779,26 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
             assertEquals(200, getWithKey("/sn/" + SITE + "/search/document?id=" + partitionProbeId("a")
                     + "&_setlocale=" + LOCALE, keyA).statusCode(), "key A reads its own document");
 
+            // The metrics a partitioned key reads are its partition's searches only.
+            var site = siteRepository.findByName(SITE).orElseThrow();
+            String failedA = "t1133-failed-a-" + java.util.UUID.randomUUID();
+            String failedB = "t1133-failed-b-" + java.util.UUID.randomUUID();
+            for (String[] logged : new String[][] { { failedA, RESERVED_FACET_FIELD + "=t1133-a" },
+                    { failedB, RESERVED_FACET_FIELD + "=t1133-b" } }) {
+                TurSNSiteMetricAccess access = new TurSNSiteMetricAccess();
+                access.setAccessDate(Instant.now());
+                access.setTerm(logged[0]);
+                access.setNumFound(0);
+                access.setPartitionKey(logged[1]);
+                access.setTurSNSite(site);
+                metricAccessRepository.save(access);
+            }
+            HttpResponse<String> failed = getWithKey("/sn/" + site.getId()
+                    + "/metrics/failed-searches?period=today&rows=50", keyA);
+            assertEquals(200, failed.statusCode(), failed.body());
+            assertTrue(failed.body().contains(failedA) && !failed.body().contains(failedB),
+                    "key A's failed searches must be its own: " + failed.body());
+
             // T1112 — a DELETE naming a field removes every document holding it, on
             // the real engine: partition B's delete-all leaves A's document alone.
             Map<String, Object> partitionB = new HashMap<>(Map.of(RESERVED_FACET_FIELD, "t1133-b"));

@@ -92,6 +92,14 @@ public class TurSNSiteMetricAccess implements Serializable {
 	@Setter
 	private long numFound;
 
+	/**
+	 * T1133 — the partition of a shared site ({@code field=value}) the request's
+	 * API key was bound to, or {@code null}.
+	 */
+	@Setter
+	@Column(length = 512)
+	private String partitionKey;
+
 	public void setTerm(String term) {
 		this.term = term;
 		this.sanatizedTerm = Normalizer.normalize(term, Normalizer.Form.NFD)

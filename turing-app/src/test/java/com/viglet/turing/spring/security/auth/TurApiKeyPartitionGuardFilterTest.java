@@ -60,7 +60,9 @@ class TurApiKeyPartitionGuardFilterTest {
             "POST, /api/sn/shared/chat, false",
             "POST, /api/sn/import/zip, false",
             "POST, /api/sn/deindex, false",
-            "GET, /api/sn/site-1/metrics/clicks, false",
+            "GET, /api/sn/site-1/metrics/clicks, true",
+            "GET, /api/sn/site-1/metrics/failed-searches, true",
+            "GET, /api/sn/site-1/metrics/top-terms/today/10, false",
             "GET, /api/dev/token, false"
     })
     void allowsOnlyTheEndpointsThatEnforceThePartition(String method, String uri, boolean allowed) {

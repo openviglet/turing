@@ -32,7 +32,8 @@ import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricClick;
  * Repository for {@link TurSNSiteMetricClick}. Clicks are append-only
  * telemetry: the only writer is the {@code /click} endpoint, and the reads are
  * the aggregates the click-through report (T1131) needs. A {@code null}
- * {@code locale} reads every locale.
+ * {@code locale} reads every locale, and a {@code null} partition key (T1133)
+ * every partition.
  *
  * @author Alexandre Oliveira
  * @since 2026.2.7
@@ -42,13 +43,15 @@ public interface TurSNSiteMetricClickRepository extends JpaRepository<TurSNSiteM
     @Query("select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickTerm("
             + "c.sanatizedTerm, COUNT(c), AVG(CAST(c.position as double))) from TurSNSiteMetricClick c "
             + "where c.turSNSite = :site and c.accessDate between :start and :end "
-            + "and (:locale is null or c.language = :locale) and c.sanatizedTerm in :terms "
-            + "group by c.sanatizedTerm")
+            + "and (:locale is null or c.language = :locale) and (:partition is null or c.partitionKey = :partition) "
+            + "and c.sanatizedTerm in :terms group by c.sanatizedTerm")
     List<TurSNSiteMetricClickTerm> clicksByTerm(@Param("site") TurSNSite site, @Param("start") Instant start,
-            @Param("end") Instant end, @Param("locale") Locale locale, @Param("terms") Collection<String> terms);
+            @Param("end") Instant end, @Param("locale") Locale locale, @Param("partition") String partitionKey,
+            @Param("terms") Collection<String> terms);
 
     @Query("select COUNT(c) from TurSNSiteMetricClick c where c.turSNSite = :site "
-            + "and c.accessDate between :start and :end and (:locale is null or c.language = :locale)")
+            + "and c.accessDate between :start and :end and (:locale is null or c.language = :locale) "
+            + "and (:partition is null or c.partitionKey = :partition)")
     long countClicks(@Param("site") TurSNSite site, @Param("start") Instant start, @Param("end") Instant end,
-            @Param("locale") Locale locale);
+            @Param("locale") Locale locale, @Param("partition") String partitionKey);
 }

@@ -19,4 +19,9 @@ public record TurSEPartition(String field, String value) implements Serializable
     public String filterQuery() {
         return field + ":" + value;
     }
+
+    /** The partition as the search and click logs record it: {@code field=value}. */
+    public String key() {
+        return field + "=" + value;
+    }
 }

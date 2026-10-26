@@ -74,18 +74,36 @@ public interface TurSNSiteMetricAccessRepository extends JpaRepository<TurSNSite
 			Instant endDate, Pageable pageable);
 
 	// T1131 — the most searched terms in a window, optionally for one locale
-	// (null reads every locale), for the click-through report.
+	// (null reads every locale) and (T1133) one partition of a shared site (null
+	// reads every partition), for the click-through report.
 	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
 			+ "TurSNSiteMetricAccess where turSNSite = :site AND accessDate BETWEEN :start AND :end "
-			+ "AND (:locale is null or language = :locale) GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC")
+			+ "AND (:locale is null or language = :locale) AND (:partition is null or partitionKey = :partition) "
+			+ "GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC")
 	List<TurSNSiteMetricAccessTerm> termsBetweenDatesForLocale(@Param("site") TurSNSite site,
 			@Param("start") Instant start, @Param("end") Instant end, @Param("locale") Locale locale,
-			Pageable pageable);
+			@Param("partition") String partitionKey, Pageable pageable);
 
 	@Query(value = "select COUNT(sanatizedTerm) from TurSNSiteMetricAccess where turSNSite = :site "
-			+ "AND accessDate BETWEEN :start AND :end AND (:locale is null or language = :locale)")
+			+ "AND accessDate BETWEEN :start AND :end AND (:locale is null or language = :locale) "
+			+ "AND (:partition is null or partitionKey = :partition)")
 	long countSearchesForLocale(@Param("site") TurSNSite site, @Param("start") Instant start,
-			@Param("end") Instant end, @Param("locale") Locale locale);
+			@Param("end") Instant end, @Param("locale") Locale locale, @Param("partition") String partitionKey);
+
+	// T1133 — the T1119 reports for one partition of a shared site.
+	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
+			+ "TurSNSiteMetricAccess where turSNSite = :site AND accessDate BETWEEN :start AND :end "
+			+ "AND partitionKey = :partition GROUP BY sanatizedTerm HAVING MAX(numFound) = 0 ORDER BY COUNT(sanatizedTerm) DESC")
+	List<TurSNSiteMetricAccessTerm> zeroResultTermsBetweenDatesInPartition(@Param("site") TurSNSite site,
+			@Param("start") Instant start, @Param("end") Instant end, @Param("partition") String partitionKey,
+			Pageable pageable);
+
+	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
+			+ "TurSNSiteMetricAccess where turSNSite = :site AND accessDate BETWEEN :start AND :end "
+			+ "AND partitionKey = :partition GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC")
+	List<TurSNSiteMetricAccessTerm> termsWithLastSeenBetweenDatesInPartition(@Param("site") TurSNSite site,
+			@Param("start") Instant start, @Param("end") Instant end, @Param("partition") String partitionKey,
+			Pageable pageable);
 
 	@Query(value = "select COUNT(sanatizedTerm) from "
 			+ "TurSNSiteMetricAccess where turSNSite = ?1")

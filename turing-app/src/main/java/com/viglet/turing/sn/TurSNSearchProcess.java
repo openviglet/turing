@@ -561,6 +561,10 @@ public class TurSNSearchProcess {
                         turSNSiteMetricAccess.setTurSNSite(
                                         turSNSiteRepository.getReferenceById(turSNSite.getId()));
                         turSNSiteMetricAccess.setNumFound(numFound);
+                        // T1133 — a partitioned key's searches are its partition's metrics.
+                        Optional.ofNullable(turSNSiteSearchContext.getTurSEParameters().getPartition())
+                                        .ifPresent(partition -> turSNSiteMetricAccess
+                                                        .setPartitionKey(partition.key()));
                         Optional.ofNullable(turSNSiteSearchContext.getTurSNSitePostParamsBean())
                                         .ifPresent(p -> {
                                                 turSNSiteMetricAccess.setTargetingRules(Optional

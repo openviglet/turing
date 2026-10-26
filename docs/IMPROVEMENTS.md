@@ -2219,15 +2219,17 @@ each endpoint is ruled out: one endpoint that forgot it would leak.
 `TurApiKeyPartitionContext` carries the partition, and `TurApiKeyPartitionGuardFilter`
 refuses the key with 403 outside its `ENFORCED` routes. MCP refuses partitioned keys.
 Search applies `TurSEParameters.partition` in Solr, Lucene and Elasticsearch, and
-imports stamp the value. T1133b checks each write's id against the stored document;
-T1133c confines similar documents and `/search/document`; T1133d confines autocomplete
-and spell-check and skips the cache; T1112's delete by field gets the partition added.
-`TurSdkContractIT` tests two partitions.
+imports stamp the value. T1133b checks writes by id; T1133c similar and
+`/search/document`; T1133d autocomplete and spell-check; T1112 confines a delete by
+field; T1133e records a `partitionKey` on each search and click and reads failed
+searches, content gaps and clicks per partition. `TurSdkContractIT` tests two
+partitions.
 
-**What is left.** Add each endpoint to `ENFORCED` once it applies the partition, and extend
-the contract test:
-- duplicates: clusters come from the per-site vector collection, so its points need the
-  partition as metadata, written at index time, and the neighbour search a filter on it;
-- chat, answer, nl-filters and copilot: RAG retrieval runs on the same vector store, and
-  its lexical half goes through search, which already applies the partition;
-- metrics: the search and click logs carry no partition, so record it per access first.
+**What is left.** Both need the partition in the per-site vector collection: written as
+point metadata at index time (with a re-embed for existing sites), and a filter on it in
+the neighbour and retrieval searches. Then:
+- duplicates (clusters come from vector neighbours);
+- chat, answer, nl-filters and copilot (RAG retrieval runs on that collection; its
+  lexical half goes through search, which already applies the partition).
+
+Add each to `ENFORCED` and extend the contract test.
