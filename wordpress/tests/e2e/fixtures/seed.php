@@ -8,7 +8,8 @@
  *   (one post, "Only on the second site", with the argument `second`);
  * - a page "Busca" holding the Turing search block, and "Header search" holding core's;
  * - the `seats` field mapped as an INT facet and `topic` (the title's last word, twelve
- *   values) as a STRING facet, and search answered by Turing.
+ *   values) as a STRING facet, the seats again as `capacity` ranges (up to 30, 30 or
+ *   more), and search answered by Turing.
  *
  * Prints JSON: { searchPageId, corePageId, postId } for the specs.
  *
@@ -172,6 +173,29 @@ update_option(
 					'facet'       => true,
 					'facet_label' => 'Topic',
 					'weight'      => null,
+				),
+				// The seats again, as ranges only: a range facet (Turing custom facet).
+				array(
+					'source'      => 'meta:seats',
+					'field'       => 'capacity',
+					'type'        => 'INT',
+					'multi'       => false,
+					'facet'       => false,
+					'facet_label' => 'Capacity',
+					'weight'      => null,
+					'range'       => true,
+					'ranges'      => array(
+						array(
+							'label' => '',
+							'from'  => null,
+							'to'    => 30,
+						),
+						array(
+							'label' => '',
+							'from'  => 30,
+							'to'    => null,
+						),
+					),
 				),
 			),
 		),

@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-25T20:28:39+00:00\n"
+"POT-Creation-Date: 2026-10-26T19:54:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -23,7 +23,7 @@ msgid "Integrate WordPress with Viglet Turing search engine for powerful content
 msgstr ""
 
 #: src/admin/views/settings-page.php:40
-#: assets/admin/health.js:181
+#: assets/admin/health.js:185
 msgid "Connection"
 msgstr ""
 
@@ -44,7 +44,7 @@ msgid "Search"
 msgstr ""
 
 #: src/admin/views/settings-page.php:52
-#: assets/admin/mapping.js:228
+#: assets/admin/mapping.js:339
 #: assets/admin/tuning.js:253
 #: assets/admin/tuning.js:380
 msgid "Actions"
@@ -817,50 +817,50 @@ msgstr ""
 msgid "Nothing is listening at %s on that port: Turing is down, or the port is wrong."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-events.php:101
+#: src/includes/class-viglet-dumont-events.php:114
 msgid "Documents imported successfully"
 msgstr ""
 
 #. translators: 1: the HTTP status code, 2: the response body.
-#: src/includes/class-viglet-dumont-events.php:104
+#: src/includes/class-viglet-dumont-events.php:117
 #, php-format
 msgid "Import failed with HTTP %1$d: %2$s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-events.php:107
+#: src/includes/class-viglet-dumont-events.php:120
 msgid "Documents removed successfully"
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-events.php:110
+#: src/includes/class-viglet-dumont-events.php:123
 #, php-format
 msgid "Deindex failed with HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-events.php:113
+#: src/includes/class-viglet-dumont-events.php:126
 msgid "Fields provisioned"
 msgstr ""
 
 #. translators: %s: the fields whose type Turing would have to change.
-#: src/includes/class-viglet-dumont-events.php:116
+#: src/includes/class-viglet-dumont-events.php:129
 #, php-format
 msgid "Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Turing."
 msgstr ""
 
 #. translators: 1: the HTTP status code, 2: Turing's error message.
-#: src/includes/class-viglet-dumont-events.php:120
+#: src/includes/class-viglet-dumont-events.php:133
 #, php-format
 msgid "Provisioning failed with HTTP %1$d: %2$s"
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-events.php:124
+#: src/includes/class-viglet-dumont-events.php:137
 #, php-format
 msgid "Bulk: %1$d sent, %2$d failed."
 msgstr ""
 
 #. translators: %d: documents removed from Turing.
-#: src/includes/class-viglet-dumont-events.php:128
+#: src/includes/class-viglet-dumont-events.php:141
 #, php-format
 msgid "%d documents WordPress no longer publishes removed."
 msgstr ""
@@ -877,44 +877,82 @@ msgstr ""
 msgid "Indexed %1$d of %2$d documents..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:182
+#: src/includes/class-viglet-dumont-mapping.php:193
 msgid "Site"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:244
+#: src/includes/class-viglet-dumont-mapping.php:316
+msgid "Upcoming"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:321
+msgid "Last 7 days"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:326
+msgid "Last 30 days"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:331
+msgid "This year"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:336
+msgid "Before this year"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:361
 msgid "No mapped field to provision."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:254
+#: src/includes/class-viglet-dumont-mapping.php:371
 msgid "The fields are already provisioned."
 msgstr ""
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:309
+#: src/includes/class-viglet-dumont-mapping.php:426
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr ""
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:335
+#: src/includes/class-viglet-dumont-mapping.php:452
 #, php-format
 msgid "Taxonomy: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:351
+#: src/includes/class-viglet-dumont-mapping.php:468
 #, php-format
 msgid "Meta: %s"
 msgstr ""
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:359
+#: src/includes/class-viglet-dumont-mapping.php:476
 #, php-format
 msgid "Post: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:364
+#: src/includes/class-viglet-dumont-mapping.php:481
 msgid "Featured image URL"
+msgstr ""
+
+#. translators: %s: a range's upper bound.
+#: src/includes/class-viglet-dumont-mapping.php:716
+#, php-format
+msgid "Up to %s"
+msgstr ""
+
+#. translators: %s: a range's lower bound.
+#: src/includes/class-viglet-dumont-mapping.php:720
+#, php-format
+msgid "%s or more"
+msgstr ""
+
+#. translators: 1: a range's lower bound, 2: its upper bound.
+#: src/includes/class-viglet-dumont-mapping.php:724
+#, php-format
+msgid "%1$s – %2$s"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-native-search.php:175
@@ -963,7 +1001,7 @@ msgstr ""
 
 #: src/includes/class-viglet-dumont-post-state.php:69
 #: src/includes/class-viglet-dumont-post-state.php:77
-#: assets/admin/health.js:391
+#: assets/admin/health.js:395
 #: src/admin/js/editor-panel.js:143
 msgid "Failed"
 msgstr ""
@@ -1093,152 +1131,152 @@ msgstr ""
 msgid "Sweep"
 msgstr ""
 
-#: assets/admin/health.js:35
+#: assets/admin/health.js:39
 msgid "never"
 msgstr ""
 
-#: assets/admin/health.js:60
+#: assets/admin/health.js:64
 msgid "AI features"
 msgstr ""
 
-#: assets/admin/health.js:64
+#: assets/admin/health.js:68
 msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
 msgstr ""
 
-#: assets/admin/health.js:79
+#: assets/admin/health.js:83
 msgid "Feature"
 msgstr ""
 
-#: assets/admin/health.js:82
+#: assets/admin/health.js:86
 msgid "State"
 msgstr ""
 
-#: assets/admin/health.js:85
+#: assets/admin/health.js:89
 msgid "Why"
 msgstr ""
 
-#: assets/admin/health.js:95
+#: assets/admin/health.js:99
 msgid "On"
 msgstr ""
 
-#: assets/admin/health.js:96
+#: assets/admin/health.js:100
 msgid "Off"
 msgstr ""
 
-#: assets/admin/health.js:116
+#: assets/admin/health.js:120
 msgid "Check again"
 msgstr ""
 
-#: assets/admin/health.js:117
+#: assets/admin/health.js:121
 msgid "Check AI features"
 msgstr ""
 
 #. translators: 1: the SN site, 2: the site key.
-#: assets/admin/health.js:193
+#: assets/admin/health.js:197
 #, js-format
 msgid "SN site %1$s, site key %2$s."
 msgstr ""
 
 #. translators: %s: why Turing refused the fields.
-#: assets/admin/health.js:205
+#: assets/admin/health.js:209
 #, js-format
 msgid "The mapped fields are not provisioned: %s"
 msgstr ""
 
-#: assets/admin/health.js:218
+#: assets/admin/health.js:222
 msgid "Documents"
 msgstr ""
 
-#: assets/admin/health.js:225
+#: assets/admin/health.js:229
 msgid "Post type"
 msgstr ""
 
-#: assets/admin/health.js:228
+#: assets/admin/health.js:232
 msgid "Published in WordPress"
 msgstr ""
 
-#: assets/admin/health.js:234
+#: assets/admin/health.js:238
 msgid "Indexed in Turing"
 msgstr ""
 
-#: assets/admin/health.js:249
+#: assets/admin/health.js:253
 msgid "unknown"
 msgstr ""
 
-#: assets/admin/health.js:259
+#: assets/admin/health.js:263
 msgid "(differs: run a reindex)"
 msgstr ""
 
-#: assets/admin/health.js:276
+#: assets/admin/health.js:280
 msgid "Queue"
 msgstr ""
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:282
+#: assets/admin/health.js:286
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr ""
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:294
+#: assets/admin/health.js:298
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr ""
 
-#: assets/admin/health.js:302
+#: assets/admin/health.js:306
 msgid "The queue has not sent anything yet."
 msgstr ""
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:316
+#: assets/admin/health.js:320
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr ""
 
-#: assets/admin/health.js:325
+#: assets/admin/health.js:329
 msgid "Retry failed"
 msgstr ""
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:338
+#: assets/admin/health.js:342
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr ""
 
-#: assets/admin/health.js:348
+#: assets/admin/health.js:352
 msgid "Send queue now"
 msgstr ""
 
-#: assets/admin/health.js:358
+#: assets/admin/health.js:362
 msgid "Last events"
 msgstr ""
 
-#: assets/admin/health.js:366
+#: assets/admin/health.js:370
 msgid "When"
 msgstr ""
 
-#: assets/admin/health.js:369
+#: assets/admin/health.js:373
 msgid "What"
 msgstr ""
 
-#: assets/admin/health.js:372
+#: assets/admin/health.js:376
 msgid "Post"
 msgstr ""
 
-#: assets/admin/health.js:375
+#: assets/admin/health.js:379
 msgid "Result"
 msgstr ""
 
-#: assets/admin/health.js:390
+#: assets/admin/health.js:394
 msgid "OK"
 msgstr ""
 
-#: assets/admin/health.js:405
+#: assets/admin/health.js:409
 msgid "Nothing has been sent yet."
 msgstr ""
 
 #: assets/admin/mapping.js:32
-#: assets/admin/mapping.js:224
+#: assets/admin/mapping.js:335
 msgid "In Turing"
 msgstr ""
 
@@ -1250,85 +1288,118 @@ msgstr ""
 msgid "Conflict"
 msgstr ""
 
-#: assets/admin/mapping.js:69
-#: assets/admin/mapping.js:206
-msgid "Source"
+#: assets/admin/mapping.js:71
+#: assets/admin/mapping.js:196
+msgid "Ranges"
 msgstr ""
 
-#: assets/admin/mapping.js:79
-#: assets/admin/mapping.js:209
-msgid "Turing field"
+#: assets/admin/mapping.js:73
+msgid "Leave a bound empty for an open end, and a label empty to name the range after its bounds."
+msgstr ""
+
+#: assets/admin/mapping.js:82
+msgid "Label"
 msgstr ""
 
 #: assets/admin/mapping.js:88
-#: assets/admin/mapping.js:212
-msgid "Type"
+msgid "From"
 msgstr ""
 
 #: assets/admin/mapping.js:97
-#: assets/admin/mapping.js:215
+msgid "To"
+msgstr ""
+
+#: assets/admin/mapping.js:111
+msgid "Remove range"
+msgstr ""
+
+#: assets/admin/mapping.js:125
+msgid "Add range"
+msgstr ""
+
+#: assets/admin/mapping.js:150
+#: assets/admin/mapping.js:317
+msgid "Source"
+msgstr ""
+
+#: assets/admin/mapping.js:160
+#: assets/admin/mapping.js:320
+msgid "Turing field"
+msgstr ""
+
+#: assets/admin/mapping.js:169
+#: assets/admin/mapping.js:323
+msgid "Type"
+msgstr ""
+
+#: assets/admin/mapping.js:181
+#: assets/admin/mapping.js:326
 msgid "Multiple"
 msgstr ""
 
-#: assets/admin/mapping.js:105
-#: assets/admin/mapping.js:218
+#: assets/admin/mapping.js:189
+#: assets/admin/mapping.js:329
 msgid "Facet"
 msgstr ""
 
-#: assets/admin/mapping.js:112
+#: assets/admin/mapping.js:199
+msgid "Upcoming, last 7 and 30 days, this year, before."
+msgstr ""
+
+#: assets/admin/mapping.js:212
 msgid "Facet label"
 msgstr ""
 
-#: assets/admin/mapping.js:122
+#: assets/admin/mapping.js:222
 msgid "Search weight"
 msgstr ""
 
-#: assets/admin/mapping.js:152
+#: assets/admin/mapping.js:252
 msgid "Remove field"
 msgstr ""
 
-#: assets/admin/mapping.js:154
+#: assets/admin/mapping.js:254
 #: assets/admin/tuning.js:49
 msgid "Remove"
 msgstr ""
 
-#: assets/admin/mapping.js:183
+#: assets/admin/mapping.js:294
 msgid "Leave this type out of search"
 msgstr ""
 
-#: assets/admin/mapping.js:196
+#: assets/admin/mapping.js:307
 msgid "Only the standard fields are sent for this type."
 msgstr ""
 
-#: assets/admin/mapping.js:221
+#: assets/admin/mapping.js:332
 msgid "Weight"
 msgstr ""
 
-#: assets/admin/mapping.js:267
+#: assets/admin/mapping.js:378
 msgid "Add field"
 msgstr ""
 
-#: assets/admin/mapping.js:270
+#: assets/admin/mapping.js:381
 msgid "Preview document"
 msgstr ""
 
 #. translators: %s: the post's title.
-#: assets/admin/mapping.js:283
+#: assets/admin/mapping.js:394
 #, js-format
 msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
 msgstr ""
 
-#: assets/admin/mapping.js:370
+#: assets/admin/mapping.js:481
 msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them."
 msgstr ""
 
 #. translators: %s: why Turing could not say where each field stands.
-#: assets/admin/mapping.js:384
+#: assets/admin/mapping.js:495
 #, js-format
 msgid "Turing did not say where the fields stand: %s"
 msgstr ""
 
-#: assets/admin/mapping.js:420
+#: assets/admin/mapping.js:531
 msgid "Save and send to Turing"
 msgstr ""
 

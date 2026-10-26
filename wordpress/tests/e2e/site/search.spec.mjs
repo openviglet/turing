@@ -92,6 +92,39 @@ test( 'a facet narrows the results, shows as a removable filter, and removing it
 	await expect( chip ).toHaveCount( 0 );
 } );
 
+test( 'a range facet narrows to a range and its chip names the range', async ( {
+	page,
+	seed,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await expect( summary( page ) ).toHaveText( '4 results' );
+
+	await openFilters( page );
+	const capacity = facet( page, 'Capacity' );
+	await expect( capacity.locator( 'label' ) ).toHaveText( [
+		/Up to 30\s*1/,
+		/30 or more\s*3/,
+	] );
+	await capacity
+		.locator( 'label' )
+		.filter( { hasText: '30 or more' } )
+		.locator( 'input' )
+		.click();
+	await expect( summary( page ) ).toHaveText( '3 results' );
+	await expect(
+		capacity
+			.locator( 'label' )
+			.filter( { hasText: '30 or more' } )
+			.locator( 'input' )
+	).toBeChecked();
+	await closeFilters( page );
+	const chip = block( page ).locator( '.viglet-dumont-search__chip' );
+	await expect( chip ).toHaveText( /Capacity: 30 or more/ );
+
+	await chip.click();
+	await expect( summary( page ) ).toHaveText( '4 results' );
+} );
+
 test( 'a long facet shows five values and the rest on demand', async ( {
 	page,
 	seed,

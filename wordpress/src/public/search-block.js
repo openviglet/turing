@@ -745,10 +745,10 @@ function card( d, position ) {
 }
 
 /**
- * The facets to show, in the order they were first answered. Turing stops describing a
- * facet once the search filters on it (T1115), so a filtered facet is rebuilt from the last
- * answer that described it: its applied values checked (and removable), the others still
- * there to switch to, with the counts they had before the filter.
+ * The facets to show, in the order they were first answered. Once the search filters on a
+ * facet Turing describes it by its applied values alone (T1115), so a filtered facet is
+ * rebuilt from the last answer that described it unfiltered: its applied values checked (and
+ * removable), the others still there to switch to, with the counts they had before the filter.
  *
  * @param {Object[]} answered The response's facets.
  * @param {string[]} applied  The request's filters, the site's own left out.
@@ -761,13 +761,7 @@ function facets( answered, applied ) {
 		}
 	}
 	// A page opened filtered (a shared link, a reload) never saw those facets unfiltered.
-	if (
-		[ ...filtered ].some(
-			( name ) =>
-				! facetMemory.has( name ) &&
-				! answered.some( ( facet ) => facet.name === name )
-		)
-	) {
+	if ( [ ...filtered ].some( ( name ) => ! facetMemory.has( name ) ) ) {
 		learnFacets();
 	}
 	const byName = new Map(
@@ -779,12 +773,13 @@ function facets( answered, applied ) {
 	return names
 		.map(
 			( name ) =>
+				( filtered.has( name ) && facetMemory.get( name ) ) ||
 				byName.get( name ) ||
-				( filtered.has( name ) ? facetMemory.get( name ) : null )
+				null
 		)
 		.filter( Boolean )
 		.map( ( facet ) => {
-			const items = byLabelWithinCount( facet.items ).map( ( i ) => {
+			const all = byLabelWithinCount( facet.items ).map( ( i ) => {
 				const selected =
 					i.selected || applied.includes( i.filterQuery );
 				return {
@@ -798,6 +793,11 @@ function facets( answered, applied ) {
 					},
 				};
 			} );
+			// A range facet answers every range, the empty ones too, and a click on one finds
+			// nothing. A filtered group keeps its values: they are what the visitor switches to.
+			const items = all.some( ( item ) => item.selected )
+				? all
+				: all.filter( ( item ) => item.count > 0 );
 			return {
 				name: facet.name,
 				label: facet.label || facet.name,
@@ -809,7 +809,8 @@ function facets( answered, applied ) {
 				more: items.length - facetValuesShown,
 				selectedCount: items.filter( ( item ) => item.selected ).length,
 			};
-		} );
+		} )
+		.filter( ( facet ) => facet.items.length );
 }
 
 /**
@@ -837,8 +838,8 @@ function byLabelWithinCount( items ) {
 
 /**
  * Ask once, without the filters, for the facets a filtered page has not seen, and redraw
- * the block when they arrive. Only a page opened already filtered needs this; until T1115
- * Turing does not describe a facet it filters on.
+ * the block when they arrive. Only a page opened already filtered needs this: Turing
+ * describes a facet it filters on by its applied values alone.
  */
 function learnFacets() {
 	const key = `${ lastQuery }|${ ( search.getState().request?.fq || [] ).join( '|' ) }`;

@@ -47,6 +47,11 @@ test( 'Fields shows the seats facet in Turing and previews a document', async ( 
 		'In Turing'
 	);
 
+	// A number field with ranges lists them, each editable, under its row.
+	const ranges = post.locator( 'fieldset' ).filter( { hasText: 'Ranges' } );
+	await expect( ranges.getByLabel( 'To' ).first() ).toHaveValue( '30' );
+	await expect( ranges.getByLabel( 'From' ).nth( 1 ) ).toHaveValue( '30' );
+
 	await post.getByRole( 'button', { name: 'Preview document' } ).click();
 	const json = post.locator( 'pre' );
 	await expect( json ).toContainText( '"site_key"' );

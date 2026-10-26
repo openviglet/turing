@@ -431,16 +431,27 @@ class Viglet_Dumont_Native_Search {
 		$facets = array();
 		foreach ( ( new Viglet_Dumont_Mapping( $this->settings ) )->all() as $type_mapping ) {
 			foreach ( $type_mapping['fields'] as $field ) {
+				$label = '' !== $field['facet_label'] ? $field['facet_label'] : $field['field'];
 				if ( $field['facet'] && ! isset( $facets[ $field['field'] ] ) ) {
 					$facets[ $field['field'] ] = array(
 						'field' => $field['field'],
-						'label' => '' !== $field['facet_label'] ? $field['facet_label'] : $field['field'],
+						'label' => $label,
 						'type'  => $field['type'],
 						'multi' => $field['multi'],
 					);
 				}
-			}
-		}
+				// A range facet filters as `<field>_range:<range label>`, so the chip names it too.
+				$range = Viglet_Dumont_Mapping::range_facet_name( $field['field'] );
+				if ( $field['range'] && ! isset( $facets[ $range ] ) ) {
+					$facets[ $range ] = array(
+						'field' => $range,
+						'label' => $label,
+						'type'  => $field['type'],
+						'multi' => false,
+					);
+				}
+			}//end foreach
+		}//end foreach
 
 		$config    = array(
 			'url'     => untrailingslashit( '' !== (string) $this->settings['public_url'] ? $this->settings['public_url'] : $this->settings['server_url'] ),

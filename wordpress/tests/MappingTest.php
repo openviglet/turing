@@ -289,6 +289,114 @@ final class MappingTest extends PluginTestCase {
 		);
 	}
 
+	public function test_a_date_or_number_field_with_ranges_declares_a_range_facet(): void {
+		$this->store(
+			array(
+				array(
+					'source'      => 'meta:start_date',
+					'field'       => 'start_date',
+					'type'        => 'DATE',
+					'facet_label' => 'Date',
+					'range'       => true,
+				),
+				array(
+					'source' => 'meta:seats',
+					'field'  => 'seats',
+					'type'   => 'INT',
+					'range'  => true,
+					'ranges' => array(
+						array(
+							'label' => 'Small',
+							'from'  => '0',
+							'to'    => '20',
+						),
+						array(
+							'from' => '20',
+							'to'   => '50.5',
+						),
+						array( 'from' => '50' ),
+						array( 'label' => 'Unbounded' ),
+						array(
+							'label' => 'Small',
+							'to'    => '5',
+						),
+					),
+				),
+				array(
+					'source' => 'meta:title_alt',
+					'field'  => 'title_alt',
+					'type'   => 'STRING',
+					'range'  => true,
+					'ranges' => array( array( 'from' => 1 ) ),
+				),
+			)
+		);
+
+		$facets = $this->mapping()->manifest()['customFacets'];
+
+		$this->assertSame( array( 'start_date_range', 'seats_range' ), array_column( $facets, 'name' ) );
+		$this->assertSame( 'start_date', $facets[0]['field'] );
+		$this->assertSame( array( 'pt_BR' => 'Date' ), $facets[0]['label'] );
+		$this->assertSame(
+			array(
+				'label'          => 'Last 7 days',
+				'rangeStartDate' => 'NOW-7DAYS',
+				'rangeEndDate'   => 'NOW',
+			),
+			$facets[0]['items'][1]
+		);
+		$this->assertSame(
+			array(
+				'label'        => 'Before this year',
+				'rangeEndDate' => 'NOW/YEAR',
+			),
+			$facets[0]['items'][4]
+		);
+		// A range with no bound is dropped, one with no label is named after its bounds, and a
+		// label already taken keeps the first range that had it.
+		$this->assertSame(
+			array(
+				array(
+					'label'      => 'Small',
+					'rangeStart' => 0,
+					'rangeEnd'   => 20,
+				),
+				array(
+					'label'      => '20 – 50.5',
+					'rangeStart' => 20,
+					'rangeEnd'   => 50.5,
+				),
+				array(
+					'label'      => '50 or more',
+					'rangeStart' => 50,
+				),
+			),
+			$facets[1]['items']
+		);
+		$this->assertSame( 'seats', $facets[1]['defaultLabel'] );
+	}
+
+	public function test_without_a_range_the_manifest_declares_no_custom_facet(): void {
+		$this->store(
+			array(
+				array(
+					'source' => 'meta:seats',
+					'field'  => 'seats',
+					'type'   => 'INT',
+					'ranges' => array( array( 'from' => 1 ) ),
+				),
+				array(
+					'source' => 'meta:size',
+					'field'  => 'size',
+					'type'   => 'INT',
+					'range'  => true,
+				),
+			)
+		);
+
+		$this->assertArrayNotHasKey( 'customFacets', $this->mapping()->manifest() );
+	}
+
 	public function test_provisioning_posts_the_manifest_once_until_it_changes(): void {
 		$this->store(
 			array(

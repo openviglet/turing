@@ -46,12 +46,92 @@ function emptyField( sources ) {
 		facet: false,
 		facet_label: '',
 		weight: null,
+		range: false,
+		ranges: [],
 	};
+}
+
+// The types a range facet can bucket; a date gets a fixed set of periods.
+const RANGE_TYPES = [ 'INT', 'LONG', 'FLOAT', 'DOUBLE', 'DATE' ];
+
+function bound( value ) {
+	return value === '' ? null : Number( value );
+}
+
+function RangeRows( { ranges, onChange } ) {
+	const setRange = ( index, key, value ) =>
+		onChange(
+			ranges.map( ( r, i ) =>
+				i === index ? { ...r, [ key ]: value } : r
+			)
+		);
+
+	return (
+		<fieldset>
+			<legend>{ __( 'Ranges', 'viglet-dumont' ) }</legend>
+			<p className="description">
+				{ __(
+					'Leave a bound empty for an open end, and a label empty to name the range after its bounds.',
+					'viglet-dumont'
+				) }
+			</p>
+			{ ranges.map( ( range, index ) => (
+				<Flex key={ index } justify="flex-start" align="flex-end">
+					<TextControl
+						__nextHasNoMarginBottom
+						label={ __( 'Label', 'viglet-dumont' ) }
+						value={ range.label || '' }
+						onChange={ ( v ) => setRange( index, 'label', v ) }
+					/>
+					<TextControl
+						__nextHasNoMarginBottom
+						label={ __( 'From', 'viglet-dumont' ) }
+						type="number"
+						value={ range.from ?? '' }
+						onChange={ ( v ) =>
+							setRange( index, 'from', bound( v ) )
+						}
+					/>
+					<TextControl
+						__nextHasNoMarginBottom
+						label={ __( 'To', 'viglet-dumont' ) }
+						type="number"
+						value={ range.to ?? '' }
+						onChange={ ( v ) =>
+							setRange( index, 'to', bound( v ) )
+						}
+					/>
+					<Button
+						variant="tertiary"
+						isDestructive
+						onClick={ () =>
+							onChange( ranges.filter( ( r, i ) => i !== index ) )
+						}
+					>
+						{ __( 'Remove range', 'viglet-dumont' ) }
+					</Button>
+				</Flex>
+			) ) }
+			<Button
+				variant="secondary"
+				style={ { marginTop: 8 } }
+				onClick={ () =>
+					onChange( [
+						...ranges,
+						{ label: '', from: null, to: null },
+					] )
+				}
+			>
+				{ __( 'Add range', 'viglet-dumont' ) }
+			</Button>
+		</fieldset>
+	);
 }
 
 function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 	const set = ( key ) => ( value ) =>
 		onChange( { ...field, [ key ]: value } );
+	const rangeable = RANGE_TYPES.includes( field.type );
 	const state = status ? status[ field.field ] : null;
 	const known = sources.some( ( s ) => s.source === field.source );
 	const options = (
@@ -61,100 +141,131 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 		.map( ( s ) => ( { value: s.source, label: s.label } ) );
 
 	return (
-		<tr>
-			<td>
-				<SelectControl
-					__nextHasNoMarginBottom
-					hideLabelFromVision
-					label={ __( 'Source', 'viglet-dumont' ) }
-					value={ field.source }
-					options={ options }
-					onChange={ set( 'source' ) }
-				/>
-			</td>
-			<td>
-				<TextControl
-					__nextHasNoMarginBottom
-					hideLabelFromVision
-					label={ __( 'Turing field', 'viglet-dumont' ) }
-					value={ field.field }
-					onChange={ set( 'field' ) }
-				/>
-			</td>
-			<td>
-				<SelectControl
-					__nextHasNoMarginBottom
-					hideLabelFromVision
-					label={ __( 'Type', 'viglet-dumont' ) }
-					value={ field.type }
-					options={ types.map( ( t ) => ( { value: t, label: t } ) ) }
-					onChange={ set( 'type' ) }
-				/>
-			</td>
-			<td>
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					label={ __( 'Multiple', 'viglet-dumont' ) }
-					checked={ !! field.multi }
-					onChange={ set( 'multi' ) }
-				/>
-			</td>
-			<td>
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					label={ __( 'Facet', 'viglet-dumont' ) }
-					checked={ !! field.facet }
-					onChange={ set( 'facet' ) }
-				/>
-				{ field.facet && (
+		<>
+			<tr>
+				<td>
+					<SelectControl
+						__nextHasNoMarginBottom
+						hideLabelFromVision
+						label={ __( 'Source', 'viglet-dumont' ) }
+						value={ field.source }
+						options={ options }
+						onChange={ set( 'source' ) }
+					/>
+				</td>
+				<td>
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'Facet label', 'viglet-dumont' ) }
-						value={ field.facet_label }
-						onChange={ set( 'facet_label' ) }
+						hideLabelFromVision
+						label={ __( 'Turing field', 'viglet-dumont' ) }
+						value={ field.field }
+						onChange={ set( 'field' ) }
 					/>
-				) }
-			</td>
-			<td>
-				<TextControl
-					__nextHasNoMarginBottom
-					hideLabelFromVision
-					label={ __( 'Search weight', 'viglet-dumont' ) }
-					type="number"
-					min={ 1 }
-					max={ 100 }
-					value={ field.weight ?? '' }
-					onChange={ ( v ) =>
-						set( 'weight' )( v === '' ? null : Number( v ) )
-					}
-				/>
-			</td>
-			<td>
-				{ state ? (
-					<span title={ state.detail }>
-						{ STATUS_LABEL[ state.status ] || state.status }
-						{ state.detail && (
-							<>
-								<br />
-								<small>{ state.detail }</small>
-							</>
-						) }
-					</span>
-				) : (
-					'—'
-				) }
-			</td>
-			<td>
-				<Button
-					variant="tertiary"
-					isDestructive
-					onClick={ onRemove }
-					label={ __( 'Remove field', 'viglet-dumont' ) }
-				>
-					{ __( 'Remove', 'viglet-dumont' ) }
-				</Button>
-			</td>
-		</tr>
+				</td>
+				<td>
+					<SelectControl
+						__nextHasNoMarginBottom
+						hideLabelFromVision
+						label={ __( 'Type', 'viglet-dumont' ) }
+						value={ field.type }
+						options={ types.map( ( t ) => ( {
+							value: t,
+							label: t,
+						} ) ) }
+						onChange={ set( 'type' ) }
+					/>
+				</td>
+				<td>
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						label={ __( 'Multiple', 'viglet-dumont' ) }
+						checked={ !! field.multi }
+						onChange={ set( 'multi' ) }
+					/>
+				</td>
+				<td>
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						label={ __( 'Facet', 'viglet-dumont' ) }
+						checked={ !! field.facet }
+						onChange={ set( 'facet' ) }
+					/>
+					{ rangeable && (
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							label={ __( 'Ranges', 'viglet-dumont' ) }
+							help={
+								'DATE' === field.type
+									? __(
+											'Upcoming, last 7 and 30 days, this year, before.',
+											'viglet-dumont'
+										)
+									: undefined
+							}
+							checked={ !! field.range }
+							onChange={ set( 'range' ) }
+						/>
+					) }
+					{ ( field.facet || ( rangeable && field.range ) ) && (
+						<TextControl
+							__nextHasNoMarginBottom
+							label={ __( 'Facet label', 'viglet-dumont' ) }
+							value={ field.facet_label }
+							onChange={ set( 'facet_label' ) }
+						/>
+					) }
+				</td>
+				<td>
+					<TextControl
+						__nextHasNoMarginBottom
+						hideLabelFromVision
+						label={ __( 'Search weight', 'viglet-dumont' ) }
+						type="number"
+						min={ 1 }
+						max={ 100 }
+						value={ field.weight ?? '' }
+						onChange={ ( v ) =>
+							set( 'weight' )( v === '' ? null : Number( v ) )
+						}
+					/>
+				</td>
+				<td>
+					{ state ? (
+						<span title={ state.detail }>
+							{ STATUS_LABEL[ state.status ] || state.status }
+							{ state.detail && (
+								<>
+									<br />
+									<small>{ state.detail }</small>
+								</>
+							) }
+						</span>
+					) : (
+						'—'
+					) }
+				</td>
+				<td>
+					<Button
+						variant="tertiary"
+						isDestructive
+						onClick={ onRemove }
+						label={ __( 'Remove field', 'viglet-dumont' ) }
+					>
+						{ __( 'Remove', 'viglet-dumont' ) }
+					</Button>
+				</td>
+			</tr>
+			{ rangeable && field.range && 'DATE' !== field.type && (
+				<tr>
+					<td colSpan={ 8 }>
+						<RangeRows
+							ranges={ field.ranges || [] }
+							onChange={ set( 'ranges' ) }
+						/>
+					</td>
+				</tr>
+			) }
+		</>
 	);
 }
 

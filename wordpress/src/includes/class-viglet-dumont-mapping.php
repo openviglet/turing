@@ -21,11 +21,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  *     { "evento": { "exclude": false, "fields": [
  *         { "source": "meta:start_date", "field": "start_date", "type": "DATE",
- *           "multi": false, "facet": true, "facet_label": "Date", "weight": null } ] } }
+ *           "multi": false, "facet": true, "facet_label": "Date", "weight": null,
+ *           "range": true, "ranges": [] } ] } }
  *
  * A source is `taxonomy:<slug>`, `meta:<key>`, `core:<excerpt|slug|menu_order|parent>` or
  * `thumbnail`. With nothing stored, every public custom taxonomy of an indexed type is
  * mapped as a multi-valued STRING facet, so a custom taxonomy is searchable out of the box.
+ *
+ * `range` gives a DATE or number field a range facet as well, declared as a Turing custom
+ * facet named `<field>_range`: a fixed set of periods for a date, and for a number the
+ * `ranges` it lists, each `{label, from, to}` with either bound open.
  */
 class Viglet_Dumont_Mapping {
 
@@ -40,6 +45,12 @@ class Viglet_Dumont_Mapping {
 
 	/** The field types Turing's manifest accepts and the plugin knows how to convert to. */
 	public const TYPES = array( 'STRING', 'TEXT', 'INT', 'LONG', 'FLOAT', 'DOUBLE', 'DATE', 'BOOL' );
+
+	/** The types a range facet can bucket. */
+	public const RANGE_TYPES = array( 'INT', 'LONG', 'FLOAT', 'DOUBLE', 'DATE' );
+
+	/** How many ranges a number field may list. */
+	private const MAX_RANGES = 20;
 
 	/** The core sources a mapping may name. */
 	private const CORE_SOURCES = array( 'excerpt', 'slug', 'menu_order', 'parent' );
@@ -190,6 +201,7 @@ class Viglet_Dumont_Mapping {
 				'facet'       => false,
 			),
 		);
+		$custom = array();
 
 		foreach ( $this->all() as $type_mapping ) {
 			if ( $type_mapping['exclude'] ) {
@@ -198,6 +210,10 @@ class Viglet_Dumont_Mapping {
 			foreach ( $type_mapping['fields'] as $field ) {
 				if ( isset( $fields[ $field['field'] ] ) ) {
 					continue;
+				}
+				$range = self::range_facet( $field, $locale );
+				if ( null !== $range ) {
+					$custom[] = $range;
 				}
 				$spec = array(
 					'name'        => $field['field'],
@@ -213,13 +229,114 @@ class Viglet_Dumont_Mapping {
 					$spec['searchWeight'] = $field['weight'];
 				}
 				$fields[ $field['field'] ] = $spec;
-			}
+			}//end foreach
 		}//end foreach
 
-		return array(
+		$manifest = array(
 			'name'    => $this->settings['site_name'],
 			'locales' => array( $locale ),
 			'fields'  => array_values( $fields ),
+		);
+		if ( ! empty( $custom ) ) {
+			$manifest['customFacets'] = $custom;
+		}
+
+		return $manifest;
+	}
+
+	/**
+	 * The name of a field's range facet. A filter on it reads `<name>:<range label>`.
+	 *
+	 * @param string $field The Turing field.
+	 */
+	public static function range_facet_name( string $field ): string {
+		return $field . '_range';
+	}
+
+	/**
+	 * A field's range facet as the manifest declares it, or null when it has none.
+	 *
+	 * @param array  $field  A sanitized mapped field.
+	 * @param string $locale The site's locale.
+	 * @return array{field: string, name: string, defaultLabel: string, label: array, items: array}|null
+	 */
+	public static function range_facet( array $field, string $locale ): ?array {
+		if ( empty( $field['range'] ) ) {
+			return null;
+		}
+
+		$items = array();
+		if ( 'DATE' === $field['type'] ) {
+			foreach ( self::date_ranges() as $range ) {
+				$items[] = array_filter(
+					array(
+						'label'          => $range['label'],
+						'rangeStartDate' => $range['from'],
+						'rangeEndDate'   => $range['to'],
+					),
+					static fn ( $value ) => null !== $value
+				);
+			}
+		} else {
+			foreach ( $field['ranges'] as $range ) {
+				$items[] = array_filter(
+					array(
+						'label'      => $range['label'],
+						'rangeStart' => $range['from'],
+						'rangeEnd'   => $range['to'],
+					),
+					static fn ( $value ) => null !== $value
+				);
+			}
+		}//end if
+		if ( empty( $items ) ) {
+			return null;
+		}
+
+		$label = '' !== $field['facet_label'] ? $field['facet_label'] : $field['field'];
+
+		return array(
+			'field'        => $field['field'],
+			'name'         => self::range_facet_name( $field['field'] ),
+			'defaultLabel' => $label,
+			'label'        => array( $locale => $label ),
+			'items'        => $items,
+		);
+	}
+
+	/**
+	 * The periods a date's range facet offers, as Turing date math. They overlap on purpose:
+	 * a visitor narrows from "this year" to "last 7 days", not between disjoint slices.
+	 *
+	 * @return array<int, array{label: string, from: ?string, to: ?string}>
+	 */
+	public static function date_ranges(): array {
+		return array(
+			array(
+				'label' => __( 'Upcoming', 'viglet-dumont' ),
+				'from'  => 'NOW',
+				'to'    => null,
+			),
+			array(
+				'label' => __( 'Last 7 days', 'viglet-dumont' ),
+				'from'  => 'NOW-7DAYS',
+				'to'    => 'NOW',
+			),
+			array(
+				'label' => __( 'Last 30 days', 'viglet-dumont' ),
+				'from'  => 'NOW-30DAYS',
+				'to'    => 'NOW',
+			),
+			array(
+				'label' => __( 'This year', 'viglet-dumont' ),
+				'from'  => 'NOW/YEAR',
+				'to'    => 'NOW',
+			),
+			array(
+				'label' => __( 'Before this year', 'viglet-dumont' ),
+				'from'  => null,
+				'to'    => 'NOW/YEAR',
+			),
 		);
 	}
 
@@ -529,7 +646,9 @@ class Viglet_Dumont_Mapping {
 			return null;
 		}
 
-		$weight = $field['weight'] ?? null;
+		$weight    = $field['weight'] ?? null;
+		$rangeable = in_array( $type, self::RANGE_TYPES, true );
+		$ranges    = $rangeable && 'DATE' !== $type ? self::sanitize_ranges( $field['ranges'] ?? array() ) : array();
 
 		return array(
 			'source'      => $source,
@@ -539,6 +658,69 @@ class Viglet_Dumont_Mapping {
 			'facet'       => ! empty( $field['facet'] ),
 			'facet_label' => sanitize_text_field( (string) ( $field['facet_label'] ?? '' ) ),
 			'weight'      => is_numeric( $weight ) ? max( 1.0, min( 100.0, (float) $weight ) ) : null,
+			'range'       => $rangeable && ! empty( $field['range'] ),
+			'ranges'      => $ranges,
 		);
+	}
+
+	/**
+	 * A number field's ranges, validated: a range needs one bound at least, and one with no
+	 * label is named after its bounds. A label two ranges share keeps the first, since the
+	 * label is what a filter on the facet names.
+	 *
+	 * @param mixed $ranges The ranges as stored or filtered.
+	 * @return array<int, array{label: string, from: int|float|null, to: int|float|null}>
+	 */
+	private static function sanitize_ranges( $ranges ): array {
+		$clean  = array();
+		$labels = array();
+		foreach ( is_array( $ranges ) ? $ranges : array() as $range ) {
+			if ( ! is_array( $range ) ) {
+				continue;
+			}
+			$from = is_numeric( $range['from'] ?? null ) ? 0 + $range['from'] : null;
+			$to   = is_numeric( $range['to'] ?? null ) ? 0 + $range['to'] : null;
+			if ( null === $from && null === $to ) {
+				continue;
+			}
+			$label = sanitize_text_field( (string) ( $range['label'] ?? '' ) );
+			if ( '' === $label ) {
+				$label = self::range_label( $from, $to );
+			}
+			if ( isset( $labels[ $label ] ) ) {
+				continue;
+			}
+			$labels[ $label ] = true;
+			$clean[]          = array(
+				'label' => $label,
+				'from'  => $from,
+				'to'    => $to,
+			);
+			if ( count( $clean ) >= self::MAX_RANGES ) {
+				break;
+			}
+		}//end foreach
+
+		return $clean;
+	}
+
+	/**
+	 * A range named after its bounds: "20 – 50", "Up to 20", "50 or more".
+	 *
+	 * @param int|float|null $from The lower bound, or null when open.
+	 * @param int|float|null $to   The upper bound, or null when open.
+	 */
+	private static function range_label( $from, $to ): string {
+		if ( null === $from ) {
+			/* translators: %s: a range's upper bound. */
+			return sprintf( __( 'Up to %s', 'viglet-dumont' ), $to );
+		}
+		if ( null === $to ) {
+			/* translators: %s: a range's lower bound. */
+			return sprintf( __( '%s or more', 'viglet-dumont' ), $from );
+		}
+
+		/* translators: 1: a range's lower bound, 2: its upper bound. */
+		return sprintf( __( '%1$s – %2$s', 'viglet-dumont' ), $from, $to );
 	}
 }
