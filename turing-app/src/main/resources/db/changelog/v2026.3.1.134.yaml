@@ -1,0 +1,26 @@
+databaseChangeLog:
+  # T1133 — an API key may be bound to one partition of a shared SN site: a field
+  # and the value the key's documents carry in it. Both null = an unpartitioned key.
+  - changeSet:
+      id: v2026.3.1.134-add-dev_token-partition
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: dev_token
+        - not:
+            - columnExists:
+                tableName: dev_token
+                columnName: partitionField
+      changes:
+        - addColumn:
+            tableName: dev_token
+            columns:
+              - column:
+                  name: partitionField
+                  type: varchar(255)
+                  remarks: "T1133 field that partitions a shared SN site (e.g. site_key)."
+              - column:
+                  name: partitionValue
+                  type: varchar(255)
+                  remarks: "T1133 value this key's documents carry in partitionField."

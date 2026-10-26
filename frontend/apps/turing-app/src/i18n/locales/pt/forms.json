@@ -215,6 +215,10 @@
       "tokenLabel": "Token",
       "tokenDesc": "O valor do token de API gerado.",
       "tokenHint": "Use este token no cabeçalho Authorization para requisições de API.",
+      "partitionTitle": "Partição de um site compartilhado",
+      "partitionDesc": "Opcional. Restringe esta chave aos documentos cujo campo tem este valor: suas buscas veem só esses documentos, e suas importações recebem o valor. Endpoints que ainda não aplicam partições recusam a chave.",
+      "partitionField": "Campo",
+      "partitionValue": "Valor",
       "titleRequired": "Título é obrigatório."
     },
     "mcp": {

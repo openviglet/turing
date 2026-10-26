@@ -1811,4 +1811,16 @@ class TurSolrQueryBuilderTest {
 
                 assertThat(query.getFilterQueries()).isNull();
         }
+
+        /** T1133 — the key's partition is its own quoted filter query. */
+        @Test
+        void partitionIsItsOwnQuotedFilterQuery() {
+                SolrQuery query = new SolrQuery();
+
+                TurSolrQueryBuilder.preparePartition(
+                                new com.viglet.turing.commons.se.TurSEPartition("site_key", "a \"b\""), query);
+                TurSolrQueryBuilder.preparePartition(null, query);
+
+                assertThat(query.getFilterQueries()).containsExactly("site_key:\"a \\\"b\\\"\"");
+        }
 }

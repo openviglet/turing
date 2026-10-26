@@ -80,9 +80,28 @@ public class TurDevToken extends TurAuditable<String> implements Serializable {
 	@Column
 	private Instant expiresAt;
 
+	/**
+	 * T1133 — the field that partitions a shared SN site (e.g. {@code site_key}).
+	 * With {@link #partitionValue}, the server confines every request this key
+	 * makes to the documents carrying that value. Both {@code null}: unpartitioned.
+	 */
+	@Column
+	private String partitionField;
+
+	/** T1133 — the value this key's documents carry in {@link #partitionField}. */
+	@Column
+	private String partitionValue;
+
 	/** True when this token may still authenticate: enabled and not past expiry. */
 	@com.fasterxml.jackson.annotation.JsonIgnore
 	public boolean isUsable() {
 		return enabled && (expiresAt == null || Instant.now().isBefore(expiresAt));
+	}
+
+	/** T1133 — whether this key is bound to one partition of a shared site. */
+	@com.fasterxml.jackson.annotation.JsonIgnore
+	public boolean isPartitioned() {
+		return partitionField != null && !partitionField.isBlank()
+				&& partitionValue != null && !partitionValue.isBlank();
 	}
 }

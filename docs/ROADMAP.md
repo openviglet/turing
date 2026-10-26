@@ -10,17 +10,23 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
-- 📋 **T1112** (deps: T1133) **An import DELETE removes by id or type only, so a connector sharing an SN site cannot delete its documents by a field** — Each connector lists its ids through search and deletes them one by one, and an id of * is accepted and deletes nothing. → §CXXIV
-- 📋 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Each endpoint needs its own fq to keep shared sites apart, and any endpoint without one leaks another site's documents. → §CXLV
+- 📋 **T1112** (deps: T1133 ⏳) **An import DELETE removes by id or type only, so a connector sharing an SN site cannot delete its documents by a field** — Each connector lists its ids through search and deletes them one by one, and an id of * is accepted and deletes nothing. → §CXXIV
+- ⏳ **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Autocomplete, spell-check, similar, chat, nl-filters, metrics and delete still refuse a partitioned key, and a reused id overwrites. → §CXLV
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1132** (deps: T1133) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — A related-content rail must over-fetch and discard, and can come up short on a busy shared site. → §CXLIV
+- 📋 **T1132** (deps: T1133 ⏳) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — A related-content rail must over-fetch and discard, and can come up short on a busy shared site. → §CXLIV
 - 📋 **T1137** (deps: —) **The React SDK's useTuringSearch writes the TUR_SESSION cookie on mount and reports every as-you-type search** — A consent-respecting React site cannot hand the hook its analytics bus, which the vanilla controller now allows. → §CXLIX
 
 ## Block CF — What the SN site manifest cannot declare
 
 - 📋 **T1135** (deps: —) **The SN manifest cannot set a site's facet behaviour, so provisioning as code cannot choose drill-down or multi-select** — facetType, facetItemType and itemsPerFacet are console-only, so a connector must click through the console to get facets that stay visible. → §CXLVII
+
+## Done when — T1133
+
+- **Every SN endpoint takes a partitioned key and keeps it in its partition**
+  TurSdkContractIT's two-partition test covers every endpoint, and the guard's ENFORCED
+  list matches every SN route.
 
 ## Non-goals (do NOT add as tasks)
 

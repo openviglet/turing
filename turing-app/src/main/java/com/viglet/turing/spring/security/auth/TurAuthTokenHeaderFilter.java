@@ -58,6 +58,8 @@ public class TurAuthTokenHeaderFilter extends OncePerRequestFilter {
                 authenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                // T1133 — a key bound to a partition of a shared site carries it.
+                TurApiKeyPartitionContext.bind(request, token);
             });
         }
         filterChain.doFilter(request, response);

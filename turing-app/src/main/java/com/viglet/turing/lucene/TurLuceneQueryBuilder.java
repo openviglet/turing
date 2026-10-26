@@ -157,6 +157,15 @@ public class TurLuceneQueryBuilder {
                     BooleanClause.Occur.FILTER);
         }
 
+        // T1133 — the partition the request's API key is bound to, read by the
+        // field's type like a facet selection, but never shown as one.
+        if (params.getPartition() != null) {
+            String field = params.getPartition().field();
+            TurSNSiteFieldExt ext = enabledFieldsByName(turSNSite).get(field);
+            builder.add(TurLuceneFilterQueries.build(field, params.getPartition().value(),
+                    ext != null ? ext.getType() : null, Instant.now()), BooleanClause.Occur.FILTER);
+        }
+
         // T1064 â€” ranking expressions raise the score of the documents they
         // describe (SHOULD beside the MUST main query), as Solr's bq does.
         if (rankingExpressions != null) {

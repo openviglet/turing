@@ -603,6 +603,14 @@ class TurLuceneQueryBuilderTest {
         return params;
     }
 
+    /** T1133 — a key's partition binds a search like a filter, though the request sent none. */
+    @Test
+    void aPartitionConfinesTheSearchToItsDocuments() throws Exception {
+        TurSEParameters params = new TurSEParameters(searchAll());
+        params.setPartition(new com.viglet.turing.commons.se.TurSEPartition("category", "domestico"));
+        assertEquals(java.util.Set.of("baba"), matchingIds(siteWithIdAndCategory(), params, JOBS));
+    }
+
     @Test
     void recallUnderAFilterThatHoldsTheJobReturnsIt() throws Exception {
         // "trabalho com criancas" recalled two jobs; the visitor filtered on education.

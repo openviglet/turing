@@ -342,6 +342,15 @@ public class TurElasticsearch {
                     .map(co.elastic.clients.elasticsearch._types.FieldValue::of).toList();
             filters.add(Query.of(f -> f.terms(t -> t.field(TurSNFieldName.ID).terms(tt -> tt.value(ids)))));
         }
+        // T1133 — the partition the request's API key is bound to, read by the
+        // field's type like a facet selection, but never shown as one.
+        if (turSEParameters.getPartition() != null) {
+            TurElasticsearchFilterQueries.build(turSNSite,
+                    com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder()
+                            .defaultValues(List.of(turSEParameters.getPartition().filterQuery())).build(),
+                    enabledFieldsByName(turSNSite), (facet, label) -> Optional.empty(), Instant.now())
+                    .ifPresent(filters::add);
+        }
         if (filters.isEmpty()) {
             return query;
         }

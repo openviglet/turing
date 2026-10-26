@@ -2238,22 +2238,28 @@ stays for type and visibility.
 ## CXLV A shared SN site is partitioned by the server, not by its clients (T1133)
 
 **Where it happened.** Dumont's WordPress plugin writes several WordPress sites into one
-SN site and tells them apart by a `site_key` field. Isolation lives in the client: it
-sends `fq=site_key:<key>` where an endpoint takes one. Search does. Similar and
-duplicates (T1132) and the import DELETE (T1112) do not, and neither do autocomplete,
-spell-check, related terms, chat and answer retrieval, nl-filters or the metrics. And
-the key is not bound to a `site_key`, so site A's key reads and deletes site B's
-documents.
+SN site, told apart by a `site_key` field, and isolation lived in the client's `fq`.
 
-**Decision (review, 2026-10-25).** A shared SN site is a supported model, and the server
-owns the partition. Adding `fq` endpoint by endpoint is the alternative it rules out:
-every new endpoint would repeat the patch, and one that forgot it would leak.
+**Decision (review, 2026-10-25).** The server owns the partition. Patching `fq` into
+each endpoint is ruled out: one endpoint that forgot it would leak.
 
-**What Turing should do.**
-- A partition filter bound to an API key (a field and a value, e.g. `site_key` = `a.example.org`), applied by the server to every read and write that key makes: search, autocomplete, spell-check, related terms, similar and duplicates, chat and answer retrieval, nl-filters, import and delete, metrics.
-- An import from a partitioned key gets the partition value stamped on, or is refused when it carries a different one.
-- A partitioned key's delete-all means its own partition (T1112's field delete).
-- A contract test: two partitions in one site, and no endpoint answers or changes the other's documents.
+**What landed (part 1).** `dev_token.partitionField`/`partitionValue` bind a key.
+`TurApiKeyPartitionContext` carries the partition, and `TurApiKeyPartitionGuardFilter`
+refuses the key with 403 outside its `ENFORCED` routes. MCP refuses partitioned keys.
+Search applies `TurSEParameters.partition` in Solr, Lucene and Elasticsearch, and skips
+recall, MLT, clusters, `showAllFacetItems` and the cache for it. The JSON imports stamp
+the value, and refuse another value or a DELETE. `TurSdkContractIT` tests two
+partitions.
+
+**What is left.** Add each endpoint to `ENFORCED` once it applies the partition, and extend
+the contract test:
+- autocomplete, spell-check and related terms;
+- similar, duplicates (T1132) and the stored-document read;
+- chat, answer, nl-filters and copilot (the vector store needs a metadata filter too);
+- metrics;
+- DELETE by id checks the document's partition, and delete-all means the key's own
+  partition (T1112);
+- a CREATE that reuses another partition's id must not replace that document.
 
 ## CXLVII Site facet behaviour in the SN manifest (T1135)
 

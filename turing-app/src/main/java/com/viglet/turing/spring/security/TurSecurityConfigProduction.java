@@ -56,6 +56,7 @@ import java.util.stream.Stream;
 import com.viglet.core.security.VigletCsrfCookieFilter;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.spring.security.auth.TurApiKeyCsrfExemption;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionGuardFilter;
 import com.viglet.turing.spring.security.auth.TurAuthTokenHeaderFilter;
 import com.viglet.turing.spring.security.auth.TurGatewayKeyAuthFilter;
 import com.viglet.turing.spring.security.auth.TurLogoutHandler;
@@ -363,6 +364,7 @@ public class TurSecurityConfigProduction {
                         TurGatewayKeyAuthFilter turGatewayKeyAuthFilter,
                         TurSNSiteApiKeyGateFilter turSNSiteApiKeyGateFilter,
                         TurTenantResolutionFilter turTenantResolutionFilter,
+                        TurApiKeyPartitionGuardFilter turApiKeyPartitionGuardFilter,
                         TurApiKeyCsrfExemption turApiKeyCsrfExemption,
                         TurLogoutHandler turLogoutHandler,
                         TurConfigProperties turConfigProperties,
@@ -387,6 +389,9 @@ public class TurSecurityConfigProduction {
                 // T259 / §XIV.2.3 — resolve + bind the current tenant once the
                 // principal is known. No-op when turing.tenancy.enabled=false.
                 http.addFilterAfter(turTenantResolutionFilter, TurSNSiteApiKeyGateFilter.class);
+                // T1133 — a key bound to a partition of a shared site is refused on
+                // every endpoint that does not enforce the partition.
+                http.addFilterAfter(turApiKeyPartitionGuardFilter, TurAuthTokenHeaderFilter.class);
                 http.userDetailsService(userDetailsService);
                 http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
                 http.securityContext(securityContext -> securityContext

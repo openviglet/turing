@@ -160,6 +160,7 @@ public class TurSolrQueryBuilder {
         }
         prepareQueryFilterQuery(turSEParameters.getTurSNFilterParams(), query, turSNSite);
         prepareIdRestriction(turSEParameters.getRestrictIds(), query);
+        preparePartition(turSEParameters.getPartition(), query);
         prepareQueryTargetingRules(context.getTurSNSitePostParamsBean(), query);
         if (hasGroup(turSEParameters)) {
             prepareGroup(turSEParameters, query);
@@ -279,6 +280,19 @@ public class TurSolrQueryBuilder {
         query.addFilterQuery(ids.stream()
                 .map(id -> "\"" + id.replace("\\", "\\\\").replace("\"", "\\\"") + "\"")
                 .collect(Collectors.joining(" OR ", TurSNFieldName.ID + ":(", ")")));
+    }
+
+    /**
+     * T1133 — confines the result set to the partition the request's API key is
+     * bound to, with its own {@code fq}. The value is quoted like an id; the
+     * field name was validated as a plain identifier when the key was saved.
+     */
+    static void preparePartition(com.viglet.turing.commons.se.TurSEPartition partition, SolrQuery query) {
+        if (partition == null) {
+            return;
+        }
+        query.addFilterQuery(partition.field() + ":\""
+                + partition.value().replace("\\", "\\\\").replace("\"", "\\\"") + "\"");
     }
 
     private void prepareQueryFilterQuery(TurSNFilterParams turSNFilterParams, SolrQuery query,

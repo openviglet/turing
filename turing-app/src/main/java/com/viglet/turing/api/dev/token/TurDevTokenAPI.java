@@ -23,6 +23,9 @@ package com.viglet.turing.api.dev.token;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +79,7 @@ public class TurDevTokenAPI {
 	@Operation(summary = "Update a Developer Token")
 	@PutMapping("/{id}")
 	public TurDevTokenDto turDevTokenUpdate(@PathVariable String id, @RequestBody TurDevTokenDto turDevTokenDto) {
+		validatePartition(turDevTokenDto);
 		TurDevToken source = turDevTokenMapper.toEntity(turDevTokenDto);
 		return turDevTokenRepository.findById(id).map(existing -> {
 			turDevTokenMapper.updateEntity(source, existing);
@@ -96,12 +100,38 @@ public class TurDevTokenAPI {
 	@Operation(summary = "Create a Developer Token")
 	@PostMapping
 	public TurDevTokenDto turDevTokenAdd(@RequestBody TurDevTokenDto turDevTokenDto) {
+		validatePartition(turDevTokenDto);
 		TurDevToken turDevToken = turDevTokenMapper.toEntity(turDevTokenDto);
 		turDevToken.setToken(UUID.randomUUID().toString().replace("-", "").substring(0, 25));
 		this.turDevTokenRepository.save(turDevToken);
 		// T646 / §XXXVII.8 — the create response is the ONLY place the cleartext
 		// token value is returned (a one-time reveal); list/get/update scrub it.
 		return turDevTokenMapper.toDto(turDevToken);
+	}
+
+	/** A field the engines can filter on without quoting its name. */
+	private static final Pattern PARTITION_FIELD = Pattern.compile("^[A-Za-z0-9_.\\-]{1,255}$");
+
+	/**
+	 * T1133 — a partition is a field and a value, both or neither, and the field
+	 * is a plain name: it goes into the engines' filters unquoted.
+	 *
+	 * @throws IllegalArgumentException (400) for half a partition or an unusable field name
+	 */
+	static void validatePartition(TurDevToken token) {
+		boolean hasField = StringUtils.isNotBlank(token.getPartitionField());
+		boolean hasValue = StringUtils.isNotBlank(token.getPartitionValue());
+		if (hasField != hasValue) {
+			throw new IllegalArgumentException("A partition needs both partitionField and partitionValue");
+		}
+		if (hasField && !PARTITION_FIELD.matcher(token.getPartitionField().trim()).matches()) {
+			throw new IllegalArgumentException(
+					"partitionField must be a field name of letters, digits, '_', '.' or '-'");
+		}
+		if (!hasField) {
+			token.setPartitionField(null);
+			token.setPartitionValue(null);
+		}
 	}
 
 	/**

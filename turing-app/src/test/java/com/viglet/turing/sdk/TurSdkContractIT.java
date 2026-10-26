@@ -52,7 +52,9 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.exchange.TurImportExchange;
 import com.viglet.turing.exchange.TurImportExchange.ImportResult;
+import com.viglet.turing.persistence.model.dev.token.TurDevToken;
 import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
+import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
 import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricClick;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -180,6 +182,9 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
 
     @Autowired
     private TurSNClickThroughService clickThroughService;
+
+    @Autowired
+    private TurDevTokenRepository devTokenRepository;
 
     private final HttpClient http = HttpClient.newHttpClient();
     private final ObjectMapper json = JsonMapper.builder().build();
@@ -708,6 +713,87 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         // 202 when metrics are on, 204 with X-Turing-Metrics when off (T1131); never 415.
         HttpResponse<String> res = http.send(beacon, BodyHandlers.ofString());
         assertEquals(2, res.statusCode() / 100, "a beacon click must be accepted, got " + res.statusCode());
+    }
+
+    /**
+     * T1133 — two partitions of one site, each with its own key: a key's search
+     * answers only its partition's documents, its import cannot write into the
+     * other partition, and an endpoint that does not enforce partitions refuses it.
+     */
+    @Test
+    void aPartitionedKeyStaysInsideItsPartition() throws Exception {
+        String keyA = partitionedKey("a");
+        String keyB = partitionedKey("b");
+        indexPartitionProbe(TurSNJobAction.CREATE, "a");
+        indexPartitionProbe(TurSNJobAction.CREATE, "b");
+        try {
+            String everything = """
+                    {"q":"*","locale":"%s","rows":200}""".formatted(LOCALE);
+            assertEquals(List.of(partitionProbeId("a")), documentIds(postJson("/sn/" + SITE + "/search/query",
+                    everything, keyA)));
+            assertEquals(List.of(partitionProbeId("b")), documentIds(postJson("/sn/" + SITE + "/search/query",
+                    everything, keyB)));
+            List<String> unpartitioned = documentIds(postJson("/sn/" + SITE + "/search/query", everything, null));
+            assertTrue(unpartitioned.containsAll(List.of(partitionProbeId("a"), partitionProbeId("b"))),
+                    "a request without a partitioned key sees the whole site");
+
+            HttpResponse<String> autocomplete = http.send(HttpRequest.newBuilder(
+                    URI.create(base() + "/sn/" + SITE + "/ac?q=dra&_setlocale=" + LOCALE))
+                    .header("Key", keyA).GET().build(), BodyHandlers.ofString());
+            assertEquals(403, autocomplete.statusCode(), "autocomplete does not enforce partitions yet");
+
+            HttpResponse<String> intoB = postJson("/sn/import", """
+                    {"turingDocuments":[{"turSNJobAction":"CREATE","siteNames":["%s"],"locale":"en_US",
+                     "attributes":{"id":"t1133-forged","title":"forged","%s":"t1133-b"}}]}"""
+                    .formatted(SITE, RESERVED_FACET_FIELD), keyA);
+            assertEquals(403, intoB.statusCode(), "key A must not write into partition B: " + intoB.body());
+        } finally {
+            indexPartitionProbe(TurSNJobAction.DELETE, "a");
+            indexPartitionProbe(TurSNJobAction.DELETE, "b");
+        }
+    }
+
+    private String partitionedKey(String partition) {
+        TurDevToken token = new TurDevToken();
+        token.setTitle("T1133 partition " + partition);
+        token.setToken("t1133" + partition + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 18));
+        token.setPartitionField(RESERVED_FACET_FIELD);
+        token.setPartitionValue("t1133-" + partition);
+        devTokenRepository.save(token);
+        return token.getToken();
+    }
+
+    private static String partitionProbeId(String partition) {
+        return "t1133-probe-" + partition;
+    }
+
+    private void indexPartitionProbe(TurSNJobAction action, String partition) {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("id", partitionProbeId(partition));
+        if (action == TurSNJobAction.CREATE) {
+            attributes.put("title", "T1133 partition probe " + partition);
+            attributes.put(RESERVED_FACET_FIELD, "t1133-" + partition);
+        }
+        processQueue.processIndexingQueue(new TurSNJobItems(
+                new TurSNJobItem(action, List.of(SITE), Locale.forLanguageTag("en-US"), attributes, null)));
+    }
+
+    private List<String> documentIds(HttpResponse<String> response) throws Exception {
+        assertEquals(200, response.statusCode(), response.body());
+        List<String> ids = new java.util.ArrayList<>();
+        json.readTree(response.body()).path("results").path("document")
+                .forEach(document -> ids.add(document.path("fields").path("id").asString()));
+        return ids;
+    }
+
+    private HttpResponse<String> postJson(String path, String body, String key) throws Exception {
+        HttpRequest.Builder req = HttpRequest.newBuilder(URI.create(base() + path))
+                .header("Content-Type", "application/json")
+                .POST(BodyPublishers.ofString(body));
+        if (key != null) {
+            req.header("Key", key);
+        }
+        return http.send(req.build(), BodyHandlers.ofString());
     }
 
     /**

@@ -30,6 +30,7 @@ import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -67,7 +68,7 @@ public class TurSNSiteSearchService {
             String siteName) {
 
         TurSNSiteSearchContext searchContext = getTurSNSiteSearchContext(turSNSearchParams, request, siteName);
-        return searchCacheEnabled
+        return useCache()
                 ? executeSearchWithCache(searchContext)
                 : executeSearch(searchContext);
     }
@@ -110,7 +111,7 @@ public class TurSNSiteSearchService {
         TurSNSiteSearchContext searchContext = TurSNUtils.getTurSNSiteSearchContext(
                 getTurSNConfig(siteName), siteName, turSNSearchParams,
                 turSNSitePostParamsBean, request);
-        if (searchCacheEnabled) {
+        if (useCache()) {
             return executeSearchWithCache(searchContext);
         } else {
             return executeSearch(searchContext);
@@ -132,9 +133,18 @@ public class TurSNSiteSearchService {
             String siteName) {
         TurSNSiteSearchContext searchContext =
                 publicPostSearchContext(searchRequest, turSNSearchParams, request, siteName);
-        return searchCacheEnabled
+        return useCache()
                 ? executeSearchWithCache(searchContext)
                 : executeSearch(searchContext);
+    }
+
+    /**
+     * T1133 — a request bound to a partition of a shared site never reads or
+     * fills the search cache, whose key does not carry the partition: one
+     * partition's cached page would otherwise answer another's request.
+     */
+    private boolean useCache() {
+        return searchCacheEnabled && TurApiKeyPartitionContext.current().isEmpty();
     }
 
     /**

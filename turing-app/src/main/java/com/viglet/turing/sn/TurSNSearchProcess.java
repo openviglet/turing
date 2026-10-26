@@ -86,6 +86,7 @@ import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
 import com.viglet.turing.solr.TurSolrInstance;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
 import com.viglet.turing.solr.TurSolrQueryBuilder;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 /**
  * @author Alexandre Oliveira
@@ -203,7 +204,22 @@ public class TurSNSearchProcess {
                                 () -> searchInternal(context));
         }
 
+        /**
+         * T1133 — binds the search to the partition of a shared site that the
+         * request's API key is bound to. Every search path runs through here, and
+         * the engines apply the partition as a filter on top of the request's own.
+         */
+        private static void applyPartition(TurSNSiteSearchContext context) {
+                TurApiKeyPartitionContext.current()
+                                .ifPresent(partition -> context.getTurSEParameters().setPartition(partition));
+        }
+
+        private static boolean isPartitioned(TurSNSiteSearchContext context) {
+                return context.getTurSEParameters().getPartition() != null;
+        }
+
         private TurSNSiteSearchBean searchInternal(TurSNSiteSearchContext context) {
+                applyPartition(context);
                 Optional<TurSNSiteSearchSnapshot> snapOpt = snapshotService
                                 .getSnapshot(context.getSiteName(), context.getLocale());
                 if (snapOpt.isEmpty()) {
@@ -288,7 +304,8 @@ public class TurSNSearchProcess {
                                         })
                                         .orElse(List.of());
                 }
-                if (hasFilters(params.getTurSNFilterParams())) {
+                // T1133 — an unrestricted read would ignore the partition too.
+                if (hasFilters(params.getTurSNFilterParams()) || params.getPartition() != null) {
                         return null;
                 }
                 TurSNSiteLocale siteLocale = TurSNDuplicateClusteringService.resolveLocale(snap,
@@ -326,6 +343,7 @@ public class TurSNSearchProcess {
                 restricted.setRows(ids.size());
                 restricted.setAutoCorrectionDisabled(1);
                 restricted.setRestrictIds(ids);
+                restricted.setPartition(original.getPartition());
                 return plugin.retrieveSearchResults(new TurSNSiteSearchContext(context.getSiteName(),
                                 context.getTurSNConfig(), restricted, context.getLocale(), context.getUri()));
         }
@@ -383,8 +401,10 @@ public class TurSNSearchProcess {
         private void attachDuplicateClusters(TurSNSiteSearchContext context,
                         TurSNSiteSearchSnapshot snap, TurSearchEnginePlugin plugin,
                         TurSEResults turSEResults) {
+                // T1133 — a cluster's members are looked up across the whole site.
                 if (!TurSNUtils.isTrue(snap.site().getMlt())
-                                || CollectionUtils.isEmpty(turSEResults.getResults())) {
+                                || CollectionUtils.isEmpty(turSEResults.getResults())
+                                || isPartitioned(context)) {
                         return;
                 }
                 duplicateClusteringService.attachClusters(snap, context.getLocale(), plugin,
@@ -394,6 +414,7 @@ public class TurSNSearchProcess {
         }
 
         public List<Object> searchList(TurSNSiteSearchContext context) {
+                applyPartition(context);
                 context.getTurSNConfig().setHlEnabled(false);
                 return snapshotService.getSnapshot(context.getSiteName(), context.getLocale())
                                 .map(snap -> {
@@ -649,7 +670,9 @@ public class TurSNSearchProcess {
                                                 context, turSNSite, facetsInFilterQueries, facetMap,
                                                 turSEResults))
                                 .setFacetToRemove(facetRenderer.responseFacetToRemove(context, turSNSite))
-                                .setSimilar(responseMLT(turSNSite, turSEResults))
+                                // T1133 — similar documents are found across the whole site.
+                                .setSimilar(isPartitioned(context) ? Collections.emptyList()
+                                                : responseMLT(turSNSite, turSEResults))
                                 .setSpellCheck(turSEResults.getSpellCheck() != null
                                                 ? new TurSNSiteSpellCheckBean(context, turSEResults.getSpellCheck())
                                                 : new TurSNSiteSpellCheckBean())

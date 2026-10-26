@@ -82,6 +82,9 @@ public class TurMcpApiKeyAuthenticationFilter extends OncePerRequestFilter {
                 // T646 / §XXXVII.8 — reject disabled/expired tokens.
                 turDevTokenRepository.findByToken(key.trim())
                         .filter(TurDevToken::isUsable)
+                        // T1133 — MCP tools do not enforce partitions, so a key
+                        // bound to one is not an MCP credential.
+                        .filter(token -> !token.isPartitioned())
                         .ifPresent(token -> authenticate(token, request));
             }
         }

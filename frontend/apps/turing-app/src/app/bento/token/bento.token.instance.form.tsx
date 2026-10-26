@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { GradientButton } from "@/components/ui/gradient-button"
 import { Input } from "@/components/ui/input"
 import type { TurTokenInstance } from "@/models/token/token-instance.model.ts"
-import { IconKey } from "@tabler/icons-react"
+import { IconKey, IconLayersSubtract } from "@tabler/icons-react"
 import { toast } from "@viglet/viglet-design-system"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
@@ -139,6 +139,43 @@ export const BentoTokenInstanceForm: React.FC<Props> = ({ value, isNew, staged, 
             />
           </BentoFormSection>
         )}
+
+        {/* T1133 — optional binding to one partition of a shared site. */}
+        <BentoFormSection
+          icon={IconLayersSubtract}
+          tone="slate"
+          title={t("forms.token.partitionTitle")}
+          description={t("forms.token.partitionDesc")}
+        >
+          <div className="grid gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="partitionField"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("forms.token.partitionField")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="site_key" className="font-mono text-sm" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="partitionValue"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("forms.token.partitionValue")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="a.example.org" className="font-mono text-sm" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </BentoFormSection>
       </form>
     </Form>
   )

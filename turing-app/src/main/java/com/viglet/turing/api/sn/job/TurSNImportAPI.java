@@ -30,6 +30,7 @@ import java.util.Optional;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jms.core.JmsMessagingTemplate;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,7 @@ import com.viglet.turing.genai.TurSNGenAi;
 import com.viglet.turing.logging.TurLoggingUtils;
 import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
 import com.viglet.turing.sn.TurSNConstants;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.spring.utils.TurSpringUtils;
 import com.viglet.turing.utils.TurFileUtils;
 
@@ -87,8 +89,36 @@ public class TurSNImportAPI {
     @PostMapping
     public boolean turSNImportBroker(@RequestBody TurSNJobItems turSNJobItems) {
         requireItems(turSNJobItems);
+        applyPartition(turSNJobItems);
         send(turSNJobItems);
         return true;
+    }
+
+    /**
+     * T1133 — a key bound to a partition of a shared site writes only into it:
+     * each document gets the partition's value stamped on, a document that
+     * carries a different value is refused, and so is a delete, which names a
+     * document by id alone and so could reach another partition's.
+     */
+    static void applyPartition(TurSNJobItems turSNJobItems) {
+        TurApiKeyPartitionContext.current().ifPresent(partition -> turSNJobItems.forEach(item -> {
+            if (item == null) {
+                return;
+            }
+            if (item.getTurSNJobAction() == TurSNJobAction.DELETE) {
+                throw new AccessDeniedException(
+                        "An API key bound to a partition cannot delete documents yet");
+            }
+            if (item.getTurSNJobAction() != TurSNJobAction.CREATE || item.getAttributes() == null) {
+                return;
+            }
+            Object carried = item.getAttributes().get(partition.field());
+            if (carried != null && !partition.value().equals(String.valueOf(carried))) {
+                throw new AccessDeniedException("Document " + item.getAttributes().get(TurSNFieldName.ID)
+                        + " carries " + partition.field() + "=" + carried + ", outside this key's partition");
+            }
+            item.getAttributes().put(partition.field(), partition.value());
+        }));
     }
 
     /**
@@ -115,6 +145,7 @@ public class TurSNImportAPI {
     @PostMapping("bulk")
     public boolean turSNImportBulkBroker(@RequestBody TurSNJobItems turSNJobItems) {
         requireItems(turSNJobItems);
+        applyPartition(turSNJobItems);
         if (turSNBulkImportService.isEligible(turSNJobItems)) {
             int processed = turSNBulkImportService.importDirect(turSNJobItems);
             log.info("Direct bulk import wrote {} items, bypassing the indexing queue", processed);

@@ -173,4 +173,31 @@ class TurDevTokenAPITest {
 
         verify(turDevTokenRepository, times(1)).save(any(TurDevToken.class));
     }
+
+    /** T1133 — a partition is a field and a value, both or neither, with a plain field name. */
+    @Test
+    void testPartitionValidation() {
+        TurDevToken half = new TurDevToken();
+        half.setPartitionField("site_key");
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> TurDevTokenAPI.validatePartition(half))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        TurDevToken injected = new TurDevToken();
+        injected.setPartitionField("site_key:* OR id");
+        injected.setPartitionValue("a");
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> TurDevTokenAPI.validatePartition(injected))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        TurDevToken blank = new TurDevToken();
+        blank.setPartitionField(" ");
+        blank.setPartitionValue("");
+        TurDevTokenAPI.validatePartition(blank);
+        org.assertj.core.api.Assertions.assertThat(blank.getPartitionField()).isNull();
+
+        TurDevToken valid = new TurDevToken();
+        valid.setPartitionField("site_key");
+        valid.setPartitionValue("a.example.org");
+        TurDevTokenAPI.validatePartition(valid);
+        org.assertj.core.api.Assertions.assertThat(valid.isPartitioned()).isTrue();
+    }
 }

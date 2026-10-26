@@ -307,8 +307,11 @@ public class TurSNFacetRenderer {
             return;
         }
         TurSNSiteFieldExtDto fieldExtDto = facetMap.get(facetResult.turSEFacetResult.getFacet());
+        // T1133 — a zero-count value may be another partition's: a partitioned
+        // request sees only the values its own documents carry.
         boolean showAllFacetItems = fieldExtDto.getShowAllFacetItems() != null
-                && fieldExtDto.getShowAllFacetItems();
+                && fieldExtDto.getShowAllFacetItems()
+                && context.getTurSEParameters().getPartition() == null;
         List<TurSNSiteSearchFacetItemBean> items = new ArrayList<>();
         facetResult.turSEFacetResult.getTurSEFacetResultAttr().values().forEach(facetItem -> {
             String fq = facetResult.turSEFacetResult.getFacet() + ":" + facetItem.getAttribute();

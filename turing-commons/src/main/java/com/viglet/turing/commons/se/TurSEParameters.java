@@ -36,6 +36,12 @@ public class TurSEParameters implements Serializable {
      * facet renderer never shows it as a selection.
      */
     private List<String> restrictIds;
+    /**
+     * T1133 — the partition of a shared site the request's API key is bound to,
+     * or {@code null}. Like {@link #restrictIds}, set by Turing and never read
+     * from a request; every engine adds it as a filter on top of the others.
+     */
+    private TurSEPartition partition;
 
     public TurSEParameters(TurSNSearchParams turSNSearchParams) {
         this(turSNSearchParams, null);

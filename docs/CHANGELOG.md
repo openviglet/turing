@@ -1454,6 +1454,7 @@
 - **T1126** — The auditor reads the principal by its type, so an API-key request audits as the key owner and audited entities save over a Key, under local auth and Keycloak alike.
 - **T1138** — The console type-checks and builds again: @tanstack/react-table is back on 8.21.3, and Dependabot no longer offers its semver-major updates.
 - **T1139** — The console unit suite is green again: the bento list test asserts the design system's MEDIUM default instead of the LARGE lead tile it no longer gives.
+- **T1133 (key binding, search, import)** — An API key can be bound to a partition of a shared SN site: its searches see only the partition's documents in Solr, Lucene and Elasticsearch, its imports are stamped with the partition and refused outside it, and every endpoint that does not enforce partitions yet, MCP included, refuses the key.
 
 ## Block CA — Search response fields arrive as they were indexed
 

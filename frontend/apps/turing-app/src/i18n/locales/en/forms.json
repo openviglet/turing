@@ -215,6 +215,10 @@
       "tokenLabel": "Token",
       "tokenDesc": "The generated API token value.",
       "tokenHint": "Use this token in the Authorization header for API requests.",
+      "partitionTitle": "Partition of a shared site",
+      "partitionDesc": "Optional. Confines this key to the documents whose field holds this value: its searches see only them, and its imports are stamped with the value. Endpoints that do not enforce partitions yet refuse the key.",
+      "partitionField": "Field",
+      "partitionValue": "Value",
       "titleRequired": "Title is required."
     },
     "mcp": {
