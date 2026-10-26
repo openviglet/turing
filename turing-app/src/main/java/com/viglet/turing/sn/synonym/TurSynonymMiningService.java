@@ -102,7 +102,8 @@ public class TurSynonymMiningService {
         Set<String> seen = new LinkedHashSet<>();
         for (TurSNSiteMetricAccessTerm entry : topTerms) {
             String term = entry.getTerm() == null ? null : entry.getTerm().trim();
-            if (term == null || term.isEmpty() || !seen.add(term.toLowerCase(Locale.ROOT))) {
+            if (term == null || term.isEmpty() || isQuerySyntax(term)
+                    || !seen.add(term.toLowerCase(Locale.ROOT))) {
                 continue;
             }
             try {
@@ -117,13 +118,45 @@ public class TurSynonymMiningService {
         return candidates;
     }
 
-    /** Maps each cluster to a disabled REGULAR proposal (pure — unit-tested). */
+    /**
+     * Maps each cluster to a disabled REGULAR proposal (pure — unit-tested). T1125:
+     * a term another term of the cluster starts with is that term typed half-way,
+     * not a synonym, so it is dropped, and a cluster left with one term proposes
+     * nothing.
+     */
     static List<TurSNSynonymDto> toProposals(List<List<String>> clusters, Locale locale) {
         List<TurSNSynonymDto> proposals = new ArrayList<>();
         for (List<String> cluster : clusters) {
-            proposals.add(new TurSNSynonymDto(null, "Suggested: " + cluster.get(0),
-                    TurSNSynonymType.REGULAR, locale, null, cluster, false));
+            List<String> terms = withoutHalfTyped(cluster);
+            if (terms.size() < 2) {
+                continue;
+            }
+            proposals.add(new TurSNSynonymDto(null, "Suggested: " + terms.get(0),
+                    TurSNSynonymType.REGULAR, locale, null, terms, false));
         }
         return proposals;
+    }
+
+    /**
+     * T1125 — a logged query that spells search syntax: a wildcard, a phrase, a
+     * field or a group. It is how the visitor searched, not a word to group, and a
+     * wildcard is the same query as the word it ends.
+     */
+    static boolean isQuerySyntax(String term) {
+        return term.chars().anyMatch(c -> "*?\":()[]{}~^".indexOf(c) >= 0);
+    }
+
+    private static List<String> withoutHalfTyped(List<String> cluster) {
+        List<String> kept = new ArrayList<>();
+        for (String term : cluster) {
+            String lower = term.toLowerCase(Locale.ROOT);
+            boolean prefixOfAnother = cluster.stream()
+                    .map(other -> other.toLowerCase(Locale.ROOT))
+                    .anyMatch(other -> other.length() > lower.length() && other.startsWith(lower));
+            if (!prefixOfAnother) {
+                kept.add(term);
+            }
+        }
+        return kept;
     }
 }

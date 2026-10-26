@@ -2207,29 +2207,6 @@ same listing.
   `id: "*"`, or make it mean "all documents of this site" on purpose (T1133: of the key's partition).
 - Document it on the import OpenAPI operation, and add it to the Java and JS SDKs.
 
-## CXXXVII Synonym mining ignores wildcard and half-typed queries (T1125)
-
-**Where it happened.** Dumont's WordPress plugin (Dumont D172) offers Turing's mined
-synonyms on its Search tuning screen. On the local stack:
-
-    POST /api/sn/{id}/synonym/mine?locale=en_US&limit=20
-
-answers four candidates, all of them a query and its own wildcard or prefix: `workshop =
-workshop*`, `work* = work`, `wo* = wo`, `worksho* = worksho`. They come from the
-plugin's as-you-type search (Dumont D163), which sends the last word with a `*` because
-Turing matches whole words only (T1120), and from the half-typed words themselves. The
-search log records both, and mining reads two spellings of one query as synonyms.
-
-**Workaround.** The plugin drops any candidate whose terms carry a `*` and any whose
-terms are prefixes of one another before offering them.
-
-**What Turing should do.** Leave wildcard queries out of the log mining reads (or log
-the query as the visitor typed it, without the operator), never propose terms that
-differ only by a trailing `*`, and treat a term that is a prefix of another as one typed
-half-way rather than a synonym. T1120's as-you-type parameter would also keep the `*`
-out of the log: a request in T1120's `mode: "instant"` is never logged, so mining never
-sees it.
-
 ## CXXXVIII The auditor accepts an API-key principal (T1126)
 
 **Where it happened.** Dumont's WordPress plugin (Dumont D172) writes boosts as ranking

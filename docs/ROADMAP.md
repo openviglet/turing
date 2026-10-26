@@ -16,7 +16,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1125** (deps: T1120 ✅) **Synonym mining proposes a query and its own wildcard or half-typed prefix as synonyms** — An as-you-type search fills the log with work and work*, so every mined suggestion is noise an owner must reject. → §CXXXVII
 - 📋 **T1127** (deps: —) **An SN site's chat calls the LLM but the cost ledger records nothing: cost summary stays at zero** — No operator or client can see what a site's generative features cost, so no budget can be held to. → §CXXXIX
 - 📋 **T1128** (deps: —) **The SDK's result-click call can be cut off by the navigation the click starts, and /click refuses a beacon** — Clicks are lost silently, more often on slow networks, so click-through rates undercount. → §CXL
 - 📋 **T1129** (deps: —) **The search controller's analytics option writes a 30-day cookie before consent and reports every as-you-type search** — A consent-respecting site with instant search cannot use the SDK's search analytics and has to re-emit the events itself. → §CXLI

@@ -107,4 +107,25 @@ class TurSynonymMiningServiceTest {
         assertEquals(TurSNSynonymType.REGULAR, proposals.get(0).type());
         assertEquals(Locale.forLanguageTag("pt-BR"), proposals.get(0).language());
     }
+
+    /** T1125 — the four candidates an as-you-type search produced, none of them a synonym. */
+    @Test
+    void aWordAndItsHalfTypedPrefixAreNoSynonyms() {
+        List<TurSNSynonymDto> proposals = TurSynonymMiningService.toProposals(List.of(
+                List.of("workshop", "worksho"),
+                List.of("work", "wo"),
+                List.of("Workshop", "workshops", "seminar")), Locale.ENGLISH);
+
+        assertEquals(1, proposals.size());
+        assertEquals(List.of("workshops", "seminar"), proposals.get(0).terms());
+    }
+
+    @Test
+    void aQueryThatSpellsSyntaxIsNotMined() {
+        assertTrue(TurSynonymMiningService.isQuerySyntax("work*"));
+        assertTrue(TurSynonymMiningService.isQuerySyntax("\"workshop on\""));
+        assertTrue(TurSynonymMiningService.isQuerySyntax("title:work"));
+        assertFalse(TurSynonymMiningService.isQuerySyntax("workshop"));
+        assertFalse(TurSynonymMiningService.isQuerySyntax("são paulo"));
+    }
 }
