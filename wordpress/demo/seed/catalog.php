@@ -9,7 +9,7 @@
  *
  * Idempotent: a product is found again by its SKU (`TF-…`). Then the shop's fields are mapped
  * as facets and a few synonyms are set in Turing. The searches that show each feature are in
- * curated.json, which demo/curated.spec.mjs checks.
+ * the theme's curated.json, which demo/curated.spec.mjs checks.
  *
  * Prints JSON: { products: <count>, guides: <count>, pages: { … } }.
  *

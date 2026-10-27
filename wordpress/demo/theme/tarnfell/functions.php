@@ -33,3 +33,6 @@ add_action(
 		add_editor_style( 'style.css' );
 	}
 );
+
+// The "Compare searches" page: WordPress's own search beside Turing's (D195).
+require get_theme_file_path( 'inc/compare.php' );

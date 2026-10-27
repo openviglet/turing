@@ -25,6 +25,8 @@ $pages = array(
 	'home-demo'   => array( 'Home', '', '' ),
 	'search-gear' => array( 'Search the shop', $search, 'page-search' ),
 	'journal'     => array( 'Trail journal', '', '' ),
+	// WordPress's own search beside Turing's, on one query (D195).
+	'compare-searches' => array( 'Compare searches', '<!-- wp:tarnfell/compare /-->', '' ),
 );
 
 $ids = array();
@@ -40,6 +42,9 @@ foreach ( $pages as $slug => list( $title, $content, $template ) ) {
 	$ids[ $slug ] = $found ? (int) wp_update_post( array( 'ID' => $found->ID ) + $args ) : (int) wp_insert_post( $args );
 	update_post_meta( $ids[ $slug ], '_wp_page_template', $template );
 }
+
+// The compare page names every curated search: indexed, it would be a result for each.
+update_post_meta( $ids['compare-searches'], '_viglet_dumont_exclude', '1' );
 
 update_option( 'show_on_front', 'page' );
 update_option( 'page_on_front', $ids['home-demo'] );

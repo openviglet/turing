@@ -137,3 +137,62 @@ body .woocommerce span.onsale {
 .tarnfell-header-row > .wp-block-navigation {
 	margin-inline-start: auto;
 }
+
+/* Compare searches (D195): the curated searches, then the two columns side by side. */
+.tarnfell-compare__form {
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+.tarnfell-compare__form input[type="search"] {
+	flex: 1;
+	font: inherit;
+	padding: 0.6rem 0.8rem;
+}
+
+.tarnfell-compare__examples {
+	display: grid;
+	gap: 0.35rem;
+	list-style: none;
+	margin: 0 0 2rem;
+	padding: 0;
+}
+
+.tarnfell-compare__examples a {
+	font-weight: 600;
+	margin-right: 0.5rem;
+}
+
+.tarnfell-compare__examples a[aria-current="true"] {
+	text-decoration-thickness: 3px;
+}
+
+.tarnfell-compare__examples span {
+	font-size: 0.9em;
+	opacity: 0.8;
+}
+
+.tarnfell-compare__columns {
+	display: grid;
+	gap: 2rem;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 782px) {
+	.tarnfell-compare__columns {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.tarnfell-compare__columns h2 {
+	font-size: 1.4rem;
+	margin-top: 0;
+}
+
+.tarnfell-compare__results {
+	display: grid;
+	gap: 0.75rem;
+	margin: 0;
+	padding-left: 1.2rem;
+}

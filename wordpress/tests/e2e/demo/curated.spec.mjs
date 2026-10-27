@@ -1,5 +1,5 @@
 // The demo storefront's curated searches (D194), on the `demo` project's stack (Tarnfell, its
-// catalog from demo/seed/catalog.php): each search in demo/seed/curated.json shows one feature,
+// catalog from demo/seed/catalog.php): each search in demo/theme/tarnfell/curated.json shows one feature,
 // and here each still returns what it is there to show, so the demo cannot rot silently.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -13,7 +13,8 @@ const curated = JSON.parse(
 			'..',
 			'..',
 			'demo',
-			'seed',
+			'theme',
+			'tarnfell',
 			'curated.json'
 		),
 		'utf8'

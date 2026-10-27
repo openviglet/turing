@@ -2,30 +2,35 @@
 	{
 		"query": "light jacket for rain",
 		"shows": "A need described in words finds the product made for it.",
-		"first": "Catbells light rain jacket"
+		"first": "Catbells light rain jacket",
+		"native": "Catbells light rain jacket"
 	},
 	{
 		"query": "waterproof jacket",
 		"shows": "A buying guide first, then the products it recommends.",
 		"first": "How to choose a waterproof jacket",
-		"then": "Catbells light rain jacket"
+		"then": "Catbells light rain jacket",
+		"native": "How to choose a waterproof jacket"
 	},
 	{
 		"query": "raincoat",
 		"shows": "A synonym: no product or guide says raincoat, and the guide and rain jackets come back.",
 		"first": "How to choose a waterproof jacket",
-		"then": "Catbells light rain jacket"
+		"then": "Catbells light rain jacket",
+		"native": null
 	},
 	{
 		"query": "rucksack",
 		"shows": "A synonym in British English for what the shop calls a daypack.",
-		"first": "Helvellyn 28 litre daypack"
+		"first": "Helvellyn 28 litre daypack",
+		"native": null
 	},
 	{
 		"query": "puffer",
 		"shows": "A shopper's word for a down jacket: the care guide, then the jacket.",
 		"first": "How to wash a down jacket",
-		"then": "Blencathra down jacket"
+		"then": "Blencathra down jacket",
+		"native": null
 	},
 	{
 		"query": "helvelyn",
