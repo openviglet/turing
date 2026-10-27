@@ -37,6 +37,8 @@ import com.viglet.turing.api.exception.TurNotFoundException;
 import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.TurSNChatDisabledReason;
 import com.viglet.turing.genai.TurSNChatRouteResolver;
+import com.viglet.turing.genai.TurSNSiteVectorProbe;
+import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.genai.catalog.TurCatalogCopilotService;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode;
@@ -66,6 +68,8 @@ class TurSNSiteAiCapabilitiesAPITest {
     private TurCatalogCopilotService catalogCopilotService;
     @Mock
     private TurLlmSummaryService llmSummaryService;
+    @Mock
+    private TurSNSiteVectorProbe vectorProbe;
     @InjectMocks
     private TurSNSiteAiCapabilitiesAPI api;
 
@@ -113,6 +117,25 @@ class TurSNSiteAiCapabilitiesAPITest {
         assertThat(capabilities.answer().reason()).isEqualTo("MISSING_DEFAULT_LLM");
         assertThat(capabilities.nlFilters().reason()).isEqualTo("MISSING_DEFAULT_LLM");
         assertThat(capabilities.similarByVector().reason()).isEqualTo("VECTORLESS");
+    }
+
+    @Test
+    void aReadySiteWithNoVectorsAsksForAReindexAndKeepsChat() {
+        // T1151 — configured for RAG, but nothing of the site reached the store.
+        TurSNSite site = site(null);
+        TurAIAgent agent = new TurAIAgent();
+        when(turSNSearchProcess.getSNSite("Sample")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(null)).thenReturn(new TurSNChatRouteResolver.Decision(
+                TurSNChatRouteResolver.Route.RAG, TurSNChatDisabledReason.NONE));
+        when(defaultAgentResolver.isRagReady(null)).thenReturn(true);
+        when(defaultAgentResolver.resolveEffectiveAgent(null)).thenReturn(agent);
+        when(vectorProbe.probe(site, agent)).thenReturn(TurSNSiteVectorProbe.Presence.ABSENT);
+
+        TurSNSiteAiCapabilitiesAPI.Capabilities capabilities = api.capabilities("Sample");
+
+        assertThat(capabilities.similarByVector().enabled()).isFalse();
+        assertThat(capabilities.similarByVector().reason()).isEqualTo(TurSNSiteAiCapabilitiesAPI.NOT_EMBEDDED);
+        assertThat(capabilities.chat().enabled()).isTrue();
     }
 
     @Test

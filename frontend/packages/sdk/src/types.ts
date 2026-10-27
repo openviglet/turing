@@ -447,7 +447,11 @@ export interface TurSortOption {
 /** One AI feature of a site: on, or off with the reason (`NONE` when on). */
 export interface TurAiCapability {
   enabled: boolean;
-  /** `NONE`, or why it is off: `NO_GENAI`, `MISSING_DEFAULT_LLM`, `VECTORLESS`, ... */
+  /**
+   * `NONE`, or why it is off: `NO_GENAI`, `MISSING_DEFAULT_LLM`, `VECTORLESS`, ...
+   * `similarByVector` answers `NOT_EMBEDDED` when the site is configured for RAG
+   * but its store holds none of its content yet: reindex the site.
+   */
   reason: string;
 }
 

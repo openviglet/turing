@@ -14,7 +14,8 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-- 📋 **T1151** (deps: —) **A site whose content was indexed before GenAI was on reads RAG-ready while it holds no vectors** — Capabilities say vector search is available and chat answers that the content is missing, with nothing pointing at the reindex it needs. → §CLV.3
+- ⏳ **T1151** (deps: —) **A site whose content was indexed before GenAI was on reads RAG-ready while it holds no vectors** — The console's site GenAI page does not show NOT_EMBEDDED beside a reindex action, so an admin still cannot see why chat finds nothing. → §CLV.3
+- 📋 **T1152** (deps: —) **A document imported for several sites is tagged in the vector store with only the first site's name** — The second site's chunks say they belong to the first, so any filter, count or delete by site misses them or touches the wrong ones. → §CLV.4
 
 ## Block BV — The quality gate stops at the package boundary
 
@@ -38,6 +39,12 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
+
+## Done when — T1151
+
+- **The console's site GenAI page shows NOT_EMBEDDED with a reindex action** A page test
+  renders the site GenAI page with a capabilities answer whose similarByVector reason is
+  NOT_EMBEDDED and finds the notice and a button that starts the site's reindex.
 
 ## Non-goals (do NOT add as tasks)
 

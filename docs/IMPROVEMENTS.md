@@ -2292,5 +2292,27 @@ invisible to a connector and to an admin.
 - When the configuration is ready but the site holds no vectors, the capabilities answer
   carries a distinct reason (e.g. `NOT_EMBEDDED`) saying a reindex is needed, rather than
   reading available.
-- The console's site GenAI page shows the same state next to a reindex action.
+- The console's site GenAI page shows the same state next to a reindex action. (Left: the
+  probe, `TurSNSiteVectorProbe`, and the `NOT_EMBEDDED` capability shipped first.)
 - Not a gate on chat itself: a partly embedded site still answers what it has.
+
+### CLV.4 Each embedded chunk names the site it was written for (T1152)
+
+**Where it comes from.** Found while building T1151's vector probe.
+`TurSNGenAi.addDocuments` loops a job item's `siteNames` and embeds the item once per
+site, into that site's locale collection, but `buildMetadataFromJob` writes
+`metadata.put(SITES, jobItem.getSiteNames().getFirst())`. So when one item names sites A
+and B, the chunks written for B say `sites = A`. The reindex path (`buildMetadata`) uses
+the site being indexed, so the two paths disagree.
+
+**Why it matters.** Nothing filters SN chat on `sites` today (a site is isolated by its
+collection), but the ANN admin browser and `listChunks` filters do read scalar metadata,
+and any later per-site filter, count or delete-by-site would miss B's chunks or touch
+A's. `source_id` deletion before re-adding is unaffected.
+
+**What it should do.**
+- `addJobItem` passes the site it is embedding for into the metadata builder, so each
+  chunk carries the site it was written for, as the reindex path already does.
+- A test imports one item for two sites and asserts each site's chunks carry its own name.
+- Existing chunks keep the wrong value until the second site is reindexed; say so in the
+  ship note rather than migrating.

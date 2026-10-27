@@ -1522,6 +1522,7 @@
 - **T1135** — The SN manifest's facets block sets a site's facets on or off, its type, its item type (drill-down or multi-select) and items per facet, reported as facetSettingsChanged and facetSettingsToChange, with TurSNManifestFacets in the Java SDK.
 - **T1146** — A manifest genAi block without agentId keeps the site's live agent and creates a Default-agent binding only when none exists; "default" still rebinds, and the SDK has keepAgent().
 - **T1147** — Import embeds a site on the Default AI Agent: both import gates use isRagReady, so a site without its own agent is embedded; sites indexed earlier need one reindex.
+- **T1151 (capabilities API)** — Capabilities report similarByVector NOT_EMBEDDED for a RAG-ready site whose store holds none of its content, from a cached one-chunk listing per locale that calls no model.
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 

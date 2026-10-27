@@ -31,6 +31,9 @@ import com.viglet.turing.api.exception.TurNotFoundException;
 import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.TurSNChatDisabledReason;
 import com.viglet.turing.genai.TurSNChatRouteResolver;
+import com.viglet.turing.genai.TurSNSiteVectorProbe;
+import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.genai.catalog.TurCatalogCopilotService;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.TurSNSearchProcess;
@@ -44,7 +47,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * Which AI features a Semantic Navigation site can use, in one read (T1123).
  *
  * <p>Every answer comes from configuration, as {@code /chat/enabled} does: no
- * model is called, so a status screen can ask on every page load. Chat and the
+ * model is called, so a status screen can ask on every page load. The one store
+ * read is {@code similarByVector}'s cached probe for any vector of the site (T1151). Chat and the
  * answer engine read the same route since T1116, so they always agree.
  *
  * @author Alexandre Oliveira
@@ -61,17 +65,22 @@ public class TurSNSiteAiCapabilitiesAPI {
     private final TurNLFacetParser nlFacetParser;
     private final TurCatalogCopilotService catalogCopilotService;
     private final TurLlmSummaryService llmSummaryService;
+    private final TurSNSiteVectorProbe vectorProbe;
+
+    /** {@code similarByVector}'s reason when the site is ready but holds no vectors yet (T1151). */
+    public static final String NOT_EMBEDDED = "NOT_EMBEDDED";
 
     public TurSNSiteAiCapabilitiesAPI(TurSNSearchProcess turSNSearchProcess,
             TurSNChatRouteResolver chatRouteResolver, TurDefaultAgentResolver defaultAgentResolver,
             TurNLFacetParser nlFacetParser, TurCatalogCopilotService catalogCopilotService,
-            TurLlmSummaryService llmSummaryService) {
+            TurLlmSummaryService llmSummaryService, TurSNSiteVectorProbe vectorProbe) {
         this.turSNSearchProcess = turSNSearchProcess;
         this.chatRouteResolver = chatRouteResolver;
         this.defaultAgentResolver = defaultAgentResolver;
         this.nlFacetParser = nlFacetParser;
         this.catalogCopilotService = catalogCopilotService;
         this.llmSummaryService = llmSummaryService;
+        this.vectorProbe = vectorProbe;
     }
 
     /** One feature: whether it is on, and why not when it is off ({@code NONE} when on). */
@@ -103,10 +112,25 @@ public class TurSNSiteAiCapabilitiesAPI {
             return new Capabilities(site.getName(), route, route,
                     Capability.needsDefaultLlm(nlFacetParser.isAvailable()),
                     Capability.needsDefaultLlm(catalogCopilotService.isAvailable()),
-                    defaultAgentResolver.isRagReady(genAi) ? Capability.of(TurSNChatDisabledReason.NONE)
-                            : new Capability(false, ragOffReason(genAi)),
+                    similarByVector(site, genAi),
                     Capability.needsDefaultLlm(llmSummaryService.isAvailable()));
         }).orElseThrow(() -> new TurNotFoundException("SN site not found: " + siteName));
+    }
+
+    /**
+     * Vector similarity, off when the configuration cannot embed and (T1151) when
+     * it can but the store holds none of the site's content yet:
+     * {@code NOT_EMBEDDED} asks for a reindex. Chat is not gated on it, since a
+     * partly embedded site still answers what it holds.
+     */
+    private Capability similarByVector(TurSNSite site, TurSNSiteGenAi genAi) {
+        if (!defaultAgentResolver.isRagReady(genAi)) {
+            return new Capability(false, ragOffReason(genAi));
+        }
+        TurAIAgent agent = defaultAgentResolver.resolveEffectiveAgent(genAi);
+        return vectorProbe.probe(site, agent) == TurSNSiteVectorProbe.Presence.ABSENT
+                ? new Capability(false, NOT_EMBEDDED)
+                : Capability.of(TurSNChatDisabledReason.NONE);
     }
 
     /** Why vector similarity is off: the site opted out of vectors, or its agent cannot embed. */
