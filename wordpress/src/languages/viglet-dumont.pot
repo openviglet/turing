@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27T17:10:44+00:00\n"
+"POT-Creation-Date: 2026-10-27T17:32:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -39,7 +39,7 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:99
 #: assets/admin/insights.js:159
 #: assets/admin/tuning.js:382
-#: src/admin/js/editor-panel.js:211
+#: src/admin/js/editor-panel.js:293
 #: src/admin/js/search-block-editor.js:108
 msgid "Search"
 msgstr ""
@@ -797,20 +797,20 @@ msgid "Invalid JSON response from server"
 msgstr ""
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:491
+#: src/includes/class-viglet-dumont-api-client.php:521
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:515
+#: src/includes/class-viglet-dumont-api-client.php:545
 msgid "Turing did not answer."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:572
+#: src/includes/class-viglet-dumont-api-client.php:602
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:577
+#: src/includes/class-viglet-dumont-api-client.php:607
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
@@ -1240,7 +1240,7 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:72
 #: src/includes/class-viglet-dumont-post-state.php:80
 #: assets/admin/health.js:395
-#: src/admin/js/editor-panel.js:202
+#: src/admin/js/editor-panel.js:284
 msgid "Failed"
 msgstr ""
 
@@ -1258,18 +1258,39 @@ msgstr ""
 msgid "Not indexed yet"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:208
+#: src/includes/class-viglet-dumont-post-state.php:249
+msgid "Save some text first: the fit is judged on the saved post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:291
+msgid "Too complex"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:292
+msgid "Jargon"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:293
+msgid "Tone"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:294
+msgid "Missing context"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:308
+#: src/includes/class-viglet-dumont-post-state.php:370
+#: src/includes/class-viglet-dumont-post-state.php:439
+#: src/includes/class-viglet-dumont-post-state.php:453
+msgid "No such post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:328
 msgid "Save some text first: the draft is written from the saved post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:232
+#: src/includes/class-viglet-dumont-post-state.php:352
 msgid "Turing wrote no draft."
-msgstr ""
-
-#: src/includes/class-viglet-dumont-post-state.php:250
-#: src/includes/class-viglet-dumont-post-state.php:319
-#: src/includes/class-viglet-dumont-post-state.php:333
-msgid "No such post."
 msgstr ""
 
 #: src/includes/class-viglet-dumont-search-block.php:78
@@ -1439,6 +1460,7 @@ msgid "Off"
 msgstr ""
 
 #: assets/admin/health.js:120
+#: src/admin/js/editor-panel.js:236
 msgid "Check again"
 msgstr ""
 
@@ -2105,91 +2127,117 @@ msgstr ""
 msgid "Visitors ask in plain words and Turing’s catalog copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:73
+#: src/admin/js/editor-panel.js:74
 msgid "Add a link to"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:74
+#: src/admin/js/editor-panel.js:75
 msgid "Add a link"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:80
+#: src/admin/js/editor-panel.js:81
 msgid "Assist"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:83
+#: src/admin/js/editor-panel.js:84
 msgid "Already covered?"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:86
+#: src/admin/js/editor-panel.js:87
 msgid "Nothing on the site looks like this post."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:87
+#: src/admin/js/editor-panel.js:88
 msgid "Link ideas"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:90
+#: src/admin/js/editor-panel.js:91
 msgid "No related posts yet."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:93
+#: src/admin/js/editor-panel.js:94
 msgid "Compared by title: once this post is indexed, Turing compares the whole text."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:101
+#: src/admin/js/editor-panel.js:102
 msgid "Look again"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:101
+#: src/admin/js/editor-panel.js:102
 msgid "Find related posts"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:139
+#: src/admin/js/editor-panel.js:140
 msgid "Excerpt"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:144
+#: src/admin/js/editor-panel.js:145
 msgid "In the excerpt field. Save the post to keep it."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:151
+#: src/admin/js/editor-panel.js:152
 msgid "Use this excerpt"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:158
+#: src/admin/js/editor-panel.js:159
 msgid "Draft another"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:158
+#: src/admin/js/editor-panel.js:159
 msgid "Draft an excerpt"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:160
+#: src/admin/js/editor-panel.js:161
 msgid "Written by Turing’s language model from the saved post. Nothing changes until you use it and save."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:186
+#: src/admin/js/editor-panel.js:205
+msgid "Fits the audience?"
+msgstr ""
+
+#. translators: 1: an audience persona's name, 2: how well the post suits it, 0 to 100.
+#: src/admin/js/editor-panel.js:212
+#, js-format
+msgid "%1$s: %2$d%%"
+msgstr ""
+
+#. translators: %s: a rewrite Turing suggests for a passage.
+#: src/admin/js/editor-panel.js:224
+#, js-format
+msgid "Try: %s"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:236
+msgid "Check audience fit"
+msgstr ""
+
+#. translators: %s: the audience personas, comma separated.
+#: src/admin/js/editor-panel.js:240
+#, js-format
+msgid "Judged by Turing against %s, from the saved post."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:268
 msgid "Unknown"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:213
+#: src/admin/js/editor-panel.js:295
 msgid "Checking…"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:218
+#: src/admin/js/editor-panel.js:300
 msgid "Exclude from search"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:219
+#: src/admin/js/editor-panel.js:301
 msgid "Takes effect when the post is saved."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:232
+#: src/admin/js/editor-panel.js:314
 msgid "Reindex now"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:237
+#: src/admin/js/editor-panel.js:319
 msgid "Promote for a search…"
 msgstr ""
 

@@ -22,7 +22,7 @@ export const budget = {
  *
  * @param {string} key The setting.
  */
-function setting( key ) {
+export function setting( key ) {
 	return wp( [ 'option', 'pluck', 'viglet_dumont_settings', key ] )
 		.trim()
 		.split( '\n' )

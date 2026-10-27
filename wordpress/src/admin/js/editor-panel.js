@@ -14,6 +14,7 @@
     var useSelect = wp.data.useSelect;
     var useDispatch = wp.data.useDispatch;
     var __ = wp.i18n.__;
+    var sprintf = wp.i18n.sprintf;
     var components = wp.components;
     // PluginDocumentSettingPanel moved from wp.editPost to wp.editor in WordPress 6.6.
     var Panel = (wp.editor && wp.editor.PluginDocumentSettingPanel) || wp.editPost.PluginDocumentSettingPanel;
@@ -161,6 +162,87 @@
         );
     }
 
+    /**
+     * How the saved post suits each audience persona of the site's agent in Turing (D171): a
+     * score with its reasons. Shown only on a site whose agent has personas.
+     */
+    function AudienceFit(props) {
+        var personasHook = useState([]);
+        var personas = personasHook[0];
+        var setPersonas = personasHook[1];
+        var resultHook = useState(null);
+        var result = resultHook[0];
+        var setResult = resultHook[1];
+        var busyHook = useState(false);
+        var busy = busyHook[0];
+        var setBusy = busyHook[1];
+
+        useEffect(function () {
+            if (props.postId) {
+                wp.apiFetch({ path: '/viglet-dumont/v1/post/' + props.postId + '/fit' })
+                    .then(function (answer) { setPersonas(answer.personas || []); })
+                    .catch(function () { setPersonas([]); });
+            }
+        }, [props.postId]);
+
+        if (!personas.length) {
+            return null;
+        }
+
+        function check() {
+            setBusy(true);
+            wp.apiFetch({ path: '/viglet-dumont/v1/post/' + props.postId + '/fit', method: 'POST' })
+                .then(setResult)
+                .catch(function (error) {
+                    setResult({ fits: [], error: error.message || String(error) });
+                })
+                .finally(function () {
+                    setBusy(false);
+                });
+        }
+
+        return el('div', { className: 'viglet-dumont-assist__fit' },
+            el('h4', null, __('Fits the audience?', 'viglet-dumont')),
+            result && result.error ? el('p', null, result.error) : null,
+            result && result.fits.length ? el('ul', { className: 'viglet-dumont-assist__list', 'aria-live': 'polite', style: { margin: '0 0 12px' } },
+                result.fits.map(function (fit) {
+                    return el('li', { key: fit.persona, style: { marginBottom: '8px' } },
+                        el('strong', null, sprintf(
+                            /* translators: 1: an audience persona's name, 2: how well the post suits it, 0 to 100. */
+                            __('%1$s: %2$d%%', 'viglet-dumont'),
+                            fit.persona,
+                            fit.score
+                        )),
+                        fit.summary ? el('br') : null,
+                        fit.summary,
+                        fit.misfits.length ? el('ul', null, fit.misfits.map(function (misfit, i) {
+                            return el('li', { key: i },
+                                el('em', null, misfit.reason), ': “', misfit.span, '”',
+                                misfit.suggestion ? el('br') : null,
+                                misfit.suggestion ? sprintf(
+                                    /* translators: %s: a rewrite Turing suggests for a passage. */
+                                    __('Try: %s', 'viglet-dumont'),
+                                    misfit.suggestion
+                                ) : null
+                            );
+                        })) : null
+                    );
+                })) : null,
+            el('p', null, el(components.Button, {
+                variant: 'secondary',
+                isBusy: busy,
+                disabled: busy,
+                onClick: check
+            }, result ? __('Check again', 'viglet-dumont') : __('Check audience fit', 'viglet-dumont'))),
+            el('p', { className: 'viglet-dumont-assist__note' },
+                sprintf(
+                    /* translators: %s: the audience personas, comma separated. */
+                    __('Judged by Turing against %s, from the saved post.', 'viglet-dumont'),
+                    personas.map(function (p) { return p.name; }).join(', ')
+                ))
+        );
+    }
+
     function SearchPanel() {
         var post = useSelect(function (select) {
             var editor = select('core/editor');
@@ -236,7 +318,8 @@
                 href: 'admin.php?page=viglet-dumont-tuning&promote=' + post.id
             }, __('Promote for a search…', 'viglet-dumont'))) : null,
             el(Assist, { postId: post.id }),
-            el(ExcerptDraft, { postId: post.id })
+            el(ExcerptDraft, { postId: post.id }),
+            el(AudienceFit, { postId: post.id })
         );
     }
 

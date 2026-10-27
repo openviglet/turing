@@ -189,6 +189,126 @@ class Viglet_Dumont_Post_State {
 				),
 			)
 		);
+		// Audience fit (D171): GET lists the site's personas, POST judges the saved post.
+		register_rest_route(
+			'viglet-dumont/v1',
+			'/post/(?P<id>\d+)/fit',
+			array(
+				array(
+					'methods'             => 'GET',
+					'callback'            => fn () => new WP_REST_Response( array( 'personas' => $this->personas() ), 200 ),
+					'permission_callback' => $can_edit,
+				),
+				array(
+					'methods'             => 'POST',
+					'callback'            => array( $this, 'rest_fit' ),
+					'permission_callback' => $can_edit,
+				),
+			)
+		);
+	}
+
+	/** The most personas one audience-fit check asks about: each is an LLM call. */
+	public const FIT_PERSONAS = 4;
+
+	/**
+	 * The SN site's audience personas, id and name; none when Turing has none or cannot say.
+	 *
+	 * @return array<int, array{id: string, name: string}>
+	 */
+	public function personas(): array {
+		$personas = ( new Viglet_Dumont_API_Client( $this->settings ) )->personas();
+		if ( ! is_array( $personas ) ) {
+			return array();
+		}
+
+		return array_values(
+			array_map(
+				static fn ( array $p ) => array(
+					'id'   => (string) $p['id'],
+					'name' => (string) ( $p['name'] ?? $p['id'] ),
+				),
+				array_filter( $personas, static fn ( $p ) => is_array( $p ) && '' !== (string) ( $p['id'] ?? '' ) )
+			)
+		);
+	}
+
+	/**
+	 * How the saved post suits each of the site's audience personas (D171), by Turing's
+	 * content-fit: a score, a summary, and the spans that do not fit with the reason. Nothing
+	 * here writes to the post.
+	 *
+	 * @param WP_Post $post The post being written.
+	 * @return array{fits: array, error: string}
+	 */
+	public function audience_fit( WP_Post $post ): array {
+		$text = trim( wp_strip_all_tags( strip_shortcodes( (string) $post->post_content ) ) );
+		if ( '' === $text ) {
+			return array(
+				'fits'  => array(),
+				'error' => __( 'Save some text first: the fit is judged on the saved post.', 'viglet-dumont' ),
+			);
+		}
+		$client = new Viglet_Dumont_API_Client( $this->settings );
+		$fits   = array();
+		$error  = '';
+		foreach ( array_slice( $this->personas(), 0, self::FIT_PERSONAS ) as $persona ) {
+			$fit = $client->content_fit( $persona['id'], trim( $post->post_title . "\n\n" . $text ), $post->post_title );
+			if ( is_wp_error( $fit ) ) {
+				$error = $fit->get_error_message();
+				continue;
+			}
+			$fits[] = array(
+				'persona' => $persona['name'],
+				'score'   => (int) round( (float) ( $fit['fitScore'] ?? 0 ) ),
+				'summary' => (string) ( $fit['summary'] ?? '' ),
+				'misfits' => array_values(
+					array_map(
+						static fn ( array $m ) => array(
+							'reason'     => self::misfit_reason( (string) ( $m['reason'] ?? '' ) ),
+							'span'       => (string) ( $m['span'] ?? '' ),
+							'suggestion' => (string) ( $m['suggestion'] ?? '' ),
+						),
+						array_filter( (array) ( $fit['misfits'] ?? array() ), 'is_array' )
+					)
+				),
+			);
+		}//end foreach
+
+		return array(
+			'fits'  => $fits,
+			'error' => $fits ? '' : $error,
+		);
+	}
+
+	/**
+	 * What one of content-fit's misfit codes means, for the author.
+	 *
+	 * @param string $code `too-complex`, `jargon`, `tone` or `missing-context` (Turing T634).
+	 */
+	private static function misfit_reason( string $code ): string {
+		$labels = array(
+			'too-complex'     => __( 'Too complex', 'viglet-dumont' ),
+			'jargon'          => __( 'Jargon', 'viglet-dumont' ),
+			'tone'            => __( 'Tone', 'viglet-dumont' ),
+			'missing-context' => __( 'Missing context', 'viglet-dumont' ),
+		);
+
+		return $labels[ $code ] ?? $code;
+	}
+
+	/**
+	 * REST: the saved post judged against each audience persona.
+	 *
+	 * @param WP_REST_Request $request Carries `id`.
+	 */
+	public function rest_fit( WP_REST_Request $request ): WP_REST_Response {
+		$post = get_post( (int) $request['id'] );
+		if ( ! $post instanceof WP_Post ) {
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-dumont' ) ), 404 );
+		}
+
+		return new WP_REST_Response( $this->audience_fit( $post ), 200 );
 	}
 
 	/**

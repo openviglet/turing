@@ -125,3 +125,74 @@ test( 'a drafted excerpt goes into the excerpt field only when the author uses i
 		panel.getByText( 'In the excerpt field. Save the post to keep it.' )
 	).toBeVisible();
 } );
+
+// Audience fit (D171): Turing's answers replayed here; the live one is ai/assist.spec.mjs's.
+const fitRoute = ( page, personas, fits ) =>
+	page.route(
+		( url ) =>
+			/viglet-dumont\/v1\/post\/\d+\/fit/.test(
+				decodeURIComponent( url.href )
+			),
+		( route ) =>
+			route.fulfill( {
+				json:
+					'POST' === route.request().method()
+						? { fits, error: '' }
+						: { personas },
+			} )
+	);
+
+test( 'a site whose agent has personas scores the post for each, with the reasons', async ( {
+	page,
+	seed,
+	axe,
+} ) => {
+	await fitRoute(
+		page,
+		[ { id: 'p1', name: 'Grant applicant' } ],
+		[
+			{
+				persona: 'Grant applicant',
+				score: 73,
+				summary: 'Clear deadline, little on eligibility.',
+				misfits: [
+					{
+						reason: 'Missing context',
+						span: 'Applications close on 14 March.',
+						suggestion: 'Say who may apply.',
+					},
+				],
+			},
+		]
+	);
+	const panel = await openPanel( page, seed );
+	const fit = panel.locator( '.viglet-dumont-assist__fit' );
+	await expect(
+		fit.getByText( 'Judged by Turing against Grant applicant' )
+	).toBeVisible();
+	await fit.getByRole( 'button', { name: 'Check audience fit' } ).click();
+	await expect( fit.locator( 'li' ).first() ).toContainText(
+		'Grant applicant: 73%'
+	);
+	await expect( fit ).toContainText(
+		'Missing context: “Applications close on 14 March.”'
+	);
+	await expect( fit ).toContainText( 'Try: Say who may apply.' );
+	await axe( "the editor panel's audience fit", {
+		include: '.viglet-dumont-assist__fit',
+	} );
+} );
+
+test( 'a site with no personas offers no audience fit', async ( {
+	page,
+	seed,
+} ) => {
+	await fitRoute( page, [], [] );
+	const panel = await openPanel( page, seed );
+	await expect(
+		panel.getByRole( 'button', { name: 'Draft an excerpt' } )
+	).toBeVisible();
+	await expect(
+		panel.getByRole( 'heading', { name: 'Fits the audience?' } )
+	).toHaveCount( 0 );
+} );

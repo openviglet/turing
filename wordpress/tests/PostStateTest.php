@@ -296,4 +296,68 @@ final class PostStateTest extends PluginTestCase {
 	public function test_a_published_post_with_no_record_reads_not_indexed_yet(): void {
 		$this->assertSame( 'not_indexed', $this->describe()['state'] );
 	}
+
+	public function test_the_saved_post_is_judged_against_each_audience_persona_of_the_site(): void {
+		$this->post->post_title   = 'Research grant';
+		$this->post->post_content = '<p>Applications close on 14 March.</p>';
+		Functions\when( 'strip_shortcodes' )->returnArg();
+		$this->turing(
+			array(
+				'/content-fit' => json_encode(
+					array(
+						'personaId' => 'p1',
+						'fitScore'  => 72.6,
+						'summary'   => 'Clear deadline, little on eligibility.',
+						'fits'      => array( 'States the deadline.' ),
+						'misfits'   => array(
+							array(
+								'span'       => 'Applications close on 14 March.',
+								'reason'     => 'missing-context',
+								'suggestion' => 'Applications from early-career researchers close on 14 March.',
+							),
+						),
+					)
+				),
+				'/personas'    => json_encode(
+					array(
+						array(
+							'id'   => 'p1',
+							'name' => 'Grant applicant',
+						),
+					)
+				),
+			)
+		);
+
+		$fit = ( new Viglet_Dumont_Post_State( $this->settings() ) )->audience_fit( $this->post );
+
+		$this->assertSame(
+			array(
+				'fits'  => array(
+					array(
+						'persona' => 'Grant applicant',
+						'score'   => 73,
+						'summary' => 'Clear deadline, little on eligibility.',
+						'misfits' => array(
+							array(
+								'reason'     => 'Missing context',
+								'span'       => 'Applications close on 14 March.',
+								'suggestion' => 'Applications from early-career researchers close on 14 March.',
+							),
+						),
+					),
+				),
+				'error' => '',
+			),
+			$fit
+		);
+		$this->assertSame( 'https://turing.example.org/api/sn/Sample+Site/persona/p1/content-fit', str_replace( '%20', '+', $this->requests[1][0] ) );
+		$this->assertSame( "Research grant\n\nApplications close on 14 March.", json_decode( $this->requests[1][1]['body'], true )['content'] );
+	}
+
+	public function test_a_site_without_personas_offers_no_audience_fit(): void {
+		$this->turing( array( '/personas' => '[]' ) );
+
+		$this->assertSame( array(), ( new Viglet_Dumont_Post_State( $this->settings() ) )->personas() );
+	}
 }

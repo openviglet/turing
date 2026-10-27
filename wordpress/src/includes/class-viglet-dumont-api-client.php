@@ -440,6 +440,36 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * The audience personas the SN site's agent accepts for content-fit (Turing T1143): id,
+	 * name and description, ordered by name, none when the site has no agent.
+	 *
+	 * @return array|WP_Error Turing's list, as it answered.
+	 */
+	public function personas() {
+		return $this->call( 'GET', '/api/sn/' . rawurlencode( $this->site_name ) . '/personas' );
+	}
+
+	/**
+	 * How well a text suits one of the site's audience personas (Turing T634): a score from 0
+	 * to 100, a summary, what fits and the spans that do not, each with its reason.
+	 *
+	 * @param string $persona_id One of personas()'s ids.
+	 * @param string $content    The text to judge.
+	 * @param string $name       What the text is, for the model.
+	 * @return array|WP_Error
+	 */
+	public function content_fit( string $persona_id, string $content, string $name ) {
+		return $this->call(
+			'POST',
+			'/api/sn/' . rawurlencode( $this->site_name ) . '/persona/' . rawurlencode( $persona_id ) . '/content-fit',
+			array(
+				'content'    => $content,
+				'sourceName' => $name,
+			)
+		);
+	}
+
+	/**
 	 * A call to one of Turing's console APIs (`/api/sn/<site id>/...`), JSON both ways, for the
 	 * Search tuning screen (D172).
 	 *

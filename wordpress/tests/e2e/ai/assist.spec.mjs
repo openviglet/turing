@@ -55,3 +55,53 @@ test( 'the excerpt drafted for the grant post keeps its deadline', async ( {
 		)
 	).toBe( await draft.textContent() );
 } );
+
+test( 'the grant post is scored for the audience persona of the site, with a reason', async ( {
+	page,
+	look,
+} ) => {
+	await page.goto(
+		`/wp-admin/post.php?post=${ ai().posts.grant }&action=edit`
+	);
+	const guide = page
+		.getByRole( 'dialog' )
+		.getByRole( 'button', { name: 'Close' } );
+	if ( await guide.isVisible( { timeout: 5000 } ).catch( () => false ) ) {
+		await guide.click();
+	}
+	const panel = page.locator( '.viglet-dumont-search-panel' );
+	if ( ! ( await panel.isVisible().catch( () => false ) ) ) {
+		await page
+			.getByRole( 'button', { name: 'Settings', exact: true } )
+			.click();
+		await page.getByRole( 'tab', { name: 'Post' } ).click();
+	}
+	const check = panel.getByRole( 'button', { name: 'Check audience fit' } );
+	if ( ! ( await check.isVisible().catch( () => false ) ) ) {
+		await page
+			.getByRole( 'button', { name: 'Search', exact: true } )
+			.click();
+	}
+
+	const started = Date.now();
+	await check.click();
+	const score = panel.locator( '.viglet-dumont-assist__fit li strong' );
+	await expect( score ).toHaveText( /^Grant applicant: \d{1,3}%$/, {
+		timeout: 60000,
+	} );
+	const answer = await panel
+		.locator( '.viglet-dumont-assist__fit > ul > li' )
+		.first()
+		.textContent();
+	record(
+		'audience fit: grant',
+		'(the grant post)',
+		answer,
+		Date.now() - started
+	);
+	await look( 'ai-audience-fit' );
+	// A score with no reason tells the author nothing to change.
+	expect( answer.replace( /^Grant applicant: \d+%/, '' ).trim() ).not.toBe(
+		''
+	);
+} );
