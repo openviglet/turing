@@ -196,3 +196,49 @@ body .woocommerce span.onsale {
 	margin: 0;
 	padding-left: 1.2rem;
 }
+
+/* "How it works" (D195): a numbered marker before each feature, its note in the flow. */
+.tarnfell-tour {
+	margin: 0.5rem 0;
+}
+
+.tarnfell-tour__marker {
+	align-items: center;
+	background: var(--wp--preset--color--ember, #b4501c);
+	border: 0;
+	border-radius: 50%;
+	color: #fff;
+	cursor: pointer;
+	display: inline-flex;
+	font: 700 0.9rem/1 sans-serif;
+	height: 1.75rem;
+	justify-content: center;
+	width: 1.75rem;
+}
+
+.tarnfell-tour__marker:focus-visible {
+	outline: 3px solid currentColor;
+	outline-offset: 2px;
+}
+
+.tarnfell-tour__note {
+	background: var(--wp--preset--color--paper, #fff);
+	border-left: 4px solid var(--wp--preset--color--ember, #b4501c);
+	margin-top: 0.5rem;
+	max-width: 36rem;
+	padding: 0.75rem 1rem;
+}
+
+.tarnfell-tour__note p {
+	margin: 0.25rem 0 0.5rem;
+}
+
+.tarnfell-tour__leave {
+	background: var(--wp--preset--color--pine, #1f3b2d);
+	bottom: 1rem;
+	color: #fff;
+	padding: 0.5rem 0.9rem;
+	position: fixed;
+	right: 1rem;
+	z-index: 10;
+}

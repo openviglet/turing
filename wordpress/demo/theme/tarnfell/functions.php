@@ -36,3 +36,17 @@ add_action(
 
 // The "Compare searches" page: WordPress's own search beside Turing's (D195).
 require get_theme_file_path( 'inc/compare.php' );
+
+/**
+ * "How it works" (D195): the tour's markers and notes, on a page opened with ?tour=1 only, so
+ * no other visit pays for its script.
+ */
+function tarnfell_tour(): void {
+	// A read-only page parameter: nothing is changed, so there is no nonce to check.
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( empty( $_GET['tour'] ) ) {
+		return;
+	}
+	wp_enqueue_script( 'tarnfell-tour', get_theme_file_uri( 'assets/tour.js' ), array(), wp_get_theme()->get( 'Version' ), array( 'in_footer' => true ) );
+}
+add_action( 'wp_enqueue_scripts', 'tarnfell_tour' );

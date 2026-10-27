@@ -1,7 +1,7 @@
 // The demo's "Compare searches" page (D195): WordPress's own search beside Turing's on one query.
 // For every example the page offers, Turing's column holds the result it is curated for, and
-// WordPress's column is read, not assumed: curated.json records what it shows (`native`, its
-// first result, or null for nothing), so a page that stopped showing a difference fails.
+// WordPress's column is read, not assumed: curated.json records what it shows (`native`, one of
+// its results, or null for nothing), so a page that stopped showing a difference fails.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test } from '../fixtures.mjs';
@@ -48,9 +48,15 @@ for ( const example of examples ) {
 		if ( null === example.native ) {
 			await expect( native ).toContainText( 'No results found.' );
 		} else {
-			await expect( native.locator( 'li' ).first() ).toHaveText(
-				new RegExp( `^${ example.native }\\b` )
-			);
+			// Among its results, not first: WordPress breaks ties by date, and seeded posts
+			// share one.
+			await expect(
+				native
+					.locator( 'li' )
+					.filter( {
+						hasText: new RegExp( `^${ example.native }\\b` ),
+					} )
+			).not.toHaveCount( 0 );
 		}
 	} );
 }
