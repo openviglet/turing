@@ -256,6 +256,7 @@ run-docker.cmd                         :: WordPress http://localhost:8080/wp-adm
                                        :: Turing    http://localhost:2700 (admin / dumont-dev)
 run-docker.cmd wp dumont queue run     :: any WP-CLI command
 run-docker.cmd wp dumont ai status     :: which of Turing's AI features the site can use (exits 1 if any is off)
+run-docker.cmd demo                    :: the Tarnfell demo storefront, with WooCommerce
 run-docker.cmd multisite               :: also a two-site network on http://localhost:8081
 run-docker.cmd logs turing             :: follow a log: wordpress, turing or db
 run-docker.cmd stop                    :: keep the data
@@ -275,6 +276,15 @@ which lags the Turing source; build it from a Turing checkout after `mvnw packag
 `docker build -f Dockerfile.local -t turing-ce:local .` (the published 2026.3.4 image answers
 every API-key import with HTTP 500). Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
 `TURING_ADMIN_PASSWORD` or `TURING_IMAGE` before the first run to change the defaults.
+
+The demo storefront (`demo/`, outside the plugin zip) is Tarnfell, a fictional outdoor gear
+shop: its own theme, WooCommerce with the browser tests' jackets, a home whose hero is the
+search block's box alone, a results page, product pages with the copilot and Related, and a
+journal. Lighthouse in headless Edge (October 2026): home 93 performance and 96
+accessibility, results 90 and 96. axe finds nothing on home, search and a post; on a product,
+only WooCommerce's own mini-cart drawer. The name was checked with a web search only (no
+brand or store called Tarnfell): run a trademark registry search before any public use. The
+browser tests' global setup puts the default stack back.
 
 `phpcbf` capitalises `wordpress` wherever it reads it as prose, and the `source_apps` value is
 data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that sniff; keep it.
