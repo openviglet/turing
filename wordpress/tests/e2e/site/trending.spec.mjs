@@ -62,6 +62,63 @@ test( 'popular searches that find something become chips, and a chip searches fo
 	await expect( chips ).toBeHidden();
 } );
 
+test( 'spellings of one want show as one chip, under the most searched', async ( {
+	page,
+} ) => {
+	// D213: the grouping the daily job stores, fixed here rather than asked of a model. Two
+	// chips that both answer stand in for "raincoat" and "rain jacket".
+	const chips = page.getByRole( 'navigation', { name: 'Popular searches' } );
+	await page.goto( `/?page_id=${ pageId }` );
+	await expect(
+		chips.getByRole( 'link', { name: 'seminar' } )
+	).toBeVisible();
+	const [ first, second ] = (
+		await chips.getByRole( 'link' ).allTextContents()
+	)
+		.map( ( name ) => name.trim() )
+		.filter( ( name ) => [ 'seminar', 'workshop' ].includes( name ) );
+	expect( second ).toBeTruthy();
+
+	const fresh = () =>
+		wp( [ 'transient', 'delete', 'viglet_dumont_trending' ] );
+	try {
+		wp( [
+			'option',
+			'update',
+			'viglet_dumont_trending_groups',
+			JSON.stringify( [ [ 'seminar', 'workshop' ] ] ),
+			'--format=json',
+		] );
+		wp( [
+			'option',
+			'patch',
+			'update',
+			'viglet_dumont_settings',
+			'generative_ai',
+			'1',
+		] );
+		fresh();
+		await page.reload();
+		await expect(
+			chips.getByRole( 'link', { name: first, exact: true } )
+		).toBeVisible();
+		await expect(
+			chips.getByRole( 'link', { name: second, exact: true } )
+		).toHaveCount( 0 );
+	} finally {
+		wp( [
+			'option',
+			'patch',
+			'update',
+			'viglet_dumont_settings',
+			'generative_ai',
+			'0',
+		] );
+		wp( [ 'option', 'delete', 'viglet_dumont_trending_groups' ] );
+		fresh();
+	}
+} );
+
 test.describe( 'as the site owner', () => {
 	test.use( { storageState: authFile } );
 

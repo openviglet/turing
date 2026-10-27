@@ -272,6 +272,15 @@ function viglet_dumont_process_queue(): void {
 add_action( Viglet_Dumont_Queue::CRON_HOOK, 'viglet_dumont_process_queue' );
 
 /**
+ * The daily WP-Cron job that groups the popular searches' spellings (D213).
+ */
+function viglet_dumont_group_trending(): void {
+	( new Viglet_Dumont_Trending() )->group();
+}
+add_action( Viglet_Dumont_Trending::CRON_HOOK, 'viglet_dumont_group_trending' );
+add_action( 'init', array( 'Viglet_Dumont_Trending', 'schedule' ) );
+
+/**
  * Search redirect — replaces default WordPress search with Turing.
  */
 function viglet_dumont_search_redirect(): void {
@@ -302,6 +311,7 @@ register_activation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_activate' );
  */
 function viglet_dumont_deactivate(): void {
 	wp_clear_scheduled_hook( Viglet_Dumont_Queue::CRON_HOOK );
+	wp_clear_scheduled_hook( Viglet_Dumont_Trending::CRON_HOOK );
 }
 register_deactivation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_deactivate' );
 
