@@ -499,7 +499,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
 									<?php esc_html_e( 'Turn on generative AI for this site in Turing', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'Sent with the fields: on the next indexing run, or when the Fields screen is saved. It replaces an agent chosen for this site in Turing\'s console, and turning it off here later leaves Turing\'s setting as it is.', 'viglet-dumont' ); ?></small>
+									<small><?php esc_html_e( 'Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing\'s console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing\'s setting as it is.', 'viglet-dumont' ); ?></small>
 								</span>
 							</label>
 						</div>

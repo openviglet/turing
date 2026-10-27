@@ -503,7 +503,7 @@ function Mapping() {
 			{ data.genai_change && (
 				<Notice status="info" isDismissible={ false }>
 					{ __(
-						"Saving also sets generative AI for this site in Turing: on, answering through its Default AI Agent, in place of any agent chosen in Turing's console.",
+						"Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console.",
 						'viglet-dumont'
 					) }
 				</Notice>

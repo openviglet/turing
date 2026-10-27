@@ -659,39 +659,39 @@ msgstr "%1$d de %2$d documentos indexados..."
 msgid "Site"
 msgstr "Site"
 
-#: src/includes/class-viglet-dumont-mapping.php:378
+#: src/includes/class-viglet-dumont-mapping.php:379
 msgid "No mapped field to provision."
 msgstr "Nenhum campo mapeado para enviar."
 
-#: src/includes/class-viglet-dumont-mapping.php:388
+#: src/includes/class-viglet-dumont-mapping.php:389
 msgid "The fields are already provisioned."
 msgstr "Os campos já estão no Turing."
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:456
+#: src/includes/class-viglet-dumont-mapping.php:457
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr "%1$s é %2$s no Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:485
+#: src/includes/class-viglet-dumont-mapping.php:486
 #, php-format
 msgid "Taxonomy: %s"
 msgstr "Taxonomia: %s"
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:501
+#: src/includes/class-viglet-dumont-mapping.php:502
 #, php-format
 msgid "Meta: %s"
 msgstr "Meta: %s"
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:509
+#: src/includes/class-viglet-dumont-mapping.php:510
 #, php-format
 msgid "Post: %s"
 msgstr "Post: %s"
 
-#: src/includes/class-viglet-dumont-mapping.php:514
+#: src/includes/class-viglet-dumont-mapping.php:515
 msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
@@ -1340,15 +1340,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:513
+#: src/includes/class-viglet-dumont-api-client.php:515
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:570
+#: src/includes/class-viglet-dumont-api-client.php:572
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:575
+#: src/includes/class-viglet-dumont-api-client.php:577
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1453,7 +1453,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:489
+#: src/includes/class-viglet-dumont-api-client.php:491
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -1878,42 +1878,42 @@ msgctxt "block description"
 msgid "The Turing search block’s results: the count, the sort, the answer and the list."
 msgstr "Os resultados do bloco de busca do Turing: a contagem, a ordenação, a resposta e a lista."
 
-#: src/includes/class-viglet-dumont-mapping.php:333
+#: src/includes/class-viglet-dumont-mapping.php:334
 msgid "Upcoming"
 msgstr "Próximos"
 
-#: src/includes/class-viglet-dumont-mapping.php:338
+#: src/includes/class-viglet-dumont-mapping.php:339
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:343
+#: src/includes/class-viglet-dumont-mapping.php:344
 #: assets/admin/insights.js:24
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:348
+#: src/includes/class-viglet-dumont-mapping.php:349
 msgid "This year"
 msgstr "Este ano"
 
-#: src/includes/class-viglet-dumont-mapping.php:353
+#: src/includes/class-viglet-dumont-mapping.php:354
 msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:758
+#: src/includes/class-viglet-dumont-mapping.php:759
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:762
+#: src/includes/class-viglet-dumont-mapping.php:763
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:766
+#: src/includes/class-viglet-dumont-mapping.php:767
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
@@ -2115,7 +2115,7 @@ msgstr "Ainda não há buscas neste período. Elas aparecem aqui quando os visit
 msgid "%1$s searches, %2$s clicks, %3$s click-through."
 msgstr "%1$s buscas, %2$s cliques, %3$s de taxa de clique."
 
-#: src/includes/class-viglet-dumont-insights.php:182
+#: src/includes/class-viglet-dumont-insights.php:183
 #: assets/admin/insights.js:361
 msgid "Top searches"
 msgstr "Buscas mais feitas"
@@ -2132,7 +2132,7 @@ msgstr "Cliques"
 msgid "Click-through"
 msgstr "Taxa de clique"
 
-#: src/includes/class-viglet-dumont-insights.php:183
+#: src/includes/class-viglet-dumont-insights.php:184
 #: assets/admin/insights.js:381
 msgid "Searches that found nothing"
 msgstr "Buscas que não encontraram nada"
@@ -2157,11 +2157,11 @@ msgstr "Toda busca com resultados levou a um clique."
 msgid "Site search this week"
 msgstr "Busca do site nesta semana"
 
-#: src/includes/class-viglet-dumont-insights.php:189
+#: src/includes/class-viglet-dumont-insights.php:190
 msgid "No searches this week yet."
 msgstr "Ainda não há buscas nesta semana."
 
-#: src/includes/class-viglet-dumont-insights.php:205
+#: src/includes/class-viglet-dumont-insights.php:206
 msgid "All search insights"
 msgstr "Todos os insights de busca"
 
@@ -2248,17 +2248,9 @@ msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de
 msgid "Turn on generative AI for this site in Turing"
 msgstr "Ativar a IA generativa deste site no Turing"
 
-#: src/admin/views/settings-page.php:502
-msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. It replaces an agent chosen for this site in Turing's console, and turning it off here later leaves Turing's setting as it is."
-msgstr "Enviado com os campos: na próxima indexação, ou ao salvar a tela Campos. Substitui um agente escolhido para este site no console do Turing, e desativar aqui depois mantém a configuração do Turing como está."
-
 #: src/viglet-dumont.php:105
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
-
-#: assets/admin/mapping.js:505
-msgid "Saving also sets generative AI for this site in Turing: on, answering through its Default AI Agent, in place of any agent chosen in Turing's console."
-msgstr "Salvar também ativa a IA generativa deste site no Turing, respondendo pelo Agente de IA Padrão, no lugar de qualquer agente escolhido no console do Turing."
 
 #: assets/admin/tuning.js:561
 msgid "Boosts"
@@ -2312,7 +2304,7 @@ msgstr "Abaixo"
 msgid "Save boosts"
 msgstr "Salvar impulsos"
 
-#: src/includes/class-viglet-dumont-insights.php:187
+#: src/includes/class-viglet-dumont-insights.php:188
 msgid "Turing is not keeping search metrics, so no new searches are recorded."
 msgstr "O Turing não está guardando métricas de busca, então nenhuma busca nova é registrada."
 
@@ -2320,12 +2312,12 @@ msgstr "O Turing não está guardando métricas de busca, então nenhuma busca n
 msgid "Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 msgstr "O Turing não está guardando métricas de busca, então nenhuma busca ou clique novo é registrado. O administrador do Turing as ativa com turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 
-#: src/includes/class-viglet-dumont-insights.php:119
+#: src/includes/class-viglet-dumont-insights.php:120
 msgid "There are no searches in this period to summarize."
 msgstr "Não há buscas neste período para resumir."
 
 #: src/includes/class-viglet-dumont-compare.php:133
-#: src/includes/class-viglet-dumont-insights.php:154
+#: src/includes/class-viglet-dumont-insights.php:155
 msgid "Turing wrote no summary."
 msgstr "O Turing não escreveu um resumo."
 
@@ -2496,3 +2488,11 @@ msgstr "Caiu %s"
 #: assets/admin/insights.js:271
 msgid "Against the period before"
 msgstr "Em relação ao período anterior"
+
+#: src/admin/views/settings-page.php:502
+msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing's console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing's setting as it is."
+msgstr "Enviado com os campos: na próxima indexação, ou quando a tela Campos é salva. Um agente escolhido para este site no console do Turing é mantido; um site sem agente responde pelo Agente de IA padrão. Desligar aqui depois deixa a configuração do Turing como está."
+
+#: assets/admin/mapping.js:505
+msgid "Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console."
+msgstr "Salvar também liga a IA generativa deste site no Turing, respondendo pelo Agente de IA padrão até que um agente seja escolhido no console do Turing."

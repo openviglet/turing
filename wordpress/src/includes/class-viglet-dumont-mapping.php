@@ -242,10 +242,11 @@ class Viglet_Dumont_Mapping {
 		if ( ! empty( $custom ) ) {
 			$manifest['customFacets'] = $custom;
 		}
-		// Declaring the block is what turns the site's GenAI on (Turing T1116), answering
-		// through the Default AI Agent. Left out, Turing keeps whatever binding it has.
+		// Declaring the block is what turns the site's GenAI on (Turing T1116). With no agent
+		// named, Turing keeps the agent an admin chose in its console and binds the Default AI
+		// Agent only to a site that has none (Turing T1146, D214). An object, so `{}` in JSON.
 		if ( self::declares_generative_ai( $this->settings ) ) {
-			$manifest['genAi'] = array( 'agentId' => 'default' );
+			$manifest['genAi'] = new stdClass();
 		}
 
 		return $manifest;

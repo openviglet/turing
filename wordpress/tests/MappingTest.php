@@ -490,7 +490,8 @@ final class MappingTest extends PluginTestCase {
 
 		$manifest = ( new Viglet_Dumont_Mapping( $this->settings( array( 'generative_ai' => 1 ) ) ) )->manifest();
 
-		$this->assertSame( array( 'agentId' => 'default' ), $manifest['genAi'] );
+		$this->assertEquals( new \stdClass(), $manifest['genAi'], 'no agent named: the site keeps the one it has' );
+		$this->assertSame( '{}', wp_json_encode( $manifest['genAi'] ) );
 	}
 
 	public function test_turning_generative_ai_on_sends_the_manifest_again(): void {
@@ -499,7 +500,7 @@ final class MappingTest extends PluginTestCase {
 		( new Viglet_Dumont_Mapping( $this->settings( array( 'generative_ai' => 1 ) ) ) )->provision( $client );
 
 		$this->assertCount( 2, $this->requests );
-		$this->assertSame( array( 'agentId' => 'default' ), $this->body( 1 )['genAi'] );
+		$this->assertStringContainsString( '"genAi":{}', $this->requests[1][1]['body'] );
 	}
 
 	public function test_the_plan_says_whether_the_site_s_generative_ai_changes(): void {
