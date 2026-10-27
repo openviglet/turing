@@ -108,6 +108,8 @@ update_post_meta( $compare_id, '_viglet_dumont_exclude', '1' );
 
 $settings                       = get_option( 'viglet_dumont_settings', array() );
 $settings['index_custom_types'] = array( 'product' );
+// Related content on a product page, whose product cards offer Compare (compare.spec.mjs, D212).
+$settings['related_after'] = array( 'post', 'product' );
 update_option( 'viglet_dumont_settings', $settings );
 
 $mapping            = get_option( 'viglet_dumont_mapping', array() );

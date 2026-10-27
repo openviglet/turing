@@ -42,6 +42,18 @@ $viglet_dumont_heading = '' !== trim( (string) ( $attributes['heading'] ?? '' ) 
 	: __( 'Related posts', 'viglet-dumont' );
 $viglet_dumont_id      = wp_unique_id( 'viglet-dumont-related-' );
 $viglet_dumont_doc_ids = new Viglet_Dumont_Indexer();
+// A product among them offers Compare, ticked into the list the search cards use (D212).
+$viglet_dumont_shop = Viglet_Dumont_WooCommerce::active()
+	&& array_filter( $viglet_dumont_posts, static fn ( WP_Post $post ) => 'product' === $post->post_type );
+if ( $viglet_dumont_shop ) {
+	wp_interactivity_state(
+		'viglet-dumont/related',
+		array(
+			/* translators: %d: how many products, two to four. */
+			'compareLabel' => __( 'Compare %d products', 'viglet-dumont' ),
+		)
+	);
+}
 ?>
 <section
 	<?php
@@ -75,8 +87,9 @@ $viglet_dumont_doc_ids = new Viglet_Dumont_Indexer();
 				<?php
 				echo wp_interactivity_data_wp_context( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by WordPress.
 					array(
-						'id'       => $viglet_dumont_doc_ids->build_doc_id( $viglet_dumont_related->ID ),
-						'position' => $viglet_dumont_index + 1,
+						'id'        => $viglet_dumont_doc_ids->build_doc_id( $viglet_dumont_related->ID ),
+						'position'  => $viglet_dumont_index + 1,
+						'productId' => $viglet_dumont_related->ID,
 					)
 				);
 				?>
@@ -95,7 +108,19 @@ $viglet_dumont_doc_ids = new Viglet_Dumont_Indexer();
 				<?php if ( ! empty( $attributes['showExcerpt'] ) ) : ?>
 					<p class="viglet-dumont-related__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt( $viglet_dumont_related ), 24 ) ); ?></p>
 				<?php endif; ?>
+				<?php if ( $viglet_dumont_shop && 'product' === $viglet_dumont_related->post_type ) : ?>
+					<label class="viglet-dumont-related__compare" hidden data-wp-bind--hidden="!state.canCompare">
+						<?php /* translators: %s: a product's name. */ ?>
+						<input type="checkbox" aria-label="<?php echo esc_attr( sprintf( __( 'Compare %s', 'viglet-dumont' ), get_the_title( $viglet_dumont_related ) ) ); ?>" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
+						<?php esc_html_e( 'Compare', 'viglet-dumont' ); ?>
+					</label>
+				<?php endif; ?>
 			</li>
 		<?php endforeach; ?>
 	</ul>
+	<?php if ( $viglet_dumont_shop ) : ?>
+		<p class="viglet-dumont-related__compare-bar" hidden data-wp-bind--hidden="!state.compareReady">
+			<a class="wp-element-button" data-wp-bind--href="state.compareUrl" data-wp-text="state.compareText"></a>
+		</p>
+	<?php endif; ?>
 </section>

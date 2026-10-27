@@ -60,6 +60,99 @@ test( 'two jackets ticked in the results compare side by side, their differences
 	).toBeChecked();
 } );
 
+/**
+ * A jacket's id, read through the Store API.
+ *
+ * @param {import('@playwright/test').Page} page A page of the site.
+ * @param {string}                          name The jacket's name.
+ */
+async function productId( page, name ) {
+	const response = await page.request.get(
+		`/?rest_route=/wc/store/v1/products&search=${ encodeURIComponent(
+			name
+		) }`
+	);
+	return ( await response.json() )[ 0 ].id;
+}
+
+test( 'one jacket ticked in the results and one in a product page’s Related compare together', async ( {
+	page,
+	seed,
+} ) => {
+	// D212: Related's product cards tick into the list the search cards use.
+	await page.goto( jackets( seed ) );
+	await card( page, 'Wool jacket' )
+		.getByRole( 'checkbox', { name: 'Compare Wool jacket' } )
+		.check();
+
+	await page.goto( `/?p=${ await productId( page, 'Rain jacket' ) }` );
+	const related = page.locator( '.wp-block-viglet-dumont-related' );
+	const boxes = related.getByRole( 'checkbox', { name: /^Compare / } );
+	await expect( boxes.first() ).toBeVisible();
+	const bar = related.locator( '.viglet-dumont-related__compare-bar' );
+	await expect( bar ).toBeHidden();
+	const other = boxes.and(
+		related.locator( 'input:not([aria-label="Compare Wool jacket"])' )
+	);
+	const name = ( await other.first().getAttribute( 'aria-label' ) ).replace(
+		/^Compare /,
+		''
+	);
+	await other.first().check();
+	await expect( bar.getByRole( 'link' ) ).toHaveText( 'Compare 2 products' );
+
+	await bar.getByRole( 'link' ).click();
+	await expect(
+		page.locator( '.viglet-dumont-compare__table thead th' )
+	).toHaveText( [ 'Wool jacket', name ] );
+} );
+
+test( 'a product the copilot cites is ticked for the search results too', async ( {
+	page,
+	seed,
+} ) => {
+	// D212: the copilot's product items tick into the same list.
+	const rain = await productId( page, 'Rain jacket' );
+	await page.route( '**/copilot/available', ( route ) =>
+		route.fulfill( { json: { available: true } } )
+	);
+	await page.route( /\/copilot$/, ( route ) =>
+		route.fulfill( {
+			json: {
+				available: true,
+				answer: 'The Rain jacket is waterproof [1].',
+				citations: [
+					{
+						rank: 1,
+						id: `localhost:post:${ rain }`,
+						title: 'Rain jacket',
+						url: `/?p=${ rain }`,
+					},
+				],
+				totalHits: 1,
+			},
+		} )
+	);
+	await page.goto( '/?pagename=ask-the-shop' );
+	const copilot = page.locator( '.viglet-dumont-copilot' );
+	await copilot
+		.getByLabel( 'What are you looking for?' )
+		.fill( 'a waterproof jacket' );
+	await copilot.getByRole( 'button', { name: 'Ask', exact: true } ).click();
+	await copilot
+		.getByRole( 'checkbox', { name: 'Compare Rain jacket' } )
+		.check();
+	// One is not a comparison.
+	await expect(
+		copilot.locator( '.viglet-dumont-copilot__compare-bar' )
+	).toBeHidden();
+
+	await page.goto( jackets( seed ) );
+	await expect(
+		card( page, 'Rain jacket' ).getByRole( 'checkbox' )
+	).toBeChecked();
+} );
+
 test( 'the compare page without products says how to choose them', async ( {
 	page,
 } ) => {

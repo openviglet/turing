@@ -8,6 +8,7 @@ import { getContext, store } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
 import {
 	addToCart,
+	compare,
 	config,
 	createClient,
 	postIdOf,
@@ -21,6 +22,27 @@ const site = encodeURIComponent( config.site );
 const messages = [];
 
 const { state } = store( 'viglet-dumont/copilot', {
+	state: {
+		// Compare on a cited product (D212), over the list the search cards use.
+		get canCompare() {
+			return compare.available;
+		},
+		get compared() {
+			return compare.has( getContext().item.productId );
+		},
+		get compareFull() {
+			return compare.full( getContext().item.productId );
+		},
+		get compareReady() {
+			return compare.ready;
+		},
+		get compareUrl() {
+			return compare.url;
+		},
+		get compareText() {
+			return state.compareLabel.replace( '%d', compare.ids.length );
+		},
+	},
 	actions: {
 		type( event ) {
 			state.question = event.target.value;
@@ -67,6 +89,10 @@ const { state } = store( 'viglet-dumont/copilot', {
 					'%s',
 					citation.title || ''
 				),
+				compareFor: state.compareFor.replace(
+					'%s',
+					citation.title || ''
+				),
 				cartStatus: '',
 				adding: false,
 			} ) );
@@ -102,6 +128,9 @@ const { state } = store( 'viglet-dumont/copilot', {
 				? state.cartAdded
 				: added.message || state.cartFailed;
 			item.adding = false;
+		},
+		toggleCompare() {
+			compare.toggle( getContext().item.productId );
 		},
 	},
 	callbacks: {

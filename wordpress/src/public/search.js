@@ -20,7 +20,7 @@ import {
 	createTuringClient,
 	googleAnalyticsSink,
 } from '@viglet/turing-sdk';
-import { getConfig } from '@wordpress/interactivity';
+import { getConfig, store } from '@wordpress/interactivity';
 
 export * from '@viglet/turing-sdk';
 
@@ -223,6 +223,91 @@ export async function shopProduct( productId ) {
 		return null;
 	}
 }
+
+// The products ticked for comparison (D200), for this tab only. One list for every card that
+// offers Compare (search results, Related, the copilot: D212), so a choice made in one
+// counts in the others; it lives in a store of its own so each block's getters follow it.
+const compareKey = 'viglet-dumont-compare';
+const compareMax = 4;
+const compared = store( 'viglet-dumont/compare', {
+	state: { ids: loadCompare() },
+} ).state;
+
+/**
+ * The products this tab ticked for comparison; none where storage is blocked.
+ *
+ * @return {number[]} Product ids, in the order ticked.
+ */
+function loadCompare() {
+	try {
+		const kept = JSON.parse( window.sessionStorage.getItem( compareKey ) );
+		return Array.isArray( kept )
+			? kept.map( Number ).filter( Boolean ).slice( 0, compareMax )
+			: [];
+	} catch {
+		return [];
+	}
+}
+
+/**
+ * Compare, for a card that shows a product (D200, D212): offered once a page holds the
+ * compare block (`config.shop.comparePage`), at most four products at a time.
+ */
+export const compare = {
+	/** @return {boolean} Whether cards offer Compare at all. */
+	get available() {
+		return !! config.shop?.comparePage;
+	},
+	/** @return {number[]} The ticked product ids, in the order ticked. */
+	get ids() {
+		return compared.ids;
+	},
+	/** @return {boolean} Whether two or more are ticked, so the compare link is worth showing. */
+	get ready() {
+		return compare.available && compared.ids.length >= 2;
+	},
+	/** @return {string} The compare page, asked for the ticked products. */
+	get url() {
+		const url = new URL(
+			config.shop?.comparePage || '/',
+			window.location.href
+		);
+		url.searchParams.set( 'compare', compared.ids.join( ',' ) );
+		return url.href;
+	},
+	/**
+	 * @param {number} productId The product's post id.
+	 * @return {boolean} Whether it is ticked.
+	 */
+	has( productId ) {
+		return compared.ids.includes( productId );
+	},
+	/**
+	 * @param {number} productId The product's post id.
+	 * @return {boolean} Whether it cannot be ticked, four others being ticked already.
+	 */
+	full( productId ) {
+		return ! compare.has( productId ) && compared.ids.length >= compareMax;
+	},
+	/**
+	 * Tick the product, or untick it, and keep the list for this tab.
+	 *
+	 * @param {number} productId The product's post id.
+	 */
+	toggle( productId ) {
+		compared.ids = compare.has( productId )
+			? compared.ids.filter( ( id ) => id !== productId )
+			: [ ...compared.ids, productId ].slice( 0, compareMax );
+		try {
+			window.sessionStorage.setItem(
+				compareKey,
+				JSON.stringify( compared.ids )
+			);
+		} catch {
+			// Storage blocked: the choice lasts as long as the page.
+		}
+	},
+};
 
 /**
  * Report the result a visitor opened: to Turing (`POST /api/sn/{site}/click`, which its

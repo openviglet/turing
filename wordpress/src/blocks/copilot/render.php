@@ -18,18 +18,23 @@ $viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' ) ? (str
 wp_interactivity_state(
 	'viglet-dumont/copilot',
 	array(
-		'available'  => false,
-		'question'   => '',
-		'turns'      => array(),
-		'busy'       => false,
-		'status'     => '',
+		'available'    => false,
+		'question'     => '',
+		'turns'        => array(),
+		'busy'         => false,
+		'status'       => '',
 		/* translators: %s: the product's name. */
-		'cartLabel'  => __( 'Add to cart: %s', 'viglet-dumont' ),
-		'cartAdded'  => __( 'Added to your cart.', 'viglet-dumont' ),
-		'cartFailed' => __( 'It could not be added to the cart.', 'viglet-dumont' ),
-		'thinking'   => __( 'Looking through the catalog…', 'viglet-dumont' ),
-		'failed'     => __( 'The catalog could not answer right now.', 'viglet-dumont' ),
-		'nothing'    => __( 'Nothing in the catalog matches that.', 'viglet-dumont' ),
+		'cartLabel'    => __( 'Add to cart: %s', 'viglet-dumont' ),
+		// Compare on a cited product (D212), into the list the search cards use.
+		/* translators: %s: a product's name. */
+		'compareFor'   => __( 'Compare %s', 'viglet-dumont' ),
+		/* translators: %d: how many products, two to four. */
+		'compareLabel' => __( 'Compare %d products', 'viglet-dumont' ),
+		'cartAdded'    => __( 'Added to your cart.', 'viglet-dumont' ),
+		'cartFailed'   => __( 'It could not be added to the cart.', 'viglet-dumont' ),
+		'thinking'     => __( 'Looking through the catalog…', 'viglet-dumont' ),
+		'failed'       => __( 'The catalog could not answer right now.', 'viglet-dumont' ),
+		'nothing'      => __( 'Nothing in the catalog matches that.', 'viglet-dumont' ),
 	)
 );
 ?>
@@ -57,6 +62,10 @@ wp_interactivity_state(
 								<strong data-wp-text="context.item.price"></strong>
 								<button type="button" class="wp-element-button" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="context.item.adding" data-wp-bind--hidden="!context.item.buyable" data-wp-bind--aria-label="context.item.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-dumont' ); ?></button>
 								<span role="status" data-wp-text="context.item.cartStatus"></span>
+								<label class="viglet-dumont-copilot__compare" hidden data-wp-bind--hidden="!state.canCompare">
+									<input type="checkbox" data-wp-bind--aria-label="context.item.compareFor" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
+									<?php esc_html_e( 'Compare', 'viglet-dumont' ); ?>
+								</label>
 							</span>
 						</li>
 					</template>
@@ -64,6 +73,9 @@ wp_interactivity_state(
 			</li>
 		</template>
 	</ol>
+	<p class="viglet-dumont-copilot__compare-bar" hidden data-wp-bind--hidden="!state.compareReady">
+		<a class="wp-element-button" data-wp-bind--href="state.compareUrl" data-wp-text="state.compareText"></a>
+	</p>
 	<form class="viglet-dumont-copilot__form" data-wp-on--submit="actions.ask">
 		<label for="<?php echo esc_attr( $viglet_dumont_id ); ?>"><?php esc_html_e( 'What are you looking for?', 'viglet-dumont' ); ?></label>
 		<input

@@ -62,3 +62,16 @@
 	font: inherit;
 	padding: 0.5rem 0.75rem;
 }
+
+/* Compare on a cited product (D212), into the list the search cards use. */
+.viglet-dumont-copilot__compare {
+	align-items: center;
+	display: inline-flex;
+	gap: 0.35rem;
+	font-size: 0.875em;
+}
+
+.viglet-dumont-copilot__compare-bar {
+	margin: 1rem 0;
+	text-align: right;
+}
