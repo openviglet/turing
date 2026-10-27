@@ -11,7 +11,7 @@
  * as facets and a few synonyms are set in Turing. The searches that show each feature are in
  * curated.json, which demo/curated.spec.mjs checks.
  *
- * Prints JSON: { products: <count>, pages: { … } }.
+ * Prints JSON: { products: <count>, guides: <count>, pages: { … } }.
  *
  * @package Viglet_Dumont
  */
@@ -267,6 +267,9 @@ foreach ( $models as $m => list( $category, $model, $price, $materials, $uses, $
 	}
 }
 
+// The trail journal: guides and how-tos that name the products above.
+$guides = require __DIR__ . '/journal.php';
+
 // Products indexed, the shop's fields as facets: category, price ranges, stock, colour, material, use.
 $settings                       = viglet_dumont_get_settings();
 $settings['index_custom_types'] = array( 'product' );
@@ -329,6 +332,7 @@ foreach ( array(
 echo wp_json_encode(
 	array(
 		'products' => $count,
+		'guides'   => count( $guides ),
 		'pages'    => $pages,
 	)
 );

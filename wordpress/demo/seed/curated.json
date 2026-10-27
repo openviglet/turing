@@ -5,9 +5,16 @@
 		"first": "Catbells light rain jacket"
 	},
 	{
+		"query": "waterproof jacket",
+		"shows": "A buying guide first, then the products it recommends.",
+		"first": "How to choose a waterproof jacket",
+		"then": "Catbells light rain jacket"
+	},
+	{
 		"query": "raincoat",
-		"shows": "A synonym: no product says raincoat, and the rain jackets come back.",
-		"first": "Catbells light rain jacket"
+		"shows": "A synonym: no product or guide says raincoat, and the guide and rain jackets come back.",
+		"first": "How to choose a waterproof jacket",
+		"then": "Catbells light rain jacket"
 	},
 	{
 		"query": "rucksack",
@@ -16,8 +23,9 @@
 	},
 	{
 		"query": "puffer",
-		"shows": "A shopper's word for an insulated jacket.",
-		"first": "Blencathra down jacket"
+		"shows": "A shopper's word for a down jacket: the care guide, then the jacket.",
+		"first": "How to wash a down jacket",
+		"then": "Blencathra down jacket"
 	},
 	{
 		"query": "helvelyn",

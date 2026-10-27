@@ -70,6 +70,31 @@ export default async function globalSetup( config ) {
 		] );
 	}
 
+	// The demo's trail journal (demo/seed/journal.php, D194): searched it would be counted, and
+	// listed it would fill the post list. The demo's seed writes it again.
+	const journal = wp( [
+		'post',
+		'list',
+		'--post_type=post',
+		'--post_status=any',
+		'--category_name=buying-guides,how-tos',
+		'--format=ids',
+	] ).trim();
+	if ( journal ) {
+		wp( [ 'post', 'delete', ...journal.split( /\s+/ ), '--force' ] );
+		// Their deletions sent now, not by the cron worker after the specs have started. A
+		// held lock means that worker is sending them already.
+		try {
+			wp( [ 'dumont', 'queue', 'run' ] );
+		} catch {}
+	}
+	// And the synonyms it set in Turing, which the Search tuning spec would list beside its own.
+	wp( [
+		'eval',
+		'$t = new Viglet_Dumont_Tuning(); $all = $t->all();' +
+			' foreach ( is_wp_error( $all ) ? array() : $all["synonyms"] as $row ) { if ( $row["ours"] ) { $t->remove_synonym( $row["id"] ); } }',
+	] );
+
 	// What the demo storefront changes besides its pages: permalinks, the front page, the
 	// site's name and the plugin's search page.
 	wp( [ 'rewrite', 'structure', '' ] );

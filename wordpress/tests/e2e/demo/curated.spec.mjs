@@ -40,6 +40,13 @@ for ( const search of curated ) {
 		await expect(
 			block( page ).locator( '.viglet-dumont-search__title a' ).first()
 		).toHaveText( new RegExp( `^${ search.first }\\b` ) );
+		if ( search.then ) {
+			await expect(
+				block( page )
+					.locator( '.viglet-dumont-search__title a' )
+					.nth( 1 )
+			).toHaveText( new RegExp( `^${ search.then }\\b` ) );
+		}
 		if ( search.count ) {
 			await expect(
 				block( page ).locator( '.viglet-dumont-search__summary' )
