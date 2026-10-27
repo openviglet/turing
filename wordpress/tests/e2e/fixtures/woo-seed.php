@@ -27,18 +27,6 @@ if ( ! taxonomy_exists( 'pa_color' ) ) {
 	register_taxonomy( 'pa_color', 'product', array( 'hierarchical' => false ) );
 }
 
-// The demo catalog's products (demo/seed/catalog.php, SKUs TF-…) are not the tests': out of
-// the shop, so a search here finds the three jackets alone.
-global $wpdb;
-foreach ( $wpdb->get_col( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_sku' AND meta_value LIKE 'TF-%'" ) as $demo_id ) {
-	wp_update_post(
-		array(
-			'ID'          => (int) $demo_id,
-			'post_status' => 'draft',
-		)
-	);
-}
-
 $jackets = array(
 	'rain'  => array( 'Rain jacket', 'RJ-01', '199', '149.90', 'instock', 'Red' ),
 	'wool'  => array( 'Wool jacket', 'WJ-01', '89', '', 'instock', 'Blue' ),

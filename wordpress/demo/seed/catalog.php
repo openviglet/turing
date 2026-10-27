@@ -1,7 +1,7 @@
 <?php
 /**
- * The demo storefront's catalog (D194), run by `run-docker.cmd demo` and by the browser suite's
- * `demo` project: the Tarnfell pages (setup.php), then about 150 products of a fictional brand
+ * The demo storefront's catalog (D194), run on the demo's own WordPress by `run-docker.cmd demo`,
+ * and by the browser suite's `demo-setup` when it is missing: the Tarnfell pages (setup.php), then about 150 products of a fictional brand
  * across eight categories, each with colour, material, use and size attributes, a price, some
  * on sale and some out of stock, and a description that answers what a shopper asks (how
  * waterproof, how heavy, how warm, how to wash it). No reviews or ratings: invented ones would
@@ -226,14 +226,6 @@ $term = static function ( string $taxonomy, string $name ): int {
 	$found = term_exists( $name, $taxonomy ) ?: wp_insert_term( $name, $taxonomy );
 	return (int) $found['term_id'];
 };
-
-// The browser tests' three jackets (tests/e2e/fixtures/woo-seed.php) are not the shop's.
-foreach ( array( 'RJ-01', 'WJ-01', 'LJ-01' ) as $test_sku ) {
-	$test_id = wc_get_product_id_by_sku( $test_sku );
-	if ( $test_id ) {
-		wp_update_post( array( 'ID' => $test_id, 'post_status' => 'draft' ) );
-	}
-}
 
 $category_ids = array();
 foreach ( $categories as $slug => $name ) {

@@ -194,6 +194,10 @@ Beyond behaviour, the suite also checks:
   `localhost:8081` (`/` and `/second/`), sharing the local Turing under its own SN site
   ("Network"). `E2E_MULTISITE=1 npm run test:e2e` seeds both sites and adds the `network`
   project, which checks that each site's search block finds only its own documents.
+- **Demo storefront**: the `demo` project checks the curated searches, the comparison page
+  and the tour on the demo's own WordPress (`run-docker.cmd demo`, `localhost:38082`), after
+  `demo-setup` seeds its catalog if missing. It needs no switch, so `npm run test:e2e` runs it
+  beside the rest and `npm run test:e2e:demo` runs it alone.
 
 **The live-LLM suite** (`npm run test:e2e:ai`, `playwright.ai.config.mjs`) asks Turing's
 generative features real questions, on a stack started with `OPENAI_API_KEY`. It is never
@@ -300,7 +304,10 @@ site's searches return the other's documents. WP-CLI on the demo is
 `run-docker.cmd demo` turns the demo into Portuguese: the site's language, the plugin's locale
 and the SN site's, and a catalog and journal seeded from `demo/seed/pt_BR.php` with
 Portuguese synonyms; run it again with `en_US` (the default) to go back. The `demo` Playwright project
-still seeds Tarnfell onto the test site for now (D220).
+runs against it (`WP_DEMO_URL`, default `http://localhost:38082`) and seeds its catalog only
+when it is missing; `npm run test:e2e:demo` runs those specs alone, without touching the test
+site. A test site that ran the demo before this split keeps its `TF-` products and journal:
+`run-docker.cmd reset` clears them.
 
 `phpcbf` capitalises `wordpress` wherever it reads it as prose, and the `source_apps` value is
 data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that sniff; keep it.

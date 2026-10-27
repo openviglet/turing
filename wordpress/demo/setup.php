@@ -2,8 +2,8 @@
 /**
  * The demo storefront (D193), run by `run-docker.cmd demo` after the stack is up: the Tarnfell
  * theme, a static home, the search page and the journal, and the plugin's instant search on
- * the theme's own search box. Idempotent. The browser suite's global setup drafts these pages
- * and puts the front page back, so the default stack's screenshots do not move.
+ * the theme's own search box. Idempotent. It runs on the demo's own WordPress (D219), never
+ * on the browser tests' site.
  *
  * @package Viglet_Dumont
  */

@@ -2,7 +2,9 @@
 // (WordPress on localhost:8080 with a local Turing). Not run in CI, which has no Turing.
 //
 //   run-docker.cmd          # once: the stack
+//   run-docker.cmd demo     # once: the demo storefront beside it, on localhost:38082
 //   npm run test:e2e        # seed, log in, run every spec
+//   npm run test:e2e:demo   # the demo storefront's specs alone
 //   npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont-health
 //
 // Drives the installed Microsoft Edge (`channel: msedge`), so no browser download is needed;
@@ -46,16 +48,18 @@ const variantSteps = [
 		},
 		testMatch: 'woo/**/*.spec.mjs',
 	},
+];
+
+// The demo storefront (D194) on its own WordPress (run-docker.cmd demo, D219): its specs need no
+// switch and leave the site above alone (D220). `npm run test:e2e:demo` runs them alone.
+export const demoURL = process.env.WP_DEMO_URL || 'http://localhost:38082';
+export const demoProjects = [
+	{ name: 'demo-setup', testMatch: 'setup/demo.setup.mjs' },
 	{
-		// The demo storefront (D194): Tarnfell and its catalog, its curated searches checked.
 		name: 'demo',
-		metadata: {
-			theme: 'tarnfell',
-			locale: 'en_US',
-			plugins: [ 'woocommerce' ],
-			seed: '/demo/seed/catalog.php',
-		},
 		testMatch: 'demo/**/*.spec.mjs',
+		dependencies: [ 'demo-setup' ],
+		use: { baseURL: demoURL },
 	},
 ];
 const variants = variantSteps.flatMap( ( step, i ) => [
@@ -129,6 +133,7 @@ export default defineConfig( {
 			use: { viewport: { width: 390, height: 844 }, isMobile: true },
 		},
 		...variants,
+		...demoProjects,
 		// The multisite network beside the single site (run-docker.cmd multisite); its specs
 		// address both sites by URL, so it needs no switch and depends on nothing.
 		...( process.env.E2E_MULTISITE

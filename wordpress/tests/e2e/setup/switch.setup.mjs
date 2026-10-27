@@ -7,8 +7,8 @@ import { wp } from '../global-setup.mjs';
 
 test( 'switch the site', async ( {}, testInfo ) => {
 	const { theme, version, locale, plugins, seed } = testInfo.project.metadata;
-	// A seed is a few hundred WordPress saves and a reindex: the demo catalog's takes minutes.
-	test.setTimeout( 5 * 60 * 1000 );
+	// A plugin or a language may be downloaded first, then a seed and a reindex.
+	test.setTimeout( 3 * 60 * 1000 );
 	for ( const plugin of plugins || [] ) {
 		try {
 			wp( [ 'plugin', 'is-installed', plugin ] );

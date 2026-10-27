@@ -57,8 +57,7 @@ export default async function globalSetup( config ) {
 		'list',
 		'--post_type=page',
 		'--post_status=publish',
-		// And the demo storefront's (run-docker.cmd demo, D193).
-		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,compare-products,home-demo,search-gear,journal,compare-searches',
+		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,compare-products',
 		'--format=ids',
 	] ).trim();
 	if ( shopPages ) {
@@ -70,40 +69,7 @@ export default async function globalSetup( config ) {
 		] );
 	}
 
-	// The demo's trail journal (demo/seed/journal.php, D194): searched it would be counted, and
-	// listed it would fill the post list. The demo's seed writes it again.
-	const journal = wp( [
-		'post',
-		'list',
-		'--post_type=post',
-		'--post_status=any',
-		'--category_name=buying-guides,how-tos',
-		'--format=ids',
-	] ).trim();
-	if ( journal ) {
-		wp( [ 'post', 'delete', ...journal.split( /\s+/ ), '--force' ] );
-		// Their deletions sent now, not by the cron worker after the specs have started. A
-		// held lock means that worker is sending them already.
-		try {
-			wp( [ 'dumont', 'queue', 'run' ] );
-		} catch {}
-	}
-	// And the synonyms it set in Turing, which the Search tuning spec would list beside its own.
-	wp( [
-		'eval',
-		'$t = new Viglet_Dumont_Tuning(); $all = $t->all();' +
-			' foreach ( is_wp_error( $all ) ? array() : $all["synonyms"] as $row ) { if ( $row["ours"] ) { $t->remove_synonym( $row["id"] ); } }',
-	] );
-
-	// What the demo storefront changes besides its pages: permalinks, the front page, the
-	// site's name and the plugin's search page.
-	wp( [ 'rewrite', 'structure', '' ] );
-	wp( [
-		'eval',
-		'update_option( "show_on_front", "posts" ); update_option( "page_on_front", 0 ); update_option( "page_for_posts", 0 );' +
-			' update_option( "blogname", "Viglet Dumont test" ); update_option( "blogdescription", "" );' +
-			' $s = viglet_dumont_get_settings(); $s["search_page"] = 0; viglet_dumont_update_settings( $s );',
-	] );
+	// The demo storefront has a WordPress of its own (D219, D220), so nothing of it is undone here.
 
 	if ( ! process.env.E2E_SKIP_SEED ) {
 		const out = wp( [ 'eval-file', '/e2e/seed.php' ] );
