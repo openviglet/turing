@@ -9,12 +9,16 @@ test( 'a search that found nothing is listed, with a draft to write about it', a
 	look,
 	axe,
 } ) => {
-	// A visitor's search, as the block sends it, for a word no post holds.
-	const term = `zzinsight${ Date.now() }`;
-	const searched = await page.request.get(
-		`${ turingURL }/api/sn/Sample/search?q=${ term }&_setlocale=en_US`
-	);
-	expect( searched.ok() ).toBe( true );
+	// A visitor's search, as the block sends it, for a word no post holds. One term, searched
+	// three times: Turing lists the period's failed searches by count with ties oldest first
+	// (Turing T1148), so a new one-off term falls past the cap once a day of runs logged 20.
+	const term = 'zzinsightgap';
+	for ( let i = 0; i < 3; i++ ) {
+		const searched = await page.request.get(
+			`${ turingURL }/api/sn/Sample/search?q=${ term }&_setlocale=en_US`
+		);
+		expect( searched.ok() ).toBe( true );
+	}
 
 	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
 	await page.getByLabel( 'Period' ).selectOption( 'today' );
