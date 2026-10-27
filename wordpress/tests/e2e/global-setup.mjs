@@ -37,10 +37,37 @@ export function wp( args, service = 'cli' ) {
 	);
 }
 
+/**
+ * Stop unless the browser's URL is the WordPress WP-CLI seeds (D221). WP-CLI always reaches
+ * this compose project's site, while the browser goes wherever the URL says: another site on
+ * that port would be browsed instead, and every spec would fail as if the plugin were broken.
+ *
+ * @param {string} url      The URL the specs browse.
+ * @param {string} service  The compose service whose WordPress is seeded.
+ * @param {string} variable The environment variable that sets the URL.
+ */
+export function assertSameSite( url, service, variable ) {
+	const lines = wp( [ 'option', 'get', 'siteurl' ], service )
+		.trim()
+		.split( /\r?\n/ );
+	const stack = new URL( lines[ lines.length - 1 ].trim() ).origin;
+	const browsed = new URL( url ).origin;
+	if ( stack !== browsed ) {
+		throw new Error(
+			`The browser tests would browse ${ browsed }, but the stack's WordPress (${ service }) is ${ stack }: ` +
+				`set ${ variable }=${ stack }, or start the stack on that port.`
+		);
+	}
+}
+
 export default async function globalSetup( config ) {
 	const { baseURL, channel, storageState } = config.projects.find(
 		( p ) => p.name === 'admin'
 	).use;
+	assertSameSite( baseURL, 'cli', 'WP_URL' );
+	if ( process.env.E2E_MULTISITE ) {
+		assertSameSite( networkURL, 'cli-ms', 'WP_MS_URL' );
+	}
 	mkdirSync( dirname( seedFile ), { recursive: true } );
 
 	// The variant every run starts from, even one that skips the seed: a run stopped half-way

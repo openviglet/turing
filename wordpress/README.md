@@ -285,7 +285,9 @@ to change the defaults.
 To move an installed stack to another port (another project holds 8080, say), set `WP_PORT`,
 run `run-docker.cmd`, then
 `run-docker.cmd wp search-replace localhost:8080 localhost:<port> --all-tables --skip-columns=guid`;
-the browser tests then need `WP_URL=http://localhost:<port>`.
+the browser tests then need `WP_URL=http://localhost:<port>`. Their setup compares each URL
+with the site URL WP-CLI reports (`WP_URL`, `WP_MS_URL`, `WP_DEMO_URL`) and stops before
+seeding when they differ, so another WordPress on that port is never tested by mistake.
 
 The demo storefront (`demo/`, outside the plugin zip) is Tarnfell, a fictional outdoor gear
 shop: its own theme, WooCommerce with its catalog (`demo/seed`), a home whose hero is the

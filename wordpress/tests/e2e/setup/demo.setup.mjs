@@ -4,8 +4,9 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { test } from '@playwright/test';
-import { wp } from '../global-setup.mjs';
+import { assertSameSite, wp } from '../global-setup.mjs';
 import { demoFile } from '../demo/curated.mjs';
+import { demoURL } from '../../../playwright.config.mjs';
 
 const demo = ( args ) => wp( args, 'cli-demo' );
 
@@ -18,6 +19,7 @@ test( 'the demo storefront is up, with its catalog', async () => {
 			'The demo WordPress is not installed: run `run-docker.cmd demo` first.'
 		);
 	}
+	assertSameSite( demoURL, 'cli-demo', 'WP_DEMO_URL' );
 	// The specs check the curated searches in the language the demo speaks (DEMO_LOCALE, D217).
 	const locale = demo( [ 'eval', 'echo get_locale();' ] )
 		.trim()
