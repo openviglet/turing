@@ -573,6 +573,7 @@
       "reindexEtaWithThreads": "Estimated time remaining: {{time}} · {{threads}} threads",
       "reindexEtaCalculatingWithThreads": "Estimating remaining time… · {{threads}} threads",
       "reindexHint": "Re-embed all indexed content with current RAG settings. Useful after changing models or chunking.",
+      "notEmbedded": "This site's content is not in the vector store yet, so chat will not find it. It was probably indexed before generative AI was turned on: reindex to embed it.",
       "reindexComplete": "Vector store reindex complete.",
       "reindexFailed": "Vector store reindex failed.",
       "reindexRequiresSave": "Save the form first — reindex uses the persisted AI agent on this site.",

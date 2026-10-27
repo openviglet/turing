@@ -152,6 +152,10 @@ export const queryKeys = {
     all: () => ['sn-chat-enabled'] as const,
     bySite: (siteName: string) => [...queryKeys.snChatEnabled.all(), 'site', siteName] as const,
   },
+  snAiCapabilities: {
+    all: () => ['sn-ai-capabilities'] as const,
+    bySite: (siteName: string) => [...queryKeys.snAiCapabilities.all(), 'site', siteName] as const,
+  },
   locales: {
     all: () => ['locales'] as const,
     list: () => [...queryKeys.locales.all(), 'list'] as const,

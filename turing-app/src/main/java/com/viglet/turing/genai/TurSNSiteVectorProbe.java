@@ -55,7 +55,8 @@ import lombok.extern.slf4j.Slf4j;
  * {@link TurGenAiStoreProvider#listChunks} reads the store directly. A store
  * that cannot list answers {@link Presence#UNKNOWN}, which callers treat as
  * present, so the probe never claims a site is empty without having looked.
- * Answers are kept for {@link #TTL}, since a status screen asks on every load.
+ * A found or unknown answer is kept for {@link #TTL}, since a status screen asks
+ * on every load; an empty one is looked up again each time.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.6
@@ -107,7 +108,13 @@ public class TurSNSiteVectorProbe {
             return cached.presence();
         }
         Presence presence = look(site, store);
-        cache.put(key, new Cached(presence, now));
+        // Absence is not kept: it is the state a reindex is about to end, and a
+        // cached "empty" would outlive the reindex that filled the store.
+        if (presence == Presence.ABSENT) {
+            cache.remove(key);
+        } else {
+            cache.put(key, new Cached(presence, now));
+        }
         return presence;
     }
 

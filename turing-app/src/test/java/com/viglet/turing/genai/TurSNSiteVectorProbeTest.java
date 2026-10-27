@@ -109,17 +109,26 @@ class TurSNSiteVectorProbeTest {
     }
 
     @Test
-    void theAnswerIsKeptForItsTtl() {
-        when(provider.listChunks(any(), any(), any(), anyInt(), anyInt(), anyMap())).thenReturn(page(0));
+    void aFoundAnswerIsKeptForItsTtl() {
+        when(provider.listChunks(any(), any(), any(), anyInt(), anyInt(), anyMap())).thenReturn(page(3));
         Instant start = Instant.parse("2026-10-27T10:00:00Z");
         probe.setClockForTest(Clock.fixed(start, ZoneOffset.UTC));
         probe.probe(site, agent);
         probe.probe(site, agent);
-        // Two locales, one look.
-        verify(provider, times(2)).listChunks(any(), any(), any(), anyInt(), anyInt(), anyMap());
+        // The first locale answers, and the second call is served from the cache.
+        verify(provider, times(1)).listChunks(any(), any(), any(), anyInt(), anyInt(), anyMap());
 
         probe.setClockForTest(Clock.fixed(start.plus(TurSNSiteVectorProbe.TTL), ZoneOffset.UTC));
         probe.probe(site, agent);
-        verify(provider, times(4)).listChunks(any(), any(), any(), anyInt(), anyInt(), any(Map.class));
+        verify(provider, times(2)).listChunks(any(), any(), any(), anyInt(), anyInt(), any(Map.class));
+    }
+
+    @Test
+    void anEmptyAnswerIsNotKeptSoAReindexShowsAtOnce() {
+        when(provider.listChunks(any(), any(), any(), anyInt(), anyInt(), anyMap()))
+                .thenReturn(page(0), page(0), page(5));
+
+        assertThat(probe.probe(site, agent)).isEqualTo(Presence.ABSENT);
+        assertThat(probe.probe(site, agent)).isEqualTo(Presence.PRESENT);
     }
 }

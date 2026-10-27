@@ -33,6 +33,9 @@ import type {
 } from "@/models/sn/sn-site-genai.model"
 import { useUpdateSnSite } from "@/api/queries/sn-site.queries"
 import { usePersonas } from "@/api/queries/persona.queries"
+import { NOT_EMBEDDED, useSnAiCapabilities } from "@/api/queries/sn-ai-capabilities.queries"
+import { queryKeys } from "@/api/queries/keys"
+import { turingQueryClient } from "@/lib/query-client"
 import type { TurSNSite } from "@/models/sn/sn-site.model"
 import { useSmoothedEta } from "@/hooks/use-smoothed-eta"
 import { formatTime } from "@/lib/format-time"
@@ -84,6 +87,8 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
     // T472 — audience personas (kind AUDIENCE/BOTH) selectable as the
     // index-time content-fit reader proxy.
     const { data: personas } = usePersonas();
+    // T1151 — tells a RAG-ready site that holds no vectors yet to reindex.
+    const { data: capabilities } = useSnAiCapabilities(snSite.name);
     const audiencePersonas = (personas ?? []).filter(
         (p) => p.personaKind === "AUDIENCE" || p.personaKind === "BOTH",
     );
@@ -248,9 +253,15 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
     // We also block while the form is dirty so the user can't click reindex
     // immediately after picking a different agent without saving it first.
     const savedAgent = snSite.turSNSiteGenAi?.turAIAgent;
-    const savedRagEnabled =
-        !!savedAgent && savedAgent.enabled === 1 && savedAgent.ragEnabled === true;
+    // T1151 — a site saved with no agent of its own reindexes into the Default AI
+    // Agent's store, as the backend reindex resolves it.
+    const savedVectorMode = snSite.turSNSiteGenAi?.knowledgeBaseMode !== "VECTORLESS_STRUCTURED";
+    const savedRagEnabled = savedAgent
+        ? savedAgent.enabled === 1 && savedAgent.ragEnabled === true
+        : savedVectorMode && defaultAgent?.enabled === 1 && defaultAgentRagEnabled;
     const canReindex = savedRagEnabled && !form.formState.isDirty;
+    const reindexVisible = ragEnabled || (usingDefaultAgent && defaultAgentRagEnabled && vectorModeActive);
+    const notEmbedded = capabilities?.similarByVector?.reason === NOT_EMBEDDED;
     const reindexTitleHint = canReindex
         ? undefined
         : t("forms.snGenai.reindexRequiresSave");
@@ -328,6 +339,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
             () => {
                 setIsReindexing(false);
                 setReindexProgress(null);
+                // T1151 — the store now holds the site's content; drop the "not embedded" notice.
+                void turingQueryClient.invalidateQueries({
+                    queryKey: queryKeys.snAiCapabilities.bySite(snSite.name),
+                });
                 if (notifyOnComplete) {
                     toast.success(t("forms.snGenai.reindexComplete"));
                 }
@@ -339,7 +354,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                 toast.error(t("forms.snGenai.reindexFailed"));
             },
         );
-    }, [t]);
+    }, [t, snSite.name]);
 
     const handleReindexClick = useCallback(async () => {
         if (isReindexing) return;
@@ -553,7 +568,16 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                 {/* ragEnabled already folds in the knowledge-base mode
                                     (T790), so a VECTORLESS_STRUCTURED site hides the
                                     reindex button — the backend reindex early-returns anyway. */}
-                                {ragEnabled && (
+                                {reindexVisible && notEmbedded && !isReindexing && (
+                                    <div
+                                        role="status"
+                                        data-testid="sn-genai-not-embedded"
+                                        className="mt-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-900 dark:text-amber-200"
+                                    >
+                                        {t("forms.snGenai.notEmbedded")}
+                                    </div>
+                                )}
+                                {reindexVisible && (
                                     <div className="flex items-center gap-3 pt-4 border-t border-border/40">
                                         <GradientButton
                                             type="button"

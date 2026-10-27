@@ -573,6 +573,7 @@
       "reindexEtaWithThreads": "Tempo estimado restante: {{time}} · {{threads}} threads",
       "reindexEtaCalculatingWithThreads": "Estimando tempo restante… · {{threads}} threads",
       "reindexHint": "Reembedar todo o conteúdo indexado com as configurações de RAG atuais. Útil após mudar modelos ou estratégia de chunking.",
+      "notEmbedded": "O conteúdo deste site ainda não está no vector store, então o chat não vai encontrá-lo. Provavelmente foi indexado antes de a IA generativa ser ligada: reindexe para embedá-lo.",
       "reindexComplete": "Reindexação do banco vetorial concluída.",
       "reindexFailed": "Falha na reindexação do banco vetorial.",
       "reindexRequiresSave": "Salve o formulário primeiro — a reindexação usa o AI agent persistido neste site.",

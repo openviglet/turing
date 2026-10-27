@@ -100,6 +100,7 @@ public class TurSNSiteAPI {
     private final TurSNSiteMapper turSNSiteMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService;
+    private final com.viglet.turing.genai.TurDefaultAgentResolver turDefaultAgentResolver;
 
     @Operation(summary = "Semantic Navigation Site List")
     @GetMapping
@@ -382,9 +383,9 @@ public class TurSNSiteAPI {
             @RequestParam(required = false) String taskId) {
         return turSNSiteRepository.findById(id)
                 .map(site -> {
-                    var genAi = site.getTurSNSiteGenAi();
-                    var agent = genAi == null ? null : genAi.getTurAIAgent();
-                    if (agent == null || agent.getEnabled() != 1 || !agent.isRagEnabled()) {
+                    // T1151 — the effective agent, as the reindex itself resolves it, so a
+                    // site on the Default AI Agent can be reindexed into its store.
+                    if (!turDefaultAgentResolver.isRagReady(site.getTurSNSiteGenAi())) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                                 .<Map<String, String>>body(Map.of(ERROR, "RAG is not enabled on this site"));
                     }

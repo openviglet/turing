@@ -92,7 +92,35 @@ class TurSNSiteAPITest {
                                 export, mock(TurSNSiteContentExchangeService.class),
                                 template, queue, pluginFactory, siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
-                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class));
+                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class),
+                                mock(com.viglet.turing.genai.TurDefaultAgentResolver.class));
+        }
+
+        @Test
+        void aSiteOnTheDefaultAgentCanStartAReindex() {
+                // T1151 — the gate reads the effective agent, as the reindex does.
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                com.viglet.turing.genai.TurDefaultAgentResolver resolver =
+                                mock(com.viglet.turing.genai.TurDefaultAgentResolver.class);
+                TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSNSiteGenAiRepository.class),
+                                mock(com.viglet.turing.persistence.repository.agent.TurAIAgentRepository.class),
+                                mock(com.viglet.turing.persistence.repository.se.TurSEInstanceRepository.class),
+                                mock(TurSNSiteExport.class), mock(TurSNSiteContentExchangeService.class),
+                                mock(TurSNTemplate.class), mock(TurSNQueue.class),
+                                mock(TurSearchEnginePluginFactory.class), Mappers.getMapper(TurSNSiteMapper.class),
+                                mock(org.springframework.context.ApplicationEventPublisher.class),
+                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class), resolver);
+                TurSNSite site = new TurSNSite();
+                site.setId("site");
+                site.setTurSNSiteGenAi(new TurSNSiteGenAi());
+                when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+                when(resolver.isRagReady(site.getTurSNSiteGenAi())).thenReturn(true);
+
+                var response = api.turSNSiteGenAiReindex("site", "task-1");
+
+                assertThat(response.getStatusCode().value()).isEqualTo(200);
+                assertThat(response.getBody()).containsValue("task-1");
         }
 
         @Test
@@ -194,7 +222,8 @@ class TurSNSiteAPITest {
                                 mock(TurSNTemplate.class), mock(TurSNQueue.class),
                                 mock(TurSearchEnginePluginFactory.class), siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
-                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class));
+                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class),
+                                mock(com.viglet.turing.genai.TurDefaultAgentResolver.class));
 
                 TurSNSite existing = new TurSNSite();
                 TurSNSiteGenAi existingGenAi = new TurSNSiteGenAi();
