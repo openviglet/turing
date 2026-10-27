@@ -413,7 +413,8 @@ class Viglet_Dumont_API_Client {
 
 	/**
 	 * Text Turing's default language model writes from some data and an instruction
-	 * (`POST /api/v2/summary`), cached by Turing under the key until asked to regenerate.
+	 * (`POST /api/v2/summary`), cached by Turing under the key until asked to regenerate. It
+	 * names the SN site, so Turing counts the call in that site's cost and budget (D216).
 	 *
 	 * @param string $cache_key     What the answer is cached under.
 	 * @param string $data          The text the model reads.
@@ -431,6 +432,7 @@ class Viglet_Dumont_API_Client {
 					'cacheKey'     => $cache_key,
 					'data'         => $data,
 					'systemPrompt' => $system_prompt,
+					'site'         => $this->site_name,
 				),
 				array( 'timeout' => 60 )
 			)

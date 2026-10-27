@@ -270,6 +270,7 @@ final class InsightsTest extends PluginTestCase {
 		$this->assertStringContainsString( "Searches that found nothing:\n- worskhop: 7 searches", $body['data'] );
 		$this->assertStringContainsString( 'pt_BR', $body['systemPrompt'] );
 		$this->assertSame( 'viglet-dumont-insights-' . md5( "pt_BR\n" . $body['data'] ), $body['cacheKey'] );
+		$this->assertSame( 'Sample Site', $body['site'], 'billed to the site that asked' );
 	}
 
 	public function test_a_summary_turing_cannot_write_says_why(): void {
