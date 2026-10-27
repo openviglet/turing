@@ -137,11 +137,12 @@ final class InsightsTest extends PluginTestCase {
 	 * Turing's click endpoint as it answers an empty click: 204 and the header with metrics
 	 * off, 400 with them on.
 	 *
-	 * @param bool $on Whether Turing keeps metrics.
+	 * @param bool $on       Whether Turing keeps metrics.
+	 * @param bool $reported Whether the reports say so themselves (Turing 2026.3.6 on).
 	 */
-	private function metrics( bool $on ): void {
+	private function metrics( bool $on, bool $reported = false ): void {
 		Functions\when( 'wp_remote_request' )->alias(
-			function ( string $url, array $args ) use ( $on ) {
+			function ( string $url, array $args ) use ( $on, $reported ) {
 				$this->requests[] = array( $url, $args );
 				if ( str_ends_with( $url, '/click' ) ) {
 					return $on
@@ -155,7 +156,7 @@ final class InsightsTest extends PluginTestCase {
 							'body'     => '',
 						);
 				}
-				$body = str_contains( $url, '/metrics/' ) ? array( 'terms' => array() ) : array(
+				$body = str_contains( $url, '/metrics/' ) ? array( 'terms' => array() ) + ( $reported ? array( 'metricsEnabled' => $on ) : array() ) : array(
 					array(
 						'id'   => 'site-uuid',
 						'name' => 'Sample Site',
@@ -182,6 +183,16 @@ final class InsightsTest extends PluginTestCase {
 		$this->metrics( true );
 		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'today' );
 		$this->assertFalse( $report['metricsOff'] );
+	}
+
+	public function test_a_report_that_says_whether_metrics_are_on_needs_no_probe_click(): void {
+		foreach ( array( true, false ) as $on ) {
+			$this->requests = array();
+			$this->metrics( $on, true );
+			$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'today' );
+			$this->assertSame( ! $on, $report['metricsOff'] );
+			$this->assertSame( array(), array_filter( $this->requests, static fn ( $r ) => str_ends_with( $r[0], '/click' ) ) );
+		}
 	}
 
 	public function test_the_dashboard_widget_says_metrics_are_off(): void {

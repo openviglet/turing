@@ -91,8 +91,9 @@ class Viglet_Dumont_Insights {
 			'top'        => $top,
 			'failed'     => self::terms( (array) ( $failed['terms'] ?? array() ) ),
 			'unopened'   => self::terms( (array) ( $clicks['neverClicked'] ?? array() ) ),
-			// An empty period with metrics off is not a quiet site: Turing kept nothing.
-			'metricsOff' => false === $this->client->metrics_enabled(),
+			// An empty period with metrics off is not a quiet site: Turing kept nothing. The report
+			// says so since Turing 2026.3.6 (D215); an older one is asked with a probe click.
+			'metricsOff' => false === ( is_bool( $clicks['metricsEnabled'] ?? null ) ? $clicks['metricsEnabled'] : $this->client->metrics_enabled() ),
 		);
 	}
 
