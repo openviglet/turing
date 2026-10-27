@@ -3,8 +3,17 @@
 // with Enter, and the note covers nothing of the feature it describes; Escape closes it and
 // gives the focus back.
 import { expect, test } from '../fixtures.mjs';
+import { demoLocale } from './curated.mjs';
 
 test.use( { viewport: { width: 390, height: 844 } } );
+
+// Its searches name English products: on a demo in another language (D217) there is nothing to tour.
+test.beforeEach( () => {
+	test.skip(
+		'en_US' !== demoLocale(),
+		`The demo speaks ${ demoLocale() }; the tour searches in English.`
+	);
+} );
 
 const boxes = ( a, b ) =>
 	a.x < b.x + b.width &&

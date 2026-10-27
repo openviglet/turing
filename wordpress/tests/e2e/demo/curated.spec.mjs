@@ -1,30 +1,22 @@
 // The demo storefront's curated searches (D194), on the `demo` project's stack (Tarnfell, its
 // catalog from demo/seed/catalog.php): each search in demo/theme/tarnfell/curated.json shows one feature,
-// and here each still returns what it is there to show, so the demo cannot rot silently.
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+// and here each still returns what it is there to show, so the demo cannot rot silently. Each
+// language's searches are checked when the demo speaks it (DEMO_LOCALE, D217).
 import { expect, test } from '../fixtures.mjs';
-
-const curated = JSON.parse(
-	readFileSync(
-		join(
-			import.meta.dirname,
-			'..',
-			'..',
-			'..',
-			'demo',
-			'theme',
-			'tarnfell',
-			'curated.json'
-		),
-		'utf8'
-	)
-);
+import { curated, demoLocale, localeOf } from './curated.mjs';
 
 const block = ( page ) => page.locator( '.viglet-dumont-search' );
 
 for ( const search of curated ) {
-	test( `"${ search.query }": ${ search.shows }`, async ( { page } ) => {
+	test( `${ localeOf( search ) } "${ search.query }": ${
+		search.shows
+	}`, async ( { page } ) => {
+		test.skip(
+			localeOf( search ) !== demoLocale(),
+			`The demo speaks ${ demoLocale() }: DEMO_LOCALE=${ localeOf(
+				search
+			) } run-docker.cmd demo checks this one.`
+		);
 		const params = new URLSearchParams( { q: search.query } );
 		if ( search.filter ) {
 			params.append( 'fq[]', search.filter );
@@ -60,7 +52,7 @@ for ( const search of curated ) {
 		if ( search.count ) {
 			await expect(
 				block( page ).locator( '.viglet-dumont-search__summary' )
-			).toHaveText( `${ search.count } results` );
+			).toHaveText( new RegExp( `^${ search.count } ` ) );
 		}
 	} );
 }

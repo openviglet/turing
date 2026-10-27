@@ -10,15 +10,21 @@
  */
 
 /**
- * The curated searches (curated.json), each with the feature it shows.
+ * The curated searches (curated.json) in the site's language, each with the feature it shows.
+ * An entry with no `locale` is English.
  *
- * @return array<int, array{query: string, shows: string, native?: ?string}>
+ * @return array<int, array{query: string, shows: string, native?: ?string, locale?: string}>
  */
 function tarnfell_curated(): array {
 	$file = get_theme_file_path( 'curated.json' );
 	$list = is_readable( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : array();
 
-	return is_array( $list ) ? $list : array();
+	return array_values(
+		array_filter(
+			is_array( $list ) ? $list : array(),
+			static fn ( $example ) => ( $example['locale'] ?? 'en_US' ) === get_locale()
+		)
+	);
 }
 
 /**

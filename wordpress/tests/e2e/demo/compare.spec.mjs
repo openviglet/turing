@@ -1,26 +1,12 @@
 // The demo's "Compare searches" page (D195): WordPress's own search beside Turing's on one query.
 // For every example the page offers, Turing's column holds the result it is curated for, and
 // WordPress's column is read, not assumed: curated.json records what it shows (`native`, one of
-// its results, or null for nothing), so a page that stopped showing a difference fails.
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+// its results, or null for nothing), so a page that stopped showing a difference fails. The page
+// offers the examples in the demo's language (D217).
 import { expect, test } from '../fixtures.mjs';
+import { curated, demoLocale, localeOf } from './curated.mjs';
 
-const examples = JSON.parse(
-	readFileSync(
-		join(
-			import.meta.dirname,
-			'..',
-			'..',
-			'..',
-			'demo',
-			'theme',
-			'tarnfell',
-			'curated.json'
-		),
-		'utf8'
-	)
-).filter( ( example ) => 'native' in example );
+const examples = curated.filter( ( example ) => 'native' in example );
 
 test( 'the page offers each comparable curated search as a link', async ( {
 	page,
@@ -28,13 +14,21 @@ test( 'the page offers each comparable curated search as a link', async ( {
 } ) => {
 	await page.goto( '/?pagename=compare-searches' );
 	await expect( page.locator( '.tarnfell-compare__examples a' ) ).toHaveText(
-		examples.map( ( example ) => example.query )
+		examples
+			.filter( ( example ) => localeOf( example ) === demoLocale() )
+			.map( ( example ) => example.query )
 	);
 	await axe( 'the compare page', { include: '.tarnfell-compare' } );
 } );
 
 for ( const example of examples ) {
-	test( `"${ example.query }" side by side`, async ( { page } ) => {
+	test( `${ localeOf( example ) } "${
+		example.query
+	}" side by side`, async ( { page } ) => {
+		test.skip(
+			localeOf( example ) !== demoLocale(),
+			`The demo speaks ${ demoLocale() }.`
+		);
 		await page.goto(
 			`/?pagename=compare-searches&q=${ encodeURIComponent(
 				example.query
@@ -51,11 +45,9 @@ for ( const example of examples ) {
 			// Among its results, not first: WordPress breaks ties by date, and seeded posts
 			// share one.
 			await expect(
-				native
-					.locator( 'li' )
-					.filter( {
-						hasText: new RegExp( `^${ example.native }\\b` ),
-					} )
+				native.locator( 'li' ).filter( {
+					hasText: new RegExp( `^${ example.native }\\b` ),
+				} )
 			).not.toHaveCount( 0 );
 		}
 	} );

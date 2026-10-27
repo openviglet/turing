@@ -187,7 +187,7 @@ return array(
 		'Helvellyn 28 litre daypack'       => array(
 			'Mochila de ataque Helvellyn 28 litros',
 			'Uma mochila de ataque de 28 litros com costas ventiladas, do tamanho certo para um dia inteiro na montanha.',
-			'Peso 980 g. Capa de chuva no fundo, compartimento para reservatório de água e bolsos na barrigueira.',
+			'Peso 980 g. Capa para mochila no fundo, compartimento para reservatório de água e bolsos na barrigueira.',
 		),
 		'Scafell 45 litre pack'            => array(
 			'Mochila Scafell 45 litros',
@@ -334,7 +334,7 @@ return array(
 		) ),
 		'what-size-backpack'                 => array( 'De que tamanho deve ser sua mochila?', 'Guias de compra', array(
 			'Um dia na montanha pede espaço para uma jaqueta impermeável, uma camada quente, almoço, água e um kit de primeiros socorros: cerca de 25 a 30 litros. Uma noite em refúgio, 40 a 45. Levando barraca e uma semana de comida, 60 ou mais.',
-			'A Mochila de ataque Helvellyn 28 litros tem capa de chuva no fundo. A Mochila Scafell 45 litros leva equipamento leve para uma noite fora. A Mochila cargueira Ennerdale 65 litros carrega uma barraca, com uma barrigueira que leva a maior parte do peso. Para correr, o Colete de hidratação Wasdale 12 litros leva uma jaqueta impermeável e duas garrafas.',
+			'A Mochila de ataque Helvellyn 28 litros guarda uma capa para mochila no fundo. A Mochila Scafell 45 litros leva equipamento leve para uma noite fora. A Mochila cargueira Ennerdale 65 litros carrega uma barraca, com uma barrigueira que leva a maior parte do peso. Para correr, o Colete de hidratação Wasdale 12 litros leva uma jaqueta impermeável e duas garrafas.',
 		) ),
 		'choosing-a-backpacking-tent'        => array( 'Como escolher uma barraca para mochilão', 'Guias de compra', array(
 			'Peso, espaço e resistência ao vento são as três coisas a equilibrar. Uma barraca que se monta pelo sobreteto primeiro mantém o quarto seco quando você monta na chuva.',

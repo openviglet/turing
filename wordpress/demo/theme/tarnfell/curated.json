@@ -43,5 +43,48 @@
 		"shows": "A filter by attribute narrows the tents to the ones for mountains.",
 		"first": "Blencathra mountain tent",
 		"count": 6
+	},
+	{
+		"locale": "pt_BR",
+		"query": "jaqueta leve para chuva",
+		"shows": "Uma necessidade descrita em palavras encontra o produto feito para ela.",
+		"first": "Jaqueta de chuva leve Catbells",
+		"native": "Jaqueta de chuva leve Catbells"
+	},
+	{
+		"locale": "pt_BR",
+		"query": "jaqueta impermeável",
+		"shows": "Um guia de compra primeiro, depois os produtos que ele recomenda.",
+		"first": "Como escolher uma jaqueta impermeável"
+	},
+	{
+		"locale": "pt_BR",
+		"query": "capa de chuva",
+		"shows": "Um sinônimo: nenhum produto diz capa de chuva, e o guia e as jaquetas impermeáveis voltam.",
+		"first": "Como escolher uma jaqueta impermeável",
+		"then": "Jaqueta impermeável do dia a dia Borrowdale",
+		"native": "Como escolher uma jaqueta impermeável"
+	},
+	{
+		"locale": "pt_BR",
+		"query": "puffer",
+		"shows": "A palavra do cliente para jaqueta de pluma: os guias, depois a jaqueta.",
+		"first": "Pluma ou sintético: como escolher uma jaqueta térmica",
+		"then": "Como lavar uma jaqueta de pluma",
+		"native": null
+	},
+	{
+		"locale": "pt_BR",
+		"query": "helvelyn",
+		"shows": "Um erro de digitação que a busca oferece corrigir.",
+		"correction": "helvellyn"
+	},
+	{
+		"locale": "pt_BR",
+		"query": "barraca",
+		"filter": "pa_use:Montanhismo",
+		"shows": "Um filtro por atributo deixa só as barracas de montanha.",
+		"first": "Barraca de montanha Blencathra",
+		"count": 6
 	}
 ]
