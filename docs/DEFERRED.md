@@ -19,3 +19,5 @@
 
 ## Block BQ — The answer engine as a first-class search lens (`/answer`) (§LXIV)
 
+## Block CI — API errors name what the caller sent wrong
+

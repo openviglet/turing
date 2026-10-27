@@ -18,6 +18,10 @@
 
 - 📋 **T1153** (deps: —) **The answer stream drops the space at the start of each token, so a cited answer reads as one run-on word** — SSE clients strip one space after data:, and the answer sends tokens raw, so every SDK panel shows unreadable answers. → §LXIV.8
 
+## Block CI — API errors name what the caller sent wrong
+
+- 📋 **T1154** (deps: —) **A query string that is not valid UTF-8 answers 500 Internal Server Error, not a 400 naming the parameter** — The caller is told the server broke and is sent to Turing's log, when the request was what was wrong. → §CLVI.1
+
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

@@ -1537,3 +1537,6 @@
 ## Block CH — Published container images track the shipped source
 
 - **T1113** — Every release now pushes turing-ce at its version and moves latest to it, a branch dispatch publishes <branch>-snapshot, and /api/discovery names the build's version and commit (design §CXXV superseded: its release check against the ledger is moot, since the release job now publishes the image and a missed push turns the release run red).
+
+## Block CI — API errors name what the caller sent wrong
+

@@ -31,6 +31,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BQ — The answer engine as a first-class search lens (`/answer`) (§LXIV)
 
+## Block CI — API errors name what the caller sent wrong
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2304,3 +2306,40 @@ trigger.
 ## CLIV Persona as a first-class actionable surface (§XXXII)
 
 ## CLV What the SN site manifest cannot declare
+
+## CLVI API errors name what the caller sent wrong
+
+A request the caller got wrong answers 4xx with what was wrong in it, never a 500 that
+sends the caller to the server log.
+
+### CLVI.1 Malformed query parameters answer 400, not 500 (T1154)
+
+**Where it happened.** Dumont D217 (the WordPress demo catalog in Portuguese), checking
+the Demo SN site with curl from Git Bash on Windows:
+
+    curl -s -G http://localhost:2700/api/sn/Demo/search \
+      --data-urlencode "q=jaqueta impermeável" --data-urlencode "_setlocale=pt_BR"
+
+The shell handed curl the `é` in Windows-1252, so the query string carried `%E9`, which
+is not UTF-8.
+
+**What came back.** HTTP 500, `type: tag:viglet.com,2026:errors/internal`, "An
+unexpected error occurred". The log shows `TurGlobalExceptionHandler` catching Tomcat's
+`org.apache.tomcat.util.http.InvalidParameterException: Character decoding failed.
+Parameter [q] ... has been ignored` as an unhandled exception. The same query encoded as
+UTF-8 (`%C3%A9`) answers normally.
+
+**What was expected.** A 400 problem detail that names the parameter and says its value
+is not valid UTF-8, as `MissingServletRequestParameterException` already gets a 4xx in
+the same handler. A 500 tells the caller the server broke and sends them to Turing's
+log, when the request was what was wrong; a monitoring setup also counts it as an
+outage.
+
+**What Turing should do.** Map `InvalidParameterException` (and Spring's
+`MethodArgumentTypeMismatchException`, `HttpMessageNotReadableException` if they reach
+the fallback too) to 400 in `TurGlobalExceptionHandler`, with the parameter name in
+`detail` and no stack trace at ERROR level. Test in `TurGlobalExceptionHandlerTest`,
+plus one MockMvc call with `q=%E9` on `/api/sn/{site}/search`.
+
+**Workaround.** None in Dumont: the plugin and the SDK send UTF-8. Only hand-built
+requests from a non-UTF-8 shell hit it.
