@@ -79,7 +79,7 @@ class Viglet_Dumont_Insights {
 			return $failed;
 		}
 
-		$top      = self::terms( (array) ( $clicks['terms'] ?? array() ) );
+		$top      = $this->with_trend( self::terms( (array) ( $clicks['terms'] ?? array() ) ), $site, $clicks );
 		$searches = (int) array_sum( array_column( $top, 'searches' ) );
 		$clicked  = (int) array_sum( array_column( $top, 'clicks' ) );
 
@@ -203,6 +203,39 @@ class Viglet_Dumont_Insights {
 			'<p><a href="%1$s">%2$s</a></p>',
 			esc_url( admin_url( 'admin.php?page=viglet-dumont-insights' ) ),
 			esc_html__( 'All search insights', 'viglet-dumont' )
+		);
+	}
+
+	/**
+	 * Each top search with how often it was made in the window just before this one, as long
+	 * (D207): the screen reads the two as rising, falling or new.
+	 *
+	 * @param array  $top    The period's top searches, as terms() returns them.
+	 * @param string $site   The SN site's id.
+	 * @param array  $clicks Turing's click report for the period, which names its window.
+	 * @return array The same terms, each with `previous`.
+	 */
+	private function with_trend( array $top, string $site, array $clicks ): array {
+		$from = strtotime( (string) ( $clicks['from'] ?? '' ) );
+		$to   = strtotime( (string) ( $clicks['to'] ?? '' ) );
+		// All time has nothing before it to compare with.
+		if ( ! $from || ! $to || $to <= $from ) {
+			return $top;
+		}
+		$query    = '?from=' . rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', $from - ( $to - $from ) ) )
+			. '&to=' . rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', $from ) ) . '&rows=' . ( self::ROWS * 5 );
+		$previous = $this->client->call( 'GET', "/api/sn/{$site}/metrics/clicks{$query}" );
+		if ( is_wp_error( $previous ) ) {
+			return $top;
+		}
+		$before = array();
+		foreach ( (array) ( $previous['terms'] ?? array() ) as $row ) {
+			$before[ mb_strtolower( (string) ( $row['term'] ?? '' ) ) ] = (int) ( $row['searches'] ?? 0 );
+		}
+
+		return array_map(
+			static fn ( array $term ) => $term + array( 'previous' => $before[ mb_strtolower( $term['term'] ) ] ?? 0 ),
+			$top
 		);
 	}
 

@@ -313,4 +313,58 @@ final class InsightsTest extends PluginTestCase {
 		$this->assertSame( 0, $report['searches'] );
 		$this->assertSame( 0.0, $report['ctr'] );
 	}
+
+	public function test_each_top_search_carries_its_count_in_the_window_before_this_one(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				if ( str_contains( $url, '/metrics/clicks?from=' ) ) {
+					$body = array(
+						'terms' => array(
+							array(
+								'term'     => 'Workshop',
+								'searches' => 10,
+							),
+						),
+					);
+				} elseif ( str_contains( $url, '/metrics/clicks' ) ) {
+					$body = array(
+						'from'  => '2026-10-20T00:00:00Z',
+						'to'    => '2026-10-27T00:00:00Z',
+						'terms' => array(
+							array(
+								'term'     => 'workshop',
+								'searches' => 14,
+								'clicks'   => 2,
+							),
+							array(
+								'term'     => 'seminar',
+								'searches' => 3,
+								'clicks'   => 0,
+							),
+						),
+					);
+				} elseif ( str_contains( $url, '/metrics/' ) ) {
+					$body = array( 'terms' => array() );
+				} else {
+					$body = array(
+						array(
+							'id'   => 'site-uuid',
+							'name' => 'Sample Site',
+						),
+					);
+				}
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode( $body ),
+				);
+			}
+		);
+
+		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'this-week' );
+
+		$this->assertSame( array( 10, 0 ), array_column( $report['top'], 'previous' ), 'whatever the case; a search new this week had none' );
+		$before = array_values( array_filter( $this->requests, static fn ( $r ) => str_contains( $r[0], 'clicks?from=' ) ) );
+		$this->assertStringContainsString( 'from=2026-10-13T00%3A00%3A00Z&to=2026-10-20T00%3A00%3A00Z', $before[0][0], 'the seven days before these seven' );
+	}
 }

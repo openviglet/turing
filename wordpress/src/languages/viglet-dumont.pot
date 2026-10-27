@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27T12:33:48+00:00\n"
+"POT-Creation-Date: 2026-10-27T12:41:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -1092,12 +1092,12 @@ msgid "There are no searches in this period to summarize."
 msgstr ""
 
 #: src/includes/class-viglet-dumont-insights.php:182
-#: assets/admin/insights.js:323
+#: assets/admin/insights.js:361
 msgid "Top searches"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-insights.php:183
-#: assets/admin/insights.js:342
+#: assets/admin/insights.js:381
 msgid "Searches that found nothing"
 msgstr ""
 
@@ -1594,57 +1594,81 @@ msgstr ""
 msgid "Add a synonym"
 msgstr ""
 
-#: assets/admin/insights.js:238
+#: assets/admin/insights.js:249
+msgid "New"
+msgstr ""
+
+#: assets/admin/insights.js:253
+msgid "Steady"
+msgstr ""
+
+#. translators: %s: how much more it was searched than in the period before, e.g. 40%.
+#: assets/admin/insights.js:259
+#, js-format
+msgid "Up %s"
+msgstr ""
+
+#. translators: %s: how much less it was searched than in the period before, e.g. 40%.
+#: assets/admin/insights.js:261
+#, js-format
+msgid "Down %s"
+msgstr ""
+
+#: assets/admin/insights.js:271
+msgid "Against the period before"
+msgstr ""
+
+#: assets/admin/insights.js:276
 msgid "Searches"
 msgstr ""
 
-#: assets/admin/insights.js:270
+#: assets/admin/insights.js:308
 msgid "What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out."
 msgstr ""
 
-#: assets/admin/insights.js:277
+#: assets/admin/insights.js:315
 msgid "Period"
 msgstr ""
 
-#: assets/admin/insights.js:290
+#: assets/admin/insights.js:328
 msgid "Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 msgstr ""
 
-#: assets/admin/insights.js:301
+#: assets/admin/insights.js:339
 msgid "No searches in this period yet. They appear here once visitors use the site’s search."
 msgstr ""
 
 #. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
-#: assets/admin/insights.js:312
+#: assets/admin/insights.js:350
 #, js-format
 msgid "%1$s searches, %2$s clicks, %3$s click-through."
 msgstr ""
 
-#: assets/admin/insights.js:324
+#: assets/admin/insights.js:362
 msgid "No searches in this period."
 msgstr ""
 
-#: assets/admin/insights.js:332
+#: assets/admin/insights.js:370
 msgid "Clicks"
 msgstr ""
 
-#: assets/admin/insights.js:336
+#: assets/admin/insights.js:374
 msgid "Click-through"
 msgstr ""
 
-#: assets/admin/insights.js:346
+#: assets/admin/insights.js:385
 msgid "Every search found something."
 msgstr ""
 
-#: assets/admin/insights.js:354
+#: assets/admin/insights.js:393
 msgid "Last searched"
 msgstr ""
 
-#: assets/admin/insights.js:367
+#: assets/admin/insights.js:406
 msgid "Found, but never opened"
 msgstr ""
 
-#: assets/admin/insights.js:371
+#: assets/admin/insights.js:410
 msgid "Every search that found results led to a click."
 msgstr ""
 

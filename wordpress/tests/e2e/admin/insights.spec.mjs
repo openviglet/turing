@@ -169,3 +169,59 @@ test( 'metrics turned off in Turing are said, not shown as a quiet period', asyn
 	).toHaveCount( 0 );
 	await look( 'insights-metrics-off' );
 } );
+
+test( 'each top search reads against the period before: up, down, steady or new', async ( {
+	page,
+} ) => {
+	const term = ( name, searches, previous ) => ( {
+		term: name,
+		searches,
+		clicks: 0,
+		ctr: 0,
+		lastSeen: '',
+		previous,
+	} );
+	await page.route(
+		( url ) =>
+			decodeURIComponent( url.href ).includes(
+				'viglet-dumont/v1/insights'
+			),
+		( route ) =>
+			route.fulfill( {
+				json: {
+					period: 'this-week',
+					searches: 50,
+					clicks: 0,
+					ctr: 0,
+					top: [
+						term( 'boots', 14, 10 ),
+						term( 'tents', 6, 10 ),
+						term( 'stoves', 10, 10 ),
+						term( 'kayaks', 3, 0 ),
+					],
+					failed: [],
+					unopened: [],
+				},
+			} )
+	);
+	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	const rows = page
+		.locator( '.components-card' )
+		.filter( {
+			has: page.getByRole( 'heading', { name: 'Top searches' } ),
+		} )
+		.locator( 'tbody tr' );
+	await expect( rows.locator( 'td' ).last() ).toHaveText( 'New' );
+	await expect( rows ).toHaveText( [
+		/boots.*Up 40%/,
+		/tents.*Down 40%/,
+		/stoves.*Steady/,
+		/kayaks.*New/,
+	] );
+
+	// All time has no period before it.
+	await page.getByLabel( 'Period' ).selectOption( 'all-time' );
+	await expect(
+		page.getByRole( 'columnheader', { name: 'Against the period before' } )
+	).toHaveCount( 0 );
+} );

@@ -234,6 +234,44 @@ function Terms( { title, empty, terms, columns, write, synonym } ) {
 	);
 }
 
+/**
+ * A search against the window just before this one, as long (D207): up or down by how much,
+ * new, or steady. The words carry it; the arrow is for the eye and hidden from screen readers.
+ *
+ * @param {Object} props      The props.
+ * @param {Object} props.term A top search, with `previous` from the plugin's report.
+ */
+function Trend( { term } ) {
+	if ( undefined === term.previous ) {
+		return null;
+	}
+	if ( 0 === term.previous ) {
+		return __( 'New', 'viglet-dumont' );
+	}
+	const change = ( term.searches - term.previous ) / term.previous;
+	if ( Math.abs( change ) < 0.1 ) {
+		return __( 'Steady', 'viglet-dumont' );
+	}
+	const amount = percent.format( Math.abs( change ) );
+	const label =
+		change > 0
+			? /* translators: %s: how much more it was searched than in the period before, e.g. 40%. */
+				sprintf( __( 'Up %s', 'viglet-dumont' ), amount )
+			: /* translators: %s: how much less it was searched than in the period before, e.g. 40%. */
+				sprintf( __( 'Down %s', 'viglet-dumont' ), amount );
+	return (
+		<>
+			<span aria-hidden="true">{ change > 0 ? '▲' : '▼' } </span>
+			{ label }
+		</>
+	);
+}
+
+const trendColumn = {
+	label: __( 'Against the period before', 'viglet-dumont' ),
+	cell: ( term ) => <Trend term={ term } />,
+};
+
 const searchesColumn = {
 	label: __( 'Searches', 'viglet-dumont' ),
 	cell: ( term ) => count.format( term.searches ),
@@ -336,6 +374,7 @@ function Insights() {
 								label: __( 'Click-through', 'viglet-dumont' ),
 								cell: ( term ) => percent.format( term.ctr ),
 							},
+							...( 'all-time' === period ? [] : [ trendColumn ] ),
 						] }
 					/>
 					<Terms

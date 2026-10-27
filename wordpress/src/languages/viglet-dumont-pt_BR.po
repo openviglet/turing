@@ -2093,63 +2093,63 @@ msgstr "Escrever sobre isto: “%s”"
 msgid "Write about this"
 msgstr "Escrever sobre isto"
 
-#: assets/admin/insights.js:238
+#: assets/admin/insights.js:276
 msgid "Searches"
 msgstr "Buscas"
 
-#: assets/admin/insights.js:270
+#: assets/admin/insights.js:308
 msgid "What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out."
 msgstr "O que os visitantes buscaram neste site, o que não encontrou nada e o que nunca abriram, a partir das métricas de busca do Turing. Buscas feitas durante a digitação ficam de fora."
 
-#: assets/admin/insights.js:277
+#: assets/admin/insights.js:315
 msgid "Period"
 msgstr "Período"
 
-#: assets/admin/insights.js:301
+#: assets/admin/insights.js:339
 msgid "No searches in this period yet. They appear here once visitors use the site’s search."
 msgstr "Ainda não há buscas neste período. Elas aparecem aqui quando os visitantes usam a busca do site."
 
 #. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
-#: assets/admin/insights.js:312
+#: assets/admin/insights.js:350
 #, js-format
 msgid "%1$s searches, %2$s clicks, %3$s click-through."
 msgstr "%1$s buscas, %2$s cliques, %3$s de taxa de clique."
 
 #: src/includes/class-viglet-dumont-insights.php:182
-#: assets/admin/insights.js:323
+#: assets/admin/insights.js:361
 msgid "Top searches"
 msgstr "Buscas mais feitas"
 
-#: assets/admin/insights.js:324
+#: assets/admin/insights.js:362
 msgid "No searches in this period."
 msgstr "Nenhuma busca neste período."
 
-#: assets/admin/insights.js:332
+#: assets/admin/insights.js:370
 msgid "Clicks"
 msgstr "Cliques"
 
-#: assets/admin/insights.js:336
+#: assets/admin/insights.js:374
 msgid "Click-through"
 msgstr "Taxa de clique"
 
 #: src/includes/class-viglet-dumont-insights.php:183
-#: assets/admin/insights.js:342
+#: assets/admin/insights.js:381
 msgid "Searches that found nothing"
 msgstr "Buscas que não encontraram nada"
 
-#: assets/admin/insights.js:346
+#: assets/admin/insights.js:385
 msgid "Every search found something."
 msgstr "Toda busca encontrou algo."
 
-#: assets/admin/insights.js:354
+#: assets/admin/insights.js:393
 msgid "Last searched"
 msgstr "Última busca"
 
-#: assets/admin/insights.js:367
+#: assets/admin/insights.js:406
 msgid "Found, but never opened"
 msgstr "Encontradas, mas nunca abertas"
 
-#: assets/admin/insights.js:371
+#: assets/admin/insights.js:410
 msgid "Every search that found results led to a click."
 msgstr "Toda busca com resultados levou a um clique."
 
@@ -2316,7 +2316,7 @@ msgstr "Salvar impulsos"
 msgid "Turing is not keeping search metrics, so no new searches are recorded."
 msgstr "O Turing não está guardando métricas de busca, então nenhuma busca nova é registrada."
 
-#: assets/admin/insights.js:290
+#: assets/admin/insights.js:328
 msgid "Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 msgstr "O Turing não está guardando métricas de busca, então nenhuma busca ou clique novo é registrado. O administrador do Turing as ativa com turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 
@@ -2472,3 +2472,27 @@ msgstr "Enquanto não houver nenhuma"
 #: src/admin/views/settings-page.php:483
 msgid "One search per line, shown while the site has no popular searches of its own. Each is still checked to find something."
 msgstr "Uma busca por linha, mostrada enquanto o site não tem buscas populares próprias. Cada uma ainda é conferida para encontrar algo."
+
+#: assets/admin/insights.js:249
+msgid "New"
+msgstr "Nova"
+
+#: assets/admin/insights.js:253
+msgid "Steady"
+msgstr "Estável"
+
+#. translators: %s: how much more it was searched than in the period before, e.g. 40%.
+#: assets/admin/insights.js:259
+#, js-format
+msgid "Up %s"
+msgstr "Subiu %s"
+
+#. translators: %s: how much less it was searched than in the period before, e.g. 40%.
+#: assets/admin/insights.js:261
+#, js-format
+msgid "Down %s"
+msgstr "Caiu %s"
+
+#: assets/admin/insights.js:271
+msgid "Against the period before"
+msgstr "Em relação ao período anterior"
