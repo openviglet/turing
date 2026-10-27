@@ -7,7 +7,8 @@ rem   run-docker.cmd multisite  also start a two-site multisite network on WP_MS
 rem                             sharing the SN site SN_MS_SITE (Network), for the browser tests
 rem   run-docker.cmd demo       also start the demo storefront on WP_DEMO_PORT (38082): a WordPress
 rem                             of its own with the Tarnfell theme (demo/theme), WooCommerce and
-rem                             its catalog, on its own SN site SN_DEMO_SITE (Demo)
+rem                             its catalog, on its own SN site SN_DEMO_SITE (Demo), in
+rem                             DEMO_LOCALE (en_US; pt_BR seeds the catalog in Portuguese)
 rem   run-docker.cmd demo reset stop the demo and delete its WordPress and database only
 rem   run-docker.cmd stop       stop the containers, keep the data
 rem   run-docker.cmd reset      stop and delete WordPress, its database and Turing's store
@@ -102,6 +103,7 @@ rem The demo has a WordPress and an SN site of its own (D219): the browser tests
 rem never touched, so both are up at once.
 if "%WP_DEMO_PORT%"=="" set "WP_DEMO_PORT=38082"
 if "%SN_DEMO_SITE%"=="" set "SN_DEMO_SITE=Demo"
+if "%DEMO_LOCALE%"=="" set "DEMO_LOCALE=en_US"
 if /i "%~2"=="reset" (
     %DC% --profile demo rm -s -f wordpress-demo cron-demo db-demo
     docker volume rm viglet-dumont-wp_wp-demo viglet-dumont-wp_db-demo
@@ -133,18 +135,22 @@ if errorlevel 1 (
 set "KEY="
 for /f "delims=" %%k in ('%WPD% option pluck viglet_dumont_settings api_key 2^>nul') do set "KEY=%%k"
 if "%KEY%"=="" (
-    for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%TURING_LOCALE%"') do set "KEY=%%k"
+    for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%DEMO_LOCALE%"') do set "KEY=%%k"
 ) else (
-    powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%TURING_LOCALE%" -NoToken
+    powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%DEMO_LOCALE%" -NoToken
 )
 if "%KEY%"=="" ( echo Turing was not provisioned for %SN_DEMO_SITE%; the demo has no API key. & exit /b 1 )
 %WPD% eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
 
 %WPD% theme activate tarnfell || exit /b 1
+rem The site speaks DEMO_LOCALE, and the seed writes the catalog in it (D217).
+if /i not "%DEMO_LOCALE%"=="en_US" %WPD% language core install %DEMO_LOCALE% >nul 2>&1
+%WPD% site switch-language %DEMO_LOCALE% || exit /b 1
 %WPD% rewrite structure "/%%postname%%/" --hard || exit /b 1
 rem A shop: WooCommerce on, with the demo's catalog (demo/seed), which runs demo/setup.php first.
 %WPD% plugin is-installed woocommerce >nul 2>&1 || %WPD% plugin install woocommerce || exit /b 1
 %WPD% plugin activate woocommerce || exit /b 1
+if /i not "%DEMO_LOCALE%"=="en_US" %WPD% language plugin install woocommerce %DEMO_LOCALE% >nul 2>&1
 %WPD% eval-file /demo/seed/catalog.php || exit /b 1
 rem The seed makes products indexable after saving them, so nothing queued them: send them now.
 %WPD% dumont reindex || exit /b 1

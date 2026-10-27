@@ -22,6 +22,11 @@ ob_start();
 require __DIR__ . '/../setup.php';
 $pages = json_decode( (string) ob_get_clean(), true );
 
+// The site's language picks the copy (D217): Portuguese from pt_BR.php, keyed by the English it
+// replaces, or the English below. Turing indexes it under the site's locale either way.
+$pt = 'pt_BR' === get_locale() ? require __DIR__ . '/pt_BR.php' : array();
+$tr = static fn ( string $group, string $text ): string => $pt[ $group ][ $text ] ?? $text;
+
 // The global attributes, and their taxonomies for this request (WooCommerce registers them on init).
 foreach ( array( 'color' => 'Colour', 'material' => 'Material', 'use' => 'Use', 'size' => 'Size' ) as $slug => $label ) {
 	if ( ! wc_attribute_taxonomy_id_by_name( $slug ) ) {
@@ -211,6 +216,8 @@ $care = array(
 	'sleeping-bags'      => 'Store loose in its storage sack, not compressed. Wash rarely, with a specialist wash.',
 	'accessories'        => 'Rinse and dry after use; see the label for washing.',
 );
+$categories = array_replace( $categories, $pt['categories'] ?? array() );
+$care       = array_replace( $care, $pt['care'] ?? array() );
 
 $term = static function ( string $taxonomy, string $name ): int {
 	$found = term_exists( $name, $taxonomy ) ?: wp_insert_term( $name, $taxonomy );
@@ -229,19 +236,29 @@ $category_ids = array();
 foreach ( $categories as $slug => $name ) {
 	$found                 = get_term_by( 'slug', $slug, 'product_cat' );
 	$category_ids[ $slug ] = $found ? (int) $found->term_id : (int) wp_insert_term( $name, 'product_cat', array( 'slug' => $slug ) )['term_id'];
+	// Named in the site's language, whichever language seeded it before.
+	if ( $found && $found->name !== $name ) {
+		wp_update_term( $found->term_id, 'product_cat', array( 'name' => $name ) );
+	}
 }
 
 $count = 0;
 foreach ( $models as $m => list( $category, $model, $price, $materials, $uses, $sizes, $colours, $lead, $facts ) ) {
-	foreach ( $colours as $c => $colour ) {
+	list( $title, $lead, $facts ) = $pt['models'][ $model ] ?? array( $model, $lead, $facts );
+	$materials                    = array_map( static fn ( $value ) => $tr( 'terms', $value ), $materials );
+	$uses                         = array_map( static fn ( $value ) => $tr( 'terms', $value ), $uses );
+	$sizes                        = array_map( static fn ( $value ) => $tr( 'terms', $value ), $sizes );
+	foreach ( $colours as $c => $colour_en ) {
 		++$count;
-		$sku     = sprintf( 'TF-%02d-%s', $m + 1, strtoupper( substr( $colour, 0, 3 ) ) );
+		// The SKU keeps the English colour, so a product is found again in either language.
+		$sku     = sprintf( 'TF-%02d-%s', $m + 1, strtoupper( substr( $colour_en, 0, 3 ) ) );
+		$colour  = $tr( 'terms', $colour_en );
 		$id      = wc_get_product_id_by_sku( $sku );
 		$product = $id ? wc_get_product( $id ) : new WC_Product_Simple();
-		$product->set_name( "{$model}, " . strtolower( $colour ) );
+		$product->set_name( "{$title}, " . mb_strtolower( $colour ) );
 		$product->set_sku( $sku );
 		$product->set_short_description( $lead );
-		$product->set_description( "{$lead}\n\n{$facts}\n\nColour: {$colour}. Materials: " . implode( ', ', $materials ) . ".\n\nCare: {$care[ $category ]}" );
+		$product->set_description( "{$lead}\n\n{$facts}\n\n" . $tr( 'labels', 'Colour' ) . ": {$colour}. " . $tr( 'labels', 'Materials' ) . ': ' . implode( ', ', $materials ) . ".\n\n" . $tr( 'labels', 'Care' ) . ": {$care[ $category ]}" );
 		$product->set_regular_price( (string) $price );
 		// One colour in five on sale, a fifth off; one product in eleven sold out.
 		$product->set_sale_price( 0 === ( $m + $c ) % 5 ? number_format( $price * 0.8, 2, '.', '' ) : '' );
@@ -287,7 +304,7 @@ $mapping            = get_option( 'viglet_dumont_mapping', array() );
 $mapping['product'] = array(
 	'exclude' => false,
 	'fields'  => array(
-		$facet( 'taxonomy:product_cat', 'product_cat', 'Category' ),
+		$facet( 'taxonomy:product_cat', 'product_cat', $tr( 'labels', 'Category' ) ),
 		array(
 			'source'      => 'woo:price',
 			'field'       => 'price',
@@ -306,10 +323,10 @@ $mapping['product'] = array(
 			'field'  => 'regular_price',
 			'type'   => 'FLOAT',
 		),
-		$facet( 'woo:stock_status', 'stock_status', 'Stock', false ),
-		$facet( 'taxonomy:pa_color', 'pa_color', 'Colour' ),
-		$facet( 'taxonomy:pa_material', 'pa_material', 'Material' ),
-		$facet( 'taxonomy:pa_use', 'pa_use', 'Use' ),
+		$facet( 'woo:stock_status', 'stock_status', $tr( 'labels', 'Stock' ), false ),
+		$facet( 'taxonomy:pa_color', 'pa_color', $tr( 'labels', 'Colour' ) ),
+		$facet( 'taxonomy:pa_material', 'pa_material', $tr( 'labels', 'Material' ) ),
+		$facet( 'taxonomy:pa_use', 'pa_use', $tr( 'labels', 'Use' ) ),
 	),
 );
 update_option( 'viglet_dumont_mapping', $mapping, false );
@@ -318,7 +335,7 @@ update_option( 'viglet_dumont_mapping', $mapping, false );
 $tuning = new Viglet_Dumont_Tuning();
 $have   = $tuning->all();
 $kept   = is_wp_error( $have ) ? array() : array_map( static fn ( $row ) => implode( '|', $row['terms'] ), (array) $have['synonyms'] );
-foreach ( array(
+foreach ( $pt['synonyms'] ?? array(
 	array( 'raincoat', 'rain jacket', 'waterproof jacket', 'waterproof' ),
 	array( 'puffer', 'down jacket', 'insulated jacket' ),
 	array( 'rucksack', 'backpack', 'daypack' ),

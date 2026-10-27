@@ -276,7 +276,7 @@ local login. When an image `turing-ce:local` exists, it is used instead of the p
 which lags the Turing source; build it from a Turing checkout after `mvnw package` with
 `docker build -f Dockerfile.local -t turing-ce:local .` (the published 2026.3.4 image answers
 every API-key import with HTTP 500). Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
-`TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT` or `SN_DEMO_SITE` before the first run
+`TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT`, `SN_DEMO_SITE` or `DEMO_LOCALE` before the first run
 to change the defaults.
 To move an installed stack to another port (another project holds 8080, say), set `WP_PORT`,
 run `run-docker.cmd`, then
@@ -296,7 +296,10 @@ The demo is a WordPress of its own (`wordpress-demo`, `db-demo` and `cron-demo`,
 `SN_DEMO_SITE` (`Demo`), with its own API key. The site on `WP_PORT` stays the browser tests'
 and is never switched to Tarnfell, so the demo can stay up while the tests run and neither
 site's searches return the other's documents. WP-CLI on the demo is
-`docker compose run --rm --no-deps cli-demo wp <command>`. The `demo` Playwright project
+`docker compose run --rm --no-deps cli-demo wp <command>`. `DEMO_LOCALE=pt_BR` before
+`run-docker.cmd demo` turns the demo into Portuguese: the site's language, the plugin's locale
+and the SN site's, and a catalog and journal seeded from `demo/seed/pt_BR.php` with
+Portuguese synonyms; run it again with `en_US` (the default) to go back. The `demo` Playwright project
 still seeds Tarnfell onto the test site for now (D220).
 
 `phpcbf` capitalises `wordpress` wherever it reads it as prose, and the `source_apps` value is

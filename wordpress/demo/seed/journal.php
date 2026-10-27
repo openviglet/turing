@@ -107,6 +107,8 @@ $journal = array(
 
 $ids = array();
 foreach ( $journal as list( $slug, $title, $category, $paragraphs ) ) {
+	// In Portuguese on a pt_BR site (D217): catalog.php reads pt_BR.php into $pt.
+	list( $title, $category, $paragraphs ) = $pt['journal'][ $slug ] ?? array( $title, $category, $paragraphs );
 	$category_id = (int) ( term_exists( $category, 'category' ) ?: wp_insert_term( $category, 'category' ) )['term_id'];
 	$content     = implode(
 		"\n\n",

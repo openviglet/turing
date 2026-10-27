@@ -226,6 +226,8 @@ services:
       <<: *wp-env
       WORDPRESS_DB_HOST: db-demo
       VIGLET_DUMONT_TURING_SITE: ${SN_DEMO_SITE:-Demo}
+      # The demo's language (D217): en_US, or pt_BR for the catalog in Portuguese.
+      VIGLET_DUMONT_TURING_LOCALE: ${DEMO_LOCALE:-en_US}
     volumes:
       - wp-demo:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
