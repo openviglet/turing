@@ -114,7 +114,19 @@ if ( Viglet_Dumont_Native_Search::is_editor_preview() ) {
 wp_interactivity_state( 'viglet-dumont/search', $viglet_dumont_state );
 
 // The layout the block's settings chose, as modifier classes style.css reads.
-$viglet_dumont_parts   = '' !== trim( (string) $content );
+$viglet_dumont_parts = '' !== trim( (string) $content );
+// A block holding no results part, a search box in a hero say, sends the query to the full
+// search page (D208), unless that page is this one.
+$viglet_dumont_elsewhere = null;
+if ( $viglet_dumont_parts && ! str_contains( (string) $content, 'viglet-dumont-search__results' ) ) {
+	$viglet_dumont_target = ( new Viglet_Dumont_Native_Search() )->search_page();
+	if ( untrailingslashit( $viglet_dumont_target['searchPage'] ) !== untrailingslashit( (string) get_permalink() ) ) {
+		$viglet_dumont_elsewhere = array(
+			'url'   => $viglet_dumont_target['searchPage'],
+			'param' => $viglet_dumont_target['queryParam'],
+		);
+	}
+}
 $viglet_dumont_classes = implode(
 	' ',
 	array_filter(
@@ -130,6 +142,7 @@ $viglet_dumont_classes = implode(
 <div
 	<?php echo get_block_wrapper_attributes( array( 'class' => $viglet_dumont_classes ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the wrapper attributes. ?>
 	data-wp-interactive="viglet-dumont/search"
+	<?php echo $viglet_dumont_elsewhere ? wp_interactivity_data_wp_context( array( 'elsewhere' => $viglet_dumont_elsewhere ) ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the context attribute. ?>
 	data-wp-init="callbacks.init"
 >
 	<?php

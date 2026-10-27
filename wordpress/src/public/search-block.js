@@ -280,11 +280,15 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		submit( event ) {
 			event.preventDefault();
-			choose( state.query );
+			if ( ! goElsewhere( state.query ) ) {
+				choose( state.query );
+			}
 		},
 		pick() {
 			const { option } = getContext();
-			choose( option.text );
+			if ( ! goElsewhere( option.text ) ) {
+				choose( option.text );
+			}
 		},
 		clear() {
 			window.clearTimeout( instant );
@@ -690,6 +694,31 @@ function readable( field, value ) {
 		return `≥ ${ bound( from ) }`;
 	}
 	return `${ bound( from ) } – ${ bound( to ) }`;
+}
+
+/**
+ * A block with no results of its own (D208) sends the query to the full search page, kept as
+ * a recent search like any other.
+ *
+ * @param {string} query The query.
+ * @return {boolean} Whether the page is leaving for the search page.
+ */
+function goElsewhere( query ) {
+	// A block with results of its own carries no context at all.
+	const elsewhere = getContext()?.elsewhere;
+	if ( ! elsewhere?.url || ! query.trim() ) {
+		return false;
+	}
+	saveRecent(
+		[
+			query.trim(),
+			...loadRecent().filter( ( q ) => q !== query.trim() ),
+		].slice( 0, recentMax )
+	);
+	const url = new URL( elsewhere.url, window.location.href );
+	url.searchParams.set( elsewhere.param || 'q', query.trim() );
+	window.location.assign( url.href );
+	return true;
 }
 
 /**

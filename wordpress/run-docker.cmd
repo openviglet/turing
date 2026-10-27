@@ -107,6 +107,8 @@ rem A shop: WooCommerce on, with the woo browser tests' jackets (tests/e2e/fixtu
 %WP% plugin activate woocommerce || exit /b 1
 %WP% eval-file /e2e/woo-seed.php || exit /b 1
 %WP% eval-file /demo/setup.php || exit /b 1
+rem The seed makes products indexable after saving them, so nothing queued them: send them now.
+%WP% dumont reindex || exit /b 1
 echo Demo storefront: http://localhost:%WP_PORT%/
 exit /b 0
 

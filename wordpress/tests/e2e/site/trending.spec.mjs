@@ -25,6 +25,8 @@ test.beforeAll( async ( { request } ) => {
 			'--post_status=publish',
 			'--post_title=Popular',
 			'--post_content=<!-- wp:viglet-dumont/search {"showTrending":true} /-->',
+			// Out of the index: its text would be one more result for the other specs.
+			'--meta_input={"_viglet_dumont_exclude":"1"}',
 			'--porcelain',
 		] ).trim()
 	);
