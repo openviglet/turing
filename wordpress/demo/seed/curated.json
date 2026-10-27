@@ -1,0 +1,34 @@
+[
+	{
+		"query": "light jacket for rain",
+		"shows": "A need described in words finds the product made for it.",
+		"first": "Catbells light rain jacket"
+	},
+	{
+		"query": "raincoat",
+		"shows": "A synonym: no product says raincoat, and the rain jackets come back.",
+		"first": "Catbells light rain jacket"
+	},
+	{
+		"query": "rucksack",
+		"shows": "A synonym in British English for what the shop calls a daypack.",
+		"first": "Helvellyn 28 litre daypack"
+	},
+	{
+		"query": "puffer",
+		"shows": "A shopper's word for an insulated jacket.",
+		"first": "Blencathra down jacket"
+	},
+	{
+		"query": "helvelyn",
+		"shows": "A misspelling the search offers to correct.",
+		"correction": "helvellyn"
+	},
+	{
+		"query": "tent",
+		"filter": "pa_use:Mountaineering",
+		"shows": "A filter by attribute narrows the tents to the ones for mountains.",
+		"first": "Blencathra mountain tent",
+		"count": 6
+	}
+]

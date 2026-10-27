@@ -46,6 +46,17 @@ const variantSteps = [
 		},
 		testMatch: 'woo/**/*.spec.mjs',
 	},
+	{
+		// The demo storefront (D194): Tarnfell and its catalog, its curated searches checked.
+		name: 'demo',
+		metadata: {
+			theme: 'tarnfell',
+			locale: 'en_US',
+			plugins: [ 'woocommerce' ],
+			seed: '/demo/seed/catalog.php',
+		},
+		testMatch: 'demo/**/*.spec.mjs',
+	},
 ];
 const variants = variantSteps.flatMap( ( step, i ) => [
 	{

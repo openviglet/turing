@@ -276,9 +276,13 @@ which lags the Turing source; build it from a Turing checkout after `mvnw packag
 `docker build -f Dockerfile.local -t turing-ce:local .` (the published 2026.3.4 image answers
 every API-key import with HTTP 500). Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
 `TURING_ADMIN_PASSWORD` or `TURING_IMAGE` before the first run to change the defaults.
+To move an installed stack to another port (another project holds 8080, say), set `WP_PORT`,
+run `run-docker.cmd`, then
+`run-docker.cmd wp search-replace localhost:8080 localhost:<port> --all-tables --skip-columns=guid`;
+the browser tests then need `WP_URL=http://localhost:<port>`.
 
 The demo storefront (`demo/`, outside the plugin zip) is Tarnfell, a fictional outdoor gear
-shop: its own theme, WooCommerce with the browser tests' jackets, a home whose hero is the
+shop: its own theme, WooCommerce with its catalog (`demo/seed`), a home whose hero is the
 search block's box alone, a results page, product pages with the copilot and Related, and a
 journal. Lighthouse in headless Edge (October 2026): home 93 performance and 96
 accessibility, results 90 and 96. axe finds nothing on home, search and a post; on a product,
