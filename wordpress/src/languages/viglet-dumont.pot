@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27T12:10:52+00:00\n"
+"POT-Creation-Date: 2026-10-27T12:19:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -576,6 +576,14 @@ msgstr ""
 
 #: src/blocks/search/parts/toolbar.php:25
 msgid "Sort by"
+msgstr ""
+
+#: src/blocks/search/parts/trending.php:27
+msgid "Popular searches"
+msgstr ""
+
+#: src/blocks/search/parts/trending.php:28
+msgid "Popular:"
 msgstr ""
 
 #. translators: %d: how many suggestions the search box offers.
@@ -1330,31 +1338,31 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:88
+#: src/viglet-dumont.php:89
 msgid "Answers with sources"
 msgstr ""
 
-#: src/viglet-dumont.php:89
+#: src/viglet-dumont.php:90
 msgid "Chat"
 msgstr ""
 
-#: src/viglet-dumont.php:90
+#: src/viglet-dumont.php:91
 msgid "Natural-language filters"
 msgstr ""
 
-#: src/viglet-dumont.php:91
+#: src/viglet-dumont.php:92
 msgid "Catalog copilot"
 msgstr ""
 
-#: src/viglet-dumont.php:104
+#: src/viglet-dumont.php:105
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr ""
 
-#: src/viglet-dumont.php:822
+#: src/viglet-dumont.php:823
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:847
+#: src/viglet-dumont.php:848
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -2175,22 +2183,22 @@ msgid "Show as"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:92
-#: src/admin/js/search-block-editor.js:187
+#: src/admin/js/search-block-editor.js:200
 msgid "A grid"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:96
-#: src/admin/js/search-block-editor.js:183
+#: src/admin/js/search-block-editor.js:196
 msgid "A list"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:105
-#: src/admin/js/search-block-editor.js:197
+#: src/admin/js/search-block-editor.js:210
 msgid "Show the image"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:107
-#: src/admin/js/search-block-editor.js:200
+#: src/admin/js/search-block-editor.js:213
 msgid "Show the date"
 msgstr ""
 
@@ -2243,38 +2251,46 @@ msgid "“Posts about php from last year” offers Type and Published filters to
 msgstr ""
 
 #: src/admin/js/search-block-editor.js:156
-msgid "Where the filters sit"
+msgid "Show popular searches under the box"
 msgstr ""
 
 #: src/admin/js/search-block-editor.js:160
+msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:169
+msgid "Where the filters sit"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:173
 msgid "Left"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:164
+#: src/admin/js/search-block-editor.js:177
 msgid "Right"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:168
+#: src/admin/js/search-block-editor.js:181
 msgid "Above the results"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:179
+#: src/admin/js/search-block-editor.js:192
 msgid "Results as"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:199
+#: src/admin/js/search-block-editor.js:212
 msgid "Show the type"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:203
+#: src/admin/js/search-block-editor.js:216
 msgid "Show the snippet"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:215
+#: src/admin/js/search-block-editor.js:228
 msgid "Results per page"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:239
+#: src/admin/js/search-block-editor.js:252
 msgid "Turing search"
 msgstr ""
 

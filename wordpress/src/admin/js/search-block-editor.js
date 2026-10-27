@@ -152,6 +152,19 @@
 						onChange: ( suggestFilters ) =>
 							setAttributes( { suggestFilters } ),
 					} ),
+					el( ToggleControl, {
+						label: __(
+							'Show popular searches under the box',
+							'viglet-dumont'
+						),
+						help: __(
+							'Up to eight of this week’s most searched words, each one checked to find something, before a visitor types.',
+							'viglet-dumont'
+						),
+						checked: attributes.showTrending,
+						onChange: ( showTrending ) =>
+							setAttributes( { showTrending } ),
+					} ),
 					el( SelectControl, {
 						label: __( 'Where the filters sit', 'viglet-dumont' ),
 						value: attributes.facetsPosition,

@@ -42,6 +42,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-related.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-woocommerce.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-compare.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-insights.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-trending.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';

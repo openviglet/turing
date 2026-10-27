@@ -772,11 +772,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:822
+#: src/viglet-dumont.php:823
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:847
+#: src/viglet-dumont.php:848
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1126,7 +1126,7 @@ msgstr "Texto de exemplo"
 msgid "Show filters (facets)"
 msgstr "Mostrar filtros (facetas)"
 
-#: src/admin/js/search-block-editor.js:239
+#: src/admin/js/search-block-editor.js:252
 msgid "Turing search"
 msgstr "Busca Turing"
 
@@ -1225,7 +1225,7 @@ msgstr "Ordenar por"
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 
-#: src/admin/js/search-block-editor.js:215
+#: src/admin/js/search-block-editor.js:228
 msgid "Results per page"
 msgstr "Resultados por página"
 
@@ -1277,51 +1277,51 @@ msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
-#: src/admin/js/search-block-editor.js:156
+#: src/admin/js/search-block-editor.js:169
 msgid "Where the filters sit"
 msgstr "Onde ficam os filtros"
 
-#: src/admin/js/search-block-editor.js:160
+#: src/admin/js/search-block-editor.js:173
 msgid "Left"
 msgstr "À esquerda"
 
-#: src/admin/js/search-block-editor.js:164
+#: src/admin/js/search-block-editor.js:177
 msgid "Right"
 msgstr "À direita"
 
-#: src/admin/js/search-block-editor.js:168
+#: src/admin/js/search-block-editor.js:181
 msgid "Above the results"
 msgstr "Acima dos resultados"
 
-#: src/admin/js/search-block-editor.js:179
+#: src/admin/js/search-block-editor.js:192
 msgid "Results as"
 msgstr "Resultados em"
 
 #: src/admin/js/related-block-editor.js:96
-#: src/admin/js/search-block-editor.js:183
+#: src/admin/js/search-block-editor.js:196
 msgid "A list"
 msgstr "Lista"
 
 #: src/admin/js/related-block-editor.js:92
-#: src/admin/js/search-block-editor.js:187
+#: src/admin/js/search-block-editor.js:200
 msgid "A grid"
 msgstr "Grade"
 
 #: src/admin/js/related-block-editor.js:105
-#: src/admin/js/search-block-editor.js:197
+#: src/admin/js/search-block-editor.js:210
 msgid "Show the image"
 msgstr "Mostrar a imagem"
 
-#: src/admin/js/search-block-editor.js:199
+#: src/admin/js/search-block-editor.js:212
 msgid "Show the type"
 msgstr "Mostrar o tipo"
 
 #: src/admin/js/related-block-editor.js:107
-#: src/admin/js/search-block-editor.js:200
+#: src/admin/js/search-block-editor.js:213
 msgid "Show the date"
 msgstr "Mostrar a data"
 
-#: src/admin/js/search-block-editor.js:203
+#: src/admin/js/search-block-editor.js:216
 msgid "Show the snippet"
 msgstr "Mostrar o trecho"
 
@@ -1368,19 +1368,19 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-dumont.php:88
+#: src/viglet-dumont.php:89
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-dumont.php:89
+#: src/viglet-dumont.php:90
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-dumont.php:90
+#: src/viglet-dumont.php:91
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: src/viglet-dumont.php:91
+#: src/viglet-dumont.php:92
 msgid "Catalog copilot"
 msgstr "Copiloto de catálogo"
 
@@ -2252,7 +2252,7 @@ msgstr "Ativar a IA generativa deste site no Turing"
 msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. It replaces an agent chosen for this site in Turing's console, and turning it off here later leaves Turing's setting as it is."
 msgstr "Enviado com os campos: na próxima indexação, ou ao salvar a tela Campos. Substitui um agente escolhido para este site no console do Turing, e desativar aqui depois mantém a configuração do Turing como está."
 
-#: src/viglet-dumont.php:104
+#: src/viglet-dumont.php:105
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
@@ -2432,3 +2432,19 @@ msgstr "São necessários dois produtos ou mais para comparar."
 #: src/includes/class-viglet-dumont-compare.php:139
 msgid "The summary named a figure the table does not hold, so it is not shown."
 msgstr "O resumo citou um número que a tabela não tem, por isso não é mostrado."
+
+#: src/blocks/search/parts/trending.php:27
+msgid "Popular searches"
+msgstr "Buscas populares"
+
+#: src/blocks/search/parts/trending.php:28
+msgid "Popular:"
+msgstr "Populares:"
+
+#: src/admin/js/search-block-editor.js:156
+msgid "Show popular searches under the box"
+msgstr "Mostrar as buscas populares sob a caixa"
+
+#: src/admin/js/search-block-editor.js:160
+msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
+msgstr "Até oito das palavras mais buscadas da semana, cada uma conferida para encontrar algo, antes que o visitante digite."

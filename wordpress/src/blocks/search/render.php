@@ -138,7 +138,7 @@ $viglet_dumont_classes = implode(
 	} else {
 		// The default order, with the filters and the results side by side.
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- the pieces escape their own output.
-		echo Viglet_Dumont_Search_Block::pieces( array( 'box', 'correction', 'toolbar', 'applied', 'suggested', 'toggle', 'answer' ), $attributes );
+		echo Viglet_Dumont_Search_Block::pieces( array( 'box', 'correction', 'trending', 'toolbar', 'applied', 'suggested', 'toggle', 'answer' ), $attributes );
 		echo '<div class="viglet-dumont-search__layout">';
 		echo Viglet_Dumont_Search_Block::pieces( array( 'facets', 'main' ), $attributes );
 		echo '</div>';
