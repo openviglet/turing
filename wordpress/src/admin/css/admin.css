@@ -191,6 +191,11 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+/* Clear of the arrow WordPress draws on the right (D192). */
+.viglet-dumont-field select {
+    padding-right: 32px;
+}
+
 .viglet-dumont-field input:focus,
 .viglet-dumont-field select:focus {
     border-color: var(--vd-primary);
@@ -337,8 +342,11 @@
     flex-shrink: 0;
 }
 
+/* The right padding is the room WordPress keeps for the select's arrow (D192); stretched,
+   the select takes the height of the button beside it. */
 .viglet-dumont-action-buttons select {
-    padding: 6px 10px;
+    align-self: stretch;
+    padding: 0 28px 0 10px;
     border: 1px solid var(--vd-border);
     border-radius: 4px;
     font-size: 13px;

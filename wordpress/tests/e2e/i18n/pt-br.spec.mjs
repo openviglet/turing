@@ -4,6 +4,7 @@
 // plugin's own region of the page.
 import { readFileSync } from 'node:fs';
 import { expect, test } from '../fixtures.mjs';
+import { selectsClearOfArrow } from '../selects.mjs';
 
 /**
  * The .po's entries as { msgid, msgstr }, continuation lines joined.
@@ -155,4 +156,16 @@ test( 'the search block is in Portuguese, results and filters included', async (
 	await expect(
 		block.locator( '.viglet-dumont-search__summary' )
 	).toHaveText( '1 resultado' );
+} );
+
+test( 'the settings selects keep their Portuguese text clear of the arrow (D192)', async ( {
+	page,
+} ) => {
+	await page.goto( '/wp-admin/admin.php?page=viglet-dumont' );
+	for ( const tab of [ 'connection', 'indexing', 'search', 'actions' ] ) {
+		await page.click( `.viglet-dumont-tab[data-tab="${ tab }"]` );
+		expect( await selectsClearOfArrow( page, `#panel-${ tab }` ) ).toEqual(
+			[]
+		);
+	}
 } );

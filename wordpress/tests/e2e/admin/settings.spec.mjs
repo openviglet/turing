@@ -1,7 +1,31 @@
 // Viglet Dumont → Settings: its four tabs, and the Actions tab's buttons and overview.
 import { expect, test } from '../fixtures.mjs';
+import { selectsClearOfArrow } from '../selects.mjs';
 
 const settingsUrl = '/wp-admin/admin.php?page=viglet-dumont';
+
+test( 'every select keeps its text clear of its arrow, and the action row lines up', async ( {
+	page,
+} ) => {
+	await page.goto( settingsUrl );
+	for ( const tab of [ 'connection', 'indexing', 'search', 'actions' ] ) {
+		await page.click( `.viglet-dumont-tab[data-tab="${ tab }"]` );
+		expect( await selectsClearOfArrow( page, `#panel-${ tab }` ) ).toEqual(
+			[]
+		);
+	}
+	const select = await page
+		.locator( '#viglet-dumont-index-type' )
+		.boundingBox();
+	const button = await page
+		.locator( '.viglet-dumont-action-buttons' )
+		.filter( { has: page.locator( '#viglet-dumont-index-type' ) } )
+		.locator( 'button' )
+		.boundingBox();
+	expect( Math.abs( select.height - button.height ) ).toBeLessThanOrEqual(
+		1
+	);
+} );
 
 test( 'every settings tab opens and shows its panel', async ( {
 	page,
