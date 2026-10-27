@@ -5,6 +5,8 @@ rem
 rem   run-docker.cmd            start both, install WordPress and provision Turing on first run
 rem   run-docker.cmd multisite  also start a two-site multisite network on WP_MS_PORT (8081),
 rem                             sharing the SN site SN_MS_SITE (Network), for the browser tests
+rem   run-docker.cmd demo       the demo storefront: the Tarnfell theme (demo/theme), its home,
+rem                             search page and journal; the browser tests put the default back
 rem   run-docker.cmd stop       stop the containers, keep the data
 rem   run-docker.cmd reset      stop and delete WordPress, its database and Turing's store
 rem   run-docker.cmd logs [svc] follow a log: wordpress (default), turing or db
@@ -34,6 +36,7 @@ set "WP=%DC% run --rm --no-deps cli wp"
 if /i "%~1"=="stop"  ( %DC% --profile multisite down & exit /b %ERRORLEVEL% )
 if /i "%~1"=="reset" ( %DC% --profile multisite down -v & exit /b %ERRORLEVEL% )
 if /i "%~1"=="multisite" goto :multisite
+if /i "%~1"=="demo" goto :demo
 if /i "%~1"=="logs"  goto :logs
 if /i "%~1"=="wp" goto :wp
 if not "%~1"=="" ( echo Unknown command: %~1 & exit /b 1 )
@@ -90,6 +93,17 @@ exit /b 0
 if "%NEWKEY%"=="" ( echo Turing was not provisioned; the plugin has no API key yet. & exit /b 0 )
 %WP% option patch update viglet_dumont_settings api_key "%NEWKEY%" >nul
 echo The plugin has an API key for the local Turing.
+exit /b 0
+
+:demo
+call "%~f0" || exit /b 1
+%WP% theme activate tarnfell || exit /b 1
+rem In English, whatever language a browser test run left the site in.
+%WP% site switch-language en_US || exit /b 1
+rem Its links are pretty permalinks; the browser tests put plain ones back.
+%WP% rewrite structure "/%%postname%%/" --hard || exit /b 1
+%WP% eval-file /demo/setup.php || exit /b 1
+echo Demo storefront: http://localhost:%WP_PORT%/
 exit /b 0
 
 :multisite

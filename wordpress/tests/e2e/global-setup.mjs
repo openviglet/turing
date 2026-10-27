@@ -57,7 +57,8 @@ export default async function globalSetup( config ) {
 		'list',
 		'--post_type=page',
 		'--post_status=publish',
-		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop',
+		// And the demo storefront's (run-docker.cmd demo, D193).
+		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,home-demo,search-gear,journal',
 		'--format=ids',
 	] ).trim();
 	if ( shopPages ) {
@@ -68,6 +69,16 @@ export default async function globalSetup( config ) {
 			'--post_status=draft',
 		] );
 	}
+
+	// What the demo storefront changes besides its pages: permalinks, the front page, the
+	// site's name and the plugin's search page.
+	wp( [ 'rewrite', 'structure', '' ] );
+	wp( [
+		'eval',
+		'update_option( "show_on_front", "posts" ); update_option( "page_on_front", 0 ); update_option( "page_for_posts", 0 );' +
+			' update_option( "blogname", "Viglet Dumont test" ); update_option( "blogdescription", "" );' +
+			' $s = viglet_dumont_get_settings(); $s["search_page"] = 0; viglet_dumont_update_settings( $s );',
+	] );
 
 	if ( ! process.env.E2E_SKIP_SEED ) {
 		const out = wp( [ 'eval-file', '/e2e/seed.php' ] );

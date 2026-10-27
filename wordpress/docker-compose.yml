@@ -89,6 +89,8 @@ services:
     volumes:
       - wp:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      # The demo storefront theme (D193), outside the plugin zip; active only after run-docker.cmd demo.
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -103,6 +105,7 @@ services:
     volumes:
       - wp:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -118,7 +121,9 @@ services:
     volumes:
       - wp:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
       - ./tests/e2e/fixtures:/e2e:ro
+      - ./demo:/demo:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -156,6 +161,7 @@ services:
     volumes:
       - wp-ms:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -171,6 +177,7 @@ services:
     volumes:
       - wp-ms:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -182,7 +189,9 @@ services:
     volumes:
       - wp-ms:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
       - ./tests/e2e/fixtures:/e2e:ro
+      - ./demo:/demo:ro
       - ./bin/multisite.htaccess:/dumont/multisite.htaccess:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"

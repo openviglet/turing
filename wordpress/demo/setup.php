@@ -1,0 +1,57 @@
+<?php
+/**
+ * The demo storefront (D193), run by `run-docker.cmd demo` after the stack is up: the Tarnfell
+ * theme, a static home, the search page and the journal, and the plugin's instant search on
+ * the theme's own search box. Idempotent. The browser suite's global setup drafts these pages
+ * and puts the front page back, so the default stack's screenshots do not move.
+ *
+ * @package Viglet_Dumont
+ */
+
+// phpcs:disable -- a setup script run by WP-CLI, not plugin code.
+
+// The Turing search block and its parts, in the page so the plugin finds it (has_block).
+$search = '<!-- wp:viglet-dumont/search {"placeholder":"Search jackets, boots, tents…","showAnswer":true,"suggestFilters":true,"resultsLayout":"grid","align":"wide"} -->
+<!-- wp:viglet-dumont/search-box /-->
+
+<!-- wp:viglet-dumont/search-filters /-->
+
+<!-- wp:viglet-dumont/search-results /-->
+
+<!-- wp:viglet-dumont/search-pages /-->
+<!-- /wp:viglet-dumont/search -->';
+
+$pages = array(
+	'home-demo'   => array( 'Home', '', '' ),
+	'search-gear' => array( 'Search the shop', $search, 'page-search' ),
+	'journal'     => array( 'Trail journal', '', '' ),
+);
+
+$ids = array();
+foreach ( $pages as $slug => list( $title, $content, $template ) ) {
+	$found = get_page_by_path( $slug, OBJECT, 'page' );
+	$args  = array(
+		'post_type'    => 'page',
+		'post_name'    => $slug,
+		'post_title'   => $title,
+		'post_content' => $content,
+		'post_status'  => 'publish',
+	);
+	$ids[ $slug ] = $found ? (int) wp_update_post( array( 'ID' => $found->ID ) + $args ) : (int) wp_insert_post( $args );
+	update_post_meta( $ids[ $slug ], '_wp_page_template', $template );
+}
+
+update_option( 'show_on_front', 'page' );
+update_option( 'page_on_front', $ids['home-demo'] );
+update_option( 'page_for_posts', $ids['journal'] );
+update_option( 'blogname', 'Tarnfell' );
+update_option( 'blogdescription', 'Gear for the high ground' );
+
+// The hero's search box opens the instant search, and Enter goes to the page above.
+$settings                      = viglet_dumont_get_settings();
+$settings['search_enabled']    = 1;
+$settings['instant_overlay']   = 1;
+$settings['search_page']       = $ids['search-gear'];
+viglet_dumont_update_settings( $settings );
+
+echo wp_json_encode( $ids ), "\n";

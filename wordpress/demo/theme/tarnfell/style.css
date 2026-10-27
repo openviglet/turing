@@ -1,0 +1,119 @@
+/*
+Theme Name: Tarnfell
+Description: The demo storefront for the Viglet Dumont plugin: an outdoor gear shop built on Turing search. A fictional brand, for showing the plugin; not for a real store.
+Version: 0.1.0
+Requires at least: 6.6
+Requires PHP: 8.1
+Author: Viglet
+License: MIT
+Text Domain: tarnfell
+*/
+
+/* What theme.json cannot say: the hero's search box, the brand mark and the search block
+   on the birch background. */
+
+.tarnfell-brand {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	text-decoration: none;
+	color: var(--wp--preset--color--pine);
+}
+
+.tarnfell-brand svg {
+	flex: none;
+}
+
+.tarnfell-hero .wp-block-search__inside-wrapper {
+	background: var(--wp--preset--color--paper);
+	border: 0;
+	border-radius: 6px;
+	padding: 0.35rem;
+	box-shadow: 0 12px 32px rgb(0 0 0 / 0.25);
+}
+
+.tarnfell-hero .wp-block-search__input {
+	border: 0;
+	font-size: 1.125rem;
+	padding: 0.75rem 1rem;
+	min-width: 0;
+}
+
+.tarnfell-hero .wp-block-search__label {
+	color: var(--wp--preset--color--lichen);
+}
+
+.tarnfell-tile {
+	transition: transform 0.15s ease-out;
+}
+
+.tarnfell-tile:hover,
+.tarnfell-tile:focus-within {
+	transform: translateY(-3px);
+}
+
+.tarnfell-tile a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.tarnfell-tile a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.tarnfell-tile {
+	position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tarnfell-tile {
+		transition: none;
+	}
+}
+
+/* The brand's name, set like the site title it stands for. */
+.tarnfell-brand .wp-block-site-title {
+	font-family: var(--wp--preset--font-family--display);
+	font-weight: 700;
+	font-size: 1.75rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	line-height: 1;
+}
+
+/* A tile's title is on its own colour: it takes the tile's text colour, not the link's. */
+.tarnfell-tile .wp-block-heading a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* The bands meet: no gap between the header, the page and the footer. */
+.wp-site-blocks > * + * {
+	margin-block-start: 0;
+}
+
+/* Form controls speak the theme's type, the search block's field and sort included. */
+input,
+select,
+textarea,
+button {
+	font-family: inherit;
+}
+
+.viglet-dumont-search input[type="search"] {
+	font-size: var(--wp--preset--font-size--medium);
+	padding-inline: 0.75rem;
+}
+
+/* A short page keeps its footer at the bottom of the window. */
+.wp-site-blocks {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.wp-site-blocks > main {
+	flex: 1;
+}
