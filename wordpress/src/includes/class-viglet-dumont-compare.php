@@ -92,6 +92,97 @@ class Viglet_Dumont_Compare {
 	}
 
 	/**
+	 * Two to four sentences on what the products share and where they differ, by Turing's
+	 * language model, written only from the table's facts. A summary holding a figure the
+	 * facts do not is dropped rather than shown: the numbers a shopper reads are the table's.
+	 *
+	 * @param int[] $ids   Product ids, as ids() returns them.
+	 * @param bool  $again Write another rather than the one Turing cached.
+	 * @return array{summary: string, error: string}
+	 */
+	public static function summary( array $ids, bool $again = false ): array {
+		$table = self::table( $ids );
+		if ( count( $table['products'] ) < 2 ) {
+			return array(
+				'summary' => '',
+				'error'   => __( 'Two products or more are needed to compare.', 'viglet-dumont' ),
+			);
+		}
+
+		$data   = self::facts( $table );
+		$locale = get_locale();
+		$prompt = sprintf(
+			'You help a shopper compare products, in two to four short sentences: what they have in common, then where they differ. Name no winner, recommend nothing and judge nothing. Use only the facts given; every number you write must appear in them exactly. Write in the language of the locale %s. Answer as plain text: no heading, no list, no markdown.',
+			$locale
+		);
+		// The same products, unchanged, answer from Turing's cache.
+		$modified = array_map( static fn ( int $id ) => (string) get_post_modified_time( 'U', true, $id ), $ids );
+		$key      = 'viglet-dumont-compare-' . md5( $locale . "\n" . implode( ',', $ids ) . "\n" . implode( ',', $modified ) );
+
+		$result = ( new Viglet_Dumont_API_Client() )->summary( $key, $data, $prompt, $again );
+		if ( is_wp_error( $result ) ) {
+			return array(
+				'summary' => '',
+				'error'   => $result->get_error_message(),
+			);
+		}
+		$summary = trim( (string) ( $result['content'] ?? '' ) );
+		if ( empty( $result['success'] ) || '' === $summary ) {
+			return array(
+				'summary' => '',
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no summary.', 'viglet-dumont' ),
+			);
+		}
+		if ( ! self::grounded( $summary, $data ) ) {
+			return array(
+				'summary' => '',
+				'error'   => __( 'The summary named a figure the table does not hold, so it is not shown.', 'viglet-dumont' ),
+			);
+		}
+
+		return array(
+			'summary' => $summary,
+			'error'   => '',
+		);
+	}
+
+	/**
+	 * The table as the facts the model may use: one line per row, each value with its product.
+	 *
+	 * @param array $table As table() returns it.
+	 */
+	public static function facts( array $table ): string {
+		$names = array_column( $table['products'], 'name' );
+		$lines = array( 'Products: ' . implode( '; ', $names ) );
+		foreach ( $table['rows'] as $row ) {
+			$values = array();
+			foreach ( $row['values'] as $i => $value ) {
+				$values[] = $names[ $i ] . ' = ' . $value;
+			}
+			$lines[] = sprintf( '%s: %s (%s)', $row['label'], implode( '; ', $values ), $row['differs'] ? 'differs' : 'the same' );
+		}
+
+		return implode( "\n", $lines );
+	}
+
+	/**
+	 * Whether every figure in a text appears in the facts, as written there.
+	 *
+	 * @param string $text  What the model wrote.
+	 * @param string $facts What it was given.
+	 */
+	public static function grounded( string $text, string $facts ): bool {
+		preg_match_all( '/\d+(?:[.,]\d+)*/', $text, $found );
+		foreach ( $found[0] as $figure ) {
+			if ( ! str_contains( $facts, $figure ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * The page holding the compare block: the first published one, as the search page is
 	 * found (Viglet_Dumont_Native_Search::search_page()).
 	 */

@@ -518,6 +518,31 @@ function viglet_dumont_register_rest_routes(): void {
 			),
 		)
 	);
+	// The compare block's summary (D200), asked for by its page once the table is drawn. Public:
+	// it reads published products only, and Turing caches it by the products and their dates.
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/compare/summary',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn ( WP_REST_Request $request ) => new WP_REST_Response(
+				Viglet_Dumont_WooCommerce::active()
+					? Viglet_Dumont_Compare::summary( Viglet_Dumont_Compare::ids( (string) $request['ids'] ) )
+					: array(
+						'summary' => '',
+						'error'   => '',
+					),
+				200
+			),
+			'permission_callback' => '__return_true',
+			'args'                => array(
+				'ids' => array(
+					'type'     => 'string',
+					'required' => true,
+				),
+			),
+		)
+	);
 	// An LLM call, made only when the owner asks for it (D178).
 	register_rest_route(
 		'viglet-dumont/v1',

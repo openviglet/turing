@@ -40,4 +40,43 @@ final class CompareTest extends PluginTestCase {
 		);
 		$this->assertFalse( $row->invoke( null, 'Availability', array( 'In stock', 'in stock ' ) )['differs'], 'the same, whatever the case' );
 	}
+
+	private function jackets(): array {
+		return array(
+			'products' => array(
+				array( 'name' => 'Rain jacket' ),
+				array( 'name' => 'Wool jacket' ),
+			),
+			'rows'     => array(
+				array(
+					'label'   => 'Price',
+					'values'  => array( '$149.90', '$89.00' ),
+					'differs' => true,
+				),
+				array(
+					'label'   => 'Availability',
+					'values'  => array( 'In stock', 'In stock' ),
+					'differs' => false,
+				),
+			),
+		);
+	}
+
+	public function test_the_facts_are_the_table_one_line_a_row_each_value_with_its_product(): void {
+		$this->assertSame(
+			"Products: Rain jacket; Wool jacket\n" .
+			"Price: Rain jacket = \$149.90; Wool jacket = \$89.00 (differs)\n" .
+			'Availability: Rain jacket = In stock; Wool jacket = In stock (the same)',
+			Viglet_Dumont_Compare::facts( $this->jackets() )
+		);
+	}
+
+	public function test_a_summary_holding_a_figure_the_table_lacks_is_not_grounded(): void {
+		$facts = Viglet_Dumont_Compare::facts( $this->jackets() );
+
+		$this->assertTrue( Viglet_Dumont_Compare::grounded( 'Both are in stock; the Rain jacket costs $149.90 and the Wool jacket $89.00.', $facts ) );
+		$this->assertTrue( Viglet_Dumont_Compare::grounded( 'They differ in price.', $facts ), 'no figure at all' );
+		$this->assertFalse( Viglet_Dumont_Compare::grounded( 'The Wool jacket saves you $60.90.', $facts ), 'a difference the model worked out' );
+		$this->assertFalse( Viglet_Dumont_Compare::grounded( 'The Rain jacket weighs 2 kg.', $facts ) );
+	}
 }

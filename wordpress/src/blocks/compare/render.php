@@ -26,6 +26,13 @@ $viglet_dumont_table   = count( $viglet_dumont_ids ) >= 2 ? Viglet_Dumont_Compar
 	<?php if ( null === $viglet_dumont_table ) : ?>
 		<p class="viglet-dumont-compare__empty"><?php esc_html_e( 'Tick Compare on two to four products in the search results to see them side by side here.', 'viglet-dumont' ); ?></p>
 	<?php else : ?>
+		<?php
+		// Asked for once the page is drawn (public/compare.js): the table never waits on a model.
+		?>
+		<div class="viglet-dumont-compare__summary" hidden aria-live="polite" data-summary-url="<?php echo esc_url( add_query_arg( 'ids', implode( ',', $viglet_dumont_ids ), rest_url( 'viglet-dumont/v1/compare/summary' ) ) ); ?>">
+			<p class="viglet-dumont-compare__ai"><?php esc_html_e( 'Summary written by AI from the table below', 'viglet-dumont' ); ?></p>
+			<p class="viglet-dumont-compare__summary-text"></p>
+		</div>
 		<div class="viglet-dumont-compare__scroll" role="region" tabindex="0" aria-label="<?php echo esc_attr( $viglet_dumont_heading ); ?>">
 			<table class="viglet-dumont-compare__table">
 				<thead>

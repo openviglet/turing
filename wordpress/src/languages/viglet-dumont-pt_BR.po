@@ -37,7 +37,7 @@ msgstr "Indexação"
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
-#: src/includes/class-viglet-dumont-native-search.php:208
+#: src/includes/class-viglet-dumont-native-search.php:214
 #: src/includes/class-viglet-dumont-post-state.php:99
 #: assets/admin/insights.js:159
 #: assets/admin/tuning.js:382
@@ -311,13 +311,13 @@ msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #: src/blocks/search/render.php:101
-#: src/includes/class-viglet-dumont-native-search.php:219
+#: src/includes/class-viglet-dumont-native-search.php:225
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
 #: src/blocks/search/render.php:102
-#: src/includes/class-viglet-dumont-native-search.php:220
+#: src/includes/class-viglet-dumont-native-search.php:226
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
@@ -772,11 +772,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:797
+#: src/viglet-dumont.php:822
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:822
+#: src/viglet-dumont.php:847
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1249,31 +1249,31 @@ msgstr "Automática: a página com o bloco de busca do Turing"
 msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
 msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
 
-#: src/includes/class-viglet-dumont-native-search.php:207
+#: src/includes/class-viglet-dumont-native-search.php:213
 msgid "Search this site"
 msgstr "Buscar neste site"
 
-#: src/includes/class-viglet-dumont-native-search.php:209
+#: src/includes/class-viglet-dumont-native-search.php:215
 msgid "Close"
 msgstr "Fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:210
+#: src/includes/class-viglet-dumont-native-search.php:216
 msgid "Results"
 msgstr "Resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:211
+#: src/includes/class-viglet-dumont-native-search.php:217
 msgid "Searching…"
 msgstr "Buscando…"
 
-#: src/includes/class-viglet-dumont-native-search.php:221
+#: src/includes/class-viglet-dumont-native-search.php:227
 msgid "See all results"
 msgstr "Ver todos os resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:222
+#: src/includes/class-viglet-dumont-native-search.php:228
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:223
+#: src/includes/class-viglet-dumont-native-search.php:229
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
@@ -1809,9 +1809,9 @@ msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma.
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:97
 #: src/blocks/search/render.php:99
-#: src/includes/class-viglet-dumont-native-search.php:215
-#: src/includes/class-viglet-dumont-native-search.php:217
-#: src/includes/class-viglet-dumont-native-search.php:348
+#: src/includes/class-viglet-dumont-native-search.php:221
+#: src/includes/class-viglet-dumont-native-search.php:223
+#: src/includes/class-viglet-dumont-native-search.php:354
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -2324,6 +2324,7 @@ msgstr "O Turing não está guardando métricas de busca, então nenhuma busca o
 msgid "There are no searches in this period to summarize."
 msgstr "Não há buscas neste período para resumir."
 
+#: src/includes/class-viglet-dumont-compare.php:133
 #: src/includes/class-viglet-dumont-insights.php:154
 msgid "Turing wrote no summary."
 msgstr "O Turing não escreveu um resumo."
@@ -2355,11 +2356,11 @@ msgstr "Comparar produtos"
 msgid "Tick Compare on two to four products in the search results to see them side by side here."
 msgstr "Marque Comparar em dois a quatro produtos nos resultados da busca para vê-los lado a lado aqui."
 
-#: src/blocks/compare/render.php:50
+#: src/blocks/compare/render.php:57
 msgid "(differs)"
 msgstr "(diferente)"
 
-#: src/blocks/compare/render.php:61
+#: src/blocks/compare/render.php:68
 msgid "Where they differ"
 msgstr "Onde diferem"
 
@@ -2419,3 +2420,15 @@ msgstr "comparação"
 msgctxt "block keyword"
 msgid "products"
 msgstr "produtos"
+
+#: src/blocks/compare/render.php:33
+msgid "Summary written by AI from the table below"
+msgstr "Resumo escrito por IA a partir da tabela abaixo"
+
+#: src/includes/class-viglet-dumont-compare.php:108
+msgid "Two products or more are needed to compare."
+msgstr "São necessários dois produtos ou mais para comparar."
+
+#: src/includes/class-viglet-dumont-compare.php:139
+msgid "The summary named a figure the table does not hold, so it is not shown."
+msgstr "O resumo citou um número que a tabela não tem, por isso não é mostrado."

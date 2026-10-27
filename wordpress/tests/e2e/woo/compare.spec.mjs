@@ -68,3 +68,60 @@ test( 'the compare page without products says how to choose them', async ( {
 		/Tick Compare on two to four products/
 	);
 } );
+
+// The summary above the table (D200). Turing's answer is replayed here; the live one is the
+// `ai` project's (ai/compare.spec.mjs).
+const answerWith = ( page, json ) =>
+	page.route(
+		( url ) => decodeURIComponent( url.href ).includes( 'compare/summary' ),
+		( route ) => route.fulfill( { json } )
+	);
+
+const compareJackets = async ( page ) => {
+	const ids = await page.evaluate( async () => {
+		const response = await window.fetch(
+			'/?rest_route=/wp/v2/product&search=jacket&per_page=10&_fields=id,title'
+		);
+		return ( await response.json() ).map( ( p ) => p.id );
+	} );
+	await page.goto(
+		`/?pagename=compare-products&compare=${ ids.join( ',' ) }`
+	);
+};
+
+test( 'a summary Turing wrote shows above the table, labelled as AI', async ( {
+	page,
+} ) => {
+	await page.goto( '/' );
+	await answerWith( page, {
+		summary: 'Both jackets are in stock; they differ in price and color.',
+		error: '',
+	} );
+	await compareJackets( page );
+	const summary = page.locator( '.viglet-dumont-compare__summary' );
+	await expect( summary ).toBeVisible();
+	await expect( summary ).toContainText(
+		'Summary written by AI from the table below'
+	);
+	await expect(
+		summary.locator( '.viglet-dumont-compare__summary-text' )
+	).toHaveText(
+		'Both jackets are in stock; they differ in price and color.'
+	);
+} );
+
+test( 'without a summary the table stands alone', async ( { page } ) => {
+	await page.goto( '/' );
+	await answerWith( page, {
+		summary: '',
+		error: 'No default LLM is configured.',
+	} );
+	await compareJackets( page );
+	await expect(
+		page.locator( '.viglet-dumont-compare__table' )
+	).toBeVisible();
+	await page.waitForLoadState( 'networkidle' );
+	await expect(
+		page.locator( '.viglet-dumont-compare__summary' )
+	).toBeHidden();
+} );

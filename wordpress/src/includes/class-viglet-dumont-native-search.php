@@ -159,7 +159,13 @@ class Viglet_Dumont_Native_Search {
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/copilot' );
 
-		// Compare products (D200): a table drawn on the server, so it has no view module.
+		// Compare products (D200): a table drawn on the server; its module only asks for the summary.
+		wp_register_script_module(
+			'viglet-dumont/compare-block',
+			VIGLET_DUMONT_URL . 'public/compare.js',
+			array(),
+			VIGLET_DUMONT_VERSION
+		);
 		wp_register_script(
 			'viglet-dumont-compare-block-editor',
 			VIGLET_DUMONT_URL . 'admin/js/compare-block-editor.js',

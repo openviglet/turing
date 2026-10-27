@@ -23,5 +23,6 @@
 	},
 	"editorScript": "viglet-dumont-compare-block-editor",
 	"style": "viglet-dumont-compare-block",
+	"viewScriptModule": "viglet-dumont/compare-block",
 	"render": "file:./render.php"
 }

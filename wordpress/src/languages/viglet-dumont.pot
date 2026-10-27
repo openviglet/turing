@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27T11:55:22+00:00\n"
+"POT-Creation-Date: 2026-10-27T12:10:52+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -35,7 +35,7 @@ msgstr ""
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
-#: src/includes/class-viglet-dumont-native-search.php:208
+#: src/includes/class-viglet-dumont-native-search.php:214
 #: src/includes/class-viglet-dumont-post-state.php:99
 #: assets/admin/insights.js:159
 #: assets/admin/tuning.js:382
@@ -399,11 +399,15 @@ msgstr ""
 msgid "Tick Compare on two to four products in the search results to see them side by side here."
 msgstr ""
 
-#: src/blocks/compare/render.php:50
+#: src/blocks/compare/render.php:33
+msgid "Summary written by AI from the table below"
+msgstr ""
+
+#: src/blocks/compare/render.php:57
 msgid "(differs)"
 msgstr ""
 
-#: src/blocks/compare/render.php:61
+#: src/blocks/compare/render.php:68
 msgid "Where they differ"
 msgstr ""
 
@@ -624,9 +628,9 @@ msgstr ""
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:97
 #: src/blocks/search/render.php:99
-#: src/includes/class-viglet-dumont-native-search.php:215
-#: src/includes/class-viglet-dumont-native-search.php:217
-#: src/includes/class-viglet-dumont-native-search.php:348
+#: src/includes/class-viglet-dumont-native-search.php:221
+#: src/includes/class-viglet-dumont-native-search.php:223
+#: src/includes/class-viglet-dumont-native-search.php:354
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -634,13 +638,13 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/blocks/search/render.php:101
-#: src/includes/class-viglet-dumont-native-search.php:219
+#: src/includes/class-viglet-dumont-native-search.php:225
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
 #: src/blocks/search/render.php:102
-#: src/includes/class-viglet-dumont-native-search.php:220
+#: src/includes/class-viglet-dumont-native-search.php:226
 msgid "Search is unavailable right now."
 msgstr ""
 
@@ -908,6 +912,19 @@ msgstr ""
 msgid "Rating"
 msgstr ""
 
+#: src/includes/class-viglet-dumont-compare.php:108
+msgid "Two products or more are needed to compare."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:133
+#: src/includes/class-viglet-dumont-insights.php:154
+msgid "Turing wrote no summary."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:139
+msgid "The summary named a figure the table does not hold, so it is not shown."
+msgstr ""
+
 #: src/includes/class-viglet-dumont-diagnostics.php:49
 msgid "The Turing URL must be a full http:// or https:// address, e.g. https://search.example.org."
 msgstr ""
@@ -1042,10 +1059,6 @@ msgstr ""
 msgid "There are no searches in this period to summarize."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-insights.php:154
-msgid "Turing wrote no summary."
-msgstr ""
-
 #: src/includes/class-viglet-dumont-insights.php:182
 #: assets/admin/insights.js:323
 msgid "Top searches"
@@ -1148,31 +1161,31 @@ msgstr ""
 msgid "%1$s – %2$s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:207
+#: src/includes/class-viglet-dumont-native-search.php:213
 msgid "Search this site"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:209
+#: src/includes/class-viglet-dumont-native-search.php:215
 msgid "Close"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:210
+#: src/includes/class-viglet-dumont-native-search.php:216
 msgid "Results"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:211
+#: src/includes/class-viglet-dumont-native-search.php:217
 msgid "Searching…"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:221
+#: src/includes/class-viglet-dumont-native-search.php:227
 msgid "See all results"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:222
+#: src/includes/class-viglet-dumont-native-search.php:228
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:223
+#: src/includes/class-viglet-dumont-native-search.php:229
 msgid "Search (Ctrl+K)"
 msgstr ""
 
@@ -1337,11 +1350,11 @@ msgstr ""
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr ""
 
-#: src/viglet-dumont.php:797
+#: src/viglet-dumont.php:822
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:822
+#: src/viglet-dumont.php:847
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
