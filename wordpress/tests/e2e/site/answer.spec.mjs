@@ -142,11 +142,27 @@ test( 'an answer that cites nothing is never drawn', async ( {
 	await expect( panel( page ) ).toBeHidden();
 } );
 
-test( "a site whose AI is off (this stack's real Turing) shows no panel and no error", async ( {
+test( 'a site whose AI is off shows no panel and no error', async ( {
 	page,
 	seed,
 } ) => {
-	// No route: Turing answers with its own error event, "AI is not enabled for site".
+	// Turing's own answer when AI is off, replayed (D191): a stack started with
+	// OPENAI_API_KEY answers through its Default AI Agent, binding or not (Turing T622).
+	await page.route( answerRoute, ( route ) =>
+		route.fulfill( {
+			status: 200,
+			contentType: 'text/event-stream',
+			body: stream( [
+				[
+					'error',
+					JSON.stringify( {
+						message:
+							'AI is not enabled for site: Sample (NO_AGENT)',
+					} ),
+				],
+			] ),
+		} )
+	);
 	await page.goto(
 		`/?page_id=${ seed.askPageId }&q=${ encodeURIComponent(
 			'which workshop covers facets?'
