@@ -57,6 +57,27 @@ test( 'opening a related post reports it to Turing with its rank', async ( {
 	expect( click.documentId ).toMatch( /:post:\d+$/ );
 } );
 
+test( 'a template that places the block gets no second one after the content', async ( {
+	page,
+	request,
+	seed,
+} ) => {
+	// Its own block template holds Related, and "Related after posts" is on (D210).
+	await page.goto( `/?p=${ seed.templatedPostId }` );
+	await expect( page.getByText( 'About Workshop on blocks.' ) ).toBeVisible();
+	await expect( related( page ) ).toHaveCount( 1 );
+	await expect(
+		related( page ).locator( '.viglet-dumont-related__title' )
+	).toHaveCount( 3 );
+
+	const html = await (
+		await request.get( `/?p=${ seed.templatedPostId }` )
+	).text();
+	expect(
+		html.match( /class="[^"]*wp-block-viglet-dumont-related[ "]/g )
+	).toHaveLength( 1 );
+} );
+
 test( 'a page Turing finds nothing like gets no related box at all', async ( {
 	page,
 	seed,

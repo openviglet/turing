@@ -59,6 +59,39 @@ foreach ( $titles as $i => $title ) {
 	if ( 'Workshop on facets' === $title ) {
 		$related_id = $id;
 	}
+	if ( 'Workshop on blocks' === $title ) {
+		$templated_id = $id;
+	}
+}
+
+// A block template of its own for one workshop that places the Related block itself, as
+// Tarnfell's single.html does, while "Related after posts" stays on (related.spec.mjs, D210).
+if ( isset( $templated_id ) ) {
+	$template_slug    = 'single-post-' . get_post_field( 'post_name', $templated_id );
+	$template_content = implode(
+		"\n\n",
+		array(
+			'<!-- wp:template-part {"slug":"header"} /-->',
+			'<!-- wp:post-title {"level":1} /-->',
+			'<!-- wp:post-content /-->',
+			'<!-- wp:group --><div class="wp-block-group"><!-- wp:viglet-dumont/related /--></div><!-- /wp:group -->',
+			'<!-- wp:template-part {"slug":"footer"} /-->',
+		)
+	);
+	$template    = get_page_by_path( $template_slug, OBJECT, 'wp_template' );
+	$template_id = $template ? $template->ID : (int) wp_insert_post(
+		array(
+			'post_type'    => 'wp_template',
+			'post_name'    => $template_slug,
+			'post_title'   => 'Related in the template',
+			'post_status'  => 'publish',
+			'post_content' => $template_content,
+		)
+	);
+	if ( $template && $template->post_content !== $template_content ) {
+		wp_update_post( array( 'ID' => $template_id, 'post_content' => $template_content ) );
+	}
+	wp_set_object_terms( $template_id, 'twentytwentyfive', 'wp_theme' );
 }
 
 $page = get_page_by_path( 'busca' );
@@ -237,6 +270,7 @@ echo wp_json_encode(
 		'lonelyPageId' => $lonely_id,
 		'partsPageId'  => $parts_id,
 		'relatedPostId' => $related_id ?? 0,
+		'templatedPostId' => $templated_id ?? 0,
 		'postId'       => $post_id,
 	)
 );

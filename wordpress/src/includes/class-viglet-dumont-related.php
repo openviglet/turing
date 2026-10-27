@@ -57,15 +57,15 @@ class Viglet_Dumont_Related {
 
 	/**
 	 * The post's content with the Related content block after it (`the_content`): only on
-	 * the post being viewed, of a chosen type, and only when the content does not hold the
-	 * block already.
+	 * the post being viewed, of a chosen type, and only when neither the content nor the
+	 * block template drawing it holds the block already (D210).
 	 *
 	 * @param string $content The post's content.
 	 * @return string
 	 */
 	public function append( string $content ): string {
 		$types = (array) ( $this->settings['related_after'] ?? array() );
-		if ( ! is_singular( $types ) || ! in_the_loop() || ! is_main_query() || has_block( 'viglet-dumont/related' ) ) {
+		if ( ! is_singular( $types ) || ! in_the_loop() || ! is_main_query() || has_block( 'viglet-dumont/related' ) || $this->template_holds_block() ) {
 			return $content;
 		}
 
@@ -78,6 +78,53 @@ class Viglet_Dumont_Related {
 				'innerContent' => array(),
 			)
 		);
+	}
+
+	/**
+	 * Whether the block template being rendered places the Related content block, itself or
+	 * in a template part it includes. The template is drawn before the content filter runs
+	 * and a Related block after the post content has not drawn yet, so the template's own
+	 * markup is read rather than a flag the block would set. False on a classic theme.
+	 *
+	 * @return bool
+	 */
+	private function template_holds_block(): bool {
+		global $_wp_current_template_content;
+
+		return is_string( $_wp_current_template_content )
+			&& $this->blocks_hold( parse_blocks( $_wp_current_template_content ) );
+	}
+
+	/**
+	 * Whether these parsed blocks, their inner blocks or the template parts they name hold the
+	 * Related content block.
+	 *
+	 * @param array    $blocks The parsed blocks.
+	 * @param string[] $parts  The template parts already read, so a part including itself ends.
+	 * @return bool
+	 */
+	private function blocks_hold( array $blocks, array &$parts = array() ): bool {
+		foreach ( $blocks as $block ) {
+			$name = $block['blockName'] ?? '';
+			if ( 'viglet-dumont/related' === $name ) {
+				return true;
+			}
+			if ( 'core/template-part' === $name && ! empty( $block['attrs']['slug'] ) ) {
+				$id = ( $block['attrs']['theme'] ?? get_stylesheet() ) . '//' . $block['attrs']['slug'];
+				if ( ! in_array( $id, $parts, true ) ) {
+					$parts[] = $id;
+					$part    = get_block_template( $id, 'wp_template_part' );
+					if ( $part && $this->blocks_hold( parse_blocks( (string) $part->content ), $parts ) ) {
+						return true;
+					}
+				}
+			}
+			if ( $this->blocks_hold( $block['innerBlocks'] ?? array(), $parts ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
