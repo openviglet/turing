@@ -48,6 +48,15 @@ for ( const search of curated ) {
 					.nth( 1 )
 			).toHaveText( new RegExp( `^${ search.then }\\b` ) );
 		}
+		// Every result shows its picture (D218): drawn by demo/seed/images.php.
+		const cards = block( page ).locator(
+			'.viglet-dumont-search__results > li'
+		);
+		for ( const card of await cards.all() ) {
+			await expect(
+				card.locator( '.viglet-dumont-search__image' )
+			).toHaveAttribute( 'src', /\.webp$/ );
+		}
 		if ( search.count ) {
 			await expect(
 				block( page ).locator( '.viglet-dumont-search__summary' )

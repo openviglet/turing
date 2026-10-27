@@ -27,6 +27,9 @@ $pages = json_decode( (string) ob_get_clean(), true );
 $pt = 'pt_BR' === get_locale() ? require __DIR__ . '/pt_BR.php' : array();
 $tr = static fn ( string $group, string $text ): string => $pt[ $group ][ $text ] ?? $text;
 
+// Each product's and guide's picture, drawn here rather than downloaded (D218).
+require_once __DIR__ . '/images.php';
+
 // The global attributes, and their taxonomies for this request (WooCommerce registers them on init).
 foreach ( array( 'color' => 'Colour', 'material' => 'Material', 'use' => 'Use', 'size' => 'Size' ) as $slug => $label ) {
 	if ( ! wc_attribute_taxonomy_id_by_name( $slug ) ) {
@@ -264,6 +267,7 @@ foreach ( $models as $m => list( $category, $model, $price, $materials, $uses, $
 		$product->set_sale_price( 0 === ( $m + $c ) % 5 ? number_format( $price * 0.8, 2, '.', '' ) : '' );
 		$product->set_stock_status( 0 === $count % 11 ? 'outofstock' : 'instock' );
 		$product->set_category_ids( array( $category_ids[ $category ] ) );
+		$product->set_image_id( tarnfell_product_image( $m, $model, $category, $colour_en, "{$title}, " . mb_strtolower( $colour ) ) );
 		$product->set_status( 'publish' );
 
 		$attributes = array();
