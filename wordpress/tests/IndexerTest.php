@@ -140,54 +140,25 @@ final class IndexerTest extends PluginTestCase {
 	}
 
 	/**
-	 * Two sites share one SN site: Turing holds documents under the keys site-a and site-b, and
-	 * answers a search only with the documents whose site_key the filter names.
+	 * Two sites share one SN site: delete-all names this site's key and the plugin's source,
+	 * in one DELETE by fields (Turing T1112), and lists nothing first.
 	 */
 	public function test_delete_all_removes_only_this_site_keys_documents(): void {
-		$held = array(
-			'site-a' => array( 'site-a:post:1', 'site-a:post:2' ),
-			'site-b' => array( 'site-b:post:1' ),
-		);
-		Functions\when( 'wp_remote_request' )->alias(
-			function ( string $url, array $args ) use ( $held ) {
-				$this->requests[] = array( $url, $args );
-				$body             = '';
-				if ( 'GET' === $args['method'] ) {
-					parse_str( (string) parse_url( $url, PHP_URL_QUERY ), $query );
-					$key  = substr( $query['fq'][0], strlen( 'site_key:' ) );
-					$ids  = $held[ $key ] ?? array();
-					$body = json_encode(
-						array(
-							'queryContext' => array( 'count' => count( $ids ) ),
-							'results'      => array(
-								'document' => array_map( static fn ( $id ) => array( 'fields' => array( 'id' => $id ) ), $ids ),
-							),
-						)
-					);
-				}
-				return array(
-					'response' => array( 'code' => 200 ),
-					'body'     => $body,
-				);
-			}
-		);
-
 		$deleted = ( new Viglet_Dumont_Indexer( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->delete_all();
 
 		$this->assertTrue( $deleted );
-		$deletes = array();
-		foreach ( $this->requests as $index => $request ) {
-			if ( str_ends_with( $request[0], '/api/sn/import' ) ) {
-				foreach ( $this->body( $index )['snJobItems'] as $item ) {
-					$this->assertSame( 'DELETE', $item['turSNJobAction'] );
-					$deletes[] = $item['attributes']['id'];
-				}
-			}
-		}
-		$this->assertSame( array( 'site-a:post:1', 'site-a:post:2' ), $deletes );
+		$imports = array_keys( array_filter( $this->requests, static fn ( $r ) => str_ends_with( $r[0], '/api/sn/import' ) ) );
+		$this->assertCount( 1, $imports );
+		$this->assertCount( 0, array_filter( $this->requests, static fn ( $r ) => str_contains( $r[0], '/search' ) ), 'nothing listed' );
+		$items = $this->body( $imports[0] )['snJobItems'];
+		$this->assertCount( 1, $items );
+		$this->assertSame( 'DELETE', $items[0]['turSNJobAction'] );
+		$this->assertSame( 'site-a', $items[0]['attributes']['site_key'] );
+		$this->assertArrayNotHasKey( 'id', $items[0]['attributes'] );
+		$this->assertArrayHasKey( 'source_apps', $items[0]['attributes'] );
 	}
 
-	public function test_delete_all_reports_a_failed_search(): void {
+	public function test_delete_all_reports_a_failed_delete(): void {
 		$this->status = 500;
 
 		$this->assertFalse( ( new Viglet_Dumont_Indexer( $this->settings() ) )->delete_all() );

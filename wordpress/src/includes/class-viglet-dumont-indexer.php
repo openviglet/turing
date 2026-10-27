@@ -221,21 +221,11 @@ class Viglet_Dumont_Indexer {
 	 */
 	public function delete_all(): bool {
 		$this->provision();
-		$ids = $this->list_site_ids();
-		if ( null === $ids ) {
-			return false;
-		}
+		// One delete by the field this site's documents share (Turing T1112), not a listing
+		// paged through and deleted one id at a time.
+		$result = $this->client->deindex( array( $this->client->build_delete_by_fields( array( 'site_key' => $this->site_key() ) ) ) );
 
-		$batch_size = max( 1, (int) $this->settings['batch_size'] );
-		foreach ( array_chunk( $ids, $batch_size ) as $chunk ) {
-			$items  = array_map( array( $this->client, 'build_delete_item' ), $chunk );
-			$result = $this->client->deindex( $items );
-			if ( ! $result['success'] ) {
-				return false;
-			}
-		}
-
-		return true;
+		return $result['success'];
 	}
 
 	/**

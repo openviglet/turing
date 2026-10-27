@@ -21,8 +21,14 @@ class Viglet_Dumont_Related {
 	/** How long one post's neighbours are kept before Turing is asked again: an hour. */
 	public const CACHE_TTL = 3600;
 
-	/** The most Turing answers for one question. */
+	/** The most Turing is asked for at once. */
 	private const MAX_ROWS = 50;
+
+	/**
+	 * How many neighbours are asked for each one shown: the rest absorb what WordPress drops
+	 * (unpublished, another type), never another site's, which Turing filters out (T1132).
+	 */
+	private const ROWS_PER_SHOWN = 3;
 
 	/**
 	 * The plugin settings.
@@ -76,8 +82,8 @@ class Viglet_Dumont_Related {
 
 	/**
 	 * The published posts Turing finds most like this one, best first. Never the post itself,
-	 * never another site's document (a shared SN site answers with every site's, Turing
-	 * T1132), and an empty list when Turing does not answer or the post is not indexed.
+	 * never another site's document (Turing filters by this site's key), and an empty list
+	 * when Turing does not answer or the post is not indexed.
 	 *
 	 * @param int    $post_id   The post being read.
 	 * @param int    $count     How many to return.
@@ -92,7 +98,7 @@ class Viglet_Dumont_Related {
 			return array();
 		}
 
-		$ids   = $this->neighbours( $post_id, $mode );
+		$ids   = $this->neighbours( $post_id, $mode, min( self::MAX_ROWS, $count * self::ROWS_PER_SHOWN ) );
 		$posts = array();
 		foreach ( $ids as $id ) {
 			$candidate = get_post( $id );
@@ -115,14 +121,15 @@ class Viglet_Dumont_Related {
 
 	/**
 	 * This site's post ids among the post's neighbours in Turing, in Turing's order, cached.
-	 * Turing takes no filter here (T1132), so it is asked for more than will be shown.
+	 * Turing filters by this site's key (T1132), so only posts and terms are left to tell apart.
 	 *
 	 * @param int    $post_id The post.
 	 * @param string $mode    The similarity, as for posts().
+	 * @param int    $rows    How many to ask Turing for.
 	 * @return int[]
 	 */
-	private function neighbours( int $post_id, string $mode ): array {
-		$key    = 'viglet_dumont_related_' . md5( $post_id . '|' . $mode . '|' . $this->settings['site_name'] . '|' . $this->settings['locale'] );
+	private function neighbours( int $post_id, string $mode, int $rows ): array {
+		$key    = 'viglet_dumont_related_' . md5( $post_id . '|' . $mode . '|' . $rows . '|' . $this->settings['site_name'] . '|' . $this->settings['locale'] );
 		$cached = get_transient( $key );
 		if ( is_array( $cached ) ) {
 			return $cached;
@@ -131,12 +138,13 @@ class Viglet_Dumont_Related {
 		$indexer = new Viglet_Dumont_Indexer( $this->settings );
 		$similar = ( new Viglet_Dumont_API_Client( $this->settings ) )->similar(
 			$indexer->build_doc_id( $post_id ),
-			self::MAX_ROWS,
-			$mode
+			$rows,
+			$mode,
+			array( 'site_key:' . $indexer->site_key() )
 		);
 		// A site without embeddings may refuse a semantic question: ask by shared words.
 		if ( is_wp_error( $similar ) && 'VECTOR' === $mode ) {
-			return $this->neighbours( $post_id, 'MLT' );
+			return $this->neighbours( $post_id, 'MLT', $rows );
 		}
 		if ( is_wp_error( $similar ) ) {
 			return array();

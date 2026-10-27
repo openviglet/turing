@@ -76,6 +76,8 @@ final class RelatedTest extends PluginTestCase {
 		$this->assertStringContainsString( '/search/similar?', $this->requests[0][0] );
 		$this->assertStringContainsString( 'id=site-a%3Apost%3A2', $this->requests[0][0] );
 		$this->assertStringNotContainsString( 'mode=', $this->requests[0][0], 'Turing chooses unless told' );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[0][0], 'Turing keeps to this site' );
+		$this->assertStringContainsString( 'rows=15', $this->requests[0][0], 'three asked for each one shown' );
 	}
 
 	public function test_same_type_and_count_are_kept(): void {

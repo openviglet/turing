@@ -297,14 +297,23 @@ class Viglet_Dumont_API_Client {
 	 * @return array TurSNJobItem-compatible array.
 	 */
 	public function build_delete_item( string $doc_id ): array {
+		return $this->build_delete_by_fields( array( 'id' => $doc_id ) );
+	}
+
+	/**
+	 * Build a TurSNJobItem that deletes every document holding all these field values
+	 * (Turing T1112), e.g. `site_key` for every post of one site of a shared SN site.
+	 *
+	 * @param array<string, string> $fields Field to the one value it must hold.
+	 * @return array TurSNJobItem-compatible array.
+	 */
+	public function build_delete_by_fields( array $fields ): array {
 		return array(
 			'locale'         => $this->locale,
 			'turSNJobAction' => 'DELETE',
 			'siteNames'      => array( $this->site_name ),
-			'attributes'     => array(
-				'id'          => $doc_id,
-				'source_apps' => $this->source_app,
-			),
+			// For a delete by fields, source_apps is one more: only this plugin's documents go.
+			'attributes'     => array_merge( $fields, array( 'source_apps' => $this->source_app ) ),
 		);
 	}
 
@@ -360,13 +369,15 @@ class Viglet_Dumont_API_Client {
 	 * @param string $doc_id The indexed document's id.
 	 * @param int    $rows   How many.
 	 * @param string $mode   `MLT` (lexical) or `VECTOR` (semantic); empty lets Turing choose.
+	 * @param array  $fq     Filter queries, as the search takes them (Turing T1132).
 	 * @return array<int, array{id: string, title: string, url: string}>|WP_Error An empty list when the id is not indexed.
 	 */
-	public function similar( string $doc_id, int $rows = 5, string $mode = '' ) {
+	public function similar( string $doc_id, int $rows = 5, string $mode = '', array $fq = array() ) {
 		$params = array(
 			'id'         => $doc_id,
 			'rows'       => $rows,
 			'_setlocale' => $this->locale,
+			'fq[]'       => $fq,
 		);
 		if ( in_array( $mode, array( 'MLT', 'VECTOR' ), true ) ) {
 			$params['mode'] = $mode;
