@@ -131,10 +131,10 @@
     }
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "10.6.2",
-    "@storybook/addon-docs": "^10.6.2",
-    "@storybook/addon-links": "^10.6.2",
-    "@storybook/react-vite": "^10.6.2",
+    "@storybook/addon-a11y": "10.6.3",
+    "@storybook/addon-docs": "^10.6.3",
+    "@storybook/addon-links": "^10.6.3",
+    "@storybook/react-vite": "^10.6.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/react": "^19.3.0",
@@ -146,7 +146,7 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-markdown": "^10.1.0",
-    "storybook": "^10.6.2",
+    "storybook": "^10.6.3",
     "typescript": "^5.6.0",
     "vite": "^8.1.6",
     "vitest": "^5.0.3"
