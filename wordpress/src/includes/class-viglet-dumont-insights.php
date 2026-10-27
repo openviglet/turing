@@ -97,6 +97,71 @@ class Viglet_Dumont_Insights {
 	}
 
 	/**
+	 * A few sentences on the period by Turing's language model: what visitors looked for, what
+	 * the site lacks and what to write. Written from the report's own terms, cached by Turing
+	 * under a key of what it read, so an unchanged period answers from the cache.
+	 *
+	 * @param string $period One of self::PERIODS.
+	 * @param bool   $again  Write another rather than the one Turing cached.
+	 * @return array{summary: string, error: string}
+	 */
+	public function summary( string $period, bool $again = false ): array {
+		$report = $this->report( $period );
+		if ( is_wp_error( $report ) ) {
+			return array(
+				'summary' => '',
+				'error'   => $report->get_error_message(),
+			);
+		}
+		if ( ! $report['top'] && ! $report['failed'] ) {
+			return array(
+				'summary' => '',
+				'error'   => __( 'There are no searches in this period to summarize.', 'viglet-dumont' ),
+			);
+		}
+
+		$lines  = static fn ( array $terms ) => implode(
+			"\n",
+			array_map( static fn ( array $t ) => sprintf( '- %s: %d searches, %d clicks', $t['term'], $t['searches'], $t['clicks'] ?? 0 ), $terms )
+		);
+		$data   = sprintf(
+			"Period: %s\nSearches: %d, clicks: %d\n\nTop searches:\n%s\n\nSearches that found nothing:\n%s\n\nSearches whose results nobody opened:\n%s",
+			$report['period'],
+			$report['searches'],
+			$report['clicks'],
+			$lines( $report['top'] ),
+			$lines( $report['failed'] ),
+			$lines( $report['unopened'] )
+		);
+		$locale = get_locale();
+		$prompt = sprintf(
+			'You summarize a website\'s search log for its owner in three to five short sentences: what visitors looked for most, what they searched for and did not find, and which one or two posts would be worth writing. Write in the language of the locale %s. Use only the searches listed; name searches as written, never invent numbers. Answer as plain text: no heading, no list, no markdown.',
+			$locale
+		);
+		$key    = 'viglet-dumont-insights-' . md5( $locale . "\n" . $data );
+
+		$result = $this->client->summary( $key, $data, $prompt, $again );
+		if ( is_wp_error( $result ) ) {
+			return array(
+				'summary' => '',
+				'error'   => $result->get_error_message(),
+			);
+		}
+		$summary = trim( (string) ( $result['content'] ?? '' ) );
+		if ( empty( $result['success'] ) || '' === $summary ) {
+			return array(
+				'summary' => '',
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no summary.', 'viglet-dumont' ),
+			);
+		}
+
+		return array(
+			'summary' => $summary,
+			'error'   => '',
+		);
+	}
+
+	/**
 	 * The dashboard widget: the week's five top searches and five that found nothing, each a
 	 * link to the screen. The report is kept for a few minutes, so the dashboard does not ask
 	 * Turing on every visit.

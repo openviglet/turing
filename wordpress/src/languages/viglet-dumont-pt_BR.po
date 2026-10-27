@@ -39,7 +39,7 @@ msgstr "Indexação"
 #: src/blocks/search/parts/box.php:48
 #: src/includes/class-viglet-dumont-native-search.php:195
 #: src/includes/class-viglet-dumont-post-state.php:99
-#: assets/admin/insights.js:91
+#: assets/admin/insights.js:159
 #: assets/admin/tuning.js:382
 #: src/admin/js/editor-panel.js:211
 #: src/admin/js/search-block-editor.js:108
@@ -47,7 +47,7 @@ msgid "Search"
 msgstr "Busca"
 
 #: src/admin/views/settings-page.php:52
-#: assets/admin/insights.js:101
+#: assets/admin/insights.js:169
 #: assets/admin/mapping.js:339
 #: assets/admin/tuning.js:262
 #: assets/admin/tuning.js:389
@@ -772,11 +772,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:772
+#: src/viglet-dumont.php:796
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:797
+#: src/viglet-dumont.php:821
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1881,12 +1881,12 @@ msgid "Upcoming"
 msgstr "Próximos"
 
 #: src/includes/class-viglet-dumont-mapping.php:338
-#: assets/admin/insights.js:22
+#: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
 #: src/includes/class-viglet-dumont-mapping.php:343
-#: assets/admin/insights.js:23
+#: assets/admin/insights.js:24
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
@@ -2072,81 +2072,81 @@ msgstr "Insights de busca"
 msgid "Insights"
 msgstr "Insights"
 
-#: assets/admin/insights.js:21
+#: assets/admin/insights.js:22
 msgid "Last 24 hours"
 msgstr "Últimas 24 horas"
 
-#: assets/admin/insights.js:24
+#: assets/admin/insights.js:25
 msgid "All time"
 msgstr "Todo o período"
 
 #. translators: %s: a search visitors made.
-#: assets/admin/insights.js:122
+#: assets/admin/insights.js:190
 #, js-format
 msgid "Write about this: “%s”"
 msgstr "Escrever sobre isto: “%s”"
 
-#: assets/admin/insights.js:129
+#: assets/admin/insights.js:197
 msgid "Write about this"
 msgstr "Escrever sobre isto"
 
-#: assets/admin/insights.js:170
+#: assets/admin/insights.js:238
 msgid "Searches"
 msgstr "Buscas"
 
-#: assets/admin/insights.js:202
+#: assets/admin/insights.js:270
 msgid "What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out."
 msgstr "O que os visitantes buscaram neste site, o que não encontrou nada e o que nunca abriram, a partir das métricas de busca do Turing. Buscas feitas durante a digitação ficam de fora."
 
-#: assets/admin/insights.js:209
+#: assets/admin/insights.js:277
 msgid "Period"
 msgstr "Período"
 
-#: assets/admin/insights.js:233
+#: assets/admin/insights.js:301
 msgid "No searches in this period yet. They appear here once visitors use the site’s search."
 msgstr "Ainda não há buscas neste período. Elas aparecem aqui quando os visitantes usam a busca do site."
 
 #. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
-#: assets/admin/insights.js:244
+#: assets/admin/insights.js:312
 #, js-format
 msgid "%1$s searches, %2$s clicks, %3$s click-through."
 msgstr "%1$s buscas, %2$s cliques, %3$s de taxa de clique."
 
-#: src/includes/class-viglet-dumont-insights.php:117
-#: assets/admin/insights.js:254
+#: src/includes/class-viglet-dumont-insights.php:182
+#: assets/admin/insights.js:323
 msgid "Top searches"
 msgstr "Buscas mais feitas"
 
-#: assets/admin/insights.js:255
+#: assets/admin/insights.js:324
 msgid "No searches in this period."
 msgstr "Nenhuma busca neste período."
 
-#: assets/admin/insights.js:263
+#: assets/admin/insights.js:332
 msgid "Clicks"
 msgstr "Cliques"
 
-#: assets/admin/insights.js:267
+#: assets/admin/insights.js:336
 msgid "Click-through"
 msgstr "Taxa de clique"
 
-#: src/includes/class-viglet-dumont-insights.php:118
-#: assets/admin/insights.js:273
+#: src/includes/class-viglet-dumont-insights.php:183
+#: assets/admin/insights.js:342
 msgid "Searches that found nothing"
 msgstr "Buscas que não encontraram nada"
 
-#: assets/admin/insights.js:277
+#: assets/admin/insights.js:346
 msgid "Every search found something."
 msgstr "Toda busca encontrou algo."
 
-#: assets/admin/insights.js:285
+#: assets/admin/insights.js:354
 msgid "Last searched"
 msgstr "Última busca"
 
-#: assets/admin/insights.js:298
+#: assets/admin/insights.js:367
 msgid "Found, but never opened"
 msgstr "Encontradas, mas nunca abertas"
 
-#: assets/admin/insights.js:302
+#: assets/admin/insights.js:371
 msgid "Every search that found results led to a click."
 msgstr "Toda busca com resultados levou a um clique."
 
@@ -2154,21 +2154,21 @@ msgstr "Toda busca com resultados levou a um clique."
 msgid "Site search this week"
 msgstr "Busca do site nesta semana"
 
-#: src/includes/class-viglet-dumont-insights.php:124
+#: src/includes/class-viglet-dumont-insights.php:189
 msgid "No searches this week yet."
 msgstr "Ainda não há buscas nesta semana."
 
-#: src/includes/class-viglet-dumont-insights.php:140
+#: src/includes/class-viglet-dumont-insights.php:205
 msgid "All search insights"
 msgstr "Todos os insights de busca"
 
 #. translators: %s: a search that found nothing.
-#: assets/admin/insights.js:143
+#: assets/admin/insights.js:211
 #, js-format
 msgid "Add a synonym: “%s”"
 msgstr "Adicionar um sinônimo: “%s”"
 
-#: assets/admin/insights.js:150
+#: assets/admin/insights.js:218
 msgid "Add a synonym"
 msgstr "Adicionar um sinônimo"
 
@@ -2308,10 +2308,34 @@ msgstr "Abaixo"
 msgid "Save boosts"
 msgstr "Salvar impulsos"
 
-#: src/includes/class-viglet-dumont-insights.php:122
+#: src/includes/class-viglet-dumont-insights.php:187
 msgid "Turing is not keeping search metrics, so no new searches are recorded."
 msgstr "O Turing não está guardando métricas de busca, então nenhuma busca nova é registrada."
 
-#: assets/admin/insights.js:222
+#: assets/admin/insights.js:290
 msgid "Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 msgstr "O Turing não está guardando métricas de busca, então nenhuma busca ou clique novo é registrado. O administrador do Turing as ativa com turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
+
+#: src/includes/class-viglet-dumont-insights.php:119
+msgid "There are no searches in this period to summarize."
+msgstr "Não há buscas neste período para resumir."
+
+#: src/includes/class-viglet-dumont-insights.php:154
+msgid "Turing wrote no summary."
+msgstr "O Turing não escreveu um resumo."
+
+#: assets/admin/insights.js:95
+msgid "Summary"
+msgstr "Resumo"
+
+#: assets/admin/insights.js:113
+msgid "Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call."
+msgstr "O modelo de linguagem do Turing lê as buscas deste período e diz o que os visitantes procuraram e o que vale a pena escrever. Cada resumo é uma chamada a um LLM."
+
+#: assets/admin/insights.js:126
+msgid "Write another"
+msgstr "Escrever outro"
+
+#: assets/admin/insights.js:127
+msgid "Summarize this period"
+msgstr "Resumir este período"

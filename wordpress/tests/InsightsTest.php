@@ -208,6 +208,92 @@ final class InsightsTest extends PluginTestCase {
 		$this->assertStringNotContainsString( 'No searches this week yet.', $html );
 	}
 
+	/**
+	 * A period with one top search and one that found nothing, and Turing's summary answer.
+	 *
+	 * @param array $summary The decoded body of `/api/v2/summary`.
+	 */
+	private function period_with_searches( array $summary ): void {
+		Functions\when( 'get_locale' )->justReturn( 'pt_BR' );
+		$this->turing(
+			array(
+				'/api/v2/summary'          => $summary,
+				'/metrics/clicks'          => array(
+					'terms' => array(
+						array(
+							'term'     => 'workshop',
+							'searches' => 40,
+							'clicks'   => 10,
+						),
+					),
+				),
+				'/metrics/failed-searches' => array(
+					'terms' => array(
+						array(
+							'term'     => 'worskhop',
+							'searches' => 7,
+						),
+					),
+				),
+				'/api/sn'                  => array(
+					array(
+						'id'   => 'site-uuid',
+						'name' => 'Sample Site',
+					),
+				),
+			)
+		);
+	}
+
+	public function test_a_summary_is_written_from_the_periods_searches_in_the_sites_language(): void {
+		$this->period_with_searches(
+			array(
+				'success' => true,
+				'content' => "Visitors looked for workshops.\n",
+			)
+		);
+
+		$result = ( new Viglet_Dumont_Insights( $this->settings() ) )->summary( 'this-week' );
+
+		$this->assertSame(
+			array(
+				'summary' => 'Visitors looked for workshops.',
+				'error'   => '',
+			),
+			$result
+		);
+		$sent = array_values( array_filter( $this->requests, static fn ( $r ) => str_contains( $r[0], '/api/v2/summary' ) ) );
+		$this->assertCount( 1, $sent );
+		$this->assertStringNotContainsString( 'regenerate', $sent[0][0], 'the cached summary unless asked again' );
+		$body = json_decode( $sent[0][1]['body'], true );
+		$this->assertStringContainsString( '- workshop: 40 searches, 10 clicks', $body['data'] );
+		$this->assertStringContainsString( "Searches that found nothing:\n- worskhop: 7 searches", $body['data'] );
+		$this->assertStringContainsString( 'pt_BR', $body['systemPrompt'] );
+		$this->assertSame( 'viglet-dumont-insights-' . md5( "pt_BR\n" . $body['data'] ), $body['cacheKey'] );
+	}
+
+	public function test_a_summary_turing_cannot_write_says_why(): void {
+		$this->period_with_searches(
+			array(
+				'success' => false,
+				'error'   => 'No default LLM is configured.',
+			)
+		);
+
+		$result = ( new Viglet_Dumont_Insights( $this->settings() ) )->summary( 'this-week', true );
+
+		$this->assertSame( 'No default LLM is configured.', $result['error'] );
+		$this->assertSame( '', $result['summary'] );
+	}
+
+	public function test_a_period_with_no_searches_asks_no_summary(): void {
+		$this->metrics( true );
+		$result = ( new Viglet_Dumont_Insights( $this->settings() ) )->summary( 'today' );
+
+		$this->assertNotSame( '', $result['error'] );
+		$this->assertCount( 0, array_filter( $this->requests, static fn ( $r ) => str_contains( $r[0], '/api/v2/summary' ) ) );
+	}
+
 	public function test_an_unknown_period_reads_the_last_week(): void {
 		$this->turing(
 			array(

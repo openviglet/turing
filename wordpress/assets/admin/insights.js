@@ -6,6 +6,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import {
+	Button,
 	Card,
 	CardBody,
 	CardHeader,
@@ -61,6 +62,73 @@ function synonymUrl( term ) {
 	return `admin.php?page=viglet-dumont-tuning&synonym=${ encodeURIComponent(
 		term
 	) }`;
+}
+
+/**
+ * The period in a few sentences by Turing's language model, asked for only on a click: each
+ * one is an LLM call. Mounted with a key of the period, so another period starts empty.
+ *
+ * @param {Object} props        The props.
+ * @param {string} props.period The period shown.
+ */
+function Summary( { period } ) {
+	const [ answer, setAnswer ] = useState( null );
+	const [ busy, setBusy ] = useState( false );
+
+	const ask = ( again ) => {
+		setBusy( true );
+		apiFetch( {
+			path: `/viglet-dumont/v1/insights/summary?period=${ period }${
+				again ? '&again=1' : ''
+			}`,
+		} )
+			.then( setAnswer )
+			.catch( ( e ) =>
+				setAnswer( { summary: '', error: e.message || String( e ) } )
+			)
+			.finally( () => setBusy( false ) );
+	};
+
+	return (
+		<Card>
+			<CardHeader>
+				<h2>{ __( 'Summary', 'viglet-dumont' ) }</h2>
+			</CardHeader>
+			<CardBody>
+				{ answer?.error && (
+					<Notice status="error" isDismissible={ false }>
+						{ answer.error }
+					</Notice>
+				) }
+				{ answer?.summary && (
+					<p
+						className="viglet-dumont-insights__summary"
+						style={ { whiteSpace: 'pre-line' } }
+					>
+						{ answer.summary }
+					</p>
+				) }
+				{ ! answer?.summary && (
+					<p className="description">
+						{ __(
+							'Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call.',
+							'viglet-dumont'
+						) }
+					</p>
+				) }
+				<Button
+					variant="secondary"
+					isBusy={ busy }
+					disabled={ busy }
+					onClick={ () => ask( !! answer?.summary ) }
+				>
+					{ answer?.summary
+						? __( 'Write another', 'viglet-dumont' )
+						: __( 'Summarize this period', 'viglet-dumont' ) }
+				</Button>
+			</CardBody>
+		</Card>
+	);
 }
 
 /**
@@ -250,6 +318,7 @@ function Insights() {
 							percent.format( report.ctr )
 						) }
 					</p>
+					<Summary key={ period } period={ period } />
 					<Terms
 						title={ __( 'Top searches', 'viglet-dumont' ) }
 						empty={ __(

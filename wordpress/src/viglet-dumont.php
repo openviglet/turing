@@ -517,6 +517,30 @@ function viglet_dumont_register_rest_routes(): void {
 			),
 		)
 	);
+	// An LLM call, made only when the owner asks for it (D178).
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/insights/summary',
+		array(
+			'methods'             => 'GET',
+			'callback'            => static fn ( WP_REST_Request $request ) => new WP_REST_Response(
+				( new Viglet_Dumont_Insights() )->summary( (string) $request['period'], (bool) $request['again'] ),
+				200
+			),
+			'permission_callback' => $can_manage,
+			'args'                => array(
+				'period' => array(
+					'type'    => 'string',
+					'enum'    => Viglet_Dumont_Insights::PERIODS,
+					'default' => 'this-week',
+				),
+				'again'  => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+			),
+		)
+	);
 	$answer = static fn ( $result ) => is_wp_error( $result )
 		? new WP_REST_Response( array( 'message' => $result->get_error_message() ), 'viglet_dumont_not_ours' === $result->get_error_code() ? 403 : 502 )
 		: new WP_REST_Response( true === $result ? ( new Viglet_Dumont_Tuning() )->all() : $result, 200 );

@@ -63,6 +63,49 @@ test( 'the dashboard shows the week’s searches', async ( { page, axe } ) => {
 	} );
 } );
 
+test( 'a summary is asked for on a click, and another on the next', async ( {
+	page,
+	look,
+} ) => {
+	// The default suite spends no LLM call: the plugin's answer is replayed (the live one is
+	// the `ai` project's, ai/insights.spec.mjs).
+	const asked = [];
+	await page.route(
+		( url ) =>
+			decodeURIComponent( url.href ).includes(
+				'viglet-dumont/v1/insights/summary'
+			),
+		( route ) => {
+			asked.push( decodeURIComponent( route.request().url() ) );
+			return route.fulfill( {
+				json: {
+					summary: `Visitors looked for workshops (${ asked.length }).`,
+					error: '',
+				},
+			} );
+		}
+	);
+	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	const card = page.locator( '.components-card' ).filter( {
+		has: page.getByRole( 'heading', { name: 'Summary' } ),
+	} );
+	await expect( card ).toContainText( 'Each summary is an LLM call.' );
+	expect( asked ).toHaveLength( 0 );
+
+	await card.getByRole( 'button', { name: 'Summarize this period' } ).click();
+	await expect(
+		card.locator( '.viglet-dumont-insights__summary' )
+	).toHaveText( 'Visitors looked for workshops (1).' );
+	await look( 'insights-summary' );
+
+	await card.getByRole( 'button', { name: 'Write another' } ).click();
+	await expect(
+		card.locator( '.viglet-dumont-insights__summary' )
+	).toHaveText( 'Visitors looked for workshops (2).' );
+	expect( asked[ 0 ] ).not.toContain( 'again' );
+	expect( asked[ 1 ] ).toContain( 'again=1' );
+} );
+
 test( 'a period with no searches says so', async ( { page } ) => {
 	await page.route(
 		( url ) =>
