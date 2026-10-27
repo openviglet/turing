@@ -116,6 +116,7 @@ import type {
   TurChatHandoffResponse,
   TurChatFlowSelectResponse,
   TurContentFit,
+  TurPersonaOption,
   FetchSimilarParams,
   TurSimilarResult,
   TurNLFilters,
@@ -1388,6 +1389,20 @@ export async function fetchPersonaContentFit(
     throw emptyBody(`${axios.defaults.baseURL ?? ""}${path}`, "Content-fit response");
   }
   return data;
+}
+
+/**
+ * T1143 — the audience personas the site's content-fit endpoint accepts, ordered
+ * by name. Every id is one {@link fetchPersonaContentFit} accepts; a site with no
+ * agent answers an empty list. No model is called.
+ *
+ * Server endpoint: {@code GET /api/sn/{site}/personas}.
+ *
+ * @since 2026.3.5
+ */
+export async function fetchSitePersonas(site: string): Promise<TurPersonaOption[]> {
+  const { data } = await axios.get<TurPersonaOption[]>(`/sn/${site}/personas`);
+  return data ?? [];
 }
 
 /**

@@ -94,12 +94,12 @@
       "total": 2048
     },
     "baseline": {
-      "measured": "2026-08-24",
-      "total": 102993,
+      "measured": "2026-10-26",
+      "total": 104801,
       "dirs": {
-        "(root)": 2399,
-        "core/": 24531,
-        "hooks/": 69020,
+        "(root)": 2434,
+        "core/": 25628,
+        "hooks/": 69696,
         "ui/": 7043
       }
     }
@@ -146,6 +146,7 @@
         "fetchLlmInstances",
         "fetchLlmVendors",
         "fetchPersonaContentFit",
+        "fetchSitePersonas",
         "fetchRelatedTerms",
         "fetchSearch",
         "fetchSimilar",

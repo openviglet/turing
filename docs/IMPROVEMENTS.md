@@ -31,8 +31,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block AI — Persona as a first-class actionable surface (§XXXII)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2301,36 +2299,6 @@ trigger.
 
 ## CLIV Persona as a first-class actionable surface (§XXXII)
 
-### CLIV.1 No read lists a site's audience personas (T1143)
-
-**Where it happened.** Dumont D171 (the WordPress editor's Assist section) wants "Fits
-the audience?": a content-fit score per audience persona of the site, from the anonymous
-`POST /api/sn/{site}/persona/{personaId}/content-fit` (T634). That endpoint takes a
-persona id, but nothing a site's client can call lists which ids it accepts.
-
-**What came back.** No `/api/sn/{site}/...` read names the site's catalog personas. The
-plugin's key does open `/api/persona` and `/api/ai-agent`, so a client could rebuild the
-answer itself: find the site's GenAI binding, fall back to the global Default AI Agent
-the way `TurDefaultAgentResolver` does, then keep the personas `isUsableAsAudience()`.
-That is Turing's resolution copied into every consumer, drifting the first time it
-changes.
-
-**Workaround used.** None: Dumont D171 waits on this line.
-
-**What it should do.**
-- `GET /api/sn/{site}/personas` (or a field on an existing site read) answering the
-  personas of the site's effective agent that content-fit accepts: id, name, a short
-  description, and whether each is usable as an audience, resolved by the same code the
-  content-fit endpoint uses so the two can never disagree.
-- Anonymous like content-fit, gated by the same site API-key filter, carrying no prompt
-  or private persona fields.
-- A partitioned key (T1133, multisite D153) reaches it and content-fit: both join
-  `TurApiKeyPartitionGuardFilter.ENFORCED`. Neither reads the index; today content-fit
-  answers such a key 403.
-- The JS and Java SDKs expose it beside `fetchPersonaContentFit`.
-- Done when a client lists a site's audience personas and every id it gets is accepted
-  by content-fit.
-
 ## CLV What the SN site manifest cannot declare
 
 ### CLV.1 The genAi block keeps the live agent when none is named (T1146)
@@ -2359,3 +2327,31 @@ saving replaces an agent chosen in the console.
   `agentId` (and no differing `knowledgeBaseMode`).
 - Dumont's plugin then sends `{}` rather than `{"agentId": "default"}` and drops the
   warning (file it in Dumont when this ships).
+
+### CLV.2 Import embeds a site on the Default AI Agent (T1147)
+
+**Where it happened.** Dumont D174, the WordPress plugin's live-LLM suite. The plugin
+turns the site's GenAI on through the manifest, `"genAi": {"agentId": "default"}` (D186,
+T1116). Turing logs `GenAI changed=true` and the site's binding is created with
+`turAIAgent: null`, which `TurSNManifestGenAi.ownAgentId()` defines as "the Default AI
+Agent". The posts are then reindexed and `GET /api/sn/Sample/search?q=research grant`
+finds the seeded post, but `GET /api/sn/Sample/chat?q=When do research grant
+applications close?` answers "The information is not available in the website's
+content."
+
+**Why.** `TurSNImportAPI.sendToGenAi` (and `TurSNBulkImportService`) embed a batch only
+when `TurSNSiteRepositoryAdapter.hasRagEnabledForSiteName` is true, and that reads the
+site's *own* agent: `agent != null && enabled && ragEnabled`. A site on the Default AI
+Agent has none, so nothing is ever written to the vector store. Chat is not gated the
+same way: `TurGenAiContextFactory` resolves the effective agent through
+`TurDefaultAgentResolver.resolveEffectiveAgent`, so it runs, retrieves nothing, and
+answers from an empty context. The GenAI binding the manifest makes is half on.
+
+**Workaround.** None. Dumont D174 waits on this.
+
+**What it should do.**
+- `hasRagEnabledForSiteName` resolves the effective agent the way the chat path does
+  (`TurDefaultAgentResolver.isRagReady(genAi)` already exists), so a site bound to the
+  Default AI Agent embeds on import.
+- A test imports into a site whose binding has no agent of its own, with a RAG-ready
+  default agent, and asserts the documents reach `addDocuments`.

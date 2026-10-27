@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchPersonaContentFit, postSiteFlowSelect } from "../api";
+import { fetchPersonaContentFit, fetchSitePersonas, postSiteFlowSelect } from "../api";
 import { TuringTransportError } from "../errors";
 import type { TuringClient } from "../client";
 import type { TurContentFit } from "../types";
@@ -60,5 +60,22 @@ describe("fetchPersonaContentFit (T635)", () => {
       flow: "Flow",
       personaId: "p1",
     }, { signal: undefined });
+  });
+});
+
+/** T1143 — the audience personas a site's content-fit accepts. */
+describe("fetchSitePersonas (T1143)", () => {
+  it("GETs the site's personas", async () => {
+    const personas = [{ id: "p1", name: "Skeptical Developer", description: "Reads the docs" }];
+    const get = vi.fn().mockResolvedValueOnce(personas);
+    const client = { get } as unknown as TuringClient;
+
+    expect(await fetchSitePersonas(client, "site1")).toEqual(personas);
+    expect(get).toHaveBeenCalledWith("/sn/site1/personas", { signal: undefined });
+  });
+
+  it("answers an empty list for an empty body", async () => {
+    const client = { get: vi.fn().mockResolvedValueOnce(undefined) } as unknown as TuringClient;
+    expect(await fetchSitePersonas(client, "site1")).toEqual([]);
   });
 });

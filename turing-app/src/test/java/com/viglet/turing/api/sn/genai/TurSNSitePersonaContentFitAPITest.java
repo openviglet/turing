@@ -67,7 +67,8 @@ class TurSNSitePersonaContentFitAPITest {
 
     @BeforeEach
     void setUp() {
-        api = new TurSNSitePersonaContentFitAPI(turSNSearchProcess, turDefaultAgentResolver, evaluator);
+        api = new TurSNSitePersonaContentFitAPI(
+                new TurSNSiteAudiencePersonas(turSNSearchProcess, turDefaultAgentResolver), evaluator);
 
         TurPersona audience = persona("p-audience", TurPersonaKind.AUDIENCE);
         TurPersona speakerOnly = persona("p-speaker", TurPersonaKind.SPEAKER);

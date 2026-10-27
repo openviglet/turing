@@ -39,6 +39,7 @@ export {
   postSiteHandoff,
   postSiteFlowSelect,
   fetchPersonaContentFit,
+  fetchSitePersonas,
   postSiteFormSubmit,
   fetchSiteChatState,
   fetchSortOptions,

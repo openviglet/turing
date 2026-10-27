@@ -182,6 +182,9 @@ public class TurSecurityConfigProduction {
                         // T634 — anonymous persona content-fit (LLM-cost surface;
                         // nginx-rate-limited on the demo host).
                         "/api/sn/*/persona/*/content-fit",
+                        // T1143 — the audience personas content-fit accepts, so a
+                        // client can offer them. A catalog read; no model is called.
+                        "/api/sn/*/personas",
                         "/api/sn/*/*/spell-check",
                         // T1118 — the SDK's fetchRelatedTerms runs in the browser
                         // beside search and spell-check, keyless.
@@ -262,7 +265,8 @@ public class TurSecurityConfigProduction {
                         "/api/sn/*/query/**",
                         "/api/sn/*/*/spell-check",
                         "/api/sn/*/*/related-terms",
-                        "/api/sn/*/ai/capabilities"
+                        "/api/sn/*/ai/capabilities",
+                        "/api/sn/*/personas"
         );
 
         /**

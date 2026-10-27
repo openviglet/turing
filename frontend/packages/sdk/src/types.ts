@@ -823,6 +823,8 @@ export interface TurAnswerTrace {
 export interface TurPersonaOption {
   readonly id: string;
   readonly name: string;
+  /** T1143 — the persona's one-line description, as `fetchSitePersonas` returns it. */
+  readonly description?: string | null;
   /**
    * T717 / §XLVI.1 — optional Big Five (OCEAN) personality traits (0–100 each).
    * Present only when the persona has opted in; a consumer may surface them (e.g.

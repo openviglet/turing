@@ -74,11 +74,11 @@
       "total": 1024
     },
     "baseline": {
-      "measured": "2026-10-13",
-      "total": 36007,
+      "measured": "2026-10-26",
+      "total": 37378,
       "entries": {
-        "turing-sdk.js": 19056,
-        "turing-sdk.umd.cjs": 16951
+        "turing-sdk.js": 19766,
+        "turing-sdk.umd.cjs": 17612
       }
     }
   },
@@ -140,6 +140,7 @@
         "fetchLlmInstances",
         "fetchLlmVendors",
         "fetchPersonaContentFit",
+        "fetchSitePersonas",
         "fetchRelatedTerms",
         "fetchSearch",
         "fetchSimilar",

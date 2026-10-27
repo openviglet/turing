@@ -21,6 +21,7 @@ import type {
   TurChatToolCall,
   TurClientToolCall,
   TurContentFit,
+  TurPersonaOption,
   TurIntent,
   TurLlmContextInfo,
   TurLlmInstance,
@@ -1655,6 +1656,24 @@ export async function fetchPersonaContentFit(
 }
 
 /**
+ * T1143 — the audience personas the site's content-fit endpoint accepts, ordered
+ * by name, so a client can offer them (e.g. through `TuringPersonaPicker`). Every
+ * id returned is one {@link fetchPersonaContentFit} accepts: the server reads both
+ * from the same resolution of the site's effective agent. A site with no agent
+ * answers an empty list. No model is called.
+ *
+ * Server endpoint: {@code GET /api/sn/{site}/personas}.
+ */
+export async function fetchSitePersonas(
+  client: TuringClient,
+  site: string,
+  options: TuringCallOptions = {},
+): Promise<TurPersonaOption[]> {
+  const data = await client.get<TurPersonaOption[]>(`/sn/${site}/personas`, { signal: options.signal });
+  return data ?? [];
+}
+
+/**
  * Lists the LLM instances visible to the current session. Secured behind
  * {@code ROLE_ADMIN}/{@code LLM_VIEW} — anonymous callers get 401/403.
  *
@@ -2710,6 +2729,7 @@ export function createTuringApi(client: TuringClient) {
     postSiteHandoff: bind(postSiteHandoff),
     postSiteFlowSelect: bind(postSiteFlowSelect),
     fetchPersonaContentFit: bind(fetchPersonaContentFit),
+    fetchSitePersonas: bind(fetchSitePersonas),
     fetchLlmInstances: bind(fetchLlmInstances),
     fetchLlmContextInfo: bind(fetchLlmContextInfo),
     fetchAgentContextInfo: bind(fetchAgentContextInfo),

@@ -22,14 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.api.exception.TurNotFoundException;
 import com.viglet.turing.api.exception.TurPayloadTooLargeException;
 import com.viglet.turing.api.exception.TurValidationException;
-import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.persona.fit.TurContentFitMisfit;
 import com.viglet.turing.genai.persona.fit.TurContentFitResult;
 import com.viglet.turing.genai.persona.fit.TurPersonaContentFitEvaluator;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.sn.TurSNSearchProcess;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,7 +41,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * <ul>
  *   <li>the persona must belong to the site's <em>effective</em> agent catalog
  *       (resolved exactly as the SN chat does) AND be usable as an audience —
- *       an unknown/speaker-only id is a 404, never an arbitrary persona;</li>
+ *       an unknown/speaker-only id is a 404, never an arbitrary persona. Both
+ *       checks live in {@link TurSNSiteAudiencePersonas}, which also answers
+ *       {@code GET /api/sn/{site}/personas} (T1143);</li>
  *   <li>the submitted text is hard-capped ({@link #MAX_CONTENT_CHARS}) — this is
  *       an LLM-cost/abuse surface, so oversized input is rejected (413) rather
  *       than silently clipped, and the endpoint is nginx-rate-limited on the
@@ -64,15 +63,12 @@ public class TurSNSitePersonaContentFitAPI {
     /** Hard cap on submitted text — matches the evaluator's own clip threshold. */
     static final int MAX_CONTENT_CHARS = 12_000;
 
-    private final TurSNSearchProcess turSNSearchProcess;
-    private final TurDefaultAgentResolver turDefaultAgentResolver;
+    private final TurSNSiteAudiencePersonas audiencePersonas;
     private final TurPersonaContentFitEvaluator evaluator;
 
-    public TurSNSitePersonaContentFitAPI(TurSNSearchProcess turSNSearchProcess,
-            TurDefaultAgentResolver turDefaultAgentResolver,
+    public TurSNSitePersonaContentFitAPI(TurSNSiteAudiencePersonas audiencePersonas,
             TurPersonaContentFitEvaluator evaluator) {
-        this.turSNSearchProcess = turSNSearchProcess;
-        this.turDefaultAgentResolver = turDefaultAgentResolver;
+        this.audiencePersonas = audiencePersonas;
         this.evaluator = evaluator;
     }
 
@@ -90,51 +86,19 @@ public class TurSNSitePersonaContentFitAPI {
                     "content exceeds the " + MAX_CONTENT_CHARS + "-character limit");
         }
 
-        TurAIAgent agent = turSNSearchProcess.getSNSite(siteName)
-                .map(site -> resolveAgent(site.getTurSNSiteGenAi()))
-                .orElseThrow(() -> new TurNotFoundException("Site not found: " + siteName));
+        // A missing genAi binding is not an error on its own: the resolver falls
+        // back to the global Default AI Agent, exactly as SN chat does. Only when
+        // neither exists is this a 404.
+        TurAIAgent agent = audiencePersonas.agent(siteName)
+                .orElseThrow(() -> new TurNotFoundException("No AI agent configured for this site"));
 
-        TurPersona persona = findAudiencePersona(agent, personaId);
+        TurPersona persona = audiencePersonas.find(agent, personaId);
 
         TurContentFitResult result = evaluator.evaluateText(persona, content, null,
                 request.sourceName(), /* regenerate = */ false);
         return new TurSNPersonaContentFitResponse(persona.getId(), persona.getName(),
                 result.fitScore(), result.summary(), result.fits(), result.misfits(),
                 result.llmUsed());
-    }
-
-    /**
-     * Resolves the effective agent for the site. A missing {@code genAi} binding
-     * is <em>not</em> an error on its own: {@link TurDefaultAgentResolver} is
-     * null-safe and falls back to the global <b>Default AI Agent</b> (exactly as
-     * SN chat does), so a search-only demo site with no per-site binding still
-     * works. Only when neither a site agent nor a default agent exists is this a
-     * 404.
-     */
-    private TurAIAgent resolveAgent(TurSNSiteGenAi genAi) {
-        TurAIAgent agent = turDefaultAgentResolver.resolveEffectiveAgent(genAi);
-        if (agent == null) {
-            throw new TurNotFoundException("No AI agent configured for this site");
-        }
-        return agent;
-    }
-
-    /**
-     * Resolves {@code personaId} to a persona in the agent's catalog that is
-     * usable as an audience. Anything else (unknown id, or a speaker-only
-     * persona with no audience facet) is a 404 — the guest can never point the
-     * evaluator at a persona the agent operator did not attach.
-     */
-    private TurPersona findAudiencePersona(TurAIAgent agent, String personaId) {
-        if (agent.getPersonas() == null) {
-            throw new TurNotFoundException("Persona not found");
-        }
-        return agent.getPersonas().stream()
-                .filter(p -> personaId.equals(p.getId()))
-                .filter(TurPersona::isUsableAsAudience)
-                .findFirst()
-                .orElseThrow(() -> new TurNotFoundException(
-                        "Persona not found in this site's catalog"));
     }
 
     /** Guest request body: the text to validate + an optional display name. */

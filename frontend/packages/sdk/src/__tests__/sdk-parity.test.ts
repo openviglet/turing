@@ -69,6 +69,7 @@ const PUBLIC_ENDPOINTS: readonly EndpointContract[] = [
   { method: "POST", path: "/sn/{site}/chat/handoff", fn: "postSiteHandoff" },
   { method: "POST", path: "/sn/{site}/chat/flow-select", fn: "postSiteFlowSelect" },
   { method: "POST", path: "/sn/{site}/persona/{personaId}/content-fit", fn: "fetchPersonaContentFit" }, // T635
+  { method: "GET", path: "/sn/{site}/personas", fn: "fetchSitePersonas" }, // T1143
 
   { method: "POST", path: "/sn/{site}/chat/form-submit", fn: "postSiteFormSubmit" },
   { method: "POST", path: "/sn/{site}/chat/resume", fn: "postSiteChatResume" }, // T401
