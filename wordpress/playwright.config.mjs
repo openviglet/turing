@@ -76,6 +76,9 @@ export default defineConfig( {
 			maxDiffPixels: 50,
 			animations: 'disabled',
 			caret: 'hide',
+			// A result's crumb names the host, port included: kept in the layout, not its text,
+			// so the baselines hold on whatever port the stack runs (WP_PORT).
+			stylePath: './tests/e2e/screenshot.css',
 		},
 	},
 	// Fonts render differently per OS, so each platform keeps its own baselines.
