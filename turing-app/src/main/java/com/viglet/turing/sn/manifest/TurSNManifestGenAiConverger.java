@@ -41,7 +41,9 @@ import lombok.RequiredArgsConstructor;
  * <p>Only what the manifest declares is compared: the site's own agent and,
  * when declared, the knowledge-base mode. Every other GenAI setting (ranking,
  * semantic recall, RAG flags) is the console's, and a converge never touches
- * it. A manifest without a {@code genAi} block leaves the binding alone.
+ * it. A manifest without a {@code genAi} block leaves the binding alone, and a
+ * block without an {@code agentId} keeps the agent the live binding has
+ * (T1146).
  *
  * @author Alexandre Oliveira
  * @since 2026.3.6
@@ -89,11 +91,13 @@ public class TurSNManifestGenAiConverger {
             return false;
         }
         TurSNSiteGenAi target = live != null ? live : new TurSNSiteGenAi();
-        String agentId = genAi.ownAgentId();
-        TurAIAgent agent = agentId == null ? null
-                : turAIAgentRepository.findById(agentId).orElseThrow(() -> new IllegalArgumentException(
-                        "Manifest genAi names agent '" + agentId + "', which does not exist"));
-        target.setTurAIAgent(agent);
+        if (live == null || !genAi.keepsLiveAgent()) {
+            String agentId = genAi.ownAgentId();
+            TurAIAgent agent = agentId == null ? null
+                    : turAIAgentRepository.findById(agentId).orElseThrow(() -> new IllegalArgumentException(
+                            "Manifest genAi names agent '" + agentId + "', which does not exist"));
+            target.setTurAIAgent(agent);
+        }
         if (genAi.knowledgeBaseMode() != null) {
             target.setKnowledgeBaseMode(genAi.knowledgeBaseMode());
         }
@@ -106,7 +110,7 @@ public class TurSNManifestGenAiConverger {
             return false;
         }
         String liveAgentId = live.getTurAIAgent() == null ? null : live.getTurAIAgent().getId();
-        return Objects.equals(liveAgentId, genAi.ownAgentId())
+        return (genAi.keepsLiveAgent() || Objects.equals(liveAgentId, genAi.ownAgentId()))
                 && (genAi.knowledgeBaseMode() == null
                         || genAi.knowledgeBaseMode() == live.getKnowledgeBaseMode());
     }

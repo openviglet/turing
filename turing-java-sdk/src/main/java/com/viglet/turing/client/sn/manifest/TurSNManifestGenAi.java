@@ -20,9 +20,11 @@ package com.viglet.turing.client.sn.manifest;
  * T1116 — the GenAI binding a manifest declares for its site. Declaring one turns
  * the site's GenAI on: the server creates the binding when the site has none.
  *
- * @param agentId           the AI agent the site answers through; {@code null} or
+ * @param agentId           the AI agent the site answers through;
  *                          {@value #DEFAULT_AGENT} answers through the server's
- *                          global Default AI Agent
+ *                          global Default AI Agent; {@code null} keeps the agent
+ *                          the site is already bound to, or the Default AI Agent
+ *                          on a site with no binding (T1146)
  * @param knowledgeBaseMode {@code VECTOR}, {@code VECTORLESS_STRUCTURED} or
  *                          {@code HYBRID}; {@code null} keeps the live mode
  *
@@ -37,6 +39,14 @@ public record TurSNManifestGenAi(String agentId, String knowledgeBaseMode) {
     /** GenAI on, answering through the server's Default AI Agent. */
     public static TurSNManifestGenAi defaultAgent() {
         return new TurSNManifestGenAi(DEFAULT_AGENT, null);
+    }
+
+    /**
+     * GenAI on, keeping whichever agent the site is already bound to (T1146);
+     * a site with no binding gets one on the Default AI Agent.
+     */
+    public static TurSNManifestGenAi keepAgent() {
+        return new TurSNManifestGenAi(null, null);
     }
 
     /** GenAI on, answering through the named agent. */

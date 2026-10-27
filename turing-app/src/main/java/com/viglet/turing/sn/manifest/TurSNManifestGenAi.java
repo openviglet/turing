@@ -28,9 +28,13 @@ import com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode;
  * at all is what turns the site's GenAI on: the binding is created if the site
  * has none.
  *
- * @param agentId           the AI agent the site answers through; {@code null}
- *                          or {@code "default"} binds no agent of its own, so the
- *                          global Default AI Agent answers (T622)
+ * @param agentId           the AI agent the site answers through;
+ *                          {@code "default"} binds no agent of its own, so the
+ *                          global Default AI Agent answers (T622). Omitted
+ *                          ({@code null} or blank) keeps whichever agent the live
+ *                          binding has, and creates a binding on the Default AI
+ *                          Agent only when the site has none (T1146; before it,
+ *                          an omitted id rebound the site like {@code "default"})
  * @param knowledgeBaseMode how the site retrieves; {@code null} keeps the live
  *                          mode, or {@code VECTOR} on a new binding
  *
@@ -41,6 +45,14 @@ public record TurSNManifestGenAi(String agentId, TurSNKnowledgeBaseMode knowledg
 
     /** The {@link #agentId} that means "the global Default AI Agent". */
     public static final String DEFAULT_AGENT = "default";
+
+    /**
+     * Whether the block names no agent at all, so a live binding keeps its
+     * agent (T1146).
+     */
+    public boolean keepsLiveAgent() {
+        return agentId == null || agentId.isBlank();
+    }
 
     /** The agent the site binds as its own, or {@code null} for the Default AI Agent. */
     public String ownAgentId() {

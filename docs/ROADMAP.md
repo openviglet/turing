@@ -18,7 +18,6 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-- 📋 **T1146** (deps: —) **A manifest genAi block cannot turn GenAI on and keep the site's agent; it always rebinds one** — A connector that only wants answers on overwrites the agent an admin chose in the console. → §CLV.1
 - 📋 **T1147** (deps: —) **A site on the Default AI Agent is never embedded on import, so its RAG chat retrieves nothing** — Chat runs through the default agent but the import gate reads only the site's own agent, so answers say the content is not there. → §CLV.2
 
 ## Block BV — The quality gate stops at the package boundary

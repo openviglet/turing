@@ -2345,33 +2345,6 @@ trigger.
 
 ## CLV What the SN site manifest cannot declare
 
-### CLV.1 The genAi block keeps the live agent when none is named (T1146)
-
-**Where it happened.** Dumont D186 (the WordPress plugin) turns a site's GenAI on by
-declaring `"genAi": {"agentId": "default"}` in the manifest it posts to `POST
-/api/sn/manifest`. The site already answered, bound in the console to an agent of its
-own, yet `POST /api/sn/manifest/plan` returned `genAiToChange: true`: applying it would
-rebind the site to the Default AI Agent.
-
-**Why.** `TurSNManifestGenAi.ownAgentId()` reads both `null` and `"default"` as "no
-agent of the site's own", and `TurSNManifestGenAiConverger` writes that onto a live
-binding. So the manifest can say "this agent" or "the Default AI Agent", but not "GenAI
-on, whichever agent the site already has".
-
-**Workaround.** None in code. The plugin warns that saving replaces an agent chosen in
-the console.
-
-**What it should do.**
-- An omitted `agentId` keeps the live binding's agent, and creates the binding with the
-  Default AI Agent only when the site has none; `"default"` keeps meaning "rebind to the
-  Default AI Agent", so a client that wants the old behaviour says so.
-- This changes what an omitted field means, so the manifest's version notes (T386) say
-  it, and the planner's diff shows it.
-- `genAiToChange` is false for a site that already has a binding and a block without
-  `agentId` (and no differing `knowledgeBaseMode`).
-- Dumont's plugin then sends `{}` and drops the warning (file it in Dumont when this
-  ships).
-
 ### CLV.2 Import embeds a site on the Default AI Agent (T1147)
 
 **Where it happened.** Dumont D174, the WordPress plugin's live-LLM suite. The plugin
