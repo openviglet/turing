@@ -51,28 +51,81 @@ class Viglet_Dumont_Trending {
 			return $cached;
 		}
 
-		$report = ( new Viglet_Dumont_Insights( $this->settings ) )->report( 'this-week' );
-		$chips  = array();
+		$report  = ( new Viglet_Dumont_Insights( $this->settings ) )->report( 'this-week' );
+		$popular = array();
 		if ( ! is_wp_error( $report ) ) {
-			$client  = new Viglet_Dumont_API_Client( $this->settings );
-			$indexer = new Viglet_Dumont_Indexer( $this->settings );
 			foreach ( $report['top'] as $term ) {
-				$query = trim( (string) $term['term'] );
-				if ( (int) $term['searches'] < self::MIN_SEARCHES || ! self::presentable( $query ) || in_array( mb_strtolower( $query ), array_map( 'mb_strtolower', $chips ), true ) ) {
-					continue;
-				}
-				$found = $client->search( $query, 1, 1, array( 'fq[]' => array( 'site_key:' . $indexer->site_key() ) ) );
-				if ( ! is_wp_error( $found ) && (int) ( $found['queryContext']['count'] ?? 0 ) > 0 ) {
-					$chips[] = $query;
-				}
-				if ( count( $chips ) >= self::MAX ) {
-					break;
+				if ( (int) $term['searches'] >= self::MIN_SEARCHES ) {
+					$popular[] = (string) $term['term'];
 				}
 			}
+		}
+		$chips = $this->answered( $popular );
+		// A site with no history yet: the admin's own list, held to the same checks.
+		if ( ! $chips ) {
+			$chips = $this->answered( (array) ( $this->settings['trending_fallback'] ?? array() ) );
 		}
 		set_transient( self::CACHE, $chips, HOUR_IN_SECONDS );
 
 		return $chips;
+	}
+
+	/**
+	 * Of these searches, in order, the ones that may be shown and return results now: at most
+	 * self::MAX, each spelling once, none holding a word the settings block.
+	 *
+	 * @param string[] $queries Searches, most wanted first.
+	 * @return string[]
+	 */
+	private function answered( array $queries ): array {
+		$client  = new Viglet_Dumont_API_Client( $this->settings );
+		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$blocked = array_map( 'mb_strtolower', (array) ( $this->settings['trending_block'] ?? array() ) );
+		$chips   = array();
+		foreach ( $queries as $query ) {
+			$query = trim( (string) $query );
+			if ( ! self::presentable( $query ) || in_array( mb_strtolower( $query ), array_map( 'mb_strtolower', $chips ), true ) || self::holds_any( $query, $blocked ) ) {
+				continue;
+			}
+			$found = $client->search( $query, 1, 1, array( 'fq[]' => array( 'site_key:' . $indexer->site_key() ) ) );
+			if ( ! is_wp_error( $found ) && (int) ( $found['queryContext']['count'] ?? 0 ) > 0 ) {
+				$chips[] = $query;
+			}
+			if ( count( $chips ) >= self::MAX ) {
+				break;
+			}
+		}
+
+		return $chips;
+	}
+
+	/**
+	 * Whether a search holds one of these words or phrases, whole, whatever the case.
+	 *
+	 * @param string   $query   A search.
+	 * @param string[] $blocked Lowercase words or phrases.
+	 */
+	private static function holds_any( string $query, array $blocked ): bool {
+		$query = ' ' . mb_strtolower( $query ) . ' ';
+		foreach ( $blocked as $word ) {
+			if ( '' !== $word && preg_match( '/(?<![\p{L}\p{N}])' . preg_quote( $word, '/' ) . '(?![\p{L}\p{N}])/u', $query ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * A textarea's lines as a list: trimmed, plain text, each once, at most twenty.
+	 *
+	 * @param string $text One entry per line.
+	 * @return string[]
+	 */
+	public static function lines( string $text ): array {
+		$lines = array_filter( array_map( static fn ( $line ) => sanitize_text_field( $line ), (array) preg_split( '/\R/', $text ) ) );
+
+		return array_slice( array_values( array_unique( $lines ) ), 0, 20 );
 	}
 
 	/**

@@ -464,6 +464,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<div class="viglet-dumont-card">
 					<div class="viglet-dumont-card__header">
+						<h2><?php esc_html_e( 'Popular Searches', 'viglet-dumont' ); ?></h2>
+						<p><?php esc_html_e( 'The chips a search block shows under its box when "Show popular searches" is on: this week\'s most searched words, each checked to find something.', 'viglet-dumont' ); ?></p>
+					</div>
+					<div class="viglet-dumont-card__body">
+						<div class="viglet-dumont-field">
+							<label for="trending_block"><?php esc_html_e( 'Never show', 'viglet-dumont' ); ?></label>
+							<textarea id="trending_block" rows="3"
+									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[trending_block]"
+									aria-describedby="trending_block_help"><?php echo esc_textarea( implode( "\n", (array) $settings['trending_block'] ) ); ?></textarea>
+							<p class="description" id="trending_block_help"><?php esc_html_e( 'One word or phrase per line. A search holding any of them never becomes a chip.', 'viglet-dumont' ); ?></p>
+						</div>
+						<div class="viglet-dumont-field">
+							<label for="trending_fallback"><?php esc_html_e( 'When there are none yet', 'viglet-dumont' ); ?></label>
+							<textarea id="trending_fallback" rows="3"
+									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[trending_fallback]"
+									aria-describedby="trending_fallback_help"><?php echo esc_textarea( implode( "\n", (array) $settings['trending_fallback'] ) ); ?></textarea>
+							<p class="description" id="trending_fallback_help"><?php esc_html_e( 'One search per line, shown while the site has no popular searches of its own. Each is still checked to find something.', 'viglet-dumont' ); ?></p>
+						</div>
+					</div>
+				</div>
+
+				<div class="viglet-dumont-card">
+					<div class="viglet-dumont-card__header">
 						<h2><?php esc_html_e( 'Generative AI', 'viglet-dumont' ); ?></h2>
 						<p><?php esc_html_e( 'Answers with sources and chat over this site\'s content, through Turing\'s Default AI Agent. Each answer is an LLM call billed to whoever runs Turing\'s AI provider.', 'viglet-dumont' ); ?></p>
 					</div>

@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27T12:19:35+00:00\n"
+"POT-Creation-Date: 2026-10-27T12:33:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -120,7 +120,7 @@ msgid "Source App Identifier"
 msgstr ""
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:511
+#: src/admin/views/settings-page.php:534
 msgid "Test Connection"
 msgstr ""
 
@@ -305,86 +305,110 @@ msgid "The posts Turing finds most like the one being read. Add the Related cont
 msgstr ""
 
 #: src/admin/views/settings-page.php:467
-msgid "Generative AI"
+msgid "Popular Searches"
 msgstr ""
 
 #: src/admin/views/settings-page.php:468
-msgid "Answers with sources and chat over this site's content, through Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Turing's AI provider."
+msgid "The chips a search block shows under its box when \"Show popular searches\" is on: this week's most searched words, each checked to find something."
 msgstr ""
 
-#: src/admin/views/settings-page.php:478
-msgid "Turn on generative AI for this site in Turing"
+#: src/admin/views/settings-page.php:472
+msgid "Never show"
+msgstr ""
+
+#: src/admin/views/settings-page.php:476
+msgid "One word or phrase per line. A search holding any of them never becomes a chip."
 msgstr ""
 
 #: src/admin/views/settings-page.php:479
+msgid "When there are none yet"
+msgstr ""
+
+#: src/admin/views/settings-page.php:483
+msgid "One search per line, shown while the site has no popular searches of its own. Each is still checked to find something."
+msgstr ""
+
+#: src/admin/views/settings-page.php:490
+msgid "Generative AI"
+msgstr ""
+
+#: src/admin/views/settings-page.php:491
+msgid "Answers with sources and chat over this site's content, through Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Turing's AI provider."
+msgstr ""
+
+#: src/admin/views/settings-page.php:501
+msgid "Turn on generative AI for this site in Turing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:502
 msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. It replaces an agent chosen for this site in Turing's console, and turning it off here later leaves Turing's setting as it is."
 msgstr ""
 
-#: src/admin/views/settings-page.php:489
+#: src/admin/views/settings-page.php:512
 msgid "Save Settings"
 msgstr ""
 
-#: src/admin/views/settings-page.php:497
+#: src/admin/views/settings-page.php:520
 msgid "Indexing Actions"
 msgstr ""
 
-#: src/admin/views/settings-page.php:498
+#: src/admin/views/settings-page.php:521
 msgid "Manage your Turing search index."
 msgstr ""
 
-#: src/admin/views/settings-page.php:506
+#: src/admin/views/settings-page.php:529
 msgid "Connection Status"
 msgstr ""
 
-#: src/admin/views/settings-page.php:507
+#: src/admin/views/settings-page.php:530
 msgid "Test the connection to your Turing server."
 msgstr ""
 
-#: src/admin/views/settings-page.php:523
+#: src/admin/views/settings-page.php:546
 msgid "Index All Content"
 msgstr ""
 
-#: src/admin/views/settings-page.php:524
+#: src/admin/views/settings-page.php:547
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr ""
 
-#: src/admin/views/settings-page.php:527
+#: src/admin/views/settings-page.php:550
 msgid "Content to index"
 msgstr ""
 
-#: src/admin/views/settings-page.php:529
+#: src/admin/views/settings-page.php:552
 msgid "All Content"
 msgstr ""
 
-#: src/admin/views/settings-page.php:530
+#: src/admin/views/settings-page.php:553
 msgid "Posts Only"
 msgstr ""
 
-#: src/admin/views/settings-page.php:531
+#: src/admin/views/settings-page.php:554
 msgid "Pages Only"
 msgstr ""
 
-#: src/admin/views/settings-page.php:535
+#: src/admin/views/settings-page.php:558
 msgid "Start Indexing"
 msgstr ""
 
-#: src/admin/views/settings-page.php:554
+#: src/admin/views/settings-page.php:577
 msgid "Delete All Indexed Content"
 msgstr ""
 
-#: src/admin/views/settings-page.php:555
+#: src/admin/views/settings-page.php:578
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr ""
 
-#: src/admin/views/settings-page.php:559
+#: src/admin/views/settings-page.php:582
 msgid "Delete All"
 msgstr ""
 
-#: src/admin/views/settings-page.php:570
+#: src/admin/views/settings-page.php:593
 msgid "Content Overview"
 msgstr ""
 
-#: src/admin/views/settings-page.php:574
+#: src/admin/views/settings-page.php:597
 msgid "Loading stats..."
 msgstr ""
 
@@ -710,39 +734,39 @@ msgstr ""
 msgid "Insights"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:241
+#: src/includes/class-viglet-dumont-admin.php:245
 msgid "Indexing..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:242
+#: src/includes/class-viglet-dumont-admin.php:246
 msgid "Complete!"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:243
+#: src/includes/class-viglet-dumont-admin.php:247
 msgid "Error"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:244
+#: src/includes/class-viglet-dumont-admin.php:248
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:245
+#: src/includes/class-viglet-dumont-admin.php:249
 msgid "Deleting..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:246
+#: src/includes/class-viglet-dumont-admin.php:250
 msgid "All indexed content has been deleted."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:247
+#: src/includes/class-viglet-dumont-admin.php:251
 msgid "Testing connection..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:248
+#: src/includes/class-viglet-dumont-admin.php:252
 msgid "Total"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:266
+#: src/includes/class-viglet-dumont-admin.php:270
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr ""
 

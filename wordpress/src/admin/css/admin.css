@@ -177,6 +177,7 @@
     color: var(--vd-text);
 }
 
+.viglet-dumont-field textarea,
 .viglet-dumont-field input[type="text"],
 .viglet-dumont-field input[type="url"],
 .viglet-dumont-field input[type="password"],

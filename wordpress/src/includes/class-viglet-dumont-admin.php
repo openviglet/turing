@@ -191,6 +191,10 @@ class Viglet_Dumont_Admin {
 		$sanitized['ga_measurement_id']   = Viglet_Dumont_Native_Search::sanitize_measurement_id( (string) ( $input['ga_measurement_id'] ?? '' ) );
 		$sanitized['related_after']       = array_values( array_intersect( (array) ( $input['related_after'] ?? array() ), get_post_types( array( 'public' => true ) ) ) );
 		$sanitized['generative_ai']       = ! empty( $input['generative_ai'] ) ? 1 : 0;
+		$sanitized['trending_block']      = Viglet_Dumont_Trending::lines( (string) ( $input['trending_block'] ?? '' ) );
+		$sanitized['trending_fallback']   = Viglet_Dumont_Trending::lines( (string) ( $input['trending_fallback'] ?? '' ) );
+		// The chips follow the new lists at once, not after the hour they are kept.
+		delete_transient( Viglet_Dumont_Trending::CACHE );
 
 		return Viglet_Dumont_Settings::without_overridden( $sanitized );
 	}

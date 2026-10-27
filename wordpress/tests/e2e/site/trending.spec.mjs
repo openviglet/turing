@@ -1,6 +1,7 @@
 // Popular searches under the box (D202): the week's searches that find something become chips,
 // one that finds nothing never does, and a chip searches for itself. The page is made here and
 // removed again, so no other spec's screenshots see it in the theme's menu.
+import { authFile } from '../../../playwright.config.mjs';
 import { wp } from '../global-setup.mjs';
 import { expect, test } from '../fixtures.mjs';
 
@@ -57,4 +58,38 @@ test( 'popular searches that find something become chips, and a chip searches fo
 	).toHaveText( /Seminar on/ );
 	// Once a search is on the page, the chips step aside.
 	await expect( chips ).toBeHidden();
+} );
+
+test.describe( 'as the site owner', () => {
+	test.use( { storageState: authFile } );
+
+	test( 'a word blocked in Settings never shows as a chip', async ( {
+		page,
+	} ) => {
+		const settings = '/wp-admin/admin.php?page=viglet-dumont';
+		const save = async ( words ) => {
+			await page.goto( settings );
+			await page.click( '.viglet-dumont-tab[data-tab="search"]' );
+			await page.getByLabel( 'Never show' ).fill( words );
+			await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+			await expect( page.getByLabel( 'Never show' ) ).toHaveValue(
+				words
+			);
+		};
+		try {
+			await save( 'Seminar' );
+			await page.goto( `/?page_id=${ pageId }` );
+			const chips = page.getByRole( 'navigation', {
+				name: 'Popular searches',
+			} );
+			await expect(
+				chips.getByRole( 'link', { name: 'workshop' } )
+			).toBeVisible();
+			await expect(
+				chips.getByRole( 'link', { name: 'seminar' } )
+			).toHaveCount( 0 );
+		} finally {
+			await save( '' );
+		}
+	} );
 } );

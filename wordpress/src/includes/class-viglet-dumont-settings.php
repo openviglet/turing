@@ -71,6 +71,9 @@ class Viglet_Dumont_Settings {
 		'ga_measurement_id'   => '',
 		// The post types that get the Related content block after their content (D177).
 		'related_after'       => array(),
+		// Popular-search chips (D202): words never shown, and chips for a site with no history.
+		'trending_block'      => array(),
+		'trending_fallback'   => array(),
 		// Opt-in: the manifest turns the site's generative AI on, which spends the owner's LLM budget.
 		'generative_ai'       => 0,
 	);

@@ -122,7 +122,7 @@ msgid "Source App Identifier"
 msgstr "Identificador da aplicação de origem"
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:511
+#: src/admin/views/settings-page.php:534
 msgid "Test Connection"
 msgstr "Testar conexão"
 
@@ -246,67 +246,67 @@ msgstr "Com a página do tema, o Turing ordena os resultados e o tema os mostra 
 msgid "Results Per Page"
 msgstr "Resultados por página"
 
-#: src/admin/views/settings-page.php:489
+#: src/admin/views/settings-page.php:512
 msgid "Save Settings"
 msgstr "Salvar configurações"
 
-#: src/admin/views/settings-page.php:497
+#: src/admin/views/settings-page.php:520
 msgid "Indexing Actions"
 msgstr "Ações de indexação"
 
-#: src/admin/views/settings-page.php:498
+#: src/admin/views/settings-page.php:521
 msgid "Manage your Turing search index."
 msgstr "Gerencie o seu índice de busca no Turing."
 
-#: src/admin/views/settings-page.php:506
+#: src/admin/views/settings-page.php:529
 msgid "Connection Status"
 msgstr "Status da conexão"
 
-#: src/admin/views/settings-page.php:507
+#: src/admin/views/settings-page.php:530
 msgid "Test the connection to your Turing server."
 msgstr "Teste a conexão com o seu servidor Turing."
 
-#: src/admin/views/settings-page.php:523
+#: src/admin/views/settings-page.php:546
 msgid "Index All Content"
 msgstr "Indexar todo o conteúdo"
 
-#: src/admin/views/settings-page.php:524
+#: src/admin/views/settings-page.php:547
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
 
-#: src/admin/views/settings-page.php:529
+#: src/admin/views/settings-page.php:552
 msgid "All Content"
 msgstr "Todo o conteúdo"
 
-#: src/admin/views/settings-page.php:530
+#: src/admin/views/settings-page.php:553
 msgid "Posts Only"
 msgstr "Só posts"
 
-#: src/admin/views/settings-page.php:531
+#: src/admin/views/settings-page.php:554
 msgid "Pages Only"
 msgstr "Só páginas"
 
-#: src/admin/views/settings-page.php:535
+#: src/admin/views/settings-page.php:558
 msgid "Start Indexing"
 msgstr "Iniciar indexação"
 
-#: src/admin/views/settings-page.php:554
+#: src/admin/views/settings-page.php:577
 msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
-#: src/admin/views/settings-page.php:555
+#: src/admin/views/settings-page.php:578
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
-#: src/admin/views/settings-page.php:559
+#: src/admin/views/settings-page.php:582
 msgid "Delete All"
 msgstr "Excluir tudo"
 
-#: src/admin/views/settings-page.php:570
+#: src/admin/views/settings-page.php:593
 msgid "Content Overview"
 msgstr "Visão geral do conteúdo"
 
-#: src/admin/views/settings-page.php:574
+#: src/admin/views/settings-page.php:597
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
@@ -384,39 +384,39 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:241
+#: src/includes/class-viglet-dumont-admin.php:245
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:242
+#: src/includes/class-viglet-dumont-admin.php:246
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:243
+#: src/includes/class-viglet-dumont-admin.php:247
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:244
+#: src/includes/class-viglet-dumont-admin.php:248
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:245
+#: src/includes/class-viglet-dumont-admin.php:249
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:246
+#: src/includes/class-viglet-dumont-admin.php:250
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:247
+#: src/includes/class-viglet-dumont-admin.php:251
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:248
+#: src/includes/class-viglet-dumont-admin.php:252
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:266
+#: src/includes/class-viglet-dumont-admin.php:270
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -1161,7 +1161,7 @@ msgstr "facetas"
 msgid "Suggestions"
 msgstr "Sugestões"
 
-#: src/admin/views/settings-page.php:527
+#: src/admin/views/settings-page.php:550
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
@@ -2236,19 +2236,19 @@ msgctxt "block keyword"
 msgid "shop"
 msgstr "loja"
 
-#: src/admin/views/settings-page.php:467
+#: src/admin/views/settings-page.php:490
 msgid "Generative AI"
 msgstr "IA generativa"
 
-#: src/admin/views/settings-page.php:468
+#: src/admin/views/settings-page.php:491
 msgid "Answers with sources and chat over this site's content, through Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Turing's AI provider."
 msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de IA Padrão do Turing. Cada resposta é uma chamada a um LLM cobrada de quem opera o provedor de IA do Turing."
 
-#: src/admin/views/settings-page.php:478
+#: src/admin/views/settings-page.php:501
 msgid "Turn on generative AI for this site in Turing"
 msgstr "Ativar a IA generativa deste site no Turing"
 
-#: src/admin/views/settings-page.php:479
+#: src/admin/views/settings-page.php:502
 msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. It replaces an agent chosen for this site in Turing's console, and turning it off here later leaves Turing's setting as it is."
 msgstr "Enviado com os campos: na próxima indexação, ou ao salvar a tela Campos. Substitui um agente escolhido para este site no console do Turing, e desativar aqui depois mantém a configuração do Turing como está."
 
@@ -2448,3 +2448,27 @@ msgstr "Mostrar as buscas populares sob a caixa"
 #: src/admin/js/search-block-editor.js:160
 msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
 msgstr "Até oito das palavras mais buscadas da semana, cada uma conferida para encontrar algo, antes que o visitante digite."
+
+#: src/admin/views/settings-page.php:467
+msgid "Popular Searches"
+msgstr "Buscas populares"
+
+#: src/admin/views/settings-page.php:468
+msgid "The chips a search block shows under its box when \"Show popular searches\" is on: this week's most searched words, each checked to find something."
+msgstr "Os chips que um bloco de busca mostra sob a caixa quando \"Mostrar as buscas populares\" está ativo: as palavras mais buscadas da semana, cada uma conferida para encontrar algo."
+
+#: src/admin/views/settings-page.php:472
+msgid "Never show"
+msgstr "Nunca mostrar"
+
+#: src/admin/views/settings-page.php:476
+msgid "One word or phrase per line. A search holding any of them never becomes a chip."
+msgstr "Uma palavra ou frase por linha. Uma busca que contenha alguma delas nunca vira chip."
+
+#: src/admin/views/settings-page.php:479
+msgid "When there are none yet"
+msgstr "Enquanto não houver nenhuma"
+
+#: src/admin/views/settings-page.php:483
+msgid "One search per line, shown while the site has no popular searches of its own. Each is still checked to find something."
+msgstr "Uma busca por linha, mostrada enquanto o site não tem buscas populares próprias. Cada uma ainda é conferida para encontrar algo."
