@@ -1821,7 +1821,8 @@ export function fetchLlmVendors(): Promise<TurLlmVendor[]> {
 
 /**
  * T405 — generates (or returns a cached) LLM summary for arbitrary data
- * ({@code POST /api/v2/summary}). {@code regenerate} bypasses the cache.
+ * ({@code POST /api/v2/summary}). {@code regenerate} bypasses the cache;
+ * {@code site} (T1150) is the SN site name the call's spend is recorded against.
  *
  * @since 2026.3.4
  */
@@ -1830,6 +1831,7 @@ export async function postSummary(params: {
   readonly data: string;
   readonly systemPrompt?: string;
   readonly regenerate?: boolean;
+  readonly site?: string;
 }): Promise<TurSummaryResult> {
   const { data } = await axios.post<TurSummaryResult>(
     `/v2/summary`,
@@ -1837,6 +1839,7 @@ export async function postSummary(params: {
       cacheKey: params.cacheKey,
       data: params.data,
       systemPrompt: params.systemPrompt,
+      site: params.site,
     },
     params.regenerate ? { params: { regenerate: true } } : undefined,
   );

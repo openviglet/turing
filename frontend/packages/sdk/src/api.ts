@@ -2287,7 +2287,8 @@ export function fetchLlmVendors(
 
 /**
  * T405 — generates (or returns a cached) LLM summary for arbitrary data
- * ({@code POST /api/v2/summary}). {@code regenerate} bypasses the cache.
+ * ({@code POST /api/v2/summary}). {@code regenerate} bypasses the cache;
+ * {@code site} (T1150) is the SN site name the call's spend is recorded against.
  */
 export async function postSummary(
   client: TuringClient,
@@ -2296,6 +2297,7 @@ export async function postSummary(
     readonly data: string;
     readonly systemPrompt?: string;
     readonly regenerate?: boolean;
+    readonly site?: string;
   },
   options: TuringCallOptions = {},
 ): Promise<TurSummaryResult> {
@@ -2304,6 +2306,7 @@ export async function postSummary(
     cacheKey: params.cacheKey,
     data: params.data,
     systemPrompt: params.systemPrompt,
+    site: params.site,
   }, { signal: options.signal });
   return data ?? { success: false, error: "empty response", content: "", canRegenerate: false };
 }

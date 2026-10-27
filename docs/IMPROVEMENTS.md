@@ -2049,29 +2049,6 @@ What keeps them shipped is `frontend/scripts/search-contract-rules.mjs`: the con
 named rules, each paired with the surfaces it is checked on, run from the app suite, the
 SDK suite and the workspace scripts suite.
 
-### LXX.14 The summary endpoint records its spend against a site (T1150)
-
-**Where it happened.** Dumont D174/D178, the WordPress plugin's live-LLM suite. It reads
-`GET /api/v2/llm/cost/summary?site=Sample` before and after each run and fails over a
-token budget. The Search insights summary and the editor's excerpt draft both call `POST
-/api/v2/summary` with `{cacheKey, data, systemPrompt}`. A run that made one such call
-printed "0 tokens, 0 calls", while Turing's log recorded `total=923` with no site.
-
-**Why.** `TurSummaryAPI` takes no site, so `TurLlmSummaryService` records the usage
-unattributed, and the per-site cost summary cannot count it.
-
-**Workaround.** None; the plugin's AI suite under-reports its spend.
-
-**What it should do.**
-- `POST /api/v2/summary` accepts an optional `site` (its name, as `cost/summary?site=`
-  and `recordUsage` use) and records the usage against it, as SN chat and answer do.
-- The site is checked, not trusted: a caller may name only a site its credential reaches
-  (a site-scoped or partitioned key, its own site), or one key could bill another site's
-  ledger and budget. An unknown or unreachable site is a 400/403, never a silent drop.
-- A cache hit spends nothing and records nothing.
-- `cost/summary?site=` then counts it; the SDKs' summary call gains the field.
-- Dumont's plugin passes its site (file it in Dumont when this ships).
-
 ## XXXVII Security hardening (post-audit)
 
 _Fully shipped — see [CHANGELOG.md](CHANGELOG.md) → Block AN and `git log`._

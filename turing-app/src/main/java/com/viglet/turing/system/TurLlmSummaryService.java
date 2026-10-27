@@ -92,6 +92,16 @@ public class TurLlmSummaryService {
      */
     public SummaryResult generate(String cacheKey, String data, String systemPrompt,
             boolean regenerate, String llmInstanceIdOverride) {
+        return generate(cacheKey, data, systemPrompt, regenerate, llmInstanceIdOverride, null);
+    }
+
+    /**
+     * T1150 — as above, recording the call's spend against the Semantic
+     * Navigation site {@code siteName} ({@code null} for none), so the site's
+     * cost summary and budget count it. A cache hit spends and records nothing.
+     */
+    public SummaryResult generate(String cacheKey, String data, String systemPrompt,
+            boolean regenerate, String llmInstanceIdOverride, String siteName) {
         String llmId = resolveUsableLlmId(llmInstanceIdOverride);
         if (!StringUtils.hasText(llmId)) {
             return new SummaryResult(false, "No default LLM configured in Global Settings.", null, false);
@@ -125,7 +135,7 @@ public class TurLlmSummaryService {
             var response = chatModel.call(prompt);
 
             tokenUsageService.recordUsage(llmInstance, response, resolveUsername(),
-                    null, com.viglet.turing.observability.TurMeterNames.STAGE_CHAT_BACKGROUND);
+                    null, com.viglet.turing.observability.TurMeterNames.STAGE_CHAT_BACKGROUND, null, siteName);
 
             String content = response.getResult().getOutput().getText();
 

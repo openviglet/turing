@@ -1367,6 +1367,7 @@
 - **T1144** — A call to a model with no price row books costUsd null instead of $0 (column now nullable), and the cost summary reports unpricedRequests; zero-priced local models still book 0.
 - **T1148** — Failed-search and last-seen window reports break count ties by the latest search, partitioned or not, so a new one-off gap shows first among equals.
 - **T1149** — The failed-searches, content-gaps and clicks reports carry metricsEnabled in their body, and the vanilla SDK's report types have it, so an empty report no longer reads as a quiet site.
+- **T1150** — POST /api/v2/summary takes an optional site and records the call's spend against it, refusing an unknown name; cost/summary?site= counts it and both SDKs' postSummary take site.
 
 ## Block BJ — Configurable, per-language NL ranking lexicon (Lucene analysis)
 

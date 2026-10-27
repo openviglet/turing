@@ -12,8 +12,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1150** (deps: —) **Summary calls are spent outside any site, so a site's cost summary and budget never count them** — The generic summary endpoint takes no site, so connectors that ask for summaries under-report what a site spends. → §LXX.14
-
 ## Block CF — What the SN site manifest cannot declare
 
 - 📋 **T1151** (deps: —) **A site whose content was indexed before GenAI was on reads RAG-ready while it holds no vectors** — Capabilities say vector search is available and chat answers that the content is missing, with nothing pointing at the reindex it needs. → §CLV.3
