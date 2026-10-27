@@ -2234,27 +2234,27 @@ msgstr "loja"
 
 #: src/admin/views/settings-page.php:467
 msgid "Generative AI"
-msgstr ""
+msgstr "IA generativa"
 
 #: src/admin/views/settings-page.php:468
 msgid "Answers with sources and chat over this site's content, through Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Turing's AI provider."
-msgstr ""
+msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de IA Padrão do Turing. Cada resposta é uma chamada a um LLM cobrada de quem opera o provedor de IA do Turing."
 
 #: src/admin/views/settings-page.php:478
 msgid "Turn on generative AI for this site in Turing"
-msgstr ""
+msgstr "Ativar a IA generativa deste site no Turing"
 
 #: src/admin/views/settings-page.php:479
 msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. It replaces an agent chosen for this site in Turing's console, and turning it off here later leaves Turing's setting as it is."
-msgstr ""
+msgstr "Enviado com os campos: na próxima indexação, ou ao salvar a tela Campos. Substitui um agente escolhido para este site no console do Turing, e desativar aqui depois mantém a configuração do Turing como está."
 
 #: src/viglet-dumont.php:103
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
-msgstr ""
+msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
 #: assets/admin/mapping.js:505
 msgid "Saving also sets generative AI for this site in Turing: on, answering through its Default AI Agent, in place of any agent chosen in Turing's console."
-msgstr ""
+msgstr "Salvar também ativa a IA generativa deste site no Turing, respondendo pelo Agente de IA Padrão, no lugar de qualquer agente escolhido no console do Turing."
 
 #: assets/admin/tuning.js:561
 msgid "Boosts"
