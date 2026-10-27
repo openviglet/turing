@@ -17,7 +17,7 @@ export default async function aiTeardown() {
 	const ids = Object.values( posts || {} ).map( String );
 	if ( ids.length ) {
 		wp( [ 'post', 'delete', ...ids, '--force' ] );
-		wp( [ 'dumont', 'queue', 'run' ] );
+		drainQueue();
 	}
 
 	if ( ! before ) {
@@ -38,4 +38,33 @@ export default async function aiTeardown() {
 	if ( over.length ) {
 		throw new Error( `The live-LLM run spent ${ over.join( ' and ' ) }.` );
 	}
+}
+
+/**
+ * Send the queued deletions now. The cron container's worker may hold the queue's lock, and
+ * `queue run` then exits 1 ("Another worker is sending the queue"); that worker is sending
+ * the same jobs, so wait for the queue to empty rather than fail a green run.
+ */
+function drainQueue() {
+	for ( let tries = 0; tries < 30; tries++ ) {
+		try {
+			wp( [ 'dumont', 'queue', 'run' ] );
+			return;
+		} catch ( error ) {
+			if (
+				! /Another worker/.test(
+					String( error.stderr || error.stdout || error )
+				)
+			) {
+				throw error;
+			}
+		}
+		Atomics.wait(
+			new Int32Array( new SharedArrayBuffer( 4 ) ),
+			0,
+			0,
+			2000
+		);
+	}
+	throw new Error( 'The queue stayed locked for a minute.' );
 }
