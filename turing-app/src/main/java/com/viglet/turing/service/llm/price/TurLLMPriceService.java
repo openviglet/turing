@@ -175,6 +175,31 @@ public class TurLLMPriceService {
         return written;
     }
 
+    /**
+     * T1144 — deletes the {@link TurLLMPriceSource#CATALOG} rows keyed by a catalog
+     * slug ({@code openai}) rather than a vendor id ({@code OPENAI}). The reconciler
+     * wrote those before it mapped slugs to vendors, and no call was ever priced by
+     * them. The match is exact; {@code MANUAL} rows are never touched.
+     *
+     * @param slugs catalog slugs that are not also a vendor id
+     * @return count of rows deleted
+     */
+    @CacheEvict(value = PRICE_CACHE, allEntries = true)
+    public int dropCatalogRowsKeyedBy(Collection<String> slugs) {
+        if (slugs == null || slugs.isEmpty()) {
+            return 0;
+        }
+        List<TurLLMPrice> stale = priceRepository.findBySource(TurLLMPriceSource.CATALOG).stream()
+                .filter(p -> slugs.contains(p.getVendorId()))
+                .toList();
+        if (!stale.isEmpty()) {
+            priceRepository.deleteAll(stale);
+            log.info("Dropped {} catalog price row(s) keyed by a catalog slug instead of a vendor id",
+                    stale.size());
+        }
+        return stale.size();
+    }
+
     private boolean reconcileOne(CatalogPrice candidate) {
         if (!StringUtils.hasText(candidate.vendorId()) || !StringUtils.hasText(candidate.modelName())) {
             return false;

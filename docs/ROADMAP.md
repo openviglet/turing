@@ -12,7 +12,7 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1144** (deps: —) **Catalog prices are keyed by plugin slug (openai) but looked up by vendor id (OPENAI), so every call costs $0** — T777 already writes gpt-4o-mini's catalog price; the key mismatch hides it from every instance, and an unpriced model still reads $0 rather than unknown. → §LXX.10
+- ⏳ **T1144** (deps: —) **Catalog prices are keyed by plugin slug (openai) but looked up by vendor id (OPENAI), so every call costs $0** — An unpriced call still books $0: make costUsd nullable per entry and count unpriced calls in the cost summary. → §LXX.10
 
 ## Block CF — What the SN site manifest cannot declare
 
@@ -41,6 +41,12 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
+
+## Done when — T1144
+
+- **A call to a model with no price row is booked as unpriced, not $0** The entry's
+  costUsd reads null and /api/v2/llm/cost/summary counts the unpriced calls, while a
+  zero-priced local model still books 0.
 
 ## Non-goals (do NOT add as tasks)
 

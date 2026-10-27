@@ -10,6 +10,7 @@
 package com.viglet.turing.service.llm.price;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
@@ -32,6 +33,8 @@ import com.viglet.turing.genai.provider.llm.TurLlmModelKind;
 import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata;
 import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata.TurLlmModelPricing;
 import com.viglet.turing.genai.provider.llm.TurLlmModelOption;
+import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
 import com.viglet.turing.service.llm.price.TurLLMPriceService.CatalogPrice;
 
 /**
@@ -52,16 +55,63 @@ class TurLLMPriceCatalogReconcilerTest {
     @Mock
     private TurLLMPriceService priceService;
 
+    @Mock
+    private TurLLMVendorRepository vendorRepository;
+
     private static TurLlmModelOption priced(String id, TurLlmModelPricing pricing) {
         TurLlmModelMetadata metadata = new TurLlmModelMetadata(
                 null, null, null, null, null, pricing, null, null, null, null, null, null, null, null);
         return new TurLlmModelOption(id, id, TurLlmModelKind.CHAT, metadata);
     }
 
+    private static TurLLMVendor vendor(String id, String plugin) {
+        TurLLMVendor vendor = new TurLLMVendor();
+        vendor.setId(id);
+        vendor.setPlugin(plugin);
+        return vendor;
+    }
+
     private TurLLMPriceCatalogReconciler enabled() {
-        TurLLMPriceCatalogReconciler reconciler = new TurLLMPriceCatalogReconciler(modelCatalog, priceService);
+        // The vendors seeded at boot: the catalog slug is the plugin, never the id.
+        lenient().when(vendorRepository.findAll()).thenReturn(List.of(vendor("OPENAI", "openai"),
+                vendor("GEMINI_OPENAI", "gemini-openai"), vendor("ANTHROPIC", "anthropic")));
+        TurLLMPriceCatalogReconciler reconciler =
+                new TurLLMPriceCatalogReconciler(modelCatalog, priceService, vendorRepository);
         ReflectionTestUtils.setField(reconciler, "enabled", true);
         return reconciler;
+    }
+
+    @Test
+    void keysEachPriceByTheVendorIdACallIsPricedWith() {
+        TurLlmModelOption mini = priced("gpt-4o-mini",
+                new TurLlmModelPricing(0.15, 0.6, "USD", true, "litellm", "2026-07-20"));
+        TurLlmModelOption flash = priced("gemini-2.5-flash",
+                new TurLlmModelPricing(0.3, 2.5, "USD", true, "litellm", "2026-07-20"));
+        when(modelCatalog.allModels()).thenReturn(Map.of("openai", List.of(mini),
+                "gemini-openai", List.of(flash), "no-such-vendor", List.of(mini)));
+        when(priceService.reconcileCatalogPrices(anyCollection())).thenReturn(2);
+
+        enabled().syncPricesFromCatalog();
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Collection<CatalogPrice>> captor = ArgumentCaptor.forClass(Collection.class);
+        verify(priceService).reconcileCatalogPrices(captor.capture());
+        // A slug no vendor carries is not written: no call could be priced by it.
+        assertThat(captor.getValue()).extracting(CatalogPrice::vendorId, CatalogPrice::modelName)
+                .containsExactlyInAnyOrder(tuple("OPENAI", "gpt-4o-mini"),
+                        tuple("GEMINI_OPENAI", "gemini-2.5-flash"));
+    }
+
+    @Test
+    void dropsTheRowsTheSlugKeyWroteBeforeReconciling() {
+        when(modelCatalog.allModels()).thenReturn(Map.of());
+
+        enabled().syncPricesFromCatalog();
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Collection<String>> captor = ArgumentCaptor.forClass(Collection.class);
+        verify(priceService).dropCatalogRowsKeyedBy(captor.capture());
+        assertThat(captor.getValue()).containsExactlyInAnyOrder("openai", "gemini-openai", "anthropic");
     }
 
     @Test
@@ -81,7 +131,7 @@ class TurLLMPriceCatalogReconcilerTest {
         verify(priceService).reconcileCatalogPrices(captor.capture());
         // Only the priced chat model — the embedding model has no pricing metadata.
         assertThat(captor.getValue()).singleElement().satisfies(c -> {
-            assertThat(c.vendorId()).isEqualTo("openai");
+            assertThat(c.vendorId()).isEqualTo("OPENAI");
             assertThat(c.modelName()).isEqualTo("gpt-4o");
             assertThat(c.inputPerMillion()).isEqualTo(2.5);
             assertThat(c.outputPerMillion()).isEqualTo(10.0);
@@ -112,7 +162,7 @@ class TurLLMPriceCatalogReconcilerTest {
     @Test
     void syncIsNoOpWhenDisabled() {
         // enabled defaults to false without the @Value injection.
-        new TurLLMPriceCatalogReconciler(modelCatalog, priceService).syncPricesFromCatalog();
+        new TurLLMPriceCatalogReconciler(modelCatalog, priceService, vendorRepository).syncPricesFromCatalog();
         verify(priceService, never()).reconcileCatalogPrices(anyCollection());
     }
 

@@ -10,15 +10,23 @@
 package com.viglet.turing.service.llm.price;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.viglet.turing.genai.provider.llm.TurLlmModelCatalog;
 import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata;
 import com.viglet.turing.genai.provider.llm.TurLlmModelOption;
+import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
 import com.viglet.turing.service.llm.price.TurLLMPriceService.CatalogPrice;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,13 +55,16 @@ public class TurLLMPriceCatalogReconciler {
 
     private final TurLlmModelCatalog modelCatalog;
     private final TurLLMPriceService priceService;
+    private final TurLLMVendorRepository vendorRepository;
 
     @Value("${turing.model-catalog.price-sync.enabled:true}")
     private boolean enabled;
 
-    public TurLLMPriceCatalogReconciler(TurLlmModelCatalog modelCatalog, TurLLMPriceService priceService) {
+    public TurLLMPriceCatalogReconciler(TurLlmModelCatalog modelCatalog, TurLLMPriceService priceService,
+            TurLLMVendorRepository vendorRepository) {
         this.modelCatalog = modelCatalog;
         this.priceService = priceService;
+        this.vendorRepository = vendorRepository;
     }
 
     /**
@@ -71,7 +82,16 @@ public class TurLLMPriceCatalogReconciler {
             return;
         }
         try {
-            List<CatalogPrice> candidates = collectPricedModels();
+            Map<String, List<String>> vendorsBySlug = vendorsBySlug();
+            // T1144 — before the rows were keyed by vendor id, they were keyed by the
+            // catalog's slug, which no lookup ever matches. Drop those first, so a
+            // case-insensitive collation cannot hand the old row back as "existing".
+            Set<String> vendorIds = new HashSet<>();
+            vendorsBySlug.values().forEach(vendorIds::addAll);
+            Set<String> slugsOnly = new HashSet<>(vendorsBySlug.keySet());
+            slugsOnly.removeAll(vendorIds);
+            priceService.dropCatalogRowsKeyedBy(slugsOnly);
+            List<CatalogPrice> candidates = collectPricedModels(vendorsBySlug);
             if (candidates.isEmpty()) {
                 return;
             }
@@ -85,14 +105,38 @@ public class TurLLMPriceCatalogReconciler {
         }
     }
 
-    /** Flattens the catalog to the priced models the reconciler cares about. */
-    private List<CatalogPrice> collectPricedModels() {
+    /**
+     * T1144 — the catalog is keyed by plugin slug ({@code openai}), while a call is
+     * priced by the instance's vendor id ({@code OPENAI}). This maps each slug to
+     * the vendors whose plugin it is, resolved the way model discovery resolves it
+     * (the vendor's plugin, else its id, lower-cased). Two vendors may share one.
+     */
+    private Map<String, List<String>> vendorsBySlug() {
+        Map<String, List<String>> bySlug = new HashMap<>();
+        for (TurLLMVendor vendor : vendorRepository.findAll()) {
+            String plugin = StringUtils.hasText(vendor.getPlugin()) ? vendor.getPlugin() : vendor.getId();
+            if (StringUtils.hasText(plugin) && StringUtils.hasText(vendor.getId())) {
+                bySlug.computeIfAbsent(plugin.toLowerCase(Locale.ROOT), k -> new ArrayList<>()).add(vendor.getId());
+            }
+        }
+        return bySlug;
+    }
+
+    /**
+     * Flattens the catalog to the priced models the reconciler cares about, one
+     * candidate per vendor id. A slug no vendor carries is skipped: nothing could
+     * be priced with it.
+     */
+    private List<CatalogPrice> collectPricedModels(Map<String, List<String>> vendorsBySlug) {
         List<CatalogPrice> candidates = new ArrayList<>();
-        modelCatalog.allModels().forEach((vendor, options) -> {
-            for (TurLlmModelOption option : options) {
-                CatalogPrice candidate = toCandidate(vendor, option);
-                if (candidate != null) {
-                    candidates.add(candidate);
+        modelCatalog.allModels().forEach((slug, options) -> {
+            List<String> vendorIds = vendorsBySlug.getOrDefault(slug.toLowerCase(Locale.ROOT), List.of());
+            for (String vendorId : vendorIds) {
+                for (TurLlmModelOption option : options) {
+                    CatalogPrice candidate = toCandidate(vendorId, option);
+                    if (candidate != null) {
+                        candidates.add(candidate);
+                    }
                 }
             }
         });

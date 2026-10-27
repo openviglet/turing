@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.viglet.turing.persistence.model.llm.TurLLMPrice;
+import com.viglet.turing.persistence.model.llm.TurLLMPriceSource;
 
 /**
  * T289 / §XVI.1 — CRUD + lookup for the per-model price table. The hot-path
@@ -30,4 +31,6 @@ public interface TurLLMPriceRepository extends JpaRepository<TurLLMPrice, String
     Optional<TurLLMPrice> findByVendorIdAndModelName(String vendorId, String modelName);
 
     List<TurLLMPrice> findByOrderByVendorIdAscModelNameAsc();
+
+    List<TurLLMPrice> findBySource(TurLLMPriceSource source);
 }

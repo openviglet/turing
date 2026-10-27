@@ -211,4 +211,36 @@ class TurLLMPriceServiceTest {
         assertThat(written).isZero();
         verify(priceRepository, never()).save(any(TurLLMPrice.class));
     }
+
+    @Test
+    void dropsOnlyCatalogRowsKeyedByASlug() {
+        // T1144: the reconciler once wrote "openai"; a call is priced as "OPENAI".
+        TurLLMPrice slugKeyed = row("openai", TurLLMPriceSource.CATALOG);
+        TurLLMPrice vendorKeyed = row("OPENAI", TurLLMPriceSource.CATALOG);
+        when(priceRepository.findBySource(TurLLMPriceSource.CATALOG)).thenReturn(List.of(slugKeyed, vendorKeyed));
+
+        int dropped = service.dropCatalogRowsKeyedBy(List.of("openai", "anthropic"));
+
+        assertThat(dropped).isEqualTo(1);
+        verify(priceRepository).deleteAll(List.of(slugKeyed));
+    }
+
+    @Test
+    void pricesAVendorIdCallFromTheReconciledRow() {
+        // T1144 done-when: gpt-4o-mini on the boot-provisioned OPENAI instance is not $0.
+        TurLLMPrice mini = row("OPENAI", TurLLMPriceSource.CATALOG);
+        mini.setInputPricePerMillion(0.15);
+        mini.setOutputPricePerMillion(0.6);
+        when(priceRepository.findByVendorIdAndModelName("OPENAI", "gpt-4o-mini")).thenReturn(Optional.of(mini));
+
+        assertThat(service.computeCost("OPENAI", "gpt-4o-mini", 1_000_000, 1_000_000)).isEqualTo(0.75);
+    }
+
+    private static TurLLMPrice row(String vendorId, TurLLMPriceSource source) {
+        TurLLMPrice price = new TurLLMPrice();
+        price.setVendorId(vendorId);
+        price.setModelName("gpt-4o-mini");
+        price.setSource(source);
+        return price;
+    }
 }
