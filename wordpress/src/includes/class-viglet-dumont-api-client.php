@@ -440,6 +440,25 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * Whether Turing keeps search metrics (`turing.search.metrics.enabled`). Turing has no
+	 * read for it (Turing T1149), so this posts a click with no document: off answers 204 with
+	 * `X-Turing-Metrics: disabled` before reading it, on refuses it with 400 and keeps nothing.
+	 *
+	 * @return bool|null Null when Turing could not be asked.
+	 */
+	public function metrics_enabled(): ?bool {
+		$response = $this->request( 'POST', '/api/sn/' . rawurlencode( $this->site_name ) . '/click', null, array( 'documentId' => '' ) );
+		if ( is_wp_error( $response ) ) {
+			return null;
+		}
+		if ( 'disabled' === strtolower( (string) wp_remote_retrieve_header( $response, 'x-turing-metrics' ) ) ) {
+			return false;
+		}
+
+		return 400 === (int) wp_remote_retrieve_response_code( $response ) ? true : null;
+	}
+
+	/**
 	 * A JSON answer as an array: an error for a failed request, an empty array for a 404
 	 * (Turing's "not in the index").
 	 *

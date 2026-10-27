@@ -91,3 +91,38 @@ test( 'a period with no searches says so', async ( { page } ) => {
 	).toBeVisible();
 	await expect( page.locator( 'table' ) ).toHaveCount( 0 );
 } );
+
+test( 'metrics turned off in Turing are said, not shown as a quiet period', async ( {
+	page,
+	look,
+} ) => {
+	// This stack keeps metrics; the report as the plugin answers when Turing does not.
+	await page.route(
+		( url ) =>
+			decodeURIComponent( url.href ).includes(
+				'viglet-dumont/v1/insights'
+			),
+		( route ) =>
+			route.fulfill( {
+				json: {
+					period: 'this-week',
+					searches: 0,
+					clicks: 0,
+					ctr: 0,
+					top: [],
+					failed: [],
+					unopened: [],
+					metricsOff: true,
+				},
+			} )
+	);
+	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	const notices = page.locator( '.components-notice' );
+	await expect(
+		notices.filter( { hasText: 'Turing is not keeping search metrics' } )
+	).toBeVisible();
+	await expect(
+		notices.filter( { hasText: 'No searches in this period yet.' } )
+	).toHaveCount( 0 );
+	await look( 'insights-metrics-off' );
+} );

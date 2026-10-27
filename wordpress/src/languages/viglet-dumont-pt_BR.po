@@ -1339,15 +1339,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:483
+#: src/includes/class-viglet-dumont-api-client.php:502
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:540
+#: src/includes/class-viglet-dumont-api-client.php:559
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:545
+#: src/includes/class-viglet-dumont-api-client.php:564
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1452,7 +1452,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:459
+#: src/includes/class-viglet-dumont-api-client.php:478
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -2102,51 +2102,51 @@ msgstr "O que os visitantes buscaram neste site, o que não encontrou nada e o q
 msgid "Period"
 msgstr "Período"
 
-#: assets/admin/insights.js:222
+#: assets/admin/insights.js:233
 msgid "No searches in this period yet. They appear here once visitors use the site’s search."
 msgstr "Ainda não há buscas neste período. Elas aparecem aqui quando os visitantes usam a busca do site."
 
 #. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
-#: assets/admin/insights.js:233
+#: assets/admin/insights.js:244
 #, js-format
 msgid "%1$s searches, %2$s clicks, %3$s click-through."
 msgstr "%1$s buscas, %2$s cliques, %3$s de taxa de clique."
 
-#: src/includes/class-viglet-dumont-insights.php:115
-#: assets/admin/insights.js:243
+#: src/includes/class-viglet-dumont-insights.php:117
+#: assets/admin/insights.js:254
 msgid "Top searches"
 msgstr "Buscas mais feitas"
 
-#: assets/admin/insights.js:244
+#: assets/admin/insights.js:255
 msgid "No searches in this period."
 msgstr "Nenhuma busca neste período."
 
-#: assets/admin/insights.js:252
+#: assets/admin/insights.js:263
 msgid "Clicks"
 msgstr "Cliques"
 
-#: assets/admin/insights.js:256
+#: assets/admin/insights.js:267
 msgid "Click-through"
 msgstr "Taxa de clique"
 
-#: src/includes/class-viglet-dumont-insights.php:116
-#: assets/admin/insights.js:262
+#: src/includes/class-viglet-dumont-insights.php:118
+#: assets/admin/insights.js:273
 msgid "Searches that found nothing"
 msgstr "Buscas que não encontraram nada"
 
-#: assets/admin/insights.js:266
+#: assets/admin/insights.js:277
 msgid "Every search found something."
 msgstr "Toda busca encontrou algo."
 
-#: assets/admin/insights.js:274
+#: assets/admin/insights.js:285
 msgid "Last searched"
 msgstr "Última busca"
 
-#: assets/admin/insights.js:287
+#: assets/admin/insights.js:298
 msgid "Found, but never opened"
 msgstr "Encontradas, mas nunca abertas"
 
-#: assets/admin/insights.js:291
+#: assets/admin/insights.js:302
 msgid "Every search that found results led to a click."
 msgstr "Toda busca com resultados levou a um clique."
 
@@ -2154,11 +2154,11 @@ msgstr "Toda busca com resultados levou a um clique."
 msgid "Site search this week"
 msgstr "Busca do site nesta semana"
 
-#: src/includes/class-viglet-dumont-insights.php:120
+#: src/includes/class-viglet-dumont-insights.php:124
 msgid "No searches this week yet."
 msgstr "Ainda não há buscas nesta semana."
 
-#: src/includes/class-viglet-dumont-insights.php:136
+#: src/includes/class-viglet-dumont-insights.php:140
 msgid "All search insights"
 msgstr "Todos os insights de busca"
 
@@ -2307,3 +2307,11 @@ msgstr "Abaixo"
 #: assets/admin/tuning.js:665
 msgid "Save boosts"
 msgstr "Salvar impulsos"
+
+#: src/includes/class-viglet-dumont-insights.php:122
+msgid "Turing is not keeping search metrics, so no new searches are recorded."
+msgstr "O Turing não está guardando métricas de busca, então nenhuma busca nova é registrada."
+
+#: assets/admin/insights.js:222
+msgid "Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
+msgstr "O Turing não está guardando métricas de busca, então nenhuma busca ou clique novo é registrado. O administrador do Turing as ativa com turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."

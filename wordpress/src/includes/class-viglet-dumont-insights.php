@@ -60,7 +60,7 @@ class Viglet_Dumont_Insights {
 	 * shown terms' own, so typing does not skew the click-through rate either.
 	 *
 	 * @param string $period One of self::PERIODS.
-	 * @return array{period: string, searches: int, clicks: int, ctr: float, top: array, failed: array, unopened: array}|WP_Error
+	 * @return array{period: string, searches: int, clicks: int, ctr: float, top: array, failed: array, unopened: array, metricsOff: bool}|WP_Error
 	 */
 	public function report( string $period ) {
 		$period = in_array( $period, self::PERIODS, true ) ? $period : 'this-week';
@@ -84,13 +84,15 @@ class Viglet_Dumont_Insights {
 		$clicked  = (int) array_sum( array_column( $top, 'clicks' ) );
 
 		return array(
-			'period'   => $period,
-			'searches' => $searches,
-			'clicks'   => $clicked,
-			'ctr'      => $searches > 0 ? round( $clicked / $searches, 4 ) : 0.0,
-			'top'      => $top,
-			'failed'   => self::terms( (array) ( $failed['terms'] ?? array() ) ),
-			'unopened' => self::terms( (array) ( $clicks['neverClicked'] ?? array() ) ),
+			'period'     => $period,
+			'searches'   => $searches,
+			'clicks'     => $clicked,
+			'ctr'        => $searches > 0 ? round( $clicked / $searches, 4 ) : 0.0,
+			'top'        => $top,
+			'failed'     => self::terms( (array) ( $failed['terms'] ?? array() ) ),
+			'unopened'   => self::terms( (array) ( $clicks['neverClicked'] ?? array() ) ),
+			// An empty period with metrics off is not a quiet site: Turing kept nothing.
+			'metricsOff' => false === $this->client->metrics_enabled(),
 		);
 	}
 
@@ -116,7 +118,9 @@ class Viglet_Dumont_Insights {
 				__( 'Searches that found nothing', 'viglet-dumont' ) => array_slice( $report['failed'], 0, 5 ),
 			)
 		);
-		if ( ! $lists ) {
+		if ( ! empty( $report['metricsOff'] ) ) {
+			echo '<p>' . esc_html__( 'Turing is not keeping search metrics, so no new searches are recorded.', 'viglet-dumont' ) . '</p>';
+		} elseif ( ! $lists ) {
 			echo '<p>' . esc_html__( 'No searches this week yet.', 'viglet-dumont' ) . '</p>';
 		}
 		foreach ( $lists as $title => $terms ) {

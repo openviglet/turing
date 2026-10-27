@@ -217,14 +217,25 @@ function Insights() {
 					{ shown.error }
 				</Notice>
 			) }
-			{ report && 0 === report.searches && 0 === report.failed.length && (
-				<Notice status="info" isDismissible={ false }>
+			{ report?.metricsOff && (
+				<Notice status="warning" isDismissible={ false }>
 					{ __(
-						'No searches in this period yet. They appear here once visitors use the site’s search.',
+						'Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED).',
 						'viglet-dumont'
 					) }
 				</Notice>
 			) }
+			{ report &&
+				! report.metricsOff &&
+				0 === report.searches &&
+				0 === report.failed.length && (
+					<Notice status="info" isDismissible={ false }>
+						{ __(
+							'No searches in this period yet. They appear here once visitors use the site’s search.',
+							'viglet-dumont'
+						) }
+					</Notice>
+				) }
 			{ report && ( report.searches > 0 || report.failed.length > 0 ) && (
 				<>
 					<p className="viglet-dumont-insights__totals">

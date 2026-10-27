@@ -32,6 +32,7 @@ abstract class PluginTestCase extends TestCase {
 				'add_query_arg'                     => static fn ( array $args, string $url ) => $url . '?' . http_build_query( $args ),
 				'wp_remote_retrieve_response_code'  => static fn ( $response ) => $response['response']['code'],
 				'wp_remote_retrieve_body'           => static fn ( $response ) => $response['body'],
+				'wp_remote_retrieve_header'         => static fn ( $response, $name ) => $response['headers'][ $name ] ?? '',
 				'sanitize_key'                      => static fn ( $key ) => strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', $key ) ),
 				'sanitize_text_field'               => static fn ( $text ) => trim( strip_tags( $text ) ),
 				// No stored mapping and no custom taxonomy: a post sends the fixed document only.

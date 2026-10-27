@@ -133,6 +133,81 @@ final class InsightsTest extends PluginTestCase {
 		$this->assertStringContainsString( 'page=viglet-dumont-insights', $html );
 	}
 
+	/**
+	 * Turing's click endpoint as it answers an empty click: 204 and the header with metrics
+	 * off, 400 with them on.
+	 *
+	 * @param bool $on Whether Turing keeps metrics.
+	 */
+	private function metrics( bool $on ): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) use ( $on ) {
+				$this->requests[] = array( $url, $args );
+				if ( str_ends_with( $url, '/click' ) ) {
+					return $on
+						? array(
+							'response' => array( 'code' => 400 ),
+							'body'     => '',
+						)
+						: array(
+							'response' => array( 'code' => 204 ),
+							'headers'  => array( 'x-turing-metrics' => 'disabled' ),
+							'body'     => '',
+						);
+				}
+				$body = str_contains( $url, '/metrics/' ) ? array( 'terms' => array() ) : array(
+					array(
+						'id'   => 'site-uuid',
+						'name' => 'Sample Site',
+					),
+				);
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode( $body ),
+				);
+			}
+		);
+	}
+
+	public function test_metrics_turned_off_in_turing_are_reported_rather_than_read_as_a_quiet_period(): void {
+		$this->metrics( false );
+		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'today' );
+		$this->assertTrue( $report['metricsOff'] );
+
+		$click = array_values( array_filter( $this->requests, static fn ( $r ) => str_ends_with( $r[0], '/click' ) ) );
+		$this->assertSame( '{"documentId":""}', $click[0][1]['body'], 'a click with no document, which Turing never records' );
+	}
+
+	public function test_metrics_kept_by_turing_are_not_reported_off(): void {
+		$this->metrics( true );
+		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'today' );
+		$this->assertFalse( $report['metricsOff'] );
+	}
+
+	public function test_the_dashboard_widget_says_metrics_are_off(): void {
+		Functions\when( 'get_transient' )->justReturn(
+			array(
+				'top'        => array(),
+				'failed'     => array(),
+				'metricsOff' => true,
+			)
+		);
+		Functions\stubEscapeFunctions();
+		Functions\stubs(
+			array(
+				'admin_url' => static fn ( $path ) => 'https://site.example.org/wp-admin/' . $path,
+				'esc_url'   => static fn ( $url ) => $url,
+			)
+		);
+
+		ob_start();
+		( new Viglet_Dumont_Insights( $this->settings() ) )->render_widget();
+		$html = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'not keeping search metrics', $html );
+		$this->assertStringNotContainsString( 'No searches this week yet.', $html );
+	}
+
 	public function test_an_unknown_period_reads_the_last_week(): void {
 		$this->turing(
 			array(
