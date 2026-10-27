@@ -12,7 +12,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1149** (deps: —) **No metrics report says whether search metrics are on, so an empty period reads as a quiet site** — A client must post a fake click and read X-Turing-Metrics to tell metrics off from no searches. → §LXX.13
 - 📋 **T1150** (deps: —) **Summary calls are spent outside any site, so a site's cost summary and budget never count them** — The generic summary endpoint takes no site, so connectors that ask for summaries under-report what a site spends. → §LXX.14
 
 ## Block CF — What the SN site manifest cannot declare

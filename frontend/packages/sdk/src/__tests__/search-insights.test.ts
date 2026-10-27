@@ -18,6 +18,8 @@ describe("search insights (T1119)", () => {
     from: null,
     to: "2026-10-24T00:00:00Z",
     terms: [{ term: "php 9", searches: 4, avgResults: 0, lastSeen: "2026-10-20T10:00:00Z" }],
+    // T1149 — the report says whether the server records searches at all.
+    metricsEnabled: true,
   };
 
   function client() {

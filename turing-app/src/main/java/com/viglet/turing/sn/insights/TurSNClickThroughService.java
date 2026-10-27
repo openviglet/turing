@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +63,9 @@ public class TurSNClickThroughService {
     private final TurSNSiteMetricAccessRepository accessRepository;
     private final TurSNSiteMetricClickRepository clickRepository;
 
+    @Value("${turing.search.metrics.enabled:false}")
+    private boolean metricsEnabled;
+
     public TurSNClickThroughService(TurSNSiteMetricAccessRepository accessRepository,
             TurSNSiteMetricClickRepository clickRepository) {
         this.accessRepository = accessRepository;
@@ -79,11 +83,11 @@ public class TurSNClickThroughService {
 
     /**
      * The report: its window and locale ({@code null} for every locale), the
-     * site's totals, the most searched terms, and the terms that found results
-     * nobody opened.
+     * site's totals, the most searched terms, the terms that found results
+     * nobody opened, and (T1149) whether search metrics are recorded at all.
      */
     public record Report(Instant from, Instant to, String locale, long searches, long clicks, double ctr,
-            List<Term> terms, List<Term> neverClicked) {
+            List<Term> terms, List<Term> neverClicked, boolean metricsEnabled) {
     }
 
     /**
@@ -123,7 +127,8 @@ public class TurSNClickThroughService {
         long totalSearches = accessRepository.countSearchesForLocale(site, start, end, locale, partition);
         long totalClicks = clickRepository.countClicks(site, start, end, locale, partition);
         return new Report(window.from(), end, locale == null ? null : locale.toString(), totalSearches,
-                totalClicks, ratio(totalClicks, totalSearches), all.stream().limit(limit).toList(), neverClicked);
+                totalClicks, ratio(totalClicks, totalSearches), all.stream().limit(limit).toList(), neverClicked,
+                metricsEnabled);
     }
 
     private static Term term(TurSNSiteMetricAccessTerm searched, TurSNSiteMetricClickTerm clicked) {

@@ -266,6 +266,21 @@ class TurSNSiteMetricsAPITest {
             assertThat(term.searches()).isEqualTo(4);
             assertThat(term.lastSeen()).isEqualTo(lastSeen);
         });
+        assertThat(report.metricsEnabled()).isFalse();
+    }
+
+    /** T1149 — the report says metrics are on, so an empty one reads as a quiet site. */
+    @Test
+    void testFailedSearchesSayMetricsAreOn() {
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
+        TurSNSearchInsightsService insights = new TurSNSearchInsightsService(metricRepository);
+        org.springframework.test.util.ReflectionTestUtils.setField(insights, "metricsEnabled", true);
+        TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository, insights);
+        when(siteRepository.findById("site")).thenReturn(Optional.of(new TurSNSite()));
+
+        assertThat(api.turSNSiteMetricsFailedSearches("site", "today", null, null, 5).metricsEnabled()).isTrue();
+        assertThat(api.turSNSiteMetricsContentGaps("site", "today", null, null, 5).metricsEnabled()).isTrue();
     }
 
     /** T1119 — a content gap is a popular query whose average results stay low. */

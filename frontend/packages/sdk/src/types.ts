@@ -490,6 +490,11 @@ export interface TurSearchInsightReport {
   from: string | null;
   to: string;
   terms: TurSearchInsightTerm[];
+  /**
+   * Whether the server records searches (`turing.search.metrics.enabled`).
+   * `false` means an empty report says nothing about the site's traffic.
+   */
+  metricsEnabled: boolean;
 }
 
 // ── T1131: Click-through rates ──
@@ -525,6 +530,8 @@ export interface TurClickThroughReport {
   ctr: number;
   terms: TurClickThroughTerm[];
   neverClicked: TurClickThroughTerm[];
+  /** Whether the server records searches and clicks; see {@link TurSearchInsightReport.metricsEnabled}. */
+  metricsEnabled: boolean;
 }
 
 // ── LLM Instances ──

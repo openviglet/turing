@@ -38,6 +38,7 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
@@ -101,6 +102,18 @@ class TurSNClickThroughServiceTest {
         assertThat(report.ctr()).isZero();
         assertThat(report.locale()).isEqualTo("en_US");
         verify(clickRepository, never()).clicksByTerm(any(), any(), any(), any(), any(), anyCollection());
+    }
+
+    @Test
+    void theReportSaysWhetherMetricsAreRecorded() {
+        // T1149 — an empty report must not read as a quiet site when nothing is logged.
+        when(accessRepository.termsBetweenDatesForLocale(any(), any(), any(), any(), any(), any(Pageable.class)))
+                .thenReturn(List.of());
+        var window = new TurSNSearchInsightsService.Window(null, TO);
+
+        assertThat(service.report(site, window, null, 5).metricsEnabled()).isFalse();
+        ReflectionTestUtils.setField(service, "metricsEnabled", true);
+        assertThat(service.report(site, window, null, 5).metricsEnabled()).isTrue();
     }
 
     @Test

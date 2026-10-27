@@ -29,6 +29,8 @@ export interface TurSNClickThroughReport {
   ctr: number;
   terms: TurSNClickThroughTerm[];
   neverClicked: TurSNClickThroughTerm[];
+  /** T1149 — whether the server records searches and clicks at all. */
+  metricsEnabled: boolean;
 }
 
 export class TurSNSiteMetricsService {

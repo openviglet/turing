@@ -2049,30 +2049,6 @@ What keeps them shipped is `frontend/scripts/search-contract-rules.mjs`: the con
 named rules, each paired with the surfaces it is checked on, run from the app suite, the
 SDK suite and the workspace scripts suite.
 
-### LXX.13 The metrics reports say whether metrics are on (T1149)
-
-**Where it happened.** Dumont D178, the WordPress plugin's Search insights screen and
-dashboard widget, must tell a site owner when Turing keeps no search metrics, or an
-empty period reads as a quiet site. The metrics reports (`metrics/clicks`,
-`metrics/failed-searches`, `metrics/content-gaps`) answer an empty period the same
-either way.
-
-**Why.** `turing.search.metrics.enabled` is read by `TurSNSearchProcess` and
-`TurSNSiteClickAPI` only. The one place it shows is `POST /api/sn/{site}/click`, which
-answers 204 with `X-Turing-Metrics: disabled` (T1131).
-
-**Workaround.** `Viglet_Dumont_API_Client::metrics_enabled()` posts a click with an
-empty `documentId`: off answers 204 with the header before reading it, on refuses it
-with 400. It depends on that check coming before validation.
-
-**What it should do.**
-- The three reports carry `metricsEnabled` in their body: both are records
-  (`TurSNClickThroughService.Report`, `TurSNSearchInsightsService.Report`), so the field
-  is additive and sits beside the numbers it explains.
-- The JS SDKs' report types (`fetchFailedSearches`, `fetchContentGaps`,
-  `fetchClickThrough`) gain the field.
-- Dumont's plugin then drops the probe (file it in Dumont when this ships).
-
 ### LXX.14 The summary endpoint records its spend against a site (T1150)
 
 **Where it happened.** Dumont D174/D178, the WordPress plugin's live-LLM suite. It reads

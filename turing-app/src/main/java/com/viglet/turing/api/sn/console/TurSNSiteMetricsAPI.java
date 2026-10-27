@@ -218,7 +218,8 @@ public class TurSNSiteMetricsAPI {
 		TurSNSite site = requireSite(snSiteId);
 		TurSNSearchInsightsService.Window window = turSNSearchInsightsService.window(period, from, to);
 		return TurSNSearchInsightsService.Report.of(window,
-				turSNSearchInsightsService.failedSearches(site, window, rows));
+				turSNSearchInsightsService.failedSearches(site, window, rows),
+				turSNSearchInsightsService.metricsEnabled());
 	}
 
 	/**
@@ -237,7 +238,8 @@ public class TurSNSiteMetricsAPI {
 		TurSNSite site = requireSite(snSiteId);
 		TurSNSearchInsightsService.Window window = turSNSearchInsightsService.window(period, from, to);
 		return TurSNSearchInsightsService.Report.of(window,
-				turSNSearchInsightsService.contentGaps(site, window, rows));
+				turSNSearchInsightsService.contentGaps(site, window, rows),
+				turSNSearchInsightsService.metricsEnabled());
 	}
 
 	private TurSNSite requireSite(String snSiteId) {

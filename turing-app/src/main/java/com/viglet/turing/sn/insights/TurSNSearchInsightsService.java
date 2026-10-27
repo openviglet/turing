@@ -27,6 +27,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +58,9 @@ public class TurSNSearchInsightsService {
     private final TurSNSiteMetricAccessRepository metricAccessRepository;
     private Clock clock = Clock.systemUTC();
 
+    @Value("${turing.search.metrics.enabled:false}")
+    private boolean metricsEnabled;
+
     void setClockForTest(Clock clock) {
         this.clock = clock;
     }
@@ -77,12 +81,21 @@ public class TurSNSearchInsightsService {
     public record Window(Instant from, Instant to) {
     }
 
-    /** A report as the REST metrics answer it: the window it covers and its terms. */
-    public record Report(Instant from, Instant to, List<Term> terms) {
+    /**
+     * A report as the REST metrics answer it: the window it covers, its terms,
+     * and (T1149) whether search metrics are recorded at all, so an empty report
+     * of a site that logs nothing does not read as a quiet site.
+     */
+    public record Report(Instant from, Instant to, List<Term> terms, boolean metricsEnabled) {
 
-        public static Report of(Window window, List<Term> terms) {
-            return new Report(window.from(), window.to(), terms);
+        public static Report of(Window window, List<Term> terms, boolean metricsEnabled) {
+            return new Report(window.from(), window.to(), terms, metricsEnabled);
         }
+    }
+
+    /** Whether searches are logged ({@code turing.search.metrics.enabled}), T1149. */
+    public boolean metricsEnabled() {
+        return metricsEnabled;
     }
 
     /**
