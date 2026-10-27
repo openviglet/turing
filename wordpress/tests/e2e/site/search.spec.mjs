@@ -264,12 +264,17 @@ test( 'while a search runs the block shows placeholders and says it is busy', as
 	seed,
 	look,
 } ) => {
+	// A page opened with a query has its first results drawn by the server (D209), so the
+	// placeholders are for the first search typed into an empty page.
+	await page.goto( `/?page_id=${ seed.searchPageId }` );
 	// Hold Turing's answer long enough to see the state it leaves the block in.
 	await page.route( '**/api/sn/*/search/**', async ( route ) => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 1500 ) );
 		await route.continue();
 	} );
-	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	const box = block( page ).getByRole( 'combobox' );
+	await box.fill( 'workshop' );
+	await box.press( 'Enter' );
 	await expect(
 		block( page ).locator( '.viglet-dumont-search__skeleton' )
 	).toBeVisible();

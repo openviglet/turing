@@ -279,6 +279,219 @@ class Viglet_Dumont_Native_Search {
 		return defined( 'REST_REQUEST' ) && REST_REQUEST && 'edit' === sanitize_key( wp_unslash( $_GET['context'] ?? '' ) );
 	}
 
+	/** How many values a facet shows before "Show more", as search-block.js's facetValuesShown. */
+	public const FACET_VALUES_SHOWN = 5;
+
+	/**
+	 * The first page of a search page opened with a query (D209): the same search the block's
+	 * script will make, drawn on the server in the shape search-block.js's sync() and card()
+	 * give it, so the results are on the first paint and the script's own answer moves
+	 * nothing. Kept out of Turing's metrics, where the script's search is the one counted.
+	 * Facets are left to the script: they sit beside the results, not above them.
+	 *
+	 * @param array $state The block's state: query, sort, perPage and the labels.
+	 * @return array State to merge over it; none when Turing did not answer.
+	 */
+	public function first_page( array $state ): array {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- a read-only page, as query().
+		$filters = array_map( 'sanitize_text_field', (array) wp_unslash( $_GET['fq'] ?? array() ) );
+		$page    = max( 1, absint( wp_unslash( $_GET['pg'] ?? 1 ) ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		$query = '' !== trim( $state['query'] ) ? trim( $state['query'] ) : '*';
+		$rows  = (int) $state['perPage'];
+
+		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->search_unrecorded(
+			array(
+				'q'    => $query,
+				'p'    => $page,
+				'rows' => $rows,
+				'sort' => $state['sort'],
+				'fq[]' => array_merge( array( 'site_key:' . ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key() ), $filters ),
+			)
+		);
+		// Unanswered here, the script asks as it always did.
+		if ( ! is_array( $response ) || ! isset( $response['queryContext'] ) ) {
+			return array();
+		}
+
+		$names   = (array) ( $response['queryContext']['defaultFields'] ?? array() );
+		$field   = static fn ( array $fields, string $key, string $fallback ) => $fields[ $names[ $key ] ?? $fallback ] ?? '';
+		$shop    = Viglet_Dumont_WooCommerce::active();
+		$offset  = ( $page - 1 ) * $rows;
+		$results = array();
+		foreach ( array_values( (array) ( $response['results']['document'] ?? array() ) ) as $i => $document ) {
+			$fields    = (array) ( $document['fields'] ?? array() );
+			$url       = (string) $field( $fields, 'url', 'url' );
+			$title     = html_entity_decode( wp_strip_all_tags( (string) $field( $fields, 'title', 'title' ) ) );
+			$title     = '' !== $title ? $title : $url;
+			$type      = wp_strip_all_tags( (string) ( $fields['type'] ?? '' ) );
+			$date      = $fields['publication_date'] ?? $field( $fields, 'date', 'publication_date' );
+			$timestamp = is_numeric( $date ) ? (int) ( $date / 1000 ) : ( $date ? strtotime( (string) $date ) : false );
+			$parts     = wp_parse_url( $url );
+			$result    = array(
+				'id'          => (string) ( $fields['id'] ?? '' ),
+				'position'    => $offset + $i + 1,
+				'url'         => $url,
+				'title'       => $title,
+				'type'        => $state['typeLabels'][ $type ] ?? $type,
+				'date'        => $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : '',
+				'iso'         => $timestamp ? gmdate( 'c', $timestamp ) : '',
+				'crumb'       => implode( ' › ', array_filter( array_merge( array( $parts['host'] ?? '' ), explode( '/', $parts['path'] ?? '' ) ) ) ),
+				'image'       => (string) $field( $fields, 'image', 'image' ),
+				'snippet'     => self::snippet( (string) $field( $fields, 'description', 'abstract' ) ),
+				// The snippet as plain text, so the server draws it at its height; the script then
+				// puts the highlights in.
+				'snippetText' => '',
+				'price'       => '',
+			);
+			// A product's price row, as search-block.js's product() draws it (D173).
+			if ( $shop && is_numeric( $fields['price'] ?? null ) ) {
+				$price   = (float) $fields['price'];
+				$regular = (float) ( $fields['regular_price'] ?? 0 );
+				preg_match( '/:post:(\d+)$/', (string) ( $fields['id'] ?? '' ), $post );
+				$result = array_merge(
+					$result,
+					array(
+						'price'      => html_entity_decode( wp_strip_all_tags( wc_price( $price ) ) ),
+						'regular'    => $regular > $price ? html_entity_decode( wp_strip_all_tags( wc_price( $regular ) ) ) : '',
+						'productId'  => (int) ( $post[1] ?? 0 ),
+						'cartLabel'  => str_replace( '%s', $title, $state['cartLabel'] ),
+						'compareFor' => str_replace( '%s', $title, $state['compareFor'] ?? '%s' ),
+						'cartStatus' => '',
+						'adding'     => false,
+					)
+				);
+			}
+			$result['snippetText'] = implode( '', array_column( $result['snippet'], 'text' ) );
+			$results[]             = $result;
+		}//end foreach
+
+		$total  = (int) ( $response['queryContext']['count'] ?? 0 );
+		$config = $this->public_config();
+		$pages  = array_values(
+			array_map(
+				static fn ( array $p ) => array(
+					'page'    => $p['page'] ?? 0,
+					'text'    => (string) ( $p['text'] ?? '' ),
+					'current' => ! empty( $p['current'] ) || 'CURRENT' === ( $p['type'] ?? '' ),
+				),
+				array_filter( (array) ( $response['pagination'] ?? array() ), static fn ( $p ) => in_array( $p['type'] ?? '', array( 'PAGE', 'CURRENT' ), true ) )
+			)
+		);
+		// A filtered page's facets are rebuilt by the script from an unfiltered answer, and its
+		// applied filters are labelled from them: both are left to it there.
+		$facets = $filters ? array() : self::facets( (array) ( $response['widget']['facet'] ?? array() ), $config );
+
+		return array(
+			'status'        => 'success',
+			'total'         => $total,
+			'results'       => $results,
+			'facets'        => $facets,
+			'pages'         => $pages,
+			// What search-block.js's getters derive, which the server cannot run.
+			/* translators: %d: how many results Turing found. */
+			'summary'       => $total > 0 ? sprintf( _n( '%d result', '%d results', $total, 'viglet-dumont' ), number_format_i18n( $total ) ) : $state['noneLabel'],
+			'hasResults'    => $total > 0,
+			'isEmpty'       => 0 === $total,
+			'isLoading'     => false,
+			'showSkeleton'  => false,
+			'hasQuery'      => '' !== $state['query'],
+			'hasFacets'     => ! empty( $facets ),
+			'hasPages'      => count( $pages ) > 1,
+			'hasSpotlights' => false,
+			'canCompare'    => Viglet_Dumont_WooCommerce::active() && '' !== (string) Viglet_Dumont_Compare::page_url(),
+			'spotlights'    => array_values(
+				array_map(
+					static fn ( array $spot ) => array(
+						'url'     => (string) $spot['url'],
+						'title'   => '' !== wp_strip_all_tags( (string) ( $spot['title'] ?? '' ) ) ? wp_strip_all_tags( (string) $spot['title'] ) : (string) $spot['url'],
+						'content' => wp_strip_all_tags( (string) ( $spot['content'] ?? '' ) ),
+					),
+					array_filter( (array) ( $response['spotlights'] ?? array() ), static fn ( $spot ) => ! empty( $spot['url'] ) )
+				)
+			),
+		);
+	}
+
+	/**
+	 * Turing's facets as search-block.js's facets() gives them for an unfiltered answer: the
+	 * site's own left out, values with no results dropped, a value facet's ties by label, and
+	 * only the first values the block shows (the script adds the rest, hidden).
+	 *
+	 * @param array $answered The response's `widget.facet`.
+	 * @param array $config   The script's config, for which facets are ranges.
+	 */
+	private static function facets( array $answered, array $config ): array {
+		$ranges = array_column( array_filter( (array) ( $config['facets'] ?? array() ), static fn ( $f ) => ! empty( $f['range'] ) ), 'field' );
+		$facets = array();
+		foreach ( $answered as $facet ) {
+			$name = (string) ( $facet['name'] ?? '' );
+			if ( 'site_key' === $name || empty( $facet['facets'] ) ) {
+				continue;
+			}
+			$items = array_values( array_filter( (array) $facet['facets'], static fn ( $i ) => (int) ( $i['count'] ?? 0 ) > 0 ) );
+			if ( ! in_array( $name, $ranges, true ) ) {
+				// Turing's order is by count; within a count, by label.
+				usort(
+					$items,
+					static function ( $a, $b ) {
+						$by_count = (int) $b['count'] <=> (int) $a['count'];
+						return 0 !== $by_count ? $by_count : strcasecmp( (string) $a['label'], (string) $b['label'] );
+					}
+				);
+			}
+			if ( ! $items ) {
+				continue;
+			}
+			$facets[] = array(
+				'name'          => $name,
+				'label'         => (string) ( $facet['label']['text'] ?? $name ),
+				'items'         => array_map(
+					static fn ( array $i ) => array(
+						'label'    => (string) ( $i['label'] ?? '' ),
+						'count'    => (int) $i['count'],
+						'selected' => false,
+						'target'   => array(
+							'action'      => 'ADD',
+							'field'       => $name,
+							'filterQuery' => (string) ( $i['filterQuery'] ?? '' ),
+						),
+						'extra'    => false,
+					),
+					array_slice( $items, 0, self::FACET_VALUES_SHOWN )
+				),
+				'hasMore'       => count( $items ) > self::FACET_VALUES_SHOWN,
+				'more'          => count( $items ) - self::FACET_VALUES_SHOWN,
+				'selectedCount' => 0,
+			);
+		}//end foreach
+
+		return $facets;
+	}
+
+	/**
+	 * A description with Turing's highlights as the parts search-block.js's highlighted() makes:
+	 * each a run of text, marked or not.
+	 *
+	 * @param string $html Turing's description, `<mark>` around the matched words.
+	 * @return array<int, array{text: string, mark: bool}>
+	 */
+	private static function snippet( string $html ): array {
+		$parts = array();
+		foreach ( (array) preg_split( '#(<mark>.*?</mark>)#s', $html, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY ) as $part ) {
+			$mark = str_starts_with( (string) $part, '<mark>' );
+			$text = html_entity_decode( strip_tags( (string) $part ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- the spaces between highlights are part of the text.
+			if ( '' !== $text ) {
+				$parts[] = array(
+					'text' => $text,
+					'mark' => $mark,
+				);
+			}
+		}
+
+		return $parts;
+	}
+
 	/**
 	 * The search block's state for the editor's preview: Turing's answer to `*` for this site,
 	 * in the shape search-block.js keeps, with the values its getters would derive. The

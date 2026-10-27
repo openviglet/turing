@@ -440,6 +440,25 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * The same search as search(), kept out of Turing's search metrics (`populateMetrics:
+	 * false`): for a page drawn on the server whose script then asks again (D209), so one
+	 * visitor's search counts once.
+	 *
+	 * @param array $params The query string, as search() builds it: q, p, rows, sort, fq[].
+	 * @return array|WP_Error The decoded answer.
+	 */
+	public function search_unrecorded( array $params ) {
+		return $this->decoded(
+			$this->request(
+				'POST',
+				'/api/sn/' . rawurlencode( $this->site_name ) . '/search',
+				array_merge( array( '_setlocale' => $this->locale ), $params ),
+				array( 'populateMetrics' => false )
+			)
+		);
+	}
+
+	/**
 	 * The audience personas the SN site's agent accepts for content-fit (Turing T1143): id,
 	 * name and description, ordered by name, none when the site has no agent.
 	 *

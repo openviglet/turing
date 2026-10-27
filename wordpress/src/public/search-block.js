@@ -25,6 +25,8 @@ let autocomplete = null;
 let client = null;
 // Turing's grounded answer, when the block's Answer setting is on (D166).
 let answerer = null;
+// Whether the results on the page are the server's (D209), not yet answered by the script.
+let prerendered = false;
 // The query last sent, so a late spell-check answer for an older one is dropped.
 let lastQuery = '';
 // The pending instant search, restarted by every keystroke.
@@ -458,6 +460,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			);
 		},
 		init() {
+			prerendered = 'success' === state.status;
 			search = createSiteSearch();
 			if ( state.answerEnabled ) {
 				answerer = createAnswerController( createClient(), {
@@ -1018,6 +1021,8 @@ function card( d, position ) {
 		crumb: crumb( d.url ),
 		image: d.image || '',
 		snippet: highlighted( d.description ),
+		// What the server draws before the highlights go in (D209).
+		snippetText: plain( d.description ),
 		...product( fields, title ),
 	};
 }
@@ -1193,6 +1198,14 @@ function learnFacets() {
  * @param {Object} s The SearchControllerState.
  */
 function sync( s ) {
+	// The page's first results came drawn by the server (D209): keep them, undimmed, until the
+	// script's own answer replaces them, so nothing moves meanwhile.
+	if ( prerendered ) {
+		if ( 'loading' === s.status || 'idle' === s.status ) {
+			return;
+		}
+		prerendered = false;
+	}
 	const response = s.structured;
 	state.status = s.status;
 	state.error = s.error || '';

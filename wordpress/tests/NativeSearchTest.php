@@ -204,4 +204,135 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_measurement_id( 'UA-1234-1' ) );
 		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_measurement_id( 'G-"><script>' ) );
 	}
+
+	public function test_a_page_opened_with_a_query_draws_its_first_page_unrecorded_in_the_shape_the_script_keeps(): void {
+		Functions\stubs(
+			array(
+				'wp_date'            => static fn ( $format, $ts ) => gmdate( 'Y-m-d', $ts ),
+				'get_option'         => static fn ( $name, $fallback = false ) => $fallback,
+				'number_format_i18n' => static fn ( $n ) => (string) $n,
+				'wp_unslash'         => static fn ( $v ) => $v,
+				'wp_strip_all_tags'  => static fn ( $v ) => trim( strip_tags( $v ) ),
+				'_n'                 => static fn ( $one, $many, $n ) => 1 === $n ? $one : $many,
+			)
+		);
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode(
+						array(
+							'queryContext' => array(
+								'count'         => 7,
+								'defaultFields' => array(
+									'title'       => 'title',
+									'description' => 'abstract',
+									'url'         => 'url',
+								),
+							),
+							'results'      => array(
+								'document' => array(
+									array(
+										'fields' => array(
+											'id'       => 'site-a:post:8',
+											'title'    => 'Workshop on <mark>search</mark>',
+											'abstract' => 'About <mark>search</mark> and facets.',
+											'url'      => 'https://example.org/workshop/',
+											'type'     => 'post',
+										),
+									),
+								),
+							),
+							'pagination'   => array(
+								array(
+									'type' => 'CURRENT',
+									'page' => 1,
+									'text' => '1',
+								),
+								array(
+									'type' => 'PAGE',
+									'page' => 2,
+									'text' => '2',
+								),
+								array(
+									'type' => 'NEXT',
+									'page' => 2,
+									'text' => 'Next',
+								),
+							),
+							'widget'       => array(
+								'facet' => array(
+									array(
+										'name'   => 'seats',
+										'label'  => array( 'text' => 'Seats' ),
+										'facets' => array(
+											array(
+												'label' => '40',
+												'count' => 3,
+												'filterQuery' => 'seats:40',
+											),
+											array(
+												'label' => '20',
+												'count' => 0,
+												'filterQuery' => 'seats:20',
+											),
+										),
+									),
+								),
+							),
+						)
+					),
+				);
+			}
+		);
+
+		$page = $this->search()->first_page(
+			array(
+				'query'      => 'search',
+				'perPage'    => 10,
+				'sort'       => 'newest',
+				'typeLabels' => array( 'post' => 'Post' ),
+				'cartLabel'  => 'Add to cart: %s',
+				'noneLabel'  => 'No results found.',
+			)
+		);
+
+		[ $url, $args ] = $this->requests[0];
+		$this->assertSame( 'POST', $args['method'] );
+		$this->assertSame( array( 'populateMetrics' => false ), json_decode( $args['body'], true ), 'the script\'s search is the one counted' );
+		$this->assertStringContainsString( 'q=search', $url );
+		$this->assertStringContainsString( 'sort=newest', $url );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $url );
+
+		$result = $page['results'][0];
+		$this->assertSame( 'Workshop on search', $result['title'] );
+		$this->assertSame( 'Post', $result['type'] );
+		$this->assertSame( 'example.org › workshop', $result['crumb'] );
+		$this->assertSame(
+			array(
+				array(
+					'text' => 'About ',
+					'mark' => false,
+				),
+				array(
+					'text' => 'search',
+					'mark' => true,
+				),
+				array(
+					'text' => ' and facets.',
+					'mark' => false,
+				),
+			),
+			$result['snippet'],
+			'the spaces between highlights kept'
+		);
+		$this->assertSame( 'About search and facets.', $result['snippetText'] );
+		$this->assertSame( '7 results', $page['summary'] );
+		$this->assertTrue( $page['hasResults'] );
+		$this->assertTrue( $page['hasPages'] );
+		$this->assertCount( 2, $page['pages'], 'the page links, not Next' );
+		$this->assertSame( array( '40' ), array_column( $page['facets'][0]['items'], 'label' ), 'a value with no results dropped' );
+		$this->assertSame( 'seats:40', $page['facets'][0]['items'][0]['target']['filterQuery'] );
+	}
 }

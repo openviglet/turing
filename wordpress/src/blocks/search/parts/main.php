@@ -61,7 +61,7 @@ $viglet_dumont_recent = array_map(
 					<h2 class="viglet-dumont-search__title"><a data-wp-bind--href="context.result.url" data-wp-text="context.result.title" data-wp-on--click="actions.resultClicked" data-wp-on--auxclick="actions.resultClicked"></a></h2>
 					<p class="viglet-dumont-search__crumb" data-wp-text="context.result.crumb"></p>
 					<?php if ( $viglet_dumont_show( 'showSnippet' ) ) : ?>
-						<p class="viglet-dumont-search__snippet" data-wp-watch="callbacks.snippet"></p>
+						<p class="viglet-dumont-search__snippet" data-wp-text="context.result.snippetText" data-wp-watch="callbacks.snippet"></p>
 					<?php endif; ?>
 					<?php if ( Viglet_Dumont_WooCommerce::active() ) : ?>
 						<?php

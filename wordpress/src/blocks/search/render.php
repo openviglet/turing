@@ -109,6 +109,16 @@ if ( Viglet_Dumont_Native_Search::is_editor_preview() ) {
 		$viglet_dumont_state,
 		( new Viglet_Dumont_Native_Search() )->preview_state( $viglet_dumont_state['perPage'], $viglet_dumont_state )
 	);
+} elseif (
+	// A page opened with a search draws its first page here, so nothing moves once the script
+	// answers (D209); a block with no results of its own sends its query elsewhere (D208).
+	( '' !== $viglet_dumont_state['query'] || isset( $_GET['fq'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only.
+	&& ( '' === trim( (string) $content ) || str_contains( (string) $content, 'viglet-dumont-search__results' ) )
+) {
+	$viglet_dumont_state = array_merge(
+		$viglet_dumont_state,
+		( new Viglet_Dumont_Native_Search() )->first_page( $viglet_dumont_state )
+	);
 }
 
 wp_interactivity_state( 'viglet-dumont/search', $viglet_dumont_state );
