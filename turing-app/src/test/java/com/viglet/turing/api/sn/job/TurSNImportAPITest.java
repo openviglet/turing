@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,7 +43,14 @@ import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.domain.sn.TurSNSiteDomain;
 import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.TurSNGenAi;
+import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.system.TurGlobalSettingsService;
 
 @ExtendWith(MockitoExtension.class)
 class TurSNImportAPITest {
@@ -57,6 +65,9 @@ class TurSNImportAPITest {
 
     @Mock
     private TurSNGenAi turGenAi;
+
+    @Mock
+    private TurDefaultAgentResolver turDefaultAgentResolver;
 
     @Mock
     private com.viglet.turing.tenant.TurJmsTenantPropagation turJmsTenantPropagation;
@@ -98,7 +109,7 @@ class TurSNImportAPITest {
 
     @Test
     void importAcceptsSnJobItemsAsAnAlias() throws Exception {
-        when(turSNSiteRepositoryPort.hasRagEnabledForSiteName("site1")).thenReturn(false);
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(false);
         when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1"))
                 .thenReturn(Optional.of(siteDomain("site1")));
 
@@ -131,10 +142,9 @@ class TurSNImportAPITest {
         item.setAttributes(attributes);
         jobItems.add(item);
 
-        // The RAG-availability gate now lives behind the port — adapter test
-        // covers the entity-navigation branches; the controller test just
-        // pins the boolean contract.
-        when(turSNSiteRepositoryPort.hasRagEnabledForSiteName("site1")).thenReturn(true);
+        // T1147 — the gate is the resolver's (own agent or the Default AI
+        // Agent); TurDefaultAgentResolverTest covers its branches.
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(true);
         when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1"))
                 .thenReturn(Optional.of(siteDomain("site1")));
 
@@ -167,7 +177,7 @@ class TurSNImportAPITest {
     void ragBatchIsEmbeddedOnceNotOncePerDocument() throws Exception {
         // T1089 — each addDocuments call embeds the whole batch, so calling it per
         // document embedded a batch of three three times.
-        when(turSNSiteRepositoryPort.hasRagEnabledForSiteName("site1")).thenReturn(true);
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(true);
         when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.of(siteDomain("site1")));
 
         mockMvc.perform(post("/api/sn/import")
@@ -180,9 +190,38 @@ class TurSNImportAPITest {
     }
 
     @Test
+    void aSiteOnTheDefaultAgentIsEmbeddedOnImport() throws Exception {
+        // T1147 — the binding has no agent of its own and the Default AI Agent is
+        // RAG-ready: the gate used to read only the site's own agent and skipped it.
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurGlobalSettingsService settings = mock(TurGlobalSettingsService.class);
+        TurAIAgentRepository agentRepository = mock(TurAIAgentRepository.class);
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        site.setTurSNSiteGenAi(new TurSNSiteGenAi());
+        TurAIAgent defaultAgent = new TurAIAgent();
+        defaultAgent.setEnabled(1);
+        defaultAgent.setRagEnabled(true);
+        when(siteRepository.findByNameWithGenAi("site1")).thenReturn(Optional.of(site));
+        when(settings.getDefaultAiAgentId()).thenReturn("def-1");
+        when(agentRepository.findById("def-1")).thenReturn(Optional.of(defaultAgent));
+        when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.of(siteDomain("site1")));
+        TurSNImportAPI realGate = new TurSNImportAPI(jmsMessagingTemplate, turSNSiteRepositoryPort, turGenAi,
+                turJmsTenantPropagation, null, null,
+                new TurDefaultAgentResolver(settings, agentRepository, siteRepository));
+
+        MockMvcBuilders.standaloneSetup(realGate).build().perform(post("/api/sn/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(batchOf(2))))
+                .andExpect(status().isOk());
+
+        verify(turGenAi, times(1)).addDocuments(any(TurSNJobItems.class));
+    }
+
+    @Test
     void anEmbeddingFailureStillIndexesTheBatchForSearch() throws Exception {
         // T1089 — embedding is a side path: its failure must not stop the queue send.
-        when(turSNSiteRepositoryPort.hasRagEnabledForSiteName("site1")).thenReturn(true);
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(true);
         when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.of(siteDomain("site1")));
         when(turGenAi.addDocuments(any(TurSNJobItems.class)))
                 .thenThrow(new IllegalArgumentException("metadata cannot have null values"));
@@ -209,7 +248,7 @@ class TurSNImportAPITest {
         item.setAttributes(attributes);
         jobItems.add(item);
 
-        when(turSNSiteRepositoryPort.hasRagEnabledForSiteName("site1")).thenReturn(false);
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(false);
         when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/api/sn/import")
@@ -240,7 +279,7 @@ class TurSNImportAPITest {
             item.setAttributes(attributes);
             jobItems.add(item);
 
-            when(turSNSiteRepositoryPort.hasRagEnabledForSiteName("site1")).thenReturn(false);
+            when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(false);
             when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.empty());
 
             zos.write(objectMapper.writeValueAsBytes(jobItems));

@@ -18,7 +18,7 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-- 📋 **T1147** (deps: —) **A site on the Default AI Agent is never embedded on import, so its RAG chat retrieves nothing** — Chat runs through the default agent but the import gate reads only the site's own agent, so answers say the content is not there. → §CLV.2
+- 📋 **T1151** (deps: —) **A site whose content was indexed before GenAI was on reads RAG-ready while it holds no vectors** — Capabilities say vector search is available and chat answers that the content is missing, with nothing pointing at the reindex it needs. → §CLV.3
 
 ## Block BV — The quality gate stops at the package boundary
 

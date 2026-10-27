@@ -81,7 +81,7 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	 * Loads a site by name with its <em>to-one</em> GenAI graph fetched in one
 	 * query — {@code turSNSiteGenAi} and the GenAI's {@code turAIAgent}. Mirrors
 	 * {@link #findByIdWithGenAi(String)} for the RAG-gating path
-	 * ({@link com.viglet.turing.persistence.adapter.sn.TurSNSiteRepositoryAdapter#hasRagEnabledForSiteName(String)}),
+	 * ({@link com.viglet.turing.genai.TurDefaultAgentResolver#isRagReadyForSiteName(String)}),
 	 * which navigates {@code site → genAi → agent} to read the agent's
 	 * {@code enabled}/{@code ragEnabled} flags. Both associations are
 	 * {@code @ManyToOne}/{@code @OneToOne} LAZY, so fetching them up front keeps

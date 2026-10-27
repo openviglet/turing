@@ -32,7 +32,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.genai.TurDefaultAgentResolver;
 
 /**
  * T807 / §LV.5 (Block BG) — deterministic coverage for the opt-in direct
@@ -48,13 +48,13 @@ class TurSNBulkImportServiceTest {
     @Mock
     private TurSNProcessQueue turSNProcessQueue;
     @Mock
-    private TurSNSiteRepositoryPort turSNSiteRepositoryPort;
+    private TurDefaultAgentResolver turDefaultAgentResolver;
 
     private TurSNBulkImportService service;
 
     @BeforeEach
     void setUp() {
-        service = new TurSNBulkImportService(turSNProcessQueue, turSNSiteRepositoryPort);
+        service = new TurSNBulkImportService(turSNProcessQueue, turDefaultAgentResolver);
         ReflectionTestUtils.setField(service, "enabled", true);
         ReflectionTestUtils.setField(service, "batchSize", 2);
     }
@@ -87,13 +87,13 @@ class TurSNBulkImportServiceTest {
 
     @Test
     void notEligibleWhenAnySiteHasRagEnabled() {
-        when(turSNSiteRepositoryPort.hasRagEnabledForSiteName("site1")).thenReturn(true);
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(true);
         assertThat(service.isEligible(items(2))).isFalse();
     }
 
     @Test
     void eligibleForVectorlessSite() {
-        when(turSNSiteRepositoryPort.hasRagEnabledForSiteName("site1")).thenReturn(false);
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(false);
         assertThat(service.isEligible(items(2))).isTrue();
     }
 

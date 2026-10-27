@@ -72,25 +72,4 @@ public class TurSNSiteRepositoryAdapter implements TurSNSiteRepositoryPort {
                 .filter(name -> name != null && !name.isBlank())
                 .toList();
     }
-
-    @Override
-    public boolean hasRagEnabledForSiteName(String siteName) {
-        // Walks site → genAi config → agent in one call so consumers can
-        // gate UI/route paths on RAG availability with a single round-trip
-        // instead of three port hops. Both hops are LAZY @ManyToOne/@OneToOne,
-        // and this adapter is called from paths with no open session (e.g.
-        // startup structured-feed provisioning), so the graph must be
-        // JOIN FETCH-ed up front — a plain findByName would throw
-        // LazyInitializationException on the getTurAIAgent() dereference.
-        return turSNSiteRepository.findByNameWithGenAi(siteName)
-                .map(site -> {
-                    var genAi = site.getTurSNSiteGenAi();
-                    if (genAi == null) {
-                        return false;
-                    }
-                    var agent = genAi.getTurAIAgent();
-                    return agent != null && agent.getEnabled() == 1 && agent.isRagEnabled();
-                })
-                .orElse(false);
-    }
 }

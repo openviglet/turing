@@ -37,7 +37,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**
@@ -50,6 +52,8 @@ class TurDefaultAgentResolverTest {
     private TurGlobalSettingsService globalSettingsService;
     @Mock
     private TurAIAgentRepository turAIAgentRepository;
+    @Mock
+    private TurSNSiteRepository turSNSiteRepository;
 
     @InjectMocks
     private TurDefaultAgentResolver resolver;
@@ -186,6 +190,43 @@ class TurDefaultAgentResolverTest {
                 com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.HYBRID);
 
         assertTrue(resolver.isRagReady(genAi));
+    }
+
+    private static TurSNSite site(TurSNSiteGenAi genAi) {
+        TurSNSite site = new TurSNSite();
+        site.setName("site");
+        site.setTurSNSiteGenAi(genAi);
+        return site;
+    }
+
+    @Test
+    void isRagReadyForSiteNameFallsBackToTheDefaultAgent() {
+        // T1147 — a binding with no agent of its own is embedded through the default.
+        when(turSNSiteRepository.findByNameWithGenAi("site")).thenReturn(Optional.of(site(new TurSNSiteGenAi())));
+        when(globalSettingsService.getDefaultAiAgentId()).thenReturn("def-1");
+        when(turAIAgentRepository.findById("def-1")).thenReturn(Optional.of(ragReadyAgent()));
+
+        assertTrue(resolver.isRagReadyForSiteName("site"));
+    }
+
+    @Test
+    void isRagReadyForSiteNameReadsTheOwnAgent() {
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        TurAIAgent agent = ragReadyAgent();
+        agent.setRagEnabled(false);
+        genAi.setTurAIAgent(agent);
+        when(turSNSiteRepository.findByNameWithGenAi("site")).thenReturn(Optional.of(site(genAi)));
+
+        assertFalse(resolver.isRagReadyForSiteName("site"));
+        verifyNoInteractions(globalSettingsService, turAIAgentRepository);
+    }
+
+    @Test
+    void isRagReadyForSiteNameFalseForAMissingSite() {
+        when(turSNSiteRepository.findByNameWithGenAi("missing")).thenReturn(Optional.empty());
+
+        assertFalse(resolver.isRagReadyForSiteName("missing"));
+        verifyNoInteractions(globalSettingsService, turAIAgentRepository);
     }
 
     @Test

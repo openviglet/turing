@@ -2345,28 +2345,24 @@ trigger.
 
 ## CLV What the SN site manifest cannot declare
 
-### CLV.2 Import embeds a site on the Default AI Agent (T1147)
+### CLV.3 A site reads RAG-ready only once it holds vectors (T1151)
 
-**Where it happened.** Dumont D174, the WordPress plugin's live-LLM suite. The plugin
-turns GenAI on through the manifest, `"genAi": {"agentId": "default"}` (D186), and the
-binding is created with `turAIAgent: null`, the Default AI Agent. After a reindex,
-search finds the seeded post but chat answers "The information is not available in the
-website's content."
+**Where it comes from.** T1147 made import embed a site on the Default AI Agent. Content
+indexed before GenAI was turned on (or before T1147, for a Default-agent site) holds no
+vectors until the site is reindexed, yet every readiness read says the site is ready.
 
-**Why.** `TurSNImportAPI.sendToGenAi` and `TurSNBulkImportService` embed a batch only
-when `TurSNSiteRepositoryAdapter.hasRagEnabledForSiteName` is true, and that reads the
-site's *own* agent. A site on the Default AI Agent has none, so nothing reaches the
-vector store. Chat resolves the effective agent through
-`TurDefaultAgentResolver.resolveEffectiveAgent`, so it runs and retrieves nothing.
-
-**Workaround.** None. Dumont D174 waits on this.
+**Why.** `TurDefaultAgentResolver.isRagReady` is a configuration check: the effective
+agent exists, is enabled and has RAG on, and the mode needs vectors. Nothing asks
+whether the vector store holds any document of the site. So `GET
+/api/sn/{site}/ai/capabilities` reports `similarByVector` available, chat runs, and
+answers say "the information is not available in the website's content". The cause is
+invisible to a connector and to an admin.
 
 **What it should do.**
-- The two import callers gate on `TurDefaultAgentResolver.isRagReady(genAi)`, the rule
-  every RAG surface already follows (it also keeps a VECTORLESS site out). The check
-  belongs in the callers, not the persistence adapter: ports stay read-only and do not
-  call services.
-- Sites imported before the fix hold no vectors and need a reindex; the release note
-  says so, and the site's RAG status should not read ready until one has run.
-- A test imports into a site whose binding has no agent of its own, with a RAG-ready
-  default agent, and asserts the documents reach `addDocuments`.
+- A cheap "has vectors" read for a site: one similarity search filtered to the site with
+  `topK = 1`, or a count where the store supports one, cached briefly.
+- When the configuration is ready but the site holds no vectors, the capabilities answer
+  carries a distinct reason (e.g. `NOT_EMBEDDED`) saying a reindex is needed, rather than
+  reading available.
+- The console's site GenAI page shows the same state next to a reindex action.
+- Not a gate on chat itself: a partly embedded site still answers what it has.

@@ -1518,6 +1518,7 @@
 - **T1104** — An SN manifest declares custom sorts, converged by name, with each level placing documents that lack its field first or last on Solr and Lucene (design §CXVII superseded: the JS SDK it named has no manifest types; the Java SDK is the manifest client and gained the shape).
 - **T1135** — The SN manifest's facets block sets a site's facets on or off, its type, its item type (drill-down or multi-select) and items per facet, reported as facetSettingsChanged and facetSettingsToChange, with TurSNManifestFacets in the Java SDK.
 - **T1146** — A manifest genAi block without agentId keeps the site's live agent and creates a Default-agent binding only when none exists; "default" still rebinds, and the SDK has keepAgent().
+- **T1147** — Import embeds a site on the Default AI Agent: both import gates use isRagReady, so a site without its own agent is embedded; sites indexed earlier need one reindex.
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 

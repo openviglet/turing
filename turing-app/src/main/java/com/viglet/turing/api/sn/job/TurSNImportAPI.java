@@ -45,6 +45,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
+import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.TurSNGenAi;
 import com.viglet.turing.logging.TurLoggingUtils;
 import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
@@ -72,19 +73,22 @@ public class TurSNImportAPI {
     private final com.viglet.turing.tenant.TurJmsTenantPropagation turJmsTenantPropagation;
     private final TurSNBulkImportService turSNBulkImportService;
     private final TurSNPartitionWriteGuard turSNPartitionWriteGuard;
+    private final TurDefaultAgentResolver turDefaultAgentResolver;
 
     public TurSNImportAPI(JmsMessagingTemplate jmsMessagingTemplate,
             TurSNSiteRepositoryPort turSNSiteRepositoryPort,
             TurSNGenAi turGenAi,
             com.viglet.turing.tenant.TurJmsTenantPropagation turJmsTenantPropagation,
             TurSNBulkImportService turSNBulkImportService,
-            TurSNPartitionWriteGuard turSNPartitionWriteGuard) {
+            TurSNPartitionWriteGuard turSNPartitionWriteGuard,
+            TurDefaultAgentResolver turDefaultAgentResolver) {
         this.jmsMessagingTemplate = jmsMessagingTemplate;
         this.turSNSiteRepositoryPort = turSNSiteRepositoryPort;
         this.turGenAi = turGenAi;
         this.turJmsTenantPropagation = turJmsTenantPropagation;
         this.turSNBulkImportService = turSNBulkImportService;
         this.turSNPartitionWriteGuard = turSNPartitionWriteGuard;
+        this.turDefaultAgentResolver = turDefaultAgentResolver;
     }
 
     @Operation(summary = "Queue documents for indexing",
@@ -293,12 +297,13 @@ public class TurSNImportAPI {
             }
             Object objectId = turJobItem.getAttributes().get(TurSNFieldName.ID);
             for (String siteName : turJobItem.getSiteNames()) {
-                if (turSNSiteRepositoryPort.hasRagEnabledForSiteName(siteName)) {
+                // T1147 — the effective agent, so a site on the Default AI Agent is embedded too.
+                if (turDefaultAgentResolver.isRagReadyForSiteName(siteName)) {
                     log.debug("RAG enabled for Object ID '{}' of SN Site '{}': routing to vector store",
                             objectId, siteName);
                     anyRagSite = true;
                 } else {
-                    log.debug("RAG skipped for Object ID '{}' of SN Site '{}': site missing or agent not configured",
+                    log.debug("RAG skipped for Object ID '{}' of SN Site '{}': site missing, vectorless or no RAG-ready agent",
                             objectId, siteName);
                 }
             }

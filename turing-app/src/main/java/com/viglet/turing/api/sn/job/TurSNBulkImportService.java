@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.api.sn.queue.TurSNProcessQueue;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.genai.TurDefaultAgentResolver;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,7 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSNBulkImportService {
 
     private final TurSNProcessQueue turSNProcessQueue;
-    private final TurSNSiteRepositoryPort turSNSiteRepositoryPort;
+    private final TurDefaultAgentResolver turDefaultAgentResolver;
 
     /** Master switch for the direct fast path. Default {@code false} (off). */
     @Value("${turing.sn.import.bulk-direct.enabled:false}")
@@ -73,15 +73,15 @@ public class TurSNBulkImportService {
     private int batchSize;
 
     public TurSNBulkImportService(TurSNProcessQueue turSNProcessQueue,
-            TurSNSiteRepositoryPort turSNSiteRepositoryPort) {
+            TurDefaultAgentResolver turDefaultAgentResolver) {
         this.turSNProcessQueue = turSNProcessQueue;
-        this.turSNSiteRepositoryPort = turSNSiteRepositoryPort;
+        this.turDefaultAgentResolver = turDefaultAgentResolver;
     }
 
     /**
      * Whether {@code turSNJobItems} may take the direct fast path: the feature is
-     * enabled AND no targeted site has RAG enabled (async embedding would be
-     * skipped otherwise). A {@code null} / empty payload is never eligible.
+     * enabled AND no targeted site is RAG-ready, through its own agent or the
+     * Default AI Agent (T1147); async embedding would be skipped otherwise. A {@code null} / empty payload is never eligible.
      */
     public boolean isEligible(TurSNJobItems turSNJobItems) {
         if (!enabled || turSNJobItems == null || turSNJobItems.size() == 0) {
@@ -92,7 +92,7 @@ public class TurSNBulkImportService {
                 continue;
             }
             for (String siteName : item.getSiteNames()) {
-                if (turSNSiteRepositoryPort.hasRagEnabledForSiteName(siteName)) {
+                if (turDefaultAgentResolver.isRagReadyForSiteName(siteName)) {
                     return false;
                 }
             }

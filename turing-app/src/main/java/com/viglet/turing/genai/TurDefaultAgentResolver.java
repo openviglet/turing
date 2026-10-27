@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,11 +62,13 @@ public class TurDefaultAgentResolver {
 
     private final TurGlobalSettingsService globalSettingsService;
     private final TurAIAgentRepository turAIAgentRepository;
+    private final TurSNSiteRepository turSNSiteRepository;
 
     public TurDefaultAgentResolver(TurGlobalSettingsService globalSettingsService,
-            TurAIAgentRepository turAIAgentRepository) {
+            TurAIAgentRepository turAIAgentRepository, TurSNSiteRepository turSNSiteRepository) {
         this.globalSettingsService = globalSettingsService;
         this.turAIAgentRepository = turAIAgentRepository;
+        this.turSNSiteRepository = turSNSiteRepository;
     }
 
     /**
@@ -118,6 +121,21 @@ public class TurDefaultAgentResolver {
         // (own or the Default AI Agent fallback) has RAG enabled. VECTOR/HYBRID
         // still qualify.
         return modeNeedsVectors(turSNSiteGenAi) && isAgentRagReady(resolveEffectiveAgent(turSNSiteGenAi));
+    }
+
+    /**
+     * {@link #isRagReady} for the site with this (case-sensitive) name, or
+     * {@code false} when no site has it. The import paths gate embedding on this
+     * (T1147), so a site answering through the Default AI Agent is embedded like
+     * one with an agent of its own. The site's GenAI graph is fetched up front,
+     * since import runs without an open session.
+     *
+     * @since 2026.3.6
+     */
+    public boolean isRagReadyForSiteName(String siteName) {
+        return turSNSiteRepository.findByNameWithGenAi(siteName)
+                .map(site -> isRagReady(site.getTurSNSiteGenAi()))
+                .orElse(false);
     }
 
     /**

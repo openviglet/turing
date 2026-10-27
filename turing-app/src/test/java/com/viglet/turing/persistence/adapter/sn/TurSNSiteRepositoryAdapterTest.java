@@ -22,11 +22,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.domain.sn.TurSNSiteDomain;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 
 /**
@@ -95,75 +93,6 @@ class TurSNSiteRepositoryAdapterTest {
 
         assertThat(domain.seInstanceId()).isEqualTo("se-id");
         assertThat(domain.genAiId()).isNull();
-    }
-
-    @Test
-    void hasRagEnabledIsTrueWhenAgentEnabledAndRagOn() {
-        TurSNSite entity = buildSite();
-        TurAIAgent agent = new TurAIAgent();
-        agent.setEnabled(1);
-        agent.setRagEnabled(true);
-        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(agent);
-        entity.setTurSNSiteGenAi(genAi);
-        when(turSNSiteRepository.findByNameWithGenAi("site")).thenReturn(Optional.of(entity));
-
-        assertThat(adapter.hasRagEnabledForSiteName("site")).isTrue();
-    }
-
-    @Test
-    void hasRagEnabledIsFalseWhenAgentDisabled() {
-        TurSNSite entity = buildSite();
-        TurAIAgent agent = new TurAIAgent();
-        agent.setEnabled(0);
-        agent.setRagEnabled(true);
-        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(agent);
-        entity.setTurSNSiteGenAi(genAi);
-        when(turSNSiteRepository.findByNameWithGenAi("site")).thenReturn(Optional.of(entity));
-
-        assertThat(adapter.hasRagEnabledForSiteName("site")).isFalse();
-    }
-
-    @Test
-    void hasRagEnabledIsFalseWhenRagOff() {
-        TurSNSite entity = buildSite();
-        TurAIAgent agent = new TurAIAgent();
-        agent.setEnabled(1);
-        agent.setRagEnabled(false);
-        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(agent);
-        entity.setTurSNSiteGenAi(genAi);
-        when(turSNSiteRepository.findByNameWithGenAi("site")).thenReturn(Optional.of(entity));
-
-        assertThat(adapter.hasRagEnabledForSiteName("site")).isFalse();
-    }
-
-    @Test
-    void hasRagEnabledIsFalseWhenAgentNull() {
-        TurSNSite entity = buildSite();
-        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(null);
-        entity.setTurSNSiteGenAi(genAi);
-        when(turSNSiteRepository.findByNameWithGenAi("site")).thenReturn(Optional.of(entity));
-
-        assertThat(adapter.hasRagEnabledForSiteName("site")).isFalse();
-    }
-
-    @Test
-    void hasRagEnabledIsFalseWhenGenAiNull() {
-        TurSNSite entity = buildSite();
-        entity.setTurSNSiteGenAi(null);
-        when(turSNSiteRepository.findByNameWithGenAi("site")).thenReturn(Optional.of(entity));
-
-        assertThat(adapter.hasRagEnabledForSiteName("site")).isFalse();
-    }
-
-    @Test
-    void hasRagEnabledIsFalseWhenSiteMissing() {
-        when(turSNSiteRepository.findByNameWithGenAi("missing")).thenReturn(Optional.empty());
-
-        assertThat(adapter.hasRagEnabledForSiteName("missing")).isFalse();
     }
 
     @Test
