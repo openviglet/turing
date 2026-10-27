@@ -40,7 +40,7 @@ msgstr "Indexação"
 #: src/includes/class-viglet-dumont-native-search.php:195
 #: src/includes/class-viglet-dumont-post-state.php:99
 #: assets/admin/insights.js:91
-#: assets/admin/tuning.js:380
+#: assets/admin/tuning.js:382
 #: src/admin/js/editor-panel.js:211
 #: src/admin/js/search-block-editor.js:108
 msgid "Search"
@@ -49,8 +49,8 @@ msgstr "Busca"
 #: src/admin/views/settings-page.php:52
 #: assets/admin/insights.js:101
 #: assets/admin/mapping.js:339
-#: assets/admin/tuning.js:260
-#: assets/admin/tuning.js:387
+#: assets/admin/tuning.js:262
+#: assets/admin/tuning.js:389
 msgid "Actions"
 msgstr "Ações"
 
@@ -122,7 +122,7 @@ msgid "Source App Identifier"
 msgstr "Identificador da aplicação de origem"
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:490
+#: src/admin/views/settings-page.php:511
 msgid "Test Connection"
 msgstr "Testar conexão"
 
@@ -246,67 +246,67 @@ msgstr "Com a página do tema, o Turing ordena os resultados e o tema os mostra 
 msgid "Results Per Page"
 msgstr "Resultados por página"
 
-#: src/admin/views/settings-page.php:468
+#: src/admin/views/settings-page.php:489
 msgid "Save Settings"
 msgstr "Salvar configurações"
 
-#: src/admin/views/settings-page.php:476
+#: src/admin/views/settings-page.php:497
 msgid "Indexing Actions"
 msgstr "Ações de indexação"
 
-#: src/admin/views/settings-page.php:477
+#: src/admin/views/settings-page.php:498
 msgid "Manage your Turing search index."
 msgstr "Gerencie o seu índice de busca no Turing."
 
-#: src/admin/views/settings-page.php:485
+#: src/admin/views/settings-page.php:506
 msgid "Connection Status"
 msgstr "Status da conexão"
 
-#: src/admin/views/settings-page.php:486
+#: src/admin/views/settings-page.php:507
 msgid "Test the connection to your Turing server."
 msgstr "Teste a conexão com o seu servidor Turing."
 
-#: src/admin/views/settings-page.php:502
+#: src/admin/views/settings-page.php:523
 msgid "Index All Content"
 msgstr "Indexar todo o conteúdo"
 
-#: src/admin/views/settings-page.php:503
+#: src/admin/views/settings-page.php:524
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
 
-#: src/admin/views/settings-page.php:508
+#: src/admin/views/settings-page.php:529
 msgid "All Content"
 msgstr "Todo o conteúdo"
 
-#: src/admin/views/settings-page.php:509
+#: src/admin/views/settings-page.php:530
 msgid "Posts Only"
 msgstr "Só posts"
 
-#: src/admin/views/settings-page.php:510
+#: src/admin/views/settings-page.php:531
 msgid "Pages Only"
 msgstr "Só páginas"
 
-#: src/admin/views/settings-page.php:514
+#: src/admin/views/settings-page.php:535
 msgid "Start Indexing"
 msgstr "Iniciar indexação"
 
-#: src/admin/views/settings-page.php:533
+#: src/admin/views/settings-page.php:554
 msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
-#: src/admin/views/settings-page.php:534
+#: src/admin/views/settings-page.php:555
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
-#: src/admin/views/settings-page.php:538
+#: src/admin/views/settings-page.php:559
 msgid "Delete All"
 msgstr "Excluir tudo"
 
-#: src/admin/views/settings-page.php:549
+#: src/admin/views/settings-page.php:570
 msgid "Content Overview"
 msgstr "Visão geral do conteúdo"
 
-#: src/admin/views/settings-page.php:553
+#: src/admin/views/settings-page.php:574
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
@@ -384,39 +384,39 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:240
+#: src/includes/class-viglet-dumont-admin.php:241
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:241
+#: src/includes/class-viglet-dumont-admin.php:242
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:242
+#: src/includes/class-viglet-dumont-admin.php:243
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:243
+#: src/includes/class-viglet-dumont-admin.php:244
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:244
+#: src/includes/class-viglet-dumont-admin.php:245
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:245
+#: src/includes/class-viglet-dumont-admin.php:246
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:246
+#: src/includes/class-viglet-dumont-admin.php:247
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:247
+#: src/includes/class-viglet-dumont-admin.php:248
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:265
+#: src/includes/class-viglet-dumont-admin.php:266
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -659,39 +659,39 @@ msgstr "%1$d de %2$d documentos indexados..."
 msgid "Site"
 msgstr "Site"
 
-#: src/includes/class-viglet-dumont-mapping.php:363
+#: src/includes/class-viglet-dumont-mapping.php:378
 msgid "No mapped field to provision."
 msgstr "Nenhum campo mapeado para enviar."
 
-#: src/includes/class-viglet-dumont-mapping.php:373
+#: src/includes/class-viglet-dumont-mapping.php:388
 msgid "The fields are already provisioned."
 msgstr "Os campos já estão no Turing."
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:428
+#: src/includes/class-viglet-dumont-mapping.php:456
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr "%1$s é %2$s no Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:454
+#: src/includes/class-viglet-dumont-mapping.php:485
 #, php-format
 msgid "Taxonomy: %s"
 msgstr "Taxonomia: %s"
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:470
+#: src/includes/class-viglet-dumont-mapping.php:501
 #, php-format
 msgid "Meta: %s"
 msgstr "Meta: %s"
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:478
+#: src/includes/class-viglet-dumont-mapping.php:509
 #, php-format
 msgid "Post: %s"
 msgstr "Post: %s"
 
-#: src/includes/class-viglet-dumont-mapping.php:483
+#: src/includes/class-viglet-dumont-mapping.php:514
 msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
@@ -772,11 +772,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:752
+#: src/viglet-dumont.php:772
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:777
+#: src/viglet-dumont.php:797
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -956,7 +956,7 @@ msgid "Remove field"
 msgstr "Remover campo"
 
 #: assets/admin/mapping.js:254
-#: assets/admin/tuning.js:49
+#: assets/admin/tuning.js:51
 msgid "Remove"
 msgstr "Remover"
 
@@ -996,7 +996,7 @@ msgstr "Todo tipo de post sempre envia título, texto, URL, datas, autor, catego
 msgid "Turing did not say where the fields stand: %s"
 msgstr "O Turing não informou a situação dos campos: %s"
 
-#: assets/admin/mapping.js:531
+#: assets/admin/mapping.js:539
 msgid "Save and send to Turing"
 msgstr "Salvar e enviar ao Turing"
 
@@ -1160,7 +1160,7 @@ msgstr "facetas"
 msgid "Suggestions"
 msgstr "Sugestões"
 
-#: src/admin/views/settings-page.php:506
+#: src/admin/views/settings-page.php:527
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
@@ -1383,12 +1383,6 @@ msgstr "Filtros em linguagem natural"
 msgid "Catalog copilot"
 msgstr "Copiloto de catálogo"
 
-#. translators: %s: Turing's console address.
-#: src/viglet-dumont.php:103
-#, php-format
-msgid "Turn on generative AI for this SN site in Turing's console (%s), under the site's Generative AI settings."
-msgstr "Ative a IA generativa deste site SN no console do Turing (%s), nas configurações de IA generativa do site."
-
 #: assets/admin/health.js:64
 msgid "AI features"
 msgstr "Recursos de IA"
@@ -1523,162 +1517,162 @@ msgstr "Ajuste"
 msgid "Turing has no SN site named %s."
 msgstr "O Turing não tem um site SN chamado %s."
 
-#: src/includes/class-viglet-dumont-tuning.php:132
+#: src/includes/class-viglet-dumont-tuning.php:138
 msgid "A synonym needs two words or more."
 msgstr "Um sinônimo precisa de duas palavras ou mais."
 
-#: src/includes/class-viglet-dumont-tuning.php:174
+#: src/includes/class-viglet-dumont-tuning.php:180
 msgid "Name a search and at least one post."
 msgstr "Informe uma busca e pelo menos um post."
 
-#: src/includes/class-viglet-dumont-tuning.php:409
+#: src/includes/class-viglet-dumont-tuning.php:415
 msgid "Only what this plugin added can be removed here; change the rest in Turing's console."
 msgstr "Só o que este plugin adicionou pode ser removido aqui; altere o resto no console do Turing."
 
-#: assets/admin/tuning.js:38
+#: assets/admin/tuning.js:40
 msgid "Set in Turing’s console"
 msgstr "Definido no console do Turing"
 
-#: assets/admin/tuning.js:242
+#: assets/admin/tuning.js:244
 msgid "Synonyms"
 msgstr "Sinônimos"
 
-#: assets/admin/tuning.js:246
+#: assets/admin/tuning.js:248
 msgid "Words a visitor may type for the same thing. A search for any of them finds posts with the others."
 msgstr "Palavras que um visitante pode digitar para a mesma coisa. Uma busca por qualquer uma delas encontra posts com as outras."
 
-#: assets/admin/tuning.js:256
+#: assets/admin/tuning.js:258
 msgid "Words"
 msgstr "Palavras"
 
 #. translators: %s: the synonym's words.
-#: assets/admin/tuning.js:274
+#: assets/admin/tuning.js:276
 #, js-format
 msgid "Remove %s"
 msgstr "Remover %s"
 
-#: assets/admin/tuning.js:306
+#: assets/admin/tuning.js:308
 msgid "Words that mean the same, separated by commas"
 msgstr "Palavras com o mesmo sentido, separadas por vírgulas"
 
-#: assets/admin/tuning.js:315
+#: assets/admin/tuning.js:317
 msgid "Add synonym"
 msgstr "Adicionar sinônimo"
 
-#: assets/admin/tuning.js:366
+#: assets/admin/tuning.js:368
 msgid "Promoted results"
 msgstr "Resultados em destaque"
 
-#: assets/admin/tuning.js:370
+#: assets/admin/tuning.js:372
 msgid "Up to three posts shown first, as featured, when a visitor searches for these words."
 msgstr "Até três posts mostrados primeiro, em destaque, quando um visitante busca por estas palavras."
 
-#: assets/admin/tuning.js:383
-#: assets/admin/tuning.js:497
+#: assets/admin/tuning.js:385
+#: assets/admin/tuning.js:499
 msgid "Shown first"
 msgstr "Mostrados primeiro"
 
 #. translators: %s: the search the posts are promoted for.
-#: assets/admin/tuning.js:406
+#: assets/admin/tuning.js:408
 #, js-format
 msgid "Remove the promotion for %s"
 msgstr "Remover o destaque para %s"
 
-#: assets/admin/tuning.js:448
+#: assets/admin/tuning.js:450
 msgid "When visitors search for"
 msgstr "Quando os visitantes buscarem por"
 
-#: assets/admin/tuning.js:458
+#: assets/admin/tuning.js:460
 msgid "Find a post to show first"
 msgstr "Encontre um post para mostrar primeiro"
 
-#: assets/admin/tuning.js:466
+#: assets/admin/tuning.js:468
 msgid "Posts found"
 msgstr "Posts encontrados"
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:483
+#: assets/admin/tuning.js:485
 #, js-format
 msgid "Show %s first"
 msgstr "Mostrar %s primeiro"
 
-#: assets/admin/tuning.js:490
+#: assets/admin/tuning.js:492
 msgid "Add"
 msgstr "Adicionar"
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:513
+#: assets/admin/tuning.js:515
 #, js-format
 msgid "Take %s out"
 msgstr "Tirar %s"
 
-#: assets/admin/tuning.js:520
+#: assets/admin/tuning.js:522
 msgid "Take out"
 msgstr "Tirar"
 
-#: assets/admin/tuning.js:532
+#: assets/admin/tuning.js:534
 msgid "Promote"
 msgstr "Destacar"
 
-#: src/includes/class-viglet-dumont-tuning.php:285
+#: src/includes/class-viglet-dumont-tuning.php:291
 msgid "newer first"
 msgstr "mais recentes primeiro"
 
-#: src/includes/class-viglet-dumont-tuning.php:288
+#: src/includes/class-viglet-dumont-tuning.php:294
 msgid "sticky posts first"
 msgstr "posts fixos primeiro"
 
-#: assets/admin/tuning.js:77
+#: assets/admin/tuning.js:79
 msgid "No suggestions from recent searches."
 msgstr "Nenhuma sugestão das buscas recentes."
 
-#: assets/admin/tuning.js:84
+#: assets/admin/tuning.js:86
 msgid "Suggested synonyms"
 msgstr "Sinônimos sugeridos"
 
 #. translators: %s: the suggested words.
-#: assets/admin/tuning.js:107
+#: assets/admin/tuning.js:109
 #, js-format
 msgid "Accept %s"
 msgstr "Aceitar %s"
 
-#: assets/admin/tuning.js:111
+#: assets/admin/tuning.js:113
 msgid "Accept"
 msgstr "Aceitar"
 
-#: assets/admin/tuning.js:118
+#: assets/admin/tuning.js:120
 msgid "Suggest from recent searches"
 msgstr "Sugerir a partir das buscas recentes"
 
-#: assets/admin/tuning.js:163
+#: assets/admin/tuning.js:165
 msgid "No results."
 msgstr "Nenhum resultado."
 
-#: assets/admin/tuning.js:171
+#: assets/admin/tuning.js:173
 msgid "Featured:"
 msgstr "Destaque:"
 
-#: assets/admin/tuning.js:188
+#: assets/admin/tuning.js:190
 msgid "Try it"
 msgstr "Experimente"
 
-#: assets/admin/tuning.js:203
+#: assets/admin/tuning.js:205
 msgid "A search to watch"
 msgstr "Uma busca para acompanhar"
 
-#: assets/admin/tuning.js:204
+#: assets/admin/tuning.js:206
 msgid "Its first results, now and before your last change here."
 msgstr "Os primeiros resultados, agora e antes da sua última alteração aqui."
 
-#: assets/admin/tuning.js:213
+#: assets/admin/tuning.js:215
 msgid "Try"
 msgstr "Experimentar"
 
-#: assets/admin/tuning.js:220
+#: assets/admin/tuning.js:222
 msgid "Before"
 msgstr "Antes"
 
-#: assets/admin/tuning.js:221
+#: assets/admin/tuning.js:223
 msgid "Now"
 msgstr "Agora"
 
@@ -1882,42 +1876,42 @@ msgctxt "block description"
 msgid "The Turing search block’s results: the count, the sort, the answer and the list."
 msgstr "Os resultados do bloco de busca do Turing: a contagem, a ordenação, a resposta e a lista."
 
-#: src/includes/class-viglet-dumont-mapping.php:318
+#: src/includes/class-viglet-dumont-mapping.php:333
 msgid "Upcoming"
 msgstr "Próximos"
 
-#: src/includes/class-viglet-dumont-mapping.php:323
+#: src/includes/class-viglet-dumont-mapping.php:338
 #: assets/admin/insights.js:22
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:328
+#: src/includes/class-viglet-dumont-mapping.php:343
 #: assets/admin/insights.js:23
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:333
+#: src/includes/class-viglet-dumont-mapping.php:348
 msgid "This year"
 msgstr "Este ano"
 
-#: src/includes/class-viglet-dumont-mapping.php:338
+#: src/includes/class-viglet-dumont-mapping.php:353
 msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:727
+#: src/includes/class-viglet-dumont-mapping.php:758
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:731
+#: src/includes/class-viglet-dumont-mapping.php:762
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:735
+#: src/includes/class-viglet-dumont-mapping.php:766
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
@@ -2237,3 +2231,79 @@ msgstr "assistente"
 msgctxt "block keyword"
 msgid "shop"
 msgstr "loja"
+
+#: src/admin/views/settings-page.php:467
+msgid "Generative AI"
+msgstr ""
+
+#: src/admin/views/settings-page.php:468
+msgid "Answers with sources and chat over this site's content, through Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Turing's AI provider."
+msgstr ""
+
+#: src/admin/views/settings-page.php:478
+msgid "Turn on generative AI for this site in Turing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:479
+msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. It replaces an agent chosen for this site in Turing's console, and turning it off here later leaves Turing's setting as it is."
+msgstr ""
+
+#: src/viglet-dumont.php:103
+msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
+msgstr ""
+
+#: assets/admin/mapping.js:505
+msgid "Saving also sets generative AI for this site in Turing: on, answering through its Default AI Agent, in place of any agent chosen in Turing's console."
+msgstr ""
+
+#: assets/admin/tuning.js:561
+msgid "Boosts"
+msgstr "Impulsos"
+
+#: assets/admin/tuning.js:565
+msgid "Rank some posts higher among the results that match. A boost never adds a result, it only changes the order."
+msgstr "Coloque alguns posts mais acima entre os resultados encontrados. Um impulso nunca acrescenta um resultado, só muda a ordem."
+
+#: assets/admin/tuning.js:572
+msgid "Turing did not say which boosts are set; saving replaces them."
+msgstr "O Turing não informou quais impulsos estão definidos; salvar substitui todos."
+
+#: assets/admin/tuning.js:591
+msgid "Newer first"
+msgstr "Mais recentes primeiro"
+
+#: assets/admin/tuning.js:592
+msgid "Recently published posts rank higher."
+msgstr "Posts publicados recentemente ficam mais acima."
+
+#: assets/admin/tuning.js:601
+msgid "Sticky posts first"
+msgstr "Posts fixos primeiro"
+
+#: assets/admin/tuning.js:605
+msgid "Posts marked “Stick to the top of the blog” rank higher."
+msgstr "Posts marcados como “Fixar no topo do blog” ficam mais acima."
+
+#: assets/admin/tuning.js:613
+msgid "By post type"
+msgstr "Por tipo de conteúdo"
+
+#: assets/admin/tuning.js:617
+msgid "Up ranks a type’s posts higher; Down ranks every other type higher."
+msgstr "Acima coloca os posts do tipo mais acima; Abaixo coloca todos os outros tipos mais acima."
+
+#: assets/admin/tuning.js:634
+msgid "Up"
+msgstr "Acima"
+
+#: assets/admin/tuning.js:638
+msgid "Normal"
+msgstr "Normal"
+
+#: assets/admin/tuning.js:645
+msgid "Down"
+msgstr "Abaixo"
+
+#: assets/admin/tuning.js:665
+msgid "Save boosts"
+msgstr "Salvar impulsos"

@@ -144,6 +144,11 @@ function viglet_dumont_init(): void {
 	if ( $settings['auto_index'] || $settings['auto_deindex'] ) {
 		add_action( 'save_post', 'viglet_dumont_handle_save', 10, 2 );
 	}
+	// Sticking a post from Quick Edit or code saves nothing, yet "Sticky posts first" reads it (D187).
+	if ( $settings['auto_index'] ) {
+		add_action( 'post_stuck', 'viglet_dumont_handle_sticky' );
+		add_action( 'post_unstuck', 'viglet_dumont_handle_sticky' );
+	}
 	if ( $settings['auto_deindex'] ) {
 		add_action( 'delete_post', 'viglet_dumont_handle_delete' );
 	}
@@ -226,6 +231,19 @@ function viglet_dumont_handle_save( int $post_id, WP_Post $post ): void {
 		}
 	} elseif ( $settings['auto_deindex'] && in_array( $post->post_type, viglet_dumont_get_indexable_types(), true ) ) {
 		$queue->enqueue( $post_id, 'delete' );
+	}
+}
+
+/**
+ * Handle a post stuck or unstuck — queue an index, so its `sticky` field follows.
+ *
+ * @param int $post_id The post.
+ */
+function viglet_dumont_handle_sticky( int $post_id ): void {
+	$post    = get_post( $post_id );
+	$indexer = new Viglet_Dumont_Indexer( viglet_dumont_get_settings() );
+	if ( $post && 'publish' === $post->post_status && $indexer->should_index( $post ) ) {
+		( new Viglet_Dumont_Queue() )->enqueue( $post_id, 'index' );
 	}
 }
 

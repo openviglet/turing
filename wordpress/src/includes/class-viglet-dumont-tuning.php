@@ -116,7 +116,13 @@ class Viglet_Dumont_Tuning {
 			'synonyms'   => $synonym_rows,
 			'spotlights' => $spotlight_rows,
 			'boosts'     => is_wp_error( $boosts ) ? null : $boosts,
-			'types'      => array_values( viglet_dumont_get_indexable_types() ),
+			'types'      => array_map(
+				static fn ( string $type ) => array(
+					'name'  => $type,
+					'label' => (string) ( get_post_type_object( $type )->labels->name ?? $type ),
+				),
+				array_values( viglet_dumont_get_indexable_types() )
+			),
 		);
 	}
 

@@ -11,8 +11,10 @@ import {
 	CardHeader,
 	Flex,
 	Notice,
+	SelectControl,
 	Spinner,
 	TextControl,
+	ToggleControl,
 } from '@wordpress/components';
 import {
 	createRoot,
@@ -538,6 +540,137 @@ function Promoted( { rows, act } ) {
 	);
 }
 
+/**
+ * Boosts (D187): newer first, sticky posts first and a post type up or down, saved together
+ * as the plugin's own ranking expressions. Mounted with a key of what Turing holds, so a
+ * save's answer starts the form again from it.
+ *
+ * @param {Object}                                props        The props.
+ * @param {?Object}                               props.boosts {recency, sticky, types}, null when Turing could not say.
+ * @param {Array<{name: string, label: string}>}  props.types  The indexed post types.
+ * @param {(request: Object) => Promise<boolean>} props.act    Sends a change.
+ */
+function Boosts( { boosts, types, act } ) {
+	const [ recency, setRecency ] = useState( !! boosts?.recency );
+	const [ sticky, setSticky ] = useState( !! boosts?.sticky );
+	const [ directions, setDirections ] = useState( boosts?.types || {} );
+
+	return (
+		<Card>
+			<CardHeader>
+				<h2>{ __( 'Boosts', 'viglet-dumont' ) }</h2>
+			</CardHeader>
+			<CardBody>
+				<p>
+					{ __(
+						'Rank some posts higher among the results that match. A boost never adds a result, it only changes the order.',
+						'viglet-dumont'
+					) }
+				</p>
+				{ ! boosts && (
+					<Notice status="warning" isDismissible={ false }>
+						{ __(
+							'Turing did not say which boosts are set; saving replaces them.',
+							'viglet-dumont'
+						) }
+					</Notice>
+				) }
+				<form
+					onSubmit={ ( event ) => {
+						event.preventDefault();
+						act( {
+							path: '/viglet-dumont/v1/tuning/boosts',
+							method: 'POST',
+							data: { recency, sticky, types: directions },
+						} );
+					} }
+				>
+					<Flex direction="column" gap={ 4 }>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={ __( 'Newer first', 'viglet-dumont' ) }
+							help={ __(
+								'Recently published posts rank higher.',
+								'viglet-dumont'
+							) }
+							checked={ recency }
+							onChange={ setRecency }
+						/>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={ __(
+								'Sticky posts first',
+								'viglet-dumont'
+							) }
+							help={ __(
+								'Posts marked “Stick to the top of the blog” rank higher.',
+								'viglet-dumont'
+							) }
+							checked={ sticky }
+							onChange={ setSticky }
+						/>
+						{ types.length > 1 && (
+							<h3>{ __( 'By post type', 'viglet-dumont' ) }</h3>
+						) }
+						{ types.length > 1 && (
+							<p className="description">
+								{ __(
+									'Up ranks a type’s posts higher; Down ranks every other type higher.',
+									'viglet-dumont'
+								) }
+							</p>
+						) }
+						{ types.length > 1 &&
+							types.map( ( type ) => (
+								<SelectControl
+									key={ type.name }
+									__nextHasNoMarginBottom
+									__next40pxDefaultSize
+									label={ type.label }
+									value={ directions[ type.name ] || '' }
+									options={ [
+										{
+											value: 'up',
+											label: __( 'Up', 'viglet-dumont' ),
+										},
+										{
+											value: '',
+											label: __(
+												'Normal',
+												'viglet-dumont'
+											),
+										},
+										{
+											value: 'down',
+											label: __(
+												'Down',
+												'viglet-dumont'
+											),
+										},
+									] }
+									onChange={ ( value ) => {
+										const next = { ...directions };
+										if ( value ) {
+											next[ type.name ] = value;
+										} else {
+											delete next[ type.name ];
+										}
+										setDirections( next );
+									} }
+								/>
+							) ) }
+					</Flex>
+					<p>
+						<Button variant="secondary" type="submit">
+							{ __( 'Save boosts', 'viglet-dumont' ) }
+						</Button>
+					</p>
+				</form>
+			</CardBody>
+		</Card>
+	);
+}
+
 function Tuning() {
 	const [ data, setData ] = useState( null );
 	const [ error, setError ] = useState( '' );
@@ -584,6 +717,12 @@ function Tuning() {
 			<TryIt version={ version } />
 			<Synonyms rows={ data.synonyms } act={ act } />
 			<Promoted rows={ data.spotlights } act={ act } />
+			<Boosts
+				key={ JSON.stringify( data.boosts ) }
+				boosts={ data.boosts }
+				types={ data.types }
+				act={ act }
+			/>
 		</Flex>
 	);
 }

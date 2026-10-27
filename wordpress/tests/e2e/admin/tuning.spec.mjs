@@ -11,7 +11,8 @@ test.afterEach( () => {
 		'eval',
 		'$t = new Viglet_Dumont_Tuning(); $all = $t->all();' +
 			' foreach ( $all["synonyms"] as $s ) { if ( $s["ours"] ) { $t->remove_synonym( $s["id"] ); } }' +
-			' foreach ( $all["spotlights"] as $s ) { if ( $s["ours"] ) { $t->remove_spotlight( $s["id"] ); } }',
+			' foreach ( $all["spotlights"] as $s ) { if ( $s["ours"] ) { $t->remove_spotlight( $s["id"] ); } }' +
+			' $t->set_boosts( false, false, array() );',
 	] );
 } );
 
@@ -100,6 +101,75 @@ test( 'a post promoted for a search heads its results as featured', async ( {
 		.getByRole( 'button', { name: 'Remove the promotion for workshop' } )
 		.click();
 	await expect( card.locator( 'tbody tr' ) ).toHaveCount( 0 );
+} );
+
+// The workshops are dated 1, 2, 6 and 10 January (seed.php), and relevance ties them.
+const workshops = ( page ) => page.locator( '.viglet-dumont-search__title a' );
+
+test( 'boosts reorder the results: newer first, then sticky first, and off restores relevance', async ( {
+	page,
+	seed,
+	look,
+} ) => {
+	const results = `/?page_id=${ seed.searchPageId }&q=workshop`;
+	const card = page.locator( '.components-card' ).filter( {
+		has: page.getByRole( 'heading', { name: 'Boosts' } ),
+	} );
+	const save = async () => {
+		await card.getByRole( 'button', { name: 'Save boosts' } ).click();
+		await expect(
+			page.locator( '.components-notice.is-error' )
+		).toHaveCount( 0 );
+	};
+
+	await page.goto( screen );
+	await card.getByLabel( 'Newer first' ).check();
+	await save();
+	await expect( card.getByLabel( 'Newer first' ) ).toBeChecked();
+	await look( 'tuning-boosts' );
+	await page.goto( results );
+	await expect( workshops( page ) ).toHaveText( [
+		'Workshop on testing',
+		'Workshop on blocks',
+		'Workshop on facets',
+		'Workshop on search',
+	] );
+
+	// Stuck from code, as Quick Edit does: no save, only post_stuck, and the queue sends it.
+	wp( [
+		'eval',
+		'$id = get_posts( array( "title" => "Workshop on facets", "fields" => "ids" ) )[0];' +
+			' stick_post( $id ); viglet_dumont_process_queue();',
+	] );
+	try {
+		await page.goto( screen );
+		await card.getByLabel( 'Newer first' ).uncheck();
+		await card.getByLabel( 'Sticky posts first' ).check();
+		await save();
+		await page.goto( results );
+		await expect( workshops( page ).first() ).toHaveText(
+			'Workshop on facets'
+		);
+	} finally {
+		wp( [
+			'eval',
+			'$id = get_posts( array( "title" => "Workshop on facets", "fields" => "ids" ) )[0];' +
+				' unstick_post( $id ); viglet_dumont_process_queue();',
+		] );
+	}
+
+	await page.goto( screen );
+	await card.getByLabel( 'Sticky posts first' ).uncheck();
+	await save();
+	await page.reload();
+	await expect( card.getByLabel( 'Newer first' ) ).not.toBeChecked();
+	await expect( card.getByLabel( 'Sticky posts first' ) ).not.toBeChecked();
+	// Relevance ties the four, so its order follows indexing; only the boosted one is known.
+	await page.goto( results );
+	await expect( workshops( page ) ).toHaveCount( 4 );
+	await expect( workshops( page ).first() ).not.toHaveText(
+		'Workshop on testing'
+	);
 } );
 
 test( "suggestions come from Turing's mining, without wildcard or half-typed variants", async ( {
