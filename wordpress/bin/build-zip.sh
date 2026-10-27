@@ -29,6 +29,11 @@ for entry in health mapping setup turing-sdk; do
         exit 1
     fi
 done
+# The build is flat: a folder in it is wp-scripts copying the plugin's own files into it (D211).
+if [ -n "$(find src/admin/build -mindepth 1 -type d)" ]; then
+    echo "src/admin/build holds folders: rm -rf src/admin/build && npm run build" >&2
+    exit 1
+fi
 
 rm -rf build
 mkdir -p build/viglet-dumont
