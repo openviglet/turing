@@ -117,3 +117,23 @@ button {
 .wp-site-blocks > main {
 	flex: 1;
 }
+
+/* WooCommerce's sale badge, in the brand's action colour at AA contrast. */
+.wc-block-components-product-sale-badge,
+body .woocommerce span.onsale {
+	background: var(--wp--preset--color--ember);
+	border-color: var(--wp--preset--color--ember);
+	color: var(--wp--preset--color--paper);
+}
+
+/* The copilot sits in the product's side column: its heading is a section's, not the page's. */
+.wp-block-viglet-dumont-copilot h2 {
+	font-size: var(--wp--preset--font-size--large);
+	margin-block-start: 0;
+}
+
+/* The header row: the mark left, then the menu and whatever WooCommerce hooks after it
+   (account, cart) together on the right. */
+.tarnfell-header-row > .wp-block-navigation {
+	margin-inline-start: auto;
+}

@@ -102,6 +102,10 @@ rem In English, whatever language a browser test run left the site in.
 %WP% site switch-language en_US || exit /b 1
 rem Its links are pretty permalinks; the browser tests put plain ones back.
 %WP% rewrite structure "/%%postname%%/" --hard || exit /b 1
+rem A shop: WooCommerce on, with the woo browser tests' jackets (tests/e2e/fixtures).
+%WP% plugin is-installed woocommerce >nul 2>&1 || %WP% plugin install woocommerce || exit /b 1
+%WP% plugin activate woocommerce || exit /b 1
+%WP% eval-file /e2e/woo-seed.php || exit /b 1
 %WP% eval-file /demo/setup.php || exit /b 1
 echo Demo storefront: http://localhost:%WP_PORT%/
 exit /b 0

@@ -1,0 +1,39 @@
+<!-- wp:template-part {"slug":"header","area":"header"} /-->
+
+<!-- wp:group {"tagName":"main","style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained","wideSize":"1200px"}} -->
+<main class="wp-block-group" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--60)"><!-- wp:woocommerce/breadcrumbs {"align":"wide","fontSize":"small"} /-->
+
+<!-- wp:columns {"align":"wide","style":{"spacing":{"blockGap":{"left":"var:preset|spacing|50"}}}} -->
+<div class="wp-block-columns alignwide"><!-- wp:column {"width":"55%"} -->
+<div class="wp-block-column" style="flex-basis:55%"><!-- wp:woocommerce/product-image-gallery /--></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"width":"45%"} -->
+<div class="wp-block-column" style="flex-basis:45%"><!-- wp:post-title {"level":1,"fontSize":"x-large","__woocommerceNamespace":"woocommerce/product-query/product-title"} /-->
+
+<!-- wp:woocommerce/product-price {"isDescendentOfSingleProductTemplate":true,"fontSize":"large"} /-->
+
+<!-- wp:post-excerpt {"__woocommerceNamespace":"woocommerce/product-query/product-summary"} /-->
+
+<!-- wp:woocommerce/add-to-cart-form /-->
+
+<!-- wp:woocommerce/product-meta -->
+<div class="wp-block-woocommerce-product-meta"><!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
+<div class="wp-block-group"><!-- wp:woocommerce/product-sku /-->
+
+<!-- wp:post-terms {"term":"product_cat","prefix":"Category: "} /--></div>
+<!-- /wp:group --></div>
+<!-- /wp:woocommerce/product-meta -->
+
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|30","left":"var:preset|spacing|30","right":"var:preset|spacing|30"}},"border":{"radius":"6px"}},"backgroundColor":"lichen","layout":{"type":"default"}} -->
+<div class="wp-block-group has-lichen-background-color has-background" style="border-radius:6px;padding-top:var(--wp--preset--spacing--30);padding-right:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30);padding-left:var(--wp--preset--spacing--30)"><!-- wp:viglet-dumont/copilot {"heading":"Not sure it fits your trip? Ask us"} /--></div>
+<!-- /wp:group --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:woocommerce/product-details {"align":"wide"} /-->
+
+<!-- wp:viglet-dumont/related {"heading":"Goes well with","count":4,"sameType":true,"layout":"grid","showImage":true,"showDate":false,"align":"wide"} /--></main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","area":"footer"} /-->

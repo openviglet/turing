@@ -13,6 +13,20 @@ function tarnfell_styles(): void {
 }
 add_action( 'wp_enqueue_scripts', 'tarnfell_styles' );
 
+/**
+ * The faces the first screen is set in, asked for before the stylesheet names them: a font
+ * that swaps in after the first paint moves the search results under the visitor's eye.
+ */
+function tarnfell_preload_fonts(): void {
+	foreach ( array( 'source-sans-3-latin-wght-normal', 'barlow-condensed-latin-700-normal', 'barlow-condensed-latin-600-normal' ) as $font ) {
+		printf(
+			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
+			esc_url( get_theme_file_uri( "assets/fonts/{$font}.woff2" ) )
+		);
+	}
+}
+add_action( 'wp_head', 'tarnfell_preload_fonts', 1 );
+
 add_action(
 	'after_setup_theme',
 	static function (): void {

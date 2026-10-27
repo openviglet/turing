@@ -52,6 +52,11 @@ $settings                      = viglet_dumont_get_settings();
 $settings['search_enabled']    = 1;
 $settings['instant_overlay']   = 1;
 $settings['search_page']       = $ids['search-gear'];
+// The theme's templates place Related themselves; appended too, it would show twice (D210).
+$settings['related_after']     = array();
+
+// A launched store: WooCommerce shows visitors a "coming soon" page until it is.
+update_option( 'woocommerce_coming_soon', 'no' );
 viglet_dumont_update_settings( $settings );
 
 echo wp_json_encode( $ids ), "\n";
