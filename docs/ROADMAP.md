@@ -12,10 +12,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-## Block CF — What the SN site manifest cannot declare
-
-- 📋 **T1152** (deps: —) **A document imported for several sites is tagged in the vector store with only the first site's name** — The second site's chunks say they belong to the first, so any filter, count or delete by site misses them or touches the wrong ones. → §CLV.4
-
 ## Block BV — The quality gate stops at the package boundary
 
 ## Done when — T1133

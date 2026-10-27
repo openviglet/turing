@@ -13,8 +13,6 @@
 
 - ⏸ **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — set aside (Needs filterable fields on vector points, as T1133 does.): The duplicates search takes no filter: vector points carry no field to filter on. → §CXLIV
 
-## Block CF — What the SN site manifest cannot declare
-
 ## Block BV — The quality gate stops at the package boundary
 
 - ⏸ **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — set aside (npm publish): Needs a person: dispatch publish-sdk.yml (bump sdk first) and publish-js-sdk.yml, then pick changesets-in-the-workflows or retire .changeset. → §CLIII.2

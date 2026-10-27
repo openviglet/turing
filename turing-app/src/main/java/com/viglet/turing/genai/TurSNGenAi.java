@@ -1388,7 +1388,8 @@ public class TurSNGenAi {
                         log.warn(RAG_DOCUMENT_FOR_OBJECT_ID_OF_SN_SITE_HAS_NO_INDEXABLE_TEXT_TITLE_ABSTRACT_TEXT_ATTRIBUTES_ARE_EMPTY,
                                 jobItem.getId(), siteName);
                     }
-                    addDocument(context, fields.header(), fields.body(), buildMetadataFromJob(jobItem, fields));
+                    addDocument(context, fields.header(), fields.body(),
+                            buildMetadataFromJob(jobItem, fields, turSNSite.getName()));
                 }, () -> log.warn("RAG skipped for Object ID '{}': SN Site '{}' not resolved by search process",
                         jobItem.getId(), siteName));
     }
@@ -1443,14 +1444,16 @@ public class TurSNGenAi {
     }
 
     @NotNull
-    private Map<String, Object> buildMetadataFromJob(TurSNJobItem jobItem, RagFields fields) {
+    private Map<String, Object> buildMetadataFromJob(TurSNJobItem jobItem, RagFields fields, String siteName) {
         Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put(SOURCE_ID, jobItem.getId());
         if (jobItem.getLocale() != null) {
             metadata.put(LOCALE, jobItem.getLocale().toString());
         }
         metadata.put(SOURCE_APPS, jobItem.getProviderName());
-        metadata.put(SITES, jobItem.getSiteNames().getFirst());
+        // T1152 — the site these chunks are written for, as the reindex path
+        // stamps it; an item naming several sites is embedded once per site.
+        metadata.put(SITES, siteName);
         if (jobItem.getAttributes().containsKey(MODIFICATION_DATE)) {
             metadata.put(MODIFICATION_DATE, jobItem.getAttributes().get(MODIFICATION_DATE));
         }

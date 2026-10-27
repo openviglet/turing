@@ -27,8 +27,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-## Block CF — What the SN site manifest cannot declare
-
 ## Block BV — The quality gate stops at the package boundary
 
 ## Table of contents
@@ -2272,24 +2270,3 @@ trigger.
 ## CLIV Persona as a first-class actionable surface (§XXXII)
 
 ## CLV What the SN site manifest cannot declare
-
-### CLV.4 Each embedded chunk names the site it was written for (T1152)
-
-**Where it comes from.** Found while building T1151's vector probe.
-`TurSNGenAi.addDocuments` loops a job item's `siteNames` and embeds the item once per
-site, into that site's locale collection, but `buildMetadataFromJob` writes
-`metadata.put(SITES, jobItem.getSiteNames().getFirst())`. So when one item names sites A
-and B, the chunks written for B say `sites = A`. The reindex path (`buildMetadata`) uses
-the site being indexed, so the two paths disagree.
-
-**Why it matters.** Nothing filters SN chat on `sites` today (a site is isolated by its
-collection), but the ANN admin browser and `listChunks` filters do read scalar metadata,
-and any later per-site filter, count or delete-by-site would miss B's chunks or touch
-A's. `source_id` deletion before re-adding is unaffected.
-
-**What it should do.**
-- `addJobItem` passes the site it is embedding for into the metadata builder, so each
-  chunk carries the site it was written for, as the reindex path already does.
-- A test imports one item for two sites and asserts each site's chunks carry its own name.
-- Existing chunks keep the wrong value until the second site is reindexed; say so in the
-  ship note rather than migrating.

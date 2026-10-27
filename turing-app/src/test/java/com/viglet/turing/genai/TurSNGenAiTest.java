@@ -498,6 +498,40 @@ class TurSNGenAiTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    void addDocuments_tagsEachSitesChunksWithThatSite() {
+        // T1152 — an item for two sites used to stamp both sites' chunks with the first.
+        Map<String, Object> attrs = new HashMap<>();
+        attrs.put("id", "doc-9");
+        attrs.put("title", "Shared title");
+        attrs.put("text", "Shared text");
+        TurSNJobItem jobItem = new TurSNJobItem();
+        jobItem.setSiteNames(List.of("site-a", "site-b"));
+        jobItem.setLocale(Locale.ENGLISH);
+        jobItem.setAttributes(attrs);
+        TurSNJobItems jobItems = new TurSNJobItems();
+        jobItems.setTuringDocuments(List.of(jobItem));
+
+        for (String name : List.of("site-a", "site-b")) {
+            TurSNSite site = new TurSNSite();
+            site.setName(name);
+            site.setTurSNSiteGenAi(new TurSNSiteGenAi());
+            when(turSNSearchProcess.getSNSite(name)).thenReturn(Optional.of(site));
+        }
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true)
+                .vectorStore(mock(VectorStore.class)).build();
+        when(contextFactory.build(any(), any())).thenReturn(context);
+        when(moderationService.filterModeratedChunks(any(), any())).thenAnswer(inv -> inv.getArgument(0));
+
+        turSNGenAi.addDocuments(jobItems);
+
+        org.mockito.ArgumentCaptor<List<Document>> written = org.mockito.ArgumentCaptor.forClass(List.class);
+        verify(ragContextBuilder, times(2)).reindexByMetadata(any(), written.capture(), eq("source_id"), any());
+        assertEquals(List.of("site-a", "site-b"), written.getAllValues().stream()
+                .map(chunks -> chunks.getFirst().getMetadata().get("sites")).toList());
+    }
+
+    @Test
     void addDocuments_shouldUseNullCollectionWhenLocaleIsNull() {
         Map<String, Object> attrs = new HashMap<>();
         attrs.put("id", "doc-2");

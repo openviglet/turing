@@ -1523,6 +1523,7 @@
 - **T1146** — A manifest genAi block without agentId keeps the site's live agent and creates a Default-agent binding only when none exists; "default" still rebinds, and the SDK has keepAgent().
 - **T1147** — Import embeds a site on the Default AI Agent: both import gates use isRagReady, so a site without its own agent is embedded; sites indexed earlier need one reindex.
 - **T1151** — The site GenAI page flags a RAG-ready site with no vectors beside Reindex all, now offered and accepted for Default-agent sites too; the probe no longer caches an empty answer.
+- **T1152** — Import tags each embedded chunk with the site it was written for, as reindex does; chunks written earlier for a second site keep the first's name until that site is reindexed.
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
