@@ -58,7 +58,7 @@ export default async function globalSetup( config ) {
 		'--post_type=page',
 		'--post_status=publish',
 		// And the demo storefront's (run-docker.cmd demo, D193).
-		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,home-demo,search-gear,journal',
+		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,compare-products,home-demo,search-gear,journal',
 		'--format=ids',
 	] ).trim();
 	if ( shopPages ) {

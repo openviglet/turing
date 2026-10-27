@@ -78,6 +78,10 @@ $viglet_dumont_state = array(
 	// A product result's "Add to cart" (D173): its name for a screen reader, and what it did.
 	/* translators: %s: the product's name. */
 	'cartLabel'      => __( 'Add to cart: %s', 'viglet-dumont' ),
+	/* translators: %d: how many products, two to four. */
+	'compareLabel'   => __( 'Compare %d products', 'viglet-dumont' ),
+	/* translators: %s: a product's name. */
+	'compareFor'     => __( 'Compare %s', 'viglet-dumont' ),
 	'cartAdded'      => __( 'Added to your cart.', 'viglet-dumont' ),
 	'cartFailed'     => __( 'It could not be added to the cart.', 'viglet-dumont' ),
 	'fieldLabels'    => array(

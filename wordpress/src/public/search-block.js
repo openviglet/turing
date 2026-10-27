@@ -48,9 +48,37 @@ const instantMs = 300;
 // Recent searches live in this browser only and are never sent anywhere.
 const recentKey = 'viglet-dumont-recent-searches';
 const recentMax = 5;
+// The products ticked for comparison (D200), for this tab only.
+const compareKey = 'viglet-dumont-compare';
+const compareMax = 4;
 
 const { state, actions } = store( 'viglet-dumont/search', {
 	state: {
+		compare: loadCompare(),
+		// Compare shows on a product's card once a page holds the compare block.
+		get canCompare() {
+			return !! config.shop?.comparePage;
+		},
+		get compared() {
+			return state.compare.includes( getContext().result.productId );
+		},
+		get compareFull() {
+			return ! state.compared && state.compare.length >= compareMax;
+		},
+		get compareReady() {
+			return state.canCompare && state.compare.length >= 2;
+		},
+		get compareUrl() {
+			const url = new URL(
+				config.shop?.comparePage || '/',
+				window.location.href
+			);
+			url.searchParams.set( 'compare', state.compare.join( ',' ) );
+			return url.href;
+		},
+		get compareText() {
+			return state.compareLabel.replace( '%d', state.compare.length );
+		},
 		// What the list offers: suggestions for what is typed, or recent searches for an
 		// empty box. The part already typed is split off so it can be shown in bold.
 		get options() {
@@ -318,6 +346,20 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			search.toggleFacet( filter.target );
 			writeUrl( true );
 			focusInput();
+		},
+		toggleCompare() {
+			const { result } = getContext();
+			state.compare = state.compare.includes( result.productId )
+				? state.compare.filter( ( id ) => id !== result.productId )
+				: [ ...state.compare, result.productId ].slice( 0, compareMax );
+			try {
+				window.sessionStorage.setItem(
+					compareKey,
+					JSON.stringify( state.compare )
+				);
+			} catch {
+				// Storage blocked: the choice lasts as long as the page.
+			}
 		},
 		// One of the product through WooCommerce's Store API, which answers why when it cannot
 		// (out of stock, say); the page and the results stay as they are.
@@ -698,6 +740,22 @@ function loadRecent() {
 }
 
 /**
+ * The products this tab ticked for comparison; none where storage is blocked.
+ *
+ * @return {number[]} Product ids, in the order ticked.
+ */
+function loadCompare() {
+	try {
+		const kept = JSON.parse( window.sessionStorage.getItem( compareKey ) );
+		return Array.isArray( kept )
+			? kept.map( Number ).filter( Boolean ).slice( 0, compareMax )
+			: [];
+	} catch {
+		return [];
+	}
+}
+
+/**
  * Keep the recent searches in this browser.
  *
  * @param {string[]} queries Newest first.
@@ -953,6 +1011,7 @@ function product( fields, title ) {
 		regular: regular > price ? money.format( regular ) : '',
 		productId: postIdOf( fields.id ),
 		cartLabel: state.cartLabel.replace( '%s', title ),
+		compareFor: state.compareFor.replace( '%s', title ),
 		cartStatus: '',
 		adding: false,
 	};

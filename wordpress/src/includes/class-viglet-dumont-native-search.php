@@ -158,6 +158,19 @@ class Viglet_Dumont_Native_Search {
 		wp_register_style( 'viglet-dumont-copilot-block', VIGLET_DUMONT_URL . 'blocks/copilot/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/copilot' );
+
+		// Compare products (D200): a table drawn on the server, so it has no view module.
+		wp_register_script(
+			'viglet-dumont-compare-block-editor',
+			VIGLET_DUMONT_URL . 'admin/js/compare-block-editor.js',
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+			VIGLET_DUMONT_VERSION,
+			true
+		);
+		wp_set_script_translations( 'viglet-dumont-compare-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_register_style( 'viglet-dumont-compare-block', VIGLET_DUMONT_URL . 'blocks/compare/style.css', array(), VIGLET_DUMONT_VERSION );
+
+		register_block_type( VIGLET_DUMONT_DIR . 'blocks/compare' );
 	}
 
 	/**

@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "viglet-dumont/compare",
+	"title": "Compare products",
+	"category": "widgets",
+	"icon": "columns",
+	"description": "The products a shopper ticked Compare on, side by side: a table of what they all have, the rows where they differ marked. Needs WooCommerce.",
+	"keywords": [ "compare", "comparison", "shop", "products" ],
+	"textdomain": "viglet-dumont",
+	"attributes": {
+		"heading": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": { "margin": true, "padding": true },
+		"color": { "background": true, "text": true, "link": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"editorScript": "viglet-dumont-compare-block-editor",
+	"style": "viglet-dumont-compare-block",
+	"render": "file:./render.php"
+}

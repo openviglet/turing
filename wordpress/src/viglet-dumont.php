@@ -40,6 +40,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-diagnostics.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-tuning.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-related.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-woocommerce.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-compare.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-insights.php';
 
 if ( is_admin() ) {

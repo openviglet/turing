@@ -76,6 +76,24 @@ wp_update_post(
 // Out of the index, so the jacket searches find the jackets alone.
 update_post_meta( $ask_id, '_viglet_dumont_exclude', '1' );
 
+// A page with the Compare products block (woo/compare.spec.mjs, D200); drafted again too.
+$compare    = get_page_by_path( 'compare-products' );
+$compare_id = $compare ? $compare->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'compare-products',
+		'post_title'   => 'Compare products',
+		'post_content' => '<!-- wp:viglet-dumont/compare /-->',
+	)
+);
+wp_update_post(
+	array(
+		'ID'          => $compare_id,
+		'post_status' => 'publish',
+	)
+);
+update_post_meta( $compare_id, '_viglet_dumont_exclude', '1' );
+
 $settings                       = get_option( 'viglet_dumont_settings', array() );
 $settings['index_custom_types'] = array( 'product' );
 update_option( 'viglet_dumont_settings', $settings );

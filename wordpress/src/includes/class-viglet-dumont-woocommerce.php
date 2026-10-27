@@ -80,10 +80,12 @@ class Viglet_Dumont_WooCommerce {
 		}
 
 		return array(
-			'currency' => function_exists( 'get_woocommerce_currency' ) ? (string) get_woocommerce_currency() : 'USD',
-			'storeApi' => rest_url( 'wc/store/v1/' ),
-			'nonce'    => wp_create_nonce( 'wc_store_api' ),
-			'cartUrl'  => function_exists( 'wc_get_cart_url' ) ? (string) wc_get_cart_url() : '',
+			'currency'    => function_exists( 'get_woocommerce_currency' ) ? (string) get_woocommerce_currency() : 'USD',
+			'storeApi'    => rest_url( 'wc/store/v1/' ),
+			'nonce'       => wp_create_nonce( 'wc_store_api' ),
+			'cartUrl'     => function_exists( 'wc_get_cart_url' ) ? (string) wc_get_cart_url() : '',
+			// Where ticked products are compared (D200); empty, the cards offer no Compare.
+			'comparePage' => Viglet_Dumont_Compare::page_url(),
 		);
 	}
 

@@ -1,0 +1,54 @@
+/* The compare block (D200). Colours come from the theme: the table inherits its text, and a
+   differing row is marked with a tint of the current colour, readable on any background. */
+
+.viglet-dumont-compare__scroll {
+	overflow-x: auto;
+}
+
+.viglet-dumont-compare__table {
+	border-collapse: collapse;
+	width: 100%;
+	min-width: 32rem;
+}
+
+.viglet-dumont-compare__table th,
+.viglet-dumont-compare__table td {
+	border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+	padding: 0.6rem 0.75rem;
+	text-align: left;
+	vertical-align: top;
+}
+
+.viglet-dumont-compare__table thead th {
+	font-weight: 600;
+}
+
+.viglet-dumont-compare__table thead img {
+	display: block;
+	width: 120px;
+	height: 120px;
+	object-fit: cover;
+	margin-bottom: 0.5rem;
+}
+
+.viglet-dumont-compare__table tbody th {
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.viglet-dumont-compare__differs,
+.viglet-dumont-compare__swatch {
+	background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.viglet-dumont-compare__swatch {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	vertical-align: -0.15em;
+	border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+}
+
+.viglet-dumont-compare__legend {
+	font-size: 0.875em;
+}

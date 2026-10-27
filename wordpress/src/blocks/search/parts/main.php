@@ -74,12 +74,21 @@ $viglet_dumont_recent = array_map(
 							</p>
 							<button type="button" class="wp-element-button viglet-dumont-search__cart" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="context.result.adding" data-wp-bind--aria-label="context.result.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-dumont' ); ?></button>
 							<span class="viglet-dumont-search__cart-status" role="status" data-wp-text="context.result.cartStatus"></span>
+							<label class="viglet-dumont-search__compare" hidden data-wp-bind--hidden="!state.canCompare">
+								<input type="checkbox" data-wp-bind--aria-label="context.result.compareFor" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
+								<?php esc_html_e( 'Compare', 'viglet-dumont' ); ?>
+							</label>
 						</div>
 					<?php endif; ?>
 				</div>
 			</li>
 		</template>
 	</ol>
+	<?php if ( Viglet_Dumont_WooCommerce::active() ) : ?>
+		<p class="viglet-dumont-search__compare-bar" hidden data-wp-bind--hidden="!state.compareReady">
+			<a class="wp-element-button" data-wp-bind--href="state.compareUrl" data-wp-text="state.compareText"></a>
+		</p>
+	<?php endif; ?>
 
 	<ol class="viglet-dumont-search__skeleton" aria-hidden="true" hidden data-wp-bind--hidden="!state.showSkeleton">
 		<li></li>
