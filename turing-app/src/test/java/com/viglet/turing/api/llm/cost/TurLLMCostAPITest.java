@@ -114,6 +114,17 @@ class TurLLMCostAPITest {
         assertThat(report.bySite()).extracting(TurLLMCostAPI.SiteCostRow::siteName).containsExactly("Sample");
     }
 
+    /** T1144 — calls with no price are counted, so a $0 total is not read as free. */
+    @Test
+    void summaryCountsTheUnpricedCalls() {
+        when(agentRepository.findAll()).thenReturn(List.of());
+        when(tokenUsageRepository.countUnpriced(any(), any())).thenReturn(54L);
+        when(tokenUsageRepository.countUnpricedForSite(any(), any(), eq("Sample"))).thenReturn(7L);
+
+        assertThat(api.summary(null, null).unpricedRequests()).isEqualTo(54);
+        assertThat(api.summary(null, null, "Sample").unpricedRequests()).isEqualTo(7);
+    }
+
     @Test
     void anUnreadableBoundIsRefused() {
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> api.summary("2026-10-24Tnoon", null))

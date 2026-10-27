@@ -85,11 +85,13 @@ public class TurLLMTokenUsage implements Serializable {
      * T289 / §XVI.1 — frozen USD cost of this turn, computed at write time as
      * {@code (inputTokens × inputRate + outputTokens × outputRate)} from the
      * {@code tur_llm_price} table. Frozen-at-capture (standard billing) so a
-     * later price edit doesn't silently rewrite history. {@code 0.0} for local /
-     * embedded / unpriced models — the "$0 fully local" story keys off this.
+     * later price edit doesn't silently rewrite history. {@code 0.0} for a
+     * zero-priced local / embedded model — the "$0 fully local" story keys off
+     * this — and, since T1144, {@code null} for a model with no price row at all,
+     * so an unpriced call is never read as free.
      */
-    @Column(name = "cost_usd", nullable = false)
-    private double costUsd;
+    @Column(name = "cost_usd")
+    private Double costUsd;
 
     /**
      * T742 / §XLIX — id of the {@link com.viglet.turing.persistence.model.gateway.TurGatewayKey}

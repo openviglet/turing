@@ -111,6 +111,62 @@ class TurLLMTokenUsageServiceTest {
     }
 
     @Test
+    void aModelWithNoPriceRowIsBookedAsUnpriced() {
+        // T1144 — no row is "unknown", never $0.
+        stubUsage(1_000_000, 1_000_000);
+
+        double returned = service.recordUsage(instance, chatResponse, "admin", null, null);
+
+        assertThat(saved().getCostUsd()).isNull();
+        assertThat(returned).isZero();
+    }
+
+    @Test
+    void aZeroPricedModelStillBooksZero() {
+        // T1144 — a local model priced at $0 is free, not unpriced.
+        when(priceRepository.findByVendorIdAndModelName("openai", "gpt-4"))
+                .thenReturn(java.util.Optional.of(price(0.0, 0.0)));
+        stubUsage(1_000, 1_000);
+
+        service.recordUsage(instance, chatResponse, "admin");
+
+        assertThat(saved().getCostUsd()).isZero();
+    }
+
+    @Test
+    void aPricedModelBooksItsCost() {
+        when(priceRepository.findByVendorIdAndModelName("openai", "gpt-4"))
+                .thenReturn(java.util.Optional.of(price(0.15, 0.6)));
+        stubUsage(1_000_000, 1_000_000);
+
+        double returned = service.recordUsage(instance, chatResponse, "admin", null, null);
+
+        assertThat(saved().getCostUsd()).isEqualTo(0.75);
+        assertThat(returned).isEqualTo(0.75);
+    }
+
+    private void stubUsage(int input, int output) {
+        when(chatResponse.getMetadata()).thenReturn(metadata);
+        when(metadata.getUsage()).thenReturn(usage);
+        when(usage.getPromptTokens()).thenReturn(input);
+        when(usage.getCompletionTokens()).thenReturn(output);
+        when(usage.getTotalTokens()).thenReturn(input + output);
+    }
+
+    private TurLLMTokenUsage saved() {
+        ArgumentCaptor<TurLLMTokenUsage> captor = ArgumentCaptor.forClass(TurLLMTokenUsage.class);
+        verify(tokenUsageRepository).save(captor.capture());
+        return captor.getValue();
+    }
+
+    private static com.viglet.turing.persistence.model.llm.TurLLMPrice price(double in, double out) {
+        com.viglet.turing.persistence.model.llm.TurLLMPrice price = new com.viglet.turing.persistence.model.llm.TurLLMPrice();
+        price.setInputPricePerMillion(in);
+        price.setOutputPricePerMillion(out);
+        return price;
+    }
+
+    @Test
     void shouldCalculateTotalWhenTotalTokensIsZero() {
         when(chatResponse.getMetadata()).thenReturn(metadata);
         when(metadata.getUsage()).thenReturn(usage);

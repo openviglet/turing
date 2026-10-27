@@ -57,10 +57,16 @@ public class TurLLMPriceService {
 
     /**
      * Per-million-token rates resolved for a model. A {@code null} row resolves
-     * to {@code ZERO} so callers never branch on absence.
+     * to {@code ZERO} so callers never branch on absence; {@code priced} (T1144)
+     * is what tells that miss apart from a row priced at $0.
      */
-    public record Rates(double inputPerMillion, double outputPerMillion) {
-        public static final Rates ZERO = new Rates(0.0, 0.0);
+    public record Rates(double inputPerMillion, double outputPerMillion, boolean priced) {
+        public static final Rates ZERO = new Rates(0.0, 0.0, false);
+
+        /** Rates read from a price row. */
+        public Rates(double inputPerMillion, double outputPerMillion) {
+            this(inputPerMillion, outputPerMillion, true);
+        }
     }
 
     public TurLLMPriceService(TurLLMPriceRepository priceRepository,
@@ -78,7 +84,23 @@ public class TurLLMPriceService {
         if (vendorId == null || modelName == null) {
             return 0.0;
         }
+        return cost(self.rates(vendorId, modelName), inputTokens, outputTokens);
+    }
+
+    /**
+     * T1144 — the cost of a call to book: as {@link #computeCost}, but {@code null}
+     * when no price row exists for the model, so the ledger records the call as
+     * unpriced rather than free. A row priced at $0 (a local model) still books 0.
+     */
+    public Double callCost(String vendorId, String modelName, long inputTokens, long outputTokens) {
+        if (vendorId == null || modelName == null) {
+            return null;
+        }
         Rates rates = self.rates(vendorId, modelName);
+        return rates.priced() ? cost(rates, inputTokens, outputTokens) : null;
+    }
+
+    private static double cost(Rates rates, long inputTokens, long outputTokens) {
         double cost = (inputTokens / 1_000_000.0) * rates.inputPerMillion()
                 + (outputTokens / 1_000_000.0) * rates.outputPerMillion();
         // Guard against negatives from a mis-entered price; never bill below 0.

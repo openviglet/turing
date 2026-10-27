@@ -94,7 +94,8 @@ public class TurLLMCostAPI {
             List<StageCostRow> byStage,
             List<TenantCostRow> byTenant,
             List<SiteCostRow> bySite,
-            String site) {
+            String site,
+            long unpricedRequests) {
     }
 
     /** T1127 — a Semantic Navigation site's spend in the window. */
@@ -158,7 +159,10 @@ public class TurLLMCostAPI {
                 periodLabel(to, end.toLocalDate().minusDays(1)),
                 totalCost, totalTokens, totalInputTokens, totalOutputTokens, totalReqs,
                 byAgent, byModel, stageRows(start, end, onlySite), tenantRows(start, end, onlySite),
-                siteRows(start, end, onlySite), onlySite);
+                siteRows(start, end, onlySite), onlySite,
+                // T1144 — the calls whose cost is unknown, which totalCostUsd leaves out.
+                onlySite == null ? tokenUsageRepository.countUnpriced(start, end)
+                        : tokenUsageRepository.countUnpricedForSite(start, end, onlySite));
     }
 
     private static String periodLabel(String bound, LocalDate day) {

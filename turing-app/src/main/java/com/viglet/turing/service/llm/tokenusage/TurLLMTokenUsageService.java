@@ -106,8 +106,10 @@ public class TurLLMTokenUsageService {
             String vendorId = instance.getTurLLMVendor() != null
                     ? instance.getTurLLMVendor().getId()
                     : "unknown";
-            double costUsd = priceService.computeCost(
+            // T1144 — null when the model has no price row: booked as unpriced, not $0.
+            Double bookedCost = priceService.callCost(
                     vendorId, instance.getModelName(), inputTokens, outputTokens);
+            double costUsd = bookedCost == null ? 0.0 : bookedCost;
 
             TurLLMTokenUsage turLLMTokenUsage = new TurLLMTokenUsage();
             turLLMTokenUsage.setTurLLMInstance(instance);
@@ -123,7 +125,7 @@ public class TurLLMTokenUsageService {
             // T289 / §XVI.1 — agent + stage attribution and frozen USD cost.
             turLLMTokenUsage.setAgentId(agentId);
             turLLMTokenUsage.setStage(stage == null || stage.isBlank() ? STAGE_OTHER : stage);
-            turLLMTokenUsage.setCostUsd(costUsd);
+            turLLMTokenUsage.setCostUsd(bookedCost);
             // T742 / §XLIX — per-key attribution for the Governed LLM Gateway.
             turLLMTokenUsage.setKeyId(keyId);
             turLLMTokenUsage.setSiteName(siteName);

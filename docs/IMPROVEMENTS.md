@@ -2049,33 +2049,70 @@ What keeps them shipped is `frontend/scripts/search-contract-rules.mjs`: the con
 named rules, each paired with the surfaces it is checked on, run from the app suite, the
 SDK suite and the workspace scripts suite.
 
-### LXX.10 Catalog prices never reach the cost ledger (T1144)
+### LXX.12 Failed-search ties come back newest first (T1148)
 
-**Where it happened.** Dumont D174's live-LLM suite reads `GET
-/api/v2/llm/cost/summary?site=Sample` (T1127) before and after a run, to report and
-budget what it spent. On the run-docker.cmd stack (Turing started with `OPENAI_API_KEY`,
-which creates an OpenAI `gpt-4o-mini` instance at boot) every call is booked with its
-tokens and `costUsd: 0.0`: 29,358 tokens over 54 calls read $0.00.
+**Where it happened.** Dumont D178, the WordPress plugin's Search insights screen, reads
+`GET /api/sn/{site}/metrics/failed-searches?period=today&rows=30`. Its browser spec
+searches a new word no post holds and expects it in the list. After a day of runs had
+logged 20 other one-off failed searches, the new word never came back: every term had
+one search, and the list held the oldest twenty.
 
-**Why (review, 2026-10-26).** The price exists. `TurLLMPriceCatalogReconciler` (T777)
-writes the catalog's `gpt-4o-mini` rate under the catalog's vendor key, the lower-case
-plugin slug `openai`. `TurLLMTokenUsageService` prices a call with the vendor's id,
-`OPENAI`, and `findByVendorIdAndModelName` matches exactly. Only a case-insensitive
-collation (MySQL) hides it; H2 and PostgreSQL miss every row. `GEMINI_OPENAI` vs
-`gemini-openai` shows case folding alone is not the fix. The unit tests use `openai` on
-both sides, so they pass.
+**Why.** `TurSNSiteMetricAccessRepository.zeroResultTermsBetweenDates` (and
+`termsWithLastSeenBetweenDates`) order by `COUNT(sanatizedTerm) DESC` alone, so ties
+fall in the database's order, oldest first in practice, and `rows` cuts the newest off.
+The `lastSeen` each term carries is already computed (`MAX(accessDate)`) and unused for
+order.
 
-**Workaround used.** The suite holds a token budget (`AI_TOKEN_BUDGET`) beside its
-dollar budget (`AI_COST_BUDGET`), and the dollar one stays inert until this ships.
+**Workaround.** The plugin's spec searches one fixed term three times so its count beats
+the one-off ties (`wordpress/tests/e2e/admin/insights.spec.mjs`). A site owner still
+never sees a new gap on a busy day until it is searched again.
 
 **What it should do.**
-- One key on both sides: the reconciler maps a catalog slug to the vendor whose plugin
-  it is (or the lookup resolves the plugin). Slug-keyed `CATALOG` rows are migrated;
-  `MANUAL` rows are never touched.
-- An unpriced call is booked as unpriced, not $0: `costUsd: null` per entry and an
-  unpriced-call count in the summary.
-- Done when the boot-provisioned `gpt-4o-mini` instance books a non-zero `costUsd` on
-  H2 in a test, and a model with no price shows as unpriced.
+- Break count ties by `MAX(accessDate) DESC` in both window queries, so the most recent
+  gap shows first among equals.
+- A repository test with more one-off terms than `rows` returns the newest.
+
+### LXX.13 The metrics reports say whether metrics are on (T1149)
+
+**Where it happened.** Dumont D178, the WordPress plugin's Search insights screen and
+dashboard widget, must tell a site owner when Turing keeps no search metrics, or an
+empty period reads as a quiet site. The metrics reports (`metrics/clicks`,
+`metrics/failed-searches`) answer an empty period the same either way.
+
+**Why.** `turing.search.metrics.enabled` is read by `TurSNSearchProcess` and
+`TurSNSiteClickAPI` only. The one place it shows is `POST /api/sn/{site}/click`, which
+answers 204 with `X-Turing-Metrics: disabled` (T1131).
+
+**Workaround.** `Viglet_Dumont_API_Client::metrics_enabled()` posts a click with an
+empty `documentId`: off answers 204 with the header before reading it, on refuses it
+with 400. It depends on that check coming before validation.
+
+**What it should do.**
+- The metrics reports carry `metricsEnabled` (or `X-Turing-Metrics` on every answer), so
+  a client reads it beside the numbers it explains.
+- Dumont's plugin then drops the probe (file it in Dumont when this ships).
+
+### LXX.14 The summary endpoint records its spend against a site (T1150)
+
+**Where it happened.** Dumont D174/D178, the WordPress plugin's live-LLM suite. It reads
+`GET /api/llm/cost/summary?site=Sample` before and after each run and fails over a token
+budget. The Search insights summary and the editor's excerpt draft both call `POST
+/api/v2/summary` with `{cacheKey, data, systemPrompt}`. A run that made one such call
+printed "0 tokens, 0 calls", while Turing's log recorded it: `[TokenUsage] Recorded: ...
+total=923 ...` with no site.
+
+**Why.** `TurSummaryAPI` takes no site, so `TurLlmSummaryService` records the usage
+unattributed, and the per-site cost summary cannot count it. Every connector that asks
+for summaries (Dumont's own insights, the WordPress plugin) spends outside the site's
+ledger and its budget.
+
+**Workaround.** None; the plugin's AI suite under-reports its spend.
+
+**What it should do.**
+- `POST /api/v2/summary` accepts an optional `site` (name or id) and records the usage
+  against it, as the SN chat and answer paths do.
+- `cost/summary?site=` then counts it; the SDK's summary call gains the field.
+- Dumont's plugin passes its site (file it in Dumont when this ships).
 
 ## XXXVII Security hardening (post-audit)
 

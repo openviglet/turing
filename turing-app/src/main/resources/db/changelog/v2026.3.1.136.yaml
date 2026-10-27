@@ -1,0 +1,17 @@
+databaseChangeLog:
+  # T1144 — a call to a model with no price row is booked with cost_usd NULL
+  # ("unpriced") instead of 0, so the cost summary can tell an unpriced call from
+  # a zero-priced local one. Existing rows keep their 0; the default stays 0.
+  - changeSet:
+      id: v2026.3.1.136-llm_token_usage-cost_usd-nullable
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            tableName: llm_token_usage
+            columnName: cost_usd
+      changes:
+        - dropNotNullConstraint:
+            tableName: llm_token_usage
+            columnName: cost_usd
+            columnDataType: double

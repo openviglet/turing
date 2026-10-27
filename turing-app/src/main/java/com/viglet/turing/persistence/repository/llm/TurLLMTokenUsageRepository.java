@@ -119,6 +119,22 @@ public interface TurLLMTokenUsageRepository extends JpaRepository<TurLLMTokenUsa
             """)
     List<Object[]> findCostByStage(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+    /** T1144 — calls booked with no price row (cost_usd NULL) in the window. */
+    @Query("""
+            SELECT COUNT(u) FROM TurLLMTokenUsage u
+            WHERE u.createdAt >= :start AND u.createdAt < :end AND u.costUsd IS NULL
+            """)
+    long countUnpriced(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    /** T1144 — as {@link #countUnpriced}, for one Semantic Navigation site. */
+    @Query("""
+            SELECT COUNT(u) FROM TurLLMTokenUsage u
+            WHERE u.createdAt >= :start AND u.createdAt < :end AND u.costUsd IS NULL
+              AND u.siteName = :site
+            """)
+    long countUnpricedForSite(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
+            @Param("site") String site);
+
     // ---- T1127 — the same breakdowns for one Semantic Navigation site ----------
 
     @Query("""

@@ -12,7 +12,9 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- ⏳ **T1144** (deps: —) **Catalog prices are keyed by plugin slug (openai) but looked up by vendor id (OPENAI), so every call costs $0** — An unpriced call still books $0: make costUsd nullable per entry and count unpriced calls in the cost summary. → §LXX.10
+- 📋 **T1148** (deps: —) **Failed searches that tie on count come back oldest first, so a new gap is cut off by rows on a busy day** — A site owner never sees the newest zero-result search until it is searched again, and a client must over-fetch to find it. → §LXX.12
+- 📋 **T1149** (deps: —) **No metrics report says whether search metrics are on, so an empty period reads as a quiet site** — A client must post a fake click and read X-Turing-Metrics to tell metrics off from no searches. → §LXX.13
+- 📋 **T1150** (deps: —) **Summary calls are spent outside any site, so a site's cost summary and budget never count them** — The generic summary endpoint takes no site, so connectors that ask for summaries under-report what a site spends. → §LXX.14
 
 ## Block CF — What the SN site manifest cannot declare
 
@@ -41,12 +43,6 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
-
-## Done when — T1144
-
-- **A call to a model with no price row is booked as unpriced, not $0** The entry's
-  costUsd reads null and /api/v2/llm/cost/summary counts the unpriced calls, while a
-  zero-priced local model still books 0.
 
 ## Non-goals (do NOT add as tasks)
 

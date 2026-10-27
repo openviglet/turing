@@ -76,7 +76,8 @@ public class TurLLMBatchCostEstimator {
 
         double perItem = priceService.computeCost(vendorId, modelName, inTokens, outTokens);
         double total = perItem * items;
-        boolean priced = !Rates.ZERO.equals(priceService.rates(vendorId, modelName));
+        Rates rates = priceService.rates(vendorId, modelName);
+        boolean priced = rates.inputPerMillion() > 0 || rates.outputPerMillion() > 0;
         boolean overBudget = budgetUsd != null && budgetUsd > 0 && total > budgetUsd;
 
         return new BatchCostEstimate(items, inTokens, outTokens, perItem, total, priced, budgetUsd, overBudget);
