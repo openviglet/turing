@@ -2057,27 +2057,30 @@ searches a new word no post holds and expects it in the list. After a day of run
 logged 20 other one-off failed searches, the new word never came back: every term had
 one search, and the list held the oldest twenty.
 
-**Why.** `TurSNSiteMetricAccessRepository.zeroResultTermsBetweenDates` (and
-`termsWithLastSeenBetweenDates`) order by `COUNT(sanatizedTerm) DESC` alone, so ties
-fall in the database's order, oldest first in practice, and `rows` cuts the newest off.
-The `lastSeen` each term carries is already computed (`MAX(accessDate)`) and unused for
-order.
+**Why.** The window queries in `TurSNSiteMetricAccessRepository` order by
+`COUNT(sanatizedTerm) DESC` alone, so ties fall in the database's order, oldest first in
+practice, and `rows` cuts the newest off. There are four of them:
+`zeroResultTermsBetweenDates`, `termsWithLastSeenBetweenDates`, and their T1133
+`...InPartition` twins that a partitioned key reads. The `lastSeen` each term carries is
+already computed (`MAX(accessDate)`) and unused for order.
 
 **Workaround.** The plugin's spec searches one fixed term three times so its count beats
 the one-off ties (`wordpress/tests/e2e/admin/insights.spec.mjs`). A site owner still
 never sees a new gap on a busy day until it is searched again.
 
 **What it should do.**
-- Break count ties by `MAX(accessDate) DESC` in both window queries, so the most recent
-  gap shows first among equals.
-- A repository test with more one-off terms than `rows` returns the newest.
+- Break count ties by `MAX(accessDate) DESC` in all four window queries, so the most
+  recent gap shows first among equals for a partitioned key too.
+- A repository test with more one-off terms than `rows` returns the newest, unpartitioned
+  and partitioned.
 
 ### LXX.13 The metrics reports say whether metrics are on (T1149)
 
 **Where it happened.** Dumont D178, the WordPress plugin's Search insights screen and
 dashboard widget, must tell a site owner when Turing keeps no search metrics, or an
 empty period reads as a quiet site. The metrics reports (`metrics/clicks`,
-`metrics/failed-searches`) answer an empty period the same either way.
+`metrics/failed-searches`, `metrics/content-gaps`) answer an empty period the same
+either way.
 
 **Why.** `turing.search.metrics.enabled` is read by `TurSNSearchProcess` and
 `TurSNSiteClickAPI` only. The one place it shows is `POST /api/sn/{site}/click`, which
@@ -2088,30 +2091,34 @@ empty `documentId`: off answers 204 with the header before reading it, on refuse
 with 400. It depends on that check coming before validation.
 
 **What it should do.**
-- The metrics reports carry `metricsEnabled` (or `X-Turing-Metrics` on every answer), so
-  a client reads it beside the numbers it explains.
+- The three reports carry `metricsEnabled` in their body: both are records
+  (`TurSNClickThroughService.Report`, `TurSNSearchInsightsService.Report`), so the field
+  is additive and sits beside the numbers it explains.
+- The JS SDKs' report types (`fetchFailedSearches`, `fetchContentGaps`,
+  `fetchClickThrough`) gain the field.
 - Dumont's plugin then drops the probe (file it in Dumont when this ships).
 
 ### LXX.14 The summary endpoint records its spend against a site (T1150)
 
 **Where it happened.** Dumont D174/D178, the WordPress plugin's live-LLM suite. It reads
-`GET /api/llm/cost/summary?site=Sample` before and after each run and fails over a token
-budget. The Search insights summary and the editor's excerpt draft both call `POST
+`GET /api/v2/llm/cost/summary?site=Sample` before and after each run and fails over a
+token budget. The Search insights summary and the editor's excerpt draft both call `POST
 /api/v2/summary` with `{cacheKey, data, systemPrompt}`. A run that made one such call
-printed "0 tokens, 0 calls", while Turing's log recorded it: `[TokenUsage] Recorded: ...
-total=923 ...` with no site.
+printed "0 tokens, 0 calls", while Turing's log recorded `total=923` with no site.
 
 **Why.** `TurSummaryAPI` takes no site, so `TurLlmSummaryService` records the usage
-unattributed, and the per-site cost summary cannot count it. Every connector that asks
-for summaries (Dumont's own insights, the WordPress plugin) spends outside the site's
-ledger and its budget.
+unattributed, and the per-site cost summary cannot count it.
 
 **Workaround.** None; the plugin's AI suite under-reports its spend.
 
 **What it should do.**
-- `POST /api/v2/summary` accepts an optional `site` (name or id) and records the usage
-  against it, as the SN chat and answer paths do.
-- `cost/summary?site=` then counts it; the SDK's summary call gains the field.
+- `POST /api/v2/summary` accepts an optional `site` (its name, as `cost/summary?site=`
+  and `recordUsage` use) and records the usage against it, as SN chat and answer do.
+- The site is checked, not trusted: a caller may name only a site its credential reaches
+  (a site-scoped or partitioned key, its own site), or one key could bill another site's
+  ledger and budget. An unknown or unreachable site is a 400/403, never a silent drop.
+- A cache hit spends nothing and records nothing.
+- `cost/summary?site=` then counts it; the SDKs' summary call gains the field.
 - Dumont's plugin passes its site (file it in Dumont when this ships).
 
 ## XXXVII Security hardening (post-audit)
@@ -2342,53 +2349,51 @@ trigger.
 
 **Where it happened.** Dumont D186 (the WordPress plugin) turns a site's GenAI on by
 declaring `"genAi": {"agentId": "default"}` in the manifest it posts to `POST
-/api/sn/manifest`. On the plugin's dev stack the site already answered, bound in the
-console to an agent of its own, yet `POST /api/sn/manifest/plan` with that block
-returned `genAiToChange: true`: applying it would rebind the site to the Default AI
-Agent.
+/api/sn/manifest`. The site already answered, bound in the console to an agent of its
+own, yet `POST /api/sn/manifest/plan` returned `genAiToChange: true`: applying it would
+rebind the site to the Default AI Agent.
 
 **Why.** `TurSNManifestGenAi.ownAgentId()` reads both `null` and `"default"` as "no
 agent of the site's own", and `TurSNManifestGenAiConverger` writes that onto a live
 binding. So the manifest can say "this agent" or "the Default AI Agent", but not "GenAI
-on, whichever agent the site already has". A connector that only wants answers on must
-overwrite an admin's console choice to get them.
+on, whichever agent the site already has".
 
-**Workaround.** None in code. The plugin's setting and its Fields screen warn that
-saving replaces an agent chosen in the console.
+**Workaround.** None in code. The plugin warns that saving replaces an agent chosen in
+the console.
 
 **What it should do.**
-- An omitted `agentId` in a declared `genAi` block keeps the live binding's agent, and
-  creates the binding with the Default AI Agent only when the site has none; `"default"`
-  keeps meaning "rebind to the Default AI Agent".
+- An omitted `agentId` keeps the live binding's agent, and creates the binding with the
+  Default AI Agent only when the site has none; `"default"` keeps meaning "rebind to the
+  Default AI Agent", so a client that wants the old behaviour says so.
+- This changes what an omitted field means, so the manifest's version notes (T386) say
+  it, and the planner's diff shows it.
 - `genAiToChange` is false for a site that already has a binding and a block without
   `agentId` (and no differing `knowledgeBaseMode`).
-- Dumont's plugin then sends `{}` rather than `{"agentId": "default"}` and drops the
-  warning (file it in Dumont when this ships).
+- Dumont's plugin then sends `{}` and drops the warning (file it in Dumont when this
+  ships).
 
 ### CLV.2 Import embeds a site on the Default AI Agent (T1147)
 
 **Where it happened.** Dumont D174, the WordPress plugin's live-LLM suite. The plugin
-turns the site's GenAI on through the manifest, `"genAi": {"agentId": "default"}` (D186,
-T1116). Turing logs `GenAI changed=true` and the site's binding is created with
-`turAIAgent: null`, which `TurSNManifestGenAi.ownAgentId()` defines as "the Default AI
-Agent". The posts are then reindexed and `GET /api/sn/Sample/search?q=research grant`
-finds the seeded post, but `GET /api/sn/Sample/chat?q=When do research grant
-applications close?` answers "The information is not available in the website's
-content."
+turns GenAI on through the manifest, `"genAi": {"agentId": "default"}` (D186), and the
+binding is created with `turAIAgent: null`, the Default AI Agent. After a reindex,
+search finds the seeded post but chat answers "The information is not available in the
+website's content."
 
-**Why.** `TurSNImportAPI.sendToGenAi` (and `TurSNBulkImportService`) embed a batch only
+**Why.** `TurSNImportAPI.sendToGenAi` and `TurSNBulkImportService` embed a batch only
 when `TurSNSiteRepositoryAdapter.hasRagEnabledForSiteName` is true, and that reads the
-site's *own* agent: `agent != null && enabled && ragEnabled`. A site on the Default AI
-Agent has none, so nothing is ever written to the vector store. Chat is not gated the
-same way: `TurGenAiContextFactory` resolves the effective agent through
-`TurDefaultAgentResolver.resolveEffectiveAgent`, so it runs, retrieves nothing, and
-answers from an empty context. The GenAI binding the manifest makes is half on.
+site's *own* agent. A site on the Default AI Agent has none, so nothing reaches the
+vector store. Chat resolves the effective agent through
+`TurDefaultAgentResolver.resolveEffectiveAgent`, so it runs and retrieves nothing.
 
 **Workaround.** None. Dumont D174 waits on this.
 
 **What it should do.**
-- `hasRagEnabledForSiteName` resolves the effective agent the way the chat path does
-  (`TurDefaultAgentResolver.isRagReady(genAi)` already exists), so a site bound to the
-  Default AI Agent embeds on import.
+- The two import callers gate on `TurDefaultAgentResolver.isRagReady(genAi)`, the rule
+  every RAG surface already follows (it also keeps a VECTORLESS site out). The check
+  belongs in the callers, not the persistence adapter: ports stay read-only and do not
+  call services.
+- Sites imported before the fix hold no vectors and need a reindex; the release note
+  says so, and the site's RAG status should not read ready until one has run.
 - A test imports into a site whose binding has no agent of its own, with a RAG-ready
   default agent, and asserts the documents reach `addDocuments`.
