@@ -62,14 +62,15 @@ public interface TurSNSiteMetricAccessRepository extends JpaRepository<TurSNSite
 	List<TurSNSiteMetricAccessTerm> topZeroResultTerms(TurSNSite turSNSite, Pageable pageable);
 
 	// T1119 — the two queries above inside a window, each with the term's last
-	// search, for the failed-searches and content-gaps REST metrics.
+	// search, for the failed-searches and content-gaps REST metrics. Count ties
+	// come back newest first (T1148), so `rows` cuts the oldest one-off terms.
 	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
-			+ "TurSNSiteMetricAccess where turSNSite = ?1 AND accessDate BETWEEN ?2 AND ?3 GROUP BY sanatizedTerm HAVING MAX(numFound) = 0 ORDER BY COUNT(sanatizedTerm) DESC")
+			+ "TurSNSiteMetricAccess where turSNSite = ?1 AND accessDate BETWEEN ?2 AND ?3 GROUP BY sanatizedTerm HAVING MAX(numFound) = 0 ORDER BY COUNT(sanatizedTerm) DESC, MAX(accessDate) DESC")
 	List<TurSNSiteMetricAccessTerm> zeroResultTermsBetweenDates(TurSNSite turSNSite, Instant startDate,
 			Instant endDate, Pageable pageable);
 
 	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
-			+ "TurSNSiteMetricAccess where turSNSite = ?1 AND accessDate BETWEEN ?2 AND ?3 GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC")
+			+ "TurSNSiteMetricAccess where turSNSite = ?1 AND accessDate BETWEEN ?2 AND ?3 GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC, MAX(accessDate) DESC")
 	List<TurSNSiteMetricAccessTerm> termsWithLastSeenBetweenDates(TurSNSite turSNSite, Instant startDate,
 			Instant endDate, Pageable pageable);
 
@@ -93,14 +94,14 @@ public interface TurSNSiteMetricAccessRepository extends JpaRepository<TurSNSite
 	// T1133 — the T1119 reports for one partition of a shared site.
 	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
 			+ "TurSNSiteMetricAccess where turSNSite = :site AND accessDate BETWEEN :start AND :end "
-			+ "AND partitionKey = :partition GROUP BY sanatizedTerm HAVING MAX(numFound) = 0 ORDER BY COUNT(sanatizedTerm) DESC")
+			+ "AND partitionKey = :partition GROUP BY sanatizedTerm HAVING MAX(numFound) = 0 ORDER BY COUNT(sanatizedTerm) DESC, MAX(accessDate) DESC")
 	List<TurSNSiteMetricAccessTerm> zeroResultTermsBetweenDatesInPartition(@Param("site") TurSNSite site,
 			@Param("start") Instant start, @Param("end") Instant end, @Param("partition") String partitionKey,
 			Pageable pageable);
 
 	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm(sanatizedTerm, COUNT(sanatizedTerm), AVG(CAST(numFound as double)), MAX(accessDate)) from "
 			+ "TurSNSiteMetricAccess where turSNSite = :site AND accessDate BETWEEN :start AND :end "
-			+ "AND partitionKey = :partition GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC")
+			+ "AND partitionKey = :partition GROUP BY sanatizedTerm ORDER BY COUNT(sanatizedTerm) DESC, MAX(accessDate) DESC")
 	List<TurSNSiteMetricAccessTerm> termsWithLastSeenBetweenDatesInPartition(@Param("site") TurSNSite site,
 			@Param("start") Instant start, @Param("end") Instant end, @Param("partition") String partitionKey,
 			Pageable pageable);

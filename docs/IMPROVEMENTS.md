@@ -2049,31 +2049,6 @@ What keeps them shipped is `frontend/scripts/search-contract-rules.mjs`: the con
 named rules, each paired with the surfaces it is checked on, run from the app suite, the
 SDK suite and the workspace scripts suite.
 
-### LXX.12 Failed-search ties come back newest first (T1148)
-
-**Where it happened.** Dumont D178, the WordPress plugin's Search insights screen, reads
-`GET /api/sn/{site}/metrics/failed-searches?period=today&rows=30`. Its browser spec
-searches a new word no post holds and expects it in the list. After a day of runs had
-logged 20 other one-off failed searches, the new word never came back: every term had
-one search, and the list held the oldest twenty.
-
-**Why.** The window queries in `TurSNSiteMetricAccessRepository` order by
-`COUNT(sanatizedTerm) DESC` alone, so ties fall in the database's order, oldest first in
-practice, and `rows` cuts the newest off. There are four of them:
-`zeroResultTermsBetweenDates`, `termsWithLastSeenBetweenDates`, and their T1133
-`...InPartition` twins that a partitioned key reads. The `lastSeen` each term carries is
-already computed (`MAX(accessDate)`) and unused for order.
-
-**Workaround.** The plugin's spec searches one fixed term three times so its count beats
-the one-off ties (`wordpress/tests/e2e/admin/insights.spec.mjs`). A site owner still
-never sees a new gap on a busy day until it is searched again.
-
-**What it should do.**
-- Break count ties by `MAX(accessDate) DESC` in all four window queries, so the most
-  recent gap shows first among equals for a partitioned key too.
-- A repository test with more one-off terms than `rows` returns the newest, unpartitioned
-  and partitioned.
-
 ### LXX.13 The metrics reports say whether metrics are on (T1149)
 
 **Where it happened.** Dumont D178, the WordPress plugin's Search insights screen and
