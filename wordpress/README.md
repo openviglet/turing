@@ -256,7 +256,8 @@ run-docker.cmd                         :: WordPress http://localhost:8080/wp-adm
                                        :: Turing    http://localhost:2700 (admin / dumont-dev)
 run-docker.cmd wp dumont queue run     :: any WP-CLI command
 run-docker.cmd wp dumont ai status     :: which of Turing's AI features the site can use (exits 1 if any is off)
-run-docker.cmd demo                    :: the Tarnfell demo storefront, with WooCommerce
+run-docker.cmd demo                    :: also the Tarnfell demo storefront on http://localhost:38082
+run-docker.cmd demo reset              :: drop the demo's WordPress and database only
 run-docker.cmd multisite               :: also a two-site network on http://localhost:8081
 run-docker.cmd logs turing             :: follow a log: wordpress, turing or db
 run-docker.cmd stop                    :: keep the data
@@ -275,7 +276,8 @@ local login. When an image `turing-ce:local` exists, it is used instead of the p
 which lags the Turing source; build it from a Turing checkout after `mvnw package` with
 `docker build -f Dockerfile.local -t turing-ce:local .` (the published 2026.3.4 image answers
 every API-key import with HTTP 500). Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
-`TURING_ADMIN_PASSWORD` or `TURING_IMAGE` before the first run to change the defaults.
+`TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT` or `SN_DEMO_SITE` before the first run
+to change the defaults.
 To move an installed stack to another port (another project holds 8080, say), set `WP_PORT`,
 run `run-docker.cmd`, then
 `run-docker.cmd wp search-replace localhost:8080 localhost:<port> --all-tables --skip-columns=guid`;
@@ -287,8 +289,15 @@ search block's box alone, a results page, product pages with the copilot and Rel
 journal. Lighthouse in headless Edge (October 2026): home 93 performance and 96
 accessibility, results 90 and 96. axe finds nothing on home, search and a post; on a product,
 only WooCommerce's own mini-cart drawer. The name was checked with a web search only (no
-brand or store called Tarnfell): run a trademark registry search before any public use. The
-browser tests' global setup puts the default stack back.
+brand or store called Tarnfell): run a trademark registry search before any public use.
+
+The demo is a WordPress of its own (`wordpress-demo`, `db-demo` and `cron-demo`, the compose
+`demo` profile) on `WP_DEMO_PORT` (38082), sharing the one Turing under its own SN site,
+`SN_DEMO_SITE` (`Demo`), with its own API key. The site on `WP_PORT` stays the browser tests'
+and is never switched to Tarnfell, so the demo can stay up while the tests run and neither
+site's searches return the other's documents. WP-CLI on the demo is
+`docker compose run --rm --no-deps cli-demo wp <command>`. The `demo` Playwright project
+still seeds Tarnfell onto the test site for now (D220).
 
 `phpcbf` capitalises `wordpress` wherever it reads it as prose, and the `source_apps` value is
 data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that sniff; keep it.

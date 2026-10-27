@@ -5,8 +5,10 @@ rem
 rem   run-docker.cmd            start both, install WordPress and provision Turing on first run
 rem   run-docker.cmd multisite  also start a two-site multisite network on WP_MS_PORT (8081),
 rem                             sharing the SN site SN_MS_SITE (Network), for the browser tests
-rem   run-docker.cmd demo       the demo storefront: the Tarnfell theme (demo/theme), its home,
-rem                             search page and journal; the browser tests put the default back
+rem   run-docker.cmd demo       also start the demo storefront on WP_DEMO_PORT (38082): a WordPress
+rem                             of its own with the Tarnfell theme (demo/theme), WooCommerce and
+rem                             its catalog, on its own SN site SN_DEMO_SITE (Demo)
+rem   run-docker.cmd demo reset stop the demo and delete its WordPress and database only
 rem   run-docker.cmd stop       stop the containers, keep the data
 rem   run-docker.cmd reset      stop and delete WordPress, its database and Turing's store
 rem   run-docker.cmd logs [svc] follow a log: wordpress (default), turing or db
@@ -33,8 +35,8 @@ if "%TURING_IMAGE%"=="" docker image inspect turing-ce:local >nul 2>&1 && set "T
 set "DC=docker compose"
 set "WP=%DC% run --rm --no-deps cli wp"
 
-if /i "%~1"=="stop"  ( %DC% --profile multisite down & exit /b %ERRORLEVEL% )
-if /i "%~1"=="reset" ( %DC% --profile multisite down -v & exit /b %ERRORLEVEL% )
+if /i "%~1"=="stop"  ( %DC% --profile multisite --profile demo down & exit /b %ERRORLEVEL% )
+if /i "%~1"=="reset" ( %DC% --profile multisite --profile demo down -v & exit /b %ERRORLEVEL% )
 if /i "%~1"=="multisite" goto :multisite
 if /i "%~1"=="demo" goto :demo
 if /i "%~1"=="logs"  goto :logs
@@ -96,19 +98,60 @@ echo The plugin has an API key for the local Turing.
 exit /b 0
 
 :demo
+rem The demo has a WordPress and an SN site of its own (D219): the browser tests' site is
+rem never touched, so both are up at once.
+if "%WP_DEMO_PORT%"=="" set "WP_DEMO_PORT=38082"
+if "%SN_DEMO_SITE%"=="" set "SN_DEMO_SITE=Demo"
+if /i "%~2"=="reset" (
+    %DC% --profile demo rm -s -f wordpress-demo cron-demo db-demo
+    docker volume rm viglet-dumont-wp_wp-demo viglet-dumont-wp_db-demo
+    exit /b 0
+)
+rem The single site and Turing first: the demo shares that Turing.
 call "%~f0" || exit /b 1
-%WP% theme activate tarnfell || exit /b 1
-rem In English, whatever language a browser test run left the site in.
-%WP% site switch-language en_US || exit /b 1
-rem Its links are pretty permalinks; the browser tests put plain ones back.
-%WP% rewrite structure "/%%postname%%/" --hard || exit /b 1
+set "WPD=%DC% run --rm --no-deps cli-demo wp"
+set "DEMOURL=http://localhost:%WP_DEMO_PORT%"
+%DC% --profile demo up -d || exit /b 1
+
+echo Waiting for the demo WordPress...
+set /a TRIES=0
+:waitdemo
+set /a TRIES+=1
+%WPD% db check >nul 2>&1 && goto :readydemo
+if %TRIES% geq 60 ( echo The demo WordPress did not come up. See: run-docker.cmd logs wordpress-demo & exit /b 1 )
+timeout /t 2 /nobreak >nul
+goto :waitdemo
+
+:readydemo
+%WPD% core is-installed >nul 2>&1
+if errorlevel 1 (
+    echo Installing the demo WordPress...
+    %WPD% core install --url=%DEMOURL% --title="Tarnfell" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
+)
+%WPD% plugin activate viglet-dumont >nul 2>&1
+
+set "KEY="
+for /f "delims=" %%k in ('%WPD% option pluck viglet_dumont_settings api_key 2^>nul') do set "KEY=%%k"
+if "%KEY%"=="" (
+    for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%TURING_LOCALE%"') do set "KEY=%%k"
+) else (
+    powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%TURING_LOCALE%" -NoToken
+)
+if "%KEY%"=="" ( echo Turing was not provisioned for %SN_DEMO_SITE%; the demo has no API key. & exit /b 1 )
+%WPD% eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
+
+%WPD% theme activate tarnfell || exit /b 1
+%WPD% rewrite structure "/%%postname%%/" --hard || exit /b 1
 rem A shop: WooCommerce on, with the demo's catalog (demo/seed), which runs demo/setup.php first.
-%WP% plugin is-installed woocommerce >nul 2>&1 || %WP% plugin install woocommerce || exit /b 1
-%WP% plugin activate woocommerce || exit /b 1
-%WP% eval-file /demo/seed/catalog.php || exit /b 1
+%WPD% plugin is-installed woocommerce >nul 2>&1 || %WPD% plugin install woocommerce || exit /b 1
+%WPD% plugin activate woocommerce || exit /b 1
+%WPD% eval-file /demo/seed/catalog.php || exit /b 1
 rem The seed makes products indexable after saving them, so nothing queued them: send them now.
-%WP% dumont reindex || exit /b 1
-echo Demo storefront: http://localhost:%WP_PORT%/
+%WPD% dumont reindex || exit /b 1
+
+echo.
+echo Demo storefront: %DEMOURL%/   (admin / admin), SN site %SN_DEMO_SITE%
+echo Demo WP-CLI:     docker compose run --rm --no-deps cli-demo wp ...
 exit /b 0
 
 :multisite
