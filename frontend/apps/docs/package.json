@@ -8,7 +8,7 @@
     "dev": "astro dev",
     "build": "astro build && node scripts/check-links.mjs",
     "preview": "astro preview",
-    "port": "node scripts/port-docusaurus.mjs && node scripts/redirect-map.mjs"
+    "redirects": "node scripts/redirect-map.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.9",

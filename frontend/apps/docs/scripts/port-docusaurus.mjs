@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * T1161 — ports the Docusaurus `docs-turing` content (vigletdocs) into this Starlight
- * area. Re-runnable: it rewrites src/content/docs, public/img and
- * src/sidebar.generated.json from the source each time, so the port can be repeated
- * while vigletdocs keeps receiving edits.
+ * T1161 — ported the Docusaurus `docs-turing` content (vigletdocs) into this Starlight
+ * area: it rewrites src/content/docs, public/img and src/sidebar.generated.json from
+ * the source. Since T1164 the pages here are edited directly and docs-turing is
+ * frozen, so this is kept as the record of how the port was made, not as a sync.
  *
- *   node scripts/port-docusaurus.mjs [path-to-vigletdocs.github.io]
+ *   node scripts/port-docusaurus.mjs --force [path-to-vigletdocs.github.io]
  *
  * What it converts, and nothing else (the source uses no Tabs and no other theme
  * components):
@@ -29,9 +29,19 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
+// T1164 — the pages here are the source of truth now and vigletdocs docs-turing is
+// frozen, so a run would replace pages edited here with the frozen copies. It
+// refuses unless asked for by name.
+if (!process.argv.includes("--force")) {
+  console.error("[port] docs-turing is frozen (T1164): the pages in src/content/docs are the source "
+    + "of truth, and this would overwrite them. Pass --force only to re-import on purpose.");
+  process.exit(1);
+}
+
 const HERE = path.dirname(url.fileURLToPath(import.meta.url));
 const AREA = path.resolve(HERE, "..");
-const SOURCE_ROOT = path.resolve(process.argv[2] ?? "D:/Git/viglet/vigletdocs/vigletdocs.github.io");
+const SOURCE_ROOT = path.resolve(process.argv.slice(2).find((a) => a !== "--force")
+  ?? "D:/Git/viglet/vigletdocs/vigletdocs.github.io");
 const SOURCE = path.join(SOURCE_ROOT, "docs-turing");
 const CONTENT = path.join(AREA, "src", "content", "docs");
 const PUBLIC_IMG = path.join(AREA, "public", "img");

@@ -1,6 +1,6 @@
 ---
 name: turing-roadmap-docs
-description: The Turing-specific rules around the roadmap that roadkeep does not enforce — that ROADMAP.md stays minimal (headings + open lines only, no block descriptions or shipped notes, block drop when a block's last line ships), that new functionality REUSES an existing block (or a generic standing one) instead of minting a new letter, the one-task-one-commit + /loop discipline, the next block letter and docs/last-task.md, and propagating a shipped user-facing task into the separate end-user documentation site (vigletdocs docs-turing) via its COVERAGE.md gate. The four docs/ files (ROADMAP.md, CHANGELOG.md, IMPROVEMENTS.md, STRATEGY.md) are written by the roadkeep tools and never by hand — for adding, shipping, retiring, sectioning, picking or querying a task use the `roadkeep` skill instead. Use when planning where a new feature or a cluster of findings goes, when finishing a task, when about to open a block, or after shipping anything user-facing.
+description: The Turing-specific rules around the roadmap that roadkeep does not enforce — that ROADMAP.md stays minimal (headings + open lines only, no block descriptions or shipped notes, block drop when a block's last line ships), that new functionality REUSES an existing block (or a generic standing one) instead of minting a new letter, the one-task-one-commit + /loop discipline, the next block letter and docs/last-task.md, and propagating a shipped user-facing task into the end-user documentation (frontend/apps/docs, published at turing.viglet.org/docs) in the same commit, via its COVERAGE.md gate. The four docs/ files (ROADMAP.md, CHANGELOG.md, IMPROVEMENTS.md, STRATEGY.md) are written by the roadkeep tools and never by hand — for adding, shipping, retiring, sectioning, picking or querying a task use the `roadkeep` skill instead. Use when planning where a new feature or a cluster of findings goes, when finishing a task, when about to open a block, or after shipping anything user-facing.
 ---
 
 # Turing roadmap & docs — what roadkeep does not cover
@@ -208,13 +208,21 @@ yours to edit:
 ## Propagating to end-user documentation
 
 The four `docs/` files are the **internal** engineering roadmap. The **end-user**
-documentation is a *separate Docusaurus repo*:
+documentation lives in this repo (T1164), as the Astro + Starlight area published at
+https://turing.viglet.org/docs:
 
 ```
-D:\Git\viglet\vigletdocs\vigletdocs.github.io\docs-turing
+frontend/apps/docs/src/content/docs/      one .md / .mdx per page
+frontend/apps/docs/src/sidebar.generated.json   the sidebar order
+frontend/apps/docs/COVERAGE.md            the gate
 ```
 
-Its gate is [`docs-turing/COVERAGE.md`](file:///D:/Git/viglet/vigletdocs/vigletdocs.github.io/docs-turing/COVERAGE.md)
+The old Docusaurus copy (vigletdocs `docs-turing`) is **frozen**: every page there
+carries a "moved to turing.viglet.org/docs" banner. Never edit it, and never re-run
+`scripts/port-docusaurus.mjs` (the one-time importer, which refuses without `--force`) —
+it would overwrite the pages here with the frozen ones.
+
+Its gate is [`frontend/apps/docs/COVERAGE.md`](../../../frontend/apps/docs/COVERAGE.md)
 — a matrix mapping every shipped `CHANGELOG.md` block/feature to **either** an end-user
 page (with anchor) **or** an explicit "deliberately internal — no public page" row. A
 shipped user-facing subsystem with no page is an **orphan** (🔴) and counts as a bug in
@@ -234,7 +242,8 @@ the docs. (`_documentation-update-plan.md` is retired — do not resurrect it;
    anchor on `ai-agents.md`, `rag.md`, `chat-flow.md`, `llm-instances.md`, etc.) rather
    than warranting a brand-new page. Fold into the closest existing page (mark it 🧩 in
    `COVERAGE.md`) unless the surface is genuinely new and sizeable enough to stand alone
-   (then a new `.md` + a ✅ row).
+   (then a new `.md` + a ✅ row, and an entry in `src/sidebar.generated.json` where the
+   page belongs).
 3. **Write for the user, not the commit.** The end-user docs explain *what the feature
    does and how to use it* — configuration keys, admin UI steps, API/SDK calls, examples.
    They are **not** a changelog or design-rationale dump. Keep the tense/voice of the
@@ -247,24 +256,19 @@ the docs. (`_documentation-update-plan.md` is retired — do not resurrect it;
    point at the `openviglet/turing-ce` repo (the public one), never the private
    `openviglet/turing`.
 
-**Commit the docs separately.** `docs-turing` lives in a *different git repo*, so its
-changes are their own commit in that repo (`cd` into the vigletdocs repo first — see the
-`run-commit.cmd` "stages relative to CWD" rule). The Turing-repo commit carries the code
-+ what `ship` wrote; the vigletdocs commit carries the end-user page + `COVERAGE.md`.
-Keep `-m` titles ASCII.
-
-**Batch note.** When shipping a run of tasks under `/loop`, the end-user-docs decision
-runs per task, but it's fine to accumulate several small page edits and land them in one
-focused vigletdocs commit at a natural boundary (e.g. once a whole block ships) rather
-than a trivial commit per task — as long as `COVERAGE.md` never claims a page that isn't
-there yet.
+**The page ships in the task's own commit.** Code, what `ship` wrote, the end-user page
+and the `COVERAGE.md` row are one Turing commit — there is no second repo any more. Run
+`pnpm --filter turing-docs build` before committing: it builds the area and its link
+gate fails on any broken internal link, anchor, image or redirect target. Links between
+pages are written with the base (`/docs/<slug>/`): Astro does not prefix hand-typed
+absolute links, and the gate is what catches one that drops it.
 
 **Seeing the current state — run this, don't invent it.** The decision above asks whether
 a block is accounted for, and the way to see that is one command plus one comparison:
 
 ```bash
 roadkeep block list                      # every declared block, from the governed files
-grep -c "Block X" …/docs-turing/COVERAGE.md   # is that block accounted for?
+grep -c "Block X" frontend/apps/docs/COVERAGE.md   # is that block accounted for?
 ```
 
 `roadkeep block list` is the right source: it reads all four governed files, so it finds

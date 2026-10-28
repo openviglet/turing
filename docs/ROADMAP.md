@@ -19,10 +19,6 @@
 - 📋 **T1166** (deps: —) **With chat memory on, a prompt capture counts memory turns in its index, so a follow-up's searched query lands off-turn** — The Live Preview is where an operator checks what a rewritten follow-up searched, and it must show that on the turn it belongs to. → §CLVIII.4
 - 📋 **T1167** (deps: T1159 ✅) **The kit call cites no guide: a plan comes back as products without the site's own advice for it** — A shopper who does not know what to buy is the one who has not read the site's guide, and the call already retrieves for that plan. → §CLVIII.5
 
-## Block U — Documentation refresh (`docs-turing`)
-
-- 📋 **T1164** (deps: T1161 ✅, T1162 ✅) **The ship workflow, COVERAGE.md gate and skills still send end-user doc edits to the vigletdocs repo** — Move COVERAGE.md beside the new docs, repoint turing-roadmap-docs and agents.md to frontend/apps/docs, and freeze docs-turing in vigletdocs as superseded. → §CLIX.5
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

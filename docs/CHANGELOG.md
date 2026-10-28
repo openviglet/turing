@@ -618,6 +618,7 @@
 - **T1161** — All 72 docs-turing pages and their images are in /docs in the Docusaurus sidebar order, ported by a re-runnable script; a link check fails the build on any broken link (design §CLIX.2 recorded in `frontend/apps/docs/scripts/port-docusaurus.mjs`).
 - **T1162** — /docs now wears the marketing site's palette, fonts, cube mark, nav links and footer in light and dark, checked against turing.viglet.org in screenshots at desktop and phone width (design §CLIX.3 recorded in `frontend/apps/docs/src/styles/docs.css`).
 - **T1163** — redirects.json maps all 102 old docs.viglet.org/turing URLs, archived 0.3.x included, to their /docs page in the plugin-client-redirects shape, and in-repo links now point at /docs (design §CLIX.4 recorded in `frontend/apps/docs/scripts/redirect-map.mjs`).
+- **T1164** — COVERAGE.md now gates frontend/apps/docs, the roadmap skill and agents.md put a user-facing page in the task's own commit, and docs-turing in vigletdocs is frozen behind a moved banner (design §CLIX.5 recorded in `.claude/skills/turing-roadmap-docs/SKILL.md`).
 
 ## Block W — Agent↔UI transparency & client tools (AG-UI parity, §XXII)
 

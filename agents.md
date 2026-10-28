@@ -12,7 +12,7 @@
 > | Skill | Reach for it when… |
 > | ----- | ------------------ |
 > | `roadkeep` | **the write path for `docs/ROADMAP.md`/`CHANGELOG.md`/`IMPROVEMENTS.md`/`STRATEGY.md`**: adding, shipping, retiring, deferring or sectioning a task, and every query about the backlog |
-> | `turing-roadmap-docs` | the Turing rules `roadkeep` does not enforce: **where new work goes (reuse a block, don't mint a letter)**, one-task-one-commit + `/loop`, the next block letter, propagating a shipped user-facing task to the `docs-turing` site |
+> | `turing-roadmap-docs` | the Turing rules `roadkeep` does not enforce: **where new work goes (reuse a block, don't mint a letter)**, one-task-one-commit + `/loop`, the next block letter, propagating a shipped user-facing task to the end-user docs in `frontend/apps/docs` (same commit) |
 > | `turing-persistence` | writing JPA entities, `@Column` annotations, associations (LAZY rule), or Liquibase changelogs |
 > | `turing-integration-tests` | creating or debugging a `*IT.java` / `@SpringBootTest` / context-startup hang |
 > | `turing-frontend-testing` | adding or debugging a `*.test.tsx` (vitest + RTL) |
@@ -32,6 +32,7 @@
 - **frontend/**: pnpm + Turborepo monorepo with the React apps and SDK packages
   - **frontend/apps/turing-app**: React 19 + TypeScript frontend (Vite, Tailwind v4, shadcn/ui)
   - **frontend/apps/marketplace**: marketplace example apps (mythical-creatures, space-missions, vinyl-records)
+  - **frontend/apps/docs**: `turing-docs`, the end-user documentation (Astro + Starlight) at turing.viglet.org/docs, built into the marketing site's `dist/docs` by `build:site`; pages in `src/content/docs`, the gate in `COVERAGE.md`, a link check on every build. The single source of the end-user docs since T1164 (vigletdocs `docs-turing` is frozen)
   - **frontend/apps/showcase**: `turing-showcase` ("Atlas Store"): the Block Y reference app that stresses the maximum platform surface (typed catalog, faceted+hybrid search, RAG chat, agents, skills, creative bets). Self-seeds a 200-product catalog; `pnpm dev:showcase` / `build:showcase`; e2e `TurShowcaseSmokeIT`; coverage audit in its `COVERAGE.md`
   - **frontend/packages/react-sdk**: `@viglet/turing-react-sdk`: hooks and UI components for the Turing API
   - **frontend/packages/sdk**: `@viglet/turing-sdk`: **vanilla JS, zero-dependency** SDK (framework-agnostic client + observable controllers for search/chat/autocomplete/slots). Built for Adobe Edge Delivery Services (EDS) blocks, plain `<script>`, or any bundler. Ported from the React SDK's `core/` (axios → native `fetch` via an explicit `createTuringClient`). Ships a self-contained ESM vendor file (`dist/turing-sdk.js`) + UMD + types via Vite lib mode. EDS example blocks live in `frontend/packages/sdk/examples/eds/`. Build: `pnpm --filter @viglet/turing-sdk build` (root alias `build:sdk`). The React SDK keeps its own `core/` copy for now; a future change may have it depend on this package.
@@ -89,7 +90,7 @@ Verify with `git -C D:\Git\viglet\turing\latest rev-parse --abbrev-ref HEAD`
 > the plugin and is therefore the same text in every adopting project. The Turing rules
 > roadkeep does *not* enforce (where new work is filed, reusing a block instead of minting a
 > letter, one-task-one-commit + `/loop`, the next block letter, propagating a shipped
-> user-facing task into the `docs-turing` site) are the **`turing-roadmap-docs` skill**. A
+> user-facing task into the end-user docs in `frontend/apps/docs`) are the **`turing-roadmap-docs` skill**. A
 > rule restated here is a rule that can disagree with the tool that enforces it.
 
 ### Build & Test Commands

@@ -31,8 +31,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-## Block U — Documentation refresh (`docs-turing`)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2324,15 +2322,3 @@ staged as a product is not repeated.
 `guideTypes` the result is unchanged; a product-typed result is never cited as a guide.
 
 ## CLIX Documentation refresh (`docs-turing`)
-
-### CLIX.5 Switching the source of truth (T1164)
-
-Once the port and the theme have shipped, two copies of the end-user docs exist, and the
-one people edit has to be unambiguous. The `turing-roadmap-docs` skill's propagation
-section, `agents.md` and any memory that names `docs-turing` today tell a session to
-write the page and update `COVERAGE.md` in the vigletdocs repo, as a separate commit.
-This task moves `COVERAGE.md` into `frontend/apps/docs`, rewrites those instructions so
-a user-facing ship adds its page in the same Turing commit, and marks `docs-turing` in
-vigletdocs as superseded (a banner on every page pointing to turing.viglet.org/docs, no
-further edits), leaving Shio and Dumont docs untouched there. Any content edited in
-vigletdocs after the T1161 port is re-synced first, so the cut-over loses nothing.
