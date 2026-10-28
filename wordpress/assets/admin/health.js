@@ -86,6 +86,9 @@ function AiFeatures() {
 									{ __( 'State', 'viglet-dumont' ) }
 								</th>
 								<th scope="col">
+									{ __( 'Shown by', 'viglet-dumont' ) }
+								</th>
+								<th scope="col">
 									{ __( 'Why', 'viglet-dumont' ) }
 								</th>
 							</tr>
@@ -99,6 +102,7 @@ function AiFeatures() {
 											? __( 'On', 'viglet-dumont' )
 											: __( 'Off', 'viglet-dumont' ) }
 									</td>
+									<td>{ row.block || '—' }</td>
 									<td>
 										{ [ row.reason, row.fix ]
 											.filter( Boolean )

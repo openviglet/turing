@@ -25,7 +25,7 @@ msgid "Integrate WordPress with Viglet Turing search engine for powerful content
 msgstr "Integre o WordPress ao mecanismo de busca Viglet Turing para indexar e buscar o seu conteúdo."
 
 #: src/admin/views/settings-page.php:40
-#: assets/admin/health.js:185
+#: assets/admin/health.js:189
 msgid "Connection"
 msgstr "Conexão"
 
@@ -725,7 +725,7 @@ msgstr "Excluído da busca"
 
 #: src/includes/class-viglet-dumont-post-state.php:72
 #: src/includes/class-viglet-dumont-post-state.php:80
-#: assets/admin/health.js:395
+#: assets/admin/health.js:399
 #: src/admin/js/editor-panel.js:284
 msgid "Failed"
 msgstr "Falhou"
@@ -773,11 +773,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:836
+#: src/viglet-dumont.php:844
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:861
+#: src/viglet-dumont.php:869
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -802,106 +802,106 @@ msgid "never"
 msgstr "nunca"
 
 #. translators: 1: the SN site, 2: the site key.
-#: assets/admin/health.js:197
+#: assets/admin/health.js:201
 #, js-format
 msgid "SN site %1$s, site key %2$s."
 msgstr "Site SN %1$s, chave do site %2$s."
 
 #. translators: %s: why Turing refused the fields.
-#: assets/admin/health.js:209
+#: assets/admin/health.js:213
 #, js-format
 msgid "The mapped fields are not provisioned: %s"
 msgstr "Os campos mapeados não estão no Turing: %s"
 
-#: assets/admin/health.js:222
+#: assets/admin/health.js:226
 msgid "Documents"
 msgstr "Documentos"
 
-#: assets/admin/health.js:229
+#: assets/admin/health.js:233
 msgid "Post type"
 msgstr "Tipo de post"
 
-#: assets/admin/health.js:232
+#: assets/admin/health.js:236
 msgid "Published in WordPress"
 msgstr "Publicados no WordPress"
 
-#: assets/admin/health.js:238
+#: assets/admin/health.js:242
 msgid "Indexed in Turing"
 msgstr "Indexados no Turing"
 
-#: assets/admin/health.js:253
+#: assets/admin/health.js:257
 msgid "unknown"
 msgstr "desconhecido"
 
-#: assets/admin/health.js:263
+#: assets/admin/health.js:267
 msgid "(differs: run a reindex)"
 msgstr "(diferente: rode uma reindexação)"
 
-#: assets/admin/health.js:280
+#: assets/admin/health.js:284
 msgid "Queue"
 msgstr "Fila"
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:286
+#: assets/admin/health.js:290
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr "%1$d aguardando, %2$d desistiram de tentar."
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:298
+#: assets/admin/health.js:302
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr "Última execução %1$s: %2$d enviados, %3$d falharam."
 
-#: assets/admin/health.js:306
+#: assets/admin/health.js:310
 msgid "The queue has not sent anything yet."
 msgstr "A fila ainda não enviou nada."
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:320
+#: assets/admin/health.js:324
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr "%d tarefas com falha voltaram para a fila."
 
-#: assets/admin/health.js:329
+#: assets/admin/health.js:333
 msgid "Retry failed"
 msgstr "Tentar de novo as que falharam"
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:342
+#: assets/admin/health.js:346
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr "%1$d enviados, %2$d falharam."
 
-#: assets/admin/health.js:352
+#: assets/admin/health.js:356
 msgid "Send queue now"
 msgstr "Enviar a fila agora"
 
-#: assets/admin/health.js:362
+#: assets/admin/health.js:366
 msgid "Last events"
 msgstr "Últimos eventos"
 
-#: assets/admin/health.js:370
+#: assets/admin/health.js:374
 msgid "When"
 msgstr "Quando"
 
-#: assets/admin/health.js:373
+#: assets/admin/health.js:377
 msgid "What"
 msgstr "O quê"
 
-#: assets/admin/health.js:376
+#: assets/admin/health.js:380
 msgid "Post"
 msgstr "Post"
 
-#: assets/admin/health.js:379
+#: assets/admin/health.js:383
 msgid "Result"
 msgstr "Resultado"
 
-#: assets/admin/health.js:394
+#: assets/admin/health.js:398
 msgid "OK"
 msgstr "OK"
 
-#: assets/admin/health.js:409
+#: assets/admin/health.js:413
 msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
@@ -1403,24 +1403,24 @@ msgstr "Recurso"
 msgid "State"
 msgstr "Estado"
 
-#: assets/admin/health.js:89
+#: assets/admin/health.js:92
 msgid "Why"
 msgstr "Por quê"
 
-#: assets/admin/health.js:99
+#: assets/admin/health.js:102
 msgid "On"
 msgstr "Ligado"
 
-#: assets/admin/health.js:100
+#: assets/admin/health.js:103
 msgid "Off"
 msgstr "Desligado"
 
-#: assets/admin/health.js:120
+#: assets/admin/health.js:124
 #: src/admin/js/editor-panel.js:236
 msgid "Check again"
 msgstr "Verificar de novo"
 
-#: assets/admin/health.js:121
+#: assets/admin/health.js:125
 msgid "Check AI features"
 msgstr "Verificar recursos de IA"
 
@@ -2258,7 +2258,7 @@ msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de
 msgid "Turn on generative AI for this site in Turing"
 msgstr "Ativar a IA generativa deste site no Turing"
 
-#: src/viglet-dumont.php:106
+#: src/viglet-dumont.php:114
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
@@ -2648,3 +2648,23 @@ msgstr "chat"
 msgctxt "block keyword"
 msgid "question"
 msgstr "pergunta"
+
+#: src/viglet-dumont.php:97
+msgid "Turing search block, with \"Answer questions from this site’s content\" on"
+msgstr "Bloco de busca do Turing, com \"Responder perguntas com o conteúdo deste site\" ligado"
+
+#: src/viglet-dumont.php:98
+msgid "Site assistant block, or its launcher on every page"
+msgstr "Bloco Assistente do site, ou o botão dele em todas as páginas"
+
+#: src/viglet-dumont.php:99
+msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
+msgstr "Bloco de busca do Turing, com \"Sugerir os filtros que uma frase cita\" ligado"
+
+#: src/viglet-dumont.php:100
+msgid "Ask the catalog block"
+msgstr "Bloco Pergunte ao catálogo"
+
+#: assets/admin/health.js:89
+msgid "Shown by"
+msgstr "Aparece em"

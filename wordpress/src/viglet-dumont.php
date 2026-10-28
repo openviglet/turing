@@ -92,11 +92,19 @@ function viglet_dumont_ai_status(): array {
 		'nl_filters' => __( 'Natural-language filters', 'viglet-dumont' ),
 		'copilot'    => __( 'Catalog copilot', 'viglet-dumont' ),
 	);
+	// Where a visitor meets each feature (D179): the block, and the setting on it when there is one.
+	$blocks = array(
+		'answer'     => __( 'Turing search block, with "Answer questions from this site’s content" on', 'viglet-dumont' ),
+		'chat'       => __( 'Site assistant block, or its launcher on every page', 'viglet-dumont' ),
+		'nl_filters' => __( 'Turing search block, with "Suggest the filters a sentence names" on', 'viglet-dumont' ),
+		'copilot'    => __( 'Ask the catalog block', 'viglet-dumont' ),
+	);
 
 	return array_map(
 		static fn ( array $row ) => array(
 			'feature' => $row['feature'],
 			'label'   => $labels[ $row['feature'] ] ?? $row['feature'],
+			'block'   => $blocks[ $row['feature'] ] ?? '',
 			'on'      => $row['on'],
 			// A sentence, so the fix after it reads as the next one.
 			'reason'  => '' === $row['reason'] || preg_match( '/[.!?]$/', $row['reason'] ) ? $row['reason'] : $row['reason'] . '.',
