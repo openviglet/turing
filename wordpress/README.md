@@ -192,7 +192,10 @@ npm run test:e2e               # seed, log in, run every spec
 
 The global setup runs [`fixtures/seed.php`](tests/e2e/fixtures/seed.php) through WP-CLI:
 twelve posts with a `seats` facet, a "Busca" page holding the search block, Turing search
-on. It then reindexes and logs in once. Every test fails on a console error, an uncaught
+on. It also installs a small mu-plugin, on the test stack only, that hides core's "Please
+update WordPress now" nag: that link fails axe, so without it the admin specs went red the
+day core released a version newer than the stack's image. It then reindexes and logs in
+once. Every test fails on a console error, an uncaught
 page error, a failed request or a 4xx/5xx response, and saves its screens to
 `tests/e2e/artifacts/screens/<project>/`. The HTML report is in `tests/e2e/artifacts/report/`.
 `E2E_SKIP_SEED=1` reruns without seeding. It is not in CI, which has no Turing.

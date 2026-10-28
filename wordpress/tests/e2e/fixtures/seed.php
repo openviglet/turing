@@ -18,6 +18,21 @@
 
 // phpcs:disable -- a test fixture run by WP-CLI, not plugin code.
 
+// Core's "Please update WordPress now" nag (D236): it shows on every admin page once core has a
+// release newer than the stack's image, and its link fails axe's label-content-name-mismatch,
+// so the admin specs went red on a date. An mu-plugin on this test stack only hides core's own
+// nag and update check; every plugin notice stays on the page, and stays checked.
+$nag_off = WPMU_PLUGIN_DIR . '/viglet-dumont-e2e-no-core-nag.php';
+if ( ! file_exists( $nag_off ) ) {
+	wp_mkdir_p( WPMU_PLUGIN_DIR );
+	file_put_contents(
+		$nag_off,
+		"<?php\n// Written by the Viglet Dumont browser tests' seed (tests/e2e/fixtures/seed.php, D236).\n" .
+		"add_filter( 'pre_site_transient_update_core', static fn () => (object) array( 'updates' => array(), 'version_checked' => get_bloginfo( 'version' ), 'last_checked' => time() ) );\n" .
+		"add_action( 'admin_init', static function () { remove_action( 'admin_notices', 'update_nag', 3 ); remove_action( 'network_admin_notices', 'update_nag', 3 ); } );\n"
+	);
+}
+
 // `wp eval-file seed.php second` seeds the multisite network's second site instead: one post
 // no other site has, so a search that crosses sites shows (multisite.spec.mjs).
 $titles = 'second' === ( $args[0] ?? '' ) ? array( 'Only on the second site' ) : array(
