@@ -31,8 +31,30 @@ add_action(
 	'after_setup_theme',
 	static function (): void {
 		add_editor_style( 'style.css' );
+		// The theme in the site's language (D223): languages/<locale>.l10n.php.
+		load_theme_textdomain( 'tarnfell', get_theme_file_path( 'languages' ) );
 	}
 );
+
+/**
+ * The text a template keeps in block attributes (a heading, a placeholder, a prefix), in the
+ * site's language (D223): the patterns print their own text through __(), and these are the
+ * strings the HTML templates cannot. Only a string the theme's translations hold changes.
+ *
+ * @param array $block The parsed block about to render.
+ * @return array
+ */
+function tarnfell_translate_attributes( array $block ): array {
+	foreach ( array( 'heading', 'placeholder', 'prefix' ) as $attribute ) {
+		if ( isset( $block['attrs'][ $attribute ] ) && is_string( $block['attrs'][ $attribute ] ) ) {
+			// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText -- the templates' own strings, translated in languages/.
+			$block['attrs'][ $attribute ] = translate( $block['attrs'][ $attribute ], 'tarnfell' );
+		}
+	}
+
+	return $block;
+}
+add_filter( 'render_block_data', 'tarnfell_translate_attributes' );
 
 // The "Compare searches" page: WordPress's own search beside Turing's (D195).
 require get_theme_file_path( 'inc/compare.php' );

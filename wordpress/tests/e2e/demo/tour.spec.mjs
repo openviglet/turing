@@ -7,13 +7,30 @@ import { demoLocale } from './curated.mjs';
 
 test.use( { viewport: { width: 390, height: 844 } } );
 
-// Its searches name English products: on a demo in another language (D217) there is nothing to tour.
-test.beforeEach( () => {
-	test.skip(
-		'en_US' !== demoLocale(),
-		`The demo speaks ${ demoLocale() }; the tour searches in English.`
-	);
-} );
+// What the tour says and searches for, in each language the demo speaks (D217, D223).
+const words = {
+	en_US: {
+		marker: 'Turing feature',
+		docs: 'How it works',
+		jacket: 'jacket',
+		daypack: 'helvellyn daypack',
+		search: 'Search as you type',
+		filters: 'Filters from the catalog',
+		related: 'Related, by meaning',
+		copilot: 'Ask the catalog',
+	},
+	pt_BR: {
+		marker: 'Recurso do Turing',
+		docs: 'Como funciona',
+		jacket: 'jaqueta',
+		daypack: 'helvellyn mochila',
+		search: 'Busca enquanto digita',
+		filters: 'Filtros vindos do catálogo',
+		related: 'Relacionados pelo sentido',
+		copilot: 'Pergunte ao catálogo',
+	},
+};
+const say = () => words[ demoLocale() ] || words.en_US;
 
 const boxes = ( a, b ) =>
 	a.x < b.x + b.width &&
@@ -27,7 +44,7 @@ async function walk( page, expected ) {
 	for ( let i = 0; i < expected.length; i++ ) {
 		const marker = markers.nth( i );
 		await expect( marker ).toHaveAccessibleName(
-			`Turing feature ${ i + 1 }: ${ expected[ i ] }`
+			`${ say().marker } ${ i + 1 }: ${ expected[ i ] }`
 		);
 		// Reached with the keyboard: Tab until this marker has the focus.
 		for (
@@ -47,7 +64,7 @@ async function walk( page, expected ) {
 		);
 		await expect( note ).toBeVisible();
 		await expect(
-			note.getByRole( 'link', { name: 'How it works' } )
+			note.getByRole( 'link', { name: say().docs } )
 		).toBeVisible();
 		// The feature is the element after the marker's wrapper.
 		const feature = await marker.evaluate( ( el ) => {
@@ -69,18 +86,22 @@ test( 'the search page names its search box and its filters', async ( {
 	page,
 	axe,
 } ) => {
-	await page.goto( '/?pagename=search-gear&q=jacket&tour=1' );
+	await page.goto(
+		`/?pagename=search-gear&q=${ encodeURIComponent( say().jacket ) }&tour=1`
+	);
 	await expect(
 		page.locator( '.viglet-dumont-search__title a' ).first()
 	).toBeVisible();
-	await walk( page, [ 'Search as you type', 'Filters from the catalog' ] );
+	await walk( page, [ say().search, say().filters ] );
 	await axe( 'the tour', { include: '.tarnfell-tour' } );
 } );
 
 test( 'a product page names Related, and the catalog copilot where it shows', async ( {
 	page,
 } ) => {
-	await page.goto( '/?pagename=search-gear&q=helvellyn+daypack' );
+	await page.goto(
+		`/?pagename=search-gear&q=${ encodeURIComponent( say().daypack ) }`
+	);
 	const product = await page
 		.locator( '.viglet-dumont-search__title a' )
 		.first()
@@ -94,13 +115,15 @@ test( 'a product page names Related, and the catalog copilot where it shows', as
 		.isVisible()
 		.catch( () => false );
 	await walk( page, [
-		'Related, by meaning',
-		...( copilot ? [ 'Ask the catalog' ] : [] ),
+		say().related,
+		...( copilot ? [ say().copilot ] : [] ),
 	] );
 } );
 
 test( 'a page without ?tour loads no tour', async ( { page } ) => {
-	await page.goto( '/?pagename=search-gear&q=jacket' );
+	await page.goto(
+		`/?pagename=search-gear&q=${ encodeURIComponent( say().jacket ) }`
+	);
 	await expect( page.locator( '.tarnfell-tour__marker' ) ).toHaveCount( 0 );
 	expect(
 		await page.evaluate( () =>

@@ -40,7 +40,11 @@ for ( const example of examples ) {
 			turing.locator( '.viglet-dumont-search__title a' ).first()
 		).toHaveText( new RegExp( `^${ example.first }\\b` ) );
 		if ( null === example.native ) {
-			await expect( native ).toContainText( 'No results found.' );
+			await expect( native ).toContainText(
+				'pt_BR' === demoLocale()
+					? 'Nenhum resultado encontrado.'
+					: 'No results found.'
+			);
 		} else {
 			// Among its results, not first: WordPress breaks ties by date, and seeded posts
 			// share one.

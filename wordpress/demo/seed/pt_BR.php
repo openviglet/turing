@@ -60,6 +60,15 @@ return array(
 		'One size'             => 'Tamanho único',
 	),
 
+	// The pages demo/setup.php makes, and the site's tagline (D223).
+	'pages'      => array(
+		'Home'                     => 'Início',
+		'Search the shop'          => 'Buscar na loja',
+		'Trail journal'            => 'Diário de trilha',
+		'Compare searches'         => 'Comparar buscas',
+		'Gear for the high ground' => 'Equipamento para as alturas',
+	),
+
 	// The words around a description's facts, and the facet labels.
 	'labels'     => array(
 		'Colour'    => 'Cor',

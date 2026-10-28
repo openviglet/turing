@@ -29,8 +29,12 @@ $pages = array(
 	'compare-searches' => array( 'Compare searches', '<!-- wp:tarnfell/compare /-->', '' ),
 );
 
+// Named in the site's language (D223): seed/pt_BR.php carries the Portuguese.
+$names = 'pt_BR' === get_locale() ? ( require __DIR__ . '/seed/pt_BR.php' )['pages'] : array();
+
 $ids = array();
 foreach ( $pages as $slug => list( $title, $content, $template ) ) {
+	$title = $names[ $title ] ?? $title;
 	$found = get_page_by_path( $slug, OBJECT, 'page' );
 	$args  = array(
 		'post_type'    => 'page',
@@ -50,7 +54,7 @@ update_option( 'show_on_front', 'page' );
 update_option( 'page_on_front', $ids['home-demo'] );
 update_option( 'page_for_posts', $ids['journal'] );
 update_option( 'blogname', 'Tarnfell' );
-update_option( 'blogdescription', 'Gear for the high ground' );
+update_option( 'blogdescription', $names['Gear for the high ground'] ?? 'Gear for the high ground' );
 
 // The hero's search box opens the instant search, and Enter goes to the page above.
 $settings                      = viglet_dumont_get_settings();
