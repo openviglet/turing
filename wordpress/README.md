@@ -91,6 +91,17 @@ Settings → Search → Related Content puts it after the content of chosen post
 block chooses how many to show, shared words or meaning (`MLT` / `VECTOR`; meaning falls back
 to shared words on a site without embeddings), same post type only, and grid or list.
 
+The **Site assistant** block (`viglet-dumont/assistant`) is a button that opens a chat with
+Turing over the site's posts (`POST /api/sn/{site}/chat/conversation`, through the SDK's chat
+controller). Answers stream in, labelled as generated, with the posts they used as links and
+a "Was this helpful?" that goes to Turing's answer signals. The conversation is the visitor's
+own (Turing's `TUR_SESSION` cookie) and lasts across the pages of the tab, so a cited post can
+be opened without losing it; "New conversation" starts again. The only action the agent may
+take on the page is opening one of this site's pages. The block suggests first questions,
+its own or else the week's popular searches, and stays hidden while Turing reports chat off.
+Settings → Search → Generative AI → "Site assistant on every page" puts it in a corner of
+every page instead.
+
 A theme that builds its own search on `@viglet/turing-sdk` does not vendor it: the plugin
 registers two script modules, `@viglet/turing-sdk` (the SDK as published) and
 `viglet-dumont/search` (the SDK configured for this site, filtered to its site key):
@@ -235,7 +246,7 @@ WP-CLI (Docker works where it is not installed):
 ```sh
 docker run --rm -v "$PWD:/plugin" -w /plugin wordpress:cli-2.12-php8.5 sh -c '
   wp i18n make-pot . src/languages/viglet-dumont.pot --slug=viglet-dumont --domain=viglet-dumont \
-    --exclude=node_modules,vendor,src/admin/build,tests,build &&
+    --exclude=node_modules,vendor,src/admin/build,tests,build,demo &&
   wp i18n update-po src/languages/viglet-dumont.pot src/languages &&
   wp i18n make-mo src/languages && wp i18n make-json src/languages --no-purge'
 ```

@@ -159,6 +159,25 @@ class Viglet_Dumont_Native_Search {
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/copilot' );
 
+		// Site assistant (D175): a chat with Turing over this site's posts.
+		wp_register_script_module(
+			'viglet-dumont/assistant-block',
+			VIGLET_DUMONT_URL . 'public/assistant.js',
+			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
+			VIGLET_DUMONT_VERSION
+		);
+		wp_register_script(
+			'viglet-dumont-assistant-block-editor',
+			VIGLET_DUMONT_URL . 'admin/js/assistant-block-editor.js',
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+			VIGLET_DUMONT_VERSION,
+			true
+		);
+		wp_set_script_translations( 'viglet-dumont-assistant-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_register_style( 'viglet-dumont-assistant-block', VIGLET_DUMONT_URL . 'blocks/assistant/style.css', array(), VIGLET_DUMONT_VERSION );
+
+		register_block_type( VIGLET_DUMONT_DIR . 'blocks/assistant' );
+
 		// Compare products (D200): a table drawn on the server; its module only asks for the summary.
 		wp_register_script_module(
 			'viglet-dumont/compare-block',

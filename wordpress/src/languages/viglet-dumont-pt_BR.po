@@ -37,7 +37,7 @@ msgstr "Indexação"
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
-#: src/includes/class-viglet-dumont-native-search.php:214
+#: src/includes/class-viglet-dumont-native-search.php:233
 #: src/includes/class-viglet-dumont-post-state.php:99
 #: assets/admin/insights.js:159
 #: assets/admin/tuning.js:382
@@ -122,7 +122,7 @@ msgid "Source App Identifier"
 msgstr "Identificador da aplicação de origem"
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:534
+#: src/admin/views/settings-page.php:544
 msgid "Test Connection"
 msgstr "Testar conexão"
 
@@ -246,78 +246,78 @@ msgstr "Com a página do tema, o Turing ordena os resultados e o tema os mostra 
 msgid "Results Per Page"
 msgstr "Resultados por página"
 
-#: src/admin/views/settings-page.php:512
+#: src/admin/views/settings-page.php:522
 msgid "Save Settings"
 msgstr "Salvar configurações"
 
-#: src/admin/views/settings-page.php:520
+#: src/admin/views/settings-page.php:530
 msgid "Indexing Actions"
 msgstr "Ações de indexação"
 
-#: src/admin/views/settings-page.php:521
+#: src/admin/views/settings-page.php:531
 msgid "Manage your Turing search index."
 msgstr "Gerencie o seu índice de busca no Turing."
 
-#: src/admin/views/settings-page.php:529
+#: src/admin/views/settings-page.php:539
 msgid "Connection Status"
 msgstr "Status da conexão"
 
-#: src/admin/views/settings-page.php:530
+#: src/admin/views/settings-page.php:540
 msgid "Test the connection to your Turing server."
 msgstr "Teste a conexão com o seu servidor Turing."
 
-#: src/admin/views/settings-page.php:546
+#: src/admin/views/settings-page.php:556
 msgid "Index All Content"
 msgstr "Indexar todo o conteúdo"
 
-#: src/admin/views/settings-page.php:547
+#: src/admin/views/settings-page.php:557
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
 
-#: src/admin/views/settings-page.php:552
+#: src/admin/views/settings-page.php:562
 msgid "All Content"
 msgstr "Todo o conteúdo"
 
-#: src/admin/views/settings-page.php:553
+#: src/admin/views/settings-page.php:563
 msgid "Posts Only"
 msgstr "Só posts"
 
-#: src/admin/views/settings-page.php:554
+#: src/admin/views/settings-page.php:564
 msgid "Pages Only"
 msgstr "Só páginas"
 
-#: src/admin/views/settings-page.php:558
+#: src/admin/views/settings-page.php:568
 msgid "Start Indexing"
 msgstr "Iniciar indexação"
 
-#: src/admin/views/settings-page.php:577
+#: src/admin/views/settings-page.php:587
 msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
-#: src/admin/views/settings-page.php:578
+#: src/admin/views/settings-page.php:588
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
-#: src/admin/views/settings-page.php:582
+#: src/admin/views/settings-page.php:592
 msgid "Delete All"
 msgstr "Excluir tudo"
 
-#: src/admin/views/settings-page.php:593
+#: src/admin/views/settings-page.php:603
 msgid "Content Overview"
 msgstr "Visão geral do conteúdo"
 
-#: src/admin/views/settings-page.php:597
+#: src/admin/views/settings-page.php:607
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #: src/blocks/search/render.php:101
-#: src/includes/class-viglet-dumont-native-search.php:225
+#: src/includes/class-viglet-dumont-native-search.php:244
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
 #: src/blocks/search/render.php:102
-#: src/includes/class-viglet-dumont-native-search.php:226
+#: src/includes/class-viglet-dumont-native-search.php:245
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
@@ -384,39 +384,39 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:245
+#: src/includes/class-viglet-dumont-admin.php:246
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:246
+#: src/includes/class-viglet-dumont-admin.php:247
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:247
+#: src/includes/class-viglet-dumont-admin.php:248
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:248
+#: src/includes/class-viglet-dumont-admin.php:249
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:249
+#: src/includes/class-viglet-dumont-admin.php:250
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:250
+#: src/includes/class-viglet-dumont-admin.php:251
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:251
+#: src/includes/class-viglet-dumont-admin.php:252
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:252
+#: src/includes/class-viglet-dumont-admin.php:253
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:270
+#: src/includes/class-viglet-dumont-admin.php:271
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -773,11 +773,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:823
+#: src/viglet-dumont.php:836
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:848
+#: src/viglet-dumont.php:861
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1146,6 +1146,7 @@ msgctxt "block keyword"
 msgid "search"
 msgstr "busca"
 
+#: src/blocks/assistant/block.json
 #: src/blocks/copilot/block.json
 #: src/blocks/related/block.json
 #: src/blocks/search/block.json
@@ -1162,7 +1163,7 @@ msgstr "facetas"
 msgid "Suggestions"
 msgstr "Sugestões"
 
-#: src/admin/views/settings-page.php:550
+#: src/admin/views/settings-page.php:560
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
@@ -1250,31 +1251,32 @@ msgstr "Automática: a página com o bloco de busca do Turing"
 msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
 msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
 
-#: src/includes/class-viglet-dumont-native-search.php:213
+#: src/includes/class-viglet-dumont-native-search.php:232
 msgid "Search this site"
 msgstr "Buscar neste site"
 
-#: src/includes/class-viglet-dumont-native-search.php:215
+#: src/blocks/assistant/render.php:58
+#: src/includes/class-viglet-dumont-native-search.php:234
 msgid "Close"
 msgstr "Fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:216
+#: src/includes/class-viglet-dumont-native-search.php:235
 msgid "Results"
 msgstr "Resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:217
+#: src/includes/class-viglet-dumont-native-search.php:236
 msgid "Searching…"
 msgstr "Buscando…"
 
-#: src/includes/class-viglet-dumont-native-search.php:227
+#: src/includes/class-viglet-dumont-native-search.php:246
 msgid "See all results"
 msgstr "Ver todos os resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:228
+#: src/includes/class-viglet-dumont-native-search.php:247
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:229
+#: src/includes/class-viglet-dumont-native-search.php:248
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
@@ -1341,15 +1343,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:545
+#: src/includes/class-viglet-dumont-api-client.php:564
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:602
+#: src/includes/class-viglet-dumont-api-client.php:621
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:607
+#: src/includes/class-viglet-dumont-api-client.php:626
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1369,19 +1371,19 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-dumont.php:89
+#: src/viglet-dumont.php:90
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-dumont.php:90
+#: src/viglet-dumont.php:91
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-dumont.php:91
+#: src/viglet-dumont.php:92
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: src/viglet-dumont.php:92
+#: src/viglet-dumont.php:93
 msgid "Catalog copilot"
 msgstr "Copiloto de catálogo"
 
@@ -1430,18 +1432,22 @@ msgstr "Resposta gerada a partir deste site"
 msgid "Sources"
 msgstr "Fontes"
 
+#: src/blocks/assistant/render.php:71
 #: src/blocks/search/parts/answer.php:30
 msgid "Was this helpful?"
 msgstr "Isto ajudou?"
 
+#: src/blocks/assistant/render.php:72
 #: src/blocks/search/parts/answer.php:31
 msgid "Yes"
 msgstr "Sim"
 
+#: src/blocks/assistant/render.php:73
 #: src/blocks/search/parts/answer.php:32
 msgid "No"
 msgstr "Não"
 
+#: src/blocks/assistant/render.php:75
 #: src/blocks/search/parts/answer.php:34
 msgid "Thank you."
 msgstr "Obrigado."
@@ -1455,7 +1461,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:521
+#: src/includes/class-viglet-dumont-api-client.php:540
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -1811,9 +1817,10 @@ msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma.
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:97
 #: src/blocks/search/render.php:99
-#: src/includes/class-viglet-dumont-native-search.php:221
-#: src/includes/class-viglet-dumont-native-search.php:223
-#: src/includes/class-viglet-dumont-native-search.php:354
+#: src/includes/class-viglet-dumont-native-search.php:240
+#: src/includes/class-viglet-dumont-native-search.php:242
+#: src/includes/class-viglet-dumont-native-search.php:412
+#: src/includes/class-viglet-dumont-native-search.php:586
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -2041,12 +2048,12 @@ msgstr "Produto: %s"
 msgid "Stock"
 msgstr "Estoque"
 
-#: src/blocks/copilot/render.php:56
+#: src/blocks/copilot/render.php:61
 #: src/blocks/search/parts/main.php:72
 msgid "Was"
 msgstr "De"
 
-#: src/blocks/copilot/render.php:58
+#: src/blocks/copilot/render.php:63
 #: src/blocks/search/parts/main.php:75
 msgid "Add to cart"
 msgstr "Adicionar ao carrinho"
@@ -2058,12 +2065,12 @@ msgstr "Adicionar ao carrinho"
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
-#: src/blocks/copilot/render.php:28
+#: src/blocks/copilot/render.php:33
 #: src/blocks/search/render.php:85
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
-#: src/blocks/copilot/render.php:29
+#: src/blocks/copilot/render.php:34
 #: src/blocks/search/render.php:86
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
@@ -2184,23 +2191,23 @@ msgstr "Adicionar um sinônimo"
 msgid "Ask the catalog"
 msgstr "Pergunte ao catálogo"
 
-#: src/blocks/copilot/render.php:30
+#: src/blocks/copilot/render.php:35
 msgid "Looking through the catalog…"
 msgstr "Procurando no catálogo…"
 
-#: src/blocks/copilot/render.php:31
+#: src/blocks/copilot/render.php:36
 msgid "The catalog could not answer right now."
 msgstr "O catálogo não pôde responder agora."
 
-#: src/blocks/copilot/render.php:32
+#: src/blocks/copilot/render.php:37
 msgid "Nothing in the catalog matches that."
 msgstr "Nada no catálogo corresponde a isso."
 
-#: src/blocks/copilot/render.php:68
+#: src/blocks/copilot/render.php:80
 msgid "What are you looking for?"
 msgstr "O que você procura?"
 
-#: src/blocks/copilot/render.php:77
+#: src/blocks/copilot/render.php:89
 msgid "Ask"
 msgstr "Perguntar"
 
@@ -2227,6 +2234,7 @@ msgctxt "block keyword"
 msgid "copilot"
 msgstr "copiloto"
 
+#: src/blocks/assistant/block.json
 #: src/blocks/copilot/block.json
 msgctxt "block keyword"
 msgid "assistant"
@@ -2250,7 +2258,7 @@ msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de
 msgid "Turn on generative AI for this site in Turing"
 msgstr "Ativar a IA generativa deste site no Turing"
 
-#: src/viglet-dumont.php:105
+#: src/viglet-dumont.php:106
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
@@ -2358,17 +2366,23 @@ msgstr "(diferente)"
 msgid "Where they differ"
 msgstr "Onde diferem"
 
+#: src/blocks/copilot/render.php:67
+#: src/blocks/related/render.php:115
 #: src/blocks/search/parts/main.php:79
 msgid "Compare"
 msgstr "Comparar"
 
 #. translators: %d: how many products, two to four.
+#: src/blocks/copilot/render.php:32
+#: src/blocks/related/render.php:53
 #: src/blocks/search/render.php:82
 #, php-format
 msgid "Compare %d products"
 msgstr "Comparar %d produtos"
 
 #. translators: %s: a product's name.
+#: src/blocks/copilot/render.php:30
+#: src/blocks/related/render.php:114
 #: src/blocks/search/render.php:84
 #, php-format
 msgid "Compare %s"
@@ -2544,3 +2558,93 @@ msgstr "Avaliar para o público"
 #, js-format
 msgid "Judged by Turing against %s, from the saved post."
 msgstr "Avaliado pelo Turing para %s, a partir do post salvo."
+
+#: src/admin/views/settings-page.php:511
+msgid "Site assistant on every page"
+msgstr "Assistente do site em todas as páginas"
+
+#: src/admin/views/settings-page.php:512
+msgid "A button in the corner of every page opens a chat that answers from this site's posts and lists the posts it used. It shows only while Turing's chat is on for this site. Without it, place the Site assistant block where you want it."
+msgstr "Um botão no canto de todas as páginas abre um chat que responde a partir dos posts deste site e lista os posts que usou. Ele só aparece enquanto o chat do Turing estiver ligado para este site. Sem isso, coloque o bloco Assistente do site onde quiser."
+
+#: src/blocks/assistant/render.php:17
+#: src/admin/js/assistant-block-editor.js:38
+#: src/admin/js/assistant-block-editor.js:58
+msgid "Ask this site"
+msgstr "Pergunte a este site"
+
+#: src/blocks/assistant/render.php:28
+msgid "Reading this site’s posts…"
+msgstr "Lendo os posts deste site…"
+
+#: src/blocks/assistant/render.php:29
+msgid "The assistant could not answer right now. Try again in a moment."
+msgstr "O assistente não conseguiu responder agora. Tente de novo em instantes."
+
+#: src/blocks/assistant/render.php:57
+msgid "New conversation"
+msgstr "Nova conversa"
+
+#: src/blocks/assistant/render.php:60
+msgid "Answers are generated by AI from this site’s posts and may be wrong. Check the posts they cite."
+msgstr "As respostas são geradas por IA a partir dos posts deste site e podem estar erradas. Confira os posts que elas citam."
+
+#: src/blocks/assistant/render.php:61
+msgid "Conversation"
+msgstr "Conversa"
+
+#: src/blocks/assistant/render.php:65
+msgid "Posts it used"
+msgstr "Posts usados"
+
+#: src/blocks/assistant/render.php:80
+msgid "Try asking"
+msgstr "Experimente perguntar"
+
+#: src/blocks/assistant/render.php:88
+msgid "Your question"
+msgstr "Sua pergunta"
+
+#: src/blocks/assistant/render.php:96
+msgid "Send"
+msgstr "Enviar"
+
+#: src/admin/js/assistant-block-editor.js:35
+msgid "Site assistant"
+msgstr "Assistente do site"
+
+#: src/admin/js/assistant-block-editor.js:37
+msgid "Button and heading"
+msgstr "Botão e título"
+
+#: src/admin/js/assistant-block-editor.js:43
+msgid "Suggested questions"
+msgstr "Perguntas sugeridas"
+
+#: src/admin/js/assistant-block-editor.js:44
+msgid "One per line. Left empty, the assistant suggests this week’s popular searches."
+msgstr "Uma por linha. Em branco, o assistente sugere as buscas populares da semana."
+
+#: src/admin/js/assistant-block-editor.js:59
+msgid "A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Turing’s chat is on for this site."
+msgstr "Um botão que abre um chat que responde a partir dos posts deste site, com os posts que usou. Ele só aparece enquanto o chat do Turing estiver ligado para este site."
+
+#: src/blocks/assistant/block.json
+msgctxt "block title"
+msgid "Site assistant"
+msgstr "Assistente do site"
+
+#: src/blocks/assistant/block.json
+msgctxt "block description"
+msgid "A button that opens a conversation with Turing's chat: visitors ask in their own words and get an answer generated from this site's posts, with the posts it used."
+msgstr "Um botão que abre uma conversa com o chat do Turing: os visitantes perguntam com suas próprias palavras e recebem uma resposta gerada a partir dos posts deste site, com os posts que ela usou."
+
+#: src/blocks/assistant/block.json
+msgctxt "block keyword"
+msgid "chat"
+msgstr "chat"
+
+#: src/blocks/assistant/block.json
+msgctxt "block keyword"
+msgid "question"
+msgstr "pergunta"

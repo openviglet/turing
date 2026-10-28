@@ -1,0 +1,160 @@
+/* The Site assistant (D175): it takes its colours and type from the theme. */
+.viglet-dumont-assistant.is-floating {
+	bottom: 1.25rem;
+	position: fixed;
+	right: 1.25rem;
+	z-index: 99990;
+}
+
+.viglet-dumont-assistant.is-floating .viglet-dumont-assistant__open {
+	border-radius: 999px;
+	box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+}
+
+.viglet-dumont-assistant__dialog {
+	background: var(--wp--preset--color--base, Canvas);
+	border: 1px solid currentcolor;
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: var(--wp--preset--color--contrast, CanvasText);
+	max-height: min(40rem, calc(100vh - 2rem));
+	max-width: calc(100vw - 2rem);
+	padding: 1rem 1.25rem;
+	width: 32rem;
+}
+
+.viglet-dumont-assistant__dialog[open] {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.viglet-dumont-assistant__dialog::backdrop {
+	background: rgb(0 0 0 / 40%);
+}
+
+.viglet-dumont-assistant__head {
+	align-items: center;
+	display: flex;
+	gap: 0.5rem;
+}
+
+.viglet-dumont-assistant__head h2 {
+	flex: 1;
+	font-size: 1.25em;
+	margin: 0;
+}
+
+.viglet-dumont-assistant__close {
+	font-size: 1.5em;
+	line-height: 1;
+}
+
+.viglet-dumont-assistant__dialog button:not(.wp-element-button) {
+	background: none;
+	border: 1px solid currentcolor;
+	border-radius: 4px;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	padding: 0.25rem 0.6rem;
+}
+
+.viglet-dumont-assistant__dialog button:disabled {
+	cursor: default;
+	opacity: 0.5;
+}
+
+.viglet-dumont-assistant__generated {
+	font-size: 0.875em;
+	margin: 0;
+	opacity: 0.8;
+}
+
+.viglet-dumont-assistant__log {
+	flex: 1;
+	min-height: 4rem;
+	overflow-y: auto;
+}
+
+.viglet-dumont-assistant__log > ol {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.viglet-dumont-assistant__message {
+	align-self: flex-start;
+	max-width: 90%;
+}
+
+.viglet-dumont-assistant__message.is-visitor {
+	align-self: flex-end;
+	font-weight: 600;
+}
+
+.viglet-dumont-assistant__text {
+	margin: 0;
+	white-space: pre-line;
+}
+
+.viglet-dumont-assistant__sources {
+	display: grid;
+	gap: 0.5rem;
+	list-style: none;
+	margin: 0.5rem 0 0;
+	padding: 0;
+}
+
+.viglet-dumont-assistant__source a {
+	border: 1px solid currentcolor;
+	border-radius: 6px;
+	display: block;
+	padding: 0.5rem 0.75rem;
+}
+
+.viglet-dumont-assistant__feedback {
+	font-size: 0.875em;
+	margin: 0.5rem 0 0;
+}
+
+.viglet-dumont-assistant__suggestions p {
+	margin: 0 0 0.25rem;
+}
+
+.viglet-dumont-assistant__suggestions ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.viglet-dumont-assistant__form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.viglet-dumont-assistant__form label {
+	flex-basis: 100%;
+}
+
+.viglet-dumont-assistant__form input {
+	flex: 1 1 12rem;
+	font: inherit;
+	padding: 0.5rem 0.75rem;
+}
+
+.viglet-dumont-assistant__status {
+	margin: 0;
+	min-height: 1.5em;
+}
+
+.viglet-dumont-assistant__status:empty {
+	display: none;
+}

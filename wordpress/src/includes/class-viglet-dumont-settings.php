@@ -76,6 +76,8 @@ class Viglet_Dumont_Settings {
 		'trending_fallback'   => array(),
 		// Opt-in: the manifest turns the site's generative AI on, which spends the owner's LLM budget.
 		'generative_ai'       => 0,
+		// The Site assistant's launcher on every page (D175); the block works without it.
+		'assistant_launcher'  => 0,
 	);
 
 	/**

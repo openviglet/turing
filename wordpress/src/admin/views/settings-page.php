@@ -502,6 +502,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<small><?php esc_html_e( 'Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing\'s console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing\'s setting as it is.', 'viglet-dumont' ); ?></small>
 								</span>
 							</label>
+							<label class="viglet-dumont-toggle">
+								<input type="checkbox"
+										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[assistant_launcher]"
+										value="1" <?php checked( $settings['assistant_launcher'], 1 ); ?> />
+								<span class="viglet-dumont-toggle__slider"></span>
+								<span class="viglet-dumont-toggle__label">
+									<?php esc_html_e( 'Site assistant on every page', 'viglet-dumont' ); ?>
+									<small><?php esc_html_e( 'A button in the corner of every page opens a chat that answers from this site\'s posts and lists the posts it used. It shows only while Turing\'s chat is on for this site. Without it, place the Site assistant block where you want it.', 'viglet-dumont' ); ?></small>
+								</span>
+							</label>
 						</div>
 					</div>
 				</div>

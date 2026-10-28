@@ -43,6 +43,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-woocommerce.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-compare.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-insights.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-trending.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-assistant.php';
 
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
@@ -167,6 +168,8 @@ function viglet_dumont_init(): void {
 	add_action( 'wp_enqueue_scripts', array( 'Viglet_Dumont_Native_Search', 'provide_config' ) );
 	// Related content after the chosen post types' content (D177).
 	( new Viglet_Dumont_Related( $settings ) )->register();
+	// The Site assistant in a corner of every page, when the site asks for it (D175).
+	( new Viglet_Dumont_Assistant( $settings ) )->register();
 
 	if ( $settings['search_enabled'] ) {
 		if ( 'template' === $settings['search_mode'] ) {
