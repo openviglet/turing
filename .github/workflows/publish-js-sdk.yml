@@ -49,9 +49,11 @@ jobs:
       # published still got a new version number and their package.json drifted
       # from what npm actually holds. Only react-sdk is released here, so only
       # react-sdk is bumped; the vanilla SDK has publish-sdk.yml.
-      - name: Bump @viglet/turing-react-sdk (patch)
-        working-directory: frontend/packages/react-sdk
-        run: npm version patch --no-git-tag-version
+      # bump-patch.mjs reads the versions npm holds, so a version published but
+      # never committed here does not make the publish 403.
+      - name: Bump @viglet/turing-react-sdk (next unpublished patch)
+        working-directory: frontend
+        run: node scripts/bump-patch.mjs packages/react-sdk
 
       # ── Build & publish the SDK (which now carries the bumped version) ──
       # T875: this step used to run `build:sdk`, which filters the *vanilla*

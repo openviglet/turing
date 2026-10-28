@@ -1,15 +1,15 @@
 name: Publish @viglet/turing-sdk
 
 # Publishes the vanilla, zero-dependency JavaScript SDK to npm (T876).
-# Bump the version in frontend/packages/sdk/package.json and commit it before
-# dispatching this workflow. The build + bundle-size budget + tests run as a
-# publish gate; npm itself rejects a version that is already published, so
-# re-dispatching without a version bump is a safe no-op.
+# The workflow picks the version itself: scripts/bump-patch.mjs moves
+# package.json to the next patch npm has not seen (a local bump that has not
+# shipped is kept), and the bump is committed back after the publish. The
+# build + bundle-size budget + tests run as a publish gate.
 on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   # npm trusted publishing (OIDC): without this GitHub mints no ID token, pnpm
   # skips OIDC and the PUT falls back to an unauthenticated 404.
   id-token: write
@@ -34,9 +34,20 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
 
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Install workspace deps
         working-directory: frontend
         run: pnpm install --frozen-lockfile=false
+
+      # Bumps from the versions npm holds, not from package.json alone: a version
+      # published but never committed here made the publish 403 on a re-dispatch.
+      - name: Bump @viglet/turing-sdk (next unpublished patch)
+        working-directory: frontend
+        run: node scripts/bump-patch.mjs packages/sdk
 
       - name: Build @viglet/turing-sdk
         working-directory: frontend
@@ -63,6 +74,13 @@ jobs:
         # T914 — `pnpm publish`, never `npm publish`: npm does not rewrite pnpm's
         # `workspace:` protocol, so a package that grows a workspace dependency would
         # ship an unresolvable range. `--no-git-checks` because actions/checkout
-        # leaves a detached HEAD, which pnpm's branch check rejects.
+        # leaves a detached HEAD, which pnpm's branch check rejects, and the bump
+        # above leaves the tree dirty.
         # Authenticates through the npm trusted publisher (OIDC), not a token.
         run: pnpm publish --access public --no-git-checks
+
+      - name: Commit version bump
+        run: |
+          git add frontend/packages/sdk/package.json
+          git commit -m "chore: bump @viglet/turing-sdk [skip ci]" || echo "No changes to commit"
+          git push
