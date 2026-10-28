@@ -83,6 +83,8 @@ public class TurSNProcessQueue {
     private final com.viglet.turing.sn.checksum.TurSNChecksumIndexer turSNChecksumIndexer;
     private final TurSNSearchCacheEvictor turSNSearchCacheEvictor;
     private final TurSNProcessQueue self;
+    /** T1158 — removes a deleted document's chunks from the site's RAG collection. */
+    private final com.viglet.turing.genai.TurSNGenAi turSNGenAi;
 
     public TurSNProcessQueue(TurSearchEnginePluginFactory pluginFactory,
             TurSNSiteRepository turSNSiteRepository,
@@ -98,7 +100,9 @@ public class TurSNProcessQueue {
             com.viglet.turing.sn.kb.TurSNMicrothesaurusIndexer turSNMicrothesaurusIndexer,
             com.viglet.turing.sn.checksum.TurSNChecksumIndexer turSNChecksumIndexer,
             TurSNSearchCacheEvictor turSNSearchCacheEvictor,
-            @org.springframework.context.annotation.Lazy TurSNProcessQueue self) {
+            @org.springframework.context.annotation.Lazy TurSNProcessQueue self,
+            @org.springframework.context.annotation.Lazy com.viglet.turing.genai.TurSNGenAi turSNGenAi) {
+        this.turSNGenAi = turSNGenAi;
         this.pluginFactory = pluginFactory;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -393,6 +397,10 @@ public class TurSNProcessQueue {
             if (deIndexed) {
                 // T383 — mirror the removal into the per-site hybrid vector collection.
                 turSNHybridRankingService.deIndex(turSNSite, turSNJobItem.getId());
+                // T1158 — and out of the GenAI RAG collection the site chat cites from.
+                if (turSNGenAi != null) {
+                    turSNGenAi.removeDocument(turSNSite, turSNJobItem.getLocale(), turSNJobItem.getId());
+                }
             }
             return deIndexed;
         } else if (turSNJobItem.getAttributes().containsKey(TurSNFieldName.TYPE)) {

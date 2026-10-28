@@ -2291,27 +2291,26 @@ host hands to Google Analytics, and the consent that gates them.
 
 **Where it happened.** Dumont D175 on the run-docker stack, SN site `Sample`. The suite
 seeds a "Research grant 2026" post, reindexes and deletes it in teardown. Keyword search
-no longer finds it, yet the chat still answers its deadline and cites
-`http://localhost:8080/?p=…`, a URL the site left when it moved port.
+no longer finds it, yet the chat still answers its deadline and cites a URL the site
+left when it moved port.
 
-**Why.** `TurSNProcessQueue.deIndex` removes the document from the engine and the T383
-hybrid collection, but never from the GenAI RAG collection `TurSNGenAi` writes by
-`SOURCE_ID`. Two more gaps share the cause: `TurMilvusStoreProvider` does not override
-`deleteByMetadata`, so on Milvus a delete is a no-op and every re-index piles duplicate
-chunks; and the store seam matches one key, so a delete by type or by fields (T1112)
-cannot be expressed, `type` only reaching chunk metadata as a short custom field.
+**Landed (delete by id).** `TurSNProcessQueue.deIndex` now calls
+`TurSNGenAi.removeDocument(site, locale, id)` after a successful engine delete. It
+resolves the locale collection `addJobItem` wrote to and deletes by `SOURCE_ID` through
+`TurRagContextBuilder.deleteByMetadata`. A site with no GenAI is a no-op, and a store
+failure is logged, never thrown. `TurMilvusStoreProvider` now implements
+`deleteByMetadata` (a `metadata["key"] == value` expression), so Milvus deletes and a
+re-index replaces instead of duplicating.
 
-**What it should do.** On a successful deIndex, delete the RAG chunks of the job's
-locale collection, scoped to the site (`SITES`): by `SOURCE_ID` for an id; for a type or
-field set, by a multi-key metadata filter on the store seam, or the matching ids read
-from the engine before it deletes. Implement it on every store provider (Milvus
-included). A site with no GenAI is a no-op. Ship a purge for orphans already stored:
-chunks whose `SOURCE_ID` the engine no longer holds.
+**Left.** A delete by type or by fields (T1112) still leaves chunks: the store seam
+matches one key, and `type` reaches chunk metadata only as a short custom field. Either
+add a multi-key `deleteByMetadata(Map)` to the seam (every provider, Milvus included),
+or read the matching ids from the engine before it deletes and remove them one by one.
+Then ship a purge for orphans already stored: chunks whose `SOURCE_ID` the engine no
+longer holds.
 
-**Tests.** Per store provider: delete by id, type and fields leaves no chunk; re-index
-on Milvus replaces, not duplicates; another site's chunks in a shared collection stay.
-
-**Workaround.** None.
+**Tests.** Per store provider: delete by type and by fields leaves no chunk; another
+site's chunks in a shared collection stay; the purge removes only orphans.
 
 ### CLVIII.3 A plan-to-kit copilot call (T1159)
 

@@ -26,6 +26,7 @@ import io.milvus.param.IndexType;
 import io.milvus.param.MetricType;
 import io.milvus.param.R;
 import io.milvus.param.collection.ShowCollectionsParam;
+import io.milvus.param.dml.DeleteParam;
 import io.milvus.param.dml.QueryParam;
 import io.milvus.response.QueryResultsWrapper;
 import io.milvus.response.ShowCollResponseWrapper;
@@ -417,6 +418,49 @@ public class TurMilvusStoreProvider implements TurGenAiStoreProvider {
         return connectBuilder.build();
     }
 
+    /**
+     * T1158 — deletes the chunks whose {@code metadata[key]} equals {@code value}.
+     * Without it a Milvus collection kept every chunk a deleted document had, and a
+     * re-index piled a second copy beside the first (the other providers delete
+     * before they re-add). A key the expression cannot address is refused as a
+     * no-op rather than widened into a delete of the whole collection.
+     */
+    @Override
+    public void deleteByMetadata(TurStoreInstance turStoreInstance,
+            String decryptedCredential,
+            String collectionName,
+            String metadataKey,
+            String metadataValue) {
+        String expr = deleteExpression(metadataKey, metadataValue);
+        if (expr == null) {
+            log.warn("[Milvus] delete skipped: metadata key '{}' cannot be addressed", metadataKey);
+            return;
+        }
+        String collection = StringUtils.hasText(collectionName) ? collectionName : DEFAULT_COLLECTION;
+        Map<String, Object> options = optionsParser.parse(turStoreInstance.getProviderOptionsJson());
+        MilvusServiceClient client = null;
+        try {
+            client = buildMilvusClient(turStoreInstance, decryptedCredential, options);
+            R<io.milvus.grpc.MutationResult> resp = client.delete(DeleteParam.newBuilder()
+                    .withCollectionName(collection)
+                    .withExpr(expr)
+                    .build());
+            if (resp.getStatus() != R.Status.Success.getCode()) {
+                log.warn("[Milvus] delete failed for '{}' ({}): {}", collection, expr, resp.getMessage());
+            }
+        } finally {
+            closeQuietly(client);
+        }
+    }
+
+    /** T1158 — the delete expression for one key and value, or {@code null} when either cannot be used. */
+    static String deleteExpression(String metadataKey, String metadataValue) {
+        if (!StringUtils.hasText(metadataKey) || !StringUtils.hasText(metadataValue)) {
+            return null;
+        }
+        return buildMilvusFilterExpression(Map.of(metadataKey, List.of(metadataValue)));
+    }
+
     @Override
     public TurStoreChunkPage listChunks(TurStoreInstance turStoreInstance,
             String decryptedCredential,
@@ -491,7 +535,7 @@ public class TurMilvusStoreProvider implements TurGenAiStoreProvider {
      * lists become {@code in [...]} clauses; single values use {@code ==}.
      * Returns {@code null} when no filter applies.
      */
-    private String buildMilvusFilterExpression(Map<String, List<String>> filters) {
+    static String buildMilvusFilterExpression(Map<String, List<String>> filters) {
         if (filters == null || filters.isEmpty()) {
             return null;
         }

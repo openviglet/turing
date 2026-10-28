@@ -311,6 +311,24 @@ public class TurRagContextBuilder {
     }
 
     /**
+     * T1158 — deletes the embeddings whose metadata matches
+     * {@code metadataKey=metadataValue}, the half of {@link #reindexByMetadata}
+     * a document delete needs on its own. Failures are logged, never thrown.
+     */
+    public void deleteByMetadata(RagInfrastructure infra, String metadataKey, String metadataValue) {
+        if (infra == null || !StringUtils.hasText(metadataKey) || !StringUtils.hasText(metadataValue)) {
+            return;
+        }
+        try {
+            infra.storeProvider().deleteByMetadata(infra.storeInstance(), infra.storeCredential(),
+                    infra.collectionName(), metadataKey, metadataValue);
+        } catch (Exception e) {
+            log.warn("Failed to delete embeddings for {}={} (collection='{}'): {}",
+                    metadataKey, metadataValue, infra.collectionName(), e.getMessage());
+        }
+    }
+
+    /**
      * T512 / §XXVIII.8 — re-index a document's chunks, using contextualized
      * embeddings when the configured embedding model supports them (Voyage
      * {@code voyage-context-3}). The chunks of one logical document are embedded

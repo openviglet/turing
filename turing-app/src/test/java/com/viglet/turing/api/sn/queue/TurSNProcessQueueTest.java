@@ -77,6 +77,8 @@ class TurSNProcessQueueTest {
     private com.viglet.turing.api.sn.search.TurSNSearchCacheEvictor turSNSearchCacheEvictor;
     @Mock
     private TurSNProcessQueue self;
+    @Mock
+    private com.viglet.turing.genai.TurSNGenAi turSNGenAi;
     @InjectMocks
     private TurSNProcessQueue processQueue;
 
@@ -140,6 +142,8 @@ class TurSNProcessQueueTest {
         processQueue.processIndexingQueue(jobItems);
 
         verify(plugin, times(1)).deIndex(site, Locale.US, "1");
+        // T1158 — the deleted document leaves the RAG collection too.
+        verify(turSNGenAi).removeDocument(site, Locale.US, "1");
     }
 
     @Test

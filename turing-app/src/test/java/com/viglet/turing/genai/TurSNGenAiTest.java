@@ -163,6 +163,47 @@ class TurSNGenAiTest {
         verify(chatModel, times(1)).call(any(Prompt.class));
     }
 
+    /** T1158 — a deleted document's chunks leave the locale collection they were written to. */
+    @Test
+    void removeDocumentDeletesTheChunksBySourceIdInTheLocaleCollection() {
+        TurSNSite site = new TurSNSite();
+        site.setName("Sample");
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        site.setTurSNSiteGenAi(genAi);
+        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
+        siteLocale.setCore("sample_en");
+        when(localeRepository.findByTurSNSiteAndLanguage(site, Locale.US)).thenReturn(siteLocale);
+        var infra = mock(TurRagContextBuilder.RagInfrastructure.class);
+        TurGenAiContext context = mock(TurGenAiContext.class);
+        when(context.isEnabled()).thenReturn(true);
+        when(context.getRagInfrastructure()).thenReturn(infra);
+        when(contextFactory.build(genAi, "sample_en")).thenReturn(context);
+
+        assertTrue(turSNGenAi.removeDocument(site, Locale.US, "doc-1"));
+
+        verify(ragContextBuilder).deleteByMetadata(infra, TurSNGenAi.SOURCE_ID, "doc-1");
+    }
+
+    @Test
+    void removeDocumentIsANoOpForASiteWithoutGenAi() {
+        TurSNSite site = new TurSNSite();
+        site.setName("Plain");
+
+        assertFalse(turSNGenAi.removeDocument(site, Locale.US, "doc-1"));
+
+        verifyNoInteractions(contextFactory, ragContextBuilder);
+    }
+
+    @Test
+    void removeDocumentNeverThrowsWhenTheContextCannotBeBuilt() {
+        TurSNSite site = new TurSNSite();
+        site.setName("Broken");
+        site.setTurSNSiteGenAi(new TurSNSiteGenAi());
+        when(contextFactory.build(any(), any())).thenThrow(new IllegalStateException("store down"));
+
+        assertFalse(turSNGenAi.removeDocument(site, Locale.US, "doc-1"));
+    }
+
     @Test
     void anSnCallWithoutALedgerStillAnswers() {
         var chatModel = org.mockito.Mockito.mock(org.springframework.ai.chat.model.ChatModel.class);

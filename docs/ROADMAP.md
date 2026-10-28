@@ -16,7 +16,7 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1158** (deps: —) **Deleting a document leaves its RAG chunks (by id, type or fields; on Milvus always), so site chat still cites it** — A removed or moved page keeps answering visitors with content the site no longer publishes, and no reindex clears it. → §CLVIII.2
+- ⏳ **T1158** (deps: —) **Deleting a document leaves its RAG chunks (by id, type or fields; on Milvus always), so site chat still cites it** — Delete by type or fields still leaves chunks, and orphans already stored need a purge. → §CLVIII.2
 - 📋 **T1159** (deps: —) **The catalog copilot answers one need at a time; a described plan cannot come back as staged products by need** — A shopper planning a trip does not know every item to ask for, and each consumer would rebuild the gaps, the id check and the staging. → §CLVIII.3
 - 📋 **T1166** (deps: —) **With chat memory on, a prompt capture counts memory turns in its index, so a follow-up's searched query lands off-turn** — The Live Preview is where an operator checks what a rewritten follow-up searched, and it must show that on the turn it belongs to. → §CLVIII.4
 
@@ -48,6 +48,15 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
+
+## Done when — T1158
+
+- **A delete by type or by fields leaves no RAG chunk of the matching documents** A test
+  per store provider indexes documents of two types, deletes one type and one field set
+  through the queue, and finds no chunk of them left, with another site's chunks intact.
+- **A purge removes stored chunks whose document the engine no longer holds** Run
+  against a collection holding chunks of a deleted document and of a live one, the purge
+  removes only the deleted document's chunks.
 
 ## Non-goals (do NOT add as tasks)
 

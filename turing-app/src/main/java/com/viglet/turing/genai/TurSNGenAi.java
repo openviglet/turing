@@ -1432,6 +1432,37 @@ public class TurSNGenAi {
         return failed[0];
     }
 
+    /**
+     * T1158 — removes a deleted document's chunks from the site's RAG collection
+     * for {@code locale}, the collection {@link #addJobItem} wrote them to, keyed
+     * by the same {@link #SOURCE_ID}. Without it the site chat kept citing a page
+     * the engine no longer held. A site with no GenAI binding, or a context that
+     * is not enabled, has nothing to remove; a store failure is logged, never
+     * thrown, because the engine delete has already happened.
+     *
+     * @return {@code true} when the store was asked to delete the chunks
+     */
+    public boolean removeDocument(TurSNSite turSNSite, Locale locale, String id) {
+        if (turSNSite == null || turSNSite.getTurSNSiteGenAi() == null || id == null || id.isBlank()) {
+            return false;
+        }
+        try {
+            String collectionName = resolveCollectionName(turSNSite, locale);
+            TurGenAiContext context = turGenAiContextFactory.build(turSNSite.getTurSNSiteGenAi(), collectionName);
+            if (!context.isEnabled() || context.getRagInfrastructure() == null) {
+                return false;
+            }
+            turRagContextBuilder.deleteByMetadata(context.getRagInfrastructure(), SOURCE_ID, id);
+            log.debug("RAG removed Object ID '{}' of SN Site '{}' (collection='{}')",
+                    id, turSNSite.getName(), collectionName);
+            return true;
+        } catch (RuntimeException e) {
+            log.warn("RAG chunks of Object ID '{}' of SN Site '{}' could not be removed: {}",
+                    id, turSNSite.getName(), e.getMessage());
+            return false;
+        }
+    }
+
     private void addJobItem(TurSNJobItem jobItem, String siteName) {
         turSNSearchProcess.getSNSite(siteName).ifPresentOrElse(turSNSite -> {
                     if (turSNSite.getTurSNSiteGenAi() == null) {
