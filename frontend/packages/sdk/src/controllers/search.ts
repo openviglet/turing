@@ -150,7 +150,9 @@ export interface SearchControllerOptions {
   readonly sessionCookieName?: string;
   /**
    * T1129 — asked before every analytics event and before the session cookie is
-   * written. While it returns `false` nothing is emitted and no cookie is set, so
+   * written, and (T1156) before {@link SearchController.trackResultClick} posts the
+   * click to Turing. While it returns `false` nothing is emitted, no click is
+   * posted and no cookie is set, so
    * a site can hand over the bus before the visitor has answered a consent
    * banner. Once it returns `true` the session id is stamped on the next event.
    * Omitted, consent is assumed (the historic behaviour).
@@ -537,6 +539,8 @@ export function createSearchController(
       const params = store.getState().params;
       const query = term ?? params.q ?? "";
       disarmAbandonment();
+      // T1156 — consent gates the click report to Turing, not only the event.
+      if (!consent()) return;
       // Server CTR (fire-and-forget; swallows its own errors).
       void postClick(client, config.site, {
         term: query,

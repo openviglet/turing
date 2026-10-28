@@ -14,10 +14,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block Z — Client-side conversion analytics & the Google Analytics bridge (§XXV)
-
-- 📋 **T1156** (deps: —) **trackResultClick, in the search controller and in useTuringSearch, posts the click to Turing without asking consent** — A site that withholds consent until the visitor answers still sends every opened result's query and rank to Turing's metrics. → §CLVII.2
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

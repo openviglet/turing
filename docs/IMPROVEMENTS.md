@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block Z — Client-side conversion analytics & the Google Analytics bridge (§XXV)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2282,28 +2280,3 @@ sends the caller to the server log.
 
 What the SDK reports to analytics, and when: the search, click and abandonment events a
 host hands to Google Analytics, and the consent that gates them.
-
-### CLVII.2 Consent gates the click report too (T1156)
-
-**Where it happened.** Dumont D188, moving the WordPress plugin's result clicks onto
-`SearchController.trackResultClick()` in `@viglet/turing-sdk` 2026.3.10.
-
-**What happens.** T1129 added a `consent` option that is "asked before every analytics
-event and before the session cookie is written". `trackResultClick()` asks it only for
-the `turing_search_result_click` event: the `postClick()` to `POST
-/api/sn/{site}/click`, which records the query, the document and its rank in Turing's
-metrics, is sent first and unconditionally. A site that hands the controller `consent:
-() => false` until the visitor answers a banner still reports every opened result to
-Turing. `useTuringSearch().trackResultClick` in the React SDK does the same.
-
-**Workaround in Dumont.** The plugin checks its own `trackingAllowed()` before calling
-`trackResultClick()` (`wordpress/src/public/search.js`), so its visitors are not
-affected; any other consumer that trusts the option is.
-
-**What Turing should do.** In `sdk/src/controllers/search.ts` and
-`react-sdk/src/hooks/use-turing-search.ts`, return before `postClick()` when consent is
-refused, as the event already does; keep disarming abandonment either way. Say in both
-options' doc comments that consent gates the click report too. `useTuringClickTracking`
-takes no consent and is an explicit host call, so it stays as it is. Test in each
-package: with `consent: () => false`, `trackResultClick()` sends no request and emits
-nothing; once consent turns true, the next click posts and emits.

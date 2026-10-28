@@ -101,6 +101,23 @@ describe("useTuringSearch — analytics (T1137)", () => {
     expect(named("turing_search_abandoned")).toHaveLength(0);
   });
 
+  it("posts no click and emits nothing until consent is given", async () => {
+    const { postClick } = await import("../../core/api");
+    vi.mocked(postClick).mockClear();
+    let granted = false;
+    const { result } = setup({ consent: () => granted });
+
+    await act(() => result.current.searchQuery("boots"));
+    act(() => result.current.trackResultClick("doc-1", 1));
+    expect(postClick).not.toHaveBeenCalled();
+    expect(events).toHaveLength(0);
+
+    granted = true;
+    act(() => result.current.trackResultClick("doc-1", 1));
+    expect(postClick).toHaveBeenCalledTimes(1);
+    expect(named("turing_search_result_click")).toHaveLength(1);
+  });
+
   // T1155 — a filter, sort or page change on the same query is not another search.
   const facet = {
     action: "ADD",

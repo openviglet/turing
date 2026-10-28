@@ -117,6 +117,43 @@ describe("createSearchController — search abandonment (T1130)", () => {
   });
 });
 
+/** T1156 — consent gates the click report to Turing, not only the event. */
+describe("createSearchController — click consent (T1156)", () => {
+  afterEach(() => clearTurSession());
+
+  it("posts no click and emits nothing until consent is given", async () => {
+    const response: TurSearchResponse = {
+      queryContext: { count: 4 } as TurSearchResponse["queryContext"],
+      results: { document: [] },
+      widget: {} as TurSearchResponse["widget"],
+    };
+    const client = {
+      get: vi.fn(() => Promise.resolve(null)),
+      post: vi.fn(() => Promise.resolve(response)),
+    } as unknown as TuringClient;
+    const events: TuringAnalyticsEvent[] = [];
+    const analytics = createTuringAnalytics({ sinks: [(e) => events.push(e)] });
+    let granted = false;
+    const search = createSearchController(client, { site: "s1", locale: "en_US" }, undefined, {
+      analytics,
+      chat: false,
+      consent: () => granted,
+    });
+    const clicks = () =>
+      vi.mocked(client.post).mock.calls.filter(([path]) => String(path).includes("/click"));
+
+    await search.searchQuery("boots");
+    search.trackResultClick("doc-9", 1);
+    expect(clicks()).toHaveLength(0);
+    expect(events).toHaveLength(0);
+
+    granted = true;
+    search.trackResultClick("doc-9", 1);
+    expect(clicks()).toHaveLength(1);
+    expect(events.map((e) => e.name)).toEqual(["turing_search_result_click"]);
+  });
+});
+
 /** T1155 — a filter, sort or page change on the same query is not another search. */
 describe("createSearchController — refinements (T1155)", () => {
   afterEach(() => {

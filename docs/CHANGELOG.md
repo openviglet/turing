@@ -664,6 +664,7 @@
 - **T462** — **Search / semantic-navigation conversion events** — `createSearchController` emits `turing_search` (+ total hit count), `turing_search_no_results` (content-gap signal, feeds T252), `turing_search_refined`, and `trackResultClick()` (one call → server CTR `postClick` + `turing_search_result_click`). Cross-surface `search → chat → lead` stitching via the shared `TUR_SESSION` cookie. Covered by `analytics-search.test.ts`.
 - **T463** — **React hook + react-ui passthrough + EDS wiring + docs** — `useTuringAnalytics()` in `@viglet/turing-react-sdk` (memoized bus + GA4 sink auto-attached, `site` seeded from context); `useTuringChat` (lifecycle + abandonment + form-lead) and `useTuringSearch` (full search events + `trackResultClick`) gain the `analytics` option; `TuringResultList` gains an `onResultClick` analytics passthrough (zero-dep). New `turing-analytics` EDS example block (GA4 auto-detect) + SDK README "Analytics" section.
 - **T1155** — Both SDKs report a search only when q changes: a facet, sort, page or locale change emits nothing and keeps the one abandonment watcher, with its count updated and idle timer restarted.
+- **T1156** — trackResultClick in both SDKs now asks consent before posting the click to Turing, so a refused consent sends no request and no event; abandonment is still disarmed.
 
 ## Block AA — Synthetic personas: audience-fit content evaluation & persona synthesis from audio (§XXVI)
 

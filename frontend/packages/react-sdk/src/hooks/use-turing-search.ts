@@ -124,8 +124,9 @@ export interface UseTuringSearchOptions {
   readonly analytics?: TuringAnalytics;
   /**
    * T1137 — asked before every analytics event and before the `TUR_SESSION`
-   * cookie is written. While it returns `false` nothing is emitted and no cookie
-   * is set; the session id is stamped on the first consented event. Omitted,
+   * cookie is written, and (T1156) before `trackResultClick` posts the click to
+   * Turing. While it returns `false` nothing is emitted, no click is posted and
+   * no cookie is set; the session id is stamped on the first consented event. Omitted,
    * consent is assumed.
    */
   readonly consent?: () => boolean;
@@ -471,6 +472,8 @@ export function useTuringSearch(
     (documentId: string, position: number, term?: string) => {
       const query = term ?? params.q ?? "";
       disarmAbandonment();
+      // T1156 — consent gates the click report to Turing, not only the event.
+      if (consentRef.current && !consentRef.current()) return;
       void postClick(config.site, {
         term: query,
         documentId,
