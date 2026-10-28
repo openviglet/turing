@@ -1,12 +1,12 @@
 // After the live-LLM suite: delete the posts with known facts again and send the deletions to
-// Turing now, so the default suite finds the stack as its own seed left it (its page counts
-// and screenshots depend on that). Runs even when a spec failed. Then what the run spent,
+// Turing now, and wait until they have left its index, so the default suite finds the stack
+// as its own seed left it (its page counts and screenshots depend on that). Runs even when a spec failed. Then what the run spent,
 // from Turing's ledger (cost.mjs): written beside the answers, printed, and a run over budget
 // fails.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { wp } from '../global-setup.mjs';
-import { budget, difference, overBudget, spent } from './cost.mjs';
+import { budget, difference, overBudget, setting, spent } from './cost.mjs';
 import { aiFile } from './global-setup.mjs';
 
 export default async function aiTeardown() {
@@ -18,6 +18,7 @@ export default async function aiTeardown() {
 	if ( ids.length ) {
 		wp( [ 'post', 'delete', ...ids, '--force' ] );
 		drainQueue();
+		await leaveIndex( ids );
 	}
 
 	if ( ! before ) {
@@ -38,6 +39,34 @@ export default async function aiTeardown() {
 	if ( over.length ) {
 		throw new Error( `The live-LLM run spent ${ over.join( ' and ' ) }.` );
 	}
+}
+
+const turingURL = process.env.TURING_URL || 'http://localhost:2700';
+
+/**
+ * Wait until Turing no longer answers with these posts (D174). The queue is sent before
+ * Turing commits the deletions, and a default run started right after would count them.
+ *
+ * @param {string[]} ids The deleted posts' ids.
+ */
+async function leaveIndex( ids ) {
+	const site = encodeURIComponent( setting( 'site_name' ) );
+	const locale = encodeURIComponent( setting( 'locale' ) );
+	const gone = ( id ) => ( doc ) =>
+		! String( doc.fields?.id || '' ).endsWith( `:post:${ id }` );
+	for ( let tries = 0; tries < 30; tries++ ) {
+		const response = await fetch(
+			`${ turingURL }/api/sn/${ site }/search?q=*&rows=500&_setlocale=${ locale }`
+		);
+		const docs = ( await response.json() ).results?.document || [];
+		if ( ids.every( ( id ) => docs.every( gone( id ) ) ) ) {
+			return;
+		}
+		await new Promise( ( resolve ) => setTimeout( resolve, 2000 ) );
+	}
+	throw new Error(
+		'The seeded posts were still in the index a minute later.'
+	);
 }
 
 /**
