@@ -2441,16 +2441,3 @@ a user-facing ship adds its page in the same Turing commit, and marks `docs-turi
 vigletdocs as superseded (a banner on every page pointing to turing.viglet.org/docs, no
 further edits), leaving Shio and Dumont docs untouched there. Any content edited in
 vigletdocs after the T1161 port is re-synced first, so the cut-over loses nothing.
-
-## CLX Keep the Anthropic okhttp client on Spring AI's core (T1165)
-
-**Where it happened.** Dependabot's java group (fdc3b42a7b) moved Spring AI from 2.0.1
-to 2.0.2, and spring-ai-anthropic 2.0.2 resolves anthropic-java-core 2.72.0. T1134 took
-the okhttp client out of Dependabot so it would move with Spring AI by hand, and nobody
-moved it: it stayed on 2.52.0. Core 2.72.0 also renamed `FileMetadata` to
-`BetaFileMetadata`, so `TurFilesApiBridge` stopped compiling.
-
-**Fix.** Pin `anthropic-java-client-okhttp` to 2.72.0, follow the rename in the bridge
-and its test, and add `TurAnthropicSdkAlignmentTest`, which compares the versions of the
-two jars on the test classpath. The next Spring AI bump that moves the core then fails
-one test that names the version to pin, not a missing SDK class somewhere else.

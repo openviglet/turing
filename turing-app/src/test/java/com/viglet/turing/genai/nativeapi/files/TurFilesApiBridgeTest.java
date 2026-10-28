@@ -34,7 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.anthropic.client.AnthropicClient;
-import com.anthropic.models.beta.files.FileMetadata;
+import com.anthropic.models.beta.files.BetaFileMetadata;
 import com.openai.client.OpenAIClient;
 import com.openai.models.files.FileCreateParams;
 import com.openai.models.files.FileObject;
@@ -132,7 +132,7 @@ class TurFilesApiBridgeTest {
                 mock(com.anthropic.services.blocking.BetaService.class);
         com.anthropic.services.blocking.beta.FileService files =
                 mock(com.anthropic.services.blocking.beta.FileService.class);
-        FileMetadata metadata = mock(FileMetadata.class);
+        BetaFileMetadata metadata = mock(BetaFileMetadata.class);
         when(nativeClient.anthropic(instance)).thenReturn(Optional.of(client));
         when(client.beta()).thenReturn(beta);
         when(beta.files()).thenReturn(files);

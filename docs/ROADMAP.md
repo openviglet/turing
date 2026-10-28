@@ -10,8 +10,6 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
-- 🛠 **T1165** (deps: —) **turing-app no longer compiles: Spring AI 2.0.2 moved anthropic-java-core to 2.72.0, okhttp client pinned at 2.52.0** — Every backend build and test run is red until the pinned client follows the core that Spring AI resolves. → §CLX
-
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 ## Block BV — The quality gate stops at the package boundary

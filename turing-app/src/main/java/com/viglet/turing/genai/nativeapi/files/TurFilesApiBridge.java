@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
 
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.models.beta.AnthropicBeta;
-import com.anthropic.models.beta.files.FileMetadata;
+import com.anthropic.models.beta.files.BetaFileMetadata;
 import com.anthropic.models.beta.files.FileUploadParams;
 import com.openai.client.OpenAIClient;
 import com.openai.models.files.FileCreateParams;
@@ -197,7 +197,7 @@ public class TurFilesApiBridge {
         if (client == null) {
             return null;
         }
-        FileMetadata file = client.beta().files().upload(FileUploadParams.builder()
+        BetaFileMetadata file = client.beta().files().upload(FileUploadParams.builder()
                 .file(com.anthropic.core.MultipartField.<InputStream>builder()
                         .value(new ByteArrayInputStream(data))
                         .filename(name)
