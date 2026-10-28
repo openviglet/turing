@@ -20,8 +20,8 @@ test( 'a shopper searches and adds a jacket to the cart without a mouse', async 
 	let focused = '';
 	for ( let tabs = 0; tabs < 60 && focused !== target; tabs++ ) {
 		await page.keyboard.press( 'Tab' );
-		focused = await page.evaluate( () => {
-			const el = document.activeElement;
+		focused = await page.locator( 'body' ).evaluate( ( body ) => {
+			const el = body.ownerDocument.activeElement;
 			return (
 				el?.getAttribute( 'aria-label' ) ||
 				el?.textContent?.trim() ||
@@ -31,8 +31,10 @@ test( 'a shopper searches and adds a jacket to the cart without a mouse', async 
 	}
 	expect( focused, 'reached by Tab from the search box' ).toBe( target );
 	// The focus shows: an outline or a ring, not the bare button.
-	const ring = await page.evaluate( () => {
-		const style = window.getComputedStyle( document.activeElement );
+	const ring = await page.locator( 'body' ).evaluate( ( body ) => {
+		const style = window.getComputedStyle(
+			body.ownerDocument.activeElement
+		);
 		return 'none' !== style.outlineStyle || 'none' !== style.boxShadow;
 	} );
 	expect( ring ).toBe( true );
