@@ -221,7 +221,12 @@ in English and Portuguese, and one with a planted instruction; the specs check t
 come from those posts, ignore the instruction, invent no figure a post does not hold, and
 stay within a p95 time budget (`E2E_AI_P95_MS`, 20 s). Each spec skips, with the reason
 `wp dumont ai status` gives, a feature that is off. The answers land in
-`tests/e2e/artifacts/ai/answers.json`, and the teardown deletes the seeded posts again.
+`tests/e2e/artifacts/ai/answers.json`, and the teardown deletes the seeded posts again. The
+`demo-ai` project asks the demo store's curated prompts
+([`ai-prompts.json`](demo/theme/tarnfell/ai-prompts.json)) through the Site assistant on its
+showcase: each answer must cite the guide the prompt names, and a question about something the
+store does not sell must come back with no price. It skips while the demo's chat is off (a
+stack without the key, or a demo not reindexed since its setup).
 
 **The recorded tour** (`npm run e2e:tour`, `playwright.tour.config.mjs`) walks the demo's
 showcase with "How it works" on, after a search so the filters show, and opens each numbered

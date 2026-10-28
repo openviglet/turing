@@ -7,7 +7,7 @@
 // Each spec skips, with its reason, a feature D169's probe reports off. Answers are saved to
 // tests/e2e/artifacts/ai/ for a reviewer to read.
 import { defineConfig } from '@playwright/test';
-import base, { authFile } from './playwright.config.mjs';
+import base, { authFile, demoProjects, demoURL } from './playwright.config.mjs';
 
 export default defineConfig( {
 	...base,
@@ -30,6 +30,14 @@ export default defineConfig( {
 			testMatch: 'ai/**/*.spec.mjs',
 			// The global setup of the base config looks up this project for its login.
 			use: { storageState: authFile },
+		},
+		// The demo store's curated prompts (D198), on its own WordPress (run-docker.cmd demo).
+		demoProjects[ 0 ],
+		{
+			name: 'demo-ai',
+			testMatch: 'demo-ai/**/*.spec.mjs',
+			dependencies: [ 'demo-setup' ],
+			use: { baseURL: demoURL },
 		},
 		// global-setup.mjs reads the admin project's options; it must exist here too.
 		{ name: 'admin', testMatch: /^$/, use: { storageState: authFile } },
