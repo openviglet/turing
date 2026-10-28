@@ -19,3 +19,5 @@
 
 ## Block CC — Lucene engine search with synonyms
 
+## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+

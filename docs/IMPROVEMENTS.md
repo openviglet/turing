@@ -31,6 +31,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CC — Lucene engine search with synonyms
 
+## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2314,5 +2316,32 @@ What the SDK reports to analytics, and when: the search, click and abandonment e
 host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+### CLVIII.6 Kit gap queries in the catalog's words (T1169)
+
+**Where it happened.** Dumont's Build my kit (D201) on the Demo SN site (Tarnfell, 132
+outdoor products), `ghcr.io/openviglet/turing-ce:latest` (build `3b726072ee`). Three
+plans: "Two days crossing the mountains in July, first time"; "I need a waterproof
+jacket, a warm layer and a daypack for a rainy hike"; "Weekend camping trip, it will
+rain and nights are cold". Each came back with `stages: []`, every gap in `unfilled`
+(physical comfort, weather protection, Waterproof clothing...) and `guides: []`. The
+same catalog answers `q=waterproof jacket` with 49 results and `q=Waterproof clothing`
+with 0.
+
+**Why.** `gapPrompt` asks for "a search query for the catalog" but gives the model
+nothing of the catalog, so it writes need words. `retrieve(site, locale, gap.query())`
+then runs as a `must` on `_text_` with every word required (the log shows `must: _text_
+"first aid kits"`), so one word the catalog does not use empties the gap.
+
+**What it should do.**
+- Give the gap prompt the site's closed vocabulary, as `nl-filters` (T1085) reads it:
+  category values and the main facet values, and ask for each query in those words.
+- A gap whose query finds nothing retries with its words ORed, then with its name, before
+  it counts as unfilled. Guides the same.
+
+**Workaround used.** None; the Dumont block shows the unfilled needs as they come.
+
+**Gate.** On a seeded catalog, each of the three plans stages at least three gaps with
+products, and the second plan's jacket gap stages a waterproof jacket.
 
 ## CLIX Documentation refresh (`docs-turing`)
