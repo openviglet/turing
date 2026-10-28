@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block CI — API errors name what the caller sent wrong
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2277,37 +2275,3 @@ trigger.
 
 A request the caller got wrong answers 4xx with what was wrong in it, never a 500 that
 sends the caller to the server log.
-
-### CLVI.1 Malformed query parameters answer 400, not 500 (T1154)
-
-**Where it happened.** Dumont D217 (the WordPress demo catalog in Portuguese), checking
-the Demo SN site with curl from Git Bash on Windows:
-
-    curl -s -G http://localhost:2700/api/sn/Demo/search \
-      --data-urlencode "q=jaqueta impermeável" --data-urlencode "_setlocale=pt_BR"
-
-The shell handed curl the `é` in Windows-1252, so the query string carried `%E9`, which
-is not UTF-8.
-
-**What came back.** HTTP 500, `type: tag:viglet.com,2026:errors/internal`, "An
-unexpected error occurred". The log shows `TurGlobalExceptionHandler` catching Tomcat's
-`org.apache.tomcat.util.http.InvalidParameterException: Character decoding failed.
-Parameter [q] ... has been ignored` as an unhandled exception. The same query encoded as
-UTF-8 (`%C3%A9`) answers normally.
-
-**The wider case.** The handler does not extend `ResponseEntityExceptionHandler` and has
-no case for `MethodArgumentTypeMismatchException`, so a parameter of the wrong type
-(`?page=abc` on any endpoint) falls to the same 500. That is the common one; the UTF-8
-case needs a hand-built request from a non-UTF-8 shell.
-`HttpMessageNotReadableException` is already a 400 (`handleNotReadable`).
-
-**What Turing should do.** Answer both with a 400 problem detail carrying the parameter
-name in `detail` and a `parameter` property, as `handleMissingParameter` does, logged at
-WARN with no stack trace. Find the Tomcat exception by walking the cause chain rather
-than importing a container-internal class. Tests in `TurGlobalExceptionHandlerTest`,
-plus MockMvc calls with `q=%E9` and a non-numeric numeric parameter.
-
-**Why it matters.** A 500 tells the caller the server broke and sends them to Turing's
-log, and monitoring counts it as an outage, when the request was what was wrong.
-
-**Workaround.** None needed in Dumont: the plugin and the SDK send UTF-8.

@@ -7,6 +7,7 @@ package com.viglet.turing.api.exception;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -128,6 +129,43 @@ class TurGlobalExceptionHandlerTest {
         mvc.perform(get("/test/needs-param"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.parameter", equalTo("siteId")));
+    }
+
+    @Test
+    void typeMismatch_mapsTo400WithParameterNameT1154() throws Exception {
+        mvc.perform(get("/test/paged").param("page", "abc"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.type", startsWith("tag:viglet.com,2026:errors/validation")))
+                .andExpect(jsonPath("$.parameter", equalTo("page")))
+                .andExpect(jsonPath("$.detail", containsString("'page' must be of type int")))
+                .andExpect(jsonPath("$.detail", not(containsString("abc"))));
+    }
+
+    @Test
+    void undecodableParameter_mapsTo400WithParameterNameT1154() throws Exception {
+        mvc.perform(get("/test/undecodable"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.type", startsWith("tag:viglet.com,2026:errors/validation")))
+                .andExpect(jsonPath("$.parameter", equalTo("q")))
+                .andExpect(jsonPath("$.detail", containsString("UTF-8")))
+                .andExpect(jsonPath("$.detail", not(containsString("imperme"))));
+    }
+
+    @Test
+    void undecodableParameterWrappedInAnotherException_mapsTo400T1154() throws Exception {
+        mvc.perform(get("/test/undecodable-wrapped"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.parameter", equalTo("q")));
+    }
+
+    @Test
+    void undecodableParameter_ignoresOtherIllegalStateExceptions() {
+        org.assertj.core.api.Assertions.assertThat(
+                TurGlobalExceptionHandler.undecodableParameter(new IllegalStateException("Parameter [q]")))
+                .isNull();
+        org.assertj.core.api.Assertions.assertThat(TurGlobalExceptionHandler.undecodableParameter(
+                new org.apache.tomcat.util.http.InvalidParameterException("no name here")))
+                .isEqualTo("?");
     }
 
     @Test
@@ -269,6 +307,25 @@ class TurGlobalExceptionHandlerTest {
         @GetMapping("/needs-param")
         public void needsParam(@RequestParam String siteId) {
             // never reached without param
+        }
+
+        @GetMapping("/paged")
+        public void paged(@RequestParam int page) {
+            // never reached with a non-numeric page
+        }
+
+        @GetMapping("/undecodable")
+        public void undecodable() {
+            // What Tomcat raises from getParameter when the query string carries %E9.
+            throw new org.apache.tomcat.util.http.InvalidParameterException(
+                    "Character decoding failed. Parameter [q] with value [jaqueta imperme?vel] has been ignored.",
+                    400);
+        }
+
+        @GetMapping("/undecodable-wrapped")
+        public void undecodableWrapped() {
+            throw new IllegalStateException("filter failed", new org.apache.tomcat.util.http.InvalidParameterException(
+                    "Character decoding failed. Parameter [q] with value [x] has been ignored.", 400));
         }
 
         @GetMapping("/boom")

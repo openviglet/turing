@@ -38,6 +38,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -138,6 +139,18 @@ public class TurGlobalExceptionHandler {
                 "Missing required parameter: " + ex.getParameterName());
         problem.setProperty("parameter", ex.getParameterName());
         return ResponseEntity.badRequest().body(problem);
+    }
+
+    /**
+     * T1154 — a parameter that does not convert to its declared type
+     * ({@code ?page=abc} on an {@code int}) is the caller's mistake: 400 naming the
+     * parameter, the same shape as {@link #handleMissingParameter}, with no stack
+     * trace. The rejected value is not echoed back.
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ProblemDetail> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String expected = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "another type";
+        return badParameter(ex.getName(), "Parameter '" + ex.getName() + "' must be of type " + expected + ".");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -294,6 +307,11 @@ public class TurGlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleUnexpected(Exception ex) {
+        String undecodable = undecodableParameter(ex);
+        if (undecodable != null) {
+            return badParameter(undecodable, "Parameter '" + undecodable
+                    + "' could not be decoded; percent-encode its value as UTF-8.");
+        }
         ProblemDetail problem = build(HttpStatus.INTERNAL_SERVER_ERROR, TurErrorTypes.INTERNAL,
                 "An unexpected error occurred. See server logs (correlationId).");
         Object correlationId = problem.getProperties() != null ? problem.getProperties().get("correlationId") : null;
@@ -310,6 +328,37 @@ public class TurGlobalExceptionHandler {
         pd.setProperty("correlationId", UUID.randomUUID().toString());
         pd.setProperty("timestamp", OffsetDateTime.now(ZoneId.systemDefault()).toString());
         return pd;
+    }
+
+    private ResponseEntity<ProblemDetail> badParameter(String parameter, String detail) {
+        ProblemDetail problem = build(HttpStatus.BAD_REQUEST, TurErrorTypes.VALIDATION, detail);
+        problem.setProperty("parameter", parameter);
+        log.warn("[GlobalEx] Malformed parameter: {}", parameter);
+        return ResponseEntity.badRequest().body(problem);
+    }
+
+    /** Tomcat's parameter-parsing failure, matched by name so no container class is imported. */
+    private static final String TOMCAT_INVALID_PARAMETER = "org.apache.tomcat.util.http.InvalidParameterException";
+    private static final Pattern TOMCAT_PARAMETER_NAME = Pattern.compile("Parameter \\[([^\\]]*)\\]");
+    private static final int MAX_CAUSE_DEPTH = 16;
+
+    /**
+     * T1154 — Tomcat raises {@code InvalidParameterException} from the first
+     * {@code getParameter} call when the query string is not valid in the request
+     * charset (a {@code %E9} from a Windows-1252 shell). Walks the cause chain for
+     * it and returns the parameter its message names, {@code "?"} when the message
+     * names none, or {@code null} when the failure is something else.
+     */
+    static String undecodableParameter(Throwable ex) {
+        Throwable cause = ex;
+        for (int depth = 0; cause != null && depth < MAX_CAUSE_DEPTH; depth++) {
+            if (TOMCAT_INVALID_PARAMETER.equals(cause.getClass().getName())) {
+                Matcher m = TOMCAT_PARAMETER_NAME.matcher(String.valueOf(cause.getMessage()));
+                return m.find() ? m.group(1) : "?";
+            }
+            cause = cause.getCause() == cause ? null : cause.getCause();
+        }
+        return null;
     }
 
     private void logBusiness(HttpStatus status, TurApiException ex) {

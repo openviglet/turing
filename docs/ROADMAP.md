@@ -14,10 +14,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block CI — API errors name what the caller sent wrong
-
-- 📋 **T1154** (deps: —) **A malformed query parameter, of the wrong type or not valid UTF-8, answers 500 instead of a 400 naming it** — The caller is told the server broke and is sent to Turing's log, when the request was what was wrong. → §CLVI.1
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**
