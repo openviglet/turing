@@ -316,15 +316,29 @@ public class TurRagContextBuilder {
      * a document delete needs on its own. Failures are logged, never thrown.
      */
     public void deleteByMetadata(RagInfrastructure infra, String metadataKey, String metadataValue) {
-        if (infra == null || !StringUtils.hasText(metadataKey) || !StringUtils.hasText(metadataValue)) {
+        if (!StringUtils.hasText(metadataKey) || !StringUtils.hasText(metadataValue)) {
             return;
         }
+        deleteByMetadata(infra, java.util.Map.of(metadataKey, metadataValue));
+    }
+
+    /**
+     * T1158 — deletes the embeddings whose metadata matches every entry of
+     * {@code match}. Failures are logged, never thrown.
+     *
+     * @return {@code true} when the store was asked to delete
+     */
+    public boolean deleteByMetadata(RagInfrastructure infra, java.util.Map<String, String> match) {
+        if (infra == null || match == null || match.isEmpty()) {
+            return false;
+        }
         try {
-            infra.storeProvider().deleteByMetadata(infra.storeInstance(), infra.storeCredential(),
-                    infra.collectionName(), metadataKey, metadataValue);
+            return infra.storeProvider().deleteByMetadata(infra.storeInstance(), infra.storeCredential(),
+                    infra.collectionName(), match);
         } catch (Exception e) {
-            log.warn("Failed to delete embeddings for {}={} (collection='{}'): {}",
-                    metadataKey, metadataValue, infra.collectionName(), e.getMessage());
+            log.warn("Failed to delete embeddings where {} (collection='{}'): {}",
+                    match, infra.collectionName(), e.getMessage());
+            return false;
         }
     }
 

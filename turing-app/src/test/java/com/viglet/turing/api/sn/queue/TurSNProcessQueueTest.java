@@ -354,6 +354,8 @@ class TurSNProcessQueueTest {
 
         verify(plugin).deIndexByType(site, Locale.US, "news");
         verify(plugin, never()).deIndex(any(), any(), any());
+        // T1158 — the type's RAG chunks go with it.
+        verify(turSNGenAi).removeDocuments(site, Locale.US, Map.of(TurSNFieldName.TYPE, "news"));
     }
 
     /** T1112 — a DELETE naming fields deletes the documents holding them all. */
@@ -382,6 +384,8 @@ class TurSNProcessQueueTest {
         verify(plugin).deIndexByFields(site, Locale.US, Map.of("site_key", "a.example.org"));
         verify(plugin, never()).deIndex(any(), any(), any());
         verify(plugin, never()).deIndexByType(any(), any(), any());
+        // T1158 — and every document holding those fields leaves the RAG collection.
+        verify(turSNGenAi).removeDocuments(site, Locale.US, Map.of("site_key", "a.example.org"));
     }
 
     @Test

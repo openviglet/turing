@@ -2287,31 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.2 Remove a deleted document's RAG chunks (T1158)
-
-**Where it happened.** Dumont D175 on the run-docker stack, SN site `Sample`. The suite
-seeds a "Research grant 2026" post, reindexes and deletes it in teardown. Keyword search
-no longer finds it, yet the chat still answers its deadline and cites a URL the site
-left when it moved port.
-
-**Landed (delete by id).** `TurSNProcessQueue.deIndex` now calls
-`TurSNGenAi.removeDocument(site, locale, id)` after a successful engine delete. It
-resolves the locale collection `addJobItem` wrote to and deletes by `SOURCE_ID` through
-`TurRagContextBuilder.deleteByMetadata`. A site with no GenAI is a no-op, and a store
-failure is logged, never thrown. `TurMilvusStoreProvider` now implements
-`deleteByMetadata` (a `metadata["key"] == value` expression), so Milvus deletes and a
-re-index replaces instead of duplicating.
-
-**Left.** A delete by type or by fields (T1112) still leaves chunks: the store seam
-matches one key, and `type` reaches chunk metadata only as a short custom field. Either
-add a multi-key `deleteByMetadata(Map)` to the seam (every provider, Milvus included),
-or read the matching ids from the engine before it deletes and remove them one by one.
-Then ship a purge for orphans already stored: chunks whose `SOURCE_ID` the engine no
-longer holds.
-
-**Tests.** Per store provider: delete by type and by fields leaves no chunk; another
-site's chunks in a shared collection stay; the purge removes only orphans.
-
 ### CLVIII.3 A plan-to-kit copilot call (T1159)
 
 **Where it happened.** Dumont D201, a "Build my kit" mode for the WordPress catalog

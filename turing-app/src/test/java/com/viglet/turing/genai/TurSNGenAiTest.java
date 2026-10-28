@@ -178,10 +178,27 @@ class TurSNGenAiTest {
         when(context.isEnabled()).thenReturn(true);
         when(context.getRagInfrastructure()).thenReturn(infra);
         when(contextFactory.build(genAi, "sample_en")).thenReturn(context);
+        when(ragContextBuilder.deleteByMetadata(infra, Map.of(TurSNGenAi.SOURCE_ID, "doc-1"))).thenReturn(true);
 
         assertTrue(turSNGenAi.removeDocument(site, Locale.US, "doc-1"));
+    }
 
-        verify(ragContextBuilder).deleteByMetadata(infra, TurSNGenAi.SOURCE_ID, "doc-1");
+    /** T1158 — a delete by type or fields removes the chunks matching all of them. */
+    @Test
+    void removeDocumentsDeletesByEveryNamedField() {
+        TurSNSite site = new TurSNSite();
+        site.setName("Sample");
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        site.setTurSNSiteGenAi(genAi);
+        var infra = mock(TurRagContextBuilder.RagInfrastructure.class);
+        TurGenAiContext context = mock(TurGenAiContext.class);
+        when(context.isEnabled()).thenReturn(true);
+        when(context.getRagInfrastructure()).thenReturn(infra);
+        when(contextFactory.build(any(), any())).thenReturn(context);
+        Map<String, String> match = Map.of("type", "news", "site_key", "a.example.org");
+        when(ragContextBuilder.deleteByMetadata(infra, match)).thenReturn(true);
+
+        assertTrue(turSNGenAi.removeDocuments(site, Locale.US, match));
     }
 
     @Test

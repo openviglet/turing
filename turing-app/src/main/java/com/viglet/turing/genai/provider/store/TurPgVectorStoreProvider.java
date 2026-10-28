@@ -468,6 +468,42 @@ public class TurPgVectorStoreProvider implements TurGenAiStoreProvider {
         }
     }
 
+    /** T1158 — deletes the rows whose metadata matches every entry of {@code match}. */
+    @Override
+    public boolean deleteByMetadata(TurStoreInstance turStoreInstance,
+            String decryptedCredential,
+            String collectionName,
+            Map<String, String> match) {
+        if (match == null || match.isEmpty() || match.entrySet().stream().anyMatch(e ->
+                !StringUtils.hasText(e.getKey()) || !StringUtils.hasText(e.getValue()))) {
+            return false;
+        }
+        try {
+            Map<String, Object> options = optionsParser.parse(turStoreInstance.getProviderOptionsJson());
+            JdbcTemplate jdbcTemplate = buildJdbcTemplate(turStoreInstance, decryptedCredential, options);
+            String schemaName = firstNonBlank(
+                    optionsParser.stringValue(options, SCHEMA_NAME_OPTION), DEFAULT_SCHEMA_NAME);
+            String quotedTable = quoteIdentifier(schemaName) + "." + quoteIdentifier(collectionName);
+            List<Object> args = new java.util.ArrayList<>();
+            match.forEach((key, value) -> {
+                args.add(key);
+                args.add(value);
+            });
+            int deleted = jdbcTemplate.update(deleteSql(quotedTable, match.size()), args.toArray());
+            log.info("[PGVector] Deleted {} rows where {} from {}", deleted, match, collectionName);
+            return true;
+        } catch (Exception e) {
+            log.warn("[PGVector] Failed to delete by metadata: {}", match, e);
+            throw new TurRuntimeException("Failed to delete by metadata: " + match, e);
+        }
+    }
+
+    /** T1158 — one {@code metadata ->> ? = ?} clause per entry, joined with AND. */
+    static String deleteSql(String quotedTable, int entries) {
+        return "DELETE FROM " + quotedTable + " WHERE "
+                + String.join(" AND ", java.util.Collections.nCopies(entries, "metadata ->> ? = ?"));
+    }
+
     private String sanitizeTableName(String name) {
         return name.replaceAll("\\W", "_");
     }

@@ -122,6 +122,32 @@ class TurLuceneStoreProviderTest {
                 .satisfies(c -> assertThat(c.content()).contains("beta"));
     }
 
+    /** T1158 — a delete by several fields removes only the chunks holding all of them. */
+    @Test
+    void deleteByEveryFieldRemovesOnlyTheChunksMatchingAll() {
+        VectorStore store = provider.createVectorStore(instance, embeddingModel(), null);
+        store.add(List.of(
+                new Document("a", "alpha refund policy", Map.of("type", "faq", "site_key", "a.example.org")),
+                new Document("b", "beta refund policy", Map.of("type", "faq", "site_key", "b.example.org")),
+                new Document("c", "gamma shipping", Map.of("type", "guide", "site_key", "a.example.org"))));
+
+        assertThat(provider.deleteByMetadata(instance, null, "docs",
+                Map.of("type", "faq", "site_key", "a.example.org"))).isTrue();
+
+        assertThat(provider.listChunks(instance, null, "docs", 0, 10, Map.of()).chunks())
+                .extracting(c -> c.content())
+                .containsExactlyInAnyOrder("beta refund policy", "gamma shipping");
+    }
+
+    @Test
+    void deleteByEveryFieldRefusesABlankEntry() {
+        VectorStore store = provider.createVectorStore(instance, embeddingModel(), null);
+        indexSampleDocs(store);
+
+        assertThat(provider.deleteByMetadata(instance, null, "docs", Map.of("type", " "))).isFalse();
+        assertThat(provider.listChunks(instance, null, "docs", 0, 10, Map.of()).total()).isEqualTo(2);
+    }
+
     @Test
     void clearCollectionEmptiesIt() {
         VectorStore store = provider.createVectorStore(instance, embeddingModel(), null);

@@ -408,6 +408,7 @@ public class TurSNProcessQueue {
             boolean deIndexed = plugin.deIndexByType(turSNSite, turSNJobItem.getLocale(), type);
             if (deIndexed) {
                 turSNHybridRankingService.deIndexByType(turSNSite, type);
+                removeRagChunks(turSNSite, turSNJobItem, Map.of(TurSNFieldName.TYPE, type));
             }
             return deIndexed;
         } else if (!turSNJobItem.getAttributes().isEmpty()) {
@@ -416,9 +417,21 @@ public class TurSNProcessQueue {
             // collection keeps its points: hydration through the engine drops them.
             Map<String, String> fields = new java.util.LinkedHashMap<>();
             turSNJobItem.getAttributes().forEach((field, value) -> fields.put(field, String.valueOf(value)));
-            return plugin.deIndexByFields(turSNSite, turSNJobItem.getLocale(), fields);
+            boolean deIndexed = plugin.deIndexByFields(turSNSite, turSNJobItem.getLocale(), fields);
+            if (deIndexed) {
+                // T1158 — the RAG chunks are cited directly, so they must go too.
+                removeRagChunks(turSNSite, turSNJobItem, fields);
+            }
+            return deIndexed;
         }
         return false;
+    }
+
+    /** T1158 — removes the RAG chunks of the documents a type or field delete named. */
+    private void removeRagChunks(TurSNSite turSNSite, TurSNJobItem turSNJobItem, Map<String, String> match) {
+        if (turSNGenAi != null) {
+            turSNGenAi.removeDocuments(turSNSite, turSNJobItem.getLocale(), match);
+        }
     }
 
     private boolean index(TurSNJobItem turSNJobItem, TurSNSite turSNSite) {

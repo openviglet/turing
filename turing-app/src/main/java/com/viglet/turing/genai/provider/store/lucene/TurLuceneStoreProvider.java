@@ -233,6 +233,51 @@ public class TurLuceneStoreProvider implements TurGenAiStoreProvider {
         }
     }
 
+    /** T1158 — deletes the embeddings matching every entry of {@code match}. */
+    @Override
+    public boolean deleteByMetadata(TurStoreInstance turStoreInstance,
+            String decryptedCredential,
+            String collectionName,
+            Map<String, String> match) {
+        org.apache.lucene.search.Query query = deleteQuery(match);
+        if (query == null) {
+            return false;
+        }
+        Map<String, Object> options = optionsParser.parse(turStoreInstance.getProviderOptionsJson());
+        Path basePath = resolveBasePath(turStoreInstance, options);
+        TurLuceneVectorIndex index = openIndex(basePath, collectionName, resolveQuantization(options));
+        try {
+            index.getWriter().deleteDocuments(query);
+            index.getWriter().commit();
+            log.info("[Lucene] Deleted embeddings where {} from collection '{}'", match, collectionName);
+            return true;
+        } catch (IOException e) {
+            log.warn("[Lucene] Failed to delete by metadata {} in '{}': {}", match, collectionName, e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * T1158 — every entry as a required term on its {@code meta_<key>} field, or
+     * {@code null} when an entry is blank: dropping one would widen the delete.
+     */
+    static org.apache.lucene.search.Query deleteQuery(Map<String, String> match) {
+        if (match == null || match.isEmpty()) {
+            return null;
+        }
+        var builder = new org.apache.lucene.search.BooleanQuery.Builder();
+        for (Map.Entry<String, String> entry : match.entrySet()) {
+            if (entry.getKey() == null || entry.getKey().isBlank()
+                    || entry.getValue() == null || entry.getValue().isBlank()) {
+                return null;
+            }
+            builder.add(new org.apache.lucene.search.TermQuery(new org.apache.lucene.index.Term(
+                    TurLuceneVectorStore.METADATA_FIELD_PREFIX + entry.getKey(), entry.getValue())),
+                    org.apache.lucene.search.BooleanClause.Occur.FILTER);
+        }
+        return builder.build();
+    }
+
     @Override
     public Map<String, String> getSystemInfo(TurStoreInstance turStoreInstance,
             String decryptedCredential) {

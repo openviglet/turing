@@ -86,6 +86,27 @@ public interface TurGenAiStoreProvider {
     }
 
     /**
+     * T1158 — deletes the embeddings whose metadata matches <em>every</em> entry of
+     * {@code match} (a document delete by type, or by a set of fields). A provider
+     * that cannot express the conjunction must not widen it: the default handles a
+     * single entry through {@link #deleteByMetadata(TurStoreInstance, String, String,
+     * String, String)} and deletes nothing for more.
+     *
+     * @return {@code true} when the store was asked to delete
+     */
+    default boolean deleteByMetadata(TurStoreInstance turStoreInstance,
+                                     String decryptedCredential,
+                                     String collectionName,
+                                     Map<String, String> match) {
+        if (match == null || match.size() != 1) {
+            return false;
+        }
+        Map.Entry<String, String> only = match.entrySet().iterator().next();
+        deleteByMetadata(turStoreInstance, decryptedCredential, collectionName, only.getKey(), only.getValue());
+        return true;
+    }
+
+    /**
      * Clears all embeddings from a collection without deleting the collection itself.
      */
     default void clearCollection(TurStoreInstance turStoreInstance,

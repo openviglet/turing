@@ -360,6 +360,53 @@ public class TurChromaStoreProvider implements TurGenAiStoreProvider {
         }
     }
 
+    /** T1158 — deletes the embeddings matching every entry of {@code match}. */
+    @Override
+    public boolean deleteByMetadata(TurStoreInstance turStoreInstance,
+            String decryptedCredential,
+            String collectionName,
+            Map<String, String> match) {
+        Map<String, Object> where = deleteWhere(match);
+        if (where == null) {
+            return false;
+        }
+        Map<String, Object> options = optionsParser.parse(turStoreInstance.getProviderOptionsJson());
+        ChromaApi chromaApi = buildChromaApi(turStoreInstance, decryptedCredential, options);
+        String tenantName = firstNonBlank(optionsParser.stringValue(options, TENANT_NAME_OPTION), DEFAULT_TENANT);
+        String databaseName = firstNonBlank(optionsParser.stringValue(options, DATABASE_NAME_OPTION), DEFAULT_DATABASE);
+        try {
+            ChromaApi.Collection collection = chromaApi.getCollection(tenantName, databaseName, collectionName);
+            if (collection == null) {
+                return false;
+            }
+            int deleted = chromaApi.deleteEmbeddings(tenantName, databaseName, collection.id(),
+                    new ChromaApi.DeleteEmbeddingsRequest(List.of(), where));
+            log.info("[Chroma] Deleted {} embeddings where {} from collection {}", deleted, match, collectionName);
+            return true;
+        } catch (Exception e) {
+            log.warn("[Chroma] Failed to delete embeddings by metadata: {}", match, e);
+            return false;
+        }
+    }
+
+    /**
+     * T1158 — Chroma's {@code where} for every entry: the bare map for one, an
+     * {@code $and} of single-key maps for more (Chroma refuses several keys at the
+     * top level). {@code null} when an entry is blank.
+     */
+    static Map<String, Object> deleteWhere(Map<String, String> match) {
+        if (match == null || match.isEmpty() || match.entrySet().stream().anyMatch(e ->
+                !StringUtils.hasText(e.getKey()) || !StringUtils.hasText(e.getValue()))) {
+            return null;
+        }
+        if (match.size() == 1) {
+            return Map.copyOf(match);
+        }
+        return Map.of("$and", match.entrySet().stream()
+                .map(e -> (Object) Map.of(e.getKey(), e.getValue()))
+                .toList());
+    }
+
     @Override
     public TurStoreChunkPage listChunks(TurStoreInstance turStoreInstance,
             String decryptedCredential,

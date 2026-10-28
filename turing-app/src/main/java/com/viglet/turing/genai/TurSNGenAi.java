@@ -1443,7 +1443,24 @@ public class TurSNGenAi {
      * @return {@code true} when the store was asked to delete the chunks
      */
     public boolean removeDocument(TurSNSite turSNSite, Locale locale, String id) {
-        if (turSNSite == null || turSNSite.getTurSNSiteGenAi() == null || id == null || id.isBlank()) {
+        if (id == null || id.isBlank()) {
+            return false;
+        }
+        return removeDocuments(turSNSite, locale, Map.of(SOURCE_ID, id));
+    }
+
+    /**
+     * T1158 — removes the chunks whose metadata matches every entry of
+     * {@code match}: a delete by type ({@code type=news}) or by a set of fields
+     * (T1112). Chunk metadata carries a document's short categorical fields
+     * ({@link #partitionFields}), which is what a type or field delete names. The
+     * collection, the no-GenAI no-op and the never-throw contract are
+     * {@link #removeDocument}'s.
+     *
+     * @return {@code true} when the store was asked to delete the chunks
+     */
+    public boolean removeDocuments(TurSNSite turSNSite, Locale locale, Map<String, String> match) {
+        if (turSNSite == null || turSNSite.getTurSNSiteGenAi() == null || match == null || match.isEmpty()) {
             return false;
         }
         try {
@@ -1452,13 +1469,13 @@ public class TurSNGenAi {
             if (!context.isEnabled() || context.getRagInfrastructure() == null) {
                 return false;
             }
-            turRagContextBuilder.deleteByMetadata(context.getRagInfrastructure(), SOURCE_ID, id);
-            log.debug("RAG removed Object ID '{}' of SN Site '{}' (collection='{}')",
-                    id, turSNSite.getName(), collectionName);
-            return true;
+            boolean asked = turRagContextBuilder.deleteByMetadata(context.getRagInfrastructure(), match);
+            log.debug("RAG removed chunks where {} of SN Site '{}' (collection='{}', asked={})",
+                    match, turSNSite.getName(), collectionName, asked);
+            return asked;
         } catch (RuntimeException e) {
-            log.warn("RAG chunks of Object ID '{}' of SN Site '{}' could not be removed: {}",
-                    id, turSNSite.getName(), e.getMessage());
+            log.warn("RAG chunks where {} of SN Site '{}' could not be removed: {}",
+                    match, turSNSite.getName(), e.getMessage());
             return false;
         }
     }

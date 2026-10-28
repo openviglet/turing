@@ -431,10 +431,25 @@ public class TurMilvusStoreProvider implements TurGenAiStoreProvider {
             String collectionName,
             String metadataKey,
             String metadataValue) {
-        String expr = deleteExpression(metadataKey, metadataValue);
+        deleteWhere(turStoreInstance, decryptedCredential, collectionName,
+                metadataKey == null ? null : Map.of(metadataKey, metadataValue == null ? "" : metadataValue));
+    }
+
+    /** T1158 — deletes the chunks matching every entry of {@code match}. */
+    @Override
+    public boolean deleteByMetadata(TurStoreInstance turStoreInstance,
+            String decryptedCredential,
+            String collectionName,
+            Map<String, String> match) {
+        return deleteWhere(turStoreInstance, decryptedCredential, collectionName, match);
+    }
+
+    private boolean deleteWhere(TurStoreInstance turStoreInstance, String decryptedCredential,
+            String collectionName, Map<String, String> match) {
+        String expr = deleteExpression(match);
         if (expr == null) {
-            log.warn("[Milvus] delete skipped: metadata key '{}' cannot be addressed", metadataKey);
-            return;
+            log.warn("[Milvus] delete skipped: {} cannot be addressed", match);
+            return false;
         }
         String collection = StringUtils.hasText(collectionName) ? collectionName : DEFAULT_COLLECTION;
         Map<String, Object> options = optionsParser.parse(turStoreInstance.getProviderOptionsJson());
@@ -448,6 +463,7 @@ public class TurMilvusStoreProvider implements TurGenAiStoreProvider {
             if (resp.getStatus() != R.Status.Success.getCode()) {
                 log.warn("[Milvus] delete failed for '{}' ({}): {}", collection, expr, resp.getMessage());
             }
+            return true;
         } finally {
             closeQuietly(client);
         }
@@ -455,10 +471,27 @@ public class TurMilvusStoreProvider implements TurGenAiStoreProvider {
 
     /** T1158 — the delete expression for one key and value, or {@code null} when either cannot be used. */
     static String deleteExpression(String metadataKey, String metadataValue) {
-        if (!StringUtils.hasText(metadataKey) || !StringUtils.hasText(metadataValue)) {
+        return metadataKey == null ? null
+                : deleteExpression(Map.of(metadataKey, metadataValue == null ? "" : metadataValue));
+    }
+
+    /**
+     * T1158 — the conjunction of every entry, or {@code null} when any entry cannot
+     * be addressed: dropping one would widen the delete past what was asked.
+     */
+    static String deleteExpression(Map<String, String> match) {
+        if (match == null || match.isEmpty()) {
             return null;
         }
-        return buildMilvusFilterExpression(Map.of(metadataKey, List.of(metadataValue)));
+        Map<String, List<String>> filters = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : match.entrySet()) {
+            if (!StringUtils.hasText(entry.getKey()) || !entry.getKey().matches("\\w+")
+                    || !StringUtils.hasText(entry.getValue())) {
+                return null;
+            }
+            filters.put(entry.getKey(), List.of(entry.getValue()));
+        }
+        return buildMilvusFilterExpression(filters);
     }
 
     @Override
