@@ -39,7 +39,7 @@
              `coverage` profile (active by default) overrides it via
              prepare-agent-integration. -->
         <failsafeArgLine></failsafeArgLine>
-        <spring-boot.version>4.1.1</spring-boot.version>
+        <spring-boot.version>4.1.2</spring-boot.version>
         <!-- viglet-core is now an external project (github.com/openviglet/viglet-core),
              published to GitHub Packages and versioned independently from Turing. -->
         <viglet-core.version>2026.3.13</viglet-core.version>
@@ -55,7 +55,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <minio.version>9.0.3</minio.version>
         <mongodb.version>5.13.0</mongodb.version>
-        <okhttp.version>5.5.0</okhttp.version>
+        <okhttp.version>5.5.1</okhttp.version>
         <resilience4j.version>2.4.0</resilience4j.version>
         <shedlock.version>7.10.1</shedlock.version>
         <testcontainers.version>2.0.5</testcontainers.version>
@@ -397,7 +397,7 @@
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.14.0</version>
+                <version>2.15.0</version>
             </dependency>
             <dependency>
                 <groupId>org.mongodb</groupId>
