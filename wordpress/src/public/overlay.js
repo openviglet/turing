@@ -133,7 +133,8 @@ function build() {
 	} );
 	dialog.addEventListener( 'close', () => opener?.focus?.() );
 
-	search = createSiteSearch();
+	// Tracked, so an opened result is reported through it; as-you-type searches never are.
+	search = createSiteSearch( { track: true } );
 	search.subscribe( render );
 }
 
@@ -273,11 +274,14 @@ function go() {
  * @param {number} i Its index in the list.
  */
 function openResult( i ) {
-	trackResultClick( {
-		documentId: results[ i ].id,
-		position: i + 1,
-		term: input.value.trim(),
-	} );
+	trackResultClick(
+		{
+			documentId: results[ i ].id,
+			position: i + 1,
+			term: input.value.trim(),
+		},
+		search
+	);
 	window.location.assign( results[ i ].url );
 }
 

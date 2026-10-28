@@ -15,9 +15,9 @@ import {
 	createSiteSearch,
 	fetchSpellCheck,
 	postIdOf,
+	reportSearchesWhen,
 	siteFilter,
 	trackResultClick,
-	trackSearch,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
@@ -34,7 +34,8 @@ let lastQuery = '';
 let instant = null;
 // The page's own title, which retitle() puts the query in front of.
 let baseTitle = '';
-// A search the visitor settled on, reported once its answer arrives (see sync()).
+// Whether the search in flight is one the visitor settled on (submitted, picked, opened from a
+// link), which the analytics bus reports, or a filter, sort or page on it, which it does not.
 let settled = false;
 // The sentence last sent to Turing's nl-filters, so a late reading of an older one is dropped.
 let reading = '';
@@ -304,6 +305,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		// than one, so the focus stays there.
 		toggleFacet() {
 			const { item } = getContext();
+			settled = false;
 			search.toggleFacet( item.target );
 			writeUrl( true );
 			if ( ! state.drawerOpen ) {
@@ -341,6 +343,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		removeFilter() {
 			const { filter } = getContext();
+			settled = false;
 			search.toggleFacet( filter.target );
 			writeUrl( true );
 			focusInput();
@@ -383,6 +386,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		clearFilters() {
 			// The SDK's clearAllFilters would drop the site filter too; keep it.
+			settled = false;
 			send( { fq: [ siteFilter ], page: 1 } );
 			writeUrl( true );
 		},
@@ -391,6 +395,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		goToPage() {
 			const { page } = getContext();
+			settled = false;
 			search.goToPage( page.page );
 			writeUrl( true );
 			focusInput();
@@ -412,14 +417,18 @@ const { state, actions } = store( 'viglet-dumont/search', {
 				return;
 			}
 			const { result } = getContext();
-			trackResultClick( {
-				documentId: result.id,
-				position: result.position,
-				term: lastQuery,
-			} );
+			trackResultClick(
+				{
+					documentId: result.id,
+					position: result.position,
+					term: lastQuery,
+				},
+				search
+			);
 		},
 		sortBy( event ) {
 			state.sort = event.target.value;
+			settled = false;
 			send( { page: 1 } );
 			writeUrl( true );
 		},
@@ -442,7 +451,8 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		init() {
 			prerendered = 'success' === state.status;
-			search = createSiteSearch();
+			search = createSiteSearch( { track: true } );
+			reportSearchesWhen( () => settled );
 			if ( state.answerEnabled ) {
 				answerer = createAnswerController( createClient(), {
 					site: config.site,
@@ -1179,10 +1189,6 @@ function sync( s ) {
 		( Math.max( 1, Number( s.request?.page ) || 1 ) - 1 ) *
 		( Number( s.request?.rows ) || state.perPage );
 	state.results = s.documents.map( ( d, i ) => card( d, offset + i + 1 ) );
-	if ( settled && 'success' === s.status ) {
-		settled = false;
-		trackSearch( lastQuery, state.total );
-	}
 	// Promoted results (Search tuning, D172): set for the query in Turing, shown first.
 	state.spotlights = ( response?.spotlights || [] )
 		.filter( ( spot ) => spot.url )

@@ -119,15 +119,18 @@ Two opt-in settings under Search, both off on a fresh install:
   navigation never waits for it. Turing keeps clicks only with search metrics on
   (`TURING_SEARCH_METRICS_ENABLED=true`).
 - **Send search events to Google Analytics**: searches the visitor settled on (not each
-  as-you-type one), no-result searches, refinements and result clicks, as the SDK's
-  `turing_search*` events through the Google tag or Tag Manager the site already loads.
-  The measurement id is optional.
+  as-you-type one, nor a filter, sort or page on one), no-result searches, changed queries
+  and result clicks, as the SDK's `turing_search*` events through the Google tag or Tag
+  Manager the site already loads, with GA4's own `search` and `select_content` beside them so
+  its built-in site-search reports fill. With clicks reported too, a search left without
+  opening a result sends `turing_search_abandoned`. The measurement id is optional.
 
 Events carry no visitor data, and the plugin sets no cookie. With a consent plugin that
 speaks the WP Consent API, nothing is sent until the visitor allows `statistics`. Without
 one, the site decides: `add_filter( 'viglet_dumont_tracking_consent', '__return_false' );`
-sends nothing at all. A theme's own blocks report the same way through `trackSearch()` and
-`trackResultClick()` from `viglet-dumont/search`.
+sends nothing at all. A theme's own blocks report the same way: through
+`createSiteSearch( { track: true } )` and `trackResultClick( click, controller )` from
+`viglet-dumont/search`, or, searching without a tracked controller, `trackSearch()`.
 
 ## Develop
 

@@ -19,6 +19,7 @@ import {
 	createTuringAnalytics,
 	createTuringClient,
 	googleAnalyticsSink,
+	postClick,
 } from '@viglet/turing-sdk';
 import { getConfig, store } from '@wordpress/interactivity';
 
@@ -42,16 +43,40 @@ export function createClient( options = {} ) {
 /**
  * A search controller over this site's documents, search-only by default (no AI answer).
  *
- * @param {Object} options            Overrides.
- * @param {Object} options.params     Initial SearchParams, merged over the site filter.
- * @param {Object} options.controller SearchControllerOptions, e.g. { chat: true }.
+ * With `track`, the controller reports to the analytics bus (D188): the searches the visitor
+ * settles on (never an as-you-type one, which runs in instant mode), and, when the site counts
+ * clicks, a search left without opening a result. Only with the visitor's consent, and with
+ * no session cookie.
+ *
+ * @param {Object}  options            Overrides.
+ * @param {Object}  options.params     Initial SearchParams, merged over the site filter.
+ * @param {Object}  options.controller SearchControllerOptions, e.g. { chat: true }.
+ * @param {boolean} options.track      Report this controller's searches.
  */
-export function createSiteSearch( { params = {}, controller = {} } = {} ) {
+export function createSiteSearch( {
+	params = {},
+	controller = {},
+	track = false,
+} = {} ) {
 	return createSearchController(
 		createClient(),
 		{ site: config.site, locale: config.locale },
 		{ fq: [ siteFilter ], ...params },
-		{ chat: false, ...controller }
+		{
+			chat: false,
+			...( track
+				? {
+						analytics: bus(),
+						consent: trackingAllowed,
+						sessionCookie: false,
+						// A click disarms it through the controller, which happens only when
+						// clicks are counted (trackResultClick()); otherwise every opened result
+						// would read as a search left behind.
+						abandonment: !! config.analytics?.clicks,
+					}
+				: {} ),
+			...controller,
+		}
 	);
 }
 
@@ -86,36 +111,34 @@ export function trackingAllowed() {
 
 let analytics = null;
 
+// Whether the search being answered is one the visitor settled on (reportSearchesWhen()).
+let settled = () => true;
+
+const searchEvents = new Set( [
+	TURING_ANALYTICS_EVENTS.search,
+	TURING_ANALYTICS_EVENTS.searchNoResults,
+	TURING_ANALYTICS_EVENTS.searchRefined,
+] );
+
 /**
- * The SDK's analytics bus, with Google Analytics as its sink when the site sends events
- * there, under the SDK's turing_* names (not yet GA4's search and select_content, Turing
- * T1130). It is never handed to a search controller: the controller would set a 30-day
- * session cookie before consent is asked, and report every as-you-type search (Turing
- * T1129), so the blocks report through trackSearch() and trackResultClick() instead.
+ * Tell the bus which searches are worth reporting. A search controller reports every search
+ * it runs that is not as-you-type, so a filter, a sort or a page would each count as another
+ * search, and fill GA4's site-search report with refinements (Turing T1155). The search
+ * block answers this with whether its current search is one the visitor settled on.
+ *
+ * @param {() => boolean} predicate Called when a search event is about to be sent.
  */
-function bus() {
-	if ( ! analytics ) {
-		const { ga, measurementId } = config.analytics || {};
-		analytics = createTuringAnalytics( {
-			sinks: ga
-				? [
-						googleAnalyticsSink( {
-							measurementId: measurementId || undefined,
-						} ),
-					]
-				: [],
-			context: { site: config.site },
-		} );
-	}
-	return analytics;
+export function reportSearchesWhen( predicate ) {
+	settled = predicate;
 }
 
-// The last search reported, so the next one can be told apart as a refinement.
+// The last search trackSearch() reported, so the next one can be told apart as a refinement.
 let reported = '';
 
 /**
- * Report a search the visitor settled on (submitted, picked, opened from a link), never the
- * searches typing runs on the way there. Nothing personal: the query and a count.
+ * Report a search the visitor settled on, for a theme's own block that searches without a
+ * tracked controller (createSiteSearch( { track: true } ) reports by itself, D188). Nothing
+ * personal: the query and a count.
  *
  * @param {string} query   What was searched for; `*` (browse everything) is not reported.
  * @param {number} results How many results Turing found.
@@ -134,6 +157,33 @@ export function trackSearch( query, results ) {
 		bus().emit( events.searchNoResults, { query: typed } );
 	}
 	reported = typed;
+}
+
+/**
+ * The SDK's analytics bus, with Google Analytics as its sink when the site sends events
+ * there: the turing_* events, and GA4's own `search` and `select_content` beside them so its
+ * site-search reports fill (Turing T1130). The search controllers report through it
+ * (createSiteSearch( { track: true } )); search events of a refinement are held back.
+ */
+function bus() {
+	if ( ! analytics ) {
+		const { ga, measurementId } = config.analytics || {};
+		const google = googleAnalyticsSink( {
+			measurementId: measurementId || undefined,
+			recommended: true,
+		} );
+		analytics = createTuringAnalytics( {
+			sinks: ga
+				? [
+						( event ) =>
+							( ! searchEvents.has( event.name ) || settled() ) &&
+							google( event ),
+					]
+				: [],
+			context: { site: config.site },
+		} );
+	}
+	return analytics;
 }
 
 /**
@@ -311,40 +361,41 @@ export const compare = {
 
 /**
  * Report the result a visitor opened: to Turing (`POST /api/sn/{site}/click`, which its
- * click-through rates read) and to the analytics bus. Sent with `keepalive`, so it outlives
- * the navigation the click starts and never delays it; the SDK's postClick would first ask
- * for a CSRF token and could be cut off by the page unloading (Turing T1128).
+ * click-through rates read) and to the analytics bus. The SDK sends it with `keepalive`, so it
+ * outlives the navigation the click starts (T1128). Opened from a search controller's results,
+ * it goes through that controller, which also disarms the search's abandonment (D188).
  *
  * @param {Object} click            The click.
  * @param {string} click.documentId Turing's id of the document opened.
  * @param {number} click.position   Its rank in the results, from 1 across pages.
  * @param {string} click.term       The query that listed it.
+ * @param {Object} controller       The search controller that listed it, if any.
  */
-export function trackResultClick( { documentId, position, term } ) {
+export function trackResultClick(
+	{ documentId, position, term },
+	controller = null
+) {
 	if ( ! documentId || ! trackingAllowed() ) {
 		return;
 	}
-	if ( config.analytics.clicks ) {
-		createClient()
-			.fetchRaw(
-				`/sn/${ encodeURIComponent( config.site ) }/click`,
-				{
-					method: 'POST',
-					keepalive: true,
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify( {
-						term,
-						documentId,
-						position,
-						locale: config.locale,
-					} ),
-				},
-				false
-			)
-			.catch( () => {
-				// A lost click is not something the visitor needs to see.
-			} );
+	if ( ! config.analytics.clicks ) {
+		bus().emit( TURING_ANALYTICS_EVENTS.searchResultClick, {
+			query: term,
+			document_id: documentId,
+			position,
+		} );
+		return;
 	}
+	if ( controller ) {
+		controller.trackResultClick( documentId, position, term );
+		return;
+	}
+	void postClick( createClient(), config.site, {
+		term,
+		documentId,
+		position,
+		locale: config.locale,
+	} );
 	bus().emit( TURING_ANALYTICS_EVENTS.searchResultClick, {
 		query: term,
 		document_id: documentId,

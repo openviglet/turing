@@ -106,6 +106,7 @@ test( 'only a search the visitor settles on is reported, not each one typing run
 	expect( await events( page ) ).toEqual( [] );
 
 	await page.keyboard.press( 'Enter' );
+	// With GA4's own `search` beside it, so its site-search reports fill (D188).
 	await expect
 		.poll( () => events( page ) )
 		.toEqual( [
@@ -113,7 +114,81 @@ test( 'only a search the visitor settles on is reported, not each one typing run
 				'turing_search',
 				expect.objectContaining( { query: 'workshop', results: 4 } ),
 			],
+			[
+				'search',
+				expect.objectContaining( { search_term: 'workshop' } ),
+			],
 		] );
+} );
+
+test( 'a filter, a sort or a page on a search is not reported as another search', async ( {
+	page,
+	seed,
+} ) => {
+	await stub( page );
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await expect( titles( page ) ).toHaveCount( 4 );
+	await expect.poll( async () => ( await events( page ) ).length ).toBe( 2 );
+
+	await block( page )
+		.locator( '.viglet-dumont-search__facet' )
+		.filter( { has: page.locator( 'summary', { hasText: 'Seats' } ) } )
+		.locator( 'label' )
+		.filter( { hasText: '40' } )
+		.locator( 'input' )
+		.click();
+	await expect( titles( page ) ).toHaveCount( 3 );
+	await block( page ).getByLabel( 'Sort by' ).selectOption( { index: 1 } );
+	await expect( titles( page ) ).toHaveCount( 3 );
+	await page.waitForLoadState( 'networkidle' );
+	expect(
+		( await events( page ) ).filter( ( [ name ] ) =>
+			[ 'turing_search', 'search' ].includes( name )
+		)
+	).toHaveLength( 2 );
+} );
+
+test( 'a search left without opening a result is reported once as abandoned', async ( {
+	page,
+	seed,
+} ) => {
+	await stub( page );
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await expect( titles( page ) ).toHaveCount( 4 );
+	await expect.poll( async () => ( await events( page ) ).length ).toBe( 2 );
+
+	// Leaving the page is what the SDK watches for (tab hidden or unload).
+	await page.goto( '/' );
+	const abandoned = ( await events( page ) ).filter(
+		( [ name ] ) => 'turing_search_abandoned' === name
+	);
+	expect( abandoned ).toEqual( [
+		[
+			'turing_search_abandoned',
+			expect.objectContaining( { query: 'workshop', results: 4 } ),
+		],
+	] );
+} );
+
+test( 'a search whose result is opened is not reported as abandoned', async ( {
+	page,
+	seed,
+} ) => {
+	await stub( page );
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await expect( titles( page ) ).toHaveCount( 4 );
+	const title = await titles( page ).first().textContent();
+	await titles( page ).first().click();
+	await expect( page ).toHaveTitle( new RegExp( `^${ title }` ) );
+
+	const received = await events( page );
+	expect( received ).toContainEqual( [
+		'select_content',
+		expect.objectContaining( { content_type: 'search_result' } ),
+	] );
+	expect(
+		received.filter( ( [ name ] ) => 'turing_search_abandoned' === name )
+	).toEqual( [] );
 } );
 
 test( 'nothing is sent while the consent plugin has no statistics consent', async ( {
