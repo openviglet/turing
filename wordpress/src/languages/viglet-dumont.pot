@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-28T12:29:29+00:00\n"
+"POT-Creation-Date: 2026-10-28T17:39:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -510,22 +510,22 @@ msgstr ""
 msgid "Where they differ"
 msgstr ""
 
-#: src/blocks/copilot/render.php:16
-#: src/admin/js/copilot-block-editor.js:34
-#: src/admin/js/copilot-block-editor.js:37
-#: src/admin/js/copilot-block-editor.js:57
+#: src/blocks/copilot/render.php:18
+#: src/admin/js/copilot-block-editor.js:36
+#: src/admin/js/copilot-block-editor.js:39
+#: src/admin/js/copilot-block-editor.js:68
 msgid "Ask the catalog"
 msgstr ""
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:27
+#: src/blocks/copilot/render.php:30
 #: src/blocks/search/render.php:80
 #, php-format
 msgid "Add to cart: %s"
 msgstr ""
 
 #. translators: %s: a product's name.
-#: src/blocks/copilot/render.php:30
+#: src/blocks/copilot/render.php:33
 #: src/blocks/related/render.php:114
 #: src/blocks/search/render.php:84
 #, php-format
@@ -533,57 +533,129 @@ msgid "Compare %s"
 msgstr ""
 
 #. translators: %d: how many products, two to four.
-#: src/blocks/copilot/render.php:32
+#: src/blocks/copilot/render.php:35
 #: src/blocks/related/render.php:53
 #: src/blocks/search/render.php:82
 #, php-format
 msgid "Compare %d products"
 msgstr ""
 
-#: src/blocks/copilot/render.php:33
+#: src/blocks/copilot/render.php:36
 #: src/blocks/search/render.php:85
 msgid "Added to your cart."
 msgstr ""
 
-#: src/blocks/copilot/render.php:34
+#: src/blocks/copilot/render.php:37
 #: src/blocks/search/render.php:86
 msgid "It could not be added to the cart."
 msgstr ""
 
-#: src/blocks/copilot/render.php:35
+#: src/blocks/copilot/render.php:38
 msgid "Looking through the catalog…"
 msgstr ""
 
-#: src/blocks/copilot/render.php:36
+#: src/blocks/copilot/render.php:39
 msgid "The catalog could not answer right now."
 msgstr ""
 
-#: src/blocks/copilot/render.php:37
+#: src/blocks/copilot/render.php:40
 msgid "Nothing in the catalog matches that."
 msgstr ""
 
-#: src/blocks/copilot/render.php:61
+#: src/blocks/copilot/render.php:53
+#: src/blocks/copilot/render.php:157
+msgid "What are you looking for?"
+msgstr ""
+
+#: src/blocks/copilot/render.php:54
+#: src/blocks/copilot/render.php:166
+msgid "Ask"
+msgstr ""
+
+#: src/blocks/copilot/render.php:55
+msgid "Describe your plan"
+msgstr ""
+
+#: src/blocks/copilot/render.php:56
+msgid "Build my kit"
+msgstr ""
+
+#: src/blocks/copilot/render.php:57
+msgid "Putting your kit together…"
+msgstr ""
+
+#: src/blocks/copilot/render.php:58
+msgid "The catalog has nothing for that plan."
+msgstr ""
+
+#. translators: %s: the needs the catalog has no product for, comma-separated.
+#: src/blocks/copilot/render.php:60
+#, php-format
+msgid "Nothing in the catalog yet for: %s."
+msgstr ""
+
+#. translators: %s: the product's name.
+#: src/blocks/copilot/render.php:62
+#, php-format
+msgid "Keep %s in the kit"
+msgstr ""
+
+#. translators: %d: how many products.
+#: src/blocks/copilot/render.php:64
+#, php-format
+msgid "Add %d products to the cart"
+msgstr ""
+
+#: src/blocks/copilot/render.php:65
+msgid "Add 1 product to the cart"
+msgstr ""
+
+#. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
+#: src/blocks/copilot/render.php:67
+#, php-format
+msgid "Added %1$d to your cart. Cart total: %2$s."
+msgstr ""
+
+#. translators: 1: how many were added, 2: how many were asked for.
+#: src/blocks/copilot/render.php:69
+#, php-format
+msgid "Added %1$d of %2$d to your cart; the rest could not be added."
+msgstr ""
+
+#: src/blocks/copilot/render.php:83
+msgid "Mode"
+msgstr ""
+
+#: src/blocks/copilot/render.php:84
+msgid "Ask a question"
+msgstr ""
+
+#: src/blocks/copilot/render.php:85
+msgid "Plan a kit"
+msgstr ""
+
+#: src/blocks/copilot/render.php:99
 #: src/blocks/search/parts/main.php:72
 msgid "Was"
 msgstr ""
 
-#: src/blocks/copilot/render.php:63
+#: src/blocks/copilot/render.php:101
 #: src/blocks/search/parts/main.php:75
 msgid "Add to cart"
 msgstr ""
 
-#: src/blocks/copilot/render.php:67
+#: src/blocks/copilot/render.php:105
 #: src/blocks/related/render.php:115
 #: src/blocks/search/parts/main.php:79
 msgid "Compare"
 msgstr ""
 
-#: src/blocks/copilot/render.php:80
-msgid "What are you looking for?"
+#: src/blocks/copilot/render.php:134
+msgid "Out of stock"
 msgstr ""
 
-#: src/blocks/copilot/render.php:89
-msgid "Ask"
+#: src/blocks/copilot/render.php:143
+msgid "Guides for this plan"
 msgstr ""
 
 #: src/blocks/related/render.php:34
@@ -1142,13 +1214,13 @@ msgid "%d documents WordPress no longer publishes removed."
 msgstr ""
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-dumont-indexer.php:207
+#: src/includes/class-viglet-dumont-indexer.php:208
 #, php-format
 msgid "Indexing complete. %d documents indexed."
 msgstr ""
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-dumont-indexer.php:209
+#: src/includes/class-viglet-dumont-indexer.php:210
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr ""
@@ -1242,19 +1314,19 @@ msgid "Featured image URL"
 msgstr ""
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:759
+#: src/includes/class-viglet-dumont-mapping.php:760
 #, php-format
 msgid "Up to %s"
 msgstr ""
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:763
+#: src/includes/class-viglet-dumont-mapping.php:764
 #, php-format
 msgid "%s or more"
 msgstr ""
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:767
+#: src/includes/class-viglet-dumont-mapping.php:768
 #, php-format
 msgid "%1$s – %2$s"
 msgstr ""
@@ -1481,11 +1553,11 @@ msgstr ""
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr ""
 
-#: src/viglet-dumont.php:844
+#: src/viglet-dumont.php:846
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:869
+#: src/viglet-dumont.php:871
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -2207,7 +2279,7 @@ msgid "A button that opens a chat answering from this site’s posts, with the p
 msgstr ""
 
 #: src/admin/js/compare-block-editor.js:36
-#: src/admin/js/copilot-block-editor.js:36
+#: src/admin/js/copilot-block-editor.js:38
 #: src/admin/js/related-block-editor.js:47
 msgid "Heading"
 msgstr ""
@@ -2216,16 +2288,24 @@ msgstr ""
 msgid "Shows the products a shopper ticked Compare on in the search results, side by side. The search results link here once this page is published."
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:42
+#: src/admin/js/copilot-block-editor.js:44
 #: src/admin/js/search-block-editor.js:110
 msgid "Placeholder"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:43
+#: src/admin/js/copilot-block-editor.js:45
 msgid "A waterproof jacket under 200"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:58
+#: src/admin/js/copilot-block-editor.js:54
+msgid "Offer Build my kit"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:55
+msgid "A visitor describes a plan and gets the products it needs, grouped by need, to put in the cart together."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:69
 msgid "Visitors ask in plain words and Turing’s catalog copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
 msgstr ""
 
@@ -2564,7 +2644,7 @@ msgstr ""
 
 #: src/blocks/copilot/block.json
 msgctxt "block description"
-msgid "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart."
+msgid "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart, and a described plan can be turned into a kit of products, grouped by what the plan needs."
 msgstr ""
 
 #: src/blocks/copilot/block.json

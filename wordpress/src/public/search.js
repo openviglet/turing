@@ -209,6 +209,46 @@ export async function addToCart( productId ) {
 }
 
 /**
+ * An amount the Store API gives in minor units, formatted in the shop's currency.
+ *
+ * @param {number|string} minor    The amount, in minor units.
+ * @param {Object}        currency The Store API's currency_code and currency_minor_unit.
+ * @return {string} The amount as the page's language writes it.
+ */
+function shopMoney( minor, currency ) {
+	return new Intl.NumberFormat( document.documentElement.lang || undefined, {
+		style: 'currency',
+		currency: currency.currency_code || config.shop.currency,
+	} ).format(
+		Number( minor ) / 10 ** Number( currency.currency_minor_unit ?? 2 )
+	);
+}
+
+/**
+ * The visitor's cart total as WooCommerce computes it (D201), never added up here: taxes,
+ * coupons and shipping are the shop's to apply.
+ *
+ * @return {Promise<string>} The total, formatted; empty when there is no shop or no answer.
+ */
+export async function cartTotal() {
+	if ( ! config.shop ) {
+		return '';
+	}
+	try {
+		const response = await window.fetch( `${ config.shop.storeApi }cart`, {
+			credentials: 'same-origin',
+		} );
+		if ( ! response.ok ) {
+			return '';
+		}
+		const totals = ( await response.json() ).totals || {};
+		return shopMoney( totals.total_price, totals );
+	} catch {
+		return '';
+	}
+}
+
+/**
  * A WooCommerce product as the shop sells it now, from the Store API: its price in the
  * shop's currency (and the regular one when on sale) and whether it can be bought.
  *
@@ -230,14 +270,7 @@ export async function shopProduct( productId ) {
 		}
 		const product = await response.json();
 		const prices = product.prices || {};
-		const money = ( minor ) =>
-			new Intl.NumberFormat( document.documentElement.lang || undefined, {
-				style: 'currency',
-				currency: prices.currency_code || config.shop.currency,
-			} ).format(
-				Number( minor ) /
-					10 ** Number( prices.currency_minor_unit ?? 2 )
-			);
+		const money = ( minor ) => shopMoney( minor, prices );
 		return {
 			price: money( prices.price ),
 			regular:

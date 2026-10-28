@@ -5,7 +5,7 @@
 	"title": "Ask the catalog",
 	"category": "widgets",
 	"icon": "format-chat",
-	"description": "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart.",
+	"description": "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart, and a described plan can be turned into a kit of products, grouped by what the plan needs.",
 	"keywords": [ "copilot", "assistant", "shop", "turing" ],
 	"textdomain": "viglet-dumont",
 	"attributes": {
@@ -16,6 +16,10 @@
 		"placeholder": {
 			"type": "string",
 			"default": ""
+		},
+		"kit": {
+			"type": "boolean",
+			"default": true
 		}
 	},
 	"supports": {

@@ -1,5 +1,6 @@
 /**
- * The Ask the catalog block in the editor: its heading and placeholder. The conversation runs
+ * The Ask the catalog block in the editor: its heading, placeholder and whether it offers the
+ * Build my kit mode (D201). The conversation runs
  * only on the site (render.php and public/copilot.js), so the editor shows a placeholder and
  * there is nothing to save.
  *
@@ -13,13 +14,14 @@
 	const el = wp.element.createElement;
 	const __ = wp.i18n.__;
 	const { useBlockProps, InspectorControls } = wp.blockEditor;
-	const { PanelBody, Placeholder, TextControl } = wp.components;
+	const { PanelBody, Placeholder, TextControl, ToggleControl } =
+		wp.components;
 
 	/**
 	 * The block in the editor.
 	 *
 	 * @param {Object}                       props               The block's props.
-	 * @param {Object}                       props.attributes    heading and placeholder.
+	 * @param {Object}                       props.attributes    heading, placeholder and kit.
 	 * @param {(attributes: Object) => void} props.setAttributes Updates them.
 	 */
 	function Edit( { attributes, setAttributes } ) {
@@ -47,6 +49,15 @@
 						value: attributes.placeholder,
 						onChange: ( placeholder ) =>
 							setAttributes( { placeholder } ),
+					} ),
+					el( ToggleControl, {
+						label: __( 'Offer Build my kit', 'viglet-dumont' ),
+						help: __(
+							'A visitor describes a plan and gets the products it needs, grouped by need, to put in the cart together.',
+							'viglet-dumont'
+						),
+						checked: attributes.kit,
+						onChange: ( kit ) => setAttributes( { kit } ),
 					} )
 				)
 			),

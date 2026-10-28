@@ -644,13 +644,13 @@ msgid "Nothing is listening at %s on that port: Turing is down, or the port is w
 msgstr "Nada responde em %s nessa porta: o Turing está fora do ar, ou a porta está errada."
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-dumont-indexer.php:207
+#: src/includes/class-viglet-dumont-indexer.php:208
 #, php-format
 msgid "Indexing complete. %d documents indexed."
 msgstr "Indexação concluída. %d documentos indexados."
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-dumont-indexer.php:209
+#: src/includes/class-viglet-dumont-indexer.php:210
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
@@ -773,11 +773,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:844
+#: src/viglet-dumont.php:846
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:869
+#: src/viglet-dumont.php:871
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1118,7 +1118,7 @@ msgstr "Vale quando o post for salvo."
 msgid "Reindex now"
 msgstr "Reindexar agora"
 
-#: src/admin/js/copilot-block-editor.js:42
+#: src/admin/js/copilot-block-editor.js:44
 #: src/admin/js/search-block-editor.js:110
 msgid "Placeholder"
 msgstr "Texto de exemplo"
@@ -1744,7 +1744,7 @@ msgid "Related content"
 msgstr "Conteúdo relacionado"
 
 #: src/admin/js/compare-block-editor.js:36
-#: src/admin/js/copilot-block-editor.js:36
+#: src/admin/js/copilot-block-editor.js:38
 #: src/admin/js/related-block-editor.js:47
 msgid "Heading"
 msgstr "Título"
@@ -1910,19 +1910,19 @@ msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:759
+#: src/includes/class-viglet-dumont-mapping.php:760
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:763
+#: src/includes/class-viglet-dumont-mapping.php:764
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:767
+#: src/includes/class-viglet-dumont-mapping.php:768
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
@@ -2048,29 +2048,29 @@ msgstr "Produto: %s"
 msgid "Stock"
 msgstr "Estoque"
 
-#: src/blocks/copilot/render.php:61
+#: src/blocks/copilot/render.php:99
 #: src/blocks/search/parts/main.php:72
 msgid "Was"
 msgstr "De"
 
-#: src/blocks/copilot/render.php:63
+#: src/blocks/copilot/render.php:101
 #: src/blocks/search/parts/main.php:75
 msgid "Add to cart"
 msgstr "Adicionar ao carrinho"
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:27
+#: src/blocks/copilot/render.php:30
 #: src/blocks/search/render.php:80
 #, php-format
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
-#: src/blocks/copilot/render.php:33
+#: src/blocks/copilot/render.php:36
 #: src/blocks/search/render.php:85
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
-#: src/blocks/copilot/render.php:34
+#: src/blocks/copilot/render.php:37
 #: src/blocks/search/render.php:86
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
@@ -2184,38 +2184,40 @@ msgstr "Adicionar um sinônimo: “%s”"
 msgid "Add a synonym"
 msgstr "Adicionar um sinônimo"
 
-#: src/blocks/copilot/render.php:16
-#: src/admin/js/copilot-block-editor.js:34
-#: src/admin/js/copilot-block-editor.js:37
-#: src/admin/js/copilot-block-editor.js:57
+#: src/blocks/copilot/render.php:18
+#: src/admin/js/copilot-block-editor.js:36
+#: src/admin/js/copilot-block-editor.js:39
+#: src/admin/js/copilot-block-editor.js:68
 msgid "Ask the catalog"
 msgstr "Pergunte ao catálogo"
 
-#: src/blocks/copilot/render.php:35
+#: src/blocks/copilot/render.php:38
 msgid "Looking through the catalog…"
 msgstr "Procurando no catálogo…"
 
-#: src/blocks/copilot/render.php:36
+#: src/blocks/copilot/render.php:39
 msgid "The catalog could not answer right now."
 msgstr "O catálogo não pôde responder agora."
 
-#: src/blocks/copilot/render.php:37
+#: src/blocks/copilot/render.php:40
 msgid "Nothing in the catalog matches that."
 msgstr "Nada no catálogo corresponde a isso."
 
-#: src/blocks/copilot/render.php:80
+#: src/blocks/copilot/render.php:53
+#: src/blocks/copilot/render.php:157
 msgid "What are you looking for?"
 msgstr "O que você procura?"
 
-#: src/blocks/copilot/render.php:89
+#: src/blocks/copilot/render.php:54
+#: src/blocks/copilot/render.php:166
 msgid "Ask"
 msgstr "Perguntar"
 
-#: src/admin/js/copilot-block-editor.js:43
+#: src/admin/js/copilot-block-editor.js:45
 msgid "A waterproof jacket under 200"
 msgstr "Uma jaqueta impermeável por menos de 200"
 
-#: src/admin/js/copilot-block-editor.js:58
+#: src/admin/js/copilot-block-editor.js:69
 msgid "Visitors ask in plain words and Turing’s catalog copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
 msgstr "Os visitantes perguntam com palavras comuns e o copiloto de catálogo do Turing responde a partir deste site, citando os itens. Aparece só quando o Turing tem um modelo de linguagem para isso."
 
@@ -2223,11 +2225,6 @@ msgstr "Os visitantes perguntam com palavras comuns e o copiloto de catálogo do
 msgctxt "block title"
 msgid "Ask the catalog"
 msgstr "Pergunte ao catálogo"
-
-#: src/blocks/copilot/block.json
-msgctxt "block description"
-msgid "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart."
-msgstr "Uma conversa com o copiloto de catálogo do Turing: um pedido em palavras comuns respondido a partir do conteúdo deste site, com os itens que ele cita. Numa loja WooCommerce cada produto citado mostra o preço e pode ir para o carrinho."
 
 #: src/blocks/copilot/block.json
 msgctxt "block keyword"
@@ -2366,14 +2363,14 @@ msgstr "(diferente)"
 msgid "Where they differ"
 msgstr "Onde diferem"
 
-#: src/blocks/copilot/render.php:67
+#: src/blocks/copilot/render.php:105
 #: src/blocks/related/render.php:115
 #: src/blocks/search/parts/main.php:79
 msgid "Compare"
 msgstr "Comparar"
 
 #. translators: %d: how many products, two to four.
-#: src/blocks/copilot/render.php:32
+#: src/blocks/copilot/render.php:35
 #: src/blocks/related/render.php:53
 #: src/blocks/search/render.php:82
 #, php-format
@@ -2381,7 +2378,7 @@ msgid "Compare %d products"
 msgstr "Comparar %d produtos"
 
 #. translators: %s: a product's name.
-#: src/blocks/copilot/render.php:30
+#: src/blocks/copilot/render.php:33
 #: src/blocks/related/render.php:114
 #: src/blocks/search/render.php:84
 #, php-format
@@ -2668,3 +2665,86 @@ msgstr "Bloco Pergunte ao catálogo"
 #: assets/admin/health.js:89
 msgid "Shown by"
 msgstr "Aparece em"
+
+#: src/blocks/copilot/render.php:55
+msgid "Describe your plan"
+msgstr "Descreva seu plano"
+
+#: src/blocks/copilot/render.php:56
+msgid "Build my kit"
+msgstr "Montar meu kit"
+
+#: src/blocks/copilot/render.php:57
+msgid "Putting your kit together…"
+msgstr "Montando seu kit…"
+
+#: src/blocks/copilot/render.php:58
+msgid "The catalog has nothing for that plan."
+msgstr "O catálogo não tem nada para esse plano."
+
+#. translators: %s: the needs the catalog has no product for, comma-separated.
+#: src/blocks/copilot/render.php:60
+#, php-format
+msgid "Nothing in the catalog yet for: %s."
+msgstr "Ainda não há nada no catálogo para: %s."
+
+#. translators: %s: the product's name.
+#: src/blocks/copilot/render.php:62
+#, php-format
+msgid "Keep %s in the kit"
+msgstr "Manter %s no kit"
+
+#. translators: %d: how many products.
+#: src/blocks/copilot/render.php:64
+#, php-format
+msgid "Add %d products to the cart"
+msgstr "Adicionar %d produtos ao carrinho"
+
+#: src/blocks/copilot/render.php:65
+msgid "Add 1 product to the cart"
+msgstr "Adicionar 1 produto ao carrinho"
+
+#. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
+#: src/blocks/copilot/render.php:67
+#, php-format
+msgid "Added %1$d to your cart. Cart total: %2$s."
+msgstr "%1$d adicionados ao carrinho. Total do carrinho: %2$s."
+
+#. translators: 1: how many were added, 2: how many were asked for.
+#: src/blocks/copilot/render.php:69
+#, php-format
+msgid "Added %1$d of %2$d to your cart; the rest could not be added."
+msgstr "%1$d de %2$d adicionados ao carrinho; os demais não puderam ser adicionados."
+
+#: src/blocks/copilot/render.php:83
+msgid "Mode"
+msgstr "Modo"
+
+#: src/blocks/copilot/render.php:84
+msgid "Ask a question"
+msgstr "Fazer uma pergunta"
+
+#: src/blocks/copilot/render.php:85
+msgid "Plan a kit"
+msgstr "Planejar um kit"
+
+#: src/blocks/copilot/render.php:134
+msgid "Out of stock"
+msgstr "Fora de estoque"
+
+#: src/blocks/copilot/render.php:143
+msgid "Guides for this plan"
+msgstr "Guias para este plano"
+
+#: src/admin/js/copilot-block-editor.js:54
+msgid "Offer Build my kit"
+msgstr "Oferecer Montar meu kit"
+
+#: src/admin/js/copilot-block-editor.js:55
+msgid "A visitor describes a plan and gets the products it needs, grouped by need, to put in the cart together."
+msgstr "O visitante descreve um plano e recebe os produtos de que ele precisa, agrupados por necessidade, para colocar no carrinho de uma vez."
+
+#: src/blocks/copilot/block.json
+msgctxt "block description"
+msgid "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart, and a described plan can be turned into a kit of products, grouped by what the plan needs."
+msgstr "Uma conversa com o copiloto de catálogo do Turing: um pedido em palavras simples respondido com o conteúdo deste site, citando os itens. Numa loja WooCommerce, cada produto citado mostra o preço e pode ir para o carrinho, e um plano descrito pode virar um kit de produtos, agrupados pelo que o plano precisa."

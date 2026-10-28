@@ -75,3 +75,99 @@
 	margin: 1rem 0;
 	text-align: right;
 }
+
+/* Build my kit (D201): a mode switch, then the plan's needs, each with its products. */
+.viglet-dumont-copilot__modes {
+	display: inline-flex;
+	gap: 0;
+	margin: 0 0 1rem;
+	border: 1px solid currentcolor;
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.viglet-dumont-copilot__modes button {
+	background: transparent;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	padding: 0.35rem 1rem;
+}
+
+.viglet-dumont-copilot__modes button[aria-pressed="true"] {
+	background: var(--wp--preset--color--contrast, #111);
+	color: var(--wp--preset--color--base, #fff);
+}
+
+.viglet-dumont-copilot__kit {
+	margin-bottom: 1.5rem;
+}
+
+.viglet-dumont-copilot__kit-summary {
+	margin: 0 0 1rem;
+}
+
+.viglet-dumont-copilot__stages,
+.viglet-dumont-copilot__kit-items,
+.viglet-dumont-copilot__guides ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.viglet-dumont-copilot__stage {
+	margin-bottom: 1.25rem;
+}
+
+.viglet-dumont-copilot__stage h3,
+.viglet-dumont-copilot__guides h3 {
+	font-size: 1em;
+	margin: 0 0 0.25rem;
+}
+
+.viglet-dumont-copilot__stage-reason {
+	margin: 0 0 0.5rem;
+	opacity: 0.8;
+}
+
+.viglet-dumont-copilot__kit-item {
+	align-items: center;
+	display: flex;
+	gap: 0.75rem;
+	padding: 0.4rem 0;
+}
+
+.viglet-dumont-copilot__kit-name {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.viglet-dumont-copilot__kit-reason {
+	font-size: 0.875em;
+	opacity: 0.75;
+}
+
+/* Said in words rather than faded: a faded name fails contrast and reads as disabled text. */
+.viglet-dumont-copilot__out {
+	border: 1px solid currentcolor;
+	border-radius: 999px;
+	font-size: 0.8125em;
+	padding: 0 0.5rem;
+	white-space: nowrap;
+}
+
+.viglet-dumont-copilot__unfilled {
+	font-style: italic;
+	margin: 0 0 1rem;
+}
+
+.viglet-dumont-copilot__guides {
+	margin: 0 0 1rem;
+}
+
+.viglet-dumont-copilot__kit-cart {
+	margin: 1rem 0 0.5rem;
+}
