@@ -14,6 +14,10 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block CC — Lucene engine search with synonyms
+
+- 📋 **T1168** (deps: —) **On the Lucene engine, a restart drops every SN site's synonyms from search, though they stay configured** — Synonym searches silently answer nothing after any deploy or container restart, until someone re-saves a synonym. → §CXIV.2
+
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

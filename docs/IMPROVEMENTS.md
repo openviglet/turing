@@ -29,6 +29,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block CC — Lucene engine search with synonyms
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2143,6 +2145,36 @@ silently. Found while building trabalharei's local Turing and import proof.
 ## CXIII LLM gateway parity with the OpenAI wire
 
 ## CXIV Lucene engine search with synonyms
+
+### CXIV.2 Lucene synonyms survive a restart (T1168)
+
+**Where it happened.** Dumont's WordPress e2e stack (`turing-ce:local`, Lucene engine,
+build `3777bc8d`). The Docker daemon restarted and the `turing` container came back with
+`docker start`. On the Demo SN site, `GET /api/sn/Demo/search?q=rucksack` then answered
+0 results, and so did `raincoat`, while `backpack` still matched. The synonyms were
+still configured: the site's tuning listed `rucksack | backpack | daypack` and `raincoat
+| rain jacket | waterproof jacket | waterproof`. Before the restart they matched;
+Dumont's demo curated specs (`tests/e2e/demo/curated.spec.mjs`) went red on four
+searches.
+
+**Why.** On Lucene, query-time synonyms live in `TurLuceneSynonymRegistry`, an in-memory
+map that `TurLuceneSearchEnginePlugin.applySynonyms` fills. The only caller is
+`TurSNSynonymApplyService`, reached from `TurSNSiteSynonymAPI` when synonyms are saved.
+No startup step re-applies the stored ones, so every restart empties the registry and
+`queryAnalyzer` falls back to `TurLuceneFoldingAnalyzer` with no error and nothing
+logged.
+
+**What it should do.** On application ready, for each SN site locale whose engine
+`supportsSynonyms()`, call `TurSNSynonymApplyService.applyAll(site)`, the same path a
+save takes, and log how many rules each core received. A site whose apply fails logs the
+reason and keeps serving.
+
+**Workaround used.** None in Dumont; re-saving one synonym in the console re-applies the
+set.
+
+**Gate.** An integration test that saves synonyms, recreates the plugin and registry the
+way a restart does, runs the startup hook, and finds `q=rucksack` answering through the
+synonym.
 
 ## CXV turing.viglet.org relevance pass
 
