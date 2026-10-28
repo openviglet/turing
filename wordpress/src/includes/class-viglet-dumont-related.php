@@ -58,14 +58,16 @@ class Viglet_Dumont_Related {
 	/**
 	 * The post's content with the Related content block after it (`the_content`): only on
 	 * the post being viewed, of a chosen type, and only when neither the content nor the
-	 * block template drawing it holds the block already (D210).
+	 * block template drawing it holds the block already (D210). Never into an excerpt being
+	 * built from the content (D222): `wp_trim_excerpt()` runs `the_content` inside
+	 * `get_the_excerpt`, and would keep the box's titles and dates as the post's summary.
 	 *
 	 * @param string $content The post's content.
 	 * @return string
 	 */
 	public function append( string $content ): string {
 		$types = (array) ( $this->settings['related_after'] ?? array() );
-		if ( ! is_singular( $types ) || ! in_the_loop() || ! is_main_query() || has_block( 'viglet-dumont/related' ) || $this->template_holds_block() ) {
+		if ( doing_filter( 'get_the_excerpt' ) || ! is_singular( $types ) || ! in_the_loop() || ! is_main_query() || has_block( 'viglet-dumont/related' ) || $this->template_holds_block() ) {
 			return $content;
 		}
 

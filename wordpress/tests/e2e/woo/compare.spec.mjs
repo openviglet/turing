@@ -86,6 +86,10 @@ test( 'one jacket ticked in the results and one in a product page’s Related co
 		.check();
 
 	await page.goto( `/?p=${ await productId( page, 'Rain jacket' ) }` );
+	// The summary under the price is the product's own, not the box's text (D222).
+	await expect(
+		page.locator( '.wp-block-post-excerpt__excerpt' )
+	).toHaveText( /^A Red jacket for the field\.\s*$/ );
 	const related = page.locator( '.wp-block-viglet-dumont-related' );
 	const boxes = related.getByRole( 'checkbox', { name: /^Compare / } );
 	await expect( boxes.first() ).toBeVisible();

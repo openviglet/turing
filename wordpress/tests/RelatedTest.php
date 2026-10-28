@@ -134,6 +134,7 @@ final class RelatedTest extends PluginTestCase {
 	 * @param array $parts  Each template part's markup, by `theme//slug`.
 	 */
 	private function viewing( array $parsed = array(), array $parts = array(), bool $in_content = false ): void {
+		Functions\when( 'doing_filter' )->justReturn( false );
 		Functions\when( 'is_singular' )->justReturn( true );
 		Functions\when( 'in_the_loop' )->justReturn( true );
 		Functions\when( 'is_main_query' )->justReturn( true );
@@ -168,6 +169,14 @@ final class RelatedTest extends PluginTestCase {
 
 		$this->assertSame( '<p>Body</p><related/>', $this->append( null ), 'no block template' );
 		$this->assertSame( '<p>Body</p><related/>', $this->append( 'single' ) );
+	}
+
+	public function test_an_excerpt_built_from_the_content_gets_no_box(): void {
+		$this->viewing();
+		// wp_trim_excerpt() runs the_content inside get_the_excerpt (D222).
+		Functions\when( 'doing_filter' )->alias( static fn ( $hook ) => 'get_the_excerpt' === $hook );
+
+		$this->assertSame( '<p>Body</p>', $this->append( null ) );
 	}
 
 	public function test_content_that_holds_the_block_gets_no_second_one(): void {
