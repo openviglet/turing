@@ -29,6 +29,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2280,3 +2282,30 @@ sends the caller to the server log.
 
 What the SDK reports to analytics, and when: the search, click and abandonment events a
 host hands to Google Analytics, and the consent that gates them.
+
+## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+### CLVIII.1 Retrieve follow-ups as standalone questions (T1157)
+
+**Where it happened.** Dumont D175, the WordPress Site assistant block, drives the SDK's
+`createChatController` against `POST /api/sn/{site}/chat/conversation` and sends every
+message of the conversation each turn. On the run-docker stack with OpenAI, the live-LLM
+spec (`wordpress/tests/e2e/ai/assistant.spec.mjs`) asked "When do applications for the
+research grant close?" and got the right date, citing the "Research grant 2026" post.
+The follow-up "Where do I send it?" came back "I'm sorry, but that information is not
+available in the website's database.", although that post says "Send the form to the
+Office of Research."
+
+**Why.** `TurSNGenAi.retrieveDocuments` searches with `latestUserQuery` alone (line
+754): a follow-up that leans on an earlier turn ("it", "and the other one?", "how
+much?") retrieves nothing, and the T329 refusal answers. The model has the whole history
+but not the passages.
+
+**What it should do.** Before retrieval on a turn that has history, rewrite the question
+into a standalone one from the conversation (a short LLM call, or the last user turns
+joined as a cheap fallback), retrieve with that, and keep answering the visitor's own
+words. Skip it on a first turn. Record the rewritten query in the trace so Live Preview
+shows what was searched.
+
+**Workaround.** None: the Dumont spec checks that the follow-up reaches Turing with the
+whole history and records the answer, and names this id.

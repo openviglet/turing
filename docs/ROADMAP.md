@@ -14,6 +14,10 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+- 📋 **T1157** (deps: —) **Site chat follow-ups that refer back (it, that one) retrieve nothing: retrieval reads the latest message alone** — A visitor's second question is usually a follow-up, and answering it with a refusal ends the conversation the chat exists for. → §CLVIII.1
+
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**
