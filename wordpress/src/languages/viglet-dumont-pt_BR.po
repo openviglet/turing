@@ -310,13 +310,13 @@ msgstr "Visão geral do conteúdo"
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#: src/blocks/search/render.php:101
+#: src/blocks/search/render.php:114
 #: src/includes/class-viglet-dumont-native-search.php:244
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:102
+#: src/blocks/search/render.php:115
 #: src/includes/class-viglet-dumont-native-search.php:245
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
@@ -344,7 +344,7 @@ msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
 #: src/blocks/search/parts/facets.php:22
-#: src/blocks/search/render.php:64
+#: src/blocks/search/render.php:66
 msgid "Filters"
 msgstr "Filtros"
 
@@ -928,7 +928,7 @@ msgstr "Origem"
 msgid "Turing field"
 msgstr "Campo no Turing"
 
-#: src/blocks/search/render.php:88
+#: src/blocks/search/render.php:99
 #: assets/admin/mapping.js:169
 #: assets/admin/mapping.js:323
 msgid "Type"
@@ -1127,7 +1127,7 @@ msgstr "Texto de exemplo"
 msgid "Show filters (facets)"
 msgstr "Mostrar filtros (facetas)"
 
-#: src/admin/js/search-block-editor.js:252
+#: src/admin/js/search-block-editor.js:266
 msgid "Turing search"
 msgstr "Busca Turing"
 
@@ -1188,18 +1188,18 @@ msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:66
+#: src/blocks/search/render.php:68
 #, php-format
 msgid "Filters (%d)"
 msgstr "Filtros (%d)"
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:68
+#: src/blocks/search/render.php:70
 #, php-format
 msgid "Show %d more"
 msgstr "Mostrar mais %d"
 
-#: src/blocks/search/render.php:69
+#: src/blocks/search/render.php:71
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
@@ -1227,7 +1227,7 @@ msgstr "Ordenar por"
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 
-#: src/admin/js/search-block-editor.js:228
+#: src/admin/js/search-block-editor.js:242
 msgid "Results per page"
 msgstr "Resultados por página"
 
@@ -1280,51 +1280,51 @@ msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
-#: src/admin/js/search-block-editor.js:169
+#: src/admin/js/search-block-editor.js:183
 msgid "Where the filters sit"
 msgstr "Onde ficam os filtros"
 
-#: src/admin/js/search-block-editor.js:173
+#: src/admin/js/search-block-editor.js:187
 msgid "Left"
 msgstr "À esquerda"
 
-#: src/admin/js/search-block-editor.js:177
+#: src/admin/js/search-block-editor.js:191
 msgid "Right"
 msgstr "À direita"
 
-#: src/admin/js/search-block-editor.js:181
+#: src/admin/js/search-block-editor.js:195
 msgid "Above the results"
 msgstr "Acima dos resultados"
 
-#: src/admin/js/search-block-editor.js:192
+#: src/admin/js/search-block-editor.js:206
 msgid "Results as"
 msgstr "Resultados em"
 
 #: src/admin/js/related-block-editor.js:96
-#: src/admin/js/search-block-editor.js:196
+#: src/admin/js/search-block-editor.js:210
 msgid "A list"
 msgstr "Lista"
 
 #: src/admin/js/related-block-editor.js:92
-#: src/admin/js/search-block-editor.js:200
+#: src/admin/js/search-block-editor.js:214
 msgid "A grid"
 msgstr "Grade"
 
 #: src/admin/js/related-block-editor.js:105
-#: src/admin/js/search-block-editor.js:210
+#: src/admin/js/search-block-editor.js:224
 msgid "Show the image"
 msgstr "Mostrar a imagem"
 
-#: src/admin/js/search-block-editor.js:212
+#: src/admin/js/search-block-editor.js:226
 msgid "Show the type"
 msgstr "Mostrar o tipo"
 
 #: src/admin/js/related-block-editor.js:107
-#: src/admin/js/search-block-editor.js:213
+#: src/admin/js/search-block-editor.js:227
 msgid "Show the date"
 msgstr "Mostrar a data"
 
-#: src/admin/js/search-block-editor.js:216
+#: src/admin/js/search-block-editor.js:230
 msgid "Show the snippet"
 msgstr "Mostrar o trecho"
 
@@ -1806,8 +1806,8 @@ msgid "similar"
 msgstr "semelhante"
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:58
 #: src/blocks/search/render.php:60
+#: src/blocks/search/render.php:62
 #, php-format
 msgid "%d suggestion. Use the up and down arrows to choose it."
 msgid_plural "%d suggestions. Use the up and down arrows to choose one."
@@ -1815,8 +1815,8 @@ msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
 msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:97
-#: src/blocks/search/render.php:99
+#: src/blocks/search/render.php:110
+#: src/blocks/search/render.php:112
 #: src/includes/class-viglet-dumont-native-search.php:240
 #: src/includes/class-viglet-dumont-native-search.php:242
 #: src/includes/class-viglet-dumont-native-search.php:412
@@ -1960,15 +1960,15 @@ msgstr "Adicionar faixa"
 msgid "Upcoming, last 7 and 30 days, this year, before."
 msgstr "Próximos, últimos 7 e 30 dias, este ano, antes."
 
-#: src/blocks/search/parts/suggested.php:21
+#: src/blocks/search/parts/suggested.php:23
 msgid "Filter by what you asked for:"
 msgstr "Filtrar pelo que você pediu:"
 
-#: src/blocks/search/parts/suggested.php:28
+#: src/blocks/search/parts/suggested.php:30
 msgid "Apply this filter"
 msgstr "Aplicar este filtro"
 
-#: src/blocks/search/render.php:89
+#: src/blocks/search/render.php:100
 msgid "Published"
 msgstr "Publicado"
 
@@ -2013,6 +2013,7 @@ msgid "Written by Turing’s language model from the saved post. Nothing changes
 msgstr "Escrito pelo modelo de linguagem do Turing a partir do post salvo. Nada muda até você usá-lo e salvar."
 
 #: src/includes/class-viglet-dumont-compare.php:69
+#: src/includes/class-viglet-dumont-search-block.php:107
 #: src/includes/class-viglet-dumont-woocommerce.php:99
 #: src/includes/class-viglet-dumont-woocommerce.php:131
 msgid "Price"
@@ -2060,18 +2061,18 @@ msgstr "Adicionar ao carrinho"
 
 #. translators: %s: the product's name.
 #: src/blocks/copilot/render.php:30
-#: src/blocks/search/render.php:80
+#: src/blocks/search/render.php:90
 #, php-format
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
 #: src/blocks/copilot/render.php:36
-#: src/blocks/search/render.php:85
+#: src/blocks/search/render.php:95
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
 #: src/blocks/copilot/render.php:37
-#: src/blocks/search/render.php:86
+#: src/blocks/search/render.php:96
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
 
@@ -2372,7 +2373,7 @@ msgstr "Comparar"
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:35
 #: src/blocks/related/render.php:53
-#: src/blocks/search/render.php:82
+#: src/blocks/search/render.php:92
 #, php-format
 msgid "Compare %d products"
 msgstr "Comparar %d produtos"
@@ -2380,7 +2381,7 @@ msgstr "Comparar %d produtos"
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:33
 #: src/blocks/related/render.php:114
-#: src/blocks/search/render.php:84
+#: src/blocks/search/render.php:94
 #, php-format
 msgid "Compare %s"
 msgstr "Comparar %s"
@@ -2446,11 +2447,11 @@ msgstr "Buscas populares"
 msgid "Popular:"
 msgstr "Populares:"
 
-#: src/admin/js/search-block-editor.js:156
+#: src/admin/js/search-block-editor.js:170
 msgid "Show popular searches under the box"
 msgstr "Mostrar as buscas populares sob a caixa"
 
-#: src/admin/js/search-block-editor.js:160
+#: src/admin/js/search-block-editor.js:174
 msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
 msgstr "Até oito das palavras mais buscadas da semana, cada uma conferida para encontrar algo, antes que o visitante digite."
 
@@ -2748,3 +2749,21 @@ msgstr "O visitante descreve um plano e recebe os produtos de que ele precisa, a
 msgctxt "block description"
 msgid "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart, and a described plan can be turned into a kit of products, grouped by what the plan needs."
 msgstr "Uma conversa com o copiloto de catálogo do Turing: um pedido em palavras simples respondido com o conteúdo deste site, citando os itens. Numa loja WooCommerce, cada produto citado mostra o preço e pode ir para o carrinho, e um plano descrito pode virar um kit de produtos, agrupados pelo que o plano precisa."
+
+#: src/blocks/search/parts/suggested.php:39
+msgid "Undo"
+msgstr "Desfazer"
+
+#. translators: %s: the filters read from the visitor's sentence, comma-separated.
+#: src/blocks/search/render.php:87
+#, php-format
+msgid "Understood: %s"
+msgstr "Entendido: %s"
+
+#: src/admin/js/search-block-editor.js:157
+msgid "Apply them instead of suggesting"
+msgstr "Aplicá-los em vez de sugerir"
+
+#: src/admin/js/search-block-editor.js:161
+msgid "“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model."
+msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma vez, e uma linha diz o que foi entendido, com Desfazer. Um preço é lido mesmo sem um modelo de linguagem."

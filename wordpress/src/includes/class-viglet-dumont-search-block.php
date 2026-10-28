@@ -92,6 +92,28 @@ class Viglet_Dumont_Search_Block {
 	}
 
 	/**
+	 * The field a WooCommerce product's price is indexed under, and the name a filter on it
+	 * shows (D199): what a price a sentence names ("under R$400") filters, read in code. Null
+	 * when no mapping sends the shop's price.
+	 *
+	 * @return array{field: string, label: string}|null
+	 */
+	public static function price_field(): ?array {
+		foreach ( ( new Viglet_Dumont_Mapping( viglet_dumont_get_settings() ) )->all() as $type_mapping ) {
+			foreach ( $type_mapping['fields'] as $field ) {
+				if ( 'woo:price' === $field['source'] ) {
+					return array(
+						'field' => $field['field'],
+						'label' => '' !== $field['facet_label'] ? $field['facet_label'] : __( 'Price', 'viglet-dumont' ),
+					);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * The parent's attributes as an inner block sees them through its context.
 	 *
 	 * @param array $context The inner block's context.

@@ -193,6 +193,25 @@
 	border-style: dashed;
 }
 
+/* What a sentence was read as, once applied (D199), with Undo beside it. */
+.viglet-dumont-search__understood {
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 0.75rem;
+	margin: 0 0 1rem;
+}
+
+.viglet-dumont-search__undo {
+	background: none;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	padding: 0;
+	text-decoration: underline;
+}
+
 .viglet-dumont-search__layout {
 	display: grid;
 	gap: 2rem;

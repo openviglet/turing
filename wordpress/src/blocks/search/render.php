@@ -35,6 +35,8 @@ foreach ( viglet_dumont_get_indexable_types() as $viglet_dumont_type ) {
 	}
 }
 
+$viglet_dumont_price = Viglet_Dumont_Search_Block::price_field();
+
 $viglet_dumont_state = array(
 	'query'          => Viglet_Dumont_Search_Block::query(),
 	'status'         => 'idle',
@@ -75,6 +77,14 @@ $viglet_dumont_state = array(
 	// The filters a sentence names (D170), and the names of the core fields they may filter.
 	'suggestEnabled' => ! empty( $attributes['suggestFilters'] ),
 	'suggested'      => array(),
+	// D199: with applyFilters on, the filters a sentence names are applied, said in a line and
+	// undone with one click, instead of offered; a price it names is read in code as well, so
+	// "under R$400" filters with no language model in Turing.
+	'applyEnabled'   => ! empty( $attributes['suggestFilters'] ) && ! empty( $attributes['applyFilters'] ),
+	'priceField'     => $viglet_dumont_price ? $viglet_dumont_price['field'] : '',
+	'understood'     => '',
+	/* translators: %s: the filters read from the visitor's sentence, comma-separated. */
+	'understoodText' => __( 'Understood: %s', 'viglet-dumont' ),
 	// A product result's "Add to cart" (D173): its name for a screen reader, and what it did.
 	/* translators: %s: the product's name. */
 	'cartLabel'      => __( 'Add to cart: %s', 'viglet-dumont' ),
@@ -84,9 +94,12 @@ $viglet_dumont_state = array(
 	'compareFor'     => __( 'Compare %s', 'viglet-dumont' ),
 	'cartAdded'      => __( 'Added to your cart.', 'viglet-dumont' ),
 	'cartFailed'     => __( 'It could not be added to the cart.', 'viglet-dumont' ),
-	'fieldLabels'    => array(
-		'type'             => __( 'Type', 'viglet-dumont' ),
-		'publication_date' => __( 'Published', 'viglet-dumont' ),
+	'fieldLabels'    => array_merge(
+		array(
+			'type'             => __( 'Type', 'viglet-dumont' ),
+			'publication_date' => __( 'Published', 'viglet-dumont' ),
+		),
+		$viglet_dumont_price ? array( $viglet_dumont_price['field'] => $viglet_dumont_price['label'] ) : array()
 	),
 	'sort'           => Viglet_Dumont_Search_Block::sort(),
 	'perPage'        => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),

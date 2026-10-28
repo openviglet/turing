@@ -14,6 +14,7 @@
 		"viglet-dumont/search/showSort": "showSort",
 		"viglet-dumont/search/showAnswer": "showAnswer",
 		"viglet-dumont/search/suggestFilters": "suggestFilters",
+		"viglet-dumont/search/applyFilters": "applyFilters",
 		"viglet-dumont/search/showTrending": "showTrending",
 		"viglet-dumont/search/showImage": "showImage",
 		"viglet-dumont/search/showDate": "showDate",
@@ -72,6 +73,10 @@
 			"default": false
 		},
 		"suggestFilters": {
+			"type": "boolean",
+			"default": false
+		},
+		"applyFilters": {
 			"type": "boolean",
 			"default": false
 		}

@@ -2,6 +2,8 @@
 /**
  * A piece of the Turing search block (D185). The filters a sentence names (D170): Turing's
  * reading of the query, offered as chips that apply with one click and never on their own.
+ * With applyFilters on (D199) they are applied instead, and a line says what was read, with
+ * one click to undo it.
  *
  * Drawn by Viglet_Dumont_Search_Block::pieces(), for the block or one of its inner blocks.
  *
@@ -31,4 +33,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</template>
 		</ul>
 	</div>
+	<?php if ( ! empty( $attributes['applyFilters'] ) ) : ?>
+		<p class="viglet-dumont-search__understood" role="status" hidden data-wp-bind--hidden="!state.understood">
+			<span data-wp-text="state.understood"></span>
+			<button type="button" class="viglet-dumont-search__undo" data-wp-on--click="actions.undoUnderstood"><?php esc_html_e( 'Undo', 'viglet-dumont' ); ?></button>
+		</p>
+	<?php endif; ?>
 <?php endif; ?>

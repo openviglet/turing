@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-28T17:39:03+00:00\n"
+"POT-Creation-Date: 2026-10-28T18:03:27+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -519,7 +519,7 @@ msgstr ""
 
 #. translators: %s: the product's name.
 #: src/blocks/copilot/render.php:30
-#: src/blocks/search/render.php:80
+#: src/blocks/search/render.php:90
 #, php-format
 msgid "Add to cart: %s"
 msgstr ""
@@ -527,7 +527,7 @@ msgstr ""
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:33
 #: src/blocks/related/render.php:114
-#: src/blocks/search/render.php:84
+#: src/blocks/search/render.php:94
 #, php-format
 msgid "Compare %s"
 msgstr ""
@@ -535,18 +535,18 @@ msgstr ""
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:35
 #: src/blocks/related/render.php:53
-#: src/blocks/search/render.php:82
+#: src/blocks/search/render.php:92
 #, php-format
 msgid "Compare %d products"
 msgstr ""
 
 #: src/blocks/copilot/render.php:36
-#: src/blocks/search/render.php:85
+#: src/blocks/search/render.php:95
 msgid "Added to your cart."
 msgstr ""
 
 #: src/blocks/copilot/render.php:37
-#: src/blocks/search/render.php:86
+#: src/blocks/search/render.php:96
 msgid "It could not be added to the cart."
 msgstr ""
 
@@ -710,7 +710,7 @@ msgid "Did you mean:"
 msgstr ""
 
 #: src/blocks/search/parts/facets.php:22
-#: src/blocks/search/render.php:64
+#: src/blocks/search/render.php:66
 msgid "Filters"
 msgstr ""
 
@@ -739,12 +739,16 @@ msgstr ""
 msgid "Result pages"
 msgstr ""
 
-#: src/blocks/search/parts/suggested.php:21
+#: src/blocks/search/parts/suggested.php:23
 msgid "Filter by what you asked for:"
 msgstr ""
 
-#: src/blocks/search/parts/suggested.php:28
+#: src/blocks/search/parts/suggested.php:30
 msgid "Apply this filter"
+msgstr ""
+
+#: src/blocks/search/parts/suggested.php:39
+msgid "Undo"
 msgstr ""
 
 #: src/blocks/search/parts/toolbar.php:25
@@ -760,8 +764,8 @@ msgid "Popular:"
 msgstr ""
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:58
 #: src/blocks/search/render.php:60
+#: src/blocks/search/render.php:62
 #, php-format
 msgid "%d suggestion. Use the up and down arrows to choose it."
 msgid_plural "%d suggestions. Use the up and down arrows to choose one."
@@ -769,34 +773,40 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:66
+#: src/blocks/search/render.php:68
 #, php-format
 msgid "Filters (%d)"
 msgstr ""
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:68
+#: src/blocks/search/render.php:70
 #, php-format
 msgid "Show %d more"
 msgstr ""
 
-#: src/blocks/search/render.php:69
+#: src/blocks/search/render.php:71
 msgid "Show fewer"
 msgstr ""
 
-#: src/blocks/search/render.php:88
+#. translators: %s: the filters read from the visitor's sentence, comma-separated.
+#: src/blocks/search/render.php:87
+#, php-format
+msgid "Understood: %s"
+msgstr ""
+
+#: src/blocks/search/render.php:99
 #: assets/admin/mapping.js:169
 #: assets/admin/mapping.js:323
 msgid "Type"
 msgstr ""
 
-#: src/blocks/search/render.php:89
+#: src/blocks/search/render.php:100
 msgid "Published"
 msgstr ""
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:97
-#: src/blocks/search/render.php:99
+#: src/blocks/search/render.php:110
+#: src/blocks/search/render.php:112
 #: src/includes/class-viglet-dumont-native-search.php:240
 #: src/includes/class-viglet-dumont-native-search.php:242
 #: src/includes/class-viglet-dumont-native-search.php:412
@@ -807,13 +817,13 @@ msgid_plural "%d results"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/blocks/search/render.php:101
+#: src/blocks/search/render.php:114
 #: src/includes/class-viglet-dumont-native-search.php:244
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
-#: src/blocks/search/render.php:102
+#: src/blocks/search/render.php:115
 #: src/includes/class-viglet-dumont-native-search.php:245
 msgid "Search is unavailable right now."
 msgstr ""
@@ -1060,6 +1070,7 @@ msgid "%1$d sent, %2$d failed."
 msgstr ""
 
 #: src/includes/class-viglet-dumont-compare.php:69
+#: src/includes/class-viglet-dumont-search-block.php:107
 #: src/includes/class-viglet-dumont-woocommerce.php:99
 #: src/includes/class-viglet-dumont-woocommerce.php:131
 msgid "Price"
@@ -2461,22 +2472,22 @@ msgid "Show as"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:92
-#: src/admin/js/search-block-editor.js:200
+#: src/admin/js/search-block-editor.js:214
 msgid "A grid"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:96
-#: src/admin/js/search-block-editor.js:196
+#: src/admin/js/search-block-editor.js:210
 msgid "A list"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:105
-#: src/admin/js/search-block-editor.js:210
+#: src/admin/js/search-block-editor.js:224
 msgid "Show the image"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:107
-#: src/admin/js/search-block-editor.js:213
+#: src/admin/js/search-block-editor.js:227
 msgid "Show the date"
 msgstr ""
 
@@ -2528,47 +2539,55 @@ msgstr ""
 msgid "“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:156
+#: src/admin/js/search-block-editor.js:157
+msgid "Apply them instead of suggesting"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:161
+msgid "“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:170
 msgid "Show popular searches under the box"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:160
+#: src/admin/js/search-block-editor.js:174
 msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:169
+#: src/admin/js/search-block-editor.js:183
 msgid "Where the filters sit"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:173
+#: src/admin/js/search-block-editor.js:187
 msgid "Left"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:177
+#: src/admin/js/search-block-editor.js:191
 msgid "Right"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:181
+#: src/admin/js/search-block-editor.js:195
 msgid "Above the results"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:192
+#: src/admin/js/search-block-editor.js:206
 msgid "Results as"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:212
+#: src/admin/js/search-block-editor.js:226
 msgid "Show the type"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:216
+#: src/admin/js/search-block-editor.js:230
 msgid "Show the snippet"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:228
+#: src/admin/js/search-block-editor.js:242
 msgid "Results per page"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:252
+#: src/admin/js/search-block-editor.js:266
 msgid "Turing search"
 msgstr ""
 

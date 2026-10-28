@@ -152,6 +152,20 @@
 						onChange: ( suggestFilters ) =>
 							setAttributes( { suggestFilters } ),
 					} ),
+					attributes.suggestFilters &&
+						el( ToggleControl, {
+							label: __(
+								'Apply them instead of suggesting',
+								'viglet-dumont'
+							),
+							help: __(
+								'“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model.',
+								'viglet-dumont'
+							),
+							checked: attributes.applyFilters,
+							onChange: ( applyFilters ) =>
+								setAttributes( { applyFilters } ),
+						} ),
 					el( ToggleControl, {
 						label: __(
 							'Show popular searches under the box',

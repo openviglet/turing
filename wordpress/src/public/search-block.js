@@ -35,6 +35,10 @@ let instant = null;
 let baseTitle = '';
 // The sentence last sent to Turing's nl-filters, so a late reading of an older one is dropped.
 let reading = '';
+// What an applied reading replaced (D199), so Undo puts the search back as the visitor typed it.
+let beforeReading = null;
+// The readings this page already paid for, by sentence: each one is an LLM call.
+const readings = new Map();
 
 // Each facet as Turing last described it unfiltered, by field (see facets()).
 const facetMemory = new Map();
@@ -377,6 +381,21 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			writeUrl( true );
 			focusInput();
 		},
+		// The search as it was before the sentence was read: its words back, its filters back.
+		undoUnderstood() {
+			if ( ! beforeReading ) {
+				return;
+			}
+			const { q, fq } = beforeReading;
+			beforeReading = null;
+			state.understood = '';
+			state.query = '*' === q ? '' : q;
+			lastQuery = q;
+			state.corrected = '';
+			send( { q, fq, page: 1 } );
+			writeUrl( true );
+			focusInput();
+		},
 		clearFilters() {
 			// The SDK's clearAllFilters would drop the site filter too; keep it.
 			send( { fq: [ siteFilter ], page: 1 } );
@@ -584,45 +603,182 @@ async function suggestFilters( query ) {
 	const text = query.trim();
 	reading = text;
 	state.suggested = [];
+	state.understood = '';
+	beforeReading = null;
 	if ( ! state.suggestEnabled || '*' === text || ! readsAsSentence( text ) ) {
 		return;
 	}
-	let answer;
-	try {
-		// The SDK's postNlFilters is not published yet; this is its request (T1085).
-		answer = await client.post(
-			`/sn/${ encodeURIComponent( config.site ) }/nl-filters`,
-			{ text, locale: config.locale },
-			{ csrf: false }
-		);
-	} catch {
-		// No reading is not an error the visitor needs to see.
+	let answer = readings.get( text );
+	if ( ! answer ) {
+		try {
+			// The SDK's postNlFilters is not published yet; this is its request (T1085).
+			answer = await client.post(
+				`/sn/${ encodeURIComponent( config.site ) }/nl-filters`,
+				{ text, locale: config.locale },
+				{ csrf: false }
+			);
+		} catch {
+			// No reading is not an error the visitor needs to see.
+			answer = null;
+		}
+		// Each reading is an LLM call: the same sentence again, in this page, is not another.
+		if ( answer?.available ) {
+			readings.set( text, answer );
+		}
+	}
+	// A newer search overtook this one.
+	if ( reading !== text ) {
 		return;
 	}
-	// No language model in Turing, or a newer search overtook this one.
-	if ( reading !== text || ! answer?.available ) {
-		return;
-	}
-	const grounded = new Set(
-		( answer.filters || [] )
-			.filter( ( filter ) => filter.grounded )
-			.map( ( filter ) => filter.field )
-	);
 	const applied = search.getState().request?.fq || [];
-	state.suggested = ( answer.fq || [] )
-		.filter( ( fq ) => {
+	let q = text;
+	let fqs = [];
+	// No language model in Turing leaves the price, which is read in code below.
+	if ( answer?.available ) {
+		const grounded = new Set(
+			( answer.filters || [] )
+				.filter( ( filter ) => filter.grounded )
+				.map( ( filter ) => filter.field )
+		);
+		q = answer.q || '';
+		fqs = ( answer.fq || [] ).filter( ( fq ) => {
 			const field = fq.split( ':' )[ 0 ];
 			return (
 				grounded.has( field ) &&
 				filterable( field ) &&
 				! applied.includes( fq )
 			);
-		} )
-		.map( ( fq ) => ( {
-			fq,
-			q: answer.q || '',
-			label: filterLabel( fq ),
-		} ) );
+		} );
+	}
+	const price = readPrice( text );
+	if (
+		price &&
+		! applied.includes( price.fq ) &&
+		! fqs.some( ( fq ) => fq.startsWith( `${ state.priceField }:` ) )
+	) {
+		fqs.push( price.fq );
+		q = q.replace( price.words, ' ' ).replace( /\s+/g, ' ' ).trim();
+	}
+	if ( ! fqs.length ) {
+		return;
+	}
+	if ( state.applyEnabled ) {
+		applyReading( q, fqs );
+		return;
+	}
+	state.suggested = fqs.map( ( fq ) => ( {
+		fq,
+		q,
+		label: filterLabel( fq ),
+	} ) );
+}
+
+/**
+ * Apply what a sentence was read as (D199): its filters on, the words they came from out of
+ * the query, and a line saying so, built from the filters themselves and never from model
+ * prose. Undo puts back the search as it was.
+ *
+ * @param {string}   q   The query without the words the filters were read from.
+ * @param {string[]} fqs The filters to apply.
+ */
+function applyReading( q, fqs ) {
+	const request = search.getState().request || {};
+	const fq = request.fq || [ siteFilter ];
+	beforeReading = { q: request.q || lastQuery || '*', fq };
+	state.understood = state.understoodText.replace(
+		'%s',
+		fqs.map( filterLabel ).join( ', ' )
+	);
+	state.query = q;
+	lastQuery = q || '*';
+	state.corrected = '';
+	send( { q: lastQuery, fq: [ ...fq, ...fqs ], page: 1 } );
+	writeUrl( true );
+}
+
+// An amount: a currency sign or word, a number written either way ("1.200,50" or "1,200.50").
+const amount =
+	'(?:(R\\$|US\\$|\\$|€|£)\\s*)?(\\d{1,3}(?:[.,\\s]\\d{3})+(?:[.,]\\d{1,2})?|\\d+(?:[.,]\\d{1,2})?)(\\s*(?:reais|real|dólares|dolares|dollars?|euros?|bucks))?';
+// How a sentence bounds a price, in the languages the plugin ships (en, pt_BR). Between comes
+// first, since "from 100 to 300" would otherwise read as "from 100".
+const priceBounds = [
+	[
+		'between',
+		new RegExp(
+			`\\b(?:between|entre|from|de)\\s+${ amount }\\s+(?:and|to|e|a|até)\\s+${ amount }`,
+			'iu'
+		),
+	],
+	[
+		'max',
+		new RegExp(
+			`\\b(?:under|below|less than|up to|at most|cheaper than|até|abaixo de|menos de|no máximo|por até|por menos de)\\s+${ amount }`,
+			'iu'
+		),
+	],
+	[
+		'min',
+		new RegExp(
+			`\\b(?:over|above|more than|at least|acima de|mais de|a partir de|pelo menos|no mínimo)\\s+${ amount }`,
+			'iu'
+		),
+	],
+];
+
+/**
+ * A number as the sentence wrote it: the last separator followed by one or two digits is the
+ * decimal point, the others group thousands.
+ *
+ * @param {string} written The number, e.g. "1.200,50".
+ * @return {number} Its value.
+ */
+function writtenNumber( written ) {
+	const compact = written.replace( /\s/g, '' );
+	const decimal = compact.match( /[.,](\d{1,2})$/ );
+	const whole = (
+		decimal ? compact.slice( 0, decimal.index ) : compact
+	).replace( /[.,]/g, '' );
+	return Number( decimal ? `${ whole }.${ decimal[ 1 ] }` : whole );
+}
+
+/**
+ * The price a sentence names, read in code (D199), so it filters whether or not Turing has a
+ * language model: "under R$400", "entre 100 e 300 reais", "over $50". Only on a site that
+ * indexes the shop's price, and only an amount marked as money (a sign or a currency word), so
+ * "under 2 kg" is not read as one.
+ *
+ * @param {string} text The visitor's sentence.
+ * @return {{fq: string, words: string}|null} The filter, and the words it was read from.
+ */
+function readPrice( text ) {
+	if ( ! state.priceField ) {
+		return null;
+	}
+	for ( const [ kind, pattern ] of priceBounds ) {
+		const match = text.match( pattern );
+		if ( ! match ) {
+			continue;
+		}
+		const money = match.slice( 1 );
+		// Each amount is three groups: sign, number, currency word.
+		const marked = [ 0, 3 ].some( ( i ) => money[ i ] || money[ i + 2 ] );
+		if ( ! marked ) {
+			continue;
+		}
+		const first = writtenNumber( money[ 1 ] );
+		const second = 'between' === kind ? writtenNumber( money[ 4 ] ) : first;
+		const ranges = {
+			between: [ Math.min( first, second ), Math.max( first, second ) ],
+			max: [ '*', first ],
+			min: [ first, '*' ],
+		};
+		const range = ranges[ kind ];
+		return {
+			fq: `${ state.priceField }:[${ range[ 0 ] } TO ${ range[ 1 ] }]`,
+			words: match[ 0 ],
+		};
+	}
+	return null;
 }
 
 /**

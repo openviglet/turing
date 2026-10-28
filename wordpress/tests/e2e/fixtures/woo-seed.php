@@ -94,6 +94,24 @@ wp_update_post(
 );
 update_post_meta( $compare_id, '_viglet_dumont_exclude', '1' );
 
+// A search page that applies the filters a sentence names (woo/understand.spec.mjs, D199).
+$find    = get_page_by_path( 'find-gear' );
+$find_id = $find ? $find->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'find-gear',
+		'post_title'   => 'Find gear',
+		'post_content' => '<!-- wp:viglet-dumont/search {"suggestFilters":true,"applyFilters":true} /-->',
+	)
+);
+wp_update_post(
+	array(
+		'ID'          => $find_id,
+		'post_status' => 'publish',
+	)
+);
+update_post_meta( $find_id, '_viglet_dumont_exclude', '1' );
+
 $settings                       = get_option( 'viglet_dumont_settings', array() );
 $settings['index_custom_types'] = array( 'product' );
 // Related content on a product page, whose product cards offer Compare (compare.spec.mjs, D212).

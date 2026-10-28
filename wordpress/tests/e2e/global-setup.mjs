@@ -84,7 +84,7 @@ export default async function globalSetup( config ) {
 		'list',
 		'--post_type=page',
 		'--post_status=publish',
-		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,compare-products',
+		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,compare-products,find-gear',
 		'--format=ids',
 	] ).trim();
 	if ( shopPages ) {
