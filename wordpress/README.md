@@ -83,6 +83,20 @@ results, or set its own blocks between them. They stay one search with one store
 filters stay beside the results. A block whose parts were never arranged draws them in the
 default order.
 
+**Filters from a sentence** (`suggestFilters`, `applyFilters`). With the first on, a sentence
+goes to Turing's `POST /api/sn/{site}/nl-filters` and the filters it grounded on the site's
+facets are offered as chips. With the second on too, they are applied, the words they came
+from leave the query, and a line built from the filters themselves (never from model prose)
+says what was understood, with Undo. `applyFilters` is off by default: suggestions shipped
+first as "a guess is the visitor's to take", and turning every such site to auto-apply
+would change their visitors' search unasked. Two readings run in code in
+`src/public/search-block.js`, so they work with no language model: a price marked as money
+(`readPrice`, en and pt_BR), on the field the WooCommerce price is mapped to, and a size
+(`readSize`) on a facet whose field or name says size, grounded on the values the site's
+products have. The plugin keeps no cap on readings: Turing throttles anonymous
+`nl-filters` calls itself (`TurAnonymousAbuseRateLimitFilter`), and a second limiter here
+would be two counts of one budget.
+
 The **Related content** block (`viglet-dumont/related`) lists the posts Turing's
 similar-documents search finds most like the one being read. It never lists the post itself,
 only this site's published posts, and renders nothing when there are none. It is drawn on the

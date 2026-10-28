@@ -11,7 +11,7 @@
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.
 
 // The Turing search block and its parts, in the page so the plugin finds it (has_block).
-$search = '<!-- wp:viglet-dumont/search {"placeholder":"Search jackets, boots, tents…","showAnswer":true,"suggestFilters":true,"resultsLayout":"grid","align":"wide"} -->
+$search = '<!-- wp:viglet-dumont/search {"placeholder":"Search jackets, boots, tents…","showAnswer":true,"suggestFilters":true,"applyFilters":true,"resultsLayout":"grid","align":"wide"} -->
 <!-- wp:viglet-dumont/search-box /-->
 
 <!-- wp:viglet-dumont/search-filters /-->

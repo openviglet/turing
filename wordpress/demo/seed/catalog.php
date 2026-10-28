@@ -283,7 +283,8 @@ foreach ( $models as $m => list( $category, $model, $price, $materials, $uses, $
 // The trail journal: guides and how-tos that name the products above.
 $guides = require __DIR__ . '/journal.php';
 
-// Products indexed, the shop's fields as facets: category, price ranges, stock, colour, material, use.
+// Products indexed, the shop's fields as facets: category, price ranges, stock, colour, material,
+// use and size.
 $settings                       = viglet_dumont_get_settings();
 $settings['index_custom_types'] = array( 'product' );
 viglet_dumont_update_settings( $settings );
@@ -323,6 +324,8 @@ $mapping['product'] = array(
 		$facet( 'taxonomy:pa_color', 'pa_color', $tr( 'labels', 'Colour' ) ),
 		$facet( 'taxonomy:pa_material', 'pa_material', $tr( 'labels', 'Material' ) ),
 		$facet( 'taxonomy:pa_use', 'pa_use', $tr( 'labels', 'Use' ) ),
+		// What "size M" or "tamanho 42" in a search filters on (D199).
+		$facet( 'taxonomy:pa_size', 'pa_size', $tr( 'labels', 'Size' ) ),
 	),
 );
 update_option( 'viglet_dumont_mapping', $mapping, false );

@@ -83,6 +83,7 @@ return array(
 		'Stock'     => 'Estoque',
 		'Material'  => 'Material',
 		'Use'       => 'Uso',
+		'Size'      => 'Tamanho',
 	),
 
 	'care'       => array(

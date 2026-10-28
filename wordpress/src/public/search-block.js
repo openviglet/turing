@@ -650,6 +650,18 @@ async function suggestFilters( query ) {
 			);
 		} );
 	}
+	const size = await readSize( text );
+	if ( reading !== text ) {
+		return;
+	}
+	if (
+		size &&
+		! applied.includes( size.fq ) &&
+		! fqs.some( ( fq ) => fq.startsWith( `${ size.field }:` ) )
+	) {
+		fqs.push( size.fq );
+		q = q.replace( size.words, ' ' ).replace( /\s+/g, ' ' ).trim();
+	}
 	const price = readPrice( text );
 	if (
 		price &&
@@ -694,6 +706,77 @@ function applyReading( q, fqs ) {
 	state.corrected = '';
 	send( { q: lastQuery, fq: [ ...fq, ...fqs ], page: 1 } );
 	writeUrl( true );
+}
+
+// "size M", "tamanho 42", "tam. G": the word, then a short value.
+const sizeWords = /\b(?:size|tamanho|tam\.?)\s+([\p{L}\d]{1,4})\b/iu;
+// Every facet value the site has, asked for once per page (see readSize()).
+let siteFacets = null;
+
+/**
+ * Every value of every facet this site's documents have, from one unfiltered search: what a
+ * size read in code is checked against.
+ *
+ * @return {Promise<Object[]>} Turing's facets, with their items.
+ */
+function allFacets() {
+	siteFacets ??= new Promise( ( resolve ) => {
+		const probe = createSiteSearch();
+		const unsubscribe = probe.subscribe( ( s ) => {
+			if ( 'success' !== s.status && 'error' !== s.status ) {
+				return;
+			}
+			unsubscribe?.();
+			resolve( s.structured?.facets || [] );
+		} );
+		probe.searchRequest( {
+			locale: config.locale,
+			q: '*',
+			fq: [ siteFilter ],
+			page: 1,
+		} );
+	} );
+	return siteFacets;
+}
+
+/**
+ * The size a sentence names, read in code (D199) and grounded: "size M" filters only when M
+ * is a value of a size facet this site has, so nothing is invented and an unknown size sets
+ * nothing. A size facet is one the mapping declares whose field or name says size.
+ *
+ * @param {string} text The visitor's sentence.
+ * @return {Promise<{field: string, fq: string, words: string}|null>} The filter, its field,
+ *                                                                     and the words it came from.
+ */
+async function readSize( text ) {
+	const match = text.match( sizeWords );
+	const fields = ( config.facets || [] )
+		.filter(
+			( facet ) =>
+				! facet.range &&
+				/size|tamanho/i.test( `${ facet.field } ${ facet.label }` )
+		)
+		.map( ( facet ) => facet.field );
+	if ( ! match || ! fields.length ) {
+		return null;
+	}
+	const wanted = match[ 1 ].toLowerCase();
+	for ( const facet of await allFacets() ) {
+		if ( ! fields.includes( facet.name ) ) {
+			continue;
+		}
+		const item = ( facet.items || [] ).find(
+			( i ) => String( i.label ).toLowerCase() === wanted
+		);
+		if ( item?.filterQuery ) {
+			return {
+				field: facet.name,
+				fq: item.filterQuery,
+				words: match[ 0 ],
+			};
+		}
+	}
+	return null;
 }
 
 // An amount: a currency sign or word, a number written either way ("1.200,50" or "1,200.50").
