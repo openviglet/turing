@@ -14,6 +14,7 @@ const words = {
 		docs: 'How it works',
 		jacket: 'jacket',
 		daypack: 'helvellyn daypack',
+		productType: 'Product',
 		search: 'Search as you type',
 		filters: 'Filters from the catalog',
 		related: 'Related, by meaning',
@@ -24,6 +25,7 @@ const words = {
 		docs: 'Como funciona',
 		jacket: 'jaqueta',
 		daypack: 'helvellyn mochila',
+		productType: 'Produto',
 		search: 'Busca enquanto digita',
 		filters: 'Filtros vindos do catálogo',
 		related: 'Relacionados pelo sentido',
@@ -107,9 +109,19 @@ test( 'a product page names the catalog copilot and Related, in page order', asy
 	await page.goto(
 		`/?pagename=search-gear&q=${ encodeURIComponent( say().daypack ) }`
 	);
+	// The first product, not the first result: a journal guide that names the same daypack
+	// (and matches "daypack" through the backpack synonym) may rank above it.
 	const product = await page
-		.locator( '.viglet-dumont-search__title a' )
+		.locator(
+			'.viglet-dumont-search__results .viglet-dumont-search__result'
+		)
+		.filter( {
+			has: page.locator( '.viglet-dumont-search__type', {
+				hasText: say().productType,
+			} ),
+		} )
 		.first()
+		.locator( '.viglet-dumont-search__title a' )
 		.getAttribute( 'href' );
 	const url = new URL( product );
 	url.searchParams.set( 'tour', '1' );
