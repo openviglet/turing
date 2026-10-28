@@ -41,6 +41,8 @@ $pages['showcase'] = array(
 		"\n\n",
 		array(
 			'<!-- wp:paragraph --><p>' . $say( 'Each block on this page is a Turing feature the plugin brings to WordPress. Open it with How it works for a note on each.' ) . '</p><!-- /wp:paragraph -->',
+			// Shown by the theme only while Turing's chat cannot answer (D198).
+			'<!-- wp:paragraph {"className":"tarnfell-ai-off"} --><p class="tarnfell-ai-off"><strong>' . $say( 'The AI features on this page are off.' ) . '</strong> ' . $say( 'This demo\'s Turing has no language model, so the answer, the catalog copilot and the Site assistant stay hidden. Start the stack with OPENAI_API_KEY set to try them.' ) . '</p><!-- /wp:paragraph -->',
 			$heading( 'Search, with an answer' ),
 			$search,
 			// These two head themselves with the feature's name.

@@ -69,6 +69,8 @@ return array(
 		'Showcase'                 => 'Vitrine',
 		'Each block on this page is a Turing feature the plugin brings to WordPress. Open it with How it works for a note on each.' => 'Cada bloco desta página é um recurso do Turing que o plugin traz ao WordPress. Abra com Como funciona para ver uma nota sobre cada um.',
 		'Search, with an answer'   => 'Busca, com resposta',
+		'The AI features on this page are off.' => 'Os recursos de IA desta página estão desligados.',
+		'This demo\'s Turing has no language model, so the answer, the catalog copilot and the Site assistant stay hidden. Start the stack with OPENAI_API_KEY set to try them.' => 'O Turing desta demo não tem modelo de linguagem, então a resposta, o catálogo e o Assistente do site ficam ocultos. Suba o ambiente com OPENAI_API_KEY definida para experimentá-los.',
 		'Gear for the high ground' => 'Equipamento para as alturas',
 	),
 

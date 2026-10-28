@@ -55,5 +55,21 @@ test( 'the showcase holds every Turing block, each named and numbered by the tou
 			)
 		);
 	}
+	await expect( page.locator( '.tarnfell-ai-off' ) ).toBeHidden();
 	await look( 'demo-showcase' );
+} );
+
+test( 'without a language model the showcase says the AI features are off', async ( {
+	page,
+} ) => {
+	await page.route( '**/copilot/available', ( route ) =>
+		route.fulfill( { json: { available: false } } )
+	);
+	await page.route( '**/chat/enabled', ( route ) =>
+		route.fulfill( { json: { enabled: false, reason: 'MISSING_LLM' } } )
+	);
+	await page.goto( '/showcase/' );
+	await expect( page.locator( '.tarnfell-ai-off' ) ).toBeVisible();
+	await expect( page.locator( '.viglet-dumont-assistant' ) ).toBeHidden();
+	await expect( page.locator( '.viglet-dumont-copilot' ) ).toBeHidden();
 } );

@@ -242,3 +242,12 @@ body .woocommerce span.onsale {
 	right: 1rem;
 	z-index: 10;
 }
+
+/* The showcase's notice that the AI features are off (D198): shown by assets/ai-notice.js. */
+.tarnfell-ai-off {
+	display: none;
+}
+
+.tarnfell-ai-off.is-shown {
+	display: block;
+}

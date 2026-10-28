@@ -72,3 +72,15 @@ function tarnfell_tour(): void {
 	wp_enqueue_script( 'tarnfell-tour', get_theme_file_uri( 'assets/tour.js' ), array(), wp_get_theme()->get( 'Version' ), array( 'in_footer' => true ) );
 }
 add_action( 'wp_enqueue_scripts', 'tarnfell_tour' );
+
+/**
+ * The showcase's notice that the AI features are off (D198): shown only when Turing says its
+ * chat cannot answer, as on a stack started without an LLM key.
+ */
+function tarnfell_ai_notice(): void {
+	if ( ! is_page( 'showcase' ) ) {
+		return;
+	}
+	wp_enqueue_script_module( 'tarnfell/ai-notice', get_theme_file_uri( 'assets/ai-notice.js' ), array( 'viglet-dumont/search' ), wp_get_theme()->get( 'Version' ) );
+}
+add_action( 'wp_enqueue_scripts', 'tarnfell_ai_notice' );
