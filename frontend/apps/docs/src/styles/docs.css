@@ -1,0 +1,32 @@
+/*
+ * T1160 — the brand accent only: the Viglet Turing blue-600 -> indigo-600 gradient
+ * (blue-500 -> indigo-500 in dark mode) on Starlight's accent tokens, so the area is
+ * not stock Starlight. The full Viglet Design System theme (typography, header and
+ * footer matching the marketing site) is T1162.
+ */
+:root {
+  --sl-color-accent-low: #1e1b4b;
+  --sl-color-accent: #6366f1;
+  --sl-color-accent-high: #c7d2fe;
+  --turing-gradient: linear-gradient(90deg, #3b82f6, #6366f1);
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #e0e7ff;
+  --sl-color-accent: #4f46e5;
+  --sl-color-accent-high: #312e81;
+  --turing-gradient: linear-gradient(90deg, #2563eb, #4f46e5);
+}
+
+.site-title {
+  background: var(--turing-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sl-link-button.primary {
+  background: var(--turing-gradient);
+  border: none;
+  color: #fff;
+}

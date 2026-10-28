@@ -1,0 +1,32 @@
+---
+title: Viglet Turing documentation
+description: Install, configure and use Viglet Turing, the enterprise search platform.
+template: splash
+hero:
+  tagline: Enterprise search with Semantic Navigation, connectors and GenAI, documented next to the code it describes.
+  actions:
+    - text: Get started
+      link: getting-started/installation/
+      icon: right-arrow
+      variant: primary
+    - text: turing.viglet.org
+      link: https://turing.viglet.org/
+      variant: minimal
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+<CardGrid>
+  <Card title="Semantic Navigation" icon="magnifier">
+    Sites, facets, spotlights and ranking over Solr, Elasticsearch or the embedded Lucene engine.
+  </Card>
+  <Card title="Connectors" icon="puzzle">
+    Index content from AEM, WordPress, databases, file systems and the web through Dumont.
+  </Card>
+  <Card title="GenAI" icon="star">
+    RAG chat, the catalog copilot, AI agents and LLM providers, grounded in the site's own index.
+  </Card>
+  <Card title="SDKs" icon="seti:javascript">
+    The vanilla JS SDK and the React SDK for building search and chat into any page.
+  </Card>
+</CardGrid>

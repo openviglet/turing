@@ -1,0 +1,16 @@
+{
+  "name": "turing-docs",
+  "private": true,
+  "version": "2026.3.6",
+  "type": "module",
+  "description": "Viglet Turing end-user documentation, at turing.viglet.org/docs. Builds into the marketing site's dist/docs.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.41.9",
+    "astro": "^7.2.9"
+  }
+}

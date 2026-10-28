@@ -2325,28 +2325,6 @@ staged as a product is not repeated.
 
 ## CLIX Documentation refresh (`docs-turing`)
 
-### CLIX.1 Docs move into the Turing repo as an Astro area at /docs (T1160)
-
-The end-user documentation for Turing lives in
-`D:\Git\viglet\vigletdocs\vigletdocs.github.io\docs-turing`, a Docusaurus repo shared
-with Shio and Dumont and published at docs.viglet.org. Every shipped user-facing task
-therefore needs a second commit in a second repo, and the docs drift from the code they
-describe. The target is https://turing.viglet.org/docs, built from this repo.
-
-The shape to copy is roadkeep's `site/docs` (`D:\Git\alegauss\roadkeep\site\docs`): its
-own Astro + Starlight project, a fixed `base` (`/docs`), and an `outDir` inside the
-marketing site's `dist/` so the one GitHub Pages deploy (`publish-github-pages.yml`,
-CNAME turing.viglet.org) carries both. The docs build runs last, because Vite empties
-`dist/` before writing. Pagefind indexes at build time, so search needs no service.
-Hand-typed absolute links lose the base prefix; that is a known trap in that setup and
-the port must avoid it.
-
-The difference from roadkeep: the default Starlight look is not acceptable. The area
-must follow the Viglet Design System (blue-600 to indigo-600 gradient, dark mode,
-typography, header consistent with the marketing site), so a visitor moving from
-turing.viglet.org into /docs sees one product. docs.viglet.org will later redirect to
-/docs, so the old URL paths need a mapping to the new ones.
-
 ### CLIX.2 Porting the Docusaurus content (T1161)
 
 `docs-turing` holds about 74 `.md`/`.mdx` pages plus `getting-started/`, ordered by

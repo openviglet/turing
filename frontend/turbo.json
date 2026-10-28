@@ -13,6 +13,10 @@
       "dependsOn": ["^build"],
       "cache": false
     },
+    "turing-docs#build": {
+      "dependsOn": ["^build", "turing-site#build"],
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true
