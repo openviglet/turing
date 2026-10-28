@@ -31,6 +31,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
+## Block U — Documentation refresh (`docs-turing`)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2362,3 +2364,93 @@ plugin it is one search per guessed gap plus an unchecked model call, which ever
 consumer (cursarei's staged course path) would rebuild.
 
 **Workaround.** None: D201 waits on this.
+
+## CLIX Documentation refresh (`docs-turing`)
+
+### CLIX.1 Docs move into the Turing repo as an Astro area at /docs (T1160)
+
+The end-user documentation for Turing lives in
+`D:\Git\viglet\vigletdocs\vigletdocs.github.io\docs-turing`, a Docusaurus repo shared
+with Shio and Dumont and published at docs.viglet.org. Every shipped user-facing task
+therefore needs a second commit in a second repo, and the docs drift from the code they
+describe. The target is https://turing.viglet.org/docs, built from this repo.
+
+The shape to copy is roadkeep's `site/docs` (`D:\Git\alegauss\roadkeep\site\docs`): its
+own Astro + Starlight project, a fixed `base` (`/docs`), and an `outDir` inside the
+marketing site's `dist/` so the one GitHub Pages deploy (`publish-github-pages.yml`,
+CNAME turing.viglet.org) carries both. The docs build runs last, because Vite empties
+`dist/` before writing. Pagefind indexes at build time, so search needs no service.
+Hand-typed absolute links lose the base prefix; that is a known trap in that setup and
+the port must avoid it.
+
+The difference from roadkeep: the default Starlight look is not acceptable. The area
+must follow the Viglet Design System (blue-600 to indigo-600 gradient, dark mode,
+typography, header consistent with the marketing site), so a visitor moving from
+turing.viglet.org into /docs sees one product. docs.viglet.org will later redirect to
+/docs, so the old URL paths need a mapping to the new ones.
+
+### CLIX.2 Porting the Docusaurus content (T1161)
+
+`docs-turing` holds about 74 `.md`/`.mdx` pages plus `getting-started/`, ordered by
+`sidebars-turing.ts`, with images under the shared `static/`. Docusaurus syntax does not
+carry over as-is: `:::note`/`:::tip` admonitions, `<Tabs>`/`<TabItem>`, MDX imports of
+theme components, `@site/` and `/img/` paths, and slug-based internal links all need
+converting to Starlight's equivalents (asides, `<Tabs>` from
+`@astrojs/starlight/components`, assets beside the content collection, base-aware
+links). The port is a copy plus a conversion script, so the result can be re-run while
+vigletdocs keeps receiving edits. Done means every page renders, the sidebar keeps the
+current order, and a link checker over the built output finds no broken internal link or
+missing image. `_documentation-update-plan.md` is retired and is not copied.
+
+### CLIX.3 A docs theme built on the Design System (T1162)
+
+roadkeep's docs area keeps Starlight's stock look plus a small `customCss`; that is the
+part not to copy. Turing's docs must read as the same product as turing.viglet.org and
+the admin console. The theme maps Starlight's CSS custom properties (`--sl-color-*`,
+fonts, radii) onto the Viglet Design System tokens
+(`d:/git/viglet/viglet-design-system`), uses the blue-600 to indigo-600 primary gradient
+(blue-500 to indigo-500 in dark mode), and keeps both light and dark modes legible. The
+header and footer are overridden through Starlight component overrides so the logo, nav
+links and footer match `frontend/apps/site`, with a link back to the marketing pages.
+Code blocks, asides, tables, cards and the search modal are restyled to the same
+palette. Done means a reviewer switching between turing.viglet.org and /docs in both
+themes sees no visual break, and the layout holds at phone width.
+
+### CLIX.4 Redirect map for docs.viglet.org (T1163)
+
+docs.viglet.org will later redirect to https://turing.viglet.org/docs. Search engines,
+blog posts, the admin console and other Viglet products link to deep Docusaurus URLs
+(`/turing/<slug>`, `/turing/<version>/<slug>`), and a domain-level redirect that sends
+all of them to the docs home throws that away. This task derives the old URL set from
+the Docusaurus build (current docs plus the archived 0.3.5 to 0.3.9 versions) and writes
+a machine-readable map old path to new path, with versioned pages pointing at the
+current page or a stated landing page. The map is generated, not hand-kept, and a check
+fails when a ported page has no entry. The redirect itself (DNS, the vigletdocs side, or
+meta-refresh stubs) is out of scope here; this task only makes it possible without
+broken links. In-repo links to docs.viglet.org (console help links,
+`frontend/apps/site`, READMEs, SDK docs) move to /docs in the same pass.
+
+### CLIX.5 Switching the source of truth (T1164)
+
+Once the port and the theme have shipped, two copies of the end-user docs exist, and the
+one people edit has to be unambiguous. The `turing-roadmap-docs` skill's propagation
+section, `agents.md` and any memory that names `docs-turing` today tell a session to
+write the page and update `COVERAGE.md` in the vigletdocs repo, as a separate commit.
+This task moves `COVERAGE.md` into `frontend/apps/docs`, rewrites those instructions so
+a user-facing ship adds its page in the same Turing commit, and marks `docs-turing` in
+vigletdocs as superseded (a banner on every page pointing to turing.viglet.org/docs, no
+further edits), leaving Shio and Dumont docs untouched there. Any content edited in
+vigletdocs after the T1161 port is re-synced first, so the cut-over loses nothing.
+
+## CLX Keep the Anthropic okhttp client on Spring AI's core (T1165)
+
+**Where it happened.** Dependabot's java group (fdc3b42a7b) moved Spring AI from 2.0.1
+to 2.0.2, and spring-ai-anthropic 2.0.2 resolves anthropic-java-core 2.72.0. T1134 took
+the okhttp client out of Dependabot so it would move with Spring AI by hand, and nobody
+moved it: it stayed on 2.52.0. Core 2.72.0 also renamed `FileMetadata` to
+`BetaFileMetadata`, so `TurFilesApiBridge` stopped compiling.
+
+**Fix.** Pin `anthropic-java-client-okhttp` to 2.72.0, follow the rename in the bridge
+and its test, and add `TurAnthropicSdkAlignmentTest`, which compares the versions of the
+two jars on the test classpath. The next Spring AI bump that moves the core then fails
+one test that names the version to pin, not a missing SDK class somewhere else.

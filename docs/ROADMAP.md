@@ -10,15 +10,25 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
+- 🛠 **T1165** (deps: —) **turing-app no longer compiles: Spring AI 2.0.2 moved anthropic-java-core to 2.72.0, okhttp client pinned at 2.52.0** — Every backend build and test run is red until the pinned client follows the core that Spring AI resolves. → §CLX
+
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 ## Block BV — The quality gate stops at the package boundary
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1157** (deps: —) **Chat follow-ups that refer back (it, that one) retrieve nothing: SN chat and copilot search the latest message alone** — A visitor's second question is usually a follow-up, and answering it with a refusal ends the conversation the chat exists for. → §CLVIII.1
+- 🛠 **T1157** (deps: —) **Chat follow-ups that refer back (it, that one) retrieve nothing: SN chat and copilot search the latest message alone** — A visitor's second question is usually a follow-up, and answering it with a refusal ends the conversation the chat exists for. → §CLVIII.1
 - 📋 **T1158** (deps: —) **Deleting a document leaves its RAG chunks (by id, type or fields; on Milvus always), so site chat still cites it** — A removed or moved page keeps answering visitors with content the site no longer publishes, and no reindex clears it. → §CLVIII.2
 - 📋 **T1159** (deps: —) **The catalog copilot answers one need at a time; a described plan cannot come back as staged products by need** — A shopper planning a trip does not know every item to ask for, and each consumer would rebuild the gaps, the id check and the staging. → §CLVIII.3
+
+## Block U — Documentation refresh (`docs-turing`)
+
+- 📋 **T1160** (deps: —) **End-user docs live in a separate Docusaurus repo (vigletdocs) instead of at turing.viglet.org/docs** — Scaffold frontend/apps/docs as Astro + Starlight (roadkeep's site/docs shape), base /docs, built into the site dist by build:site and the Pages deploy. → §CLIX.1
+- 📋 **T1161** (deps: T1160) **The 70+ docs-turing pages, images and sidebar order exist only in Docusaurus form** — Port every page with sidebars-turing.ts order, converting admonitions, Tabs, MDX imports, static/img paths and internal links to Starlight, with no page dropped. → §CLIX.2
+- 📋 **T1162** (deps: T1160) **Stock Starlight theme does not look like Viglet Turing or the turing.viglet.org site around it** — Theme the docs area from the Viglet Design System tokens: blue-indigo gradient, dark mode, typography, header and footer matching frontend/apps/site. → §CLIX.3
+- 📋 **T1163** (deps: T1161) **No map from docs.viglet.org/turing/* URLs to /docs pages, so the planned redirect would 404 old links** — Generate a redirect map from every old Docusaurus URL (current and 0.3.x versions) to its /docs page and keep it in the repo, ready for the docs.viglet.org redirect. → §CLIX.4
+- 📋 **T1164** (deps: T1161, T1162) **The ship workflow, COVERAGE.md gate and skills still send end-user doc edits to the vigletdocs repo** — Move COVERAGE.md beside the new docs, repoint turing-roadmap-docs and agents.md to frontend/apps/docs, and freeze docs-turing in vigletdocs as superseded. → §CLIX.5
 
 ## Done when — T1133
 

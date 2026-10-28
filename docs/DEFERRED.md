@@ -19,3 +19,5 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
+## Block U — Documentation refresh (`docs-turing`)
+
