@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block CC — Lucene engine search with synonyms
-
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 ## Table of contents
@@ -2147,35 +2145,6 @@ silently. Found while building trabalharei's local Turing and import proof.
 ## CXIII LLM gateway parity with the OpenAI wire
 
 ## CXIV Lucene engine search with synonyms
-
-### CXIV.2 Lucene synonyms survive a restart (T1168)
-
-**Where it happened.** Dumont's WordPress e2e stack (`turing-ce:local`, Lucene engine,
-build `3777bc8d`). After a `docker start`, the Demo SN site answered 0 results for
-`rucksack` and `raincoat` while `backpack` still matched. The tuning still listed
-`rucksack | backpack | daypack` and `raincoat | rain jacket | waterproof jacket`; four
-curated specs went red.
-
-**Why.** Saving a synonym only writes the row; Push to engine (`POST …/synonym/apply`,
-`TurSNSynonymApplyService.applyAll`) installs it. Solr and Elasticsearch keep what was
-pushed across a restart. Lucene keeps it only in `TurLuceneSynonymRegistry`, an
-in-memory map, and nothing refills it at boot, so the query analyzer silently runs
-without synonyms.
-
-**What it should do.**
-- A plugin capability, `synonymsSurviveRestart()`, true by default and false on Lucene.
-- On application ready, for each SN site whose engine answers false, call `applyAll`
-  and log the rules each core received. Solr and Elasticsearch cores are not touched.
-- With tenancy on, run per tenant through `TurTenantScheduledFanOut`; with no tenant
-  bound the sweep would see only DEFAULT's sites.
-- A site whose apply fails, or whose core does not exist yet, logs why and keeps serving.
-- Docs: after a Lucene restart the live set is every enabled rule, pushed or not.
-
-**Workaround.** Push to engine again.
-
-**Gate.** An IT that pushes synonyms, recreates the registry as a restart does, runs the
-hook and finds `q=rucksack` through the synonym; a test that a Solr site is not
-re-applied; a test that a tenant's site is re-applied under its tenant.
 
 ## CXV turing.viglet.org relevance pass
 

@@ -442,6 +442,18 @@ public interface TurSearchEnginePlugin {
     }
 
     /**
+     * T1168 — whether synonyms pushed by {@link #applySynonyms} are still
+     * installed after the Turing process restarts. Solr and Elasticsearch keep
+     * them in the engine, so the default is {@code true}; an engine that holds
+     * them only in this JVM answers {@code false} and is re-applied at boot.
+     *
+     * @since 2026.3.5
+     */
+    default boolean synonymsSurviveRestart() {
+        return true;
+    }
+
+    /**
      * T663 — pushes the (site, locale) synonym rules into the engine's
      * query-time analysis so a search for any term in a rule matches records
      * containing the equivalents, <em>without</em> reindexing. The rules are the

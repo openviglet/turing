@@ -14,10 +14,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block CC — Lucene engine search with synonyms
-
-- 📋 **T1168** (deps: —) **On the Lucene engine, a restart drops every SN site's synonyms from search, though they stay configured** — Synonym searches silently answer nothing after any deploy or container restart, until someone pushes the synonyms to the engine again. → §CXIV.2
-
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 - 📋 **T1169** (deps: —) **On Lucene, every copilot free-text clause matches nothing: it queries `_text_`, a field the Lucene index never writes** — Copilot answers, Build my kit and MCP search on a Lucene site match by facets only, so a kit stages nothing. → §CLVIII.6

@@ -294,6 +294,12 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
         return true;
     }
 
+    /** T1168 — the registry is in-memory, so a restart empties it. */
+    @Override
+    public boolean synonymsSurviveRestart() {
+        return false;
+    }
+
     @Override
     public TurSESynonymApplyResult applySynonyms(TurSEInstance seInstance, String indexName,
             Locale locale, List<TurSESynonymRule> rules) {

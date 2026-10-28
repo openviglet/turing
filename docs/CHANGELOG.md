@@ -1514,6 +1514,7 @@
 ## Block CC — Lucene engine search with synonyms
 
 - **T1091** — Searches whose synonym expands to a multi-word term, and quoted queries, answer on Lucene: phrases run only on TEXT fields and match keyword fields as one exact term (design §CXIV.1 recorded in `turing-app/src/main/java/com/viglet/turing/lucene/TurLuceneQueryBuilder.java`).
+- **T1168** — Lucene SN sites re-apply their enabled synonyms at boot, per tenant, so synonym searches keep matching after a restart or deploy; Solr and Elasticsearch sites are left alone (design §CXIV.2 recorded in `turing-app/src/main/java/com/viglet/turing/sn/synonym/TurSNSynonymStartupReapply.java`).
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 

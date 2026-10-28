@@ -81,6 +81,20 @@ public class TurSNSynonymApplyService {
         return new TurSNSynonymSupportDto(plugin.getPluginType(), plugin.supportsSynonyms());
     }
 
+    /**
+     * T1168 — whether the site's engine forgets pushed synonyms on a restart,
+     * so they must be re-applied at boot. False for an unknown site.
+     */
+    @Transactional(readOnly = true)
+    public boolean losesSynonymsOnRestart(String siteId) {
+        return siteRepository.findById(siteId)
+                .map(site -> {
+                    TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+                    return plugin.supportsSynonyms() && !plugin.synonymsSurviveRestart();
+                })
+                .orElse(false);
+    }
+
     /** Pushes synonyms for every locale of the site; keyed by locale tag. */
     @Transactional(readOnly = true)
     public Map<String, TurSESynonymApplyResult> applyAll(String siteId) {

@@ -26,7 +26,7 @@ Synonyms are a Turing-owned, engine-neutral model; the engine plugin translates 
 
 - **Solr**: written through the Managed Synonyms resource and applied by a query-time synonym graph filter; the core is reloaded so the change is live with no reindex.
 - **Elasticsearch**: pushed through the Synonyms API as a synonym set that a search-analyzer synonym-graph filter reads, updatable without reindex.
-- **Lucene** (embedded store): compiled into an in-memory synonym map consulted by the query analyzer.
+- **Lucene** (embedded store): compiled into an in-memory synonym map consulted by the query analyzer. Because that map lives in memory, Turing re-applies every Lucene site's synonyms when it starts, so they keep working after a restart or deploy. After a restart the live set is every **enabled** rule, whether or not it had been pushed before.
 
 Engines differ in what they can represent, and Turing is honest about it rather than dropping a rule silently:
 
