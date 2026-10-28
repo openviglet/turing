@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.genai.catalog.TurCatalogCopilotResult;
 import com.viglet.turing.genai.catalog.TurCatalogCopilotService;
 import com.viglet.turing.genai.catalog.TurCatalogCopilotService.ChatTurn;
+import com.viglet.turing.genai.catalog.TurCatalogKitService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,9 +46,11 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSNCatalogCopilotAPI {
 
     private final TurCatalogCopilotService copilotService;
+    private final TurCatalogKitService kitService;
 
-    public TurSNCatalogCopilotAPI(TurCatalogCopilotService copilotService) {
+    public TurSNCatalogCopilotAPI(TurCatalogCopilotService copilotService, TurCatalogKitService kitService) {
         this.copilotService = copilotService;
+        this.kitService = kitService;
     }
 
     /** Whether the copilot can answer (a default LLM is configured). */
@@ -71,6 +74,22 @@ public class TurSNCatalogCopilotAPI {
                         .toList();
         log.info("[CatalogCopilot] chat on site '{}' with {} turns", siteName, turns.size());
         return copilotService.answer(siteName, request.locale(), turns);
+    }
+
+    /**
+     * T1159 — turns a described plan into a staged kit: the needs it implies, each
+     * with the catalog products retrieval found for it.
+     */
+    @Operation(summary = "Stage the catalog products a described plan needs, grouped by need")
+    @PostMapping(value = "/kit", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public TurCatalogKitService.Result kit(@PathVariable String siteName, @RequestBody KitRequest request) {
+        log.info("[CatalogKit] kit on site '{}'", siteName);
+        return kitService.plan(siteName, request.locale(), request.plan(), request.maxGaps(), request.perGap());
+    }
+
+    /** T1159 — the plan, an optional locale and optional limits (gaps, products per gap). */
+    public record KitRequest(String plan, String locale, Integer maxGaps, Integer perGap) {
     }
 
     /** Request body: the conversation so far plus an optional locale. */

@@ -2291,26 +2291,25 @@ host hands to Google Analytics, and the consent that gates them.
 
 **Where it happened.** Dumont D201, a "Build my kit" mode for the WordPress catalog
 copilot block (D173). A shopper writes a plan, "two days crossing the mountains in July,
-first time", and wants every item it implies. `POST /api/sn/{site}/copilot` answers one
-need with the items it cites, and `/chat/conversation` likewise; neither returns the
-needs a plan implies or groups products by them.
+first time", and wants every item it implies; `/copilot` answers one need at a time.
 
-**What it should do.** A copilot call that takes a plan and returns a short summary, the
-gaps the plan implies (shelter, layers, water), and stages: each gap with up to a few
-products and a one-line reason from their attributes. One LLM call names the gaps; each
-gap then runs the shared `TurCatalogCopilotService.retrieve()`, so the site's planning
-strategy and hybrid ranking apply. `TurQueryFanOut` only splits comparatives and does
-not infer needs. Every product id is checked against the candidates retrieval returned,
-as the T798 citation grounding does, and an invented id is dropped. An availability
-field named in the request marks or replaces an item. A matching document (a guide) is
-cited. Prices are never the model's. Exposed in the SDK beside the copilot, with its
-availability on the same probe.
+**Landed (the staged-kit call).** `POST /api/sn/{site}/copilot/kit` with `{plan, locale,
+maxGaps, perGap}`, in `TurCatalogKitService`. One LLM call names the gaps as plain lines
+(`SUMMARY:` / `GAP: name | query | why`, not structured output); each gap runs the
+shared `TurCatalogCopilotService.retrieve()`, so the site's planning strategy and hybrid
+ranking apply. Products come from that retrieval, never from the model, so every id is
+one the index returned and no price is the model's; a product staged under one gap is
+not repeated under another. The result carries the summary, the stages (gap, reason,
+query, products) and the gaps the catalog filled with nothing.
 
-**Why in Turing.** Retrieval, the id check and the LLM call are Turing's; built in a
-plugin it is one search per guessed gap plus an unchecked model call, which every other
-consumer (cursarei's staged course path) would rebuild.
+**Left.** A one-line reason per product from its attributes (today the reason is the
+gap's). An availability field named in the request that marks or drops an unavailable
+product. A matching document (a guide) cited beside the stages. And the call in both
+SDKs (`@viglet/turing-sdk`, `@viglet/turing-react-sdk`) beside the copilot, with its
+availability on the same `/copilot/available` probe.
 
-**Workaround.** None: D201 waits on this.
+**Tests.** Per-product reasons quote only the product's own attributes; an unavailable
+product is marked or dropped as asked; the SDKs post the request and type the result.
 
 ### CLVIII.4 Number a captured turn by the client history (T1166)
 
