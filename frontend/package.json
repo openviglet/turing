@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
-    "turbo": "^2.11.9"
+    "turbo": "^2.11.10"
   },
   "engines": {
     "node": ">=26",
