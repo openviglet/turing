@@ -617,6 +617,7 @@
 - **T1160** — frontend/apps/docs builds an Astro + Starlight area at turing.viglet.org/docs into the site's dist, run last by build:site, so the Pages deploy carries it (design §CLIX.1 recorded in `frontend/apps/docs/astro.config.mjs`).
 - **T1161** — All 72 docs-turing pages and their images are in /docs in the Docusaurus sidebar order, ported by a re-runnable script; a link check fails the build on any broken link (design §CLIX.2 recorded in `frontend/apps/docs/scripts/port-docusaurus.mjs`).
 - **T1162** — /docs now wears the marketing site's palette, fonts, cube mark, nav links and footer in light and dark, checked against turing.viglet.org in screenshots at desktop and phone width (design §CLIX.3 recorded in `frontend/apps/docs/src/styles/docs.css`).
+- **T1163** — redirects.json maps all 102 old docs.viglet.org/turing URLs, archived 0.3.x included, to their /docs page in the plugin-client-redirects shape, and in-repo links now point at /docs (design §CLIX.4 recorded in `frontend/apps/docs/scripts/redirect-map.mjs`).
 
 ## Block W — Agent↔UI transparency & client tools (AG-UI parity, §XXII)
 

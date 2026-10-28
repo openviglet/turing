@@ -79,7 +79,7 @@ export function SiteFooter() {
               viglet.org
             </a>
             <a href={LINKS.docs} className="hover:text-[#f2f4fb]">
-              docs.viglet.org
+              Docs
             </a>
             <button type="button" onClick={reopenConsent} className="hover:text-[#f2f4fb]">
               Cookie settings

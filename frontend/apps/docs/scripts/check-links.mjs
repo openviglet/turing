@@ -53,6 +53,15 @@ for (const file of htmlFiles(OUT)) {
   }
 }
 
+// T1163 — every redirect-map target on this area must be a page the build wrote.
+const SITE = "https://turing.viglet.org";
+const redirects = JSON.parse(fs.readFileSync(path.resolve(HERE, "..", "redirects.json"), "utf8"));
+for (const { from, to } of redirects) {
+  if (!to.startsWith(`${SITE}${BASE}/`)) continue;
+  const target = targetFile(to.slice(SITE.length));
+  if (!fs.existsSync(target)) broken.push(`redirects.json: ${from} -> ${to} (no ${path.relative(OUT, target)})`);
+}
+
 if (broken.length) {
   console.error(`[check-links] ${broken.length} broken internal link(s):\n  ${broken.join("\n  ")}`);
   process.exit(1);

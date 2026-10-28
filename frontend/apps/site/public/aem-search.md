@@ -103,4 +103,4 @@ resolve on the public WKND site (wknd.site).
 
 - AEM Search page: https://turing.viglet.org/aem-search/
 - AEM Connector docs (Dumont): https://docs.viglet.org/dumont/connectors/aem
-- Documentation: https://docs.viglet.org/turing/
+- Documentation: https://turing.viglet.org/docs/

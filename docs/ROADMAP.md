@@ -21,7 +21,6 @@
 
 ## Block U — Documentation refresh (`docs-turing`)
 
-- 📋 **T1163** (deps: T1161 ✅) **No map from docs.viglet.org/turing/* URLs to /docs pages, so the planned redirect would 404 old links** — Generate a redirect map from every old Docusaurus URL (current and 0.3.x versions) to its /docs page and keep it in the repo, ready for the docs.viglet.org redirect. → §CLIX.4
 - 📋 **T1164** (deps: T1161 ✅, T1162 ✅) **The ship workflow, COVERAGE.md gate and skills still send end-user doc edits to the vigletdocs repo** — Move COVERAGE.md beside the new docs, repoint turing-roadmap-docs and agents.md to frontend/apps/docs, and freeze docs-turing in vigletdocs as superseded. → §CLIX.5
 
 ## Done when — T1133

@@ -16,7 +16,7 @@ image:https://img.shields.io/badge/ghcr.io-openviglet%2Fturing--ce-2563eb?style=
 image:https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk&logoColor=white[Java 21]
 image:https://img.shields.io/badge/Spring%20Boot-4-6DB33F?style=flat-square&logo=springboot&logoColor=white[Spring Boot 4]
 image:https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black[React 19]
-image:https://img.shields.io/badge/docs-docs.viglet.org-brightgreen?style=flat-square&logo=readthedocs&logoColor=white[Documentation,link="https://docs.viglet.org/turing/"]
+image:https://img.shields.io/badge/docs-turing.viglet.org%2Fdocs-brightgreen?style=flat-square&logo=readthedocs&logoColor=white[Documentation,link="https://turing.viglet.org/docs/"]
 image:https://img.shields.io/badge/discussions-join-8b5cf6?style=flat-square&logo=github[Discussions,link="https://github.com/openviglet/turing-ce/discussions"]
 
 image::.github/screenshot-console.png[Viglet Turing admin console,align="center"]
@@ -270,7 +270,7 @@ turing-ce/
 
 [cols="1,2"]
 |===
-| https://docs.viglet.org/turing/[docs.viglet.org/turing] | Architecture, configuration, connectors, admin guide
+| https://turing.viglet.org/docs/[turing.viglet.org/docs] | Architecture, configuration, connectors, admin guide
 | https://turing.viglet.org/aem-search[AEM search guide] | Adding enterprise search + AI to Adobe Experience Manager
 | link:docs/RAG_HYBRID_CONFIG.md[Hybrid RAG configuration] | Tuning BM25 + vector retrieval and rerankers
 | link:docs/MULTI_TENANCY.md[Multi-tenancy] | Running one instance for many tenants

@@ -18,11 +18,11 @@ image:https://img.shields.io/badge/ghcr.io-openviglet%2Fturing--ce-2563eb?style=
 image:https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk&logoColor=white[Java 21]
 image:https://img.shields.io/badge/Spring%20Boot-4-6DB33F?style=flat-square&logo=springboot&logoColor=white[Spring Boot 4]
 image:https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black[React 19]
-image:https://img.shields.io/badge/docs-docs.viglet.org-brightgreen?style=flat-square&logo=readthedocs&logoColor=white[Documentation,link="https://docs.viglet.org/turing/"]
+image:https://img.shields.io/badge/docs-turing.viglet.org%2Fdocs-brightgreen?style=flat-square&logo=readthedocs&logoColor=white[Documentation,link="https://turing.viglet.org/docs/"]
 image:https://img.shields.io/badge/Sonar-Code%20Quality-brightgreen?style=flat-square&logo=SonarCloud[Code quality,link="https://sonarcloud.io/project/overview?id=viglet_turing"]
 
 **Site:** https://turing.viglet.org[turing.viglet.org] ·
-**Docs:** https://docs.viglet.org/turing/[docs.viglet.org/turing] ·
+**Docs:** https://turing.viglet.org/docs/[turing.viglet.org/docs] ·
 **Compare:** https://turing.viglet.org/compare/[Turing vs Algolia, Coveo, Lucidworks and Elasticsearch] ·
 **AEM:** https://turing.viglet.org/aem-search[enterprise search for Adobe AEM]
 
@@ -338,7 +338,7 @@ More at https://www.viglet.org[viglet.org].
 
 [cols="1,2"]
 |===
-| https://docs.viglet.org/turing/[docs.viglet.org/turing] | Architecture, configuration, connectors, admin guide
+| https://turing.viglet.org/docs/[turing.viglet.org/docs] | Architecture, configuration, connectors, admin guide
 | https://turing.viglet.org/aem-search[AEM search guide] | Adding enterprise search and AI to Adobe Experience Manager
 | https://turing.viglet.org/compare/[Comparison] | Turing vs Algolia, Coveo, Lucidworks, Elasticsearch and DIY RAG
 | https://turing.viglet.org/latest/javadoc/[Javadoc] | API reference for the Java classes

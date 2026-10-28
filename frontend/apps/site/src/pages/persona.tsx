@@ -16,7 +16,7 @@ import {
 } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
 
-const PERSONA_BOOK_URL = "https://docs.viglet.org/turing/persona-book";
+const PERSONA_BOOK_URL = "/docs/persona-book/";
 
 /** Matrix cell: yes/no render as icons, anything else as short freeform text. */
 function Cell({ value, highlight }: Readonly<{ value: string; highlight?: boolean }>) {

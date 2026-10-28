@@ -2325,20 +2325,6 @@ staged as a product is not repeated.
 
 ## CLIX Documentation refresh (`docs-turing`)
 
-### CLIX.4 Redirect map for docs.viglet.org (T1163)
-
-docs.viglet.org will later redirect to https://turing.viglet.org/docs. Search engines,
-blog posts, the admin console and other Viglet products link to deep Docusaurus URLs
-(`/turing/<slug>`, `/turing/<version>/<slug>`), and a domain-level redirect that sends
-all of them to the docs home throws that away. This task derives the old URL set from
-the Docusaurus build (current docs plus the archived 0.3.5 to 0.3.9 versions) and writes
-a machine-readable map old path to new path, with versioned pages pointing at the
-current page or a stated landing page. The map is generated, not hand-kept, and a check
-fails when a ported page has no entry. The redirect itself (DNS, the vigletdocs side, or
-meta-refresh stubs) is out of scope here; this task only makes it possible without
-broken links. In-repo links to docs.viglet.org (console help links,
-`frontend/apps/site`, READMEs, SDK docs) move to /docs in the same pass.
-
 ### CLIX.5 Switching the source of truth (T1164)
 
 Once the port and the theme have shipped, two copies of the end-user docs exist, and the

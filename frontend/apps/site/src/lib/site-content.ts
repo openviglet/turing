@@ -349,7 +349,7 @@ export const RESOURCES: LinkCard[] = [
     title: "Documentation",
     description:
       "Architecture guides, configuration reference, connector setup, API docs and deployment instructions.",
-    href: "https://docs.viglet.org/turing/",
+    href: "/docs/",
     tag: "Docs",
   },
 ];
@@ -419,7 +419,7 @@ export const AUDIENCES: Audience[] = [
       "Vendor-neutral funnel analytics to your own GA4, GTM, Segment or Matomo, zero-config",
       "Self-host with one docker run. No account, no telemetry",
     ],
-    primary: { label: "Get started", href: "https://docs.viglet.org/turing/" },
+    primary: { label: "Get started", href: "/docs/" },
     secondary: { label: "Try it live", href: "/#playground" },
   },
   {
@@ -614,7 +614,7 @@ export const FEATURE_DETAILS: Record<string, FeatureDetail> = {
     "_setlocale": "en_US"
   }'`,
     },
-    docs: { label: "Search & connectors docs", href: "https://docs.viglet.org/turing/category/enterprise-search" },
+    docs: { label: "Search & connectors docs", href: "/docs/enterprise-search/" },
     demo: { label: "Try a live faceted demo", href: "/marketplace/mythical-creatures/" },
     faq: [
       {
@@ -682,7 +682,7 @@ function Assistant() {
   return <ChatThread messages={messages} onSend={send} />;
 }`,
     },
-    docs: { label: "RAG & chat docs", href: "https://docs.viglet.org/turing/category/rag-chat" },
+    docs: { label: "RAG & chat docs", href: "/docs/rag-chat/" },
     faq: [
       {
         q: "Where do the citations come from?",
@@ -743,7 +743,7 @@ cd my-search
 npx @viglet/turing-cli dev      # local stack
 npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
     },
-    docs: { label: "Agents, tools & skills docs", href: "https://docs.viglet.org/turing/category/agents" },
+    docs: { label: "Agents, tools & skills docs", href: "/docs/agents/" },
     faq: [
       {
         q: "What is the difference between a tool and a skill?",
@@ -814,7 +814,7 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
   tenancy:
     enabled: false          # flip on for multi-tenant`,
     },
-    docs: { label: "Deployment & configuration docs", href: "https://docs.viglet.org/turing/category/deploy-operate" },
+    docs: { label: "Deployment & configuration docs", href: "/docs/deploy-operate/" },
     faq: [
       {
         q: "How do I run Turing on my own machine?",

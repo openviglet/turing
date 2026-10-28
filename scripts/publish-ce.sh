@@ -109,7 +109,7 @@ fi
 
 if [[ -z "${RELEASE_NOTES//[[:space:]]/}" ]]; then
   warn "CHANGELOG.md has no section for $VERSION (or ${VERSION%.*}) — the release commit will have no change list. Add one before publishing."
-  RELEASE_NOTES="See https://docs.viglet.org/turing/ for documentation."
+  RELEASE_NOTES="See https://turing.viglet.org/docs/ for documentation."
 fi
 
 COMMIT_MSG="$(cat <<EOF

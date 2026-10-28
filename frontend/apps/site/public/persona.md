@@ -83,11 +83,11 @@ AI review) against the demo backend.
 
 The full guide, with a worked example for every feature and six customer
 scenarios (e-commerce, banking, healthcare, SaaS, public sector, media), is
-"The Persona Book": https://docs.viglet.org/turing/persona-book
+"The Persona Book": https://turing.viglet.org/docs/persona-book/
 
 ## Links
 
 - Personas page: https://turing.viglet.org/persona/
-- The Persona Book: https://docs.viglet.org/turing/persona-book
-- Personas reference: https://docs.viglet.org/turing/personas
-- Documentation: https://docs.viglet.org/turing/
+- The Persona Book: https://turing.viglet.org/docs/persona-book/
+- Personas reference: https://turing.viglet.org/docs/personas/
+- Documentation: https://turing.viglet.org/docs/

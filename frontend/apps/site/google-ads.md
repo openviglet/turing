@@ -89,7 +89,7 @@ ideal 4–6. **Todos os destinos abaixo são páginas/âncoras reais**: as ânco
 | Data Residency & Security | Self-hosted, your infrastructure | Every page and query stays yours | `turing.viglet.org/security` |
 | AEM Connector Docs | Index AEM 6.5 or Cloud Service | Powered by the Dumont connector | `docs.viglet.org/dumont/connectors/aem` |
 | Compare Alternatives | vs Algolia, Elasticsearch & RAG | An honest, side-by-side look | `turing.viglet.org/compare` |
-| Get Started | Self-host under Apache 2.0 | Connect your AEM tier fast | `docs.viglet.org/turing/` |
+| Get Started | Self-host under Apache 2.0 | Connect your AEM tier fast | `turing.viglet.org/docs/` |
 
 Sitelinks extras (páginas reais, para rotação/A-B):
 
@@ -105,7 +105,7 @@ Sitelinks extras (páginas reais, para rotação/A-B):
 > isso.
 >
 > **URLs confirmadas no código** (`components/brand.tsx`):
-> `LINKS.docs = https://docs.viglet.org/turing/` ·
+> `LINKS.docs = /docs/` ·
 > `LINKS.aemConnector = https://docs.viglet.org/dumont/connectors/aem`.
 
 ### Âncoras disponíveis em /aem-search (adicionadas nesta rodada)
@@ -238,7 +238,7 @@ Rotas prerenderizadas (HTML estático) disponíveis hoje:
 - `/` (landing) · `/aem-search` · `/compare` · `/migrate` · `/persona` · `/security`
 - `/features/search` · `/features/ask` · `/features/automate` · `/features/run`
 
-Docs externas: `docs.viglet.org/turing/` · `docs.viglet.org/dumont/connectors/aem`.
+Docs externas: `turing.viglet.org/docs/` · `docs.viglet.org/dumont/connectors/aem`.
 
 ## 11. Pendências / verificar antes de publicar
 

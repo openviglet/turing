@@ -1,0 +1,410 @@
+[
+  {
+    "from": "/turing",
+    "to": "https://turing.viglet.org/docs/"
+  },
+  {
+    "from": "/turing/0.3.5",
+    "to": "https://turing.viglet.org/docs/"
+  },
+  {
+    "from": "/turing/0.3.5/administration-guide",
+    "to": "https://turing.viglet.org/docs/administration-guide/"
+  },
+  {
+    "from": "/turing/0.3.5/connectors",
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
+  },
+  {
+    "from": "/turing/0.3.5/developer-guide",
+    "to": "https://turing.viglet.org/docs/developer-guide/"
+  },
+  {
+    "from": "/turing/0.3.5/installation-guide",
+    "to": "https://turing.viglet.org/docs/installation-guide/"
+  },
+  {
+    "from": "/turing/0.3.5/release-notes",
+    "to": "https://www.viglet.org/turing/release-notes/"
+  },
+  {
+    "from": "/turing/0.3.6",
+    "to": "https://turing.viglet.org/docs/"
+  },
+  {
+    "from": "/turing/0.3.6/administration-guide",
+    "to": "https://turing.viglet.org/docs/administration-guide/"
+  },
+  {
+    "from": "/turing/0.3.6/connectors",
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
+  },
+  {
+    "from": "/turing/0.3.6/developer-guide",
+    "to": "https://turing.viglet.org/docs/developer-guide/"
+  },
+  {
+    "from": "/turing/0.3.6/installation-guide",
+    "to": "https://turing.viglet.org/docs/installation-guide/"
+  },
+  {
+    "from": "/turing/0.3.6/release-notes",
+    "to": "https://www.viglet.org/turing/release-notes/"
+  },
+  {
+    "from": "/turing/0.3.7",
+    "to": "https://turing.viglet.org/docs/"
+  },
+  {
+    "from": "/turing/0.3.7/administration-guide",
+    "to": "https://turing.viglet.org/docs/administration-guide/"
+  },
+  {
+    "from": "/turing/0.3.7/connectors",
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
+  },
+  {
+    "from": "/turing/0.3.7/developer-guide",
+    "to": "https://turing.viglet.org/docs/developer-guide/"
+  },
+  {
+    "from": "/turing/0.3.7/installation-guide",
+    "to": "https://turing.viglet.org/docs/installation-guide/"
+  },
+  {
+    "from": "/turing/0.3.7/release-notes",
+    "to": "https://www.viglet.org/turing/release-notes/"
+  },
+  {
+    "from": "/turing/0.3.8",
+    "to": "https://turing.viglet.org/docs/"
+  },
+  {
+    "from": "/turing/0.3.8/administration-guide",
+    "to": "https://turing.viglet.org/docs/administration-guide/"
+  },
+  {
+    "from": "/turing/0.3.8/connectors",
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
+  },
+  {
+    "from": "/turing/0.3.8/developer-guide",
+    "to": "https://turing.viglet.org/docs/developer-guide/"
+  },
+  {
+    "from": "/turing/0.3.8/installation-guide",
+    "to": "https://turing.viglet.org/docs/installation-guide/"
+  },
+  {
+    "from": "/turing/0.3.8/release-notes",
+    "to": "https://www.viglet.org/turing/release-notes/"
+  },
+  {
+    "from": "/turing/0.3.9",
+    "to": "https://turing.viglet.org/docs/"
+  },
+  {
+    "from": "/turing/0.3.9/administration-guide",
+    "to": "https://turing.viglet.org/docs/administration-guide/"
+  },
+  {
+    "from": "/turing/0.3.9/connectors",
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
+  },
+  {
+    "from": "/turing/0.3.9/developer-guide",
+    "to": "https://turing.viglet.org/docs/developer-guide/"
+  },
+  {
+    "from": "/turing/0.3.9/installation-guide",
+    "to": "https://turing.viglet.org/docs/installation-guide/"
+  },
+  {
+    "from": "/turing/0.3.9/release-notes",
+    "to": "https://www.viglet.org/turing/release-notes/"
+  },
+  {
+    "from": "/turing/administration-guide",
+    "to": "https://turing.viglet.org/docs/administration-guide/"
+  },
+  {
+    "from": "/turing/agent-eval",
+    "to": "https://turing.viglet.org/docs/agent-eval/"
+  },
+  {
+    "from": "/turing/agent-workspace",
+    "to": "https://turing.viglet.org/docs/agent-workspace/"
+  },
+  {
+    "from": "/turing/ai-agents",
+    "to": "https://turing.viglet.org/docs/ai-agents/"
+  },
+  {
+    "from": "/turing/answer",
+    "to": "https://turing.viglet.org/docs/answer/"
+  },
+  {
+    "from": "/turing/architecture-overview",
+    "to": "https://turing.viglet.org/docs/architecture-overview/"
+  },
+  {
+    "from": "/turing/assets",
+    "to": "https://turing.viglet.org/docs/assets/"
+  },
+  {
+    "from": "/turing/capabilities",
+    "to": "https://turing.viglet.org/docs/capabilities/"
+  },
+  {
+    "from": "/turing/category/agents",
+    "to": "https://turing.viglet.org/docs/agents/"
+  },
+  {
+    "from": "/turing/category/deploy-operate",
+    "to": "https://turing.viglet.org/docs/deploy-operate/"
+  },
+  {
+    "from": "/turing/category/enterprise-search",
+    "to": "https://turing.viglet.org/docs/enterprise-search/"
+  },
+  {
+    "from": "/turing/category/rag-chat",
+    "to": "https://turing.viglet.org/docs/rag-chat/"
+  },
+  {
+    "from": "/turing/chat",
+    "to": "https://turing.viglet.org/docs/chat/"
+  },
+  {
+    "from": "/turing/chat-analytics",
+    "to": "https://turing.viglet.org/docs/chat-analytics/"
+  },
+  {
+    "from": "/turing/chat-flow",
+    "to": "https://turing.viglet.org/docs/chat-flow/"
+  },
+  {
+    "from": "/turing/chat-memory",
+    "to": "https://turing.viglet.org/docs/chat-memory/"
+  },
+  {
+    "from": "/turing/cli",
+    "to": "https://turing.viglet.org/docs/cli/"
+  },
+  {
+    "from": "/turing/client-tools",
+    "to": "https://turing.viglet.org/docs/client-tools/"
+  },
+  {
+    "from": "/turing/configuration-reference",
+    "to": "https://turing.viglet.org/docs/configuration-reference/"
+  },
+  {
+    "from": "/turing/conversion-analytics",
+    "to": "https://turing.viglet.org/docs/conversion-analytics/"
+  },
+  {
+    "from": "/turing/cost-governance",
+    "to": "https://turing.viglet.org/docs/cost-governance/"
+  },
+  {
+    "from": "/turing/custom-tools",
+    "to": "https://turing.viglet.org/docs/custom-tools/"
+  },
+  {
+    "from": "/turing/developer-guide",
+    "to": "https://turing.viglet.org/docs/developer-guide/"
+  },
+  {
+    "from": "/turing/dsl-compatibility",
+    "to": "https://turing.viglet.org/docs/dsl-compatibility/"
+  },
+  {
+    "from": "/turing/dsl-query",
+    "to": "https://turing.viglet.org/docs/dsl-query/"
+  },
+  {
+    "from": "/turing/embedding-models",
+    "to": "https://turing.viglet.org/docs/embedding-models/"
+  },
+  {
+    "from": "/turing/embedding-stores",
+    "to": "https://turing.viglet.org/docs/embedding-stores/"
+  },
+  {
+    "from": "/turing/experiments",
+    "to": "https://turing.viglet.org/docs/experiments/"
+  },
+  {
+    "from": "/turing/flow-dsl",
+    "to": "https://turing.viglet.org/docs/flow-dsl/"
+  },
+  {
+    "from": "/turing/genai-llm",
+    "to": "https://turing.viglet.org/docs/genai-llm/"
+  },
+  {
+    "from": "/turing/getting-started/core-concepts",
+    "to": "https://turing.viglet.org/docs/getting-started/core-concepts/"
+  },
+  {
+    "from": "/turing/getting-started/intro",
+    "to": "https://turing.viglet.org/docs/getting-started/intro/"
+  },
+  {
+    "from": "/turing/graphql",
+    "to": "https://turing.viglet.org/docs/graphql/"
+  },
+  {
+    "from": "/turing/human-in-the-loop",
+    "to": "https://turing.viglet.org/docs/human-in-the-loop/"
+  },
+  {
+    "from": "/turing/import-export",
+    "to": "https://turing.viglet.org/docs/import-export/"
+  },
+  {
+    "from": "/turing/installation-guide",
+    "to": "https://turing.viglet.org/docs/installation-guide/"
+  },
+  {
+    "from": "/turing/integration",
+    "to": "https://turing.viglet.org/docs/integration/"
+  },
+  {
+    "from": "/turing/integration-aem",
+    "to": "https://turing.viglet.org/docs/integration-aem/"
+  },
+  {
+    "from": "/turing/intent",
+    "to": "https://turing.viglet.org/docs/intent/"
+  },
+  {
+    "from": "/turing/javascript-sdk",
+    "to": "https://turing.viglet.org/docs/javascript-sdk/"
+  },
+  {
+    "from": "/turing/llm-gateway",
+    "to": "https://turing.viglet.org/docs/llm-gateway/"
+  },
+  {
+    "from": "/turing/llm-instances",
+    "to": "https://turing.viglet.org/docs/llm-instances/"
+  },
+  {
+    "from": "/turing/logging",
+    "to": "https://turing.viglet.org/docs/logging/"
+  },
+  {
+    "from": "/turing/manifest",
+    "to": "https://turing.viglet.org/docs/manifest/"
+  },
+  {
+    "from": "/turing/mcp-servers",
+    "to": "https://turing.viglet.org/docs/mcp-servers/"
+  },
+  {
+    "from": "/turing/migration",
+    "to": "https://turing.viglet.org/docs/migration/"
+  },
+  {
+    "from": "/turing/multi-tenancy",
+    "to": "https://turing.viglet.org/docs/multi-tenancy/"
+  },
+  {
+    "from": "/turing/observability",
+    "to": "https://turing.viglet.org/docs/observability/"
+  },
+  {
+    "from": "/turing/persona-book",
+    "to": "https://turing.viglet.org/docs/persona-book/"
+  },
+  {
+    "from": "/turing/personas",
+    "to": "https://turing.viglet.org/docs/personas/"
+  },
+  {
+    "from": "/turing/rag",
+    "to": "https://turing.viglet.org/docs/rag/"
+  },
+  {
+    "from": "/turing/react-sdk",
+    "to": "https://turing.viglet.org/docs/react-sdk/"
+  },
+  {
+    "from": "/turing/reranking",
+    "to": "https://turing.viglet.org/docs/reranking/"
+  },
+  {
+    "from": "/turing/rest-api",
+    "to": "https://turing.viglet.org/docs/rest-api/"
+  },
+  {
+    "from": "/turing/routines",
+    "to": "https://turing.viglet.org/docs/routines/"
+  },
+  {
+    "from": "/turing/search-engine",
+    "to": "https://turing.viglet.org/docs/search-engine/"
+  },
+  {
+    "from": "/turing/security-authentication",
+    "to": "https://turing.viglet.org/docs/security-authentication/"
+  },
+  {
+    "from": "/turing/security-hardening",
+    "to": "https://turing.viglet.org/docs/security-hardening/"
+  },
+  {
+    "from": "/turing/security-keycloak",
+    "to": "https://turing.viglet.org/docs/security-keycloak/"
+  },
+  {
+    "from": "/turing/security-social-login",
+    "to": "https://turing.viglet.org/docs/security-social-login/"
+  },
+  {
+    "from": "/turing/semantic-navigation",
+    "to": "https://turing.viglet.org/docs/semantic-navigation/"
+  },
+  {
+    "from": "/turing/showcase",
+    "to": "https://turing.viglet.org/docs/showcase/"
+  },
+  {
+    "from": "/turing/skills",
+    "to": "https://turing.viglet.org/docs/skills/"
+  },
+  {
+    "from": "/turing/spa-pages",
+    "to": "https://turing.viglet.org/docs/spa-pages/"
+  },
+  {
+    "from": "/turing/synonyms",
+    "to": "https://turing.viglet.org/docs/synonyms/"
+  },
+  {
+    "from": "/turing/thesaurus",
+    "to": "https://turing.viglet.org/docs/thesaurus/"
+  },
+  {
+    "from": "/turing/token-usage",
+    "to": "https://turing.viglet.org/docs/token-usage/"
+  },
+  {
+    "from": "/turing/tool-calling",
+    "to": "https://turing.viglet.org/docs/tool-calling/"
+  },
+  {
+    "from": "/turing/transcription",
+    "to": "https://turing.viglet.org/docs/transcription/"
+  },
+  {
+    "from": "/turing/vectorless-structured-rag",
+    "to": "https://turing.viglet.org/docs/vectorless-structured-rag/"
+  },
+  {
+    "from": "/turing/webhooks",
+    "to": "https://turing.viglet.org/docs/webhooks/"
+  }
+]

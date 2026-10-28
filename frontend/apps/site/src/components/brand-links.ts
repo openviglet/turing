@@ -5,7 +5,7 @@
  * renders, and the module it sat in exports components.
  */
 export const LINKS = {
-  docs: "https://docs.viglet.org/turing/",
+  docs: "/docs/",
   // Connectors ship in the Dumont project; the AEM connector docs live under
   // the /dumont route (docs-dumont/connectors/aem.md), not under /turing.
   aemConnector: "https://docs.viglet.org/dumont/connectors/aem",
