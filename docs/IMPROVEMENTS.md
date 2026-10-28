@@ -29,6 +29,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block Z — Client-side conversion analytics & the Google Analytics bridge (§XXV)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2275,3 +2277,60 @@ trigger.
 
 A request the caller got wrong answers 4xx with what was wrong in it, never a 500 that
 sends the caller to the server log.
+
+## CLVII Search analytics in the SDK
+
+What the SDK reports to analytics, and when: the search, click and abandonment events a
+host hands to Google Analytics, and the consent that gates them.
+
+### CLVII.2 Consent gates the click report too (T1156)
+
+**Where it happened.** Dumont D188, moving the WordPress plugin's result clicks onto
+`SearchController.trackResultClick()` in `@viglet/turing-sdk` 2026.3.10.
+
+**What happens.** T1129 added a `consent` option that is "asked before every analytics
+event and before the session cookie is written". `trackResultClick()` asks it only for
+the `turing_search_result_click` event: the `postClick()` to `POST
+/api/sn/{site}/click`, which records the query, the document and its rank in Turing's
+metrics, is sent first and unconditionally. A site that hands the controller `consent:
+() => false` until the visitor answers a banner still reports every opened result to
+Turing.
+
+**Workaround in Dumont.** The plugin checks its own `trackingAllowed()` before calling
+`trackResultClick()` (`wordpress/src/public/search.js`), so its visitors are not
+affected; any other consumer that trusts the option is.
+
+**What Turing should do.** In `controllers/search.ts`, return before `postClick()` when
+`consent()` is false, as the event already does; keep disarming abandonment either way.
+Say in the option's doc comment that it gates the click report too. Test: with `consent:
+() => false`, `trackResultClick()` sends no request and emits nothing.
+
+### CLVII.1 A refinement is not another search (T1155)
+
+**Where it happened.** Dumont D188, the WordPress plugin's search block on
+`@viglet/turing-sdk` 2026.3.10: `createSearchController(..., { analytics, consent,
+sessionCookie: false, abandonment: true })`, the bus with `googleAnalyticsSink({
+recommended: true })`.
+
+**What comes back.** `emitSearchEvents()` runs after every request that is not `mode:
+"instant"`, so `toggleFacet`, `changeSort`, `goToPage` and a `searchRequest` that only
+changes `fq` or `page` each emit another `turing_search` and, in recommended mode,
+another GA4 `search` with the same `search_term`. A visitor who searches "workshop",
+ticks a facet and changes the sort is three searches in GA4's site-search report, and
+the abandonment watcher is re-armed each time. Only a changed query is told apart
+(`turing_search_refined`).
+
+**What was expected.** One search per query the visitor settled on; a filter, sort or
+page on it is a refinement of that search, not a new one.
+
+**Workaround in Dumont.** `wordpress/src/public/search.js` wraps the GA sink: search
+events pass only while the block's `reportSearchesWhen()` predicate says the request in
+flight is settled (`settled = false` before each facet, sort, page and filter-clear
+call). Remove it once the SDK ships this.
+
+**What Turing should do.** Emit the search events only for a new query: skip a response
+whose request differs from the last reported one only in `fq`, `page`, `rows` or `sort`,
+or let `searchRequest` take `{ report: false }` and pass it from the controller's own
+refinement methods. Test in `controllers/search.test.ts`: a facet, a sort and a page
+after one search emit no second `turing_search` or GA4 `search`, and leave abandonment
+armed once.
