@@ -34,10 +34,10 @@ export default defineConfig({
 
   integrations: [
     starlight({
-      title: "Viglet Turing Docs",
+      title: "Viglet Turing",
       description:
         "How to install, configure and use Viglet Turing: Semantic Navigation, search engines, connectors and GenAI.",
-      logo: { src: "./src/assets/turing-logo.png", alt: "Viglet Turing" },
+      logo: { src: "./src/assets/turing-mark.svg", alt: "Viglet Turing" },
       favicon: "/favicon.ico",
       // Pagefind, indexed at build time: search needs no service to be up.
       pagefind: true,
@@ -45,6 +45,23 @@ export default defineConfig({
         { icon: "github", label: "GitHub", href: "https://github.com/openviglet/turing-ce" },
       ],
       customCss: ["./src/styles/docs.css"],
+      // T1162 — the marketing site's look: its fonts, and its brand, nav and footer.
+      head: [
+        { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.googleapis.com" } },
+        { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true } },
+        {
+          tag: "link",
+          attrs: {
+            rel: "stylesheet",
+            href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap",
+          },
+        },
+      ],
+      components: {
+        SiteTitle: "./src/components/SiteTitle.astro",
+        SocialIcons: "./src/components/SocialIcons.astro",
+        Footer: "./src/components/Footer.astro",
+      },
       // T1161 — the order of the Docusaurus sidebars-turing.ts, written by
       // scripts/port-docusaurus.mjs next to the pages it ports.
       sidebar,

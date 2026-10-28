@@ -1,5 +1,5 @@
 ---
-title: "getting-started/intro"
+title: "What is Viglet Turing?"
 description: "Viglet Turing is an open-source enterprise search platform with keyword search, faceted navigation, and generative AI for files, CMS, and databases."
 ---
 **Viglet Turing** is an open-source enterprise search platform. It helps organizations make their content findable, understandable, and interactive: through keyword search, faceted navigation, and generative AI conversations.

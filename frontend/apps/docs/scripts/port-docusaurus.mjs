@@ -209,8 +209,13 @@ function convertBody(page) {
   return out.join("\n").replace(/^\s+/, "");
 }
 
+/** Docusaurus falls back to the body's H1 when the frontmatter has no title; so does this. */
+function titleOf(page) {
+  return unquote(page.data.title) ?? (page.body.match(/^#\s+(.+?)\s*$/m) ?? [])[1] ?? page.slug;
+}
+
 function frontmatter(page, extra = {}) {
-  const fm = ["---", `title: ${yamlString(unquote(page.data.title) ?? page.slug)}`];
+  const fm = ["---", `title: ${yamlString(titleOf(page))}`];
   if (page.data.description) fm.push(`description: ${yamlString(unquote(page.data.description))}`);
   if (page.data.sidebar_label) fm.push("sidebar:", `  label: ${yamlString(unquote(page.data.sidebar_label))}`);
   if (page.data.hide_table_of_contents === "true") fm.push("tableOfContents: false");
@@ -221,7 +226,7 @@ function frontmatter(page, extra = {}) {
 
 function cardFor(slug) {
   const page = bySlug.get(slugOfId(slug));
-  const title = unquote(page.data.title) ?? slug;
+  const title = titleOf(page);
   const description = unquote(page.data.description) ?? "";
   return `  <LinkCard title=${JSON.stringify(title)} description=${JSON.stringify(description)} href="${hrefOf(page.slug)}" />`;
 }
@@ -298,7 +303,7 @@ fs.rmSync(CONTENT, { recursive: true, force: true });
 fs.rmSync(PUBLIC_IMG, { recursive: true, force: true });
 for (const page of pages) {
   let text;
-  let ext = path.extname(page.relPath);
+  let ext;
   if (page.slug === "") {
     text = convertLanding(page);
     ext = ".mdx";

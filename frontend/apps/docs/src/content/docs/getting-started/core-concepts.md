@@ -1,5 +1,5 @@
 ---
-title: "getting-started/core-concepts"
+title: "Core Concepts"
 description: "The mental model behind Viglet Turing (semantic navigation sites, faceted search, indexing, and generative AI) explained in plain terms."
 ---
 This page explains the fundamental concepts of Viglet Turing in plain terms. No configuration files, no code, just the mental model you need before diving into the technical documentation.

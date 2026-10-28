@@ -1,0 +1,134 @@
+---
+/**
+ * T1162 — Starlight's page footer (pagination, last updated), then the marketing
+ * site's footer: the same columns and the same dark band as turing.viglet.org.
+ */
+import Default from "@astrojs/starlight/components/Footer.astro";
+import mark from "../assets/turing-mark.svg";
+
+const columns = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Capabilities", href: "/#features" },
+      { label: "Compare", href: "/compare/" },
+      { label: "Migrate", href: "/migrate/" },
+      { label: "AEM search", href: "/aem-search/" },
+      { label: "Security", href: "/security/" },
+      { label: "Marketplace", href: "/#marketplace" },
+    ],
+  },
+  {
+    heading: "Developers",
+    links: [
+      { label: "React SDK", href: "/react-sdk/" },
+      { label: "npm", href: "https://www.npmjs.com/package/@viglet/turing-react-sdk" },
+      { label: "CLI", href: "https://www.npmjs.com/package/@viglet/turing-cli" },
+    ],
+  },
+  {
+    heading: "Open & transparent",
+    links: [
+      { label: "Roadmap", href: "https://github.com/openviglet/turing-ce/blob/HEAD/docs/ROADMAP.md" },
+      { label: "Changelog", href: "https://www.viglet.org/turing/release-notes/" },
+      { label: "viglet.org", href: "https://www.viglet.org" },
+    ],
+  },
+];
+const year = new Date().getFullYear();
+---
+
+<Default />
+<footer class="turing-footer not-content">
+  <div class="turing-footer-grid">
+    <div>
+      <span class="turing-footer-brand">
+        <img src={mark.src} alt="" width="28" height="28" />
+        Viglet Turing
+      </span>
+      <p>Open-source Enterprise Search Intelligence Platform: agents, tools, skills, MCP and RAG for your content.</p>
+    </div>
+    {
+      columns.map((col) => (
+        <div>
+          <h3>{col.heading}</h3>
+          <ul>
+            {col.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+  <div class="turing-footer-legal">© {year} Viglet Turing · Apache 2.0 License</div>
+</footer>
+
+<style>
+  .turing-footer {
+    margin-top: 3rem;
+    padding: 2.5rem 1.5rem 1.5rem;
+    background: #07080f;
+    color: #8b94b3;
+    border-radius: var(--turing-radius);
+    font-size: var(--sl-text-sm);
+  }
+  .turing-footer-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 50rem) {
+    .turing-footer-grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    }
+  }
+  .turing-footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+    color: #f2f4fb;
+  }
+  .turing-footer p {
+    margin-top: 0.75rem;
+    line-height: 1.6;
+  }
+  .turing-footer h3 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #f2f4fb;
+  }
+  .turing-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+  }
+  .turing-footer li + li {
+    margin-top: 0.6rem;
+  }
+  .turing-footer a {
+    color: #8b94b3;
+    text-decoration: none;
+  }
+  .turing-footer a:hover {
+    color: #f2f4fb;
+  }
+  .turing-footer-legal {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #161a2b;
+    font-size: 0.75rem;
+    color: #5e6580;
+  }
+</style>

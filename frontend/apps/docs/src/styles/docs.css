@@ -1,27 +1,88 @@
 /*
- * T1160 — the brand accent only: the Viglet Turing blue-600 -> indigo-600 gradient
- * (blue-500 -> indigo-500 in dark mode) on Starlight's accent tokens, so the area is
- * not stock Starlight. The full Viglet Design System theme (typography, header and
- * footer matching the marketing site) is T1162.
+ * T1162 — the docs area in the marketing site's look (frontend/apps/site/src/index.css):
+ * the same oklch palette on Starlight's tokens, Plus Jakarta Sans and JetBrains Mono,
+ * the 0.75rem radius, and the blue-600 -> indigo-600 gradient (blue-500 -> indigo-500
+ * in dark mode). Starlight's scale runs from --sl-color-white (strongest text) to
+ * --sl-color-black (the page), so the light theme inverts it.
  */
 :root {
-  --sl-color-accent-low: #1e1b4b;
-  --sl-color-accent: #6366f1;
-  --sl-color-accent-high: #c7d2fe;
+  --sl-font: "Plus Jakarta Sans", system-ui, sans-serif;
+  --sl-font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --turing-radius: 0.75rem;
   --turing-gradient: linear-gradient(90deg, #3b82f6, #6366f1);
+
+  /* Dark, the site's .dark tokens. */
+  --sl-color-white: oklch(0.96 0.005 265);
+  --sl-color-gray-1: oklch(0.9 0.01 265);
+  --sl-color-gray-2: oklch(0.8 0.015 265);
+  --sl-color-gray-3: oklch(0.68 0.02 265);
+  --sl-color-gray-4: oklch(0.46 0.02 265);
+  --sl-color-gray-5: oklch(0.27 0.02 265);
+  --sl-color-gray-6: oklch(0.17 0.02 265);
+  --sl-color-black: oklch(0.13 0.02 265);
+  --sl-color-accent-low: oklch(0.26 0.06 264);
+  --sl-color-accent: oklch(0.66 0.18 264);
+  --sl-color-accent-high: oklch(0.86 0.08 264);
+  --sl-color-bg-nav: color-mix(in oklab, var(--sl-color-black) 85%, transparent);
 }
 
 :root[data-theme="light"] {
-  --sl-color-accent-low: #e0e7ff;
-  --sl-color-accent: #4f46e5;
-  --sl-color-accent-high: #312e81;
   --turing-gradient: linear-gradient(90deg, #2563eb, #4f46e5);
+
+  /* Light, the site's :root tokens. */
+  --sl-color-white: oklch(0.16 0.02 265);
+  --sl-color-gray-1: oklch(0.25 0.03 265);
+  --sl-color-gray-2: oklch(0.36 0.03 265);
+  --sl-color-gray-3: oklch(0.52 0.02 265);
+  --sl-color-gray-4: oklch(0.7 0.015 265);
+  --sl-color-gray-5: oklch(0.92 0.008 265);
+  --sl-color-gray-6: oklch(0.97 0.005 265);
+  --sl-color-gray-7: oklch(0.985 0.003 265);
+  --sl-color-black: oklch(1 0 0);
+  --sl-color-accent-low: oklch(0.94 0.03 264);
+  --sl-color-accent: oklch(0.55 0.22 264);
+  --sl-color-accent-high: oklch(0.35 0.15 264);
+  --sl-color-bg-nav: color-mix(in oklab, var(--sl-color-black) 85%, transparent);
 }
 
+body {
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The header reads as the site's sticky nav: the page colour, opaque, so text
+   scrolled under it never shows through. */
+header.header {
+  background-color: var(--sl-color-black);
+}
+
+/* The brand as the site draws it: the foreground colour, extra-bold, nav-sized. */
 .site-title {
+  color: var(--sl-color-white);
+  font-size: 1.05rem;
+  font-weight: 800;
+  gap: 0.5rem;
+}
+.site-title img {
+  height: 2rem;
+  width: auto;
+}
+
+/* The current page: the site's soft primary pill, not a solid block. */
+.sidebar-content a[aria-current="page"],
+.sidebar-content a[aria-current="page"]:hover {
+  background: color-mix(in oklab, var(--sl-color-accent) 14%, transparent);
+  color: var(--sl-color-accent-high);
+  font-weight: 700;
+}
+
+/* Headings and the splash hero carry the brand gradient. */
+.hero h1,
+.content-panel h1#_top {
   background: var(--turing-gradient);
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
@@ -29,4 +90,29 @@
   background: var(--turing-gradient);
   border: none;
   color: #fff;
+}
+
+/* Cards, asides, code and tables on the site's radius. */
+.card,
+.sl-link-card,
+.starlight-aside,
+.expressive-code .frame,
+.sl-markdown-content table,
+site-search dialog {
+  border-radius: var(--turing-radius);
+}
+
+.sl-link-card:hover {
+  border-color: var(--sl-color-accent);
+  box-shadow: 0 4px 20px color-mix(in oklab, var(--sl-color-accent) 18%, transparent);
+}
+
+.starlight-aside--note,
+.starlight-aside--tip {
+  --sl-color-asides-text-accent: var(--sl-color-accent-high);
+}
+
+.sl-markdown-content table {
+  display: block;
+  overflow-x: auto;
 }

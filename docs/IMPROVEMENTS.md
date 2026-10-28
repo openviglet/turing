@@ -2325,20 +2325,6 @@ staged as a product is not repeated.
 
 ## CLIX Documentation refresh (`docs-turing`)
 
-### CLIX.3 A docs theme built on the Design System (T1162)
-
-roadkeep's docs area keeps Starlight's stock look plus a small `customCss`; that is the
-part not to copy. Turing's docs must read as the same product as turing.viglet.org and
-the admin console. The theme maps Starlight's CSS custom properties (`--sl-color-*`,
-fonts, radii) onto the Viglet Design System tokens
-(`d:/git/viglet/viglet-design-system`), uses the blue-600 to indigo-600 primary gradient
-(blue-500 to indigo-500 in dark mode), and keeps both light and dark modes legible. The
-header and footer are overridden through Starlight component overrides so the logo, nav
-links and footer match `frontend/apps/site`, with a link back to the marketing pages.
-Code blocks, asides, tables, cards and the search modal are restyled to the same
-palette. Done means a reviewer switching between turing.viglet.org and /docs in both
-themes sees no visual break, and the layout holds at phone width.
-
 ### CLIX.4 Redirect map for docs.viglet.org (T1163)
 
 docs.viglet.org will later redirect to https://turing.viglet.org/docs. Search engines,
