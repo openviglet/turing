@@ -143,7 +143,7 @@ public final class TurAnswerStreamFramer {
                     return Flux.empty();
                 }
                 answer.append(content);
-                return Flux.just(event(EVENT_TOKEN, content));
+                return Flux.just(event(EVENT_TOKEN, tokenData(content)));
             }
             case UPSTREAM_CLIENT_TOOL_CALL -> {
                 // T841 — the agent rendered the answer as a structured artifact (an
@@ -222,6 +222,19 @@ public final class TurAnswerStreamFramer {
         } catch (RuntimeException e) {
             return List.of();
         }
+    }
+
+    /**
+     * T1153 — a token's {@code data:} payload, written so its own leading space
+     * survives. Spring writes {@code data:} with no space after the colon and an SSE
+     * client strips one space there, so a raw {@code " for"} arrived as {@code "for"}
+     * and the answer read as one run-on word. Prefixing a space gives the client the
+     * separator it strips; a token carrying {@code \n} is split by the encoder into
+     * several {@code data:} lines, and each continuation gets the same space. The
+     * wire format is unchanged, so no SDK needs a release.
+     */
+    static String tokenData(String token) {
+        return " " + token.replace("\n", "\n ");
     }
 
     private static ServerSentEvent<String> event(String name, String data) {

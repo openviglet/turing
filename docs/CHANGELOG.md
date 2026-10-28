@@ -1250,6 +1250,7 @@
 - **T891** — The switcher reaches the keyword page behind a `_lens=1` opt-in the switcher and the console launcher append, so the round trip closes and a visitor's page is unchanged.
 - **T889** — The answer stream, freshness and signal are anonymous like the chat beside them; minting a share permalink and the operator page stay authenticated, guarded by a source test.
 - **T976** — A new answer.md documents the endpoint from its contract — parameters, the eight SSE events, the five errors, freshness, signals and why share is not anonymous — and the matrix now accounts for every block.
+- **T1153** — Each answer token is written as `data: ` plus the token, with every continuation line given the same space, so a token's own leading space reaches SSE clients and cited answers read as words again (design §LXIV.8 recorded in `turing-app/src/main/java/com/viglet/turing/genai/answer/TurAnswerStreamFramer.java`).
 
 ## Block BU — The search cache is off by a thousand and never evicted on write
 

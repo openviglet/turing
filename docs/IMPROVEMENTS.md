@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block BQ — The answer engine as a first-class search lens (`/answer`) (§LXIV)
-
 ## Block CI — API errors name what the caller sent wrong
 
 ## Table of contents
@@ -2022,41 +2020,6 @@ layer up. Deep-linking `/sn/{name}?_aimode=true` would be cheaper, but it is a l
 into lens #1 with a panel open — it inherits the reader-tuned chrome, and it still
 leaves vectorless sites without a tile. The block adds **no backend**.
 
-
-### LXIV.8 Answer tokens keep their leading space (T1153)
-
-**Where it showed up.** Dumont D174's live-LLM suite, the WordPress search block's
-answer panel (`createAnswerController` from `@viglet/turing-sdk` 2026.3.9), against a
-Turing built from 2026.3 at d4b46f5daf.
-
-**What happens.** `GET /api/sn/Sample/answer?q=When do applications for the research
-grant close?&locale=en_US` streams each model token as its own `token` event, the token
-as raw text (`TurAnswerStreamFramer.java:146`, `event(EVENT_TOKEN, content)`), and
-Spring writes `data:` with no space after the colon:
-
-```
-event:token
-data:Applications
-
-event:token
-data: for
-```
-
-The SSE spec has a client drop one space after `data:`, so " for" reaches every
-conforming client, the browser's `EventSource` included, as "for". Both SDKs strip
-exactly that one space, as they should, so the bug is the server's. The answer framer is
-the only stream that sends raw text; chat, the gateway and slots send JSON.
-
-**What it should do.** Write every `token` event as `data: ` plus the token, so the
-stripped space is the separator's and the token's own space survives. The wire format
-does not change: every published SDK, and any third-party client of `/answer`, keeps
-working with no release. JSON-encoding the payload is rejected: it breaks the public
-contract and needs both shapes in the SDKs for a release. A token that carries `\n` is
-split into several `data:` lines, and each needs its own leading space. Framer tests
-with a token starting with a space and one containing `\n`, plus an SDK test that parses
-both back unchanged.
-
-**Workaround.** None in Dumont; the answer spec stays red, and D174 waits on this line.
 
 ## LXV. Block AV follow-through — the gaps the POST-native migration left (Block BR)
 

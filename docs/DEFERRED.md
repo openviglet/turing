@@ -17,7 +17,5 @@
 
 - ⏸ **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — set aside (npm publish): Needs a person: dispatch publish-sdk.yml (bump sdk first) and publish-js-sdk.yml, then pick changesets-in-the-workflows or retire .changeset. → §CLIII.2
 
-## Block BQ — The answer engine as a first-class search lens (`/answer`) (§LXIV)
-
 ## Block CI — API errors name what the caller sent wrong
 

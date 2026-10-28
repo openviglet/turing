@@ -14,10 +14,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block BQ — The answer engine as a first-class search lens (`/answer`) (§LXIV)
-
-- 📋 **T1153** (deps: —) **The answer stream drops the space at the start of each token, so a cited answer reads as one run-on word** — SSE clients strip one space after data:, and the answer sends tokens raw, so every SDK panel shows unreadable answers. → §LXIV.8
-
 ## Block CI — API errors name what the caller sent wrong
 
 - 📋 **T1154** (deps: —) **A malformed query parameter, of the wrong type or not valid UTF-8, answers 500 instead of a 400 naming it** — The caller is told the server broke and is sent to Turing's log, when the request was what was wrong. → §CLVI.1

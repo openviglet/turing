@@ -11,6 +11,7 @@ package com.viglet.turing.genai.answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,8 @@ import com.viglet.turing.genai.citation.TurAnswerCitation;
 import com.viglet.turing.genai.rag.TurRagSource;
 
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import reactor.core.publisher.Flux;
 import tools.jackson.core.type.TypeReference;
@@ -74,9 +77,9 @@ class TurAnswerStreamFramerTest {
                 .containsExactly("sources", "token", "token", "citations", "trace");
         // sources numbered 1..k
         assertThat(ranks(events, "sources")).containsExactly(1, 2);
-        // tokens carry the raw text
-        assertThat(events.get(1).data()).isEqualTo("Hello ");
-        assertThat(events.get(2).data()).isEqualTo("world");
+        // tokens carry the raw text behind the one space an SSE client strips (T1153)
+        assertThat(events.get(1).data()).isEqualTo(" Hello ");
+        assertThat(events.get(2).data()).isEqualTo(" world");
         // citations mirror the numbered sources
         List<TurAnswerCitation> citations = citations(events);
         assertThat(citations).extracting(TurAnswerCitation::rank).containsExactly(1, 2);
@@ -223,6 +226,31 @@ class TurAnswerStreamFramerTest {
     }
 
     @Test
+    void tokenStartingWithASpaceSurvivesTheWireT1153() {
+        Flux<ChatResponse> upstream = Flux.just(token("Applications"), token(" for"), token(" the grant"));
+
+        List<ServerSentEvent<String>> events = frame(upstream);
+
+        assertThat(events).filteredOn(e -> "token".equals(e.event()))
+                .extracting(TurAnswerStreamFramerTest::overTheWire)
+                .containsExactly("Applications", " for", " the grant");
+        TurAnswerTraceEvent trace = MAPPER.readValue(byEvent(events, "trace").data(),
+                TurAnswerTraceEvent.class);
+        assertThat(trace.answerLength()).isEqualTo("Applications for the grant".length());
+    }
+
+    @Test
+    void tokenWithNewlinesKeepsEachLinesLeadingSpaceT1153() {
+        Flux<ChatResponse> upstream = Flux.just(token("Steps:\n first\n\n second"), token("\n"));
+
+        List<ServerSentEvent<String>> events = frame(upstream);
+
+        assertThat(events).filteredOn(e -> "token".equals(e.event()))
+                .extracting(TurAnswerStreamFramerTest::overTheWire)
+                .containsExactly("Steps:\n first\n\n second", "\n");
+    }
+
+    @Test
     void errorEventCarriesTheMessage() {
         ServerSentEvent<String> error = TurAnswerStreamFramer.errorEvent("boom");
         assertThat(error.event()).isEqualTo("error");
@@ -230,6 +258,27 @@ class TurAnswerStreamFramerTest {
     }
 
     // ─────────────────────────── helpers ───────────────────────────
+
+    /**
+     * Writes the event's data the way Spring MVC puts it on the wire (the
+     * {@link SseEmitter} builder the reactive return value is adapted to), then reads
+     * it back as a conforming SSE client does: one space stripped after each
+     * {@code data:}, the lines joined with a newline.
+     */
+    private static String overTheWire(ServerSentEvent<String> event) {
+        StringBuilder wire = new StringBuilder();
+        for (ResponseBodyEmitter.DataWithMediaType part : SseEmitter.event().data(event.data()).build()) {
+            wire.append(part.getData());
+        }
+        List<String> lines = new ArrayList<>();
+        for (String line : wire.toString().split("\n", -1)) {
+            if (line.startsWith("data:")) {
+                String raw = line.substring("data:".length());
+                lines.add(raw.startsWith(" ") ? raw.substring(1) : raw);
+            }
+        }
+        return String.join("\n", lines);
+    }
 
     private static ServerSentEvent<String> byEvent(List<ServerSentEvent<String>> events, String name) {
         return events.stream().filter(e -> name.equals(e.event())).findFirst().orElseThrow();

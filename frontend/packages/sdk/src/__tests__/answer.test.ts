@@ -261,4 +261,18 @@ describe("consumeAnswerStream (T837)", () => {
 
     expect(result.answer).toBe("line1\nline2");
   });
+
+  it("keeps each token's own leading space and newlines as the server frames them (T1153)", async () => {
+    // The server writes `data:` with no space and prefixes each line of a token
+    // with the one space a client strips, so the token's own spaces survive.
+    const body =
+      "event:token\ndata: Applications\n\n" +
+      "event:token\ndata:  for\n\n" +
+      "event:token\ndata: :\ndata:  first\ndata: \ndata:  second\n\n";
+    const response = new Response(body, { status: 200 });
+
+    const result = await consumeAnswerStream(response);
+
+    expect(result.answer).toBe("Applications for:\n first\n\n second");
+  });
 });

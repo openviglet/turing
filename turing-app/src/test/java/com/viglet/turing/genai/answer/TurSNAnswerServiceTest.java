@@ -133,7 +133,7 @@ class TurSNAnswerServiceTest {
         // Re-framed into the answer contract: token, then citations, the generated
         // follow-ups, and the trace.
         assertThat(eventNames(events)).containsExactly("token", "citations", "followups", "trace");
-        assertThat(events.get(0).data()).isEqualTo("Hello");
+        assertThat(events.get(0).data()).isEqualTo(" Hello");
     }
 
     @Test
