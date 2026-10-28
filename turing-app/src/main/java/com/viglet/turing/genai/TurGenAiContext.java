@@ -52,6 +52,11 @@ public class TurGenAiContext {
     /** T500 — max estimated corpus tokens that still qualify for full-context. */
     private final int fullContextTokenBudget;
     /**
+     * T1157 — the site's follow-up query mode; {@code null} (no site binding,
+     * the {@link #disabled()} context) searches the latest message alone.
+     */
+    private final com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode followupQueryMode;
+    /**
      * T1127 — the instance {@link #chatModel} was built from, and the agent it
      * belongs to, so the SN calls made with this context land in the cost ledger.
      * {@code null} on the {@link #disabled()} context.

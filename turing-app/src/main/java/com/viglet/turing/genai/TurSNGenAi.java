@@ -149,6 +149,8 @@ public class TurSNGenAi {
     static final String STAGE_SN_CHAT = "sn.chat";
     static final String STAGE_SN_CHECK = "sn.chat.check";
     static final String STAGE_SN_FOLLOWUPS = "sn.chat.followups";
+    /** T1157 — the standalone-question rewrite of a follow-up turn. */
+    static final String STAGE_SN_REWRITE = "sn.chat.rewrite";
 
     /**
      * T1127 — calls the context's model and records the call in the cost ledger,
@@ -316,6 +318,9 @@ public class TurSNGenAi {
         if (latestUserQuery.isBlank()) {
             return reactor.core.publisher.Flux.empty();
         }
+        // T1157 — retrieval, the relevance gate and the STRICT_RAG judge search the
+        // standalone question; the executor below still answers the visitor's words.
+        String searchQuery = standaloneQuery(context, history, latestUserQuery);
 
         // T327 — retrieve once, keep the chunks' provenance, then build the
         // stuffed system prompt from the same documents. Previously the public
@@ -324,8 +329,8 @@ public class TurSNGenAi {
         // `sources[]` SSE event the agent tool path emits (T292).
         // T1085 — a list-style question on a named site takes its filters from the
         // shared NL extractor, checked against the site's own values.
-        com.viglet.turing.sn.nl.TurSNNLFilters nlFilters = siteNlFilters(request, filters, latestUserQuery);
-        List<Document> relevantDocuments = retrieveDocuments(context, latestUserQuery, filters,
+        com.viglet.turing.sn.nl.TurSNNLFilters nlFilters = siteNlFilters(request, filters, searchQuery);
+        List<Document> relevantDocuments = retrieveDocuments(context, searchQuery, filters,
                 nlFilters == null ? null : retrievalFilters(nlFilters));
 
         // T329 — deterministic "not in this site" refusal. When the relevance
@@ -360,9 +365,9 @@ public class TurSNGenAi {
         // contract as T329) instead of generating. Skipped when a chat flow
         // governs the turn (the message is flow input, not a site question).
         if (isStrictRag(context) && !chatFlowEngineService.hasActiveFlow(conversationId)
-                && !canAnswerFromRetrievedContent(context, latestUserQuery, relevantDocuments)) {
+                && !canAnswerFromRetrievedContent(context, searchQuery, relevantDocuments)) {
             log.debug("RAG chat streaming (STRICT_RAG): retrieved content does not answer '{}' — "
-                    + "deterministic refusal (locale={})", latestUserQuery, locale);
+                    + "deterministic refusal (locale={})", searchQuery, locale);
             return prependFiltersEvent(reactor.core.publisher.Flux.just(
                     new TurAgentChatExecutor.ChatResponse(ASSISTANT, localizedRefusal(locale))),
                     request, nlFilters);
@@ -387,11 +392,11 @@ public class TurSNGenAi {
                                 conversationId, flowId, null, requestPersonaId, true, request.siteName()),
                         forcedVariant);
         reactor.core.publisher.Flux<TurAgentChatExecutor.ChatResponse> grounded =
-                appendGroundednessCaveat(answer, context, latestUserQuery, relevantDocuments, locale);
+                appendGroundednessCaveat(answer, context, searchQuery, relevantDocuments, locale);
         reactor.core.publisher.Flux<TurAgentChatExecutor.ChatResponse> withSources =
                 prependSourcesEvent(grounded, relevantDocuments);
         return prependFiltersEvent(
-                appendFollowupsEvent(withSources, context, latestUserQuery, relevantDocuments),
+                appendFollowupsEvent(withSources, context, searchQuery, relevantDocuments),
                 request, nlFilters);
     }
 
@@ -859,7 +864,8 @@ public class TurSNGenAi {
         // Shared retrieval (T328): auto-extracts filters, applies the
         // config-driven relevance gate on the filtered path, and runs the
         // optional reranker. Returns chunks with metadata intact.
-        List<Document> relevantDocuments = retrieveDocuments(context, latestUserQuery, filters);
+        List<Document> relevantDocuments = retrieveDocuments(context,
+                standaloneQuery(context, history, latestUserQuery), filters);
         logRetrievedDocuments(relevantDocuments, context.getVectorStore().getClass().getSimpleName());
         String information = relevantDocuments.stream()
                 .map(Document::getText)
@@ -877,6 +883,26 @@ public class TurSNGenAi {
         String answer = callAndRecord(context, prompt, STAGE_SN_CHAT).getResult().getOutput().getText();
         log.debug("RAG chat LLM answer=<<<\n{}\n>>>", answer);
         return TurChatMessage.builder().text(answer).enabled(true).build();
+    }
+
+    /**
+     * T1157 — the question this turn's retrieval searches, by the site's follow-up
+     * mode. A rewrite is one short call on the context's model, recorded in the
+     * cost ledger; it falls back to {@code latest} on any failure.
+     */
+    String standaloneQuery(TurGenAiContext context, List<ConversationMessage> history, String latest) {
+        com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode mode = context.getFollowupQueryMode();
+        if (mode == null || mode == com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode.LATEST_ONLY) {
+            return latest;
+        }
+        String query = com.viglet.turing.genai.rag.TurStandaloneQuery.resolve(mode,
+                history.stream()
+                        .map(m -> new com.viglet.turing.genai.rag.TurStandaloneQuery.Turn(m.role(), m.content()))
+                        .toList(),
+                prompt -> callAndRecord(context, new Prompt(prompt), STAGE_SN_REWRITE)
+                        .getResult().getOutput().getText());
+        log.debug("RAG chat {} follow-up query: '{}' searches '{}'", mode, latest, query);
+        return query.isBlank() ? latest : query;
     }
 
     /** Warns when retrieval came back empty, else dumps each doc at debug. */

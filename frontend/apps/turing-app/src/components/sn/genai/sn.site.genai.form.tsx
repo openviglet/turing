@@ -154,6 +154,8 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
             // keeps the classic embedding RAG chat so a pre-T790 binding renders
             // unchanged; VECTORLESS_STRUCTURED is the copilot (no embeddings).
             knowledgeBaseMode: snSite.turSNSiteGenAi?.knowledgeBaseMode ?? "VECTOR",
+            // T1157 — LATEST_ONLY searches the latest message alone, as before.
+            followupQueryMode: snSite.turSNSiteGenAi?.followupQueryMode ?? "LATEST_ONLY",
             // T818/T819 (Block BK) — copilot query-planning strategy + analysis depth.
             // null means "inherit the deployment default" (DETERMINISTIC = today's
             // behaviour), so a pre-BK binding renders the "Default" pill selected and
@@ -682,6 +684,54 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                         <div>{t("forms.snGenai.kbModeVectorlessCalloutDesc")}</div>
                                     </div>
                                 )}
+                                {/* T1157 — what retrieval searches on a follow-up turn
+                                    ("Where do I send it?"), for the site chat and the
+                                    copilot alike. The answer keeps the visitor's words. */}
+                                <FormField
+                                    control={form.control}
+                                    name="followupQueryMode"
+                                    render={({ field }) => (
+                                        <FormItemTwoColumns>
+                                            <FormItemTwoColumns.Left>
+                                                <FormItemTwoColumns.Label>
+                                                    {t("forms.snGenai.followupQueryMode")}
+                                                </FormItemTwoColumns.Label>
+                                                <FormItemTwoColumns.Description>
+                                                    {field.value === "JOINED"
+                                                        ? t("forms.snGenai.followupQueryJoinedHint")
+                                                        : field.value === "REWRITE"
+                                                            ? t("forms.snGenai.followupQueryRewriteHint")
+                                                            : t("forms.snGenai.followupQueryLatestHint")}
+                                                </FormItemTwoColumns.Description>
+                                            </FormItemTwoColumns.Left>
+                                            <FormItemTwoColumns.Right>
+                                                <div className="flex flex-wrap gap-2">
+                                                    <GradientButton
+                                                        type="button"
+                                                        variant={(field.value ?? "LATEST_ONLY") === "LATEST_ONLY" ? "default" : "outline"}
+                                                        onClick={() => field.onChange("LATEST_ONLY")}
+                                                    >
+                                                        {t("forms.snGenai.followupQueryLatest")}
+                                                    </GradientButton>
+                                                    <GradientButton
+                                                        type="button"
+                                                        variant={field.value === "JOINED" ? "default" : "outline"}
+                                                        onClick={() => field.onChange("JOINED")}
+                                                    >
+                                                        {t("forms.snGenai.followupQueryJoined")}
+                                                    </GradientButton>
+                                                    <GradientButton
+                                                        type="button"
+                                                        variant={field.value === "REWRITE" ? "default" : "outline"}
+                                                        onClick={() => field.onChange("REWRITE")}
+                                                    >
+                                                        {t("forms.snGenai.followupQueryRewrite")}
+                                                    </GradientButton>
+                                                </div>
+                                            </FormItemTwoColumns.Right>
+                                        </FormItemTwoColumns>
+                                    )}
+                                />
                         </SNFormSection>
 
                         {/* T818–T821 / §LIX (Block BK) — Copilot Query Planning.

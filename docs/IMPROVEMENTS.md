@@ -2290,29 +2290,23 @@ host hands to Google Analytics, and the consent that gates them.
 ### CLVIII.1 Retrieve follow-ups as standalone questions (T1157)
 
 **Where it happened.** Dumont D175, the WordPress Site assistant block, sends the whole
-conversation each turn to `POST /api/sn/{site}/chat/conversation`. With OpenAI, "When do
-applications for the research grant close?" got the right date; the follow-up "Where do
-I send it?" got the refusal, although the cited post says "Send the form to the Office
-of Research."
+conversation each turn to `POST /api/sn/{site}/chat/conversation`. "When do applications
+for the research grant close?" got the right date; the follow-up "Where do I send it?"
+got the refusal, although the cited post says "Send the form to the Office of Research."
 
-**Why.** Retrieval reads the latest user message alone, on three paths: the SN streaming
-chat (`TurSNGenAi`, line 311), the blocking one (line 849) and the catalog copilot
-(`TurCatalogCopilotService.answer`, line 182), whose history reaches the answer but not
-the search. A follow-up ("it", "how much?") retrieves nothing and the T329 refusal
-answers.
+**Landed (retrieval half).** `TurStandaloneQuery.resolve` (genai/rag) is the shared
+seam: `LATEST_ONLY` (default), `JOINED` (last 3 user turns, no LLM) or `REWRITE` (one
+short LLM call, falling back to the latest message on failure, blank or runaway output).
+A first turn skips it. The site sets it in `sn_site_genai.followupQueryMode` (Liquibase
+v2026.3.1.137, the GenAI form's knowledge-base card). `TurSNGenAi` uses the resolved
+query for retrieval, the NL filters, the STRICT_RAG judge, the groundedness check and
+the follow-up chips on both chat paths; `TurCatalogCopilotService.answer` uses it for
+retrieval. The answer keeps the visitor's own words. Rewrites are booked as
+`sn.chat.rewrite` / `sn.copilot.rewrite` in the cost ledger.
 
-**What it should do.** One shared standalone-question seam the three paths call before
-retrieval, set per site: `LATEST_ONLY` (default, today), `JOINED` (last user turns
-joined, no LLM) or `REWRITE` (a short LLM call). Retrieval, the relevance gate and the
-STRICT_RAG judge use the rewritten query; the answer keeps the visitor's own words. A
-first turn skips it; a failed rewrite falls back to the latest message. The trace
-records the query searched, so Live Preview shows it.
-
-**Tests.** A follow-up retrieves its antecedent's document; a topic switch does not drag
-the old topic in; a first turn and `LATEST_ONLY` are unchanged; a rewrite failure
-degrades to the latest message.
-
-**Workaround.** None: the Dumont spec records the answer and names this id.
+**Left.** The searched query is only logged at debug. Record it in the prompt capture
+(`TurPromptCaptureService`) beside the turn, so the Live Preview shows what a follow-up
+was rewritten to, and an operator can tell a bad rewrite from a retrieval miss.
 
 ### CLVIII.2 Remove a deleted document's RAG chunks (T1158)
 

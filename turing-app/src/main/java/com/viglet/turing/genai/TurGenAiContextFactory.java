@@ -122,6 +122,7 @@ public class TurGenAiContextFactory {
                 // overrides, so full-context stays off.
                 .fullContextEnabled(turSNSiteGenAi != null && turSNSiteGenAi.isFullContextAnsweringEnabled())
                 .fullContextTokenBudget(turSNSiteGenAi == null ? 0 : turSNSiteGenAi.getFullContextTokenBudget())
+                .followupQueryMode(turSNSiteGenAi == null ? null : turSNSiteGenAi.getFollowupQueryMode())
                 .llmInstance(llmInstance)
                 .agentId(agent.getId())
                 .siteName(siteName)

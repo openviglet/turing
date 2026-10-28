@@ -31,6 +31,14 @@ export type TurSNRankingMode = "LEGACY" | "HYBRID_RRF" | "HYBRID_RRF_RERANK";
 export type TurSNKnowledgeBaseMode = "VECTOR" | "VECTORLESS_STRUCTURED" | "HYBRID";
 
 /**
+ * T1157 — what a site's chat retrieval searches on a follow-up turn ("Where do I
+ * send it?"): the latest message alone (`LATEST_ONLY`, default), the last user
+ * turns joined (`JOINED`, no LLM call), or an LLM rewrite of the turn as a
+ * standalone question (`REWRITE`). The answer always keeps the visitor's words.
+ */
+export type TurFollowupQueryMode = "LATEST_ONLY" | "JOINED" | "REWRITE";
+
+/**
  * T818 / §LIX.1 (Block BK) — the catalog copilot's query-planning STRATEGY: how a
  * natural-language question becomes a structured DSL query.
  *
@@ -122,6 +130,11 @@ export interface TurSNSiteGenAi {
    * LLM); `HYBRID` exposes both. @since 2026.3.4
    */
   knowledgeBaseMode?: TurSNKnowledgeBaseMode;
+  /**
+   * T1157 / §CLVIII.1 — what the chat and copilot retrieval search on a follow-up
+   * turn. `LATEST_ONLY` (default) is today's behaviour. @since 2026.3.5
+   */
+  followupQueryMode?: TurFollowupQueryMode;
   /**
    * T818 / §LIX.1 (Block BK) — the copilot's query-planning strategy. `null`
    * inherits the deployment default (`DETERMINISTIC` = today's behaviour), so an

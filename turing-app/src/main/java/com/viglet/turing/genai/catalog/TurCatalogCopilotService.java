@@ -35,7 +35,10 @@ import com.viglet.turing.genai.catalog.planning.TurCopilotQueryPlanner;
 import com.viglet.turing.genai.catalog.planning.TurCopilotQueryPlanner.PlanRequest;
 import com.viglet.turing.genai.catalog.planning.TurCopilotQueryPlannerFactory;
 import com.viglet.turing.genai.citation.TurAnswerCitationNumberer;
+import com.viglet.turing.genai.rag.TurStandaloneQuery;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode;
+import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.se.result.TurSEResult;
@@ -123,6 +126,8 @@ public class TurCatalogCopilotService {
 
     /** T1127 — the cost stage of a catalog copilot answer. */
     static final String STAGE_COPILOT = "sn.copilot";
+    /** T1157 — the standalone-question rewrite of a follow-up copilot turn. */
+    static final String STAGE_COPILOT_REWRITE = "sn.copilot.rewrite";
 
     public TurCatalogCopilotService(TurNLFacetParser parser,
             TurCopilotQueryPlannerFactory plannerFactory,
@@ -179,7 +184,8 @@ public class TurCatalogCopilotService {
         // skip NL→DSL retrieval and ground the LLM on every row (still cited).
         // Falls back to filtered retrieval when the corpus is too large / empty.
         Retrieval retrieval = stuffAllRetrieve(siteName, locale)
-                .orElseGet(() -> retrieve(siteName, locale, latestUser));
+                .orElseGet(() -> retrieve(siteName, locale,
+                        standaloneQuery(chatModelOpt.get(), siteName, messages, latestUser)));
         if (!retrieval.siteFound()) {
             return TurCatalogCopilotResult.error("Catalog site not found: " + siteName);
         }
@@ -241,6 +247,41 @@ public class TurCatalogCopilotService {
                         : new TurCatalogCitation(footnote, c.id(), c.title(), c.url(),
                                 c.score(), c.rankingExplanation()),
                 MAX_RETURNED_CITATIONS, MAX_RESULTS);
+    }
+
+    /**
+     * T1157 — the question the catalog retrieval searches, by the site's follow-up
+     * mode; the answer call still reads the whole conversation. The site's mode is
+     * read through the projection query the planner factory uses, so no LAZY
+     * association is navigated on this non-transactional path.
+     */
+    String standaloneQuery(ChatModel chatModel, String siteName, List<ChatTurn> messages, String latest) {
+        TurFollowupQueryMode mode;
+        try {
+            mode = turSNSiteRepository.findGenAiByNameIgnoreCase(siteName)
+                    .map(TurSNSiteGenAi::getFollowupQueryMode)
+                    .orElse(null);
+        } catch (RuntimeException e) {
+            log.debug("[CatalogCopilot] could not read the follow-up mode for '{}': {}", siteName, e.getMessage());
+            mode = null;
+        }
+        if (mode == null || mode == TurFollowupQueryMode.LATEST_ONLY) {
+            return latest;
+        }
+        String query = TurStandaloneQuery.resolve(mode,
+                messages.stream()
+                        .filter(java.util.Objects::nonNull)
+                        .map(turn -> new TurStandaloneQuery.Turn(turn.role(), turn.content()))
+                        .toList(),
+                prompt -> {
+                    var response = chatModel.call(new Prompt(prompt));
+                    chatModelResolver.defaultInstance().ifPresent(instance -> tokenUsageService.recordUsage(
+                            instance, response, "system", null, STAGE_COPILOT_REWRITE, null, siteName));
+                    var result = response.getResult();
+                    return result != null && result.getOutput() != null ? result.getOutput().getText() : null;
+                });
+        log.debug("[CatalogCopilot] {} follow-up query: '{}' searches '{}'", mode, latest, query);
+        return StringUtils.hasText(query) ? query : latest;
     }
 
     private String callLlm(ChatModel chatModel, String siteName, Retrieval retrieval,

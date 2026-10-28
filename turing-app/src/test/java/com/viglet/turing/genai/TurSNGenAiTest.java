@@ -104,6 +104,65 @@ class TurSNGenAiTest {
         verify(tokenUsage).recordUsage(instance, response, "anonymous", "agent-1", "sn.chat", null, "Sample");
     }
 
+    /**
+     * T1157 — on REWRITE a follow-up retrieves with the standalone question, and the
+     * answer call still carries the visitor's own words.
+     */
+    @Test
+    void aFollowUpRetrievesWithTheRewrittenQuestion() {
+        ChatModel chatModel = mock(ChatModel.class);
+        when(chatModel.call(any(Prompt.class))).thenAnswer(invocation -> {
+            Prompt prompt = invocation.getArgument(0);
+            String text = prompt.getContents().startsWith("Rewrite the user's LAST message")
+                    ? "Where do I send the research grant application?"
+                    : "Send it to the Office of Research.";
+            return new ChatResponse(List.of(new Generation(
+                    new org.springframework.ai.chat.messages.AssistantMessage(text))));
+        });
+        VectorStore vectorStore = mock(VectorStore.class);
+        org.mockito.ArgumentCaptor<SearchRequest> searched = org.mockito.ArgumentCaptor.forClass(SearchRequest.class);
+        when(vectorStore.similaritySearch(searched.capture()))
+                .thenReturn(List.of(new Document("Send the form to the Office of Research.")));
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel)
+                .vectorStore(vectorStore)
+                .followupQueryMode(com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode.REWRITE)
+                .build();
+        List<TurSNGenAi.ConversationMessage> history = List.of(
+                new TurSNGenAi.ConversationMessage("user", "When do applications for the research grant close?"),
+                new TurSNGenAi.ConversationMessage("assistant", "Applications close on March 31."),
+                new TurSNGenAi.ConversationMessage("user", "Where do I send it?"));
+
+        TurChatMessage result = turSNGenAi.assistantConversation(context, history);
+
+        assertEquals("Send it to the Office of Research.", result.getText());
+        assertEquals("Where do I send the research grant application?", searched.getValue().getQuery());
+        org.mockito.ArgumentCaptor<Prompt> prompts = org.mockito.ArgumentCaptor.forClass(Prompt.class);
+        verify(chatModel, times(2)).call(prompts.capture());
+        assertTrue(prompts.getAllValues().get(1).getContents().contains("Where do I send it?"),
+                "the answer reads the visitor's own words");
+    }
+
+    /** T1157 — without a mode the follow-up searches the latest message, as before. */
+    @Test
+    void withoutAModeAFollowUpSearchesTheLatestMessage() {
+        ChatModel chatModel = mock(ChatModel.class);
+        when(chatModel.call(any(Prompt.class))).thenReturn(new ChatResponse(List.of(new Generation(
+                new org.springframework.ai.chat.messages.AssistantMessage("answer")))));
+        VectorStore vectorStore = mock(VectorStore.class);
+        org.mockito.ArgumentCaptor<SearchRequest> searched = org.mockito.ArgumentCaptor.forClass(SearchRequest.class);
+        when(vectorStore.similaritySearch(searched.capture())).thenReturn(List.of());
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel)
+                .vectorStore(vectorStore).build();
+
+        turSNGenAi.assistantConversation(context, List.of(
+                new TurSNGenAi.ConversationMessage("user", "When do applications close?"),
+                new TurSNGenAi.ConversationMessage("assistant", "March 31."),
+                new TurSNGenAi.ConversationMessage("user", "Where do I send it?")));
+
+        assertEquals("Where do I send it?", searched.getValue().getQuery());
+        verify(chatModel, times(1)).call(any(Prompt.class));
+    }
+
     @Test
     void anSnCallWithoutALedgerStillAnswers() {
         var chatModel = org.mockito.Mockito.mock(org.springframework.ai.chat.model.ChatModel.class);

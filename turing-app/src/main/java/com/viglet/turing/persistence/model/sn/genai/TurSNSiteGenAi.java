@@ -310,6 +310,19 @@ public class TurSNSiteGenAi implements Serializable {
     private int fullContextTokenBudget = 800_000;
 
     /**
+     * T1157 / §CLVIII.1 — what the site's chat retrieval searches on a follow-up
+     * turn: the latest message alone ({@link TurFollowupQueryMode#LATEST_ONLY},
+     * default), the last user turns joined, or an LLM rewrite as a standalone
+     * question. Read by the SN chat (streaming and blocking) and the catalog
+     * copilot; the answer always keeps the visitor's own words.
+     *
+     * @since 2026.3.6
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "followupQueryMode", nullable = false, length = 16)
+    private TurFollowupQueryMode followupQueryMode = TurFollowupQueryMode.LATEST_ONLY;
+
+    /**
      * T501 / §X.19 — opt-in for index-time native video/audio understanding. When
      * {@code true} and the site's GenAI agent resolves to a <em>Gemini</em> LLM
      * instance, a document that references a video or audio asset (a media URL in
