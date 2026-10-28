@@ -101,6 +101,56 @@ describe("useTuringSearch — analytics (T1137)", () => {
     expect(named("turing_search_abandoned")).toHaveLength(0);
   });
 
+  // T1155 — a filter, sort or page change on the same query is not another search.
+  const facet = {
+    action: "ADD",
+    field: "type",
+    filterQuery: "type:article",
+    value: "article",
+    label: "Article",
+    count: 1,
+    selected: false,
+  } as const;
+
+  it("reports one search for a facet, a sort and a page after it", async () => {
+    const { result } = setup();
+
+    await act(() => result.current.searchQuery("workshop"));
+    await act(() => result.current.toggleFacet(facet));
+    await act(() => result.current.changeSort("newest"));
+    await act(() => result.current.goToPage(2));
+
+    expect(named("turing_search")).toHaveLength(1);
+  });
+
+  it("reports the same term again after a wildcard search", async () => {
+    const { result } = setup();
+
+    await act(() => result.current.searchQuery("workshop"));
+    await act(() => result.current.searchQuery("*"));
+    await act(() => result.current.searchQuery("workshop"));
+
+    expect(named("turing_search")).toHaveLength(2);
+  });
+
+  it("does not report abandonment for a facet toggled within the idle window", async () => {
+    vi.useFakeTimers();
+    try {
+      const { result } = setup({ abandonment: { idleMs: 1000 } });
+
+      await act(() => result.current.searchQuery("workshop"));
+      act(() => vi.advanceTimersByTime(800));
+      await act(() => result.current.toggleFacet(facet));
+      act(() => vi.advanceTimersByTime(800));
+      expect(named("turing_search_abandoned")).toHaveLength(0);
+
+      act(() => vi.advanceTimersByTime(200));
+      expect(named("turing_search_abandoned")).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("sends GA4's recommended events when the sink asks for them", () => {
     const gtag = vi.fn();
     const analytics = createTuringAnalytics({ sinks: [googleAnalyticsSink({ gtag, recommended: true })] });

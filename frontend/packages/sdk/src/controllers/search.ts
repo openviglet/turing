@@ -301,6 +301,10 @@ export function createSearchController(
   }
   // Last real (non-wildcard) query, for refinement detection.
   let lastNonEmptyQuery: string | null = null;
+  // T1155 — the query the bus last reported as a search. A filter, sort, page
+  // or locale change on the same `q` is a refinement and reports nothing; a
+  // wildcard search clears it, so typing the same term again is a new search.
+  let lastReportedQuery: string | null = null;
 
   // T1130 — one watcher per settled search; a click or the next search
   // replaces it, and it fires at most once.
@@ -309,6 +313,8 @@ export function createSearchController(
     abandonmentOptions = abandonment === true ? {} : abandonment;
   }
   let abandonmentWatcher: AbandonmentWatcher | null = null;
+  // Read when the watcher fires, so a refinement can update the count it reports.
+  let abandonmentResults = 0;
 
   function disarmAbandonment(): void {
     abandonmentWatcher?.stop();
@@ -318,10 +324,22 @@ export function createSearchController(
   function armAbandonment(query: string, results: number): void {
     disarmAbandonment();
     if (!abandonmentOptions) return;
+    abandonmentResults = results;
     abandonmentWatcher = createAbandonmentWatcher((reason: AbandonmentReason) => {
       disarmAbandonment();
-      consentedAnalytics()?.emit(TURING_ANALYTICS_EVENTS.searchAbandoned, { query, results, reason });
+      consentedAnalytics()?.emit(TURING_ANALYTICS_EVENTS.searchAbandoned, {
+        query,
+        results: abandonmentResults,
+        reason,
+      });
     }, abandonmentOptions);
+  }
+
+  /** T1155 — a refinement keeps the watcher, with the new count and a fresh idle timer. */
+  function refreshAbandonment(results: number): void {
+    if (!abandonmentWatcher) return;
+    abandonmentResults = results;
+    abandonmentWatcher.ping();
   }
 
   // Monotonic request id — the closure equivalent of `useRef(0)`. A late
@@ -340,9 +358,17 @@ export function createSearchController(
 
   /** Emits the canonical search events after a successful result set. */
   function emitSearchEvents(query: string, resultCount: number): void {
-    if (!query || query === "*") return;
+    if (!query || query === "*") {
+      lastReportedQuery = null;
+      return;
+    }
+    if (query === lastReportedQuery) {
+      refreshAbandonment(resultCount);
+      return;
+    }
     const bus = consentedAnalytics();
     if (!bus) return;
+    lastReportedQuery = query;
     if (lastNonEmptyQuery && lastNonEmptyQuery !== query) {
       bus.emit(TURING_ANALYTICS_EVENTS.searchRefined, {
         from: lastNonEmptyQuery,

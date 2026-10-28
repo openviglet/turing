@@ -116,3 +116,78 @@ describe("createSearchController — search abandonment (T1130)", () => {
     expect(abandoned().map((e) => e.params.query)).toEqual(["boots"]);
   });
 });
+
+/** T1155 — a filter, sort or page change on the same query is not another search. */
+describe("createSearchController — refinements (T1155)", () => {
+  afterEach(() => {
+    clearTurSession();
+    vi.useRealTimers();
+  });
+
+  const facet = { action: "ADD", field: "type", filterQuery: "type:article" } as const;
+
+  function setup(options: Omit<SearchControllerOptions, "analytics"> = {}, postNative = true) {
+    const response: TurSearchResponse = {
+      queryContext: { count: 4 } as TurSearchResponse["queryContext"],
+      results: { document: [] },
+      widget: {} as TurSearchResponse["widget"],
+    };
+    const client = {
+      get: vi.fn(() => Promise.resolve(response)),
+      post: vi.fn(() => Promise.resolve(response)),
+    } as unknown as TuringClient;
+    const events: TuringAnalyticsEvent[] = [];
+    const analytics = createTuringAnalytics({ sinks: [(e) => events.push(e)] });
+    const search = createSearchController(client, { site: "s1", locale: "en_US" }, undefined, {
+      analytics,
+      chat: false,
+      postNative,
+      ...options,
+    });
+    const named = (name: string) => events.filter((e) => e.name === name);
+    return { search, named };
+  }
+
+  it("reports one search for a facet, a sort and a page after it", async () => {
+    const { search, named } = setup();
+    await search.searchQuery("workshop");
+    await search.toggleFacet(facet);
+    await search.changeSort("newest");
+    await search.goToPage(2);
+    await search.searchRequest({ ...search.getState().request, fq: [] });
+
+    expect(named("turing_search")).toHaveLength(1);
+  });
+
+  it("reports one search on the legacy GET path too", async () => {
+    const { search, named } = setup({}, false);
+    await search.searchQuery("workshop");
+    await search.changeSort("newest");
+    await search.goToPage(2);
+
+    expect(named("turing_search")).toHaveLength(1);
+  });
+
+  it("reports the same term again after a wildcard search", async () => {
+    const { search, named } = setup();
+    await search.searchQuery("workshop");
+    await search.searchQuery("*");
+    await search.searchQuery("workshop");
+
+    expect(named("turing_search")).toHaveLength(2);
+  });
+
+  it("keeps one abandonment watcher across a refinement, with its count and idle timer", async () => {
+    vi.useFakeTimers();
+    const { search, named } = setup({ abandonment: { idleMs: 1000 } });
+    await search.searchQuery("workshop");
+    vi.advanceTimersByTime(800);
+    await search.toggleFacet(facet);
+    vi.advanceTimersByTime(800);
+    expect(named("turing_search_abandoned")).toHaveLength(0);
+
+    vi.advanceTimersByTime(200);
+    expect(named("turing_search_abandoned")).toHaveLength(1);
+    expect(named("turing_search_abandoned")[0].params).toMatchObject({ query: "workshop", reason: "idle" });
+  });
+});

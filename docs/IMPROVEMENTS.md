@@ -2307,27 +2307,3 @@ options' doc comments that consent gates the click report too. `useTuringClickTr
 takes no consent and is an explicit host call, so it stays as it is. Test in each
 package: with `consent: () => false`, `trackResultClick()` sends no request and emits
 nothing; once consent turns true, the next click posts and emits.
-
-### CLVII.1 A refinement is not another search (T1155)
-
-**Where it happened.** Dumont D188, the WordPress search block on `@viglet/turing-sdk`
-2026.3.10 with `abandonment: true` and `googleAnalyticsSink({ recommended: true })`.
-
-**What comes back.** `emitSearchEvents()` runs after every request that is not `mode:
-"instant"`: `toggleFacet`, `changeSort`, `goToPage` and a `searchRequest` that only
-changes `fq` or `page` each emit another `turing_search` and GA4 `search` with the same
-term, and re-arm the abandonment watcher. The legacy GET path does the same, and so does
-`useTuringSearch` in the React SDK, which carries its own copy.
-
-**Workaround in Dumont.** `wordpress/src/public/search.js` wraps the GA sink and passes
-search events only while the block says the request in flight is settled (D224).
-
-**What Turing should do.** In both packages and on both paths, emit the search events
-only when `q` differs from the last reported query; a wildcard search clears it. No new
-option and no flag: a count per refinement is the defect, and nothing documents it.
-Locale, sort, page and filters on the same `q` are refinements; a spell-check rewrite is
-a new search. A refinement emits nothing but keeps one abandonment watcher, updating its
-result count and restarting its idle timer. Tests in `sdk/src/__tests__/` and
-`react-sdk/src/hooks/__tests__/use-turing-search-analytics.test.tsx`: a facet, a sort
-and a page after one search emit one `turing_search`; "workshop", `*`, "workshop" emits
-two; a facet within the idle window does not fire abandonment.

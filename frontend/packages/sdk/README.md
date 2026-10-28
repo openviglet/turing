@@ -104,7 +104,7 @@ createChatController(client, { site: "my-site", analytics, goalSlots: ["email"] 
 | `turing_chat_lead_captured` | a goal slot is written or a native form (T107) is submitted |
 | `turing_chat_abandoned` | a started, unconverted conversation ends (tab hide / unload / idle) — the signal the server can't see |
 | `turing_ab_variant_assigned` | the A/B arm resolves; `experiment_key` / `variant_label` / `persona_id` then ride on **every** event |
-| `turing_search` / `_no_results` / `_result_click` / `_refined` | search lifecycle (`_no_results` is a content-gap signal) |
+| `turing_search` / `_no_results` / `_result_click` / `_refined` | search lifecycle (`_no_results` is a content-gap signal); a filter, sort, page or locale change on the same query is a refinement and emits nothing |
 
 **Sinks**: `googleAnalyticsSink({ measurementId?, transport? })` (GA4 `gtag` +
 GTM `dataLayer`, auto-detected), `onEventSink(fn)` (Segment/Matomo/Plausible),

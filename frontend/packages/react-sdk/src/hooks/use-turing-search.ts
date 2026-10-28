@@ -190,6 +190,12 @@ export function useTuringSearch(
   consentRef.current = options.consent;
   const sessionStampedRef = useRef(!sessionCookie);
   const abandonmentRef = useRef<AbandonmentWatcher | null>(null);
+  // T1155 — the query last reported as a search. A filter, sort, page or locale
+  // change on the same `q` is a refinement and reports nothing; a wildcard
+  // search clears it, so typing the same term again is a new search.
+  const lastReportedQueryRef = useRef<string | null>(null);
+  // Read when the watcher fires, so a refinement can update the count it reports.
+  const abandonmentResultsRef = useRef(0);
 
   // T463 — the site is known up front. T1137: the `TUR_SESSION` id that
   // stitches a later chat lead to this search is stamped on the first
@@ -218,9 +224,21 @@ export function useTuringSearch(
   /** T463 — the search funnel events for a settled query; T1137 arms abandonment. */
   const emitSearchEvents = useCallback(
     (q: string, resultCount: number) => {
-      if (!q || q === "*") return;
+      if (!q || q === "*") {
+        lastReportedQueryRef.current = null;
+        return;
+      }
+      if (q === lastReportedQueryRef.current) {
+        // A refinement keeps the watcher, with the new count and a fresh idle timer.
+        if (abandonmentRef.current) {
+          abandonmentResultsRef.current = resultCount;
+          abandonmentRef.current.ping();
+        }
+        return;
+      }
       const bus = consentedAnalytics();
       if (!bus) return;
+      lastReportedQueryRef.current = q;
       const prev = lastQueryRef.current;
       if (prev && prev !== q) {
         bus.emit(TURING_ANALYTICS_EVENTS.searchRefined, { from: prev, to: q });
@@ -232,11 +250,12 @@ export function useTuringSearch(
       lastQueryRef.current = q;
       disarmAbandonment();
       if (abandonment) {
+        abandonmentResultsRef.current = resultCount;
         abandonmentRef.current = createAbandonmentWatcher((reason: AbandonmentReason) => {
           disarmAbandonment();
           consentedAnalytics()?.emit(TURING_ANALYTICS_EVENTS.searchAbandoned, {
             query: q,
-            results: resultCount,
+            results: abandonmentResultsRef.current,
             reason,
           });
         }, abandonment === true ? {} : abandonment);
