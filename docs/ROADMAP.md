@@ -16,9 +16,9 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- ⏳ **T1157** (deps: —) **Chat follow-ups that refer back (it, that one) retrieve nothing: SN chat and copilot search the latest message alone** — Record the query each turn searched in the prompt capture, so the Live Preview shows what a follow-up was rewritten to. → §CLVIII.1
 - 📋 **T1158** (deps: —) **Deleting a document leaves its RAG chunks (by id, type or fields; on Milvus always), so site chat still cites it** — A removed or moved page keeps answering visitors with content the site no longer publishes, and no reindex clears it. → §CLVIII.2
 - 📋 **T1159** (deps: —) **The catalog copilot answers one need at a time; a described plan cannot come back as staged products by need** — A shopper planning a trip does not know every item to ask for, and each consumer would rebuild the gaps, the id check and the staging. → §CLVIII.3
+- 📋 **T1166** (deps: —) **With chat memory on, a prompt capture counts memory turns in its index, so a follow-up's searched query lands off-turn** — The Live Preview is where an operator checks what a rewritten follow-up searched, and it must show that on the turn it belongs to. → §CLVIII.4
 
 ## Block U — Documentation refresh (`docs-turing`)
 
@@ -48,12 +48,6 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
-
-## Done when — T1157
-
-- **The Live Preview shows the query a follow-up turn searched** A captured SN chat turn
-  on a REWRITE site records the rewritten query beside the visitor's message, and the
-  Live Preview renders it; a test asserts the capture carries it.
 
 ## Non-goals (do NOT add as tasks)
 

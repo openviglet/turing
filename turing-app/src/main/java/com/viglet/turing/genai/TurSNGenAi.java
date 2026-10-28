@@ -144,6 +144,7 @@ public class TurSNGenAi {
     private final TurSNFullContextService fullContextService;
     private final com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService;
     private final com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService;
+    private final com.viglet.turing.genai.capture.TurPromptCaptureService promptCaptureService;
 
     /** T1127 — the cost stages of the SN calls this class makes outside the agent executor. */
     static final String STAGE_SN_CHAT = "sn.chat";
@@ -209,12 +210,33 @@ public class TurSNGenAi {
                 moderationService, fullContextService, nlFilterService, null);
     }
 
+    /** The constructor before T1157, kept for callers that build this class by hand. */
+    public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
+            TurGenAiContextFactory turGenAiContextFactory,
+            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurRagContextBuilder turRagContextBuilder,
+            TurRagFacetExtractor facetExtractor,
+            TurAgentChatExecutor agentChatExecutor,
+            com.viglet.turing.system.TurGlobalSettingsService globalSettingsService,
+            com.viglet.turing.genai.rag.TurRagReranker ragReranker,
+            com.viglet.turing.genai.flow.TurChatFlowEngineService chatFlowEngineService,
+            com.viglet.turing.genai.safety.TurModerationService moderationService,
+            TurSNFullContextService fullContextService,
+            com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService,
+            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService) {
+        this(turSNSearchProcess, turGenAiContextFactory, turSNSiteLocaleRepository, turRagContextBuilder,
+                facetExtractor, agentChatExecutor, globalSettingsService, ragReranker, chatFlowEngineService,
+                moderationService, fullContextService, nlFilterService, tokenUsageService, null);
+    }
+
     /**
-     * @param nlFilterService   T1085 — the shared NL filter extractor; {@code @Lazy}
-     *                          because it reaches the search engines, which this
-     *                          class must not wait on at startup
-     * @param tokenUsageService T1127 — records the calls this class makes outside
-     *                          the agent executor in the cost ledger
+     * @param nlFilterService      T1085 — the shared NL filter extractor; {@code @Lazy}
+     *                             because it reaches the search engines, which this
+     *                             class must not wait on at startup
+     * @param tokenUsageService    T1127 — records the calls this class makes outside
+     *                             the agent executor in the cost ledger
+     * @param promptCaptureService T1157 — records the query a rewritten follow-up
+     *                             searched, for the Live Preview
      */
     @org.springframework.beans.factory.annotation.Autowired
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
@@ -229,8 +251,10 @@ public class TurSNGenAi {
             com.viglet.turing.genai.safety.TurModerationService moderationService,
             TurSNFullContextService fullContextService,
             @org.springframework.context.annotation.Lazy com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService,
-            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService) {
+            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService,
+            com.viglet.turing.genai.capture.TurPromptCaptureService promptCaptureService) {
         this.tokenUsageService = tokenUsageService;
+        this.promptCaptureService = promptCaptureService;
         this.turSNSearchProcess = turSNSearchProcess;
         this.turGenAiContextFactory = turGenAiContextFactory;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -321,6 +345,7 @@ public class TurSNGenAi {
         // T1157 — retrieval, the relevance gate and the STRICT_RAG judge search the
         // standalone question; the executor below still answers the visitor's words.
         String searchQuery = standaloneQuery(context, history, latestUserQuery);
+        recordSearchedQuery(agent, conversationId, history, latestUserQuery, searchQuery);
 
         // T327 — retrieve once, keep the chunks' provenance, then build the
         // stuffed system prompt from the same documents. Previously the public
@@ -903,6 +928,21 @@ public class TurSNGenAi {
                         .getResult().getOutput().getText());
         log.debug("RAG chat {} follow-up query: '{}' searches '{}'", mode, latest, query);
         return query.isBlank() ? latest : query;
+    }
+
+    /**
+     * T1157 — keeps the query a follow-up searched beside this turn's prompt
+     * capture, under the turn index the capture will take (its user-message
+     * count), so the Live Preview can show what the follow-up became. Nothing is
+     * recorded when the latest message was searched as it is.
+     */
+    private void recordSearchedQuery(com.viglet.turing.persistence.model.agent.TurAIAgent agent,
+            String conversationId, List<ConversationMessage> history, String latest, String searched) {
+        if (promptCaptureService == null || searched == null || searched.equals(latest)) {
+            return;
+        }
+        int turnIndex = (int) history.stream().filter(m -> "user".equals(m.role())).count();
+        promptCaptureService.recordSearchedQuery(agent, conversationId, turnIndex, searched);
     }
 
     /** Warns when retrieval came back empty, else dumps each doc at debug. */

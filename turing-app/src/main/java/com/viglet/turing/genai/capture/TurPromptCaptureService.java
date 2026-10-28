@@ -61,6 +61,9 @@ public class TurPromptCaptureService {
     static final String CAPTURES_DIR = "prompt-captures";
     private static final String TURN_PREFIX = "turn-";
     private static final String TURN_SUFFIX = ".json";
+    /** T1157 — the searched-query sidecar's prefix; {@link #parseTurnIndex} ignores it. */
+    private static final String SEARCHED_PREFIX = "searched-";
+    private static final String SEARCHED_QUERY_FIELD = "query";
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final TurStorageService storageService;
@@ -149,6 +152,42 @@ public class TurPromptCaptureService {
         }
     }
 
+    /**
+     * T1157 — records the query a turn's retrieval searched when it differs from
+     * the visitor's message (a follow-up rewritten as a standalone question), so
+     * the Live Preview can show it beside the captured turn. Stored next to the
+     * turn, not inside it: the capture is written later, by the executor that
+     * sends the prompt. No-op when capture is disabled or the query is blank.
+     */
+    public void recordSearchedQuery(TurAIAgent agent, String conversationId, int turnIndex, String query) {
+        if (!isEnabled(agent) || !StringUtils.hasText(conversationId) || !StringUtils.hasText(query)) {
+            return;
+        }
+        try {
+            byte[] body = MAPPER.writeValueAsBytes(java.util.Map.of(SEARCHED_QUERY_FIELD, query));
+            try (ByteArrayInputStream in = new ByteArrayInputStream(body)) {
+                storageService.uploadStream(searchedKey(agent.getId(), conversationId, Math.max(turnIndex, 1)),
+                        in, body.length, "application/json");
+            }
+        } catch (Exception e) {
+            log.debug("[PromptCapture] searched query skipped for conv '{}': {}", conversationId, e.getMessage());
+        }
+    }
+
+    /** T1157 — the query turn {@code turnIndex} searched, when one was recorded. */
+    public Optional<String> getSearchedQuery(String agentId, String conversationId, int turnIndex) {
+        if (!storageService.isEnabled() || !StringUtils.hasText(agentId)
+                || !StringUtils.hasText(conversationId)) {
+            return Optional.empty();
+        }
+        try (var in = storageService.downloadObject(searchedKey(agentId, conversationId, turnIndex))) {
+            Object query = MAPPER.readValue(in.readAllBytes(), java.util.Map.class).get(SEARCHED_QUERY_FIELD);
+            return query instanceof String text && StringUtils.hasText(text) ? Optional.of(text) : Optional.empty();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
     private void store(String agentId, String conversationId, int turnIndex,
             String systemPrompt, List<TurPromptCapture.Message> messages) {
         TurPromptCapture capture = new TurPromptCapture(conversationId, turnIndex,
@@ -184,6 +223,7 @@ public class TurPromptCaptureService {
             // listTurns returns newest-first; delete everything past the cap.
             for (TurPromptCaptureTurnRef stale : turns.subList(cap, turns.size())) {
                 storageService.deleteObject(turnKey(agentId, conversationId, stale.turnIndex()));
+                deleteQuietly(searchedKey(agentId, conversationId, stale.turnIndex()));
             }
         } catch (Exception e) {
             log.debug("[PromptCapture] ring prune no-op for conv '{}': {}",
@@ -251,6 +291,20 @@ public class TurPromptCaptureService {
 
     static String turnKey(String agentId, String conversationId, int turnIndex) {
         return capturesRoot(agentId, conversationId) + TURN_PREFIX + turnIndex + TURN_SUFFIX;
+    }
+
+    /** T1157 — the sidecar holding the query turn {@code turnIndex} searched. */
+    static String searchedKey(String agentId, String conversationId, int turnIndex) {
+        return capturesRoot(agentId, conversationId) + SEARCHED_PREFIX + turnIndex + TURN_SUFFIX;
+    }
+
+    /** Deletes a sidecar that may never have been written. */
+    private void deleteQuietly(String objectName) {
+        try {
+            storageService.deleteObject(objectName);
+        } catch (Exception e) {
+            log.debug("[PromptCapture] no sidecar '{}' to delete: {}", objectName, e.getMessage());
+        }
     }
 
     /** Extracts the turn index from a {@code .../turn-N.json} object name, or null. */

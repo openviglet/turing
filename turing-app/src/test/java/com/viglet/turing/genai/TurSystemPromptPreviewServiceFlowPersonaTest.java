@@ -305,6 +305,29 @@ class TurSystemPromptPreviewServiceFlowPersonaTest {
         assertThat(dto.replay().toolCalls().get(0).durationMs()).isEqualTo(42L);
     }
 
+    /** T1157 — a captured follow-up turn shows the query retrieval searched. */
+    @Test
+    void verbatimReplayNotesTheQueryAFollowUpSearched() {
+        TurAIAgent agent = agentWith();
+        agent.setId("agent-1");
+        var capture = new com.viglet.turing.genai.capture.TurPromptCapture("conv-1", 2, 1L, "agent-1",
+                "SYS", List.of(
+                        new com.viglet.turing.genai.capture.TurPromptCapture.Message("system", "SYS"),
+                        new com.viglet.turing.genai.capture.TurPromptCapture.Message("user", "When does it close?"),
+                        new com.viglet.turing.genai.capture.TurPromptCapture.Message("assistant", "March 31."),
+                        new com.viglet.turing.genai.capture.TurPromptCapture.Message("user", "Where do I send it?")));
+        when(promptCaptureService.getCapture("agent-1", "conv-1", 2)).thenReturn(Optional.of(capture));
+        when(promptCaptureService.getSearchedQuery("agent-1", "conv-1", 2))
+                .thenReturn(Optional.of("Where do I send the grant application?"));
+
+        TurSystemPromptPreviewDto dto = service.buildReplayPreview(agent, "conv-1", 2);
+
+        assertThat(dto.messages()).hasSize(3);
+        assertThat(dto.messages().get(2).content()).isEqualTo("Where do I send it?");
+        assertThat(dto.messages().get(2).note()).isEqualTo("Where do I send the grant application?");
+        assertThat(dto.messages().get(0).note()).isNull();
+    }
+
     @Test
     void replayOfUnknownConversationDegradesToPlainPreview() {
         when(chatFlowRepository.findByTurAIAgent_IdOrderByNameAsc(any())).thenReturn(List.of());

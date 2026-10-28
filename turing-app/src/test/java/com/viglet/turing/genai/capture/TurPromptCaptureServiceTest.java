@@ -158,6 +158,36 @@ class TurPromptCaptureServiceTest {
         assertTrue(service.getCapture(AGENT, CONV, 99).isEmpty());
     }
 
+    /** T1157 — the searched query rides beside its turn and is not a turn itself. */
+    @Test
+    void searchedQueryRoundTripsWithoutBecomingATurn() {
+        captureTurns(2);
+        service.recordSearchedQuery(agent(true), CONV, 2, "Where do I send the grant application?");
+
+        assertEquals(Optional.of("Where do I send the grant application?"),
+                service.getSearchedQuery(AGENT, CONV, 2));
+        assertTrue(service.getSearchedQuery(AGENT, CONV, 1).isEmpty());
+        assertEquals(List.of(2, 1), service.listTurns(AGENT, CONV).stream()
+                .map(TurPromptCaptureTurnRef::turnIndex).toList());
+    }
+
+    @Test
+    void searchedQueryIsNotRecordedWithoutCapture() {
+        service.recordSearchedQuery(agent(false), CONV, 1, "q");
+        service.recordSearchedQuery(agent(true), CONV, 1, " ");
+
+        assertTrue(storage.blobs.isEmpty());
+    }
+
+    @Test
+    void ringPrunesTheSearchedQueryWithItsTurn() {
+        properties.setMaxTurnsPerConversation(2);
+        service.recordSearchedQuery(agent(true), CONV, 1, "first");
+        captureTurns(3);
+
+        assertTrue(service.getSearchedQuery(AGENT, CONV, 1).isEmpty());
+    }
+
     /** Captures {@code n} turns, turn i carrying i user messages so indices are 1..n. */
     private void captureTurns(int n) {
         for (int i = 1; i <= n; i++) {

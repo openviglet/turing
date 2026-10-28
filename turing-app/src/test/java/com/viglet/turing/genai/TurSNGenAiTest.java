@@ -835,6 +835,36 @@ class TurSNGenAiTest {
         assertTrue(fields.isEmpty());
     }
 
+    /** T1157 — a rewritten follow-up's searched query is kept under the turn the capture takes. */
+    @Test
+    void streamingRecordsTheRewrittenQueryForTheLivePreview() {
+        var capture = mock(com.viglet.turing.genai.capture.TurPromptCaptureService.class);
+        TurSNGenAi withCapture = new TurSNGenAi(turSNSearchProcess, contextFactory, localeRepository,
+                ragContextBuilder, facetExtractor, agentChatExecutor, globalSettingsService, ragReranker,
+                chatFlowEngineService, moderationService, new TurSNFullContextService(), null, null, capture);
+        ChatModel chatModel = mock(ChatModel.class);
+        when(chatModel.call(any(Prompt.class))).thenReturn(new ChatResponse(List.of(new Generation(
+                new org.springframework.ai.chat.messages.AssistantMessage("Where do I send the grant form?")))));
+        VectorStore vectorStore = mock(VectorStore.class);
+        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of());
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel)
+                .vectorStore(vectorStore)
+                .followupQueryMode(com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode.REWRITE)
+                .build();
+        var agent = mock(com.viglet.turing.persistence.model.agent.TurAIAgent.class);
+        List<TurSNGenAi.ConversationMessage> history = List.of(
+                new TurSNGenAi.ConversationMessage("user", "When does the grant close?"),
+                new TurSNGenAi.ConversationMessage("assistant", "March 31."),
+                new TurSNGenAi.ConversationMessage("user", "Where do I send it?"));
+
+        withCapture.assistantConversationStreaming(context, agent,
+                mock(com.viglet.turing.persistence.model.llm.TurLLMInstance.class),
+                new TurSNGenAiChatRequest(history, null, "conv-1", null, null, Locale.ENGLISH, null))
+                .collectList().block();
+
+        verify(capture).recordSearchedQuery(agent, "conv-1", 2, "Where do I send the grant form?");
+    }
+
     @Test
     void streamingShouldReturnDeterministicLocalizedRefusalWhenNoDocumentsPassGate() {
         TurGenAiContext context = mock(TurGenAiContext.class);

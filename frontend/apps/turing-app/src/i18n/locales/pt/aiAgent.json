@@ -144,6 +144,7 @@
         "title": "Prévia ao Vivo",
         "description": "Tudo abaixo é concatenado em uma única mensagem de sistema antes de chegar ao modelo. Cada bloco é marcado com sua origem.",
         "runtimeOnly": "só em runtime",
+        "searchedQuery": "A busca usou",
         "noFixedText": "Sem texto fixo — depende da conversa ao vivo.",
         "flowLabel": "Pré-visualizar com chat flow",
         "flowNone": "Sem flow (turno simples)",

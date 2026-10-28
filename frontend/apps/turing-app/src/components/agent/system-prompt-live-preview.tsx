@@ -800,11 +800,24 @@ function MessageRow({ message }: Readonly<{ message: TurSystemPromptMessage }>) 
         )}
       </div>
       {message.content ? (
-        <div className={PROSE_CLASSES}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
-            {preserveSoftBreaks(message.content)}
-          </ReactMarkdown>
-        </div>
+        <>
+          <div className={PROSE_CLASSES}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+              {preserveSoftBreaks(message.content)}
+            </ReactMarkdown>
+          </div>
+          {/* T1157 — on a captured turn the note is the query retrieval searched
+              (a follow-up rewritten as a standalone question). It is the query
+              itself, not an i18n key, so it is shown as written. */}
+          {message.origin === "CAPTURED" && message.note && (
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              <span className="font-medium">
+                {t("aiAgent.systemPrompt.preview.searchedQuery", { defaultValue: "Retrieval searched" })}:
+              </span>{" "}
+              {message.note}
+            </p>
+          )}
+        </>
       ) : (
         message.note && (
           <p className="text-xs italic leading-relaxed text-muted-foreground/80">

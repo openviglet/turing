@@ -2287,27 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.1 Retrieve follow-ups as standalone questions (T1157)
-
-**Where it happened.** Dumont D175, the WordPress Site assistant block, sends the whole
-conversation each turn to `POST /api/sn/{site}/chat/conversation`. "When do applications
-for the research grant close?" got the right date; the follow-up "Where do I send it?"
-got the refusal, although the cited post says "Send the form to the Office of Research."
-
-**Landed (retrieval half).** `TurStandaloneQuery.resolve` (genai/rag) is the shared
-seam: `LATEST_ONLY` (default), `JOINED` (last 3 user turns, no LLM) or `REWRITE` (one
-short LLM call, falling back to the latest message on failure, blank or runaway output).
-A first turn skips it. The site sets it in `sn_site_genai.followupQueryMode` (Liquibase
-v2026.3.1.137, the GenAI form's knowledge-base card). `TurSNGenAi` uses the resolved
-query for retrieval, the NL filters, the STRICT_RAG judge, the groundedness check and
-the follow-up chips on both chat paths; `TurCatalogCopilotService.answer` uses it for
-retrieval. The answer keeps the visitor's own words. Rewrites are booked as
-`sn.chat.rewrite` / `sn.copilot.rewrite` in the cost ledger.
-
-**Left.** The searched query is only logged at debug. Record it in the prompt capture
-(`TurPromptCaptureService`) beside the turn, so the Live Preview shows what a follow-up
-was rewritten to, and an operator can tell a bad rewrite from a retrieval miss.
-
 ### CLVIII.2 Remove a deleted document's RAG chunks (T1158)
 
 **Where it happened.** Dumont D175 on the run-docker stack, SN site `Sample`. The suite
@@ -2358,6 +2337,25 @@ plugin it is one search per guessed gap plus an unchecked model call, which ever
 consumer (cursarei's staged course path) would rebuild.
 
 **Workaround.** None: D201 waits on this.
+
+### CLVIII.4 Number a captured turn by the client history (T1166)
+
+**What happens.** `TurPromptCaptureService.captureSpringAi` numbers a turn by the user
+messages in the list it is handed, and that list carries the T115 memory summary and the
+T30 relevance-retrieved older turns as `user` messages. `TurSNGenAi.recordSearchedQuery`
+(T1157) numbers the same turn by the visitor's own user messages. On an agent with
+memory compression or relevance recall the two counts differ, so the searched-query
+sidecar is stored under a turn index the capture never takes, and the Live Preview shows
+the query on the wrong turn or not at all.
+
+**What it should do.** One turn number both writers agree on: the count of user messages
+in the client history the executor received, before any memory prefix is added. Either
+carry it on `TurChatTurnContext` and pass it to `captureSpringAi` / `captureNative`, or
+have the capture count only messages whose origin is the client history. The sidecar
+then keys off the same number by construction.
+
+**Tests.** A capture written with a memory prefix takes the client-history index; a
+searched query recorded for that turn shows on it in the verbatim replay.
 
 ## CLIX Documentation refresh (`docs-turing`)
 

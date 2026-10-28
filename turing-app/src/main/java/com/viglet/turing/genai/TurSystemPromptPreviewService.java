@@ -277,6 +277,21 @@ public class TurSystemPromptPreviewService {
             messages.add(new TurSystemPromptMessageDto(message.role(), "CAPTURED",
                     capturedRoleLabel(message.role()), content, tokens, false, null));
         }
+        // T1157 — a follow-up rewritten for retrieval: the turn's own user message
+        // (the last one) carries the query that was actually searched as its note.
+        String searched = promptCaptureService
+                .getSearchedQuery(capture.agentId(), capture.conversationId(), capture.turnIndex())
+                .orElse(null);
+        if (searched != null) {
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                TurSystemPromptMessageDto m = messages.get(i);
+                if ("user".equals(m.role())) {
+                    messages.set(i, new TurSystemPromptMessageDto(m.role(), m.origin(), m.label(),
+                            m.content(), m.tokens(), m.runtimeOnly(), searched));
+                    break;
+                }
+            }
+        }
 
         List<TurSystemPromptToolCallDto> toolCalls = new ArrayList<>();
         for (TurChatToolCall call : toolCallTraceService.getTrace(capture.conversationId())) {
