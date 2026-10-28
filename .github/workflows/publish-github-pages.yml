@@ -73,10 +73,10 @@ jobs:
       - name: Copy static pages assets
         run: cp .github/pages/* _site/
 
-      - name: Deploy to openviglet/turing-ce (github-pages branch)
+      - name: Deploy to openviglet/turing (github-pages branch)
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.GH_PKG_TOKEN }}
-          external_repository: openviglet/turing-ce
+          external_repository: openviglet/turing
           publish_branch: github-pages
           publish_dir: ./_site

@@ -69,7 +69,7 @@ jobs:
       - name: Deploy Version
         env:
           GH_TOKEN: ${{ secrets.GH_PKG_TOKEN }}
-          RELEASE_REPO: openviglet/turing-ce
+          RELEASE_REPO: openviglet/turing
         run: |
           mvn install package -Dgpg.skip=true -Dturing.open-browser=false
           chmod +x scripts/package-dist.sh
