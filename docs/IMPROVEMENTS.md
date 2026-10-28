@@ -2294,43 +2294,40 @@ the `turing_search_result_click` event: the `postClick()` to `POST
 /api/sn/{site}/click`, which records the query, the document and its rank in Turing's
 metrics, is sent first and unconditionally. A site that hands the controller `consent:
 () => false` until the visitor answers a banner still reports every opened result to
-Turing.
+Turing. `useTuringSearch().trackResultClick` in the React SDK does the same.
 
 **Workaround in Dumont.** The plugin checks its own `trackingAllowed()` before calling
 `trackResultClick()` (`wordpress/src/public/search.js`), so its visitors are not
 affected; any other consumer that trusts the option is.
 
-**What Turing should do.** In `controllers/search.ts`, return before `postClick()` when
-`consent()` is false, as the event already does; keep disarming abandonment either way.
-Say in the option's doc comment that it gates the click report too. Test: with `consent:
-() => false`, `trackResultClick()` sends no request and emits nothing.
+**What Turing should do.** In `sdk/src/controllers/search.ts` and
+`react-sdk/src/hooks/use-turing-search.ts`, return before `postClick()` when consent is
+refused, as the event already does; keep disarming abandonment either way. Say in both
+options' doc comments that consent gates the click report too. `useTuringClickTracking`
+takes no consent and is an explicit host call, so it stays as it is. Test in each
+package: with `consent: () => false`, `trackResultClick()` sends no request and emits
+nothing; once consent turns true, the next click posts and emits.
 
 ### CLVII.1 A refinement is not another search (T1155)
 
-**Where it happened.** Dumont D188, the WordPress plugin's search block on
-`@viglet/turing-sdk` 2026.3.10: `createSearchController(..., { analytics, consent,
-sessionCookie: false, abandonment: true })`, the bus with `googleAnalyticsSink({
-recommended: true })`.
+**Where it happened.** Dumont D188, the WordPress search block on `@viglet/turing-sdk`
+2026.3.10 with `abandonment: true` and `googleAnalyticsSink({ recommended: true })`.
 
 **What comes back.** `emitSearchEvents()` runs after every request that is not `mode:
-"instant"`, so `toggleFacet`, `changeSort`, `goToPage` and a `searchRequest` that only
-changes `fq` or `page` each emit another `turing_search` and, in recommended mode,
-another GA4 `search` with the same `search_term`. A visitor who searches "workshop",
-ticks a facet and changes the sort is three searches in GA4's site-search report, and
-the abandonment watcher is re-armed each time. Only a changed query is told apart
-(`turing_search_refined`).
+"instant"`: `toggleFacet`, `changeSort`, `goToPage` and a `searchRequest` that only
+changes `fq` or `page` each emit another `turing_search` and GA4 `search` with the same
+term, and re-arm the abandonment watcher. The legacy GET path does the same, and so does
+`useTuringSearch` in the React SDK, which carries its own copy.
 
-**What was expected.** One search per query the visitor settled on; a filter, sort or
-page on it is a refinement of that search, not a new one.
+**Workaround in Dumont.** `wordpress/src/public/search.js` wraps the GA sink and passes
+search events only while the block says the request in flight is settled (D224).
 
-**Workaround in Dumont.** `wordpress/src/public/search.js` wraps the GA sink: search
-events pass only while the block's `reportSearchesWhen()` predicate says the request in
-flight is settled (`settled = false` before each facet, sort, page and filter-clear
-call). Remove it once the SDK ships this.
-
-**What Turing should do.** Emit the search events only for a new query: skip a response
-whose request differs from the last reported one only in `fq`, `page`, `rows` or `sort`,
-or let `searchRequest` take `{ report: false }` and pass it from the controller's own
-refinement methods. Test in `controllers/search.test.ts`: a facet, a sort and a page
-after one search emit no second `turing_search` or GA4 `search`, and leave abandonment
-armed once.
+**What Turing should do.** In both packages and on both paths, emit the search events
+only when `q` differs from the last reported query; a wildcard search clears it. No new
+option and no flag: a count per refinement is the defect, and nothing documents it.
+Locale, sort, page and filters on the same `q` are refinements; a spell-check rewrite is
+a new search. A refinement emits nothing but keeps one abandonment watcher, updating its
+result count and restarting its idle timer. Tests in `sdk/src/__tests__/` and
+`react-sdk/src/hooks/__tests__/use-turing-search-analytics.test.tsx`: a facet, a sort
+and a page after one search emit one `turing_search`; "workshop", `*`, "workshop" emits
+two; a facet within the idle window does not fire abandonment.

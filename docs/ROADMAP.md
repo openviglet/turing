@@ -16,8 +16,8 @@
 
 ## Block Z — Client-side conversion analytics & the Google Analytics bridge (§XXV)
 
-- 📋 **T1155** (deps: —) **The search controller reports a filter, a sort or a page change as another search, to its bus and to GA4** — GA4's site-search report counts each refinement as a new search and abandonment is re-armed, so hosts filter the bus by hand. → §CLVII.1
-- 📋 **T1156** (deps: —) **trackResultClick posts the click to Turing without asking the controller's consent function** — A site that withholds consent until the visitor answers still sends every opened result's query and rank to Turing's metrics. → §CLVII.2
+- 📋 **T1155** (deps: —) **The search controller and useTuringSearch report a filter, sort or page change as another search, to the bus and GA4** — GA4's site-search report counts each refinement as a new search and abandonment is re-armed, so hosts filter the bus by hand. → §CLVII.1
+- 📋 **T1156** (deps: —) **trackResultClick, in the search controller and in useTuringSearch, posts the click to Turing without asking consent** — A site that withholds consent until the visitor answers still sends every opened result's query and rank to Turing's metrics. → §CLVII.2
 
 ## Done when — T1133
 
