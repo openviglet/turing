@@ -59,9 +59,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			settings_fields( 'viglet_dumont_settings_group' );
 
 			// A value set by wp-config.php or the environment is shown read-only, naming what sets it.
-			$sources  = Viglet_Dumont_Settings::sources();
-			$locked   = static fn ( string $key ) => Viglet_Dumont_Settings::is_overridden( $key ) ? 'readonly' : '';
-			$env_note = static function ( string $key ) use ( $sources ) {
+			$viglet_dumont_sources  = Viglet_Dumont_Settings::sources();
+			$viglet_dumont_locked   = static fn ( string $key ) => Viglet_Dumont_Settings::is_overridden( $key ) ? 'readonly' : '';
+			$viglet_dumont_env_note = static function ( string $key ) use ( $viglet_dumont_sources ) {
 				if ( Viglet_Dumont_Settings::is_overridden( $key ) ) {
 					printf(
 						'<p class="description"><strong>%s</strong></p>',
@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							sprintf(
 								/* translators: %s: the constant or environment variable's name. */
 								__( 'Set by %s outside WordPress; change it there.', 'viglet-dumont' ),
-								$sources[ $key ]['name']
+								$viglet_dumont_sources[ $key ]['name']
 							)
 						)
 					);
@@ -90,10 +90,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<input type="url" id="server_url"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[server_url]"
 									value="<?php echo esc_attr( $settings['server_url'] ); ?>"
-									class="regular-text" <?php echo esc_attr( $locked( 'server_url' ) ); ?>
+									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'server_url' ) ); ?>
 									placeholder="http://localhost:2700" />
 							<p class="description"><?php esc_html_e( 'The full URL of your Turing server (e.g., http://localhost:2700).', 'viglet-dumont' ); ?></p>
-							<?php $env_note( 'server_url' ); ?>
+							<?php $viglet_dumont_env_note( 'server_url' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field">
@@ -101,10 +101,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<input type="text" id="site_name"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[site_name]"
 									value="<?php echo esc_attr( $settings['site_name'] ); ?>"
-									class="regular-text" <?php echo esc_attr( $locked( 'site_name' ) ); ?>
+									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'site_name' ) ); ?>
 									placeholder="default" />
 							<p class="description"><?php esc_html_e( 'The Turing Semantic Navigation site name to use for indexing and search.', 'viglet-dumont' ); ?></p>
-							<?php $env_note( 'site_name' ); ?>
+							<?php $viglet_dumont_env_note( 'site_name' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field">
@@ -112,10 +112,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<input type="text" id="site_key"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[site_key]"
 									value="<?php echo esc_attr( $settings['site_key'] ); ?>"
-									class="regular-text" <?php echo esc_attr( $locked( 'site_key' ) ); ?>
+									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'site_key' ) ); ?>
 									placeholder="<?php echo esc_attr( ( new Viglet_Dumont_Indexer( array_merge( $settings, array( 'site_key' => '' ) ) ) )->site_key() ); ?>" />
 							<p class="description"><?php esc_html_e( 'Starts every document id and fills the site_key field, so several WordPress sites can share one SN site. Empty uses this site\'s address. Changing it needs an Index All.', 'viglet-dumont' ); ?></p>
-							<?php $env_note( 'site_key' ); ?>
+							<?php $viglet_dumont_env_note( 'site_key' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field">
@@ -126,11 +126,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<input type="password" id="api_key"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[api_key]"
 									value=""
-									class="regular-text" <?php echo esc_attr( $locked( 'api_key' ) ); ?>
+									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'api_key' ) ); ?>
 									placeholder="<?php echo '' !== (string) $settings['api_key'] ? esc_attr__( 'A key is stored', 'viglet-dumont' ) : ''; ?>"
 									autocomplete="new-password" />
 							<p class="description"><?php esc_html_e( 'Optional. API key for authentication with the Turing server.', 'viglet-dumont' ); ?></p>
-							<?php $env_note( 'api_key' ); ?>
+							<?php $viglet_dumont_env_note( 'api_key' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field">
@@ -138,18 +138,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<input type="url" id="public_url"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[public_url]"
 									value="<?php echo esc_attr( $settings['public_url'] ); ?>"
-									class="regular-text" <?php echo esc_attr( $locked( 'public_url' ) ); ?> />
+									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'public_url' ) ); ?> />
 							<p class="description"><?php esc_html_e( 'Where visitors\' browsers reach Turing, when it differs from the Server URL this server uses. Empty uses the Server URL.', 'viglet-dumont' ); ?></p>
-							<?php $env_note( 'public_url' ); ?>
+							<?php $viglet_dumont_env_note( 'public_url' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field-row">
 							<div class="viglet-dumont-field">
 								<label for="locale"><?php esc_html_e( 'Locale', 'viglet-dumont' ); ?></label>
-								<?php $env_note( 'locale' ); ?>
+								<?php $viglet_dumont_env_note( 'locale' ); ?>
 								<select id="locale" name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[locale]" <?php disabled( Viglet_Dumont_Settings::is_overridden( 'locale' ) ); ?>>
 									<?php
-									$locales = array(
+									$viglet_dumont_locales = array(
 										'en_US' => 'English (US)',
 										'en_GB' => 'English (UK)',
 										'pt_BR' => 'Portugu&ecirc;s (Brasil)',
@@ -161,10 +161,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 										'ja_JP' => '&#26085;&#26412;&#35486;',
 										'zh_CN' => '&#20013;&#25991;',
 									);
-									foreach ( $locales as $code => $label ) :
+									foreach ( $viglet_dumont_locales as $viglet_dumont_code => $viglet_dumont_label ) :
 										?>
-										<option value="<?php echo esc_attr( $code ); ?>" <?php selected( $settings['locale'], $code ); ?>>
-											<?php echo esc_html( $label ); ?>
+										<option value="<?php echo esc_attr( $viglet_dumont_code ); ?>" <?php selected( $settings['locale'], $viglet_dumont_code ); ?>>
+											<?php echo esc_html( $viglet_dumont_label ); ?>
 										</option>
 									<?php endforeach; ?>
 								</select>

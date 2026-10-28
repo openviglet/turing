@@ -131,7 +131,9 @@ function viglet_dumont_update_settings( array $settings ): bool {
  * Initialize the plugin.
  */
 function viglet_dumont_init(): void {
-	load_plugin_textdomain( 'viglet-dumont', false, dirname( plugin_basename( VIGLET_DUMONT_FILE ) ) . '/languages' );
+	// A site that installed the GitHub zip or Composer gets no language pack from wordpress.org:
+	// the pt_BR the plugin ships is loaded from its own languages/ folder.
+	load_plugin_textdomain( 'viglet-dumont', false, dirname( plugin_basename( VIGLET_DUMONT_FILE ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 
 	$settings = viglet_dumont_get_settings();
 

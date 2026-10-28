@@ -85,18 +85,18 @@ wp_enqueue_style(
 		<div class="vd-search__layout">
 			<?php if ( ! empty( $facets ) ) : ?>
 				<aside class="vd-search__sidebar">
-					<?php foreach ( $facets as $facet ) : ?>
-						<?php if ( ! empty( $facet['facetValues'] ) ) : ?>
+					<?php foreach ( $facets as $viglet_dumont_facet ) : ?>
+						<?php if ( ! empty( $viglet_dumont_facet['facetValues'] ) ) : ?>
 							<div class="vd-facet">
 								<h3 class="vd-facet__title">
-									<?php echo esc_html( $facet['label'] ?? $facet['name'] ?? '' ); ?>
+									<?php echo esc_html( $viglet_dumont_facet['label'] ?? $viglet_dumont_facet['name'] ?? '' ); ?>
 								</h3>
 								<ul class="vd-facet__list">
-									<?php foreach ( $facet['facetValues'] as $value ) : ?>
+									<?php foreach ( $viglet_dumont_facet['facetValues'] as $viglet_dumont_value ) : ?>
 										<li>
-											<a href="<?php echo esc_url( add_query_arg( 'fq[]', $value['link'] ?? '', false ) ); ?>">
-												<?php echo esc_html( $value['label'] ?? '' ); ?>
-												<span class="vd-facet__count"><?php echo esc_html( $value['count'] ?? 0 ); ?></span>
+											<a href="<?php echo esc_url( add_query_arg( 'fq[]', $viglet_dumont_value['link'] ?? '', false ) ); ?>">
+												<?php echo esc_html( $viglet_dumont_value['label'] ?? '' ); ?>
+												<span class="vd-facet__count"><?php echo esc_html( $viglet_dumont_value['count'] ?? 0 ); ?></span>
 											</a>
 										</li>
 									<?php endforeach; ?>
@@ -113,49 +113,49 @@ wp_enqueue_style(
 						<p><?php esc_html_e( 'No results found. Try different keywords.', 'viglet-dumont' ); ?></p>
 					</div>
 				<?php else : ?>
-					<?php foreach ( $results as $item ) : ?>
+					<?php foreach ( $results as $viglet_dumont_item ) : ?>
 						<?php
-						$fields = $item['fields'] ?? array();
-						$title  = $fields['title'] ?? '';
-						$url    = $fields['url'] ?? '#';
-						$text   = '';
-						if ( ! empty( $item['highlighting'] ) ) {
-							$text = implode( ' ... ', $item['highlighting'] );
-						} elseif ( ! empty( $fields['abstract'] ) ) {
-							$text = $fields['abstract'];
-						} elseif ( ! empty( $fields['text'] ) ) {
-							$text = wp_trim_words( $fields['text'], 30 );
+						$viglet_dumont_fields = $viglet_dumont_item['fields'] ?? array();
+						$viglet_dumont_title  = $viglet_dumont_fields['title'] ?? '';
+						$viglet_dumont_url    = $viglet_dumont_fields['url'] ?? '#';
+						$viglet_dumont_text   = '';
+						if ( ! empty( $viglet_dumont_item['highlighting'] ) ) {
+							$viglet_dumont_text = implode( ' ... ', $viglet_dumont_item['highlighting'] );
+						} elseif ( ! empty( $viglet_dumont_fields['abstract'] ) ) {
+							$viglet_dumont_text = $viglet_dumont_fields['abstract'];
+						} elseif ( ! empty( $viglet_dumont_fields['text'] ) ) {
+							$viglet_dumont_text = wp_trim_words( $viglet_dumont_fields['text'], 30 );
 						}
-						$author = $fields['author'] ?? '';
-						$date   = $fields['publication_date'] ?? '';
-						$image  = $fields['image'] ?? '';
-						$type   = $fields['type'] ?? '';
+						$viglet_dumont_author = $viglet_dumont_fields['author'] ?? '';
+						$viglet_dumont_date   = $viglet_dumont_fields['publication_date'] ?? '';
+						$viglet_dumont_image  = $viglet_dumont_fields['image'] ?? '';
+						$viglet_dumont_type   = $viglet_dumont_fields['type'] ?? '';
 						?>
 						<article class="vd-result">
-							<?php if ( $image ) : ?>
+							<?php if ( $viglet_dumont_image ) : ?>
 								<div class="vd-result__image">
-									<img src="<?php echo esc_url( $image ); ?>"
-										alt="<?php echo esc_attr( $title ); ?>"
+									<img src="<?php echo esc_url( $viglet_dumont_image ); ?>"
+										alt="<?php echo esc_attr( $viglet_dumont_title ); ?>"
 										loading="lazy" />
 								</div>
 							<?php endif; ?>
 							<div class="vd-result__content">
-								<?php if ( $type ) : ?>
-									<span class="vd-result__type"><?php echo esc_html( ucfirst( $type ) ); ?></span>
+								<?php if ( $viglet_dumont_type ) : ?>
+									<span class="vd-result__type"><?php echo esc_html( ucfirst( $viglet_dumont_type ) ); ?></span>
 								<?php endif; ?>
 								<h2 class="vd-result__title">
-									<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $title ); ?></a>
+									<a href="<?php echo esc_url( $viglet_dumont_url ); ?>"><?php echo esc_html( $viglet_dumont_title ); ?></a>
 								</h2>
-								<?php if ( $text ) : ?>
-									<p class="vd-result__excerpt"><?php echo wp_kses_post( $text ); ?></p>
+								<?php if ( $viglet_dumont_text ) : ?>
+									<p class="vd-result__excerpt"><?php echo wp_kses_post( $viglet_dumont_text ); ?></p>
 								<?php endif; ?>
 								<div class="vd-result__meta">
-									<?php if ( $author ) : ?>
-										<span class="vd-result__author"><?php echo esc_html( $author ); ?></span>
+									<?php if ( $viglet_dumont_author ) : ?>
+										<span class="vd-result__author"><?php echo esc_html( $viglet_dumont_author ); ?></span>
 									<?php endif; ?>
-									<?php if ( $date ) : ?>
-										<time class="vd-result__date" datetime="<?php echo esc_attr( $date ); ?>">
-											<?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $date ) ) ); ?>
+									<?php if ( $viglet_dumont_date ) : ?>
+										<time class="vd-result__date" datetime="<?php echo esc_attr( $viglet_dumont_date ); ?>">
+											<?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $viglet_dumont_date ) ) ); ?>
 										</time>
 									<?php endif; ?>
 								</div>

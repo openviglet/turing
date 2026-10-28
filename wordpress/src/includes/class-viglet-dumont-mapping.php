@@ -660,7 +660,8 @@ class Viglet_Dumont_Mapping {
 		}
 
 		return array(
-			'exclude' => ! empty( $type_mapping['exclude'] ),
+			// The mapping's own flag (a post type left out), not a WP_Query argument.
+			'exclude' => ! empty( $type_mapping['exclude'] ), // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			'fields'  => $fields,
 		);
 	}

@@ -156,7 +156,8 @@ class Viglet_Dumont_Indexer {
 
 		$exclude_ids = $this->get_excluded_ids();
 		if ( ! empty( $exclude_ids ) ) {
-			$args['post__not_in'] = $exclude_ids;
+			// The settings' "Exclude IDs": a short list an admin types, not a growing set.
+			$args['post__not_in'] = $exclude_ids; // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
 		}
 
 		$query     = new WP_Query( $args );
