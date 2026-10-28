@@ -1969,6 +1969,77 @@ export function postNlFilters(
   });
 }
 
+// ── T1159: Plan-to-kit copilot ──────────────────────────────────────────────
+
+/** T1159 — what to do with a product whose availability field reads unavailable. */
+export type TurCatalogKitAvailability = "MARK" | "DROP";
+
+/** T1159 — the request of {@link postCopilotKit}; every field but `plan` is optional. */
+export interface TurCatalogKitRequest {
+  /** The shopper's plan, in their words ("two days crossing the mountains in July"). */
+  readonly plan: string;
+  readonly locale?: string;
+  /** How many needs to name (1-8, default 5). */
+  readonly maxGaps?: number;
+  /** Products per need (1-6, default 3). */
+  readonly perGap?: number;
+  /** The product field that says whether it can be bought. */
+  readonly availabilityField?: string;
+  /** `MARK` (default) keeps an unavailable product with `available: false`; `DROP` leaves it out. */
+  readonly availability?: TurCatalogKitAvailability;
+}
+
+/** T1159 — a staged product: a catalog result, never one the model named. */
+export interface TurCatalogKitProduct {
+  readonly rank: number;
+  readonly id: string;
+  readonly title: string;
+  readonly url?: string | null;
+  readonly score?: number | null;
+  /** This product's own attributes (`key: value; …`), the ones matching the need first. */
+  readonly reason?: string | null;
+  /** Set only when an availability field was named and the product has it. */
+  readonly available?: boolean | null;
+}
+
+/** T1159 — one need the plan implies, with the products that fill it. */
+export interface TurCatalogKitStage {
+  readonly gap: string;
+  readonly reason?: string | null;
+  readonly query: string;
+  readonly products: readonly TurCatalogKitProduct[];
+}
+
+/** T1159 — response of {@link postCopilotKit}. */
+export interface TurCatalogKitResult {
+  readonly summary?: string | null;
+  readonly stages: readonly TurCatalogKitStage[];
+  /** Needs the catalog had no product for. */
+  readonly unfilled: readonly string[];
+  /** Set when no kit could be built (no default LLM, unknown site, empty plan). */
+  readonly error?: string | null;
+}
+
+/**
+ * T1159 — turns a described plan into a staged kit: the needs it implies, each
+ * with the catalog products retrieval found for it. One LLM call names the
+ * needs; every product comes from the site's own search, so no id or price is
+ * the model's. Its availability is the copilot's (`GET /sn/{site}/copilot/available`).
+ *
+ * Server endpoint: {@code POST /api/sn/{site}/copilot/kit}.
+ */
+export function postCopilotKit(
+  client: TuringClient,
+  site: string,
+  request: TurCatalogKitRequest,
+  options: TuringCallOptions = {},
+): Promise<TurCatalogKitResult> {
+  return client.post<TurCatalogKitResult>(`/sn/${site}/copilot/kit`, request, {
+    csrf: false,
+    signal: options.signal,
+  });
+}
+
 // ── T401: Multimodal slot-upload + flow resume ──────────────────────────────
 
 /**
@@ -2741,6 +2812,7 @@ export function createTuringApi(client: TuringClient) {
     fetchSimilar: bind(fetchSimilar),
     fetchStoredDocuments: bind(fetchStoredDocuments),
     postNlFilters: bind(postNlFilters),
+    postCopilotKit: bind(postCopilotKit),
     postSiteSlotUpload: bind(postSiteSlotUpload),
     postSiteChatResume: bind(postSiteChatResume),
     fetchSpellCheck: bind(fetchSpellCheck),

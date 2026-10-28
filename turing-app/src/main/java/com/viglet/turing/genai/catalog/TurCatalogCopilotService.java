@@ -417,7 +417,7 @@ public class TurCatalogCopilotService {
 
         Projection projection = project(ordered, MAX_RESULTS, fieldDescriptions(schema));
         return new Retrieval(projection.citations(), projection.contextBlocks(),
-                totalHits, summarize(request), true);
+                totalHits, summarize(request), true, projection.attributes());
     }
 
     /**
@@ -450,7 +450,7 @@ public class TurCatalogCopilotService {
             log.info("[CatalogCopilot] site '{}' FAN-OUT over {} sub-queries -> {} fused hits",
                     siteName, subQueries.size(), union.size());
             return Optional.of(new Retrieval(projection.citations(), projection.contextBlocks(),
-                    union.size(), "fan-out(" + subQueries.size() + ")", true));
+                    union.size(), "fan-out(" + subQueries.size() + ")", true, projection.attributes()));
         } catch (RuntimeException e) {
             log.warn("[CatalogCopilot] fan-out failed for site '{}', falling back to single-pass: {}",
                     siteName, e.getMessage());
@@ -532,6 +532,7 @@ public class TurCatalogCopilotService {
             ContextBlockBuilder builder) {
         List<TurCatalogCitation> citations = new ArrayList<>();
         List<String> contextBlocks = new ArrayList<>();
+        List<Map<String, String>> attributes = new ArrayList<>();
         int limit = Math.min(max, ordered.size());
         for (int i = 0; i < limit; i++) {
             TurDslSearchResponse.Hit hit = ordered.get(i);
@@ -543,8 +544,24 @@ public class TurCatalogCopilotService {
                     StringUtils.hasText(url) ? url : null, hit.score(),
                     hit.explanation()));
             contextBlocks.add(builder.build(rank, title, url, source));
+            attributes.add(shortAttributes(source));
         }
-        return new Projection(citations, contextBlocks);
+        return new Projection(citations, contextBlocks, attributes);
+    }
+
+    /** T1159 — the short, non-text fields a context block lists, as plain strings. */
+    private static Map<String, String> shortAttributes(Map<String, Object> source) {
+        Map<String, String> attributes = new java.util.LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : source.entrySet()) {
+            if (isReservedField(entry.getKey()) || entry.getValue() == null) {
+                continue;
+            }
+            String value = str(entry.getValue());
+            if (StringUtils.hasText(value) && value.length() <= 80) {
+                attributes.put(entry.getKey(), value);
+            }
+        }
+        return attributes;
     }
 
     /** Builds one row's grounding context block (verbose or compact). */
@@ -670,7 +687,7 @@ public class TurCatalogCopilotService {
             log.info("[CatalogCopilot] site '{}' STUFF_ALL (full): grounding on all {} rows "
                     + "(~{} tokens, budget {})", siteName, hits.size(), fullTokens, budget);
             return Optional.of(new Retrieval(full.citations(), full.contextBlocks(),
-                    totalHits, "", true));
+                    totalHits, "", true, full.attributes()));
         }
 
         // T822 / §LX.1 — full is over budget; retry a COMPACT projection (key fields
@@ -683,7 +700,7 @@ public class TurCatalogCopilotService {
                     + "(~{} tokens, budget {}; full was ~{})",
                     siteName, hits.size(), compactTokens, budget, fullTokens);
             return Optional.of(new Retrieval(compact.citations(), compact.contextBlocks(),
-                    totalHits, "", true));
+                    totalHits, "", true, compact.attributes()));
         }
 
         // T823 / §LX.2 — even the compact whole-catalog exceeds the budget → filtered.
@@ -714,7 +731,8 @@ public class TurCatalogCopilotService {
     }
 
     /** Citations + per-result context blocks projected from a hit page. */
-    private record Projection(List<TurCatalogCitation> citations, List<String> contextBlocks) {
+    private record Projection(List<TurCatalogCitation> citations, List<String> contextBlocks,
+            List<Map<String, String>> attributes) {
     }
 
     /**
@@ -943,10 +961,28 @@ public class TurCatalogCopilotService {
      * The projected outcome of {@link #retrieve}: the cited results, the per-result
      * grounding context blocks fed to the LLM (or the tool's text reply), the total
      * index hit count, a human summary of the applied filters, and whether the site
-     * exists at all.
+     * exists at all. T1159 — {@code attributes} holds each citation's short,
+     * non-text fields (the ones its context block lists), in citation order, so a
+     * caller can say why a product fits without re-reading the index.
      */
     public record Retrieval(List<TurCatalogCitation> citations, List<String> contextBlocks,
-            long totalHits, String groundedSummary, boolean siteFound) {
+            long totalHits, String groundedSummary, boolean siteFound,
+            List<Map<String, String>> attributes) {
+
+        public Retrieval {
+            attributes = attributes == null ? List.of() : attributes;
+        }
+
+        /** The shape before T1159: no per-citation attributes. */
+        public Retrieval(List<TurCatalogCitation> citations, List<String> contextBlocks,
+                long totalHits, String groundedSummary, boolean siteFound) {
+            this(citations, contextBlocks, totalHits, groundedSummary, siteFound, List.of());
+        }
+
+        /** The attributes of the citation at {@code index}, or none. */
+        public Map<String, String> attributesAt(int index) {
+            return index >= 0 && index < attributes.size() ? attributes.get(index) : Map.of();
+        }
 
         static Retrieval notFound() {
             return new Retrieval(List.of(), List.of(), 0L, null, false);

@@ -85,11 +85,19 @@ public class TurSNCatalogCopilotAPI {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public TurCatalogKitService.Result kit(@PathVariable String siteName, @RequestBody KitRequest request) {
         log.info("[CatalogKit] kit on site '{}'", siteName);
-        return kitService.plan(siteName, request.locale(), request.plan(), request.maxGaps(), request.perGap());
+        return kitService.plan(siteName, request.locale(), request.plan(),
+                new TurCatalogKitService.Options(request.maxGaps(), request.perGap(),
+                        request.availabilityField(), request.availability()));
     }
 
-    /** T1159 — the plan, an optional locale and optional limits (gaps, products per gap). */
-    public record KitRequest(String plan, String locale, Integer maxGaps, Integer perGap) {
+    /**
+     * T1159 — the plan, an optional locale and optional limits (gaps, products per
+     * gap). {@code availabilityField} names the product field that says whether it
+     * can be bought; {@code availability} is {@code MARK} (default: keep it, with
+     * {@code available: false}) or {@code DROP}.
+     */
+    public record KitRequest(String plan, String locale, Integer maxGaps, Integer perGap,
+            String availabilityField, TurCatalogKitService.Availability availability) {
     }
 
     /** Request body: the conversation so far plus an optional locale. */

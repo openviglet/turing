@@ -46,6 +46,7 @@ export {
   fetchSimilar,
   fetchStoredDocuments,
   postNlFilters,
+  postCopilotKit,
   chatConversationBody,
   parseFiltersEvent,
   postSiteSlotUpload,
@@ -204,6 +205,13 @@ export type {
   CopilotStatus,
 } from "./hooks/use-turing-copilot";
 export type { TurCatalogCitation, TurCatalogCopilotResult } from "./core/api";
+export type {
+  TurCatalogKitAvailability,
+  TurCatalogKitRequest,
+  TurCatalogKitProduct,
+  TurCatalogKitStage,
+  TurCatalogKitResult,
+} from "./core/api";
 export { useTuringUserMemory } from "./hooks/use-turing-user-memory";
 export type {
   TuringUserMemory,

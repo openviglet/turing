@@ -2287,30 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.3 A plan-to-kit copilot call (T1159)
-
-**Where it happened.** Dumont D201, a "Build my kit" mode for the WordPress catalog
-copilot block (D173). A shopper writes a plan, "two days crossing the mountains in July,
-first time", and wants every item it implies; `/copilot` answers one need at a time.
-
-**Landed (the staged-kit call).** `POST /api/sn/{site}/copilot/kit` with `{plan, locale,
-maxGaps, perGap}`, in `TurCatalogKitService`. One LLM call names the gaps as plain lines
-(`SUMMARY:` / `GAP: name | query | why`, not structured output); each gap runs the
-shared `TurCatalogCopilotService.retrieve()`, so the site's planning strategy and hybrid
-ranking apply. Products come from that retrieval, never from the model, so every id is
-one the index returned and no price is the model's; a product staged under one gap is
-not repeated under another. The result carries the summary, the stages (gap, reason,
-query, products) and the gaps the catalog filled with nothing.
-
-**Left.** A one-line reason per product from its attributes (today the reason is the
-gap's). An availability field named in the request that marks or drops an unavailable
-product. A matching document (a guide) cited beside the stages. And the call in both
-SDKs (`@viglet/turing-sdk`, `@viglet/turing-react-sdk`) beside the copilot, with its
-availability on the same `/copilot/available` probe.
-
-**Tests.** Per-product reasons quote only the product's own attributes; an unavailable
-product is marked or dropped as asked; the SDKs post the request and type the result.
-
 ### CLVIII.4 Number a captured turn by the client history (T1166)
 
 **What happens.** `TurPromptCaptureService.captureSpringAi` numbers a turn by the user
@@ -2329,6 +2305,23 @@ then keys off the same number by construction.
 
 **Tests.** A capture written with a memory prefix takes the client-history index; a
 searched query recorded for that turn shows on it in the verbatim replay.
+
+### CLVIII.5 Cite a guide beside the kit (T1167)
+
+**What happens.** `POST /api/sn/{site}/copilot/kit` (T1159) returns the needs a plan
+implies and the products that fill them, but never the site's own advice for that plan:
+a "first mountain crossing" guide or a packing checklist the catalog also indexes. A
+shopper who does not know what to buy is also the one who has not read the guide.
+
+**What it should do.** Beside the stages, cite up to two documents that are not
+products: retrieve the plan text itself through `TurCatalogCopilotService.retrieve()`,
+keep the results whose type matches a `guideTypes` list named in the request (a site's
+content types differ, so no type is guessed), and return them as citations with title
+and URL. No request `guideTypes` means no guides, exactly as today. A guide already
+staged as a product is not repeated.
+
+**Tests.** A plan whose retrieval returns a guide-typed document cites it; without
+`guideTypes` the result is unchanged; a product-typed result is never cited as a guide.
 
 ## CLIX Documentation refresh (`docs-turing`)
 

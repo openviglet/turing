@@ -957,7 +957,7 @@
 - **T1004** — The demo emits 317-526 token events per answer now, the first at 1.9s and the rest spread over ~4s, with sources still arriving ahead of them.
 - **T1157** — A rewritten follow-up's searched query is now kept beside its prompt capture, and the Live Preview shows it under the visitor's message on that turn (design §CLVIII.1 recorded in `turing-app/src/main/java/com/viglet/turing/genai/rag/TurStandaloneQuery.java`).
 - **T1158** — Deletes by type or fields now remove the matching RAG chunks on every store, and POST /api/sn/{id}/genai/purge-orphans clears chunks of documents the engine no longer holds (design §CLVIII.2 recorded in `turing-app/src/main/java/com/viglet/turing/genai/TurSNRagOrphanPurgeService.java`).
-- **T1159 (staged-kit call)** — POST /api/sn/{site}/copilot/kit turns a plan into needs, each staged with products the catalog retrieval returned, never ids or prices from the model.
+- **T1159** — Each staged product now explains itself from its own attributes, an availability field marks or drops it, and both SDKs call the kit as postCopilotKit (design §CLVIII.3 recorded in `turing-app/src/main/java/com/viglet/turing/genai/catalog/TurCatalogKitService.java`).
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

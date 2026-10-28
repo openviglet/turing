@@ -16,8 +16,8 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- ⏳ **T1159** (deps: —) **The catalog copilot answers one need at a time; a described plan cannot come back as staged products by need** — Per-product reasons, an availability field, a cited guide and the SDK calls are still to come. → §CLVIII.3
 - 📋 **T1166** (deps: —) **With chat memory on, a prompt capture counts memory turns in its index, so a follow-up's searched query lands off-turn** — The Live Preview is where an operator checks what a rewritten follow-up searched, and it must show that on the turn it belongs to. → §CLVIII.4
+- 📋 **T1167** (deps: T1159 ✅) **The kit call cites no guide: a plan comes back as products without the site's own advice for it** — A shopper who does not know what to buy is the one who has not read the site's guide, and the call already retrieves for that plan. → §CLVIII.5
 
 ## Block U — Documentation refresh (`docs-turing`)
 
@@ -47,15 +47,6 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
-
-## Done when — T1159
-
-- **Each staged product carries a reason drawn from its own attributes** A test stages
-  products whose attributes differ and finds each reason quotes only that product's
-  attribute values, never another product's or an invented one.
-- **Both SDKs call the kit endpoint and type its result** The vanilla and React SDK
-  tests post a plan to /copilot/kit and read the summary, stages and unfilled gaps from
-  the typed result.
 
 ## Non-goals (do NOT add as tasks)
 

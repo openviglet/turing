@@ -84,11 +84,57 @@ class TurCatalogKitServiceTest {
         assertEquals("Shelter", result.stages().get(0).gap());
         assertEquals("nights on the trail", result.stages().get(0).reason());
         assertEquals(List.of("t1", "t2", "t3"),
-                result.stages().get(0).products().stream().map(TurCatalogCitation::id).toList());
+                result.stages().get(0).products().stream().map(TurCatalogKitService.KitProduct::id).toList());
         // t1 is already staged under Shelter, so Water keeps only w1.
         assertEquals(List.of("w1"),
-                result.stages().get(1).products().stream().map(TurCatalogCitation::id).toList());
+                result.stages().get(1).products().stream().map(TurCatalogKitService.KitProduct::id).toList());
         assertEquals(List.of("Navigation"), result.unfilled());
+    }
+
+    /** T1159 — each product's reason quotes its own attributes, the gap's words first. */
+    @Test
+    void eachProductsReasonComesFromItsOwnAttributes() {
+        modelReplies("GAP: Shelter | lightweight tent | nights on the trail, light to carry");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("lightweight tent"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("t1"), product("t2")), List.of(), 2, null,
+                        true, List.of(
+                                new java.util.LinkedHashMap<>(java.util.Map.of("color", "green")) {
+                                    {
+                                        put("weight", "1.2 kg, light");
+                                        put("capacity", "2 people");
+                                    }
+                                },
+                                java.util.Map.of("capacity", "3 people"))));
+
+        TurCatalogKitService.Result result = service.plan("outdoor", "en", "a trip", null, null);
+
+        List<TurCatalogKitService.KitProduct> products = result.stages().getFirst().products();
+        assertEquals("weight: 1.2 kg, light; color: green", products.get(0).reason(),
+                "the attribute sharing a word with the gap leads");
+        assertEquals("capacity: 3 people", products.get(1).reason());
+        assertNull(products.get(0).available(), "no availability field was named");
+    }
+
+    /** T1159 — a named availability field marks, or drops, an unavailable product. */
+    @Test
+    void anAvailabilityFieldMarksOrDropsUnavailableProducts() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("tent"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("t1"), product("t2"), product("t3")),
+                        List.of(), 3, null, true, List.of(
+                                java.util.Map.of("in_stock", "Out of stock"),
+                                java.util.Map.of("in_stock", "true"),
+                                java.util.Map.of())));
+
+        var marked = service.plan("outdoor", "en", "a trip", new TurCatalogKitService.Options(null, 3,
+                "in_stock", TurCatalogKitService.Availability.MARK)).stages().getFirst().products();
+        assertEquals(java.util.Arrays.asList(false, true, null),
+                marked.stream().map(TurCatalogKitService.KitProduct::available).toList());
+        assertNull(marked.get(1).reason(), "the availability field is not a reason");
+
+        var dropped = service.plan("outdoor", "en", "a trip", new TurCatalogKitService.Options(null, 3,
+                "in_stock", TurCatalogKitService.Availability.DROP)).stages().getFirst().products();
+        assertEquals(List.of("t2", "t3"), dropped.stream().map(TurCatalogKitService.KitProduct::id).toList());
     }
 
     @Test

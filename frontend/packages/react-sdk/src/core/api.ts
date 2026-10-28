@@ -130,6 +130,17 @@ import type {
   TurFeaturesInfo,
   TurSystemLocale,
   TurSummaryResult,
+  TurCatalogKitRequest,
+  TurCatalogKitResult,
+} from "@viglet/turing-sdk";
+
+/** T1159 — the plan-to-kit types are the vanilla SDK's, so both SDKs read one wire shape. */
+export type {
+  TurCatalogKitAvailability,
+  TurCatalogKitRequest,
+  TurCatalogKitProduct,
+  TurCatalogKitStage,
+  TurCatalogKitResult,
 } from "@viglet/turing-sdk";
 
 function buildQueryString(params: SearchParams): string {
@@ -1102,6 +1113,19 @@ export async function postCopilot(
     `/sn/${site}/copilot`,
     { messages, locale },
   );
+  return data;
+}
+
+/**
+ * T1159 — turns a described plan into a staged kit: the needs it implies, each
+ * with the catalog products the site's search returned for it (never ids or
+ * prices from the model). Gate it on {@link fetchCopilotAvailable}.
+ */
+export async function postCopilotKit(
+  site: string,
+  request: TurCatalogKitRequest,
+): Promise<TurCatalogKitResult> {
+  const { data } = await axios.post<TurCatalogKitResult>(`/sn/${site}/copilot/kit`, request);
   return data;
 }
 

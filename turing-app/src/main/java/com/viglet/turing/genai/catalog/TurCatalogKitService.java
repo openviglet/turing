@@ -12,6 +12,7 @@ package com.viglet.turing.genai.catalog;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -65,8 +66,35 @@ public class TurCatalogKitService {
     }
 
     /** One need the plan implies, with the products retrieval found for it. */
-    public record Stage(String gap, String reason, String query, List<TurCatalogCitation> products) {
+    public record Stage(String gap, String reason, String query, List<KitProduct> products) {
     }
+
+    /**
+     * A staged product: the citation retrieval returned, a one-line {@code reason}
+     * made only of this product's own attributes (never the model's words), and
+     * {@code available} when the request named an availability field: {@code false}
+     * for a value that reads as unavailable, {@code null} when the product has no
+     * such field.
+     */
+    public record KitProduct(int rank, String id, String title, String url, Double score, String reason,
+            Boolean available) {
+    }
+
+    /** What the request asks for an unavailable product: kept and marked, or dropped. */
+    public enum Availability {
+        MARK, DROP
+    }
+
+    /** The kit's optional knobs; every field may be {@code null}. */
+    public record Options(Integer maxGaps, Integer perGap, String availabilityField, Availability availability) {
+        static final Options DEFAULTS = new Options(null, null, null, null);
+    }
+
+    /** Values of an availability field that read as "not available", lower-cased. */
+    static final Set<String> UNAVAILABLE = Set.of("false", "0", "no", "n", "unavailable", "out of stock",
+            "out_of_stock", "out-of-stock", "outofstock", "sold out", "sold_out", "discontinued");
+    /** At most this many attributes go into a product's reason. */
+    static final int REASON_ATTRIBUTES = 2;
 
     /**
      * The staged kit, or an error. {@code stages} holds only gaps retrieval found
@@ -88,6 +116,13 @@ public class TurCatalogKitService {
     }
 
     public Result plan(String siteName, String locale, String planText, Integer maxGaps, Integer perGap) {
+        return plan(siteName, locale, planText, new Options(maxGaps, perGap, null, null));
+    }
+
+    public Result plan(String siteName, String locale, String planText, Options options) {
+        Options opts = options == null ? Options.DEFAULTS : options;
+        Integer maxGaps = opts.maxGaps();
+        Integer perGap = opts.perGap();
         if (!StringUtils.hasText(planText)) {
             return Result.error("No plan provided");
         }
@@ -121,22 +156,84 @@ public class TurCatalogKitService {
             if (!retrieval.siteFound()) {
                 return Result.error("Catalog site not found: " + siteName);
             }
-            List<TurCatalogCitation> products = new ArrayList<>();
-            for (TurCatalogCitation citation : retrieval.citations()) {
-                if (products.size() == productLimit) {
-                    break;
-                }
-                if (citation.id() != null && staged.add(citation.id())) {
-                    products.add(citation);
-                }
-            }
+            List<KitProduct> products = stageProducts(retrieval, gap, opts, productLimit, staged);
             if (products.isEmpty()) {
                 unfilled.add(gap.name());
             } else {
-                stages.add(new Stage(gap.name(), gap.reason(), gap.query(), List.copyOf(products)));
+                stages.add(new Stage(gap.name(), gap.reason(), gap.query(), products));
             }
         }
         return new Result(named.summary(), List.copyOf(stages), List.copyOf(unfilled), null);
+    }
+
+    /**
+     * Up to {@code limit} of the gap's retrieved products, skipping any already
+     * staged under an earlier gap, and an unavailable one when the request drops
+     * them. {@code staged} records each product taken.
+     */
+    private static List<KitProduct> stageProducts(TurCatalogCopilotService.Retrieval retrieval, Gap gap,
+            Options opts, int limit, Set<String> staged) {
+        List<KitProduct> products = new ArrayList<>();
+        List<TurCatalogCitation> citations = retrieval.citations();
+        for (int i = 0; i < citations.size() && products.size() < limit; i++) {
+            TurCatalogCitation citation = citations.get(i);
+            Map<String, String> attributes = retrieval.attributesAt(i);
+            Boolean available = availability(attributes, opts.availabilityField());
+            boolean dropped = Boolean.FALSE.equals(available) && opts.availability() == Availability.DROP;
+            if (citation.id() != null && !dropped && staged.add(citation.id())) {
+                products.add(new KitProduct(citation.rank(), citation.id(), citation.title(), citation.url(),
+                        citation.score(), reason(attributes, gap, opts.availabilityField()), available));
+            }
+        }
+        return List.copyOf(products);
+    }
+
+    /**
+     * The product's reason, from its own attributes only: the ones whose name or
+     * value shares a word with the gap (its name, query or why) first, then the
+     * others, at most {@link #REASON_ATTRIBUTES}, as {@code key: value; …}.
+     * {@code null} when the product lists no attribute.
+     */
+    static String reason(Map<String, String> attributes, Gap gap, String availabilityField) {
+        if (attributes == null || attributes.isEmpty()) {
+            return null;
+        }
+        Set<String> gapWords = words(String.join(" ", gap.name(), gap.query(),
+                gap.reason() == null ? "" : gap.reason()));
+        List<Map.Entry<String, String>> matching = new ArrayList<>();
+        List<Map.Entry<String, String>> others = new ArrayList<>();
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            if (entry.getKey().equals(availabilityField)) {
+                continue;
+            }
+            Set<String> entryWords = words(entry.getKey() + " " + entry.getValue());
+            entryWords.retainAll(gapWords);
+            (entryWords.isEmpty() ? others : matching).add(entry);
+        }
+        matching.addAll(others);
+        List<String> parts = matching.stream().limit(REASON_ATTRIBUTES)
+                .map(e -> e.getKey() + ": " + e.getValue())
+                .toList();
+        return parts.isEmpty() ? null : String.join("; ", parts);
+    }
+
+    private static Set<String> words(String text) {
+        Set<String> words = new HashSet<>();
+        for (String word : text.toLowerCase(java.util.Locale.ROOT).split("[^\\p{L}\\p{N}]+")) {
+            if (word.length() > 2) {
+                words.add(word);
+            }
+        }
+        return words;
+    }
+
+    /** {@code null} when no field was named or the product lacks it; else whether it reads available. */
+    static Boolean availability(Map<String, String> attributes, String field) {
+        if (!StringUtils.hasText(field) || attributes == null || !attributes.containsKey(field)) {
+            return null;
+        }
+        String value = attributes.get(field).strip().toLowerCase(java.util.Locale.ROOT);
+        return !UNAVAILABLE.contains(value);
     }
 
     private String callModel(ChatModel chatModel, String siteName, String prompt) {
@@ -160,6 +257,18 @@ public class TurCatalogKitService {
                 PLAN: %s""".formatted(siteName, gapLimit, plan);
     }
 
+    /** {@code name | query | why}; a missing query is the name, a nameless gap is {@code null}. */
+    private static Gap parseGap(String text) {
+        String[] parts = text.split("\\|", 3);
+        String name = parts[0].strip();
+        if (name.isEmpty()) {
+            return null;
+        }
+        String query = parts.length > 1 && !parts[1].isBlank() ? parts[1].strip() : name;
+        String reason = parts.length > 2 && !parts[2].isBlank() ? parts[2].strip() : null;
+        return new Gap(name, query, reason);
+    }
+
     /** Lenient: unknown lines are ignored, a gap without a query searches its name. */
     static Plan parse(String raw, int gapLimit) {
         if (raw == null) {
@@ -174,12 +283,9 @@ public class TurCatalogKitService {
             if (upper.startsWith("SUMMARY:") && summary == null) {
                 summary = text.substring("SUMMARY:".length()).strip();
             } else if (upper.startsWith("GAP:") && gaps.size() < gapLimit) {
-                String[] parts = text.substring("GAP:".length()).split("\\|", 3);
-                String name = parts[0].strip();
-                String query = parts.length > 1 && !parts[1].isBlank() ? parts[1].strip() : name;
-                String reason = parts.length > 2 ? parts[2].strip() : null;
-                if (!name.isEmpty() && seen.add(name.toLowerCase(java.util.Locale.ROOT))) {
-                    gaps.add(new Gap(name, query, reason == null || reason.isEmpty() ? null : reason));
+                Gap gap = parseGap(text.substring("GAP:".length()));
+                if (gap != null && seen.add(gap.name().toLowerCase(java.util.Locale.ROOT))) {
+                    gaps.add(gap);
                 }
             }
         }
