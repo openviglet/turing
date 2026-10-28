@@ -2285,25 +2285,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.4 Number a captured turn by the client history (T1166)
-
-**What happens.** `TurPromptCaptureService.captureSpringAi` numbers a turn by the user
-messages in the list it is handed, and that list carries the T115 memory summary and the
-T30 relevance-retrieved older turns as `user` messages. `TurSNGenAi.recordSearchedQuery`
-(T1157) numbers the same turn by the visitor's own user messages. On an agent with
-memory compression or relevance recall the two counts differ, so the searched-query
-sidecar is stored under a turn index the capture never takes, and the Live Preview shows
-the query on the wrong turn or not at all.
-
-**What it should do.** One turn number both writers agree on: the count of user messages
-in the client history the executor received, before any memory prefix is added. Either
-carry it on `TurChatTurnContext` and pass it to `captureSpringAi` / `captureNative`, or
-have the capture count only messages whose origin is the client history. The sidecar
-then keys off the same number by construction.
-
-**Tests.** A capture written with a memory prefix takes the client-history index; a
-searched query recorded for that turn shows on it in the verbatim replay.
-
 ### CLVIII.5 Cite a guide beside the kit (T1167)
 
 **What happens.** `POST /api/sn/{site}/copilot/kit` (T1159) returns the needs a plan

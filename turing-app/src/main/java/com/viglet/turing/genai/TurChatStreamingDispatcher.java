@@ -182,7 +182,7 @@ public class TurChatStreamingDispatcher {
         // Live Preview can replay this turn verbatim later. Opt-in per-agent +
         // storage-backed + fail-open (never breaks the turn); same list both
         // the CALL and STREAM branches send.
-        promptCaptureService.captureSpringAi(agent, turn.conversationId(), messages);
+        promptCaptureService.captureSpringAi(agent, turn.conversationId(), messages, turn.clientTurns());
 
         // STREAM mode: forward each token chunk to the SSE pipeline as it
         // arrives so the bubble fills in token-by-token. We only take this

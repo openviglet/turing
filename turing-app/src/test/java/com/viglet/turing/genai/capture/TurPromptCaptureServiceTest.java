@@ -158,6 +158,40 @@ class TurPromptCaptureServiceTest {
         assertTrue(service.getCapture(AGENT, CONV, 99).isEmpty());
     }
 
+    /**
+     * T1166 — a memory prefix adds user messages to the assembled list; the turn
+     * is still numbered by the client's history, where the searched query is keyed.
+     */
+    @Test
+    void aMemoryPrefixDoesNotShiftTheTurnNumber() {
+        List<ChatMessageItem> clientHistory = List.of(
+                new ChatMessageItem("user", "When does the grant close?"),
+                new ChatMessageItem("assistant", "March 31."),
+                new ChatMessageItem("user", "Where do I send it?"));
+        List<Message> assembled = List.of(
+                new SystemMessage("SYS"),
+                new UserMessage("[memory summary] earlier the visitor asked about fees"),
+                new AssistantMessage("Noted."),
+                new UserMessage("When does the grant close?"),
+                new AssistantMessage("March 31."),
+                new UserMessage("Where do I send it?"));
+
+        service.captureSpringAi(agent(true), CONV, assembled, TurPromptCaptureService.userTurns(clientHistory));
+        service.recordSearchedQuery(agent(true), CONV, 2, "Where do I send the grant application?");
+
+        assertTrue(service.getCapture(AGENT, CONV, 2).isPresent(), "numbered by the client's 2 turns, not 3");
+        assertTrue(service.getCapture(AGENT, CONV, 3).isEmpty());
+        assertEquals(Optional.of("Where do I send the grant application?"), service.getSearchedQuery(AGENT, CONV, 2));
+    }
+
+    @Test
+    void anUnknownClientCountFallsBackToTheAssembledList() {
+        assertEquals(3, TurPromptCaptureService.turnIndex(0, 3));
+        assertEquals(2, TurPromptCaptureService.turnIndex(2, 3));
+        assertEquals(1, TurPromptCaptureService.turnIndex(0, 0));
+        assertEquals(0, TurPromptCaptureService.userTurns(null));
+    }
+
     /** T1157 — the searched query rides beside its turn and is not a turn itself. */
     @Test
     void searchedQueryRoundTripsWithoutBecomingATurn() {

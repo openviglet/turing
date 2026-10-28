@@ -532,7 +532,8 @@ public class TurAgentChatExecutor {
 
         return streamingDispatcher.dispatch(
                 new TurChatTurnContext(agent, llmInstance, conversationId, lastUserMessageEarly,
-                        username, tStart, tSetupEnd, request.siteName()),
+                        username, tStart, tSetupEnd, request.siteName(),
+                        com.viglet.turing.genai.capture.TurPromptCaptureService.userTurns(history)),
                 decryptedApiKey, chatModel, messages, initialOptions, flowContext, activePersona,
                 // T1004 — the resolved-and-gated toolset, which is what AUTO mode
                 // needs to know. Read from `callbacks` after both the T647

@@ -94,6 +94,18 @@ public class TurPromptCaptureService {
      * ChatModel}. No-op when disabled / no conversation id.
      */
     public void captureSpringAi(TurAIAgent agent, String conversationId, List<Message> messages) {
+        captureSpringAi(agent, conversationId, messages, 0);
+    }
+
+    /**
+     * T1166 — as {@link #captureSpringAi(TurAIAgent, String, List)}, numbered by
+     * {@code clientTurns}, the user messages in the history the client sent. The
+     * assembled list also carries memory turns (the T115 summary, T30 recalled
+     * turns) as {@code user} messages, and counting those would number the turn
+     * differently from every other writer keyed by it. {@code 0} counts the list.
+     */
+    public void captureSpringAi(TurAIAgent agent, String conversationId, List<Message> messages,
+            int clientTurns) {
         if (!isEnabled(agent) || !StringUtils.hasText(conversationId) || messages == null) {
             return;
         }
@@ -112,7 +124,7 @@ public class TurPromptCaptureService {
                 }
                 captured.add(new TurPromptCapture.Message(role, content));
             }
-            store(agent.getId(), conversationId, Math.max(userTurns, 1), systemPrompt, captured);
+            store(agent.getId(), conversationId, turnIndex(clientTurns, userTurns), systemPrompt, captured);
         } catch (RuntimeException e) {
             log.debug("[PromptCapture] Spring-AI capture skipped for conv '{}': {}",
                     conversationId, e.getMessage());
@@ -127,6 +139,12 @@ public class TurPromptCaptureService {
      */
     public void captureNative(TurAIAgent agent, String conversationId,
             String systemPrompt, List<ChatMessageItem> history) {
+        captureNative(agent, conversationId, systemPrompt, history, 0);
+    }
+
+    /** T1166 — as {@link #captureNative(TurAIAgent, String, String, List)}, numbered by {@code clientTurns}. */
+    public void captureNative(TurAIAgent agent, String conversationId,
+            String systemPrompt, List<ChatMessageItem> history, int clientTurns) {
         if (!isEnabled(agent) || !StringUtils.hasText(conversationId)) {
             return;
         }
@@ -145,7 +163,7 @@ public class TurPromptCaptureService {
                             item.content() == null ? "" : item.content()));
                 }
             }
-            store(agent.getId(), conversationId, Math.max(userTurns, 1), system, captured);
+            store(agent.getId(), conversationId, turnIndex(clientTurns, userTurns), system, captured);
         } catch (RuntimeException e) {
             log.debug("[PromptCapture] native capture skipped for conv '{}': {}",
                     conversationId, e.getMessage());
@@ -291,6 +309,22 @@ public class TurPromptCaptureService {
 
     static String turnKey(String agentId, String conversationId, int turnIndex) {
         return capturesRoot(agentId, conversationId) + TURN_PREFIX + turnIndex + TURN_SUFFIX;
+    }
+
+    /**
+     * T1166 — the user messages in a client history: the one turn number every
+     * writer keyed by turn uses (the capture, the T1157 searched-query sidecar).
+     */
+    public static int userTurns(List<ChatMessageItem> history) {
+        if (history == null) {
+            return 0;
+        }
+        return (int) history.stream().filter(m -> m != null && "user".equals(m.role())).count();
+    }
+
+    /** The client's count when known, else the assembled list's; never below 1. */
+    static int turnIndex(int clientTurns, int assembledUserTurns) {
+        return Math.max(clientTurns > 0 ? clientTurns : assembledUserTurns, 1);
     }
 
     /** T1157 — the sidecar holding the query turn {@code turnIndex} searched. */

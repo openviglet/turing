@@ -356,7 +356,8 @@ public class TurNativeChatExecutor {
         // grounding but before the vendor branches dispatch, so the Live Preview
         // can replay this native turn verbatim. Opt-in + storage-backed +
         // fail-open (never breaks the turn).
-        promptCaptureService.captureNative(agent, conversationId, turn.systemPrompt(), turn.history());
+        promptCaptureService.captureNative(agent, conversationId, turn.systemPrompt(), turn.history(),
+                com.viglet.turing.genai.capture.TurPromptCaptureService.userTurns(history));
 
         // T519 / §XXVIII.15 — Cohere native citation branch. Retrieve the top-K
         // passages and run Cohere's v2/chat with them as documents; the response's

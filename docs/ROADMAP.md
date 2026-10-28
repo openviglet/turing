@@ -16,7 +16,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1166** (deps: —) **With chat memory on, a prompt capture counts memory turns in its index, so a follow-up's searched query lands off-turn** — The Live Preview is where an operator checks what a rewritten follow-up searched, and it must show that on the turn it belongs to. → §CLVIII.4
 - 📋 **T1167** (deps: T1159 ✅) **The kit call cites no guide: a plan comes back as products without the site's own advice for it** — A shopper who does not know what to buy is the one who has not read the site's guide, and the call already retrieves for that plan. → §CLVIII.5
 
 ## Done when — T1133

@@ -963,6 +963,7 @@
 - **T1157** — A rewritten follow-up's searched query is now kept beside its prompt capture, and the Live Preview shows it under the visitor's message on that turn (design §CLVIII.1 recorded in `turing-app/src/main/java/com/viglet/turing/genai/rag/TurStandaloneQuery.java`).
 - **T1158** — Deletes by type or fields now remove the matching RAG chunks on every store, and POST /api/sn/{id}/genai/purge-orphans clears chunks of documents the engine no longer holds (design §CLVIII.2 recorded in `turing-app/src/main/java/com/viglet/turing/genai/TurSNRagOrphanPurgeService.java`).
 - **T1159** — Each staged product now explains itself from its own attributes, an availability field marks or drops it, and both SDKs call the kit as postCopilotKit (design §CLVIII.3 recorded in `turing-app/src/main/java/com/viglet/turing/genai/catalog/TurCatalogKitService.java`).
+- **T1166** — A prompt capture is numbered by the client history's user turns, so memory turns no longer shift it and a follow-up's searched query shows on its own turn.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

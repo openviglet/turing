@@ -34,6 +34,9 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
  * @param tStart          turn-start millis (for total-time accounting)
  * @param tSetupEnd       setup-phase end millis (for post-time accounting)
  * @param siteName        nullable — T1127, the SN site the turn answers for (cost attribution)
+ * @param clientTurns     T1166 — the user messages in the history the client sent, before
+ *                        any memory prefix: the turn number a prompt capture takes, so
+ *                        every writer keyed by turn agrees on it. {@code 0} is unknown.
  * @author Alexandre Oliveira
  * @since 2026.3.1
  */
@@ -45,11 +48,18 @@ public record TurChatTurnContext(
         String username,
         long tStart,
         long tSetupEnd,
-        String siteName) {
+        String siteName,
+        int clientTurns) {
+
+    /** The context before {@link #clientTurns}: the turn number is counted at capture. */
+    public TurChatTurnContext(TurAIAgent agent, TurLLMInstance llmInstance, String conversationId,
+            String lastUserMessage, String username, long tStart, long tSetupEnd, String siteName) {
+        this(agent, llmInstance, conversationId, lastUserMessage, username, tStart, tSetupEnd, siteName, 0);
+    }
 
     /** The context before {@link #siteName}: a turn not made for an SN site. */
     public TurChatTurnContext(TurAIAgent agent, TurLLMInstance llmInstance, String conversationId,
             String lastUserMessage, String username, long tStart, long tSetupEnd) {
-        this(agent, llmInstance, conversationId, lastUserMessage, username, tStart, tSetupEnd, null);
+        this(agent, llmInstance, conversationId, lastUserMessage, username, tStart, tSetupEnd, null, 0);
     }
 }
