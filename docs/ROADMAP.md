@@ -16,8 +16,8 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1157** (deps: —) **Site chat follow-ups that refer back (it, that one) retrieve nothing: retrieval reads the latest message alone** — A visitor's second question is usually a follow-up, and answering it with a refusal ends the conversation the chat exists for. → §CLVIII.1
-- 📋 **T1158** (deps: —) **Deleting a document leaves its RAG chunks, so site chat still answers from it and links its old URL** — A removed or moved page keeps answering visitors with content the site no longer publishes, and no reindex clears it. → §CLVIII.2
+- 📋 **T1157** (deps: —) **Chat follow-ups that refer back (it, that one) retrieve nothing: SN chat and copilot search the latest message alone** — A visitor's second question is usually a follow-up, and answering it with a refusal ends the conversation the chat exists for. → §CLVIII.1
+- 📋 **T1158** (deps: —) **Deleting a document leaves its RAG chunks (by id, type or fields; on Milvus always), so site chat still cites it** — A removed or moved page keeps answering visitors with content the site no longer publishes, and no reindex clears it. → §CLVIII.2
 - 📋 **T1159** (deps: —) **The catalog copilot answers one need at a time; a described plan cannot come back as staged products by need** — A shopper planning a trip does not know every item to ask for, and each consumer would rebuild the gaps, the id check and the staging. → §CLVIII.3
 
 ## Done when — T1133

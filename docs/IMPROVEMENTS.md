@@ -2287,75 +2287,78 @@ host hands to Google Analytics, and the consent that gates them.
 
 ### CLVIII.1 Retrieve follow-ups as standalone questions (T1157)
 
-**Where it happened.** Dumont D175, the WordPress Site assistant block, drives the SDK's
-`createChatController` against `POST /api/sn/{site}/chat/conversation` and sends every
-message of the conversation each turn. On the run-docker stack with OpenAI, the live-LLM
-spec (`wordpress/tests/e2e/ai/assistant.spec.mjs`) asked "When do applications for the
-research grant close?" and got the right date, citing the "Research grant 2026" post.
-The follow-up "Where do I send it?" came back "I'm sorry, but that information is not
-available in the website's database.", although that post says "Send the form to the
-Office of Research."
+**Where it happened.** Dumont D175, the WordPress Site assistant block, sends the whole
+conversation each turn to `POST /api/sn/{site}/chat/conversation`. With OpenAI, "When do
+applications for the research grant close?" got the right date; the follow-up "Where do
+I send it?" got the refusal, although the cited post says "Send the form to the Office
+of Research."
 
-**Why.** `TurSNGenAi.retrieveDocuments` searches with `latestUserQuery` alone (line
-754): a follow-up that leans on an earlier turn ("it", "and the other one?", "how
-much?") retrieves nothing, and the T329 refusal answers. The model has the whole history
-but not the passages.
+**Why.** Retrieval reads the latest user message alone, on three paths: the SN streaming
+chat (`TurSNGenAi`, line 311), the blocking one (line 849) and the catalog copilot
+(`TurCatalogCopilotService.answer`, line 182), whose history reaches the answer but not
+the search. A follow-up ("it", "how much?") retrieves nothing and the T329 refusal
+answers.
 
-**What it should do.** Before retrieval on a turn that has history, rewrite the question
-into a standalone one from the conversation (a short LLM call, or the last user turns
-joined as a cheap fallback), retrieve with that, and keep answering the visitor's own
-words. Skip it on a first turn. Record the rewritten query in the trace so Live Preview
-shows what was searched.
+**What it should do.** One shared standalone-question seam the three paths call before
+retrieval, set per site: `LATEST_ONLY` (default, today), `JOINED` (last user turns
+joined, no LLM) or `REWRITE` (a short LLM call). Retrieval, the relevance gate and the
+STRICT_RAG judge use the rewritten query; the answer keeps the visitor's own words. A
+first turn skips it; a failed rewrite falls back to the latest message. The trace
+records the query searched, so Live Preview shows it.
 
-**Workaround.** None: the Dumont spec checks that the follow-up reaches Turing with the
-whole history and records the answer, and names this id.
+**Tests.** A follow-up retrieves its antecedent's document; a topic switch does not drag
+the old topic in; a first turn and `LATEST_ONLY` are unchanged; a rewrite failure
+degrades to the latest message.
+
+**Workaround.** None: the Dumont spec records the answer and names this id.
 
 ### CLVIII.2 Remove a deleted document's RAG chunks (T1158)
 
-**Where it happened.** Dumont D175 (WordPress Site assistant) on the run-docker stack,
-SN site `Sample`. The live-LLM suite seeds a "Research grant 2026" post, reindexes, and
-deletes it again in its teardown (Dumont queues a DELETE import). After the teardown the
-keyword search for "Research grant 2026" returns nothing, yet `GET
-/api/sn/Sample/chat?q=When do applications for the research grant close?` still answers
-the deadline, citing `http://localhost:8080/?p=…`, a URL the site left when it moved to
-port 38081: every earlier copy's chunks are still in the RAG collection.
+**Where it happened.** Dumont D175 on the run-docker stack, SN site `Sample`. The suite
+seeds a "Research grant 2026" post, reindexes and deletes it in teardown. Keyword search
+no longer finds it, yet the chat still answers its deadline and cites
+`http://localhost:8080/?p=…`, a URL the site left when it moved port.
 
-**Why.** `TurSNProcessQueue.deIndex` removes the document from the search engine and
-mirrors the removal into the hybrid vector collection (T383), but nothing removes it
-from the GenAI RAG collection that `TurSNGenAi` writes through
-`reindexByMetadata(SOURCE_ID, id)`. A re-index replaces a document's chunks by
-`SOURCE_ID`; a delete, by id, by type or by fields (T1112), never does.
+**Why.** `TurSNProcessQueue.deIndex` removes the document from the engine and the T383
+hybrid collection, but never from the GenAI RAG collection `TurSNGenAi` writes by
+`SOURCE_ID`. Two more gaps share the cause: `TurMilvusStoreProvider` does not override
+`deleteByMetadata`, so on Milvus a delete is a no-op and every re-index piles duplicate
+chunks; and the store seam matches one key, so a delete by type or by fields (T1112)
+cannot be expressed, `type` only reaching chunk metadata as a short custom field.
 
-**What it should do.** On a successful deIndex, delete the RAG chunks too: by
-`SOURCE_ID` for an id, and by the matching metadata for a type or a field set, for each
-locale's collection the site writes. A site with no GenAI is a no-op. A one-off purge
-for sites that already hold orphans (chunks whose `SOURCE_ID` the engine no longer has)
-would clean existing stores.
+**What it should do.** On a successful deIndex, delete the RAG chunks of the job's
+locale collection, scoped to the site (`SITES`): by `SOURCE_ID` for an id; for a type or
+field set, by a multi-key metadata filter on the store seam, or the matching ids read
+from the engine before it deletes. Implement it on every store provider (Milvus
+included). A site with no GenAI is a no-op. Ship a purge for orphans already stored:
+chunks whose `SOURCE_ID` the engine no longer holds.
 
-**Workaround.** None. The Dumont spec cannot check that a cited post is on the site
-while an earlier run's chunks answer; it reads the chat's sources as Turing returns
-them.
+**Tests.** Per store provider: delete by id, type and fields leaves no chunk; re-index
+on Milvus replaces, not duplicates; another site's chunks in a shared collection stay.
+
+**Workaround.** None.
 
 ### CLVIII.3 A plan-to-kit copilot call (T1159)
 
 **Where it happened.** Dumont D201, a "Build my kit" mode for the WordPress catalog
 copilot block (D173). A shopper writes a plan, "two days crossing the mountains in July,
-first time", and wants every item it implies. The SDK and the SN API offer `POST
-/api/sn/{site}/copilot`, which answers one need with the items it cites, and
-`/chat/conversation`; neither returns the needs a plan implies or groups products by
-them.
+first time", and wants every item it implies. `POST /api/sn/{site}/copilot` answers one
+need with the items it cites, and `/chat/conversation` likewise; neither returns the
+needs a plan implies or groups products by them.
 
-**What it should do.** A copilot call that takes a plan and returns, from the site's own
-retrieval: a short summary, the gaps the plan implies (shelter, layers, water), and
-stages, each gap with up to a few products and a one-line reason from their attributes.
-Every product id is checked against the candidates retrieval returned, and an id the
-model invents is dropped. A field such as stock can mark or replace an item, named by
-the request. A document the plan matches (a guide) is cited. Prices are never the
-model's: the caller reads them from its store. Exposed in the SDK beside the copilot,
-and its availability on the same probe.
+**What it should do.** A copilot call that takes a plan and returns a short summary, the
+gaps the plan implies (shelter, layers, water), and stages: each gap with up to a few
+products and a one-line reason from their attributes. One LLM call names the gaps; each
+gap then runs the shared `TurCatalogCopilotService.retrieve()`, so the site's planning
+strategy and hybrid ranking apply. `TurQueryFanOut` only splits comparatives and does
+not infer needs. Every product id is checked against the candidates retrieval returned,
+as the T798 citation grounding does, and an invented id is dropped. An availability
+field named in the request marks or replaces an item. A matching document (a guide) is
+cited. Prices are never the model's. Exposed in the SDK beside the copilot, with its
+availability on the same probe.
 
-**Why in Turing.** Retrieval, the id check and the LLM call are Turing's; built in the
-plugin it would be one search per guessed gap plus an unchecked model call, which every
-other consumer (cursarei's staged course path does the same) would rebuild.
+**Why in Turing.** Retrieval, the id check and the LLM call are Turing's; built in a
+plugin it is one search per guessed gap plus an unchecked model call, which every other
+consumer (cursarei's staged course path) would rebuild.
 
 **Workaround.** None: D201 waits on this.
