@@ -257,6 +257,44 @@ class TurSNFacetRendererTest {
         assertThat(result.getFirst().getLabel().getText()).isEqualTo("Pricing Input Per 1M");
     }
 
+    @Test
+    void facetInFilterQuery_staysVisibleWhenSiteItemTypeIsOr() {
+        site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+        Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", true);
+        // Skip the AND-OR re-query branch (needs a search-engine plugin); only visibility is under test.
+        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
+                .thenReturn(Collections.emptyList());
+
+        List<TurSNSiteSearchFacetBean> result = renderer.responseSecondaryFacet(
+                contextWithFilters(List.of("category:books")), site, List.of("category"),
+                facetMap, resultsWithFacet("category", "books", 5));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getFacets().getFirst().isSelected()).isTrue();
+    }
+
+    @Test
+    void facetInFilterQuery_fieldItemTypeAndOverridesSiteOr() {
+        site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+        site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+        Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", true);
+        facetMap.get("category").setFacetType(TurSNSiteFacetFieldEnum.AND);
+        facetMap.get("category").setFacetItemType(TurSNSiteFacetFieldEnum.AND);
+        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
+                .thenReturn(Collections.emptyList());
+        TurSEResults results = resultsWithFacet("category", "books", 5);
+        TurSNSiteSearchContext ctx = contextWithFilters(List.of("category:books"));
+
+        List<TurSNSiteSearchFacetBean> legacy = renderer.responseSecondaryFacet(
+                ctx, site, List.of("category"), facetMap, results);
+        List<TurSNSiteSearchFacetBean> structured = renderer.responseStructuredSecondaryFacet(
+                ctx, site, List.of("category"), facetMap, results);
+
+        assertThat(legacy).isEmpty();
+        assertThat(structured).extracting(TurSNSiteSearchFacetBean::getName)
+                .containsExactly("category");
+    }
+
     // ---- helpers ---------------------------------------------------------
 
     /** Renders the main facets for the single facet field declared in {@code facetMap}. */
