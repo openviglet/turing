@@ -2335,3 +2335,27 @@ would clean existing stores.
 **Workaround.** None. The Dumont spec cannot check that a cited post is on the site
 while an earlier run's chunks answer; it reads the chat's sources as Turing returns
 them.
+
+### CLVIII.3 A plan-to-kit copilot call (T1159)
+
+**Where it happened.** Dumont D201, a "Build my kit" mode for the WordPress catalog
+copilot block (D173). A shopper writes a plan, "two days crossing the mountains in July,
+first time", and wants every item it implies. The SDK and the SN API offer `POST
+/api/sn/{site}/copilot`, which answers one need with the items it cites, and
+`/chat/conversation`; neither returns the needs a plan implies or groups products by
+them.
+
+**What it should do.** A copilot call that takes a plan and returns, from the site's own
+retrieval: a short summary, the gaps the plan implies (shelter, layers, water), and
+stages, each gap with up to a few products and a one-line reason from their attributes.
+Every product id is checked against the candidates retrieval returned, and an id the
+model invents is dropped. A field such as stock can mark or replace an item, named by
+the request. A document the plan matches (a guide) is cited. Prices are never the
+model's: the caller reads them from its store. Exposed in the SDK beside the copilot,
+and its availability on the same probe.
+
+**Why in Turing.** Retrieval, the id check and the LLM call are Turing's; built in the
+plugin it would be one search per guessed gap plus an unchecked model call, which every
+other consumer (cursarei's staged course path does the same) would rebuild.
+
+**Workaround.** None: D201 waits on this.
