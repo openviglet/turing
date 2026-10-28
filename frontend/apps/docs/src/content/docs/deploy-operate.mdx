@@ -1,0 +1,35 @@
+---
+title: "Deploy & Operate"
+description: "Self-host on your own infrastructure: install, configure any LLM provider, run multi-tenant, and observe cost, tokens and conversations."
+tableOfContents: false
+---
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+Run Turing on **your own infrastructure** under Apache 2.0, no vendor lock-in for
+your data, your models or your search engine. Install it, point it at **any LLM
+provider** (OpenAI, Anthropic, Gemini, Azure OpenAI or local Ollama), and configure
+per-instance behavior; API keys are stored encrypted. Scale to multiple isolated
+**tenants** behind a single identity realm when you need to, or keep a single-tenant
+deployment simple.
+
+Operating Turing in production is first-class: Micrometer metrics, conversation and
+chat analytics, cache-hit gauges, **token usage** accounting and **cost governance**
+give you the visibility to run it confidently. This section covers installation, the
+full configuration reference, provider and instance setup, assets, multi-tenancy,
+administration, logging and observability.
+
+<CardGrid>
+  <LinkCard title="Installation Guide" description="Viglet Turing Installation Guide" href="/docs/installation-guide/" />
+  <LinkCard title="Configuration Reference" description="Complete reference for the Viglet Turing application.yaml configuration file." href="/docs/configuration-reference/" />
+  <LinkCard title="Generative AI & LLM Configuration" description="Overview of GenAI capabilities in Viglet Turing: LLM providers, RAG architecture, tool calling, MCP servers, and AI agents." href="/docs/genai-llm/" />
+  <LinkCard title="Configure LLM Instances in Viglet Turing" description="Connect Viglet Turing to OpenAI, Anthropic Claude, Gemini, Ollama and 7 other model providers: credentials per vendor, generation parameters, and which features each model supports." href="/docs/llm-instances/" />
+  <LinkCard title="Assets" description="Manage files and train the RAG knowledge base with Viglet Turing Assets." href="/docs/assets/" />
+  <LinkCard title="Multi-Tenancy" description="Run one Viglet Turing JVM that serves many fully isolated tenants: discriminator-column data isolation, a single Keycloak realm with a tenant claim, tenant-owned infrastructure, plan quotas, and tenant lifecycle." href="/docs/multi-tenancy/" />
+  <LinkCard title="Administration Guide" description="Manage users, groups, roles, API tokens, global settings, and system diagnostics in Viglet Turing." href="/docs/administration-guide/" />
+  <LinkCard title="Observability: Prometheus & Grafana" description="The metrics, dashboards, and traces that turn Viglet Turing from a black box into a glass box. Prometheus scrapes Spring Boot Actuator, Grafana renders the story, and you sleep through the night." href="/docs/observability/" />
+  <LinkCard title="Logging" description="Monitor server activity, indexing pipeline, and AEM connector logs from the Viglet Turing admin console." href="/docs/logging/" />
+  <LinkCard title="Chat Analytics" description="Turn thousands of chat conversations into the voice of your customer. Intent, goal achievement, sentiment trajectory, funnels, conversation replay, tool-latency p95, router-decision and SSE diagnostics: engine-agnostic, cluster-safe, AI-on-AI classified." href="/docs/chat-analytics/" />
+  <LinkCard title="Token Usage" description="Monitor and analyse LLM token consumption in Viglet Turing." href="/docs/token-usage/" />
+  <LinkCard title="Cost Governance" description="See and control your AI spend. Turing freezes a USD cost on every turn from an editable price table, rolls it up into a live dashboard by agent / model / stage, and lets each agent enforce a soft monthly budget that downgrades to a cheaper model instead of overspending." href="/docs/cost-governance/" />
+  <LinkCard title="Governed LLM Gateway" description="Point any OpenAI-compatible client at Viglet Turing: virtual keys, per-key budgets and rate limits, semantic cache, guardrails, model-name routing into agents and RAG, and native tools." href="/docs/llm-gateway/" />
+</CardGrid>

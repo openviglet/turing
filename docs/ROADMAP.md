@@ -21,10 +21,9 @@
 
 ## Block U — Documentation refresh (`docs-turing`)
 
-- 📋 **T1161** (deps: T1160 ✅) **The 70+ docs-turing pages, images and sidebar order exist only in Docusaurus form** — Port every page with sidebars-turing.ts order, converting admonitions, Tabs, MDX imports, static/img paths and internal links to Starlight, with no page dropped. → §CLIX.2
 - 📋 **T1162** (deps: T1160 ✅) **Stock Starlight theme does not look like Viglet Turing or the turing.viglet.org site around it** — Theme the docs area from the Viglet Design System tokens: blue-indigo gradient, dark mode, typography, header and footer matching frontend/apps/site. → §CLIX.3
-- 📋 **T1163** (deps: T1161) **No map from docs.viglet.org/turing/* URLs to /docs pages, so the planned redirect would 404 old links** — Generate a redirect map from every old Docusaurus URL (current and 0.3.x versions) to its /docs page and keep it in the repo, ready for the docs.viglet.org redirect. → §CLIX.4
-- 📋 **T1164** (deps: T1161, T1162) **The ship workflow, COVERAGE.md gate and skills still send end-user doc edits to the vigletdocs repo** — Move COVERAGE.md beside the new docs, repoint turing-roadmap-docs and agents.md to frontend/apps/docs, and freeze docs-turing in vigletdocs as superseded. → §CLIX.5
+- 📋 **T1163** (deps: T1161 ✅) **No map from docs.viglet.org/turing/* URLs to /docs pages, so the planned redirect would 404 old links** — Generate a redirect map from every old Docusaurus URL (current and 0.3.x versions) to its /docs page and keep it in the repo, ready for the docs.viglet.org redirect. → §CLIX.4
+- 📋 **T1164** (deps: T1161 ✅, T1162) **The ship workflow, COVERAGE.md gate and skills still send end-user doc edits to the vigletdocs repo** — Move COVERAGE.md beside the new docs, repoint turing-roadmap-docs and agents.md to frontend/apps/docs, and freeze docs-turing in vigletdocs as superseded. → §CLIX.5
 
 ## Done when — T1133
 

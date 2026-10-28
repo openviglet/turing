@@ -1,0 +1,35 @@
+---
+title: "Agents, Tools & Skills"
+description: "Configurable AI agents that call your tools, run Anthropic-standard skills in a sandbox, federate over MCP, and orchestrate multi-step chat flows."
+tableOfContents: false
+---
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+Turn retrieval into action. Turing's configurable agents call **your tools** (custom
+Groovy with HTTP, search and slot helpers), run **Anthropic-standard skills** in an
+isolated Docker sandbox, and federate across **MCP servers**, while Turing can
+itself be exposed as an MCP server so any MCP-aware client can query your content.
+Each provider's own server-side tools (web search, code execution, computer use,
+image generation) are available too, opt-in per agent.
+
+For anything beyond a single turn, the declarative **chat-flow** DSL orchestrates
+multi-step conversations: slots, form capture, A/B experiments, **human-in-the-loop**
+approvals, **webhooks** and scheduled **routines**. An evaluation harness lets you
+gate agent and prompt changes in CI before they ship.
+
+<CardGrid>
+  <LinkCard title="AI Agents" description="AI Agents are purpose-built specialists you compose from an LLM, tools, and a persona. They are the conversion engine of Viglet Turing." href="/docs/ai-agents/" />
+  <LinkCard title="Tool Calling" description="Native tool calling capabilities available to AI Agents in Viglet Turing, DSL-based search tools, RAG, web crawling, and more." href="/docs/tool-calling/" />
+  <LinkCard title="Capabilities" description="The capability registry and two-level gate in Viglet Turing: how provider-native server tools, request options, and Turing's own tools surface in one taxonomy and run in one tool loop." href="/docs/capabilities/" />
+  <LinkCard title="Client Tools & Agent↔UI (AG-UI)" description="Live tool-call events, browser-executed client tools, the park/resume protocol, and generative UI in Viglet Turing: the agent↔UI surface." href="/docs/client-tools/" />
+  <LinkCard title="Custom Tools" description="Build your own AI tools in Groovy and let your agents call them like first-class capabilities. Plus Vibe Coding: the AI helps you write the tool, describe it to the LLM, and shape its parameters." href="/docs/custom-tools/" />
+  <LinkCard title="MCP Servers" description="MCP works both ways in Viglet Turing: connect AI Agents to external tool servers (client), and expose Turing's own search/RAG/agent/analytics tools to Claude Desktop, Claude Code, or Cursor (server)." href="/docs/mcp-servers/" />
+  <LinkCard title="Run Anthropic-Compatible Agent Skills in Viglet Turing" description="Import, author and run Anthropic-compatible Agent Skills (a SKILL.md folder with scripts and references) in a Docker sandbox. Skills exported from Claude run unchanged in chat and search." href="/docs/skills/" />
+  <LinkCard title="Agent Workspace" description="A per-conversation blob store that lets an agent build, keep, and hand back files (drafts, reports, charts, offloaded tool results) without bloating the prompt." href="/docs/agent-workspace/" />
+  <LinkCard title="Chat Flow" description="Author conversational state machines visually. A rich node catalog (questions, slots, tools, routines, webhooks, approvals, sub-flows), three guardrail strategies, error edges, a typed slot store, and AI-assisted authoring (Vibe Coding) that lets you describe the flow in plain English and watch it draw itself." href="/docs/chat-flow/" />
+  <LinkCard title="Human-in-the-Loop" description="Put a person in the conversation when it matters. Pause a flow for an explicit human approval over email / Slack / webhook, or watch a live conversation as a spectator and take the wheel mid-chat as a co-pilot." href="/docs/human-in-the-loop/" />
+  <LinkCard title="Webhooks" description="Push chat conversations to your CRM or automation tools. Fire a webhook automatically when a slot is filled, explicitly as a handoff channel, or deterministically from a flow node, with payload templates, encrypted credentials, and HMAC signing." href="/docs/webhooks/" />
+  <LinkCard title="Routines" description="Run long work asynchronously inside a conversation. A routine is a named async job fired by a chat-flow scheduleAgent node: it runs on a queue while the chat turn returns instantly, then writes its result into a slot to resume the flow." href="/docs/routines/" />
+  <LinkCard title="Experiments (A/B Testing)" description="A/B test your chat flows natively. Split traffic across variants by weight, measure the winner with a real significance test, let a multi-armed bandit shift traffic automatically, and auto-promote the champion, all declared on the flow itself." href="/docs/experiments/" />
+  <LinkCard title="Agent Evaluation (CI)" description="Regression-test your AI agents like code. Capture golden conversations with expected slots and outcomes, replay them through the real engine, score them with a deterministic diff plus an LLM judge, and block a flow from publishing when it regresses." href="/docs/agent-eval/" />
+</CardGrid>

@@ -1,0 +1,281 @@
+[
+  {
+    "label": "Introduction",
+    "link": "/"
+  },
+  {
+    "label": "Getting Started",
+    "collapsed": false,
+    "items": [
+      {
+        "slug": "getting-started/intro"
+      },
+      {
+        "slug": "getting-started/core-concepts"
+      },
+      {
+        "slug": "architecture-overview"
+      }
+    ]
+  },
+  {
+    "label": "Enterprise Search",
+    "collapsed": false,
+    "items": [
+      {
+        "label": "Overview",
+        "slug": "enterprise-search"
+      },
+      {
+        "slug": "search-engine"
+      },
+      {
+        "slug": "semantic-navigation"
+      },
+      {
+        "slug": "synonyms"
+      },
+      {
+        "slug": "thesaurus"
+      },
+      {
+        "slug": "manifest"
+      },
+      {
+        "label": "DSL Query",
+        "collapsed": false,
+        "items": [
+          {
+            "slug": "dsl-query"
+          },
+          {
+            "slug": "dsl-compatibility"
+          }
+        ]
+      },
+      {
+        "slug": "spa-pages"
+      },
+      {
+        "label": "Integration",
+        "collapsed": false,
+        "items": [
+          {
+            "slug": "integration"
+          },
+          {
+            "slug": "integration-aem"
+          }
+        ]
+      },
+      {
+        "slug": "import-export"
+      },
+      {
+        "slug": "migration"
+      }
+    ]
+  },
+  {
+    "label": "RAG & Chat",
+    "collapsed": false,
+    "items": [
+      {
+        "label": "Overview",
+        "slug": "rag-chat"
+      },
+      {
+        "slug": "rag"
+      },
+      {
+        "slug": "answer"
+      },
+      {
+        "slug": "vectorless-structured-rag"
+      },
+      {
+        "slug": "embedding-stores"
+      },
+      {
+        "slug": "embedding-models"
+      },
+      {
+        "slug": "reranking"
+      },
+      {
+        "slug": "chat"
+      },
+      {
+        "slug": "chat-memory"
+      },
+      {
+        "slug": "intent"
+      },
+      {
+        "slug": "personas"
+      },
+      {
+        "slug": "persona-book"
+      },
+      {
+        "slug": "transcription"
+      }
+    ]
+  },
+  {
+    "label": "Agents, Tools & Skills",
+    "collapsed": false,
+    "items": [
+      {
+        "label": "Overview",
+        "slug": "agents"
+      },
+      {
+        "slug": "ai-agents"
+      },
+      {
+        "slug": "tool-calling"
+      },
+      {
+        "slug": "capabilities"
+      },
+      {
+        "slug": "client-tools"
+      },
+      {
+        "slug": "custom-tools"
+      },
+      {
+        "slug": "mcp-servers"
+      },
+      {
+        "slug": "skills"
+      },
+      {
+        "slug": "agent-workspace"
+      },
+      {
+        "slug": "chat-flow"
+      },
+      {
+        "slug": "human-in-the-loop"
+      },
+      {
+        "slug": "webhooks"
+      },
+      {
+        "slug": "routines"
+      },
+      {
+        "slug": "experiments"
+      },
+      {
+        "slug": "agent-eval"
+      }
+    ]
+  },
+  {
+    "label": "Deploy & Operate",
+    "collapsed": false,
+    "items": [
+      {
+        "label": "Overview",
+        "slug": "deploy-operate"
+      },
+      {
+        "slug": "installation-guide"
+      },
+      {
+        "slug": "configuration-reference"
+      },
+      {
+        "slug": "genai-llm"
+      },
+      {
+        "slug": "llm-instances"
+      },
+      {
+        "slug": "assets"
+      },
+      {
+        "slug": "multi-tenancy"
+      },
+      {
+        "slug": "administration-guide"
+      },
+      {
+        "slug": "observability"
+      },
+      {
+        "slug": "logging"
+      },
+      {
+        "slug": "chat-analytics"
+      },
+      {
+        "slug": "token-usage"
+      },
+      {
+        "slug": "cost-governance"
+      },
+      {
+        "slug": "llm-gateway"
+      }
+    ]
+  },
+  {
+    "label": "Developers",
+    "collapsed": false,
+    "items": [
+      {
+        "slug": "developer-guide"
+      },
+      {
+        "slug": "react-sdk"
+      },
+      {
+        "slug": "javascript-sdk"
+      },
+      {
+        "slug": "cli"
+      },
+      {
+        "slug": "flow-dsl"
+      },
+      {
+        "slug": "showcase"
+      },
+      {
+        "slug": "conversion-analytics"
+      },
+      {
+        "slug": "rest-api"
+      },
+      {
+        "slug": "graphql"
+      }
+    ]
+  },
+  {
+    "label": "Security",
+    "collapsed": false,
+    "items": [
+      {
+        "slug": "security-authentication"
+      },
+      {
+        "slug": "security-social-login"
+      },
+      {
+        "slug": "security-keycloak"
+      },
+      {
+        "slug": "security-hardening"
+      }
+    ]
+  },
+  {
+    "label": "Storybook (React SDK)",
+    "link": "https://turing.viglet.org/react-sdk"
+  }
+]

@@ -1,0 +1,34 @@
+---
+title: "Enterprise Search"
+description: "Faceted, multilingual, typo-tolerant search on Solr, Elasticsearch or embedded Lucene: one query API, schema as code, hybrid keyword + vector ranking."
+tableOfContents: false
+---
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+Turing indexes your content into the search engine you already operate (**Apache
+Solr**, **Elasticsearch** or an **embedded Lucene** index) and exposes it through a
+single query API. Facets, locale-aware analyzers, autocomplete, spell-check and
+currency/number localization ship in the box, so you get the depth enterprise
+catalogs and knowledge bases need without stitching libraries together. Everything
+runs on your infrastructure; your content never leaves your network.
+
+Define a site's fields in a **versioned manifest** and Turing converges the live
+schema to match, flagging breaking changes before they run. Turn on **hybrid
+ranking** and results are reordered with Reciprocal Rank Fusion over BM25 and
+per-site vectors (semantic relevance without giving up exact-match precision)
+while a coverage view shows exactly which fields your documents actually populate.
+
+<CardGrid>
+  <LinkCard title="Search Engine" description="Configure and manage Search Engine instances in Viglet Turing." href="/docs/search-engine/" />
+  <LinkCard title="Semantic Navigation" description="Configure and manage Semantic Navigation Sites: behavior, facets, fields, targeting rules, spotlights, merge providers, and generative AI." href="/docs/semantic-navigation/" />
+  <LinkCard title="Synonyms" description="Author query-time synonyms once and Viglet Turing pushes them into Solr, Elasticsearch or Lucene with no reindex, plus a one-click import from Algolia and AI-assisted synonym suggestions mined from your search logs." href="/docs/synonyms/" />
+  <LinkCard title="Thesaurus" description="Enrich indexing with a curated, hierarchical controlled vocabulary: Viglet Turing recognises the terms a document mentions and expands it with their broader concepts at index time, adding recall, a concept-facet browse, and related-concept suggestions. Includes a seed library, XML import, and AI-assisted generation." href="/docs/thesaurus/" />
+  <LinkCard title="Field Manifest & Schema-as-Code" description="Provision and evolve a Semantic Navigation site's field schema declaratively in Viglet Turing: idempotent manifests, planner/migrations, LLM-assisted derivation, hybrid ranking, and field-coverage observability." href="/docs/manifest/" />
+  <LinkCard title="DSL Query API" description="Elasticsearch-compatible Query DSL API for Viglet Turing: search across Solr, Lucene, and Elasticsearch with a unified query language." href="/docs/dsl-query/" />
+  <LinkCard title="DSL Compatibility Matrix" description="Detailed compatibility matrix of Viglet Turing DSL Query API across Elasticsearch, Apache Solr, and Apache Lucene engines." href="/docs/dsl-compatibility/" />
+  <LinkCard title="SPA Pages" description="Deploy and host Single Page Applications directly in Viglet Turing." href="/docs/spa-pages/" />
+  <LinkCard title="Integration" description="Manage content connectors that import and index content from external sources into Viglet Turing." href="/docs/integration/" />
+  <LinkCard title="AEM Connector" description="AEM integration overview in Viglet Turing: connector setup and links to detailed Viglet Dumont documentation." href="/docs/integration-aem/" />
+  <LinkCard title="Import & Export" description="Export and import Semantic Navigation site configurations and content via ZIP archives." href="/docs/import-export/" />
+  <LinkCard title="Migrating from Algolia or Elasticsearch" description="Move a search index from Algolia or Elasticsearch to Viglet Turing: a concept-mapping table, a three-step import path (schema as code, bulk index, swap the SDK), and self-hosted search where your data stays in your own infrastructure." href="/docs/migration/" />
+</CardGrid>

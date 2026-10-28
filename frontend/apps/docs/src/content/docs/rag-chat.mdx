@@ -1,0 +1,33 @@
+---
+title: "RAG & Chat"
+description: "Retrieval-augmented generation with citations, a pluggable reranker, relevance gating and groundedness checks, grounded, streamed answers you can audit."
+tableOfContents: false
+---
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+Ground answers in **your own content**. Turing's retrieval-augmented generation
+pipeline pulls the most relevant passages, sharpens them with a **pluggable
+reranker** (LLM, cross-encoder or Cohere), and streams a cited answer token by
+token. Every citation traces back to the exact source passage: provider-agnostic
+provenance built on Turing's own retrieval metadata, not a vendor's citation API.
+
+Answers stay honest by construction: a configurable **relevance gate** drops weak
+matches, an optional **groundedness check** appends a low-confidence caveat to
+anything it can't support, and a deterministic refusal fires when a question simply
+isn't covered by your data. Embeddings can use the built-in Lucene vector store or
+your engine's own vectors, and conversation memory keeps long chats coherent.
+
+<CardGrid>
+  <LinkCard title="What is RAG?" description="Retrieval-Augmented Generation explained: how LLMs, Embedding Models, and Embedding Stores work together to ground AI responses in real content." href="/docs/rag/" />
+  <LinkCard title="Answer Engine" description="The /answer lens in Viglet Turing: a streaming, grounded, cited answer over a Semantic Navigation site's knowledge base, with freshness re-checks, interaction signals and shareable permalinks." href="/docs/answer/" />
+  <LinkCard title="Vectorless (Structured-Data) RAG" description="Answer questions over a structured catalog (products, prices, specs, a model registry) grounded and cited, using only an LLM and your search index. No embeddings, no vector store." href="/docs/vectorless-structured-rag/" />
+  <LinkCard title="Embedding Stores" description="Vector database backends for RAG and semantic search in Viglet Turing: ChromaDB, PgVector and Milvus." href="/docs/embedding-stores/" />
+  <LinkCard title="Embedding Models" description="Configure embedding models for vector generation, supported providers, local transformers, model selection and the REST API." href="/docs/embedding-models/" />
+  <LinkCard title="Reranking" description="The reranking stage in Viglet Turing: a selectable, fail-open second pass (LLM, cross-encoder, Cohere, Voyage, Bedrock, Vertex AI) that sharpens retrieved context before generation." href="/docs/reranking/" />
+  <LinkCard title="Chat" description="The Viglet Turing Chat interface is where AI Agents meet customers. Direct LLM, Semantic Navigation grounded chat, and agent-per-tab, each tuned for a different conversion moment." href="/docs/chat/" />
+  <LinkCard title="Chat Memory" description="Persist conversation history per agent, surface the most relevant older turns with BM25 retrieval, and compress long histories into a workspace-stored summary." href="/docs/chat-memory/" />
+  <LinkCard title="Intent" description="Configure intent categories and action prompts for the Viglet Turing chat interface." href="/docs/intent/" />
+  <LinkCard title="Personas" description="Give your AI Agents a brand voice. Personas turn a generic LLM into the salesperson, the support specialist, the executive advisor your company always wanted to have." href="/docs/personas/" />
+  <LinkCard title="The Persona Book" description="The complete, didactic, strategic guide to Personas in Viglet Turing, from why a generic AI voice costs you money to Persona Match, Dialogue, and Synthetic User Research, with worked examples for every feature." href="/docs/persona-book/" />
+  <LinkCard title="Transcribe Audio to Text with OpenAI or a Self-Hosted Whisper Server" description="Set up speech-to-text in Viglet Turing with OpenAI or a self-hosted OpenAI-compatible server, split recordings past the upload limit, and transcribe multi-hour audio as async jobs." href="/docs/transcription/" />
+</CardGrid>

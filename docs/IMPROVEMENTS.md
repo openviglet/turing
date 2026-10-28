@@ -2325,19 +2325,6 @@ staged as a product is not repeated.
 
 ## CLIX Documentation refresh (`docs-turing`)
 
-### CLIX.2 Porting the Docusaurus content (T1161)
-
-`docs-turing` holds about 74 `.md`/`.mdx` pages plus `getting-started/`, ordered by
-`sidebars-turing.ts`, with images under the shared `static/`. Docusaurus syntax does not
-carry over as-is: `:::note`/`:::tip` admonitions, `<Tabs>`/`<TabItem>`, MDX imports of
-theme components, `@site/` and `/img/` paths, and slug-based internal links all need
-converting to Starlight's equivalents (asides, `<Tabs>` from
-`@astrojs/starlight/components`, assets beside the content collection, base-aware
-links). The port is a copy plus a conversion script, so the result can be re-run while
-vigletdocs keeps receiving edits. Done means every page renders, the sidebar keeps the
-current order, and a link checker over the built output finds no broken internal link or
-missing image. `_documentation-update-plan.md` is retired and is not copied.
-
 ### CLIX.3 A docs theme built on the Design System (T1162)
 
 roadkeep's docs area keeps Starlight's stock look plus a small `customCss`; that is the

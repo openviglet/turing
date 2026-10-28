@@ -6,8 +6,9 @@
   "description": "Viglet Turing end-user documentation, at turing.viglet.org/docs. Builds into the marketing site's dist/docs.",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "build": "astro build && node scripts/check-links.mjs",
+    "preview": "astro preview",
+    "port": "node scripts/port-docusaurus.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.9",

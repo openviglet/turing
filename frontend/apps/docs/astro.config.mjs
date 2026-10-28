@@ -5,8 +5,14 @@
 // the docs drifted from the code. They are built from this repo now, in the shape roadkeep's
 // site/docs uses: their own Astro + Starlight project, a fixed base, and an outDir inside the
 // marketing site's dist/ so the one GitHub Pages deploy carries both.
+import { readFileSync } from "node:fs";
+
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+
+const sidebar = JSON.parse(
+  readFileSync(new URL("./src/sidebar.generated.json", import.meta.url), "utf-8"),
+);
 
 // The base. Astro rewrites the links it generates and NOT the ones typed by hand, so an
 // absolute href written into a page ("/getting-started/") drops the prefix and 404s in
@@ -39,10 +45,9 @@ export default defineConfig({
         { icon: "github", label: "GitHub", href: "https://github.com/openviglet/turing-ce" },
       ],
       customCss: ["./src/styles/docs.css"],
-      sidebar: [
-        { label: "Introduction", link: "/" },
-        { label: "Getting started", items: [{ autogenerate: { directory: "getting-started" } }] },
-      ],
+      // T1161 — the order of the Docusaurus sidebars-turing.ts, written by
+      // scripts/port-docusaurus.mjs next to the pages it ports.
+      sidebar,
       editLink: {},
       lastUpdated: true,
     }),

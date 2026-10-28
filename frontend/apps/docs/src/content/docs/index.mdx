@@ -1,32 +1,78 @@
 ---
-title: Viglet Turing documentation
-description: Install, configure and use Viglet Turing, the enterprise search platform.
+title: "Viglet Turing"
+description: "Viglet Turing: Enterprise Search with Semantic Navigation and Generative AI"
 template: splash
-hero:
-  tagline: Enterprise search with Semantic Navigation, connectors and GenAI, documented next to the code it describes.
-  actions:
-    - text: Get started
-      link: getting-started/installation/
-      icon: right-arrow
-      variant: primary
-    - text: turing.viglet.org
-      link: https://turing.viglet.org/
-      variant: minimal
 ---
 
-import { Card, CardGrid } from "@astrojs/starlight/components";
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+**Viglet Turing** is an open-source enterprise search platform combining **Semantic Navigation**, **content integration**, and **Generative AI**. Index content from any source, deliver faceted search experiences, and deploy conversational AI grounded in your own data.
+
+## Key capabilities
 
 <CardGrid>
-  <Card title="Semantic Navigation" icon="magnifier">
-    Sites, facets, spotlights and ranking over Solr, Elasticsearch or the embedded Lucene engine.
+  <Card title="Semantic Navigation">
+    Faceted search, autocomplete, spotlights, targeting rules, result ranking and per-site AI insights.
   </Card>
-  <Card title="Connectors" icon="puzzle">
-    Index content from AEM, WordPress, databases, file systems and the web through Dumont.
+  <Card title="Generative AI">
+    RAG over your indexed content, LLM instances, AI agents, tool calling and MCP server integration.
   </Card>
-  <Card title="GenAI" icon="star">
-    RAG chat, the catalog copilot, AI agents and LLM providers, grounded in the site's own index.
+  <Card title="Content Integration">
+    REST API connectors, AEM, web crawler, delta tracking, merge providers and indexing rules.
   </Card>
-  <Card title="SDKs" icon="seti:javascript">
-    The vanilla JS SDK and the React SDK for building search and chat into any page.
+  <Card title="Security">
+    Native session auth, REST API key tokens and production-grade Keycloak OAuth2/OIDC SSO.
   </Card>
+</CardGrid>
+
+## Quick start
+
+<CardGrid>
+  <LinkCard title="01. Start here" description="The zero → first-agent learning path" href="/docs/getting-started/intro/" />
+  <LinkCard title="02. Understand" description="SN Sites, connectors and the data model" href="/docs/getting-started/core-concepts/" />
+  <LinkCard title="03. Install" description="Docker, standalone JAR or from source" href="/docs/installation-guide/" />
+  <LinkCard title="04. Search" description="REST API, search params and response format" href="/docs/rest-api/" />
+</CardGrid>
+
+## Administration & Development
+
+<CardGrid>
+  <LinkCard title="Administration Guide" description="Users, roles, API tokens, global settings and system information" href="/docs/administration-guide/" />
+  <LinkCard title="Developer Guide" description="Tech stack, dev environment, Java SDK and contribution guide" href="/docs/developer-guide/" />
+  <LinkCard title="REST API Reference" description="Search, autocomplete, spell check, GenAI chat and token usage endpoints" href="/docs/rest-api/" />
+</CardGrid>
+
+## Enterprise Search
+
+<CardGrid>
+  <LinkCard title="Search Engine" description="Manage Solr, Elasticsearch and Lucene backends, cores and monitoring" href="/docs/search-engine/" />
+  <LinkCard title="Semantic Navigation" description="Configure SN Sites: fields, facets, spotlights, targeting rules, result ranking and GenAI" href="/docs/semantic-navigation/" />
+  <LinkCard title="Integration" description="Connect AEM and web crawler sources with indexing rules and monitoring" href="/docs/integration/" />
+</CardGrid>
+
+## Generative AI
+
+<CardGrid>
+  <LinkCard title="GenAI & LLM Configuration" description="RAG architecture, embedding pipeline and core GenAI concepts" href="/docs/genai-llm/" />
+  <LinkCard title="What is RAG?" description="How LLMs, embedding models and vector stores work together to ground AI in your content" href="/docs/rag/" />
+  <LinkCard title="LLM Instances" description="Configure provider connections: vendors, models, API keys and capabilities" href="/docs/llm-instances/" />
+  <LinkCard title="Embedding Stores" description="ChromaDB, PgVector and Milvus vector database backends" href="/docs/embedding-stores/" />
+  <LinkCard title="Embedding Models" description="Provider support, model selection and local transformers configuration" href="/docs/embedding-models/" />
+  <LinkCard title="Assets (Knowledge Base)" description="File manager backed by MinIO: upload, organise and train the RAG knowledge base" href="/docs/assets/" />
+  <LinkCard title="Tool Calling" description="27 native tools across 7 categories available to AI Agents" href="/docs/tool-calling/" />
+  <LinkCard title="MCP Servers" description="Extend agents with external tools via the Model Context Protocol" href="/docs/mcp-servers/" />
+  <LinkCard title="AI Agents" description="Compose and deploy purpose-built AI assistants with custom tools and personas" href="/docs/ai-agents/" />
+  <LinkCard title="Skills" description="Run portable, Anthropic-compatible skill folders in a Docker sandbox: usable in chat and semantic navigation" href="/docs/skills/" />
+  <LinkCard title="Agent Workspace" description="Per-conversation file store: tool artifacts, downloads and auto-offloaded large results" href="/docs/agent-workspace/" />
+  <LinkCard title="Chat Memory" description="Persist history, retrieve relevant older turns with BM25, and compress long conversations" href="/docs/chat-memory/" />
+  <LinkCard title="Chat" description="Chat interface: direct LLM, Semantic Navigation and AI Agent views" href="/docs/chat/" />
+  <LinkCard title="Token Usage" description="Monitor and analyse LLM token consumption by model and day" href="/docs/token-usage/" />
+</CardGrid>
+
+## Technical Reference
+
+<CardGrid>
+  <LinkCard title="Architecture Overview" description="Component diagram, indexing and search flows, deployment topologies" href="/docs/architecture-overview/" />
+  <LinkCard title="Authentication" description="Native session login and REST API Key authentication" href="/docs/security-authentication/" />
+  <LinkCard title="Security & Keycloak" description="Full OAuth2/OIDC production setup with Keycloak, Apache proxy and SSL" href="/docs/security-keycloak/" />
 </CardGrid>
