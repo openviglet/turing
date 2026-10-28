@@ -84,6 +84,10 @@ $settings['instant_overlay']   = 1;
 $settings['search_page']       = $ids['search-gear'];
 // The theme's templates place Related themselves; appended too, it would show twice (D210).
 $settings['related_after']     = array();
+// Turing's generative AI on the store (D198): sent with the fields on the next index (D186), and
+// the Site assistant on every page. Both stay hidden on a stack whose Turing has no LLM key.
+$settings['generative_ai']      = 1;
+$settings['assistant_launcher'] = 1;
 
 // A launched store: WooCommerce shows visitors a "coming soon" page until it is.
 update_option( 'woocommerce_coming_soon', 'no' );

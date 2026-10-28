@@ -314,7 +314,9 @@ The demo storefront (`demo/`, outside the plugin zip) is Tarnfell, a fictional o
 shop: its own theme, WooCommerce with its catalog (`demo/seed`), a home whose hero is the
 search block's box alone, a results page, product pages with the copilot and Related, a
 journal, and a showcase (`/showcase/`) holding the search, the copilot and the Site assistant
-on one page; "How it works" (`?tour=1`) numbers each Turing feature a page shows. Lighthouse in headless Edge (October 2026): home 93 performance and 96
+on one page; "How it works" (`?tour=1`) numbers each Turing feature a page shows. The setup
+turns the site's generative AI on (sent with the fields on the next index) and puts the Site
+assistant in a corner of every page; both stay hidden while Turing has no language model. Lighthouse in headless Edge (October 2026): home 93 performance and 96
 accessibility, results 90 and 96. axe finds nothing on home, search and a post; on a product,
 only WooCommerce's own mini-cart drawer. The name was checked with a web search only (no
 brand or store called Tarnfell): run a trademark registry search before any public use.

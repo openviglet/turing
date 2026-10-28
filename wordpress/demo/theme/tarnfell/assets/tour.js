@@ -80,7 +80,8 @@
 			],
 		},
 		{
-			selector: '.wp-block-viglet-dumont-assistant',
+			// A placed block; the corner launcher on every page is the site's chrome, not a stop.
+			selector: '.wp-block-viglet-dumont-assistant:not(.is-floating)',
 			anchor: '#search',
 			en: [
 				'Ask this site',
