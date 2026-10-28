@@ -17,6 +17,7 @@
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 - 📋 **T1157** (deps: —) **Site chat follow-ups that refer back (it, that one) retrieve nothing: retrieval reads the latest message alone** — A visitor's second question is usually a follow-up, and answering it with a refusal ends the conversation the chat exists for. → §CLVIII.1
+- 📋 **T1158** (deps: —) **Deleting a document leaves its RAG chunks, so site chat still answers from it and links its old URL** — A removed or moved page keeps answering visitors with content the site no longer publishes, and no reindex clears it. → §CLVIII.2
 
 ## Done when — T1133
 

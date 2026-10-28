@@ -2309,3 +2309,29 @@ shows what was searched.
 
 **Workaround.** None: the Dumont spec checks that the follow-up reaches Turing with the
 whole history and records the answer, and names this id.
+
+### CLVIII.2 Remove a deleted document's RAG chunks (T1158)
+
+**Where it happened.** Dumont D175 (WordPress Site assistant) on the run-docker stack,
+SN site `Sample`. The live-LLM suite seeds a "Research grant 2026" post, reindexes, and
+deletes it again in its teardown (Dumont queues a DELETE import). After the teardown the
+keyword search for "Research grant 2026" returns nothing, yet `GET
+/api/sn/Sample/chat?q=When do applications for the research grant close?` still answers
+the deadline, citing `http://localhost:8080/?p=…`, a URL the site left when it moved to
+port 38081: every earlier copy's chunks are still in the RAG collection.
+
+**Why.** `TurSNProcessQueue.deIndex` removes the document from the search engine and
+mirrors the removal into the hybrid vector collection (T383), but nothing removes it
+from the GenAI RAG collection that `TurSNGenAi` writes through
+`reindexByMetadata(SOURCE_ID, id)`. A re-index replaces a document's chunks by
+`SOURCE_ID`; a delete, by id, by type or by fields (T1112), never does.
+
+**What it should do.** On a successful deIndex, delete the RAG chunks too: by
+`SOURCE_ID` for an id, and by the matching metadata for a type or a field set, for each
+locale's collection the site writes. A site with no GenAI is a no-op. A one-off purge
+for sites that already hold orphans (chunks whose `SOURCE_ID` the engine no longer has)
+would clean existing stores.
+
+**Workaround.** None. The Dumont spec cannot check that a cited post is on the site
+while an earlier run's chunks answer; it reads the chat's sources as Turing returns
+them.
