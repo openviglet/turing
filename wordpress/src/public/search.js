@@ -111,27 +111,6 @@ export function trackingAllowed() {
 
 let analytics = null;
 
-// Whether the search being answered is one the visitor settled on (reportSearchesWhen()).
-let settled = () => true;
-
-const searchEvents = new Set( [
-	TURING_ANALYTICS_EVENTS.search,
-	TURING_ANALYTICS_EVENTS.searchNoResults,
-	TURING_ANALYTICS_EVENTS.searchRefined,
-] );
-
-/**
- * Tell the bus which searches are worth reporting. A search controller reports every search
- * it runs that is not as-you-type, so a filter, a sort or a page would each count as another
- * search, and fill GA4's site-search report with refinements (Turing T1155). The search
- * block answers this with whether its current search is one the visitor settled on.
- *
- * @param {() => boolean} predicate Called when a search event is about to be sent.
- */
-export function reportSearchesWhen( predicate ) {
-	settled = predicate;
-}
-
 // The last search trackSearch() reported, so the next one can be told apart as a refinement.
 let reported = '';
 
@@ -163,21 +142,19 @@ export function trackSearch( query, results ) {
  * The SDK's analytics bus, with Google Analytics as its sink when the site sends events
  * there: the turing_* events, and GA4's own `search` and `select_content` beside them so its
  * site-search reports fill (Turing T1130). The search controllers report through it
- * (createSiteSearch( { track: true } )); search events of a refinement are held back.
+ * (createSiteSearch( { track: true } )), which report a search when its query changes and
+ * treat a filter, a sort or a page on it as the same search (Turing T1155, D224).
  */
 function bus() {
 	if ( ! analytics ) {
 		const { ga, measurementId } = config.analytics || {};
-		const google = googleAnalyticsSink( {
-			measurementId: measurementId || undefined,
-			recommended: true,
-		} );
 		analytics = createTuringAnalytics( {
 			sinks: ga
 				? [
-						( event ) =>
-							( ! searchEvents.has( event.name ) || settled() ) &&
-							google( event ),
+						googleAnalyticsSink( {
+							measurementId: measurementId || undefined,
+							recommended: true,
+						} ),
 					]
 				: [],
 			context: { site: config.site },

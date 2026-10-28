@@ -15,7 +15,6 @@ import {
 	createSiteSearch,
 	fetchSpellCheck,
 	postIdOf,
-	reportSearchesWhen,
 	siteFilter,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -34,9 +33,6 @@ let lastQuery = '';
 let instant = null;
 // The page's own title, which retitle() puts the query in front of.
 let baseTitle = '';
-// Whether the search in flight is one the visitor settled on (submitted, picked, opened from a
-// link), which the analytics bus reports, or a filter, sort or page on it, which it does not.
-let settled = false;
 // The sentence last sent to Turing's nl-filters, so a late reading of an older one is dropped.
 let reading = '';
 
@@ -305,7 +301,6 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		// than one, so the focus stays there.
 		toggleFacet() {
 			const { item } = getContext();
-			settled = false;
 			search.toggleFacet( item.target );
 			writeUrl( true );
 			if ( ! state.drawerOpen ) {
@@ -343,7 +338,6 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		removeFilter() {
 			const { filter } = getContext();
-			settled = false;
 			search.toggleFacet( filter.target );
 			writeUrl( true );
 			focusInput();
@@ -372,7 +366,6 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			);
 			state.query = suggestion.q;
 			lastQuery = suggestion.q.trim() || '*';
-			settled = true;
 			state.corrected = '';
 			send( {
 				q: lastQuery,
@@ -386,7 +379,6 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		clearFilters() {
 			// The SDK's clearAllFilters would drop the site filter too; keep it.
-			settled = false;
 			send( { fq: [ siteFilter ], page: 1 } );
 			writeUrl( true );
 		},
@@ -395,7 +387,6 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		goToPage() {
 			const { page } = getContext();
-			settled = false;
 			search.goToPage( page.page );
 			writeUrl( true );
 			focusInput();
@@ -428,7 +419,6 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		sortBy( event ) {
 			state.sort = event.target.value;
-			settled = false;
 			send( { page: 1 } );
 			writeUrl( true );
 		},
@@ -452,7 +442,6 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		init() {
 			prerendered = 'success' === state.status;
 			search = createSiteSearch( { track: true } );
-			reportSearchesWhen( () => settled );
 			if ( state.answerEnabled ) {
 				answerer = createAnswerController( createClient(), {
 					site: config.site,
@@ -794,7 +783,6 @@ function focusInput() {
 function run( query, prefix = false ) {
 	const typed = query.trim();
 	lastQuery = typed || '*';
-	settled = ! prefix;
 	state.corrected = '';
 	send( {
 		q: lastQuery,
@@ -860,7 +848,6 @@ function readUrl() {
 	state.query = params.get( 'q' ) ?? params.get( 's' ) ?? '';
 	state.sort = params.get( 'sort' ) || 'relevance';
 	lastQuery = state.query.trim() || '*';
-	settled = true;
 	state.corrected = '';
 	send( {
 		q: lastQuery,
