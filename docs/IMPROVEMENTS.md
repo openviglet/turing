@@ -2151,32 +2151,31 @@ silently. Found while building trabalharei's local Turing and import proof.
 ### CXIV.2 Lucene synonyms survive a restart (T1168)
 
 **Where it happened.** Dumont's WordPress e2e stack (`turing-ce:local`, Lucene engine,
-build `3777bc8d`). The Docker daemon restarted and the `turing` container came back with
-`docker start`. On the Demo SN site, `GET /api/sn/Demo/search?q=rucksack` then answered
-0 results, and so did `raincoat`, while `backpack` still matched. The synonyms were
-still configured: the site's tuning listed `rucksack | backpack | daypack` and `raincoat
-| rain jacket | waterproof jacket | waterproof`. Before the restart they matched;
-Dumont's demo curated specs (`tests/e2e/demo/curated.spec.mjs`) went red on four
-searches.
+build `3777bc8d`). After a `docker start`, the Demo SN site answered 0 results for
+`rucksack` and `raincoat` while `backpack` still matched. The tuning still listed
+`rucksack | backpack | daypack` and `raincoat | rain jacket | waterproof jacket`; four
+curated specs went red.
 
-**Why.** On Lucene, query-time synonyms live in `TurLuceneSynonymRegistry`, an in-memory
-map that `TurLuceneSearchEnginePlugin.applySynonyms` fills. The only caller is
-`TurSNSynonymApplyService`, reached from `TurSNSiteSynonymAPI` when synonyms are saved.
-No startup step re-applies the stored ones, so every restart empties the registry and
-`queryAnalyzer` falls back to `TurLuceneFoldingAnalyzer` with no error and nothing
-logged.
+**Why.** Saving a synonym only writes the row; Push to engine (`POST …/synonym/apply`,
+`TurSNSynonymApplyService.applyAll`) installs it. Solr and Elasticsearch keep what was
+pushed across a restart. Lucene keeps it only in `TurLuceneSynonymRegistry`, an
+in-memory map, and nothing refills it at boot, so the query analyzer silently runs
+without synonyms.
 
-**What it should do.** On application ready, for each SN site locale whose engine
-`supportsSynonyms()`, call `TurSNSynonymApplyService.applyAll(site)`, the same path a
-save takes, and log how many rules each core received. A site whose apply fails logs the
-reason and keeps serving.
+**What it should do.**
+- A plugin capability, `synonymsSurviveRestart()`, true by default and false on Lucene.
+- On application ready, for each SN site whose engine answers false, call `applyAll`
+  and log the rules each core received. Solr and Elasticsearch cores are not touched.
+- With tenancy on, run per tenant through `TurTenantScheduledFanOut`; with no tenant
+  bound the sweep would see only DEFAULT's sites.
+- A site whose apply fails, or whose core does not exist yet, logs why and keeps serving.
+- Docs: after a Lucene restart the live set is every enabled rule, pushed or not.
 
-**Workaround used.** None in Dumont; re-saving one synonym in the console re-applies the
-set.
+**Workaround.** Push to engine again.
 
-**Gate.** An integration test that saves synonyms, recreates the plugin and registry the
-way a restart does, runs the startup hook, and finds `q=rucksack` answering through the
-synonym.
+**Gate.** An IT that pushes synonyms, recreates the registry as a restart does, runs the
+hook and finds `q=rucksack` through the synonym; a test that a Solr site is not
+re-applied; a test that a tenant's site is re-applied under its tenant.
 
 ## CXV turing.viglet.org relevance pass
 
@@ -2317,31 +2316,33 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.6 Kit gap queries in the catalog's words (T1169)
+### CLVIII.6 Copilot free text finds nothing on Lucene: `_text_` is never indexed (T1169)
 
 **Where it happened.** Dumont's Build my kit (D201) on the Demo SN site (Tarnfell, 132
-outdoor products), `ghcr.io/openviglet/turing-ce:latest` (build `3b726072ee`). Three
-plans: "Two days crossing the mountains in July, first time"; "I need a waterproof
-jacket, a warm layer and a daypack for a rainy hike"; "Weekend camping trip, it will
-rain and nights are cold". Each came back with `stages: []`, every gap in `unfilled`
-(physical comfort, weather protection, Waterproof clothing...) and `guides: []`. The
-same catalog answers `q=waterproof jacket` with 49 results and `q=Waterproof clothing`
-with 0.
+outdoor products, Lucene engine), `turing-ce:latest` (build `3b726072ee`). Three plans
+("Two days crossing the mountains in July, first time", a waterproof jacket + warm layer
++ daypack, a rainy weekend camping trip) each came back with `stages: []`, every gap
+`unfilled` and `guides: []`, while SN search answers `q=waterproof jacket` with 49.
 
-**Why.** `gapPrompt` asks for "a search query for the catalog" but gives the model
-nothing of the catalog, so it writes need words. `retrieve(site, locale, gap.query())`
-then runs as a `must` on `_text_` with every word required (the log shows `must: _text_
-"first aid kits"`), so one word the catalog does not use empties the gap.
+**Why.** Copilot plans put free text in `match` on `_text_`
+(`TurCopilotQueryBodies.freeText`, `TurSNNLFilterService.toQuery`,
+`TurCopilotPlanCompiler`). `_text_` is Solr's catch-all default field (`TurSNTemplate`).
+The Lucene indexer writes each attribute under its own name
+(`TurLuceneDocumentHandler.buildDocument`) and never a `_text_`, so on Lucene
+`TurDslLuceneExecutor` queries a field no document has. SN search escapes this by
+expanding to the site's text fields (`TurLuceneQueryBuilder.resolveTextFields`). The
+match is OR, not all-words, so need words were not the cause.
 
 **What it should do.**
-- Give the gap prompt the site's closed vocabulary, as `nl-filters` (T1085) reads it:
-  category values and the main facet values, and ask for each query in those words.
-- A gap whose query finds nothing retries with its words ORed, then with its name, before
-  it counts as unfilled. Guides the same.
+- `TurDslLuceneExecutor` resolves `_text_` to the site's enabled TEXT fields, for
+  `match`, `multi_match` without fields, `query_string`, `simple_query_string` and
+  `match_bool_prefix`. One seam fixes the copilot chat, the kit and its guides, the MCP
+  search/RAG tools and `TurDslToolService`. No contract changes.
+- Secondary: `gapPrompt` gets the site's facet values (as T1085 reads them) so gap
+  queries use the catalog's words.
 
-**Workaround used.** None; the Dumont block shows the unfilled needs as they come.
-
-**Gate.** On a seeded catalog, each of the three plans stages at least three gaps with
-products, and the second plan's jacket gap stages a waterproof jacket.
+**Gate.** An executor test where `match _text_` finds a document indexed only under its
+TEXT fields; on a seeded Lucene catalog each of the three plans stages at least three
+gaps, and the jacket gap stages a waterproof jacket.
 
 ## CLIX Documentation refresh (`docs-turing`)
