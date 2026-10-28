@@ -223,6 +223,13 @@ stay within a p95 time budget (`E2E_AI_P95_MS`, 20 s). Each spec skips, with the
 `wp dumont ai status` gives, a feature that is off. The answers land in
 `tests/e2e/artifacts/ai/answers.json`, and the teardown deletes the seeded posts again.
 
+**The recorded tour** (`npm run e2e:tour`, `playwright.tour.config.mjs`) walks the demo's
+showcase with "How it works" on, after a search so the filters show, and opens each numbered
+feature in turn. It leaves one screenshot per feature and `tour.webm` in
+`tests/e2e/artifacts/tour/`, the source of the docs' per-feature screenshots. It asks the stack
+as it is, so a feature with no language model behind it is skipped, not failed. Recording needs
+Playwright's ffmpeg once: `npx playwright install ffmpeg`.
+
 To look at one page in detail, logged in or not:
 
 ```sh

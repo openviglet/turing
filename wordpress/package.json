@@ -6,11 +6,12 @@
   "scripts": {
     "build": "wp-scripts build health.js mapping.js setup.js tuning.js insights.js --webpack-src-dir=assets/admin --output-path=src/admin/build && node bin/copy-sdk.mjs",
     "start": "wp-scripts start health.js mapping.js setup.js tuning.js insights.js --webpack-src-dir=assets/admin --output-path=src/admin/build && node bin/copy-sdk.mjs",
-    "lint:js": "wp-scripts lint-js assets/admin src/public bin src/admin/js/search-block-editor.js src/admin/js/related-block-editor.js src/admin/js/copilot-block-editor.js src/admin/js/compare-block-editor.js src/admin/js/assistant-block-editor.js tests/e2e playwright.config.mjs playwright.ai.config.mjs playwright.demo.config.mjs",
+    "lint:js": "wp-scripts lint-js assets/admin src/public bin src/admin/js/search-block-editor.js src/admin/js/related-block-editor.js src/admin/js/copilot-block-editor.js src/admin/js/compare-block-editor.js src/admin/js/assistant-block-editor.js tests/e2e playwright.config.mjs playwright.ai.config.mjs playwright.demo.config.mjs playwright.tour.config.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ai": "playwright test -c playwright.ai.config.mjs",
     "test:e2e:demo": "playwright test -c playwright.demo.config.mjs",
-    "e2e:look": "node tests/e2e/look.mjs"
+    "e2e:look": "node tests/e2e/look.mjs",
+    "e2e:tour": "playwright test -c playwright.tour.config.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
