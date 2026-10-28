@@ -16,7 +16,7 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1169** (deps: —) **On Lucene, every copilot free-text clause matches nothing: it queries `_text_`, a field the Lucene index never writes** — Copilot answers, Build my kit and MCP search on a Lucene site match by facets only, so a kit stages nothing. → §CLVIII.6
+- ⏳ **T1169** (deps: —) **Build my kit names its gap queries without the site's facet values, so they can miss the catalog's own words** — A gap the model words its own way stages nothing, so a kit can come back short of what the catalog actually holds. → §CLVIII.6
 
 ## Done when — T1133
 
@@ -38,6 +38,12 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
+
+## Done when — T1169
+
+- **The gap prompt names the site's facet values** A test shows gapPrompt lists the
+  values read from the site and leaves out a field with no buckets; on a seeded Lucene
+  catalog each of the three Dumont plans stages at least three gaps.
 
 ## Non-goals (do NOT add as tasks)
 

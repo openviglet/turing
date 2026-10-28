@@ -965,6 +965,7 @@
 - **T1159** — Each staged product now explains itself from its own attributes, an availability field marks or drops it, and both SDKs call the kit as postCopilotKit (design §CLVIII.3 recorded in `turing-app/src/main/java/com/viglet/turing/genai/catalog/TurCatalogKitService.java`).
 - **T1166** — A prompt capture is numbered by the client history's user turns, so memory turns no longer shift it and a follow-up's searched query shows on its own turn.
 - **T1167** — The kit call now cites up to two guides of the request's guideTypes beside the stages, typed in both SDKs and documented with the kit on the copilot page.
+- **T1169 (executor _text_ resolution)** — On Lucene, copilot, kit, MCP and DSL free-text clauses on `_text_` now search the site's TEXT fields, so they match the products SN search finds.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

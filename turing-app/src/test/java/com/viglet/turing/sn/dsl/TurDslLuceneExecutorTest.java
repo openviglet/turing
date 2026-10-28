@@ -19,6 +19,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -169,6 +170,64 @@ class TurDslLuceneExecutorTest {
                 assertThat(searcher.count(terms)).isEqualTo(2);
             }
         }
+    }
+
+    // ─────────────── T1169: _text_ resolves to the site's TEXT fields ───────────────
+
+    @Test
+    void textCatchAllFindsDocumentsIndexedOnlyUnderTheirTextFields() throws IOException {
+        // The Lucene indexer never writes `_text_`: a copilot `match _text_` must reach
+        // the TEXT fields the document was actually indexed under.
+        try (Directory dir = new ByteBuffersDirectory()) {
+            try (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {
+                writer.addDocument(product("p1", "Storm shell", "A waterproof jacket for alpine rain"));
+                writer.addDocument(product("p2", "Merino base layer", "Warm next-to-skin layer"));
+            }
+            try (DirectoryReader reader = DirectoryReader.open(dir)) {
+                IndexSearcher searcher = new IndexSearcher(reader);
+                Map<String, TurSEFieldType> types = Map.of("title", TurSEFieldType.TEXT,
+                        "description", TurSEFieldType.TEXT, "type", TurSEFieldType.STRING);
+
+                assertThat(searcher.count(executor.translateQuery(
+                        new TurDslQuery.Match("_text_", "waterproof jacket", null), types))).isEqualTo(1);
+                assertThat(searcher.count(executor.translateQuery(
+                        new TurDslQuery.Match("_text_", "storm", null), types))).isEqualTo(1);
+                assertThat(searcher.count(executor.translateQuery(
+                        new TurDslQuery.MultiMatch("warm layer", null, null), types))).isEqualTo(1);
+                assertThat(searcher.count(executor.translateQuery(
+                        new TurDslQuery.QueryString("alpine OR merino", null, null), types))).isEqualTo(2);
+                assertThat(searcher.count(executor.translateQuery(
+                        new TurDslQuery.SimpleQueryString("rain", null, null), types))).isEqualTo(1);
+                assertThat(searcher.count(executor.translateQuery(
+                        new TurDslQuery.MatchPhrase("_text_", "waterproof jacket", null), types))).isEqualTo(1);
+                // Each token may sit in a different field; the last is a prefix.
+                assertThat(searcher.count(executor.translateQuery(
+                        new TurDslQuery.MatchBoolPrefix("_text_", "storm waterpr"), types))).isEqualTo(1);
+                // Without a resolved site the catch-all stays `_text_`, which finds nothing here.
+                assertThat(searcher.count(executor.translateQuery(
+                        new TurDslQuery.Match("_text_", "waterproof", null)))).isZero();
+            }
+        }
+    }
+
+    @Test
+    void anExplicitFieldIsNotExpanded() {
+        Map<String, TurSEFieldType> types = Map.of("title", TurSEFieldType.TEXT,
+                "description", TurSEFieldType.TEXT);
+        assertThat(TurDslLuceneExecutor.searchFields("title", types)).containsExactly("title");
+        assertThat(TurDslLuceneExecutor.searchFields("_text_", types))
+                .containsExactly("description", "title");
+        assertThat(TurDslLuceneExecutor.searchFields("_text_", Map.of("type", TurSEFieldType.STRING)))
+                .containsExactly("_text_");
+    }
+
+    private static Document product(String id, String title, String description) {
+        Document doc = new Document();
+        doc.add(new StringField("id", id, Field.Store.YES));
+        doc.add(new TextField("title", title, Field.Store.YES));
+        doc.add(new TextField("description", description, Field.Store.YES));
+        doc.add(new StringField("type", "product", Field.Store.YES));
+        return doc;
     }
 
     private static Document docOf(String id, String kind, String vendor) {

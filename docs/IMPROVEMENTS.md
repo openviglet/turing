@@ -2285,33 +2285,28 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.6 Copilot free text finds nothing on Lucene: `_text_` is never indexed (T1169)
+### CLVIII.6 Build my kit names gaps without the catalog's words (T1169)
 
 **Where it happened.** Dumont's Build my kit (D201) on the Demo SN site (Tarnfell, 132
-outdoor products, Lucene engine), `turing-ce:latest` (build `3b726072ee`). Three plans
-("Two days crossing the mountains in July, first time", a waterproof jacket + warm layer
-+ daypack, a rainy weekend camping trip) each came back with `stages: []`, every gap
-`unfilled` and `guides: []`, while SN search answers `q=waterproof jacket` with 49.
+outdoor products, Lucene engine). Three plans each came back with `stages: []` and every
+gap `unfilled`.
 
-**Why.** Copilot plans put free text in `match` on `_text_`
-(`TurCopilotQueryBodies.freeText`, `TurSNNLFilterService.toQuery`,
-`TurCopilotPlanCompiler`). `_text_` is Solr's catch-all default field (`TurSNTemplate`).
-The Lucene indexer writes each attribute under its own name
-(`TurLuceneDocumentHandler.buildDocument`) and never a `_text_`, so on Lucene
-`TurDslLuceneExecutor` queries a field no document has. SN search escapes this by
-expanding to the site's text fields (`TurLuceneQueryBuilder.resolveTextFields`). The
-match is OR, not all-words, so need words were not the cause.
+**What landed.** The main cause is fixed: `TurDslLuceneExecutor` now resolves `_text_`
+to the site's TEXT fields (`searchFields`) for `match`, `match_phrase`, `multi_match`,
+`combined_fields`, `query_string`, `simple_query_string` and `match_bool_prefix`. So
+free-text gap queries reach the catalog on Lucene as they already did on Solr.
 
-**What it should do.**
-- `TurDslLuceneExecutor` resolves `_text_` to the site's enabled TEXT fields, for
-  `match`, `multi_match` without fields, `query_string`, `simple_query_string` and
-  `match_bool_prefix`. One seam fixes the copilot chat, the kit and its guides, the MCP
-  search/RAG tools and `TurDslToolService`. No contract changes.
-- Secondary: `gapPrompt` gets the site's facet values (as T1085 reads them) so gap
-  queries use the catalog's words.
+**What is left.** `TurCatalogKitService.gapPrompt` asks the model to name gaps from the
+plan text and the site name alone. The model writes gap queries in its own words
+("insulating mid-layer"), which can miss what the catalog actually calls things
+("fleece", "softshell"). The prompt should carry a short list of the site's facet values
+(category, type and the like), read the way `TurSNNLFilterService.siteValues` reads
+them: one `match_all` search with `terms` aggregations through the DSL search service. A
+field with no buckets is left out, and a read that fails sends the prompt without the
+list.
 
-**Gate.** An executor test where `match _text_` finds a document indexed only under its
-TEXT fields; on a seeded Lucene catalog each of the three plans stages at least three
-gaps, and the jacket gap stages a waterproof jacket.
+**Gate.** A test that `gapPrompt` lists the values read for the site and leaves out a
+field with no buckets. On a seeded Lucene catalog, each of the three plans stages at
+least three gaps, and the jacket gap stages a waterproof jacket.
 
 ## CLIX Documentation refresh (`docs-turing`)

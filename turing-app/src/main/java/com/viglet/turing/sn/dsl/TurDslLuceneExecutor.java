@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -193,9 +194,9 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return switch (query) {
             case TurDslQuery.MatchAll() -> MatchAllDocsQuery.INSTANCE;
 
-            case TurDslQuery.Match q -> translateMatch(q);
+            case TurDslQuery.Match q -> translateMatch(q, fieldTypes);
 
-            case TurDslQuery.MultiMatch q -> translateMultiMatch(q);
+            case TurDslQuery.MultiMatch q -> translateMultiMatch(q, fieldTypes);
 
             case TurDslQuery.Term(var field, var value) ->
                     translateTerm(field, value, fieldTypes.get(field));
@@ -215,17 +216,17 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
 
             case TurDslQuery.Exists(var field) -> new FieldExistsQuery(field);
 
-            case TurDslQuery.QueryString q -> translateQueryString(q);
+            case TurDslQuery.QueryString q -> translateQueryString(q, fieldTypes);
 
             case TurDslQuery.Fuzzy q -> translateFuzzy(q);
 
             case TurDslQuery.Ids q -> translateIds(q);
 
-            case TurDslQuery.MatchPhrase q -> translateMatchPhrase(q);
+            case TurDslQuery.MatchPhrase q -> translateMatchPhrase(q, fieldTypes);
 
             case TurDslQuery.MatchPhrasePrefix q -> translateMatchPhrasePrefix(q);
 
-            case TurDslQuery.SimpleQueryString q -> translateSimpleQueryString(q);
+            case TurDslQuery.SimpleQueryString q -> translateSimpleQueryString(q, fieldTypes);
 
             case TurDslQuery.Regexp(var field, var value, var flags) ->
                     new RegexpQuery(new Term(field, value));
@@ -250,9 +251,9 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
 
             case TurDslQuery.MoreLikeThis q -> translateMoreLikeThis(q);
 
-            case TurDslQuery.CombinedFields q -> translateCombinedFields(q);
+            case TurDslQuery.CombinedFields q -> translateCombinedFields(q, fieldTypes);
 
-            case TurDslQuery.MatchBoolPrefix q -> translateMatchBoolPrefix(q);
+            case TurDslQuery.MatchBoolPrefix q -> translateMatchBoolPrefix(q, fieldTypes);
 
             // Less-common query families (pinned / geo / span / join / feature / wrapper)
             // live in a sibling switch to keep each below the case-count limit.
@@ -304,9 +305,35 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
     // Each takes the matched record and uses its accessors; behavior is
     // identical to the original inline arm.
 
-    private Query translateMatch(TurDslQuery.Match q) {
+    /**
+     * T1169 — the fields a query on {@code field} should search. {@code _text_} is
+     * Solr's catch-all default field, which the Lucene indexer never writes: each
+     * attribute is indexed under its own name, and only TEXT ones are analyzed. So
+     * {@code _text_} expands to the site's TEXT fields, as SN search does. Without
+     * a known TEXT field (no site resolved) it stays {@code _text_}.
+     */
+    static String[] searchFields(String field, Map<String, TurSEFieldType> fieldTypes) {
+        if (!TEXT.equals(field)) {
+            return new String[]{field};
+        }
+        String[] textFields = fieldTypes.entrySet().stream()
+                .filter(e -> e.getValue() == TurSEFieldType.TEXT)
+                .map(Map.Entry::getKey)
+                .sorted()
+                .toArray(String[]::new);
+        return textFields.length > 0 ? textFields : new String[]{TEXT};
+    }
+
+    /** A parser over one field, or over several when {@code _text_} expanded. */
+    private static QueryParser parserFor(String[] fields) {
+        return fields.length == 1
+                ? new QueryParser(fields[0], new StandardAnalyzer())
+                : new MultiFieldQueryParser(fields, new StandardAnalyzer());
+    }
+
+    private Query translateMatch(TurDslQuery.Match q, Map<String, TurSEFieldType> fieldTypes) {
         try {
-            QueryParser parser = new QueryParser(q.field(), new StandardAnalyzer());
+            QueryParser parser = parserFor(searchFields(q.field(), fieldTypes));
             if ("and".equalsIgnoreCase(q.operator())) {
                 parser.setDefaultOperator(QueryParser.Operator.AND);
             }
@@ -316,10 +343,10 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         }
     }
 
-    private Query translateMultiMatch(TurDslQuery.MultiMatch q) {
+    private Query translateMultiMatch(TurDslQuery.MultiMatch q, Map<String, TurSEFieldType> fieldTypes) {
         if (q.fields() == null || q.fields().isEmpty()) {
             try {
-                return new QueryParser(TEXT, new StandardAnalyzer()).parse(q.query());
+                return parserFor(searchFields(TEXT, fieldTypes)).parse(q.query());
             } catch (Exception e) {
                 return MatchAllDocsQuery.INSTANCE;
             }
@@ -383,10 +410,10 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return builder.build();
     }
 
-    private Query translateQueryString(TurDslQuery.QueryString q) {
+    private Query translateQueryString(TurDslQuery.QueryString q, Map<String, TurSEFieldType> fieldTypes) {
         try {
             String df = q.defaultField() != null ? q.defaultField() : TEXT;
-            QueryParser parser = new QueryParser(df, new StandardAnalyzer());
+            QueryParser parser = parserFor(searchFields(df, fieldTypes));
             if ("AND".equalsIgnoreCase(q.defaultOperator())) {
                 parser.setDefaultOperator(QueryParser.Operator.AND);
             }
@@ -409,9 +436,9 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return builder.build();
     }
 
-    private Query translateMatchPhrase(TurDslQuery.MatchPhrase q) {
+    private Query translateMatchPhrase(TurDslQuery.MatchPhrase q, Map<String, TurSEFieldType> fieldTypes) {
         try {
-            QueryParser parser = new QueryParser(q.field(), new StandardAnalyzer());
+            QueryParser parser = parserFor(searchFields(q.field(), fieldTypes));
             return parser.parse(S.formatted(q.query()));
         } catch (Exception e) {
             return new TermQuery(new Term(q.field(), q.query().toLowerCase()));
@@ -427,10 +454,11 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         }
     }
 
-    private Query translateSimpleQueryString(TurDslQuery.SimpleQueryString q) {
+    private Query translateSimpleQueryString(TurDslQuery.SimpleQueryString q,
+            Map<String, TurSEFieldType> fieldTypes) {
         try {
             String[] f = (q.fields() != null && !q.fields().isEmpty())
-                    ? q.fields().toArray(String[]::new) : new String[]{TEXT};
+                    ? q.fields().toArray(String[]::new) : searchFields(TEXT, fieldTypes);
             MultiFieldQueryParser parser = new MultiFieldQueryParser(f, new StandardAnalyzer());
             if ("AND".equalsIgnoreCase(q.defaultOperator())) {
                 parser.setDefaultOperator(QueryParser.Operator.AND);
@@ -497,10 +525,11 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return MatchAllDocsQuery.INSTANCE;
     }
 
-    private Query translateCombinedFields(TurDslQuery.CombinedFields q) {
+    private Query translateCombinedFields(TurDslQuery.CombinedFields q,
+            Map<String, TurSEFieldType> fieldTypes) {
         if (q.fields() == null || q.fields().isEmpty()) {
             try {
-                return new QueryParser(TEXT, new StandardAnalyzer()).parse(q.query());
+                return parserFor(searchFields(TEXT, fieldTypes)).parse(q.query());
             } catch (Exception e) {
                 return MatchAllDocsQuery.INSTANCE;
             }
@@ -517,17 +546,33 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         }
     }
 
-    private Query translateMatchBoolPrefix(TurDslQuery.MatchBoolPrefix q) {
-        // Last token as prefix, previous tokens as term queries
+    private Query translateMatchBoolPrefix(TurDslQuery.MatchBoolPrefix q,
+            Map<String, TurSEFieldType> fieldTypes) {
+        // Last token as prefix, previous tokens as term queries; each token may be
+        // found in any of the searched fields.
         String[] tokens = q.query().trim().split("\\s+");
+        String[] fields = searchFields(q.field(), fieldTypes);
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        for (int i = 0; i < tokens.length - 1; i++) {
-            builder.add(new TermQuery(new Term(q.field(), tokens[i].toLowerCase())),
-                    BooleanClause.Occur.MUST);
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i].toLowerCase();
+            boolean last = i == tokens.length - 1;
+            builder.add(anyField(fields, f -> last
+                    ? new PrefixQuery(new Term(f, token))
+                    : new TermQuery(new Term(f, token))), BooleanClause.Occur.MUST);
         }
-        builder.add(new PrefixQuery(new Term(q.field(),
-                tokens[tokens.length - 1].toLowerCase())), BooleanClause.Occur.MUST);
         return builder.build();
+    }
+
+    /** The query for one field, or a disjunction of it over several. */
+    private static Query anyField(String[] fields, Function<String, Query> perField) {
+        if (fields.length == 1) {
+            return perField.apply(fields[0]);
+        }
+        BooleanQuery.Builder any = new BooleanQuery.Builder();
+        for (String f : fields) {
+            any.add(perField.apply(f), BooleanClause.Occur.SHOULD);
+        }
+        return any.build();
     }
 
     private Query translatePinned(TurDslQuery.Pinned q, Map<String, TurSEFieldType> fieldTypes) {
