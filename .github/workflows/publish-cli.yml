@@ -10,6 +10,9 @@ on:
 
 permissions:
   contents: read
+  # npm trusted publishing (OIDC): without this GitHub mints no ID token, pnpm
+  # skips OIDC and the PUT falls back to an unauthenticated 404.
+  id-token: write
 
 jobs:
   publish:
@@ -63,6 +66,5 @@ jobs:
         # `workspace:` protocol, so a package that grows a workspace dependency would
         # ship an unresolvable range. `--no-git-checks` because actions/checkout
         # leaves a detached HEAD, which pnpm's branch check rejects.
+        # Authenticates through the npm trusted publisher (OIDC), not a token.
         run: pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

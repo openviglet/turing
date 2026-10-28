@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # npm trusted publishing (OIDC): without this GitHub mints no ID token,
+      # pnpm skips OIDC and the PUT falls back to an unauthenticated 404.
+      id-token: write
 
     steps:
       - uses: actions/checkout@v7
@@ -89,9 +92,8 @@ jobs:
       # version bump above leaves the tree dirty; pnpm rejects both by default.
       - name: Publish @viglet/turing-react-sdk
         working-directory: frontend/packages/react-sdk
+        # Authenticates through the npm trusted publisher (OIDC), not a token.
         run: pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # ── Commit the one package.json the bump touched ──
       - name: Commit version bump
