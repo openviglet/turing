@@ -63,6 +63,7 @@ import com.viglet.turing.solr.TurSolrQueryBuilder;
 public class TurSNFacetRenderer {
 
     private static final String FACET_ITEM_AND = "-AND";
+    private static final String FACET_ITEM_OR = "-OR";
     private static final String AND_OR = "AND-OR";
     private static final String FACETS_TO_REMOVE = "Facets To Remove";
 
@@ -111,9 +112,11 @@ public class TurSNFacetRenderer {
         if (!facetIsEnabled(turSNSite, turSEResults)) {
             return Collections.emptyList();
         }
+        TurSNFilterParams filterParams = context.getTurSEParameters().getTurSNFilterParams();
         Predicate<TurSEFacetResult> predicate = visibility == Visibility.MAIN
-                ? f -> showMainFacet(facetsInFilterQueries, facetMap, f, turSNSite)
-                : f -> showSecondaryFacet(facetsInFilterQueries, facetMap, f, turSNSite);
+                ? f -> showMainFacet(facetsInFilterQueries, facetMap, f, turSNSite, filterParams)
+                : f -> showSecondaryFacet(facetsInFilterQueries, facetMap, f, turSNSite,
+                        filterParams);
 
         List<TurSNSiteSearchFacetBean> beans = new ArrayList<>();
         turSEResults.getFacetResults().stream()
@@ -171,37 +174,41 @@ public class TurSNFacetRenderer {
 
     private static boolean showFacet(List<String> facetsInFilterQueries,
             Map<String, TurSNSiteFieldExtDto> facetMap, TurSEFacetResult facet,
-            TurSNSite turSNSite) {
+            TurSNSite turSNSite, TurSNFilterParams filterParams) {
         return facetMap.containsKey(facet.getFacet())
                 && (!facetsInFilterQueries.contains(facet.getFacet())
-                        || showFacetByFacetItemType(turSNSite))
+                        || showFacetByFacetItemType(facetMap.get(facet.getFacet()), turSNSite,
+                                filterParams))
                 && !facet.getTurSEFacetResultAttr().isEmpty();
     }
 
     private static boolean showMainFacet(List<String> facetsInFilterQueries,
             Map<String, TurSNSiteFieldExtDto> facetMap, TurSEFacetResult facet,
-            TurSNSite turSNSite) {
+            TurSNSite turSNSite, TurSNFilterParams filterParams) {
         Boolean secondary = facetMap.get(facet.getFacet()).getSecondaryFacet();
-        return showFacet(facetsInFilterQueries, facetMap, facet, turSNSite)
+        return showFacet(facetsInFilterQueries, facetMap, facet, turSNSite, filterParams)
                 && (secondary == null || !secondary);
     }
 
     private static boolean showSecondaryFacet(List<String> facetsInFilterQueries,
             Map<String, TurSNSiteFieldExtDto> facetMap, TurSEFacetResult facet,
-            TurSNSite turSNSite) {
+            TurSNSite turSNSite, TurSNFilterParams filterParams) {
         Boolean secondary = facetMap.get(facet.getFacet()).getSecondaryFacet();
-        return showFacet(facetsInFilterQueries, facetMap, facet, turSNSite)
+        return showFacet(facetsInFilterQueries, facetMap, facet, turSNSite, filterParams)
                 && secondary != null && secondary;
     }
 
-    private static boolean showFacetByFacetItemType(TurSNSite turSNSite) {
-        if (turSNSite.getFacetItemType() == null) {
-            return false;
-        }
-        return switch (turSNSite.getFacetItemType()) {
-            case OR -> true;
-            case AND, DEFAULT -> false;
-        };
+    /**
+     * A facet already in the filter query stays visible only when its item type
+     * resolves to OR. Resolved per facet (request operator, then the field's own
+     * override, then the site default) — the same rule used to build the item
+     * links — so a field set to AND is not kept visible by a site-level OR.
+     */
+    private static boolean showFacetByFacetItemType(TurSNSiteFieldExtDto fieldExtDto,
+            TurSNSite turSNSite, TurSNFilterParams filterParams) {
+        return TurSolrQueryBuilder.getFacetTypeAndFacetItemTypeValues(
+                new TurSNFacetTypeContext(fieldExtDto, turSNSite, filterParams))
+                .endsWith(FACET_ITEM_OR);
     }
 
     // ---- facet result resolution ----------------------------------------

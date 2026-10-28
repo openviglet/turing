@@ -36,6 +36,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 import com.viglet.turing.se.facet.TurSEFacetResult;
 import com.viglet.turing.se.facet.TurSEFacetResultAttr;
@@ -171,6 +172,37 @@ class TurSNFacetRendererTest {
         assertThat(result).hasSize(1);
         assertThat(result.getFirst().getFacets()).hasSize(1);
         assertThat(result.getFirst().getFacets().getFirst().getLabel()).isEqualTo("books");
+    }
+
+    @Test
+    void facetInFilterQuery_staysVisibleWhenSiteItemTypeIsOr() {
+        site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+        Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", true);
+        // Skip the AND-OR re-query branch (needs a search-engine plugin); only visibility is under test.
+        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
+                .thenReturn(Collections.emptyList());
+
+        List<TurSNSiteSearchFacetBean> result = renderer.responseSecondaryFacet(
+                contextWithFilters(List.of("category:books")), site, List.of("category"),
+                facetMap, resultsWithFacet("category", "books", 5));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getFacets().getFirst().isSelected()).isTrue();
+    }
+
+    @Test
+    void facetInFilterQuery_fieldItemTypeAndOverridesSiteOr() {
+        site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+        site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+        Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", true);
+        facetMap.get("category").setFacetType(TurSNSiteFacetFieldEnum.AND);
+        facetMap.get("category").setFacetItemType(TurSNSiteFacetFieldEnum.AND);
+
+        List<TurSNSiteSearchFacetBean> result = renderer.responseSecondaryFacet(
+                contextWithFilters(List.of("category:books")), site, List.of("category"),
+                facetMap, resultsWithFacet("category", "books", 5));
+
+        assertThat(result).isEmpty();
     }
 
     // ---- helpers ---------------------------------------------------------
