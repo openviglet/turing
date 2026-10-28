@@ -2031,7 +2031,8 @@ Turing built from 2026.3 at d4b46f5daf.
 
 **What happens.** `GET /api/sn/Sample/answer?q=When do applications for the research
 grant close?&locale=en_US` streams each model token as its own `token` event, the token
-as raw text (`TurAnswerStreamFramer.java:146`, `event(EVENT_TOKEN, content)`):
+as raw text (`TurAnswerStreamFramer.java:146`, `event(EVENT_TOKEN, content)`), and
+Spring writes `data:` with no space after the colon:
 
 ```
 event:token
@@ -2041,17 +2042,19 @@ event:token
 data: for
 ```
 
-The SSE spec has a client drop one space after `data:`, so the token " for" reaches
-every spec-conforming client as "for". The SDK's parser does exactly that, and the panel
-reads "Applicationsfortheresearchgrantcloseon14March2026." Chat is not affected: its
-stream JSON-encodes each chunk.
+The SSE spec has a client drop one space after `data:`, so " for" reaches every
+conforming client, the browser's `EventSource` included, as "for". Both SDKs strip
+exactly that one space, as they should, so the bug is the server's. The answer framer is
+the only stream that sends raw text; chat, the gateway and slots send JSON.
 
-**What it should do.** Frame the answer's `token` events so the text survives a
-conforming parser: either JSON-encode the payload (`{"content":" for"}`, as chat does,
-with the SDK reading both shapes for a release) or always write `data: ` plus the token,
-so the single stripped space is the separator's and the token's own space stays. Add a
-framer test with a token that starts with a space, and an SDK test that parses it back
-unchanged.
+**What it should do.** Write every `token` event as `data: ` plus the token, so the
+stripped space is the separator's and the token's own space survives. The wire format
+does not change: every published SDK, and any third-party client of `/answer`, keeps
+working with no release. JSON-encoding the payload is rejected: it breaks the public
+contract and needs both shapes in the SDKs for a release. A token that carries `\n` is
+split into several `data:` lines, and each needs its own leading space. Framer tests
+with a token starting with a space and one containing `\n`, plus an SDK test that parses
+both back unchanged.
 
 **Workaround.** None in Dumont; the answer spec stays red, and D174 waits on this line.
 
@@ -2329,17 +2332,19 @@ unexpected error occurred". The log shows `TurGlobalExceptionHandler` catching T
 Parameter [q] ... has been ignored` as an unhandled exception. The same query encoded as
 UTF-8 (`%C3%A9`) answers normally.
 
-**What was expected.** A 400 problem detail that names the parameter and says its value
-is not valid UTF-8, as `MissingServletRequestParameterException` already gets a 4xx in
-the same handler. A 500 tells the caller the server broke and sends them to Turing's
-log, when the request was what was wrong; a monitoring setup also counts it as an
-outage.
+**The wider case.** The handler does not extend `ResponseEntityExceptionHandler` and has
+no case for `MethodArgumentTypeMismatchException`, so a parameter of the wrong type
+(`?page=abc` on any endpoint) falls to the same 500. That is the common one; the UTF-8
+case needs a hand-built request from a non-UTF-8 shell.
+`HttpMessageNotReadableException` is already a 400 (`handleNotReadable`).
 
-**What Turing should do.** Map `InvalidParameterException` (and Spring's
-`MethodArgumentTypeMismatchException`, `HttpMessageNotReadableException` if they reach
-the fallback too) to 400 in `TurGlobalExceptionHandler`, with the parameter name in
-`detail` and no stack trace at ERROR level. Test in `TurGlobalExceptionHandlerTest`,
-plus one MockMvc call with `q=%E9` on `/api/sn/{site}/search`.
+**What Turing should do.** Answer both with a 400 problem detail carrying the parameter
+name in `detail` and a `parameter` property, as `handleMissingParameter` does, logged at
+WARN with no stack trace. Find the Tomcat exception by walking the cause chain rather
+than importing a container-internal class. Tests in `TurGlobalExceptionHandlerTest`,
+plus MockMvc calls with `q=%E9` and a non-numeric numeric parameter.
 
-**Workaround.** None in Dumont: the plugin and the SDK send UTF-8. Only hand-built
-requests from a non-UTF-8 shell hit it.
+**Why it matters.** A 500 tells the caller the server broke and sends them to Turing's
+log, and monitoring counts it as an outage, when the request was what was wrong.
+
+**Workaround.** None needed in Dumont: the plugin and the SDK send UTF-8.

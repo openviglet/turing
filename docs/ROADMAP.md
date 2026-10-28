@@ -20,7 +20,7 @@
 
 ## Block CI — API errors name what the caller sent wrong
 
-- 📋 **T1154** (deps: —) **A query string that is not valid UTF-8 answers 500 Internal Server Error, not a 400 naming the parameter** — The caller is told the server broke and is sent to Turing's log, when the request was what was wrong. → §CLVI.1
+- 📋 **T1154** (deps: —) **A malformed query parameter, of the wrong type or not valid UTF-8, answers 500 instead of a 400 naming it** — The caller is told the server broke and is sent to Turing's log, when the request was what was wrong. → §CLVI.1
 
 ## Done when — T1133
 
