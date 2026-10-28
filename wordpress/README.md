@@ -305,8 +305,9 @@ seeding when they differ, so another WordPress on that port is never tested by m
 
 The demo storefront (`demo/`, outside the plugin zip) is Tarnfell, a fictional outdoor gear
 shop: its own theme, WooCommerce with its catalog (`demo/seed`), a home whose hero is the
-search block's box alone, a results page, product pages with the copilot and Related, and a
-journal. Lighthouse in headless Edge (October 2026): home 93 performance and 96
+search block's box alone, a results page, product pages with the copilot and Related, a
+journal, and a showcase (`/showcase/`) holding the search, the copilot and the Site assistant
+on one page; "How it works" (`?tour=1`) numbers each Turing feature a page shows. Lighthouse in headless Edge (October 2026): home 93 performance and 96
 accessibility, results 90 and 96. axe finds nothing on home, search and a post; on a product,
 only WooCommerce's own mini-cart drawer. The name was checked with a web search only (no
 brand or store called Tarnfell): run a trademark registry search before any public use.

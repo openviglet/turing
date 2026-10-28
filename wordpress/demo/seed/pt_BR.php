@@ -60,12 +60,15 @@ return array(
 		'One size'             => 'Tamanho único',
 	),
 
-	// The pages demo/setup.php makes, and the site's tagline (D223).
+	// The pages demo/setup.php makes, the showcase's words (D179) and the site's tagline (D223).
 	'pages'      => array(
 		'Home'                     => 'Início',
 		'Search the shop'          => 'Buscar na loja',
 		'Trail journal'            => 'Diário de trilha',
 		'Compare searches'         => 'Comparar buscas',
+		'Showcase'                 => 'Vitrine',
+		'Each block on this page is a Turing feature the plugin brings to WordPress. Open it with How it works for a note on each.' => 'Cada bloco desta página é um recurso do Turing que o plugin traz ao WordPress. Abra com Como funciona para ver uma nota sobre cada um.',
+		'Search, with an answer'   => 'Busca, com resposta',
 		'Gear for the high ground' => 'Equipamento para as alturas',
 	),
 

@@ -79,6 +79,18 @@
 				'Descreva uma necessidade numa frase e o Turing responde com produtos em estoque desta loja e por que cada um serve; um clique adiciona ao carrinho.',
 			],
 		},
+		{
+			selector: '.wp-block-viglet-dumont-assistant',
+			anchor: '#search',
+			en: [
+				'Ask this site',
+				"A conversation with Turing over the shop's guides and products: each answer lists what it read, and the conversation follows the visitor from page to page.",
+			],
+			pt: [
+				'Pergunte a este site',
+				'Uma conversa com o Turing sobre os guias e produtos da loja: cada resposta lista o que leu, e a conversa acompanha o visitante de página em página.',
+			],
+		},
 	];
 
 	let open = null;
@@ -91,14 +103,44 @@
 		}
 	};
 
-	let number = 0;
-	for ( const feature of features ) {
-		const target = document.querySelector( feature.selector );
-		// A feature this page does not have, or keeps hidden for now, gets no marker.
-		if ( ! target || target.closest( '[hidden]' ) ) {
-			continue;
+	// The features the page shows now: one it does not have, or keeps hidden, gets no marker.
+	// In the order the page shows them.
+	const shown = () =>
+		features
+			.map( ( feature ) => ( {
+				feature,
+				target: document.querySelector( feature.selector ),
+			} ) )
+			.filter(
+				( { target } ) => target && ! target.closest( '[hidden]' )
+			)
+			.sort( ( a, b ) =>
+				// eslint-disable-next-line no-bitwise -- compareDocumentPosition answers in bits.
+				a.target.compareDocumentPosition( b.target ) &
+				window.Node.DOCUMENT_POSITION_FOLLOWING
+					? -1
+					: 1
+			)
+			.map( ( { feature } ) => feature );
+
+	let placed = '';
+	// Number the features the page shows, in its order. Run again when one appears: the
+	// copilot and the Site assistant show only once Turing says they can answer (D179).
+	const place = () => {
+		const now = shown();
+		const key = now.map( ( feature ) => feature.selector ).join( '|' );
+		if ( key === placed || open ) {
+			return;
 		}
-		number++;
+		placed = key;
+		document
+			.querySelectorAll( '.tarnfell-tour' )
+			.forEach( ( wrap ) => wrap.remove() );
+		now.forEach( ( feature, i ) => mark( feature, i + 1 ) );
+	};
+
+	const mark = ( feature, number ) => {
+		const target = document.querySelector( feature.selector );
 		const [ title, body ] = pt ? feature.pt : feature.en;
 		const id = `tarnfell-tour-${ number }`;
 		const wrap = document.createElement( 'div' );
@@ -135,7 +177,22 @@
 				open = { button, note };
 			}
 		} );
-	}
+	};
+
+	place();
+	new window.MutationObserver( ( changes ) => {
+		if (
+			changes.some(
+				( change ) => ! change.target.closest?.( '.tarnfell-tour' )
+			)
+		) {
+			place();
+		}
+	} ).observe( document.body, {
+		subtree: true,
+		attributes: true,
+		attributeFilter: [ 'hidden' ],
+	} );
 
 	document.addEventListener( 'keydown', ( event ) => {
 		if ( 'Escape' === event.key ) {

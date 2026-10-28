@@ -31,6 +31,25 @@ $pages = array(
 
 // Named in the site's language (D223): seed/pt_BR.php carries the Portuguese.
 $names = 'pt_BR' === get_locale() ? ( require __DIR__ . '/seed/pt_BR.php' )['pages'] : array();
+$say   = static fn ( string $text ): string => esc_html( $names[ $text ] ?? $text );
+
+// Every Turing block on one page (D179), each under the feature it shows; ?tour=1 numbers them.
+$heading           = static fn ( string $text ): string => '<!-- wp:heading --><h2 class="wp-block-heading">' . $say( $text ) . '</h2><!-- /wp:heading -->';
+$pages['showcase'] = array(
+	'Showcase',
+	implode(
+		"\n\n",
+		array(
+			'<!-- wp:paragraph --><p>' . $say( 'Each block on this page is a Turing feature the plugin brings to WordPress. Open it with How it works for a note on each.' ) . '</p><!-- /wp:paragraph -->',
+			$heading( 'Search, with an answer' ),
+			$search,
+			// These two head themselves with the feature's name.
+			'<!-- wp:viglet-dumont/copilot /-->',
+			'<!-- wp:viglet-dumont/assistant /-->',
+		)
+	),
+	'',
+);
 
 $ids = array();
 foreach ( $pages as $slug => list( $title, $content, $template ) ) {
@@ -49,6 +68,8 @@ foreach ( $pages as $slug => list( $title, $content, $template ) ) {
 
 // The compare page names every curated search: indexed, it would be a result for each.
 update_post_meta( $ids['compare-searches'], '_viglet_dumont_exclude', '1' );
+// The showcase describes features, not gear: never a search result.
+update_post_meta( $ids['showcase'], '_viglet_dumont_exclude', '1' );
 
 update_option( 'show_on_front', 'page' );
 update_option( 'page_on_front', $ids['home-demo'] );

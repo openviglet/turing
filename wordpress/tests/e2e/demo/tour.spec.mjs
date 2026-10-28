@@ -96,9 +96,14 @@ test( 'the search page names its search box and its filters', async ( {
 	await axe( 'the tour', { include: '.tarnfell-tour' } );
 } );
 
-test( 'a product page names Related, and the catalog copilot where it shows', async ( {
+test( 'a product page names the catalog copilot and Related, in page order', async ( {
 	page,
 } ) => {
+	// Answered as on, so the copilot shows as on a stack with a language model; its marker
+	// is placed once it does (D179).
+	await page.route( '**/copilot/available', ( route ) =>
+		route.fulfill( { json: { available: true } } )
+	);
 	await page.goto(
 		`/?pagename=search-gear&q=${ encodeURIComponent( say().daypack ) }`
 	);
@@ -109,15 +114,10 @@ test( 'a product page names Related, and the catalog copilot where it shows', as
 	const url = new URL( product );
 	url.searchParams.set( 'tour', '1' );
 	await page.goto( url.pathname + url.search );
-	// The copilot shows only where the site has a language model; its marker with it.
-	const copilot = await page
-		.locator( '.wp-block-viglet-dumont-copilot' )
-		.isVisible()
-		.catch( () => false );
-	await walk( page, [
-		say().related,
-		...( copilot ? [ say().copilot ] : [] ),
-	] );
+	await expect(
+		page.locator( '.wp-block-viglet-dumont-copilot' )
+	).toBeVisible();
+	await walk( page, [ say().copilot, say().related ] );
 } );
 
 test( 'a page without ?tour loads no tour', async ( { page } ) => {
