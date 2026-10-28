@@ -122,6 +122,26 @@ class TurSNNLFilterServiceTest {
     }
 
     @Test
+    @DisplayName("T1169: the facet vocabulary lists the values each non-numeric facet holds, capped per field")
+    void facetVocabularyReadsTheSitesValues() {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(turSNSiteRepository.findByNameIgnoreCase("nowhere")).thenReturn(Optional.empty());
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("city", TurSEFieldType.STRING, true),
+                field("contract", TurSEFieldType.STRING, true),
+                field("title", TurSEFieldType.TEXT, false),
+                field("salary", TurSEFieldType.FLOAT, true)));
+        // f0 = city, f1 = contract: contract holds nothing, so it is left out.
+        siteHolds(Map.of("f0", List.of("São Paulo", "Campinas", "Santos"), "f1", List.of()));
+
+        Map<String, List<String>> vocabulary = service.facetVocabulary("vagas", "pt_BR", 2);
+
+        assertThat(vocabulary).containsOnlyKeys("city");
+        assertThat(vocabulary.get("city")).containsExactly("São Paulo", "Campinas");
+        assertThat(service.facetVocabulary("nowhere", "pt_BR", 2)).isEmpty();
+    }
+
+    @Test
     @DisplayName("A value without accents is spelled as the site holds it, read from the words that named it")
     void groundsAValueInTheSiteSpelling() {
         siteWithFields();

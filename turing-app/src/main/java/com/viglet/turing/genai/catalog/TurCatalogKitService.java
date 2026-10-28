@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.system.TurDefaultChatModelResolver;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,15 +55,23 @@ public class TurCatalogKitService {
     /** T1127 — the cost stage of the gap-naming call. */
     static final String STAGE_KIT = "sn.copilot.kit";
 
+    /** T1169 — at most this many values per facet field go into the gap prompt. */
+    static final int VOCABULARY_VALUES = 15;
+    /** T1169 — at most this many facet fields go into the gap prompt. */
+    static final int VOCABULARY_FIELDS = 8;
+
     private final TurCatalogCopilotService copilotService;
     private final TurDefaultChatModelResolver chatModelResolver;
     private final TurLLMTokenUsageService tokenUsageService;
+    private final TurSNNLFilterService nlFilterService;
 
     public TurCatalogKitService(TurCatalogCopilotService copilotService,
-            TurDefaultChatModelResolver chatModelResolver, TurLLMTokenUsageService tokenUsageService) {
+            TurDefaultChatModelResolver chatModelResolver, TurLLMTokenUsageService tokenUsageService,
+            TurSNNLFilterService nlFilterService) {
         this.copilotService = copilotService;
         this.chatModelResolver = chatModelResolver;
         this.tokenUsageService = tokenUsageService;
+        this.nlFilterService = nlFilterService;
     }
 
     /** One need the plan implies, with the products retrieval found for it. */
@@ -165,7 +174,8 @@ public class TurCatalogKitService {
 
         Plan named;
         try {
-            named = parse(callModel(chatModel.get(), siteName, gapPrompt(siteName, plan, gapLimit)), gapLimit);
+            named = parse(callModel(chatModel.get(), siteName,
+                    gapPrompt(siteName, plan, gapLimit, vocabulary(siteName, locale))), gapLimit);
         } catch (RuntimeException e) {
             log.warn("[CatalogKit] gap naming failed for site '{}': {}", siteName, e.getMessage());
             return Result.error("Could not name the needs of the plan: " + e.getMessage());
@@ -298,17 +308,43 @@ public class TurCatalogKitService {
         return result != null && result.getOutput() != null ? result.getOutput().getText() : null;
     }
 
-    static String gapPrompt(String siteName, String plan, int gapLimit) {
+    /**
+     * T1169 — the site's facet values, so the model words its gap queries the way
+     * the catalog does. A read that fails sends the prompt without them.
+     */
+    private Map<String, List<String>> vocabulary(String siteName, String locale) {
+        try {
+            return nlFilterService.facetVocabulary(siteName, locale, VOCABULARY_VALUES);
+        } catch (RuntimeException e) {
+            log.warn("[CatalogKit] could not read the facet values of site '{}': {}", siteName, e.getMessage());
+            return Map.of();
+        }
+    }
+
+    static String gapPrompt(String siteName, String plan, int gapLimit, Map<String, List<String>> vocabulary) {
+        StringBuilder words = new StringBuilder();
+        if (vocabulary != null) {
+            vocabulary.entrySet().stream()
+                    .filter(e -> e.getValue() != null && !e.getValue().isEmpty())
+                    .limit(VOCABULARY_FIELDS)
+                    .forEach(e -> words.append("- ").append(e.getKey()).append(": ")
+                            .append(String.join(", ", e.getValue())).append('\n'));
+        }
+        String catalogWords = words.isEmpty() ? "" : """
+
+                The catalog's own words, by field. Word each search query with them \
+                where they fit:
+                %s""".formatted(words);
         return """
                 A shopper on the "%s" catalog describes a plan. Name the needs the plan \
                 implies that products from such a catalog could fill, most important \
                 first, at most %d. Do not name products, brands or prices.
-
+                %s
                 Reply in plain lines only, no other text:
                 SUMMARY: one sentence restating the plan
                 GAP: short need name | search query for the catalog | why the plan needs it
 
-                PLAN: %s""".formatted(siteName, gapLimit, plan);
+                PLAN: %s""".formatted(siteName, gapLimit, catalogWords, plan);
     }
 
     /** {@code name | query | why}; a missing query is the name, a nameless gap is {@code null}. */

@@ -174,6 +174,33 @@ public class TurSNNLFilterService {
         return new TurSNNLFilters(true, text, q, filters, fq(filters), dropped);
     }
 
+    /**
+     * T1169 — the values the site's facet fields hold, the most common first and at
+     * most {@code perField} each, so a prompt can word its queries the way the
+     * catalog does. A field with no buckets is absent; an unknown site, or a read
+     * that fails, answers an empty map.
+     *
+     * @param locale the search locale; {@code null} means the site's first locale
+     */
+    @Transactional(readOnly = true)
+    public Map<String, List<String>> facetVocabulary(String siteName, String locale, int perField) {
+        Optional<TurSNSite> site = turSNSiteRepository.findByNameIgnoreCase(siteName);
+        if (site.isEmpty()) {
+            return Map.of();
+        }
+        List<String> fields = turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site.get(), 1).stream()
+                .map(TurNLFacetField::of)
+                .filter(field -> field.facet() && !field.numeric())
+                .map(TurNLFacetField::name)
+                .distinct()
+                .toList();
+        String searchLocale = StringUtils.hasText(locale) ? locale : firstLocale(site.get());
+        Map<String, List<String>> vocabulary = new LinkedHashMap<>();
+        siteValues(site.get().getName(), searchLocale, fields).forEach((field, values) ->
+                vocabulary.put(field, values.stream().limit(perField).toList()));
+        return vocabulary;
+    }
+
     private String firstLocale(TurSNSite site) {
         return turSNSiteLocaleRepository.findByTurSNSiteOrderByPositionAsc(site).stream()
                 .map(TurSNSiteLocale::getLanguage)

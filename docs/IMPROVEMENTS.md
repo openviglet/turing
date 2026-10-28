@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2284,29 +2282,5 @@ What the SDK reports to analytics, and when: the search, click and abandonment e
 host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
-### CLVIII.6 Build my kit names gaps without the catalog's words (T1169)
-
-**Where it happened.** Dumont's Build my kit (D201) on the Demo SN site (Tarnfell, 132
-outdoor products, Lucene engine). Three plans each came back with `stages: []` and every
-gap `unfilled`.
-
-**What landed.** The main cause is fixed: `TurDslLuceneExecutor` now resolves `_text_`
-to the site's TEXT fields (`searchFields`) for `match`, `match_phrase`, `multi_match`,
-`combined_fields`, `query_string`, `simple_query_string` and `match_bool_prefix`. So
-free-text gap queries reach the catalog on Lucene as they already did on Solr.
-
-**What is left.** `TurCatalogKitService.gapPrompt` asks the model to name gaps from the
-plan text and the site name alone. The model writes gap queries in its own words
-("insulating mid-layer"), which can miss what the catalog actually calls things
-("fleece", "softshell"). The prompt should carry a short list of the site's facet values
-(category, type and the like), read the way `TurSNNLFilterService.siteValues` reads
-them: one `match_all` search with `terms` aggregations through the DSL search service. A
-field with no buckets is left out, and a read that fails sends the prompt without the
-list.
-
-**Gate.** A test that `gapPrompt` lists the values read for the site and leaves out a
-field with no buckets. On a seeded Lucene catalog, each of the three plans stages at
-least three gaps, and the jacket gap stages a waterproof jacket.
 
 ## CLIX Documentation refresh (`docs-turing`)

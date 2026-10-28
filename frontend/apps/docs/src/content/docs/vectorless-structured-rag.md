@@ -378,6 +378,10 @@ the needs the catalog had nothing for in `unfilled`, and up to two `guides`.
   names the needs; each need then runs the same retrieval as a copilot question, so
   the site's planning strategy and hybrid ranking apply, and no id or price is the
   model's. A product staged under one need is not repeated under another.
+- **Needs are worded in the catalog's own terms.** The call that names the needs is
+  shown the most common values of the site's facet fields (category, type and the
+  like), so a need searches for `fleece` when that is what the catalog calls it,
+  rather than a phrase the model made up.
 - **Each product says why it fits from its own attributes** (`reason`, e.g.
   `weight: 1.2 kg; capacity: 2 people`), the ones matching the need first.
 - **Availability.** Name the field that says whether a product can be bought in

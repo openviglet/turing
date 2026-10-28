@@ -1,6 +1,7 @@
 package com.viglet.turing.genai.catalog;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,11 +13,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -24,6 +28,7 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.system.TurDefaultChatModelResolver;
 
 /**
@@ -38,6 +43,7 @@ class TurCatalogKitServiceTest {
     private TurCatalogCopilotService copilotService;
     private TurDefaultChatModelResolver chatModelResolver;
     private ChatModel chatModel;
+    private TurSNNLFilterService nlFilterService;
     private TurCatalogKitService service;
 
     @BeforeEach
@@ -45,9 +51,47 @@ class TurCatalogKitServiceTest {
         copilotService = mock(TurCatalogCopilotService.class);
         chatModelResolver = mock(TurDefaultChatModelResolver.class);
         chatModel = mock(ChatModel.class);
+        nlFilterService = mock(TurSNNLFilterService.class);
         when(chatModelResolver.resolve()).thenReturn(Optional.of(chatModel));
         when(chatModelResolver.defaultInstance()).thenReturn(Optional.empty());
-        service = new TurCatalogKitService(copilotService, chatModelResolver, mock(TurLLMTokenUsageService.class));
+        service = new TurCatalogKitService(copilotService, chatModelResolver, mock(TurLLMTokenUsageService.class),
+                nlFilterService);
+    }
+
+    /** T1169 — the gap prompt carries the catalog's facet values, so queries use its words. */
+    @Test
+    void theGapPromptNamesTheSitesFacetValues() {
+        Map<String, List<String>> vocabulary = new LinkedHashMap<>();
+        vocabulary.put("category", List.of("Jackets", "Fleece"));
+        vocabulary.put("empty", List.of());
+        String prompt = TurCatalogKitService.gapPrompt("outdoor", "a rainy weekend", 3, vocabulary);
+
+        assertTrue(prompt.contains("- category: Jackets, Fleece"));
+        assertFalse(prompt.contains("empty"));
+        assertTrue(prompt.contains("PLAN: a rainy weekend"));
+        assertFalse(TurCatalogKitService.gapPrompt("outdoor", "a trip", 3, Map.of())
+                .contains("catalog's own words"));
+    }
+
+    @Test
+    void thePlanSendsTheReadValuesToTheModelAndSurvivesAFailedRead() {
+        modelReplies("GAP: Shell | waterproof jacket | rain all weekend");
+        retrievalReturns("waterproof jacket", product("j1"));
+        when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
+                .thenReturn(Map.of("category", List.of("Jackets")));
+
+        service.plan("outdoor", "en", "a rainy weekend camping trip", null, null);
+
+        ArgumentCaptor<Prompt> sent = ArgumentCaptor.forClass(Prompt.class);
+        verify(chatModel).call(sent.capture());
+        assertTrue(sent.getValue().getContents().contains("- category: Jackets"));
+
+        when(nlFilterService.facetVocabulary(anyString(), anyString(), org.mockito.ArgumentMatchers.anyInt()))
+                .thenThrow(new IllegalStateException("engine down"));
+        TurCatalogKitService.Result result = service.plan("outdoor", "en", "a rainy weekend camping trip",
+                null, null);
+        assertNull(result.error());
+        assertEquals(1, result.stages().size());
     }
 
     private void modelReplies(String text) {
