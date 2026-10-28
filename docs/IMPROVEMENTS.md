@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2284,22 +2282,5 @@ What the SDK reports to analytics, and when: the search, click and abandonment e
 host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
-### CLVIII.5 Cite a guide beside the kit (T1167)
-
-**What happens.** `POST /api/sn/{site}/copilot/kit` (T1159) returns the needs a plan
-implies and the products that fill them, but never the site's own advice for that plan:
-a "first mountain crossing" guide or a packing checklist the catalog also indexes. A
-shopper who does not know what to buy is also the one who has not read the guide.
-
-**What it should do.** Beside the stages, cite up to two documents that are not
-products: retrieve the plan text itself through `TurCatalogCopilotService.retrieve()`,
-keep the results whose type matches a `guideTypes` list named in the request (a site's
-content types differ, so no type is guessed), and return them as citations with title
-and URL. No request `guideTypes` means no guides, exactly as today. A guide already
-staged as a product is not repeated.
-
-**Tests.** A plan whose retrieval returns a guide-typed document cites it; without
-`guideTypes` the result is unchanged; a product-typed result is never cited as a guide.
 
 ## CLIX Documentation refresh (`docs-turing`)

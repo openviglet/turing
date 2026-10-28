@@ -137,6 +137,39 @@ class TurCatalogKitServiceTest {
         assertEquals(List.of("t2", "t3"), dropped.stream().map(TurCatalogKitService.KitProduct::id).toList());
     }
 
+    /** T1167 — a guide of a requested type is cited; a product-typed or staged one is not. */
+    @Test
+    void citesGuidesOfTheRequestedTypesOnly() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        retrievalReturns("tent", product("t1"));
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("a first mountain crossing"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(
+                        List.of(product("g1"), product("t1"), product("p9"), product("g2"), product("g3")),
+                        List.of(), 5, null, true, List.of(
+                                java.util.Map.of("type", "Guide"),
+                                java.util.Map.of("type", "guide"),
+                                java.util.Map.of("type", "product"),
+                                java.util.Map.of("type", "checklist"),
+                                java.util.Map.of("type", "guide"))));
+
+        var guided = service.plan("outdoor", "en", "a first mountain crossing",
+                new TurCatalogKitService.Options(null, null, null, null, List.of("guide", "checklist")));
+
+        assertEquals(List.of("g1", "g2"), guided.guides().stream().map(TurCatalogCitation::id).toList(),
+                "t1 is staged, p9 is a product, and two guides is the cap");
+    }
+
+    @Test
+    void withoutGuideTypesNoGuideIsSearched() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        retrievalReturns("tent", product("t1"));
+
+        var result = service.plan("outdoor", "en", "a first mountain crossing", null, null);
+
+        assertTrue(result.guides().isEmpty());
+        verify(copilotService, never()).retrieve("outdoor", "en", "a first mountain crossing");
+    }
+
     @Test
     void aPlanWithoutGapsSearchesNothing() {
         modelReplies("SUMMARY: Just browsing.");

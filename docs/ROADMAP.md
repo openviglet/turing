@@ -14,10 +14,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
-- 📋 **T1167** (deps: T1159 ✅) **The kit call cites no guide: a plan comes back as products without the site's own advice for it** — A shopper who does not know what to buy is the one who has not read the site's guide, and the call already retrieves for that plan. → §CLVIII.5
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

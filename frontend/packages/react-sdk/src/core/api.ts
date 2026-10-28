@@ -140,6 +140,7 @@ export type {
   TurCatalogKitRequest,
   TurCatalogKitProduct,
   TurCatalogKitStage,
+  TurCatalogKitGuide,
   TurCatalogKitResult,
 } from "@viglet/turing-sdk";
 

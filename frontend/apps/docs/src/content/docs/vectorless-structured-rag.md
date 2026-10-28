@@ -351,6 +351,46 @@ orders of magnitude, not milliseconds.
 Because an LLM-assisted row costs up to three LLM calls **per case**, restrict
 `strategies` (or lower `maxPasses`) when the pack is large.
 
+### Building a kit from a plan
+
+A shopper often does not know every item to ask for. Describe the plan instead, and
+the copilot returns the needs it implies, each with the catalog products that fill it:
+
+`POST /api/sn/{siteName}/copilot/kit`
+
+```json
+{
+  "plan": "two days crossing the mountains in July, first time",
+  "locale": "en",
+  "maxGaps": 5,
+  "perGap": 3,
+  "availabilityField": "in_stock",
+  "availability": "MARK",
+  "guideTypes": ["guide", "checklist"]
+}
+```
+
+Only `plan` is required. The response carries a one-sentence `summary`, the `stages`
+(each with the need, why the plan needs it, the search it ran and its `products`),
+the needs the catalog had nothing for in `unfilled`, and up to two `guides`.
+
+- **Products come from the site's own search, never from the model.** One LLM call
+  names the needs; each need then runs the same retrieval as a copilot question, so
+  the site's planning strategy and hybrid ranking apply, and no id or price is the
+  model's. A product staged under one need is not repeated under another.
+- **Each product says why it fits from its own attributes** (`reason`, e.g.
+  `weight: 1.2 kg; capacity: 2 people`), the ones matching the need first.
+- **Availability.** Name the field that says whether a product can be bought in
+  `availabilityField`. With `availability: "MARK"` (the default) an unavailable
+  product stays, with `available: false`; with `"DROP"` it is left out. Values such
+  as `false`, `0`, `out of stock` and `sold out` read as unavailable.
+- **Guides.** List the document types that count as a guide on your site in
+  `guideTypes`, and the documents of those types the plan itself retrieves are cited
+  beside the stages. Without `guideTypes`, no guide is searched.
+
+Both SDKs call it as `postCopilotKit` (`@viglet/turing-sdk` and
+`@viglet/turing-react-sdk`); gate it on `/copilot/available`, like the copilot.
+
 ### From React (SDK)
 
 The `@viglet/turing-react-sdk` ships a `useTuringCopilot` hook and an embeddable

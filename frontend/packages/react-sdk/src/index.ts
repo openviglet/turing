@@ -210,6 +210,7 @@ export type {
   TurCatalogKitRequest,
   TurCatalogKitProduct,
   TurCatalogKitStage,
+  TurCatalogKitGuide,
   TurCatalogKitResult,
 } from "./core/api";
 export { useTuringUserMemory } from "./hooks/use-turing-user-memory";

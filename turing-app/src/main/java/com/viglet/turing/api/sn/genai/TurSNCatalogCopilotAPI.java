@@ -87,17 +87,18 @@ public class TurSNCatalogCopilotAPI {
         log.info("[CatalogKit] kit on site '{}'", siteName);
         return kitService.plan(siteName, request.locale(), request.plan(),
                 new TurCatalogKitService.Options(request.maxGaps(), request.perGap(),
-                        request.availabilityField(), request.availability()));
+                        request.availabilityField(), request.availability(), request.guideTypes()));
     }
 
     /**
      * T1159 — the plan, an optional locale and optional limits (gaps, products per
      * gap). {@code availabilityField} names the product field that says whether it
      * can be bought; {@code availability} is {@code MARK} (default: keep it, with
-     * {@code available: false}) or {@code DROP}.
+     * {@code available: false}) or {@code DROP}. T1167 — {@code guideTypes} names the
+     * document types that count as a guide, cited beside the stages.
      */
     public record KitRequest(String plan, String locale, Integer maxGaps, Integer perGap,
-            String availabilityField, TurCatalogKitService.Availability availability) {
+            String availabilityField, TurCatalogKitService.Availability availability, List<String> guideTypes) {
     }
 
     /** Request body: the conversation so far plus an optional locale. */

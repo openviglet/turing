@@ -85,10 +85,23 @@ public class TurCatalogKitService {
         MARK, DROP
     }
 
-    /** The kit's optional knobs; every field may be {@code null}. */
-    public record Options(Integer maxGaps, Integer perGap, String availabilityField, Availability availability) {
-        static final Options DEFAULTS = new Options(null, null, null, null);
+    /**
+     * The kit's optional knobs; every field may be {@code null}. T1167 —
+     * {@code guideTypes} names the document types that count as a guide on this
+     * site (a site's types differ, so none is guessed); without it no guide is cited.
+     */
+    public record Options(Integer maxGaps, Integer perGap, String availabilityField, Availability availability,
+            List<String> guideTypes) {
+        static final Options DEFAULTS = new Options(null, null, null, null, null);
+
+        /** The knobs before T1167: no guide types. */
+        public Options(Integer maxGaps, Integer perGap, String availabilityField, Availability availability) {
+            this(maxGaps, perGap, availabilityField, availability, null);
+        }
     }
+
+    /** T1167 — at most this many guides are cited beside the stages. */
+    static final int MAX_GUIDES = 2;
 
     /** Values of an availability field that read as "not available", lower-cased. */
     static final Set<String> UNAVAILABLE = Set.of("false", "0", "no", "n", "unavailable", "out of stock",
@@ -99,9 +112,22 @@ public class TurCatalogKitService {
     /**
      * The staged kit, or an error. {@code stages} holds only gaps retrieval found
      * products for; {@code unfilled} names the gaps it found none for, so a client
-     * can say what the catalog lacks.
+     * can say what the catalog lacks. T1167 — {@code guides} cites the site's own
+     * advice for the plan (documents of a requested guide type), empty unless the
+     * request named guide types.
      */
-    public record Result(String summary, List<Stage> stages, List<String> unfilled, String error) {
+    public record Result(String summary, List<Stage> stages, List<String> unfilled, String error,
+            List<TurCatalogCitation> guides) {
+
+        public Result {
+            guides = guides == null ? List.of() : guides;
+        }
+
+        /** The result before T1167: no guides. */
+        public Result(String summary, List<Stage> stages, List<String> unfilled, String error) {
+            this(summary, stages, unfilled, error, List.of());
+        }
+
         static Result error(String message) {
             return new Result(null, List.of(), List.of(), message);
         }
@@ -163,7 +189,35 @@ public class TurCatalogKitService {
                 stages.add(new Stage(gap.name(), gap.reason(), gap.query(), products));
             }
         }
-        return new Result(named.summary(), List.copyOf(stages), List.copyOf(unfilled), null);
+        return new Result(named.summary(), List.copyOf(stages), List.copyOf(unfilled), null,
+                guides(siteName, locale, plan, opts.guideTypes(), staged));
+    }
+
+    /**
+     * T1167 — up to {@link #MAX_GUIDES} documents the plan text itself retrieves
+     * whose {@code type} is one of {@code guideTypes} (case-insensitive), skipping
+     * any already staged as a product. No guide types, no retrieval.
+     */
+    private List<TurCatalogCitation> guides(String siteName, String locale, String plan, List<String> guideTypes,
+            Set<String> staged) {
+        if (guideTypes == null || guideTypes.isEmpty()) {
+            return List.of();
+        }
+        Set<String> types = new HashSet<>();
+        guideTypes.stream().filter(StringUtils::hasText)
+                .forEach(t -> types.add(t.strip().toLowerCase(java.util.Locale.ROOT)));
+        TurCatalogCopilotService.Retrieval retrieval = copilotService.retrieve(siteName, locale, plan);
+        List<TurCatalogCitation> guides = new ArrayList<>();
+        List<TurCatalogCitation> citations = retrieval.citations();
+        for (int i = 0; i < citations.size() && guides.size() < MAX_GUIDES; i++) {
+            TurCatalogCitation citation = citations.get(i);
+            String type = retrieval.attributesAt(i).get("type");
+            if (citation.id() != null && type != null && types.contains(type.strip().toLowerCase(java.util.Locale.ROOT))
+                    && !staged.contains(citation.id())) {
+                guides.add(citation);
+            }
+        }
+        return List.copyOf(guides);
     }
 
     /**

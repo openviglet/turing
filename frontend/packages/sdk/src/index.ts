@@ -132,6 +132,7 @@ export type {
   TurCatalogKitRequest,
   TurCatalogKitProduct,
   TurCatalogKitStage,
+  TurCatalogKitGuide,
   TurCatalogKitResult,
   TurChatConversationRequest,
   TurChatSlotUploadResponse,

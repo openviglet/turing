@@ -1987,6 +1987,17 @@ export interface TurCatalogKitRequest {
   readonly availabilityField?: string;
   /** `MARK` (default) keeps an unavailable product with `available: false`; `DROP` leaves it out. */
   readonly availability?: TurCatalogKitAvailability;
+  /** T1167 — the document types that count as a guide on this site; none, no guides. */
+  readonly guideTypes?: readonly string[];
+}
+
+/** T1167 — a guide the plan retrieved: the site's own advice, cited beside the stages. */
+export interface TurCatalogKitGuide {
+  readonly rank: number;
+  readonly id: string;
+  readonly title: string;
+  readonly url?: string | null;
+  readonly score?: number | null;
 }
 
 /** T1159 — a staged product: a catalog result, never one the model named. */
@@ -2016,6 +2027,8 @@ export interface TurCatalogKitResult {
   readonly stages: readonly TurCatalogKitStage[];
   /** Needs the catalog had no product for. */
   readonly unfilled: readonly string[];
+  /** T1167 — up to two guides of a requested type; empty without `guideTypes`. */
+  readonly guides?: readonly TurCatalogKitGuide[];
   /** Set when no kit could be built (no default LLM, unknown site, empty plan). */
   readonly error?: string | null;
 }
