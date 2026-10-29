@@ -1,7 +1,7 @@
 # turing-site
 
 Public marketing site for **Viglet Turing**, published to
-[turing.viglet.org](https://turing.viglet.org/).
+[openviglet.github.io/turing](https://openviglet.github.io/turing/).
 
 Stack: **Vite 8 + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui**
 (same conventions as the other apps in this monorepo). It is a standalone,
@@ -24,7 +24,7 @@ pnpm --filter turing-site dev
 pnpm build:site          # tsc -b && vite build  →  dist/
 ```
 
-The build output in `dist/` is deployed to the root of `turing.viglet.org` by
+The build output in `dist/` is deployed to the root of `openviglet.github.io/turing` by
 [.github/workflows/publish-github-pages.yml](../../../.github/workflows/publish-github-pages.yml),
 alongside the React SDK Storybook (`/react-sdk/`) and the marketplace examples
 (`/marketplace/`).

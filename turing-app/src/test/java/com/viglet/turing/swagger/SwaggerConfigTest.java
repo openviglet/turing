@@ -23,6 +23,6 @@ class SwaggerConfigTest {
         assertEquals("Apache 2.0", openAPI.getInfo().getLicense().getName());
         assertEquals("https://www.viglet.org/turing/", openAPI.getInfo().getLicense().getUrl());
         assertEquals("Turing ES Documentation", openAPI.getExternalDocs().getDescription());
-        assertEquals("https://turing.viglet.org/docs/", openAPI.getExternalDocs().getUrl());
+        assertEquals("https://openviglet.github.io/turing/docs/", openAPI.getExternalDocs().getUrl());
     }
 }

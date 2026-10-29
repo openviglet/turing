@@ -13,6 +13,7 @@ import {
   MIGRATION_MAP,
   MIGRATION_OUTCOMES,
 } from "@/lib/site-content";
+import { withBase } from "@/lib/site-url";
 
 /**
  * "Switching from Algolia / Elasticsearch?" migration landing (§XXVII.3, T479).
@@ -33,7 +34,7 @@ export function MigratePage() {
           <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
           <Container>
             <a
-              href="/"
+              href={withBase("/")}
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
             >
               <ArrowLeft className="size-4" /> Back to overview
@@ -61,7 +62,7 @@ export function MigratePage() {
                 variant="outline"
                 className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
-                <a href="/#playground">Try it live</a>
+                <a href={withBase("/#playground")}>Try it live</a>
               </Button>
             </div>
           </Container>
@@ -220,7 +221,7 @@ export function MigratePage() {
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href="/#playground">Try it live</a>
+                  <a href={withBase("/#playground")}>Try it live</a>
                 </Button>
               </div>
             </Card>

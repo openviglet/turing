@@ -83,7 +83,7 @@ public class TurLLMVendorOnStartup {
 		// credit. Fixed endpoint, one opaque model alias; nothing to configure.
 		ensureVendor(TurVigletLlmProvider.VENDOR_ID,
 				"Viglet AI — the managed endpoint behind the onboarding credit (fixed endpoint, one model)",
-				TurVigletLlmProvider.PLUGIN_TYPE, "Viglet AI", "https://turing.viglet.org");
+				TurVigletLlmProvider.PLUGIN_TYPE, "Viglet AI", "https://openviglet.github.io/turing");
 	}
 
 	/** Creates the vendor only when its id is not already present (idempotent). */

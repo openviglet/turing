@@ -41,13 +41,13 @@
     "semantic-search",
     "self-hosted"
   ],
-  "homepage": "https://turing.viglet.org",
+  "homepage": "https://openviglet.github.io/turing",
   "bugs": {
-    "url": "https://github.com/openviglet/turing-ce/issues"
+    "url": "https://github.com/openviglet/turing/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/openviglet/turing-ce.git",
+    "url": "https://github.com/openviglet/turing.git",
     "directory": "frontend/packages/cli"
   },
   "author": "Viglet <opensource@viglet.org> (https://www.viglet.org)",

@@ -6,7 +6,7 @@
 > Swap the LLM or the tools and the voice stays. Self-hosted, open source
 > (Apache 2.0).
 
-Page: https://turing.viglet.org/persona/
+Page: https://openviglet.github.io/turing/persona/
 
 ## What is an AI persona?
 
@@ -75,7 +75,7 @@ the tools, so you can change the LLM and keep the persona.
 
 ## Live demo
 
-A live content-fit demo runs on https://turing.viglet.org/persona/: pick an
+A live content-fit demo runs on https://openviglet.github.io/turing/persona/: pick an
 audience persona, paste text, and get a fit verdict (readability + text-grounded
 AI review) against the demo backend.
 
@@ -83,11 +83,11 @@ AI review) against the demo backend.
 
 The full guide, with a worked example for every feature and six customer
 scenarios (e-commerce, banking, healthcare, SaaS, public sector, media), is
-"The Persona Book": https://turing.viglet.org/docs/persona-book/
+"The Persona Book": https://openviglet.github.io/turing/docs/persona-book/
 
 ## Links
 
-- Personas page: https://turing.viglet.org/persona/
-- The Persona Book: https://turing.viglet.org/docs/persona-book/
-- Personas reference: https://turing.viglet.org/docs/personas/
-- Documentation: https://turing.viglet.org/docs/
+- Personas page: https://openviglet.github.io/turing/persona/
+- The Persona Book: https://openviglet.github.io/turing/docs/persona-book/
+- Personas reference: https://openviglet.github.io/turing/docs/personas/
+- Documentation: https://openviglet.github.io/turing/docs/

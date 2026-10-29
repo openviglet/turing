@@ -13,7 +13,9 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { pathToFileURL } from "node:url";
 
-const SITE_ORIGIN = "https://turing.viglet.org";
+// The public URL of the site root: GitHub Pages serves it under the project path
+// that vite.config.ts sets as `base`.
+const SITE_URL = "https://openviglet.github.io/turing";
 const distDir = resolve(process.cwd(), "dist");
 const serverEntry = resolve(process.cwd(), "dist-ssr", "entry-server.js");
 
@@ -30,7 +32,7 @@ function replaceOrThrow(html, re, replacement, label) {
 
 function buildHtml(route) {
   const appHtml = render(route.path);
-  const canonical = `${SITE_ORIGIN}${route.path === "/" ? "/" : route.path}`;
+  const canonical = `${SITE_URL}${route.path}`;
   const title = route.title;
   const desc = route.description;
 

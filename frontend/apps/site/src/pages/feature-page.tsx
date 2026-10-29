@@ -11,6 +11,7 @@ import {
   FEATURE_SLUGS,
   type FeatureDetail,
 } from "@/lib/site-content";
+import { withBase } from "@/lib/site-url";
 
 /** FAQPage JSON-LD for the page's own questions, prerendered to static HTML. */
 function FeatureJsonLd({ detail }: Readonly<{ detail: FeatureDetail }>) {
@@ -48,7 +49,7 @@ export function FeaturePage({ detail }: Readonly<{ detail: FeatureDetail }>) {
           <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
           <Container>
             <a
-              href="/"
+              href={withBase("/")}
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
             >
               <ArrowLeft className="size-4" /> Back to overview
@@ -150,7 +151,7 @@ export function FeaturePage({ detail }: Readonly<{ detail: FeatureDetail }>) {
             </h2>
             <div className="grid gap-5 sm:grid-cols-3">
               {others.map((o) => (
-                <a key={o.slug} href={`/features/${o.slug}/`} className="group">
+                <a key={o.slug} href={withBase(`/features/${o.slug}/`)} className="group">
                   <Card className="h-full gap-0 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10">
                     <span className="text-xs font-extrabold tracking-[0.1em] text-muted-foreground uppercase">
                       {o.eyebrow}

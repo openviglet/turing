@@ -16,6 +16,7 @@ import {
   AEM_STEPS,
 } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
+import { siteUrl, withBase } from "@/lib/site-url";
 
 /** Matrix cell: yes/no render as icons, anything else as short freeform text. */
 function Cell({ value, highlight }: Readonly<{ value: string; highlight?: boolean }>) {
@@ -48,13 +49,13 @@ function AemJsonLd() {
             "@type": "ListItem",
             position: 1,
             name: "Viglet Turing",
-            item: "https://turing.viglet.org/",
+            item: siteUrl("/"),
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "AEM Search",
-            item: "https://turing.viglet.org/aem-search/",
+            item: siteUrl("/aem-search/"),
           },
         ],
       },
@@ -63,7 +64,7 @@ function AemJsonLd() {
         name: "Viglet Turing · AEM AI Search",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Any (self-hosted, Docker)",
-        url: "https://turing.viglet.org/aem-search/",
+        url: siteUrl("/aem-search/"),
         description:
           "AI search for Adobe Experience Manager: cited, streaming answers plus faceted keyword + semantic search over AEM 6.5 and AEM as a Cloud Service, indexed via the Dumont connector. Self-hosted, open source (Apache 2.0).",
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -109,7 +110,7 @@ export function AemPage() {
           <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
           <Container>
             <a
-              href="/"
+              href={withBase("/")}
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
             >
               <ArrowLeft className="size-4" /> Back to overview
@@ -345,7 +346,7 @@ export function AemPage() {
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href="/compare/">Compare the alternatives</a>
+                  <a href={withBase("/compare/")}>Compare the alternatives</a>
                 </Button>
               </div>
             </Card>

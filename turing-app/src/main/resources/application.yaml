@@ -427,7 +427,7 @@ turing:
     server: false
   marketplace:
     enabled: true
-    url: https://turing.viglet.org/marketplace/marketplace.json
+    url: https://openviglet.github.io/turing/marketplace/marketplace.json
   genai:
     reindex:
       # Number of documents indexed in parallel during a RAG reindex.

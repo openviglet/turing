@@ -2,6 +2,7 @@ import { ArrowRight, Check, Minus } from "lucide-react";
 import { Container, SectionHeader, TableScroll } from "@/components/brand";
 import { COMPARISON, COMPARISON_COLUMNS } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
+import { withBase } from "@/lib/site-url";
 
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
   if (value === "yes") {
@@ -75,14 +76,14 @@ export function Comparison() {
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-center">
           <a
-            href="/compare/"
+            href={withBase("/compare/")}
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
           >
             See the full comparison &amp; FAQ
             <ArrowRight className="size-4" />
           </a>
           <a
-            href="/migrate/"
+            href={withBase("/migrate/")}
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
           >
             Switching from Algolia or Elasticsearch?

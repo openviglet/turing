@@ -50,7 +50,7 @@ import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
 
 /**
  * T673 / §XL (Block AQ) — imports a <em>Turing Thesaurus Exchange</em>
- * <em>authority file</em> (namespace {@code https://turing.viglet.org/xsd/thesaurus/1.0},
+ * <em>authority file</em> (namespace {@code https://openviglet.github.io/turing/xsd/thesaurus/1.0},
  * formal contract in {@code kb/turing-thesaurus-1.0.xsd}) into a
  * {@link TurMicrothesaurus} under a {@link TurKnowledgeBase}. The parser reads by
  * local element name, so it also ingests legacy controlled-vocabulary exports

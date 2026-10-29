@@ -9,7 +9,7 @@ const LINKS_LEFT = [
 ];
 
 const LINKS_RIGHT = [
-  { href: "https://turing.viglet.org/docs/", label: "Docs", external: true },
+  { href: "https://openviglet.github.io/turing/docs/", label: "Docs", external: true },
   { href: "https://www.viglet.org/#contact", label: "Contact", external: true },
   { href: "https://www.viglet.org", label: "Viglet", external: true },
 ];

@@ -1,14 +1,14 @@
-# Google Ads: turing.viglet.org/aem-search
+# Google Ads: openviglet.github.io/turing/aem-search
 
 Copy e configuração de campanha para promover a página **AI Search for Adobe
-Experience Manager** (`https://turing.viglet.org/aem-search/`).
+Experience Manager** (`https://openviglet.github.io/turing/aem-search/`).
 
 Posicionamento da página: dar ao AEM respostas de IA **citadas e em streaming**,
 mais busca **facetada + semântica**, e ir além do que um add-on AEM-native
 consegue: busca fora do AEM, agents/tools/skills/MCP, qualquer LLM, qualquer
 engine, self-hosted sob **Apache 2.0**.
 
-- **Final URL:** `https://turing.viglet.org/aem-search/`
+- **Final URL:** `https://openviglet.github.io/turing/aem-search/`
 - **Display path sugerido:** `viglet.org/AEM-Search`
 - **Business name:** `Viglet` (empresa; `Turing ES` é o produto)
 
@@ -82,12 +82,12 @@ ideal 4–6.
 
 | Link text | Descrição 1 | Descrição 2 | Final URL |
 | --- | --- | --- | --- |
-| Try Live on WKND | Search & ask Adobe's WKND site | Cited answers, real AEM content | `turing.viglet.org/#playground` |
+| Try Live on WKND | Search & ask Adobe's WKND site | Cited answers, real AEM content | `openviglet.github.io/turing/#playground` |
 | AEM Connector Docs | Index AEM 6.5 or Cloud Service | Powered by the Dumont connector | *(LINKS.aemConnector)* |
-| Get Started | Self-host under Apache 2.0 | Connect your AEM tier fast | `turing.viglet.org/` (docs) |
-| AEM AI Capability Matrix | vs an AEM-native AI add-on | See where the depth gap opens | `turing.viglet.org/aem-search/` |
-| Bring Your Own LLM | Any LLM, any search engine | Data stays in your infrastructure | `turing.viglet.org/aem-search/` |
-| Compare Alternatives | vs Algolia, Elasticsearch & RAG | An honest, side-by-side look | `turing.viglet.org/compare` |
+| Get Started | Self-host under Apache 2.0 | Connect your AEM tier fast | `openviglet.github.io/turing/` (docs) |
+| AEM AI Capability Matrix | vs an AEM-native AI add-on | See where the depth gap opens | `openviglet.github.io/turing/aem-search/` |
+| Bring Your Own LLM | Any LLM, any search engine | Data stays in your infrastructure | `openviglet.github.io/turing/aem-search/` |
+| Compare Alternatives | vs Algolia, Elasticsearch & RAG | An honest, side-by-side look | `openviglet.github.io/turing/compare` |
 
 > **Atenção:** `/compare` compara Turing vs **Algolia, Elasticsearch & DIY RAG**,
 > *não* AEM-native search. A comparação contra o AEM-native AI add-on está na
@@ -184,7 +184,7 @@ Não limita o alcance: dá pista de quem converte para acelerar o aprendizado.
 - aem-ai-search.com (concorrente direto citado na página)
 
 **Seus dados (sinal mais forte, se disponível):**
-- Visitantes do site (tag do Google em turing.viglet.org, especialmente `/aem-search`)
+- Visitantes do site (tag do Google em openviglet.github.io/turing, especialmente `/aem-search`)
 - Lista de clientes/leads (quem baixou docs, testou a demo)
 
 **Interesses e dados demográficos detalhados:**

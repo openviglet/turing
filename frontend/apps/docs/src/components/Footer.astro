@@ -1,27 +1,28 @@
 ---
 /**
  * T1162 — Starlight's page footer (pagination, last updated), then the marketing
- * site's footer: the same columns and the same dark band as turing.viglet.org.
+ * site's footer: the same columns and the same dark band as openviglet.github.io/turing.
  */
 import Default from "@astrojs/starlight/components/Footer.astro";
+import { SITE_ROOT } from "../../site.mjs";
 import mark from "../assets/turing-mark.svg";
 
 const columns = [
   {
     heading: "Product",
     links: [
-      { label: "Capabilities", href: "/#features" },
-      { label: "Compare", href: "/compare/" },
-      { label: "Migrate", href: "/migrate/" },
-      { label: "AEM search", href: "/aem-search/" },
-      { label: "Security", href: "/security/" },
-      { label: "Marketplace", href: "/#marketplace" },
+      { label: "Capabilities", href: `${SITE_ROOT}/#features` },
+      { label: "Compare", href: `${SITE_ROOT}/compare/` },
+      { label: "Migrate", href: `${SITE_ROOT}/migrate/` },
+      { label: "AEM search", href: `${SITE_ROOT}/aem-search/` },
+      { label: "Security", href: `${SITE_ROOT}/security/` },
+      { label: "Marketplace", href: `${SITE_ROOT}/#marketplace` },
     ],
   },
   {
     heading: "Developers",
     links: [
-      { label: "React SDK", href: "/react-sdk/" },
+      { label: "React SDK", href: `${SITE_ROOT}/react-sdk/` },
       { label: "npm", href: "https://www.npmjs.com/package/@viglet/turing-react-sdk" },
       { label: "CLI", href: "https://www.npmjs.com/package/@viglet/turing-cli" },
     ],
@@ -29,7 +30,7 @@ const columns = [
   {
     heading: "Open & transparent",
     links: [
-      { label: "Roadmap", href: "https://github.com/openviglet/turing-ce/blob/HEAD/docs/ROADMAP.md" },
+      { label: "Roadmap", href: "https://github.com/openviglet/turing/blob/HEAD/docs/ROADMAP.md" },
       { label: "Changelog", href: "https://www.viglet.org/turing/release-notes/" },
       { label: "viglet.org", href: "https://www.viglet.org" },
     ],

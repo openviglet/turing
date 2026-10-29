@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?> 
-<authorityFile xmlns="https://turing.viglet.org/xsd/thesaurus/1.0">
+<authorityFile xmlns="https://openviglet.github.io/turing/xsd/thesaurus/1.0">
   <name>APICULTURA</name>
   <terms>
     <term>

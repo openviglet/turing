@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
+import { withBase } from "@/lib/site-url";
 
 export function CallToAction() {
   return (
@@ -30,7 +31,7 @@ export function CallToAction() {
               variant="outline"
               className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white dark:bg-white/10"
             >
-              <a href="/#playground">Try it live</a>
+              <a href={withBase("/#playground")}>Try it live</a>
             </Button>
           </div>
         </div>

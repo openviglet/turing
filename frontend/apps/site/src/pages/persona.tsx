@@ -15,8 +15,9 @@ import {
   PERSONA_VOICES,
 } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
+import { siteUrl, withBase } from "@/lib/site-url";
 
-const PERSONA_BOOK_URL = "/docs/persona-book/";
+const PERSONA_BOOK_URL = withBase("/docs/persona-book/");
 
 /** Matrix cell: yes/no render as icons, anything else as short freeform text. */
 function Cell({ value, highlight }: Readonly<{ value: string; highlight?: boolean }>) {
@@ -49,13 +50,13 @@ function PersonaJsonLd() {
             "@type": "ListItem",
             position: 1,
             name: "Viglet Turing",
-            item: "https://turing.viglet.org/",
+            item: siteUrl("/"),
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "AI Personas",
-            item: "https://turing.viglet.org/persona/",
+            item: siteUrl("/persona/"),
           },
         ],
       },
@@ -64,7 +65,7 @@ function PersonaJsonLd() {
         name: "Viglet Turing · AI Personas (brand voice)",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Any (self-hosted, Docker)",
-        url: "https://turing.viglet.org/persona/",
+        url: siteUrl("/persona/"),
         description:
           "Give your AI agents a governed brand voice. Required and forbidden vocabulary enforced in two layers, live brand facts via MCP, audience content-fit scoring, Persona Match and synthetic user research. Self-hosted, open source (Apache 2.0).",
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -112,7 +113,7 @@ export function PersonaPage() {
           <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
           <Container>
             <a
-              href="/"
+              href={withBase("/")}
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
             >
               <ArrowLeft className="size-4" /> Back to overview
@@ -134,7 +135,7 @@ export function PersonaPage() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <a href="/#playground">
+                <a href={withBase("/#playground")}>
                   Try it live <ArrowRight className="size-4" />
                 </a>
               </Button>

@@ -48,5 +48,5 @@
   <text x="80" y="548" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="26" font-weight="500" fill="#aeb7d4">Any LLM · your infrastructure · your data. The open alternative to Algolia.</text>
 
   <!-- url -->
-  <text x="80" y="596" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="500" fill="#6b7394">turing.viglet.org</text>
+  <text x="80" y="596" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="500" fill="#6b7394">openviglet.github.io/turing</text>
 </svg>

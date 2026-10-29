@@ -1,20 +1,21 @@
 import { Container, Logo } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
 import { reopenConsent } from "@/lib/analytics";
+import { withBase } from "@/lib/site-url";
 
 const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] = [
   {
     heading: "Product",
     links: [
       // Root-anchored so they also work from the /features/* pages (match SiteNav).
-      { label: "Capabilities", href: "/#features" },
-      { label: "How it works", href: "/#how" },
-      { label: "Compare", href: "/compare/" },
-      { label: "Migrate", href: "/migrate/" },
-      { label: "AEM search", href: "/aem-search/" },
-      { label: "Security", href: "/security/" },
-      { label: "Self-host", href: "/#self-host" },
-      { label: "Marketplace", href: "/#marketplace" },
+      { label: "Capabilities", href: withBase("/#features") },
+      { label: "How it works", href: withBase("/#how") },
+      { label: "Compare", href: withBase("/compare/") },
+      { label: "Migrate", href: withBase("/migrate/") },
+      { label: "AEM search", href: withBase("/aem-search/") },
+      { label: "Security", href: withBase("/security/") },
+      { label: "Self-host", href: withBase("/#self-host") },
+      { label: "Marketplace", href: withBase("/#marketplace") },
       { label: "React SDK", href: LINKS.storybook },
     ],
   },

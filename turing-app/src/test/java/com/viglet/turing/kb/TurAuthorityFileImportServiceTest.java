@@ -50,7 +50,7 @@ class TurAuthorityFileImportServiceTest {
     private final TurKnowledgeBase kb = new TurKnowledgeBase();
 
     private static final String XML = """
-            <authorityFile xmlns="https://turing.viglet.org/xsd/thesaurus/1.0">
+            <authorityFile xmlns="https://openviglet.github.io/turing/xsd/thesaurus/1.0">
               <name>APICULTURA</name>
               <terms>
                 <term><id>1</id><name>Doença</name><enabled>true</enabled>

@@ -12,6 +12,8 @@
  * (viglet.org's src/index.css has them).
  */
 
+import { withBase } from "@/lib/site-url";
+
 const PRODUCT_NAMES: Record<string, string> = {
   dumont: "Viglet Dumont",
   shio: "Viglet Shio",
@@ -33,7 +35,7 @@ export function VigletLogo({ identifier, size = 48, glow = false, className }: V
   const classes = [className, glow && !small ? "vg-cube-glow" : ""].filter(Boolean).join(" ");
   return (
     <img
-      src={`/logos/${identifier}${small ? "-small" : ""}.svg`}
+      src={withBase(`/logos/${identifier}${small ? "-small" : ""}.svg`)}
       alt={name}
       width={size}
       height={size}

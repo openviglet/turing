@@ -6,7 +6,7 @@ bundler required.
 
 For the whole picture of search on Adobe Experience Manager (the AEM connector,
 the search component and a live demo on Adobe's WKND site), see
-[AEM search with Viglet Turing](https://turing.viglet.org/aem-search/).
+[AEM search with Viglet Turing](https://openviglet.github.io/turing/aem-search/).
 
 ## How EDS loads the SDK
 

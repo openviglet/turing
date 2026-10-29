@@ -14,6 +14,7 @@ import {
   FAQ,
 } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
+import { withBase } from "@/lib/site-url";
 
 /** Matrix cell: yes/no render as icons, anything else as short freeform text. */
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
@@ -73,7 +74,7 @@ export function ComparePage() {
           <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
           <Container>
             <a
-              href="/"
+              href={withBase("/")}
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
             >
               <ArrowLeft className="size-4" /> Back to overview
@@ -92,7 +93,7 @@ export function ComparePage() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <a href="/#playground">
+                <a href={withBase("/#playground")}>
                   Try it live <ArrowRight className="size-4" />
                 </a>
               </Button>
@@ -102,7 +103,7 @@ export function ComparePage() {
                 variant="outline"
                 className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
-                <a href="/migrate/">Switching from Algolia or Elastic?</a>
+                <a href={withBase("/migrate/")}>Switching from Algolia or Elastic?</a>
               </Button>
             </div>
           </Container>
@@ -302,7 +303,7 @@ export function ComparePage() {
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href="/#playground">Try it live</a>
+                  <a href={withBase("/#playground")}>Try it live</a>
                 </Button>
               </div>
             </Card>

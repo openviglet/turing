@@ -8,8 +8,8 @@
     "category": "example",
     "tags": ["fantasy", "bestiary", "search", "spa"],
     "icon": "dragon",
-    "downloadUrl": "https://turing.viglet.org/marketplace/mythical-creatures/mythical-creatures.zip",
-    "readmeUrl": "https://turing.viglet.org/marketplace/mythical-creatures/README.md",
+    "downloadUrl": "https://openviglet.github.io/turing/marketplace/mythical-creatures/mythical-creatures.zip",
+    "readmeUrl": "https://openviglet.github.io/turing/marketplace/mythical-creatures/README.md",
     "hasContent": true,
     "hasTemplate": true
   },
@@ -22,8 +22,8 @@
     "category": "example",
     "tags": ["space", "science", "missions", "spa"],
     "icon": "rocket",
-    "downloadUrl": "https://turing.viglet.org/marketplace/space-missions/space-missions.zip",
-    "readmeUrl": "https://turing.viglet.org/marketplace/space-missions/README.md",
+    "downloadUrl": "https://openviglet.github.io/turing/marketplace/space-missions/space-missions.zip",
+    "readmeUrl": "https://openviglet.github.io/turing/marketplace/space-missions/README.md",
     "hasContent": true,
     "hasTemplate": true
   },
@@ -36,8 +36,8 @@
     "category": "example",
     "tags": ["music", "vinyl", "catalog", "spa"],
     "icon": "vinyl",
-    "downloadUrl": "https://turing.viglet.org/marketplace/vinyl-records/vinyl-records.zip",
-    "readmeUrl": "https://turing.viglet.org/marketplace/vinyl-records/README.md",
+    "downloadUrl": "https://openviglet.github.io/turing/marketplace/vinyl-records/vinyl-records.zip",
+    "readmeUrl": "https://openviglet.github.io/turing/marketplace/vinyl-records/README.md",
     "hasContent": true,
     "hasTemplate": true
   }

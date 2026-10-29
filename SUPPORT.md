@@ -16,7 +16,7 @@ commercial license without Apache 2.0's attribution obligations.
 
 - [GitHub Issues](https://github.com/openviglet/turing/issues): bugs and feature requests
 - [GitHub Discussions](https://github.com/openviglet/turing/discussions): questions
-- [Documentation](https://turing.viglet.org/docs/)
+- [Documentation](https://openviglet.github.io/turing/docs/)
 
 Best-effort, no response-time guarantee. If you need a guarantee, see below.
 

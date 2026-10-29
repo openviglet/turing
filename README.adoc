@@ -18,13 +18,13 @@ image:https://img.shields.io/badge/ghcr.io-openviglet%2Fturing--ce-2563eb?style=
 image:https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk&logoColor=white[Java 21]
 image:https://img.shields.io/badge/Spring%20Boot-4-6DB33F?style=flat-square&logo=springboot&logoColor=white[Spring Boot 4]
 image:https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black[React 19]
-image:https://img.shields.io/badge/docs-turing.viglet.org%2Fdocs-brightgreen?style=flat-square&logo=readthedocs&logoColor=white[Documentation,link="https://turing.viglet.org/docs/"]
+image:https://img.shields.io/badge/docs-turing.viglet.org%2Fdocs-brightgreen?style=flat-square&logo=readthedocs&logoColor=white[Documentation,link="https://openviglet.github.io/turing/docs/"]
 image:https://img.shields.io/badge/Sonar-Code%20Quality-brightgreen?style=flat-square&logo=SonarCloud[Code quality,link="https://sonarcloud.io/project/overview?id=viglet_turing"]
 
-**Site:** https://turing.viglet.org[turing.viglet.org] ·
-**Docs:** https://turing.viglet.org/docs/[turing.viglet.org/docs] ·
-**Compare:** https://turing.viglet.org/compare/[Turing vs Algolia, Coveo, Lucidworks and Elasticsearch] ·
-**AEM:** https://turing.viglet.org/aem-search[enterprise search for Adobe AEM]
+**Site:** https://openviglet.github.io/turing[openviglet.github.io/turing] ·
+**Docs:** https://openviglet.github.io/turing/docs/[openviglet.github.io/turing/docs] ·
+**Compare:** https://openviglet.github.io/turing/compare/[Turing vs Algolia, Coveo, Lucidworks and Elasticsearch] ·
+**AEM:** https://openviglet.github.io/turing/aem-search[enterprise search for Adobe AEM]
 
 toc::[]
 
@@ -105,7 +105,7 @@ option: a complete search platform you run yourself.
 |===
 
 The full comparison, product by product, is at
-https://turing.viglet.org/compare/[turing.viglet.org/compare].
+https://openviglet.github.io/turing/compare/[openviglet.github.io/turing/compare].
 
 == What's inside
 
@@ -292,12 +292,12 @@ turing/
 Yes. It covers the same ground (faceted search, autocomplete, merchandising-style
 spotlights and ranking rules, AI answers over your content) under the Apache 2.0
 license, self-hosted, with no metering by record or query. See the
-https://turing.viglet.org/compare/[comparison].
+https://openviglet.github.io/turing/compare/[comparison].
 
 **Does it work with Adobe Experience Manager?**
 Yes. https://github.com/openviglet/dumont[Viglet Dumont] reads AEM on-premise, AMS
 and AEM as a Cloud Service, and indexes it into Turing. Walkthrough:
-https://turing.viglet.org/aem-search[enterprise search for Adobe AEM].
+https://openviglet.github.io/turing/aem-search[enterprise search for Adobe AEM].
 
 **Can I run a RAG chat on my own servers?**
 Yes. The chat answers from your indexed content with inline citations, and the LLM is
@@ -338,10 +338,10 @@ More at https://www.viglet.org[viglet.org].
 
 [cols="1,2"]
 |===
-| https://turing.viglet.org/docs/[turing.viglet.org/docs] | Architecture, configuration, connectors, admin guide
-| https://turing.viglet.org/aem-search[AEM search guide] | Adding enterprise search and AI to Adobe Experience Manager
-| https://turing.viglet.org/compare/[Comparison] | Turing vs Algolia, Coveo, Lucidworks, Elasticsearch and DIY RAG
-| https://turing.viglet.org/latest/javadoc/[Javadoc] | API reference for the Java classes
+| https://openviglet.github.io/turing/docs/[openviglet.github.io/turing/docs] | Architecture, configuration, connectors, admin guide
+| https://openviglet.github.io/turing/aem-search[AEM search guide] | Adding enterprise search and AI to Adobe Experience Manager
+| https://openviglet.github.io/turing/compare/[Comparison] | Turing vs Algolia, Coveo, Lucidworks, Elasticsearch and DIY RAG
+| https://openviglet.github.io/turing/latest/javadoc/[Javadoc] | API reference for the Java classes
 | link:CHANGELOG.md[Changelog] | What shipped in each release
 |===
 
@@ -365,4 +365,4 @@ Apache License 2.0: see link:LICENSE[LICENSE].
 ---
 
 [.text-center]
-Built by the https://www.viglet.org[Viglet] Team · https://turing.viglet.org[turing.viglet.org]
+Built by the https://www.viglet.org[Viglet] Team · https://openviglet.github.io/turing[openviglet.github.io/turing]

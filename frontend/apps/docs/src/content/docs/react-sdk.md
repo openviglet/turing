@@ -9,7 +9,7 @@ The **@viglet/turing-react-sdk** provides headless hooks and unstyled UI compone
 - **TypeScript-first**: full type safety for all hooks, components, and API responses
 - **React 18 & 19** compatible
 
-> **Storybook**: Interactive demos and live examples at [turing.viglet.org/react-sdk](https://turing.viglet.org/react-sdk)
+> **Storybook**: Interactive demos and live examples at [openviglet.github.io/turing/react-sdk](https://openviglet.github.io/turing/react-sdk)
 
 ---
 
@@ -628,7 +628,7 @@ function SearchPage() {
 
 - [GitHub Repository](https://github.com/openviglet/turing)
 - [npm Package](https://www.npmjs.com/package/@viglet/turing-react-sdk)
-- [Storybook (Live Demos)](https://turing.viglet.org/react-sdk)
+- [Storybook (Live Demos)](https://openviglet.github.io/turing/react-sdk)
 - [REST API Reference](/docs/rest-api/)
 
 ---

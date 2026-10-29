@@ -1,0 +1,22 @@
+databaseChangeLog:
+  # --- Viglet AI vendor website: turing.viglet.org retired ---
+  # The site moved to GitHub Pages (https://openviglet.github.io/turing). Repoint
+  # the VIGLET vendor row that v2026.3.1.125 seeded on existing installs. Fresh
+  # installs already get the new URL from TurLLMVendorOnStartup. Idempotent:
+  # skipped unless the row still carries the old URL.
+  - changeSet:
+      id: v2026.3.1.138-01-viglet-ai-vendor-website
+      author: viglet-team
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "1"
+          sql: "SELECT COUNT(*) FROM llm_vendor WHERE id = 'VIGLET' AND website = 'https://turing.viglet.org'"
+      changes:
+        - update:
+            tableName: llm_vendor
+            columns:
+              - column:
+                  name: website
+                  value: "https://openviglet.github.io/turing"
+            where: "id = 'VIGLET' AND website = 'https://turing.viglet.org'"

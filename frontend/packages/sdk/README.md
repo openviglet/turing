@@ -8,7 +8,7 @@ Built for **Adobe Edge Delivery Services (EDS)** blocks, plain `<script>`, Astro
 WordPress, or any bundler. (For React apps, use
 [`@viglet/turing-react-sdk`](../react-sdk) instead — same backend, hook-based API.)
 On Adobe Experience Manager it is the search component behind
-[AEM search with Viglet Turing](https://turing.viglet.org/aem-search/).
+[AEM search with Viglet Turing](https://openviglet.github.io/turing/aem-search/).
 
 ## Installation
 

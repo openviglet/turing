@@ -9,10 +9,10 @@ By participating you agree to abide by our
 
 ## Ways to contribute
 
-- **Report a bug**: [open an issue](https://github.com/openviglet/turing-ce/issues)
+- **Report a bug**: [open an issue](https://github.com/openviglet/turing/issues)
   using the bug-report template; include version, steps to reproduce, and logs.
 - **Request a feature**: open an issue with the feature-request template.
-- **Ask a question**: use [Discussions](https://github.com/openviglet/turing-ce/discussions),
+- **Ask a question**: use [Discussions](https://github.com/openviglet/turing/discussions),
   not the issue tracker.
 - **Submit code or docs**: open a pull request (see below).
 
@@ -34,8 +34,8 @@ and **Node 26+ with pnpm** for the frontend.
 
 ```bash
 # Clone
-git clone https://github.com/openviglet/turing-ce.git
-cd turing-ce
+git clone https://github.com/openviglet/turing.git
+cd turing
 
 # Full build (backend + frontend)
 ./mvnw clean install
@@ -113,5 +113,5 @@ project's **Apache 2.0** license, as certified by your DCO sign-off.
 ---
 
 Questions about contributing? Start a
-[Discussion](https://github.com/openviglet/turing-ce/discussions). For
+[Discussion](https://github.com/openviglet/turing/discussions). For
 commercial support and services, see [SUPPORT.md](SUPPORT.md).

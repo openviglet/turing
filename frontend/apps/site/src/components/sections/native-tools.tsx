@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Container, SectionHeader } from "@/components/brand";
 import { NATIVE_TOOLS } from "@/lib/site-content";
+import { withBase } from "@/lib/site-url";
 
 /** Brand dots for the provider badges on each tool card. */
 const PROVIDER_COLOR: Record<string, string> = {
@@ -59,7 +60,7 @@ export function NativeTools({ teaser = false }: Readonly<{ teaser?: boolean }>) 
         {teaser && (
           <div className="mt-8 flex justify-center">
             <Button asChild size="lg" variant="outline">
-              <a href="/features/automate/">
+              <a href={withBase("/features/automate/")}>
                 See how agents use these <ArrowRight className="size-4" />
               </a>
             </Button>

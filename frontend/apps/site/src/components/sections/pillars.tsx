@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Container, SectionHeader } from "@/components/brand";
 import { PILLARS } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
+import { withBase } from "@/lib/site-url";
 
 export function Pillars() {
   return (
@@ -49,7 +50,7 @@ export function Pillars() {
                   ))}
                 </div>
                 <a
-                  href={`/features/${p.slug}/`}
+                  href={withBase(`/features/${p.slug}/`)}
                   className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
                 >
                   Learn more

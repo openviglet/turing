@@ -7,7 +7,7 @@ Interoperability artifacts kept as living contracts for planned work.
 A real-world **controlled-vocabulary microthesaurus** (an *authority file*) used
 to design and validate the **Turing Thesaurus Exchange** format: the 100% Turing
 XML contract for Block AQ (Knowledge Base / microthesauri), namespace
-`https://turing.viglet.org/xsd/thesaurus/1.0`. Classic enterprise
+`https://openviglet.github.io/turing/xsd/thesaurus/1.0`. Classic enterprise
 semantic-navigation systems were only a conceptual inspiration; this sample is a
 generic thesaurus export whose *shape* the T673 XSD and XML importer are authored
 against, and the format the T675 LLM-assisted generation emits.

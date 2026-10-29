@@ -10,9 +10,11 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
+import { DOCS_BASE, SITE_ORIGIN } from "../site.mjs";
+
 const HERE = path.dirname(url.fileURLToPath(import.meta.url));
 const OUT = path.resolve(HERE, "..", "..", "site", "dist", "docs");
-const BASE = "/docs";
+const BASE = DOCS_BASE;
 
 function htmlFiles(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
@@ -42,6 +44,12 @@ for (const file of htmlFiles(OUT)) {
   const html = fs.readFileSync(file, "utf8");
   for (const m of html.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
     const ref = m[1];
+    // A link written as "/docs/<page>/" that astro.config.mjs did not rebase points at
+    // the origin's root, outside the site, and 404s in production alone.
+    if (ref.startsWith("/docs/") || ref === "/docs") {
+      broken.push(`${path.relative(OUT, file)}: ${ref} (missing the ${BASE} base)`);
+      continue;
+    }
     if (!ref.startsWith(`${BASE}/`) && ref !== BASE) continue;
     const [pathname, hash] = ref.split("#");
     const target = targetFile(pathname.split("?")[0]);
@@ -54,7 +62,7 @@ for (const file of htmlFiles(OUT)) {
 }
 
 // T1163 — every redirect-map target on this area must be a page the build wrote.
-const SITE = "https://turing.viglet.org";
+const SITE = SITE_ORIGIN;
 const redirects = JSON.parse(fs.readFileSync(path.resolve(HERE, "..", "redirects.json"), "utf8"));
 for (const { from, to } of redirects) {
   if (!to.startsWith(`${SITE}${BASE}/`)) continue;

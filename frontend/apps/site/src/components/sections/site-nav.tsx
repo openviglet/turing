@@ -11,6 +11,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Container, Logo } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
 import { cn } from "@/lib/utils";
+import { withBase } from "@/lib/site-url";
 
 // Hrefs are root-anchored ("/#…") so they also work from the feature pages:
 // the browser navigates home and scrolls to the section.
@@ -19,7 +20,7 @@ import { cn } from "@/lib/utils";
 // grouped dropdowns. AEM is deliberately pulled OUT of the Solutions dropdown
 // and rendered as a highlighted top-level pill, because it's our headline solution.
 const NAV_LINKS = [
-  { label: "Try it live", href: "/#playground" },
+  { label: "Try it live", href: withBase("/#playground") },
   { label: "Docs", href: LINKS.docs },
 ];
 
@@ -27,19 +28,19 @@ const NAV_GROUPS = [
   {
     label: "Product",
     items: [
-      { label: "Capabilities", href: "/#features" },
-      { label: "AI Personas", href: "/persona/" },
-      { label: "Why Turing", href: "/#why" },
-      { label: "Developers", href: "/#developers" },
-      { label: "Marketplace", href: "/#marketplace" },
+      { label: "Capabilities", href: withBase("/#features") },
+      { label: "AI Personas", href: withBase("/persona/") },
+      { label: "Why Turing", href: withBase("/#why") },
+      { label: "Developers", href: withBase("/#developers") },
+      { label: "Marketplace", href: withBase("/#marketplace") },
     ],
   },
   {
     label: "Solutions",
     items: [
-      { label: "Security & data residency", href: "/security/" },
-      { label: "Compare", href: "/compare/" },
-      { label: "Migrate", href: "/migrate/" },
+      { label: "Security & data residency", href: withBase("/security/") },
+      { label: "Compare", href: withBase("/compare/") },
+      { label: "Migrate", href: withBase("/migrate/") },
     ],
   },
 ];
@@ -75,7 +76,7 @@ export function SiteNav() {
     >
       <Container className="flex h-16 items-center gap-4">
         <div className="flex shrink-0 items-center gap-2.5">
-          <a href="/" className="text-base" aria-label="Viglet Turing home">
+          <a href={withBase("/")} className="text-base" aria-label="Viglet Turing home">
             {/* Icon-only mark on mobile to leave room for the CTA + menu; full
                 wordmark from sm up. */}
             <Logo className="hidden sm:inline-flex" />
@@ -103,7 +104,7 @@ export function SiteNav() {
           ))}
           {/* Headline solution, pulled out of the dropdown and highlighted. */}
           <a
-            href="/aem-search/"
+            href={withBase("/aem-search/")}
             className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-bold whitespace-nowrap text-primary transition-colors hover:border-primary/50 hover:bg-primary/15"
           >
             <Sparkles className="size-3.5" />
@@ -173,7 +174,7 @@ export function SiteNav() {
               </a>
             ))}
             <a
-              href="/aem-search/"
+              href={withBase("/aem-search/")}
               onClick={closeMenu}
               className="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-2 py-2.5 text-sm font-bold text-primary transition-colors hover:bg-primary/15"
             >

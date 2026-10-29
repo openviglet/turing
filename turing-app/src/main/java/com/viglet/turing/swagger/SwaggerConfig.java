@@ -40,6 +40,6 @@ public class SwaggerConfig {
 						.license(new License().name("Apache 2.0").url("https://www.viglet.org/turing/")))
 				.externalDocs(new ExternalDocumentation()
 						.description("Turing ES Documentation")
-						.url("https://turing.viglet.org/docs/"));
+						.url("https://openviglet.github.io/turing/docs/"));
 	}
 }

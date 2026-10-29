@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Container, Eyebrow } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
 import { CopyCommand } from "@/components/copy-command";
+import { withBase } from "@/lib/site-url";
 
 const POINTS = [
   "Prebuilt container image: nothing to clone, nothing to build",
@@ -86,7 +87,7 @@ export function SelfHost() {
               <a href="#playground">Try the live demo</a>
             </Button>
             <Button asChild variant="ghost">
-              <a href="/security/">Data residency for regulated industries</a>
+              <a href={withBase("/security/")}>Data residency for regulated industries</a>
             </Button>
           </div>
         </div>

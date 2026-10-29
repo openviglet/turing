@@ -183,7 +183,7 @@ The reason teams switch: a hosted SaaS keeps your index (and increasingly your u
 - **Bring your own LLM and search engine**: OpenAI, Anthropic, Gemini, Azure or local Ollama; Solr, Elasticsearch or embedded Lucene.
 - **No per-record or per-search billing**: cost scales with your infrastructure, not your traffic.
 
-See [Deploy & Operate](/docs/deploy-operate/) for installation, and [Self-hosted, any LLM](https://turing.viglet.org/features/run) for the platform overview.
+See [Deploy & Operate](/docs/deploy-operate/) for installation, and [Self-hosted, any LLM](https://openviglet.github.io/turing/features/run) for the platform overview.
 
 ---
 

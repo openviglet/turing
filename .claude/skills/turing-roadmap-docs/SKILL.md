@@ -1,6 +1,6 @@
 ---
 name: turing-roadmap-docs
-description: The Turing-specific rules around the roadmap that roadkeep does not enforce — that ROADMAP.md stays minimal (headings + open lines only, no block descriptions or shipped notes, block drop when a block's last line ships), that new functionality REUSES an existing block (or a generic standing one) instead of minting a new letter, the one-task-one-commit + /loop discipline, the next block letter and docs/last-task.md, and propagating a shipped user-facing task into the end-user documentation (frontend/apps/docs, published at turing.viglet.org/docs) in the same commit, via its COVERAGE.md gate. The four docs/ files (ROADMAP.md, CHANGELOG.md, IMPROVEMENTS.md, STRATEGY.md) are written by the roadkeep tools and never by hand — for adding, shipping, retiring, sectioning, picking or querying a task use the `roadkeep` skill instead. Use when planning where a new feature or a cluster of findings goes, when finishing a task, when about to open a block, or after shipping anything user-facing.
+description: The Turing-specific rules around the roadmap that roadkeep does not enforce — that ROADMAP.md stays minimal (headings + open lines only, no block descriptions or shipped notes, block drop when a block's last line ships), that new functionality REUSES an existing block (or a generic standing one) instead of minting a new letter, the one-task-one-commit + /loop discipline, the next block letter and docs/last-task.md, and propagating a shipped user-facing task into the end-user documentation (frontend/apps/docs, published at openviglet.github.io/turing/docs) in the same commit, via its COVERAGE.md gate. The four docs/ files (ROADMAP.md, CHANGELOG.md, IMPROVEMENTS.md, STRATEGY.md) are written by the roadkeep tools and never by hand — for adding, shipping, retiring, sectioning, picking or querying a task use the `roadkeep` skill instead. Use when planning where a new feature or a cluster of findings goes, when finishing a task, when about to open a block, or after shipping anything user-facing.
 ---
 
 # Turing roadmap & docs — what roadkeep does not cover
@@ -209,7 +209,7 @@ yours to edit:
 
 The four `docs/` files are the **internal** engineering roadmap. The **end-user**
 documentation lives in this repo (T1164), as the Astro + Starlight area published at
-https://turing.viglet.org/docs:
+https://openviglet.github.io/turing/docs:
 
 ```
 frontend/apps/docs/src/content/docs/      one .md / .mdx per page
@@ -218,7 +218,7 @@ frontend/apps/docs/COVERAGE.md            the gate
 ```
 
 The old Docusaurus copy (vigletdocs `docs-turing`) is **frozen**: every page there
-carries a "moved to turing.viglet.org/docs" banner. Never edit it, and never re-run
+carries a "moved to openviglet.github.io/turing/docs" banner. Never edit it, and never re-run
 `scripts/port-docusaurus.mjs` (the one-time importer, which refuses without `--force`) —
 it would overwrite the pages here with the frozen ones.
 

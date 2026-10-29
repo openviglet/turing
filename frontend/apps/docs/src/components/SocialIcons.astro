@@ -2,14 +2,15 @@
 /**
  * T1162 — the marketing site's top-level links in the docs header, before
  * Starlight's own icons, so a reader can go back to the product pages from any
- * page here. Root-anchored on turing.viglet.org, as the site's own nav is.
+ * page here. Anchored on the site root (SITE_ROOT), as the site's own nav is.
  */
 import Default from "@astrojs/starlight/components/SocialIcons.astro";
+import { SITE_ROOT } from "../../site.mjs";
 
 const links = [
-  { label: "Home", href: "/" },
-  { label: "Try it live", href: "/#playground" },
-  { label: "AEM AI Search", href: "/aem-search/", highlight: true },
+  { label: "Home", href: `${SITE_ROOT}/` },
+  { label: "Try it live", href: `${SITE_ROOT}/#playground` },
+  { label: "AEM AI Search", href: `${SITE_ROOT}/aem-search/`, highlight: true },
 ];
 ---
 

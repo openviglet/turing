@@ -53,7 +53,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TurThesaurusGenerationService {
 
-    static final String NAMESPACE = "https://turing.viglet.org/xsd/thesaurus/1.0";
+    static final String NAMESPACE = "https://openviglet.github.io/turing/xsd/thesaurus/1.0";
 
     private final TurThesaurusHierarchyGenerator generator;
     private final TurAuthorityFileImportService importService;

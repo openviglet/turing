@@ -23,6 +23,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { TuringPersonaOption } from "@viglet/turing-react-ui";
+import { withBase } from "@/lib/site-url";
 
 /**
  * T638 / §XXVII.4: the personas the playground offers ("same question,
@@ -290,21 +291,21 @@ export const MARKETPLACE: LinkCard[] = [
     title: "Mythical Creatures",
     description:
       "A fantasy bestiary search site with dragons, griffins and phoenixes. Faceted search plus a React SPA template.",
-    href: "/marketplace/mythical-creatures/",
+    href: withBase("/marketplace/mythical-creatures/"),
     tag: "Faceted · React",
   },
   {
     title: "Space Missions",
     description:
       "Historic and fictional space missions with semantic search over mission data, crews and launch details.",
-    href: "/marketplace/space-missions/",
+    href: withBase("/marketplace/space-missions/"),
     tag: "Semantic · Data",
   },
   {
     title: "Vinyl Records",
     description:
       "A vinyl records catalog: browse albums by artist, genre, year and label with a retro template.",
-    href: "/marketplace/vinyl-records/",
+    href: withBase("/marketplace/vinyl-records/"),
     tag: "Catalog · Retro",
   },
 ];
@@ -314,7 +315,7 @@ export const RESOURCES: LinkCard[] = [
     title: "React SDK Storybook",
     description:
       "Interactive component docs: headless hooks and UI components with live examples for enterprise search.",
-    href: "/react-sdk/",
+    href: withBase("/react-sdk/"),
     tag: "Storybook",
   },
   {
@@ -349,7 +350,7 @@ export const RESOURCES: LinkCard[] = [
     title: "Documentation",
     description:
       "Architecture guides, configuration reference, connector setup, API docs and deployment instructions.",
-    href: "/docs/",
+    href: withBase("/docs/"),
     tag: "Docs",
   },
 ];
@@ -419,8 +420,8 @@ export const AUDIENCES: Audience[] = [
       "Vendor-neutral funnel analytics to your own GA4, GTM, Segment or Matomo, zero-config",
       "Self-host with one docker run. No account, no telemetry",
     ],
-    primary: { label: "Get started", href: "/docs/" },
-    secondary: { label: "Try it live", href: "/#playground" },
+    primary: { label: "Get started", href: withBase("/docs/") },
+    secondary: { label: "Try it live", href: withBase("/#playground") },
   },
   {
     eyebrow: "For enterprises",
@@ -432,8 +433,8 @@ export const AUDIENCES: Audience[] = [
       "SSO, encrypted secrets, any LLM (including fully local)",
       "Cited, auditable answers you can trace to the source",
     ],
-    primary: { label: "AEM AI Search", href: "/aem-search/" },
-    secondary: { label: "Security & data residency", href: "/security/" },
+    primary: { label: "AEM AI Search", href: withBase("/aem-search/") },
+    secondary: { label: "Security & data residency", href: withBase("/security/") },
   },
 ];
 
@@ -614,8 +615,8 @@ export const FEATURE_DETAILS: Record<string, FeatureDetail> = {
     "_setlocale": "en_US"
   }'`,
     },
-    docs: { label: "Search & connectors docs", href: "/docs/enterprise-search/" },
-    demo: { label: "Try a live faceted demo", href: "/marketplace/mythical-creatures/" },
+    docs: { label: "Search & connectors docs", href: withBase("/docs/enterprise-search/") },
+    demo: { label: "Try a live faceted demo", href: withBase("/marketplace/mythical-creatures/") },
     faq: [
       {
         q: "Do I need Solr or Elasticsearch to start?",
@@ -636,7 +637,7 @@ export const FEATURE_DETAILS: Record<string, FeatureDetail> = {
     ],
     related: {
       label: "Switching from Algolia or Elasticsearch?",
-      href: "/migrate/",
+      href: withBase("/migrate/"),
       body: "Concept mapping, a three-step import path and what changes in your front end.",
     },
     metaTitle: "Enterprise Search on Solr, Elasticsearch & Lucene | Viglet Turing",
@@ -682,7 +683,7 @@ function Assistant() {
   return <ChatThread messages={messages} onSend={send} />;
 }`,
     },
-    docs: { label: "RAG & chat docs", href: "/docs/rag-chat/" },
+    docs: { label: "RAG & chat docs", href: withBase("/docs/rag-chat/") },
     faq: [
       {
         q: "Where do the citations come from?",
@@ -703,7 +704,7 @@ function Assistant() {
     ],
     related: {
       label: "Turing vs a DIY LangChain RAG stack",
-      href: "/compare/",
+      href: withBase("/compare/"),
       body: "What you would otherwise build and run yourself, side by side with Algolia, Coveo and Elasticsearch.",
     },
     metaTitle: "RAG & Cited AI Chat over Your Content | Viglet Turing",
@@ -743,7 +744,7 @@ cd my-search
 npx @viglet/turing-cli dev      # local stack
 npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
     },
-    docs: { label: "Agents, tools & skills docs", href: "/docs/agents/" },
+    docs: { label: "Agents, tools & skills docs", href: withBase("/docs/agents/") },
     faq: [
       {
         q: "What is the difference between a tool and a skill?",
@@ -764,7 +765,7 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
     ],
     related: {
       label: "AI Personas: give your agents a brand voice",
-      href: "/persona/",
+      href: withBase("/persona/"),
       body: "Governed vocabulary, live brand facts over MCP and audience content-fit scoring.",
     },
     metaTitle: "AI Agents with Tools, Skills, MCP & Native Tools | Viglet Turing",
@@ -814,7 +815,7 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
   tenancy:
     enabled: false          # flip on for multi-tenant`,
     },
-    docs: { label: "Deployment & configuration docs", href: "/docs/deploy-operate/" },
+    docs: { label: "Deployment & configuration docs", href: withBase("/docs/deploy-operate/") },
     faq: [
       {
         q: "How do I run Turing on my own machine?",
@@ -835,7 +836,7 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
     ],
     related: {
       label: "Security & data residency",
-      href: "/security/",
+      href: withBase("/security/"),
       body: "Why self-hosting removes the vendor boundary, and the questions regulated teams ask first.",
     },
     metaTitle: "Self-Hosted, Any LLM, Open Source (Apache 2.0) | Viglet Turing",

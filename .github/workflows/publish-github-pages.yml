@@ -37,7 +37,8 @@ jobs:
         working-directory: frontend
         run: pnpm run build-storybook:react-sdk
         env:
-          STORYBOOK_BASE: /react-sdk/
+          # The site is served under the project path /turing/ (vite.config.ts base).
+          STORYBOOK_BASE: /turing/react-sdk/
 
       - name: Build marketing site (root)
         working-directory: frontend
@@ -87,20 +88,18 @@ jobs:
             fi
           done
 
-      - name: Deploy to openviglet/turing-ce (github-pages branch)
+      # Served at https://openviglet.github.io/turing/ (no custom domain, so no
+      # CNAME): Pages for openviglet/turing must serve the github-pages branch.
+      - name: Deploy to openviglet/turing (github-pages branch)
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.GH_PKG_TOKEN }}
-          external_repository: openviglet/turing-ce
+          external_repository: openviglet/turing
           publish_branch: github-pages
           publish_dir: ./_site
-          # Persist the custom domain across deploys. Each publish overwrites the
-          # github-pages branch; without a CNAME in the published root, GitHub
-          # Pages drops the custom domain and it has to be re-added by hand.
-          cname: turing.viglet.org
 
       # Ping IndexNow (Bing -> ChatGPT search, Copilot, DuckDuckGo) with every
       # sitemap URL. Waits for Pages to serve the key file; never fails the job.
       - name: Notify IndexNow
         continue-on-error: true
-        run: node frontend/apps/site/scripts/indexnow.mjs https://turing.viglet.org 0216f1cfab96c7e0be9434d12adbcc16
+        run: node frontend/apps/site/scripts/indexnow.mjs https://openviglet.github.io/turing 0216f1cfab96c7e0be9434d12adbcc16

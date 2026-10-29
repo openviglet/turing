@@ -342,8 +342,8 @@ Multiple Turing instances run behind Apache HTTP Server configured as a reverse 
 | [Installation Guide](/docs/installation-guide/) | Setup with Docker, JAR, or build from source |
 | [Configuration Reference](/docs/configuration-reference/) | All application.yaml properties |
 | [Integration](/docs/integration/) | Manage content connectors in the admin console |
-| [Dumont: Architecture](https://dumont.viglet.org/docs/architecture/) | Connector-side architecture: pipeline engine, message queue, and indexing plugins |
-| [Dumont: Connectors](https://dumont.viglet.org/docs/connectors/overview/) | Available connectors and deployment types |
+| [Dumont: Architecture](https://openviglet.github.io/dumont/docs/architecture/) | Connector-side architecture: pipeline engine, message queue, and indexing plugins |
+| [Dumont: Connectors](https://openviglet.github.io/dumont/docs/connectors/overview/) | Available connectors and deployment types |
 
 ---
 

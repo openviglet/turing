@@ -7,6 +7,7 @@ import { Container } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
 import { SECURITY_FAQ, SECURITY_POINTS } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
+import { withBase } from "@/lib/site-url";
 
 /** FAQPage JSON-LD for the data-residency questions, prerendered to static HTML. */
 function SecurityJsonLd() {
@@ -50,7 +51,7 @@ export function SecurityPage() {
           <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
           <Container>
             <a
-              href="/"
+              href={withBase("/")}
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
             >
               <ArrowLeft className="size-4" /> Back to overview
@@ -79,7 +80,7 @@ export function SecurityPage() {
                 variant="outline"
                 className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
-                <a href="/#self-host">Self-host in one command</a>
+                <a href={withBase("/#self-host")}>Self-host in one command</a>
               </Button>
             </div>
           </Container>
@@ -192,12 +193,12 @@ export function SecurityPage() {
               </ul>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button asChild size="lg">
-                  <a href="/aem-search/">
+                  <a href={withBase("/aem-search/")}>
                     See it for AEM <ArrowRight className="size-4" />
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href="/compare/">Compare the alternatives</a>
+                  <a href={withBase("/compare/")}>Compare the alternatives</a>
                 </Button>
               </div>
             </div>

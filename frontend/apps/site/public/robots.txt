@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://turing.viglet.org/sitemap.xml
+Sitemap: https://openviglet.github.io/turing/sitemap.xml

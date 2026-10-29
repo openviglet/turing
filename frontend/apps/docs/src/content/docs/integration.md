@@ -37,7 +37,7 @@ The creation and edit form is divided into two sections.
 
 ## Integration Detail: Sections
 
-After an integration is created, its detail page provides navigation to several sections. The sections below are common to all connector types. For AEM-specific configuration, see the [Turing AEM Connector](/docs/integration-aem/) overview and the full [Dumont AEM Connector](https://dumont.viglet.org/docs/connectors/aem/) documentation.
+After an integration is created, its detail page provides navigation to several sections. The sections below are common to all connector types. For AEM-specific configuration, see the [Turing AEM Connector](/docs/integration-aem/) overview and the full [Dumont AEM Connector](https://openviglet.github.io/dumont/docs/connectors/aem/) documentation.
 
 ---
 
@@ -158,8 +158,8 @@ Built-in SSRF protection validates the endpoint before forwarding. Requests to p
 | [Semantic Navigation](/docs/semantic-navigation/) | Configure the SN Sites that receive indexed content |
 | [Architecture Overview](/docs/architecture-overview/) | End-to-end indexing flow from connector to Solr |
 | [REST API Reference](/docs/rest-api/) | API endpoints for programmatic indexing |
-| [Dumont: Connectors](https://dumont.viglet.org/docs/connectors/overview/) | Available connectors (Web Crawler, AEM, Database, FileSystem, WordPress) and how to deploy them |
-| [Dumont: REST API](https://dumont.viglet.org/docs/rest-api/) | Connector-side API for triggering indexing, monitoring, and source management |
+| [Dumont: Connectors](https://openviglet.github.io/dumont/docs/connectors/overview/) | Available connectors (Web Crawler, AEM, Database, FileSystem, WordPress) and how to deploy them |
+| [Dumont: REST API](https://openviglet.github.io/dumont/docs/rest-api/) | Connector-side API for triggering indexing, monitoring, and source management |
 
 ---
 

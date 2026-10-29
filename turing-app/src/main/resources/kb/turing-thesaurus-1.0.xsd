@@ -2,7 +2,7 @@
 <!--
   T673 / §XL (Block AQ) — the Turing Thesaurus Exchange format: the formal
   contract for importing/exporting a microthesaurus (controlled vocabulary) as
-  XML, namespace https://turing.viglet.org/xsd/thesaurus/1.0.
+  XML, namespace https://openviglet.github.io/turing/xsd/thesaurus/1.0.
 
   This is a 100% Turing format. Its shape (an "authority file" of terms with
   broader/narrower/related/use relations + recognition variations) follows
@@ -15,8 +15,8 @@
   cosmetic drift.
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="https://turing.viglet.org/xsd/thesaurus/1.0"
-           targetNamespace="https://turing.viglet.org/xsd/thesaurus/1.0"
+           xmlns:tns="https://openviglet.github.io/turing/xsd/thesaurus/1.0"
+           targetNamespace="https://openviglet.github.io/turing/xsd/thesaurus/1.0"
            elementFormDefault="qualified">
 
   <xs:element name="authorityFile" type="tns:authorityFileType"/>

@@ -375,7 +375,7 @@ Para adicionar um novo serviço ao contexto:
 ## 📞 Suporte
 
 Para dúvidas ou problemas, consulte:
-- Documentação: https://turing.viglet.org/docs/
+- Documentação: https://openviglet.github.io/turing/docs/
 - GitHub: https://github.com/openviglet/turing
 - Issues: https://github.com/openviglet/turing/issues
 
