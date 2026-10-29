@@ -2287,84 +2287,78 @@ host hands to Google Analytics, and the consent that gates them.
 
 ### CLVIII.7 Lucene SN text search stems by locale (T1170)
 
-**Where it happened.** Dumont D201 (Build my kit on the WordPress demo store), checking
-the kit live on SN site `Demo` (en_US, Lucene engine, image `sha-971cf94703ec`, 165
-documents from Dumont's WordPress plugin).
+**Where it happened.** Dumont D201 (Build my kit), SN site `Demo` (en_US, Lucene, image
+`sha-971cf94703ec`, 165 documents from Dumont's WordPress plugin).
 
 **What happens.** `GET /api/sn/Demo/search?q=…` matches only the exact word form:
 
 | q | hits |
 |---|---|
-| `jacket` | 28 |
-| `jackets` | 0 |
-| `boot` | 10 (the boots) |
-| `boots` | 7 (articles only, no boot product) |
-| `sleeping bag` | 19 |
-| `sleeping bags` | 3 (a dry bag set) |
-| `waterproof jacket` | 49 |
-| `Waterproof jackets` | 0 |
+| `jacket` / `jackets` | 28 / 0 |
+| `boot` / `boots` | 10 / 7 (articles only) |
+| `sleeping bag` / `sleeping bags` | 19 / 3 |
+| `waterproof jacket` / `Waterproof jackets` | 49 / 0 |
 
-A shopper typing the plural, the way people name a category, gets nothing or the wrong
-thing. The kit (T1159) is hit hardest: its gap queries are category-like plurals, so
-they come back unfilled (see the kit-query line filed with this one).
+The kit (T1159) is hit hardest: its gap queries are category-like plurals.
 
-**Expected.** An English site's text fields and query go through an analyzer that stems,
-so `jackets` meets `jacket` as T815 already does for the ranking lexicon. The same holds
-for pt_BR (`jaquetas`/`jaqueta`) through the locale's analyzer.
+**Cause.** Every non-`_ac` field is indexed by `TurLuceneFoldingAnalyzer` (via
+`TurLucenePerFieldAnalyzer`, one per IndexWriter, no locale), and the query side parses
+with a bare `StandardAnalyzer` in `TurDslLuceneExecutor` and `TurLuceneQueryBuilder`.
+Neither stems. The DSL path is the copilot's, so index-side stemming alone fixes
+nothing.
 
-**Workaround.** None; Dumont's D201 live gate waits on this.
+**What Turing should do.** One locale-chosen analyzer for both index and query (Snowball
+`English`/`Portuguese`, as T815's lexicon), emitting the stem beside the original token
+(keyword-repeat, the T1080 folding pattern), so an index not yet reindexed still matches
+exact words and gains plurals after a reindex. Never stem `_ac`, string facets or ids;
+compose with `TurLuceneSynonymAnalyzer`; an unknown locale stays unstemmed.
 
-**What Turing should do.** Index and query an SN site's TEXT fields on Lucene with the
-site locale's stemming analyzer (Solr's `text_en` / `text_pt` behave this way),
-including the `_text_` resolution T1169 added, and add a parity spec: a plural query
-finds the singular-titled document on Lucene, Solr and Elasticsearch.
+**Spec.** A plural query finds the singular-titled document on Lucene (en_US, pt_BR),
+and the cases above. The ES plugin sets no stemming analyzer either: record what it does
+in the parity spec and file its own line if it misses.
 
 ### CLVIII.8 Kit gaps retrieve by the facet value they name (T1171)
 
-**Where it happened.** Dumont D201 (Build my kit on the WordPress demo store), live on
-SN site `Demo` (en_US, Lucene, image `sha-971cf94703ec`, which carries T1169).
+**Where it happened.** Dumont D201 (Build my kit), SN site `Demo` (en_US, Lucene, image
+`sha-971cf94703ec`, which carries T1169).
 
-**Request.**
+**Request.** `POST /api/sn/Demo/copilot/kit` with plan "Two days crossing the mountains
+in July, first time", `guideTypes: ["post"]`.
 
-```
-POST /api/sn/Demo/copilot/kit
-{"plan":"Two days crossing the mountains in July, first time","locale":"en_US",
- "availabilityField":"stock_status","availability":"MARK","guideTypes":["post"]}
-```
+**What came back.** One stage and four unfilled gaps (`Weather protection`, `Light
+travel gear`, `Reliable footwear`, `Rest accommodation`) although the catalog sells rain
+jackets, boots and tents. The one stage has the query `product_cat: Fleece and
+midlayers`.
 
-**What came back.** One stage and four unfilled gaps: `Weather protection`, `Light
-travel gear`, `Reliable footwear`, `Rest accommodation`, although the catalog holds rain
-jackets, boots and tents. The one stage, `Comfort during activity`, has the query
-`product_cat: Fleece and midlayers` and stages a how-to post and two cook sets.
+**Why.** `gapPrompt` lists the vocabulary as `- product_cat: Accessories, Waterproof
+jackets, …` and the model copies that layout into the query. The query then goes through
+`TurCatalogCopilotService.retrieve`, whose planner runs the LLM facet parse (T1085
+grounding) over the site's enabled fields; check the T823 plan log first for whether it
+grounded `product_cat` or fell back to free text. Plain `Waterproof jackets` finds 0
+(T1170 is part of it).
 
-**Why.** T1169's prompt lists the vocabulary as `- product_cat: Accessories, Waterproof
-jackets, …`, and the model copies that layout into the query. Retrieval then runs the
-string as free text: the field name is noise, and a facet value such as `Waterproof
-jackets` is not text-matched (plain `Waterproof jackets` finds 0, `waterproof jacket`
-finds 49; the stemming line filed with this one is part of it).
+**What Turing should do.** Drop the `field: values` layout from the prompt and say the
+query part is plain words. Accept an optional fourth column, `GAP: name | words | why |
+field=value`, honoured only when the field is in the kit's vocabulary and the value one
+of its values (case-insensitive); run it as a filter beside the words through a
+`retrieve` overload, falling back to words alone when the filter finds nothing.
+Three-column replies still parse; the API is unchanged.
 
-**Expected.** A gap the model ties to a catalog value retrieves the products carrying
-it.
-
-**Workaround.** None; Dumont D201's live gate waits on this.
-
-**What Turing should do.** Let a gap carry a filter apart from its words: e.g. `GAP: name
-| search words | why | field=value` (or parse a leading `field: value` whose field is a
-facet the vocabulary listed and whose value is one of its values) and run it as a filter
-query beside the plain words, falling back to words alone when the filter finds nothing.
-Tell the model the query part is plain words. Spec: the demo-style plan above stages
-products for at least its shelter, shell and footwear needs on a seeded catalog.
+**Spec.** The plan above stages products for its shelter, shell and footwear needs on a
+seeded catalog; an unknown field or value is ignored; an empty filter falls back.
 
 ### CLVIII.9 Guide-typed documents never fill a kit stage (T1172)
 
 **Where it happened.** Dumont D201 (Build my kit on the WordPress demo store), live on
-SN site `Demo` (image `sha-971cf94703ec`), same request as the kit-query line filed with
-this one (`guideTypes: ["post"]`).
+SN site `Demo` (image `sha-971cf94703ec`), same request as T1171 (`guideTypes:
+["post"]`).
 
 **What came back.** The stage `Comfort during activity` ranks first
 `localhost:post:158`, "How to wash and reproof a waterproof jacket" — a journal post
 (`type: post`, `available: null`, reason `site_key: localhost; section: How-tos`) —
-staged as a product. A client that puts the kit in the cart has to skip it.
+staged as a product. A client that puts the kit in the cart has to skip it. Worse,
+`guides()` skips ids already staged, so the post is also lost from `guides`, where it
+belongs.
 
 **Expected.** A document of a type the request names in `guideTypes` is a guide by the
 caller's own word, so it is never a kit product: it may be cited among `guides`, not in
@@ -2374,8 +2368,8 @@ a stage.
 this.
 
 **What Turing should do.** In `TurCatalogKitService.stageProducts`, skip citations whose
-`type` is one of `guideTypes` (case-insensitive), so the stage fills from the next
-products instead. Optionally accept `productTypes` to stage only those types, for sites
-whose guides are not typed. Unit spec on the skip.
+`type` is one of `guideTypes` (case-insensitive, the same normalised set `guides()`
+builds), so the stage fills from the next products instead. Unit specs: the skip, and
+that the skipped post is still cited in `guides`.
 
 ## CLIX Documentation refresh (`docs-turing`)
