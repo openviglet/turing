@@ -1,0 +1,381 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-wy3hjvd4"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Integration | Viglet Turing</title><link rel="canonical" href="https://openviglet.github.io/turing/docs/integration/"/><link rel="sitemap" href="/turing/docs/sitemap-index.xml"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"/><link rel="shortcut icon" href="/turing/docs/favicon.ico" type="image/x-icon"/><meta name="generator" content="Astro v7.4.2"/><meta name="generator" content="Starlight v0.41.11"/><meta property="og:title" content="Integration"/><meta property="og:type" content="article"/><meta property="og:url" content="https://openviglet.github.io/turing/docs/integration/"/><meta property="og:locale" content="en"/><meta property="og:description" content="Manage content connectors that import and index content from external sources into Viglet Turing."/><meta property="og:site_name" content="Viglet Turing"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="Manage content connectors that import and index content from external sources into Viglet Turing."/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/turing/docs/_astro/print.ehPL0gv-.css" media="print"><link rel="stylesheet" href="/turing/docs/_astro/common.gvporLFj.css"><style>@layer starlight.components{.card-grid:where(.astro-6q73ypdm){grid-template-columns:100%;gap:1rem;display:grid}.card-grid:where(.astro-6q73ypdm)>*{margin-top:0!important}@media (width>=50rem){.card-grid:where(.astro-6q73ypdm){grid-template-columns:1fr 1fr;gap:1.5rem}.stagger:where(.astro-6q73ypdm){--stagger-height:5rem;padding-bottom:var(--stagger-height)}.stagger:where(.astro-6q73ypdm)>:nth-child(2n){transform:translateY(var(--stagger-height))}}.sl-link-card:where(.astro-b5uddqxg){border:1px solid var(--sl-color-gray-5);box-shadow:var(--sl-shadow-sm);border-radius:.5rem;grid-template-columns:1fr auto;gap:.5rem;padding:1rem;display:grid;position:relative}a:where(.astro-b5uddqxg){line-height:var(--sl-line-height-headings);text-decoration:none}a:where(.astro-b5uddqxg):before{content:"";position:absolute;inset:0}.stack:where(.astro-b5uddqxg){flex-direction:column;gap:.5rem}.title:where(.astro-b5uddqxg){color:var(--sl-color-white);font-weight:600;font-size:var(--sl-text-lg)}.description:where(.astro-b5uddqxg){color:var(--sl-color-gray-3);line-height:1.5}.icon:where(.astro-b5uddqxg){color:var(--sl-color-gray-3)}.sl-link-card:where(.astro-b5uddqxg):hover{background:var(--sl-color-gray-7,var(--sl-color-gray-6));border-color:var(--sl-color-gray-2)}.sl-link-card:where(.astro-b5uddqxg):hover .icon:where(.astro-b5uddqxg){color:var(--sl-color-white)}}
+@layer starlight.components{.card:where(.astro-uyl7lth6){--sl-card-border:var(--sl-color-purple);--sl-card-bg:var(--sl-color-purple-low);border:1px solid var(--sl-color-gray-5);background-color:var(--sl-color-black);flex-direction:column;gap:clamp(.5rem,.125rem + 1vw,1rem);padding:clamp(1rem,.125rem + 3vw,2.5rem)}.card:where(.astro-uyl7lth6):nth-child(4n+1){--sl-card-border:var(--sl-color-orange);--sl-card-bg:var(--sl-color-orange-low)}.card:where(.astro-uyl7lth6):nth-child(4n+3){--sl-card-border:var(--sl-color-green);--sl-card-bg:var(--sl-color-green-low)}.card:where(.astro-uyl7lth6):nth-child(4n+4){--sl-card-border:var(--sl-color-red);--sl-card-bg:var(--sl-color-red-low)}.card:where(.astro-uyl7lth6):nth-child(4n+5){--sl-card-border:var(--sl-color-blue);--sl-card-bg:var(--sl-color-blue-low)}.title:where(.astro-uyl7lth6){font-weight:600;font-size:var(--sl-text-h4);color:var(--sl-color-white);line-height:var(--sl-line-height-headings);align-items:center;gap:1rem}.card:where(.astro-uyl7lth6) .icon:where(.astro-uyl7lth6){border:1px solid var(--sl-card-border);background-color:var(--sl-card-bg);border-radius:.25rem;flex-shrink:0;padding:.2em}.card:where(.astro-uyl7lth6) .body:where(.astro-uyl7lth6){font-size:clamp(var(--sl-text-sm), calc(.5rem + 1vw), var(--sl-text-body));margin:0}}
+@layer starlight.components{svg:where(.astro-nwdigvql){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em}}
+</style><script type="module" src="/turing/docs/_astro/page.cNngjUgL.js"></script></head><body class="astro-wy3hjvd4"><a class="sl-skip-link astro-24szbuaa" href="#_top">Skip to content</a><div class="page sl-flex astro-ib55ocom"><header class="header astro-ib55ocom"><div class="header astro-ukxunls3"><div class="title-wrapper sl-flex astro-ukxunls3"><div class="turing-brand astro-hen6hmfb"><a href="/turing/docs/" class="site-title sl-flex astro-f4vgya6g"><img class="astro-f4vgya6g" alt="Viglet Turing" src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" width="512" height="512"><span class="astro-f4vgya6g" translate="no">Viglet Turing</span></a><span class="turing-docs-label astro-hen6hmfb">Docs</span><a class="turing-pill astro-hen6hmfb" href="https://www.viglet.org" target="_blank" rel="noreferrer">part of viglet.org ↗</a></div></div><div class="sl-flex print:hidden astro-ukxunls3"><site-search class="astro-ukxunls3 astro-a2lndvxu" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-a2lndvxu"><svg aria-hidden="true" class="astro-a2lndvxu astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-a2lndvxu" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-a2lndvxu" style="display: none;"><kbd class="astro-a2lndvxu">Ctrl</kbd><kbd class="astro-a2lndvxu">K</kbd></kbd></button><dialog style="padding:0" aria-label="Search" class="astro-a2lndvxu"><div class="dialog-frame sl-flex astro-a2lndvxu"><button data-close-modal class="sl-flex md:sl-hidden astro-a2lndvxu">Cancel</button><div class="search-container astro-a2lndvxu"><div id="starlight__search" class="astro-a2lndvxu"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/turing/docs/_astro/Search.astro_astro_type_script_index_0_lang.w5cqYmCt.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-ukxunls3"><div class="sl-flex social-icons astro-ukxunls3"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-ib55ocom" aria-label="Main"><starlight-menu-button class="print:hidden astro-p3fyn3ad"><button aria-expanded="false" aria-label="Menu" aria-controls="starlight__sidebar" class="sl-flex md:sl-hidden astro-p3fyn3ad"><svg aria-hidden="true" class="open-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg></button></starlight-menu-button><script type="module">var e=class extends HTMLElement{btn=this.querySelector(`button`);constructor(){super(),this.btn.addEventListener(`click`,()=>this.toggleExpanded());let e=this.closest(`nav`);e&&e.addEventListener(`keyup`,e=>this.closeOnEscape(e)),matchMedia(`(min-width: 50em)`).addEventListener(`change`,()=>this.setExpanded(!1))}setExpanded(e){this.setAttribute(`aria-expanded`,String(e)),document.body.toggleAttribute(`data-mobile-menu-expanded`,e),document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}toggleExpanded(){this.setExpanded(this.getAttribute(`aria-expanded`)!==`true`)}closeOnEscape(e){e.code===`Escape`&&(this.setExpanded(!1),this.btn.focus())}};customElements.define(`starlight-menu-button`,e);</script><div id="starlight__sidebar" class="sidebar-pane astro-ib55ocom"><div class="sidebar-content sl-flex astro-ib55ocom"><sl-sidebar-state-persist data-hash="0qm6pqf" class="astro-odquddkb"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/" class="large astro-da7gfiol"><span class="astro-da7gfiol">Introduction</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Getting Started</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/intro/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is Viglet Turing?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/core-concepts/" class="astro-da7gfiol"><span class="astro-da7gfiol">Core Concepts</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/architecture-overview/" class="astro-da7gfiol"><span class="astro-da7gfiol">Architecture Overview</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Enterprise Search</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/enterprise-search/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/search-engine/" class="astro-da7gfiol"><span class="astro-da7gfiol">Search Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/semantic-navigation/" class="astro-da7gfiol"><span class="astro-da7gfiol">Semantic Navigation</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/synonyms/" class="astro-da7gfiol"><span class="astro-da7gfiol">Synonyms</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/thesaurus/" class="astro-da7gfiol"><span class="astro-da7gfiol">Thesaurus</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/manifest/" class="astro-da7gfiol"><span class="astro-da7gfiol">Field Manifest &amp; Schema-as-Code</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">DSL Query</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/dsl-query/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Query API</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/dsl-compatibility/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Compatibility Matrix</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/spa-pages/" class="astro-da7gfiol"><span class="astro-da7gfiol">SPA Pages</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Integration</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/integration/" aria-current="page" class="astro-da7gfiol"><span class="astro-da7gfiol">Integration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/integration-aem/" class="astro-da7gfiol"><span class="astro-da7gfiol">AEM Connector</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/import-export/" class="astro-da7gfiol"><span class="astro-da7gfiol">Import &amp; Export</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/migration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Migrating from Algolia or Elasticsearch</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">RAG &amp; Chat</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/rag-chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is RAG?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/answer/" class="astro-da7gfiol"><span class="astro-da7gfiol">Answer Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/vectorless-structured-rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">Vectorless (Structured-Data) RAG</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-stores/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Stores</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-models/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Models</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/reranking/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reranking</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-memory/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Memory</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/intent/" class="astro-da7gfiol"><span class="astro-da7gfiol">Intent</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/personas/" class="astro-da7gfiol"><span class="astro-da7gfiol">Personas</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/persona-book/" class="astro-da7gfiol"><span class="astro-da7gfiol">The Persona Book</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/transcription/" class="astro-da7gfiol"><span class="astro-da7gfiol">Transcription</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Agents, Tools &amp; Skills</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/ai-agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">AI Agents</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/tool-calling/" class="astro-da7gfiol"><span class="astro-da7gfiol">Tool Calling</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/capabilities/" class="astro-da7gfiol"><span class="astro-da7gfiol">Capabilities</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/client-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Client Tools &amp; Agent↔UI (AG-UI)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/custom-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Custom Tools</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/mcp-servers/" class="astro-da7gfiol"><span class="astro-da7gfiol">MCP Servers</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/skills/" class="astro-da7gfiol"><span class="astro-da7gfiol">Skills</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-workspace/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Workspace</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-flow/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Flow</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/human-in-the-loop/" class="astro-da7gfiol"><span class="astro-da7gfiol">Human-in-the-Loop</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/webhooks/" class="astro-da7gfiol"><span class="astro-da7gfiol">Webhooks</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/routines/" class="astro-da7gfiol"><span class="astro-da7gfiol">Routines</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/experiments/" class="astro-da7gfiol"><span class="astro-da7gfiol">Experiments (A/B Testing)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-eval/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Evaluation (CI)</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Deploy &amp; Operate</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="6"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/deploy-operate/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/installation-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Installation Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/configuration-reference/" class="astro-da7gfiol"><span class="astro-da7gfiol">Configuration Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/genai-llm/" class="astro-da7gfiol"><span class="astro-da7gfiol">Generative AI &amp; LLM Configuration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-instances/" class="astro-da7gfiol"><span class="astro-da7gfiol">LLM Instances</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/assets/" class="astro-da7gfiol"><span class="astro-da7gfiol">Assets</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/multi-tenancy/" class="astro-da7gfiol"><span class="astro-da7gfiol">Multi-Tenancy</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/administration-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Administration Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/observability/" class="astro-da7gfiol"><span class="astro-da7gfiol">Observability: Prometheus &amp; Grafana</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/logging/" class="astro-da7gfiol"><span class="astro-da7gfiol">Logging</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Analytics</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/token-usage/" class="astro-da7gfiol"><span class="astro-da7gfiol">Token Usage</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cost-governance/" class="astro-da7gfiol"><span class="astro-da7gfiol">Cost Governance</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-gateway/" class="astro-da7gfiol"><span class="astro-da7gfiol">Governed LLM Gateway</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Developers</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="7"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/developer-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Developer Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/react-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">React SDK</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/javascript-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">JavaScript SDK (vanilla)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cli/" class="astro-da7gfiol"><span class="astro-da7gfiol">Turing CLI</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/flow-dsl/" class="astro-da7gfiol"><span class="astro-da7gfiol">Flow DSL</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/showcase/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reference showcase (Atlas Store)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/conversion-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Conversion Analytics (GA4 bridge)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rest-api/" class="astro-da7gfiol"><span class="astro-da7gfiol">REST API Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/graphql/" class="astro-da7gfiol"><span class="astro-da7gfiol">GraphQL API</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Security</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="8"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/security-authentication/" class="astro-da7gfiol"><span class="astro-da7gfiol">Authentication</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-social-login/" class="astro-da7gfiol"><span class="astro-da7gfiol">Social Login (OAuth2)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-keycloak/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security &amp; Keycloak</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-hardening/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security Hardening &amp; Upgrade Notes</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="https://openviglet.github.io/turing/react-sdk" class="large astro-da7gfiol"><span class="astro-da7gfiol">Storybook (React SDK)</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-yv4jyioq"><div class="social-icons astro-yv4jyioq"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div></div></div></div></nav><div class="main-frame astro-ib55ocom"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-muvsczkj"><aside class="right-sidebar-container print:hidden astro-muvsczkj"><div class="right-sidebar astro-muvsczkj"><div class="lg:sl-hidden astro-uaaz7kdr"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-l2ev5fid"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-l2ev5fid"><details id="starlight__mobile-toc" class="astro-l2ev5fid"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-l2ev5fid"><span class="toggle sl-flex astro-l2ev5fid">On this page<svg aria-hidden="true" class="caret astro-l2ev5fid astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-l2ev5fid"></span></summary><div class="dropdown astro-l2ev5fid"><ul class="isMobile astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#instance-listing" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Instance Listing</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#creating-or-editing-an-integration" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Creating or Editing an Integration</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#integration-detail-sections" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Integration Detail: Sections</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#monitoring" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Monitoring</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#indexing-stats" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Indexing Stats</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#double-check" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Double Check</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#system-information" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">System Information</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#architecture" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Architecture</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/turing/docs/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.BcSo_yiZ.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-uaaz7kdr"><div class="sl-container astro-uaaz7kdr"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#instance-listing" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Instance Listing</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#creating-or-editing-an-integration" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Creating or Editing an Integration</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#integration-detail-sections" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Integration Detail: Sections</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#monitoring" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Monitoring</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#indexing-stats" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Indexing Stats</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#double-check" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Double Check</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#system-information" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">System Information</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#architecture" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Architecture</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></nav></starlight-toc><script type="module" src="/turing/docs/_astro/TableOfContents.astro_astro_type_script_index_0_lang.Csloo1VZ.js"></script></div></div></div></aside><div class="main-pane astro-muvsczkj"><main data-pagefind-body class="astro-wy3hjvd4" lang="en" dir="ltr"><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><h1 id="_top" class="astro-swossm7f">Integration</h1></div></div><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><div class="sl-markdown-content"><p>The <strong>Integration</strong> page (<code dir="auto">/admin/integration/instance</code>) manages connectors that import and index content from external sources (such as AEM, web crawlers, or other content repositories) into the Viglet Turing search engine. It is accessible from the <strong>Enterprise Search</strong> section of the sidebar.</p>
+<p>Each <strong>Integration instance</strong> represents a configured connection to a content connector application. The connector runs as a separate process (for example, Viglet Dumont) and communicates with Turing via REST. Turing acts as a proxy: the API path <code dir="auto">/api/v2/integration/{integrationId}/**</code> forwards requests to the configured connector endpoint, with built-in SSRF protection.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="instance-listing">Instance Listing</h2><a class="sl-anchor-link" href="#instance-listing"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Instance Listing”</span></a></div>
+<p>The listing page shows all configured Integration instances as a grid of cards, each displaying the integration’s title and description. A button at the top of the page opens the creation form.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="creating-or-editing-an-integration">Creating or Editing an Integration</h2><a class="sl-anchor-link" href="#creating-or-editing-an-integration"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Creating or Editing an Integration”</span></a></div>
+<p>The creation and edit form is divided into two sections.</p>
+<p><strong>General Information</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Integration Name</td><td>Human-readable identifier for this integration (required)</td></tr><tr><td>Short Description</td><td>Optional description of the integration’s purpose</td></tr></tbody></table>
+<p><strong>Connection Details</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Integration Type</td><td>Connector type: <strong>AEM</strong> or <strong>Web Crawler</strong></td></tr><tr><td>Endpoint</td><td>URL of the connector application</td></tr><tr><td>Enabled</td><td>Toggle to activate or deactivate this integration</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="integration-detail-sections">Integration Detail: Sections</h2><a class="sl-anchor-link" href="#integration-detail-sections"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Integration Detail: Sections”</span></a></div>
+<p>After an integration is created, its detail page provides navigation to several sections. The sections below are common to all connector types. For AEM-specific configuration, see the <a href="/turing/docs/integration-aem/">Turing AEM Connector</a> overview and the full <a href="https://openviglet.github.io/dumont/docs/connectors/aem/">Dumont AEM Connector</a> documentation.</p>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="settings">Settings</h3><a class="sl-anchor-link" href="#settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Settings”</span></a></div>
+<p>The Settings section contains the same form fields as the creation form (General Information and Connection Details), allowing you to edit the integration name, description, endpoint, type, and enabled state.</p>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="monitoring">Monitoring</h3><a class="sl-anchor-link" href="#monitoring"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Monitoring”</span></a></div>
+<p>The Monitoring section is a real-time dashboard for tracking the indexing pipeline. It displays indexing events as they are received and processed.</p>
+<p><strong>Filters:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Filter</th><th>Description</th></tr></thead><tbody><tr><td>Date From / Date To</td><td>Restrict results to a time window</td></tr><tr><td>Object ID</td><td>Filter by a specific document ID</td></tr><tr><td>Status</td><td>Filter by processing status (see status table below)</td></tr><tr><td>Environment</td><td>Author or Publish</td></tr><tr><td>Language</td><td>Locale code (for example, <code dir="auto">en_US</code>)</td></tr><tr><td>Sites</td><td>Filter by target SN Site</td></tr></tbody></table>
+<p><strong>Auto-refresh:</strong> configurable intervals: Off, 1s, 5s, 10s, 30s, 1m, 5m.</p>
+<p><strong>Result columns:</strong> Date, Object ID, Status, Environment, Language, Sites.</p>
+<p>Results are paginated and sortable.</p>
+<div class="sl-heading-wrapper level-h4"><h4 id="indexing-status-values">Indexing Status Values</h4><a class="sl-anchor-link" href="#indexing-status-values"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Indexing Status Values”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td><code dir="auto">PREPARE_INDEX</code></td><td>Preparing to index the document</td></tr><tr><td><code dir="auto">PREPARE_UNCHANGED</code></td><td>No changes detected since last indexing</td></tr><tr><td><code dir="auto">PREPARE_REINDEX</code></td><td>Preparing a reindexation</td></tr><tr><td><code dir="auto">PREPARE_FORCED_REINDEX</code></td><td>Forced reindexation triggered</td></tr><tr><td><code dir="auto">RECEIVED_AND_SENT_TO_TURING</code></td><td>Document received by the connector and forwarded to Turing</td></tr><tr><td><code dir="auto">SENT_TO_QUEUE</code></td><td>Document placed in the Artemis processing queue</td></tr><tr><td><code dir="auto">RECEIVED_FROM_QUEUE</code></td><td>Document consumed from the queue by the indexing pipeline</td></tr><tr><td><code dir="auto">INDEXED</code></td><td>Document successfully indexed in Solr</td></tr><tr><td><code dir="auto">FINISHED</code></td><td>Operation finished</td></tr><tr><td><code dir="auto">DEINDEXED</code></td><td>Document removed from the index</td></tr><tr><td><code dir="auto">NOT_PROCESSED</code> / <code dir="auto">IGNORED</code></td><td>Document skipped due to an Indexing Rule or connector decision</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="indexing-stats">Indexing Stats</h3><a class="sl-anchor-link" href="#indexing-stats"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Indexing Stats”</span></a></div>
+<p>The Indexing Stats section provides a table of completed bulk indexing operations for this integration.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Column</th><th>Description</th></tr></thead><tbody><tr><td>Start Time</td><td>Timestamp when the operation started</td></tr><tr><td>Source</td><td>Source that was operated on</td></tr><tr><td>Operation</td><td><code dir="auto">INDEX_ALL</code> or <code dir="auto">REINDEX_ALL</code></td></tr><tr><td>Documents</td><td>Number of documents processed. A <strong>Partial</strong> badge marks a run that stopped before reaching the whole source (a call budget, a rate limit, an interruption), with the reason listed under the count. A partial run never removes documents it did not reach.</td></tr><tr><td>Duration</td><td>Total elapsed time</td></tr><tr><td>Docs/min</td><td>Throughput (documents per minute)</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="double-check">Double Check</h3><a class="sl-anchor-link" href="#double-check"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Double Check”</span></a></div>
+<p>The Double Check section validates the consistency between the connector’s content and the Turing search index. It detects drift between what the connector knows about and what is actually indexed.</p>
+<ul>
+<li>Select a <strong>Source</strong> to inspect</li>
+<li>Results are shown in two views:
+<ul>
+<li><strong>Missing</strong>: content that exists in the connector but is not present in the index</li>
+<li><strong>Extra</strong>: content that is present in the index but no longer exists in the connector</li>
+</ul>
+</li>
+<li>Results are grouped by Solr core in an accordion, listing the affected document paths</li>
+</ul>
+<p>Use Double Check after a partial failure, a forced reindex, or when users report missing or stale search results.</p>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="system-information">System Information</h3><a class="sl-anchor-link" href="#system-information"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “System Information”</span></a></div>
+<p>Displays live diagnostic information from the remote connector application.</p>
+<p><strong>Status badge:</strong> UP (green) or DOWN (red): indicates whether the connector endpoint is reachable.</p>
+<p><strong>Application:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>Application</td><td>Connector application name</td></tr><tr><td>Version</td><td>Connector build version</td></tr><tr><td>Java Version</td><td>JVM version running the connector</td></tr><tr><td>Vendor</td><td>JVM vendor</td></tr><tr><td>JVM</td><td>JVM identifier</td></tr><tr><td>OS</td><td>Operating system name and version</td></tr></tbody></table>
+<p><strong>Memory and disk gauges</strong> (progress bars with total, used, and free values):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Gauge</th><th>Description</th></tr></thead><tbody><tr><td>Physical Memory (RAM)</td><td>Host system memory</td></tr><tr><td>JVM Heap Memory</td><td>Java heap utilisation and limits</td></tr><tr><td>Disk Space</td><td>Available storage on the connector’s host volume</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="architecture">Architecture</h2><a class="sl-anchor-link" href="#architecture"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Architecture”</span></a></div>
+<p>Turing acts as a transparent proxy to the connector. The API path <code dir="auto">/api/v2/integration/{integrationId}/**</code> forwards all requests to the configured connector endpoint, including authentication headers. This design keeps the connector application decoupled: it does not need to be publicly accessible, only reachable from the Turing server.</p>
+<p>Built-in SSRF protection validates the endpoint before forwarding. Requests to private IP ranges, loopback addresses, or disallowed schemes are rejected.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="related-pages">Related Pages</h2><a class="sl-anchor-link" href="#related-pages"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Related Pages”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Page</th><th>Description</th></tr></thead><tbody><tr><td><a href="/turing/docs/integration-aem/">AEM Connector</a></td><td>AEM-specific configuration: sources, content types, environments, indexing rules, and the indexing manager</td></tr><tr><td><a href="/turing/docs/semantic-navigation/">Semantic Navigation</a></td><td>Configure the SN Sites that receive indexed content</td></tr><tr><td><a href="/turing/docs/architecture-overview/">Architecture Overview</a></td><td>End-to-end indexing flow from connector to Solr</td></tr><tr><td><a href="/turing/docs/rest-api/">REST API Reference</a></td><td>API endpoints for programmatic indexing</td></tr><tr><td><a href="https://openviglet.github.io/dumont/docs/connectors/overview/">Dumont: Connectors</a></td><td>Available connectors (Web Crawler, AEM, Database, FileSystem, WordPress) and how to deploy them</td></tr><tr><td><a href="https://openviglet.github.io/dumont/docs/rest-api/">Dumont: REST API</a></td><td>Connector-side API for triggering indexing, monitoring, and source management</td></tr></tbody></table>
+<hr></div><footer class="sl-flex astro-cla57s4p"><div class="meta sl-flex astro-cla57s4p"><p>Last updated: <time datetime="2026-10-29T11:49:33.000Z">Oct 29, 2026</time></p></div><div class="pagination-links print:hidden astro-euyh6ymx" dir="ltr"><a href="/turing/docs/spa-pages/" rel="prev" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-euyh6ymx">Previous<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">SPA Pages</span></span></a><a href="/turing/docs/integration-aem/" rel="next" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-euyh6ymx">Next<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">AEM Connector</span></span></a></div></footer><footer class="turing-footer not-content astro-jo6i4kqk"><div class="turing-footer-grid astro-jo6i4kqk"><div class="astro-jo6i4kqk"><span class="turing-footer-brand astro-jo6i4kqk"><img src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" alt="" width="28" height="28" class="astro-jo6i4kqk">Viglet Turing</span><p class="astro-jo6i4kqk">Open-source Enterprise Search Intelligence Platform: agents, tools, skills, MCP and RAG for your content.</p></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Product</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/#features" class="astro-jo6i4kqk">Capabilities</a></li><li class="astro-jo6i4kqk"><a href="/turing/compare/" class="astro-jo6i4kqk">Compare</a></li><li class="astro-jo6i4kqk"><a href="/turing/migrate/" class="astro-jo6i4kqk">Migrate</a></li><li class="astro-jo6i4kqk"><a href="/turing/aem-search/" class="astro-jo6i4kqk">AEM search</a></li><li class="astro-jo6i4kqk"><a href="/turing/security/" class="astro-jo6i4kqk">Security</a></li><li class="astro-jo6i4kqk"><a href="/turing/#marketplace" class="astro-jo6i4kqk">Marketplace</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Developers</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/react-sdk/" class="astro-jo6i4kqk">React SDK</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-react-sdk" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">npm</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-cli" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">CLI</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Open &amp; transparent</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="https://github.com/openviglet/turing/blob/HEAD/docs/ROADMAP.md" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Roadmap</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org/turing/release-notes/" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Changelog</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">viglet.org</a></li></ul></div></div><div class="turing-footer-legal astro-jo6i4kqk">© 2026 Viglet Turing · Apache 2.0 License</div></footer></div></div></main></div></div></div></div></body></html>

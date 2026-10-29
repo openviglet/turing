@@ -1,0 +1,12 @@
+{
+  "name": "vinyl-records",
+  "version": "2026.3.1",
+  "author": "Alexandre Oliveira",
+  "repository": "https://github.com/openviglet/turing",
+  "description": "vinyl-records — Turing ES example application",
+  "snSite": "vinyl-records",
+  "locale": "en_US",
+  "framework": "react",
+  "buildTool": "vite",
+  "buildDate": "2026-10-29T11:54:11.595Z"
+}

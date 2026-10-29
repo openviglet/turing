@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://openviglet.github.io/turing/sitemap.xml

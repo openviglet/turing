@@ -1,0 +1,813 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-wy3hjvd4"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>AI Agents | Viglet Turing</title><link rel="canonical" href="https://openviglet.github.io/turing/docs/ai-agents/"/><link rel="sitemap" href="/turing/docs/sitemap-index.xml"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"/><link rel="shortcut icon" href="/turing/docs/favicon.ico" type="image/x-icon"/><meta name="generator" content="Astro v7.4.2"/><meta name="generator" content="Starlight v0.41.11"/><meta property="og:title" content="AI Agents"/><meta property="og:type" content="article"/><meta property="og:url" content="https://openviglet.github.io/turing/docs/ai-agents/"/><meta property="og:locale" content="en"/><meta property="og:description" content="AI Agents are purpose-built specialists you compose from an LLM, tools, and a persona. They are the conversion engine of Viglet Turing."/><meta property="og:site_name" content="Viglet Turing"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="AI Agents are purpose-built specialists you compose from an LLM, tools, and a persona. They are the conversion engine of Viglet Turing."/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/turing/docs/_astro/print.ehPL0gv-.css" media="print"><link rel="stylesheet" href="/turing/docs/_astro/common.gvporLFj.css"><style>@layer starlight.components{.card-grid:where(.astro-6q73ypdm){grid-template-columns:100%;gap:1rem;display:grid}.card-grid:where(.astro-6q73ypdm)>*{margin-top:0!important}@media (width>=50rem){.card-grid:where(.astro-6q73ypdm){grid-template-columns:1fr 1fr;gap:1.5rem}.stagger:where(.astro-6q73ypdm){--stagger-height:5rem;padding-bottom:var(--stagger-height)}.stagger:where(.astro-6q73ypdm)>:nth-child(2n){transform:translateY(var(--stagger-height))}}.sl-link-card:where(.astro-b5uddqxg){border:1px solid var(--sl-color-gray-5);box-shadow:var(--sl-shadow-sm);border-radius:.5rem;grid-template-columns:1fr auto;gap:.5rem;padding:1rem;display:grid;position:relative}a:where(.astro-b5uddqxg){line-height:var(--sl-line-height-headings);text-decoration:none}a:where(.astro-b5uddqxg):before{content:"";position:absolute;inset:0}.stack:where(.astro-b5uddqxg){flex-direction:column;gap:.5rem}.title:where(.astro-b5uddqxg){color:var(--sl-color-white);font-weight:600;font-size:var(--sl-text-lg)}.description:where(.astro-b5uddqxg){color:var(--sl-color-gray-3);line-height:1.5}.icon:where(.astro-b5uddqxg){color:var(--sl-color-gray-3)}.sl-link-card:where(.astro-b5uddqxg):hover{background:var(--sl-color-gray-7,var(--sl-color-gray-6));border-color:var(--sl-color-gray-2)}.sl-link-card:where(.astro-b5uddqxg):hover .icon:where(.astro-b5uddqxg){color:var(--sl-color-white)}}
+@layer starlight.components{.card:where(.astro-uyl7lth6){--sl-card-border:var(--sl-color-purple);--sl-card-bg:var(--sl-color-purple-low);border:1px solid var(--sl-color-gray-5);background-color:var(--sl-color-black);flex-direction:column;gap:clamp(.5rem,.125rem + 1vw,1rem);padding:clamp(1rem,.125rem + 3vw,2.5rem)}.card:where(.astro-uyl7lth6):nth-child(4n+1){--sl-card-border:var(--sl-color-orange);--sl-card-bg:var(--sl-color-orange-low)}.card:where(.astro-uyl7lth6):nth-child(4n+3){--sl-card-border:var(--sl-color-green);--sl-card-bg:var(--sl-color-green-low)}.card:where(.astro-uyl7lth6):nth-child(4n+4){--sl-card-border:var(--sl-color-red);--sl-card-bg:var(--sl-color-red-low)}.card:where(.astro-uyl7lth6):nth-child(4n+5){--sl-card-border:var(--sl-color-blue);--sl-card-bg:var(--sl-color-blue-low)}.title:where(.astro-uyl7lth6){font-weight:600;font-size:var(--sl-text-h4);color:var(--sl-color-white);line-height:var(--sl-line-height-headings);align-items:center;gap:1rem}.card:where(.astro-uyl7lth6) .icon:where(.astro-uyl7lth6){border:1px solid var(--sl-card-border);background-color:var(--sl-card-bg);border-radius:.25rem;flex-shrink:0;padding:.2em}.card:where(.astro-uyl7lth6) .body:where(.astro-uyl7lth6){font-size:clamp(var(--sl-text-sm), calc(.5rem + 1vw), var(--sl-text-body));margin:0}}
+@layer starlight.components{svg:where(.astro-nwdigvql){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em}}
+</style><script type="module" src="/turing/docs/_astro/page.cNngjUgL.js"></script></head><body class="astro-wy3hjvd4"><a class="sl-skip-link astro-24szbuaa" href="#_top">Skip to content</a><div class="page sl-flex astro-ib55ocom"><header class="header astro-ib55ocom"><div class="header astro-ukxunls3"><div class="title-wrapper sl-flex astro-ukxunls3"><div class="turing-brand astro-hen6hmfb"><a href="/turing/docs/" class="site-title sl-flex astro-f4vgya6g"><img class="astro-f4vgya6g" alt="Viglet Turing" src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" width="512" height="512"><span class="astro-f4vgya6g" translate="no">Viglet Turing</span></a><span class="turing-docs-label astro-hen6hmfb">Docs</span><a class="turing-pill astro-hen6hmfb" href="https://www.viglet.org" target="_blank" rel="noreferrer">part of viglet.org ↗</a></div></div><div class="sl-flex print:hidden astro-ukxunls3"><site-search class="astro-ukxunls3 astro-a2lndvxu" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-a2lndvxu"><svg aria-hidden="true" class="astro-a2lndvxu astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-a2lndvxu" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-a2lndvxu" style="display: none;"><kbd class="astro-a2lndvxu">Ctrl</kbd><kbd class="astro-a2lndvxu">K</kbd></kbd></button><dialog style="padding:0" aria-label="Search" class="astro-a2lndvxu"><div class="dialog-frame sl-flex astro-a2lndvxu"><button data-close-modal class="sl-flex md:sl-hidden astro-a2lndvxu">Cancel</button><div class="search-container astro-a2lndvxu"><div id="starlight__search" class="astro-a2lndvxu"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/turing/docs/_astro/Search.astro_astro_type_script_index_0_lang.w5cqYmCt.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-ukxunls3"><div class="sl-flex social-icons astro-ukxunls3"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-ib55ocom" aria-label="Main"><starlight-menu-button class="print:hidden astro-p3fyn3ad"><button aria-expanded="false" aria-label="Menu" aria-controls="starlight__sidebar" class="sl-flex md:sl-hidden astro-p3fyn3ad"><svg aria-hidden="true" class="open-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg></button></starlight-menu-button><script type="module">var e=class extends HTMLElement{btn=this.querySelector(`button`);constructor(){super(),this.btn.addEventListener(`click`,()=>this.toggleExpanded());let e=this.closest(`nav`);e&&e.addEventListener(`keyup`,e=>this.closeOnEscape(e)),matchMedia(`(min-width: 50em)`).addEventListener(`change`,()=>this.setExpanded(!1))}setExpanded(e){this.setAttribute(`aria-expanded`,String(e)),document.body.toggleAttribute(`data-mobile-menu-expanded`,e),document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}toggleExpanded(){this.setExpanded(this.getAttribute(`aria-expanded`)!==`true`)}closeOnEscape(e){e.code===`Escape`&&(this.setExpanded(!1),this.btn.focus())}};customElements.define(`starlight-menu-button`,e);</script><div id="starlight__sidebar" class="sidebar-pane astro-ib55ocom"><div class="sidebar-content sl-flex astro-ib55ocom"><sl-sidebar-state-persist data-hash="0qm6pqf" class="astro-odquddkb"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/" class="large astro-da7gfiol"><span class="astro-da7gfiol">Introduction</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Getting Started</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/intro/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is Viglet Turing?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/core-concepts/" class="astro-da7gfiol"><span class="astro-da7gfiol">Core Concepts</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/architecture-overview/" class="astro-da7gfiol"><span class="astro-da7gfiol">Architecture Overview</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Enterprise Search</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/enterprise-search/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/search-engine/" class="astro-da7gfiol"><span class="astro-da7gfiol">Search Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/semantic-navigation/" class="astro-da7gfiol"><span class="astro-da7gfiol">Semantic Navigation</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/synonyms/" class="astro-da7gfiol"><span class="astro-da7gfiol">Synonyms</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/thesaurus/" class="astro-da7gfiol"><span class="astro-da7gfiol">Thesaurus</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/manifest/" class="astro-da7gfiol"><span class="astro-da7gfiol">Field Manifest &amp; Schema-as-Code</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">DSL Query</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/dsl-query/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Query API</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/dsl-compatibility/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Compatibility Matrix</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/spa-pages/" class="astro-da7gfiol"><span class="astro-da7gfiol">SPA Pages</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Integration</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/integration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Integration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/integration-aem/" class="astro-da7gfiol"><span class="astro-da7gfiol">AEM Connector</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/import-export/" class="astro-da7gfiol"><span class="astro-da7gfiol">Import &amp; Export</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/migration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Migrating from Algolia or Elasticsearch</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">RAG &amp; Chat</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/rag-chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is RAG?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/answer/" class="astro-da7gfiol"><span class="astro-da7gfiol">Answer Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/vectorless-structured-rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">Vectorless (Structured-Data) RAG</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-stores/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Stores</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-models/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Models</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/reranking/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reranking</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-memory/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Memory</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/intent/" class="astro-da7gfiol"><span class="astro-da7gfiol">Intent</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/personas/" class="astro-da7gfiol"><span class="astro-da7gfiol">Personas</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/persona-book/" class="astro-da7gfiol"><span class="astro-da7gfiol">The Persona Book</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/transcription/" class="astro-da7gfiol"><span class="astro-da7gfiol">Transcription</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Agents, Tools &amp; Skills</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/ai-agents/" aria-current="page" class="astro-da7gfiol"><span class="astro-da7gfiol">AI Agents</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/tool-calling/" class="astro-da7gfiol"><span class="astro-da7gfiol">Tool Calling</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/capabilities/" class="astro-da7gfiol"><span class="astro-da7gfiol">Capabilities</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/client-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Client Tools &amp; Agent↔UI (AG-UI)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/custom-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Custom Tools</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/mcp-servers/" class="astro-da7gfiol"><span class="astro-da7gfiol">MCP Servers</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/skills/" class="astro-da7gfiol"><span class="astro-da7gfiol">Skills</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-workspace/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Workspace</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-flow/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Flow</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/human-in-the-loop/" class="astro-da7gfiol"><span class="astro-da7gfiol">Human-in-the-Loop</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/webhooks/" class="astro-da7gfiol"><span class="astro-da7gfiol">Webhooks</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/routines/" class="astro-da7gfiol"><span class="astro-da7gfiol">Routines</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/experiments/" class="astro-da7gfiol"><span class="astro-da7gfiol">Experiments (A/B Testing)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-eval/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Evaluation (CI)</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Deploy &amp; Operate</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="6"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/deploy-operate/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/installation-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Installation Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/configuration-reference/" class="astro-da7gfiol"><span class="astro-da7gfiol">Configuration Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/genai-llm/" class="astro-da7gfiol"><span class="astro-da7gfiol">Generative AI &amp; LLM Configuration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-instances/" class="astro-da7gfiol"><span class="astro-da7gfiol">LLM Instances</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/assets/" class="astro-da7gfiol"><span class="astro-da7gfiol">Assets</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/multi-tenancy/" class="astro-da7gfiol"><span class="astro-da7gfiol">Multi-Tenancy</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/administration-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Administration Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/observability/" class="astro-da7gfiol"><span class="astro-da7gfiol">Observability: Prometheus &amp; Grafana</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/logging/" class="astro-da7gfiol"><span class="astro-da7gfiol">Logging</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Analytics</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/token-usage/" class="astro-da7gfiol"><span class="astro-da7gfiol">Token Usage</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cost-governance/" class="astro-da7gfiol"><span class="astro-da7gfiol">Cost Governance</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-gateway/" class="astro-da7gfiol"><span class="astro-da7gfiol">Governed LLM Gateway</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Developers</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="7"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/developer-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Developer Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/react-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">React SDK</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/javascript-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">JavaScript SDK (vanilla)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cli/" class="astro-da7gfiol"><span class="astro-da7gfiol">Turing CLI</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/flow-dsl/" class="astro-da7gfiol"><span class="astro-da7gfiol">Flow DSL</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/showcase/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reference showcase (Atlas Store)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/conversion-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Conversion Analytics (GA4 bridge)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rest-api/" class="astro-da7gfiol"><span class="astro-da7gfiol">REST API Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/graphql/" class="astro-da7gfiol"><span class="astro-da7gfiol">GraphQL API</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Security</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="8"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/security-authentication/" class="astro-da7gfiol"><span class="astro-da7gfiol">Authentication</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-social-login/" class="astro-da7gfiol"><span class="astro-da7gfiol">Social Login (OAuth2)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-keycloak/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security &amp; Keycloak</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-hardening/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security Hardening &amp; Upgrade Notes</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="https://openviglet.github.io/turing/react-sdk" class="large astro-da7gfiol"><span class="astro-da7gfiol">Storybook (React SDK)</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-yv4jyioq"><div class="social-icons astro-yv4jyioq"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div></div></div></div></nav><div class="main-frame astro-ib55ocom"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-muvsczkj"><aside class="right-sidebar-container print:hidden astro-muvsczkj"><div class="right-sidebar astro-muvsczkj"><div class="lg:sl-hidden astro-uaaz7kdr"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-l2ev5fid"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-l2ev5fid"><details id="starlight__mobile-toc" class="astro-l2ev5fid"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-l2ev5fid"><span class="toggle sl-flex astro-l2ev5fid">On this page<svg aria-hidden="true" class="caret astro-l2ev5fid astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-l2ev5fid"></span></summary><div class="dropdown astro-l2ev5fid"><ul class="isMobile astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#what-agent-actually-means" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">What “Agent” Actually Means</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#composition-the-four-layers" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Composition: The Four Layers</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#1-identity" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">1. Identity</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#2-brain" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">2. Brain</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#3-capabilities" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">3. Capabilities</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#4-voice" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">4. Voice</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#default-ai-agent-global-fallback" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Default AI Agent (global fallback)</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#how-an-agent-actually-runs" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">How an Agent Actually Runs</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-1-prompt-assembly" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 1: Prompt assembly</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-2-llm-inference" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 2: LLM inference</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-3-tool-execution" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 3: Tool execution</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-4-multi-step-reasoning" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 4: Multi-step reasoning</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-5-streaming-the-response" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 5: Streaming the response</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-6-post-llm-persona-enforcement" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 6: Post-LLM persona enforcement</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-7-analytics-emission" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 7: Analytics emission</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#composing-agents-around-the-funnel" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Composing Agents Around the Funnel</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#the-discovery-agent" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">The Discovery Agent</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#the-solutions-engineer-agent" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">The Solutions Engineer Agent</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#the-onboarding-coach-agent" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">The Onboarding Coach Agent</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#the-internal-it-agent" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">The Internal IT Agent</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#configuration-form" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Configuration Form</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#live-preview--prompt-diagnostics" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Live Preview &amp; prompt diagnostics</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#llm" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">LLM</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#tools" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Tools</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#mcp-servers" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">MCP Servers</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#provider-native-tools-openai-responses" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Provider-native tools (OpenAI Responses)</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#reasoning-caching--background-execution" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Reasoning, caching &amp; background execution</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#extended-thinking--reasoning-budget" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Extended thinking / reasoning budget</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#explicit-context-caching" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Explicit context caching</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#background-execution-openai" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Background execution (OpenAI)</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#compliance--retention" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Compliance &amp; retention</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#memory--workspace" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Memory &amp; Workspace</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#rest-api" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">REST API</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#agent-management" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Agent Management</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#agent-chat" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Agent Chat</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#native-tools" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Native Tools</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#diagnosing-a-misbehaving-agent" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Diagnosing a Misbehaving Agent</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/turing/docs/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.BcSo_yiZ.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-uaaz7kdr"><div class="sl-container astro-uaaz7kdr"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#what-agent-actually-means" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">What “Agent” Actually Means</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#composition-the-four-layers" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Composition: The Four Layers</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#1-identity" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">1. Identity</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#2-brain" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">2. Brain</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#3-capabilities" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">3. Capabilities</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#4-voice" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">4. Voice</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#default-ai-agent-global-fallback" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Default AI Agent (global fallback)</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#how-an-agent-actually-runs" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">How an Agent Actually Runs</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-1-prompt-assembly" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 1: Prompt assembly</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-2-llm-inference" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 2: LLM inference</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-3-tool-execution" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 3: Tool execution</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-4-multi-step-reasoning" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 4: Multi-step reasoning</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-5-streaming-the-response" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 5: Streaming the response</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-6-post-llm-persona-enforcement" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 6: Post-LLM persona enforcement</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#step-7-analytics-emission" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Step 7: Analytics emission</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#composing-agents-around-the-funnel" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Composing Agents Around the Funnel</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#the-discovery-agent" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">The Discovery Agent</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#the-solutions-engineer-agent" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">The Solutions Engineer Agent</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#the-onboarding-coach-agent" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">The Onboarding Coach Agent</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#the-internal-it-agent" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">The Internal IT Agent</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#configuration-form" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Configuration Form</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#live-preview--prompt-diagnostics" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Live Preview &amp; prompt diagnostics</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#llm" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">LLM</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#tools" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Tools</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#mcp-servers" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">MCP Servers</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#provider-native-tools-openai-responses" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Provider-native tools (OpenAI Responses)</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#reasoning-caching--background-execution" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Reasoning, caching &amp; background execution</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#extended-thinking--reasoning-budget" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Extended thinking / reasoning budget</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#explicit-context-caching" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Explicit context caching</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#background-execution-openai" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Background execution (OpenAI)</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#compliance--retention" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Compliance &amp; retention</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#memory--workspace" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Memory &amp; Workspace</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#rest-api" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">REST API</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#agent-management" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Agent Management</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#agent-chat" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Agent Chat</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#native-tools" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Native Tools</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#diagnosing-a-misbehaving-agent" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Diagnosing a Misbehaving Agent</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></nav></starlight-toc><script type="module" src="/turing/docs/_astro/TableOfContents.astro_astro_type_script_index_0_lang.Csloo1VZ.js"></script></div></div></div></aside><div class="main-pane astro-muvsczkj"><main data-pagefind-body class="astro-wy3hjvd4" lang="en" dir="ltr"><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><h1 id="_top" class="astro-swossm7f">AI Agents</h1></div></div><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><div class="sl-markdown-content"><blockquote>
+<p><em>Hire a salesperson. Hire a solutions engineer. Hire an onboarding coach. Hire them all in an afternoon, and have them on duty 24/7 by sundown.</em></p>
+</blockquote>
+<p>An <strong>AI Agent</strong> in Viglet Turing is the specialist you don’t have to recruit, train, or replace. It’s a small, named bundle of:</p>
+<ul>
+<li>a <strong>brain</strong>, an <a href="/turing/docs/llm-instances/">LLM Instance</a> you’ve already configured,</li>
+<li>a set of <strong>hands</strong>: <a href="/turing/docs/tool-calling/">native tools</a> and <a href="/turing/docs/mcp-servers/">MCP servers</a> that let the agent actually <em>do</em> things (search your content, fetch live data, run code),</li>
+<li>a <strong>voice</strong>, a <a href="/turing/docs/personas/">Persona</a> that aligns the answers with your brand, your funnel stage, and your compliance posture.</li>
+</ul>
+<p>Each agent appears as its own tab in the <a href="/turing/docs/chat/">Chat</a> interface. Visitors pick the specialist that matches their need; agents stay in their lane.</p>
+<p>Configure agents in <strong>Administration → AI Agents</strong>.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="what-agent-actually-means">What “Agent” Actually Means</h2><a class="sl-anchor-link" href="#what-agent-actually-means"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “What “Agent” Actually Means”</span></a></div>
+<p>The word “agent” is overloaded. In Turing, an Agent has two non-negotiable properties:</p>
+<ol>
+<li><strong>It’s a composition, not a model.</strong> You’re not picking a model from a marketplace and renaming it. You’re combining decisions (<em>which</em> LLM, <em>which</em> tools, <em>which</em> voice) into a single, deployable unit. Change any of the three, and you’ve changed the agent.</li>
+<li><strong>It can act, not just answer.</strong> The defining feature of an agent over a plain chatbot is its ability to call tools: search a knowledge base, look up a stock quote, run a Python script, query an MCP server. The model doesn’t just generate words; it <em>requests an action</em>, Turing executes it, and the model reasons over the result.</li>
+</ol>
+<p>Together, these mean an agent is a <strong>business process expressed as a conversation</strong>. A user asks; the agent searches your documentation, fetches their account data, summarizes the answer, and books a follow-up, in one exchange.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="composition-the-four-layers">Composition: The Four Layers</h2><a class="sl-anchor-link" href="#composition-the-four-layers"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Composition: The Four Layers”</span></a></div>
+<p>An AI Agent is built from four layers. Get all four right and the agent feels like a senior team member; get any one wrong and it feels like a generic chatbot.</p>
+<p><img src="/turing/docs/img/diagrams/turing-agent-composition.svg" alt="AI Agent: Composition"></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="1-identity">1. Identity</h3><a class="sl-anchor-link" href="#1-identity"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “1. Identity”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><strong>Name</strong></td><td>Display name shown as the tab label in the Chat interface. <em>“Sales Concierge”</em> beats <em>“Agent #3”</em>.</td></tr><tr><td><strong>Avatar</strong></td><td>Profile image. Even a small one moves trust meters, visitors react to faces, even illustrated ones.</td></tr><tr><td><strong>Description</strong></td><td>One-line explanation of the agent’s purpose. Shown in admin lists; hints visitors what to expect.</td></tr><tr><td><strong>Enabled</strong></td><td>Toggle to activate or hide the agent. Disabled agents do not appear in the Chat interface.</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="2-brain">2. Brain</h3><a class="sl-anchor-link" href="#2-brain"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “2. Brain”</span></a></div>
+<p>The <strong>LLM Instance</strong> is the agent’s reasoning engine. You can attach <strong>one or more</strong> instances; at chat time the user (or front-end) picks which one to run.</p>
+<p>Why multiple? Because the cost/quality tradeoff varies by question:</p>
+<ul>
+<li>A trivial routing question doesn’t need a frontier model. Attach a fast, cheap instance (e.g., Gemini Flash, GPT-4o-mini) and let users default to it.</li>
+<li>A complex multi-step deal qualification benefits from a top-tier reasoner. Attach Claude Sonnet alongside, as an opt-in upgrade.</li>
+</ul>
+<p>See <a href="/turing/docs/llm-instances/">LLM Instances</a> for vendor support, default models, and provider-specific options.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="3-capabilities">3. Capabilities</h3><a class="sl-anchor-link" href="#3-capabilities"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “3. Capabilities”</span></a></div>
+<p>This is the largest configuration surface. Two sets of capabilities can be attached:</p>
+<p><strong>Native tools</strong>, 27 first-party tools, grouped into 8 categories:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Category</th><th>Tools</th><th>When to attach</th></tr></thead><tbody><tr><td><strong>Semantic Navigation</strong></td><td><code dir="auto">list_sites</code>, <code dir="auto">search_site</code>, <code dir="auto">get_document_details</code>, <code dir="auto">find_similar_documents</code>, <code dir="auto">search_by_date_range</code>, <code dir="auto">get_site_fields</code>, <code dir="auto">get_valid_filter_values</code>, … (15 total)</td><td>The agent should answer using your indexed enterprise content (CMS pages, products, internal documentation)</td></tr><tr><td><strong>RAG / Knowledge Base</strong></td><td><code dir="auto">search_knowledge_base</code>, <code dir="auto">list_knowledge_base_files</code>, <code dir="auto">get_file_content</code>, <code dir="auto">knowledge_base_stats</code></td><td>The agent should answer using files in <a href="/turing/docs/assets/">Assets</a> (PDFs, Word docs, manuals)</td></tr><tr><td><strong>Web Crawler</strong></td><td><code dir="auto">fetch_webpage</code>, <code dir="auto">extract_links</code></td><td>The agent should be able to read a public URL on demand (e.g., reference a customer’s website)</td></tr><tr><td><strong>Finance</strong></td><td><code dir="auto">get_stock_quote</code>, <code dir="auto">search_ticker</code></td><td>Investor-facing or financial-research agents</td></tr><tr><td><strong>Weather</strong></td><td><code dir="auto">get_weather</code></td><td>Travel, logistics, field-service agents</td></tr><tr><td><strong>Image Search</strong></td><td><code dir="auto">search_images</code></td><td>Marketing, content-creation agents</td></tr><tr><td><strong>Date / Time</strong></td><td><code dir="auto">get_current_time</code></td><td>Any agent that books, schedules, or references “now”</td></tr><tr><td><strong>Code Interpreter</strong></td><td><code dir="auto">execute_python</code></td><td>Data analysis, chart generation, technical agents</td></tr></tbody></table>
+<p><strong>MCP Servers</strong>, external tool servers the agent can call:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Badge</th><th>Transport</th><th>Typical use</th></tr></thead><tbody><tr><td><strong>HTTP</strong> (blue)</td><td>SSE over HTTP</td><td>A REST API your team owns; a brand-context server; a CRM lookup</td></tr><tr><td><strong>COMMAND</strong> (amber)</td><td>stdio</td><td>A local script or process: useful for filesystem or shell access on the host</td></tr></tbody></table>
+<p>See <a href="/turing/docs/tool-calling/">Tool Calling</a> for the full native tool reference and <a href="/turing/docs/mcp-servers/">MCP Servers</a> for connection setup.</p>
+<aside aria-label="Lean tool lists win" class="starlight-aside starlight-aside--caution"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10.67 1.47-8.05-14a3 3 0 0 0-5.24 0l-8 14A3 3 0 0 0 3.94 22h16.12a3 3 0 0 0 2.61-4.53Zm-1.73 2a1 1 0 0 1-.88.51H3.94a1 1 0 0 1-.88-.51 1 1 0 0 1 0-1l8-14a1 1 0 0 1 1.78 0l8.05 14a1 1 0 0 1 .05 1.02v-.02ZM12 8a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V9a1 1 0 0 0-1-1Z"></path></svg>Lean tool lists win</p><div class="starlight-aside__content"><p>A common mistake: attaching every tool because <em>“it might be useful”</em>. Every additional tool consumes prompt tokens to describe to the model, and forces the model to choose among more options. <strong>Fewer, sharper tools produce more precise tool calls and shorter latencies.</strong> Start with 3–5 tools per agent and add only what an actual user request demanded.</p></div></aside>
+<div class="sl-heading-wrapper level-h3"><h3 id="4-voice">4. Voice</h3><a class="sl-anchor-link" href="#4-voice"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “4. Voice”</span></a></div>
+<p>The <strong>Persona</strong> field attaches a <a href="/turing/docs/personas/">Persona</a> to the agent. The persona overlays:</p>
+<ul>
+<li>a system instruction (brand voice directive),</li>
+<li>tone, verbosity, language style,</li>
+<li>mandatory + forbidden vocabulary (enforced both pre- and post-LLM),</li>
+<li>optional few-shot examples retrieved from a vector store,</li>
+<li>optional live brand context from an MCP.</li>
+</ul>
+<p>A persona is <strong>optional</strong>. An agent without one uses the LLM’s default voice. For internal tools that’s fine; for any customer-facing agent it’s almost always wrong.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="default-ai-agent-global-fallback">Default AI Agent (global fallback)</h2><a class="sl-anchor-link" href="#default-ai-agent-global-fallback"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Default AI Agent (global fallback)”</span></a></div>
+<p>One agent can be marked as the global <strong>Default AI Agent</strong> in Global Settings. When a Semantic Navigation site’s chat is invoked but the site has <strong>no agent of its own</strong>, chat resolves to this default agent (using its LLM, embedding model and vector store) instead of reporting chat as disabled. This is <strong>fail-open and gated</strong>: it only happens when a default agent is actually configured, with none set, a site without its own agent keeps chat disabled exactly as before.</p>
+<p>This is what lets a search-only site (for example the zero-config public demo, whose seed is search-only) answer grounded chat without wiring a per-site agent. A site that <em>does</em> bind its own agent always uses that one; the default is only a fallback.</p>
+<p>Indexing follows the same rule: content imported into a site with no agent of its own is embedded into the Default AI Agent’s vector store when that agent has RAG on (a <code dir="auto">VECTORLESS_STRUCTURED</code> site is never embedded). Before 2026.3.6, import read only the site’s own agent, so a site that answers through the Default AI Agent and was indexed on an earlier release holds no vectors: <strong>reindex it</strong> once after upgrading, or its chat will say the content is not available. The site’s <strong>Generative AI</strong> page shows a notice when the site is set up for RAG but its vector store holds none of its content, with <strong>Reindex all</strong> beside it, also for a site that runs on the Default AI Agent.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="how-an-agent-actually-runs">How an Agent Actually Runs</h2><a class="sl-anchor-link" href="#how-an-agent-actually-runs"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “How an Agent Actually Runs”</span></a></div>
+<p>When a user sends a message, this loop runs end-to-end. Understanding it is the difference between debugging “the AI gave a weird answer” in five minutes vs. five hours.</p>
+<p><img src="/turing/docs/img/diagrams/turing-agent-flow.svg" alt="AI Agent: Execution Flow"></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="step-1-prompt-assembly">Step 1: Prompt assembly</h3><a class="sl-anchor-link" href="#step-1-prompt-assembly"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Step 1: Prompt assembly”</span></a></div>
+<p>Turing builds the prompt in this exact order:</p>
+<ol>
+<li><strong>Persona system instruction</strong> (if a persona is attached)</li>
+<li><strong>Style guidelines block</strong>: derived from the persona’s tone + verbosity + language style</li>
+<li><strong>Mandatory / forbidden vocabulary lists</strong> (if any)</li>
+<li><strong>Brand context</strong>: fetched from the persona’s MCP server, if configured</li>
+<li><strong>Agent system prompt</strong>: the agent’s own purpose-specific instruction</li>
+<li><strong>Tool definitions</strong>: JSON schemas for every native tool and MCP tool the agent has access to</li>
+<li><strong>Few-shot examples</strong>: top-K Q/A pairs retrieved by similarity from the persona’s few-shot store, if configured (only on the first user turn)</li>
+<li><strong>Conversation history</strong>: full message log so far</li>
+<li><strong>Current user message</strong></li>
+</ol>
+<p>Layers 1–6 don’t change per turn after the first message. Spring AI, the underlying integration, handles the assembly; you don’t write any of this manually.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="step-2-llm-inference">Step 2: LLM inference</h3><a class="sl-anchor-link" href="#step-2-llm-inference"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Step 2: LLM inference”</span></a></div>
+<p>The assembled prompt goes to the LLM Instance the user picked. The model receives it and decides one of two things:</p>
+<ul>
+<li><strong>Respond directly</strong>: when the answer doesn’t need any tool. Common for chit-chat, restated questions, simple factual recall.</li>
+<li><strong>Request a tool call</strong>: when the answer requires action. The model emits a structured request: tool name + arguments.</li>
+</ul>
+<p>This decision is the agent’s “thinking step”. Tool-capable models (Claude, GPT-4, Gemini) do this well; small or older models struggle and may hallucinate tool calls or skip them entirely.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="step-3-tool-execution">Step 3: Tool execution</h3><a class="sl-anchor-link" href="#step-3-tool-execution"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Step 3: Tool execution”</span></a></div>
+<p>If the model requested a tool, Turing:</p>
+<ol>
+<li>Validates the call (does the agent have access to that tool? are the arguments valid JSON?).</li>
+<li>Routes it to the correct executor: native tool implementation or MCP server.</li>
+<li>Captures the result (or the error).</li>
+<li>Logs the invocation: tool name, arguments, latency, response size.</li>
+</ol>
+<div class="sl-heading-wrapper level-h3"><h3 id="step-4-multi-step-reasoning">Step 4: Multi-step reasoning</h3><a class="sl-anchor-link" href="#step-4-multi-step-reasoning"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Step 4: Multi-step reasoning”</span></a></div>
+<p>The tool result is fed back to the model, which can:</p>
+<ul>
+<li><strong>Call another tool</strong>: chain steps. For example: <code dir="auto">search_knowledge_base</code> → <code dir="auto">get_file_content</code> → <code dir="auto">execute_python</code> to chart the data.</li>
+<li><strong>Stop and answer</strong>: synthesize the results into a final response.</li>
+</ul>
+<p>This loop runs until the model decides it has enough. Spring AI’s <code dir="auto">internalToolExecutionEnabled(true)</code> setting handles the loop transparently: the orchestration is built in.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="step-5-streaming-the-response">Step 5: Streaming the response</h3><a class="sl-anchor-link" href="#step-5-streaming-the-response"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Step 5: Streaming the response”</span></a></div>
+<p>The final response streams back to the chat UI <strong>token by token</strong> via Server-Sent Events. The user sees the answer as it’s being generated, the same way they’d watch someone typing. This isn’t cosmetic, perceived latency drops by half versus waiting for a complete response.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="step-6-post-llm-persona-enforcement">Step 6: Post-LLM persona enforcement</h3><a class="sl-anchor-link" href="#step-6-post-llm-persona-enforcement"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Step 6: Post-LLM persona enforcement”</span></a></div>
+<p>Before the response leaves the chat executor, <strong><code dir="auto">TurPersonaToneValidator</code></strong> scans it for forbidden vocabulary from the persona. Matches are masked. The user never sees them. Logs record the event so you know your prompt isn’t holding in some scenarios.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="step-7-analytics-emission">Step 7: Analytics emission</h3><a class="sl-anchor-link" href="#step-7-analytics-emission"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Step 7: Analytics emission”</span></a></div>
+<p>A <strong>chat session event</strong> is recorded by <code dir="auto">TurChatAnalyticsService</code> (turn count, token usage, agent ID, persona ID, locale, started-at, completed-at). This is the foundation for <a href="/turing/docs/chat-analytics/">Chat Analytics</a>: the dashboard that tells you, days later, <em>which agents are converting and which aren’t</em>.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="composing-agents-around-the-funnel">Composing Agents Around the Funnel</h2><a class="sl-anchor-link" href="#composing-agents-around-the-funnel"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Composing Agents Around the Funnel”</span></a></div>
+<p>The biggest leverage in agent design is <strong>funnel mapping</strong>: build one agent per stage, not one agent for everything. Each agent gets a tighter system prompt, a more focused tool list, and a persona that fits the moment.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="the-discovery-agent">The Discovery Agent</h3><a class="sl-anchor-link" href="#the-discovery-agent"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “The Discovery Agent”</span></a></div>
+<p>For visitors who arrived from a marketing campaign and don’t yet know what they want.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Layer</th><th>Configuration</th></tr></thead><tbody><tr><td><strong>Name</strong></td><td>Discovery Concierge</td></tr><tr><td><strong>LLM</strong></td><td>A fast, cheap instance (Gemini Flash, GPT-4o-mini), discovery is high-volume</td></tr><tr><td><strong>Tools</strong></td><td><code dir="auto">search_site</code> (your marketing pages), <code dir="auto">find_similar_documents</code></td></tr><tr><td><strong>MCP Servers</strong></td><td>Optional: a CRM-lookup MCP that personalizes if the user is logged in</td></tr><tr><td><strong>Persona</strong></td><td><code dir="auto">top-of-funnel-sales</code>: EXECUTIVE tone, PERSUASIVE, verbosity 2</td></tr><tr><td><strong>System Prompt</strong></td><td><em>“You greet first-time visitors. Ask one qualifying question per turn. Don’t list features; ask about outcomes. After three turns, offer a 15-min call.”</em></td></tr></tbody></table>
+<p><strong>Conversion target:</strong> <strong>discovery → demo booking.</strong></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="the-solutions-engineer-agent">The Solutions Engineer Agent</h3><a class="sl-anchor-link" href="#the-solutions-engineer-agent"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “The Solutions Engineer Agent”</span></a></div>
+<p>For technical evaluators in active comparison.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Layer</th><th>Configuration</th></tr></thead><tbody><tr><td><strong>Name</strong></td><td>Solutions Engineer</td></tr><tr><td><strong>LLM</strong></td><td>A top-tier reasoner (Claude Sonnet, GPT-4): evaluators ask hard questions</td></tr><tr><td><strong>Tools</strong></td><td><code dir="auto">search_knowledge_base</code>, <code dir="auto">get_file_content</code>, <code dir="auto">fetch_webpage</code>, <code dir="auto">execute_python</code></td></tr><tr><td><strong>MCP Servers</strong></td><td>Internal API documentation MCP</td></tr><tr><td><strong>Persona</strong></td><td><code dir="auto">solutions-engineer</code>: TECHNICAL tone, INSTRUCTIONAL, verbosity 4</td></tr><tr><td><strong>System Prompt</strong></td><td><em>“You answer integration and architecture questions. Lead with the architectural answer. Confirm assumptions before recommending. Cite docs when possible.”</em></td></tr></tbody></table>
+<p><strong>Conversion target:</strong> <strong>evaluation → technical buy-in.</strong></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="the-onboarding-coach-agent">The Onboarding Coach Agent</h3><a class="sl-anchor-link" href="#the-onboarding-coach-agent"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “The Onboarding Coach Agent”</span></a></div>
+<p>For customers who just signed up.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Layer</th><th>Configuration</th></tr></thead><tbody><tr><td><strong>Name</strong></td><td>Onboarding Coach</td></tr><tr><td><strong>LLM</strong></td><td>Mid-tier (Sonnet, GPT-4o): needs to follow conversational state precisely</td></tr><tr><td><strong>Tools</strong></td><td><code dir="auto">search_knowledge_base</code> (product docs), <code dir="auto">get_file_content</code></td></tr><tr><td><strong>MCP Servers</strong></td><td>Optional: account-state MCP that knows where the user is in the wizard</td></tr><tr><td><strong>Persona</strong></td><td><code dir="auto">onboarding-coach</code>: CASUAL, INSTRUCTIONAL, verbosity 3</td></tr><tr><td><strong>System Prompt</strong></td><td><em>“You guide brand-new users through their first day. Show one next step. Wait for confirmation. Celebrate small wins.”</em></td></tr></tbody></table>
+<p><strong>Conversion target:</strong> <strong>signup → activation milestone.</strong></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="the-internal-it-agent">The Internal IT Agent</h3><a class="sl-anchor-link" href="#the-internal-it-agent"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “The Internal IT Agent”</span></a></div>
+<p>For employees, on-premises, behind your firewall.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Layer</th><th>Configuration</th></tr></thead><tbody><tr><td><strong>Name</strong></td><td>IT Helpdesk</td></tr><tr><td><strong>LLM</strong></td><td>A local LLM via Ollama: keeps queries off third-party clouds</td></tr><tr><td><strong>Tools</strong></td><td><code dir="auto">search_knowledge_base</code> (IT runbook), <code dir="auto">execute_python</code>, <code dir="auto">get_current_time</code></td></tr><tr><td><strong>MCP Servers</strong></td><td>Internal ticketing system (stdio MCP)</td></tr><tr><td><strong>Persona</strong></td><td>None: this one optimizes for precision, not voice</td></tr><tr><td><strong>System Prompt</strong></td><td><em>“You answer IT questions for employees. Cite the runbook section. If the issue isn’t covered, open a ticket via the MCP and reply with the ticket ID.”</em></td></tr></tbody></table>
+<p><strong>Outcome target:</strong> <strong>first-call resolution rate.</strong></p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="configuration-form">Configuration Form</h2><a class="sl-anchor-link" href="#configuration-form"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Configuration Form”</span></a></div>
+<p>The agent form is split into four tabs.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="settings">Settings</h3><a class="sl-anchor-link" href="#settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Settings”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Required</th><th>Description</th></tr></thead><tbody><tr><td><strong>Name</strong></td><td>Yes</td><td>Display name shown as the tab label in the Chat interface</td></tr><tr><td><strong>Avatar</strong></td><td></td><td>Profile image: supports upload and removal</td></tr><tr><td><strong>Description</strong></td><td></td><td>Brief explanation of the agent’s purpose</td></tr><tr><td><strong>System Prompt</strong></td><td></td><td>Instructions sent as a system message before every conversation. Defines purpose, scope, and behavior.</td></tr><tr><td><strong>Persona</strong></td><td></td><td>Optional <a href="/turing/docs/personas/">Persona</a>: overlays voice, vocabulary, brand context, and few-shot examples</td></tr><tr><td><strong>Enabled</strong></td><td></td><td>Toggle to activate or deactivate the agent</td></tr><tr><td><strong>Submission retention</strong></td><td></td><td>How long completed-conversation submissions are kept, see <a href="#compliance--retention">Compliance &#x26; retention</a></td></tr><tr><td><strong>Monthly budget (USD)</strong></td><td></td><td>Soft cap on the agent’s monthly AI spend: see <a href="/turing/docs/cost-governance/">Cost governance</a>. Optional <code dir="auto">Per-turn soft cap</code> + <code dir="auto">Downgrade LLM</code></td></tr><tr><td><strong>Disclose knowledge cutoff</strong></td><td></td><td>Opt-in toggle: injects <em>“Your knowledge cutoff is &#x3C;date>”</em> into the system prompt, using the configured model’s cutoff from the public model catalog, so answers self-disclose how stale their knowledge may be. Off by default; a no-op when the catalog doesn’t know the model’s cutoff.</td></tr></tbody></table>
+<aside aria-label="Default system prompt" class="starlight-aside starlight-aside--note"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 11a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0v-4a1 1 0 0 0-1-1Zm.38-3.92a1 1 0 0 0-.76 0 1 1 0 0 0-.33.21 1.15 1.15 0 0 0-.21.33 1 1 0 0 0 .21 1.09c.097.088.209.16.33.21A1 1 0 0 0 13 8a1.05 1.05 0 0 0-.29-.71 1 1 0 0 0-.33-.21ZM12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16.001A8 8 0 0 1 12 20Z"></path></svg>Default system prompt</p><div class="starlight-aside__content"><p>If the system prompt is left blank, the agent uses the built-in default:</p><p><em>“You are an AI assistant. Answer the user’s questions using the tools available to you. If you have access to MCP server tools, use them when relevant to fulfill the user’s request. If the user asks in a specific language, respond in that same language.”</em></p><p>This is fine for prototypes. For any customer-facing agent, write a real system prompt.</p></div></aside>
+<div class="sl-heading-wrapper level-h3"><h3 id="live-preview--prompt-diagnostics">Live Preview &#x26; prompt diagnostics</h3><a class="sl-anchor-link" href="#live-preview--prompt-diagnostics"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Live Preview &#x26; prompt diagnostics”</span></a></div>
+<p>The <strong>System Prompt</strong> page has a <strong>Live Preview</strong> that reverses the opaque assembled system message into labeled, color-coded segments (persona, agent prompt, MCP instructions, the active chat-flow addendum) rendered as one flowing article so you can read exactly what the model receives, top to bottom. It’s also a diagnostic surface for <em>optimizing the turn</em>, what the model receives, what it costs, and what is wasted:</p>
+<ul>
+<li><strong>Flow-aware persona.</strong> Pick a chat flow in the preview and the persona shown is the one the flow actually resolves to, a <code dir="auto">persona</code> flow node that switches the active voice is reflected (labeled <em>“switched by flow”</em>), not silently ignored. If a flow’s persona node points at a persona that isn’t in the agent’s catalog (or is audience-only), the conflict check warns you: that’s a voice that would silently fall back to the default at runtime.</li>
+<li><strong>Token accounting &#x26; cost.</strong> A metrics strip shows the total token estimate, the <strong>cacheable-prefix vs per-turn split</strong> (the stable portion a provider prefix cache can reuse across turns), and each segment’s token count + share of the total. When the agent’s LLM instance has a configured <a href="/turing/docs/cost-governance/">price</a>, an approximate per-turn cost is shown.</li>
+<li><strong>“Inert this turn”.</strong> When a flow governs the turn, its addendum tells the model to ignore the agent prompt’s welcome / first-interaction / routing scaffolding. The preview <strong>dims those regions</strong> and totals their token cost so you can see and trim the dead weight. Mark a section precisely with an author comment: <code dir="auto">&#x3C;!-- turing:concierge-only --></code> (inert when a flow runs) or <code dir="auto">&#x3C;!-- turing:flow-only --></code> (inert on a plain turn).</li>
+<li><strong>Cross-segment lint.</strong> The conflict check runs <em>across</em> segments: it flags a rule repeated in more than one place (e.g. a forbidden-vocabulary list in both the persona and the agent prompt, you pay for it twice) and a directive stated one way in one segment and contradicted in another. A deeper <strong>LLM-powered audit</strong> is available on demand for semantic conflicts.</li>
+<li><strong>Node picker &#x26; simulated values.</strong> Preview any point in a conversation, not just the flow’s entry: pick a flow node and supply the collected slot values, and the addendum’s “Already collected” line and next-step hint reflect that real mid-conversation turn.</li>
+<li><strong>Replay a real conversation.</strong> Instead of <em>simulating</em> a turn, paste a <strong>conversation id</strong> into the “Replay a real conversation” box and the preview is rebuilt from that conversation’s actual persisted state, its governing flow, cursor node, collected slots, and the persona the runtime really resolved (honouring any flow persona switch). The assembled prompt shown is exactly what the model would receive for that conversation’s next turn, the ground truth for debugging a specific reply, not a synthesized turn. A <strong>tool-call trace</strong> below the article lists what the model actually called during that conversation (name, arguments digest, ok/error, duration), so you can read “what the prompt said” against “what the model did”. (The conversation id is the value the SDK stores in the session cookie; find it on the conversation’s inspector/export.)</li>
+<li><strong>Whole message list.</strong> Beyond the system message, a <strong>Message list</strong> section shows the full ordered set of messages the model receives: the assembled system message, the <em>history-prefix</em> turns the runtime prepends from memory (a compressed summary of older turns, plus the earlier turns most relevant to the current message), then the recent conversation window. Each prefix turn is labeled with its source, so you can see the entire input, not just the system prompt.</li>
+<li><strong>Replay any <em>past</em> turn, verbatim.</strong> Replaying a conversation (above) rebuilds the prompt from its <em>current</em> state: what the <em>next</em> turn would send. That is enough for most debugging, but by the time you inspect it the flow may have advanced, slots may have been overwritten, and memory may have been compacted, so it is not the exact prompt sent on an earlier turn. Enable <strong>Prompt Capture (Replay)</strong> on the agent’s <strong>Settings</strong> tab and Turing saves the exact system message and whole-message list of every turn to object storage as it is sent. The replay bar then shows a <strong>turn picker</strong>: pick “Current state (reconstructed)” for the live rebuild, or any captured turn (“Turn N · timestamp”) to load it <strong>byte-for-byte</strong>, the precise prompt the model received on that turn. Capture is off by default (it only writes when enabled), requires object storage to be configured, and is bounded automatically (a per-conversation turn limit, a per-entry size cap, and a retention window) so it can’t grow without limit.</li>
+</ul>
+<p>All of these are read-only and never change the assembled prompt: the preview stays a faithful mirror of what the model receives.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="llm">LLM</h3><a class="sl-anchor-link" href="#llm"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “LLM”</span></a></div>
+<p>Select one or more LLM Instances. The list shows each instance’s title, description, vendor, and model name. The user (or the front-end) picks which one to use at chat time, from the agent’s allowed set.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="tools">Tools</h3><a class="sl-anchor-link" href="#tools"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Tools”</span></a></div>
+<p>Select which of the <strong>27 native tools</strong> are available. Tools are grouped by category: each group has a select-all checkbox for quick configuration.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="mcp-servers">MCP Servers</h3><a class="sl-anchor-link" href="#mcp-servers"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “MCP Servers”</span></a></div>
+<p>Select which external MCP servers this agent can call. The list shows each server’s title, description, and connection type.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="provider-native-tools-openai-responses">Provider-native tools (OpenAI Responses)</h2><a class="sl-anchor-link" href="#provider-native-tools-openai-responses"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Provider-native tools (OpenAI Responses)”</span></a></div>
+<p>Turing’s own tool catalog (the native tools above, plus MCP and Custom tools) works on <strong>every</strong> provider. Separately, when an agent runs on an OpenAI instance through the <strong>Responses API path</strong>, it can also use OpenAI’s <em>server-side</em> built-in tools, the model runs them in OpenAI’s cloud, not in Turing:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Capability</th><th>Built-in tool</th></tr></thead><tbody><tr><td><code dir="auto">openai-web-search</code></td><td>Live web search</td></tr><tr><td><code dir="auto">openai-file-search</code></td><td>Search over OpenAI-hosted vector stores</td></tr><tr><td><code dir="auto">openai-code-interpreter</code></td><td>OpenAI’s managed code sandbox (alongside Turing’s own <a href="/turing/docs/tool-calling/">Code Interpreter</a>)</td></tr><tr><td><code dir="auto">openai-image-generation</code></td><td>Inline image generation</td></tr><tr><td><code dir="auto">openai-mcp</code></td><td>A remote MCP connector run by OpenAI</td></tr></tbody></table>
+<p>These are governed by a <strong>per-LLM-instance capability matrix</strong>: each capability is switched on per instance. An <strong>empty matrix means the unchanged Spring AI path</strong>: nothing about the default deployment changes until you opt a capability in. <strong>Anthropic and Gemini have their own server-side tools too</strong> (web search, code execution, computer use, and more), the full cross-vendor matrix and the two-level gate that governs all of them live on <a href="/turing/docs/capabilities/">Capabilities</a>.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="reasoning-caching--background-execution">Reasoning, caching &#x26; background execution</h2><a class="sl-anchor-link" href="#reasoning-caching--background-execution"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Reasoning, caching &#x26; background execution”</span></a></div>
+<p>Beyond <em>what tools</em> an agent can call, three cross-vendor request options tune <em>how the turn runs</em>, each opt-in per instance/agent (a <a href="/turing/docs/capabilities/#request_option-capabilities">Request Option</a>), each fail-open to the unchanged path when off. They reach parity across OpenAI, Anthropic, and Gemini behind shared seams.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="extended-thinking--reasoning-budget">Extended thinking / reasoning budget</h3><a class="sl-anchor-link" href="#extended-thinking--reasoning-budget"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Extended thinking / reasoning budget”</span></a></div>
+<p>Give the model a reasoning budget and surface its thought summary in the <strong>“Why this answer”</strong> panel, one contract across all three vendors:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Vendor</th><th>How</th></tr></thead><tbody><tr><td><strong>OpenAI</strong></td><td><code dir="auto">reasoning-effort</code> (minimal/low/medium/high) + <code dir="auto">reasoning-summary</code></td></tr><tr><td><strong>Anthropic</strong></td><td><code dir="auto">anthropic-extended-thinking</code>: a positive <code dir="auto">thinkingBudget</code> enables extended thinking (forces <code dir="auto">temperature = 1</code>, as Anthropic requires); <code dir="auto">interleavedThinking</code> lets Claude reason <em>between</em> tool calls in the loop</td></tr><tr><td><strong>Gemini</strong></td><td><code dir="auto">thinkingBudget</code> (0 disables, -1 dynamic) + thought summaries</td></tr></tbody></table>
+<p>All three harvest the thought summary onto the shared <code dir="auto">reasoning</code> SSE event, so it lands in the same panel with no UI change.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="explicit-context-caching">Explicit context caching</h3><a class="sl-anchor-link" href="#explicit-context-caching"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Explicit context caching”</span></a></div>
+<p>The RAG cost lever: cache the stable prefix (system prompt + pinned grounding) once and reuse it across turns, conversations, and users at a steep discount. A vendor-neutral <code dir="auto">TurContextCacheProvider</code> seam routes by vendor:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Vendor</th><th>Mechanism</th></tr></thead><tbody><tr><td><strong>Gemini</strong></td><td>A named, TTL’d remote <code dir="auto">cachedContents</code> object (<code dir="auto">gemini-context-cache</code> option), keyed so one prefix maps to one shared cache (~75% off)</td></tr><tr><td><strong>Anthropic</strong></td><td><em>Inline</em> <code dir="auto">cache_control</code> breakpoints on the system prompt + last grounding block (<code dir="auto">cacheControlEnabled</code>, TTL <code dir="auto">5m</code>/<code dir="auto">1h</code>), nothing created remotely</td></tr><tr><td><strong>OpenAI</strong></td><td>Automatic prefix caching: no opt-in needed</td></tr></tbody></table>
+<p>The default no-op provider returns empty, so an unconfigured vendor is byte-for-byte unchanged. Fail-open: a too-small prefix, quota, or any error → uncached turn, never a failed turn.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="background-execution-openai">Background execution (OpenAI)</h3><a class="sl-anchor-link" href="#background-execution-openai"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Background execution (OpenAI)”</span></a></div>
+<p>Long reasoning/agentic turns (deep code-interpreter or computer-use loops) no longer hold the HTTP connection open: <code dir="auto">openai-background</code> submits the Responses call with <code dir="auto">background:true</code> and resumes by polling until terminal, freeing the connection, not the worker. Opt-in per instance (<code dir="auto">backgroundEnabled</code>, poll interval + max-wait configurable); fail-open returns the latest response so text extraction still runs.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="compliance--retention">Compliance &#x26; retention</h2><a class="sl-anchor-link" href="#compliance--retention"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Compliance &#x26; retention”</span></a></div>
+<p>A completed conversation writes a <strong>submission</strong> (the collected slots + outcome, see <a href="/turing/docs/chat-flow/">Chat Flow</a>). For LGPD/GDPR, each agent chooses how long to keep those:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Setting</th><th>Behavior</th></tr></thead><tbody><tr><td><code dir="auto">RETAIN_FOREVER</code> (default)</td><td>Keep submissions indefinitely</td></tr><tr><td><code dir="auto">RETAIN_DAYS</code></td><td>Keep for <code dir="auto">submissionRetentionDays</code>, then a daily cleanup job purges older ones</td></tr><tr><td><code dir="auto">DELETE_AFTER_EXPORT</code></td><td>Treat the conversation export as the system-of-record archive and purge Turing’s copy right after export</td></tr></tbody></table>
+<p>The default preserves today’s behavior; the other two are opt-in per agent. <code dir="auto">pii_*</code> slots are additionally encrypted/redacted regardless of this setting.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="memory--workspace">Memory &#x26; Workspace</h2><a class="sl-anchor-link" href="#memory--workspace"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Memory &#x26; Workspace”</span></a></div>
+<p>Beyond the four composition layers, an agent has two optional runtime capabilities that make long, multi-step conversations work. Both are off by default and configured on the agent’s <strong>Settings</strong> tab.</p>
+<ul>
+<li><strong><a href="/turing/docs/chat-memory/">Chat Memory</a></strong>: persist the conversation, surface the most relevant older turns with BM25 retrieval, and compress very long histories into a cheap summary. Turn it on for any agent that holds extended conversations where context stated early still matters later.</li>
+<li><strong><a href="/turing/docs/agent-workspace/">Agent Workspace</a></strong>: a per-conversation file store. Tools write drafts, reports, and charts to it; large tool results are offloaded to it automatically to keep the prompt small; the user downloads finished files from signed links. Requires a <a href="/turing/docs/configuration-reference/#storage">storage backend</a>.</li>
+</ul>
+<p>The two interlock: memory compression stores its summaries <em>in</em> the workspace. Neither changes an agent’s behaviour until you enable it.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="rest-api">REST API</h2><a class="sl-anchor-link" href="#rest-api"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “REST API”</span></a></div>
+<div class="sl-heading-wrapper level-h3"><h3 id="agent-management">Agent Management</h3><a class="sl-anchor-link" href="#agent-management"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Agent Management”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/ai-agent</code></td><td>List all agents (ordered by title)</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/ai-agent/structure</code></td><td>Empty structure template for a new agent</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/ai-agent/{id}</code></td><td>Get a specific agent</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/ai-agent</code></td><td>Create a new agent</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/ai-agent/{id}</code></td><td>Update an existing agent</td></tr><tr><td><code dir="auto">DELETE</code></td><td><code dir="auto">/api/ai-agent/{id}</code></td><td>Delete an agent</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="agent-chat">Agent Chat</h3><a class="sl-anchor-link" href="#agent-chat"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Agent Chat”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/v2/ai-agent/{agentId}/chat</code></td><td>Stream chat response (SSE). Body: <code dir="auto">{ llmInstanceId, messages[] }</code></td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/ai-agent/{agentId}/chat/context-info</code></td><td>Context window size for the chosen LLM. Query: <code dir="auto">llmInstanceId</code></td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="native-tools">Native Tools</h3><a class="sl-anchor-link" href="#native-tools"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Native Tools”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/native-tool</code></td><td>List all available tool groups, names, and descriptions</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="diagnosing-a-misbehaving-agent">Diagnosing a Misbehaving Agent</h2><a class="sl-anchor-link" href="#diagnosing-a-misbehaving-agent"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Diagnosing a Misbehaving Agent”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Where to look</th></tr></thead><tbody><tr><td>Agent gives generic answers, doesn’t cite your content</td><td>No tool was called; the model didn’t know to use one</td><td>Add a sharper system prompt directive: <em>“Always start by calling <code dir="auto">search_knowledge_base</code> before answering.”</em></td></tr><tr><td>Agent uses brand names from a competitor or wrong product</td><td>Forbidden vocabulary not configured</td><td>Add the wrong terms to the persona’s forbidden list</td></tr><tr><td>Agent’s tone changes mid-conversation</td><td>No persona attached, or weak system prompt</td><td>Attach a persona; the post-LLM validator and prompt-side directives stabilize voice</td></tr><tr><td>Agent calls tools but ignores the results</td><td>Model is too small or the tool result is too large</td><td>Try a stronger LLM Instance; or trim the tool’s output (e.g., reduce <code dir="auto">find_similar_documents</code> top-K)</td></tr><tr><td>Conversion rate dropping over weeks</td><td>Few-shot store is stale; brand-context MCP returning old prices</td><td><a href="/turing/docs/chat-analytics/">Chat Analytics</a> drill-down → check goal-achievement rate per persona</td></tr><tr><td>Latency spikes occasionally</td><td>A tool is slow; or the LLM provider is rate-limiting</td><td><a href="/turing/docs/observability/">Observability</a> dashboards (<code dir="auto">turing.llm.calls</code> timer)</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="related-pages">Related Pages</h2><a class="sl-anchor-link" href="#related-pages"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Related Pages”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Page</th><th>Description</th></tr></thead><tbody><tr><td><a href="/turing/docs/llm-instances/">LLM Instances</a></td><td>Configure the model providers used as agent brains</td></tr><tr><td><a href="/turing/docs/tool-calling/">Tool Calling</a></td><td>The 27 native tools, grouped and explained</td></tr><tr><td><a href="/turing/docs/mcp-servers/">MCP Servers</a></td><td>Connect agents to external tool servers</td></tr><tr><td><a href="/turing/docs/personas/">Personas</a></td><td>Give agents a brand voice</td></tr><tr><td><a href="/turing/docs/chat-memory/">Chat Memory</a></td><td>Persist, retrieve, and compress conversation history</td></tr><tr><td><a href="/turing/docs/agent-workspace/">Agent Workspace</a></td><td>Per-conversation file store for tool artifacts and offloaded results</td></tr><tr><td><a href="/turing/docs/chat-flow/">Chat Flow</a></td><td>Scripted conversational journeys attached to an agent</td></tr><tr><td><a href="/turing/docs/agent-eval/">Agent Evaluation</a></td><td>Regression-test an agent before publishing</td></tr><tr><td><a href="/turing/docs/cost-governance/">Cost Governance</a></td><td>The per-agent budget fields and AI-spend dashboard</td></tr><tr><td><a href="/turing/docs/chat/">Chat</a></td><td>The interface where agents come to life</td></tr><tr><td><a href="/turing/docs/chat-analytics/">Chat Analytics</a></td><td>Measure which agents are converting</td></tr><tr><td><a href="/turing/docs/observability/">Observability</a></td><td>Watch latency, token usage, and tool reliability in real time</td></tr></tbody></table>
+<hr></div><footer class="sl-flex astro-cla57s4p"><div class="meta sl-flex astro-cla57s4p"><p>Last updated: <time datetime="2026-10-29T11:49:33.000Z">Oct 29, 2026</time></p></div><div class="pagination-links print:hidden astro-euyh6ymx" dir="ltr"><a href="/turing/docs/agents/" rel="prev" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-euyh6ymx">Previous<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Overview</span></span></a><a href="/turing/docs/tool-calling/" rel="next" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-euyh6ymx">Next<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Tool Calling</span></span></a></div></footer><footer class="turing-footer not-content astro-jo6i4kqk"><div class="turing-footer-grid astro-jo6i4kqk"><div class="astro-jo6i4kqk"><span class="turing-footer-brand astro-jo6i4kqk"><img src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" alt="" width="28" height="28" class="astro-jo6i4kqk">Viglet Turing</span><p class="astro-jo6i4kqk">Open-source Enterprise Search Intelligence Platform: agents, tools, skills, MCP and RAG for your content.</p></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Product</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/#features" class="astro-jo6i4kqk">Capabilities</a></li><li class="astro-jo6i4kqk"><a href="/turing/compare/" class="astro-jo6i4kqk">Compare</a></li><li class="astro-jo6i4kqk"><a href="/turing/migrate/" class="astro-jo6i4kqk">Migrate</a></li><li class="astro-jo6i4kqk"><a href="/turing/aem-search/" class="astro-jo6i4kqk">AEM search</a></li><li class="astro-jo6i4kqk"><a href="/turing/security/" class="astro-jo6i4kqk">Security</a></li><li class="astro-jo6i4kqk"><a href="/turing/#marketplace" class="astro-jo6i4kqk">Marketplace</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Developers</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/react-sdk/" class="astro-jo6i4kqk">React SDK</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-react-sdk" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">npm</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-cli" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">CLI</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Open &amp; transparent</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="https://github.com/openviglet/turing/blob/HEAD/docs/ROADMAP.md" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Roadmap</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org/turing/release-notes/" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Changelog</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">viglet.org</a></li></ul></div></div><div class="turing-footer-legal astro-jo6i4kqk">© 2026 Viglet Turing · Apache 2.0 License</div></footer></div></div></main></div></div></div></div></body></html>

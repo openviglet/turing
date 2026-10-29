@@ -1,0 +1,1265 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-wy3hjvd4"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Configuration Reference | Viglet Turing</title><link rel="canonical" href="https://openviglet.github.io/turing/docs/configuration-reference/"/><link rel="sitemap" href="/turing/docs/sitemap-index.xml"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"/><link rel="shortcut icon" href="/turing/docs/favicon.ico" type="image/x-icon"/><meta name="generator" content="Astro v7.4.2"/><meta name="generator" content="Starlight v0.41.11"/><meta property="og:title" content="Configuration Reference"/><meta property="og:type" content="article"/><meta property="og:url" content="https://openviglet.github.io/turing/docs/configuration-reference/"/><meta property="og:locale" content="en"/><meta property="og:description" content="Complete reference for the Viglet Turing application.yaml configuration file."/><meta property="og:site_name" content="Viglet Turing"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="Complete reference for the Viglet Turing application.yaml configuration file."/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/turing/docs/_astro/print.ehPL0gv-.css" media="print"><link rel="stylesheet" href="/turing/docs/_astro/common.gvporLFj.css"><style>@layer starlight.components{.card-grid:where(.astro-6q73ypdm){grid-template-columns:100%;gap:1rem;display:grid}.card-grid:where(.astro-6q73ypdm)>*{margin-top:0!important}@media (width>=50rem){.card-grid:where(.astro-6q73ypdm){grid-template-columns:1fr 1fr;gap:1.5rem}.stagger:where(.astro-6q73ypdm){--stagger-height:5rem;padding-bottom:var(--stagger-height)}.stagger:where(.astro-6q73ypdm)>:nth-child(2n){transform:translateY(var(--stagger-height))}}.sl-link-card:where(.astro-b5uddqxg){border:1px solid var(--sl-color-gray-5);box-shadow:var(--sl-shadow-sm);border-radius:.5rem;grid-template-columns:1fr auto;gap:.5rem;padding:1rem;display:grid;position:relative}a:where(.astro-b5uddqxg){line-height:var(--sl-line-height-headings);text-decoration:none}a:where(.astro-b5uddqxg):before{content:"";position:absolute;inset:0}.stack:where(.astro-b5uddqxg){flex-direction:column;gap:.5rem}.title:where(.astro-b5uddqxg){color:var(--sl-color-white);font-weight:600;font-size:var(--sl-text-lg)}.description:where(.astro-b5uddqxg){color:var(--sl-color-gray-3);line-height:1.5}.icon:where(.astro-b5uddqxg){color:var(--sl-color-gray-3)}.sl-link-card:where(.astro-b5uddqxg):hover{background:var(--sl-color-gray-7,var(--sl-color-gray-6));border-color:var(--sl-color-gray-2)}.sl-link-card:where(.astro-b5uddqxg):hover .icon:where(.astro-b5uddqxg){color:var(--sl-color-white)}}
+@layer starlight.components{.card:where(.astro-uyl7lth6){--sl-card-border:var(--sl-color-purple);--sl-card-bg:var(--sl-color-purple-low);border:1px solid var(--sl-color-gray-5);background-color:var(--sl-color-black);flex-direction:column;gap:clamp(.5rem,.125rem + 1vw,1rem);padding:clamp(1rem,.125rem + 3vw,2.5rem)}.card:where(.astro-uyl7lth6):nth-child(4n+1){--sl-card-border:var(--sl-color-orange);--sl-card-bg:var(--sl-color-orange-low)}.card:where(.astro-uyl7lth6):nth-child(4n+3){--sl-card-border:var(--sl-color-green);--sl-card-bg:var(--sl-color-green-low)}.card:where(.astro-uyl7lth6):nth-child(4n+4){--sl-card-border:var(--sl-color-red);--sl-card-bg:var(--sl-color-red-low)}.card:where(.astro-uyl7lth6):nth-child(4n+5){--sl-card-border:var(--sl-color-blue);--sl-card-bg:var(--sl-color-blue-low)}.title:where(.astro-uyl7lth6){font-weight:600;font-size:var(--sl-text-h4);color:var(--sl-color-white);line-height:var(--sl-line-height-headings);align-items:center;gap:1rem}.card:where(.astro-uyl7lth6) .icon:where(.astro-uyl7lth6){border:1px solid var(--sl-card-border);background-color:var(--sl-card-bg);border-radius:.25rem;flex-shrink:0;padding:.2em}.card:where(.astro-uyl7lth6) .body:where(.astro-uyl7lth6){font-size:clamp(var(--sl-text-sm), calc(.5rem + 1vw), var(--sl-text-body));margin:0}}
+@layer starlight.components{svg:where(.astro-nwdigvql){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em}}
+</style><script type="module" src="/turing/docs/_astro/page.cNngjUgL.js"></script></head><body class="astro-wy3hjvd4"><a class="sl-skip-link astro-24szbuaa" href="#_top">Skip to content</a><div class="page sl-flex astro-ib55ocom"><header class="header astro-ib55ocom"><div class="header astro-ukxunls3"><div class="title-wrapper sl-flex astro-ukxunls3"><div class="turing-brand astro-hen6hmfb"><a href="/turing/docs/" class="site-title sl-flex astro-f4vgya6g"><img class="astro-f4vgya6g" alt="Viglet Turing" src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" width="512" height="512"><span class="astro-f4vgya6g" translate="no">Viglet Turing</span></a><span class="turing-docs-label astro-hen6hmfb">Docs</span><a class="turing-pill astro-hen6hmfb" href="https://www.viglet.org" target="_blank" rel="noreferrer">part of viglet.org ↗</a></div></div><div class="sl-flex print:hidden astro-ukxunls3"><site-search class="astro-ukxunls3 astro-a2lndvxu" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-a2lndvxu"><svg aria-hidden="true" class="astro-a2lndvxu astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-a2lndvxu" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-a2lndvxu" style="display: none;"><kbd class="astro-a2lndvxu">Ctrl</kbd><kbd class="astro-a2lndvxu">K</kbd></kbd></button><dialog style="padding:0" aria-label="Search" class="astro-a2lndvxu"><div class="dialog-frame sl-flex astro-a2lndvxu"><button data-close-modal class="sl-flex md:sl-hidden astro-a2lndvxu">Cancel</button><div class="search-container astro-a2lndvxu"><div id="starlight__search" class="astro-a2lndvxu"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/turing/docs/_astro/Search.astro_astro_type_script_index_0_lang.w5cqYmCt.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-ukxunls3"><div class="sl-flex social-icons astro-ukxunls3"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-ib55ocom" aria-label="Main"><starlight-menu-button class="print:hidden astro-p3fyn3ad"><button aria-expanded="false" aria-label="Menu" aria-controls="starlight__sidebar" class="sl-flex md:sl-hidden astro-p3fyn3ad"><svg aria-hidden="true" class="open-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg></button></starlight-menu-button><script type="module">var e=class extends HTMLElement{btn=this.querySelector(`button`);constructor(){super(),this.btn.addEventListener(`click`,()=>this.toggleExpanded());let e=this.closest(`nav`);e&&e.addEventListener(`keyup`,e=>this.closeOnEscape(e)),matchMedia(`(min-width: 50em)`).addEventListener(`change`,()=>this.setExpanded(!1))}setExpanded(e){this.setAttribute(`aria-expanded`,String(e)),document.body.toggleAttribute(`data-mobile-menu-expanded`,e),document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}toggleExpanded(){this.setExpanded(this.getAttribute(`aria-expanded`)!==`true`)}closeOnEscape(e){e.code===`Escape`&&(this.setExpanded(!1),this.btn.focus())}};customElements.define(`starlight-menu-button`,e);</script><div id="starlight__sidebar" class="sidebar-pane astro-ib55ocom"><div class="sidebar-content sl-flex astro-ib55ocom"><sl-sidebar-state-persist data-hash="0qm6pqf" class="astro-odquddkb"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/" class="large astro-da7gfiol"><span class="astro-da7gfiol">Introduction</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Getting Started</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/intro/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is Viglet Turing?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/core-concepts/" class="astro-da7gfiol"><span class="astro-da7gfiol">Core Concepts</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/architecture-overview/" class="astro-da7gfiol"><span class="astro-da7gfiol">Architecture Overview</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Enterprise Search</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/enterprise-search/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/search-engine/" class="astro-da7gfiol"><span class="astro-da7gfiol">Search Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/semantic-navigation/" class="astro-da7gfiol"><span class="astro-da7gfiol">Semantic Navigation</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/synonyms/" class="astro-da7gfiol"><span class="astro-da7gfiol">Synonyms</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/thesaurus/" class="astro-da7gfiol"><span class="astro-da7gfiol">Thesaurus</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/manifest/" class="astro-da7gfiol"><span class="astro-da7gfiol">Field Manifest &amp; Schema-as-Code</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">DSL Query</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/dsl-query/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Query API</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/dsl-compatibility/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Compatibility Matrix</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/spa-pages/" class="astro-da7gfiol"><span class="astro-da7gfiol">SPA Pages</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Integration</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/integration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Integration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/integration-aem/" class="astro-da7gfiol"><span class="astro-da7gfiol">AEM Connector</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/import-export/" class="astro-da7gfiol"><span class="astro-da7gfiol">Import &amp; Export</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/migration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Migrating from Algolia or Elasticsearch</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">RAG &amp; Chat</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/rag-chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is RAG?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/answer/" class="astro-da7gfiol"><span class="astro-da7gfiol">Answer Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/vectorless-structured-rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">Vectorless (Structured-Data) RAG</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-stores/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Stores</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-models/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Models</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/reranking/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reranking</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-memory/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Memory</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/intent/" class="astro-da7gfiol"><span class="astro-da7gfiol">Intent</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/personas/" class="astro-da7gfiol"><span class="astro-da7gfiol">Personas</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/persona-book/" class="astro-da7gfiol"><span class="astro-da7gfiol">The Persona Book</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/transcription/" class="astro-da7gfiol"><span class="astro-da7gfiol">Transcription</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Agents, Tools &amp; Skills</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/ai-agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">AI Agents</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/tool-calling/" class="astro-da7gfiol"><span class="astro-da7gfiol">Tool Calling</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/capabilities/" class="astro-da7gfiol"><span class="astro-da7gfiol">Capabilities</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/client-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Client Tools &amp; Agent↔UI (AG-UI)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/custom-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Custom Tools</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/mcp-servers/" class="astro-da7gfiol"><span class="astro-da7gfiol">MCP Servers</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/skills/" class="astro-da7gfiol"><span class="astro-da7gfiol">Skills</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-workspace/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Workspace</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-flow/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Flow</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/human-in-the-loop/" class="astro-da7gfiol"><span class="astro-da7gfiol">Human-in-the-Loop</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/webhooks/" class="astro-da7gfiol"><span class="astro-da7gfiol">Webhooks</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/routines/" class="astro-da7gfiol"><span class="astro-da7gfiol">Routines</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/experiments/" class="astro-da7gfiol"><span class="astro-da7gfiol">Experiments (A/B Testing)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-eval/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Evaluation (CI)</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Deploy &amp; Operate</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="6"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/deploy-operate/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/installation-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Installation Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/configuration-reference/" aria-current="page" class="astro-da7gfiol"><span class="astro-da7gfiol">Configuration Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/genai-llm/" class="astro-da7gfiol"><span class="astro-da7gfiol">Generative AI &amp; LLM Configuration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-instances/" class="astro-da7gfiol"><span class="astro-da7gfiol">LLM Instances</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/assets/" class="astro-da7gfiol"><span class="astro-da7gfiol">Assets</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/multi-tenancy/" class="astro-da7gfiol"><span class="astro-da7gfiol">Multi-Tenancy</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/administration-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Administration Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/observability/" class="astro-da7gfiol"><span class="astro-da7gfiol">Observability: Prometheus &amp; Grafana</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/logging/" class="astro-da7gfiol"><span class="astro-da7gfiol">Logging</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Analytics</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/token-usage/" class="astro-da7gfiol"><span class="astro-da7gfiol">Token Usage</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cost-governance/" class="astro-da7gfiol"><span class="astro-da7gfiol">Cost Governance</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-gateway/" class="astro-da7gfiol"><span class="astro-da7gfiol">Governed LLM Gateway</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Developers</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="7"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/developer-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Developer Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/react-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">React SDK</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/javascript-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">JavaScript SDK (vanilla)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cli/" class="astro-da7gfiol"><span class="astro-da7gfiol">Turing CLI</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/flow-dsl/" class="astro-da7gfiol"><span class="astro-da7gfiol">Flow DSL</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/showcase/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reference showcase (Atlas Store)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/conversion-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Conversion Analytics (GA4 bridge)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rest-api/" class="astro-da7gfiol"><span class="astro-da7gfiol">REST API Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/graphql/" class="astro-da7gfiol"><span class="astro-da7gfiol">GraphQL API</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Security</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="8"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/security-authentication/" class="astro-da7gfiol"><span class="astro-da7gfiol">Authentication</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-social-login/" class="astro-da7gfiol"><span class="astro-da7gfiol">Social Login (OAuth2)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-keycloak/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security &amp; Keycloak</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-hardening/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security Hardening &amp; Upgrade Notes</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="https://openviglet.github.io/turing/react-sdk" class="large astro-da7gfiol"><span class="astro-da7gfiol">Storybook (React SDK)</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-yv4jyioq"><div class="social-icons astro-yv4jyioq"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div></div></div></div></nav><div class="main-frame astro-ib55ocom"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-muvsczkj"><aside class="right-sidebar-container print:hidden astro-muvsczkj"><div class="right-sidebar astro-muvsczkj"><div class="lg:sl-hidden astro-uaaz7kdr"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-l2ev5fid"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-l2ev5fid"><details id="starlight__mobile-toc" class="astro-l2ev5fid"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-l2ev5fid"><span class="toggle sl-flex astro-l2ev5fid">On this page<svg aria-hidden="true" class="caret astro-l2ev5fid astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-l2ev5fid"></span></summary><div class="dropdown astro-l2ev5fid"><ul class="isMobile astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#full-default-configuration" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Full Default Configuration</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#property-reference" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Property Reference</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#server" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Server</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#database-spring-datasource" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Database (Spring Datasource)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#message-queue-apache-artemis" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Message Queue (Apache Artemis)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#file-uploads" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">File Uploads</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#graphql" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">GraphQL</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#async--timeout" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Async / Timeout</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#turing-core" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Turing Core</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#model-catalog-turingmodel-catalog" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Model Catalog (turing.model-catalog)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#abuse-controls-turingabuse" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Abuse Controls (turing.abuse)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#mcp-client-guards-turingmcp-client" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">MCP Client Guards (turing.mcp-client)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#solr" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Solr</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#elasticsearch" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Elasticsearch</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#adobe-aem-content-ai-turingcontent-ai" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Adobe AEM Content AI (turing.content-ai)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#search-cache" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Search Cache</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#storage-assets-knowledge-base--pages" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Storage (Assets, Knowledge Base &amp; Pages)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#mongodb-application-logs" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">MongoDB (Application Logs)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#api-documentation-springdoc" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">API Documentation (SpringDoc)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#logging" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Logging</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#keycloak-oauth2--oidc" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Keycloak (OAuth2 / OIDC)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#genai--llm-database-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">GenAI / LLM (Database Settings)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#rag-reranker-database-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">RAG Reranker (Database Settings)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#embedding-store-database-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Embedding Store (Database Settings)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#code-interpreter-execution-mode" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Code Interpreter (Execution Mode)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#routines-async-queue" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Routines (Async Queue)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#turing-as-an-mcp-server" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Turing as an MCP Server</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#chat-analytics" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Chat Analytics</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#cost-governance" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Cost Governance</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#common-production-overrides" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Common Production Overrides</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/turing/docs/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.BcSo_yiZ.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-uaaz7kdr"><div class="sl-container astro-uaaz7kdr"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#full-default-configuration" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Full Default Configuration</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#property-reference" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Property Reference</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#server" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Server</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#database-spring-datasource" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Database (Spring Datasource)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#message-queue-apache-artemis" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Message Queue (Apache Artemis)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#file-uploads" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">File Uploads</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#graphql" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">GraphQL</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#async--timeout" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Async / Timeout</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#turing-core" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Turing Core</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#model-catalog-turingmodel-catalog" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Model Catalog (turing.model-catalog)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#abuse-controls-turingabuse" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Abuse Controls (turing.abuse)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#mcp-client-guards-turingmcp-client" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">MCP Client Guards (turing.mcp-client)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#solr" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Solr</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#elasticsearch" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Elasticsearch</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#adobe-aem-content-ai-turingcontent-ai" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Adobe AEM Content AI (turing.content-ai)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#search-cache" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Search Cache</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#storage-assets-knowledge-base--pages" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Storage (Assets, Knowledge Base &amp; Pages)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#mongodb-application-logs" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">MongoDB (Application Logs)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#api-documentation-springdoc" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">API Documentation (SpringDoc)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#logging" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Logging</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#keycloak-oauth2--oidc" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Keycloak (OAuth2 / OIDC)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#genai--llm-database-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">GenAI / LLM (Database Settings)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#rag-reranker-database-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">RAG Reranker (Database Settings)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#embedding-store-database-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Embedding Store (Database Settings)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#code-interpreter-execution-mode" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Code Interpreter (Execution Mode)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#routines-async-queue" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Routines (Async Queue)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#turing-as-an-mcp-server" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Turing as an MCP Server</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#chat-analytics" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Chat Analytics</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#cost-governance" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Cost Governance</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#common-production-overrides" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Common Production Overrides</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></nav></starlight-toc><script type="module" src="/turing/docs/_astro/TableOfContents.astro_astro_type_script_index_0_lang.Csloo1VZ.js"></script></div></div></div></aside><div class="main-pane astro-muvsczkj"><main data-pagefind-body class="astro-wy3hjvd4" lang="en" dir="ltr"><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><h1 id="_top" class="astro-swossm7f">Configuration Reference</h1></div></div><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><div class="sl-markdown-content"><p>This page documents every significant property in the Viglet Turing <code dir="auto">application.yaml</code> file. The file uses standard Spring Boot configuration: any property can be overridden via environment variables, JVM system properties (<code dir="auto">-Dkey=value</code>), or a separate <code dir="auto">application-production.yaml</code> file in the working directory.</p>
+<aside aria-label="Override pattern" class="starlight-aside starlight-aside--tip"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path fill-rule="evenodd" d="M1.44 8.855v-.001l3.527-3.516c.34-.344.802-.541 1.285-.548h6.649l.947-.947c3.07-3.07 6.207-3.072 7.62-2.868a1.821 1.821 0 0 1 1.557 1.557c.204 1.413.203 4.55-2.868 7.62l-.946.946v6.649a1.845 1.845 0 0 1-.549 1.286l-3.516 3.528a1.844 1.844 0 0 1-3.11-.944l-.858-4.275-4.52-4.52-2.31-.463-1.964-.394A1.847 1.847 0 0 1 .98 10.693a1.843 1.843 0 0 1 .46-1.838Zm5.379 2.017-3.873-.776L6.32 6.733h4.638l-4.14 4.14Zm8.403-5.655c2.459-2.46 4.856-2.463 5.89-2.33.134 1.035.13 3.432-2.329 5.891l-6.71 6.71-3.561-3.56 6.71-6.711Zm-1.318 15.837-.776-3.873 4.14-4.14v4.639l-3.364 3.374Z" clip-rule="evenodd"></path><path d="M9.318 18.345a.972.972 0 0 0-1.86-.561c-.482 1.435-1.687 2.204-2.934 2.619a8.22 8.22 0 0 1-1.23.302c.062-.365.157-.79.303-1.229.415-1.247 1.184-2.452 2.62-2.935a.971.971 0 1 0-.62-1.842c-.12.04-.236.084-.35.13-2.02.828-3.012 2.588-3.493 4.033a10.383 10.383 0 0 0-.51 2.845l-.001.016v.063c0 .536.434.972.97.972H2.24a7.21 7.21 0 0 0 .878-.065c.527-.063 1.248-.19 2.02-.447 1.445-.48 3.205-1.472 4.033-3.494a5.828 5.828 0 0 0 .147-.407Z"></path></svg>Override pattern</p><div class="starlight-aside__content"><p>To override a property at runtime without editing the file, use the environment variable convention: replace <code dir="auto">.</code> and <code dir="auto">-</code> with <code dir="auto">_</code> and uppercase everything. For example, <code dir="auto">turing.storage.type</code> becomes <code dir="auto">TURING_STORAGE_TYPE=minio</code>.</p></div></aside>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="full-default-configuration">Full Default Configuration</h2><a class="sl-anchor-link" href="#full-default-configuration"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Full Default Configuration”</span></a></div>
+<div class="expressive-code"><link rel="stylesheet" href="/turing/docs/_astro/ec.w36nc.css"><script type="module" src="/turing/docs/_astro/ec.0vx5m.js"></script><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="yaml"><code><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">spring</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">datasource.hikari</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">maximum-pool-size</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">20</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">minimum-idle</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">5</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">idle-timeout</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">600000</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">pool-name</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">TurConnectionPool</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">jmx.enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">profiles</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">active</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">production</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">h2</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">console</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span><span style="--0:#D6DEEB;--1:#403F53">          </span><span style="--0:#919F9F;--1:#5F636F"># keep off in production</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">path</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">/h2</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">settings</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">web-allow-others</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span><span style="--0:#D6DEEB;--1:#403F53">   </span><span style="--0:#919F9F;--1:#5F636F"># loopback-only if ever enabled</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">datasource</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">url</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">jdbc:h2:file:./store/db/turingDB;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">username</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">sa</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">password</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">""</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">driver-class-name</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">org.h2.Driver</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">liquibase</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">change-log</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">classpath:db/changelog/db.changelog-master.yaml</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">default-schema</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">PUBLIC</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">jpa</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">properties</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">hibernate</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">[globally_quoted_identifiers]</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">[format_sql]</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">[enable_lazy_load_no_trans]</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">[generate_statistics]</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">[jakarta.persistence.sharedCache.mode]</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">ALL</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">hibernate</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">ddl-auto</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">none</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">show-sql</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">jackson</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">mapper</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">[DEFAULT_VIEW_INCLUSION]</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">thymeleaf</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">mode</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">HTML</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">check-template</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">check-template-location</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">prefix</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">classpath:public/</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">suffix</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">.html</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">artemis</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">mode</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">embedded</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">broker-url</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">localhost:61616</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">embedded</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">persistent</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">data-directory</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">store/queue</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">queues</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">indexing.queue</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">pool</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">max-connections</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">10</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">jms</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">template</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">default-destination</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">indexing.queue</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">servlet</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">multipart</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">max-file-size</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">64MB</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">max-request-size</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">64MB</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">mvc</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">async</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">request-timeout</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">3600000</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">output</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">ansi</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">always</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">graphql</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">graphiql</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">path</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">/graphiql</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">http.path</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">/graphql</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">cors</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">allowed-origins</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">${turing.allowedOrigins}</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">allowed-methods</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">GET,POST</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">allowed-headers</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">*</span><span style="--0:#D9F5DD;--1:#111111">"</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">server</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">port</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">${PORT:2700}</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">compression</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">mime-types</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">application/json,text/css,application/javascript</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">min-response-size</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">2048</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">tomcat</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">accesslog</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">suffix</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">.log</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">prefix</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">access_log</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">file-date-format</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">.yyyy-MM-dd</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">directory</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">logs</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">basedir</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">store</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">threads</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">max</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">600</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">max-swallow-size</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">200MB</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">max-http-form-post-size</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">200MB</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">maxHttpResponseHeaderSize</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">800KB</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">turing</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">ai.crypto.key</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">${TURING_AI_CRYPTO_KEY:}</span><span style="--0:#D6DEEB;--1:#403F53">   </span><span style="--0:#919F9F;--1:#5F636F"># required in production (fail-fast on blank/sample)</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">allowedOrigins</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">http://localhost:4200,http://localhost:5173</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">permissions</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span><span style="--0:#D6DEEB;--1:#403F53">                          </span><span style="--0:#919F9F;--1:#5F636F"># authn is NOT admin; false = trusted single-user mode</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">multi-tenant</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">keycloak</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">url</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">http://localhost:2700</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">open-browser</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">jms.concurrency</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">1-1</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">code-interpreter</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">python-executable</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">""</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">model-catalog</span><span style="--0:#D6DEEB;--1:#403F53">:                               </span><span style="--0:#919F9F;--1:#5F636F"># public LLM catalog powering the model picker</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">url</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">${TURING_MODEL_CATALOG_URL:https://openviglet.github.io/model-catalog/catalog.json}</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">remote-enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span><span style="--0:#D6DEEB;--1:#403F53">                       </span><span style="--0:#919F9F;--1:#5F636F"># remote-only; false = live vendor listing only</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">price-sync</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span><span style="--0:#D6DEEB;--1:#403F53">                            </span><span style="--0:#919F9F;--1:#5F636F"># seed tur_llm_price from indicative pricing</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">change-feed</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">email-enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span><span style="--0:#D6DEEB;--1:#403F53">                     </span><span style="--0:#919F9F;--1:#5F636F"># opt-in daily change-feed digest email</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">solr</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">timeout</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">30000</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">cloud</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">commit</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">within</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">10000</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">elasticsearch</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">timeout</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">30000</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">search</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">metrics.enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">cache</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">ttl</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">seconds</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">86400000</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">storage</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">type</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">none</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">filesystem</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">path</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">./store/assets</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">minio</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">endpoint</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">${TURING_STORAGE_MINIO_ENDPOINT:http://localhost:9000}</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">access-key</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">${TURING_STORAGE_MINIO_ACCESS_KEY:minioadmin}</span><span style="--0:#D6DEEB;--1:#403F53">   </span><span style="--0:#919F9F;--1:#5F636F"># set via env for real deployments</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">secret-key</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">${TURING_STORAGE_MINIO_SECRET_KEY:minioadmin}</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">bucket</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">${TURING_STORAGE_MINIO_BUCKET:turing-assets}</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">mongodb</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">uri</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">mongodb://localhost:27017</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">logging</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">database</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">turingLog</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">collection</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">server</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">server</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">aem</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">aem</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">indexing</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">indexing</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">purge</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">days</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">30</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">springdoc</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">pathsToMatch</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">/api/**</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">swagger-ui</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">path</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">/swagger-ui.html</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">management</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">endpoints</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">web</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">exposure</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">include</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">health,info,prometheus</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">   </span><span style="--0:#919F9F;--1:#5F636F"># env/heapdump/etc. not exposed over HTTP</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">logging</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">config</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">classpath:logback-spring.xml</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">level</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">org</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">springframework</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">INFO</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">apache</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">INFO</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">[apache.activemq]</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">ERROR</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">com</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">viglet</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">INFO</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">dev</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">langchain4j</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">INFO</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">ai4j</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">openai4j</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">INFO</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">file</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">name</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">store/logs/turing.log</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">logback</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">rollingpolicy</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">max-file-size</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">25MB</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">max-history</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">10</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="spring:  datasource.hikari:    maximum-pool-size: 20    minimum-idle: 5    idle-timeout: 600000    pool-name: TurConnectionPool  jmx.enabled: true  profiles:    active: production  h2:    console:      enabled: false          # keep off in production      path: /h2      settings:        web-allow-others: false   # loopback-only if ever enabled  datasource:    url: jdbc:h2:file:./store/db/turingDB;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=true    username: sa    password: &#x22;&#x22;    driver-class-name: org.h2.Driver  liquibase:    change-log: classpath:db/changelog/db.changelog-master.yaml    enabled: true    default-schema: PUBLIC  jpa:    properties:      hibernate:        &#x22;[globally_quoted_identifiers]&#x22;: true        &#x22;[format_sql]&#x22;: false        &#x22;[enable_lazy_load_no_trans]&#x22;: true        &#x22;[generate_statistics]&#x22;: false      &#x22;[jakarta.persistence.sharedCache.mode]&#x22;: ALL    hibernate:      ddl-auto: none    show-sql: false  jackson:    mapper:      &#x22;[DEFAULT_VIEW_INCLUSION]&#x22;: true  thymeleaf:    mode: HTML    check-template: true    check-template-location: true    prefix: classpath:public/    suffix: .html  artemis:    mode: embedded    broker-url: localhost:61616    embedded:      enabled: true      persistent: true      data-directory: store/queue      queues: indexing.queue    pool:      max-connections: 10  jms:    template:      default-destination: indexing.queue  servlet:    multipart:      max-file-size: 64MB      max-request-size: 64MB  mvc:    async:      request-timeout: 3600000  output:    ansi:      enabled: always  graphql:    graphiql:      enabled: true      path: /graphiql    http.path: /graphql    cors:      allowed-origins: ${turing.allowedOrigins}      allowed-methods: GET,POST      allowed-headers: &#x22;*&#x22;server:  port: ${PORT:2700}  compression:    enabled: true    mime-types: application/json,text/css,application/javascript    min-response-size: 2048  tomcat:    accesslog:      enabled: false      suffix: .log      prefix: access_log      file-date-format: .yyyy-MM-dd      directory: logs    basedir: store    threads:      max: 600    max-swallow-size: 200MB    max-http-form-post-size: 200MB    maxHttpResponseHeaderSize: 800KBturing:  ai.crypto.key: ${TURING_AI_CRYPTO_KEY:}   # required in production (fail-fast on blank/sample)  allowedOrigins: http://localhost:4200,http://localhost:5173  permissions: true                          # authn is NOT admin; false = trusted single-user mode  multi-tenant: false  keycloak: false  url: http://localhost:2700  open-browser: true  jms.concurrency: 1-1  code-interpreter:    python-executable: &#x22;&#x22;  model-catalog:                               # public LLM catalog powering the model picker    url: ${TURING_MODEL_CATALOG_URL:https://openviglet.github.io/model-catalog/catalog.json}    remote-enabled: true                       # remote-only; false = live vendor listing only    price-sync:      enabled: true                            # seed tur_llm_price from indicative pricing    change-feed:      email-enabled: false                     # opt-in daily change-feed digest email  solr:    timeout: 30000    cloud: false    commit:      within: 10000      enabled: false  elasticsearch:    timeout: 30000  search:    metrics.enabled: true    cache:      ttl:        seconds: 86400000      enabled: false  storage:    type: none    filesystem:      path: ./store/assets    minio:      endpoint: ${TURING_STORAGE_MINIO_ENDPOINT:http://localhost:9000}      access-key: ${TURING_STORAGE_MINIO_ACCESS_KEY:minioadmin}   # set via env for real deployments      secret-key: ${TURING_STORAGE_MINIO_SECRET_KEY:minioadmin}      bucket: ${TURING_STORAGE_MINIO_BUCKET:turing-assets}  mongodb:    enabled: false    uri: mongodb://localhost:27017    logging:      database: turingLog      collection:        server: server        aem: aem        indexing: indexing      purge:        days: 30springdoc:  pathsToMatch: /api/**  swagger-ui:    path: /swagger-ui.htmlmanagement:  endpoints:    web:      exposure:        include: &#x22;health,info,prometheus&#x22;   # env/heapdump/etc. not exposed over HTTPlogging:  config: classpath:logback-spring.xml  level:    org:      springframework: INFO      apache: INFO      &#x22;[apache.activemq]&#x22;: ERROR    com:      viglet: INFO    dev:      langchain4j: INFO      ai4j:        openai4j: INFO  file:    name: store/logs/turing.log  logback:    rollingpolicy:      max-file-size: 25MB      max-history: 10"><div></div></button></div></figure></div>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="property-reference">Property Reference</h2><a class="sl-anchor-link" href="#property-reference"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Property Reference”</span></a></div>
+<div class="sl-heading-wrapper level-h3"><h3 id="server">Server</h3><a class="sl-anchor-link" href="#server"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Server”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">server.port</code></td><td><code dir="auto">${PORT:2700}</code></td><td>HTTP port. Override with the <code dir="auto">PORT</code> environment variable.</td></tr><tr><td><code dir="auto">server.compression.enabled</code></td><td><code dir="auto">true</code></td><td>Enables gzip compression for JSON, CSS, and JavaScript responses</td></tr><tr><td><code dir="auto">server.compression.min-response-size</code></td><td><code dir="auto">2048</code></td><td>Minimum response size in bytes before compression is applied</td></tr><tr><td><code dir="auto">server.tomcat.threads.max</code></td><td><code dir="auto">600</code></td><td>Maximum number of Tomcat worker threads</td></tr><tr><td><code dir="auto">server.tomcat.basedir</code></td><td><code dir="auto">store</code></td><td>Base directory for Tomcat internal files</td></tr><tr><td><code dir="auto">server.tomcat.max-swallow-size</code></td><td><code dir="auto">200MB</code></td><td>Maximum size of request body Tomcat will absorb</td></tr><tr><td><code dir="auto">server.tomcat.max-http-form-post-size</code></td><td><code dir="auto">200MB</code></td><td>Maximum size of HTML form POST bodies</td></tr><tr><td><code dir="auto">server.tomcat.maxHttpResponseHeaderSize</code></td><td><code dir="auto">800KB</code></td><td>Maximum size of HTTP response headers</td></tr><tr><td><code dir="auto">server.tomcat.accesslog.enabled</code></td><td><code dir="auto">false</code></td><td>Enable Tomcat access log file</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="database-spring-datasource">Database (Spring Datasource)</h3><a class="sl-anchor-link" href="#database-spring-datasource"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Database (Spring Datasource)”</span></a></div>
+<p>The default database is <strong>H2</strong> (embedded, file-based): suitable for development and simple deployments. For production, replace with MariaDB, MySQL, or PostgreSQL.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">spring.datasource.url</code></td><td><code dir="auto">jdbc:h2:file:./store/db/turingDB</code></td><td>JDBC URL. Change to your production DB URL.</td></tr><tr><td><code dir="auto">spring.datasource.username</code></td><td><code dir="auto">sa</code></td><td>Database username</td></tr><tr><td><code dir="auto">spring.datasource.password</code></td><td><code dir="auto">""</code></td><td>Database password</td></tr><tr><td><code dir="auto">spring.datasource.driver-class-name</code></td><td><code dir="auto">org.h2.Driver</code></td><td>JDBC driver class</td></tr><tr><td><code dir="auto">spring.datasource.hikari.maximum-pool-size</code></td><td><code dir="auto">20</code></td><td>Maximum connections in the HikariCP pool</td></tr><tr><td><code dir="auto">spring.datasource.hikari.minimum-idle</code></td><td><code dir="auto">5</code></td><td>Minimum idle connections kept alive</td></tr><tr><td><code dir="auto">spring.datasource.hikari.idle-timeout</code></td><td><code dir="auto">600000</code></td><td>Time (ms) a connection can remain idle before being removed</td></tr><tr><td><code dir="auto">spring.h2.console.enabled</code></td><td><code dir="auto">false</code></td><td>Enable H2 web console: <strong>do not enable in production</strong></td></tr></tbody></table>
+<p><strong>Switching to MariaDB / MySQL:</strong></p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="yaml"><code><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">spring</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">datasource</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">url</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">jdbc:mariadb://localhost:3306/turingdb</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">username</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">turing</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">password</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">your_password</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">driver-class-name</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">org.mariadb.jdbc.Driver</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="spring:  datasource:    url: jdbc:mariadb://localhost:3306/turingdb    username: turing    password: your_password    driver-class-name: org.mariadb.jdbc.Driver"><div></div></button></div></figure></div>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="message-queue-apache-artemis">Message Queue (Apache Artemis)</h3><a class="sl-anchor-link" href="#message-queue-apache-artemis"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Message Queue (Apache Artemis)”</span></a></div>
+<p>Apache Artemis runs <strong>embedded inside Turing</strong> by default: no separate installation is required. For high-availability or multi-node deployments, you can switch to an external Artemis broker.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">spring.artemis.mode</code></td><td><code dir="auto">embedded</code></td><td><code dir="auto">embedded</code> (default) or <code dir="auto">native</code> (external broker)</td></tr><tr><td><code dir="auto">spring.artemis.broker-url</code></td><td><code dir="auto">localhost:61616</code></td><td>Used when <code dir="auto">mode: native</code> to point to an external broker</td></tr><tr><td><code dir="auto">spring.artemis.embedded.enabled</code></td><td><code dir="auto">true</code></td><td>Enables the embedded broker</td></tr><tr><td><code dir="auto">spring.artemis.embedded.persistent</code></td><td><code dir="auto">true</code></td><td>Persist queue messages to disk (survives restarts)</td></tr><tr><td><code dir="auto">spring.artemis.embedded.data-directory</code></td><td><code dir="auto">store/queue</code></td><td>Directory for persisted queue data</td></tr><tr><td><code dir="auto">spring.artemis.embedded.queues</code></td><td><code dir="auto">indexing.queue</code></td><td>Queue names to create on startup</td></tr><tr><td><code dir="auto">spring.artemis.pool.max-connections</code></td><td><code dir="auto">10</code></td><td>Maximum JMS connection pool size</td></tr><tr><td><code dir="auto">spring.jms.template.default-destination</code></td><td><code dir="auto">indexing.queue</code></td><td>Default JMS destination for indexing jobs</td></tr><tr><td><code dir="auto">turing.jms.concurrency</code></td><td><code dir="auto">1-1</code></td><td>JMS listener concurrency range (min-max consumers). Increase for higher indexing throughput.</td></tr></tbody></table>
+<aside aria-label="External Artemis for scalability" class="starlight-aside starlight-aside--tip"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path fill-rule="evenodd" d="M1.44 8.855v-.001l3.527-3.516c.34-.344.802-.541 1.285-.548h6.649l.947-.947c3.07-3.07 6.207-3.072 7.62-2.868a1.821 1.821 0 0 1 1.557 1.557c.204 1.413.203 4.55-2.868 7.62l-.946.946v6.649a1.845 1.845 0 0 1-.549 1.286l-3.516 3.528a1.844 1.844 0 0 1-3.11-.944l-.858-4.275-4.52-4.52-2.31-.463-1.964-.394A1.847 1.847 0 0 1 .98 10.693a1.843 1.843 0 0 1 .46-1.838Zm5.379 2.017-3.873-.776L6.32 6.733h4.638l-4.14 4.14Zm8.403-5.655c2.459-2.46 4.856-2.463 5.89-2.33.134 1.035.13 3.432-2.329 5.891l-6.71 6.71-3.561-3.56 6.71-6.711Zm-1.318 15.837-.776-3.873 4.14-4.14v4.639l-3.364 3.374Z" clip-rule="evenodd"></path><path d="M9.318 18.345a.972.972 0 0 0-1.86-.561c-.482 1.435-1.687 2.204-2.934 2.619a8.22 8.22 0 0 1-1.23.302c.062-.365.157-.79.303-1.229.415-1.247 1.184-2.452 2.62-2.935a.971.971 0 1 0-.62-1.842c-.12.04-.236.084-.35.13-2.02.828-3.012 2.588-3.493 4.033a10.383 10.383 0 0 0-.51 2.845l-.001.016v.063c0 .536.434.972.97.972H2.24a7.21 7.21 0 0 0 .878-.065c.527-.063 1.248-.19 2.02-.447 1.445-.48 3.205-1.472 4.033-3.494a5.828 5.828 0 0 0 .147-.407Z"></path></svg>External Artemis for scalability</p><div class="starlight-aside__content"><p>To use an external Artemis broker (e.g., for multi-node deployments), set <code dir="auto">spring.artemis.mode: native</code> and point <code dir="auto">broker-url</code> to your broker. The embedded broker should be disabled in that case (<code dir="auto">spring.artemis.embedded.enabled: false</code>).</p></div></aside>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="file-uploads">File Uploads</h3><a class="sl-anchor-link" href="#file-uploads"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “File Uploads”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">spring.servlet.multipart.max-file-size</code></td><td><code dir="auto">64MB</code></td><td>Maximum size of a single uploaded file (was 1024MB; anonymous slot uploads are additionally capped by <code dir="auto">turing.abuse.chat.max-upload-bytes</code>)</td></tr><tr><td><code dir="auto">spring.servlet.multipart.max-request-size</code></td><td><code dir="auto">64MB</code></td><td>Maximum total size of a multipart request</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="graphql">GraphQL</h3><a class="sl-anchor-link" href="#graphql"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “GraphQL”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">spring.graphql.http.path</code></td><td><code dir="auto">/graphql</code></td><td>GraphQL endpoint path</td></tr><tr><td><code dir="auto">spring.graphql.graphiql.enabled</code></td><td><code dir="auto">true</code></td><td>Enable GraphiQL browser IDE</td></tr><tr><td><code dir="auto">spring.graphql.graphiql.path</code></td><td><code dir="auto">/graphiql</code></td><td>GraphiQL IDE path</td></tr><tr><td><code dir="auto">spring.graphql.cors.allowed-origins</code></td><td><code dir="auto">${turing.allowedOrigins}</code></td><td>CORS allowed origins for GraphQL</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="async--timeout">Async / Timeout</h3><a class="sl-anchor-link" href="#async--timeout"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Async / Timeout”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">spring.mvc.async.request-timeout</code></td><td><code dir="auto">3600000</code></td><td>Maximum time (ms) for async requests: 1 hour. Covers streaming LLM responses.</td></tr></tbody></table>
+<hr>
+<p><a id="turing-es-core"></a></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="turing-core">Turing Core</h3><a class="sl-anchor-link" href="#turing-core"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Turing Core”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.url</code></td><td><code dir="auto">http://localhost:2700</code></td><td>Public base URL of this Turing instance</td></tr><tr><td><code dir="auto">turing.allowedOrigins</code></td><td><code dir="auto">http://localhost:4200, http://localhost:5173</code></td><td>CORS allowed origins for the REST API and GraphQL. Add your frontend URL here.</td></tr><tr><td><code dir="auto">turing.keycloak</code></td><td><code dir="auto">false</code></td><td>Set <code dir="auto">true</code> to enable Keycloak OAuth2/OIDC. See <a href="/turing/docs/security-keycloak/">Security &#x26; Keycloak</a>.</td></tr><tr><td><code dir="auto">turing.tenancy.enabled</code></td><td><code dir="auto">false</code></td><td>Enable multi-tenant mode (one JVM, many isolated tenants). Default <code dir="auto">false</code> = single-tenant, byte-for-byte legacy behavior. See <a href="/turing/docs/multi-tenancy/">Multi-Tenancy</a>.</td></tr><tr><td><code dir="auto">turing.open-browser</code></td><td><code dir="auto">true</code></td><td>Automatically open the admin console in the browser on startup</td></tr><tr><td><code dir="auto">turing.permissions</code></td><td><code dir="auto">true</code></td><td>When <code dir="auto">true</code>, users get only their real group/role authorities. When <code dir="auto">false</code>, <strong>any</strong> authenticated principal is granted <code dir="auto">ROLE_ADMIN</code> + all privileges (trusted single-user mode only, logs a <code dir="auto">SECURITY</code> warning at startup). See <a href="/turing/docs/security-hardening/#2-turingpermissions-defaults-to-true-authn--admin">Security Hardening</a>.</td></tr><tr><td><code dir="auto">turing.admin.password</code></td><td><em>(blank → env <code dir="auto">TURING_ADMIN_PASSWORD</code>)</em></td><td>Seeds the local <code dir="auto">admin</code> password at startup (minimum 6 characters) so a container/CI deploy skips the first-access setup screen. Applied only while the password is still unset: it never overwrites an existing one. See <a href="/turing/docs/administration-guide/#login">Login</a>.</td></tr><tr><td><code dir="auto">turing.ai.crypto.key</code></td><td><em>(blank → env <code dir="auto">TURING_AI_CRYPTO_KEY</code>)</em></td><td>AES/GCM key encrypting all stored provider credentials. <strong>Required in production</strong>, the app fails to start on the <code dir="auto">production</code> profile with a blank or known-sample value.</td></tr><tr><td><code dir="auto">turing.code-interpreter.python-executable</code></td><td><em>(auto-detected)</em></td><td>Absolute path to the Python 3 binary used by the Code Interpreter GenAI tool. When blank, Turing searches standard OS locations automatically.</td></tr></tbody></table>
+<aside aria-label="Set the crypto key in production" class="starlight-aside starlight-aside--caution"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10.67 1.47-8.05-14a3 3 0 0 0-5.24 0l-8 14A3 3 0 0 0 3.94 22h16.12a3 3 0 0 0 2.61-4.53Zm-1.73 2a1 1 0 0 1-.88.51H3.94a1 1 0 0 1-.88-.51 1 1 0 0 1 0-1l8-14a1 1 0 0 1 1.78 0l8.05 14a1 1 0 0 1 .05 1.02v-.02ZM12 8a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V9a1 1 0 0 0-1-1Z"></path></svg>Set the crypto key in production</p><div class="starlight-aside__content"><p><code dir="auto">turing.ai.crypto.key</code> encrypts every LLM provider API key + store credential in the database. Supply it via the <code dir="auto">TURING_AI_CRYPTO_KEY</code> environment variable (<code dir="auto">openssl rand -base64 48</code>). Under the <code dir="auto">production</code> profile a blank or known-sample key makes startup <strong>fail fast</strong>. See <a href="/turing/docs/security-hardening/#1-ai-crypto-master-key-must-be-set-in-production">Security Hardening § crypto key</a>.</p></div></aside>
+<p><a id="model-catalog"></a></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="model-catalog-turingmodel-catalog">Model Catalog (<code dir="auto">turing.model-catalog</code>)</h3><a class="sl-anchor-link" href="#model-catalog-turingmodel-catalog"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Model Catalog (turing.model-catalog)”</span></a></div>
+<p>Turing enriches its LLM-instance model picker from a public, vendor-neutral <a href="https://openviglet.github.io/model-catalog/"><strong>model catalog</strong></a> (<a href="https://github.com/openviglet/model-catalog">openviglet/model-catalog</a>), pricing, context windows, capabilities, tiers and deprecations. The fetch is <strong>remote-only</strong> (no bundled copy), best-effort, runs off the boot path on a TTL, and never blocks startup; until the first successful fetch the picker falls back to live vendor listing only. See <a href="/turing/docs/llm-instances/#catalog-driven-intelligence">LLM Instances § Catalog-driven intelligence</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.model-catalog.url</code></td><td><code dir="auto">https://openviglet.github.io/model-catalog/catalog.json</code></td><td>Catalog endpoint the model picker reads. Override with <code dir="auto">TURING_MODEL_CATALOG_URL</code> to pin a self-hosted or air-gapped copy.</td></tr><tr><td><code dir="auto">turing.model-catalog.remote-enabled</code></td><td><code dir="auto">true</code></td><td>Set <code dir="auto">false</code> to disable the remote fetch entirely, the picker then uses only models listed live by each vendor’s API.</td></tr><tr><td><code dir="auto">turing.model-catalog.refresh-interval-ms</code></td><td><code dir="auto">21600000</code></td><td>Refresh cadence for the catalog (6h). A short initial delay (<code dir="auto">refresh-initial-delay-ms</code>, default <code dir="auto">8000</code>) keeps the fetch off the boot path.</td></tr><tr><td><code dir="auto">turing.model-catalog.price-sync.enabled</code></td><td><code dir="auto">true</code></td><td>Auto-seed/refresh the per-model price table (<code dir="auto">tur_llm_price</code>) from the catalog’s indicative pricing on a TTL. Only CATALOG-sourced rows are written, an operator’s MANUAL rate is never overwritten. <code dir="auto">false</code> keeps the price table manual-only. See <a href="/turing/docs/cost-governance/">Cost Governance</a>.</td></tr><tr><td><code dir="auto">turing.model-catalog.change-feed.email-enabled</code></td><td><code dir="auto">false</code></td><td>Opt-in: a daily job emails the Global Settings recipient a digest when the catalog change feed affects a model you use (removed / superseded / changed), deduped. The in-UI change-feed banner is always on regardless.</td></tr></tbody></table>
+<p><a id="abuse-controls-turingabuse"></a></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="abuse-controls-turingabuse">Abuse Controls (<code dir="auto">turing.abuse</code>)</h3><a class="sl-anchor-link" href="#abuse-controls-turingabuse"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Abuse Controls (turing.abuse)”</span></a></div>
+<p>In-process protection for the anonymous public chat/search surface (all on by default except the hard cost cap). See <a href="/turing/docs/security-hardening/#5-abuse-controls-on-the-anonymous-chatsearch-surface">Security Hardening § abuse controls</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.abuse.chat.rate-limit-enabled</code></td><td><code dir="auto">true</code></td><td>Per-IP + per-session fixed-window rate limit on the LLM-cost chat surface. Over the limit → HTTP 429 + <code dir="auto">Retry-After</code>.</td></tr><tr><td><code dir="auto">turing.abuse.chat.requests-per-minute-per-ip</code></td><td><code dir="auto">60</code></td><td>IP-dimension request limit. <code dir="auto">≤0</code> disables it.</td></tr><tr><td><code dir="auto">turing.abuse.chat.requests-per-minute-per-session</code></td><td><code dir="auto">30</code></td><td>Session/conversation-dimension limit. <code dir="auto">≤0</code> disables it.</td></tr><tr><td><code dir="auto">turing.abuse.chat.hard-monthly-cap-usd</code></td><td><code dir="auto">0</code></td><td><code dir="auto">>0</code> enforces a hard month-to-date LLM-spend ceiling on anonymous chat (refuses new conversations, no upstream call).</td></tr><tr><td><code dir="auto">turing.abuse.chat.anonymous-tools-enabled</code></td><td><code dir="auto">true</code></td><td><code dir="auto">false</code> strips all tool callbacks for anonymous SN chat (visitors can’t trigger tool execution).</td></tr><tr><td><code dir="auto">turing.abuse.chat.max-upload-bytes</code></td><td><code dir="auto">10485760</code></td><td>Per-file cap on anonymous slot uploads, enforced before extraction/vision.</td></tr><tr><td><code dir="auto">turing.abuse.chat.max-messages-per-turn</code></td><td><code dir="auto">100</code></td><td>Max messages per anonymous chat turn.</td></tr><tr><td><code dir="auto">turing.abuse.chat.max-message-chars</code></td><td><code dir="auto">24000</code></td><td>Max characters per anonymous message.</td></tr><tr><td><code dir="auto">turing.abuse.chat.max-zip-entries</code></td><td><code dir="auto">5000</code></td><td>Max entries in a page/skill import ZIP.</td></tr><tr><td><code dir="auto">turing.abuse.chat.max-zip-entry-bytes</code></td><td><code dir="auto">52428800</code></td><td>Max uncompressed size of one ZIP entry (zip-bomb guard).</td></tr><tr><td><code dir="auto">turing.abuse.chat.max-zip-total-bytes</code></td><td><code dir="auto">262144000</code></td><td>Max total uncompressed ZIP size.</td></tr></tbody></table>
+<p><a id="mcp-client-guards"></a></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="mcp-client-guards-turingmcp-client">MCP Client Guards (<code dir="auto">turing.mcp-client</code>)</h3><a class="sl-anchor-link" href="#mcp-client-guards-turingmcp-client"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “MCP Client Guards (turing.mcp-client)”</span></a></div>
+<p>Guardrails for the agent-as-MCP-client path. See <a href="/turing/docs/mcp-servers/">MCP Servers</a> and <a href="/turing/docs/security-hardening/#8-mcp-client-guards">Security Hardening § MCP</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.mcp-client.allowed-stdio-commands</code></td><td><em>(empty = any)</em></td><td>Allowlist of permitted stdio command base-names (e.g. <code dir="auto">[npx, uvx]</code>). When set, other commands are refused, blocks arbitrary local-process execution by config.</td></tr><tr><td><code dir="auto">turing.mcp-client.block-private-urls</code></td><td><code dir="auto">false</code></td><td>When <code dir="auto">true</code>, an HTTP MCP-client URL resolving to a private/loopback address is refused via the SSRF guard. Leave <code dir="auto">false</code> for internal-network MCP servers.</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="solr">Solr</h3><a class="sl-anchor-link" href="#solr"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Solr”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.solr.timeout</code></td><td><code dir="auto">30000</code></td><td>Connection and read timeout (ms) for Solr requests</td></tr><tr><td><code dir="auto">turing.solr.cloud</code></td><td><code dir="auto">false</code></td><td>Set <code dir="auto">true</code> for SolrCloud mode with Zookeeper</td></tr><tr><td><code dir="auto">turing.solr.commit.within</code></td><td><code dir="auto">10000</code></td><td>Soft commit time (ms): Solr commits changes within this window</td></tr><tr><td><code dir="auto">turing.solr.commit.enabled</code></td><td><code dir="auto">false</code></td><td>Enable explicit commits after indexing. Leave <code dir="auto">false</code> to use Solr’s auto-commit.</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="elasticsearch">Elasticsearch</h3><a class="sl-anchor-link" href="#elasticsearch"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Elasticsearch”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.elasticsearch.timeout</code></td><td><code dir="auto">30000</code></td><td>Connection and read timeout (ms) for Elasticsearch requests</td></tr></tbody></table>
+<hr>
+<p><a id="content-ai"></a></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="adobe-aem-content-ai-turingcontent-ai">Adobe AEM Content AI (<code dir="auto">turing.content-ai</code>)</h3><a class="sl-anchor-link" href="#adobe-aem-content-ai-turingcontent-ai"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Adobe AEM Content AI (turing.content-ai)”</span></a></div>
+<p>Settings for a Search Engine instance whose vendor is <code dir="auto">CONTENTAI</code>, a <strong>federated,
+read-only</strong> backend that queries an Adobe AEM Content AI index instead of one Turing filled. See <a href="/turing/docs/search-engine/#content-ai">Search Engine → Adobe AEM Content AI</a>
+for what the backend can and cannot do.</p>
+<p>The <strong>endpoint URL is not here</strong>: it is the Search Engine instance’s own Endpoint
+URL, so each instance can point at a different Adobe bucket.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.content-ai.enabled</code></td><td><code dir="auto">false</code></td><td>Master switch. With <code dir="auto">false</code> the backend refuses every query and reports <code dir="auto">DOWN</code> in System Information</td></tr><tr><td><code dir="auto">turing.content-ai.token</code></td><td><em>(none)</em></td><td>Bearer token from the Adobe Developer Console (“AEM Content AI” card)</td></tr><tr><td><code dir="auto">turing.content-ai.api-key</code></td><td><em>(none)</em></td><td><code dir="auto">x-api-key</code> credential, the alternative the search endpoints accept. Used only when <code dir="auto">token</code> is blank</td></tr><tr><td><code dir="auto">turing.content-ai.source-type</code></td><td><code dir="auto">ACQUISITION</code></td><td>Type of the Adobe content source: <code dir="auto">ACQUISITION</code>, <code dir="auto">AEM_AUTHOR</code>, <code dir="auto">AEM_PUBLISH</code> or <code dir="auto">CUSTOM</code></td></tr><tr><td><code dir="auto">turing.content-ai.sources.&#x3C;site></code></td><td><em>(none)</em></td><td>Adobe content source name for one SN Site. Unmapped sites fall back to the site’s core name</td></tr><tr><td><code dir="auto">turing.content-ai.hybrid</code></td><td><code dir="auto">true</code></td><td>Query semantically <strong>and</strong> lexically (Adobe’s own hybrid shape). <code dir="auto">false</code> sends the keyword query alone</td></tr><tr><td><code dir="auto">turing.content-ai.vector-boost</code></td><td><code dir="auto">1.0</code></td><td>Relevance weight of the semantic half</td></tr><tr><td><code dir="auto">turing.content-ai.fulltext-boost</code></td><td><code dir="auto">1.0</code></td><td>Relevance weight of the keyword half</td></tr><tr><td><code dir="auto">turing.content-ai.vector-space</code></td><td><em>(none)</em></td><td>Vector space name from the Adobe source’s IndexConfig. Blank uses Adobe’s default</td></tr><tr><td><code dir="auto">turing.content-ai.lexical-space</code></td><td><em>(none)</em></td><td>Lexical space name. Blank uses Adobe’s default</td></tr><tr><td><code dir="auto">turing.content-ai.facet-size</code></td><td><code dir="auto">10</code></td><td>Facet values requested per field</td></tr><tr><td><code dir="auto">turing.content-ai.max-page-walk</code></td><td><code dir="auto">10</code></td><td>How deep a result page may be reached. Adobe pages by cursor with no offset, so page <em>N</em> costs <em>N</em> requests; past this the page comes back empty with the total intact</td></tr><tr><td><code dir="auto">turing.content-ai.timeout-seconds</code></td><td><code dir="auto">10</code></td><td>Per-request timeout</td></tr><tr><td><code dir="auto">turing.content-ai.source-cache-seconds</code></td><td><code dir="auto">300</code></td><td>How long the list of your Adobe content sources is reused. It is read to check your configuration (see below), not to serve searches</td></tr><tr><td><code dir="auto">turing.content-ai.include-chunks</code></td><td><code dir="auto">false</code></td><td>Ask Adobe for the matched passages alongside each document, and expose the best one to an agent as <code dir="auto">hit.content</code> (see <a href="/turing/docs/custom-tools/#turingsearch-what-a-hit-gives-you">Custom Tools → <code dir="auto">turingSearch</code></a>). Off by default: it increases response size, and a script already reading <code dir="auto">hit.content</code> will start seeing a passage</td></tr></tbody></table>
+<p>Two limits come from Adobe’s API rather than from Turing, and you will see them:
+a page can hold <strong>at most 50 results</strong> (a larger row count is reduced to 50), and
+there is no way to jump to a page, hence <code dir="auto">max-page-walk</code>.</p>
+<aside aria-label="Caution" class="starlight-aside starlight-aside--caution"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10.67 1.47-8.05-14a3 3 0 0 0-5.24 0l-8 14A3 3 0 0 0 3.94 22h16.12a3 3 0 0 0 2.61-4.53Zm-1.73 2a1 1 0 0 1-.88.51H3.94a1 1 0 0 1-.88-.51 1 1 0 0 1 0-1l8-14a1 1 0 0 1 1.78 0l8.05 14a1 1 0 0 1 .05 1.02v-.02ZM12 8a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V9a1 1 0 0 0-1-1Z"></path></svg>Caution</p><div class="starlight-aside__content"><p>Never commit the token to <code dir="auto">application.yaml</code>. Pass it as the environment variable
+<code dir="auto">TURING_CONTENTAI_TOKEN</code> (or <code dir="auto">TURING_CONTENTAI_APIKEY</code>).</p></div></aside>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="search-cache">Search Cache</h3><a class="sl-anchor-link" href="#search-cache"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Search Cache”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.search.metrics.enabled</code></td><td><code dir="auto">true</code></td><td>Record search metrics (query terms, result counts, timestamps)</td></tr><tr><td><code dir="auto">turing.search.cache.enabled</code></td><td><code dir="auto">false</code></td><td>Enable server-side search result caching</td></tr><tr><td><code dir="auto">turing.search.cache.ttl</code></td><td><code dir="auto">24h</code></td><td>Interval of the <strong>backstop</strong> sweep that clears the cache. Unit-bearing: <code dir="auto">24h</code>, <code dir="auto">PT1H</code>, <code dir="auto">30m</code> (a bare number is milliseconds)</td></tr><tr><td><code dir="auto">turing.search.cache.ttl.seconds</code></td><td><em>(none)</em></td><td><strong>Deprecated</strong>: despite its name the value was <em>milliseconds</em>, so <code dir="auto">3600</code> meant a sweep every 3.6 seconds. Still honoured (as milliseconds) with a startup warning; use <code dir="auto">turing.search.cache.ttl</code></td></tr></tbody></table>
+<p>A cached answer does <strong>not</strong> wait for the sweep to become correct: indexing,
+deindexing and commit each evict the cache of the site they wrote, so a reindexed
+document shows up on the next search. <code dir="auto">turing.search.cache.ttl</code> only bounds how
+long an entry may survive for a site that is never written again.</p>
+<hr>
+<p><a id="storage"></a></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="storage-assets-knowledge-base--pages">Storage (Assets, Knowledge Base &#x26; Pages)</h3><a class="sl-anchor-link" href="#storage-assets-knowledge-base--pages"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Storage (Assets, Knowledge Base &#x26; Pages)”</span></a></div>
+<p>Storage powers the <a href="/turing/docs/assets/">Assets</a> file manager, the RAG Knowledge Base, and <a href="/turing/docs/spa-pages/">SPA Pages</a>. Disabled by default (<code dir="auto">none</code>). Turing supports three pluggable storage backends:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">none</code></td><td>Disabled: Assets and Pages are hidden from the sidebar</td></tr><tr><td><code dir="auto">minio</code></td><td>MinIO object storage (recommended for production)</td></tr><tr><td><code dir="auto">filesystem</code></td><td>Local filesystem directory (simple deployments, development)</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h4"><h4 id="common">Common</h4><a class="sl-anchor-link" href="#common"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Common”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.storage.type</code></td><td><code dir="auto">none</code></td><td>Storage backend: <code dir="auto">none</code>, <code dir="auto">minio</code>, or <code dir="auto">filesystem</code></td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h4"><h4 id="minio-backend">MinIO Backend</h4><a class="sl-anchor-link" href="#minio-backend"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “MinIO Backend”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.storage.minio.endpoint</code></td><td><code dir="auto">http://localhost:9000</code></td><td>MinIO server URL</td></tr><tr><td><code dir="auto">turing.storage.minio.access-key</code></td><td><em>(env <code dir="auto">TURING_STORAGE_MINIO_ACCESS_KEY</code>)</em></td><td>MinIO access key. Set via env for any real deployment.</td></tr><tr><td><code dir="auto">turing.storage.minio.secret-key</code></td><td><em>(env <code dir="auto">TURING_STORAGE_MINIO_SECRET_KEY</code>)</em></td><td>MinIO secret key. Set via env for any real deployment.</td></tr><tr><td><code dir="auto">turing.storage.minio.bucket</code></td><td><code dir="auto">turing-assets</code></td><td>Bucket name: created automatically on startup if it does not exist</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h4"><h4 id="filesystem-backend">Filesystem Backend</h4><a class="sl-anchor-link" href="#filesystem-backend"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Filesystem Backend”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.storage.filesystem.path</code></td><td><code dir="auto">./store/assets</code></td><td>Base directory for stored files. Created automatically if it does not exist.</td></tr></tbody></table>
+<p>The filesystem backend includes <strong>path traversal protection</strong>: all paths are resolved against the base directory and any attempt to escape it is blocked.</p>
+<aside aria-label="Note" class="starlight-aside starlight-aside--note"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 11a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0v-4a1 1 0 0 0-1-1Zm.38-3.92a1 1 0 0 0-.76 0 1 1 0 0 0-.33.21 1.15 1.15 0 0 0-.21.33 1 1 0 0 0 .21 1.09c.097.088.209.16.33.21A1 1 0 0 0 13 8a1.05 1.05 0 0 0-.29-.71 1 1 0 0 0-.33-.21ZM12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16.001A8 8 0 0 1 12 20Z"></path></svg>Note</p><div class="starlight-aside__content"><p>The <strong>Assets</strong> and <strong>Pages</strong> sections only appear in the sidebar when <code dir="auto">turing.storage.type</code> is set to <code dir="auto">minio</code> or <code dir="auto">filesystem</code>.</p></div></aside>
+<div class="sl-heading-wrapper level-h4"><h4 id="agent-workspace--tool-result-offload">Agent Workspace &#x26; tool-result offload</h4><a class="sl-anchor-link" href="#agent-workspace--tool-result-offload"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Agent Workspace &#x26; tool-result offload”</span></a></div>
+<p>The same storage backend also powers the per-conversation <a href="/turing/docs/agent-workspace/">Agent Workspace</a>. When storage is <code dir="auto">none</code> the workspace is inert and the offload feature below stays off: the default deployment is unchanged.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.genai.tool-result-offload.enabled</code></td><td><code dir="auto">true</code></td><td>Offload a tool result larger than the limit below to the workspace, replacing it inline with a <code dir="auto">workspace://</code> reference the model resolves via the <code dir="auto">workspace_read</code> tool. Only active when storage is enabled.</td></tr><tr><td><code dir="auto">turing.genai.tool-result-offload.inline-max-chars</code></td><td><code dir="auto">4096</code></td><td>Tool-result size (characters) above which the result is offloaded.</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="mongodb-application-logs">MongoDB (Application Logs)</h3><a class="sl-anchor-link" href="#mongodb-application-logs"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “MongoDB (Application Logs)”</span></a></div>
+<p>MongoDB is used to persist application logs, making them accessible from the admin console. Disabled by default.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.mongodb.enabled</code></td><td><code dir="auto">false</code></td><td>Set <code dir="auto">true</code> to enable MongoDB log persistence</td></tr><tr><td><code dir="auto">turing.mongodb.uri</code></td><td><code dir="auto">mongodb://localhost:27017</code></td><td>MongoDB connection URI</td></tr><tr><td><code dir="auto">turing.mongodb.logging.database</code></td><td><code dir="auto">turingLog</code></td><td>Database name for logs</td></tr><tr><td><code dir="auto">turing.mongodb.logging.collection.server</code></td><td><code dir="auto">server</code></td><td>Collection for general server logs</td></tr><tr><td><code dir="auto">turing.mongodb.logging.collection.aem</code></td><td><code dir="auto">aem</code></td><td>Collection for AEM-specific logs</td></tr><tr><td><code dir="auto">turing.mongodb.logging.collection.indexing</code></td><td><code dir="auto">indexing</code></td><td>Collection for indexing pipeline logs</td></tr><tr><td><code dir="auto">turing.mongodb.logging.purge.days</code></td><td><code dir="auto">30</code></td><td>Automatically delete log entries older than this many days</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="api-documentation-springdoc">API Documentation (SpringDoc)</h3><a class="sl-anchor-link" href="#api-documentation-springdoc"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “API Documentation (SpringDoc)”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">springdoc.pathsToMatch</code></td><td><code dir="auto">/api/**</code></td><td>API paths included in the OpenAPI spec</td></tr><tr><td><code dir="auto">springdoc.swagger-ui.path</code></td><td><code dir="auto">/swagger-ui.html</code></td><td>Swagger UI path</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="logging">Logging</h3><a class="sl-anchor-link" href="#logging"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Logging”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">logging.file.name</code></td><td><code dir="auto">store/logs/turing.log</code></td><td>Log file path</td></tr><tr><td><code dir="auto">logging.logback.rollingpolicy.max-file-size</code></td><td><code dir="auto">25MB</code></td><td>Maximum size of each log file before rotation</td></tr><tr><td><code dir="auto">logging.logback.rollingpolicy.max-history</code></td><td><code dir="auto">10</code></td><td>Number of rotated log files to keep</td></tr><tr><td><code dir="auto">logging.level.com.viglet</code></td><td><code dir="auto">INFO</code></td><td>Log level for Turing application code</td></tr><tr><td><code dir="auto">logging.level.org.springframework</code></td><td><code dir="auto">INFO</code></td><td>Log level for Spring framework</td></tr><tr><td><code dir="auto">logging.level.dev.langchain4j</code></td><td><code dir="auto">INFO</code></td><td>Log level for LangChain4j (LLM library)</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="keycloak-oauth2--oidc">Keycloak (OAuth2 / OIDC)</h3><a class="sl-anchor-link" href="#keycloak-oauth2--oidc"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Keycloak (OAuth2 / OIDC)”</span></a></div>
+<p>When <code dir="auto">turing.keycloak: true</code>, uncomment and configure the following block:</p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="yaml"><code><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">spring</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">security</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">oauth2</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">client</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">registration</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">          </span><span style="--0:#7FDBCA;--1:#111111">keycloak</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">            </span><span style="--0:#7FDBCA;--1:#111111">client-id</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">demo-app</span></div></div><div class="ec-line"><div class="code"><span class="indent">            </span><span style="--0:#7FDBCA;--1:#111111">client-secret</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">your-client-secret</span></div></div><div class="ec-line"><div class="code"><span class="indent">            </span><span style="--0:#7FDBCA;--1:#111111">scope</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">openid</span></div></div><div class="ec-line"><div class="code"><span class="indent">            </span><span style="--0:#7FDBCA;--1:#111111">authorization-grant-type</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">authorization_code</span></div></div><div class="ec-line"><div class="code"><span class="indent">            </span><span style="--0:#7FDBCA;--1:#111111">redirect-uri</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">http://localhost:2700/login/oauth2/code/demo-app</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">provider</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">          </span><span style="--0:#7FDBCA;--1:#111111">keycloak</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">            </span><span style="--0:#7FDBCA;--1:#111111">issuer-uri</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">http://localhost:8080/realms/demo</span></div></div><div class="ec-line"><div class="code"><span class="indent">            </span><span style="--0:#7FDBCA;--1:#111111">jwk-set-uri</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">http://localhost:8080/realms/demo/protocol/openid-connect/certs</span></div></div><div class="ec-line"><div class="code"><span class="indent">            </span><span style="--0:#7FDBCA;--1:#111111">user-info-uri</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">http://localhost:8080/realms/demo/protocol/openid-connect/userinfo</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">resourceserver</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#111111">jwt</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">          </span><span style="--0:#7FDBCA;--1:#111111">issuer-uri</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">http://localhost:8080/realms/demo</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="spring:  security:    oauth2:      client:        registration:          keycloak:            client-id: demo-app            client-secret: your-client-secret            scope: openid            authorization-grant-type: authorization_code            redirect-uri: http://localhost:2700/login/oauth2/code/demo-app        provider:          keycloak:            issuer-uri: http://localhost:8080/realms/demo            jwk-set-uri: http://localhost:8080/realms/demo/protocol/openid-connect/certs            user-info-uri: http://localhost:8080/realms/demo/protocol/openid-connect/userinfo      resourceserver:        jwt:          issuer-uri: http://localhost:8080/realms/demo"><div></div></button></div></figure></div>
+<p>For full Keycloak setup instructions, see <a href="/turing/docs/security-keycloak/">Security &#x26; Keycloak</a>.</p>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="genai--llm-database-settings">GenAI / LLM (Database Settings)</h3><a class="sl-anchor-link" href="#genai--llm-database-settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “GenAI / LLM (Database Settings)”</span></a></div>
+<p>LLM providers, models, and GenAI behavior are managed through the <strong>Administration Console</strong> and stored in the database, not in <code dir="auto">application.yaml</code>. The following settings are available via <strong>Settings > Global Settings</strong> in the admin UI:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Setting</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td>Default LLM</td><td><em>(none)</em></td><td>Global default LLM instance used when a Semantic Navigation site does not specify one</td></tr><tr><td>LLM Cache Enabled</td><td><code dir="auto">false</code></td><td>Cache LLM responses to reduce API calls for repeated queries</td></tr><tr><td>LLM Cache TTL (ms)</td><td><code dir="auto">3600000</code> (1 hour)</td><td>How long cached LLM responses remain valid</td></tr><tr><td>LLM Cache Regenerate</td><td><code dir="auto">false</code></td><td>When <code dir="auto">true</code>, regenerate cached responses in the background</td></tr><tr><td>RAG Enabled</td><td><code dir="auto">false</code></td><td>Enable Retrieval-Augmented Generation globally</td></tr><tr><td>Default Embedding Model</td><td><em>(none)</em></td><td>Global default embedding model for vector operations</td></tr><tr><td>Default Embedding Store</td><td><em>(none)</em></td><td>Global default embedding store instance</td></tr><tr><td>Python Executable</td><td><em>(auto-detected)</em></td><td>Path to Python 3 for the Code Interpreter tool (also overridable via <code dir="auto">turing.code-interpreter.python-executable</code> in YAML)</td></tr></tbody></table>
+<p><strong>Supported LLM providers:</strong> OpenAI, Ollama, Anthropic (Claude), Google Gemini, Google Gemini (OpenAI-compatible), and Azure OpenAI.</p>
+<p>LLM instances are created under <strong>GenAI > LLM</strong> in the admin console, where you configure the provider, API key, base URL, and model name.</p>
+<hr>
+<p><a id="rag-reranker-database-settings"></a></p>
+<div class="sl-heading-wrapper level-h3"><h3 id="rag-reranker-database-settings">RAG Reranker (Database Settings)</h3><a class="sl-anchor-link" href="#rag-reranker-database-settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “RAG Reranker (Database Settings)”</span></a></div>
+<p>The Semantic Navigation RAG path can run an optional <strong>reranking</strong> pass that re-orders retrieved chunks by relevance before they reach the model (see <a href="/turing/docs/rag/#reranking-sharper-context-before-generation">Reranking</a>). It is off by default; the reranker stage is a <strong>pluggable strategy</strong> and <strong>fails open</strong> (any error or missing configuration falls back to the original retrieval order). Configure it under <strong>Settings > Global Settings</strong> in the admin UI:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Setting</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td>Enable Reranker</td><td><code dir="auto">false</code></td><td>Run the reranking pass over retrieved candidates before generation</td></tr><tr><td>Reranker Strategy</td><td><code dir="auto">LLM</code></td><td>Backend: <code dir="auto">LLM</code> (uses the chat model), <code dir="auto">CROSS_ENCODER</code> (self-hosted <code dir="auto">/rerank</code>), or <code dir="auto">COHERE</code> (managed Cohere Rerank)</td></tr><tr><td>Reranker Top-K kept</td><td><code dir="auto">20</code></td><td>How many of the highest-ranked chunks survive into the prompt (clamped to 1–100)</td></tr><tr><td>Reranker Endpoint</td><td><em>(none)</em></td><td>For <code dir="auto">CROSS_ENCODER</code>: the self-hosted <code dir="auto">/rerank</code> endpoint URL (Text Embeddings Inference / Infinity / Jina-compatible)</td></tr><tr><td>Reranker Model</td><td><em>(backend default)</em></td><td>Rerank model name; for <code dir="auto">COHERE</code> defaults to <code dir="auto">rerank-v3.5</code></td></tr><tr><td>Reranker API Key</td><td><em>(none)</em></td><td>For <code dir="auto">COHERE</code>: the Cohere API key. Stored <strong>encrypted</strong>; write-only (never returned by the API)</td></tr></tbody></table>
+<p><strong>Cross-encoder</strong> is the recommended production choice: purpose-built reranker models (e.g. <code dir="auto">BAAI/bge-reranker-v2-m3</code>) are cheaper, faster, and more precise than borrowing a generative model. <strong>Cohere</strong> is the zero-ops managed alternative. <strong>LLM</strong> needs no extra infrastructure and is the safe default.</p>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="embedding-store-database-settings">Embedding Store (Database Settings)</h3><a class="sl-anchor-link" href="#embedding-store-database-settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Embedding Store (Database Settings)”</span></a></div>
+<p>Embedding store instances are configured through the <strong>Administration Console</strong> under <strong>GenAI > Embedding Store</strong>. Each instance specifies a vendor, connection URL, credentials, and optional provider-specific options via a JSON field.</p>
+<p><strong>Supported vendors:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Vendor</th><th>Plugin ID</th><th>Key Provider Options</th></tr></thead><tbody><tr><td><strong>ChromaDB</strong></td><td><code dir="auto">chroma</code></td><td><code dir="auto">baseUrl</code> (default <code dir="auto">http://localhost:8000</code>), <code dir="auto">collectionName</code>, <code dir="auto">tenantName</code>, <code dir="auto">databaseName</code>, <code dir="auto">initializeSchema</code>, <code dir="auto">keyToken</code>, <code dir="auto">basicUsername</code>, <code dir="auto">basicPassword</code></td></tr><tr><td><strong>Milvus</strong></td><td><code dir="auto">milvus</code></td><td><code dir="auto">baseUrl</code>, <code dir="auto">collectionName</code>, <code dir="auto">databaseName</code>, <code dir="auto">token</code>, <code dir="auto">embeddingDimension</code>, <code dir="auto">metricType</code>, <code dir="auto">indexType</code>, <code dir="auto">indexParameters</code>, <code dir="auto">initializeSchema</code></td></tr><tr><td><strong>PGVector</strong></td><td><code dir="auto">pgvector</code></td><td>JDBC URL (set as instance URL), <code dir="auto">tableName</code> (default <code dir="auto">vector_store</code>), <code dir="auto">schemaName</code> (default <code dir="auto">public</code>), <code dir="auto">dimensions</code>, <code dir="auto">distanceType</code>, <code dir="auto">indexType</code>, <code dir="auto">initializeSchema</code></td></tr></tbody></table>
+<p>Provider options are passed as a JSON object in the <strong>Provider Options</strong> field when creating or editing an embedding store instance.</p>
+<hr>
+<div class="sl-heading-wrapper level-h3"><h3 id="code-interpreter-execution-mode">Code Interpreter (Execution Mode)</h3><a class="sl-anchor-link" href="#code-interpreter-execution-mode"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Code Interpreter (Execution Mode)”</span></a></div>
+<p>The <a href="/turing/docs/tool-calling/">Code Interpreter</a> execution mode (<code dir="auto">NATIVE</code> default / <code dir="auto">DOCKER</code>) is chosen in <strong>Console → Global Settings → Code Interpreter</strong>. The YAML below tunes each mode (all under <code dir="auto">turing.code-interpreter</code>):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Purpose</th></tr></thead><tbody><tr><td><code dir="auto">turing.code-interpreter.python-executable</code></td><td><em>(auto-detected)</em></td><td>Python 3 binary (NATIVE)</td></tr><tr><td><code dir="auto">turing.code-interpreter.docker.network</code></td><td><code dir="auto">none</code></td><td><code dir="auto">none</code> = no egress; or a named docker network</td></tr><tr><td><code dir="auto">turing.code-interpreter.docker.memory</code></td><td><code dir="auto">512m</code></td><td>RAM cap per execution (DOCKER)</td></tr><tr><td><code dir="auto">turing.code-interpreter.docker.cpus</code></td><td><code dir="auto">1.0</code></td><td>CPU quota per execution (DOCKER)</td></tr><tr><td><code dir="auto">turing.code-interpreter.docker.pids-limit</code></td><td><code dir="auto">128</code></td><td>max PIDs (fork-bomb containment)</td></tr><tr><td><code dir="auto">turing.code-interpreter.docker.runtime</code></td><td><em>(host default)</em></td><td><code dir="auto">runsc</code> for gVisor (opt-in)</td></tr><tr><td><code dir="auto">turing.code-interpreter.native.limits.enabled</code></td><td><code dir="auto">false</code></td><td>Opt-in CPU/RAM caps for NATIVE (Linux)</td></tr><tr><td><code dir="auto">turing.code-interpreter.native.limits.memory-max</code></td><td><code dir="auto">1g</code></td><td>NATIVE RAM cap</td></tr><tr><td><code dir="auto">turing.code-interpreter.native.limits.cpu-seconds</code></td><td><code dir="auto">35</code></td><td>NATIVE CPU-time cap</td></tr><tr><td><code dir="auto">turing.code-interpreter.warm-pool.enabled</code></td><td><code dir="auto">false</code></td><td>Pre-warmed interpreter pool (NATIVE only)</td></tr><tr><td><code dir="auto">turing.code-interpreter.warm-pool.size</code></td><td><code dir="auto">2</code></td><td>interpreters kept ready</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="routines-async-queue">Routines (Async Queue)</h3><a class="sl-anchor-link" href="#routines-async-queue"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Routines (Async Queue)”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Purpose</th></tr></thead><tbody><tr><td><code dir="auto">turing.jms.routine.concurrency</code></td><td><code dir="auto">1-2</code></td><td>JMS listener concurrency for the <a href="/turing/docs/routines/">routine</a> worker (<code dir="auto">scheduleAgent</code> jobs)</td></tr><tr><td><code dir="auto">turing.jms.concurrency</code></td><td><code dir="auto">1-1</code></td><td>Default JMS listener concurrency (indexing queue)</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="turing-as-an-mcp-server">Turing as an MCP Server</h3><a class="sl-anchor-link" href="#turing-as-an-mcp-server"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Turing as an MCP Server”</span></a></div>
+<p>The <a href="/turing/docs/mcp-servers/#turing-as-an-mcp-server">MCP server</a> is off by default. Enable and govern it with:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Purpose</th></tr></thead><tbody><tr><td><code dir="auto">spring.ai.mcp.server.enabled</code></td><td><code dir="auto">false</code></td><td>Master switch: when off, no MCP-server beans exist</td></tr><tr><td><code dir="auto">turing.mcp-server.loopback-only</code></td><td><code dir="auto">true</code></td><td>Reject non-loopback <code dir="auto">/mcp</code> requests (the T245 trust boundary)</td></tr><tr><td><code dir="auto">turing.mcp-server.require-auth</code></td><td><code dir="auto">false</code></td><td>Turn <code dir="auto">/mcp</code> into an OAuth 2.1 JWT resource server (set with <code dir="auto">spring.security.oauth2.resourceserver.jwt.*</code>); fails closed if no decoder</td></tr><tr><td><code dir="auto">turing.mcp-server.write-enabled</code></td><td><code dir="auto">false</code></td><td>Register the write/ingestion tools (still require the <code dir="auto">mcp:write</code> scope per call)</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="chat-analytics">Chat Analytics</h3><a class="sl-anchor-link" href="#chat-analytics"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Chat Analytics”</span></a></div>
+<p>The <a href="/turing/docs/chat-analytics/">Chat Analytics</a> enricher, retention, and in-flight settings are documented in full on that page. One additional flag worth noting here:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Purpose</th></tr></thead><tbody><tr><td><code dir="auto">turing.chat.analytics.node-visit-log.enabled</code></td><td><code dir="auto">false</code></td><td>Record the per-turn node path on each conversation, enabling the <strong>path-aware funnel</strong> (T237). Off = V1 funnel behavior</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="cost-governance">Cost Governance</h3><a class="sl-anchor-link" href="#cost-governance"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Cost Governance”</span></a></div>
+<p><a href="/turing/docs/cost-governance/">Cost Governance</a> is configured through data, not YAML: the <strong>price table</strong> (<code dir="auto">tur_llm_price</code>, seeded for OpenAI/Anthropic/Gemini, editable in the console) and the <strong>per-agent budget fields</strong> (<code dir="auto">monthlyBudgetUsd</code>, <code dir="auto">perTurnSoftCapUsd</code>, <code dir="auto">budgetDowngradeLlmId</code>) on the agent Settings form.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="common-production-overrides">Common Production Overrides</h2><a class="sl-anchor-link" href="#common-production-overrides"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Common Production Overrides”</span></a></div>
+<p>A minimal production override file (<code dir="auto">application-production.yaml</code>) covering the most important changes:</p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="yaml"><code><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">spring</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">profiles</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">active</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">production</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">datasource</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">url</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">jdbc:mariadb://db-host:3306/turingdb</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">username</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">turing</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">password</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">strong_db_password</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">driver-class-name</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">org.mariadb.jdbc.Driver</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">h2</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">console</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">turing</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">url</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">https://search.yourcompany.com</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">allowedOrigins</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">https://search.yourcompany.com</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">ai.crypto.key</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">your-strong-random-key-here</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">storage</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">type</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">minio</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">minio</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">endpoint</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">http://minio:9000</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">access-key</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">your-minio-user</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">secret-key</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">your-minio-password</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">mongodb</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">uri</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#ECC48D;--1:#3B61B0">mongodb://mongo-host:27017</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">server</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">tomcat</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">accesslog</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="spring:  profiles:    active: production  datasource:    url: jdbc:mariadb://db-host:3306/turingdb    username: turing    password: strong_db_password    driver-class-name: org.mariadb.jdbc.Driver  h2:    console:      enabled: falseturing:  url: https://search.yourcompany.com  allowedOrigins: https://search.yourcompany.com  ai.crypto.key: your-strong-random-key-here  storage:    type: minio    minio:      endpoint: http://minio:9000      access-key: your-minio-user      secret-key: your-minio-password  mongodb:    enabled: true    uri: mongodb://mongo-host:27017server:  tomcat:    accesslog:      enabled: true"><div></div></button></div></figure></div>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="related-pages">Related Pages</h2><a class="sl-anchor-link" href="#related-pages"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Related Pages”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Page</th><th>Description</th></tr></thead><tbody><tr><td><a href="/turing/docs/installation-guide/">Installation Guide</a></td><td>Where these properties are set during setup</td></tr><tr><td><a href="/turing/docs/search-engine/">Search Engine</a></td><td>Solr / Elasticsearch / Lucene connection settings</td></tr><tr><td><a href="/turing/docs/llm-instances/">LLM Instances</a></td><td><code dir="auto">turing.ai.crypto.key</code> and GenAI provider config</td></tr><tr><td><a href="/turing/docs/reranking/">Reranking</a></td><td>The <code dir="auto">GLOBAL_RAG_SN_RERANK_*</code> settings</td></tr><tr><td><a href="/turing/docs/security-keycloak/">Security &#x26; Keycloak</a></td><td>OAuth2 / OIDC properties</td></tr></tbody></table></div><footer class="sl-flex astro-cla57s4p"><div class="meta sl-flex astro-cla57s4p"><p>Last updated: <time datetime="2026-10-29T11:49:33.000Z">Oct 29, 2026</time></p></div><div class="pagination-links print:hidden astro-euyh6ymx" dir="ltr"><a href="/turing/docs/installation-guide/" rel="prev" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-euyh6ymx">Previous<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Installation Guide</span></span></a><a href="/turing/docs/genai-llm/" rel="next" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-euyh6ymx">Next<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Generative AI &amp; LLM Configuration</span></span></a></div></footer><footer class="turing-footer not-content astro-jo6i4kqk"><div class="turing-footer-grid astro-jo6i4kqk"><div class="astro-jo6i4kqk"><span class="turing-footer-brand astro-jo6i4kqk"><img src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" alt="" width="28" height="28" class="astro-jo6i4kqk">Viglet Turing</span><p class="astro-jo6i4kqk">Open-source Enterprise Search Intelligence Platform: agents, tools, skills, MCP and RAG for your content.</p></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Product</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/#features" class="astro-jo6i4kqk">Capabilities</a></li><li class="astro-jo6i4kqk"><a href="/turing/compare/" class="astro-jo6i4kqk">Compare</a></li><li class="astro-jo6i4kqk"><a href="/turing/migrate/" class="astro-jo6i4kqk">Migrate</a></li><li class="astro-jo6i4kqk"><a href="/turing/aem-search/" class="astro-jo6i4kqk">AEM search</a></li><li class="astro-jo6i4kqk"><a href="/turing/security/" class="astro-jo6i4kqk">Security</a></li><li class="astro-jo6i4kqk"><a href="/turing/#marketplace" class="astro-jo6i4kqk">Marketplace</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Developers</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/react-sdk/" class="astro-jo6i4kqk">React SDK</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-react-sdk" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">npm</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-cli" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">CLI</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Open &amp; transparent</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="https://github.com/openviglet/turing/blob/HEAD/docs/ROADMAP.md" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Roadmap</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org/turing/release-notes/" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Changelog</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">viglet.org</a></li></ul></div></div><div class="turing-footer-legal astro-jo6i4kqk">© 2026 Viglet Turing · Apache 2.0 License</div></footer></div></div></main></div></div></div></div></body></html>

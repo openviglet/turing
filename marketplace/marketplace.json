@@ -1,0 +1,143 @@
+[
+  {
+    "id": "mythical-creatures",
+    "title": "Mythical Creatures",
+    "description": "A fantasy bestiary search site featuring dragons, griffins, phoenixes and more. Includes a complete SN site with faceted search, content documents and a React SPA template.",
+    "version": "2026.2",
+    "author": "Viglet",
+    "category": "example",
+    "tags": [
+      "fantasy",
+      "bestiary",
+      "search",
+      "spa"
+    ],
+    "icon": "dragon",
+    "downloadUrl": "https://openviglet.github.io/turing/marketplace/mythical-creatures/mythical-creatures.zip",
+    "readmeUrl": "https://openviglet.github.io/turing/marketplace/mythical-creatures/README.md",
+    "hasContent": true,
+    "hasTemplate": true
+  },
+  {
+    "id": "space-missions",
+    "title": "Space Missions",
+    "description": "Explore historic and fictional space missions with semantic search. Features mission data, crew information and launch details with a beautiful search interface.",
+    "version": "2026.2",
+    "author": "Viglet",
+    "category": "example",
+    "tags": [
+      "space",
+      "science",
+      "missions",
+      "spa"
+    ],
+    "icon": "rocket",
+    "downloadUrl": "https://openviglet.github.io/turing/marketplace/space-missions/space-missions.zip",
+    "readmeUrl": "https://openviglet.github.io/turing/marketplace/space-missions/README.md",
+    "hasContent": true,
+    "hasTemplate": true
+  },
+  {
+    "id": "vinyl-records",
+    "title": "Vinyl Records",
+    "description": "A music catalog search site for vinyl records. Browse albums by artist, genre, year and label. Complete with content index and a retro-styled React search template.",
+    "version": "2026.2",
+    "author": "Viglet",
+    "category": "example",
+    "tags": [
+      "music",
+      "vinyl",
+      "catalog",
+      "spa"
+    ],
+    "icon": "vinyl",
+    "downloadUrl": "https://openviglet.github.io/turing/marketplace/vinyl-records/vinyl-records.zip",
+    "readmeUrl": "https://openviglet.github.io/turing/marketplace/vinyl-records/README.md",
+    "hasContent": true,
+    "hasTemplate": true
+  },
+  {
+    "id": "wknd",
+    "title": "WKND (AEM)",
+    "description": "Adobe Experience Manager connector sample based on the WKND reference site. Ingests pages, assets and metadata from AEM into a complete SN site with a React SPA template.",
+    "version": "2026.2",
+    "author": "Viglet",
+    "category": "connector",
+    "tags": [
+      "aem",
+      "adobe",
+      "connector",
+      "dumont",
+      "spa"
+    ],
+    "icon": "aem",
+    "downloadUrl": "https://openviglet.github.io/dumont/marketplace/wknd/wknd.zip",
+    "readmeUrl": "https://openviglet.github.io/dumont/marketplace/wknd/README.md",
+    "hasContent": true,
+    "hasTemplate": true
+  },
+  {
+    "id": "celestial-gallery",
+    "title": "Celestial Gallery (Assets)",
+    "description": "Assets connector sample showing astrophotography indexing. Demonstrates file ingestion, metadata extraction and thumbnail generation, with a React SPA template.",
+    "version": "2026.2",
+    "author": "Viglet",
+    "category": "connector",
+    "tags": [
+      "assets",
+      "files",
+      "astrophotography",
+      "connector",
+      "dumont",
+      "spa"
+    ],
+    "icon": "assets",
+    "downloadUrl": "https://openviglet.github.io/dumont/marketplace/celestial-gallery/celestial-gallery.zip",
+    "readmeUrl": "https://openviglet.github.io/dumont/marketplace/celestial-gallery/README.md",
+    "hasContent": true,
+    "hasTemplate": true
+  },
+  {
+    "id": "retro-arcade",
+    "title": "Retro Arcade (Database)",
+    "description": "JDBC connector sample indexing a retro arcade game catalog. Shows SQL mapping, incremental delta and custom attributes, with a React SPA template.",
+    "version": "2026.2",
+    "author": "Viglet",
+    "category": "connector",
+    "tags": [
+      "database",
+      "jdbc",
+      "arcade",
+      "games",
+      "connector",
+      "dumont",
+      "spa"
+    ],
+    "icon": "database",
+    "downloadUrl": "https://openviglet.github.io/dumont/marketplace/retro-arcade/retro-arcade.zip",
+    "readmeUrl": "https://openviglet.github.io/dumont/marketplace/retro-arcade/README.md",
+    "hasContent": true,
+    "hasTemplate": true
+  },
+  {
+    "id": "wikipedia",
+    "title": "Wikipedia (Web Crawler)",
+    "description": "Web crawler connector sample ingesting Wikipedia articles. Demonstrates URL filtering, content extraction and link following, with a React SPA template.",
+    "version": "2026.2",
+    "author": "Viglet",
+    "category": "connector",
+    "tags": [
+      "web-crawler",
+      "wikipedia",
+      "articles",
+      "connector",
+      "dumont",
+      "spa"
+    ],
+    "icon": "web",
+    "downloadUrl": "https://openviglet.github.io/dumont/marketplace/wikipedia/wikipedia.zip",
+    "readmeUrl": "https://openviglet.github.io/dumont/marketplace/wikipedia/README.md",
+    "hasContent": true,
+    "hasTemplate": true
+  }
+]

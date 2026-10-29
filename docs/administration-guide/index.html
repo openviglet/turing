@@ -1,0 +1,997 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-wy3hjvd4"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Administration Guide | Viglet Turing</title><link rel="canonical" href="https://openviglet.github.io/turing/docs/administration-guide/"/><link rel="sitemap" href="/turing/docs/sitemap-index.xml"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"/><link rel="shortcut icon" href="/turing/docs/favicon.ico" type="image/x-icon"/><meta name="generator" content="Astro v7.4.2"/><meta name="generator" content="Starlight v0.41.11"/><meta property="og:title" content="Administration Guide"/><meta property="og:type" content="article"/><meta property="og:url" content="https://openviglet.github.io/turing/docs/administration-guide/"/><meta property="og:locale" content="en"/><meta property="og:description" content="Manage users, groups, roles, API tokens, global settings, and system diagnostics in Viglet Turing."/><meta property="og:site_name" content="Viglet Turing"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="Manage users, groups, roles, API tokens, global settings, and system diagnostics in Viglet Turing."/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/turing/docs/_astro/print.ehPL0gv-.css" media="print"><link rel="stylesheet" href="/turing/docs/_astro/common.gvporLFj.css"><style>@layer starlight.components{.card-grid:where(.astro-6q73ypdm){grid-template-columns:100%;gap:1rem;display:grid}.card-grid:where(.astro-6q73ypdm)>*{margin-top:0!important}@media (width>=50rem){.card-grid:where(.astro-6q73ypdm){grid-template-columns:1fr 1fr;gap:1.5rem}.stagger:where(.astro-6q73ypdm){--stagger-height:5rem;padding-bottom:var(--stagger-height)}.stagger:where(.astro-6q73ypdm)>:nth-child(2n){transform:translateY(var(--stagger-height))}}.sl-link-card:where(.astro-b5uddqxg){border:1px solid var(--sl-color-gray-5);box-shadow:var(--sl-shadow-sm);border-radius:.5rem;grid-template-columns:1fr auto;gap:.5rem;padding:1rem;display:grid;position:relative}a:where(.astro-b5uddqxg){line-height:var(--sl-line-height-headings);text-decoration:none}a:where(.astro-b5uddqxg):before{content:"";position:absolute;inset:0}.stack:where(.astro-b5uddqxg){flex-direction:column;gap:.5rem}.title:where(.astro-b5uddqxg){color:var(--sl-color-white);font-weight:600;font-size:var(--sl-text-lg)}.description:where(.astro-b5uddqxg){color:var(--sl-color-gray-3);line-height:1.5}.icon:where(.astro-b5uddqxg){color:var(--sl-color-gray-3)}.sl-link-card:where(.astro-b5uddqxg):hover{background:var(--sl-color-gray-7,var(--sl-color-gray-6));border-color:var(--sl-color-gray-2)}.sl-link-card:where(.astro-b5uddqxg):hover .icon:where(.astro-b5uddqxg){color:var(--sl-color-white)}}
+@layer starlight.components{.card:where(.astro-uyl7lth6){--sl-card-border:var(--sl-color-purple);--sl-card-bg:var(--sl-color-purple-low);border:1px solid var(--sl-color-gray-5);background-color:var(--sl-color-black);flex-direction:column;gap:clamp(.5rem,.125rem + 1vw,1rem);padding:clamp(1rem,.125rem + 3vw,2.5rem)}.card:where(.astro-uyl7lth6):nth-child(4n+1){--sl-card-border:var(--sl-color-orange);--sl-card-bg:var(--sl-color-orange-low)}.card:where(.astro-uyl7lth6):nth-child(4n+3){--sl-card-border:var(--sl-color-green);--sl-card-bg:var(--sl-color-green-low)}.card:where(.astro-uyl7lth6):nth-child(4n+4){--sl-card-border:var(--sl-color-red);--sl-card-bg:var(--sl-color-red-low)}.card:where(.astro-uyl7lth6):nth-child(4n+5){--sl-card-border:var(--sl-color-blue);--sl-card-bg:var(--sl-color-blue-low)}.title:where(.astro-uyl7lth6){font-weight:600;font-size:var(--sl-text-h4);color:var(--sl-color-white);line-height:var(--sl-line-height-headings);align-items:center;gap:1rem}.card:where(.astro-uyl7lth6) .icon:where(.astro-uyl7lth6){border:1px solid var(--sl-card-border);background-color:var(--sl-card-bg);border-radius:.25rem;flex-shrink:0;padding:.2em}.card:where(.astro-uyl7lth6) .body:where(.astro-uyl7lth6){font-size:clamp(var(--sl-text-sm), calc(.5rem + 1vw), var(--sl-text-body));margin:0}}
+@layer starlight.components{svg:where(.astro-nwdigvql){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em}}
+</style><script type="module" src="/turing/docs/_astro/page.cNngjUgL.js"></script></head><body class="astro-wy3hjvd4"><a class="sl-skip-link astro-24szbuaa" href="#_top">Skip to content</a><div class="page sl-flex astro-ib55ocom"><header class="header astro-ib55ocom"><div class="header astro-ukxunls3"><div class="title-wrapper sl-flex astro-ukxunls3"><div class="turing-brand astro-hen6hmfb"><a href="/turing/docs/" class="site-title sl-flex astro-f4vgya6g"><img class="astro-f4vgya6g" alt="Viglet Turing" src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" width="512" height="512"><span class="astro-f4vgya6g" translate="no">Viglet Turing</span></a><span class="turing-docs-label astro-hen6hmfb">Docs</span><a class="turing-pill astro-hen6hmfb" href="https://www.viglet.org" target="_blank" rel="noreferrer">part of viglet.org ↗</a></div></div><div class="sl-flex print:hidden astro-ukxunls3"><site-search class="astro-ukxunls3 astro-a2lndvxu" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-a2lndvxu"><svg aria-hidden="true" class="astro-a2lndvxu astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-a2lndvxu" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-a2lndvxu" style="display: none;"><kbd class="astro-a2lndvxu">Ctrl</kbd><kbd class="astro-a2lndvxu">K</kbd></kbd></button><dialog style="padding:0" aria-label="Search" class="astro-a2lndvxu"><div class="dialog-frame sl-flex astro-a2lndvxu"><button data-close-modal class="sl-flex md:sl-hidden astro-a2lndvxu">Cancel</button><div class="search-container astro-a2lndvxu"><div id="starlight__search" class="astro-a2lndvxu"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/turing/docs/_astro/Search.astro_astro_type_script_index_0_lang.w5cqYmCt.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-ukxunls3"><div class="sl-flex social-icons astro-ukxunls3"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-ib55ocom" aria-label="Main"><starlight-menu-button class="print:hidden astro-p3fyn3ad"><button aria-expanded="false" aria-label="Menu" aria-controls="starlight__sidebar" class="sl-flex md:sl-hidden astro-p3fyn3ad"><svg aria-hidden="true" class="open-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg></button></starlight-menu-button><script type="module">var e=class extends HTMLElement{btn=this.querySelector(`button`);constructor(){super(),this.btn.addEventListener(`click`,()=>this.toggleExpanded());let e=this.closest(`nav`);e&&e.addEventListener(`keyup`,e=>this.closeOnEscape(e)),matchMedia(`(min-width: 50em)`).addEventListener(`change`,()=>this.setExpanded(!1))}setExpanded(e){this.setAttribute(`aria-expanded`,String(e)),document.body.toggleAttribute(`data-mobile-menu-expanded`,e),document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}toggleExpanded(){this.setExpanded(this.getAttribute(`aria-expanded`)!==`true`)}closeOnEscape(e){e.code===`Escape`&&(this.setExpanded(!1),this.btn.focus())}};customElements.define(`starlight-menu-button`,e);</script><div id="starlight__sidebar" class="sidebar-pane astro-ib55ocom"><div class="sidebar-content sl-flex astro-ib55ocom"><sl-sidebar-state-persist data-hash="0qm6pqf" class="astro-odquddkb"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/" class="large astro-da7gfiol"><span class="astro-da7gfiol">Introduction</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Getting Started</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/intro/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is Viglet Turing?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/core-concepts/" class="astro-da7gfiol"><span class="astro-da7gfiol">Core Concepts</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/architecture-overview/" class="astro-da7gfiol"><span class="astro-da7gfiol">Architecture Overview</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Enterprise Search</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/enterprise-search/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/search-engine/" class="astro-da7gfiol"><span class="astro-da7gfiol">Search Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/semantic-navigation/" class="astro-da7gfiol"><span class="astro-da7gfiol">Semantic Navigation</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/synonyms/" class="astro-da7gfiol"><span class="astro-da7gfiol">Synonyms</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/thesaurus/" class="astro-da7gfiol"><span class="astro-da7gfiol">Thesaurus</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/manifest/" class="astro-da7gfiol"><span class="astro-da7gfiol">Field Manifest &amp; Schema-as-Code</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">DSL Query</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/dsl-query/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Query API</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/dsl-compatibility/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Compatibility Matrix</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/spa-pages/" class="astro-da7gfiol"><span class="astro-da7gfiol">SPA Pages</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Integration</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/integration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Integration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/integration-aem/" class="astro-da7gfiol"><span class="astro-da7gfiol">AEM Connector</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/import-export/" class="astro-da7gfiol"><span class="astro-da7gfiol">Import &amp; Export</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/migration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Migrating from Algolia or Elasticsearch</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">RAG &amp; Chat</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/rag-chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is RAG?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/answer/" class="astro-da7gfiol"><span class="astro-da7gfiol">Answer Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/vectorless-structured-rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">Vectorless (Structured-Data) RAG</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-stores/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Stores</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-models/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Models</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/reranking/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reranking</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-memory/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Memory</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/intent/" class="astro-da7gfiol"><span class="astro-da7gfiol">Intent</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/personas/" class="astro-da7gfiol"><span class="astro-da7gfiol">Personas</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/persona-book/" class="astro-da7gfiol"><span class="astro-da7gfiol">The Persona Book</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/transcription/" class="astro-da7gfiol"><span class="astro-da7gfiol">Transcription</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Agents, Tools &amp; Skills</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/ai-agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">AI Agents</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/tool-calling/" class="astro-da7gfiol"><span class="astro-da7gfiol">Tool Calling</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/capabilities/" class="astro-da7gfiol"><span class="astro-da7gfiol">Capabilities</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/client-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Client Tools &amp; Agent↔UI (AG-UI)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/custom-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Custom Tools</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/mcp-servers/" class="astro-da7gfiol"><span class="astro-da7gfiol">MCP Servers</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/skills/" class="astro-da7gfiol"><span class="astro-da7gfiol">Skills</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-workspace/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Workspace</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-flow/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Flow</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/human-in-the-loop/" class="astro-da7gfiol"><span class="astro-da7gfiol">Human-in-the-Loop</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/webhooks/" class="astro-da7gfiol"><span class="astro-da7gfiol">Webhooks</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/routines/" class="astro-da7gfiol"><span class="astro-da7gfiol">Routines</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/experiments/" class="astro-da7gfiol"><span class="astro-da7gfiol">Experiments (A/B Testing)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-eval/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Evaluation (CI)</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Deploy &amp; Operate</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="6"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/deploy-operate/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/installation-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Installation Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/configuration-reference/" class="astro-da7gfiol"><span class="astro-da7gfiol">Configuration Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/genai-llm/" class="astro-da7gfiol"><span class="astro-da7gfiol">Generative AI &amp; LLM Configuration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-instances/" class="astro-da7gfiol"><span class="astro-da7gfiol">LLM Instances</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/assets/" class="astro-da7gfiol"><span class="astro-da7gfiol">Assets</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/multi-tenancy/" class="astro-da7gfiol"><span class="astro-da7gfiol">Multi-Tenancy</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/administration-guide/" aria-current="page" class="astro-da7gfiol"><span class="astro-da7gfiol">Administration Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/observability/" class="astro-da7gfiol"><span class="astro-da7gfiol">Observability: Prometheus &amp; Grafana</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/logging/" class="astro-da7gfiol"><span class="astro-da7gfiol">Logging</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Analytics</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/token-usage/" class="astro-da7gfiol"><span class="astro-da7gfiol">Token Usage</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cost-governance/" class="astro-da7gfiol"><span class="astro-da7gfiol">Cost Governance</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-gateway/" class="astro-da7gfiol"><span class="astro-da7gfiol">Governed LLM Gateway</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Developers</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="7"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/developer-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Developer Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/react-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">React SDK</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/javascript-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">JavaScript SDK (vanilla)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cli/" class="astro-da7gfiol"><span class="astro-da7gfiol">Turing CLI</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/flow-dsl/" class="astro-da7gfiol"><span class="astro-da7gfiol">Flow DSL</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/showcase/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reference showcase (Atlas Store)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/conversion-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Conversion Analytics (GA4 bridge)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rest-api/" class="astro-da7gfiol"><span class="astro-da7gfiol">REST API Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/graphql/" class="astro-da7gfiol"><span class="astro-da7gfiol">GraphQL API</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Security</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="8"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/security-authentication/" class="astro-da7gfiol"><span class="astro-da7gfiol">Authentication</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-social-login/" class="astro-da7gfiol"><span class="astro-da7gfiol">Social Login (OAuth2)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-keycloak/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security &amp; Keycloak</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-hardening/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security Hardening &amp; Upgrade Notes</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="https://openviglet.github.io/turing/react-sdk" class="large astro-da7gfiol"><span class="astro-da7gfiol">Storybook (React SDK)</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-yv4jyioq"><div class="social-icons astro-yv4jyioq"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div></div></div></div></nav><div class="main-frame astro-ib55ocom"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-muvsczkj"><aside class="right-sidebar-container print:hidden astro-muvsczkj"><div class="right-sidebar astro-muvsczkj"><div class="lg:sl-hidden astro-uaaz7kdr"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-l2ev5fid"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-l2ev5fid"><details id="starlight__mobile-toc" class="astro-l2ev5fid"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-l2ev5fid"><span class="toggle sl-flex astro-l2ev5fid">On this page<svg aria-hidden="true" class="caret astro-l2ev5fid astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-l2ev5fid"></span></summary><div class="dropdown astro-l2ev5fid"><ul class="isMobile astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#login" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Login</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#option-1-the-turing_admin_password-environment-variable" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Option 1: the TURING_ADMIN_PASSWORD environment variable</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#option-2-the-first-access-setup-screen" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Option 2: the first-access setup screen</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#calling-the-api-from-scripts-and-ci" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Calling the API from scripts and CI</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#users" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Users</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#groups" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Groups</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#roles" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Roles</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#privilege-matrix" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Privilege Matrix</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#api-tokens" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">API Tokens</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#global-settings" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Global Settings</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#general" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">General</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#llm-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">LLM Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#rag-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">RAG Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#email-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Email Settings</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#system-information" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">System Information</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#overview" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#system-variables" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">System Variables</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#user-account" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">User Account</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#rest-api" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">REST API</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#users-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Users</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#groups-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Groups</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#roles-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Roles</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#api-tokens-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">API Tokens</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#global-settings-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Global Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#system-information-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">System Information</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/turing/docs/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.BcSo_yiZ.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-uaaz7kdr"><div class="sl-container astro-uaaz7kdr"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#login" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Login</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#option-1-the-turing_admin_password-environment-variable" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Option 1: the TURING_ADMIN_PASSWORD environment variable</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#option-2-the-first-access-setup-screen" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Option 2: the first-access setup screen</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#calling-the-api-from-scripts-and-ci" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Calling the API from scripts and CI</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#users" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Users</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#groups" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Groups</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#roles" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Roles</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#privilege-matrix" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Privilege Matrix</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#api-tokens" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">API Tokens</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#global-settings" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Global Settings</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#general" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">General</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#llm-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">LLM Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#rag-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">RAG Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#email-settings" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Email Settings</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#system-information" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">System Information</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#overview" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#system-variables" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">System Variables</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#user-account" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">User Account</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#rest-api" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">REST API</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#users-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Users</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#groups-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Groups</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#roles-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Roles</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#api-tokens-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">API Tokens</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#global-settings-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Global Settings</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#system-information-1" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">System Information</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></nav></starlight-toc><script type="module" src="/turing/docs/_astro/TableOfContents.astro_astro_type_script_index_0_lang.Csloo1VZ.js"></script></div></div></div></aside><div class="main-pane astro-muvsczkj"><main data-pagefind-body class="astro-wy3hjvd4" lang="en" dir="ltr"><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><h1 id="_top" class="astro-swossm7f">Administration Guide</h1></div></div><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><div class="sl-markdown-content"><p>The <strong>Administration</strong> section (<code dir="auto">/admin-settings</code>) manages users, access control, API credentials, global configuration, and system diagnostics. It is accessible from the main sidebar.</p>
+<aside aria-label="Keycloak mode" class="starlight-aside starlight-aside--note"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 11a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0v-4a1 1 0 0 0-1-1Zm.38-3.92a1 1 0 0 0-.76 0 1 1 0 0 0-.33.21 1.15 1.15 0 0 0-.21.33 1 1 0 0 0 .21 1.09c.097.088.209.16.33.21A1 1 0 0 0 13 8a1.05 1.05 0 0 0-.29-.71 1 1 0 0 0-.33-.21ZM12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16.001A8 8 0 0 1 12 20Z"></path></svg>Keycloak mode</p><div class="starlight-aside__content"><p>When Keycloak is enabled (<code dir="auto">turing.keycloak=true</code>), the <strong>Users</strong>, <strong>Groups</strong>, and <strong>Roles</strong> subsections are hidden: identity and access management is fully delegated to Keycloak. See <a href="/turing/docs/security-keycloak/">Security &#x26; Keycloak</a>.</p></div></aside>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="login">Login</h2><a class="sl-anchor-link" href="#login"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Login”</span></a></div>
+<p>When accessing Viglet Turing, a login page is displayed. The default username is <code dir="auto">admin</code>. Turing never ships a default password: you choose it in one of two ways on the first startup.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="option-1-the-turing_admin_password-environment-variable">Option 1: the <code dir="auto">TURING_ADMIN_PASSWORD</code> environment variable</h3><a class="sl-anchor-link" href="#option-1-the-turing_admin_password-environment-variable"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Option 1: the TURING_ADMIN_PASSWORD environment variable”</span></a></div>
+<p>Best for containers, unattended installs, and CI: the password is applied while the server boots, so the console goes straight to the login page. Set the variable before starting Turing for the first time:</p>
+<p><strong>Windows</strong></p>
+<div class="expressive-code"><link rel="stylesheet" href="/turing/docs/_astro/ec.w36nc.css"><script type="module" src="/turing/docs/_astro/ec.0vx5m.js"></script><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bat"><code><div class="ec-line"><div class="code"><span style="--0:#C792EA;--1:#8844AE">set</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">TURING_ADMIN_PASSWORD</span><span style="--0:#C792EA;--1:#8844AE">=</span><span style="--0:#D6DEEB;--1:#403F53">your_password</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="set TURING_ADMIN_PASSWORD=your_password"><div></div></button></div></figure></div>
+<p><strong>Linux / macOS</strong></p>
+<div class="expressive-code"><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#C792EA;--1:#8844AE">export</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">TURING_ADMIN_PASSWORD</span><span style="--0:#C792EA;--1:#8844AE">=</span><span style="--0:#C5E478;--1:#3B61B0">your_password</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="export TURING_ADMIN_PASSWORD=your_password"><div></div></button></div></figure></div>
+<p>The password must be at least <strong>6 characters</strong>: a shorter value is ignored (a warning is logged) and Turing falls back to Option 2.</p>
+<aside aria-label="Applied once, never overwritten" class="starlight-aside starlight-aside--note"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 11a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0v-4a1 1 0 0 0-1-1Zm.38-3.92a1 1 0 0 0-.76 0 1 1 0 0 0-.33.21 1.15 1.15 0 0 0-.21.33 1 1 0 0 0 .21 1.09c.097.088.209.16.33.21A1 1 0 0 0 13 8a1.05 1.05 0 0 0-.29-.71 1 1 0 0 0-.33-.21ZM12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16.001A8 8 0 0 1 12 20Z"></path></svg>Applied once, never overwritten</p><div class="starlight-aside__content"><p>The variable is only applied while the <code dir="auto">admin</code> password is still unset. Once a password exists (whether it came from this variable or from the setup screen), restarting with the variable still set changes nothing. To change the password afterwards, use the <strong>Users</strong> page in the console.</p></div></aside>
+<div class="sl-heading-wrapper level-h3"><h3 id="option-2-the-first-access-setup-screen">Option 2: the first-access setup screen</h3><a class="sl-anchor-link" href="#option-2-the-first-access-setup-screen"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Option 2: the first-access setup screen”</span></a></div>
+<p>If the variable is not set, the console asks you to choose the <code dir="auto">admin</code> password the first time it is opened (minimum 6 characters). After it is set, the setup screen is no longer reachable.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="calling-the-api-from-scripts-and-ci">Calling the API from scripts and CI</h3><a class="sl-anchor-link" href="#calling-the-api-from-scripts-and-ci"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Calling the API from scripts and CI”</span></a></div>
+<p>Scripts don’t need the console’s cookie-and-XSRF login. With local authentication (Keycloak off), send the user’s credentials with HTTP Basic:</p>
+<div class="expressive-code"><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">curl</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">-u</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">admin:your_password</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">http://localhost:2700/api/sn</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="curl -u admin:your_password http://localhost:2700/api/sn"><div></div></button></div></figure></div>
+<p>For connectors and long-lived automation, prefer an API token sent in the <code dir="auto">Key</code> header, which works without a password.</p>
+<p>If Basic answers <code dir="auto">401</code>, the password is wrong. The usual cause is a reused database: <code dir="auto">TURING_ADMIN_PASSWORD</code> was ignored at startup because a password already existed (the log says so), so the admin password is still the one stored earlier.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="users">Users</h2><a class="sl-anchor-link" href="#users"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Users”</span></a></div>
+<p>The Users page (<code dir="auto">/admin/users</code>) lists all local user accounts. Click a user to edit, or use the creation button to add a new account.</p>
+<p><strong>Account Information:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Avatar</td><td>Profile picture using DiceBear: click to pick a style, or remove to use initials</td></tr><tr><td>Username</td><td>Unique login identifier (read-only for existing users)</td></tr><tr><td>First Name</td><td>User’s first name (required)</td></tr><tr><td>Last Name</td><td>User’s last name (required)</td></tr></tbody></table>
+<p><strong>Contact:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Email</td><td>User’s email address (required)</td></tr></tbody></table>
+<p><strong>Groups &#x26; Roles</strong> (tabbed view):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Tab</th><th>Description</th></tr></thead><tbody><tr><td><strong>Groups</strong></td><td>Search and assign available groups. Remove the user from groups using the remove button.</td></tr><tr><td><strong>Roles</strong></td><td>Read-only view of roles inherited from the user’s assigned groups</td></tr></tbody></table>
+<p><strong>Security:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Password</td><td>Required for new users. Leave blank when editing to keep the current password.</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="groups">Groups</h2><a class="sl-anchor-link" href="#groups"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Groups”</span></a></div>
+<p>The Groups page (<code dir="auto">/admin/groups</code>) organises users into groups for role-based access control.</p>
+<p><strong>Group Details:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Name</td><td>Unique group identifier (required)</td></tr><tr><td>Description</td><td>Purpose or scope of this group</td></tr></tbody></table>
+<p><strong>Members &#x26; Roles</strong> (tabbed view):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Tab</th><th>Description</th></tr></thead><tbody><tr><td><strong>Users</strong></td><td>Search and add members. Remove users from the group using the remove button.</td></tr><tr><td><strong>Roles</strong></td><td>Search and assign roles. Remove roles using the remove button.</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="roles">Roles</h2><a class="sl-anchor-link" href="#roles"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Roles”</span></a></div>
+<p>The Roles page (<code dir="auto">/admin/roles</code>) defines permissions that are assigned to groups.</p>
+<p><strong>Role Details:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Name</td><td>Unique role identifier (required)</td></tr><tr><td>Description</td><td>What this role permits</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="privilege-matrix">Privilege Matrix</h3><a class="sl-anchor-link" href="#privilege-matrix"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Privilege Matrix”</span></a></div>
+<p>Each role has a <strong>privilege matrix</strong>, an interactive table where you toggle individual permissions per resource category. The matrix is organized into two sections:</p>
+<p><strong>Generative AI:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Category</th><th>Resources Covered</th></tr></thead><tbody><tr><td>LLM</td><td>Language model instances</td></tr><tr><td>EMBEDDING</td><td>Embedding model instances</td></tr><tr><td>STORE</td><td>Embedding store instances</td></tr><tr><td>AI_AGENT</td><td>AI Agent configurations</td></tr><tr><td>INTENT</td><td>Intent categories and actions</td></tr></tbody></table>
+<p><strong>Enterprise Search:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Category</th><th>Resources Covered</th></tr></thead><tbody><tr><td>SE</td><td>Search engine instances and cores</td></tr><tr><td>SN</td><td>Semantic Navigation sites and fields</td></tr></tbody></table>
+<p><strong>Actions per category:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Action</th><th>Description</th></tr></thead><tbody><tr><td>VIEW</td><td>Read access to the resource</td></tr><tr><td>CREATE</td><td>Create new resources</td></tr><tr><td>EDIT</td><td>Modify existing resources</td></tr><tr><td>DELETE</td><td>Remove resources</td></tr><tr><td>ALL</td><td>Bulk toggle: enables or disables all four actions at once</td></tr></tbody></table>
+<aside aria-label="Tip" class="starlight-aside starlight-aside--tip"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path fill-rule="evenodd" d="M1.44 8.855v-.001l3.527-3.516c.34-.344.802-.541 1.285-.548h6.649l.947-.947c3.07-3.07 6.207-3.072 7.62-2.868a1.821 1.821 0 0 1 1.557 1.557c.204 1.413.203 4.55-2.868 7.62l-.946.946v6.649a1.845 1.845 0 0 1-.549 1.286l-3.516 3.528a1.844 1.844 0 0 1-3.11-.944l-.858-4.275-4.52-4.52-2.31-.463-1.964-.394A1.847 1.847 0 0 1 .98 10.693a1.843 1.843 0 0 1 .46-1.838Zm5.379 2.017-3.873-.776L6.32 6.733h4.638l-4.14 4.14Zm8.403-5.655c2.459-2.46 4.856-2.463 5.89-2.33.134 1.035.13 3.432-2.329 5.891l-6.71 6.71-3.561-3.56 6.71-6.711Zm-1.318 15.837-.776-3.873 4.14-4.14v4.639l-3.364 3.374Z" clip-rule="evenodd"></path><path d="M9.318 18.345a.972.972 0 0 0-1.86-.561c-.482 1.435-1.687 2.204-2.934 2.619a8.22 8.22 0 0 1-1.23.302c.062-.365.157-.79.303-1.229.415-1.247 1.184-2.452 2.62-2.935a.971.971 0 1 0-.62-1.842c-.12.04-.236.084-.35.13-2.02.828-3.012 2.588-3.493 4.033a10.383 10.383 0 0 0-.51 2.845l-.001.016v.063c0 .536.434.972.97.972H2.24a7.21 7.21 0 0 0 .878-.065c.527-.063 1.248-.19 2.02-.447 1.445-.48 3.205-1.472 4.033-3.494a5.828 5.828 0 0 0 .147-.407Z"></path></svg>Tip</p><div class="starlight-aside__content"><p>The <code dir="auto">ROLE_ADMIN</code> role has full access to all resources regardless of the privilege matrix. The matrix applies to non-admin roles only.</p></div></aside>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="api-tokens">API Tokens</h2><a class="sl-anchor-link" href="#api-tokens"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “API Tokens”</span></a></div>
+<p>The API Tokens page (<code dir="auto">/admin/tokens</code>) manages tokens used to authenticate REST API requests. Every token is passed in the <code dir="auto">Key</code> request header.</p>
+<p><strong>Form fields:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Title</td><td>A human-readable name for the token (required)</td></tr><tr><td>Description</td><td>Purpose or owner of this token</td></tr></tbody></table>
+<p><strong>Token display</strong> (existing tokens only):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>API Token</td><td>Read-only, monospace display with copy-to-clipboard button</td></tr></tbody></table>
+<aside aria-label="Note" class="starlight-aside starlight-aside--note"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 11a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0v-4a1 1 0 0 0-1-1Zm.38-3.92a1 1 0 0 0-.76 0 1 1 0 0 0-.33.21 1.15 1.15 0 0 0-.21.33 1 1 0 0 0 .21 1.09c.097.088.209.16.33.21A1 1 0 0 0 13 8a1.05 1.05 0 0 0-.29-.71 1 1 0 0 0-.33-.21ZM12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16.001A8 8 0 0 1 12 20Z"></path></svg>Note</p><div class="starlight-aside__content"><p>The token value is generated automatically on creation and displayed once. It cannot be retrieved again: store it securely.</p></div></aside>
+<p><strong>Using the token in API requests:</strong></p>
+<div class="expressive-code"><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">curl</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">http://localhost:2700/api/sn/Sample/search?q=cloud&#x26;_setlocale=en_US</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#F78C6C;--1:#AA0982">\</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">-H</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#ECC48D;--1:#984E4D">Key: &#x3C;YOUR_API_TOKEN></span><span style="--0:#D9F5DD;--1:#111111">"</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="curl &#x22;http://localhost:2700/api/sn/Sample/search?q=cloud&#x26;_setlocale=en_US&#x22; \  -H &#x22;Key: <YOUR_API_TOKEN>&#x22;"><div></div></button></div></figure></div>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="global-settings">Global Settings</h2><a class="sl-anchor-link" href="#global-settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Global Settings”</span></a></div>
+<p>The Global Settings page (<code dir="auto">/admin/settings</code>) is the central configuration panel for defaults and external service integrations. Divided into four sections.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="general">General</h3><a class="sl-anchor-link" href="#general"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “General”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Decimal Separator</td><td>Choose between period (<code dir="auto">.</code>) and comma (<code dir="auto">,</code>) for numeric display. Preview shows formatted examples (e.g., <code dir="auto">1,500.75</code> vs <code dir="auto">1.500,75</code>).</td></tr><tr><td>Python Executable</td><td>Absolute path to the Python 3 binary used by the Code Interpreter tool. When left blank, Turing searches standard OS locations automatically.</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="llm-settings">LLM Settings</h3><a class="sl-anchor-link" href="#llm-settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “LLM Settings”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Default LLM Instance</td><td>Dropdown of enabled LLM instances: the default used when no site-level instance is configured. Select “None” to require explicit per-site assignment.</td></tr><tr><td>LLM Cache</td><td>Toggle to enable caching of LLM responses</td></tr><tr><td>Cache Duration</td><td>How long cached responses are retained (duration input with configurable time unit), visible when cache is enabled</td></tr><tr><td>Regenerate Cache</td><td>Toggle to force fresh LLM calls instead of serving cached responses, visible when cache is enabled</td></tr></tbody></table>
+<aside aria-label="Caution" class="starlight-aside starlight-aside--caution"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10.67 1.47-8.05-14a3 3 0 0 0-5.24 0l-8 14A3 3 0 0 0 3.94 22h16.12a3 3 0 0 0 2.61-4.53Zm-1.73 2a1 1 0 0 1-.88.51H3.94a1 1 0 0 1-.88-.51 1 1 0 0 1 0-1l8-14a1 1 0 0 1 1.78 0l8.05 14a1 1 0 0 1 .05 1.02v-.02ZM12 8a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V9a1 1 0 0 0-1-1Z"></path></svg>Caution</p><div class="starlight-aside__content"><p>Caching LLM responses improves performance but may return stale answers if the underlying content changes frequently. Tune the duration to match your content update cadence.</p></div></aside>
+<div class="sl-heading-wrapper level-h3"><h3 id="rag-settings">RAG Settings</h3><a class="sl-anchor-link" href="#rag-settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “RAG Settings”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Enable RAG Globally</td><td>Master switch for Retrieval-Augmented Generation across all sites</td></tr><tr><td>Default Embedding Model</td><td>Dropdown of enabled embedding models: required when RAG is enabled</td></tr><tr><td>Default Embedding Store</td><td>Dropdown of enabled embedding stores (ChromaDB, PgVector, or Milvus), required when RAG is enabled</td></tr></tbody></table>
+<aside aria-label="Caution" class="starlight-aside starlight-aside--caution"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10.67 1.47-8.05-14a3 3 0 0 0-5.24 0l-8 14A3 3 0 0 0 3.94 22h16.12a3 3 0 0 0 2.61-4.53Zm-1.73 2a1 1 0 0 1-.88.51H3.94a1 1 0 0 1-.88-.51 1 1 0 0 1 0-1l8-14a1 1 0 0 1 1.78 0l8.05 14a1 1 0 0 1 .05 1.02v-.02ZM12 8a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V9a1 1 0 0 0-1-1Z"></path></svg>Caution</p><div class="starlight-aside__content"><p>Changing the Default Embedding Model invalidates all existing embeddings. All indexed content must be re-indexed after changing this setting.</p></div></aside>
+<aside aria-label="Note" class="starlight-aside starlight-aside--note"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 11a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0v-4a1 1 0 0 0-1-1Zm.38-3.92a1 1 0 0 0-.76 0 1 1 0 0 0-.33.21 1.15 1.15 0 0 0-.21.33 1 1 0 0 0 .21 1.09c.097.088.209.16.33.21A1 1 0 0 0 13 8a1.05 1.05 0 0 0-.29-.71 1 1 0 0 0-.33-.21ZM12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16.001A8 8 0 0 1 12 20Z"></path></svg>Note</p><div class="starlight-aside__content"><p>The RAG Settings section is only visible if an embedding store is configured and available. If MinIO is not configured, the Knowledge Base and related RAG options will not appear.</p></div></aside>
+<div class="sl-heading-wrapper level-h3"><h3 id="email-settings">Email Settings</h3><a class="sl-anchor-link" href="#email-settings"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Email Settings”</span></a></div>
+<p>Used by Turing to send notifications and test email connectivity.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Provider</td><td>Email service provider (currently Brevo)</td></tr><tr><td>API Key</td><td>API key for the email provider</td></tr><tr><td>Sender Email</td><td>The <code dir="auto">From</code> email address</td></tr><tr><td>Sender Name</td><td>The display name shown to recipients</td></tr><tr><td>Recipient Email</td><td>Default destination for test and automated emails</td></tr><tr><td>Send Test Email</td><td>Button to send a test message and verify configuration</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="system-information">System Information</h2><a class="sl-anchor-link" href="#system-information"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “System Information”</span></a></div>
+<p>The System Information page (<code dir="auto">/admin/system-info</code>) is a diagnostic panel to monitor the health of the Turing instance. It contains two tabs.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="overview">Overview</h3><a class="sl-anchor-link" href="#overview"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Overview”</span></a></div>
+<p><strong>Application:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>Version</td><td>Current Turing build version</td></tr><tr><td>Java Version</td><td>JVM version in use</td></tr><tr><td>Java Vendor</td><td>JVM vendor (e.g., Eclipse Adoptium)</td></tr><tr><td>OS</td><td>Operating system name, version, and architecture</td></tr></tbody></table>
+<p><strong>Database:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>Status</td><td>UP (green) or DOWN (red): connection health</td></tr><tr><td>Product</td><td>Database product name (e.g., H2, MariaDB)</td></tr><tr><td>Version</td><td>Database server version</td></tr><tr><td>Driver</td><td>JDBC driver name and version</td></tr><tr><td>URL</td><td>JDBC connection URL</td></tr></tbody></table>
+<p><strong>Physical Memory (RAM):</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>RAM Usage</td><td>Percentage used with progress bar</td></tr><tr><td>Total RAM</td><td>Total physical memory installed</td></tr><tr><td>Free RAM</td><td>Available physical memory</td></tr><tr><td>Used RAM</td><td>Memory currently in use</td></tr></tbody></table>
+<p><strong>Swap / Pagefile</strong> (if available):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>Swap Usage</td><td>Percentage used with progress bar</td></tr><tr><td>Total Swap</td><td>Total swap space configured</td></tr><tr><td>Free Swap</td><td>Available swap space</td></tr></tbody></table>
+<p><strong>Memory (JVM Heap):</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>Heap Usage</td><td>Percentage used with progress bar</td></tr><tr><td>Total Allocated</td><td>JVM heap currently allocated</td></tr><tr><td>Free (Allocated)</td><td>Free space within the allocated heap</td></tr><tr><td>Used Memory</td><td>Heap memory currently in use</td></tr><tr><td>Max Heap</td><td>Maximum heap size configured</td></tr></tbody></table>
+<p><strong>Disk Space:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>Disk Usage</td><td>Percentage used with progress bar</td></tr><tr><td>Total Space</td><td>Total disk capacity</td></tr><tr><td>Available Space</td><td>Free disk space</td></tr><tr><td>Used Space</td><td>Disk space currently in use</td></tr></tbody></table>
+<p><strong>MongoDB</strong> (shown only when <code dir="auto">turing.mongodb.enabled: true</code>):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>Status</td><td>UP (green) or DOWN (red)</td></tr><tr><td>Version</td><td>MongoDB server version</td></tr><tr><td>Endpoint</td><td>Connection URI</td></tr></tbody></table>
+<p><strong>MinIO</strong> (shown only when <code dir="auto">turing.minio.enabled: true</code>):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Item</th><th>Description</th></tr></thead><tbody><tr><td>Status</td><td>UP (green) or DOWN (red)</td></tr><tr><td>Version</td><td>MinIO server version</td></tr><tr><td>Endpoint</td><td>MinIO server URL</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="system-variables">System Variables</h3><a class="sl-anchor-link" href="#system-variables"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “System Variables”</span></a></div>
+<p>A searchable table of all JVM system properties active at runtime. The search input filters properties by name or value in real time. A counter shows the number of visible entries out of the total.</p>
+<p>Useful for verifying configuration overrides, checking classpath entries, or confirming environment variable values at deployment.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="user-account">User Account</h2><a class="sl-anchor-link" href="#user-account"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “User Account”</span></a></div>
+<p>The User Account page (<code dir="auto">/account</code>) allows the currently logged-in user to manage their own profile without requiring admin privileges.</p>
+<p><strong>Profile fields:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Avatar</td><td>DiceBear avatar picker: choose a style or remove to use initials</td></tr><tr><td>First Name</td><td>User’s first name</td></tr><tr><td>Last Name</td><td>User’s last name</td></tr><tr><td>Email</td><td>User’s email address</td></tr><tr><td>Username</td><td>Read-only: cannot be changed</td></tr></tbody></table>
+<p><strong>Change Password:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>New Password</td><td>Leave blank to keep the current password</td></tr><tr><td>Confirm Password</td><td>Must match the new password</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="rest-api">REST API</h2><a class="sl-anchor-link" href="#rest-api"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “REST API”</span></a></div>
+<p>All administration endpoints require authentication via the <code dir="auto">Key</code> header. For the full endpoint reference, see <a href="/turing/docs/rest-api/">REST API Reference</a>.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="users-1">Users</h3><a class="sl-anchor-link" href="#users-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Users”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/user</code></td><td>List all users</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/user/{username}</code></td><td>Get user by username</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/user/current</code></td><td>Get the currently authenticated user</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/v2/user</code></td><td>Create a new user</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/v2/user/{username}</code></td><td>Update a user</td></tr><tr><td><code dir="auto">DELETE</code></td><td><code dir="auto">/api/v2/user/{username}</code></td><td>Delete a user</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/v2/user/{username}/avatar</code></td><td>Update user avatar</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/v2/user/{username}/password</code></td><td>Change user password</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="groups-1">Groups</h3><a class="sl-anchor-link" href="#groups-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Groups”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/group</code></td><td>List all groups</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/group/{id}</code></td><td>Get a group</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/v2/group</code></td><td>Create a group</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/v2/group/{id}</code></td><td>Update a group</td></tr><tr><td><code dir="auto">DELETE</code></td><td><code dir="auto">/api/v2/group/{id}</code></td><td>Delete a group</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="roles-1">Roles</h3><a class="sl-anchor-link" href="#roles-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Roles”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/role</code></td><td>List all roles</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/role/{id}</code></td><td>Get a role</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/v2/role</code></td><td>Create a role</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/v2/role/{id}</code></td><td>Update a role</td></tr><tr><td><code dir="auto">DELETE</code></td><td><code dir="auto">/api/v2/role/{id}</code></td><td>Delete a role</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/v2/privilege</code></td><td>List all available privileges</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="api-tokens-1">API Tokens</h3><a class="sl-anchor-link" href="#api-tokens-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “API Tokens”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/dev/token</code></td><td>List all tokens</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/dev/token/{id}</code></td><td>Get a token</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/dev/token</code></td><td>Create a token (auto-generates value)</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/dev/token/{id}</code></td><td>Update token metadata</td></tr><tr><td><code dir="auto">DELETE</code></td><td><code dir="auto">/api/dev/token/{id}</code></td><td>Delete a token</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="global-settings-1">Global Settings</h3><a class="sl-anchor-link" href="#global-settings-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Global Settings”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/system/global-settings</code></td><td>Get all settings</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/system/global-settings</code></td><td>Update settings</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/system/global-settings/email/test</code></td><td>Send test email</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="system-information-1">System Information</h3><a class="sl-anchor-link" href="#system-information-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “System Information”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/system/info</code></td><td>System overview (version, database, memory, disk, external services)</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/system/info/variables</code></td><td>JVM system properties</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="related-pages">Related Pages</h2><a class="sl-anchor-link" href="#related-pages"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Related Pages”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Page</th><th>Description</th></tr></thead><tbody><tr><td><a href="/turing/docs/security-authentication/">Security &#x26; Authentication</a></td><td>Authentication mechanisms and API token usage</td></tr><tr><td><a href="/turing/docs/security-keycloak/">Security &#x26; Keycloak</a></td><td>Keycloak OAuth2/OIDC integration</td></tr><tr><td><a href="/turing/docs/configuration-reference/">Configuration Reference</a></td><td>Full <code dir="auto">application.yaml</code> property reference</td></tr><tr><td><a href="/turing/docs/logging/">Logging</a></td><td>Server, indexing, and AEM log viewer</td></tr><tr><td><a href="/turing/docs/rest-api/">REST API Reference</a></td><td>Complete API endpoint reference</td></tr></tbody></table>
+<hr></div><footer class="sl-flex astro-cla57s4p"><div class="meta sl-flex astro-cla57s4p"><p>Last updated: <time datetime="2026-10-29T11:49:33.000Z">Oct 29, 2026</time></p></div><div class="pagination-links print:hidden astro-euyh6ymx" dir="ltr"><a href="/turing/docs/multi-tenancy/" rel="prev" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-euyh6ymx">Previous<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Multi-Tenancy</span></span></a><a href="/turing/docs/observability/" rel="next" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-euyh6ymx">Next<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Observability: Prometheus &amp; Grafana</span></span></a></div></footer><footer class="turing-footer not-content astro-jo6i4kqk"><div class="turing-footer-grid astro-jo6i4kqk"><div class="astro-jo6i4kqk"><span class="turing-footer-brand astro-jo6i4kqk"><img src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" alt="" width="28" height="28" class="astro-jo6i4kqk">Viglet Turing</span><p class="astro-jo6i4kqk">Open-source Enterprise Search Intelligence Platform: agents, tools, skills, MCP and RAG for your content.</p></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Product</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/#features" class="astro-jo6i4kqk">Capabilities</a></li><li class="astro-jo6i4kqk"><a href="/turing/compare/" class="astro-jo6i4kqk">Compare</a></li><li class="astro-jo6i4kqk"><a href="/turing/migrate/" class="astro-jo6i4kqk">Migrate</a></li><li class="astro-jo6i4kqk"><a href="/turing/aem-search/" class="astro-jo6i4kqk">AEM search</a></li><li class="astro-jo6i4kqk"><a href="/turing/security/" class="astro-jo6i4kqk">Security</a></li><li class="astro-jo6i4kqk"><a href="/turing/#marketplace" class="astro-jo6i4kqk">Marketplace</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Developers</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/react-sdk/" class="astro-jo6i4kqk">React SDK</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-react-sdk" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">npm</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-cli" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">CLI</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Open &amp; transparent</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="https://github.com/openviglet/turing/blob/HEAD/docs/ROADMAP.md" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Roadmap</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org/turing/release-notes/" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Changelog</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">viglet.org</a></li></ul></div></div><div class="turing-footer-legal astro-jo6i4kqk">© 2026 Viglet Turing · Apache 2.0 License</div></footer></div></div></main></div></div></div></div></body></html>

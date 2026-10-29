@@ -1,0 +1,626 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-wy3hjvd4"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Embedding Models | Viglet Turing</title><link rel="canonical" href="https://openviglet.github.io/turing/docs/embedding-models/"/><link rel="sitemap" href="/turing/docs/sitemap-index.xml"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"/><link rel="shortcut icon" href="/turing/docs/favicon.ico" type="image/x-icon"/><meta name="generator" content="Astro v7.4.2"/><meta name="generator" content="Starlight v0.41.11"/><meta property="og:title" content="Embedding Models"/><meta property="og:type" content="article"/><meta property="og:url" content="https://openviglet.github.io/turing/docs/embedding-models/"/><meta property="og:locale" content="en"/><meta property="og:description" content="Configure embedding models for vector generation, supported providers, local transformers, model selection and the REST API."/><meta property="og:site_name" content="Viglet Turing"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="Configure embedding models for vector generation, supported providers, local transformers, model selection and the REST API."/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/turing/docs/_astro/print.ehPL0gv-.css" media="print"><link rel="stylesheet" href="/turing/docs/_astro/common.gvporLFj.css"><style>@layer starlight.components{.card-grid:where(.astro-6q73ypdm){grid-template-columns:100%;gap:1rem;display:grid}.card-grid:where(.astro-6q73ypdm)>*{margin-top:0!important}@media (width>=50rem){.card-grid:where(.astro-6q73ypdm){grid-template-columns:1fr 1fr;gap:1.5rem}.stagger:where(.astro-6q73ypdm){--stagger-height:5rem;padding-bottom:var(--stagger-height)}.stagger:where(.astro-6q73ypdm)>:nth-child(2n){transform:translateY(var(--stagger-height))}}.sl-link-card:where(.astro-b5uddqxg){border:1px solid var(--sl-color-gray-5);box-shadow:var(--sl-shadow-sm);border-radius:.5rem;grid-template-columns:1fr auto;gap:.5rem;padding:1rem;display:grid;position:relative}a:where(.astro-b5uddqxg){line-height:var(--sl-line-height-headings);text-decoration:none}a:where(.astro-b5uddqxg):before{content:"";position:absolute;inset:0}.stack:where(.astro-b5uddqxg){flex-direction:column;gap:.5rem}.title:where(.astro-b5uddqxg){color:var(--sl-color-white);font-weight:600;font-size:var(--sl-text-lg)}.description:where(.astro-b5uddqxg){color:var(--sl-color-gray-3);line-height:1.5}.icon:where(.astro-b5uddqxg){color:var(--sl-color-gray-3)}.sl-link-card:where(.astro-b5uddqxg):hover{background:var(--sl-color-gray-7,var(--sl-color-gray-6));border-color:var(--sl-color-gray-2)}.sl-link-card:where(.astro-b5uddqxg):hover .icon:where(.astro-b5uddqxg){color:var(--sl-color-white)}}
+@layer starlight.components{.card:where(.astro-uyl7lth6){--sl-card-border:var(--sl-color-purple);--sl-card-bg:var(--sl-color-purple-low);border:1px solid var(--sl-color-gray-5);background-color:var(--sl-color-black);flex-direction:column;gap:clamp(.5rem,.125rem + 1vw,1rem);padding:clamp(1rem,.125rem + 3vw,2.5rem)}.card:where(.astro-uyl7lth6):nth-child(4n+1){--sl-card-border:var(--sl-color-orange);--sl-card-bg:var(--sl-color-orange-low)}.card:where(.astro-uyl7lth6):nth-child(4n+3){--sl-card-border:var(--sl-color-green);--sl-card-bg:var(--sl-color-green-low)}.card:where(.astro-uyl7lth6):nth-child(4n+4){--sl-card-border:var(--sl-color-red);--sl-card-bg:var(--sl-color-red-low)}.card:where(.astro-uyl7lth6):nth-child(4n+5){--sl-card-border:var(--sl-color-blue);--sl-card-bg:var(--sl-color-blue-low)}.title:where(.astro-uyl7lth6){font-weight:600;font-size:var(--sl-text-h4);color:var(--sl-color-white);line-height:var(--sl-line-height-headings);align-items:center;gap:1rem}.card:where(.astro-uyl7lth6) .icon:where(.astro-uyl7lth6){border:1px solid var(--sl-card-border);background-color:var(--sl-card-bg);border-radius:.25rem;flex-shrink:0;padding:.2em}.card:where(.astro-uyl7lth6) .body:where(.astro-uyl7lth6){font-size:clamp(var(--sl-text-sm), calc(.5rem + 1vw), var(--sl-text-body));margin:0}}
+@layer starlight.components{svg:where(.astro-nwdigvql){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em}}
+</style><script type="module" src="/turing/docs/_astro/page.cNngjUgL.js"></script></head><body class="astro-wy3hjvd4"><a class="sl-skip-link astro-24szbuaa" href="#_top">Skip to content</a><div class="page sl-flex astro-ib55ocom"><header class="header astro-ib55ocom"><div class="header astro-ukxunls3"><div class="title-wrapper sl-flex astro-ukxunls3"><div class="turing-brand astro-hen6hmfb"><a href="/turing/docs/" class="site-title sl-flex astro-f4vgya6g"><img class="astro-f4vgya6g" alt="Viglet Turing" src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" width="512" height="512"><span class="astro-f4vgya6g" translate="no">Viglet Turing</span></a><span class="turing-docs-label astro-hen6hmfb">Docs</span><a class="turing-pill astro-hen6hmfb" href="https://www.viglet.org" target="_blank" rel="noreferrer">part of viglet.org ↗</a></div></div><div class="sl-flex print:hidden astro-ukxunls3"><site-search class="astro-ukxunls3 astro-a2lndvxu" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-a2lndvxu"><svg aria-hidden="true" class="astro-a2lndvxu astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-a2lndvxu" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-a2lndvxu" style="display: none;"><kbd class="astro-a2lndvxu">Ctrl</kbd><kbd class="astro-a2lndvxu">K</kbd></kbd></button><dialog style="padding:0" aria-label="Search" class="astro-a2lndvxu"><div class="dialog-frame sl-flex astro-a2lndvxu"><button data-close-modal class="sl-flex md:sl-hidden astro-a2lndvxu">Cancel</button><div class="search-container astro-a2lndvxu"><div id="starlight__search" class="astro-a2lndvxu"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/turing/docs/_astro/Search.astro_astro_type_script_index_0_lang.w5cqYmCt.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-ukxunls3"><div class="sl-flex social-icons astro-ukxunls3"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-ib55ocom" aria-label="Main"><starlight-menu-button class="print:hidden astro-p3fyn3ad"><button aria-expanded="false" aria-label="Menu" aria-controls="starlight__sidebar" class="sl-flex md:sl-hidden astro-p3fyn3ad"><svg aria-hidden="true" class="open-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg></button></starlight-menu-button><script type="module">var e=class extends HTMLElement{btn=this.querySelector(`button`);constructor(){super(),this.btn.addEventListener(`click`,()=>this.toggleExpanded());let e=this.closest(`nav`);e&&e.addEventListener(`keyup`,e=>this.closeOnEscape(e)),matchMedia(`(min-width: 50em)`).addEventListener(`change`,()=>this.setExpanded(!1))}setExpanded(e){this.setAttribute(`aria-expanded`,String(e)),document.body.toggleAttribute(`data-mobile-menu-expanded`,e),document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}toggleExpanded(){this.setExpanded(this.getAttribute(`aria-expanded`)!==`true`)}closeOnEscape(e){e.code===`Escape`&&(this.setExpanded(!1),this.btn.focus())}};customElements.define(`starlight-menu-button`,e);</script><div id="starlight__sidebar" class="sidebar-pane astro-ib55ocom"><div class="sidebar-content sl-flex astro-ib55ocom"><sl-sidebar-state-persist data-hash="0qm6pqf" class="astro-odquddkb"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/" class="large astro-da7gfiol"><span class="astro-da7gfiol">Introduction</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Getting Started</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/intro/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is Viglet Turing?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/core-concepts/" class="astro-da7gfiol"><span class="astro-da7gfiol">Core Concepts</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/architecture-overview/" class="astro-da7gfiol"><span class="astro-da7gfiol">Architecture Overview</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Enterprise Search</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/enterprise-search/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/search-engine/" class="astro-da7gfiol"><span class="astro-da7gfiol">Search Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/semantic-navigation/" class="astro-da7gfiol"><span class="astro-da7gfiol">Semantic Navigation</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/synonyms/" class="astro-da7gfiol"><span class="astro-da7gfiol">Synonyms</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/thesaurus/" class="astro-da7gfiol"><span class="astro-da7gfiol">Thesaurus</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/manifest/" class="astro-da7gfiol"><span class="astro-da7gfiol">Field Manifest &amp; Schema-as-Code</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">DSL Query</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/dsl-query/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Query API</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/dsl-compatibility/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Compatibility Matrix</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/spa-pages/" class="astro-da7gfiol"><span class="astro-da7gfiol">SPA Pages</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Integration</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/integration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Integration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/integration-aem/" class="astro-da7gfiol"><span class="astro-da7gfiol">AEM Connector</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/import-export/" class="astro-da7gfiol"><span class="astro-da7gfiol">Import &amp; Export</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/migration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Migrating from Algolia or Elasticsearch</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">RAG &amp; Chat</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/rag-chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is RAG?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/answer/" class="astro-da7gfiol"><span class="astro-da7gfiol">Answer Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/vectorless-structured-rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">Vectorless (Structured-Data) RAG</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-stores/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Stores</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-models/" aria-current="page" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Models</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/reranking/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reranking</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-memory/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Memory</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/intent/" class="astro-da7gfiol"><span class="astro-da7gfiol">Intent</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/personas/" class="astro-da7gfiol"><span class="astro-da7gfiol">Personas</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/persona-book/" class="astro-da7gfiol"><span class="astro-da7gfiol">The Persona Book</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/transcription/" class="astro-da7gfiol"><span class="astro-da7gfiol">Transcription</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Agents, Tools &amp; Skills</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/ai-agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">AI Agents</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/tool-calling/" class="astro-da7gfiol"><span class="astro-da7gfiol">Tool Calling</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/capabilities/" class="astro-da7gfiol"><span class="astro-da7gfiol">Capabilities</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/client-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Client Tools &amp; Agent↔UI (AG-UI)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/custom-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Custom Tools</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/mcp-servers/" class="astro-da7gfiol"><span class="astro-da7gfiol">MCP Servers</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/skills/" class="astro-da7gfiol"><span class="astro-da7gfiol">Skills</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-workspace/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Workspace</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-flow/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Flow</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/human-in-the-loop/" class="astro-da7gfiol"><span class="astro-da7gfiol">Human-in-the-Loop</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/webhooks/" class="astro-da7gfiol"><span class="astro-da7gfiol">Webhooks</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/routines/" class="astro-da7gfiol"><span class="astro-da7gfiol">Routines</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/experiments/" class="astro-da7gfiol"><span class="astro-da7gfiol">Experiments (A/B Testing)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-eval/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Evaluation (CI)</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Deploy &amp; Operate</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="6"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/deploy-operate/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/installation-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Installation Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/configuration-reference/" class="astro-da7gfiol"><span class="astro-da7gfiol">Configuration Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/genai-llm/" class="astro-da7gfiol"><span class="astro-da7gfiol">Generative AI &amp; LLM Configuration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-instances/" class="astro-da7gfiol"><span class="astro-da7gfiol">LLM Instances</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/assets/" class="astro-da7gfiol"><span class="astro-da7gfiol">Assets</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/multi-tenancy/" class="astro-da7gfiol"><span class="astro-da7gfiol">Multi-Tenancy</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/administration-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Administration Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/observability/" class="astro-da7gfiol"><span class="astro-da7gfiol">Observability: Prometheus &amp; Grafana</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/logging/" class="astro-da7gfiol"><span class="astro-da7gfiol">Logging</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Analytics</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/token-usage/" class="astro-da7gfiol"><span class="astro-da7gfiol">Token Usage</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cost-governance/" class="astro-da7gfiol"><span class="astro-da7gfiol">Cost Governance</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-gateway/" class="astro-da7gfiol"><span class="astro-da7gfiol">Governed LLM Gateway</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Developers</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="7"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/developer-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Developer Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/react-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">React SDK</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/javascript-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">JavaScript SDK (vanilla)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cli/" class="astro-da7gfiol"><span class="astro-da7gfiol">Turing CLI</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/flow-dsl/" class="astro-da7gfiol"><span class="astro-da7gfiol">Flow DSL</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/showcase/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reference showcase (Atlas Store)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/conversion-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Conversion Analytics (GA4 bridge)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rest-api/" class="astro-da7gfiol"><span class="astro-da7gfiol">REST API Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/graphql/" class="astro-da7gfiol"><span class="astro-da7gfiol">GraphQL API</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Security</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="8"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/security-authentication/" class="astro-da7gfiol"><span class="astro-da7gfiol">Authentication</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-social-login/" class="astro-da7gfiol"><span class="astro-da7gfiol">Social Login (OAuth2)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-keycloak/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security &amp; Keycloak</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-hardening/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security Hardening &amp; Upgrade Notes</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="https://openviglet.github.io/turing/react-sdk" class="large astro-da7gfiol"><span class="astro-da7gfiol">Storybook (React SDK)</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-yv4jyioq"><div class="social-icons astro-yv4jyioq"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div></div></div></div></nav><div class="main-frame astro-ib55ocom"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-muvsczkj"><aside class="right-sidebar-container print:hidden astro-muvsczkj"><div class="right-sidebar astro-muvsczkj"><div class="lg:sl-hidden astro-uaaz7kdr"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-l2ev5fid"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-l2ev5fid"><details id="starlight__mobile-toc" class="astro-l2ev5fid"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-l2ev5fid"><span class="toggle sl-flex astro-l2ev5fid">On this page<svg aria-hidden="true" class="caret astro-l2ev5fid astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-l2ev5fid"></span></summary><div class="dropdown astro-l2ev5fid"><ul class="isMobile astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#supported-providers" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Supported Providers</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#openai" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">OpenAI</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#ollama-local" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Ollama (Local)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#local-transformers-onnx" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Local Transformers (ONNX)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#huggingfaceco" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">HuggingFace.co</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#advanced-embedding-capabilities" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Advanced embedding capabilities</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#asymmetric-task-types-gemini" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Asymmetric task types (Gemini)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#contextualized-chunk-embeddings-voyage-voyage-context-3" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Contextualized chunk embeddings (Voyage voyage-context-3)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#multimodal-embeddings-search-text--match-an-image-voyage-voyage-multimodal-3" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Multimodal embeddings: search text → match an image (Voyage voyage-multimodal-3)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#domain-specialized-model-per-site" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Domain-specialized model per site</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#quantized--matryoshka-vectors" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Quantized / Matryoshka vectors</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#mistral-ocr-extraction-bridge" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Mistral OCR extraction bridge</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#create--edit-form" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Create / Edit Form</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#general-information" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">General Information</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#provider" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Provider</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#local-transformers-options" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Local Transformers Options</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#status" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Status</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#choosing-a-model" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Choosing a Model</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#recommendations" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Recommendations</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#global-configuration" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Global Configuration</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#rest-api" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">REST API</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#per-site-override" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Per-Site Override</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/turing/docs/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.BcSo_yiZ.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-uaaz7kdr"><div class="sl-container astro-uaaz7kdr"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#supported-providers" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Supported Providers</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#openai" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">OpenAI</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#ollama-local" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Ollama (Local)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#local-transformers-onnx" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Local Transformers (ONNX)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#huggingfaceco" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">HuggingFace.co</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#advanced-embedding-capabilities" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Advanced embedding capabilities</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#asymmetric-task-types-gemini" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Asymmetric task types (Gemini)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#contextualized-chunk-embeddings-voyage-voyage-context-3" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Contextualized chunk embeddings (Voyage voyage-context-3)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#multimodal-embeddings-search-text--match-an-image-voyage-voyage-multimodal-3" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Multimodal embeddings: search text → match an image (Voyage voyage-multimodal-3)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#domain-specialized-model-per-site" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Domain-specialized model per site</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#quantized--matryoshka-vectors" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Quantized / Matryoshka vectors</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#mistral-ocr-extraction-bridge" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Mistral OCR extraction bridge</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#create--edit-form" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Create / Edit Form</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#general-information" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">General Information</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#provider" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Provider</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#local-transformers-options" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Local Transformers Options</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#status" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Status</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#choosing-a-model" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Choosing a Model</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#recommendations" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Recommendations</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#global-configuration" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Global Configuration</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#rest-api" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">REST API</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#per-site-override" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Per-Site Override</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></nav></starlight-toc><script type="module" src="/turing/docs/_astro/TableOfContents.astro_astro_type_script_index_0_lang.Csloo1VZ.js"></script></div></div></div></aside><div class="main-pane astro-muvsczkj"><main data-pagefind-body class="astro-wy3hjvd4" lang="en" dir="ltr"><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><h1 id="_top" class="astro-swossm7f">Embedding Models</h1></div></div><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><div class="sl-markdown-content"><p>An <strong>Embedding Model</strong> converts text into a high-dimensional numerical vector that captures its semantic meaning. These vectors enable similarity search, finding documents conceptually related to a query even when they share no common keywords.</p>
+<p>Viglet Turing uses embedding models in two phases:</p>
+<ul>
+<li><strong>Indexing</strong>: document chunks are vectorized and stored in the <a href="/turing/docs/embedding-stores/">Embedding Store</a></li>
+<li><strong>Querying</strong>: the user’s question is vectorized with the same model and compared against stored vectors</li>
+</ul>
+<aside aria-label="Same model for indexing and querying" class="starlight-aside starlight-aside--caution"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10.67 1.47-8.05-14a3 3 0 0 0-5.24 0l-8 14A3 3 0 0 0 3.94 22h16.12a3 3 0 0 0 2.61-4.53Zm-1.73 2a1 1 0 0 1-.88.51H3.94a1 1 0 0 1-.88-.51 1 1 0 0 1 0-1l8-14a1 1 0 0 1 1.78 0l8.05 14a1 1 0 0 1 .05 1.02v-.02ZM12 8a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V9a1 1 0 0 0-1-1Z"></path></svg>Same model for indexing and querying</p><div class="starlight-aside__content"><p>The embedding model must remain consistent across both phases. Changing the model after documents have been indexed causes dimension mismatches and incorrect similarity results. A <strong>full re-indexing</strong> of all content is required whenever the embedding model changes.</p></div></aside>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="supported-providers">Supported Providers</h2><a class="sl-anchor-link" href="#supported-providers"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Supported Providers”</span></a></div>
+<p>Embedding model support depends on the LLM vendor configured in the <a href="/turing/docs/llm-instances/">LLM Instance</a>. Not all vendors provide an embedding API.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Provider</th><th align="center">Embedding Support</th><th>Example Models</th><th>Default Model</th></tr></thead><tbody><tr><td><strong>OpenAI</strong></td><td align="center">Yes</td><td><code dir="auto">text-embedding-3-small</code>, <code dir="auto">text-embedding-3-large</code>, <code dir="auto">text-embedding-ada-002</code></td><td><code dir="auto">text-embedding-3-small</code></td></tr><tr><td><strong>Ollama</strong></td><td align="center">Yes</td><td><code dir="auto">nomic-embed-text</code>, <code dir="auto">mxbai-embed-large</code>, <code dir="auto">all-minilm</code></td><td><em>(configurable)</em></td></tr><tr><td><strong>Gemini</strong></td><td align="center">Yes</td><td><code dir="auto">gemini-embedding-001</code> <em>(asymmetric task types, see below)</em></td><td><code dir="auto">gemini-embedding-001</code></td></tr><tr><td><strong>OpenAI-Compatible</strong></td><td align="center">Yes*</td><td>whatever the backing endpoint exposes at <code dir="auto">/embeddings</code></td><td><em>(per endpoint)</em></td></tr><tr><td><strong>Bedrock</strong></td><td align="center">Yes</td><td><code dir="auto">amazon.titan-embed-*</code>, <code dir="auto">cohere.embed-*</code></td><td>n/a</td></tr><tr><td><strong>Voyage AI</strong></td><td align="center">Yes</td><td><code dir="auto">voyage-3</code>, <code dir="auto">voyage-3-large</code>, <code dir="auto">voyage-context-3</code>, <code dir="auto">voyage-multimodal-3</code></td><td><code dir="auto">voyage-3</code></td></tr><tr><td><strong>Cohere</strong></td><td align="center">Yes</td><td><code dir="auto">embed-v4.0</code> (multilingual / multimodal / Matryoshka)</td><td><code dir="auto">embed-v4.0</code></td></tr><tr><td><strong>Mistral AI</strong></td><td align="center">Yes</td><td><code dir="auto">mistral-embed</code></td><td><code dir="auto">mistral-embed</code></td></tr><tr><td><strong>Vertex AI</strong></td><td align="center">Yes</td><td>Gemini embeddings on GCP (reuses the native Gemini stack)</td><td>n/a</td></tr><tr><td><strong>Anthropic</strong></td><td align="center">No</td><td>n/a</td><td>n/a</td></tr><tr><td><strong>Gemini (OpenAI-compatible)</strong></td><td align="center">No</td><td>n/a</td><td>n/a</td></tr></tbody></table>
+<blockquote>
+<p>* OpenAI-Compatible embeds only when the backing endpoint actually exposes <code dir="auto">/embeddings</code>. <strong>Azure OpenAI is no longer a vendor</strong>: reach an Azure embedding deployment via OpenAI-Compatible. See <a href="/turing/docs/llm-instances/#capabilities-by-vendor">LLM Instances</a>.</p>
+</blockquote>
+<div class="sl-heading-wrapper level-h3"><h3 id="openai">OpenAI</h3><a class="sl-anchor-link" href="#openai"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “OpenAI”</span></a></div>
+<p>Connects to the OpenAI API (default: <code dir="auto">https://api.openai.com/v1</code>) using your API key. OpenAI offers three embedding model families:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Model</th><th>Dimensions</th><th>Notes</th></tr></thead><tbody><tr><td><code dir="auto">text-embedding-3-small</code></td><td>1,536</td><td>Best cost-performance balance for most deployments</td></tr><tr><td><code dir="auto">text-embedding-3-large</code></td><td>3,072</td><td>Higher quality, larger storage footprint</td></tr><tr><td><code dir="auto">text-embedding-ada-002</code></td><td>1,536</td><td>Legacy model: use <code dir="auto">3-small</code> for new deployments</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="ollama-local">Ollama (Local)</h3><a class="sl-anchor-link" href="#ollama-local"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Ollama (Local)”</span></a></div>
+<p>Runs embedding models locally via <a href="https://ollama.com">Ollama</a>. No API key required for local deployments: ideal for air-gapped environments or development.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Model</th><th>Dimensions</th><th>Notes</th></tr></thead><tbody><tr><td><code dir="auto">nomic-embed-text</code></td><td>768</td><td>Good general-purpose model, lightweight</td></tr><tr><td><code dir="auto">mxbai-embed-large</code></td><td>1,024</td><td>Higher quality, more resource-intensive</td></tr><tr><td><code dir="auto">all-minilm</code></td><td>384</td><td>Very lightweight, fast inference</td></tr></tbody></table>
+<p>Pull a model before using it:</p>
+<div class="expressive-code"><link rel="stylesheet" href="/turing/docs/_astro/ec.w36nc.css"><script type="module" src="/turing/docs/_astro/ec.0vx5m.js"></script><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">ollama</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">pull</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">nomic-embed-text</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="ollama pull nomic-embed-text"><div></div></button></div></figure></div>
+<div class="sl-heading-wrapper level-h3"><h3 id="local-transformers-onnx">Local Transformers (ONNX)</h3><a class="sl-anchor-link" href="#local-transformers-onnx"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Local Transformers (ONNX)”</span></a></div>
+<p>Turing also supports running embedding models <strong>locally, in-process</strong> via ONNX Runtime, without an external LLM provider, API or key. This is useful for air-gapped deployments, custom/fine-tuned models, and zero-cost embeddings.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Model Path</strong></td><td>Location of the <code dir="auto">.onnx</code> model file. Accepts a <code dir="auto">classpath:</code>, <code dir="auto">file:</code> or <code dir="auto">https:</code> URI. Remote (<code dir="auto">https:</code>) resources are <strong>downloaded and cached</strong> on first use.</td></tr><tr><td><strong>Tokenizer Path</strong></td><td>Location of <code dir="auto">tokenizer.json</code> (same URI schemes as above).</td></tr><tr><td><strong>Enable GPU</strong></td><td>Toggle GPU acceleration via ONNX Runtime</td></tr><tr><td><strong>Batch Size</strong></td><td>Number of texts to embed per batch</td></tr></tbody></table>
+<p>The default recommended model is <code dir="auto">all-MiniLM-L6-v2</code> (384-dimensional, ~80 MB), a small, fast sentence-transformers model. For example, point <strong>Model Path</strong> at <code dir="auto">https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/onnx/model.onnx</code> and <strong>Tokenizer Path</strong> at the matching <code dir="auto">.../tokenizer.json</code>; the first embedding call downloads and caches both.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="huggingfaceco">HuggingFace.co</h3><a class="sl-anchor-link" href="#huggingfaceco"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “HuggingFace.co”</span></a></div>
+<p>The <strong>HuggingFace.co</strong> provider runs the <em>same</em> in-process ONNX runtime as Local Transformers, but instead of typing the <code dir="auto">.onnx</code> and <code dir="auto">tokenizer.json</code> URLs by hand, you <strong>pick a model from a searchable list</strong>. Choose it from the provider dropdown and search HuggingFace directly in the form: Turing lists sentence-transformers repos ranked by popularity and only offers ones it has <strong>verified expose a loadable ONNX model + tokenizer</strong> (an <em>ONNX verified</em> check appears next to each), showing the embedding <strong>dimensions</strong> and <strong>download</strong> count. Selecting a model stores just its <strong>repo id</strong> (e.g. <code dir="auto">sentence-transformers/all-MiniLM-L6-v2</code>); Turing resolves the artifact URLs at load time, handling both repo layouts (ONNX at the root or under an <code dir="auto">onnx/</code> subfolder).</p>
+<p>When huggingface.co is unreachable (offline, rate-limited), the picker falls back to a <strong>curated catalog</strong> of known-good ONNX models, the source (<em>Live from huggingface.co</em> vs <em>From the curated catalog</em>) is badged at the bottom of the list. The picker stays <strong>editable</strong>, so a repo id not in the list can still be typed (private or brand-new models). This is the recommended way to use a local model: same zero-cost, key-free, in-process embeddings, without hunting for URLs.</p>
+<p>When you pick a model, Turing reads its <strong>embedding dimension</strong> from the repo’s <code dir="auto">config.json</code> and shows it inline. If that dimension differs from your current default embedding model’s, a warning appears: changing the dimension means every already-embedded vector is invalid until you <strong>re-index</strong>, against a vector store whose field matches the new dimension. This surfaces the cost <em>before</em> you save.</p>
+<p>If the repo ships more than one ONNX artifact (a full-precision <code dir="auto">model.onnx</code> plus quantized variants like <code dir="auto">model_quantized.onnx</code>), an <strong>ONNX Variant</strong> selector appears. Quantized variants are smaller and faster to run at a small accuracy cost; leave it on <em>Default (recommended)</em> unless you specifically want to trade accuracy for size/latency. The chosen variant is remembered with the model.</p>
+<aside aria-label="HuggingFace Inference API is not this provider" class="starlight-aside starlight-aside--note"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 11a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0v-4a1 1 0 0 0-1-1Zm.38-3.92a1 1 0 0 0-.76 0 1 1 0 0 0-.33.21 1.15 1.15 0 0 0-.21.33 1 1 0 0 0 .21 1.09c.097.088.209.16.33.21A1 1 0 0 0 13 8a1.05 1.05 0 0 0-.29-.71 1 1 0 0 0-.33-.21ZM12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16.001A8 8 0 0 1 12 20Z"></path></svg>HuggingFace Inference API is not this provider</p><div class="starlight-aside__content"><p>This provider downloads and runs the model <strong>locally</strong>. It does <em>not</em> call HuggingFace’s hosted Inference API (that would need an API key and a remote call, configure it as an <a href="/turing/docs/llm-instances/">LLM Instance</a> instead).</p></div></aside>
+<div class="sl-heading-wrapper level-h4"><h4 id="zero-config-local-rag-at-startup">Zero-config local RAG at startup</h4><a class="sl-anchor-link" href="#zero-config-local-rag-at-startup"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Zero-config local RAG at startup”</span></a></div>
+<p>A fresh install (notably the public demo) can provision a complete local retrieval backend automatically, with no admin step. When a global <a href="/turing/docs/ai-agents/">Default AI Agent</a> is configured and lacks an embedding model or a vector store, Turing fills in each missing piece, wires it onto the Default AI Agent (enabling RAG), then downloads the model and reindexes existing content into the store, so grounded chat works out of the box:</p>
+<ul>
+<li><strong>Embedding model:</strong> the global default embedding model when one is set; otherwise, when no embedding model exists at all, a new local ONNX model (<code dir="auto">all-MiniLM-L6-v2</code>), registered as the global default.</li>
+<li><strong>Vector store:</strong> the global default store when one is set; otherwise an existing enabled <a href="/turing/docs/embedding-stores/">Lucene vector store</a> (such as the “Default Vector Store” a seed import brings); otherwise, when no store exists at all, a new embedded Lucene store, registered as the global default.</li>
+</ul>
+<p>It is controlled by <code dir="auto">turing.startup.default-rag.*</code>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">turing.startup.default-rag.enabled</code></td><td><code dir="auto">true</code></td><td>Master switch for the startup provisioning.</td></tr><tr><td><code dir="auto">turing.startup.default-rag.model-name</code></td><td><code dir="auto">all-MiniLM-L6-v2</code></td><td>Display name of the provisioned embedding model.</td></tr><tr><td><code dir="auto">turing.startup.default-rag.model-repo-id</code></td><td><code dir="auto">sentence-transformers/all-MiniLM-L6-v2</code></td><td>HuggingFace repo id to provision as the default (a <code dir="auto">HuggingFace.co</code> model, same shape as one you’d pick in the form). <strong>Blank it</strong> to fall back to the raw-URL local path below.</td></tr><tr><td><code dir="auto">turing.startup.default-rag.model-path</code></td><td>HuggingFace <code dir="auto">all-MiniLM-L6-v2</code> ONNX URL</td><td>Fallback ONNX model URI, used only when <code dir="auto">model-repo-id</code> is blank.</td></tr><tr><td><code dir="auto">turing.startup.default-rag.tokenizer-path</code></td><td>HuggingFace <code dir="auto">tokenizer.json</code> URL</td><td>Fallback tokenizer URI, used only when <code dir="auto">model-repo-id</code> is blank.</td></tr><tr><td><code dir="auto">turing.startup.default-rag.store-path</code></td><td><code dir="auto">./store/lucene-vector</code></td><td>Filesystem root for the Lucene index.</td></tr><tr><td><code dir="auto">turing.startup.default-rag.reindex</code></td><td><code dir="auto">true</code></td><td>Reindex existing site content into the new store after provisioning.</td></tr><tr><td><code dir="auto">turing.genai.embedding.local.cache-dir</code></td><td><em>(temp dir)</em></td><td>Where downloaded ONNX/tokenizer resources are cached; set a persistent path to keep them across restarts.</td></tr></tbody></table>
+<p>The step is <strong>idempotent</strong> and never overrides an existing setup: a Default AI Agent that already has an embedding model and a store is left alone, and when embedding models or stores exist but none is the global default (and no Lucene store is there to adopt), it does not pick among them. Each step logs what it did, or why it stopped, at startup.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="advanced-embedding-capabilities">Advanced embedding capabilities</h2><a class="sl-anchor-link" href="#advanced-embedding-capabilities"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Advanced embedding capabilities”</span></a></div>
+<p>Beyond plain text→vector, Turing exploits provider-specific embedding features. Each is <strong>opt-in by model choice</strong>: pick the right model on the right vendor and the capability engages; everything else keeps the classic per-chunk text path byte-for-byte.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="asymmetric-task-types-gemini">Asymmetric task types (Gemini)</h3><a class="sl-anchor-link" href="#asymmetric-task-types-gemini"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Asymmetric task types (Gemini)”</span></a></div>
+<p><code dir="auto">gemini-embedding-001</code> embeds a <em>document</em> and a <em>query</em> differently for a measured retrieval-quality win the OpenAI/Anthropic models can’t match. Turing applies it automatically through the standard VectorStore convention (index-time calls use <code dir="auto">RETRIEVAL_DOCUMENT</code>, query-time calls use <code dir="auto">RETRIEVAL_QUERY</code>) with <strong>zero caller changes</strong>. An optional Matryoshka <code dir="auto">outputDimensionality</code> provider option trades a smaller vector for lower storage/IO. Voyage and Bedrock embedding models apply the same asymmetric <code dir="auto">document</code>/<code dir="auto">query</code> distinction.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="contextualized-chunk-embeddings-voyage-voyage-context-3">Contextualized chunk embeddings (Voyage <code dir="auto">voyage-context-3</code>)</h3><a class="sl-anchor-link" href="#contextualized-chunk-embeddings-voyage-voyage-context-3"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Contextualized chunk embeddings (Voyage voyage-context-3)”</span></a></div>
+<p>Attacks the classic RAG failure where a chunk is meaningless without its surrounding section. Instead of embedding each chunk in isolation, <code dir="auto">voyage-context-3</code> embeds every chunk <strong>together with its siblings</strong> so each vector carries document context. Select a <code dir="auto">*context*</code> Voyage model (or set the <code dir="auto">contextual</code> provider option) and the asset indexer embeds a document’s chunks as a group and upserts the precomputed vectors. It is <strong>fail-soft</strong>, a non-contextual model, a vector-count mismatch, or any error falls back to per-chunk embedding. Query time is unchanged.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="multimodal-embeddings-search-text--match-an-image-voyage-voyage-multimodal-3">Multimodal embeddings: search text → match an image (Voyage <code dir="auto">voyage-multimodal-3</code>)</h3><a class="sl-anchor-link" href="#multimodal-embeddings-search-text--match-an-image-voyage-voyage-multimodal-3"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Multimodal embeddings: search text → match an image (Voyage voyage-multimodal-3)”</span></a></div>
+<p>Embeds images <em>and</em> text into one shared vector space, so a plain-text query can match a PDF page-image, diagram, or screenshot the text-only path can’t reach. Select a <code dir="auto">*multimodal*</code> Voyage model (or set the <code dir="auto">multimodal</code> option); images are indexed tagged <code dir="auto">_modality=image</code>, and a text query is embedded in the same space and KNN-matched against image vectors. Exposed at <code dir="auto">/api/v2/multimodal</code> (<code dir="auto">available</code> / <code dir="auto">image</code> upload / <code dir="auto">search</code>); text-only models stay the default. Cohere <code dir="auto">embed-v4.0</code> is likewise multimodal.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="domain-specialized-model-per-site">Domain-specialized model per site</h3><a class="sl-anchor-link" href="#domain-specialized-model-per-site"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Domain-specialized model per site”</span></a></div>
+<p>Each Semantic Navigation site can pin its <strong>own</strong> embedding model (<code dir="auto">embeddingModelId</code> override on its GenAI config) (<code dir="auto">voyage-law</code> for legal docs, <code dir="auto">voyage-code</code> for code search, <code dir="auto">voyage-finance</code> for finance, or a Cohere domain model) while every other site stays on the platform default. The site’s hybrid-ranking path resolves the override for <strong>both</strong> index and query halves, so its per-site <code dir="auto">sn_&#x3C;siteId></code> collection never mismatches. Null/blank = platform default.</p>
+<aside aria-label="Switching a site’s model = re-index that site" class="starlight-aside starlight-aside--caution"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path d="M12 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10.67 1.47-8.05-14a3 3 0 0 0-5.24 0l-8 14A3 3 0 0 0 3.94 22h16.12a3 3 0 0 0 2.61-4.53Zm-1.73 2a1 1 0 0 1-.88.51H3.94a1 1 0 0 1-.88-.51 1 1 0 0 1 0-1l8-14a1 1 0 0 1 1.78 0l8.05 14a1 1 0 0 1 .05 1.02v-.02ZM12 8a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V9a1 1 0 0 0-1-1Z"></path></svg>Switching a site’s model = re-index that site</p><div class="starlight-aside__content"><p>A different model is a different vector space. Changing a site’s embedding model requires clearing and re-indexing <strong>that site’s</strong> collection.</p></div></aside>
+<div class="sl-heading-wrapper level-h3"><h3 id="quantized--matryoshka-vectors">Quantized / Matryoshka vectors</h3><a class="sl-anchor-link" href="#quantized--matryoshka-vectors"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Quantized / Matryoshka vectors”</span></a></div>
+<p>For the embedded Lucene store, scalar quantization (<code dir="auto">INT8</code> / <code dir="auto">INT4</code> / <code dir="auto">SEVEN_BIT</code> / <code dir="auto">BINARY</code>) shrinks the index and speeds search at a measured recall cost. It pairs with Matryoshka <code dir="auto">outputDimensionality</code> truncation (on the Voyage/Gemini models) to compound the savings. Configured on the <strong>store</strong>, not the model: see <a href="/turing/docs/embedding-stores/#lucene-embedded">Embedding Stores → Lucene (embedded)</a>.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="mistral-ocr-extraction-bridge">Mistral OCR extraction bridge</h3><a class="sl-anchor-link" href="#mistral-ocr-extraction-bridge"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Mistral OCR extraction bridge”</span></a></div>
+<p>Not an embedding model itself, but it feeds the embedding pipeline: for scanned PDFs and image-only documents that Apache Tika reads poorly, Turing can call Mistral’s OCR API (<code dir="auto">mistral-ocr-latest</code>) to produce layout-aware Markdown before chunking and embedding. It runs <strong>only</strong> when a file is OCR-eligible <em>and</em> Tika produced no usable text, so ordinary documents spend no OCR credits. Opt-in via <code dir="auto">turing.ocr.*</code>; disabled or keyless → inert (returns the Tika text), and any OCR error fails soft back to Tika.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="create--edit-form">Create / Edit Form</h2><a class="sl-anchor-link" href="#create--edit-form"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Create / Edit Form”</span></a></div>
+<p>Navigate to <strong>Generative AI → Embedding Models</strong> to manage embedding model configurations.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="general-information">General Information</h3><a class="sl-anchor-link" href="#general-information"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “General Information”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Required</th><th>Description</th></tr></thead><tbody><tr><td><strong>Model Name</strong></td><td>Yes</td><td>Display name for this embedding model</td></tr><tr><td><strong>Description</strong></td><td></td><td>Free-text notes about the model’s purpose</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="provider">Provider</h3><a class="sl-anchor-link" href="#provider"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Provider”</span></a></div>
+<p>The <strong>Provider Type</strong> dropdown selects one of three modes, and the model field adapts to match:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Provider mode</th><th>Model field</th><th>What is stored</th></tr></thead><tbody><tr><td>An <strong>LLM Instance</strong> (remote embedding API)</td><td>A <strong>model picker</strong> listing the vendor’s <em>embedding-capable</em> models (the same combobox the LLM form uses, filtered to embeddings), live from the vendor when a key is available, otherwise the bundled catalog. Stays editable.</td><td><code dir="auto">Model Reference</code> = the vendor model id (e.g. <code dir="auto">text-embedding-3-large</code>)</td></tr><tr><td><strong>HuggingFace.co</strong></td><td>A <strong>searchable HuggingFace picker</strong> (ONNX-verified repos, dimensions, downloads, live/catalog badge). Stays editable.</td><td><code dir="auto">Model Reference</code> = the HuggingFace repo id (e.g. <code dir="auto">sentence-transformers/all-MiniLM-L6-v2</code>)</td></tr><tr><td><strong>Transformers (Local)</strong></td><td>Manual <strong>Model Path</strong> + <strong>Tokenizer Path</strong> inputs (below)</td><td>The <code dir="auto">.onnx</code> / <code dir="auto">tokenizer.json</code> URIs</td></tr></tbody></table>
+<p>The model field is no longer free-text for the LLM and HuggingFace paths, fat-fingering <code dir="auto">text-embedding-3-smal</code> is caught by the picker, while an unlisted id can still be typed when needed.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="local-transformers-options">Local Transformers Options</h3><a class="sl-anchor-link" href="#local-transformers-options"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Local Transformers Options”</span></a></div>
+<p>These fields appear only when <strong>Transformers (Local)</strong> is selected as the provider type:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><strong>Model Path</strong></td><td>Path to the ONNX model file (<code dir="auto">.onnx</code> extension)</td></tr><tr><td><strong>Tokenizer Path</strong></td><td>Path to the tokenizer file (<code dir="auto">tokenizer.json</code>)</td></tr><tr><td><strong>Batch Size</strong></td><td>Number of texts processed per inference batch</td></tr><tr><td><strong>Enable GPU</strong></td><td>Toggle hardware acceleration</td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h3"><h3 id="status">Status</h3><a class="sl-anchor-link" href="#status"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Status”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><strong>Enabled</strong></td><td>Toggle to activate or deactivate this model. Disabled models are not available for selection.</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="choosing-a-model">Choosing a Model</h2><a class="sl-anchor-link" href="#choosing-a-model"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Choosing a Model”</span></a></div>
+<p>The embedding model determines two things:</p>
+<ul>
+<li><strong>Dimensionality</strong>: the number of dimensions in the vector (e.g., 384, 768, 1,536, 3,072). Higher dimensions capture more nuance but require more storage.</li>
+<li><strong>Semantic quality</strong>: how well the model captures meaning. Larger models generally produce better similarity results at the cost of slower indexing.</li>
+</ul>
+<div class="sl-heading-wrapper level-h3"><h3 id="recommendations">Recommendations</h3><a class="sl-anchor-link" href="#recommendations"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Recommendations”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Scenario</th><th>Recommended Model</th><th>Provider</th></tr></thead><tbody><tr><td><strong>General production</strong></td><td><code dir="auto">text-embedding-3-small</code></td><td>OpenAI</td></tr><tr><td><strong>Maximum quality</strong></td><td><code dir="auto">text-embedding-3-large</code></td><td>OpenAI</td></tr><tr><td><strong>Local / air-gapped</strong></td><td><code dir="auto">nomic-embed-text</code></td><td>Ollama</td></tr><tr><td><strong>Resource-constrained</strong></td><td><code dir="auto">all-minilm</code></td><td>Ollama</td></tr><tr><td><strong>Best retrieval quality</strong></td><td><code dir="auto">gemini-embedding-001</code> <em>(asymmetric task types)</em></td><td>Gemini</td></tr><tr><td><strong>Retrieval specialist / domain</strong></td><td><code dir="auto">voyage-3-large</code>, <code dir="auto">voyage-law</code>, <code dir="auto">voyage-code</code></td><td>Voyage AI</td></tr><tr><td><strong>Long-chunk context</strong></td><td><code dir="auto">voyage-context-3</code></td><td>Voyage AI</td></tr><tr><td><strong>Search text → image</strong></td><td><code dir="auto">voyage-multimodal-3</code>, <code dir="auto">embed-v4.0</code></td><td>Voyage AI / Cohere</td></tr><tr><td><strong>Custom fine-tuned</strong></td><td>Your <code dir="auto">.onnx</code> model</td><td>Local Transformers</td></tr></tbody></table>
+<p>For most deployments, a mid-sized model such as <code dir="auto">text-embedding-3-small</code> (OpenAI) or <code dir="auto">nomic-embed-text</code> (Ollama) provides a good balance between quality and performance.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="global-configuration">Global Configuration</h2><a class="sl-anchor-link" href="#global-configuration"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Global Configuration”</span></a></div>
+<p>Set the default embedding model in <strong>Administration → Settings</strong>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Default Embedding Model</strong></td><td>The embedding model used to generate vectors at indexing and query time</td></tr></tbody></table>
+<p>Individual Semantic Navigation Sites can override this setting in their <strong>Generative AI</strong> tab.</p>
+<p>The Knowledge Base always uses the global default.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="rest-api">REST API</h2><a class="sl-anchor-link" href="#rest-api"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “REST API”</span></a></div>
+<p>Embedding models are managed via the REST API at <code dir="auto">/api/embedding-model</code>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/embedding-model</code></td><td>List all embedding models</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/embedding-model/structure</code></td><td>Get the structure template for a new model</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/embedding-model/{id}</code></td><td>Get a specific embedding model</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/embedding-model</code></td><td>Create a new embedding model</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/embedding-model/{id}</code></td><td>Update an existing embedding model</td></tr><tr><td><code dir="auto">DELETE</code></td><td><code dir="auto">/api/embedding-model/{id}</code></td><td>Delete an embedding model</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="per-site-override">Per-Site Override</h2><a class="sl-anchor-link" href="#per-site-override"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Per-Site Override”</span></a></div>
+<p>Each Semantic Navigation Site can override the global embedding model in its <strong>Generative AI</strong> tab. This allows different sites to use different models, for example, a multilingual site might use a model optimized for cross-language embeddings while a technical site uses a domain-specific model.</p>
+<p>The site-level configuration includes:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Embedding Model</strong></td><td>Overrides the global default for this site</td></tr><tr><td><strong>Embedding Store</strong></td><td>Overrides the global store backend for this site</td></tr><tr><td><strong>LLM Instance</strong></td><td>The chat/reasoning model for this site’s GenAI features</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="related-pages">Related Pages</h2><a class="sl-anchor-link" href="#related-pages"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Related Pages”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Page</th><th>Description</th></tr></thead><tbody><tr><td><a href="/turing/docs/embedding-stores/">Embedding Stores</a></td><td>Vector backends (ChromaDB, PgVector, Milvus, embedded Lucene) + quantization</td></tr><tr><td><a href="/turing/docs/rag/">What is RAG?</a></td><td>How embedding models fit into the RAG pipeline</td></tr><tr><td><a href="/turing/docs/reranking/">Reranking</a></td><td>Re-ordering retrieved chunks (Cohere / Voyage / managed)</td></tr><tr><td><a href="/turing/docs/llm-instances/">LLM Instances</a></td><td>Configure the LLM providers that supply embedding APIs</td></tr><tr><td><a href="/turing/docs/assets/">Assets</a></td><td>Knowledge Base files indexed using the embedding model</td></tr><tr><td><a href="/turing/docs/semantic-navigation/">Semantic Navigation</a></td><td>Per-site GenAI and embedding overrides</td></tr><tr><td><a href="/turing/docs/genai-llm/">GenAI &#x26; LLM Configuration</a></td><td>Global settings and architecture overview</td></tr></tbody></table>
+<hr></div><footer class="sl-flex astro-cla57s4p"><div class="meta sl-flex astro-cla57s4p"><p>Last updated: <time datetime="2026-10-29T11:49:33.000Z">Oct 29, 2026</time></p></div><div class="pagination-links print:hidden astro-euyh6ymx" dir="ltr"><a href="/turing/docs/embedding-stores/" rel="prev" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-euyh6ymx">Previous<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Embedding Stores</span></span></a><a href="/turing/docs/reranking/" rel="next" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-euyh6ymx">Next<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Reranking</span></span></a></div></footer><footer class="turing-footer not-content astro-jo6i4kqk"><div class="turing-footer-grid astro-jo6i4kqk"><div class="astro-jo6i4kqk"><span class="turing-footer-brand astro-jo6i4kqk"><img src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" alt="" width="28" height="28" class="astro-jo6i4kqk">Viglet Turing</span><p class="astro-jo6i4kqk">Open-source Enterprise Search Intelligence Platform: agents, tools, skills, MCP and RAG for your content.</p></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Product</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/#features" class="astro-jo6i4kqk">Capabilities</a></li><li class="astro-jo6i4kqk"><a href="/turing/compare/" class="astro-jo6i4kqk">Compare</a></li><li class="astro-jo6i4kqk"><a href="/turing/migrate/" class="astro-jo6i4kqk">Migrate</a></li><li class="astro-jo6i4kqk"><a href="/turing/aem-search/" class="astro-jo6i4kqk">AEM search</a></li><li class="astro-jo6i4kqk"><a href="/turing/security/" class="astro-jo6i4kqk">Security</a></li><li class="astro-jo6i4kqk"><a href="/turing/#marketplace" class="astro-jo6i4kqk">Marketplace</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Developers</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/react-sdk/" class="astro-jo6i4kqk">React SDK</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-react-sdk" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">npm</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-cli" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">CLI</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Open &amp; transparent</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="https://github.com/openviglet/turing/blob/HEAD/docs/ROADMAP.md" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Roadmap</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org/turing/release-notes/" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Changelog</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">viglet.org</a></li></ul></div></div><div class="turing-footer-legal astro-jo6i4kqk">© 2026 Viglet Turing · Apache 2.0 License</div></footer></div></div></main></div></div></div></div></body></html>

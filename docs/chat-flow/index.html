@@ -1,0 +1,802 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-wy3hjvd4"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Chat Flow | Viglet Turing</title><link rel="canonical" href="https://openviglet.github.io/turing/docs/chat-flow/"/><link rel="sitemap" href="/turing/docs/sitemap-index.xml"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"/><link rel="shortcut icon" href="/turing/docs/favicon.ico" type="image/x-icon"/><meta name="generator" content="Astro v7.4.2"/><meta name="generator" content="Starlight v0.41.11"/><meta property="og:title" content="Chat Flow"/><meta property="og:type" content="article"/><meta property="og:url" content="https://openviglet.github.io/turing/docs/chat-flow/"/><meta property="og:locale" content="en"/><meta property="og:description" content="Author conversational state machines visually. A rich node catalog (questions, slots, tools, routines, webhooks, approvals, sub-flows), three guardrail strategies, error edges, a typed slot store, and AI-assisted authoring (Vibe Coding) that lets you describe the flow in plain English and watch it draw itself."/><meta property="og:site_name" content="Viglet Turing"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="Author conversational state machines visually. A rich node catalog (questions, slots, tools, routines, webhooks, approvals, sub-flows), three guardrail strategies, error edges, a typed slot store, and AI-assisted authoring (Vibe Coding) that lets you describe the flow in plain English and watch it draw itself."/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/turing/docs/_astro/print.ehPL0gv-.css" media="print"><link rel="stylesheet" href="/turing/docs/_astro/common.gvporLFj.css"><style>@layer starlight.components{.card-grid:where(.astro-6q73ypdm){grid-template-columns:100%;gap:1rem;display:grid}.card-grid:where(.astro-6q73ypdm)>*{margin-top:0!important}@media (width>=50rem){.card-grid:where(.astro-6q73ypdm){grid-template-columns:1fr 1fr;gap:1.5rem}.stagger:where(.astro-6q73ypdm){--stagger-height:5rem;padding-bottom:var(--stagger-height)}.stagger:where(.astro-6q73ypdm)>:nth-child(2n){transform:translateY(var(--stagger-height))}}.sl-link-card:where(.astro-b5uddqxg){border:1px solid var(--sl-color-gray-5);box-shadow:var(--sl-shadow-sm);border-radius:.5rem;grid-template-columns:1fr auto;gap:.5rem;padding:1rem;display:grid;position:relative}a:where(.astro-b5uddqxg){line-height:var(--sl-line-height-headings);text-decoration:none}a:where(.astro-b5uddqxg):before{content:"";position:absolute;inset:0}.stack:where(.astro-b5uddqxg){flex-direction:column;gap:.5rem}.title:where(.astro-b5uddqxg){color:var(--sl-color-white);font-weight:600;font-size:var(--sl-text-lg)}.description:where(.astro-b5uddqxg){color:var(--sl-color-gray-3);line-height:1.5}.icon:where(.astro-b5uddqxg){color:var(--sl-color-gray-3)}.sl-link-card:where(.astro-b5uddqxg):hover{background:var(--sl-color-gray-7,var(--sl-color-gray-6));border-color:var(--sl-color-gray-2)}.sl-link-card:where(.astro-b5uddqxg):hover .icon:where(.astro-b5uddqxg){color:var(--sl-color-white)}}
+@layer starlight.components{.card:where(.astro-uyl7lth6){--sl-card-border:var(--sl-color-purple);--sl-card-bg:var(--sl-color-purple-low);border:1px solid var(--sl-color-gray-5);background-color:var(--sl-color-black);flex-direction:column;gap:clamp(.5rem,.125rem + 1vw,1rem);padding:clamp(1rem,.125rem + 3vw,2.5rem)}.card:where(.astro-uyl7lth6):nth-child(4n+1){--sl-card-border:var(--sl-color-orange);--sl-card-bg:var(--sl-color-orange-low)}.card:where(.astro-uyl7lth6):nth-child(4n+3){--sl-card-border:var(--sl-color-green);--sl-card-bg:var(--sl-color-green-low)}.card:where(.astro-uyl7lth6):nth-child(4n+4){--sl-card-border:var(--sl-color-red);--sl-card-bg:var(--sl-color-red-low)}.card:where(.astro-uyl7lth6):nth-child(4n+5){--sl-card-border:var(--sl-color-blue);--sl-card-bg:var(--sl-color-blue-low)}.title:where(.astro-uyl7lth6){font-weight:600;font-size:var(--sl-text-h4);color:var(--sl-color-white);line-height:var(--sl-line-height-headings);align-items:center;gap:1rem}.card:where(.astro-uyl7lth6) .icon:where(.astro-uyl7lth6){border:1px solid var(--sl-card-border);background-color:var(--sl-card-bg);border-radius:.25rem;flex-shrink:0;padding:.2em}.card:where(.astro-uyl7lth6) .body:where(.astro-uyl7lth6){font-size:clamp(var(--sl-text-sm), calc(.5rem + 1vw), var(--sl-text-body));margin:0}}
+@layer starlight.components{svg:where(.astro-nwdigvql){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em}}
+</style><script type="module" src="/turing/docs/_astro/page.cNngjUgL.js"></script></head><body class="astro-wy3hjvd4"><a class="sl-skip-link astro-24szbuaa" href="#_top">Skip to content</a><div class="page sl-flex astro-ib55ocom"><header class="header astro-ib55ocom"><div class="header astro-ukxunls3"><div class="title-wrapper sl-flex astro-ukxunls3"><div class="turing-brand astro-hen6hmfb"><a href="/turing/docs/" class="site-title sl-flex astro-f4vgya6g"><img class="astro-f4vgya6g" alt="Viglet Turing" src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" width="512" height="512"><span class="astro-f4vgya6g" translate="no">Viglet Turing</span></a><span class="turing-docs-label astro-hen6hmfb">Docs</span><a class="turing-pill astro-hen6hmfb" href="https://www.viglet.org" target="_blank" rel="noreferrer">part of viglet.org ↗</a></div></div><div class="sl-flex print:hidden astro-ukxunls3"><site-search class="astro-ukxunls3 astro-a2lndvxu" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-a2lndvxu"><svg aria-hidden="true" class="astro-a2lndvxu astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-a2lndvxu" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-a2lndvxu" style="display: none;"><kbd class="astro-a2lndvxu">Ctrl</kbd><kbd class="astro-a2lndvxu">K</kbd></kbd></button><dialog style="padding:0" aria-label="Search" class="astro-a2lndvxu"><div class="dialog-frame sl-flex astro-a2lndvxu"><button data-close-modal class="sl-flex md:sl-hidden astro-a2lndvxu">Cancel</button><div class="search-container astro-a2lndvxu"><div id="starlight__search" class="astro-a2lndvxu"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/turing/docs/_astro/Search.astro_astro_type_script_index_0_lang.w5cqYmCt.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-ukxunls3"><div class="sl-flex social-icons astro-ukxunls3"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-ib55ocom" aria-label="Main"><starlight-menu-button class="print:hidden astro-p3fyn3ad"><button aria-expanded="false" aria-label="Menu" aria-controls="starlight__sidebar" class="sl-flex md:sl-hidden astro-p3fyn3ad"><svg aria-hidden="true" class="open-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-p3fyn3ad astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg></button></starlight-menu-button><script type="module">var e=class extends HTMLElement{btn=this.querySelector(`button`);constructor(){super(),this.btn.addEventListener(`click`,()=>this.toggleExpanded());let e=this.closest(`nav`);e&&e.addEventListener(`keyup`,e=>this.closeOnEscape(e)),matchMedia(`(min-width: 50em)`).addEventListener(`change`,()=>this.setExpanded(!1))}setExpanded(e){this.setAttribute(`aria-expanded`,String(e)),document.body.toggleAttribute(`data-mobile-menu-expanded`,e),document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}toggleExpanded(){this.setExpanded(this.getAttribute(`aria-expanded`)!==`true`)}closeOnEscape(e){e.code===`Escape`&&(this.setExpanded(!1),this.btn.focus())}};customElements.define(`starlight-menu-button`,e);</script><div id="starlight__sidebar" class="sidebar-pane astro-ib55ocom"><div class="sidebar-content sl-flex astro-ib55ocom"><sl-sidebar-state-persist data-hash="0qm6pqf" class="astro-odquddkb"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/" class="large astro-da7gfiol"><span class="astro-da7gfiol">Introduction</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Getting Started</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/intro/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is Viglet Turing?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/getting-started/core-concepts/" class="astro-da7gfiol"><span class="astro-da7gfiol">Core Concepts</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/architecture-overview/" class="astro-da7gfiol"><span class="astro-da7gfiol">Architecture Overview</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Enterprise Search</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/enterprise-search/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/search-engine/" class="astro-da7gfiol"><span class="astro-da7gfiol">Search Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/semantic-navigation/" class="astro-da7gfiol"><span class="astro-da7gfiol">Semantic Navigation</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/synonyms/" class="astro-da7gfiol"><span class="astro-da7gfiol">Synonyms</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/thesaurus/" class="astro-da7gfiol"><span class="astro-da7gfiol">Thesaurus</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/manifest/" class="astro-da7gfiol"><span class="astro-da7gfiol">Field Manifest &amp; Schema-as-Code</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">DSL Query</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/dsl-query/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Query API</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/dsl-compatibility/" class="astro-da7gfiol"><span class="astro-da7gfiol">DSL Compatibility Matrix</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/spa-pages/" class="astro-da7gfiol"><span class="astro-da7gfiol">SPA Pages</span></a></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Integration</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/integration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Integration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/integration-aem/" class="astro-da7gfiol"><span class="astro-da7gfiol">AEM Connector</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="/turing/docs/import-export/" class="astro-da7gfiol"><span class="astro-da7gfiol">Import &amp; Export</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/migration/" class="astro-da7gfiol"><span class="astro-da7gfiol">Migrating from Algolia or Elasticsearch</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">RAG &amp; Chat</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/rag-chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">What is RAG?</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/answer/" class="astro-da7gfiol"><span class="astro-da7gfiol">Answer Engine</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/vectorless-structured-rag/" class="astro-da7gfiol"><span class="astro-da7gfiol">Vectorless (Structured-Data) RAG</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-stores/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Stores</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/embedding-models/" class="astro-da7gfiol"><span class="astro-da7gfiol">Embedding Models</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/reranking/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reranking</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-memory/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Memory</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/intent/" class="astro-da7gfiol"><span class="astro-da7gfiol">Intent</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/personas/" class="astro-da7gfiol"><span class="astro-da7gfiol">Personas</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/persona-book/" class="astro-da7gfiol"><span class="astro-da7gfiol">The Persona Book</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/transcription/" class="astro-da7gfiol"><span class="astro-da7gfiol">Transcription</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Agents, Tools &amp; Skills</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/ai-agents/" class="astro-da7gfiol"><span class="astro-da7gfiol">AI Agents</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/tool-calling/" class="astro-da7gfiol"><span class="astro-da7gfiol">Tool Calling</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/capabilities/" class="astro-da7gfiol"><span class="astro-da7gfiol">Capabilities</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/client-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Client Tools &amp; Agent↔UI (AG-UI)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/custom-tools/" class="astro-da7gfiol"><span class="astro-da7gfiol">Custom Tools</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/mcp-servers/" class="astro-da7gfiol"><span class="astro-da7gfiol">MCP Servers</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/skills/" class="astro-da7gfiol"><span class="astro-da7gfiol">Skills</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-workspace/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Workspace</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-flow/" aria-current="page" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Flow</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/human-in-the-loop/" class="astro-da7gfiol"><span class="astro-da7gfiol">Human-in-the-Loop</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/webhooks/" class="astro-da7gfiol"><span class="astro-da7gfiol">Webhooks</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/routines/" class="astro-da7gfiol"><span class="astro-da7gfiol">Routines</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/experiments/" class="astro-da7gfiol"><span class="astro-da7gfiol">Experiments (A/B Testing)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/agent-eval/" class="astro-da7gfiol"><span class="astro-da7gfiol">Agent Evaluation (CI)</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Deploy &amp; Operate</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="6"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/deploy-operate/" class="astro-da7gfiol"><span class="astro-da7gfiol">Overview</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/installation-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Installation Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/configuration-reference/" class="astro-da7gfiol"><span class="astro-da7gfiol">Configuration Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/genai-llm/" class="astro-da7gfiol"><span class="astro-da7gfiol">Generative AI &amp; LLM Configuration</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-instances/" class="astro-da7gfiol"><span class="astro-da7gfiol">LLM Instances</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/assets/" class="astro-da7gfiol"><span class="astro-da7gfiol">Assets</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/multi-tenancy/" class="astro-da7gfiol"><span class="astro-da7gfiol">Multi-Tenancy</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/administration-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Administration Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/observability/" class="astro-da7gfiol"><span class="astro-da7gfiol">Observability: Prometheus &amp; Grafana</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/logging/" class="astro-da7gfiol"><span class="astro-da7gfiol">Logging</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/chat-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Chat Analytics</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/token-usage/" class="astro-da7gfiol"><span class="astro-da7gfiol">Token Usage</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cost-governance/" class="astro-da7gfiol"><span class="astro-da7gfiol">Cost Governance</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/llm-gateway/" class="astro-da7gfiol"><span class="astro-da7gfiol">Governed LLM Gateway</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Developers</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="7"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/developer-guide/" class="astro-da7gfiol"><span class="astro-da7gfiol">Developer Guide</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/react-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">React SDK</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/javascript-sdk/" class="astro-da7gfiol"><span class="astro-da7gfiol">JavaScript SDK (vanilla)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/cli/" class="astro-da7gfiol"><span class="astro-da7gfiol">Turing CLI</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/flow-dsl/" class="astro-da7gfiol"><span class="astro-da7gfiol">Flow DSL</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/showcase/" class="astro-da7gfiol"><span class="astro-da7gfiol">Reference showcase (Atlas Store)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/conversion-analytics/" class="astro-da7gfiol"><span class="astro-da7gfiol">Conversion Analytics (GA4 bridge)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/rest-api/" class="astro-da7gfiol"><span class="astro-da7gfiol">REST API Reference</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/graphql/" class="astro-da7gfiol"><span class="astro-da7gfiol">GraphQL API</span></a></li></ul></details></li><li class="astro-da7gfiol"><details open class="astro-da7gfiol"><summary class="astro-da7gfiol"><span class="group-label astro-da7gfiol"><span class="large astro-da7gfiol">Security</span></span><svg aria-hidden="true" class="caret astro-da7gfiol astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="8"></sl-sidebar-restore><ul class="astro-da7gfiol"><li class="astro-da7gfiol"><a href="/turing/docs/security-authentication/" class="astro-da7gfiol"><span class="astro-da7gfiol">Authentication</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-social-login/" class="astro-da7gfiol"><span class="astro-da7gfiol">Social Login (OAuth2)</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-keycloak/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security &amp; Keycloak</span></a></li><li class="astro-da7gfiol"><a href="/turing/docs/security-hardening/" class="astro-da7gfiol"><span class="astro-da7gfiol">Security Hardening &amp; Upgrade Notes</span></a></li></ul></details></li><li class="astro-da7gfiol"><a href="https://openviglet.github.io/turing/react-sdk" class="large astro-da7gfiol"><span class="astro-da7gfiol">Storybook (React SDK)</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-yv4jyioq"><div class="social-icons astro-yv4jyioq"><nav class="turing-nav astro-o2gh7vpa" aria-label="Viglet Turing"><a href="/turing/" class="turing-nav-link astro-o2gh7vpa">Home</a><a href="/turing/#playground" class="turing-nav-link astro-o2gh7vpa">Try it live</a><a href="/turing/aem-search/" class="turing-nav-link turing-nav-pill astro-o2gh7vpa">AEM AI Search</a></nav><a href="https://github.com/openviglet/turing" rel="me" class="sl-flex astro-r4wsu56l"><span class="sr-only astro-r4wsu56l">GitHub</span><svg aria-hidden="true" class="astro-r4wsu56l astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-cj4s5u7q"><span class="sr-only astro-cj4s5u7q">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-cj4s5u7q"><option value="dark" class="astro-cj4s5u7q">Dark</option><option value="light" class="astro-cj4s5u7q">Light</option><option value="auto" selected class="astro-cj4s5u7q">Auto</option></select><svg aria-hidden="true" class="icon caret astro-cj4s5u7q astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div></div></div></div></nav><div class="main-frame astro-ib55ocom"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-muvsczkj"><aside class="right-sidebar-container print:hidden astro-muvsczkj"><div class="right-sidebar astro-muvsczkj"><div class="lg:sl-hidden astro-uaaz7kdr"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-l2ev5fid"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-l2ev5fid"><details id="starlight__mobile-toc" class="astro-l2ev5fid"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-l2ev5fid"><span class="toggle sl-flex astro-l2ev5fid">On this page<svg aria-hidden="true" class="caret astro-l2ev5fid astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-l2ev5fid"></span></summary><div class="dropdown astro-l2ev5fid"><ul class="isMobile astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#when-you-need-a-chat-flow" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">When You Need a Chat Flow</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#the-core-block-types" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">The Core Block Types</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#1-start" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">1. Start</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#2-question" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">2. Question</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#3-condition" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">3. Condition</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#4-tool" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">4. Tool</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#5-sub-flow" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">5. Sub Flow</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#end" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">End</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#the-full-node-catalog" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">The Full Node Catalog</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#formcapture-validation" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">formCapture validation</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#error-handling-continueonfailure--error-edges" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Error Handling: continueOnFailure &amp; Error Edges</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#advanced-question-behavior" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Advanced Question Behavior</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#capture-first" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Capture-first</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#onjudgereject-policy" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">onJudgeReject policy</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#slots-the-conversations-memory" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Slots: The Conversation’s Memory</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#guardrails-three-strategies-three-levels-of-strictness" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Guardrails: Three Strategies, Three Levels of Strictness</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#strategy-1-heuristic-default" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Strategy 1: HEURISTIC (default)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#strategy-2-llm_judge" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Strategy 2: LLM_JUDGE</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#strategy-3-structured_output" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Strategy 3: STRUCTURED_OUTPUT</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#trigger-modes-auto-routing-or-manual" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Trigger Modes: Auto-Routing or Manual</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#auto-trigger-via-the-llm-router" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Auto-trigger via the LLM router</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#manual-selection" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Manual selection</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#trigger-conflict-resolver" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Trigger conflict resolver</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#ab-testing-a-flow" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">A/B testing a flow</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#per-conversation-state" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Per-Conversation State</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#vibe-coding-author-your-flow-with-ai" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Vibe Coding: Author Your Flow With AI</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#first-turn-creation" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">First-turn creation</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#revision-turns" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Revision turns</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#a-real-example-demo-qualification" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">A Real Example: Demo Qualification</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#graph-described" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Graph (described)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#what-the-user-sees" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">What the user sees</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#what-you-see-days-later" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">What you see, days later</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#rest-api" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">REST API</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#configuration--tuning" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Configuration &amp; Tuning</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#common-patterns" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Common Patterns</span></a><ul class="isMobile astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#funnel-as-flow" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Funnel-as-flow</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#reusable-identity-verification" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Reusable identity verification</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#tool-nodes-as-side-effects" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Tool nodes as side effects</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#conditional-branching-for-self-serve-vs-enterprise" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Conditional branching for self-serve vs. enterprise</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#diagnostics" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Diagnostics</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages-1" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/turing/docs/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.BcSo_yiZ.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-uaaz7kdr"><div class="sl-container astro-uaaz7kdr"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-vfgna4bs" style="--depth: 0;"><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#_top" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Overview</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#when-you-need-a-chat-flow" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">When You Need a Chat Flow</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#the-core-block-types" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">The Core Block Types</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#1-start" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">1. Start</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#2-question" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">2. Question</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#3-condition" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">3. Condition</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#4-tool" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">4. Tool</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#5-sub-flow" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">5. Sub Flow</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#end" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">End</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#the-full-node-catalog" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">The Full Node Catalog</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#formcapture-validation" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">formCapture validation</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#error-handling-continueonfailure--error-edges" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Error Handling: continueOnFailure &amp; Error Edges</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#advanced-question-behavior" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Advanced Question Behavior</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#capture-first" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Capture-first</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#onjudgereject-policy" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">onJudgeReject policy</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#slots-the-conversations-memory" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Slots: The Conversation’s Memory</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#guardrails-three-strategies-three-levels-of-strictness" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Guardrails: Three Strategies, Three Levels of Strictness</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#strategy-1-heuristic-default" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Strategy 1: HEURISTIC (default)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#strategy-2-llm_judge" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Strategy 2: LLM_JUDGE</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#strategy-3-structured_output" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Strategy 3: STRUCTURED_OUTPUT</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#trigger-modes-auto-routing-or-manual" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Trigger Modes: Auto-Routing or Manual</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#auto-trigger-via-the-llm-router" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Auto-trigger via the LLM router</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#manual-selection" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Manual selection</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#trigger-conflict-resolver" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Trigger conflict resolver</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#ab-testing-a-flow" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">A/B testing a flow</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#per-conversation-state" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Per-Conversation State</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#vibe-coding-author-your-flow-with-ai" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Vibe Coding: Author Your Flow With AI</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#first-turn-creation" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">First-turn creation</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#revision-turns" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Revision turns</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#a-real-example-demo-qualification" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">A Real Example: Demo Qualification</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#graph-described" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Graph (described)</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#what-the-user-sees" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">What the user sees</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#what-you-see-days-later" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">What you see, days later</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#rest-api" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">REST API</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#configuration--tuning" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Configuration &amp; Tuning</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#common-patterns" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Common Patterns</span></a><ul class="astro-vfgna4bs" style="--depth: 1;"><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#funnel-as-flow" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Funnel-as-flow</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#reusable-identity-verification" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Reusable identity verification</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#tool-nodes-as-side-effects" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Tool nodes as side effects</span></a></li><li style="--depth: 1;" class="astro-vfgna4bs"><a href="#conditional-branching-for-self-serve-vs-enterprise" style="--depth: 1;" class="astro-vfgna4bs"><span style="--depth: 1;" class="astro-vfgna4bs">Conditional branching for self-serve vs. enterprise</span></a></li></ul></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#diagnostics" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Diagnostics</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li><li style="--depth: 0;" class="astro-vfgna4bs"><a href="#related-pages-1" style="--depth: 0;" class="astro-vfgna4bs"><span style="--depth: 0;" class="astro-vfgna4bs">Related Pages</span></a></li></ul></nav></starlight-toc><script type="module" src="/turing/docs/_astro/TableOfContents.astro_astro_type_script_index_0_lang.Csloo1VZ.js"></script></div></div></div></aside><div class="main-pane astro-muvsczkj"><main data-pagefind-body class="astro-wy3hjvd4" lang="en" dir="ltr"><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><h1 id="_top" class="astro-swossm7f">Chat Flow</h1></div></div><div class="content-panel astro-ed7r63eo"><div class="sl-container astro-ed7r63eo"><div class="sl-markdown-content"><blockquote>
+<p><em>Sometimes a conversation needs to go somewhere specific. A demo qualification has six questions in a precise order. An onboarding wizard has a checklist that can’t be skipped. A support escalation collects four pieces of information before opening a ticket. <strong>Chat Flow</strong> is how you draw those journeys, visually, declaratively, and in five minutes.</em></p>
+</blockquote>
+<p>A <strong>Chat Flow</strong> is a graph of conversational steps attached to an <a href="/turing/docs/ai-agents/">AI Agent</a>. Each step (a <em>node</em>) is a small contract: <em>“ask this, validate that, store this answer in this variable, then go to the next step”</em>. The agent still uses the LLM to talk to the user; the flow steers the conversation while the LLM does the talking.</p>
+<p>Three things make Chat Flow special:</p>
+<ol>
+<li><strong>Visual authoring.</strong> You drag nodes onto a canvas, draw edges between them, and the runtime walks the graph for you. No code.</li>
+<li><strong>Multiple guardrail strategies.</strong> You decide <em>how strictly</em> the flow is enforced, from a lightweight prompt-only nudge to a JSON-validating LLM judge.</li>
+<li><strong>Vibe Coding.</strong> A built-in AI authoring chat lets you describe the flow in plain English (<em>“a five-step demo qualification flow that collects company name, role, current solution, decision timeline, and email”</em>) and watch it draw itself. You revise it the same way: <em>“split the timeline question into two: short term and long term”</em>.</li>
+</ol>
+<p>Configure flows in <strong>Administration → AI Agents → &#x3C;your agent> → Chat Flow</strong>.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="when-you-need-a-chat-flow">When You Need a Chat Flow</h2><a class="sl-anchor-link" href="#when-you-need-a-chat-flow"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “When You Need a Chat Flow”</span></a></div>
+<p>A free-form agent works beautifully when the conversation is open-ended. <em>“Help me find a product”</em> or <em>“explain this concept”</em> don’t need scripted scaffolding: the LLM and your tools are enough.</p>
+<p>But there are conversations where you actually need to <strong>collect specific information in a specific order</strong>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Goal</th><th>Needs a flow because…</th></tr></thead><tbody><tr><td>Qualify a sales lead</td><td>Five questions you need answered, every time, in order</td></tr><tr><td>Open a support ticket</td><td>Four pieces of info required by your ticketing system</td></tr><tr><td>Walk a new user through onboarding</td><td>Each step depends on the previous one being confirmed</td></tr><tr><td>Run a survey or NPS conversation</td><td>Questions follow a strict structure for analysis later</td></tr><tr><td>Gather KYC / compliance information</td><td>Regulators expect a complete audit trail of <em>what was asked</em> and <em>what was answered</em></td></tr></tbody></table>
+<p>Without a flow, you’d write a 1,500-token system prompt full of <em>“first ask this, then ask that, never skip…”</em>, and the LLM would still skip something halfway through. With a flow, the prompt is short, the order is enforced by the engine, and every collected value is stored in a typed variable.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="the-core-block-types">The Core Block Types</h2><a class="sl-anchor-link" href="#the-core-block-types"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “The Core Block Types”</span></a></div>
+<p>A Chat Flow graph starts from a small set of <strong>core node types</strong> you’ll use in almost every flow. Beyond them is a richer <a href="#the-full-node-catalog">node catalog</a> for slots, deterministic tool calls, async routines, webhooks, and human approval, covered right after.</p>
+<div class="expressive-code"><link rel="stylesheet" href="/turing/docs/_astro/ec.w36nc.css"><script type="module" src="/turing/docs/_astro/ec.0vx5m.js"></script><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="mermaid"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%</span></div></div><div class="ec-line"><div class="code"><span style="--0:#C792EA;--1:#8844AE">graph</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">LR</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">START</span><span style="--0:#C792EA;--1:#8844AE">((</span><span style="--0:#ECC48D;--1:#3B61B0">"▶ Start"</span><span style="--0:#C792EA;--1:#8844AE">))</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">Q1</span><span style="--0:#C792EA;--1:#8844AE">[</span><span style="--0:#ECC48D;--1:#3B61B0">"❓ Question&#x3C;br/>company name"</span><span style="--0:#C792EA;--1:#8844AE">]</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">Q2</span><span style="--0:#C792EA;--1:#8844AE">[</span><span style="--0:#ECC48D;--1:#3B61B0">"❓ Question&#x3C;br/>role"</span><span style="--0:#C792EA;--1:#8844AE">]</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">Q3</span><span style="--0:#C792EA;--1:#8844AE">[</span><span style="--0:#ECC48D;--1:#3B61B0">"❓ Question&#x3C;br/>timeline"</span><span style="--0:#C792EA;--1:#8844AE">]</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">COND</span><span style="--0:#C792EA;--1:#8844AE">{</span><span style="--0:#ECC48D;--1:#3B61B0">"⚙ Condition&#x3C;br/>timeline == short_term"</span><span style="--0:#C792EA;--1:#8844AE">}</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">T1</span><span style="--0:#C792EA;--1:#8844AE">[</span><span style="--0:#ECC48D;--1:#3B61B0">"🔧 Tool&#x3C;br/>book_calendar (MCP)"</span><span style="--0:#C792EA;--1:#8844AE">]</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">T2</span><span style="--0:#C792EA;--1:#8844AE">[</span><span style="--0:#ECC48D;--1:#3B61B0">"🔧 Tool&#x3C;br/>enroll_in_nurture (MCP)"</span><span style="--0:#C792EA;--1:#8844AE">]</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">SUB</span><span style="--0:#C792EA;--1:#8844AE">[[</span><span style="--0:#ECC48D;--1:#3B61B0">"📦 Sub Flow&#x3C;br/>verify-identity"</span><span style="--0:#C792EA;--1:#8844AE">]]</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">END</span><span style="--0:#C792EA;--1:#8844AE">((</span><span style="--0:#ECC48D;--1:#3B61B0">"⏹ End"</span><span style="--0:#C792EA;--1:#8844AE">))</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">START </span><span style="--0:#C792EA;--1:#8844AE">--</span><span style="--0:#ECC48D;--1:#3B61B0">> SUB </span><span style="--0:#C792EA;--1:#8844AE">--></span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">Q1 </span><span style="--0:#C792EA;--1:#8844AE">--</span><span style="--0:#ECC48D;--1:#3B61B0">> Q2 </span><span style="--0:#C792EA;--1:#8844AE">--></span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">Q3 </span><span style="--0:#C792EA;--1:#8844AE">--></span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">COND</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">COND </span><span style="--0:#C792EA;--1:#8844AE">-->|</span><span style="--0:#ECC48D;--1:#3B61B0">true</span><span style="--0:#C792EA;--1:#8844AE">|</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">T1 </span><span style="--0:#C792EA;--1:#8844AE">--></span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">END</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C5E478;--1:#3B61B0">COND </span><span style="--0:#C792EA;--1:#8844AE">-->|</span><span style="--0:#ECC48D;--1:#3B61B0">false</span><span style="--0:#C792EA;--1:#8844AE">|</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">T2 </span><span style="--0:#C792EA;--1:#8844AE">--></span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">END</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">classDef</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">blue</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">fill:#dbeafe,stroke:#4A90D9,stroke-width:2px,color:#1a1a1a</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">classDef</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">green</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">fill:#dcfce7,stroke:#50B86C,stroke-width:2px,color:#1a1a1a</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">classDef</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">purple</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">fill:#ede9fe,stroke:#9B6EC5,stroke-width:2px,color:#1a1a1a</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">classDef</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">amber</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">fill:#fef3c7,stroke:#E8A838,stroke-width:2px,color:#1a1a1a</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">class</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">START,END</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">amber</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">class</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">Q1,Q2,Q3</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">blue</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">class</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">COND</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">purple</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">class</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">T1,T2</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">green</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#C792EA;--1:#8844AE">class</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#C5E478;--1:#3B61B0">SUB</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">amber</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="%%{init: {&#x27;theme&#x27;: &#x27;base&#x27;, &#x27;themeVariables&#x27;: {&#x27;fontSize&#x27;: &#x27;13px&#x27;, &#x27;primaryColor&#x27;: &#x27;#fff&#x27;, &#x27;primaryBorderColor&#x27;: &#x27;#c0c0c0&#x27;, &#x27;lineColor&#x27;: &#x27;#888&#x27;, &#x27;textColor&#x27;: &#x27;#333&#x27;}}}%%graph LR    START((&#x22;▶ Start&#x22;))    Q1[&#x22;❓ Question<br/>company name&#x22;]    Q2[&#x22;❓ Question<br/>role&#x22;]    Q3[&#x22;❓ Question<br/>timeline&#x22;]    COND{&#x22;⚙ Condition<br/>timeline == short_term&#x22;}    T1[&#x22;🔧 Tool<br/>book_calendar (MCP)&#x22;]    T2[&#x22;🔧 Tool<br/>enroll_in_nurture (MCP)&#x22;]    SUB[[&#x22;📦 Sub Flow<br/>verify-identity&#x22;]]    END((&#x22;⏹ End&#x22;))    START --> SUB --> Q1 --> Q2 --> Q3 --> COND    COND -->|true| T1 --> END    COND -->|false| T2 --> END    classDef blue fill:#dbeafe,stroke:#4A90D9,stroke-width:2px,color:#1a1a1a    classDef green fill:#dcfce7,stroke:#50B86C,stroke-width:2px,color:#1a1a1a    classDef purple fill:#ede9fe,stroke:#9B6EC5,stroke-width:2px,color:#1a1a1a    classDef amber fill:#fef3c7,stroke:#E8A838,stroke-width:2px,color:#1a1a1a    class START,END amber    class Q1,Q2,Q3 blue    class COND purple    class T1,T2 green    class SUB amber"><div></div></button></div></figure></div>
+<p>A typical demo-qualification graph: an identity sub-flow at the start, three Question nodes, a Condition, and one of two Tool nodes depending on the timeline.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="1-start">1. Start</h3><a class="sl-anchor-link" href="#1-start"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “1. Start”</span></a></div>
+<p>The single entry point of every flow. There is exactly one Start node per flow. It has no input edges and one output edge to the first real step.</p>
+<p>The Start node is invisible to the user, the conversation simply begins at the node it points to.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="2-question">2. Question</h3><a class="sl-anchor-link" href="#2-question"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “2. Question”</span></a></div>
+<p>The bread and butter of a flow. A Question node:</p>
+<ul>
+<li>Carries an <strong>AI Instruction</strong>: what the LLM should ask the user. Written in natural language: <em>“Ask the user what their current monthly active user count is. Frame it as a market-sizing question, not an audit.”</em></li>
+<li>Optionally has a <strong>Validation Rule</strong>: what counts as a valid answer. <em>“Must be a number; if the user says ‘a lot’ or ‘many’, ask them to estimate.”</em></li>
+<li>Stores the user’s answer in an <strong>Output Variable</strong>, a named slot in the flow’s state (e.g., <code dir="auto">monthly_active_users</code>).</li>
+</ul>
+<p>When a Question node is active, the runtime injects the AI Instruction into the system prompt so the LLM knows exactly what to ask. The LLM still controls the <em>wording</em>, the <em>register</em>, the <em>follow-up</em>, but the <em>intent</em> is locked.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="3-condition">3. Condition</h3><a class="sl-anchor-link" href="#3-condition"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “3. Condition”</span></a></div>
+<p>Branches the flow based on collected variables. A Condition node has:</p>
+<ul>
+<li>A <strong>Condition Expression</strong> evaluated against the flow’s variables (e.g., <code dir="auto">monthly_active_users > 10000</code>).</li>
+<li><strong>Two outgoing edges</strong>: one labelled <em>true</em>, one labelled <em>false</em>. The runtime follows whichever matches.</li>
+</ul>
+<p>Use Condition nodes to skip questions that don’t apply, route enterprise leads differently from self-serve, or fork a survey based on an earlier answer.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="4-tool">4. Tool</h3><a class="sl-anchor-link" href="#4-tool"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “4. Tool”</span></a></div>
+<p>Calls a tool <em>as part of the flow</em>, not because the LLM asked for it. A Tool node has:</p>
+<ul>
+<li>A <strong>tool source</strong>: <code dir="auto">native</code> (one of the 27 <a href="/turing/docs/tool-calling/">native tools</a>), <code dir="auto">mcp</code> (a connected <a href="/turing/docs/mcp-servers/">MCP server</a>), or <code dir="auto">custom</code> (a <a href="/turing/docs/custom-tools/">Custom Tool</a> you authored).</li>
+<li>The <strong>tool identifier</strong>: function name for native, server id for MCP, custom-tool id for custom.</li>
+</ul>
+<p>Use Tool nodes when a step needs a deterministic action <em>between questions</em>. Examples:</p>
+<ul>
+<li>After collecting an email, call a CRM lookup MCP to enrich with the company.</li>
+<li>After a series of preferences, call <code dir="auto">search_knowledge_base</code> to retrieve recommendations.</li>
+<li>After collecting an issue description, call a custom Groovy tool that opens a Jira ticket and returns the ID.</li>
+</ul>
+<p>The result of the tool call lands in a flow variable and the conversation continues.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="5-sub-flow">5. Sub Flow</h3><a class="sl-anchor-link" href="#5-sub-flow"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “5. Sub Flow”</span></a></div>
+<p>The composition primitive. A Sub Flow node points at <em>another</em> Chat Flow on the same agent and runs it inline. When the sub-flow reaches its End node, control returns to the parent flow’s next node.</p>
+<p>Use Sub Flows for shared building blocks:</p>
+<ul>
+<li>A <em>“collect-contact-info”</em> sub-flow used by the demo qualification, the trial signup, and the support escalation.</li>
+<li>A <em>“verify-identity”</em> sub-flow used at the start of any compliance-sensitive workflow.</li>
+<li>A <em>“NPS-prompt”</em> sub-flow triggered at the end of a successful conversation.</li>
+</ul>
+<p>Sub-flows have their own state row (<code dir="auto">TurChatFlowState.parentStateId</code> records the call stack). Variables collected in the sub-flow are available in the parent when control returns.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="end">End</h3><a class="sl-anchor-link" href="#end"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “End”</span></a></div>
+<p>Terminator. Like Start, exactly one per flow. When the runtime reaches End, it marks the flow’s state as completed, persists a <code dir="auto">TurChatFlowSubmission</code> row (full collected variables + outcome), and the conversation continues normally: the agent is back to free-form mode.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="the-full-node-catalog">The Full Node Catalog</h2><a class="sl-anchor-link" href="#the-full-node-catalog"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “The Full Node Catalog”</span></a></div>
+<p>The five core types cover collection and branching. These additional node types turn a flow into a small automation engine, writing slots deterministically, calling tools and routines, reaching out over webhooks, and pausing for a human.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Node type</th><th>What it does</th><th>See</th></tr></thead><tbody><tr><td><code dir="auto">aiQuestion</code></td><td>The Question node above: LLM asks, answer captured into a slot</td><td>n/a</td></tr><tr><td><code dir="auto">writeSlot</code></td><td>Sets a slot deterministically (no LLM), with server-side <code dir="auto">{{variable}}</code> interpolation. Honors <code dir="auto">overrideExistingValue</code></td><td>n/a</td></tr><tr><td><code dir="auto">formCapture</code></td><td>Like a Question but with <strong>strict validation</strong>, built-in patterns for CPF, CNPJ, email, phone, and CEP, including CPF/CNPJ mod-11 checksum</td><td>n/a</td></tr><tr><td><code dir="auto">functionCall</code></td><td>Calls a tool <strong>synchronously</strong> as a flow step (<code dir="auto">toolSource</code> = native/MCP/custom + <code dir="auto">functionName</code>). The deterministic successor to the legacy “Tool” node</td><td><a href="/turing/docs/tool-calling/">Tool Calling</a></td></tr><tr><td><code dir="auto">subFlow</code></td><td>Runs another flow inline and returns (the Sub Flow node above)</td><td>n/a</td></tr><tr><td><code dir="auto">subFlowSwitch</code></td><td>Deterministic multi-way routing into one of several sub-flows based on a <code dir="auto">switchVariable</code></td><td>n/a</td></tr><tr><td><code dir="auto">scheduleAgent</code></td><td>Fires a <strong>routine</strong> asynchronously and waits for its result slot</td><td><a href="/turing/docs/routines/">Routines</a></td></tr><tr><td><code dir="auto">webhook</code></td><td>POSTs to a configured outbound webhook as a flow step</td><td><a href="/turing/docs/webhooks/">Webhooks</a></td></tr><tr><td><code dir="auto">humanApproval</code></td><td>Parks the conversation until a person approves/rejects</td><td><a href="/turing/docs/human-in-the-loop/">Human-in-the-Loop</a></td></tr><tr><td><code dir="auto">suspend</code></td><td>Parks the conversation indefinitely until an explicit resume</td><td><a href="/turing/docs/human-in-the-loop/">Human-in-the-Loop</a></td></tr><tr><td><code dir="auto">planningStep</code> / <code dir="auto">iteratePlan</code></td><td>Decompose a goal into a typed plan and walk it item by item (long-horizon tasks)</td><td>n/a</td></tr><tr><td><code dir="auto">condition</code></td><td>Branches on a <code dir="auto">conditionExpression</code> (the Condition node above)</td><td>n/a</td></tr></tbody></table>
+<p>Two cross-cutting node fields are worth knowing:</p>
+<ul>
+<li><strong><code dir="auto">toolsEnabled</code></strong>: set <code dir="auto">FALSE</code> on a node to strip <em>all</em> tools for that step (e.g. a pure question where you don’t want the LLM wandering off to call something). <code dir="auto">TRUE</code>/unset leaves tools available.</li>
+<li><strong><code dir="auto">personaId</code></strong>: pin a specific <a href="/turing/docs/personas/">persona</a> for the duration of a node, overriding the agent default.</li>
+</ul>
+<div class="sl-heading-wrapper level-h3"><h3 id="formcapture-validation"><code dir="auto">formCapture</code> validation</h3><a class="sl-anchor-link" href="#formcapture-validation"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “formCapture validation”</span></a></div>
+<p><code dir="auto">formCapture</code> is the node for collecting <strong>structured identifiers</strong> safely. Beyond a free-text validation rule it ships built-in patterns:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Pattern</th><th>Validates</th><th>Extra check</th></tr></thead><tbody><tr><td><code dir="auto">cpf</code></td><td>Brazilian individual taxpayer id</td><td>mod-11 digit checksum</td></tr><tr><td><code dir="auto">cnpj</code></td><td>Brazilian company id</td><td>mod-11 digit checksum</td></tr><tr><td><code dir="auto">email</code></td><td>email address</td><td>format</td></tr><tr><td><code dir="auto">phone</code></td><td>phone number</td><td>format</td></tr><tr><td><code dir="auto">cep</code></td><td>Brazilian postal code</td><td>format</td></tr></tbody></table>
+<p>A value that fails validation is rejected and the user is re-prompted, the slot never receives a malformed identifier.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="error-handling-continueonfailure--error-edges">Error Handling: <code dir="auto">continueOnFailure</code> &#x26; Error Edges</h2><a class="sl-anchor-link" href="#error-handling-continueonfailure--error-edges"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Error Handling: continueOnFailure &#x26; Error Edges”</span></a></div>
+<p>By default, when a <code dir="auto">functionCall</code>, <code dir="auto">scheduleAgent</code>, or <code dir="auto">webhook</code> node fails (a tool throws, a routine times out, a webhook can’t be delivered), the engine logs it and advances on the normal edge. When that’s not safe, opt into explicit error routing:</p>
+<ul>
+<li>Set <strong><code dir="auto">continueOnFailure: true</code></strong> on the node.</li>
+<li>Draw an outgoing edge whose <code dir="auto">sourceHandle</code> is <strong><code dir="auto">failure</code></strong>, rendered in the editor as a <strong>red “on error” arrow</strong>, exactly like a try/catch.</li>
+</ul>
+<p>On failure the engine routes down the <code dir="auto">failure</code> edge instead of advancing silently, so you can show a fallback message, retry via another path, or escalate to a human. <code dir="auto">scheduleAgent</code> additionally has a <code dir="auto">timeout</code> edge for the “routine didn’t finish in time” case (see <a href="/turing/docs/routines/">Routines</a>).</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="advanced-question-behavior">Advanced Question Behavior</h2><a class="sl-anchor-link" href="#advanced-question-behavior"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Advanced Question Behavior”</span></a></div>
+<p>Two policies make Question/<code dir="auto">formCapture</code> nodes more robust under a guardrail.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="capture-first">Capture-first</h3><a class="sl-anchor-link" href="#capture-first"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Capture-first”</span></a></div>
+<p>Rather than letting a strict judge stall a conversation by rejecting an answer it isn’t sure about, the engine <strong>persists the user’s message into the slot first</strong>, then runs the judge as <em>advisory</em>: the judge writes a <code dir="auto">&#x3C;slot>__confidence</code> (low/high) into a parallel slot instead of blocking. The flow never gets stuck with <code dir="auto">slot = null</code> because the judge was uncertain; you can branch on the confidence slot later if you care.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="onjudgereject-policy"><code dir="auto">onJudgeReject</code> policy</h3><a class="sl-anchor-link" href="#onjudgereject-policy"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “onJudgeReject policy”</span></a></div>
+<p>When the judge <em>does</em> reject an answer, the node’s <code dir="auto">onJudgeReject</code> field decides what happens:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Value</th><th>Behavior</th></tr></thead><tbody><tr><td><code dir="auto">reprompt</code></td><td>Ask the question again (the default conversational behavior)</td></tr><tr><td><code dir="auto">advance_with_literal</code></td><td>Accept the literal answer and move on (don’t fight the user)</td></tr><tr><td><code dir="auto">block</code></td><td>Hold the conversation on this node until a valid answer arrives</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="slots-the-conversations-memory">Slots: The Conversation’s Memory</h2><a class="sl-anchor-link" href="#slots-the-conversations-memory"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Slots: The Conversation’s Memory”</span></a></div>
+<p>Every value a flow collects lives in a <strong>slot</strong>, a named, conversation-scoped variable the agent treats as globally addressable across flows. Slots are more than a key-value bag; they come with streaming, auditing, privacy, and multi-modal support.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Capability</th><th>What it gives you</th></tr></thead><tbody><tr><td><strong>Live updates (SSE)</strong></td><td><code dir="auto">GET /chat/slots/stream</code> pushes the slot map as it changes; <code dir="auto">…/stream/delta</code> pushes only <code dir="auto">{added, updated, removed}</code> (~10× fewer bytes on slot-heavy conversations)</td></tr><tr><td><strong>Audit log</strong></td><td>Every write is recorded in the slot-write audit trail with its origin (<code dir="auto">NODE</code> / <code dir="auto">TOOL</code> / <code dir="auto">ENDPOINT</code> / <code dir="auto">EXTRACT</code>) and old→new delta, the backbone of the <a href="/turing/docs/chat-analytics/#conversation-replay">conversation replay timeline</a> and LGPD/GDPR auditing</td></tr><tr><td><strong>PII slots (<code dir="auto">pii_*</code>)</strong></td><td>A slot named with the <code dir="auto">pii_*</code> prefix gets extra handling (encrypted/redacted in exports), use it for anything sensitive</td></tr><tr><td><strong>Multi-modal slots</strong></td><td>Slot types <code dir="auto">IMAGE</code> / <code dir="auto">AUDIO</code> / <code dir="auto">FILE</code> hold an uploaded artifact’s storage URL (optionally vision-extracted), via <code dir="auto">POST /chat/slot-upload</code></td></tr><tr><td><strong>Document extraction</strong></td><td><code dir="auto">POST /chat/slot-extract</code> runs an uploaded file through Tika → LLM structured output → per-slot writes</td></tr><tr><td><strong>State snapshot</strong></td><td><code dir="auto">GET /chat/state</code> returns the active flow, current node, guardrail method, and A/B experiment metadata</td></tr></tbody></table>
+<p>These endpoints power the <a href="/turing/docs/chat-analytics/">Chat Analytics</a> replay timeline and the <a href="/turing/docs/react-sdk/">SDK</a> live-slot hooks.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="guardrails-three-strategies-three-levels-of-strictness">Guardrails: Three Strategies, Three Levels of Strictness</h2><a class="sl-anchor-link" href="#guardrails-three-strategies-three-levels-of-strictness"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Guardrails: Three Strategies, Three Levels of Strictness”</span></a></div>
+<p>The same flow graph can be enforced <strong>three different ways</strong> at runtime. You pick per-flow which strategy fits the conversation. There is no “best”: there is a tradeoff between strictness, latency, and token cost.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="strategy-1-heuristic-default">Strategy 1: <code dir="auto">HEURISTIC</code> (default)</h3><a class="sl-anchor-link" href="#strategy-1-heuristic-default"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Strategy 1: HEURISTIC (default)”</span></a></div>
+<p><strong>The fast lane.</strong> No extra LLM calls. The current node’s instruction is injected as a firm contract in the system prompt; after the LLM replies, a lightweight Java-side heuristic decides whether the user gave a valid answer and the engine advances.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Extra LLM calls</td><td>0</td></tr><tr><td>Latency overhead</td><td>None</td></tr><tr><td>Token overhead</td><td>~50–150 tokens added to system prompt</td></tr><tr><td>Strictness</td><td>Low: the LLM may sometimes accept fuzzy answers</td></tr><tr><td>Use when</td><td>The flow is conversational, customers can rephrase, and the cost of a mis-route is low</td></tr></tbody></table>
+<p>Heuristic is the right starting point for most flows. Run it. Watch <a href="/turing/docs/chat-analytics/">Chat Analytics</a> for sessions where the goal wasn’t achieved. Upgrade only if you see drift.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="strategy-2-llm_judge">Strategy 2: <code dir="auto">LLM_JUDGE</code></h3><a class="sl-anchor-link" href="#strategy-2-llm_judge"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Strategy 2: LLM_JUDGE”</span></a></div>
+<p><strong>Two-call enforcement.</strong> After the chat LLM replies to the user, a <em>second</em> LLM call (“the judge”) is made with a tiny structured prompt: <em>“Was the user’s answer on-topic? Did they provide a valid value? Should we advance?”</em> The judge returns JSON like:</p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="json"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">{</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"on_topic"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"collected_value"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">12500</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"ready_to_advance"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="{  &#x22;on_topic&#x22;: true,  &#x22;collected_value&#x22;: &#x22;12500&#x22;,  &#x22;ready_to_advance&#x22;: true}"><div></div></button></div></figure></div>
+<p>If <code dir="auto">on_topic</code> is false, the engine substitutes a redirect message (<em>“Let’s stay on track, could you share your monthly active users?”</em>) instead of advancing. If <code dir="auto">collected_value</code> is present, it’s stored in the node’s output variable.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Extra LLM calls</td><td>1 per turn while a flow is active</td></tr><tr><td>Latency overhead</td><td>~200–500ms (judge call)</td></tr><tr><td>Token overhead</td><td>~200 tokens per turn</td></tr><tr><td>Strictness</td><td>High: drift is caught and corrected</td></tr><tr><td>Use when</td><td>The flow is a structured form (KYC, compliance), drift costs money or violates policy</td></tr></tbody></table>
+<p>The judge can use a smaller, cheaper model than the chat LLM: its job is classification, not generation.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="strategy-3-structured_output">Strategy 3: <code dir="auto">STRUCTURED_OUTPUT</code></h3><a class="sl-anchor-link" href="#strategy-3-structured_output"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Strategy 3: STRUCTURED_OUTPUT”</span></a></div>
+<p><strong>Single-call enforcement.</strong> Instead of two LLM calls, the chat LLM is instructed to reply with a <strong>single JSON object</strong> that bundles both the user-facing message <em>and</em> the verdict:</p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="json"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">{</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"reply"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">Got it: 12,500 monthly active users. Next, what's your role on the team?</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"on_topic"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"collected_value"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">12500</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"ready_to_advance"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"abandoned"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">false</span></div></div><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="{  &#x22;reply&#x22;: &#x22;Got it: 12,500 monthly active users. Next, what&#x27;s your role on the team?&#x22;,  &#x22;on_topic&#x22;: true,  &#x22;collected_value&#x22;: &#x22;12500&#x22;,  &#x22;ready_to_advance&#x22;: true,  &#x22;abandoned&#x22;: false}"><div></div></button></div></figure></div>
+<p>The engine extracts <code dir="auto">reply</code> and shows it to the user; applies the verdict; advances. One call, full enforcement.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Extra LLM calls</td><td>0 (the chat call carries both)</td></tr><tr><td>Latency overhead</td><td>None: the judge piggybacks on the reply</td></tr><tr><td>Token overhead</td><td>~100 tokens (structured response is more verbose than free text)</td></tr><tr><td>Strictness</td><td>High: same as <code dir="auto">LLM_JUDGE</code></td></tr><tr><td>Use when</td><td>You want strict enforcement <em>and</em> low latency</td></tr></tbody></table>
+<p>Modern providers (OpenAI, Gemini, Ollama) follow JSON instructions reliably. Anthropic occasionally drifts to free text: when that happens, the engine falls back gracefully to heuristic mode for that turn.</p>
+<aside aria-label="Picking a strategy" class="starlight-aside starlight-aside--tip"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path fill-rule="evenodd" d="M1.44 8.855v-.001l3.527-3.516c.34-.344.802-.541 1.285-.548h6.649l.947-.947c3.07-3.07 6.207-3.072 7.62-2.868a1.821 1.821 0 0 1 1.557 1.557c.204 1.413.203 4.55-2.868 7.62l-.946.946v6.649a1.845 1.845 0 0 1-.549 1.286l-3.516 3.528a1.844 1.844 0 0 1-3.11-.944l-.858-4.275-4.52-4.52-2.31-.463-1.964-.394A1.847 1.847 0 0 1 .98 10.693a1.843 1.843 0 0 1 .46-1.838Zm5.379 2.017-3.873-.776L6.32 6.733h4.638l-4.14 4.14Zm8.403-5.655c2.459-2.46 4.856-2.463 5.89-2.33.134 1.035.13 3.432-2.329 5.891l-6.71 6.71-3.561-3.56 6.71-6.711Zm-1.318 15.837-.776-3.873 4.14-4.14v4.639l-3.364 3.374Z" clip-rule="evenodd"></path><path d="M9.318 18.345a.972.972 0 0 0-1.86-.561c-.482 1.435-1.687 2.204-2.934 2.619a8.22 8.22 0 0 1-1.23.302c.062-.365.157-.79.303-1.229.415-1.247 1.184-2.452 2.62-2.935a.971.971 0 1 0-.62-1.842c-.12.04-.236.084-.35.13-2.02.828-3.012 2.588-3.493 4.033a10.383 10.383 0 0 0-.51 2.845l-.001.016v.063c0 .536.434.972.97.972H2.24a7.21 7.21 0 0 0 .878-.065c.527-.063 1.248-.19 2.02-.447 1.445-.48 3.205-1.472 4.033-3.494a5.828 5.828 0 0 0 .147-.407Z"></path></svg>Picking a strategy</p><div class="starlight-aside__content"><p>Start with <code dir="auto">HEURISTIC</code>. Run it for a week. Read 20 sessions in <a href="/turing/docs/chat-analytics/">Chat Analytics</a> drill-down: pay attention to ones that ended with <code dir="auto">goalAchieved=NO</code> or <code dir="auto">sentiment=FRUSTRATED</code>. If the LLM was drifting off-topic, upgrade to <code dir="auto">STRUCTURED_OUTPUT</code>. Only escalate to <code dir="auto">LLM_JUDGE</code> if <code dir="auto">STRUCTURED_OUTPUT</code> falls back too often (provider-specific issue) or if you need the judge to use a different model from the chat LLM.</p></div></aside>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="trigger-modes-auto-routing-or-manual">Trigger Modes: Auto-Routing or Manual</h2><a class="sl-anchor-link" href="#trigger-modes-auto-routing-or-manual"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Trigger Modes: Auto-Routing or Manual”</span></a></div>
+<p>A flow doesn’t run unless something <em>picks</em> it. Two ways:</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="auto-trigger-via-the-llm-router">Auto-trigger via the LLM router</h3><a class="sl-anchor-link" href="#auto-trigger-via-the-llm-router"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Auto-trigger via the LLM router”</span></a></div>
+<p>When you set a <strong>Trigger Description</strong> on a flow (e.g., <em>“User wants to book a demo or qualify their team for a sales call”</em>), the engine includes it in a tiny LLM router prompt at the start of every chat turn. The router decides: does the user’s message match any of this agent’s flow descriptions? If yes, that flow becomes active.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Trigger Mode</th><th>Behavior</th></tr></thead><tbody><tr><td><code dir="auto">ONCE</code> (default)</td><td>Auto-trigger at most once per conversation. After the flow reaches End, the router won’t pick it again in this conversation.</td></tr><tr><td><code dir="auto">ALWAYS</code></td><td>Re-trigger whenever the router decides the message matches, even after a previous run.</td></tr></tbody></table>
+<p>Leave Trigger Description blank to disable auto-trigger entirely. The flow can still be invoked manually.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="manual-selection">Manual selection</h3><a class="sl-anchor-link" href="#manual-selection"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Manual selection”</span></a></div>
+<p>Users (or the front-end) can explicitly start a flow by name. This bypasses the router and is useful when:</p>
+<ul>
+<li>You want a button on the front-end (<em>“Schedule a demo”</em>) that always starts the qualification flow.</li>
+<li>A flow is sensitive enough that you don’t want the router making the call (e.g., compliance KYC, only triggered by an authenticated admin).</li>
+</ul>
+<p>The <strong>flow chooser</strong> endpoint pins a specific flow for a conversation by UUID or case-insensitive name, deep-link friendly (<code dir="auto">?flow=in-company</code>):</p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="plaintext"><code><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">POST /api/sn/{siteName}/chat/flow-select   { "conversationId": "...", "flow": "in-company" }</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="POST /api/sn/{siteName}/chat/flow-select   { &#x22;conversationId&#x22;: &#x22;...&#x22;, &#x22;flow&#x22;: &#x22;in-company&#x22; }"><div></div></button></div></figure></div>
+<div class="sl-heading-wrapper level-h3"><h3 id="trigger-conflict-resolver">Trigger conflict resolver</h3><a class="sl-anchor-link" href="#trigger-conflict-resolver"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Trigger conflict resolver”</span></a></div>
+<p>When two flows on the same agent have <strong>overlapping trigger descriptions</strong>, the router can’t reliably tell them apart and routing becomes a coin-flip. The editor surfaces this: a service runs a Jaccard similarity over the analyzer-stemmed trigger descriptions and flags <code dir="auto">HIGH</code> / <code dir="auto">WARNING</code> conflict pairs.</p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="plaintext"><code><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">GET /api/ai-agent/{agentId}/chat-flow/trigger-conflicts</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="GET /api/ai-agent/{agentId}/chat-flow/trigger-conflicts"><div></div></button></div></figure></div>
+<p>Tighten or differentiate the flagged descriptions until the conflicts clear.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="ab-testing-a-flow">A/B testing a flow</h3><a class="sl-anchor-link" href="#ab-testing-a-flow"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “A/B testing a flow”</span></a></div>
+<p>Flows (and even individual nodes) can be <strong>A/B tested</strong>: split traffic across variants, measure the winner with a real significance test, and auto-promote the champion. That’s a whole subsystem of its own: see <a href="/turing/docs/experiments/">Experiments</a>.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="per-conversation-state">Per-Conversation State</h2><a class="sl-anchor-link" href="#per-conversation-state"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Per-Conversation State”</span></a></div>
+<p>Every running flow has a <code dir="auto">TurChatFlowState</code> row identified by <code dir="auto">(conversationId, flowId)</code>. It tracks:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Field</th><th>What it holds</th></tr></thead><tbody><tr><td><code dir="auto">currentNodeId</code></td><td>The node the user is currently on</td></tr><tr><td><code dir="auto">variablesJson</code></td><td>All collected output variables, JSON-serialized</td></tr><tr><td><code dir="auto">parentStateId</code></td><td>Set when this state is running a sub-flow: points to the parent state. The runtime walks back up when the sub-flow ends.</td></tr><tr><td><code dir="auto">updatedAt</code></td><td>Last touched: useful for stale-flow cleanup</td></tr></tbody></table>
+<p>The state is updated <strong>after</strong> the assistant replies, so if the conversation crashes mid-turn, the state still reflects the last completed step.</p>
+<p>When the End node is reached, the engine writes a <strong><code dir="auto">TurChatFlowSubmission</code></strong> row: the full graph traversal, all collected variables, and the outcome. This is your audit log. You can list submissions by flow:</p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="plaintext"><code><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">GET /api/ai-agent/{agentId}/chat-flow/{flowId}/submissions</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="GET /api/ai-agent/{agentId}/chat-flow/{flowId}/submissions"><div></div></button></div></figure></div>
+<p>A common pattern: a <a href="/turing/docs/webhooks/">webhook</a> fires on the completing slot and creates a CRM deal automatically, populated from the variables.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="vibe-coding-author-your-flow-with-ai">Vibe Coding: Author Your Flow With AI</h2><a class="sl-anchor-link" href="#vibe-coding-author-your-flow-with-ai"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Vibe Coding: Author Your Flow With AI”</span></a></div>
+<p>Building a flow visually is fast. Building it by <em>describing it</em> is faster.</p>
+<p>Click <strong>Vibe Coding</strong> on the flow editor and you’re talking to an authoring assistant whose entire job is <em>“build the chat flow this user wants”</em>. Two modes of interaction:</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="first-turn-creation">First-turn creation</h3><a class="sl-anchor-link" href="#first-turn-creation"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “First-turn creation”</span></a></div>
+<p>You describe the flow in plain English: short or long, structured or rambling, your call. The assistant returns a complete graph: nodes positioned, edges connected, instructions written, output variables named.</p>
+<blockquote>
+<p><strong>You:</strong> <em>“I need a five-step demo qualification: company name, role, current solution, decision timeline (under 3 months / 3-6 months / over 6 months), and email. After collecting all five, call our CRM via MCP to look up the company. End the flow.”</em></p>
+<p><strong>Assistant:</strong> <em>“Done. I’ve created six Question nodes for the data you listed, a Tool node calling your <code dir="auto">crm-lookup</code> MCP server after the email, and an End node. The decision timeline question uses a Condition node so you can branch the follow-up depending on urgency. Take a look: I positioned everything left to right with the Start node on the far left.”</em></p>
+</blockquote>
+<p>The flow appears on the canvas. You can drag, edit, save.</p>
+<p>What’s happening under the hood:</p>
+<ul>
+<li>The assistant is given a <strong>rich system prompt</strong> documenting every node type, every field, edge handle conventions, layout rules, and current guardrail/trigger policy.</li>
+<li>It returns a structured <code dir="auto">ChatFlowGeneration</code> JSON the engine post-processes: deterministic positioning, id normalization, connectivity validation. Common mistakes (missing Start, dangling edges, Condition without two branches) are auto-corrected.</li>
+</ul>
+<div class="sl-heading-wrapper level-h3"><h3 id="revision-turns">Revision turns</h3><a class="sl-anchor-link" href="#revision-turns"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Revision turns”</span></a></div>
+<p>Once a flow exists, you can keep talking:</p>
+<blockquote>
+<p><strong>You:</strong> <em>“Split the timeline question into two, one for short-term plans (this quarter) and one for long-term (this year).”</em></p>
+<p><strong>Assistant:</strong> <em>“Done. I split the timeline node into <code dir="auto">short_term_plans</code> and <code dir="auto">long_term_plans</code>, kept them in sequence after the role question, and adjusted the CRM lookup to fire after both are collected.”</em></p>
+</blockquote>
+<p>In revision turns the model sees the <strong>full current state</strong> plus a slimmer <em>edit-focused</em> prompt. It only changes what you asked for; the rest of your graph stays untouched.</p>
+<aside aria-label="When Vibe Coding is the right move vs. visual editing" class="starlight-aside starlight-aside--tip"><p class="starlight-aside__title" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="starlight-aside__icon"><path fill-rule="evenodd" d="M1.44 8.855v-.001l3.527-3.516c.34-.344.802-.541 1.285-.548h6.649l.947-.947c3.07-3.07 6.207-3.072 7.62-2.868a1.821 1.821 0 0 1 1.557 1.557c.204 1.413.203 4.55-2.868 7.62l-.946.946v6.649a1.845 1.845 0 0 1-.549 1.286l-3.516 3.528a1.844 1.844 0 0 1-3.11-.944l-.858-4.275-4.52-4.52-2.31-.463-1.964-.394A1.847 1.847 0 0 1 .98 10.693a1.843 1.843 0 0 1 .46-1.838Zm5.379 2.017-3.873-.776L6.32 6.733h4.638l-4.14 4.14Zm8.403-5.655c2.459-2.46 4.856-2.463 5.89-2.33.134 1.035.13 3.432-2.329 5.891l-6.71 6.71-3.561-3.56 6.71-6.711Zm-1.318 15.837-.776-3.873 4.14-4.14v4.639l-3.364 3.374Z" clip-rule="evenodd"></path><path d="M9.318 18.345a.972.972 0 0 0-1.86-.561c-.482 1.435-1.687 2.204-2.934 2.619a8.22 8.22 0 0 1-1.23.302c.062-.365.157-.79.303-1.229.415-1.247 1.184-2.452 2.62-2.935a.971.971 0 1 0-.62-1.842c-.12.04-.236.084-.35.13-2.02.828-3.012 2.588-3.493 4.033a10.383 10.383 0 0 0-.51 2.845l-.001.016v.063c0 .536.434.972.97.972H2.24a7.21 7.21 0 0 0 .878-.065c.527-.063 1.248-.19 2.02-.447 1.445-.48 3.205-1.472 4.033-3.494a5.828 5.828 0 0 0 .147-.407Z"></path></svg>When Vibe Coding is the right move vs. visual editing</p><div class="starlight-aside__content"><p><strong>Vibe Coding wins</strong> when you’re starting from scratch, when you’re rearranging structurally (<em>“split this”, “merge those”</em>), or when you don’t yet know what blocks you’ll need. <strong>Visual editing wins</strong> when you’re tweaking copy on a single node, dragging to reorganize visually, or fine-tuning a validation rule. Use both: they edit the same graph.</p></div></aside>
+<p>The same Vibe Coding pattern is available for <a href="/turing/docs/intent/">Intents</a> and <a href="/turing/docs/custom-tools/">Custom Tools</a>. The pattern is general, described in <a href="/turing/docs/ai-agents/">AI Authoring (Vibe Coding)</a>, but Chat Flow is the most powerful expression of it because of the structural complexity of the graph.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="a-real-example-demo-qualification">A Real Example: Demo Qualification</h2><a class="sl-anchor-link" href="#a-real-example-demo-qualification"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “A Real Example: Demo Qualification”</span></a></div>
+<p>Let’s walk one flow end-to-end. Goal: qualify an inbound prospect, route hot leads to a calendar booking, route cold leads to a nurture sequence.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="graph-described">Graph (described)</h3><a class="sl-anchor-link" href="#graph-described"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Graph (described)”</span></a></div>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="plaintext"><code><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">Start</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">  </span></span><span style="--0:#d6deeb;--1:#403f53">→ Question: company name        → output: company_name</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">  </span></span><span style="--0:#d6deeb;--1:#403f53">→ Question: user's role         → output: role</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">  </span></span><span style="--0:#d6deeb;--1:#403f53">→ Question: current solution    → output: current_solution</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">  </span></span><span style="--0:#d6deeb;--1:#403f53">→ Question: timeline            → output: timeline (enum: short_term | long_term | exploring)</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">  </span></span><span style="--0:#d6deeb;--1:#403f53">→ Condition: timeline == short_term</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">       </span></span><span style="--0:#d6deeb;--1:#403f53">true  → Tool: book_calendar (MCP)  → End</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">       </span></span><span style="--0:#d6deeb;--1:#403f53">false → Tool: enroll_in_nurture (MCP) → End</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="Start  → Question: company name        → output: company_name  → Question: user&#x27;s role         → output: role  → Question: current solution    → output: current_solution  → Question: timeline            → output: timeline (enum: short_term | long_term | exploring)  → Condition: timeline == short_term       true  → Tool: book_calendar (MCP)  → End       false → Tool: enroll_in_nurture (MCP) → End"><div></div></button></div></figure></div>
+<div class="sl-heading-wrapper level-h3"><h3 id="what-the-user-sees">What the user sees</h3><a class="sl-anchor-link" href="#what-the-user-sees"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “What the user sees”</span></a></div>
+<ul>
+<li>The agent greets normally (free-form), sees the user message <em>“I’d like to learn more”</em>, and the <strong>router</strong> matches the demo-qualification flow’s trigger description. The flow becomes active.</li>
+<li>The agent’s next message asks the company name. (The Question node’s AI Instruction guided the wording; the LLM picked the actual phrasing in the user’s locale.)</li>
+<li>After each answer, the engine validates with the chosen guardrail strategy and advances.</li>
+<li>Five answers in, the engine evaluates the Condition and routes to one of two Tool nodes.</li>
+<li>The Tool returns a result (a booked slot or a nurture confirmation), which the LLM phrases naturally into the final message.</li>
+<li>End is reached; a <code dir="auto">TurChatFlowSubmission</code> is written to the database; CRM gets notified.</li>
+</ul>
+<div class="sl-heading-wrapper level-h3"><h3 id="what-you-see-days-later">What you see, days later</h3><a class="sl-anchor-link" href="#what-you-see-days-later"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “What you see, days later”</span></a></div>
+<p>In <a href="/turing/docs/chat-analytics/">Chat Analytics</a>:</p>
+<ul>
+<li>The conversation is one row, with <code dir="auto">intentLabel = CONVERSION_INTENT</code>, <code dir="auto">goalAchieved = YES</code>, <code dir="auto">sentiment = POSITIVE</code>, <code dir="auto">keyTerms = ["demo", "Q1", "team of 8"]</code>.</li>
+<li>The submission record has the full variable map.</li>
+<li>A scorecard panel groups submissions by <code dir="auto">agentId</code> so you can compare which agent is converting.</li>
+</ul>
+<p>That’s the loop. Conversation → flow → submission → analytics → product decision → flow update → better conversation. Closed.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="rest-api">REST API</h2><a class="sl-anchor-link" href="#rest-api"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “REST API”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/ai-agent/{agentId}/chat-flow</code></td><td>List all flows on an agent</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/ai-agent/{agentId}/chat-flow/{flowId}</code></td><td>Get a flow with its full graph JSON</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/ai-agent/{agentId}/chat-flow</code></td><td>Create a flow</td></tr><tr><td><code dir="auto">PUT</code></td><td><code dir="auto">/api/ai-agent/{agentId}/chat-flow/{flowId}</code></td><td>Update a flow’s graph or settings</td></tr><tr><td><code dir="auto">DELETE</code></td><td><code dir="auto">/api/ai-agent/{agentId}/chat-flow/{flowId}</code></td><td>Delete a flow</td></tr><tr><td><code dir="auto">GET</code></td><td><code dir="auto">/api/ai-agent/{agentId}/chat-flow/{flowId}/submissions</code></td><td>List collected submissions</td></tr><tr><td><code dir="auto">POST</code></td><td><code dir="auto">/api/ai-agent/{agentId}/chat-flow/ai-chat</code></td><td>Vibe Coding endpoint: describe a flow, get a graph back</td></tr></tbody></table>
+<p>The Vibe Coding endpoint follows the standard <a href="/turing/docs/ai-agents/">AI Authoring</a> shape: a chat over <code dir="auto">AiAuthoringRequest&#x3C;ChatFlowGeneration></code> / <code dir="auto">AiAuthoringResponse&#x3C;ChatFlowGeneration></code>.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="configuration--tuning">Configuration &#x26; Tuning</h2><a class="sl-anchor-link" href="#configuration--tuning"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Configuration &#x26; Tuning”</span></a></div>
+<p>The flow engine has a few knobs:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Default</th><th>Purpose</th></tr></thead><tbody><tr><td><code dir="auto">turing.chat.flow.judge.model</code></td><td>(default LLM)</td><td>Which LLM the <code dir="auto">LLM_JUDGE</code> strategy uses for the judge call. Pick a small/cheap model, classification is its only job.</td></tr><tr><td><code dir="auto">turing.chat.flow.state.ttl-hours</code></td><td>24</td><td>How long an in-flight <code dir="auto">TurChatFlowState</code> is kept before being considered stale. Stale states are cleaned by a daily housekeeping job.</td></tr></tbody></table>
+<p>State is per-conversation, abandoning a conversation leaves a state row that’s pruned by the housekeeping job after the TTL.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="common-patterns">Common Patterns</h2><a class="sl-anchor-link" href="#common-patterns"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Common Patterns”</span></a></div>
+<div class="sl-heading-wrapper level-h3"><h3 id="funnel-as-flow">Funnel-as-flow</h3><a class="sl-anchor-link" href="#funnel-as-flow"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Funnel-as-flow”</span></a></div>
+<p>One flow per funnel stage, attached to one agent each. Discovery → Qualification flow on the Sales agent. Activation → Onboarding flow on the Onboarding Coach agent. Renewal → Health-check flow on the CSM agent.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="reusable-identity-verification">Reusable identity verification</h3><a class="sl-anchor-link" href="#reusable-identity-verification"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Reusable identity verification”</span></a></div>
+<p>A single <code dir="auto">verify-identity</code> flow with three Question nodes (name, account email, last-four-digits). Every other compliance-sensitive flow starts with a Sub Flow node pointing at it. One source of truth; consistent behavior.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="tool-nodes-as-side-effects">Tool nodes as side effects</h3><a class="sl-anchor-link" href="#tool-nodes-as-side-effects"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Tool nodes as side effects”</span></a></div>
+<p>Don’t make the LLM ask the user <em>“would you like me to look up your account?”</em>, just put a Tool node after the relevant Question. The flow handles it deterministically. The LLM gets the result and weaves it into the next message.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="conditional-branching-for-self-serve-vs-enterprise">Conditional branching for self-serve vs. enterprise</h3><a class="sl-anchor-link" href="#conditional-branching-for-self-serve-vs-enterprise"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Conditional branching for self-serve vs. enterprise”</span></a></div>
+<p>After the company-size question, branch:</p>
+<ul>
+<li><code dir="auto">under_50_employees</code> → straight to the self-serve signup flow,</li>
+<li><code dir="auto">over_50_employees</code> → into the enterprise qualification path with extra questions about procurement timelines.</li>
+</ul>
+<p>One flow, two outcomes, no human intervention.</p>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="diagnostics">Diagnostics</h2><a class="sl-anchor-link" href="#diagnostics"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Diagnostics”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Where to look</th></tr></thead><tbody><tr><td>Flow drifts off-topic mid-conversation</td><td><code dir="auto">HEURISTIC</code> strategy is too lenient for this flow</td><td>Switch to <code dir="auto">STRUCTURED_OUTPUT</code>; if the issue persists, switch to <code dir="auto">LLM_JUDGE</code> with a stronger judge model</td></tr><tr><td>User messages bypass the flow router</td><td>The trigger description is too narrow; or the router LLM is too small</td><td>Broaden the Trigger Description with more user-language variations; or upgrade the default LLM</td></tr><tr><td>Variables aren’t being collected</td><td>The Question node’s Output Variable name doesn’t match the validation rule’s expected output</td><td>Check the Output Variable on the Question node; check the Tool node downstream for matching arg names</td></tr><tr><td>Sub-flow runs but never returns</td><td>The sub-flow has no End node, or there’s a dangling edge before End</td><td>Open the sub-flow in the editor: Vibe Coding’s auto-fix usually catches this; visual editing can introduce it</td></tr><tr><td>Router picks the wrong flow</td><td>Two flows have overlapping trigger descriptions</td><td>Run the <a href="#trigger-conflict-resolver">trigger-conflict resolver</a> and differentiate the flagged pair</td></tr><tr><td>A <code dir="auto">functionCall</code>/<code dir="auto">scheduleAgent</code>/<code dir="auto">webhook</code> step fails silently</td><td>No error edge wired</td><td>Set <code dir="auto">continueOnFailure</code> and draw a <code dir="auto">failure</code> edge (see <a href="#error-handling-continueonfailure--error-edges">Error Handling</a>)</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="related-pages">Related Pages</h2><a class="sl-anchor-link" href="#related-pages"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Related Pages”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Page</th><th>Description</th></tr></thead><tbody><tr><td><a href="/turing/docs/experiments/">Experiments</a></td><td>A/B test flows and nodes: significance, bandit, auto-promotion</td></tr><tr><td><a href="/turing/docs/human-in-the-loop/">Human-in-the-Loop</a></td><td>The <code dir="auto">humanApproval</code> / <code dir="auto">suspend</code> nodes + spectator/co-pilot</td></tr><tr><td><a href="/turing/docs/webhooks/">Webhooks</a></td><td>The <code dir="auto">webhook</code> node and the slot-driven CRM push</td></tr><tr><td><a href="/turing/docs/routines/">Routines</a></td><td>The <code dir="auto">scheduleAgent</code> node and async jobs</td></tr><tr><td><a href="/turing/docs/tool-calling/">Tool Calling</a></td><td>The tools a <code dir="auto">functionCall</code> node invokes</td></tr><tr><td><a href="/turing/docs/chat-analytics/">Chat Analytics</a></td><td>Funnel, replay, and the slot-audit timeline</td></tr><tr><td><a href="/turing/docs/ai-agents/">AI Agents</a></td><td>The agent a flow is attached to</td></tr><tr><td>State accumulates indefinitely</td><td>TTL housekeeping isn’t running</td></tr></tbody></table>
+<hr>
+<div class="sl-heading-wrapper level-h2"><h2 id="related-pages-1">Related Pages</h2><a class="sl-anchor-link" href="#related-pages-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Related Pages”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Page</th><th>Description</th></tr></thead><tbody><tr><td><a href="/turing/docs/ai-agents/">AI Agents</a></td><td>The agents that flows are attached to</td></tr><tr><td><a href="/turing/docs/custom-tools/">Custom Tools</a></td><td>Build your own Tool nodes with Groovy + Vibe Coding</td></tr><tr><td><a href="/turing/docs/tool-calling/">Tool Calling</a></td><td>Native tools available as Tool nodes</td></tr><tr><td><a href="/turing/docs/mcp-servers/">MCP Servers</a></td><td>External tools available as Tool nodes</td></tr><tr><td><a href="/turing/docs/intent/">Intent</a></td><td>The lightweight cousin: prompt suggestions for the chat home screen</td></tr><tr><td><a href="/turing/docs/chat-analytics/">Chat Analytics</a></td><td>Where flow outcomes show up</td></tr></tbody></table>
+<hr></div><footer class="sl-flex astro-cla57s4p"><div class="meta sl-flex astro-cla57s4p"><p>Last updated: <time datetime="2026-10-29T11:49:33.000Z">Oct 29, 2026</time></p></div><div class="pagination-links print:hidden astro-euyh6ymx" dir="ltr"><a href="/turing/docs/agent-workspace/" rel="prev" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-euyh6ymx">Previous<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Agent Workspace</span></span></a><a href="/turing/docs/human-in-the-loop/" rel="next" class="astro-euyh6ymx"><svg aria-hidden="true" class="astro-euyh6ymx astro-nwdigvql" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-euyh6ymx">Next<br class="astro-euyh6ymx"><span class="link-title astro-euyh6ymx">Human-in-the-Loop</span></span></a></div></footer><footer class="turing-footer not-content astro-jo6i4kqk"><div class="turing-footer-grid astro-jo6i4kqk"><div class="astro-jo6i4kqk"><span class="turing-footer-brand astro-jo6i4kqk"><img src="/turing/docs/_astro/turing-mark.BKn8NxVQ.svg" alt="" width="28" height="28" class="astro-jo6i4kqk">Viglet Turing</span><p class="astro-jo6i4kqk">Open-source Enterprise Search Intelligence Platform: agents, tools, skills, MCP and RAG for your content.</p></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Product</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/#features" class="astro-jo6i4kqk">Capabilities</a></li><li class="astro-jo6i4kqk"><a href="/turing/compare/" class="astro-jo6i4kqk">Compare</a></li><li class="astro-jo6i4kqk"><a href="/turing/migrate/" class="astro-jo6i4kqk">Migrate</a></li><li class="astro-jo6i4kqk"><a href="/turing/aem-search/" class="astro-jo6i4kqk">AEM search</a></li><li class="astro-jo6i4kqk"><a href="/turing/security/" class="astro-jo6i4kqk">Security</a></li><li class="astro-jo6i4kqk"><a href="/turing/#marketplace" class="astro-jo6i4kqk">Marketplace</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Developers</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="/turing/react-sdk/" class="astro-jo6i4kqk">React SDK</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-react-sdk" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">npm</a></li><li class="astro-jo6i4kqk"><a href="https://www.npmjs.com/package/@viglet/turing-cli" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">CLI</a></li></ul></div><div class="astro-jo6i4kqk"><h3 class="astro-jo6i4kqk">Open &amp; transparent</h3><ul class="astro-jo6i4kqk"><li class="astro-jo6i4kqk"><a href="https://github.com/openviglet/turing/blob/HEAD/docs/ROADMAP.md" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Roadmap</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org/turing/release-notes/" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">Changelog</a></li><li class="astro-jo6i4kqk"><a href="https://www.viglet.org" target="_blank" rel="noreferrer" class="astro-jo6i4kqk">viglet.org</a></li></ul></div></div><div class="turing-footer-legal astro-jo6i4kqk">© 2026 Viglet Turing · Apache 2.0 License</div></footer></div></div></main></div></div></div></div></body></html>
