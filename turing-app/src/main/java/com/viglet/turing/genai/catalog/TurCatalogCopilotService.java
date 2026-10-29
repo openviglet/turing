@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.api.exception.TurUnsupportedEngineException;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
+import com.viglet.turing.genai.catalog.planning.TurCopilotQueryBodies;
 import com.viglet.turing.genai.catalog.planning.TurCopilotQueryPlan;
 import com.viglet.turing.genai.catalog.planning.TurCopilotQueryPlanner;
 import com.viglet.turing.genai.catalog.planning.TurCopilotQueryPlanner.PlanRequest;
@@ -352,6 +353,17 @@ public class TurCatalogCopilotService {
      * citations + per-result context blocks. Never throws — degrades fail-open.
      */
     public Retrieval retrieve(String siteName, String locale, String query) {
+        return retrieve(siteName, locale, query, null);
+    }
+
+    /**
+     * T1171 — {@link #retrieve(String, String, String)} with {@code filter} (a facet
+     * value the caller already grounded) applied beside the planned query. The
+     * filter narrows, never empties: when words and filter together find nothing the
+     * words run alone, and when the words find nothing either the filter runs alone.
+     * A filtered retrieval does not fan out.
+     */
+    public Retrieval retrieve(String siteName, String locale, String query, TurDslQuery filter) {
         Optional<TurSNSite> siteOpt = turSNSiteRepository.findByNameIgnoreCase(siteName);
         if (siteOpt.isEmpty()) {
             return Retrieval.notFound();
@@ -370,7 +382,7 @@ public class TurCatalogCopilotService {
         // T842 / §LXII.11 — multi-query fan-out: a comparative / multi-hop question is
         // decomposed into sub-queries whose recall is RRF-unioned before rerank. Off
         // by default, never for DETERMINISTIC sites, and fail-open to single-pass.
-        if (copilotProperty.getPlanning() != null && copilotProperty.getPlanning().isFanOut()
+        if (filter == null && copilotProperty.getPlanning() != null && copilotProperty.getPlanning().isFanOut()
                 && planner.strategy() != com.viglet.turing.persistence.model.sn.genai.TurCopilotPlanningStrategy.DETERMINISTIC) {
             Optional<Retrieval> fanned =
                     fanOutRetrieve(site, siteName, searchLocale, query, schema, resolution);
@@ -400,6 +412,24 @@ public class TurCatalogCopilotService {
         }
 
         TurDslQueryRequest request = plan.request();
+        if (filter != null) {
+            TurDslQueryRequest filtered = TurCopilotQueryBodies.withFilter(request, filter);
+            Optional<TurDslSearchResponse> filteredResponse =
+                    dslSearchService.search(siteName, searchLocale, filtered);
+            if (totalHitsOf(filteredResponse) == 0 && totalHitsOf(responseOpt) == 0) {
+                filtered = TurCopilotQueryBodies.withFilter(TurCopilotQueryBodies.of(
+                        new TurDslQuery.MatchAll(), request.sort(), request.size() != null
+                                ? request.size() : MAX_RESULTS), filter);
+                filteredResponse = dslSearchService.search(siteName, searchLocale, filtered);
+            }
+            if (totalHitsOf(filteredResponse) > 0) {
+                responseOpt = filteredResponse;
+                request = filtered;
+            } else {
+                log.info("[CatalogCopilot] site '{}' filter {} found nothing; searching the words alone",
+                        siteName, filter);
+            }
+        }
         if (responseOpt.isEmpty() || responseOpt.get().hits() == null
                 || responseOpt.get().hits().hits() == null) {
             log.info("[CatalogCopilot] site '{}' FILTERED returned NO hits (filters: {})",

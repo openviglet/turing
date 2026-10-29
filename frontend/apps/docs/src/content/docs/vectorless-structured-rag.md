@@ -381,7 +381,10 @@ the needs the catalog had nothing for in `unfilled`, and up to two `guides`.
 - **Needs are worded in the catalog's own terms.** The call that names the needs is
   shown the most common values of the site's facet fields (category, type and the
   like), so a need searches for `fleece` when that is what the catalog calls it,
-  rather than a phrase the model made up.
+  rather than a phrase the model made up. When one of those values names the need
+  outright (a `Waterproof jackets` category for a rain shell), the need searches
+  inside it: its words run with that value as a filter. A value the site does not
+  have is ignored, and when the filter finds nothing the words run on their own.
 - **Each product says why it fits from its own attributes** (`reason`, e.g.
   `weight: 1.2 kg; capacity: 2 people`), the ones matching the need first.
 - **Availability.** Name the field that says whether a product can be bought in

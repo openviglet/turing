@@ -95,6 +95,16 @@ public final class TurCopilotQueryBodies {
         return copyWith(r, query, size, r.sort());
     }
 
+    /**
+     * T1171 — {@code r} with its query kept as the scoring part and {@code filter}
+     * added beside it as a non-scoring clause; a null query keeps only the filter.
+     */
+    public static TurDslQueryRequest withFilter(TurDslQueryRequest r, TurDslQuery filter) {
+        List<TurDslQuery> must = r.query() != null ? List.of(r.query()) : List.of();
+        return copyWith(r, new TurDslQuery.Bool(must, List.of(), List.of(), List.of(filter), null),
+                r.size(), r.sort());
+    }
+
     /** Field-for-field copy of {@code r} with the query, size and sort replaced. */
     private static TurDslQueryRequest copyWith(TurDslQueryRequest r, TurDslQuery query, Integer size,
             List<Object> sort) {

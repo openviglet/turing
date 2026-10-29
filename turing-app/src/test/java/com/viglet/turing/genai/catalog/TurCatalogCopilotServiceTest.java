@@ -47,6 +47,7 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
@@ -400,6 +401,46 @@ class TurCatalogCopilotServiceTest {
         assertThat(executed.sort()).isNotNull().hasSize(1);
         assertThat(executed.sort().getFirst()).isEqualTo(Map.of("pricing_inputPer1M", "asc"));
         assertThat(executed.size()).isNotNull();
+    }
+
+    /** T1171 — a grounded filter narrows the planned query and never empties it. */
+    @Test
+    void aFilterNarrowsTheWordsAndFallsBackWhenItFindsNothing() {
+        TurSNSite site = new TurSNSite();
+        site.setName("catalog");
+        when(turSNSiteRepository.findByNameIgnoreCase("catalog")).thenReturn(Optional.of(site));
+        lenient().when(parser.isAvailable()).thenReturn(false);
+        TurDslQuery.Term filter = new TurDslQuery.Term("modality", "online");
+
+        // Words and filter together match: the filtered query is the one kept.
+        ArgumentCaptor<TurDslQueryRequest> sent = ArgumentCaptor.forClass(TurDslQueryRequest.class);
+        when(dslSearchService.search(eq("catalog"), eq("en"), sent.capture()))
+                .thenReturn(Optional.of(twoHitResponse()));
+        TurCatalogCopilotService.Retrieval narrowed = service.retrieve("catalog", "en", "data masters", filter);
+        assertThat(narrowed.totalHits()).isEqualTo(2L);
+        TurDslQuery.Bool bool = (TurDslQuery.Bool) sent.getValue().query();
+        assertThat(bool.filter()).containsExactly(filter);
+        assertThat(bool.must()).hasSize(1);
+
+        // Together they match nothing but the words do: the words run alone.
+        when(dslSearchService.search(eq("catalog"), eq("en"), any(TurDslQueryRequest.class)))
+                .thenAnswer(inv -> isFiltered(inv.getArgument(2)) ? Optional.empty()
+                        : Optional.of(twoHitResponse()));
+        assertThat(service.retrieve("catalog", "en", "data masters", filter).totalHits()).isEqualTo(2L);
+
+        // The words match nothing either: the filter runs alone, over match_all.
+        when(dslSearchService.search(eq("catalog"), eq("en"), any(TurDslQueryRequest.class)))
+                .thenAnswer(inv -> {
+                    TurDslQueryRequest r = inv.getArgument(2);
+                    return isFiltered(r) && ((TurDslQuery.Bool) r.query()).must().getFirst()
+                            instanceof TurDslQuery.MatchAll ? Optional.of(twoHitResponse()) : Optional.empty();
+                });
+        assertThat(service.retrieve("catalog", "en", "data masters", filter).totalHits()).isEqualTo(2L);
+    }
+
+    private static boolean isFiltered(TurDslQueryRequest r) {
+        return r.query() instanceof TurDslQuery.Bool b && b.filter() != null && !b.filter().isEmpty()
+                && b.filter().getFirst() instanceof TurDslQuery.Term t && "modality".equals(t.field());
     }
 
     @Test

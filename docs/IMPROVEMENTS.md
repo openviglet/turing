@@ -2285,36 +2285,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.8 Kit gaps retrieve by the facet value they name (T1171)
-
-**Where it happened.** Dumont D201 (Build my kit), SN site `Demo` (en_US, Lucene, image
-`sha-971cf94703ec`, which carries T1169).
-
-**Request.** `POST /api/sn/Demo/copilot/kit` with plan "Two days crossing the mountains
-in July, first time", `guideTypes: ["post"]`.
-
-**What came back.** One stage and four unfilled gaps (`Weather protection`, `Light
-travel gear`, `Reliable footwear`, `Rest accommodation`) although the catalog sells rain
-jackets, boots and tents. The one stage has the query `product_cat: Fleece and
-midlayers`.
-
-**Why.** `gapPrompt` lists the vocabulary as `- product_cat: Accessories, Waterproof
-jackets, …` and the model copies that layout into the query. The query then goes through
-`TurCatalogCopilotService.retrieve`, whose planner runs the LLM facet parse (T1085
-grounding) over the site's enabled fields; check the T823 plan log first for whether it
-grounded `product_cat` or fell back to free text. Plain `Waterproof jackets` finds 0
-(T1170 is part of it).
-
-**What Turing should do.** Drop the `field: values` layout from the prompt and say the
-query part is plain words. Accept an optional fourth column, `GAP: name | words | why |
-field=value`, honoured only when the field is in the kit's vocabulary and the value one
-of its values (case-insensitive); run it as a filter beside the words through a
-`retrieve` overload, falling back to words alone when the filter finds nothing.
-Three-column replies still parse; the API is unchanged.
-
-**Spec.** The plan above stages products for its shelter, shell and footwear needs on a
-seeded catalog; an unknown field or value is ignored; an empty filter falls back.
-
 ### CLVIII.9 Guide-typed documents never fill a kit stage (T1172)
 
 **Where it happened.** Dumont D201 (Build my kit on the WordPress demo store), live on

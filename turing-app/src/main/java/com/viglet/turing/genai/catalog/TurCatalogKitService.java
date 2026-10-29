@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.system.TurDefaultChatModelResolver;
 
@@ -142,8 +143,16 @@ public class TurCatalogKitService {
         }
     }
 
-    /** A gap as the model named it. */
-    record Gap(String name, String query, String reason) {
+    /**
+     * A gap as the model named it. T1171 — {@code filterField} / {@code filterValue}
+     * name one of the site's facet values the need maps to, in the site's own
+     * spelling, or are both {@code null}.
+     */
+    record Gap(String name, String query, String reason, String filterField, String filterValue) {
+
+        Gap(String name, String query, String reason) {
+            this(name, query, reason, null, null);
+        }
     }
 
     /** What the gap-naming call returned, parsed. */
@@ -174,8 +183,9 @@ public class TurCatalogKitService {
 
         Plan named;
         try {
+            Map<String, List<String>> vocabulary = vocabulary(siteName, locale);
             named = parse(callModel(chatModel.get(), siteName,
-                    gapPrompt(siteName, plan, gapLimit, vocabulary(siteName, locale))), gapLimit);
+                    gapPrompt(siteName, plan, gapLimit, vocabulary)), gapLimit, vocabulary);
         } catch (RuntimeException e) {
             log.warn("[CatalogKit] gap naming failed for site '{}': {}", siteName, e.getMessage());
             return Result.error("Could not name the needs of the plan: " + e.getMessage());
@@ -188,7 +198,11 @@ public class TurCatalogKitService {
         List<String> unfilled = new ArrayList<>();
         Set<String> staged = new HashSet<>();
         for (Gap gap : named.gaps()) {
-            TurCatalogCopilotService.Retrieval retrieval = copilotService.retrieve(siteName, locale, gap.query());
+            // T1171 — a gap that names a facet value searches its words inside it.
+            TurCatalogCopilotService.Retrieval retrieval = gap.filterField() == null
+                    ? copilotService.retrieve(siteName, locale, gap.query())
+                    : copilotService.retrieve(siteName, locale, gap.query(),
+                            new TurDslQuery.Term(gap.filterField(), gap.filterValue()));
             if (!retrieval.siteFound()) {
                 return Result.error("Catalog site not found: " + siteName);
             }
@@ -321,19 +335,26 @@ public class TurCatalogKitService {
         }
     }
 
+    /**
+     * T1171 — the facet values are listed as {@code field=value} choices for an
+     * optional fourth part, not as a {@code field: values} block: the model copied
+     * that layout into its queries ({@code product_cat: Fleece and midlayers}), which
+     * no field matches as text.
+     */
     static String gapPrompt(String siteName, String plan, int gapLimit, Map<String, List<String>> vocabulary) {
         StringBuilder words = new StringBuilder();
         if (vocabulary != null) {
             vocabulary.entrySet().stream()
                     .filter(e -> e.getValue() != null && !e.getValue().isEmpty())
                     .limit(VOCABULARY_FIELDS)
-                    .forEach(e -> words.append("- ").append(e.getKey()).append(": ")
-                            .append(String.join(", ", e.getValue())).append('\n'));
+                    .forEach(e -> e.getValue().forEach(v -> words.append("- ").append(e.getKey())
+                            .append('=').append(v).append('\n')));
         }
         String catalogWords = words.isEmpty() ? "" : """
 
-                The catalog's own words, by field. Word each search query with them \
-                where they fit:
+                The catalog's own values. Word each search query with them where they \
+                fit, and when one names what the need is, add it as a fourth part, \
+                copied exactly as field=value:
                 %s""".formatted(words);
         return """
                 A shopper on the "%s" catalog describes a plan. Name the needs the plan \
@@ -342,25 +363,60 @@ public class TurCatalogKitService {
                 %s
                 Reply in plain lines only, no other text:
                 SUMMARY: one sentence restating the plan
-                GAP: short need name | search query for the catalog | why the plan needs it
+                GAP: short need name | search query for the catalog | why the plan needs it%s
+                The search query is plain words a shopper would type, never a field name.
 
-                PLAN: %s""".formatted(siteName, gapLimit, catalogWords, plan);
+                PLAN: %s""".formatted(siteName, gapLimit, catalogWords,
+                words.isEmpty() ? "" : " | field=value (optional)", plan);
     }
 
-    /** {@code name | query | why}; a missing query is the name, a nameless gap is {@code null}. */
-    private static Gap parseGap(String text) {
-        String[] parts = text.split("\\|", 3);
+    /**
+     * {@code name | query | why | field=value}; a missing query is the name, a
+     * nameless gap is {@code null}. T1171 — the filter is kept only when the field is
+     * in {@code vocabulary} and the value one of its values (case-insensitive), in
+     * the vocabulary's spelling; anything else is dropped and the gap searches its
+     * words alone.
+     */
+    private static Gap parseGap(String text, Map<String, List<String>> vocabulary) {
+        String[] parts = text.split("\\|", 4);
         String name = parts[0].strip();
         if (name.isEmpty()) {
             return null;
         }
         String query = parts.length > 1 && !parts[1].isBlank() ? parts[1].strip() : name;
         String reason = parts.length > 2 && !parts[2].isBlank() ? parts[2].strip() : null;
-        return new Gap(name, query, reason);
+        String[] filter = parts.length > 3 ? filter(parts[3], vocabulary) : null;
+        return filter == null ? new Gap(name, query, reason)
+                : new Gap(name, query, reason, filter[0], filter[1]);
+    }
+
+    /** {@code field=value} resolved against the vocabulary, as {@code [field, value]}, or {@code null}. */
+    private static String[] filter(String text, Map<String, List<String>> vocabulary) {
+        int eq = text.indexOf('=');
+        if (eq < 0 || vocabulary == null) {
+            return null;
+        }
+        String field = text.substring(0, eq).strip();
+        String value = text.substring(eq + 1).strip();
+        for (Map.Entry<String, List<String>> entry : vocabulary.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(field) && entry.getValue() != null) {
+                for (String known : entry.getValue()) {
+                    if (known.equalsIgnoreCase(value)) {
+                        return new String[] { entry.getKey(), known };
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /** {@link #parse(String, int, Map)} with no vocabulary: no gap keeps a filter. */
+    static Plan parse(String raw, int gapLimit) {
+        return parse(raw, gapLimit, Map.of());
     }
 
     /** Lenient: unknown lines are ignored, a gap without a query searches its name. */
-    static Plan parse(String raw, int gapLimit) {
+    static Plan parse(String raw, int gapLimit, Map<String, List<String>> vocabulary) {
         if (raw == null) {
             return new Plan(null, List.of());
         }
@@ -373,7 +429,7 @@ public class TurCatalogKitService {
             if (upper.startsWith("SUMMARY:") && summary == null) {
                 summary = text.substring("SUMMARY:".length()).strip();
             } else if (upper.startsWith("GAP:") && gaps.size() < gapLimit) {
-                Gap gap = parseGap(text.substring("GAP:".length()));
+                Gap gap = parseGap(text.substring("GAP:".length()), vocabulary);
                 if (gap != null && seen.add(gap.name().toLowerCase(java.util.Locale.ROOT))) {
                     gaps.add(gap);
                 }

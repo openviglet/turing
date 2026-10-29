@@ -28,6 +28,7 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.system.TurDefaultChatModelResolver;
 
@@ -66,11 +67,52 @@ class TurCatalogKitServiceTest {
         vocabulary.put("empty", List.of());
         String prompt = TurCatalogKitService.gapPrompt("outdoor", "a rainy weekend", 3, vocabulary);
 
-        assertTrue(prompt.contains("- category: Jackets, Fleece"));
+        assertTrue(prompt.contains("- category=Jackets\n- category=Fleece"));
+        assertFalse(prompt.contains("category: Jackets"), "T1171: a field: values block gets copied into queries");
+        assertTrue(prompt.contains("never a field name"));
+        assertTrue(prompt.contains("| field=value (optional)"));
         assertFalse(prompt.contains("empty"));
         assertTrue(prompt.contains("PLAN: a rainy weekend"));
-        assertFalse(TurCatalogKitService.gapPrompt("outdoor", "a trip", 3, Map.of())
-                .contains("catalog's own words"));
+        String bare = TurCatalogKitService.gapPrompt("outdoor", "a trip", 3, Map.of());
+        assertFalse(bare.contains("catalog's own values"));
+        assertFalse(bare.contains("field=value"));
+    }
+
+    /** T1171 — a fourth part naming a known facet value becomes the gap's filter. */
+    @Test
+    void aGapsFieldValueIsKeptOnlyWhenTheVocabularyHasIt() {
+        Map<String, List<String>> vocabulary = Map.of("product_cat", List.of("Waterproof jackets", "Tents"));
+        TurCatalogKitService.Plan plan = TurCatalogKitService.parse("""
+                GAP: Shell | rain jacket | wet July | PRODUCT_CAT = waterproof JACKETS
+                GAP: Shelter | tent | nights out | product_cat=Hammocks
+                GAP: Feet | hiking boots | rocky trail | brand=Acme
+                GAP: Light | headlamp | early starts""", 5, vocabulary);
+
+        TurCatalogKitService.Gap shell = plan.gaps().get(0);
+        assertEquals("product_cat", shell.filterField());
+        assertEquals("Waterproof jackets", shell.filterValue(), "the site's own spelling");
+        assertNull(plan.gaps().get(1).filterField(), "an unknown value is ignored");
+        assertNull(plan.gaps().get(2).filterField(), "an unknown field is ignored");
+        assertNull(plan.gaps().get(3).filterField(), "three columns still parse");
+        assertEquals("headlamp", plan.gaps().get(3).query());
+    }
+
+    @Test
+    void aFilteredGapRetrievesInsideItsFacetValue() {
+        modelReplies("""
+                GAP: Shell | rain jacket | wet July | product_cat=Waterproof jackets
+                GAP: Light | headlamp | early starts""");
+        when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
+                .thenReturn(Map.of("product_cat", List.of("Waterproof jackets")));
+        when(copilotService.retrieve("outdoor", "en", "rain jacket",
+                new TurDslQuery.Term("product_cat", "Waterproof jackets"))).thenReturn(
+                        new TurCatalogCopilotService.Retrieval(List.of(product("j1")), List.of(), 1, null, true));
+        retrievalReturns("headlamp", product("h1"));
+
+        TurCatalogKitService.Result result = service.plan("outdoor", "en", "two days in the mountains", null, null);
+
+        assertEquals(List.of("Shell", "Light"), result.stages().stream().map(TurCatalogKitService.Stage::gap).toList());
+        verify(copilotService, never()).retrieve("outdoor", "en", "rain jacket");
     }
 
     @Test
@@ -84,7 +126,7 @@ class TurCatalogKitServiceTest {
 
         ArgumentCaptor<Prompt> sent = ArgumentCaptor.forClass(Prompt.class);
         verify(chatModel).call(sent.capture());
-        assertTrue(sent.getValue().getContents().contains("- category: Jackets"));
+        assertTrue(sent.getValue().getContents().contains("- category=Jackets"));
 
         when(nlFilterService.facetVocabulary(anyString(), anyString(), org.mockito.ArgumentMatchers.anyInt()))
                 .thenThrow(new IllegalStateException("engine down"));
