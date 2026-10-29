@@ -1,11 +1,13 @@
 package com.viglet.turing.sn.dsl;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.lucene.TurLuceneFoldingAnalyzer;
 import com.viglet.turing.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.DoublePoint;
@@ -100,7 +102,10 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
                         int size = request.size() != null ? request.size() : 10;
                         int hitsNeeded = Math.max(1, from + size);
 
-                        Query luceneQuery = buildLuceneQuery(dslQuery, request, fieldTypes);
+                        // T1170 — text analyzed as the site's locale indexed it (folded and
+                        // stemmed), so a copilot query for "jackets" finds "jacket".
+                        Query luceneQuery = buildLuceneQuery(dslQuery, request, fieldTypes,
+                                new TurLuceneFoldingAnalyzer(locale));
 
                         Sort sort = buildSort(request.sort(), fieldTypes);
 
@@ -130,8 +135,8 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
      * post-filter clauses from {@code request}.
      */
     private Query buildLuceneQuery(TurDslQuery dslQuery, TurDslQueryRequest request,
-            Map<String, TurSEFieldType> fieldTypes) {
-        Query luceneQuery = translateQuery(dslQuery, fieldTypes);
+            Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
+        Query luceneQuery = translateQuery(dslQuery, fieldTypes, analyzer);
 
         // Min score filter
         if (request.minScore() != null) {
@@ -145,7 +150,7 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         if (request.postFilter() != null) {
             luceneQuery = new BooleanQuery.Builder()
                     .add(luceneQuery, BooleanClause.Occur.MUST)
-                    .add(translateQuery(request.postFilter(), fieldTypes),
+                    .add(translateQuery(request.postFilter(), fieldTypes, analyzer),
                             BooleanClause.Occur.FILTER)
                     .build();
         }
@@ -190,20 +195,25 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return translateQuery(query, Map.of());
     }
 
+    /** Translates with no site locale: text is folded, never stemmed. */
     Query translateQuery(TurDslQuery query, Map<String, TurSEFieldType> fieldTypes) {
+        return translateQuery(query, fieldTypes, new TurLuceneFoldingAnalyzer());
+    }
+
+    Query translateQuery(TurDslQuery query, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         return switch (query) {
             case TurDslQuery.MatchAll() -> MatchAllDocsQuery.INSTANCE;
 
-            case TurDslQuery.Match q -> translateMatch(q, fieldTypes);
+            case TurDslQuery.Match q -> translateMatch(q, fieldTypes, analyzer);
 
-            case TurDslQuery.MultiMatch q -> translateMultiMatch(q, fieldTypes);
+            case TurDslQuery.MultiMatch q -> translateMultiMatch(q, fieldTypes, analyzer);
 
             case TurDslQuery.Term(var field, var value) ->
                     translateTerm(field, value, fieldTypes.get(field));
 
-            case TurDslQuery.Terms q -> translateTerms(q, fieldTypes);
+            case TurDslQuery.Terms q -> translateTerms(q, fieldTypes, analyzer);
 
-            case TurDslQuery.Bool q -> translateBool(q, fieldTypes);
+            case TurDslQuery.Bool q -> translateBool(q, fieldTypes, analyzer);
 
             case TurDslQuery.Range(var field, var gte, var gt, var lte, var lt) ->
                     buildRangeQuery(field, gte, gt, lte, lt, fieldTypes.get(field));
@@ -216,55 +226,55 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
 
             case TurDslQuery.Exists(var field) -> new FieldExistsQuery(field);
 
-            case TurDslQuery.QueryString q -> translateQueryString(q, fieldTypes);
+            case TurDslQuery.QueryString q -> translateQueryString(q, fieldTypes, analyzer);
 
             case TurDslQuery.Fuzzy q -> translateFuzzy(q);
 
             case TurDslQuery.Ids q -> translateIds(q);
 
-            case TurDslQuery.MatchPhrase q -> translateMatchPhrase(q, fieldTypes);
+            case TurDslQuery.MatchPhrase q -> translateMatchPhrase(q, fieldTypes, analyzer);
 
-            case TurDslQuery.MatchPhrasePrefix q -> translateMatchPhrasePrefix(q);
+            case TurDslQuery.MatchPhrasePrefix q -> translateMatchPhrasePrefix(q, analyzer);
 
-            case TurDslQuery.SimpleQueryString q -> translateSimpleQueryString(q, fieldTypes);
+            case TurDslQuery.SimpleQueryString q -> translateSimpleQueryString(q, fieldTypes, analyzer);
 
             case TurDslQuery.Regexp(var field, var value, var flags) ->
                     new RegexpQuery(new Term(field, value));
 
-            case TurDslQuery.ConstantScore q -> translateConstantScore(q, fieldTypes);
+            case TurDslQuery.ConstantScore q -> translateConstantScore(q, fieldTypes, analyzer);
 
-            case TurDslQuery.DisMax q -> translateDisMax(q, fieldTypes);
+            case TurDslQuery.DisMax q -> translateDisMax(q, fieldTypes, analyzer);
 
-            case TurDslQuery.Boosting q -> translateBoosting(q, fieldTypes);
+            case TurDslQuery.Boosting q -> translateBoosting(q, fieldTypes, analyzer);
 
             case TurDslQuery.Nested(var path, var nestedQuery, var scoreMode) ->
                     // Lucene: no native nested — translate inner query directly
-                    translateQuery(nestedQuery, fieldTypes);
+                    translateQuery(nestedQuery, fieldTypes, analyzer);
 
-            case TurDslQuery.FunctionScore q -> translateFunctionScore(q, fieldTypes);
+            case TurDslQuery.FunctionScore q -> translateFunctionScore(q, fieldTypes, analyzer);
 
             case TurDslQuery.ScriptScore(var innerQuery, var script, var ms) ->
                     // Lucene: script scoring not supported — fallback to inner query
-                    translateQuery(innerQuery, fieldTypes);
+                    translateQuery(innerQuery, fieldTypes, analyzer);
 
             case TurDslQuery.Knn q -> translateKnn(q);
 
-            case TurDslQuery.MoreLikeThis q -> translateMoreLikeThis(q);
+            case TurDslQuery.MoreLikeThis q -> translateMoreLikeThis(q, analyzer);
 
-            case TurDslQuery.CombinedFields q -> translateCombinedFields(q, fieldTypes);
+            case TurDslQuery.CombinedFields q -> translateCombinedFields(q, fieldTypes, analyzer);
 
-            case TurDslQuery.MatchBoolPrefix q -> translateMatchBoolPrefix(q, fieldTypes);
+            case TurDslQuery.MatchBoolPrefix q -> translateMatchBoolPrefix(q, fieldTypes, analyzer);
 
             // Less-common query families (pinned / geo / span / join / feature / wrapper)
             // live in a sibling switch to keep each below the case-count limit.
-            default -> translateQueryExtended(query, fieldTypes);
+            default -> translateQueryExtended(query, fieldTypes, analyzer);
         };
     }
 
     /** Second-tier dispatch for the rarer query families — see {@link #translateQuery}. */
-    private Query translateQueryExtended(TurDslQuery query, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateQueryExtended(TurDslQuery query, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         return switch (query) {
-            case TurDslQuery.Pinned q -> translatePinned(q, fieldTypes);
+            case TurDslQuery.Pinned q -> translatePinned(q, fieldTypes, analyzer);
 
             case TurDslQuery.GeoDistance(var field, var distance, var location) ->
                     // Lucene: LatLonPoint.newDistanceQuery requires LatLonPoint indexed field
@@ -278,16 +288,16 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
 
             // --- Low-priority queries (translate inner query or fallback) ---
             case TurDslQuery.HasChild(var type, var childQuery, var sm, var minC, var maxC) ->
-                    translateQuery(childQuery, fieldTypes);
+                    translateQuery(childQuery, fieldTypes, analyzer);
             case TurDslQuery.HasParent(var parentType, var parentQuery, var score) ->
-                    translateQuery(parentQuery, fieldTypes);
-            case TurDslQuery.Intervals q -> translateIntervals(q);
+                    translateQuery(parentQuery, fieldTypes, analyzer);
+            case TurDslQuery.Intervals q -> translateIntervals(q, analyzer);
             case TurDslQuery.SpanTerm(var field, var value) ->
                     new TermQuery(new Term(field, value));
-            case TurDslQuery.SpanNear q -> translateSpanNear(q, fieldTypes);
-            case TurDslQuery.SpanOr q -> translateSpanOr(q, fieldTypes);
-            case TurDslQuery.SpanNot q -> translateSpanNot(q, fieldTypes);
-            case TurDslQuery.SpanFirst(var match, var end) -> translateQuery(match, fieldTypes);
+            case TurDslQuery.SpanNear q -> translateSpanNear(q, fieldTypes, analyzer);
+            case TurDslQuery.SpanOr q -> translateSpanOr(q, fieldTypes, analyzer);
+            case TurDslQuery.SpanNot q -> translateSpanNot(q, fieldTypes, analyzer);
+            case TurDslQuery.SpanFirst(var match, var end) -> translateQuery(match, fieldTypes, analyzer);
             case TurDslQuery.RankFeature(var field, var boost, var s1, var s2, var s3) ->
                     new FieldExistsQuery(field);
             case TurDslQuery.DistanceFeature(var field, var origin, var pivot) ->
@@ -325,15 +335,15 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
     }
 
     /** A parser over one field, or over several when {@code _text_} expanded. */
-    private static QueryParser parserFor(String[] fields) {
+    private static QueryParser parserFor(String[] fields, Analyzer analyzer) {
         return fields.length == 1
-                ? new QueryParser(fields[0], new StandardAnalyzer())
-                : new MultiFieldQueryParser(fields, new StandardAnalyzer());
+                ? new QueryParser(fields[0], analyzer)
+                : new MultiFieldQueryParser(fields, analyzer);
     }
 
-    private Query translateMatch(TurDslQuery.Match q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateMatch(TurDslQuery.Match q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         try {
-            QueryParser parser = parserFor(searchFields(q.field(), fieldTypes));
+            QueryParser parser = parserFor(searchFields(q.field(), fieldTypes), analyzer);
             if ("and".equalsIgnoreCase(q.operator())) {
                 parser.setDefaultOperator(QueryParser.Operator.AND);
             }
@@ -343,17 +353,17 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         }
     }
 
-    private Query translateMultiMatch(TurDslQuery.MultiMatch q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateMultiMatch(TurDslQuery.MultiMatch q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         if (q.fields() == null || q.fields().isEmpty()) {
             try {
-                return parserFor(searchFields(TEXT, fieldTypes)).parse(q.query());
+                return parserFor(searchFields(TEXT, fieldTypes), analyzer).parse(q.query());
             } catch (Exception e) {
                 return MatchAllDocsQuery.INSTANCE;
             }
         }
         try {
             MultiFieldQueryParser parser = new MultiFieldQueryParser(
-                    q.fields().toArray(String[]::new), new StandardAnalyzer());
+                    q.fields().toArray(String[]::new), analyzer);
             parser.setDefaultOperator(QueryParser.Operator.OR);
             return parser.parse(q.query());
         } catch (Exception e) {
@@ -361,7 +371,7 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         }
     }
 
-    private Query translateTerms(TurDslQuery.Terms q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateTerms(TurDslQuery.Terms q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         TurSEFieldType type = fieldTypes.get(q.field());
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
         for (Object v : q.values()) {
@@ -400,20 +410,20 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
                 RegExp.CASE_INSENSITIVE, Operations.DEFAULT_DETERMINIZE_WORK_LIMIT);
     }
 
-    private Query translateBool(TurDslQuery.Bool q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateBool(TurDslQuery.Bool q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        for (var m : q.must()) builder.add(translateQuery(m, fieldTypes), BooleanClause.Occur.MUST);
-        for (var s : q.should()) builder.add(translateQuery(s, fieldTypes), BooleanClause.Occur.SHOULD);
-        for (var mn : q.mustNot()) builder.add(translateQuery(mn, fieldTypes), BooleanClause.Occur.MUST_NOT);
-        for (var f : q.filter()) builder.add(translateQuery(f, fieldTypes), BooleanClause.Occur.FILTER);
+        for (var m : q.must()) builder.add(translateQuery(m, fieldTypes, analyzer), BooleanClause.Occur.MUST);
+        for (var s : q.should()) builder.add(translateQuery(s, fieldTypes, analyzer), BooleanClause.Occur.SHOULD);
+        for (var mn : q.mustNot()) builder.add(translateQuery(mn, fieldTypes, analyzer), BooleanClause.Occur.MUST_NOT);
+        for (var f : q.filter()) builder.add(translateQuery(f, fieldTypes, analyzer), BooleanClause.Occur.FILTER);
         if (q.minimumShouldMatch() != null) builder.setMinimumNumberShouldMatch(q.minimumShouldMatch());
         return builder.build();
     }
 
-    private Query translateQueryString(TurDslQuery.QueryString q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateQueryString(TurDslQuery.QueryString q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         try {
             String df = q.defaultField() != null ? q.defaultField() : TEXT;
-            QueryParser parser = parserFor(searchFields(df, fieldTypes));
+            QueryParser parser = parserFor(searchFields(df, fieldTypes), analyzer);
             if ("AND".equalsIgnoreCase(q.defaultOperator())) {
                 parser.setDefaultOperator(QueryParser.Operator.AND);
             }
@@ -436,18 +446,18 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return builder.build();
     }
 
-    private Query translateMatchPhrase(TurDslQuery.MatchPhrase q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateMatchPhrase(TurDslQuery.MatchPhrase q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         try {
-            QueryParser parser = parserFor(searchFields(q.field(), fieldTypes));
+            QueryParser parser = parserFor(searchFields(q.field(), fieldTypes), analyzer);
             return parser.parse(S.formatted(q.query()));
         } catch (Exception e) {
             return new TermQuery(new Term(q.field(), q.query().toLowerCase()));
         }
     }
 
-    private Query translateMatchPhrasePrefix(TurDslQuery.MatchPhrasePrefix q) {
+    private Query translateMatchPhrasePrefix(TurDslQuery.MatchPhrasePrefix q, Analyzer analyzer) {
         try {
-            QueryParser parser = new QueryParser(q.field(), new StandardAnalyzer());
+            QueryParser parser = new QueryParser(q.field(), analyzer);
             return parser.parse(S.formatted(q.query()));
         } catch (Exception e) {
             return new PrefixQuery(new Term(q.field(), q.query().toLowerCase()));
@@ -455,11 +465,11 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
     }
 
     private Query translateSimpleQueryString(TurDslQuery.SimpleQueryString q,
-            Map<String, TurSEFieldType> fieldTypes) {
+            Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         try {
             String[] f = (q.fields() != null && !q.fields().isEmpty())
                     ? q.fields().toArray(String[]::new) : searchFields(TEXT, fieldTypes);
-            MultiFieldQueryParser parser = new MultiFieldQueryParser(f, new StandardAnalyzer());
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(f, analyzer);
             if ("AND".equalsIgnoreCase(q.defaultOperator())) {
                 parser.setDefaultOperator(QueryParser.Operator.AND);
             }
@@ -469,28 +479,28 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         }
     }
 
-    private Query translateConstantScore(TurDslQuery.ConstantScore q, Map<String, TurSEFieldType> fieldTypes) {
-        Query inner = translateQuery(q.filter(), fieldTypes);
+    private Query translateConstantScore(TurDslQuery.ConstantScore q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
+        Query inner = translateQuery(q.filter(), fieldTypes, analyzer);
         ConstantScoreQuery csq = new ConstantScoreQuery(inner);
         return q.boost() != null ? new BoostQuery(csq, q.boost().floatValue()) : csq;
     }
 
-    private Query translateDisMax(TurDslQuery.DisMax q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateDisMax(TurDslQuery.DisMax q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         return new DisjunctionMaxQuery(
-                q.queries().stream().map(sub -> translateQuery(sub, fieldTypes)).toList(),
+                q.queries().stream().map(sub -> translateQuery(sub, fieldTypes, analyzer)).toList(),
                 q.tieBreaker() != null ? q.tieBreaker().floatValue() : 0.0f);
     }
 
-    private Query translateBoosting(TurDslQuery.Boosting q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateBoosting(TurDslQuery.Boosting q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        builder.add(translateQuery(q.positive(), fieldTypes), BooleanClause.Occur.MUST);
-        builder.add(translateQuery(q.negative(), fieldTypes), BooleanClause.Occur.MUST_NOT);
+        builder.add(translateQuery(q.positive(), fieldTypes, analyzer), BooleanClause.Occur.MUST);
+        builder.add(translateQuery(q.negative(), fieldTypes, analyzer), BooleanClause.Occur.MUST_NOT);
         return builder.build();
     }
 
-    private Query translateFunctionScore(TurDslQuery.FunctionScore q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateFunctionScore(TurDslQuery.FunctionScore q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         // Lucene: apply BoostQuery for the first weighted function, otherwise just inner query.
-        Query base = translateQuery(q.query(), fieldTypes);
+        Query base = translateQuery(q.query(), fieldTypes, analyzer);
         if (q.functions() != null) {
             for (var fn : q.functions()) {
                 if (fn.weight() != null) {
@@ -511,12 +521,12 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return new org.apache.lucene.search.KnnFloatVectorQuery(q.field(), vector, q.k());
     }
 
-    private Query translateMoreLikeThis(TurDslQuery.MoreLikeThis q) {
+    private Query translateMoreLikeThis(TurDslQuery.MoreLikeThis q, Analyzer analyzer) {
         // Lucene: fallback to multi-field query with like text
         if (q.likeText() != null && q.fields() != null && !q.fields().isEmpty()) {
             try {
                 MultiFieldQueryParser parser = new MultiFieldQueryParser(
-                        q.fields().toArray(String[]::new), new StandardAnalyzer());
+                        q.fields().toArray(String[]::new), analyzer);
                 return parser.parse(q.likeText());
             } catch (Exception e) {
                 return MatchAllDocsQuery.INSTANCE;
@@ -526,17 +536,17 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
     }
 
     private Query translateCombinedFields(TurDslQuery.CombinedFields q,
-            Map<String, TurSEFieldType> fieldTypes) {
+            Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         if (q.fields() == null || q.fields().isEmpty()) {
             try {
-                return parserFor(searchFields(TEXT, fieldTypes)).parse(q.query());
+                return parserFor(searchFields(TEXT, fieldTypes), analyzer).parse(q.query());
             } catch (Exception e) {
                 return MatchAllDocsQuery.INSTANCE;
             }
         }
         try {
             MultiFieldQueryParser parser = new MultiFieldQueryParser(
-                    q.fields().toArray(String[]::new), new StandardAnalyzer());
+                    q.fields().toArray(String[]::new), analyzer);
             if ("and".equalsIgnoreCase(q.operator())) {
                 parser.setDefaultOperator(QueryParser.Operator.AND);
             }
@@ -547,7 +557,7 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
     }
 
     private Query translateMatchBoolPrefix(TurDslQuery.MatchBoolPrefix q,
-            Map<String, TurSEFieldType> fieldTypes) {
+            Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         // Last token as prefix, previous tokens as term queries; each token may be
         // found in any of the searched fields.
         String[] tokens = q.query().trim().split("\\s+");
@@ -575,7 +585,7 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return any.build();
     }
 
-    private Query translatePinned(TurDslQuery.Pinned q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translatePinned(TurDslQuery.Pinned q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         // Boost pinned IDs high, then add organic query
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
         for (String id : q.ids()) {
@@ -583,7 +593,7 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
                     BooleanClause.Occur.SHOULD);
         }
         if (q.organic() != null) {
-            builder.add(translateQuery(q.organic(), fieldTypes), BooleanClause.Occur.SHOULD);
+            builder.add(translateQuery(q.organic(), fieldTypes, analyzer), BooleanClause.Occur.SHOULD);
         }
         return builder.build();
     }
@@ -597,10 +607,10 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return builder.build();
     }
 
-    private Query translateIntervals(TurDslQuery.Intervals q) {
+    private Query translateIntervals(TurDslQuery.Intervals q, Analyzer analyzer) {
         if (q.rule() != null && q.rule().query() != null) {
             try {
-                return new QueryParser(q.field(), new StandardAnalyzer())
+                return new QueryParser(q.field(), analyzer)
                         .parse(S.formatted(q.rule().query()));
             } catch (Exception e) {
                 return MatchAllDocsQuery.INSTANCE;
@@ -609,22 +619,22 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         return MatchAllDocsQuery.INSTANCE;
     }
 
-    private Query translateSpanNear(TurDslQuery.SpanNear q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateSpanNear(TurDslQuery.SpanNear q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        for (var c : q.clauses()) builder.add(translateQuery(c, fieldTypes), BooleanClause.Occur.MUST);
+        for (var c : q.clauses()) builder.add(translateQuery(c, fieldTypes, analyzer), BooleanClause.Occur.MUST);
         return builder.build();
     }
 
-    private Query translateSpanOr(TurDslQuery.SpanOr q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateSpanOr(TurDslQuery.SpanOr q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        for (var c : q.clauses()) builder.add(translateQuery(c, fieldTypes), BooleanClause.Occur.SHOULD);
+        for (var c : q.clauses()) builder.add(translateQuery(c, fieldTypes, analyzer), BooleanClause.Occur.SHOULD);
         return builder.build();
     }
 
-    private Query translateSpanNot(TurDslQuery.SpanNot q, Map<String, TurSEFieldType> fieldTypes) {
+    private Query translateSpanNot(TurDslQuery.SpanNot q, Map<String, TurSEFieldType> fieldTypes, Analyzer analyzer) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        builder.add(translateQuery(q.include(), fieldTypes), BooleanClause.Occur.MUST);
-        builder.add(translateQuery(q.exclude(), fieldTypes), BooleanClause.Occur.MUST_NOT);
+        builder.add(translateQuery(q.include(), fieldTypes, analyzer), BooleanClause.Occur.MUST);
+        builder.add(translateQuery(q.exclude(), fieldTypes, analyzer), BooleanClause.Occur.MUST_NOT);
         return builder.build();
     }
 

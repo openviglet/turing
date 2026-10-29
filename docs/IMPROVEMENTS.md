@@ -2285,38 +2285,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.7 Lucene SN text search stems by locale (T1170)
-
-**Where it happened.** Dumont D201 (Build my kit), SN site `Demo` (en_US, Lucene, image
-`sha-971cf94703ec`, 165 documents from Dumont's WordPress plugin).
-
-**What happens.** `GET /api/sn/Demo/search?q=…` matches only the exact word form:
-
-| q | hits |
-|---|---|
-| `jacket` / `jackets` | 28 / 0 |
-| `boot` / `boots` | 10 / 7 (articles only) |
-| `sleeping bag` / `sleeping bags` | 19 / 3 |
-| `waterproof jacket` / `Waterproof jackets` | 49 / 0 |
-
-The kit (T1159) is hit hardest: its gap queries are category-like plurals.
-
-**Cause.** Every non-`_ac` field is indexed by `TurLuceneFoldingAnalyzer` (via
-`TurLucenePerFieldAnalyzer`, one per IndexWriter, no locale), and the query side parses
-with a bare `StandardAnalyzer` in `TurDslLuceneExecutor` and `TurLuceneQueryBuilder`.
-Neither stems. The DSL path is the copilot's, so index-side stemming alone fixes
-nothing.
-
-**What Turing should do.** One locale-chosen analyzer for both index and query (Snowball
-`English`/`Portuguese`, as T815's lexicon), emitting the stem beside the original token
-(keyword-repeat, the T1080 folding pattern), so an index not yet reindexed still matches
-exact words and gains plurals after a reindex. Never stem `_ac`, string facets or ids;
-compose with `TurLuceneSynonymAnalyzer`; an unknown locale stays unstemmed.
-
-**Spec.** A plural query finds the singular-titled document on Lucene (en_US, pt_BR),
-and the cases above. The ES plugin sets no stemming analyzer either: record what it does
-in the parity spec and file its own line if it misses.
-
 ### CLVIII.8 Kit gaps retrieve by the facet value they name (T1171)
 
 **Where it happened.** Dumont D201 (Build my kit), SN site `Demo` (en_US, Lucene, image
@@ -2371,5 +2339,30 @@ this.
 `type` is one of `guideTypes` (case-insensitive, the same normalised set `guides()`
 builds), so the stage fills from the next products instead. Unit specs: the skip, and
 that the skipped post is still cited in `guides`.
+
+### CLVIII.10 Elasticsearch SN text fields stem by locale (T1173)
+
+**Where it was found.** Shipping T1170 (Lucene stems by locale), the design asked what
+the Elasticsearch plugin does. `TurElasticsearchUtils.toEsProperty` maps a `TEXT` field
+to a `text` property with no `analyzer`, so ES applies its `standard` analyzer: tokenize
+and lowercase, no stemming, no folding. An ES SN site therefore misses `jackets` against
+a `jacket` title exactly as Lucene did before T1170, and the copilot kit (T1159) is hurt
+the same way on an ES site.
+
+**What Turing should do.** Mirror T1170 at index creation: when `createIndex` builds a
+core for a site locale, give each `TEXT` property a custom analyzer declared in the
+index settings: `standard` tokenizer, `lowercase`, `keyword_repeat`, `snowball` (the
+same language map as `TurLuceneFoldingAnalyzer.stemmerFor`), `remove_duplicates`, then
+`asciifolding` with `preserve_original`. The `.keyword` sub-field and the `STRING`,
+`ARRAY` and `CURRENCY` mappings (analyzer `keyword`) stay untouched. ES uses the field's
+analyzer at query time, so the search side needs no change.
+
+**Existing indexes.** A mapping's analyzer cannot change on a live index: only new cores
+get it. Say so in the search-engine page; a site wanting it recreates its core and
+reindexes.
+
+**Spec.** An ES container IT (the T1107 conformance harness) indexes *Waterproof jacket*
+on an en_US core and finds it for `jackets`; a pt_BR core finds *Jaqueta* for
+`jaquetas`; a STRING facet value is still matched exactly.
 
 ## CLIX Documentation refresh (`docs-turing`)

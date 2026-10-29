@@ -16,6 +16,8 @@
  */
 package com.viglet.turing.lucene;
 
+import java.util.Locale;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.DelegatingAnalyzerWrapper;
 
@@ -23,19 +25,26 @@ import org.apache.lucene.analysis.DelegatingAnalyzerWrapper;
  * Per-field analyzer that routes {@code *_ac} fields to
  * {@link TurLuceneEdgeNGramAnalyzer} and all other fields
  * to {@link TurLuceneFoldingAnalyzer} (T1080 — StandardAnalyzer plus the
- * accent-folded form of each token).
+ * accent-folded form of each token; T1170 — and the stem of the core's language).
+ * The {@code *_ac} fields are never stemmed.
  *
  * @author Alexandre Oliveira
  * @since 2026.2.4
  */
 public class TurLucenePerFieldAnalyzer extends DelegatingAnalyzerWrapper {
 
-    private final Analyzer defaultAnalyzer = new TurLuceneFoldingAnalyzer();
+    private final Analyzer defaultAnalyzer;
     private final Analyzer edgeNGramAnalyzer = new TurLuceneEdgeNGramAnalyzer(
             TurLuceneConstants.AC_MIN_GRAM, TurLuceneConstants.AC_MAX_GRAM);
 
     public TurLucenePerFieldAnalyzer() {
+        this(null);
+    }
+
+    /** T1170 — text fields stemmed in {@code locale}'s language, when it has a stemmer. */
+    public TurLucenePerFieldAnalyzer(Locale locale) {
         super(PER_FIELD_REUSE_STRATEGY);
+        this.defaultAnalyzer = new TurLuceneFoldingAnalyzer(locale);
     }
 
     @Override

@@ -225,6 +225,8 @@ Turing uses a plugin architecture to support multiple search backends behind a u
 
 Solr, Lucene and Elasticsearch read a Semantic Navigation search the same way: facet filters (`fq`, `fqAnd`, `fqOr`, `fqOperator`, `fqItemOperator`, custom facet selections) narrow the results, and `sort` takes `relevance`, `newest`, `oldest`, `field:asc|desc` or a [custom sort](/docs/semantic-navigation/#custom-sort) name. A site moved between them keeps its filters and sorts; how the free text is matched is each engine's own.
 
+On **Lucene**, a text field matches regardless of accents (`saude` finds `Saúde`) and of plural or singular, in the language of the site's locale: on an `en_US` site `jackets` finds a product titled *Waterproof jacket*, and on a `pt_BR` site `jaquetas` finds *Jaqueta de chuva*. English, Portuguese, Spanish, French, German, Italian and Dutch are stemmed; other languages match the exact word. The same rules apply to Semantic Navigation search and to the [DSL API](/docs/dsl-compatibility/). Facet, id and autocomplete fields are never stemmed. A plural search finds singular-spelled documents right away; reindex the site so a singular search also finds documents spelled in the plural.
+
 For the full interface reference (all methods across search, index management, schema management, and document operations) and instructions on implementing a new backend, see [Developer Guide → Search Engine Plugin Architecture](/docs/developer-guide/#search-engine-plugin-architecture).
 
 ---

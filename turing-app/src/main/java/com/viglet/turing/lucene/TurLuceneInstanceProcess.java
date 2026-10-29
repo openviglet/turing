@@ -181,10 +181,23 @@ public class TurLuceneInstanceProcess {
         log.info("Opening Lucene index at: {}", indexPath);
         Directory directory = FSDirectory.open(indexPath);
         IndexWriterConfig config = new IndexWriterConfig(
-                new TurLucenePerFieldAnalyzer());
+                new TurLucenePerFieldAnalyzer(coreLocale(indexPath.getFileName().toString())));
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         IndexWriter writer = new IndexWriter(directory, config);
         return new TurLuceneInstance(writer, directory, indexPath, new FacetsConfig());
+    }
+
+    /**
+     * T1170 — the language a core is written in, so its text fields are stemmed
+     * as the search side stems the query. {@code null} (no stemming) when no site
+     * locale names the core.
+     */
+    private Locale coreLocale(String coreName) {
+        return turSNSiteLocaleRepository.findByCore(coreName).stream()
+                .map(TurSNSiteLocale::getLanguage)
+                .filter(java.util.Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     /** Evicts a cached instance (e.g. after a core is deleted). */

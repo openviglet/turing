@@ -16,6 +16,9 @@
  */
 package com.viglet.turing.plugins.se.lucene;
 
+import java.util.Locale;
+
+import com.viglet.turing.lucene.TurLuceneFoldingAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -37,9 +40,16 @@ import org.apache.lucene.analysis.synonym.SynonymMap;
 public class TurLuceneSynonymAnalyzer extends Analyzer {
 
     private final SynonymMap synonymMap;
+    private final String stemmer;
 
     public TurLuceneSynonymAnalyzer(SynonymMap synonymMap) {
+        this(synonymMap, null);
+    }
+
+    /** T1170 — also adds the stem in {@code locale}'s language, as the index side does. */
+    public TurLuceneSynonymAnalyzer(SynonymMap synonymMap, Locale locale) {
         this.synonymMap = synonymMap;
+        this.stemmer = TurLuceneFoldingAnalyzer.stemmerFor(locale);
     }
 
     @Override
@@ -47,9 +57,11 @@ public class TurLuceneSynonymAnalyzer extends Analyzer {
         Tokenizer source = new StandardTokenizer();
         TokenStream tokens = new LowerCaseFilter(source);
         tokens = new SynonymGraphFilter(tokens, synonymMap, true);
+        // T1170 — stemmed after the synonyms, so a rule keyed on a plural still fires.
+        tokens = TurLuceneFoldingAnalyzer.stem(tokens, stemmer);
         // T1080 — folded after the synonyms, so a rule keyed on an accented word
         // still fires, and its output matches the folded index too.
-        tokens = com.viglet.turing.lucene.TurLuceneFoldingAnalyzer.fold(tokens);
+        tokens = TurLuceneFoldingAnalyzer.fold(tokens);
         return new TokenStreamComponents(source, tokens);
     }
 }

@@ -16,9 +16,9 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1170** (deps: —) **A plural search on a Lucene SN site finds nothing: jackets gets 0 hits where jacket gets 28** — Shoppers name categories in the plural, so the commonest query form misses the catalog. → §CLVIII.7
 - 📋 **T1171** (deps: —) **The copilot kit writes gap queries as product_cat: value text, so a plan leaves 4 of 5 needs unfilled** — Build my kit misses rain jackets, boots and tents the catalog sells, so the feature still looks broken. → §CLVIII.8
 - 📋 **T1172** (deps: —) **The copilot kit stages a document of a requested guide type as a product** — A how-to post lands in a stage the shopper is asked to put in the cart. → §CLVIII.9
+- 📋 **T1173** (deps: —) **A plural search on an Elasticsearch SN site misses the singular: TEXT fields get ES's unstemmed standard analyzer** — An ES site loses the commonest query form that T1170 fixed on Lucene, so one site behaves differently by engine. → §CLVIII.10
 
 ## Done when — T1133
 
