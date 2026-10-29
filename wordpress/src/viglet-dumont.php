@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Viglet Dumont for WordPress
- * Plugin URI:  https://dumont.viglet.org
+ * Plugin URI:  https://openviglet.github.io/dumont
  * Description: Integrates WordPress with Viglet Turing search engine for powerful content indexing and search.
  * Version:     2.0.0
  * Author:      Viglet

@@ -3,7 +3,7 @@
     "description": "Indexes WordPress content into Viglet Turing and serves search from it.",
     "type": "wordpress-plugin",
     "license": "MIT",
-    "homepage": "https://dumont.viglet.org",
+    "homepage": "https://openviglet.github.io/dumont",
     "support": {
         "issues": "https://github.com/openviglet/dumont/issues",
         "source": "https://github.com/openviglet/dumont/tree/2026.3/wordpress"

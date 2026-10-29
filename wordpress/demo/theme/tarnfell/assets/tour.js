@@ -5,7 +5,7 @@
  * Loaded only on a toured page (functions.php), in the page's language.
  */
 ( () => {
-	const docs = 'https://dumont.viglet.org/docs/connectors/wordpress/';
+	const docs = 'https://openviglet.github.io/dumont/docs/connectors/wordpress/';
 	const pt = ( document.documentElement.lang || '' ).startsWith( 'pt' );
 	const text = pt
 		? {
