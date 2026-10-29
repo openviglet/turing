@@ -22,6 +22,16 @@ class TurElasticsearchUtilsTest {
         assertEquals("Elasticsearch Utility class", ex.getCause().getMessage());
     }
 
+    /** T1173 — the stemming analyzer is declared only for a language with a stemmer. */
+    @Test
+    void textAnalysisSettingsNameTheLanguagesStemmer() {
+        assertNull(TurElasticsearchUtils.textAnalysisSettings(null));
+        String pt = TurElasticsearchUtils.textAnalysisSettings("Portuguese");
+        assertTrue(pt.contains("\"language\":\"Portuguese\""));
+        assertTrue(pt.contains("\"" + TurElasticsearchUtils.TEXT_ANALYZER + "\""));
+        assertTrue(pt.contains("\"preserve_original\":true"));
+    }
+
     @Test
     void createIndexShouldNotThrowForUnreachableEndpoint() {
         assertDoesNotThrow(() ->

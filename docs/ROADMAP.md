@@ -14,10 +14,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
-- 📋 **T1173** (deps: —) **A plural search on an Elasticsearch SN site misses the singular: TEXT fields get ES's unstemmed standard analyzer** — An ES site loses the commonest query form that T1170 fixed on Lucene, so one site behaves differently by engine. → §CLVIII.10
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

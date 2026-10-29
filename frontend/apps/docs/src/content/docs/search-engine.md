@@ -227,6 +227,8 @@ Solr, Lucene and Elasticsearch read a Semantic Navigation search the same way: f
 
 On **Lucene**, a text field matches regardless of accents (`saude` finds `Saúde`) and of plural or singular, in the language of the site's locale: on an `en_US` site `jackets` finds a product titled *Waterproof jacket*, and on a `pt_BR` site `jaquetas` finds *Jaqueta de chuva*. English, Portuguese, Spanish, French, German, Italian and Dutch are stemmed; other languages match the exact word. The same rules apply to Semantic Navigation search and to the [DSL API](/docs/dsl-compatibility/). Facet, id and autocomplete fields are never stemmed. A plural search finds singular-spelled documents right away; reindex the site so a singular search also finds documents spelled in the plural.
 
+On **Elasticsearch**, a core created for a site locale in one of those languages analyzes its text fields the same way (stemmed and accent-folded), and facet fields still match their exact value. Elasticsearch cannot change the analyzer of an existing index, so a core created before this keeps matching the exact word: delete and recreate the core, then reindex the site, to get plural matching.
+
 For the full interface reference (all methods across search, index management, schema management, and document operations) and instructions on implementing a new backend, see [Developer Guide → Search Engine Plugin Architecture](/docs/developer-guide/#search-engine-plugin-architecture).
 
 ---

@@ -136,7 +136,9 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
         Map<String, TurSEFieldType> resolved = fieldTypes.isEmpty()
                 ? buildFieldTypesFromSite(siteLocale)
                 : fieldTypes;
-        TurElasticsearchUtils.createIndex(seInstance.getEndpointUrl(), indexName, resolved);
+        // T1173 — TEXT fields stem in the site locale's language, as on Lucene.
+        TurElasticsearchUtils.createIndex(seInstance.getEndpointUrl(), indexName, resolved,
+                siteLocale == null ? null : siteLocale.getLanguage());
     }
 
     private Map<String, TurSEFieldType> buildFieldTypesFromSite(TurSNSiteLocale siteLocale) {

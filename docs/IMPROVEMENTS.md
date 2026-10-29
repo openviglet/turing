@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2284,30 +2282,5 @@ What the SDK reports to analytics, and when: the search, click and abandonment e
 host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
-### CLVIII.10 Elasticsearch SN text fields stem by locale (T1173)
-
-**Where it was found.** Shipping T1170 (Lucene stems by locale), the design asked what
-the Elasticsearch plugin does. `TurElasticsearchUtils.toEsProperty` maps a `TEXT` field
-to a `text` property with no `analyzer`, so ES applies its `standard` analyzer: tokenize
-and lowercase, no stemming, no folding. An ES SN site therefore misses `jackets` against
-a `jacket` title exactly as Lucene did before T1170, and the copilot kit (T1159) is hurt
-the same way on an ES site.
-
-**What Turing should do.** Mirror T1170 at index creation: when `createIndex` builds a
-core for a site locale, give each `TEXT` property a custom analyzer declared in the
-index settings: `standard` tokenizer, `lowercase`, `keyword_repeat`, `snowball` (the
-same language map as `TurLuceneFoldingAnalyzer.stemmerFor`), `remove_duplicates`, then
-`asciifolding` with `preserve_original`. The `.keyword` sub-field and the `STRING`,
-`ARRAY` and `CURRENCY` mappings (analyzer `keyword`) stay untouched. ES uses the field's
-analyzer at query time, so the search side needs no change.
-
-**Existing indexes.** A mapping's analyzer cannot change on a live index: only new cores
-get it. Say so in the search-engine page; a site wanting it recreates its core and
-reindexes.
-
-**Spec.** An ES container IT (the T1107 conformance harness) indexes *Waterproof jacket*
-on an en_US core and finds it for `jackets`; a pt_BR core finds *Jaqueta* for
-`jaquetas`; a STRING facet value is still matched exactly.
 
 ## CLIX Documentation refresh (`docs-turing`)

@@ -25,6 +25,7 @@ import co.elastic.clients.elasticsearch.synonyms.SynonymRule;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.lucene.TurLuceneFoldingAnalyzer;
 import com.viglet.turing.solr.bean.TurSECoreInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
@@ -32,10 +33,12 @@ import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -88,7 +91,25 @@ public class TurElasticsearchUtils {
      */
     public static void createIndex(String endpointUrl, String indexName,
             Map<String, TurSEFieldType> fieldTypes) {
+        createIndex(endpointUrl, indexName, fieldTypes, null);
+    }
+
+    /** T1173 — the custom analyzer TEXT fields get on a core whose language stems. */
+    static final String TEXT_ANALYZER = "turing_text";
+
+    /**
+     * T1173 — {@link #createIndex(String, String, Map)} for a core written in
+     * {@code locale}'s language. When the language has a Snowball stemmer, TEXT
+     * fields are analyzed as on Lucene (T1170): lowercase, the stem beside each
+     * word, then the accent-folded form beside it, so {@code jackets} finds
+     * {@code jacket}. ES applies a field's analyzer to the query too, so search needs
+     * no change. An index that already exists keeps its mapping: an analyzer cannot
+     * change on a live index, so a core gets it when it is created or recreated.
+     */
+    public static void createIndex(String endpointUrl, String indexName,
+            Map<String, TurSEFieldType> fieldTypes, Locale locale) {
         String index = indexName.toLowerCase();
+        String analysis = textAnalysisSettings(TurLuceneFoldingAnalyzer.stemmerFor(locale));
         try (RestClient restClient = buildRestClient(endpointUrl);
              RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
              ElasticsearchClient client = new ElasticsearchClient(transport)) {
@@ -98,9 +119,15 @@ public class TurElasticsearchUtils {
                 log.info("Elasticsearch index '{}' already exists at {}", index, endpointUrl);
             } else {
                 Map<String, Property> properties = new HashMap<>();
-                fieldTypes.forEach((name, type) -> properties.put(name, toEsProperty(type)));
-                client.indices().create(r -> r.index(index)
-                        .mappings(m -> m.properties(properties)));
+                String textAnalyzer = analysis == null ? null : TEXT_ANALYZER;
+                fieldTypes.forEach((name, type) -> properties.put(name, toEsProperty(type, textAnalyzer)));
+                client.indices().create(r -> {
+                    r.index(index).mappings(m -> m.properties(properties));
+                    if (analysis != null) {
+                        r.settings(s -> s.withJson(new StringReader(analysis)));
+                    }
+                    return r;
+                });
                 log.info("Elasticsearch index '{}' created with {} field mappings at {}",
                         index, properties.size(), endpointUrl);
             }
@@ -112,12 +139,35 @@ public class TurElasticsearchUtils {
 
     private static final String KEYWORD = "keyword";
 
-    private static Property toEsProperty(TurSEFieldType type) {
+    /**
+     * T1173 — the index {@code analysis} settings declaring {@link #TEXT_ANALYZER}
+     * for {@code stemmer} (a Snowball language), or {@code null} without one.
+     */
+    static String textAnalysisSettings(String stemmer) {
+        if (stemmer == null) {
+            return null;
+        }
+        return """
+                {"analysis":{\
+                "filter":{"turing_stem":{"type":"snowball","language":"%s"},\
+                "turing_fold":{"type":"asciifolding","preserve_original":true}},\
+                "analyzer":{"%s":{"type":"custom","tokenizer":"standard",\
+                "filter":["lowercase","keyword_repeat","turing_stem","remove_duplicates","turing_fold"]}}}}"""
+                .formatted(stemmer, TEXT_ANALYZER);
+    }
+
+    /** {@code textAnalyzer} names the TEXT fields' analyzer, or {@code null} for ES's standard one. */
+    private static Property toEsProperty(TurSEFieldType type, String textAnalyzer) {
         Property keywordSubField = Property.of(fp -> fp.keyword(k -> k.ignoreAbove(256)));
         return switch (type) {
             // TEXT: analyzed full-text + .keyword sub-field for aggregation
-            case TEXT -> Property.of(p -> p.text(t -> t
-                    .fields(KEYWORD, keywordSubField)));
+            case TEXT -> Property.of(p -> p.text(t -> {
+                t.fields(KEYWORD, keywordSubField);
+                if (textAnalyzer != null) {
+                    t.analyzer(textAnalyzer);
+                }
+                return t;
+            }));
             // STRING/ARRAY: keyword (no tokenization) analyzer + .keyword sub-field for aggregation
             // Using "keyword" analyzer keeps exact-match semantics while providing a .keyword
             // sub-field — consistent with ES dynamic mapping so existing and new indexes behave the same
