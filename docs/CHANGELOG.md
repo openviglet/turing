@@ -968,6 +968,7 @@
 - **T1169** — Build my kit's gap prompt now lists the site's most common facet values, so the model words each gap query the way the catalog does (design §CLVIII.6 recorded in `turing-app/src/main/java/com/viglet/turing/genai/catalog/TurCatalogKitService.java`).
 - **T1170** — Lucene SN search and the DSL path stem text in the site locale's language beside the original word, so jackets finds jacket on en_US and jaquetas finds jaqueta on pt_BR (design §CLVIII.7 superseded: the SN query builder already folded via TurLuceneFoldingAnalyzer; only the DSL executor still parsed with a bare StandardAnalyzer) (design §CLVIII.7 recorded in `turing-app/src/main/java/com/viglet/turing/lucene/TurLuceneFoldingAnalyzer.java`).
 - **T1171** — Kit gap queries are plain words, and a gap naming a known facet value searches inside it, falling back to the words and then the value alone, so needs the catalog sells get staged (design §CLVIII.8 superseded: the fallback also runs the facet value alone when the words find nothing, which the design left unfilled) (design §CLVIII.8 recorded in `turing-app/src/main/java/com/viglet/turing/genai/catalog/TurCatalogKitService.java`).
+- **T1172** — A document of a requested guide type is never staged as a kit product: the stage fills from the next products and the document stays cited among the guides.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

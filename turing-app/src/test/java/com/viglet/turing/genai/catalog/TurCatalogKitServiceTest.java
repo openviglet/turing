@@ -245,6 +245,28 @@ class TurCatalogKitServiceTest {
                 "t1 is staged, p9 is a product, and two guides is the cap");
     }
 
+    /** T1172 — a document of a requested guide type never fills a stage; it stays a guide. */
+    @Test
+    void aGuideTypedDocumentIsNeverStagedAndStaysCitedAsAGuide() {
+        modelReplies("GAP: Shell | waterproof jacket | rain all weekend");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("waterproof jacket"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("post158"), product("j1"), product("j2")),
+                        List.of(), 3, null, true, List.of(
+                                Map.of("type", "Post"),
+                                Map.of("type", "product"),
+                                Map.of())));
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("a rainy weekend"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("post158")), List.of(), 1, null, true,
+                        List.of(Map.of("type", "post"))));
+
+        var result = service.plan("outdoor", "en", "a rainy weekend",
+                new TurCatalogKitService.Options(null, 2, null, null, List.of("post")));
+
+        assertEquals(List.of("j1", "j2"), result.stages().getFirst().products().stream()
+                .map(TurCatalogKitService.KitProduct::id).toList(), "the stage fills from the next products");
+        assertEquals(List.of("post158"), result.guides().stream().map(TurCatalogCitation::id).toList());
+    }
+
     @Test
     void withoutGuideTypesNoGuideIsSearched() {
         modelReplies("GAP: Shelter | tent | nights out");

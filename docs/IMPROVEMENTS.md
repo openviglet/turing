@@ -2285,31 +2285,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.9 Guide-typed documents never fill a kit stage (T1172)
-
-**Where it happened.** Dumont D201 (Build my kit on the WordPress demo store), live on
-SN site `Demo` (image `sha-971cf94703ec`), same request as T1171 (`guideTypes:
-["post"]`).
-
-**What came back.** The stage `Comfort during activity` ranks first
-`localhost:post:158`, "How to wash and reproof a waterproof jacket" — a journal post
-(`type: post`, `available: null`, reason `site_key: localhost; section: How-tos`) —
-staged as a product. A client that puts the kit in the cart has to skip it. Worse,
-`guides()` skips ids already staged, so the post is also lost from `guides`, where it
-belongs.
-
-**Expected.** A document of a type the request names in `guideTypes` is a guide by the
-caller's own word, so it is never a kit product: it may be cited among `guides`, not in
-a stage.
-
-**Workaround.** None; Dumont D201's live gate ("only seeded, in-stock ids") waits on
-this.
-
-**What Turing should do.** In `TurCatalogKitService.stageProducts`, skip citations whose
-`type` is one of `guideTypes` (case-insensitive, the same normalised set `guides()`
-builds), so the stage fills from the next products instead. Unit specs: the skip, and
-that the skipped post is still cited in `guides`.
-
 ### CLVIII.10 Elasticsearch SN text fields stem by locale (T1173)
 
 **Where it was found.** Shipping T1170 (Lucene stems by locale), the design asked what

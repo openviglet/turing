@@ -393,7 +393,9 @@ the needs the catalog had nothing for in `unfilled`, and up to two `guides`.
   as `false`, `0`, `out of stock` and `sold out` read as unavailable.
 - **Guides.** List the document types that count as a guide on your site in
   `guideTypes`, and the documents of those types the plan itself retrieves are cited
-  beside the stages. Without `guideTypes`, no guide is searched.
+  beside the stages. Without `guideTypes`, no guide is searched. A document of one
+  of those types is never staged as a product, even when a need's search finds it:
+  the stage fills from the next products, and the document stays a guide.
 
 Both SDKs call it as `postCopilotKit` (`@viglet/turing-sdk` and
 `@viglet/turing-react-sdk`); gate it on `/copilot/available`, like the copilot.
