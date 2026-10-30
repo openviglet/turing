@@ -14,6 +14,10 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+- 📋 **T1174** (deps: —) **A copilot kit product's reason lists raw indexed fields, site key and image URL included, as why it fits** — A shopper reads that reason under each product, so plumbing fields there make the kit look broken. → §CLVIII.11
+
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

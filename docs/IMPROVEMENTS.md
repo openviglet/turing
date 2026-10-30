@@ -29,6 +29,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
+## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2282,5 +2284,34 @@ What the SDK reports to analytics, and when: the search, click and abandonment e
 host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+### CLVIII.11 A kit product's reason uses the site's facets only (T1174)
+
+**Where it showed.** Dumont's WordPress plugin, Build my kit on the demo store (Dumont
+D201's live run, 2026-10-30): `POST /api/sn/Demo/copilot/kit` with the plan "Two days
+crossing the mountains in July, first time". Every staged product came back with a
+`reason` such as `product_cat: Tents; site_key: localhost`, or `image:
+http://localhost:38082/wp-content/uploads/2026/10/fairfield-grid-fleece-sky.webp;
+product_cat: Fleece and midlayers`. The block prints `reason` under the product, so the
+shopper reads a host key and an image URL as why a fleece fits the plan.
+
+**Why.** `TurCatalogKitService.reason` joins up to `REASON_ATTRIBUTES` of the document's
+attributes as `key: value`, the gap-matching ones first and the rest after, so whenever
+fewer attributes match the gap the slots fill with whatever the document carries:
+`site_key`, `image`, `url`-like fields. Field names are shown raw (`product_cat`,
+`pa_use`) rather than as the facet labels the site declares.
+
+**What it should do.**
+- Only attributes that are facets of the SN site go into a reason, under the facet's
+  label in the request's locale (`Category: Tents`, `Use: Hiking, Travel`). Plumbing
+  fields (site key, image, url, id, dates) never do.
+- A product with no gap-matching facet gets the matching ones it has or none, never a
+  filler: `reason` is null rather than unrelated text.
+
+**Workaround.** None in Dumont; the block shows `reason` as given
+(`src/public/copilot.js` `kitProduct`).
+
+**Gate.** A unit test on `reason` with a document carrying `site_key` and `image` beside
+two facets: only the facets appear, labelled.
 
 ## CLIX Documentation refresh (`docs-turing`)
