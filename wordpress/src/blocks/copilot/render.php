@@ -89,7 +89,7 @@ wp_interactivity_state(
 		<template data-wp-each--turn="state.turns" data-wp-each-key="context.turn.key">
 			<li class="viglet-dumont-copilot__turn">
 				<p class="viglet-dumont-copilot__question" data-wp-text="context.turn.question"></p>
-				<p class="viglet-dumont-copilot__answer" data-wp-text="context.turn.answer"></p>
+				<div class="viglet-dumont-copilot__answer" data-wp-watch="callbacks.renderAnswer"></div>
 				<ol class="viglet-dumont-copilot__items" hidden data-wp-bind--hidden="!context.turn.items.length">
 					<template data-wp-each--item="context.turn.items" data-wp-each-key="context.item.key">
 						<li class="viglet-dumont-copilot__item">

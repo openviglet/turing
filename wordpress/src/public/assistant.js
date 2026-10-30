@@ -13,6 +13,7 @@ import {
 	createChatController,
 	createClient,
 	recordAnswerSignal,
+	renderMarkdown,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
@@ -184,6 +185,10 @@ const { state } = store( 'viglet-dumont/assistant', {
 		},
 	},
 	callbacks: {
+		// A message's Markdown as lists and emphasis (D247), from text nodes, never HTML.
+		renderMessage() {
+			renderMarkdown( getElement().ref, getContext().message.text );
+		},
 		init() {
 			// One conversation for every assistant on the page, kept for this tab.
 			if ( ! chat ) {

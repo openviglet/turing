@@ -15,6 +15,7 @@ import {
 	createSiteSearch,
 	fetchSpellCheck,
 	postIdOf,
+	renderMarkdown,
 	siteFilter,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -443,6 +444,10 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 	},
 	callbacks: {
+		// The answer's Markdown as lists and emphasis (D247), from text nodes, never HTML.
+		renderAnswer() {
+			renderMarkdown( getElement().ref, state.answer );
+		},
 		// The snippet keeps Turing's highlight: built from text nodes and <mark>, never HTML.
 		snippet() {
 			const { result } = getContext();

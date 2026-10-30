@@ -61,7 +61,7 @@ wp_interactivity_state(
 		<div class="viglet-dumont-assistant__log" role="log" aria-label="<?php esc_attr_e( 'Conversation', 'viglet-dumont' ); ?>" data-wp-bind--aria-busy="state.streaming"><ol>
 			<template data-wp-each--message="state.messages" data-wp-each-key="context.message.id">
 				<li class="viglet-dumont-assistant__message" data-wp-class--is-visitor="context.message.visitor">
-					<p class="viglet-dumont-assistant__text" data-wp-text="context.message.text"></p>
+					<div class="viglet-dumont-assistant__text" data-wp-watch="callbacks.renderMessage"></div>
 					<ul class="viglet-dumont-assistant__sources" aria-label="<?php esc_attr_e( 'Posts it used', 'viglet-dumont' ); ?>" hidden data-wp-bind--hidden="!context.message.sources.length">
 						<template data-wp-each--source="context.message.sources" data-wp-each-key="context.source.url">
 							<li class="viglet-dumont-assistant__source"><a data-wp-bind--href="context.source.url" data-wp-text="context.source.title"></a></li>

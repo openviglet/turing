@@ -552,9 +552,17 @@
 	opacity: 0.8;
 }
 
+/* The answer's Markdown, rendered as paragraphs and lists (D247). */
 .viglet-dumont-search__answer-text {
 	margin: 0 0 0.75rem;
-	white-space: pre-line;
+}
+
+.viglet-dumont-search__answer-text > :is(p, ul, ol) {
+	margin: 0 0 0.5rem;
+}
+
+.viglet-dumont-search__answer-text > :last-child {
+	margin-bottom: 0;
 }
 
 .viglet-dumont-search__sources {

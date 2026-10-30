@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php if ( ! empty( $attributes['showAnswer'] ) ) : ?>
 	<section class="viglet-dumont-search__answer" aria-labelledby="<?php echo esc_attr( $viglet_dumont_id ); ?>-answer" hidden data-wp-bind--hidden="!state.showAnswer" data-wp-bind--aria-busy="state.answerStreaming">
 		<h2 class="viglet-dumont-search__answer-label" id="<?php echo esc_attr( $viglet_dumont_id ); ?>-answer"><?php esc_html_e( 'Answer generated from this site', 'viglet-dumont' ); ?></h2>
-		<p class="viglet-dumont-search__answer-text" data-wp-text="state.answer"></p>
+		<div class="viglet-dumont-search__answer-text" data-wp-watch="callbacks.renderAnswer"></div>
 		<ol class="viglet-dumont-search__sources" aria-label="<?php esc_attr_e( 'Sources', 'viglet-dumont' ); ?>">
 			<template data-wp-each--source="state.answerSources" data-wp-each-key="context.source.key">
 				<li data-wp-bind--value="context.source.rank">

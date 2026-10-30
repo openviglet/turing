@@ -96,9 +96,17 @@
 	font-weight: 600;
 }
 
+/* A message's Markdown, rendered as paragraphs and lists (D247). */
 .viglet-dumont-assistant__text {
 	margin: 0;
-	white-space: pre-line;
+}
+
+.viglet-dumont-assistant__text > :is(p, ul, ol) {
+	margin: 0 0 0.5rem;
+}
+
+.viglet-dumont-assistant__text > :last-child {
+	margin-bottom: 0;
 }
 
 .viglet-dumont-assistant__sources {

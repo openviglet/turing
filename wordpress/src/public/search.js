@@ -176,6 +176,78 @@ export function postIdOf( documentId ) {
 }
 
 /**
+ * Write a model's answer into an element as the small Markdown it is written in (D247):
+ * paragraphs, line breaks, bulleted and numbered lists, bold and italic. Built from DOM nodes
+ * and text nodes only, never from HTML, so nothing the model writes becomes markup: a
+ * `<script>` in an answer is the text "<script>". Links and images stay text too; an
+ * answer's sources are listed by the block itself.
+ *
+ * @param {HTMLElement} element Where the answer goes; its children are replaced.
+ * @param {string}      text    The answer.
+ */
+export function renderMarkdown( element, text ) {
+	const doc = element.ownerDocument;
+	// **bold**, then *italic* or _italic_, as text nodes inside strong and em.
+	const inline = ( parent, line ) => {
+		const parts = String( line ).split(
+			/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|_[^_\s][^_]*_)/
+		);
+		for ( const part of parts ) {
+			if ( ! part ) {
+				continue;
+			}
+			const bold = part.match( /^\*\*([^*]+)\*\*$/ );
+			const italic = part.match( /^(?:\*([^*]+)\*|_([^_]+)_)$/ );
+			if ( bold || italic ) {
+				const node = doc.createElement( bold ? 'strong' : 'em' );
+				node.textContent = bold
+					? bold[ 1 ]
+					: ( italic[ 1 ] ?? italic[ 2 ] );
+				parent.append( node );
+			} else {
+				parent.append( doc.createTextNode( part ) );
+			}
+		}
+	};
+	const item = /^\s*(?:([-*+])|(\d+)[.)])\s+(.*)$/;
+	element.replaceChildren();
+	let list = null;
+	let paragraph = null;
+	for ( const raw of String( text || '' ).split( /\r?\n/ ) ) {
+		const line = raw.replace( /^#{1,6}\s+/, '' );
+		const match = line.match( item );
+		if ( ! line.trim() ) {
+			list = null;
+			paragraph = null;
+		} else if ( match ) {
+			const tag = match[ 1 ] ? 'ul' : 'ol';
+			if ( ! list || list.tagName.toLowerCase() !== tag ) {
+				list = doc.createElement( tag );
+				element.append( list );
+			}
+			const li = doc.createElement( 'li' );
+			inline( li, match[ 3 ] );
+			list.append( li );
+			paragraph = null;
+		} else if ( list && /^\s{2,}\S/.test( raw ) ) {
+			// An indented line under a list item continues it.
+			const last = list.lastElementChild;
+			last.append( doc.createElement( 'br' ) );
+			inline( last, line.trim() );
+		} else {
+			list = null;
+			if ( paragraph ) {
+				paragraph.append( doc.createElement( 'br' ) );
+			} else {
+				paragraph = doc.createElement( 'p' );
+				element.append( paragraph );
+			}
+			inline( paragraph, line );
+		}
+	}
+}
+
+/**
  * Put one of a WooCommerce product in the visitor's cart through the Store API (D173), on a
  * site running WooCommerce (`config.shop`). WooCommerce says why when it cannot (out of
  * stock, say); nothing throws.

@@ -10,7 +10,7 @@
  * API), not the index's, and the whole kit goes in the cart in one click, minus whatever
  * the visitor unticked. The total is the cart's, from WooCommerce.
  */
-import { getContext, store } from '@wordpress/interactivity';
+import { getContext, getElement, store } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
 import {
 	addToCart,
@@ -19,6 +19,7 @@ import {
 	config,
 	createClient,
 	postIdOf,
+	renderMarkdown,
 	shopProduct,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
@@ -254,6 +255,10 @@ const { state } = store( 'viglet-dumont/copilot', {
 		},
 	},
 	callbacks: {
+		// An answer's Markdown as lists and emphasis (D247), from text nodes, never HTML.
+		renderAnswer() {
+			renderMarkdown( getElement().ref, getContext().turn.answer );
+		},
 		// Turing is asked only after the probe said the copilot can answer, so without a
 		// language model there is no kit to fake: the whole block stays hidden.
 		async init() {

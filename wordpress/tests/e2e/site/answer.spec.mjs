@@ -43,6 +43,58 @@ const cited = stream( [
 	],
 ] );
 
+test( 'an answer written in Markdown shows as lists and emphasis, and its markup stays text', async ( {
+	page,
+	seed,
+} ) => {
+	// D247. A newline inside an event's data travels as one `data:` line per line.
+	const markdown = [
+		'Two sessions cover it:',
+		'',
+		'- **Workshop on facets**, in March',
+		'- *Seminar on search*',
+		'',
+		'<script>window.answerRan = 1</script> See [1].',
+	].join( '\n' );
+	const body =
+		`event:sources\ndata:${ JSON.stringify( [
+			{
+				sourceId: 'localhost:post:9',
+				title: 'Workshop on facets',
+				url: 'http://localhost:8080/?p=9',
+				footnote: 1,
+			},
+		] ) }\n\n` +
+		`event:token\n${ markdown
+			.split( '\n' )
+			.map( ( line ) => `data:${ line }` )
+			.join( '\n' ) }\n\n`;
+	await page.route( answerRoute, ( route ) =>
+		route.fulfill( {
+			status: 200,
+			contentType: 'text/event-stream',
+			body,
+		} )
+	);
+	await page.goto(
+		`/?page_id=${ seed.askPageId }&q=${ encodeURIComponent(
+			'which sessions cover facets?'
+		) }`
+	);
+	const text = panel( page ).locator( '.viglet-dumont-search__answer-text' );
+	await expect( text.locator( 'li' ) ).toHaveText( [
+		'Workshop on facets, in March',
+		'Seminar on search',
+	] );
+	await expect( text.locator( 'strong' ) ).toHaveText( 'Workshop on facets' );
+	await expect( text.locator( 'em' ) ).toHaveText( 'Seminar on search' );
+	await expect( text.locator( 'p' ).last() ).toHaveText(
+		'<script>window.answerRan = 1</script> See [1].'
+	);
+	await expect( text.locator( 'script' ) ).toHaveCount( 0 );
+	expect( await page.evaluate( () => window.answerRan ) ).toBeUndefined();
+} );
+
 test( 'a question gets the cited answer above the results, and a verdict is recorded', async ( {
 	page,
 	seed,
