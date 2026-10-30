@@ -93,14 +93,14 @@ jobs:
           # Use the curated CHANGELOG section (an exact "## X.Y.Z" heading, else
           # the "## X.Y" series) rather than --generate-notes, which lists only
           # the merged pull requests (mostly Dependabot) and says nothing a user
-          # would notice (T1182).
-          if scripts/changelog-section.sh "${TAG_NAME#v}" CHANGELOG.md > /tmp/release-notes.md; then
-            gh release create ${TAG_NAME} --repo ${RELEASE_REPO} --target ${TAG_TARGET} \
-              --title "${TAG_NAME}" --notes-file /tmp/release-notes.md
-          else
-            echo "::warning::No CHANGELOG.md section for ${TAG_NAME#v} — falling back to generated notes."
-            gh release create ${TAG_NAME} --repo ${RELEASE_REPO} --target ${TAG_TARGET} --generate-notes
+          # would notice (T1182). A missing section fails the release before it is
+          # created: a release without notes for people is not published at all.
+          if ! scripts/changelog-section.sh "${TAG_NAME#v}" CHANGELOG.md > /tmp/release-notes.md; then
+            echo "::error::No CHANGELOG.md section for ${TAG_NAME#v} or its minor series: write one, then rerun."
+            exit 1
           fi
+          gh release create ${TAG_NAME} --repo ${RELEASE_REPO} --target ${TAG_TARGET} \
+            --title "${TAG_NAME}" --notes-file /tmp/release-notes.md
           gh release upload ${TAG_NAME} turing-app/target/viglet-turing.jar --repo ${RELEASE_REPO} --clobber
           gh release upload ${TAG_NAME} turing-utils/target/turing-utils.zip --repo ${RELEASE_REPO} --clobber
           gh release upload ${TAG_NAME} target/turing-install.zip --repo ${RELEASE_REPO} --clobber

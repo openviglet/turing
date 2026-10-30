@@ -2340,25 +2340,6 @@ patch there so it becomes Latest, and move the README's release badge and downlo
 `ghcr.io/openviglet/turing-ce` name for now; renaming it is a separate decision, since
 every compose file in the wild pulls it.
 
-### CLXI.3 Release notes are written for people (T1182)
-
-**Where it showed.** The body of v2026.3.6 is the generated list of Dependabot pull
-requests. `publish.yml` reads the release notes from the root `CHANGELOG.md` with
-`scripts/changelog-section.sh <version>`, but that file has one section per line (`##
-2026.3`), not per patch, so the lookup misses and the step falls back to
-`--generate-notes`.
-
-**Why it costs.** The release page is where an evaluator checks whether the project is
-alive and what changed. A list of dependency bumps says neither, while the ledger holds
-dozens of user-facing deliveries for the same weeks (visibility repo,
-estrategia/portfolio.md, 2026-10-30).
-
-**Design.** Give each patch release notes written for people: a short paragraph on what
-changed for a user, then the notable fixes, then a link to the full changelog. The
-cheapest seam is the lookup: either the release step writes a per-patch section before
-tagging, or `changelog-section.sh` falls back to the minor-line section instead of to
-generated notes. A missing section should fail the release, not degrade it silently.
-
 ### CLXI.4 turing-ce is archived with a notice (T1183)
 
 **Where it showed.** turing-ce still holds the 22 stars and the newest release, its
