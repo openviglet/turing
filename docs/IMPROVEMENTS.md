@@ -2287,29 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.13 A question in the search box finds the documents its main words do (T1176)
-
-**Where it showed.** Dumont's WordPress demo store, the search block with its answer
-panel on (D203's story run, 2026-10-30): `GET /api/sn/Demo/search?q=What do I need for
-two days in the hills?` returned `queryContext.count = 0`, and spell-check offered the
-whole question back as "did you mean".
-
-**What landed (relaxed retry).** The site flag `relaxNoResults` (console: Behavior,
-Wildcard). `TurSNSearchProcess.relaxIfNothingFound` retries a zero-result search, after
-the engine's wildcard retry, with `TurSNQueryRelaxer.relax` (Snowball stop words of the
-locale dropped) and `TurSEParameters.relaxedMatch`, which Lucene
-(`withHalfTheWordsRequired`), Solr (`q.op=OR`, `mm=50%`) and Elasticsearch
-(`Operator.Or`, `minimum_should_match 50%`) honour. The response carries
-`queryContext.relaxed`. Unit-tested per engine's query shape and on the retry itself.
-
-**What is left.**
-- Spell-check is not offered for a multi-word query whose words are all indexed: the
-  question above should not come back as its own "did you mean". The check belongs
-  where `TurSNSearchProcess` builds the spell-check bean, not in each engine.
-- An IT per engine on an en_US site: the question finds the backpack and kit guides
-  with the flag on, zero with it off; a one-word query is unchanged. Lucene runs
-  in-process; Solr and Elasticsearch need their Testcontainers images.
-
 ### CLVIII.14 An exact title phrase outranks a stemmed synonym match (T1177)
 
 **Where it showed.** Dumont's demo store (SN site `Demo`, Lucene, en_US, synonyms

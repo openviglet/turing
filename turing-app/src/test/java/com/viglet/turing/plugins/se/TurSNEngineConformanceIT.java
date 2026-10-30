@@ -127,13 +127,14 @@ class TurSNEngineConformanceIT {
                             .forStatusCode(200)
                             .withStartupTimeout(java.time.Duration.ofMinutes(4)));
 
-    /** id, sector, salary, publishedAt, expiresAt (null = the job never closes). */
+    /** id, sector, salary, publishedAt, expiresAt (null = the job never closes), title. */
     private static final Object[][] JOBS = {
-            { "creche", "educacao", 2000, "2026-10-20T00:00:00Z", "2026-11-30T00:00:00Z" },
-            { "baba", "domestico", 1800, "2026-10-01T00:00:00Z", null },
-            { "monitor", "educacao", 1500, "2026-09-01T00:00:00Z", "2026-10-30T00:00:00Z" },
-            { "enfermeira", "saude", 4000, "2026-10-22T00:00:00Z", "2026-11-15T00:00:00Z" },
-            { "dados", "tecnologia", 9000, "2026-08-01T00:00:00Z", null } };
+            { "creche", "educacao", 2000, "2026-10-20T00:00:00Z", "2026-11-30T00:00:00Z",
+                    "Two days in the hills: the kit list" },
+            { "baba", "domestico", 1800, "2026-10-01T00:00:00Z", null, "Trail kit for beginners" },
+            { "monitor", "educacao", 1500, "2026-09-01T00:00:00Z", "2026-10-30T00:00:00Z", "Summer camp monitor" },
+            { "enfermeira", "saude", 4000, "2026-10-22T00:00:00Z", "2026-11-15T00:00:00Z", "Night shift nurse" },
+            { "dados", "tecnologia", 9000, "2026-08-01T00:00:00Z", null, "Data engineer" } };
 
     private static final Map<String, TurSEFieldType> FIELD_TYPES = new LinkedHashMap<>();
 
@@ -143,6 +144,7 @@ class TurSNEngineConformanceIT {
         FIELD_TYPES.put("salary", TurSEFieldType.INT);
         FIELD_TYPES.put("publishedAt", TurSEFieldType.DATE);
         FIELD_TYPES.put("expiresAt", TurSEFieldType.DATE);
+        FIELD_TYPES.put("title", TurSEFieldType.TEXT);
     }
 
     private static final String SOLR_CORE = "turing_conformance";
@@ -183,6 +185,7 @@ class TurSNEngineConformanceIT {
         if (job[4] != null) {
             attrs.put("expiresAt", job[4]);
         }
+        attrs.put("title", job[5]);
         return attrs;
     }
 
@@ -342,9 +345,20 @@ class TurSNEngineConformanceIT {
         }
     }
 
+    /** T1176 — the request's parameters, with the relaxed retry's match when asked. */
+    private static TurSEParameters seParameters(TurSNSearchParams params, boolean relaxed) {
+        TurSEParameters seParams = new TurSEParameters(params);
+        seParams.setRelaxedMatch(relaxed);
+        return seParams;
+    }
+
     private List<String> solr(TurSNSearchParams params) {
+        return solr(params, false);
+    }
+
+    private List<String> solr(TurSNSearchParams params, boolean relaxed) {
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),
-                new TurSEParameters(params), java.util.Locale.US, URI.create("http://localhost/search"));
+                seParameters(params, relaxed), java.util.Locale.US, URI.create("http://localhost/search"));
         return solr.retrieveSolrFromSN(solrInstance, context)
                 .orElseThrow(() -> new AssertionError("Solr answered nothing"))
                 .getResults().stream()
@@ -362,7 +376,11 @@ class TurSNEngineConformanceIT {
     }
 
     private List<String> lucene(TurSNSearchParams params) throws Exception {
-        TurSEParameters seParams = new TurSEParameters(params);
+        return lucene(params, false);
+    }
+
+    private List<String> lucene(TurSNSearchParams params, boolean relaxed) throws Exception {
+        TurSEParameters seParams = seParameters(params, relaxed);
         Sort sort = luceneQueryBuilder.buildSort(site, seParams);
         var query = luceneQueryBuilder.buildQuery(site, seParams);
         ScoreDoc[] hits = sort == null ? luceneSearcher.search(query, 10).scoreDocs
@@ -375,8 +393,12 @@ class TurSNEngineConformanceIT {
     }
 
     private List<String> elasticsearch(TurSNSearchParams params) {
+        return elasticsearch(params, false);
+    }
+
+    private List<String> elasticsearch(TurSNSearchParams params, boolean relaxed) {
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),
-                new TurSEParameters(params), java.util.Locale.US, URI.create("http://localhost/search"));
+                seParameters(params, relaxed), java.util.Locale.US, URI.create("http://localhost/search"));
         return elasticsearch.retrieveElasticsearchFromSN(esInstance, context)
                 .orElseThrow(() -> new AssertionError("Elasticsearch answered nothing"))
                 .getResults().stream()
@@ -449,6 +471,24 @@ class TurSNEngineConformanceIT {
             assertThat(datedPart).containsExactlyElementsOf(dated);
             assertThat(new HashSet<>(openPart)).isEqualTo(openEnded);
         }
+    }
+
+    /**
+     * T1176 — the relaxed retry's words, as {@code TurSNQueryRelaxer} leaves a
+     * question: every word required, nothing holds all four; relaxed, a title
+     * with at least two of them matches, on every engine alike.
+     */
+    @org.junit.jupiter.api.Test
+    void everyEngineMatchesHalfTheWordsOfARelaxedQuery() throws Exception {
+        TurSNSearchParams strict = request(p -> p.setQ("kit two days hills trail"));
+        assertThat(lucene(strict)).as("Lucene, every word").isEmpty();
+        assertThat(elasticsearch(strict)).as("Elasticsearch, every word").isEmpty();
+        assertThat(solr(strict)).as("Solr, every word").isEmpty();
+
+        Set<String> expected = Set.of("creche", "baba");
+        assertThat(new HashSet<>(lucene(strict, true))).as("Lucene, relaxed").isEqualTo(expected);
+        assertThat(new HashSet<>(elasticsearch(strict, true))).as("Elasticsearch, relaxed").isEqualTo(expected);
+        assertThat(new HashSet<>(solr(strict, true))).as("Solr, relaxed").isEqualTo(expected);
     }
 
     static Stream<Arguments> missingPlacements() {

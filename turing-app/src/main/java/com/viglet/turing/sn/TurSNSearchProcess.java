@@ -41,6 +41,7 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.api.sn.bean.TurSNSiteFilterQueryBean;
 import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
@@ -277,6 +278,30 @@ public class TurSNSearchProcess {
                         params.setQuery(query);
                         params.setRelaxedMatch(false);
                 }
+        }
+
+        /**
+         * T1176 — whether the engine's spell-check suggestion is worth showing.
+         * Not when the relaxed retry matched the query's words, which are then
+         * indexed, nor when the suggestion is the query itself told apart only by
+         * case, punctuation or spacing: a question came back as its own "did you
+         * mean".
+         */
+        static boolean offersSpellCheck(TurSNSiteSearchContext context, TurSEResults results) {
+                TurSESpellCheckResult spellCheck = results.getSpellCheck();
+                if (spellCheck == null) {
+                        return false;
+                }
+                if (results.isRelaxed()) {
+                        return false;
+                }
+                return !spellCheck.isCorrected() || !normalizedWords(spellCheck.getCorrectedText())
+                                .equals(normalizedWords(context.getTurSEParameters().getQuery()));
+        }
+
+        private static String normalizedWords(String text) {
+                return text == null ? ""
+                                : String.join(" ", text.toLowerCase(Locale.ROOT).split("[^\\p{L}\\p{N}]+")).strip();
         }
 
         /**
@@ -715,7 +740,7 @@ public class TurSNSearchProcess {
                                 // T1133 — similar documents are found across the whole site.
                                 .setSimilar(isPartitioned(context) ? Collections.emptyList()
                                                 : responseMLT(turSNSite, turSEResults))
-                                .setSpellCheck(turSEResults.getSpellCheck() != null
+                                .setSpellCheck(offersSpellCheck(context, turSEResults)
                                                 ? new TurSNSiteSpellCheckBean(context, turSEResults.getSpellCheck())
                                                 : new TurSNSiteSpellCheckBean())
                                 .setIcon(turSNSite.getIcon())

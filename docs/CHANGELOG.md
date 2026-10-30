@@ -972,7 +972,7 @@
 - **T1173** — An Elasticsearch core created for a site locale stems and folds its TEXT fields like Lucene, so jackets finds jacket, while STRING facets still match exactly (design §CLVIII.10 recorded in `turing-app/src/main/java/com/viglet/turing/elasticsearch/TurElasticsearchUtils.java`).
 - **T1174** — A copilot kit product's reason now quotes only the site's facet values, under the facet's locale label, and is null when the product has none; site keys and image URLs never show.
 - **T1175** — The kit takes an optional productTypes, typed in both SDKs and documented: when given, only documents of those types are staged, so a site's pages no longer reach a stage.
-- **T1176 (relaxed retry)** — A site flag retries a zero-result search with the locale's stop words dropped and half the main words required, on Lucene, Solr and ES, flagged queryContext.relaxed.
+- **T1176** — A question is no longer offered back as its own spell-check suggestion, and the engine conformance IT proves the relaxed match alike on Lucene, Solr and Elasticsearch.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

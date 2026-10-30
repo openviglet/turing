@@ -16,7 +16,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- ⏳ **T1176** (deps: —) **A question typed in the SN search box finds nothing, because every word, question words included, must match** — Spell-check still offers a multi-word query whose words are all indexed, and no per-engine IT proves the retry on a live index. → §CLVIII.13
 - 📋 **T1177** (deps: —) **After the stemming release a guide titled with the exact query phrase no longer outranks products matching its synonym** — A Dumont demo's curated searches lost their guide-first order, and an exact title phrase is the strongest signal a search has. → §CLVIII.14
 - 📋 **T1178** (deps: —) **The SN copilot and chat cannot be told which document a question is about, so a product page gets a catalog-wide answer** — A shopper on a product page asks about that product, and an answer that cites other items misses the question. → §CLVIII.15
 - 📋 **T1179** (deps: —) **Search metrics and a visitor's latest searches strip accents and delete non-Latin letters from the words typed** — Owners act on these words and visitors reread their own; a Russian or Japanese search is lost entirely. → §CLVIII.16
@@ -49,15 +48,6 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
-
-## Done when — T1176
-
-- **A question is not offered back as its own spell-check suggestion** A unit test on
-  the spell-check step: a multi-word query whose words are all indexed gets no "did you
-  mean"; a misspelled word still does.
-- **An IT per engine proves the relaxed retry on a live index** Lucene, Solr and
-  Elasticsearch ITs on an en_US site: the hills question finds the kit guides with
-  relaxNoResults on and nothing with it off; a one-word query is unchanged.
 
 ## Non-goals (do NOT add as tasks)
 

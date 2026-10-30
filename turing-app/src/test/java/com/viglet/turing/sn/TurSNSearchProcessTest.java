@@ -430,6 +430,25 @@ class TurSNSearchProcessTest {
         }
 
         @Test
+        void testAQuestionIsNotOfferedBackAsItsOwnSpellCheck() {
+                TurSNSiteSearchContext context = searchContext("What do I need for two days in the hills?", 1,
+                                List.of());
+                java.util.function.Function<String, TurSEResults> suggesting = text -> TurSEResults.builder()
+                                .spellCheck(new com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult(
+                                                true, text))
+                                .build();
+
+                assertThat(TurSNSearchProcess.offersSpellCheck(context,
+                                suggesting.apply("what do i need for two days in the hills"))).isFalse();
+                assertThat(TurSNSearchProcess.offersSpellCheck(context,
+                                suggesting.apply("What do I need for two days in the hilts?"))).isTrue();
+                TurSEResults relaxed = suggesting.apply("whet do I need");
+                relaxed.setRelaxed(true);
+                assertThat(TurSNSearchProcess.offersSpellCheck(context, relaxed)).isFalse();
+                assertThat(TurSNSearchProcess.offersSpellCheck(context, TurSEResults.builder().build())).isFalse();
+        }
+
+        @Test
         void testNoRelaxedRetryWhenTheSiteIsOffOrTheQueryIsOneWord() {
                 List<String> relaxedQueries = new java.util.ArrayList<>();
                 relaxingSearch(0, relaxedQueries);
