@@ -259,9 +259,10 @@ product page, a test-mode checkout, and the owner's Search insights. Nothing is 
 leaves `story.webm` in `tests/e2e/artifacts/story/`. It plays in English for now (D244).
 `npm run e2e:story:record` plays it again at 1920×1080 and a human pace, and
 `npm run story:video` (ffmpeg on the PATH) cuts it into the demo video,
-`tests/e2e/artifacts/video/story.mp4`, with a title card per chapter and English captions. The
-video is a release asset, never committed, and the script refuses a recording older than the
-story.
+`tests/e2e/artifacts/video/story.mp4`, with a title card per chapter, and `story-30s.mp4`, the
+last seconds of each chapter for social posts. Both carry English and pt_BR captions, also
+written beside them as `.srt`. The videos are release assets, never committed, and the script
+refuses a recording older than the story.
 
 To look at one page in detail, logged in or not:
 

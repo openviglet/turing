@@ -1,14 +1,16 @@
 // Assembles the demo video (D204) from the recorded story: `npm run e2e:story:record` leaves
 // story.webm and chapters.json in tests/e2e/artifacts/story/, and this cuts one clip per
 // chapter, puts a title card in the demo's brand before each, an intro and an outro around
-// them, and the chapter names as English captions. Every frame between the cards is the
-// product running. Needs ffmpeg on the PATH.
+// them, and the chapter names as captions in English and pt_BR. Every frame between the cards
+// is the product running. Needs ffmpeg on the PATH.
 //
 //   npm run e2e:story:record && npm run story:video
 //
-// Writes tests/e2e/artifacts/video/story.mp4 and story.en.srt; rendered files are release
-// assets, never committed. Refuses a recording that is missing a chapter or older than the
-// story it was recorded from, so a re-record after a UI change is never skipped by accident.
+// Writes tests/e2e/artifacts/video/: story.mp4 (both caption tracks), story.en.srt and
+// story.pt-BR.srt, and story-30s.mp4, a cut for social posts that keeps the last seconds of
+// each chapter, where its result shows. Rendered files are release assets, never committed.
+// Refuses a recording that is missing a chapter or older than the story it was recorded from,
+// so a re-record after a UI change is never skipped by accident.
 import { execFileSync } from 'node:child_process';
 import {
 	existsSync,
@@ -27,6 +29,21 @@ const out = join( root, 'tests', 'e2e', 'artifacts', 'video' );
 const size = { width: 1920, height: 1080 };
 const cardSeconds = 2.5;
 const chapterCount = 8;
+// The short cut: this much of the end of each chapter, between a short intro and outro.
+const shortSeconds = 3;
+
+// Each chapter's caption in Portuguese, by its number in demo/story.md. The English one is
+// the spec's own step title.
+const portuguese = {
+	1: 'Chega: as buscas populares mostram o catálogo',
+	2: 'Diz o que precisa, numa frase',
+	3: 'Pergunta ao Assistente do site e recebe a resposta com as fontes',
+	4: 'Compara três jaquetas lado a lado',
+	5: 'Monta o kit e o põe no carrinho',
+	6: 'Confere um item: Relacionados e uma pergunta sobre ele',
+	7: 'Compra, em modo de teste',
+	8: 'Bastidores: a busca nativa e as buscas dela nos insights',
+};
 
 /**
  * Stop with a reason a person can act on.
@@ -187,43 +204,36 @@ const still = ( i ) => {
 	return file;
 };
 
-const segments = [ still( 0 ) ];
-const captions = [];
-let clock = cardSeconds;
-for ( const [ i, { start, end } ] of chapters.entries() ) {
-	segments.push( still( i + 1 ) );
-	clock += cardSeconds;
-	const clip = join( out, 'parts', `chapter-${ i + 1 }.mp4` );
-	ffmpeg( [
-		'-ss',
-		start.toFixed( 2 ),
-		'-to',
-		end.toFixed( 2 ),
-		'-i',
-		webm,
-		...encode,
-		clip,
-	] );
-	segments.push( clip );
-	const length = seconds( clip );
-	captions.push( {
-		from: clock,
-		to: clock + length,
-		text: `${ parts[ i ].number }. ${ parts[ i ].name }`,
-	} );
-	clock += length;
-}
-segments.push( still( cards.length - 1 ) );
+/**
+ * A segment cut from a file, encoded like the rest.
+ *
+ * @param {string}   name  The part's file name.
+ * @param {string[]} input ffmpeg's input arguments, seek included.
+ */
+const cut = ( name, input ) => {
+	const file = join( out, 'parts', name );
+	ffmpeg( [ ...input, ...encode, file ] );
+	return file;
+};
 
-const list = join( out, 'parts', 'list.txt' );
-writeFileSync(
-	list,
-	segments
-		.map( ( file ) => `file '${ file.replace( /\\/g, '/' ) }'` )
-		.join( '\n' )
-);
-const joined = join( out, 'parts', 'joined.mp4' );
-ffmpeg( [ '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', joined ] );
+/**
+ * Join segments without another encode.
+ *
+ * @param {string[]} segments The parts, in order.
+ * @param {string}   name     The joined file's name.
+ */
+const concat = ( segments, name ) => {
+	const list = join( out, 'parts', `${ name }.txt` );
+	writeFileSync(
+		list,
+		segments
+			.map( ( file ) => `file '${ file.replace( /\\/g, '/' ) }'` )
+			.join( '\n' )
+	);
+	const file = join( out, 'parts', name );
+	ffmpeg( [ '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', file ] );
+	return file;
+};
 
 const stamp = ( t ) => {
 	const ms = Math.round( t * 1000 );
@@ -232,39 +242,129 @@ const stamp = ( t ) => {
 		Math.floor( ms / 60000 ) % 60
 	) }:${ pad( Math.floor( ms / 1000 ) % 60 ) },${ pad( ms % 1000, 3 ) }`;
 };
-const srt = join( out, 'story.en.srt' );
-writeFileSync(
-	srt,
-	captions
-		.map(
-			( c, i ) =>
-				`${ i + 1 }\n${ stamp( c.from ) } --> ${ stamp( c.to ) }\n${
-					c.text
-				}\n`
-		)
-		.join( '\n' )
-);
-const video = join( out, 'story.mp4' );
-ffmpeg( [
-	'-i',
-	joined,
-	'-i',
-	srt,
-	'-c',
-	'copy',
-	'-c:s',
-	'mov_text',
-	'-metadata:s:s:0',
-	'language=eng',
-	video,
-] );
 
-const total = seconds( video );
-process.stdout.write(
-	`${ video }: ${ Math.floor( total / 60 ) }m${ String(
+/**
+ * Write a caption file: one cue per chapter, in a language.
+ *
+ * @param {Array<{from: number, to: number, chapter: number}>} cues     When each chapter shows.
+ * @param {'en'|'pt-BR'}                                       language Which caption.
+ * @param {string}                                             file     Where to write it.
+ */
+const subtitles = ( cues, language, file ) => {
+	writeFileSync(
+		file,
+		cues
+			.map( ( cue, i ) => {
+				const { number, name } = parts[ cue.chapter ];
+				const text = 'en' === language ? name : portuguese[ number ];
+				return `${ i + 1 }\n${ stamp( cue.from ) } --> ${ stamp(
+					cue.to
+				) }\n${ number }. ${ text }\n`;
+			} )
+			.join( '\n' )
+	);
+	return file;
+};
+
+/**
+ * The finished file: the joined video with both caption tracks, English first.
+ *
+ * @param {string}                                             joined The joined video.
+ * @param {Array<{from: number, to: number, chapter: number}>} cues   When each chapter shows.
+ * @param {string}                                             name   The file's base name.
+ */
+const finish = ( joined, cues, name ) => {
+	const en = subtitles( cues, 'en', join( out, `${ name }.en.srt` ) );
+	const pt = subtitles( cues, 'pt-BR', join( out, `${ name }.pt-BR.srt` ) );
+	const file = join( out, `${ name }.mp4` );
+	ffmpeg( [
+		'-i',
+		joined,
+		'-i',
+		en,
+		'-i',
+		pt,
+		'-map',
+		'0',
+		'-map',
+		'1',
+		'-map',
+		'2',
+		'-c',
+		'copy',
+		'-c:s',
+		'mov_text',
+		'-metadata:s:s:0',
+		'language=eng',
+		'-metadata:s:s:1',
+		'language=por',
+		file,
+	] );
+	return file;
+};
+
+// The video: intro, then each chapter's card and clip, then the outro.
+const segments = [ still( 0 ) ];
+const cues = [];
+let clock = cardSeconds;
+for ( const [ i, { start, end } ] of chapters.entries() ) {
+	segments.push( still( i + 1 ) );
+	clock += cardSeconds;
+	const clip = cut( `chapter-${ i + 1 }.mp4`, [
+		'-ss',
+		start.toFixed( 2 ),
+		'-to',
+		end.toFixed( 2 ),
+		'-i',
+		webm,
+	] );
+	segments.push( clip );
+	const length = seconds( clip );
+	cues.push( { from: clock, to: clock + length, chapter: i } );
+	clock += length;
+}
+segments.push( still( cards.length - 1 ) );
+const video = finish( concat( segments, 'joined.mp4' ), cues, 'story' );
+
+// The short cut: each chapter's last seconds, where its result shows, with no cards between.
+const intro = 2;
+const short = [
+	cut( 'short-intro.mp4', [
+		'-t',
+		String( intro ),
+		'-i',
+		join( out, 'parts', 'card-0.mp4' ),
+	] ),
+];
+const shortCues = [];
+clock = intro;
+for ( const i of chapters.keys() ) {
+	const clip = cut( `short-${ i + 1 }.mp4`, [
+		'-sseof',
+		`-${ shortSeconds }`,
+		'-i',
+		join( out, 'parts', `chapter-${ i + 1 }.mp4` ),
+	] );
+	short.push( clip );
+	const length = seconds( clip );
+	shortCues.push( { from: clock, to: clock + length, chapter: i } );
+	clock += length;
+}
+short.push( join( out, 'parts', `card-${ cards.length - 1 }.mp4` ) );
+const teaser = finish(
+	concat( short, 'joined-30s.mp4' ),
+	shortCues,
+	'story-30s'
+);
+
+const length = ( file ) => {
+	const total = seconds( file );
+	return `${ Math.floor( total / 60 ) }m${ String(
 		Math.round( total % 60 )
-	).padStart(
-		2,
-		'0'
-	) }s, ${ chapters.length } chapters, captions in ${ srt }\n`
+	).padStart( 2, '0' ) }s`;
+};
+process.stdout.write(
+	`${ video }: ${ length( video ) }, ${ chapters.length } chapters\n` +
+		`${ teaser }: ${ length( teaser ) }\n` +
+		'captions in English and pt_BR beside each, and inside as two tracks\n'
 );
