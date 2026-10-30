@@ -20,8 +20,13 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 	page,
 	look,
 	axe,
+	problems,
 } ) => {
 	const pageId = await firstId( page, '/wp/v2/pages&slug=ask-the-shop' );
+	// D241: asking the shop about a staged page is a 404, the answer that drops it from the
+	// kit. Turing T1175 would let the block not stage it at all.
+	problems.allow( new RegExp( `store/v1/products/${ pageId }\\b` ) );
+	problems.allow( /status of 404/ );
 	const product = ( name ) =>
 		firstId(
 			page,
@@ -51,17 +56,26 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 			json: {
 				summary:
 					'Two days in the mountains need a shell and a warm layer.',
-				// One need, three alternatives for it, the first of which the shop cannot sell.
+				// One need, three alternatives for it, the first of which the shop cannot sell,
+				// behind a page Turing staged as if it were a product (D241); and a need with
+				// nothing but that page.
 				stages: [
 					{
 						gap: 'Waterproof shell',
 						reason: 'Rain is likely in July.',
 						query: 'waterproof jacket',
 						products: [
+							staged( pageId, 'Ask the shop', '' ),
 							staged( linen, 'Linen jacket', 'Color: Red' ),
 							staged( rain, 'Rain jacket', 'Color: Red' ),
 							staged( wool, 'Wool jacket', 'Color: Blue' ),
 						],
+					},
+					{
+						gap: 'Warm layer',
+						reason: 'Nights are cold up there.',
+						query: 'warm layer',
+						products: [ staged( pageId, 'Ask the shop', '' ) ],
 					},
 				],
 				unfilled: [ 'Shelter' ],
@@ -110,9 +124,16 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 	await expect(
 		kit.locator( '.viglet-dumont-copilot__stage h3' )
 	).toHaveText( [ 'Waterproof shell' ] );
+	// The page is no product: it leaves the kit, and the need it alone stood for joins the
+	// line naming what the catalog has nothing for.
+	await expect(
+		kit.locator( '.viglet-dumont-copilot__kit-item' ).filter( {
+			hasText: 'Ask the shop',
+		} )
+	).toHaveCount( 0 );
 	await expect(
 		kit.locator( '.viglet-dumont-copilot__unfilled' )
-	).toHaveText( 'Nothing in the catalog yet for: Shelter.' );
+	).toHaveText( 'Nothing in the catalog yet for: Shelter, Warm layer.' );
 	await expect(
 		kit.getByRole( 'link', { name: 'Packing for the mountains' } )
 	).toBeVisible();

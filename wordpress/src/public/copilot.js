@@ -326,6 +326,7 @@ async function buildKit() {
 	state.status = '';
 	// The shop's price, and its word on stock: a product the index calls available but the
 	// shop cannot sell is marked and left out of the cart.
+	const notProducts = new Set();
 	await Promise.all(
 		state.kit.stages
 			.flatMap( ( stage ) => stage.products )
@@ -336,8 +337,42 @@ async function buildKit() {
 					if ( ! shop.buyable ) {
 						product.out = true;
 					}
+				} else if ( config.shop ) {
+					notProducts.add( product.key );
 				}
 			} )
 	);
+	dropNotProducts( notProducts, unfilled );
 	tickFirstSellable( state.kit.stages );
+}
+
+/**
+ * Take out of the kit what the shop says is not a product (D241): Turing stages any indexed
+ * document that is not a guide, a page among them, and the cart refuses one. A need left with
+ * nothing joins the line naming what the catalog has nothing for.
+ *
+ * @param {Set<string>} keys     The staged products the Store API did not know.
+ * @param {string[]}    unfilled The needs Turing already said the catalog has nothing for.
+ */
+function dropNotProducts( keys, unfilled ) {
+	if ( ! keys.size ) {
+		return;
+	}
+	const emptied = [];
+	state.kit.stages = state.kit.stages.filter( ( stage ) => {
+		stage.products = stage.products.filter(
+			( product ) => ! keys.has( product.key )
+		);
+		if ( stage.products.length ) {
+			return true;
+		}
+		emptied.push( stage.gap );
+		return false;
+	} );
+	if ( emptied.length ) {
+		state.kit.unfilled = state.kitUnfilled.replace(
+			'%s',
+			[ ...unfilled, ...emptied ].join( ', ' )
+		);
+	}
 }
