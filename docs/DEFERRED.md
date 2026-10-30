@@ -17,8 +17,6 @@
 
 - ⏸ **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — set aside (npm publish): Needs a person: dispatch publish-sdk.yml (bump sdk first) and publish-js-sdk.yml, then pick changesets-in-the-workflows or retire .changeset. → §CLIII.2
 
-## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
 ## Block CJ — Releases ship from the repository the README names
 
 - ⏸ **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — set aside (Waits on the owner's next successful 2026.3 publish run.): No 2026.3 release exists there yet: publish run 41103220225 failed. → §CLXI.1

@@ -14,10 +14,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
-- ⏳ **T1185** (deps: —) **On Solr and Elasticsearch a title holding the query as an exact phrase still ranks below synonym-only matches** — Solr still ranks synonym-only matches level with the title phrase: its title expands synonyms at query time. → §CLVIII.17
-
 ## Block CJ — Releases ship from the repository the README names
 
 - 📋 **T1186** (deps: —) **The console, the report email and the SDK and CLI texts still name the product Viglet Turing ES** — A visitor who installs the renamed download then logs into the old name, and the brand rule in the roadmap skill still asks for it. → §CLXI.6
@@ -54,12 +50,6 @@
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
-
-## Done when — T1185
-
-- **A title phrase ranks first on Solr too** A Solr row in TurSNEngineConformanceIT with
-  a synonym group: the guide titled with the query phrase ranks above the synonym-only
-  product.
 
 ## Non-goals (do NOT add as tasks)
 

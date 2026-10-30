@@ -543,6 +543,45 @@ class TurSNEngineConformanceIT {
         assertThat(ids).containsExactly("guide", "shell");
     }
 
+    /**
+     * T1185 — on Solr, whose title expands synonyms at query time, the guide titled
+     * with the query phrase still ranks above a product that only repeats a synonym:
+     * the boost runs on the configsets' synonym-free {@code title_phrase}.
+     */
+    @org.junit.jupiter.api.Test
+    void aTitleHoldingTheQueryAsAPhraseRanksFirstOnSolr() throws Exception {
+        String core = "turing_phrase";
+        var synonyms = solrContainer.execInContainer("bash", "-c",
+                "echo 'raincoat, rain jacket, waterproof jacket' >> /var/solr/data/configsets/en/conf/synonyms.txt");
+        assertThat(synonyms.getExitCode()).as(synonyms.getStderr()).isZero();
+        String host = "http://" + solrContainer.getHost() + ":" + solrContainer.getMappedPort(8983);
+        assertThat(com.viglet.turing.solr.TurSolrUtils.createCore(host, core, "en")).as("Solr core").isTrue();
+        var solrClient = new org.apache.solr.client.solrj.impl.HttpJdkSolrClient.Builder(host + "/solr").build();
+        var instance = new com.viglet.turing.solr.TurSolrInstance(solrClient, new java.net.URL(host + "/solr"), core);
+        // indexing() adds fields to the map it is given, so each document is a mutable copy.
+        solr.indexing(instance, site, new LinkedHashMap<>(Map.of(TurSNFieldName.ID, "guide", "title",
+                "How to choose a waterproof jacket for walking in the hills in every season of the year",
+                "text", "Ratings, breathability, fit, hoods, pockets, zips, weight and the price you pay.")));
+        for (String colour : List.of("slate", "moss", "ember", "sky")) {
+            solr.indexing(instance, site, new LinkedHashMap<>(Map.of(TurSNFieldName.ID, "catbells-" + colour,
+                    "title", "Rain jacket " + colour, "text",
+                    "Rain jacket with waterproof seams. A rain jacket, waterproof; the rain jacket packs small.")));
+        }
+        solrClient.commit(core);
+
+        TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),
+                new TurSEParameters(request(p -> p.setQ("waterproof jacket"))), java.util.Locale.US,
+                URI.create("http://localhost/search"));
+        List<String> ids = solr.retrieveSolrFromSN(instance, context)
+                .orElseThrow(() -> new AssertionError("Solr answered nothing"))
+                .getResults().stream()
+                .map(result -> String.valueOf(result.getFields().get(TurSNFieldName.ID)))
+                .toList();
+
+        assertThat(ids).as("the synonym finds the products").contains("catbells-slate");
+        assertThat(ids.getFirst()).isEqualTo("guide");
+    }
+
     static Stream<Arguments> missingPlacements() {
         return Stream.of(Arguments.of("closingSoonest", true), Arguments.of("openEndedFirst", false));
     }

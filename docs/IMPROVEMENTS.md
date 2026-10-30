@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BV — The quality gate stops at the package boundary
 
-## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
 ## Block CJ — Releases ship from the repository the README names
 
 ## Table of contents
@@ -2286,31 +2284,6 @@ What the SDK reports to analytics, and when: the search, click and abandonment e
 host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
-### CLVIII.17 A title phrase outranks synonym matches on Solr and Elasticsearch too (T1185)
-
-**Where it showed.** T1177: on Lucene, a guide titled "How to choose a waterproof
-jacket" fell below four products that only matched the synonym `rain jacket`. Lucene
-(`TurLuceneQueryBuilder.titlePhraseBoost`) and, since this line's first part,
-Elasticsearch (`TurElasticsearch.withTitlePhraseBoost`, a `match_phrase` on the title)
-add the query as typed, as a phrase on the site's TEXT title, boosted 10, for a query
-`TurSNQueryRelaxer.isPlainPhrase` accepts.
-
-**Why Solr is left.** A `pf` on Solr would not separate the two: the configset's
-`text_en` query analyzer runs `SynonymGraphFilterFactory`, so the title phrase expands
-to `rain jacket` too and boosts the products as much as the guide. Elasticsearch has no
-such problem because Turing's mappings give TEXT fields one analyzer with no synonym
-set.
-
-**What to build.** A synonym-free copy of the title in the Turing configsets: a field
-type with the index chain of `text_<lang>` and no query-time synonyms, filled by a
-`copyField` from the site's title. `TurSolrQueryBuilder.prepareSolrQuery` then sets
-`pf=<title>_exact^10` under `isPlainPhrase`. A configset change needs a reindex, so the
-boost applies only when the copy field exists (read it from the core's schema, else
-skip).
-
-**Gate.** A Solr row in `TurSNEngineConformanceIT` with a synonym group: the guide
-titled with the query phrase ranks first.
 
 ## CLIX Documentation refresh (`docs-turing`)
 

@@ -98,6 +98,7 @@ import com.viglet.turing.sn.facet.TurSNFacetMapForFilterQuery;
 import com.viglet.turing.sn.facet.TurSNFacetProperties;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 import com.viglet.turing.sn.tr.TurSNTargetingRuleMethod;
+import com.viglet.turing.sn.TurSNQueryRelaxer;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
@@ -190,6 +191,28 @@ public class TurSolrQueryBuilder {
                         && field.getSearchWeight() > 1f)
                 .forEach(field -> query.add(BOOST_QUERY, String.format(Locale.US,
                         "{!edismax qf='%s^%.2f' v=$q}", field.getName(), field.getSearchWeight() - 1f)));
+    }
+
+    /** T1185 — the configsets' synonym-free copy of {@code title}, for the phrase boost. */
+    public static final String TITLE_PHRASE_FIELD = "title_phrase";
+    /** T1185 — what a title holding the query as a phrase adds, as on Lucene and Elasticsearch. */
+    static final String TITLE_PHRASE_BOOST = TITLE_PHRASE_FIELD + "^10";
+
+    /**
+     * T1185 — Lucene's title-phrase boost (T1177) on Solr: edismax's {@code pf} on
+     * {@link #TITLE_PHRASE_FIELD}, which the configsets copy from {@code title}
+     * with no stemming and no synonyms, so a guide titled with the exact phrase
+     * outranks a product that matches only a synonym. Only for a plain phrase
+     * ({@link TurSNQueryRelaxer#isPlainPhrase}) on a site whose title is
+     * {@code title}; the caller checks that the core has the field.
+     */
+    public static void prepareTitlePhraseBoost(SolrQuery query, TurSNSite turSNSite, String queryString) {
+        String titleField = StringUtils.hasText(turSNSite.getDefaultTitleField())
+                ? turSNSite.getDefaultTitleField()
+                : TurSNFieldName.TITLE;
+        if (TurSNFieldName.TITLE.equals(titleField) && TurSNQueryRelaxer.isPlainPhrase(queryString)) {
+            query.set("pf", TITLE_PHRASE_BOOST);
+        }
     }
 
     private static boolean usesExactMatch(TurSNSite turSNSite, TurSEParameters turSEParameters) {

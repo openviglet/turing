@@ -267,6 +267,40 @@ public class TurSolr {
         return turSESpellCheckResult;
     }
 
+    /** T1185 — how long a core's answer about {@code title_phrase} is trusted. */
+    private static final long TITLE_PHRASE_FIELD_TTL_MS = 10 * 60 * 1000L;
+    private final Map<String, long[]> titlePhraseFieldByCore = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * T1185 — whether the core holds the synonym-free {@code title_phrase} the
+     * phrase boost runs on. A core created before the configsets carried it has
+     * none until it is recreated, and edismax refuses a {@code pf} on an undefined
+     * field, so the answer is read from the core's schema and kept for ten
+     * minutes; a failed read reads as absent.
+     */
+    boolean hasTitlePhraseField(TurSolrInstance turSolrInstance) {
+        if (turSolrInstance == null || turSolrInstance.getSolrClient() == null) {
+            return false;
+        }
+        String key = turSolrInstance.getSolrUrl() + "/" + turSolrInstance.getCore();
+        long now = System.currentTimeMillis();
+        long[] cached = titlePhraseFieldByCore.get(key);
+        if (cached != null && now - cached[1] < TITLE_PHRASE_FIELD_TTL_MS) {
+            return cached[0] == 1;
+        }
+        boolean present;
+        try {
+            present = new org.apache.solr.client.solrj.request.schema.SchemaRequest.Field(
+                    TurSolrQueryBuilder.TITLE_PHRASE_FIELD)
+                    .process(turSolrInstance.getSolrClient(), turSolrInstance.getCore())
+                    .getField() != null;
+        } catch (Exception e) {
+            present = false;
+        }
+        titlePhraseFieldByCore.put(key, new long[] { present ? 1 : 0, now });
+        return present;
+    }
+
     public Optional<TurSEResults> retrieveSolrFromSN(TurSolrInstance turSolrInstance,
             TurSNSiteSearchContext context) {
         return turSNSiteRepository.findByNameIgnoreCase(context.getSiteName()).map(turSNSite -> {
@@ -275,6 +309,9 @@ public class TurSolr {
             TurSEParameters turSEParameters = context.getTurSEParameters();
             SolrQuery query = turSolrQueryBuilder.prepareSolrQuery(context, turSNSite, turSEParameters,
                     turSESpellCheckResult);
+            if (hasTitlePhraseField(turSolrInstance)) {
+                TurSolrQueryBuilder.prepareTitlePhraseBoost(query, turSNSite, query.getQuery());
+            }
 
             TurSolrQueryContext queryContext = TurSolrQueryContext.builder()
                     .query(query)

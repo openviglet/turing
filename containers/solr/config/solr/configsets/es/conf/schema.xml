@@ -619,4 +619,15 @@
   <copyField source="abstract" dest="text_spellcheck" />
   <copyField source="text" dest="text_spellcheck" />
   <copyField source="title" dest="text_spellcheck" />
+  <!-- T1185: the title as typed, for the exact-phrase boost (pf). No stemming and no
+       synonyms, unlike text_general, so a synonym-only match is never boosted with it. -->
+  <fieldType name="text_phrase" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.StandardTokenizerFactory" />
+      <filter class="solr.LowerCaseFilterFactory" />
+      <filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="false" />
+    </analyzer>
+  </fieldType>
+  <field name="title_phrase" type="text_phrase" multiValued="false" indexed="true" stored="false" />
+  <copyField source="title" dest="title_phrase" />
 </schema>
