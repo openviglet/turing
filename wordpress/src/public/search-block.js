@@ -75,6 +75,20 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		get compareText() {
 			return state.compareLabel.replace( '%d', compare.ids.length );
 		},
+		// A card's cart status, kept by product rather than on the card (D250): the block
+		// replaces the cards it rendered on the server once its own search answers, and a
+		// status written on the old card would never show.
+		cartByProduct: {},
+		get resultAdding() {
+			return !! state.cartByProduct[ getContext().result.productId ]
+				?.adding;
+		},
+		get resultCartStatus() {
+			return (
+				state.cartByProduct[ getContext().result.productId ]?.status ||
+				''
+			);
+		},
 		// What the list offers: suggestions for what is typed, or recent searches for an
 		// empty box. The part already typed is split off so it can be shown in bold.
 		get options() {
@@ -353,14 +367,15 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		// One of the product through WooCommerce's Store API, which answers why when it cannot
 		// (out of stock, say); the page and the results stay as they are.
 		async addToCart() {
-			const { result } = getContext();
-			result.adding = true;
-			result.cartStatus = '';
-			const added = await addToCart( result.productId );
-			result.cartStatus = added.ok
-				? state.cartAdded
-				: plain( added.message ) || state.cartFailed;
-			result.adding = false;
+			const { productId } = getContext().result;
+			state.cartByProduct[ productId ] = { adding: true, status: '' };
+			const added = await addToCart( productId );
+			state.cartByProduct[ productId ] = {
+				adding: false,
+				status: added.ok
+					? state.cartAdded
+					: plain( added.message ) || state.cartFailed,
+			};
 		},
 		// The words Turing read as the filter leave the query, so they no longer match as text.
 		applySuggestion() {
@@ -1252,8 +1267,6 @@ function product( fields, title ) {
 		productId: postIdOf( fields.id ),
 		cartLabel: state.cartLabel.replace( '%s', title ),
 		compareFor: state.compareFor.replace( '%s', title ),
-		cartStatus: '',
-		adding: false,
 	};
 }
 

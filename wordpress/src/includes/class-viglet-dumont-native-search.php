@@ -376,8 +376,6 @@ class Viglet_Dumont_Native_Search {
 						'productId'  => (int) ( $post[1] ?? 0 ),
 						'cartLabel'  => str_replace( '%s', $title, $state['cartLabel'] ),
 						'compareFor' => str_replace( '%s', $title, $state['compareFor'] ?? '%s' ),
-						'cartStatus' => '',
-						'adding'     => false,
 					)
 				);
 			}

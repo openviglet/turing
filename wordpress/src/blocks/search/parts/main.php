@@ -72,8 +72,8 @@ $viglet_dumont_recent = array_map(
 								<del hidden data-wp-bind--hidden="!context.result.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-dumont' ); ?></span> <span data-wp-text="context.result.regular"></span></del>
 								<span data-wp-text="context.result.price"></span>
 							</p>
-							<button type="button" class="wp-element-button viglet-dumont-search__cart" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="context.result.adding" data-wp-bind--aria-label="context.result.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-dumont' ); ?></button>
-							<span class="viglet-dumont-search__cart-status" role="status" data-wp-text="context.result.cartStatus"></span>
+							<button type="button" class="wp-element-button viglet-dumont-search__cart" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="state.resultAdding" data-wp-bind--aria-label="context.result.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-dumont' ); ?></button>
+							<span class="viglet-dumont-search__cart-status" role="status" data-wp-text="state.resultCartStatus"></span>
 							<label class="viglet-dumont-search__compare" hidden data-wp-bind--hidden="!state.canCompare">
 								<input type="checkbox" data-wp-bind--aria-label="context.result.compareFor" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
 								<?php esc_html_e( 'Compare', 'viglet-dumont' ); ?>

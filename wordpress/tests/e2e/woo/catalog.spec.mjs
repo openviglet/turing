@@ -119,6 +119,36 @@ test( 'a product sold in colours adds the colour the shop can sell', async ( {
 	expect( item?.variation.map( ( v ) => v.value ) ).toEqual( [ 'Blue' ] );
 } );
 
+test( 'a cart status shown before the block takes over its cards is still shown after', async ( {
+	page,
+	seed,
+} ) => {
+	// D250: the block replaces the cards it rendered on the server once its own search
+	// answers. That answer is held back here, so the add lands first and the take-over after.
+	let asked;
+	const searched = new Promise( ( resolve ) => ( asked = resolve ) );
+	let release;
+	const held = new Promise( ( resolve ) => ( release = resolve ) );
+	await page.route( /\/api\/sn\/[^/]+\/search\/query/, async ( route ) => {
+		asked();
+		await held;
+		await route.continue();
+	} );
+	await page.goto( jackets( seed ) );
+	await searched;
+	const wool = results( page ).filter( { hasText: 'Wool jacket' } );
+	await wool
+		.getByRole( 'button', { name: 'Add to cart: Wool jacket' } )
+		.click();
+	const status = wool.locator( '.viglet-dumont-search__cart-status' );
+	await expect( status ).toHaveText( 'Added to your cart.' );
+
+	const answered = page.waitForResponse( /\/api\/sn\/[^/]+\/search\/query/ );
+	release();
+	await answered;
+	await expect( status ).toHaveText( 'Added to your cart.' );
+} );
+
 test( 'out of stock is a facet value, and color is one too', async ( {
 	page,
 	seed,
