@@ -101,6 +101,32 @@ final class DiagnosticsTest extends PluginTestCase {
 		$this->assertStringContainsString( 'WordPress Playground could not reach Turing at http://localhost:2700.', $step['message'] );
 	}
 
+	public function test_in_demo_mode_no_key_is_asked_for_and_the_site_is_checked_by_a_public_search(): void {
+		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		try {
+			$result = $this->run_with( array( 'api_key' => '' ) );
+		} finally {
+			putenv( 'VIGLET_DUMONT_DEMO' );
+		}
+
+		$this->assertTrue( $result['ok'] );
+		$this->assertSame( array( 'url', 'reach', 'turing', 'key', 'site' ), array_column( $result['steps'], 'step' ) );
+		$this->assertStringContainsString( 'no API key is needed', $result['steps'][3]['message'] );
+	}
+
+	public function test_in_demo_mode_a_site_that_needs_a_key_fails_at_the_site(): void {
+		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		$this->plan = array( 401, '' );
+		try {
+			$step = $this->failed_step( $this->run_with( array( 'api_key' => '' ) ) );
+		} finally {
+			putenv( 'VIGLET_DUMONT_DEMO' );
+		}
+
+		$this->assertSame( 'site', $step['step'] );
+		$this->assertStringContainsString( 'PUBLIC', $step['message'] );
+	}
+
 	public function test_no_key_and_a_refused_key_both_fail_at_the_key(): void {
 		$this->assertSame( 'key', $this->failed_step( $this->run_with( array( 'api_key' => '' ) ) )['step'] );
 

@@ -24,13 +24,30 @@ class Viglet_Dumont_Admin {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_dashboard_setup', array( $this, 'add_dashboard_widget' ) );
+		add_action( 'admin_notices', array( $this, 'demo_notice' ) );
+	}
+
+	/**
+	 * On the plugin's own screens, say that demo mode is on and what it turns off (D238), so an
+	 * indexing button that does nothing is never a mystery.
+	 */
+	public function demo_notice(): void {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! Viglet_Dumont_Settings::demo() || ! $screen || ! str_contains( (string) $screen->id, 'viglet-dumont' ) ) {
+			return;
+		}
+		printf(
+			'<div class="notice notice-info"><p>%s</p></div>',
+			esc_html( Viglet_Dumont_API_Client::demo_refusal()->get_error_message() . ' ' . __( 'Search and the AI features work from the visitors\' browsers; Search tuning and Search insights are hidden.', 'viglet-dumont' ) )
+		);
 	}
 
 	/**
 	 * The week's searches on the dashboard (D178), for whoever may read Search insights.
 	 */
 	public function add_dashboard_widget(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		// Insights read Turing's metrics, which need the key demo mode never holds (D238).
+		if ( ! current_user_can( 'manage_options' ) || Viglet_Dumont_Settings::demo() ) {
 			return;
 		}
 		wp_add_dashboard_widget(
@@ -85,6 +102,10 @@ class Viglet_Dumont_Admin {
 			'viglet-dumont-health',
 			array( $this, 'render_health_page' )
 		);
+		// Tuning and Insights read and write through Turing's keyed endpoints: demo mode has none (D238).
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return;
+		}
 		add_submenu_page(
 			'viglet-dumont',
 			__( 'Search tuning', 'viglet-dumont' ),

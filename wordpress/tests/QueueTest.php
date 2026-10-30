@@ -282,6 +282,23 @@ final class QueueTest extends PluginTestCase {
 		$this->assertSame( 'delete', $jobs[1]['action'] );
 	}
 
+	public function test_in_demo_mode_a_save_queues_nothing_and_the_worker_sends_nothing(): void {
+		// D238: a demo site holds no key and never writes to Turing.
+		$this->queue()->enqueue( 1, 'index' );
+		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		try {
+			$this->queue()->enqueue( 2, 'index' );
+			$result = $this->queue()->process( true );
+		} finally {
+			putenv( 'VIGLET_DUMONT_DEMO' );
+		}
+
+		$this->assertSame( array( 1 ), array_keys( $this->queue()->jobs() ) );
+		$this->assertSame( 0, $result['sent'] );
+		$this->assertFalse( $result['locked'] );
+		$this->assertSame( array(), $this->requests );
+	}
+
 	public function test_a_second_worker_sends_nothing_while_the_first_holds_the_lock(): void {
 		$this->queue()->enqueue( 1, 'index' );
 		$this->transients[ Viglet_Dumont_Queue::LOCK ] = 1;

@@ -61,6 +61,10 @@ written to `wp_options`, so the key stays out of database backups.
 `wp dumont status` says where each value came from. The Docker stack below sets the first
 three this way.
 
+`VIGLET_DUMONT_DEMO=1` is demo mode, for a site whose wp-admin belongs to whoever opens it
+(a WordPress Playground demo): no API key, nothing ever written to Turing, Search tuning and
+Search insights hidden, and search against a PUBLIC SN site indexed elsewhere.
+
 ## Search
 
 With "Replace WordPress search with Turing" on (off on a fresh install), the default results

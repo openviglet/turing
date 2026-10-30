@@ -151,6 +151,23 @@ class Viglet_Dumont_Settings {
 	}
 
 	/**
+	 * The constant, or environment variable, that turns demo mode on (D238).
+	 */
+	public const DEMO = 'VIGLET_DUMONT_DEMO';
+
+	/**
+	 * Demo mode (D238): a site whose wp-admin belongs to whoever opens it, such as a WordPress
+	 * Playground demo, so it holds no Turing key and never writes to Turing. It searches a
+	 * PUBLIC SN site built elsewhere; indexing, provisioning, tuning and insights are off.
+	 * Set from outside WordPress only, like the connection, so a visitor cannot turn it off.
+	 */
+	public static function demo(): bool {
+		$value = self::external( self::DEMO );
+
+		return null !== $value && ! in_array( strtolower( $value ), array( '0', 'false', 'no', 'off' ), true );
+	}
+
+	/**
 	 * Whether a setting is set from outside WordPress, so the admin shows it read-only.
 	 *
 	 * @param string $key The setting.

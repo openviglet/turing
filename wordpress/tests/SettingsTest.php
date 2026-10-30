@@ -35,6 +35,7 @@ final class SettingsTest extends PluginTestCase {
 	protected function tearDown(): void {
 		putenv( 'VIGLET_DUMONT_TURING_URL' );
 		putenv( 'VIGLET_DUMONT_TURING_API_KEY' );
+		putenv( 'VIGLET_DUMONT_DEMO' );
 		parent::tearDown();
 	}
 
@@ -71,6 +72,16 @@ final class SettingsTest extends PluginTestCase {
 		$this->assertSame( 'stored-key', $stored['api_key'] );
 		$this->assertSame( 'Changed', $stored['site_name'] );
 		$this->assertStringNotContainsString( 'env-secret', (string) json_encode( $stored ) );
+	}
+
+	public function test_demo_mode_is_off_unless_set_outside_wordpress_and_a_false_value_keeps_it_off(): void {
+		$this->assertFalse( Viglet_Dumont_Settings::demo() );
+
+		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		$this->assertTrue( Viglet_Dumont_Settings::demo() );
+
+		putenv( 'VIGLET_DUMONT_DEMO=off' );
+		$this->assertFalse( Viglet_Dumont_Settings::demo() );
 	}
 
 	public function test_a_constant_wins_over_the_environment(): void {

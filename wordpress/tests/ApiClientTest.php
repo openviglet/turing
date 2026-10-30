@@ -40,7 +40,37 @@ final class ApiClientTest extends PluginTestCase {
 
 	protected function tearDown(): void {
 		unset( $_SERVER['SERVER_SOFTWARE'] );
+		putenv( 'VIGLET_DUMONT_DEMO' );
 		parent::tearDown();
+	}
+
+	public function test_in_demo_mode_no_write_reaches_turing_and_each_says_why(): void {
+		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		$client = new Viglet_Dumont_API_Client( $this->settings( array( 'api_key' => '' ) ) );
+
+		$results = array(
+			$client->import( array() ),
+			$client->deindex( array() ),
+			$client->provision( array( 'name' => 'x' ) ),
+		);
+		$plan    = $client->plan( array( 'name' => 'x' ) );
+
+		$this->assertSame( array(), $this->requests );
+		foreach ( $results as $result ) {
+			$this->assertFalse( $result['success'] );
+			$this->assertStringContainsString( 'Demo mode (VIGLET_DUMONT_DEMO) is on', $result['message'] );
+		}
+		$this->assertInstanceOf( WP_Error::class, $plan );
+		$this->assertSame( 'viglet_dumont_demo', $plan->get_error_code() );
+	}
+
+	public function test_in_demo_mode_a_search_still_goes_out_without_a_key(): void {
+		putenv( 'VIGLET_DUMONT_DEMO=1' );
+
+		( new Viglet_Dumont_API_Client( $this->settings( array( 'api_key' => '' ) ) ) )->search( 'jacket', 1, 10 );
+
+		$this->assertCount( 1, $this->requests );
+		$this->assertArrayNotHasKey( 'Key', $this->requests[0][1]['headers'] );
 	}
 
 	public function test_in_playground_its_own_refusal_names_the_cause_and_the_address(): void {

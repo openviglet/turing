@@ -69,6 +69,10 @@ class Viglet_Dumont_Queue {
 	 * @param string $action  `index` or `delete`.
 	 */
 	public function enqueue( int $post_id, string $action ): void {
+		// Demo mode (D238) never writes to Turing, so nothing is queued to be written.
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return;
+		}
 		$jobs             = $this->jobs();
 		$jobs[ $post_id ] = array(
 			'action'    => 'delete' === $action ? 'delete' : 'index',
@@ -117,6 +121,16 @@ class Viglet_Dumont_Queue {
 	 * @return array{sent: int, failed: int, errors: array<int, string>, remaining: int, locked: bool} `errors` is the failure per post id.
 	 */
 	public function process( bool $ignore_backoff = false ): array {
+		// Demo mode (D238): no job is ever queued, and none left from before is sent.
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return array(
+				'sent'      => 0,
+				'failed'    => 0,
+				'errors'    => array(),
+				'remaining' => 0,
+				'locked'    => false,
+			);
+		}
 		if ( get_transient( self::LOCK ) ) {
 			return array(
 				'sent'      => 0,

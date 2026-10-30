@@ -116,6 +116,9 @@ class Viglet_Dumont_API_Client {
 	 *         when no response arrived; `note` is the message for the event log (D180).
 	 */
 	public function import( array $job_items ): array {
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
+		}
 		$payload = array( 'snJobItems' => $job_items );
 
 		$response = $this->request( 'POST', '/api/sn/import', null, $payload );
@@ -158,6 +161,9 @@ class Viglet_Dumont_API_Client {
 	 * @return array{success: bool, message: string, note: string|array, code: int} `code` is 0 when no response arrived.
 	 */
 	public function provision( array $manifest ): array {
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
+		}
 		$response = $this->request( 'POST', '/api/sn/manifest', null, $manifest );
 
 		if ( is_wp_error( $response ) ) {
@@ -185,6 +191,9 @@ class Viglet_Dumont_API_Client {
 	 * @return array|WP_Error The plan: `fieldsToAdd`, `fieldsUnchanged`, `breakingChanges`, ...
 	 */
 	public function plan( array $manifest ) {
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return self::demo_refusal();
+		}
 		$response = $this->request( 'POST', '/api/sn/manifest/plan', null, $manifest );
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -210,6 +219,9 @@ class Viglet_Dumont_API_Client {
 	 * @return array{success: bool, message: string, note: string|array, code: int}
 	 */
 	public function deindex( array $job_items ): array {
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
+		}
 		$payload = array( 'snJobItems' => $job_items );
 
 		$response = $this->request( 'POST', '/api/sn/import', null, $payload );
@@ -368,6 +380,21 @@ class Viglet_Dumont_API_Client {
 		$response = wp_remote_request( $url, array_replace_recursive( $args, $extra ) );
 
 		return self::playground_refusal( $response, $this->server_url ) ?? $response;
+	}
+
+	/**
+	 * What every write answers in demo mode (D238): the site holds no key and its index is
+	 * built elsewhere, so nothing is sent.
+	 */
+	public static function demo_refusal(): WP_Error {
+		return new WP_Error(
+			'viglet_dumont_demo',
+			sprintf(
+				/* translators: %s: the constant or environment variable that turns demo mode on. */
+				__( 'Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here.', 'viglet-dumont' ),
+				Viglet_Dumont_Settings::DEMO
+			)
+		);
 	}
 
 	/**

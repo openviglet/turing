@@ -73,6 +73,11 @@ class Viglet_Dumont_Diagnostics {
 		}
 		$steps[] = $this->pass( 'turing', __( 'It is a Turing.', 'viglet-dumont' ) );
 
+		// Demo mode (D238) holds no key: the SN site is checked the way visitors reach it.
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return $this->run_demo( $steps );
+		}
+
 		if ( '' === (string) ( $this->settings['api_key'] ?? '' ) ) {
 			return $this->stop( $steps, 'key', __( 'No API key is set. Create one in Turing under API Tokens and paste it here.', 'viglet-dumont' ) );
 		}
@@ -109,6 +114,48 @@ class Viglet_Dumont_Diagnostics {
 		return array(
 			'ok'          => $exists,
 			'site_exists' => $exists,
+			'steps'       => $steps,
+		);
+	}
+
+	/**
+	 * The key and site steps in demo mode: no key is asked for, and the SN site passes when it
+	 * answers a search with none, as a PUBLIC site does.
+	 *
+	 * @param array $steps The steps so far.
+	 */
+	private function run_demo( array $steps ): array {
+		$steps[] = $this->pass(
+			'key',
+			sprintf(
+				/* translators: %s: the constant or environment variable that turns demo mode on. */
+				__( 'Demo mode (%s): no API key is needed, and none is sent.', 'viglet-dumont' ),
+				Viglet_Dumont_Settings::DEMO
+			)
+		);
+
+		$ping = ( new Viglet_Dumont_API_Client( $this->settings ) )->ping();
+		if ( empty( $ping['success'] ) ) {
+			return $this->stop(
+				$steps,
+				'site',
+				sprintf(
+					/* translators: 1: the SN site's name, 2: what Turing answered. */
+					__( 'The SN site %1$s does not answer a search without a key (%2$s): in demo mode it has to exist and be PUBLIC.', 'viglet-dumont' ),
+					$this->settings['site_name'],
+					$ping['message']
+				)
+			);
+		}
+		$steps[] = $this->pass(
+			'site',
+			/* translators: %s: the SN site's name. */
+			sprintf( __( 'The SN site %s answers searches without a key.', 'viglet-dumont' ), $this->settings['site_name'] )
+		);
+
+		return array(
+			'ok'          => true,
+			'site_exists' => true,
 			'steps'       => $steps,
 		);
 	}
