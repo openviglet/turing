@@ -366,7 +366,8 @@ the copilot returns the needs it implies, each with the catalog products that fi
   "perGap": 3,
   "availabilityField": "in_stock",
   "availability": "MARK",
-  "guideTypes": ["guide", "checklist"]
+  "guideTypes": ["guide", "checklist"],
+  "productTypes": ["product"]
 }
 ```
 
@@ -399,6 +400,11 @@ the needs the catalog had nothing for in `unfilled`, and up to two `guides`.
   beside the stages. Without `guideTypes`, no guide is searched. A document of one
   of those types is never staged as a product, even when a need's search finds it:
   the stage fills from the next products, and the document stays a guide.
+- **Products.** A site indexes more than its catalog: pages, landing pages, FAQs.
+  List the document types that can be bought in `productTypes`, and only a
+  document of one of them is staged; anything else a need's search finds is skipped
+  and the stage fills from the next candidate. Without `productTypes`, every
+  document that is not a guide can be staged.
 
 Both SDKs call it as `postCopilotKit` (`@viglet/turing-sdk` and
 `@viglet/turing-react-sdk`); gate it on `/copilot/available`, like the copilot.

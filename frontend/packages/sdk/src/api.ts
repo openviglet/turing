@@ -1989,6 +1989,11 @@ export interface TurCatalogKitRequest {
   readonly availability?: TurCatalogKitAvailability;
   /** T1167 — the document types that count as a guide on this site; none, no guides. */
   readonly guideTypes?: readonly string[];
+  /**
+   * T1175 — the document types that count as a product on this site: when given,
+   * only a document of one of them is staged. None, any document not a guide is.
+   */
+  readonly productTypes?: readonly string[];
 }
 
 /** T1167 — a guide the plan retrieved: the site's own advice, cited beside the stages. */

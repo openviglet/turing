@@ -2287,32 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.12 A kit stages only the types the request names as products (T1175)
-
-**Where it showed.** Dumont's WordPress plugin, Build my kit on the Dumont demo (D203's
-story run, 2026-10-30): `POST /api/sn/Demo/copilot/kit` with `{plan, locale,
-availabilityField: "stock_status", availability: "MARK", guideTypes: ["post"]}` staged
-`localhost:post:11`, the store's "Search the shop" page (type `page`), as a product of a
-stage. The block then tried to add it to the WooCommerce cart and got a 400.
-
-**Why.** `TurCatalogKitService.stageProducts` skips only documents whose `type` is in
-`guideTypes`; everything else retrieved for a gap is staged. A site indexes more than
-its catalog (pages, landing pages, FAQs), and the request has no way to say which types
-are products.
-
-**What it should do.**
-- An optional `productTypes` beside `guideTypes`, same normalisation: when given, only a
-  document whose `type` is in it is staged; the rest is skipped and the stage fills from
-  the next candidates. When absent, today's behaviour.
-- Both SDKs (`postCopilotKit`) carry it, and the OpenAPI schema names it.
-
-**Workaround.** Dumont excludes its demo's content-free pages from the index
-(`wordpress/demo/setup.php`) and files its own line (D241) to drop, on the block side,
-an id the shop does not sell. Neither covers a site with real pages.
-
-**Gate.** A unit test on `stageProducts` with a `page` and two `product` documents and
-`productTypes: ["product"]`: only the products are staged.
-
 ### CLVIII.13 A question in the search box finds the documents its main words do (T1176)
 
 **Where it showed.** Dumont's WordPress demo store, the search block with its answer

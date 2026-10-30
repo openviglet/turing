@@ -39,6 +39,7 @@ describe("postCopilotKit", () => {
       perGap: 2,
       availabilityField: "in_stock",
       availability: "DROP",
+      productTypes: ["product"],
     });
 
     expect(result.stages[0].products[0].id).toBe("t1");
@@ -52,6 +53,7 @@ describe("postCopilotKit", () => {
       perGap: 2,
       availabilityField: "in_stock",
       availability: "DROP",
+      productTypes: ["product"],
     });
   });
 

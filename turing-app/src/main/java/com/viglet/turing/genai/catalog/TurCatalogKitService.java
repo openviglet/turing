@@ -101,14 +101,22 @@ public class TurCatalogKitService {
      * The kit's optional knobs; every field may be {@code null}. T1167 —
      * {@code guideTypes} names the document types that count as a guide on this
      * site (a site's types differ, so none is guessed); without it no guide is cited.
+     * T1175 — {@code productTypes} names the document types that may be staged as a
+     * product; without it any document that is not a guide is.
      */
     public record Options(Integer maxGaps, Integer perGap, String availabilityField, Availability availability,
-            List<String> guideTypes) {
-        static final Options DEFAULTS = new Options(null, null, null, null, null);
+            List<String> guideTypes, List<String> productTypes) {
+        static final Options DEFAULTS = new Options(null, null, null, null, null, null);
 
         /** The knobs before T1167: no guide types. */
         public Options(Integer maxGaps, Integer perGap, String availabilityField, Availability availability) {
-            this(maxGaps, perGap, availabilityField, availability, null);
+            this(maxGaps, perGap, availabilityField, availability, null, null);
+        }
+
+        /** The knobs before T1175: no product types. */
+        public Options(Integer maxGaps, Integer perGap, String availabilityField, Availability availability,
+                List<String> guideTypes) {
+            this(maxGaps, perGap, availabilityField, availability, guideTypes, null);
         }
     }
 
@@ -200,7 +208,7 @@ public class TurCatalogKitService {
         List<Stage> stages = new ArrayList<>();
         List<String> unfilled = new ArrayList<>();
         Set<String> staged = new HashSet<>();
-        Set<String> guideTypes = guideTypes(opts.guideTypes());
+        Set<String> guideTypes = types(opts.guideTypes());
         for (Gap gap : named.gaps()) {
             // T1171 — a gap that names a facet value searches its words inside it.
             TurCatalogCopilotService.Retrieval retrieval = gap.filterField() == null
@@ -237,7 +245,7 @@ public class TurCatalogKitService {
         List<TurCatalogCitation> citations = retrieval.citations();
         for (int i = 0; i < citations.size() && guides.size() < MAX_GUIDES; i++) {
             TurCatalogCitation citation = citations.get(i);
-            if (citation.id() != null && isGuide(retrieval.attributesAt(i), types)
+            if (citation.id() != null && hasType(retrieval.attributesAt(i), types)
                     && !staged.contains(citation.id())) {
                 guides.add(citation);
             }
@@ -245,18 +253,18 @@ public class TurCatalogKitService {
         return List.copyOf(guides);
     }
 
-    /** The requested guide types, stripped and lower-cased; empty when none. */
-    private static Set<String> guideTypes(List<String> guideTypes) {
+    /** The requested guide or product types, stripped and lower-cased; empty when none. */
+    private static Set<String> types(List<String> requested) {
         Set<String> types = new HashSet<>();
-        if (guideTypes != null) {
-            guideTypes.stream().filter(StringUtils::hasText)
+        if (requested != null) {
+            requested.stream().filter(StringUtils::hasText)
                     .forEach(t -> types.add(t.strip().toLowerCase(java.util.Locale.ROOT)));
         }
         return types;
     }
 
-    /** Whether the document's {@code type} is one of the guide {@code types}. */
-    private static boolean isGuide(Map<String, String> attributes, Set<String> types) {
+    /** Whether the document's {@code type} is one of {@code types}. */
+    private static boolean hasType(Map<String, String> attributes, Set<String> types) {
         String type = attributes == null ? null : attributes.get("type");
         return type != null && types.contains(type.strip().toLowerCase(java.util.Locale.ROOT));
     }
@@ -265,16 +273,20 @@ public class TurCatalogKitService {
      * Up to {@code limit} of the gap's retrieved products, skipping any already
      * staged under an earlier gap, an unavailable one when the request drops
      * them, and (T1172) a document of a requested guide type, which is cited among
-     * the guides and is never a product. {@code staged} records each product taken.
+     * the guides and is never a product. T1175 — when the request names product
+     * types, a document of any other type (a page, an FAQ) is skipped and the stage
+     * fills from the next candidate. {@code staged} records each product taken.
      */
-    private static List<KitProduct> stageProducts(TurCatalogCopilotService.Retrieval retrieval, Gap gap,
+    static List<KitProduct> stageProducts(TurCatalogCopilotService.Retrieval retrieval, Gap gap,
             Options opts, int limit, Set<String> staged, Set<String> guideTypes, Map<String, String> reasonLabels) {
+        Set<String> productTypes = types(opts.productTypes());
         List<KitProduct> products = new ArrayList<>();
         List<TurCatalogCitation> citations = retrieval.citations();
         for (int i = 0; i < citations.size() && products.size() < limit; i++) {
             TurCatalogCitation citation = citations.get(i);
             Map<String, String> attributes = retrieval.attributesAt(i);
-            if (isGuide(attributes, guideTypes)) {
+            if (hasType(attributes, guideTypes)
+                    || (!productTypes.isEmpty() && !hasType(attributes, productTypes))) {
                 continue;
             }
             Boolean available = availability(attributes, opts.availabilityField());

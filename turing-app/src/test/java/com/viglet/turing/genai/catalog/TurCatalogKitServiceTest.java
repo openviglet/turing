@@ -206,6 +206,24 @@ class TurCatalogKitServiceTest {
         assertNull(products.get(0).available(), "no availability field was named");
     }
 
+    /** T1175 — with product types named, a page between two products is not staged. */
+    @Test
+    void onlyTheNamedProductTypesAreStaged() {
+        TurCatalogCopilotService.Retrieval retrieval = new TurCatalogCopilotService.Retrieval(
+                List.of(product("page1"), product("p1"), product("p2")), List.of(), 3, null, true, List.of(
+                        Map.of("type", "page"), Map.of("type", "Product"), Map.of("type", "product")));
+        TurCatalogKitService.Gap gap = new TurCatalogKitService.Gap("Shelter", "tent", "nights out");
+
+        var typed = TurCatalogKitService.stageProducts(retrieval, gap, new TurCatalogKitService.Options(null, null,
+                null, null, null, List.of(" PRODUCT ")), 2, new java.util.HashSet<>(), java.util.Set.of(), Map.of());
+        assertEquals(List.of("p1", "p2"), typed.stream().map(TurCatalogKitService.KitProduct::id).toList());
+
+        var untyped = TurCatalogKitService.stageProducts(retrieval, gap, TurCatalogKitService.Options.DEFAULTS, 2,
+                new java.util.HashSet<>(), java.util.Set.of(), Map.of());
+        assertEquals(List.of("page1", "p1"), untyped.stream().map(TurCatalogKitService.KitProduct::id).toList(),
+                "without product types, today's behaviour");
+    }
+
     /** T1174 — a site key or an image URL is never a reason; no facet vocabulary, no reason. */
     @Test
     void aReasonUsesTheSitesFacetsOnly() {
