@@ -19,3 +19,5 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
+## Block CJ — Releases ship from the repository the README names
+

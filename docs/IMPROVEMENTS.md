@@ -31,6 +31,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
+## Block CJ — Releases ship from the repository the README names
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2288,31 +2290,31 @@ host hands to Google Analytics, and the consent that gates them.
 ### CLVIII.11 A kit product's reason uses the site's facets only (T1174)
 
 **Where it showed.** Dumont's WordPress plugin, Build my kit on the demo store (Dumont
-D201's live run, 2026-10-30): `POST /api/sn/Demo/copilot/kit` with the plan "Two days
-crossing the mountains in July, first time". Every staged product came back with a
+D201's live run, 2026-10-30): `POST /api/sn/Demo/copilot/kit` staged products with a
 `reason` such as `product_cat: Tents; site_key: localhost`, or `image:
-http://localhost:38082/wp-content/uploads/2026/10/fairfield-grid-fleece-sky.webp;
-product_cat: Fleece and midlayers`. The block prints `reason` under the product, so the
-shopper reads a host key and an image URL as why a fleece fits the plan.
+http://…/fairfield- grid-fleece-sky.webp; product_cat: Fleece and midlayers`. The block
+prints `reason` under the product, so the shopper reads a host key and an image URL as
+why a fleece fits.
 
 **Why.** `TurCatalogKitService.reason` joins up to `REASON_ATTRIBUTES` of the document's
-attributes as `key: value`, the gap-matching ones first and the rest after, so whenever
-fewer attributes match the gap the slots fill with whatever the document carries:
-`site_key`, `image`, `url`-like fields. Field names are shown raw (`product_cat`,
-`pa_use`) rather than as the facet labels the site declares.
+attributes, the gap-matching ones first and then any other, so the slots fill with
+whatever `TurCatalogCopilotService.shortAttributes` kept: it drops only title, url,
+abstract, text and id. Field names are shown raw.
 
 **What it should do.**
-- Only attributes that are facets of the SN site go into a reason, under the facet's
-  label in the request's locale (`Category: Tents`, `Use: Hiking, Travel`). Plumbing
-  fields (site key, image, url, id, dates) never do.
-- A product with no gap-matching facet gets the matching ones it has or none, never a
-  filler: `reason` is null rather than unrelated text.
+- Only facet fields of the SN site go into a reason, under the facet's label in the
+  request's locale (`facetLocales`, else `facetName`): `Category: Tents`.
+- No filler: a product with no gap-matching facet gets the facets it has, at most
+  `REASON_ATTRIBUTES`, or `reason: null`.
 
-**Workaround.** None in Dumont; the block shows `reason` as given
-(`src/public/copilot.js` `kitProduct`).
+**Where the fix goes.** `plan()` already reads `vocabulary` (the site's enabled,
+non-numeric facet fields, T1169); its keys are the allow-list, so no new read. When that
+read fails it is an empty map, and the reason is then null, never raw fields.
 
-**Gate.** A unit test on `reason` with a document carrying `site_key` and `image` beside
-two facets: only the facets appear, labelled.
+**Workaround.** None in Dumont; the block shows `reason` as given (`kitProduct`).
+
+**Gate.** A unit test on `reason` with `site_key` and `image` beside two facets: only
+the facets appear, labelled; with an empty vocabulary, `null`.
 
 ### CLVIII.12 A kit stages only the types the request names as products (T1175)
 
@@ -2346,27 +2348,28 @@ an id the shop does not sell. Neither covers a site with real pages.
 panel on (D203's story run, 2026-10-30). `GET /api/sn/Demo/search?q=What do I need for
 two days in the hills?&_setlocale=en_US` returns `queryContext.count = 0`, and
 spell-check offers the whole question back as "did you mean". The answer panel draws
-only on results, so a shopper who types a question in the box gets no answer and no
-products. `backpack night hut` finds the backpack guide; `what size backpack for a night
-in a hut` finds 1.
+only on results, so a shopper who types a question gets no answer and no products.
 
-**Why.** Every query word must match. Question words and function words ("what", "do",
-"I", "need", "for", "in", "the") are required terms, so a question in natural language
-matches no document.
+**Why.** Every query word must match, on every engine: Lucene's parser runs with
+`Operator.AND` (`TurLuceneQueryBuilder.buildMainQuery`), Solr with `q.op=AND`
+(`TurSolrQueryBuilder`), Elasticsearch with `Operator.And`. Function words ("what",
+"do", "for", "in", "the") are required terms, so a natural-language question matches
+nothing.
 
 **What it should do.**
-- A query that reads as a question, or any query that finds nothing with all words
-  required, is retried with the site locale's stop words dropped and the remaining terms
-  ORed with a minimum-should-match, before answering zero.
+- A site flag beside `wildcardNoResults`, off by default: a search that found nothing
+  with every word required is retried, after the wildcard retry, with the locale's stop
+  words dropped and the remaining words ORed under a minimum-should-match. Each engine
+  implements it (Lucene `BooleanQuery`, Solr `mm`, ES `minimum_should_match`). No guess
+  at whether the query "reads as a question": zero results is the trigger.
 - The relaxed search is said in the response (`queryContext` flag) so a client can show
   "showing results for the main words".
 - Spell-check is not offered for a multi-word query whose words are all indexed.
 
-**Workaround.** None in Dumont; its story moved the question to the Site assistant
-(chat), which retrieves differently.
+**Workaround.** None in Dumont; its story moved the question to the Site assistant.
 
-**Gate.** On the Lucene engine with an en_US site: the question above finds the backpack
-and kit guides; a one-word query is unchanged.
+**Gate.** An IT per engine on an en_US site: the question above finds the backpack and
+kit guides with the flag on, zero with it off; a one-word query is unchanged.
 
 ### CLVIII.14 An exact title phrase outranks a stemmed synonym match (T1177)
 
@@ -2395,50 +2398,157 @@ only its synonym.
 
 ### CLVIII.15 Ground a copilot or chat answer on one document (T1178)
 
-**Where it showed.** Dumont's WordPress plugin on its demo store (Dumont D242, found in
-the D203 story run, 2026-10-30). A product page carries the catalog copilot under "Not
-sure it fits your trip? Ask us", and the Site assistant in a corner. The shopper asks
-"Will this keep me dry on a wet day in the hills?" about the jacket on the page, but
-`POST /api/sn/{site}/copilot` takes only `{messages, locale}` (`CopilotRequest` in
-`TurSNCatalogCopilotAPI`), and the SN chat only the question. Neither can be told which
-document "this" is, so the answer is drawn from the whole catalog and may cite other
-jackets, or none of the one on the page.
+**Where it showed.** Dumont's demo store (Dumont D242, 2026-10-30). On a product page
+the shopper asks the catalog copilot "Will this keep me dry on a wet day in the hills?"
+about the jacket on the page, but `POST /api/sn/{site}/copilot` takes only `{messages,
+locale}` (`CopilotRequest`). The SN chat's `ConversationRequest` takes `filters`, but a
+filter on the id is a hard limit: it retrieves that document alone and drops the
+alternatives an answer should still name.
 
 **What it should do.**
-- An optional `documentId` (the indexed document's id) on the copilot request and on the SN
-  site's chat. When given, the document is retrieved and placed first in the context, it is
-  always among the citations, and the answer is about it; other documents appear only as
-  alternatives the answer names as such.
+- An optional `documentId` (the indexed document's id) on the copilot request and on the
+  SN chat's `ConversationRequest`. It pins, it does not filter: the document is
+  retrieved and placed first in the context, it is always among the citations, and the
+  answer is about it; other documents appear only as alternatives named as such.
+- One pinning helper on the retrieval side, called by `TurCatalogCopilotService.retrieve`
+  and by the chat's RAG retrieval, not one per endpoint.
 - An id the site does not hold is ignored, not an error.
 - Both SDKs (`postCopilot`, the chat call) carry it.
 
 **Workaround.** None in Dumont: D242 waits on this. The block side then sends the page's
 document id and labels the box with the product's name.
 
-**Gate.** A test on the copilot service: with `documentId` set to a product that the
-question's words alone would not retrieve, the product is the first citation.
+**Gate.** A test on the copilot service and one on the chat retrieval: with `documentId`
+set to a product the question's words alone would not retrieve, it is the first citation
+and other results are still present.
 
-### CLVIII.16 Metrics keep a search as the visitor typed it (T1179)
+### CLVIII.16 Metrics group a search by its folded form and show it as typed (T1179)
 
 **Where it showed.** Dumont's WordPress demo store in pt_BR (Dumont D244's story run,
-2026-10-30). A visitor searched `abrigo de emergência` on the SN site `Demo`. Search
-insights (the plugin reads `/api/sn/{site}/metrics/failed-searches`) lists it as `abrigo
-de emergencia`, and `jaqueta de chuva leve até R$ 400` as `jaqueta de chuva leve ate r$
-400`: the logged term is lower-cased and stripped of its accents.
+2026-10-30). A visitor searched `abrigo de emergência` on the SN site `Demo`; Search
+insights (`/api/sn/{site}/metrics/failed-searches`) lists it as `abrigo de emergencia`,
+and `jaqueta de chuva leve até R$ 400` as `jaqueta de chuva leve ate r$ 400`.
 
-**Why it costs.** The site owner reads the visitor's words misspelt, in the language
-they were written in. The plugin's "Add a synonym" and "Write about this" open with the
-folded text, so a synonym or a post title starts from a word nobody typed, and a report
-shared with a Portuguese team reads as full of typos.
+**Why.** `TurSNSiteMetricAccess.setTerm` stores the raw `term` and a `sanatizedTerm`
+(NFD, then `[^\p{ASCII}]` removed, lower-cased), and every query in
+`TurSNSiteMetricAccessRepository` groups by and returns `sanatizedTerm`. Removing every
+non-ASCII character does more than drop accents: a Cyrillic, Greek, Arabic or CJK search
+becomes an empty string, and all of them collapse into one row. The visitor's own latest
+searches (`TurSNSearchProcess`, `findLatestSearches`) read the same column, so the
+visitor sees their words misspelt too. `TurSNSiteMetricClick` folds the same way.
 
-**What it should do.** Keep folding for grouping (`emergência` and `emergencia` are one
-search), and store and return the most frequent spelling as typed, so the metrics show
-`abrigo de emergência`. The same for top searches and searches nobody clicked.
+**What it should do.**
+- The grouping key folds diacritics only (drop combining marks after NFD), never deletes
+  a letter; lower-case stays.
+- Every report and the latest searches return the most frequent spelling as typed for
+  each key, from the `term` already stored: no migration.
+- The click metrics use the same key.
 
 **Workaround.** None in the product; Dumont's story spec matches the folded form
 (`logged` in `tests/e2e/story/shopper.story.mjs`), naming this line.
 
 **Gate.** A metrics test: three searches for `emergência` and one for `emergencia` list
-once, as `emergência`, with four searches.
+once, as `emergência`, with four searches; `палатка` and `テント` list as typed, apart.
 
 ## CLIX Documentation refresh (`docs-turing`)
+
+## CLXI Releases ship from the repository the README names
+
+The 2026.3 line moved its development to openviglet/turing on 2026-10-19, but its
+releases, installers and notes still leave from turing-ce. Filed from the portfolio
+review of 2026-10-30 (visibility repo, estrategia/portfolio.md and produtos/turing.md):
+what a visitor finds on the Releases tab has to match what the README and the site say.
+
+### CLXI.1 Releases leave from openviglet/turing (T1180)
+
+**Where it showed.** On 2026-10-30 the Releases tab of openviglet/turing shows v2026.2.9
+as Latest, while the README announces 2026.3 and its release badge points at turing-ce,
+where v2026.3.6 is the newest. The 2026.3 `publish.yml` sets `RELEASE_REPO:
+openviglet/turing-ce`; the 2026.2 worktree already publishes to openviglet/turing, which
+is why the older line wins there.
+
+**Why it costs.** Someone who arrives from search or from an AI assistant lands on the
+repository the site and the docs now name, and finds an older line than the one
+described. The owner confirmed on 2026-10-30 that releases leave from openviglet/turing
+starting with 2026.3 (visibility repo, produtos/turing.md).
+
+**Design.** Point the 2026.3 `RELEASE_REPO` at openviglet/turing, cut the next 2026.3
+patch there so it becomes Latest, and move the README's release badge and download link
+(`README.adoc` lines 15 and 200) to the same repository. The image keeps its
+`ghcr.io/openviglet/turing-ce` name for now; renaming it is a separate decision, since
+every compose file in the wild pulls it.
+
+### CLXI.2 Release files carry the product name without the acronym (T1181)
+
+**Where it showed.** The v2026.3.6 assets include `Turing-ES-x86_64.AppImage`, built by
+`scripts/package-dist.sh` (`Turing-ES.AppDir`, `Turing-ES-${ARCH}.AppImage`) and
+uploaded by `publish.yml`.
+
+**Why it costs.** On 2026-10-17 the product names dropped the acronyms: "Viglet Turing"
+first, "Turing" after, with what it is written beside it. The README, the site and the
+docs already follow that; the download is the one place a visitor still meets "Turing
+ES", and it reads as a different or older product (visibility repo, produtos/turing.md,
+2026-10-30).
+
+**Design.** Rename the AppDir and AppImage to `Turing-x86_64.AppImage` in the packaging
+script and the upload step, and check the installer's display name and desktop entry for
+the same acronym. Any doc that links the old filename moves with it. Older releases keep
+their assets as published.
+
+### CLXI.3 Release notes are written for people (T1182)
+
+**Where it showed.** The body of v2026.3.6 is the generated list of Dependabot pull
+requests. `publish.yml` reads the release notes from the root `CHANGELOG.md` with
+`scripts/changelog-section.sh <version>`, but that file has one section per line (`##
+2026.3`), not per patch, so the lookup misses and the step falls back to
+`--generate-notes`.
+
+**Why it costs.** The release page is where an evaluator checks whether the project is
+alive and what changed. A list of dependency bumps says neither, while the ledger holds
+dozens of user-facing deliveries for the same weeks (visibility repo,
+estrategia/portfolio.md, 2026-10-30).
+
+**Design.** Give each patch release notes written for people: a short paragraph on what
+changed for a user, then the notable fixes, then a link to the full changelog. The
+cheapest seam is the lookup: either the release step writes a per-patch section before
+tagging, or `changelog-section.sh` falls back to the minor-line section instead of to
+generated notes. A missing section should fail the release, not degrade it silently.
+
+### CLXI.4 turing-ce is archived with a notice (T1183)
+
+**Where it showed.** turing-ce still holds the 22 stars and the newest release, its
+README is titled "Viglet Turing ES — Community Edition" and points at docs.viglet.org
+and turing.viglet.org, which now redirect to openviglet.github.io/turing. The repository
+is not archived, so it reads as the live one.
+
+**Why it costs.** Two repositories for one product split the stars and send visitors to
+the wrong place. The owner confirmed on 2026-10-30 that once releases and the image
+leave from openviglet/turing, turing-ce is archived with a notice in its README
+(visibility repo, produtos/turing-ce.md).
+
+**Design.** After CLXI.1 ships and one release has left openviglet/turing: replace the
+turing-ce README with a short notice naming openviglet/turing, the site and the image,
+push it as the last commit, set its homepage to the new site, and archive the
+repository. Stop the publish job from pushing snapshots there. The image name is
+untouched (see CLXI.1). openviglet/turing's own homepage field still says
+turing.viglet.org and moves to openviglet.github.io/turing in the same pass.
+
+### CLXI.5 A demo that opens without installing (T1184)
+
+**Where it showed.** The site's "Try it live" playground already runs search and cited
+chat against `turing-demo.viglet.org` without an install, but `README.adoc` never links
+it: its first path is "Try it in 60 seconds" with `docker run`. The admin console, where
+sites, facets, agents and ranking are configured, can only be seen after installing, and
+`turing.viglet.cloud` asks for a login.
+
+**Why it costs.** The portfolio review of 2026-10-30 names a demo that opens without
+installing as what every launch channel is missing for Turing, Shio and Dumont
+(visibility repo, estrategia/portfolio.md). Evaluators of an Algolia or Coveo
+alternative judge the console as much as the results.
+
+**Design.** Two steps. First, link the playground from the README's opening and from
+"Try it in 60 seconds". Second, a read-only console tour: a public demo tenant on the
+existing demo host with a guest role that can browse but not save, reset on a schedule,
+with the LLM calls capped as the playground's already are. If a live console is too
+costly to keep safe, a short recorded walk-through on the site is the fallback; the
+choice is the owner's.

@@ -21,7 +21,15 @@
 - 📋 **T1176** (deps: —) **A question typed in the SN search box finds nothing, because every word, question words included, must match** — Shoppers type questions, and zero results also means no answer panel, so the box fails the visitor who asks. → §CLVIII.13
 - 📋 **T1177** (deps: —) **After the stemming release a guide titled with the exact query phrase no longer outranks products matching its synonym** — A Dumont demo's curated searches lost their guide-first order, and an exact title phrase is the strongest signal a search has. → §CLVIII.14
 - 📋 **T1178** (deps: —) **The SN copilot and chat cannot be told which document a question is about, so a product page gets a catalog-wide answer** — A shopper on a product page asks about that product, and an answer that cites other items misses the question. → §CLVIII.15
-- 📋 **T1179** (deps: —) **Search metrics list a visitor's search lower-cased and stripped of its accents, so pt_BR searches read misspelt** — Site owners read and act on these words, and a Portuguese term without its accents is a typo in their own language. → §CLVIII.16
+- 📋 **T1179** (deps: —) **Search metrics and a visitor's latest searches strip accents and delete non-Latin letters from the words typed** — Owners act on these words and visitors reread their own; a Russian or Japanese search is lost entirely. → §CLVIII.16
+
+## Block CJ — Releases ship from the repository the README names
+
+- 📋 **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — Visitors land on the repository the site names and find an older line than the README announces. → §CLXI.1
+- 📋 **T1181** (deps: —) **The Linux download is still named Turing-ES-x86_64.AppImage, with the acronym the product name dropped** — The download is the last place a visitor meets the old name, and it reads as another or older product. → §CLXI.2
+- 📋 **T1182** (deps: —) **A patch release's notes are only the Dependabot pull request list, saying nothing a user would notice** — The release page is where an evaluator checks what changed, and the notes it shows say nothing about the product. → §CLXI.3
+- 📋 **T1183** (deps: T1180) **turing-ce still reads as the live repository, with the old ES name and addresses and no notice pointing elsewhere** — Two repositories for one product split the stars and send visitors to the stale one. → §CLXI.4
+- 📋 **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — A demo that opens without installing is what every launch channel is missing, and the playground already exists. → §CLXI.5
 
 ## Done when — T1133
 

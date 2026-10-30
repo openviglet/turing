@@ -1561,3 +1561,6 @@
 ## Block CI — API errors name what the caller sent wrong
 
 - **T1154** — A parameter of the wrong type, or one Tomcat cannot decode as UTF-8, now answers a 400 validation problem naming it in `detail` and `parameter`, logged at WARN without a stack trace (design §CLVI.1 recorded in `turing-app/src/main/java/com/viglet/turing/api/exception/TurGlobalExceptionHandler.java`).
+
+## Block CJ — Releases ship from the repository the README names
+
