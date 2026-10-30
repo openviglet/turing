@@ -1,3 +1,41 @@
+## 2026.3.7
+
+Releases of the 2026.3 line now ship from this repository, openviglet/turing. Earlier 2026.3 builds (up to 2026.3.6) are on openviglet/turing-ce, and the Docker image stays `ghcr.io/openviglet/turing-ce`.
+
+#### SEARCH
+* Text search is stemmed by the site's locale on Lucene and on new Elasticsearch cores, so a plural finds its singular.
+* Facet filters and custom sorts now apply on Elasticsearch.
+* Hybrid sites recall semantic hits the lexical page missed, keep the request's filters on them, and can tune the ranking per site.
+* An instant search matches the last word typed as a prefix.
+* Applied facets stay in place on drill-down sites and when their field resolves to the OR item type.
+* Synonyms on Lucene sites survive a restart, and wildcard queries or half-typed words are no longer mined as synonyms.
+* Similar documents honour the search's filters and locale.
+
+#### SEMANTIC NAVIGATION COPILOT AND CHAT
+* The copilot stages the catalog products a described plan needs, explains each choice, respects availability, and cites the site's guides beside the kit; both SDKs expose the kit call.
+* A follow-up question in SN chat and the copilot is retrieved as a standalone question, and Live Preview shows the query it searched.
+* Deleting a document also removes its chunks from the RAG collection (Milvus included), and orphaned chunks can be purged.
+* The console flags a site that has no vectors, and Default-agent sites can reindex.
+* A site's GenAI and facet behaviour can be turned on from the SN manifest, and a site's AI capabilities can be probed without calling a model.
+
+#### SECURITY AND MULTI-TENANT SITES
+* An API key can be bound to a partition of a shared SN site; search, import, autocomplete, spell-check, similar documents and deletes stay inside it.
+* Requests authenticated by an API key no longer need a CSRF token, and their audit entries name the key's user.
+
+#### ANALYTICS, COST AND SDK
+* Failed searches, content gaps and click-through rates per term are available as REST metrics, per partition.
+* The JS and React SDKs ask for consent before sending search analytics or result clicks, send GA4 search events, report search abandonment, and cancel a search a newer one supersedes.
+* SN chat, NL filters and summaries are recorded in the cost ledger against their site; a call with no known price is shown as unpriced, not free.
+
+#### FIXES
+* Streamed answers keep the space before each token.
+* Wrong-type query parameters return 400 naming the parameter.
+* Relative dates in natural-language filters resolve against today.
+* Solr: currency fields exist in every configset, cores are created through the v1 Core Admin API, and exclusive range filters work.
+
+#### DOCUMENTATION
+* The end-user documentation moved into this repository and is published at openviglet.github.io/turing/docs.
+
 ## 2026.3
 
 #### NEW FEATURES

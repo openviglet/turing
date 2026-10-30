@@ -12,7 +12,7 @@ image::.github/banner.png[Viglet Turing, Enterprise Search,align="center"]
 [.lead]
 **Viglet Turing is open source enterprise search with generative AI.** Faceted semantic search, hybrid BM25 + vector ranking, RAG chat with citations, and AI agents with MCP tools, over your own content and on your own servers. It runs on Apache Solr, Elasticsearch or embedded Lucene, with the LLM of your choice: a self-hosted alternative to Algolia, Coveo and Lucidworks.
 
-image:https://img.shields.io/github/v/release/openviglet/turing-ce?style=flat-square&logo=github&label=release&color=2563eb[Latest release,link="https://github.com/openviglet/turing-ce/releases/latest"]
+image:https://img.shields.io/github/v/release/openviglet/turing?style=flat-square&logo=github&label=release&color=2563eb[Latest release,link="https://github.com/openviglet/turing/releases/latest"]
 image:https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square&logo=apache[License,link="LICENSE"]
 image:https://img.shields.io/badge/ghcr.io-openviglet%2Fturing--ce-2563eb?style=flat-square&logo=docker&logoColor=white[Container image,link="https://github.com/orgs/openviglet/packages/container/package/turing-ce"]
 image:https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk&logoColor=white[Java 21]
@@ -197,7 +197,8 @@ java -jar turing-app/target/viglet-turing.jar
 Manifests are in link:k8s/[`k8s/`]; a single-file deployment is in link:k8s.yaml[`k8s.yaml`].
 
 Packaged installers (Windows `.exe`, `.zip`, Linux AppImage) are attached to every
-https://github.com/openviglet/turing-ce/releases[release].
+https://github.com/openviglet/turing/releases[release] (up to 2026.3.6, on
+https://github.com/openviglet/turing-ce/releases[turing-ce]).
 
 == Code examples
 
