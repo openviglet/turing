@@ -7,16 +7,16 @@
 	},
 	{
 		"query": "waterproof jacket",
-		"shows": "A buying guide first, then the products it recommends.",
+		"shows": "The guide whose title is the exact phrase comes first, then the other guide that says it.",
 		"first": "How to choose a waterproof jacket",
-		"then": "Catbells light rain jacket",
+		"then": "How to wash and reproof a waterproof jacket",
 		"native": "How to choose a waterproof jacket"
 	},
 	{
 		"query": "raincoat",
-		"shows": "A synonym: no product or guide says raincoat, and the guide and rain jackets come back.",
-		"first": "How to choose a waterproof jacket",
-		"then": "Catbells light rain jacket",
+		"shows": "A synonym: no product or guide says raincoat, and the rain jacket and its buying guide come back.",
+		"first": "Catbells light rain jacket",
+		"then": "How to choose a waterproof jacket",
 		"native": null
 	},
 	{
@@ -27,9 +27,9 @@
 	},
 	{
 		"query": "puffer",
-		"shows": "A shopper's word for a down jacket: the care guide, then the jacket.",
-		"first": "How to wash a down jacket",
-		"then": "Blencathra down jacket",
+		"shows": "A shopper's word for an insulated jacket: the guide to choosing one, then a jacket.",
+		"first": "Down or synthetic: choosing an insulated jacket",
+		"then": "Glaramara synthetic jacket",
 		"native": null
 	},
 	{
