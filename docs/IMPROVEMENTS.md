@@ -2314,4 +2314,58 @@ fewer attributes match the gap the slots fill with whatever the document carries
 **Gate.** A unit test on `reason` with a document carrying `site_key` and `image` beside
 two facets: only the facets appear, labelled.
 
+### CLVIII.12 A kit stages only the types the request names as products (T1175)
+
+**Where it showed.** Dumont's WordPress plugin, Build my kit on the Dumont demo (D203's
+story run, 2026-10-30): `POST /api/sn/Demo/copilot/kit` with `{plan, locale,
+availabilityField: "stock_status", availability: "MARK", guideTypes: ["post"]}` staged
+`localhost:post:11`, the store's "Search the shop" page (type `page`), as a product of a
+stage. The block then tried to add it to the WooCommerce cart and got a 400.
+
+**Why.** `TurCatalogKitService.stageProducts` skips only documents whose `type` is in
+`guideTypes`; everything else retrieved for a gap is staged. A site indexes more than
+its catalog (pages, landing pages, FAQs), and the request has no way to say which types
+are products.
+
+**What it should do.**
+- An optional `productTypes` beside `guideTypes`, same normalisation: when given, only a
+  document whose `type` is in it is staged; the rest is skipped and the stage fills from
+  the next candidates. When absent, today's behaviour.
+- Both SDKs (`postCopilotKit`) carry it, and the OpenAPI schema names it.
+
+**Workaround.** Dumont excludes its demo's content-free pages from the index
+(`wordpress/demo/setup.php`) and files its own line (D241) to drop, on the block side,
+an id the shop does not sell. Neither covers a site with real pages.
+
+**Gate.** A unit test on `stageProducts` with a `page` and two `product` documents and
+`productTypes: ["product"]`: only the products are staged.
+
+### CLVIII.13 A question in the search box finds the documents its main words do (T1176)
+
+**Where it showed.** Dumont's WordPress demo store, the search block with its answer
+panel on (D203's story run, 2026-10-30). `GET /api/sn/Demo/search?q=What do I need for
+two days in the hills?&_setlocale=en_US` returns `queryContext.count = 0`, and
+spell-check offers the whole question back as "did you mean". The answer panel draws
+only on results, so a shopper who types a question in the box gets no answer and no
+products. `backpack night hut` finds the backpack guide; `what size backpack for a night
+in a hut` finds 1.
+
+**Why.** Every query word must match. Question words and function words ("what", "do",
+"I", "need", "for", "in", "the") are required terms, so a question in natural language
+matches no document.
+
+**What it should do.**
+- A query that reads as a question, or any query that finds nothing with all words
+  required, is retried with the site locale's stop words dropped and the remaining terms
+  ORed with a minimum-should-match, before answering zero.
+- The relaxed search is said in the response (`queryContext` flag) so a client can show
+  "showing results for the main words".
+- Spell-check is not offered for a multi-word query whose words are all indexed.
+
+**Workaround.** None in Dumont; its story moved the question to the Site assistant
+(chat), which retrieves differently.
+
+**Gate.** On the Lucene engine with an en_US site: the question above finds the backpack
+and kit guides; a one-word query is unchanged.
+
 ## CLIX Documentation refresh (`docs-turing`)
