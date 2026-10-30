@@ -328,6 +328,9 @@ run-docker.cmd stop                    :: keep the data
 run-docker.cmd reset                   :: drop WordPress, its database and Turing's store
 ```
 
+On Linux and macOS, `sh bin/run-docker.sh` starts the same stack, and `sh bin/run-docker.sh
+demo` (or `demo reset`) the demo storefront; both provision Turing through PowerShell (`pwsh`).
+
 WP-Cron's loopback cannot reach the site URL inside the container, so `DISABLE_WP_CRON` is on
 and a `cron` service runs due events every 15 seconds, as a host with a system cron does: a
 saved post reaches Turing without `wp dumont queue run`.
