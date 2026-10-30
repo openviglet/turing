@@ -54,6 +54,11 @@ class Viglet_Dumont_Diagnostics {
 		if ( is_wp_error( $response ) ) {
 			return $this->stop( $steps, 'reach', $this->explain_transport( $response, (string) $parts['host'] ) );
 		}
+		// WordPress Playground answers a request its browser could not make itself (D237).
+		$playground = Viglet_Dumont_API_Client::playground_refusal( $response, $url );
+		if ( $playground ) {
+			return $this->stop( $steps, 'reach', $playground->get_error_message() );
+		}
 		$steps[] = $this->pass( 'reach', __( 'The server answers.', 'viglet-dumont' ) );
 
 		$code = (int) wp_remote_retrieve_response_code( $response );

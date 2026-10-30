@@ -85,6 +85,22 @@ final class DiagnosticsTest extends PluginTestCase {
 		$this->assertStringContainsString( '404', $step['message'] );
 	}
 
+	public function test_in_playground_its_own_refusal_fails_at_the_network_naming_the_cause(): void {
+		// D237: the 400 WordPress Playground answers itself, which is not Turing's.
+		$_SERVER['SERVER_SOFTWARE'] = 'PHP.wasm';
+		Functions\when( 'wp_unslash' )->returnArg();
+		$this->discovery = array( 400, 'Playground could not serve the request.' );
+
+		try {
+			$step = $this->failed_step( $this->run_with( array( 'server_url' => 'http://localhost:2700' ) ) );
+		} finally {
+			unset( $_SERVER['SERVER_SOFTWARE'] );
+		}
+
+		$this->assertSame( 'reach', $step['step'] );
+		$this->assertStringContainsString( 'WordPress Playground could not reach Turing at http://localhost:2700.', $step['message'] );
+	}
+
 	public function test_no_key_and_a_refused_key_both_fail_at_the_key(): void {
 		$this->assertSame( 'key', $this->failed_step( $this->run_with( array( 'api_key' => '' ) ) )['step'] );
 

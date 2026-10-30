@@ -420,12 +420,12 @@ msgstr "Total"
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
-#: src/includes/class-viglet-dumont-api-client.php:98
+#: src/includes/class-viglet-dumont-api-client.php:104
 msgid "Connection successful"
 msgstr "Conexão bem-sucedida"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:100
+#: src/includes/class-viglet-dumont-api-client.php:106
 #, php-format
 msgid "Server returned HTTP %d"
 msgstr "O servidor respondeu HTTP %d"
@@ -457,7 +457,7 @@ msgid "Provisioning failed with HTTP %1$d: %2$s"
 msgstr "O envio dos campos falhou com HTTP %1$d: %2$s"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:193
+#: src/includes/class-viglet-dumont-api-client.php:199
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr "O Turing não conseguiu planejar os campos (HTTP %d)."
@@ -473,12 +473,12 @@ msgid "Deindex failed with HTTP %d"
 msgstr "A remoção falhou com HTTP %d"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:259
+#: src/includes/class-viglet-dumont-api-client.php:265
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr "A busca falhou com HTTP %d"
 
-#: src/includes/class-viglet-dumont-api-client.php:267
+#: src/includes/class-viglet-dumont-api-client.php:273
 msgid "Invalid JSON response from server"
 msgstr "Resposta JSON inválida do servidor"
 
@@ -581,64 +581,64 @@ msgstr "A URL do Turing precisa ser um endereço completo http:// ou https://, e
 msgid "The URL is well formed."
 msgstr "A URL está bem formada."
 
-#: src/includes/class-viglet-dumont-diagnostics.php:57
+#: src/includes/class-viglet-dumont-diagnostics.php:62
 msgid "The server answers."
 msgstr "O servidor responde."
 
 #. translators: %d: the HTTP status the server answered with.
-#: src/includes/class-viglet-dumont-diagnostics.php:66
+#: src/includes/class-viglet-dumont-diagnostics.php:71
 #, php-format
 msgid "The server answered HTTP %d where Turing answers its discovery document: this URL is not a Turing, or a proxy is in the way."
 msgstr "O servidor respondeu HTTP %d onde o Turing responde o seu documento de descoberta: esta URL não é de um Turing, ou há um proxy no caminho."
 
-#: src/includes/class-viglet-dumont-diagnostics.php:69
+#: src/includes/class-viglet-dumont-diagnostics.php:74
 msgid "It is a Turing."
 msgstr "É um Turing."
 
-#: src/includes/class-viglet-dumont-diagnostics.php:72
+#: src/includes/class-viglet-dumont-diagnostics.php:77
 msgid "No API key is set. Create one in Turing under API Tokens and paste it here."
 msgstr "Nenhuma chave de API definida. Crie uma no Turing em API Tokens e cole aqui."
 
-#: src/includes/class-viglet-dumont-diagnostics.php:85
+#: src/includes/class-viglet-dumont-diagnostics.php:90
 msgid "Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites."
 msgstr "O Turing recusou a chave de API: ela está errada, expirou, ou o seu usuário não pode gerenciar sites SN."
 
-#: src/includes/class-viglet-dumont-diagnostics.php:89
+#: src/includes/class-viglet-dumont-diagnostics.php:94
 msgid "Turing accepts the API key."
 msgstr "O Turing aceita a chave de API."
 
 #. translators: %s: the SN site's name.
-#: src/includes/class-viglet-dumont-diagnostics.php:96
+#: src/includes/class-viglet-dumont-diagnostics.php:101
 #, php-format
 msgid "The SN site %s exists."
 msgstr "O site SN %s existe."
 
 #. translators: %s: the SN site's name.
-#: src/includes/class-viglet-dumont-diagnostics.php:101
+#: src/includes/class-viglet-dumont-diagnostics.php:106
 #, php-format
 msgid "There is no SN site named %s in Turing yet. Create it from here, or check the name."
 msgstr "Ainda não há site SN chamado %s no Turing. Crie-o daqui, ou confira o nome."
 
 #. translators: %s: the host name.
-#: src/includes/class-viglet-dumont-diagnostics.php:122
+#: src/includes/class-viglet-dumont-diagnostics.php:127
 #, php-format
 msgid "%s does not resolve (DNS): check the address for typos, or whether this server can see that network."
 msgstr "%s não resolve (DNS): confira se o endereço tem erro de digitação, ou se este servidor enxerga essa rede."
 
 #. translators: %s: the transport's own message.
-#: src/includes/class-viglet-dumont-diagnostics.php:126
+#: src/includes/class-viglet-dumont-diagnostics.php:131
 #, php-format
 msgid "The secure connection failed (TLS): the certificate is invalid, expired or self-signed. Details: %s"
 msgstr "A conexão segura falhou (TLS): o certificado é inválido, expirou ou é autoassinado. Detalhes: %s"
 
 #. translators: %s: the host name.
-#: src/includes/class-viglet-dumont-diagnostics.php:130
+#: src/includes/class-viglet-dumont-diagnostics.php:135
 #, php-format
 msgid "%s did not answer in time: a firewall may be dropping the connection, or Turing is down."
 msgstr "%s não respondeu a tempo: um firewall pode estar descartando a conexão, ou o Turing está fora do ar."
 
 #. translators: %s: the host name.
-#: src/includes/class-viglet-dumont-diagnostics.php:134
+#: src/includes/class-viglet-dumont-diagnostics.php:139
 #, php-format
 msgid "Nothing is listening at %s on that port: Turing is down, or the port is wrong."
 msgstr "Nada responde em %s nessa porta: o Turing está fora do ar, ou a porta está errada."
@@ -1343,15 +1343,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:564
+#: src/includes/class-viglet-dumont-api-client.php:607
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:621
+#: src/includes/class-viglet-dumont-api-client.php:664
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:626
+#: src/includes/class-viglet-dumont-api-client.php:669
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1461,7 +1461,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:540
+#: src/includes/class-viglet-dumont-api-client.php:583
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -2767,3 +2767,9 @@ msgstr "Aplicá-los em vez de sugerir"
 #: src/admin/js/search-block-editor.js:161
 msgid "“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model."
 msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma vez, e uma linha diz o que foi entendido, com Desfazer. Um preço é lido mesmo sem um modelo de linguagem."
+
+#. translators: %s: the Turing address the plugin is set to.
+#: src/includes/class-viglet-dumont-api-client.php:402
+#, php-format
+msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
+msgstr "O WordPress Playground não conseguiu acessar o Turing em %s. No Playground, o Turing precisa estar em um endereço público: um endereço privado, como localhost, não é acessível pelo navegador em que o Playground roda."

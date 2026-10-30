@@ -18,6 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Viglet_Dumont_API_Client {
 
 	/**
+	 * The body of the HTTP 400 WordPress Playground answers with itself when the browser it
+	 * runs in could not make a request (D237).
+	 */
+	private const PLAYGROUND_REFUSAL = 'Playground could not serve the request.';
+
+	/**
 	 * Turing's base URL, without a trailing slash.
 	 *
 	 * @var string
@@ -359,7 +365,44 @@ class Viglet_Dumont_API_Client {
 			$args['body'] = wp_json_encode( $body );
 		}
 
-		return wp_remote_request( $url, array_replace_recursive( $args, $extra ) );
+		$response = wp_remote_request( $url, array_replace_recursive( $args, $extra ) );
+
+		return self::playground_refusal( $response, $this->server_url ) ?? $response;
+	}
+
+	/**
+	 * Inside WordPress Playground (D237), PHP's requests go out through the browser, and one the
+	 * browser cannot make comes back as Playground's own HTTP 400, which would read as Turing
+	 * refusing it. Measured on playground.wordpress.net (2026-10-30): a Turing on a public
+	 * address is reached, directly when it allows the Playground origin and through
+	 * Playground's proxy when it does not; one on a private address such as localhost never
+	 * is, even with the origin allowed.
+	 *
+	 * Public for the connection check, which asks Turing's discovery document directly.
+	 *
+	 * @param array|WP_Error $response   What wp_remote_request returned.
+	 * @param string         $server_url The Turing address that was asked.
+	 * @return WP_Error|null The cause, named, or null when this is not that refusal.
+	 */
+	public static function playground_refusal( $response, string $server_url ): ?WP_Error {
+		if ( is_wp_error( $response )
+			|| 400 !== (int) wp_remote_retrieve_response_code( $response )
+			|| self::PLAYGROUND_REFUSAL !== trim( (string) wp_remote_retrieve_body( $response ) ) ) {
+			return null;
+		}
+		$software = sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ?? '' ) );
+		if ( ! defined( 'PLAYGROUND_PARENT_ORIGIN' ) && 'PHP.wasm' !== $software ) {
+			return null;
+		}
+
+		return new WP_Error(
+			'viglet_dumont_playground',
+			sprintf(
+				/* translators: %s: the Turing address the plugin is set to. */
+				__( 'WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in.', 'viglet-dumont' ),
+				$server_url
+			)
+		);
 	}
 
 	/**
