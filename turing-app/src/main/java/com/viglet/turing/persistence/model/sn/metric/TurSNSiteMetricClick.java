@@ -19,11 +19,11 @@ package com.viglet.turing.persistence.model.sn.metric;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.text.Normalizer;
 import java.time.Instant;
 import java.util.Locale;
 
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
@@ -120,10 +120,7 @@ public class TurSNSiteMetricClick implements Serializable {
             this.sanatizedTerm = null;
             return;
         }
-        this.sanatizedTerm = Normalizer.normalize(term, Normalizer.Form.NFD)
-                .replaceAll("[^\\p{ASCII}]", "")
-                .replaceAll("( )+", " ")
-                .toLowerCase()
-                .trim();
+        // T1179 — the same key as a search: diacritics dropped, never a letter.
+        this.sanatizedTerm = TurSNSiteMetricTerms.fold(term);
     }
 }

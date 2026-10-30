@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms;
 
 /**
  * What visitors searched for and did not find (T1119): the zero-result queries
@@ -139,7 +140,8 @@ public class TurSNSearchInsightsService {
                         start(window), window.to(), partition, page))
                 .orElseGet(() -> metricAccessRepository.zeroResultTermsBetweenDates(site, start(window),
                         window.to(), page));
-        return terms.stream().map(Term::of).toList();
+        // T1179 — each search reads as visitors typed it, not as its grouping key.
+        return TurSNSiteMetricTerms.asTyped(metricAccessRepository, site, terms).stream().map(Term::of).toList();
     }
 
     private static java.util.Optional<String> partitionKey() {
@@ -161,6 +163,7 @@ public class TurSNSearchInsightsService {
                         start(window), window.to(), partition, page))
                 .orElseGet(() -> metricAccessRepository.termsWithLastSeenBetweenDates(site, start(window),
                         window.to(), page));
+        TurSNSiteMetricTerms.asTyped(metricAccessRepository, site, searched);
         for (TurSNSiteMetricAccessTerm term : searched) {
             if (term.getNumFound() < LOW_COVERAGE_THRESHOLD) {
                 gaps.add(Term.of(term));

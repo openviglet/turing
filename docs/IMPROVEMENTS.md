@@ -2287,34 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.16 Metrics group a search by its folded form and show it as typed (T1179)
-
-**Where it showed.** Dumont's WordPress demo store in pt_BR (Dumont D244's story run,
-2026-10-30). A visitor searched `abrigo de emergência` on the SN site `Demo`; Search
-insights (`/api/sn/{site}/metrics/failed-searches`) lists it as `abrigo de emergencia`,
-and `jaqueta de chuva leve até R$ 400` as `jaqueta de chuva leve ate r$ 400`.
-
-**Why.** `TurSNSiteMetricAccess.setTerm` stores the raw `term` and a `sanatizedTerm`
-(NFD, then `[^\p{ASCII}]` removed, lower-cased), and every query in
-`TurSNSiteMetricAccessRepository` groups by and returns `sanatizedTerm`. Removing every
-non-ASCII character does more than drop accents: a Cyrillic, Greek, Arabic or CJK search
-becomes an empty string, and all of them collapse into one row. The visitor's own latest
-searches (`TurSNSearchProcess`, `findLatestSearches`) read the same column, so the
-visitor sees their words misspelt too. `TurSNSiteMetricClick` folds the same way.
-
-**What it should do.**
-- The grouping key folds diacritics only (drop combining marks after NFD), never deletes
-  a letter; lower-case stays.
-- Every report and the latest searches return the most frequent spelling as typed for
-  each key, from the `term` already stored: no migration.
-- The click metrics use the same key.
-
-**Workaround.** None in the product; Dumont's story spec matches the folded form
-(`logged` in `tests/e2e/story/shopper.story.mjs`), naming this line.
-
-**Gate.** A metrics test: three searches for `emergência` and one for `emergencia` list
-once, as `emergência`, with four searches; `палатка` and `テント` list as typed, apart.
-
 ### CLVIII.17 A title phrase outranks synonym matches on Solr and Elasticsearch too (T1185)
 
 **Where it showed.** T1177: on Lucene, a guide titled "How to choose a waterproof

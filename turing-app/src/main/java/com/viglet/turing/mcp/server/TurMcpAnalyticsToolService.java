@@ -89,6 +89,9 @@ public class TurMcpAnalyticsToolService {
             terms = metricAccessRepository.topTermsBetweenDates(snSite, since, now, PageRequest.of(0, limit));
             totalSearches = metricAccessRepository.countTermsByPeriod(snSite, since, now);
         }
+        // T1179 — each search as visitors typed it, not its grouping key.
+        com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms.asTyped(metricAccessRepository,
+                snSite, terms);
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("site", snSite.getName());
         result.put("period", period == null || period.isBlank() ? "all-time" : period);

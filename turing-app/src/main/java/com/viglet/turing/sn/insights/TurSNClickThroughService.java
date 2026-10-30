@@ -42,6 +42,7 @@ import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessR
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickTerm;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 /**
@@ -120,7 +121,11 @@ public class TurSNClickThroughService {
                         .collect(Collectors.toMap(TurSNSiteMetricClickTerm::term, Function.identity(),
                                 (a, b) -> a));
 
-        List<Term> all = searched.stream().map(s -> term(s, clicks.get(s.getTerm()))).toList();
+        // Clicks join on the grouping key; T1179 — the report then shows each as typed.
+        List<TurSNSiteMetricClickTerm> byKey = searched.stream().map(s -> clicks.get(s.getTerm())).toList();
+        TurSNSiteMetricTerms.asTyped(accessRepository, site, searched);
+        List<Term> all = java.util.stream.IntStream.range(0, searched.size())
+                .mapToObj(i -> term(searched.get(i), byKey.get(i))).toList();
         List<Term> neverClicked = all.stream().filter(t -> t.clicks() == 0 && t.avgResults() > 0).limit(limit)
                 .toList();
 

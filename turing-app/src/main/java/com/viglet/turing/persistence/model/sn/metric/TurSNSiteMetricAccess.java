@@ -19,7 +19,6 @@ package com.viglet.turing.persistence.model.sn.metric;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.text.Normalizer;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Locale;
@@ -28,6 +27,7 @@ import java.util.Set;
 import org.hibernate.annotations.Fetch;
 
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
 import jakarta.persistence.CollectionTable;
@@ -102,8 +102,8 @@ public class TurSNSiteMetricAccess implements Serializable {
 
 	public void setTerm(String term) {
 		this.term = term;
-		this.sanatizedTerm = Normalizer.normalize(term, Normalizer.Form.NFD)
-				.replaceAll("[^\\p{ASCII}]", "").replaceAll("( )+", " ").toLowerCase().trim();
+		// T1179 — diacritics dropped, never a letter: a Cyrillic or CJK search keeps its key.
+		this.sanatizedTerm = TurSNSiteMetricTerms.fold(term);
 	}
 
 }

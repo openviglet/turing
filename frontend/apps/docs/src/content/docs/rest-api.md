@@ -710,6 +710,8 @@ GET /api/sn/{siteId}/metrics/content-gaps?from=&to=&period=&rows=
 
 `failed-searches` lists the queries that returned nothing every time they ran. `content-gaps` lists the queries searched often whose average result count is under 3: what to write next. Both answer `{ from, to, terms: [{ term, searches, avgResults, lastSeen }], metricsEnabled }`, most searched first; terms searched equally often come back most recently searched first, so a new gap is not cut off by older ones. These are the same reports the MCP tools `top_failed_searches` and `content_gaps` read.
 
+Searches are counted together when they differ only by case, spacing or accents (`emergência` and `emergencia` are one term), and each term is shown in the spelling visitors typed most, accents included. Letters are never dropped, so a search in Cyrillic, Greek, Arabic or Japanese is listed as typed. Searches logged before this release still group by the older key, which deleted every letter outside basic Latin.
+
 `metricsEnabled` is `false` when the server does not record searches (`turing.search.metrics.enabled` is off). An empty report then says nothing about the site's traffic, so show the user that metrics are off rather than an empty list.
 
 ```bash

@@ -46,6 +46,7 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -135,8 +136,9 @@ public class TurSNSiteMetricsAPI {
 	private TurSNSiteMetricsTopTermsBean getTopTermsReport(int rows, Optional<TurSNSite> turSNSite, Calendar cal,
 			Calendar previousBegin, Calendar previousEnd) {
 		return turSNSite.map(snSite -> new TurSNSiteMetricsTopTermsBean(
-				this.turSNSiteMetricAccessRepository.topTermsBetweenDates(snSite, cal.getTime().toInstant(),
-						new Date().toInstant(), PageRequest.of(0, rows)),
+				TurSNSiteMetricTerms.asTyped(turSNSiteMetricAccessRepository, snSite,
+						this.turSNSiteMetricAccessRepository.topTermsBetweenDates(snSite,
+								cal.getTime().toInstant(), new Date().toInstant(), PageRequest.of(0, rows))),
 				this.turSNSiteMetricAccessRepository.countTermsByPeriod(snSite, cal.getTime().toInstant(),
 						new Date().toInstant()),
 				this.turSNSiteMetricAccessRepository.countTermsByPeriod(snSite, previousBegin.getTime().toInstant(),
@@ -252,7 +254,8 @@ public class TurSNSiteMetricsAPI {
 			@PathVariable int rows) {
 		Optional<TurSNSite> turSNSite = turSNSiteRepository.findById(snSiteId);
 		return turSNSite.map(snSite -> new TurSNSiteMetricsTopTermsBean(
-				this.turSNSiteMetricAccessRepository.topTerms(snSite, PageRequest.of(0, rows)),
+				TurSNSiteMetricTerms.asTyped(turSNSiteMetricAccessRepository, snSite,
+						this.turSNSiteMetricAccessRepository.topTerms(snSite, PageRequest.of(0, rows))),
 				this.turSNSiteMetricAccessRepository.countTerms(snSite), 0))
 				.orElseGet(TurSNSiteMetricsTopTermsBean::new);
 	}

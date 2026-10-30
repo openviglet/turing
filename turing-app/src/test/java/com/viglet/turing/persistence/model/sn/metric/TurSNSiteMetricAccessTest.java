@@ -112,7 +112,9 @@ class TurSNSiteMetricAccessTest {
                 org.junit.jupiter.params.provider.Arguments.of("Café Français", "cafe francais", false, null),
                 org.junit.jupiter.params.provider.Arguments.of("search   with    multiple     spaces",
                         "search with multiple spaces", false, null),
-                org.junit.jupiter.params.provider.Arguments.of("Søren Kierkegård", null, true, "ø"),
+                // T1179 — å folds to a, but ø is a letter of its own and is kept, never deleted.
+                org.junit.jupiter.params.provider.Arguments.of("Søren Kierkegård", "søren kierkegard", true, "å"),
+                org.junit.jupiter.params.provider.Arguments.of("Палатка", "палатка", false, null),
                 org.junit.jupiter.params.provider.Arguments.of("UPPER CASE SEARCH", "upper case search", false, null),
                 org.junit.jupiter.params.provider.Arguments.of("  search term  ", "search term", false, null));
     }

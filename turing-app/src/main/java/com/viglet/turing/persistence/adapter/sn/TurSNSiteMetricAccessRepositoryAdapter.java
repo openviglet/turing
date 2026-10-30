@@ -28,6 +28,7 @@ import com.viglet.turing.domain.sn.TurSNSiteMetricAccessTermDomain;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms;
 
 /**
  * Infrastructure adapter implementing
@@ -80,15 +81,16 @@ public class TurSNSiteMetricAccessRepositoryAdapter
     @Override
     public List<TurSNSiteMetricAccessTermDomain> findLatestSearches(String snSiteId,
             String language, String userId, Pageable pageable) {
-        return turSNSiteMetricAccessRepository
-                .findLatestSearches(stub(snSiteId), language, userId, pageable).stream()
+        // T1179 — the visitor reads their searches as typed, not as the grouping key.
+        return typed(snSiteId, turSNSiteMetricAccessRepository
+                .findLatestSearches(stub(snSiteId), language, userId, pageable)).stream()
                 .map(t -> TurSNSiteMetricAccessTermDomain.latest(t.getTerm(), t.getAcessDate()))
                 .toList();
     }
 
     @Override
     public List<TurSNSiteMetricAccessTermDomain> topTerms(String snSiteId, Pageable pageable) {
-        return turSNSiteMetricAccessRepository.topTerms(stub(snSiteId), pageable).stream()
+        return typed(snSiteId, turSNSiteMetricAccessRepository.topTerms(stub(snSiteId), pageable)).stream()
                 .map(t -> TurSNSiteMetricAccessTermDomain.aggregated(t.getTerm(), t.getTotal(),
                         t.getNumFound()))
                 .toList();
@@ -97,8 +99,8 @@ public class TurSNSiteMetricAccessRepositoryAdapter
     @Override
     public List<TurSNSiteMetricAccessTermDomain> topTermsBetweenDates(String snSiteId,
             Instant startDate, Instant endDate, Pageable pageable) {
-        return turSNSiteMetricAccessRepository
-                .topTermsBetweenDates(stub(snSiteId), startDate, endDate, pageable).stream()
+        return typed(snSiteId, turSNSiteMetricAccessRepository
+                .topTermsBetweenDates(stub(snSiteId), startDate, endDate, pageable)).stream()
                 .map(t -> TurSNSiteMetricAccessTermDomain.aggregated(t.getTerm(), t.getTotal(),
                         t.getNumFound()))
                 .toList();
@@ -113,6 +115,10 @@ public class TurSNSiteMetricAccessRepositoryAdapter
     public int countTermsByPeriod(String snSiteId, Instant startDate, Instant endDate) {
         return turSNSiteMetricAccessRepository.countTermsByPeriod(stub(snSiteId), startDate,
                 endDate);
+    }
+
+    private List<TurSNSiteMetricAccessTerm> typed(String snSiteId, List<TurSNSiteMetricAccessTerm> terms) {
+        return TurSNSiteMetricTerms.asTyped(turSNSiteMetricAccessRepository, stub(snSiteId), terms);
     }
 
     private static TurSNSite stub(String id) {

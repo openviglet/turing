@@ -16,7 +16,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1179** (deps: —) **Search metrics and a visitor's latest searches strip accents and delete non-Latin letters from the words typed** — Owners act on these words and visitors reread their own; a Russian or Japanese search is lost entirely. → §CLVIII.16
 - 📋 **T1185** (deps: —) **On Solr and Elasticsearch a title holding the query as an exact phrase still ranks below synonym-only matches** — T1177 fixed the guide-first order on Lucene only, so a site on the other engines keeps the regression. → §CLVIII.17
 
 ## Block CJ — Releases ship from the repository the README names

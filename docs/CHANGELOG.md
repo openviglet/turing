@@ -975,6 +975,7 @@
 - **T1176** — A question is no longer offered back as its own spell-check suggestion, and the engine conformance IT proves the relaxed match alike on Lucene, Solr and Elasticsearch.
 - **T1177** — On Lucene the query as typed, as a phrase on the site's title field, adds a 10x boost, so a guide titled with the exact phrase again outranks products matching only a synonym.
 - **T1178** — The SN chat also takes documentId, its chunks leading the context and sources with the rest kept as alternatives, and the vanilla SDK gains postCopilot and carries documentId in both calls.
+- **T1179** — Search and click metrics group a term by dropping diacritics only, never letters, and every report and the latest searches show the spelling visitors typed most.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

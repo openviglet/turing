@@ -114,6 +114,15 @@ public interface TurSNSiteMetricAccessRepository extends JpaRepository<TurSNSite
 			+ "TurSNSiteMetricAccess where turSNSite = ?1 AND accessDate BETWEEN ?2 AND ?3")
 	int countTermsByPeriod(TurSNSite turSNSite, Instant startDate, Instant endDate);
 
+	/**
+	 * T1179 — every spelling typed for each of the grouped {@code keys}, with its
+	 * count, which {@link TurSNSiteMetricTerms#asTyped} reads to show a key as typed.
+	 */
+	@Query(value = "select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTermSpelling(sanatizedTerm, term, COUNT(term)) from "
+			+ "TurSNSiteMetricAccess where turSNSite = :site AND sanatizedTerm in :keys GROUP BY sanatizedTerm, term")
+	List<TurSNSiteMetricTermSpelling> spellings(@Param("site") TurSNSite site,
+			@Param("keys") java.util.Collection<String> keys);
+
 	List<TurSNSiteMetricAccess> findByTurSNSiteAndLanguage(TurSNSite turSNSite, String language);
 
 	List<TurSNSiteMetricAccess> findByTurSNSite(TurSNSite turSNSite);
