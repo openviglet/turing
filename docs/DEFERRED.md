@@ -22,3 +22,4 @@
 ## Block CJ — Releases ship from the repository the README names
 
 - ⏸ **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — set aside (Waits on the owner's next successful 2026.3 publish run.): No 2026.3 release exists there yet: publish run 41103220225 failed. → §CLXI.1
+- ⏸ **T1183** (deps: T1180 ✅) **turing-ce still reads as the live repository, with the old ES name and addresses and no notice pointing elsewhere** — set aside (Archiving turing-ce waits on T1180's release and on the owner.): Two repositories for one product split the stars and send visitors to the stale one. → §CLXI.4
