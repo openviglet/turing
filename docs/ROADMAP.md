@@ -20,7 +20,6 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- 📋 **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — A demo that opens without installing is what every launch channel is missing, and the playground already exists. → §CLXI.5
 - 📋 **T1186** (deps: —) **The console, the report email and the SDK and CLI texts still name the product Viglet Turing ES** — A visitor who installs the renamed download then logs into the old name, and the brand rule in the roadmap skill still asks for it. → §CLXI.6
 
 ## Done when — T1133
@@ -49,6 +48,12 @@
 - **A 2026.3 release is Latest on openviglet/turing** gh release list -R
   openviglet/turing shows a v2026.3.x tag marked Latest, with the jar and install assets
   attached.
+
+## Done when — T1184
+
+- **An evaluator sees the admin console without installing** A read-only guest console
+  on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
+  the site, linked from the README.
 
 ## Non-goals (do NOT add as tasks)
 

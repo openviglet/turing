@@ -21,6 +21,7 @@ image:https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&
 image:https://img.shields.io/badge/docs-turing.viglet.org%2Fdocs-brightgreen?style=flat-square&logo=readthedocs&logoColor=white[Documentation,link="https://openviglet.github.io/turing/docs/"]
 image:https://img.shields.io/badge/Sonar-Code%20Quality-brightgreen?style=flat-square&logo=SonarCloud[Code quality,link="https://sonarcloud.io/project/overview?id=viglet_turing"]
 
+**Try it live, no install:** https://openviglet.github.io/turing/#playground[search and cited chat in the browser] ·
 **Site:** https://openviglet.github.io/turing[openviglet.github.io/turing] ·
 **Docs:** https://openviglet.github.io/turing/docs/[openviglet.github.io/turing/docs] ·
 **Compare:** https://openviglet.github.io/turing/compare/[Turing vs Algolia, Coveo, Lucidworks and Elasticsearch] ·
@@ -44,6 +45,10 @@ https://github.com/openviglet/dumont[Viglet Dumont] connector reads AEM on-premi
 AMS and AEM as a Cloud Service, and feeds Turing.
 
 == Try it in 60 seconds
+
+To see search and cited chat first, without installing anything, open the
+https://openviglet.github.io/turing/#playground[live playground] on the site. To run
+it yourself:
 
 [source,bash]
 ----
