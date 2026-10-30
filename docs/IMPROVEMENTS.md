@@ -2368,4 +2368,29 @@ matches no document.
 **Gate.** On the Lucene engine with an en_US site: the question above finds the backpack
 and kit guides; a one-word query is unchanged.
 
+### CLVIII.14 An exact title phrase outranks a stemmed synonym match (T1177)
+
+**Where it showed.** Dumont's demo store (SN site `Demo`, Lucene, en_US, synonyms
+`raincoat, rain jacket, waterproof jacket` and `puffer, down jacket, insulated jacket`),
+2026-10-30, on `ghcr.io/openviglet/turing-ce:latest` (sha-b9bc, after T1170 and T1173),
+after a full reindex. Dumont's curated-search specs, green on the earlier local image,
+now fail:
+
+- `GET /api/sn/Demo/search?q=waterproof jacket` → "Catbells light rain jacket, slate",
+  "…, moss", "…, ember", "…, sky"; the guide "How to choose a waterproof jacket", whose
+  title holds the exact phrase, is no longer first.
+- `q=raincoat` → the same; `q=puffer` → "Down or synthetic: choosing an insulated jacket"
+  above "How to wash a down jacket".
+
+**Not proven.** The earlier image was not re-run against the same index to isolate the
+change; the stemming of T1170 is the suspect, since an exact title phrase used to win
+and a stemmed synonym expansion now scores the products' `rain jacket` as high.
+
+**What it should do.** An exact phrase match in the title still outranks a stemmed or
+synonym match in other documents, as before the stemming change. A regression test in
+the Lucene plugin: a guide titled with the query phrase ranks above products matching
+only its synonym.
+
+**Workaround.** None; Dumont's demo specs stay red and Dumont D243 waits on this.
+
 ## CLIX Documentation refresh (`docs-turing`)
