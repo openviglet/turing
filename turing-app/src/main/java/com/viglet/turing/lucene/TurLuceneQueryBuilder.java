@@ -141,7 +141,7 @@ public class TurLuceneQueryBuilder {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
 
         // Main user query
-        Query mainQuery = buildMainQuery(params.getQuery(), turSNSite, locale);
+        Query mainQuery = buildMainQuery(params.getQuery(), turSNSite, locale, params.isRelaxedMatch());
         builder.add(mainQuery, BooleanClause.Occur.MUST);
 
         // Filter queries (facet selections, fqAnd/fqOr and their operators)
@@ -526,7 +526,7 @@ public class TurLuceneQueryBuilder {
     // Internals
     // -------------------------------------------------------------------------
 
-    private Query buildMainQuery(String queryStr, TurSNSite turSNSite, Locale locale) {
+    private Query buildMainQuery(String queryStr, TurSNSite turSNSite, Locale locale, boolean relaxedMatch) {
         if (!StringUtils.hasText(queryStr) || queryStr.equals("*") || queryStr.equals("*:*")) {
             return new FieldExistsQuery(TurLuceneConstants.ID);
         }
@@ -545,10 +545,14 @@ public class TurLuceneQueryBuilder {
             MultiFieldQueryParser parser = weights.isEmpty()
                     ? new MultiFieldQueryParser(textFields, analyzer)
                     : new MultiFieldQueryParser(textFields, analyzer, weights);
-            parser.setDefaultOperator(QueryParser.Operator.AND);
+            // T1176 — the relaxed retry ORs the words, half of them required.
+            parser.setDefaultOperator(relaxedMatch ? QueryParser.Operator.OR : QueryParser.Operator.AND);
             // T1066 â€” a multi-word expansion is a phrase, not loose words.
             parser.setAutoGenerateMultiTermSynonymsPhraseQuery(true);
             Query termCentric = parser.parse(queryStr);
+            if (relaxedMatch) {
+                termCentric = withHalfTheWordsRequired(termCentric);
+            }
             Query main = analyzer instanceof TurLuceneSynonymAnalyzer
                     ? withMultiWordSynonyms(termCentric, queryStr, textFields, analyzer, weights)
                     : termCentric;
@@ -558,6 +562,25 @@ public class TurLuceneQueryBuilder {
                     e.getMessage());
             return buildTermQueries(queryStr, textFields);
         }
+    }
+
+    /**
+     * T1176 — an ORed parse with at least half its word clauses required
+     * (rounded down), as Solr's and Elasticsearch's {@code 50%} minimum match
+     * reads. Two words or fewer need any one of them.
+     */
+    static Query withHalfTheWordsRequired(Query query) {
+        if (!(query instanceof BooleanQuery bq)) {
+            return query;
+        }
+        long should = bq.clauses().stream().filter(c -> c.occur() == BooleanClause.Occur.SHOULD).count();
+        int required = (int) (should / 2);
+        if (required <= 1) {
+            return query;
+        }
+        BooleanQuery.Builder builder = new BooleanQuery.Builder().setMinimumNumberShouldMatch(required);
+        bq.clauses().forEach(builder::add);
+        return builder.build();
     }
 
     /**

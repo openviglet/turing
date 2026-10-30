@@ -1,0 +1,23 @@
+databaseChangeLog:
+  # --- T1176: relaxed retry of a search that found nothing ---
+  # A site flag beside wildcardNoResults: a search that matched nothing with
+  # every word required is retried with the locale's stop words dropped and the
+  # remaining words ORed under a minimum-should-match. Off (0) by default, so
+  # existing sites search exactly as before. Idempotent: gated by columnExists.
+  - changeSet:
+      id: v2026.3.1.139-01-sn-site-relax-no-results
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: sn_site
+                columnName: relaxNoResults
+      changes:
+        - addColumn:
+            tableName: sn_site
+            columns:
+              - column:
+                  name: relaxNoResults
+                  type: int
+                  defaultValueNumeric: 0

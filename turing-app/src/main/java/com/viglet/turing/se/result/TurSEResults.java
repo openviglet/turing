@@ -42,6 +42,8 @@ public class TurSEResults extends TurSEGenericResults {
 	private List<TurSESimilarResult> similarResults;
 	private List<TurSEFacetResult> facetResults;
 	private List<TurSEGroup> groups;
+	/** T1176 — the results come from the relaxed retry: only the query's main words were matched. */
+	private boolean relaxed;
 	@Builder
 	public TurSEResults(long numFound, long start, int limit, int pageCount, int currentPage, List<TurSEResult> results,
 						int qTime, long elapsedTime, String queryString, String sort, TurSESpellCheckResult spellCheck,

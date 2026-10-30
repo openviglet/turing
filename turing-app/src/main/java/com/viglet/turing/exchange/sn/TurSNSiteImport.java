@@ -307,6 +307,9 @@ public class TurSNSiteImport {
 		turSNSite.setRowsPerPage(turSNSiteExchange.getRowsPerPage());
 		turSNSite.setWildcardNoResults(turSNSiteExchange.getWildcardNoResults());
 		turSNSite.setWildcardAlways(turSNSiteExchange.getWildcardAlways());
+		if (turSNSiteExchange.getRelaxNoResults() != null) {
+			turSNSite.setRelaxNoResults(turSNSiteExchange.getRelaxNoResults());
+		}
 		turSNSite.setExactMatch(turSNSiteExchange.getExactMatch());
 		turSNSite.setFacet(boolToInteger(turSNSiteExchange.isFacet()));
 		turSNSite.setItemsPerFacet(turSNSiteExchange.getItemsPerFacet());

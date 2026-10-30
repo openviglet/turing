@@ -64,7 +64,8 @@ public class TurSNQueryContextBuilder {
                 .setResponseTime(turSEResults.getElapsedTime())
                 .setIndex(turSNSite.getName())
                 .setFacetType(facetTypeOrDefault(turSNSite.getFacetType()))
-                .setFacetItemType(facetTypeOrDefault(turSNSite.getFacetItemType()));
+                .setFacetItemType(facetTypeOrDefault(turSNSite.getFacetItemType()))
+                .setRelaxed(turSEResults.isRelaxed());
     }
 
     private static String facetTypeOrDefault(TurSNSiteFacetFieldEnum value) {

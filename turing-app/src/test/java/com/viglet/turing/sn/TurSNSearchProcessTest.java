@@ -383,6 +383,67 @@ class TurSNSearchProcessTest {
                 verify(turSNSiteMetricAccessRepository, never()).save(any());
         }
 
+        /** T1176 — a search on a site with {@code relaxNoResults}, the engine matching only relaxed. */
+        private TurSearchEnginePlugin relaxingSearch(int relaxNoResults, List<String> relaxedQueries) {
+                TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
+                TurSNSite site = site("site-id", "site");
+                site.setRelaxNoResults(relaxNoResults);
+                when(snapshotService.getSnapshot("site", Locale.US)).thenReturn(Optional.of(
+                                snapshot(site, Locale.US, List.of(), Map.of(),
+                                                List.of(snLocale("loc-en", Locale.US, 0)))));
+                when(searchEnginePluginFactory.getPlugin("solr")).thenReturn(plugin);
+                when(plugin.retrieveSearchResults(any())).thenAnswer(inv -> {
+                        TurSEParameters params = inv.<TurSNSiteSearchContext>getArgument(0).getTurSEParameters();
+                        if (!params.isRelaxedMatch()) {
+                                return Optional.of(TurSEResults.builder().results(List.of()).numFound(0)
+                                                .currentPage(1).pageCount(0).limit(10)
+                                                .queryString(params.getQuery()).build());
+                        }
+                        relaxedQueries.add(params.getQuery());
+                        return Optional.of(TurSEResults.builder()
+                                        .results(List.of(TurSEResult.builder()
+                                                        .fields(Map.of("id", "kit-guide", "title", "Kit guide"))
+                                                        .build()))
+                                        .numFound(1).currentPage(1).pageCount(1).limit(10)
+                                        .queryString(params.getQuery()).build());
+                });
+                return plugin;
+        }
+
+        @Test
+        void testAQuestionThatFoundNothingIsRetriedWithItsMainWords() {
+                List<String> relaxedQueries = new java.util.ArrayList<>();
+                relaxingSearch(1, relaxedQueries);
+                TurSNSiteSearchContext context = searchContext("What do I need for two days in the hills?", 1,
+                                List.of());
+
+                var bean = process(false).search(context);
+
+                assertThat(relaxedQueries).containsExactly("need two days hills");
+                assertThat(bean.getQueryContext().getCount()).isEqualTo(1);
+                assertThat(bean.getQueryContext().isRelaxed()).isTrue();
+                assertThat(bean.getQueryContext().getQuery().getQueryString())
+                                .isEqualTo("What do I need for two days in the hills?");
+                assertThat(context.getTurSEParameters().getQuery())
+                                .isEqualTo("What do I need for two days in the hills?");
+                assertThat(context.getTurSEParameters().isRelaxedMatch()).isFalse();
+        }
+
+        @Test
+        void testNoRelaxedRetryWhenTheSiteIsOffOrTheQueryIsOneWord() {
+                List<String> relaxedQueries = new java.util.ArrayList<>();
+                relaxingSearch(0, relaxedQueries);
+                var off = process(false).search(searchContext("What do I need for two days in the hills?", 1,
+                                List.of()));
+                assertThat(off.getQueryContext().getCount()).isZero();
+                assertThat(off.getQueryContext().isRelaxed()).isFalse();
+
+                relaxingSearch(1, relaxedQueries);
+                var oneWord = process(false).search(searchContext("backpack", 1, List.of()));
+                assertThat(oneWord.getQueryContext().getCount()).isZero();
+                assertThat(relaxedQueries).isEmpty();
+        }
+
         /** T1103 — a hybrid-site search whose plugin returns {@code page}; fuse answered by {@code fuse}. */
         private TurSearchEnginePlugin hybridSearch(List<TurSEResult> page, long numFound) {
                 TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);

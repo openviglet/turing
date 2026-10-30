@@ -460,6 +460,8 @@
       "addWildcardNoResultsDesc": "Se nenhum resultado for encontrado, adicionar automaticamente um curinga ao termo de busca.",
       "alwaysAddWildcard": "Sempre Adicionar Curinga",
       "alwaysAddWildcardDesc": "Sempre adicionar um curinga a cada termo de busca.",
+      "relaxNoResults": "Repetir com as palavras principais quando não houver resultados",
+      "relaxNoResultsDesc": "Quando uma busca não encontra nada exigindo todas as palavras, busca de novo sem as palavras vazias do idioma, exigindo ao menos metade das restantes. Ajuda o visitante que digita uma pergunta.",
       "facets": "Facetas",
       "facetsDesc": "Opções de filtragem e configurações de navegação facetada.",
       "enableFacets": "Habilitar Facetas",

@@ -227,11 +227,13 @@ public class TurSNSearchProcess {
                 }
                 TurSNSiteSearchSnapshot snap = snapOpt.get();
                 TurSearchEnginePlugin plugin = searchEnginePluginFactory.getPlugin(snap.pluginType());
+                String typedQuery = context.getTurSEParameters().getQuery();
                 Optional<TurSEResults> resultsOpt = plugin.retrieveSearchResults(context);
                 if (resultsOpt.isEmpty()) {
                         return new TurSNSiteSearchBean();
                 }
-                TurSEResults turSEResults = resultsOpt.get();
+                TurSEResults turSEResults = relaxIfNothingFound(context, snap, plugin, typedQuery,
+                                resultsOpt.get());
                 applyHybridRanking(context, snap, turSEResults);
                 attachDuplicateClusters(context, snap, plugin, turSEResults);
                 TurSolrInstance solrInstance = turSolrInstanceProcess
@@ -239,6 +241,42 @@ public class TurSNSearchProcess {
                                 .orElse(null);
                 return pipelineObservation.record(TurMeterNames.STAGE_SEARCH_RESPONSE,
                                 () -> searchResponse(context, snap, solrInstance, turSEResults));
+        }
+
+        /**
+         * T1176 — when the site opted in and a search found nothing with every
+         * word required (the engine's own wildcard retry included), searches
+         * again with the {@code typedQuery}'s main words ORed under a
+         * minimum-should-match. Zero results is the only trigger; the relaxed
+         * results are kept only when they found something, flagged
+         * {@code relaxed} and carrying the query as typed.
+         */
+        private TurSEResults relaxIfNothingFound(TurSNSiteSearchContext context,
+                        TurSNSiteSearchSnapshot snap, TurSearchEnginePlugin plugin, String typedQuery,
+                        TurSEResults results) {
+                if (results.getNumFound() > 0 || !TurSNUtils.isTrue(snap.site().getRelaxNoResults())) {
+                        return results;
+                }
+                Optional<String> mainWords = TurSNQueryRelaxer.relax(typedQuery, context.getLocale());
+                if (mainWords.isEmpty()) {
+                        return results;
+                }
+                TurSEParameters params = context.getTurSEParameters();
+                String query = params.getQuery();
+                params.setQuery(mainWords.get());
+                params.setRelaxedMatch(true);
+                try {
+                        Optional<TurSEResults> relaxed = plugin.retrieveSearchResults(context);
+                        if (relaxed.isEmpty() || relaxed.get().getNumFound() == 0) {
+                                return results;
+                        }
+                        relaxed.get().setRelaxed(true);
+                        relaxed.get().setQueryString(typedQuery);
+                        return relaxed.get();
+                } finally {
+                        params.setQuery(query);
+                        params.setRelaxedMatch(false);
+                }
         }
 
         /**

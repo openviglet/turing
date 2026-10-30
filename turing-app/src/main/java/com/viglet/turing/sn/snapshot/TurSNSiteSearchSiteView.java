@@ -70,7 +70,7 @@ public record TurSNSiteSearchSiteView(
         String defaultTextField, String defaultDescriptionField, String defaultDateField,
         String defaultImageField, String defaultURLField,
         Integer spellCheck, Integer spellCheckFixes, Integer spotlightWithResults,
-        String searchTemplate, TurSNSiteApiAuthMode apiAuthMode,
+        String searchTemplate, TurSNSiteApiAuthMode apiAuthMode, Integer relaxNoResults,
         // ---- the two associations, denormalised to what is read ----
         String genAiId, TurSNKnowledgeBaseMode knowledgeBaseMode, String embeddingModelId,
         TurSNRankingMode snRankingMode, boolean snSemanticRecall, Double snSemanticRecallMinScore,
@@ -96,7 +96,7 @@ public record TurSNSiteSearchSiteView(
                 site.getDefaultDateField(), site.getDefaultImageField(),
                 site.getDefaultURLField(), site.getSpellCheck(), site.getSpellCheckFixes(),
                 site.getSpotlightWithResults(), site.getSearchTemplate(),
-                site.getApiAuthMode(),
+                site.getApiAuthMode(), site.getRelaxNoResults(),
                 genAi == null ? null : genAi.getId(),
                 genAi == null ? null : genAi.getKnowledgeBaseMode(),
                 genAi == null ? null : genAi.getEmbeddingModelId(),
@@ -148,6 +148,7 @@ public record TurSNSiteSearchSiteView(
         site.setSpotlightWithResults(spotlightWithResults);
         site.setSearchTemplate(searchTemplate);
         site.setApiAuthMode(apiAuthMode);
+        site.setRelaxNoResults(relaxNoResults);
         site.setTurSNSiteGenAi(genAiOrNull());
         site.setTurSEInstance(seInstanceOrNull());
         return site;

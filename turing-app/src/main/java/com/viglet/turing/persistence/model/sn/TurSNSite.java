@@ -121,6 +121,14 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	@Column
 	private Integer wildcardAlways = 0;
 
+	/**
+	 * T1176 — when 1, a search that found nothing with every word required is
+	 * retried with the locale's stop words dropped and the remaining words ORed
+	 * under a minimum-should-match, after the wildcard retry. Off by default.
+	 */
+	@Column(name = "relaxNoResults")
+	private Integer relaxNoResults = 0;
+
 	@Column
 	private Integer exactMatch = 0;
 

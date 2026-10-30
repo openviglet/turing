@@ -167,6 +167,7 @@ public class TurSNSiteAPI {
             turSNSiteEdit.setSpotlightWithResults(turSNSite.getSpotlightWithResults());
             turSNSiteEdit.setWildcardNoResults(turSNSite.getWildcardNoResults());
             turSNSiteEdit.setWildcardAlways(turSNSite.getWildcardAlways());
+            turSNSiteEdit.setRelaxNoResults(turSNSite.getRelaxNoResults());
             turSNSiteEdit.setExactMatchField(turSNSite.getExactMatchField());
             turSNSiteEdit.setDefaultField(turSNSite.getDefaultField());
             turSNSiteEdit.setDefaultTitleField(turSNSite.getDefaultTitleField());

@@ -407,7 +407,7 @@ class TurSNSiteSearchSnapshotServiceTest {
             declared.set(original, sampleFor(declared.getType(), declared.getName(), nth));
             scalars.add(declared);
         }
-        assertThat(scalars).as("the site must still have scalars to copy").hasSize(32);
+        assertThat(scalars).as("the site must still have scalars to copy").hasSize(33);
 
         TurSNSite rebuilt = TurSNSiteSearchSiteView.from(original, "solr").toEntity();
 

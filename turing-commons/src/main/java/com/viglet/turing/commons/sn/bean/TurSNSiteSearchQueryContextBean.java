@@ -42,4 +42,10 @@ public class TurSNSiteSearchQueryContextBean implements Serializable {
 	private TurSNSiteSearchDefaultFieldsBean defaultFields;
 	private String facetType;
 	private String facetItemType;
+	/**
+	 * T1176 — true when nothing matched every word and the results are those of
+	 * the query's main words, so a client can say "showing results for the main
+	 * words".
+	 */
+	private boolean relaxed;
 }

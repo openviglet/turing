@@ -240,6 +240,30 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew, baseRoute = 
               </FormItemTwoColumns>
             )}
           />
+          <FormField
+            control={form.control}
+            name="relaxNoResults"
+            render={({ field }) => (
+              <FormItemTwoColumns>
+                <FormItemTwoColumns.Left>
+                  <FormItemTwoColumns.Label>{t("forms.snBehavior.relaxNoResults")}</FormItemTwoColumns.Label>
+                  <FormItemTwoColumns.Description>
+                    {t("forms.snBehavior.relaxNoResultsDesc")}
+                  </FormItemTwoColumns.Description>
+                </FormItemTwoColumns.Left>
+                <FormItemTwoColumns.Right>
+                  <FormControl>
+                    <GradientSwitch
+                      checked={field.value === 1}
+                      onCheckedChange={(checked) => {
+                        field.onChange(checked ? 1 : 0);
+                      }}
+                    />
+                  </FormControl>
+                </FormItemTwoColumns.Right>
+              </FormItemTwoColumns>
+            )}
+          />
         </SNFormSection>
 
         {/* Facets */}

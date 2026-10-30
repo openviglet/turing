@@ -105,6 +105,29 @@ class TurLuceneQueryBuilderTest {
         assertNotNull(query);
     }
 
+    // ---- T1176: the relaxed retry ORs the words, half of them required ----
+
+    @Test
+    void aRelaxedMatchRequiresHalfTheWords() {
+        TurSNSite site = mock(TurSNSite.class);
+        TurSNSiteFieldExt textField = mock(TurSNSiteFieldExt.class);
+        when(textField.getType()).thenReturn(TurSEFieldType.TEXT);
+        when(textField.getName()).thenReturn("title");
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                .thenReturn(List.of(textField));
+
+        TurSEParameters strict = createParams("need two days hills");
+        BooleanQuery all = (BooleanQuery) extractMainClause(queryBuilder.buildQuery(site, strict));
+        assertTrue(all.clauses().stream().allMatch(c -> c.occur() == BooleanClause.Occur.MUST));
+
+        TurSEParameters relaxed = createParams("need two days hills");
+        relaxed.setRelaxedMatch(true);
+        BooleanQuery half = (BooleanQuery) extractMainClause(queryBuilder.buildQuery(site, relaxed));
+        assertTrue(half.clauses().stream().allMatch(c -> c.occur() == BooleanClause.Occur.SHOULD));
+        assertEquals(4, half.clauses().size());
+        assertEquals(2, half.getMinimumNumberShouldMatch());
+    }
+
     // ---- buildQuery: text search with fields ----
 
     @Test

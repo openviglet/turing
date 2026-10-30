@@ -18,7 +18,9 @@ import static com.viglet.turing.solr.TurSolrConstants.OR;
 import static com.viglet.turing.solr.TurSolrConstants.OR_AND;
 import static com.viglet.turing.solr.TurSolrConstants.OR_OR;
 import static com.viglet.turing.solr.TurSolrConstants.PLUS_ONE;
+import static com.viglet.turing.solr.TurSolrConstants.MM;
 import static com.viglet.turing.solr.TurSolrConstants.Q_OP;
+import static com.viglet.turing.solr.TurSolrConstants.RELAXED_MINIMUM_MATCH;
 import static com.viglet.turing.solr.TurSolrConstants.RECENT_DATES;
 import static com.viglet.turing.solr.TurSolrConstants.ROWS;
 import static com.viglet.turing.solr.TurSolrConstants.SOLR_DATE_PATTERN;
@@ -138,6 +140,11 @@ public class TurSolrQueryBuilder {
         SolrQuery query = new SolrQuery();
         query.set(DEF_TYPE, EDISMAX);
         query.set(Q_OP, AND);
+        if (turSEParameters.isRelaxedMatch()) {
+            // T1176 — the relaxed retry ORs the words, half of them required.
+            query.set(Q_OP, OR);
+            query.set(MM, RELAXED_MINIMUM_MATCH);
+        }
         turSNSearchRuleEvaluator.applyRules(turSNSite, turSEParameters, context.getLocale());
         setRows(turSNSite, turSEParameters);
         setSortEntry(turSNSite, query, turSEParameters);

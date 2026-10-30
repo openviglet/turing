@@ -98,8 +98,20 @@ Controls how the search engine processes queries and assembles results for this 
 |---|---|
 | **Wildcard No Results** | Automatically appends a wildcard (`*`) to the query when the original search returns no results, broadening the match |
 | **Wildcard Always** | Always appends a wildcard to every search term, regardless of result count |
+| **Retry with the main words on no results** | When a search finds nothing with every word required (after the wildcard retry), searches again without the language's stop words, matching at least half of the remaining words. Off by default |
 
 Use **Wildcard No Results** to recover gracefully from zero-result queries.
+
+Every word of a query is required, so a question typed into the search box ("What do I
+need for two days in the hills?") finds nothing: "what", "do" and "for" must match too.
+Turn on **Retry with the main words on no results** and that question is searched again
+as `need two days hills`, any half of them matching. The response says so in
+`queryContext.relaxed: true`, so a client can show "showing results for the main
+words"; `queryContext.query.queryString` stays what the visitor typed. A one-word query,
+a phrase in quotes and a query using `field:value` or a wildcard are never relaxed. The
+stop words are the search locale's language (English, Portuguese, Spanish, French,
+German, Italian and the other Snowball languages); a language without a list keeps
+every word.
 
 :::caution[Wildcard Always reduces precision]
 **Wildcard Always** appends `*` to every query term regardless of result count. This increases recall (more documents match) but significantly reduces relevance precision. Avoid using it in sites where ranking quality matters. Prefer **Wildcard No Results** as a safer fallback.

@@ -24,6 +24,10 @@ public final class TurSolrConstants {
     public static final String DEF_TYPE = "defType";
     public static final String AND = "AND";
     public static final String Q_OP = "q.op";
+    /** T1176 — edismax's minimum-should-match parameter. */
+    public static final String MM = "mm";
+    /** T1176 — the relaxed retry's minimum match: half of the words, rounded down. */
+    public static final String RELAXED_MINIMUM_MATCH = "50%";
     public static final String RECENT_DATES = "{!func}recip(ms(NOW/DAY,%s),3.16e-11,1,1)";
     public static final String TUR_SUGGEST = "/tur_suggest";
     public static final String TUR_SPELL = "/tur_spell";

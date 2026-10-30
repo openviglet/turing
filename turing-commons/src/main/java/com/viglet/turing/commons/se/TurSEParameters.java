@@ -42,6 +42,13 @@ public class TurSEParameters implements Serializable {
      * from a request; every engine adds it as a filter on top of the others.
      */
     private TurSEPartition partition;
+    /**
+     * T1176 — when {@code true} the query's words are ORed under a
+     * minimum-should-match of half of them instead of all being required. Set by
+     * Turing for the relaxed retry of a search that found nothing, never read
+     * from a request.
+     */
+    private boolean relaxedMatch;
 
     public TurSEParameters(TurSNSearchParams turSNSearchParams) {
         this(turSNSearchParams, null);

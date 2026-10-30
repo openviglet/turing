@@ -460,6 +460,8 @@
       "addWildcardNoResultsDesc": "If no results are found, automatically append a wildcard to the search term.",
       "alwaysAddWildcard": "Always Add Wildcard",
       "alwaysAddWildcardDesc": "Always append a wildcard to each search term.",
+      "relaxNoResults": "Retry with the main words on no results",
+      "relaxNoResultsDesc": "When a search finds nothing with every word required, search again without the language's stop words, matching at least half of the remaining words. Helps visitors who type a question.",
       "facets": "Facets",
       "facetsDesc": "Filtering options and faceted navigation settings.",
       "enableFacets": "Enable Facets",

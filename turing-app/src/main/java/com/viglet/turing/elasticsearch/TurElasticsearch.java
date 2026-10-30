@@ -402,6 +402,14 @@ public class TurElasticsearch {
 
         // simple_query_string with lenient=true skips fields whose type cannot
         // parse the query text (e.g. float, double, date fields)
+        if (turSEParameters.isRelaxedMatch()) {
+            // T1176 — the relaxed retry ORs the words, half of them required.
+            return Query.of(q -> q.simpleQueryString(qs -> qs
+                    .query(queryString)
+                    .defaultOperator(co.elastic.clients.elasticsearch._types.query_dsl.Operator.Or)
+                    .minimumShouldMatch("50%")
+                    .lenient(true)));
+        }
         return Query.of(q -> q.simpleQueryString(qs -> qs
                 .query(queryString)
                 .defaultOperator(co.elastic.clients.elasticsearch._types.query_dsl.Operator.And)

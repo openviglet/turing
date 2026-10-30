@@ -34,6 +34,8 @@ export type TurSNSite = {
   facetSort: TurSNSiteFacetFieldSortTypes;
   wildcardNoResults: number;
   wildcardAlways: number;
+  /** T1176 — 1 retries a search that found nothing with the query's main words. */
+  relaxNoResults?: number;
   exactMatch: number;
   turSNSiteGenAi: TurSNSiteGenAi;
   icon?: string | null;

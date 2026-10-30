@@ -2290,31 +2290,25 @@ host hands to Google Analytics, and the consent that gates them.
 ### CLVIII.13 A question in the search box finds the documents its main words do (T1176)
 
 **Where it showed.** Dumont's WordPress demo store, the search block with its answer
-panel on (D203's story run, 2026-10-30). `GET /api/sn/Demo/search?q=What do I need for
-two days in the hills?&_setlocale=en_US` returns `queryContext.count = 0`, and
-spell-check offers the whole question back as "did you mean". The answer panel draws
-only on results, so a shopper who types a question gets no answer and no products.
+panel on (D203's story run, 2026-10-30): `GET /api/sn/Demo/search?q=What do I need for
+two days in the hills?` returned `queryContext.count = 0`, and spell-check offered the
+whole question back as "did you mean".
 
-**Why.** Every query word must match, on every engine: Lucene's parser runs with
-`Operator.AND` (`TurLuceneQueryBuilder.buildMainQuery`), Solr with `q.op=AND`
-(`TurSolrQueryBuilder`), Elasticsearch with `Operator.And`. Function words ("what",
-"do", "for", "in", "the") are required terms, so a natural-language question matches
-nothing.
+**What landed (relaxed retry).** The site flag `relaxNoResults` (console: Behavior,
+Wildcard). `TurSNSearchProcess.relaxIfNothingFound` retries a zero-result search, after
+the engine's wildcard retry, with `TurSNQueryRelaxer.relax` (Snowball stop words of the
+locale dropped) and `TurSEParameters.relaxedMatch`, which Lucene
+(`withHalfTheWordsRequired`), Solr (`q.op=OR`, `mm=50%`) and Elasticsearch
+(`Operator.Or`, `minimum_should_match 50%`) honour. The response carries
+`queryContext.relaxed`. Unit-tested per engine's query shape and on the retry itself.
 
-**What it should do.**
-- A site flag beside `wildcardNoResults`, off by default: a search that found nothing
-  with every word required is retried, after the wildcard retry, with the locale's stop
-  words dropped and the remaining words ORed under a minimum-should-match. Each engine
-  implements it (Lucene `BooleanQuery`, Solr `mm`, ES `minimum_should_match`). No guess
-  at whether the query "reads as a question": zero results is the trigger.
-- The relaxed search is said in the response (`queryContext` flag) so a client can show
-  "showing results for the main words".
-- Spell-check is not offered for a multi-word query whose words are all indexed.
-
-**Workaround.** None in Dumont; its story moved the question to the Site assistant.
-
-**Gate.** An IT per engine on an en_US site: the question above finds the backpack and
-kit guides with the flag on, zero with it off; a one-word query is unchanged.
+**What is left.**
+- Spell-check is not offered for a multi-word query whose words are all indexed: the
+  question above should not come back as its own "did you mean". The check belongs
+  where `TurSNSearchProcess` builds the spell-check bean, not in each engine.
+- An IT per engine on an en_US site: the question finds the backpack and kit guides
+  with the flag on, zero with it off; a one-word query is unchanged. Lucene runs
+  in-process; Solr and Elasticsearch need their Testcontainers images.
 
 ### CLVIII.14 An exact title phrase outranks a stemmed synonym match (T1177)
 
