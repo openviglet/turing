@@ -1,7 +1,7 @@
 // "How it works" (D195), on the `demo` project's stack: with ?tour=1 each Turing feature on the
-// page gets a numbered marker. At phone width, every marker is reached with Tab, opens its note
-// with Enter, and the note covers nothing of the feature it describes; Escape closes it and
-// gives the focus back.
+// page gets a marker numbered with its chapter in the shopper's story (demo/story.md, D203). At
+// phone width, every marker is reached with Tab, opens its note with Enter, and the note covers
+// nothing of the feature it describes; Escape closes it and gives the focus back.
 import { expect, test } from '../fixtures.mjs';
 import { demoLocale } from './curated.mjs';
 
@@ -10,7 +10,7 @@ test.use( { viewport: { width: 390, height: 844 } } );
 // What the tour says and searches for, in each language the demo speaks (D217, D223).
 const words = {
 	en_US: {
-		marker: 'Turing feature',
+		marker: ( chapter, name ) => `Story chapter ${ chapter }: ${ name }`,
 		docs: 'How it works',
 		jacket: 'jacket',
 		daypack: 'helvellyn daypack',
@@ -21,7 +21,8 @@ const words = {
 		copilot: 'Ask the catalog',
 	},
 	pt_BR: {
-		marker: 'Recurso do Turing',
+		marker: ( chapter, name ) =>
+			`Capítulo ${ chapter } da história: ${ name }`,
 		docs: 'Como funciona',
 		jacket: 'jaqueta',
 		daypack: 'helvellyn mochila',
@@ -40,14 +41,21 @@ const boxes = ( a, b ) =>
 	a.y < b.y + b.height &&
 	b.y < a.y + a.height;
 
+/**
+ * Walk the page's markers with the keyboard.
+ *
+ * @param {import('@playwright/test').Page} page     The toured page.
+ * @param {Array<[number, string]>}         expected Each marker's chapter and feature, in page order.
+ */
 async function walk( page, expected ) {
 	const markers = page.locator( '.tarnfell-tour__marker' );
 	await expect( markers ).toHaveCount( expected.length );
 	for ( let i = 0; i < expected.length; i++ ) {
 		const marker = markers.nth( i );
 		await expect( marker ).toHaveAccessibleName(
-			`${ say().marker } ${ i + 1 }: ${ expected[ i ] }`
+			say().marker( ...expected[ i ] )
 		);
+		await expect( marker ).toHaveText( String( expected[ i ][ 0 ] ) );
 		// Reached with the keyboard: Tab until this marker has the focus.
 		for (
 			let tabs = 0;
@@ -94,7 +102,11 @@ test( 'the search page names its search box and its filters', async ( {
 	await expect(
 		page.locator( '.viglet-dumont-search__title a' ).first()
 	).toBeVisible();
-	await walk( page, [ say().search, say().filters ] );
+	// Both are chapter 2: she says what she needs, and the filters set themselves.
+	await walk( page, [
+		[ 2, say().search ],
+		[ 2, say().filters ],
+	] );
 	await axe( 'the tour', { include: '.tarnfell-tour' } );
 } );
 
@@ -129,7 +141,11 @@ test( 'a product page names the catalog copilot and Related, in page order', asy
 	await expect(
 		page.locator( '.wp-block-viglet-dumont-copilot' )
 	).toBeVisible();
-	await walk( page, [ say().copilot, say().related ] );
+	// Chapter 6, checking one item: on its page the copilot answers about it.
+	await walk( page, [
+		[ 6, say().copilot ],
+		[ 6, say().related ],
+	] );
 } );
 
 test( 'a page without ?tour loads no tour', async ( { page } ) => {

@@ -3,24 +3,30 @@
  * page, opening a two-line note on what the feature does and a link to its docs. The note opens
  * in the flow, before the feature, so it never covers what it describes; Escape closes it.
  * Loaded only on a toured page (functions.php), in the page's language.
+ *
+ * A marker's number is the feature's chapter in the shopper's story (demo/story.md, D203), so
+ * the tour, the site and the story walk the demo in one order across pages.
  */
 ( () => {
 	const docs = 'https://openviglet.github.io/dumont/docs/connectors/wordpress/';
 	const pt = ( document.documentElement.lang || '' ).startsWith( 'pt' );
 	const text = pt
 		? {
-				marker: 'Recurso do Turing %d: %s',
+				marker: 'Capítulo %d da história: %s',
 				docs: 'Como funciona',
 				close: 'Sair do tour',
 			}
 		: {
-				marker: 'Turing feature %d: %s',
+				marker: 'Story chapter %d: %s',
 				docs: 'How it works',
 				close: 'Leave the tour',
 			};
+	// The single product's page is chapter 6 of the story: there the copilot answers about one item.
+	const onProduct = document.body.classList.contains( 'single-product' );
 	const features = [
 		{
 			selector: '.viglet-dumont-search__form',
+			chapter: 2,
 			anchor: '#the-turing-search-block',
 			en: [
 				'Search as you type',
@@ -33,6 +39,7 @@
 		},
 		{
 			selector: '.viglet-dumont-search__facets',
+			chapter: 2,
 			anchor: '#fields-and-facets',
 			en: [
 				'Filters from the catalog',
@@ -45,6 +52,7 @@
 		},
 		{
 			selector: '.viglet-dumont-search__answer',
+			chapter: 3,
 			anchor: '#search',
 			en: [
 				'An answer with its sources',
@@ -57,6 +65,7 @@
 		},
 		{
 			selector: '.wp-block-viglet-dumont-related',
+			chapter: 6,
 			anchor: '#the-turing-search-block',
 			en: [
 				'Related, by meaning',
@@ -69,6 +78,7 @@
 		},
 		{
 			selector: '.wp-block-viglet-dumont-copilot',
+			chapter: onProduct ? 6 : 5,
 			anchor: '#search',
 			en: [
 				'Ask the catalog',
@@ -82,6 +92,7 @@
 		{
 			// A placed block; the corner launcher on every page is the site's chrome, not a stop.
 			selector: '.wp-block-viglet-dumont-assistant:not(.is-floating)',
+			chapter: 3,
 			anchor: '#search',
 			en: [
 				'Ask this site',
@@ -125,8 +136,8 @@
 			.map( ( { feature } ) => feature );
 
 	let placed = '';
-	// Number the features the page shows, in its order. Run again when one appears: the
-	// copilot and the Site assistant show only once Turing says they can answer (D179).
+	// Mark the features the page shows, in its order, each with its chapter. Run again when one
+	// appears: the copilot and the Site assistant show only once Turing says they can answer (D179).
 	const place = () => {
 		const now = shown();
 		const key = now.map( ( feature ) => feature.selector ).join( '|' );
@@ -140,10 +151,12 @@
 		now.forEach( ( feature, i ) => mark( feature, i + 1 ) );
 	};
 
-	const mark = ( feature, number ) => {
+	// `position` keeps each note's id unique where two features share a chapter.
+	const mark = ( feature, position ) => {
 		const target = document.querySelector( feature.selector );
 		const [ title, body ] = pt ? feature.pt : feature.en;
-		const id = `tarnfell-tour-${ number }`;
+		const number = feature.chapter;
+		const id = `tarnfell-tour-${ position }`;
 		const wrap = document.createElement( 'div' );
 		wrap.className = 'tarnfell-tour';
 		const button = document.createElement( 'button' );

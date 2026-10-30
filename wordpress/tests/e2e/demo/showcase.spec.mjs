@@ -7,12 +7,13 @@ import { demoLocale } from './curated.mjs';
 
 const words = {
 	en_US: {
-		marker: 'Turing feature',
+		marker: ( chapter, name ) => `Story chapter ${ chapter }: ${ name }`,
 		features: [ 'Search as you type', 'Ask the catalog', 'Ask this site' ],
 		heading: 'Search, with an answer',
 	},
 	pt_BR: {
-		marker: 'Recurso do Turing',
+		marker: ( chapter, name ) =>
+			`Capítulo ${ chapter } da história: ${ name }`,
 		features: [
 			'Busca enquanto digita',
 			'Pergunte ao catálogo',
@@ -42,19 +43,16 @@ test( 'the showcase holds every Turing block, each named and numbered by the tou
 	await expect( page.locator( '.viglet-dumont-copilot' ) ).toBeVisible();
 	await expect( page.locator( '.viglet-dumont-assistant' ) ).toBeVisible();
 
-	// The markers number the features in the order the page shows them.
+	// Each marker carries its feature's chapter in the story (demo/story.md, D203): saying what
+	// she needs, asking, building the kit.
 	const markers = page.locator( '.tarnfell-tour__marker' );
 	const labels = await markers.evaluateAll( ( buttons ) =>
 		buttons.map( ( b ) => b.getAttribute( 'aria-label' ) )
 	);
 	const { marker, features } = say();
-	for ( const feature of features ) {
-		expect( labels ).toContainEqual(
-			expect.stringMatching(
-				new RegExp( `^${ marker } \\d+: ${ feature }$` )
-			)
-		);
-	}
+	[ 2, 5, 3 ].forEach( ( chapter, i ) =>
+		expect( labels ).toContain( marker( chapter, features[ i ] ) )
+	);
 	await expect( page.locator( '.tarnfell-ai-off' ) ).toBeHidden();
 	await look( 'demo-showcase' );
 } );
