@@ -2418,4 +2418,27 @@ document id and labels the box with the product's name.
 **Gate.** A test on the copilot service: with `documentId` set to a product that the
 question's words alone would not retrieve, the product is the first citation.
 
+### CLVIII.16 Metrics keep a search as the visitor typed it (T1179)
+
+**Where it showed.** Dumont's WordPress demo store in pt_BR (Dumont D244's story run,
+2026-10-30). A visitor searched `abrigo de emergência` on the SN site `Demo`. Search
+insights (the plugin reads `/api/sn/{site}/metrics/failed-searches`) lists it as `abrigo
+de emergencia`, and `jaqueta de chuva leve até R$ 400` as `jaqueta de chuva leve ate r$
+400`: the logged term is lower-cased and stripped of its accents.
+
+**Why it costs.** The site owner reads the visitor's words misspelt, in the language
+they were written in. The plugin's "Add a synonym" and "Write about this" open with the
+folded text, so a synonym or a post title starts from a word nobody typed, and a report
+shared with a Portuguese team reads as full of typos.
+
+**What it should do.** Keep folding for grouping (`emergência` and `emergencia` are one
+search), and store and return the most frequent spelling as typed, so the metrics show
+`abrigo de emergência`. The same for top searches and searches nobody clicked.
+
+**Workaround.** None in the product; Dumont's story spec matches the folded form
+(`logged` in `tests/e2e/story/shopper.story.mjs`), naming this line.
+
+**Gate.** A metrics test: three searches for `emergência` and one for `emergencia` list
+once, as `emergência`, with four searches.
+
 ## CLIX Documentation refresh (`docs-turing`)
