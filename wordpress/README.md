@@ -260,7 +260,8 @@ Playwright's ffmpeg once: `npx playwright install ffmpeg`.
 shopper's visit in eight chapters, end to end on the demo with `OPENAI_API_KEY` set: popular
 searches, a sentence turned into filters, the Site assistant, a comparison, Build my kit, a
 product page, a test-mode checkout, and the owner's Search insights. Nothing is replayed, and it
-leaves `story.webm` in `tests/e2e/artifacts/story/`. It plays in English for now (D244).
+leaves `story.webm` in `tests/e2e/artifacts/story/`. It plays in the language the demo speaks:
+English, or pt_BR on a demo started with `DEMO_LOCALE=pt_BR`.
 `npm run e2e:story:record` plays it again at 1920×1080 and a human pace, and
 `npm run story:video` (ffmpeg on the PATH) cuts it into the demo video,
 `tests/e2e/artifacts/video/story.mp4`, with a title card per chapter, and `story-30s.mp4`, the

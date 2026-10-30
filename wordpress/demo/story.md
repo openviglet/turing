@@ -40,7 +40,8 @@ Then she misspells a name and the search offers the correction, and she tries a 
 shop does not use, which finds nothing (chapter 8 comes back to it).
 
 - `helvelyn` → the correction `helvellyn`.
-- `bothy bag` → no results.
+- en_US: `bothy bag` → no results.
+- pt_BR: `abrigo de emergência` → no results.
 
 ## 3. Asks
 
@@ -84,11 +85,12 @@ is placed and nothing is charged.
 
 The shop owner's view of the same visit.
 
-- **Compare searches**: `raincoat` (`capa de chuva`) on WordPress's own search finds
-  nothing; Turing finds the guide and the rain jackets through a synonym.
+- **Compare searches**: `raincoat` (pt_BR: `puffer`) on WordPress's own search finds
+  nothing; Turing finds the jackets through a synonym.
 - **Search insights** (wp-admin, today): her searches are among the top ones, and a search
-  that found nothing, `bothy bag`, is listed with **Add a synonym**, which opens Search
-  tuning with it filled in. She saves `bothy bag, bivvy bag`, so the next shopper who asks
-  for a bothy bag finds the Coniston bivvy bag. (The story saves the synonym and does not
+  that found nothing, `bothy bag` (`abrigo de emergência`), is listed with **Add a
+  synonym**, which opens Search tuning with it filled in. She saves `bothy bag, bivvy bag`
+  (`abrigo de emergência, bivaque`), so the next shopper who asks for one finds the
+  Coniston bivvy bag. (The story saves the synonym and does not
   search with it: a search that finds something leaves the "found nothing" list for the
   day, and the story must replay.)
