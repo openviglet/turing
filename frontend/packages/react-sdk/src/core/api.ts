@@ -1109,10 +1109,16 @@ export async function postCopilot(
   site: string,
   messages: TurChatConversationMessage[],
   locale?: string,
+  /**
+   * T1178 — the indexed id of the document the question is about (the product on
+   * the page): answered about first and always cited; other results stay as
+   * alternatives. An id the site does not hold is ignored.
+   */
+  documentId?: string,
 ): Promise<TurCatalogCopilotResult> {
   const { data } = await axios.post<TurCatalogCopilotResult>(
     `/sn/${site}/copilot`,
-    { messages, locale },
+    documentId ? { messages, locale, documentId } : { messages, locale },
   );
   return data;
 }

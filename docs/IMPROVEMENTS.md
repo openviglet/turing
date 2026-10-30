@@ -2289,29 +2289,27 @@ host hands to Google Analytics, and the consent that gates them.
 
 ### CLVIII.15 Ground a copilot or chat answer on one document (T1178)
 
-**Where it showed.** Dumont's demo store (Dumont D242, 2026-10-30). On a product page
-the shopper asks the catalog copilot "Will this keep me dry on a wet day in the hills?"
-about the jacket on the page, but `POST /api/sn/{site}/copilot` takes only `{messages,
-locale}` (`CopilotRequest`). The SN chat's `ConversationRequest` takes `filters`, but a
-filter on the id is a hard limit: it retrieves that document alone and drops the
-alternatives an answer should still name.
+**Where it showed.** Dumont's demo store (Dumont D242, 2026-10-30): on a product page
+the shopper asks "Will this keep me dry on a wet day in the hills?" about the jacket on
+the page, and the answer was catalog-wide.
 
-**What it should do.**
-- An optional `documentId` (the indexed document's id) on the copilot request and on the
-  SN chat's `ConversationRequest`. It pins, it does not filter: the document is
-  retrieved and placed first in the context, it is always among the citations, and the
-  answer is about it; other documents appear only as alternatives named as such.
-- One pinning helper on the retrieval side, called by `TurCatalogCopilotService.retrieve`
-  and by the chat's RAG retrieval, not one per endpoint.
-- An id the site does not hold is ignored, not an error.
-- Both SDKs (`postCopilot`, the chat call) carry it.
+**What landed (copilot).** `POST /api/sn/{site}/copilot` takes `documentId`.
+`TurCatalogCopilotService.answer(site, locale, messages, documentId)` fetches the
+document by id (`pinnedDocument`), puts it first as result `[1]` (`pinFirst` shifts the
+others and drops its duplicate), adds a prompt rule to answer about `[1]` and name
+others only as alternatives, and `withPinned` keeps it among the returned citations. A
+pinned question skips stuff-all. An unknown id is ignored. The React SDK's `postCopilot`
+and `useTuringCopilot` carry it.
 
-**Workaround.** None in Dumont: D242 waits on this. The block side then sends the page's
-document id and labels the box with the product's name.
+**What is left.**
+- The SN chat (`ConversationRequest`, beside its `filters`) takes `documentId` and pins
+  it the same way in its RAG retrieval: first in the context and the citations, never a
+  filter. Reuse the shape of `pinFirst` there rather than a second rule.
+- `@viglet/turing-sdk` has no copilot call at all: add `postCopilot` with the
+  `documentId` field, bound on the client api and listed in `sdk-parity.test.ts`.
 
-**Gate.** A test on the copilot service and one on the chat retrieval: with `documentId`
-set to a product the question's words alone would not retrieve, it is the first citation
-and other results are still present.
+**Workaround.** None in Dumont: D242 sends the page's document id once the chat or the
+copilot can take it.
 
 ### CLVIII.16 Metrics group a search by its folded form and show it as typed (T1179)
 

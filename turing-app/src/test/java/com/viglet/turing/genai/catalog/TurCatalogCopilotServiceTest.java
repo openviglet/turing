@@ -153,6 +153,71 @@ class TurCatalogCopilotServiceTest {
                 .contains("20000");
     }
 
+    /** T1178 — the product on the page is pinned first and always cited; the rest stay as alternatives. */
+    @Test
+    void aPinnedDocumentIsAnsweredAboutFirstAndAlwaysCited() {
+        TurSNSite site = new TurSNSite();
+        site.setName("catalog");
+        ChatModel chatModel = modelReturning("A good alternative is the Analytics Specialization [3].");
+        when(chatModelResolver.resolve()).thenReturn(Optional.of(chatModel));
+        when(turSNSiteRepository.findByNameIgnoreCase("catalog")).thenReturn(Optional.of(site));
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("modality", TurSEFieldType.STRING, true)));
+        when(parser.isAvailable()).thenReturn(true);
+        when(parser.parse(any())).thenReturn(groundedQuery());
+        when(hybridRankingService.isEnabled(site)).thenReturn(false);
+        Map<String, Object> pinnedDoc = new LinkedHashMap<>();
+        pinnedDoc.put("title", "Pinned Jacket");
+        pinnedDoc.put("url", "https://example.com/jacket");
+        TurDslSearchResponse pinnedResponse = new TurDslSearchResponse(1L, false,
+                new TurDslSearchResponse.Hits(new TurDslSearchResponse.Total(1, "eq"), 1.0,
+                        List.of(new TurDslSearchResponse.Hit("p9", 1.0, pinnedDoc, null))), null);
+        when(dslSearchService.search(eq("catalog"), eq("en"), any(TurDslQueryRequest.class)))
+                .thenAnswer(inv -> {
+                    TurDslQueryRequest request = inv.getArgument(2);
+                    return Optional.of(request.query() instanceof com.viglet.turing.sn.dsl.TurDslQuery.Term term
+                            && "id".equals(term.field()) ? pinnedResponse : twoHitResponse());
+                });
+
+        TurCatalogCopilotResult result = service.answer("catalog", "en",
+                List.of(new ChatTurn("user", "will this keep me dry?")), "p9");
+
+        assertThat(result.citations()).extracting(TurCatalogCitation::id).contains("p9", "d2");
+        ArgumentCaptor<Prompt> prompt = ArgumentCaptor.forClass(Prompt.class);
+        verify(chatModel).call(prompt.capture());
+        String system = prompt.getValue().getInstructions().getFirst().getText();
+        assertThat(system).contains("looking at result [1]").contains("[1] Pinned Jacket")
+                .contains("[2] Online Data MSc").contains("[3] Analytics Specialization");
+    }
+
+    @Test
+    void anUnknownPinnedIdIsIgnored() {
+        TurSNSite site = new TurSNSite();
+        site.setName("catalog");
+        ChatModel chatModel = modelReturning("The best fit is the Online Data MSc [1].");
+        when(chatModelResolver.resolve()).thenReturn(Optional.of(chatModel));
+        when(turSNSiteRepository.findByNameIgnoreCase("catalog")).thenReturn(Optional.of(site));
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("modality", TurSEFieldType.STRING, true)));
+        when(parser.isAvailable()).thenReturn(true);
+        when(parser.parse(any())).thenReturn(groundedQuery());
+        when(hybridRankingService.isEnabled(site)).thenReturn(false);
+        TurDslSearchResponse none = new TurDslSearchResponse(1L, false,
+                new TurDslSearchResponse.Hits(new TurDslSearchResponse.Total(0, "eq"), 0.0, List.of()), null);
+        when(dslSearchService.search(eq("catalog"), eq("en"), any(TurDslQueryRequest.class)))
+                .thenAnswer(inv -> {
+                    TurDslQueryRequest request = inv.getArgument(2);
+                    return Optional.of(request.query() instanceof com.viglet.turing.sn.dsl.TurDslQuery.Term term
+                            && "id".equals(term.field()) ? none : twoHitResponse());
+                });
+
+        TurCatalogCopilotResult result = service.answer("catalog", "en",
+                List.of(new ChatTurn("user", "online data masters")), "nowhere");
+
+        assertThat(result.error()).isNull();
+        assertThat(result.citations()).extracting(TurCatalogCitation::id).containsExactly("d1");
+    }
+
     @Test
     void stuffAllGroundsOnAllRowsWhenWithinBudget() {
         // T793 — the whole catalog fits the budget → skip NL→DSL, ground on all rows.

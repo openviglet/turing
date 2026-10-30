@@ -974,6 +974,7 @@
 - **T1175** — The kit takes an optional productTypes, typed in both SDKs and documented: when given, only documents of those types are staged, so a site's pages no longer reach a stage.
 - **T1176** — A question is no longer offered back as its own spell-check suggestion, and the engine conformance IT proves the relaxed match alike on Lucene, Solr and Elasticsearch.
 - **T1177** — On Lucene the query as typed, as a phrase on the site's title field, adds a 10x boost, so a guide titled with the exact phrase again outranks products matching only a synonym.
+- **T1178 (copilot)** — The catalog copilot takes an optional documentId, pinned as result [1], answered about first and always cited, with the rest kept as alternatives; React SDK and docs carry it.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

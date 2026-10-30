@@ -169,6 +169,18 @@ public class TurCatalogCopilotService {
      * @param messages the conversation so far (role {@code user}/{@code assistant})
      */
     public TurCatalogCopilotResult answer(String siteName, String locale, List<ChatTurn> messages) {
+        return answer(siteName, locale, messages, null);
+    }
+
+    /**
+     * T1178 — {@link #answer(String, String, List)} about one document:
+     * {@code documentId} (an indexed id, e.g. the product on the page) is pinned,
+     * not filtered. It is retrieved, placed first in the grounding context as
+     * result {@code [1]} and always returned among the citations; the rest of the
+     * retrieval stays, as alternatives. An id the site does not hold is ignored.
+     */
+    public TurCatalogCopilotResult answer(String siteName, String locale, List<ChatTurn> messages,
+            String documentId) {
         if (messages == null || messages.isEmpty()) {
             return TurCatalogCopilotResult.error("No conversation messages provided");
         }
@@ -184,15 +196,26 @@ public class TurCatalogCopilotService {
         // T793 / §LIV.4 — stuff-all: when the whole catalog fits the token budget,
         // skip NL→DSL retrieval and ground the LLM on every row (still cited).
         // Falls back to filtered retrieval when the corpus is too large / empty.
-        Retrieval retrieval = stuffAllRetrieve(siteName, locale)
+        // T1178 — a question about one document is answered from a filtered
+        // retrieval with that document pinned first, never from the whole catalog.
+        boolean pinning = StringUtils.hasText(documentId);
+        Retrieval retrieval = (pinning ? Optional.<Retrieval>empty() : stuffAllRetrieve(siteName, locale))
                 .orElseGet(() -> retrieve(siteName, locale,
                         standaloneQuery(chatModelOpt.get(), siteName, messages, latestUser)));
         if (!retrieval.siteFound()) {
             return TurCatalogCopilotResult.error("Catalog site not found: " + siteName);
         }
+        Optional<TurCatalogCitation> pinned = Optional.empty();
+        if (pinning) {
+            Optional<Projection> document = pinnedDocument(siteName, locale, documentId.strip());
+            if (document.isPresent()) {
+                retrieval = pinFirst(retrieval, document.get());
+                pinned = Optional.of(retrieval.citations().getFirst());
+            }
+        }
 
         try {
-            String raw = callLlm(chatModelOpt.get(), siteName, retrieval, messages);
+            String raw = callLlm(chatModelOpt.get(), siteName, retrieval, messages, pinned.isPresent());
             // T798 / §LIV.9 + T800 / §LIV.10 — the LLM grounds on the whole retrieval
             // bundle (all rows in stuff-all mode), but the citations returned to the
             // client must reflect only what the answer actually cites, AND be
@@ -200,14 +223,16 @@ public class TurCatalogCopilotService {
             // positions in the full catalog — [201], [230] — meaningless to a reader).
             TurAnswerCitationNumberer.Numbered<TurCatalogCitation> grounded =
                     groundCitations(raw, retrieval.citations());
-            return TurCatalogCopilotResult.ok(grounded.answer(), grounded.citations(),
+            return TurCatalogCopilotResult.ok(grounded.answer(),
+                    withPinned(grounded.citations(), pinned.orElse(null)),
                     retrieval.groundedSummary(), retrieval.totalHits());
         } catch (RuntimeException e) {
             log.warn("[CatalogCopilot] answer LLM call failed for site '{}': {} — returning citations only",
                     siteName, e.getMessage());
             // No answer text to ground against — still bound the returned list to a
             // top-k slice so a failed stuff-all answer never floods the client.
-            return TurCatalogCopilotResult.degraded(groundCitations(null, retrieval.citations()).citations(),
+            return TurCatalogCopilotResult.degraded(withPinned(
+                    groundCitations(null, retrieval.citations()).citations(), pinned.orElse(null)),
                     retrieval.groundedSummary(), retrieval.totalHits(),
                     "Answer generation failed: " + e.getMessage());
         }
@@ -285,10 +310,81 @@ public class TurCatalogCopilotService {
         return StringUtils.hasText(query) ? query : latest;
     }
 
+    /**
+     * T1178 — the document {@code documentId} names, projected as result
+     * {@code [1]}, or empty when the site does not hold it (or the read fails).
+     */
+    private Optional<Projection> pinnedDocument(String siteName, String locale, String documentId) {
+        try {
+            Optional<TurSNSite> site = turSNSiteRepository.findByNameIgnoreCase(siteName);
+            if (site.isEmpty()) {
+                return Optional.empty();
+            }
+            Optional<TurDslSearchResponse> response = dslSearchService.search(siteName,
+                    StringUtils.hasText(locale) ? locale : "en",
+                    com.viglet.turing.genai.catalog.planning.TurCopilotQueryBodies.of(
+                            new TurDslQuery.Term(TurSNFieldName.ID, documentId), null, 1));
+            if (response.isEmpty() || response.get().hits() == null || response.get().hits().hits() == null
+                    || response.get().hits().hits().isEmpty()) {
+                log.info("[CatalogCopilot] site '{}' holds no document '{}' to pin; answering unpinned",
+                        siteName, documentId);
+                return Optional.empty();
+            }
+            return Optional.of(project(response.get().hits().hits(), 1,
+                    fieldDescriptions(resolveSchema(site.get()))));
+        } catch (RuntimeException e) {
+            log.warn("[CatalogCopilot] could not read the pinned document '{}' of site '{}': {}", documentId,
+                    siteName, e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * T1178 — {@code retrieval} with the {@code pinned} document as result
+     * {@code [1]}: every other result moves down one rank (its context block's
+     * leading {@code [n]} with it) and the pinned document's own place in the
+     * retrieval, if it had one, is dropped.
+     */
+    static Retrieval pinFirst(Retrieval retrieval, Projection pinned) {
+        TurCatalogCitation document = pinned.citations().getFirst();
+        List<TurCatalogCitation> citations = new ArrayList<>(List.of(document));
+        List<String> blocks = new ArrayList<>(List.of(pinned.contextBlocks().getFirst()));
+        List<Map<String, String>> attributes = new ArrayList<>(List.of(pinned.attributes().getFirst()));
+        List<TurCatalogCitation> others = retrieval.citations();
+        for (int i = 0; i < others.size(); i++) {
+            TurCatalogCitation other = others.get(i);
+            if (java.util.Objects.equals(other.id(), document.id())) {
+                continue;
+            }
+            int rank = citations.size() + 1;
+            citations.add(new TurCatalogCitation(rank, other.id(), other.title(), other.url(), other.score(),
+                    other.rankingExplanation()));
+            String block = i < retrieval.contextBlocks().size() ? retrieval.contextBlocks().get(i) : "";
+            blocks.add(block.replaceFirst("^\\[\\d+]", "[" + rank + "]"));
+            attributes.add(retrieval.attributesAt(i));
+        }
+        return new Retrieval(List.copyOf(citations), List.copyOf(blocks), retrieval.totalHits(),
+                retrieval.groundedSummary(), true, List.copyOf(attributes));
+    }
+
+    /**
+     * T1178 — the answer's citations with the pinned document among them: when the
+     * answer did not cite it, it is added last, numbered after the others.
+     */
+    static List<TurCatalogCitation> withPinned(List<TurCatalogCitation> citations, TurCatalogCitation pinned) {
+        if (pinned == null || citations.stream().anyMatch(c -> java.util.Objects.equals(c.id(), pinned.id()))) {
+            return citations;
+        }
+        List<TurCatalogCitation> all = new ArrayList<>(citations);
+        all.add(new TurCatalogCitation(citations.size() + 1, pinned.id(), pinned.title(), pinned.url(),
+                pinned.score(), pinned.rankingExplanation()));
+        return List.copyOf(all);
+    }
+
     private String callLlm(ChatModel chatModel, String siteName, Retrieval retrieval,
-            List<ChatTurn> history) {
+            List<ChatTurn> history, boolean pinned) {
         List<Message> messages = new ArrayList<>();
-        messages.add(new SystemMessage(systemPrompt(siteName, retrieval)));
+        messages.add(new SystemMessage(systemPrompt(siteName, retrieval, pinned)));
         for (ChatTurn turn : history) {
             if ("assistant".equalsIgnoreCase(turn.role())) {
                 messages.add(new AssistantMessage(turn.content()));
@@ -305,10 +401,16 @@ public class TurCatalogCopilotService {
         return output != null && output.getText() != null ? output.getText() : "";
     }
 
-    private String systemPrompt(String siteName, Retrieval retrieval) {
+    private String systemPrompt(String siteName, Retrieval retrieval, boolean pinned) {
         String context = retrieval.contextBlocks().isEmpty()
                 ? "(no matching catalog results)"
                 : String.join("\n\n", retrieval.contextBlocks());
+        // T1178 — the user is looking at result [1] and asks about it.
+        String pinnedRule = pinned ? """
+                - The user is looking at result [1] and is asking about IT. Answer \
+                  about [1] first and cite it. Mention other results only as \
+                  alternatives, and say that they are alternatives.
+                """ : "";
         return """
                 You are the catalog assistant for the "%s" catalog. Answer the user \
                 STRICTLY from the CATALOG RESULTS listed below — they were retrieved \
@@ -334,12 +436,12 @@ public class TurCatalogCopilotService {
                   plainly and suggest how the user could refine the search. Do not \
                   guess.
                 - Be concise. Respond in the user's language.
-
+                %s
                 APPLIED FILTERS: %s
 
                 CATALOG RESULTS:
                 %s
-                """.formatted(siteName,
+                """.formatted(siteName, pinnedRule,
                 StringUtils.hasText(retrieval.groundedSummary()) ? retrieval.groundedSummary() : "(none)",
                 context);
     }

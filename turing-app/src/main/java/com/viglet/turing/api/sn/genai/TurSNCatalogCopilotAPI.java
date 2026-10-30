@@ -73,7 +73,7 @@ public class TurSNCatalogCopilotAPI {
                         .map(m -> new ChatTurn(m.role(), m.content()))
                         .toList();
         log.info("[CatalogCopilot] chat on site '{}' with {} turns", siteName, turns.size());
-        return copilotService.answer(siteName, request.locale(), turns);
+        return copilotService.answer(siteName, request.locale(), turns, request.documentId());
     }
 
     /**
@@ -104,8 +104,17 @@ public class TurSNCatalogCopilotAPI {
             List<String> productTypes) {
     }
 
-    /** Request body: the conversation so far plus an optional locale. */
-    public record CopilotRequest(List<Message> messages, String locale) {
+    /**
+     * Request body: the conversation so far plus an optional locale. T1178 —
+     * {@code documentId}, optional, is the indexed document the question is about
+     * (the product on the page): pinned first in the answer's context, never a filter.
+     */
+    public record CopilotRequest(List<Message> messages, String locale, String documentId) {
+
+        /** The body before T1178: no pinned document. */
+        public CopilotRequest(List<Message> messages, String locale) {
+            this(messages, locale, null);
+        }
     }
 
     public record Message(String role, String content) {

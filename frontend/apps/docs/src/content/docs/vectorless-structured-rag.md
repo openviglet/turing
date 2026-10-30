@@ -165,6 +165,15 @@ matched row (id, title, optional link, score) the answer is allowed to reference
 Multi-turn is supported: pass the running conversation and the latest user turn
 drives retrieval.
 
+**Asking about one document.** On a product page the shopper's question is about the
+product in front of them. Send its indexed id as `documentId` (for example
+`"documentId": "jacket-42"`): the copilot fetches that document, puts it first in the
+answer's context, answers about it, and always returns it among the `citations`. It
+does not filter: the documents the question retrieves stay in the context, and the
+answer may name them, as alternatives. An id the site does not hold is ignored. A
+pinned question never uses stuff-all mode. In the React SDK, pass `documentId` to
+`useTuringCopilot` or as the fourth argument of `postCopilot`.
+
 `GET /api/sn/{siteName}/copilot/available` reports whether a default LLM is
 configured (i.e. whether the copilot can answer).
 

@@ -32,6 +32,11 @@ export interface UseTuringCopilotOptions {
   readonly siteName?: string;
   /** Locale code passed to the copilot (drives the NL→facet parse language). */
   readonly locale?: string;
+  /**
+   * T1178 — the indexed id of the document the conversation is about (the
+   * product on the page). The copilot answers about it first and always cites it.
+   */
+  readonly documentId?: string;
   /** Max turns kept in memory. Default {@code 50}. */
   readonly maxMessages?: number;
   /**
@@ -104,6 +109,7 @@ export function useTuringCopilot(
   const {
     siteName: siteOverride,
     locale,
+    documentId,
     maxMessages = DEFAULT_MAX_MESSAGES,
     probeAvailability = true,
   } = options;
@@ -160,7 +166,7 @@ export function useTuringCopilot(
           role: m.role,
           content: m.content,
         }));
-        const result = await postCopilot(siteName, wire, locale);
+        const result = await postCopilot(siteName, wire, locale, documentId);
         if (requestId !== requestRef.current) return; // superseded
 
         const answerCitations = result.citations ?? [];
@@ -204,7 +210,7 @@ export function useTuringCopilot(
         setStatus("error");
       }
     },
-    [siteName, locale, maxMessages],
+    [siteName, locale, documentId, maxMessages],
   );
 
   const reset = useCallback(() => {
