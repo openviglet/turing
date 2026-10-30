@@ -973,6 +973,7 @@
 - **T1174** — A copilot kit product's reason now quotes only the site's facet values, under the facet's locale label, and is null when the product has none; site keys and image URLs never show.
 - **T1175** — The kit takes an optional productTypes, typed in both SDKs and documented: when given, only documents of those types are staged, so a site's pages no longer reach a stage.
 - **T1176** — A question is no longer offered back as its own spell-check suggestion, and the engine conformance IT proves the relaxed match alike on Lucene, Solr and Elasticsearch.
+- **T1177** — On Lucene the query as typed, as a phrase on the site's title field, adds a 10x boost, so a guide titled with the exact phrase again outranks products matching only a synonym.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

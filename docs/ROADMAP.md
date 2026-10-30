@@ -16,9 +16,9 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1177** (deps: —) **After the stemming release a guide titled with the exact query phrase no longer outranks products matching its synonym** — A Dumont demo's curated searches lost their guide-first order, and an exact title phrase is the strongest signal a search has. → §CLVIII.14
 - 📋 **T1178** (deps: —) **The SN copilot and chat cannot be told which document a question is about, so a product page gets a catalog-wide answer** — A shopper on a product page asks about that product, and an answer that cites other items misses the question. → §CLVIII.15
 - 📋 **T1179** (deps: —) **Search metrics and a visitor's latest searches strip accents and delete non-Latin letters from the words typed** — Owners act on these words and visitors reread their own; a Russian or Japanese search is lost entirely. → §CLVIII.16
+- 📋 **T1185** (deps: —) **On Solr and Elasticsearch a title holding the query as an exact phrase still ranks below synonym-only matches** — T1177 fixed the guide-first order on Lucene only, so a site on the other engines keeps the regression. → §CLVIII.17
 
 ## Block CJ — Releases ship from the repository the README names
 

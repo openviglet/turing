@@ -143,6 +143,9 @@ public class TurLuceneQueryBuilder {
         // Main user query
         Query mainQuery = buildMainQuery(params.getQuery(), turSNSite, locale, params.isRelaxedMatch());
         builder.add(mainQuery, BooleanClause.Occur.MUST);
+        // T1177 — the title holding the query as typed, as a phrase, ranks first.
+        titlePhraseBoost(params.getQuery(), turSNSite, locale)
+                .ifPresent(boost -> builder.add(boost, BooleanClause.Occur.SHOULD));
 
         // Filter queries (facet selections, fqAnd/fqOr and their operators)
         TurSNFilterParams filterParams = params.getTurSNFilterParams();
@@ -561,6 +564,43 @@ public class TurLuceneQueryBuilder {
             log.warn("Failed to parse Lucene query '{}', falling back to MatchAllDocsQuery: {}", queryStr,
                     e.getMessage());
             return buildTermQueries(queryStr, textFields);
+        }
+    }
+
+    /**
+     * T1177 — how much a title holding the query as a phrase adds, against the
+     * main query's own score: enough that a guide titled "How to choose a
+     * waterproof jacket" outranks products that only repeat a synonym.
+     */
+    static final float TITLE_PHRASE_BOOST = 10f;
+
+    /**
+     * T1177 — Solr's {@code pf} for Lucene: the query as typed, as a phrase on the
+     * site's title field, analysed without synonyms, so an exact title phrase
+     * outranks a document that matches only one of its synonyms (the synonym
+     * expansion, and since T1170 the stems, score those as high as the words
+     * typed). A boost only, never a filter. Not for a single word, a query using
+     * the engine's syntax, or a title field that holds no positions.
+     */
+    private Optional<Query> titlePhraseBoost(String queryStr, TurSNSite turSNSite, Locale locale) {
+        if (!StringUtils.hasText(queryStr) || queryStr.trim().split("\\s+").length < 2
+                || queryStr.chars().anyMatch(c -> "\"*:()[]{}~^?\\+-!&|/".indexOf(c) >= 0)) {
+            return Optional.empty();
+        }
+        String titleField = StringUtils.hasText(turSNSite.getDefaultTitleField())
+                ? turSNSite.getDefaultTitleField()
+                : TurLuceneConstants.TITLE;
+        if (!positionalFields(turSNSite).contains(titleField)) {
+            return Optional.empty();
+        }
+        try {
+            Query phrase = new QueryParser(titleField, new TurLuceneFoldingAnalyzer(locale))
+                    .parse("\"" + queryStr.trim() + "\"");
+            return phrase instanceof PhraseQuery || phrase instanceof MultiPhraseQuery
+                    ? Optional.of(new BoostQuery(phrase, TITLE_PHRASE_BOOST))
+                    : Optional.empty();
+        } catch (ParseException e) {
+            return Optional.empty();
         }
     }
 

@@ -294,6 +294,12 @@ Clicking a field opens its detail form:
 | **Default Value** | Value used when a document is indexed without this field |
 | **Search weight** | How much a query match in this field counts, from 1 to 100 (empty means 1). Set `title` to 3 so a title match outranks the same word in the body. Works on Solr and the embedded Lucene engine |
 
+On the embedded Lucene engine, a title that holds a query of two words or more as an
+exact phrase is boosted on top of the search weight: the site's default title field is
+searched for the query as typed, without synonyms. A guide titled "How to choose a
+waterproof jacket" then ranks above products that match only a synonym such as "rain
+jacket". Solr and Elasticsearch do not apply this boost yet.
+
 :::tip[Secondary Facets]
 A secondary facet is a regular facet that is additionally returned in a separate `secondaryFacet` section of the search response. This lets the front-end render it differently, for example, as horizontal tabs ("All · Articles · Videos"), while other facets appear as sidebar filters. The field must have **Facet** enabled first; **Secondary Facet** is a promotion, not a replacement.
 :::

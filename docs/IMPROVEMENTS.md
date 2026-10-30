@@ -2287,31 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.14 An exact title phrase outranks a stemmed synonym match (T1177)
-
-**Where it showed.** Dumont's demo store (SN site `Demo`, Lucene, en_US, synonyms
-`raincoat, rain jacket, waterproof jacket` and `puffer, down jacket, insulated jacket`),
-2026-10-30, on `ghcr.io/openviglet/turing-ce:latest` (sha-b9bc, after T1170 and T1173),
-after a full reindex. Dumont's curated-search specs, green on the earlier local image,
-now fail:
-
-- `GET /api/sn/Demo/search?q=waterproof jacket` → "Catbells light rain jacket, slate",
-  "…, moss", "…, ember", "…, sky"; the guide "How to choose a waterproof jacket", whose
-  title holds the exact phrase, is no longer first.
-- `q=raincoat` → the same; `q=puffer` → "Down or synthetic: choosing an insulated jacket"
-  above "How to wash a down jacket".
-
-**Not proven.** The earlier image was not re-run against the same index to isolate the
-change; the stemming of T1170 is the suspect, since an exact title phrase used to win
-and a stemmed synonym expansion now scores the products' `rain jacket` as high.
-
-**What it should do.** An exact phrase match in the title still outranks a stemmed or
-synonym match in other documents, as before the stemming change. A regression test in
-the Lucene plugin: a guide titled with the query phrase ranks above products matching
-only its synonym.
-
-**Workaround.** None; Dumont's demo specs stay red and Dumont D243 waits on this.
-
 ### CLVIII.15 Ground a copilot or chat answer on one document (T1178)
 
 **Where it showed.** Dumont's demo store (Dumont D242, 2026-10-30). On a product page
@@ -2365,6 +2340,31 @@ visitor sees their words misspelt too. `TurSNSiteMetricClick` folds the same way
 
 **Gate.** A metrics test: three searches for `emergência` and one for `emergencia` list
 once, as `emergência`, with four searches; `палатка` and `テント` list as typed, apart.
+
+### CLVIII.17 A title phrase outranks synonym matches on Solr and Elasticsearch too (T1185)
+
+**Where it showed.** T1177: on Lucene, a guide titled "How to choose a waterproof
+jacket" fell below four products that only matched the synonym `rain jacket`. The fix
+was a phrase boost: `TurLuceneQueryBuilder.titlePhraseBoost` adds the query as typed, as
+a phrase on the site's title field (`defaultTitleField`, else `title`), analysed without
+synonyms, as a SHOULD clause boosted by `TITLE_PHRASE_BOOST` (10).
+
+**Why it is not done.** Solr's edismax runs with no `pf`, and the `en` configset's
+`solrconfig.xml` declares none; Elasticsearch builds a bare `simple_query_string`
+(`TurElasticsearch.buildTextQuery`). A site on either engine with a synonym group keeps
+the order T1177 fixed on Lucene.
+
+**What to build.**
+- Solr: `pf` set to the site's title field with the same boost (`title^10`) in
+  `TurSolrQueryBuilder.prepareSolrQuery`, only for a query of two words or more that uses
+  no syntax, as on Lucene.
+- Elasticsearch: a `should` `match_phrase` on the title field with `boost 10` beside the
+  `simple_query_string`, under the same conditions.
+- The rule (two words, no syntax, a positional title) lives once, beside
+  `TurSNQueryRelaxer`, so the three engines agree.
+
+**Gate.** A row in `TurSNEngineConformanceIT`: a title holding the query as a phrase
+ranks first on all three engines, above documents that repeat its words apart.
 
 ## CLIX Documentation refresh (`docs-turing`)
 
