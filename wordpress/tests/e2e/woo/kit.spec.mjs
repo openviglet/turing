@@ -51,21 +51,15 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 			json: {
 				summary:
 					'Two days in the mountains need a shell and a warm layer.',
+				// One need, three alternatives for it, the first of which the shop cannot sell.
 				stages: [
 					{
 						gap: 'Waterproof shell',
 						reason: 'Rain is likely in July.',
 						query: 'waterproof jacket',
 						products: [
-							staged( rain, 'Rain jacket', 'Color: Red' ),
 							staged( linen, 'Linen jacket', 'Color: Red' ),
-						],
-					},
-					{
-						gap: 'Warm layer',
-						reason: 'Nights are cold up there.',
-						query: 'warm jacket',
-						products: [
+							staged( rain, 'Rain jacket', 'Color: Red' ),
 							staged( wool, 'Wool jacket', 'Color: Blue' ),
 						],
 					},
@@ -115,7 +109,7 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 	} );
 	await expect(
 		kit.locator( '.viglet-dumont-copilot__stage h3' )
-	).toHaveText( [ 'Waterproof shell', 'Warm layer' ] );
+	).toHaveText( [ 'Waterproof shell' ] );
 	await expect(
 		kit.locator( '.viglet-dumont-copilot__unfilled' )
 	).toHaveText( 'Nothing in the catalog yet for: Shelter.' );
@@ -135,15 +129,20 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 	await expect(
 		item( 'Linen jacket' ).getByRole( 'checkbox' )
 	).toBeDisabled();
+	// A stage is a choice (D240): the first product the shop can sell is ticked, past the
+	// one it cannot, and the others wait to be swapped in.
+	await expect( item( 'Rain jacket' ).getByRole( 'checkbox' ) ).toBeChecked();
+	await expect(
+		item( 'Wool jacket' ).getByRole( 'checkbox' )
+	).not.toBeChecked();
 	const add = kit.locator( '.viglet-dumont-copilot__kit-cart button' );
-	await expect( add ).toHaveText( 'Add 2 products to the cart' );
+	await expect( add ).toHaveText( 'Add 1 product to the cart' );
 
-	// A product unticked stays out of the cart.
+	// A product ticked joins the cart.
 	await item( 'Wool jacket' )
 		.getByRole( 'checkbox', { name: 'Keep Wool jacket in the kit' } )
-		.uncheck();
-	await expect( add ).toHaveText( 'Add 1 product to the cart' );
-	await item( 'Wool jacket' ).getByRole( 'checkbox' ).check();
+		.check();
+	await expect( add ).toHaveText( 'Add 2 products to the cart' );
 
 	await look( 'woo-kit' );
 	await axe( 'the Build my kit mode', {

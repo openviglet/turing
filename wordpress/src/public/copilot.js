@@ -50,9 +50,27 @@ function kitProduct( product, stage ) {
 		productId: postIdOf( product.id ),
 		price: '',
 		out: false === product.available,
-		included: false !== product.available,
+		// Ticked once the shop has said which of its stage's products it can sell (D240).
+		included: false,
 		includeFor: state.includeFor.replace( '%s', product.title || '' ),
 	};
+}
+
+/**
+ * Tick the first product of each stage the shop can sell, and only it (D240): a stage is the
+ * choice for one need, not a bundle, so the shopper swaps one in rather than unticking many.
+ *
+ * @param {Array<{products: Object[]}>} stages The kit's stages.
+ */
+function tickFirstSellable( stages ) {
+	for ( const stage of stages ) {
+		const first = stage.products.find(
+			( product ) => ! product.out && product.productId
+		);
+		for ( const product of stage.products ) {
+			product.included = product === first;
+		}
+	}
 }
 
 const { state } = store( 'viglet-dumont/copilot', {
@@ -317,9 +335,9 @@ async function buildKit() {
 					product.price = shop.price;
 					if ( ! shop.buyable ) {
 						product.out = true;
-						product.included = false;
 					}
 				}
 			} )
 	);
+	tickFirstSellable( state.kit.stages );
 }

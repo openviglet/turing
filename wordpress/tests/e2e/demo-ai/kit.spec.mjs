@@ -121,23 +121,33 @@ for ( const { plan, gaps } of plans ) {
 				).toContainText( 'Out of stock' );
 			}
 		}
-		test.skip( ! sellable.length, 'nothing in this kit can be bought' );
+		// A stage is a choice (D240): its first sellable product is ticked, and only it.
+		const chosen = kit.stages
+			.map( ( stage ) =>
+				( stage.products || [] ).find( ( p ) => sellable.includes( p ) )
+			)
+			.filter( Boolean );
+		test.skip( ! chosen.length, 'nothing in this kit can be bought' );
 		const add = view.locator( '.viglet-dumont-copilot__kit-cart button' );
 		await expect( add ).toHaveText(
-			1 === sellable.length
+			1 === chosen.length
 				? 'Add 1 product to the cart'
-				: `Add ${ sellable.length } products to the cart`
+				: `Add ${ chosen.length } products to the cart`
 		);
 
 		// Prices and the total are WooCommerce's, never the model's.
 		await add.click();
 		const status = view.locator( '.viglet-dumont-copilot__kit-status' );
 		await expect( status ).toContainText(
-			`Added ${ sellable.length } to your cart.`
+			`Added ${ chosen.length } to your cart.`
 		);
 		const cart = await page.evaluate( async () =>
 			( await window.fetch( '/?rest_route=/wc/store/v1/cart' ) ).json()
 		);
+		expect(
+			cart.items.map( ( entry ) => entry.id ).sort(),
+			'the cart holds one product per need'
+		).toEqual( chosen.map( ( p ) => postIdOf( p.id ) ).sort() );
 		// A kit runs past a thousand, so the total is grouped as the shop's locale writes it.
 		const total = new Intl.NumberFormat( 'en-US', {
 			style: 'currency',
@@ -147,7 +157,7 @@ for ( const { plan, gaps } of plans ) {
 				10 ** cart.totals.currency_minor_unit
 		);
 		await expect( status ).toHaveText(
-			`Added ${ sellable.length } to your cart. Cart total: ${ total }.`
+			`Added ${ chosen.length } to your cart. Cart total: ${ total }.`
 		);
 	} );
 }
