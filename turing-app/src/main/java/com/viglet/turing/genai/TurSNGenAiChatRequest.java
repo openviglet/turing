@@ -54,7 +54,8 @@ public record TurSNGenAiChatRequest(
         Locale locale,
         String personaId,
         String siteName,
-        boolean includeFilters) {
+        boolean includeFilters,
+        String documentId) {
 
     /**
      * The request before T1085, kept for callers that name no site: their list-style
@@ -62,6 +63,18 @@ public record TurSNGenAiChatRequest(
      */
     public TurSNGenAiChatRequest(List<ConversationMessage> history, Map<String, List<String>> filters,
             String conversationId, String flowId, String forcedVariant, Locale locale, String personaId) {
-        this(history, filters, conversationId, flowId, forcedVariant, locale, personaId, null, false);
+        this(history, filters, conversationId, flowId, forcedVariant, locale, personaId, null, false, null);
+    }
+
+    /**
+     * The request before T1178's {@code documentId}: the indexed id of the document
+     * the question is about, whose chunks are pinned first in the context and the
+     * sources, never a filter.
+     */
+    public TurSNGenAiChatRequest(List<ConversationMessage> history, Map<String, List<String>> filters,
+            String conversationId, String flowId, String forcedVariant, Locale locale, String personaId,
+            String siteName, boolean includeFilters) {
+        this(history, filters, conversationId, flowId, forcedVariant, locale, personaId, siteName,
+                includeFilters, null);
     }
 }

@@ -44,6 +44,13 @@ describe("chatConversationBody", () => {
     expect(chatConversationBody(messages, "pt_BR", { onFilters: () => undefined }).includeFilters).toBe(true);
     expect(chatConversationBody(messages, "pt_BR", {}).includeFilters).toBeUndefined();
   });
+
+  it("T1178 carries the pinned documentId", () => {
+    const messages = [{ role: "user" as const, content: "will this keep me dry?" }];
+
+    expect(chatConversationBody(messages, "en", { documentId: "jacket-42" }).documentId).toBe("jacket-42");
+    expect(chatConversationBody(messages, "en", {}).documentId).toBeUndefined();
+  });
 });
 
 describe("postChatConversation — T1086 filters", () => {

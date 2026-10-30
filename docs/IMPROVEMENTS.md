@@ -2287,30 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.15 Ground a copilot or chat answer on one document (T1178)
-
-**Where it showed.** Dumont's demo store (Dumont D242, 2026-10-30): on a product page
-the shopper asks "Will this keep me dry on a wet day in the hills?" about the jacket on
-the page, and the answer was catalog-wide.
-
-**What landed (copilot).** `POST /api/sn/{site}/copilot` takes `documentId`.
-`TurCatalogCopilotService.answer(site, locale, messages, documentId)` fetches the
-document by id (`pinnedDocument`), puts it first as result `[1]` (`pinFirst` shifts the
-others and drops its duplicate), adds a prompt rule to answer about `[1]` and name
-others only as alternatives, and `withPinned` keeps it among the returned citations. A
-pinned question skips stuff-all. An unknown id is ignored. The React SDK's `postCopilot`
-and `useTuringCopilot` carry it.
-
-**What is left.**
-- The SN chat (`ConversationRequest`, beside its `filters`) takes `documentId` and pins
-  it the same way in its RAG retrieval: first in the context and the citations, never a
-  filter. Reuse the shape of `pinFirst` there rather than a second rule.
-- `@viglet/turing-sdk` has no copilot call at all: add `postCopilot` with the
-  `documentId` field, bound on the client api and listed in `sdk-parity.test.ts`.
-
-**Workaround.** None in Dumont: D242 sends the page's document id once the chat or the
-copilot can take it.
-
 ### CLVIII.16 Metrics group a search by its folded form and show it as typed (T1179)
 
 **Where it showed.** Dumont's WordPress demo store in pt_BR (Dumont D244's story run,

@@ -602,6 +602,8 @@ The call spends one LLM completion, so it is gated like the site chat: a site in
 
 The site chat and the catalog copilot read list-style questions ("quais vagas em São Paulo?") through the same extraction, so their answers are narrowed by the same checked values. To receive those filters in the chat stream, send `"includeFilters": true` in the body of `POST /api/sn/{siteName}/chat/conversation`: a list-style question then streams one `filters` event, carrying the same JSON as above, before the answer. It is off by default, because a client that predates the event would show it as answer text.
 
+**Asking about one document.** `POST /api/sn/{site}/chat/conversation` and `POST /api/sn/{site}/copilot` both take an optional `documentId`, the indexed id of the document the question is about (the product on the page). That document leads the answer's context and is always among its sources; whatever the question retrieves stays in the context, as alternatives the answer names as such. It is never a filter, and an id the site does not hold is ignored. From the SDKs, pass `documentId` in the chat options, or in the request of `postCopilot`.
+
 ---
 
 ## GenAI API

@@ -49,6 +49,7 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.client.sn.job.TurSNJobItem;
@@ -355,8 +356,10 @@ public class TurSNGenAi {
         // T1085 — a list-style question on a named site takes its filters from the
         // shared NL extractor, checked against the site's own values.
         com.viglet.turing.sn.nl.TurSNNLFilters nlFilters = siteNlFilters(request, filters, searchQuery);
-        List<Document> relevantDocuments = retrieveDocuments(context, searchQuery, filters,
-                nlFilters == null ? null : retrievalFilters(nlFilters));
+        Pinned pinned = pinDocument(context, searchQuery, request.documentId(),
+                retrieveDocuments(context, searchQuery, filters,
+                        nlFilters == null ? null : retrievalFilters(nlFilters)));
+        List<Document> relevantDocuments = pinned.documents();
 
         // T329 — deterministic "not in this site" refusal. When the relevance
         // gate (T328) leaves nothing to ground the answer, short-circuit to the
@@ -398,9 +401,7 @@ public class TurSNGenAi {
                     request, nlFilters);
         }
 
-        String information = relevantDocuments.stream()
-                .map(Document::getText)
-                .collect(Collectors.joining("\n\n"));
+        String information = pinned.information();
         String augmentedSystemPrompt = buildSystemPrompt(
                 context.getSystemPrompt(), information, isStrictRag(context));
 
@@ -741,6 +742,67 @@ public class TurSNGenAi {
             }
         }
         return new ResolvedFilters(null, false);
+    }
+
+    /** T1178 — at most this many chunks of a pinned document go into the context. */
+    static final int PINNED_CHUNKS = 3;
+
+    /**
+     * T1178 — the retrieved documents with the pinned document's chunks first, and
+     * how many of them lead. {@link #information()} is the grounding text: with a
+     * pin, the pinned chunks under a heading saying the question is about them and
+     * the rest under one naming them alternatives.
+     */
+    record Pinned(List<Document> documents, int pinnedCount) {
+
+        String information() {
+            String all = documents.stream().map(Document::getText).collect(Collectors.joining("\n\n"));
+            if (pinnedCount == 0) {
+                return all;
+            }
+            String about = documents.subList(0, pinnedCount).stream().map(Document::getText)
+                    .collect(Collectors.joining("\n\n"));
+            String others = documents.subList(pinnedCount, documents.size()).stream().map(Document::getText)
+                    .collect(Collectors.joining("\n\n"));
+            return "THE VISITOR IS ASKING ABOUT THIS DOCUMENT; answer about it first:\n\n" + about
+                    + (others.isEmpty() ? ""
+                            : "\n\nOTHER DOCUMENTS; mention them only as alternatives, and say so:\n\n" + others);
+        }
+    }
+
+    /**
+     * T1178 — pins {@code documentId} (an indexed id, e.g. the product on the page):
+     * its chunks, read from the vector store by {@link #SOURCE_ID}, lead the
+     * {@code retrieved} documents, whose own chunks of it are dropped. It is never a
+     * filter: every other retrieved document stays. No id, an id with no chunks, or
+     * a read that fails leaves {@code retrieved} as it is.
+     */
+    Pinned pinDocument(TurGenAiContext context, String query, String documentId, List<Document> retrieved) {
+        if (!StringUtils.hasText(documentId)) {
+            return new Pinned(retrieved, 0);
+        }
+        String id = documentId.strip();
+        List<Document> chunks;
+        try {
+            chunks = context.getVectorStore().similaritySearch(SearchRequest.builder()
+                    .query(query)
+                    .topK(PINNED_CHUNKS)
+                    .similarityThreshold(0.0)
+                    .filterExpression(TurRagFilters.buildFilterExpression(Map.of(SOURCE_ID, List.of(id))))
+                    .build());
+        } catch (RuntimeException e) {
+            log.warn("RAG chat could not read the pinned document '{}': {}", id, e.getMessage());
+            return new Pinned(retrieved, 0);
+        }
+        if (chunks == null || chunks.isEmpty()) {
+            log.debug("RAG chat: no chunks for pinned document '{}' — answering unpinned", id);
+            return new Pinned(retrieved, 0);
+        }
+        List<Document> documents = new ArrayList<>(chunks);
+        retrieved.stream()
+                .filter(d -> d.getMetadata() == null || !id.equals(String.valueOf(d.getMetadata().get(SOURCE_ID))))
+                .forEach(documents::add);
+        return new Pinned(List.copyOf(documents), chunks.size());
     }
 
     private List<Document> retrieveDocuments(TurGenAiContext context,

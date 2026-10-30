@@ -31,6 +31,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.mockito.ArgumentCaptor;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -948,6 +949,45 @@ class TurSNGenAiTest {
                 events.get(0).content());
         // The LLM/executor must never run when the gate yields nothing.
         verifyNoInteractions(agentChatExecutor);
+    }
+
+    // ---- T1178: a pinned document leads the context, never filters it ----
+
+    @Test
+    void aPinnedDocumentsChunksLeadWithoutDroppingTheOthers() {
+        VectorStore vectorStore = mock(VectorStore.class);
+        Document pinnedChunk = new Document("Catbells jacket: fully taped seams, 20k waterproof rating.",
+                Map.of(TurSNGenAi.SOURCE_ID, "jacket-42"));
+        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(pinnedChunk));
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).vectorStore(vectorStore).build();
+        Document fleece = new Document("Grid fleece, sky.", Map.of(TurSNGenAi.SOURCE_ID, "fleece-7"));
+        Document duplicate = new Document("Catbells jacket, slate.", Map.of(TurSNGenAi.SOURCE_ID, "jacket-42"));
+
+        TurSNGenAi.Pinned pinned = turSNGenAi.pinDocument(context, "will this keep me dry", "jacket-42",
+                List.of(fleece, duplicate));
+
+        assertEquals(List.of(pinnedChunk, fleece), pinned.documents());
+        assertEquals(1, pinned.pinnedCount());
+        assertTrue(pinned.information().startsWith("THE VISITOR IS ASKING ABOUT THIS DOCUMENT"));
+        assertTrue(pinned.information().contains("only as alternatives"));
+        ArgumentCaptor<SearchRequest> request = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(vectorStore).similaritySearch(request.capture());
+        assertTrue(request.getValue().getFilterExpression().toString().contains("jacket-42"));
+    }
+
+    @Test
+    void anUnknownOrMissingPinLeavesTheRetrievalAsIs() {
+        VectorStore vectorStore = mock(VectorStore.class);
+        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of());
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).vectorStore(vectorStore).build();
+        Document fleece = new Document("Grid fleece, sky.", Map.of(TurSNGenAi.SOURCE_ID, "fleece-7"));
+
+        TurSNGenAi.Pinned unknown = turSNGenAi.pinDocument(context, "q", "nowhere", List.of(fleece));
+        assertEquals(List.of(fleece), unknown.documents());
+        assertEquals("Grid fleece, sky.", unknown.information());
+
+        TurSNGenAi.Pinned none = turSNGenAi.pinDocument(context, "q", null, List.of(fleece));
+        assertEquals(0, none.pinnedCount());
     }
 
     // ---- T707: enumeration-intent gate + fallback-on-empty ----

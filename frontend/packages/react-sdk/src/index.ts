@@ -47,6 +47,7 @@ export {
   fetchStoredDocuments,
   postNlFilters,
   postCopilotKit,
+  postCopilot,
   chatConversationBody,
   parseFiltersEvent,
   postSiteSlotUpload,

@@ -16,7 +16,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- ⏳ **T1178** (deps: —) **The SN copilot and chat cannot be told which document a question is about, so a product page gets a catalog-wide answer** — The SN chat cannot pin a document yet, and the vanilla SDK has no postCopilot to carry documentId. → §CLVIII.15
 - 📋 **T1179** (deps: —) **Search metrics and a visitor's latest searches strip accents and delete non-Latin letters from the words typed** — Owners act on these words and visitors reread their own; a Russian or Japanese search is lost entirely. → §CLVIII.16
 - 📋 **T1185** (deps: —) **On Solr and Elasticsearch a title holding the query as an exact phrase still ranks below synonym-only matches** — T1177 fixed the guide-first order on Lucene only, so a site on the other engines keeps the regression. → §CLVIII.17
 
@@ -48,15 +47,6 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
-
-## Done when — T1178
-
-- **The SN chat pins a documentId first without filtering** A test on the chat's RAG
-  retrieval: with documentId set to a document the question alone does not retrieve, it
-  is the first context item and citation, and the other results are still present.
-- **The vanilla SDK posts the copilot with a documentId** @viglet/turing-sdk gains
-  postCopilot (bound on the client api and listed in sdk-parity) and a test shows
-  documentId in the POST body.
 
 ## Non-goals (do NOT add as tasks)
 

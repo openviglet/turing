@@ -57,6 +57,28 @@ describe("postCopilotKit", () => {
     });
   });
 
+  it("T1178 posts the copilot conversation with the pinned documentId", async () => {
+    const answer = { available: true, answer: "Yes [1].", citations: [{ rank: 1, id: "jacket-42" }], totalHits: 3 };
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify(answer), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const api = createTuringApi(createTuringClient({ baseURL: BASE }));
+
+    const result = await api.postCopilot("outdoor", {
+      messages: [{ role: "user", content: "Will this keep me dry?" }],
+      locale: "en",
+      documentId: "jacket-42",
+    });
+
+    expect(result.citations[0].id).toBe("jacket-42");
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(new URL(url).pathname).toBe("/api/sn/outdoor/copilot");
+    expect(JSON.parse(init.body as string)).toEqual({
+      messages: [{ role: "user", content: "Will this keep me dry?" }],
+      locale: "en",
+      documentId: "jacket-42",
+    });
+  });
+
   it("is bound on the client api", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify(KIT), { status: 200 })));
     const api = createTuringApi(createTuringClient({ baseURL: BASE }));

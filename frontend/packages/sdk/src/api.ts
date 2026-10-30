@@ -354,6 +354,11 @@ export interface PostChatConversationOptions {
    * (`includeFilters`); without it the event is never sent.
    */
   readonly onFilters?: (filters: TurNLFilters) => void;
+  /**
+   * T1178 — the indexed id of the document the question is about (the product on
+   * the page): its content leads the answer's context and sources, never a filter.
+   */
+  readonly documentId?: string;
 }
 
 /**
@@ -370,6 +375,7 @@ export interface TurChatConversationRequest {
   readonly forcedVariant?: string;
   readonly personaId?: string;
   readonly includeFilters?: boolean;
+  readonly documentId?: string;
 }
 
 /** T1086 — the request body for a chat turn, from the call's options. */
@@ -387,6 +393,7 @@ export function chatConversationBody(
     forcedVariant: options?.forcedVariant,
     personaId: options?.personaId,
     includeFilters: options?.onFilters ? true : undefined,
+    documentId: options?.documentId,
   };
 }
 
@@ -2058,6 +2065,66 @@ export function postCopilotKit(
   });
 }
 
+// ── T1178: Catalog copilot ──────────────────────────────────────────────────
+
+/**
+ * T1178 — one cited catalog result from the copilot: `rank` is the `[n]` the
+ * answer cites, `url` links the source when present.
+ */
+export interface TurCatalogCitation {
+  readonly rank: number;
+  readonly id: string;
+  readonly title?: string | null;
+  readonly url?: string | null;
+  readonly score?: number | null;
+  readonly rankingExplanation?: Record<string, unknown> | null;
+}
+
+/** T1178 — the request of {@link postCopilot}; only `messages` is required. */
+export interface TurCatalogCopilotRequest {
+  /** The conversation so far; the latest user turn drives retrieval. */
+  readonly messages: readonly TurChatConversationMessage[];
+  readonly locale?: string;
+  /**
+   * The indexed id of the document the question is about (the product on the
+   * page): answered about first and always cited, never a filter. An id the site
+   * does not hold is ignored.
+   */
+  readonly documentId?: string;
+}
+
+/**
+ * T1178 — response of {@link postCopilot}: a grounded `answer` and the
+ * `citations` it is built from. `available` is `false` (with `error`) when the
+ * copilot cannot run.
+ */
+export interface TurCatalogCopilotResult {
+  readonly available: boolean;
+  readonly answer?: string | null;
+  readonly citations: readonly TurCatalogCitation[];
+  readonly groundedQuerySummary?: string | null;
+  readonly totalHits: number;
+  readonly error?: string | null;
+}
+
+/**
+ * T1178 — answers a (possibly multi-turn) catalog conversation grounded in the
+ * site's index, every claim cited. Gate it on `GET /sn/{site}/copilot/available`.
+ *
+ * Server endpoint: {@code POST /api/sn/{site}/copilot}.
+ */
+export function postCopilot(
+  client: TuringClient,
+  site: string,
+  request: TurCatalogCopilotRequest,
+  options: TuringCallOptions = {},
+): Promise<TurCatalogCopilotResult> {
+  return client.post<TurCatalogCopilotResult>(`/sn/${site}/copilot`, request, {
+    csrf: false,
+    signal: options.signal,
+  });
+}
+
 // ── T401: Multimodal slot-upload + flow resume ──────────────────────────────
 
 /**
@@ -2831,6 +2898,7 @@ export function createTuringApi(client: TuringClient) {
     fetchStoredDocuments: bind(fetchStoredDocuments),
     postNlFilters: bind(postNlFilters),
     postCopilotKit: bind(postCopilotKit),
+    postCopilot: bind(postCopilot),
     postSiteSlotUpload: bind(postSiteSlotUpload),
     postSiteChatResume: bind(postSiteChatResume),
     fetchSpellCheck: bind(fetchSpellCheck),

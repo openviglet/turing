@@ -422,7 +422,7 @@ public class TurSNSiteGenAiAPI {
 					new TurSNGenAiChatRequest(request.messages(), request.filters(),
 							request.conversationId(), request.flowId(), request.forcedVariant(), locale,
 							request.personaId(), site.getName(),
-							Boolean.TRUE.equals(request.includeFilters())));
+							Boolean.TRUE.equals(request.includeFilters()), request.documentId()));
 			// Capture the turn for chat memory: accumulate the streamed assistant
 			// chunks and enqueue once the stream finishes. The service is a no-op
 			// when the agent has chatMemoryEnabled=false or the logging engine is
@@ -1188,13 +1188,25 @@ public class TurSNSiteGenAiAPI {
 	public record ConversationRequest(List<ConversationMessage> messages, String locale,
 			java.util.Map<String, List<String>> filters,
 			String conversationId, String flowId, String forcedVariant, String personaId,
-			Boolean includeFilters) {
+			Boolean includeFilters, String documentId) {
 
 		/** The request before T1085's {@code includeFilters}, kept for existing callers. */
 		public ConversationRequest(List<ConversationMessage> messages, String locale,
 				java.util.Map<String, List<String>> filters,
 				String conversationId, String flowId, String forcedVariant, String personaId) {
-			this(messages, locale, filters, conversationId, flowId, forcedVariant, personaId, null);
+			this(messages, locale, filters, conversationId, flowId, forcedVariant, personaId, null, null);
+		}
+
+		/**
+		 * The request before T1178's {@code documentId}: the indexed document the
+		 * question is about, pinned first in the answer's context, never a filter.
+		 */
+		public ConversationRequest(List<ConversationMessage> messages, String locale,
+				java.util.Map<String, List<String>> filters,
+				String conversationId, String flowId, String forcedVariant, String personaId,
+				Boolean includeFilters) {
+			this(messages, locale, filters, conversationId, flowId, forcedVariant, personaId, includeFilters,
+					null);
 		}
 	}
 }
