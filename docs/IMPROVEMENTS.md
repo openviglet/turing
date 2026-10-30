@@ -2393,4 +2393,29 @@ only its synonym.
 
 **Workaround.** None; Dumont's demo specs stay red and Dumont D243 waits on this.
 
+### CLVIII.15 Ground a copilot or chat answer on one document (T1178)
+
+**Where it showed.** Dumont's WordPress plugin on its demo store (Dumont D242, found in
+the D203 story run, 2026-10-30). A product page carries the catalog copilot under "Not
+sure it fits your trip? Ask us", and the Site assistant in a corner. The shopper asks
+"Will this keep me dry on a wet day in the hills?" about the jacket on the page, but
+`POST /api/sn/{site}/copilot` takes only `{messages, locale}` (`CopilotRequest` in
+`TurSNCatalogCopilotAPI`), and the SN chat only the question. Neither can be told which
+document "this" is, so the answer is drawn from the whole catalog and may cite other
+jackets, or none of the one on the page.
+
+**What it should do.**
+- An optional `documentId` (the indexed document's id) on the copilot request and on the SN
+  site's chat. When given, the document is retrieved and placed first in the context, it is
+  always among the citations, and the answer is about it; other documents appear only as
+  alternatives the answer names as such.
+- An id the site does not hold is ignored, not an error.
+- Both SDKs (`postCopilot`, the chat call) carry it.
+
+**Workaround.** None in Dumont: D242 waits on this. The block side then sends the page's
+document id and labels the box with the product's name.
+
+**Gate.** A test on the copilot service: with `documentId` set to a product that the
+question's words alone would not retrieve, the product is the first citation.
+
 ## CLIX Documentation refresh (`docs-turing`)
