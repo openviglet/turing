@@ -59,7 +59,7 @@ export default function RegisterPage() {
                 </div>
 
                 <h1 className="text-2xl font-bold tracking-tight bg-linear-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-4">
-                    Viglet Turing ES
+                    Viglet Turing
                 </h1>
 
                 <Card className="w-full border-0 shadow-none bg-transparent">

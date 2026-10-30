@@ -235,7 +235,7 @@ function BentoShell() {
             )}
             <Link to={ROUTES.BENTO_HOME} className="flex items-center gap-2">
               <TurLogo className="size-8" />
-              <span className="text-sm font-medium tracking-tight md:text-base">Turing ES</span>
+              <span className="text-sm font-medium tracking-tight md:text-base">Turing</span>
             </Link>
           </div>
           <div className="flex items-center gap-2">

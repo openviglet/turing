@@ -2,7 +2,7 @@
   "setup": {
     "title": "Create Admin Password",
     "subtitle": "Complete the initial setup to get started",
-    "description": "Set the administrator password for your Turing ES instance",
+    "description": "Set the administrator password for your Turing instance",
     "firstAccess": "First Access Setup",
     "password": "Password",
     "enterPassword": "Enter admin password",

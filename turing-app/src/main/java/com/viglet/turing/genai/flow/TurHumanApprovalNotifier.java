@@ -116,12 +116,12 @@ public class TurHumanApprovalNotifier {
         }
         String html = "<p>" + escapeHtml(prompt) + "</p>"
                 + "<p><a href=\"" + escapeHtml(resumeUrl) + "\">Review &amp; respond</a></p>"
-                + "<p style=\"color:#64748b;font-size:12px\">Viglet Turing ES</p>";
+                + "<p style=\"color:#64748b;font-size:12px\">Viglet Turing</p>";
         TurEmailMessage message = TurEmailMessage.builder()
                 .senderEmail(senderEmail)
                 .senderName(senderName == null || senderName.isBlank() ? senderEmail : senderName)
                 .recipientEmail(recipient)
-                .subject("Approval required — Viglet Turing ES")
+                .subject("Approval required — Viglet Turing")
                 .htmlContent(html)
                 .build();
         emailService.sendEmail(message);

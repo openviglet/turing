@@ -634,7 +634,7 @@ spring:
         name: turing-es
         version: 2026.3.1
         instructions: >-
-          Viglet Turing ES — enterprise search intelligence. Use these tools to
+          Viglet Turing — enterprise search intelligence. Use these tools to
           discover indexed sites, inspect their fields, and run semantic/hybrid
           searches over the customer's enterprise content, with citations.
   h2:

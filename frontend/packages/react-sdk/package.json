@@ -1,7 +1,7 @@
 {
   "name": "@viglet/turing-react-sdk",
   "version": "2026.3.8",
-  "description": "React SDK for Viglet Turing ES - Headless hooks + UI components for enterprise search",
+  "description": "React SDK for Viglet Turing - Headless hooks + UI components for enterprise search",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

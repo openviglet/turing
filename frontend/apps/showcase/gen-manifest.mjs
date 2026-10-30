@@ -76,7 +76,7 @@ const manifest = {
   repository: existing.repository || "https://github.com/openviglet/turing",
   description:
     existing.description ||
-    "Atlas Store — the Viglet Turing ES reference showcase (stresses the maximum platform surface).",
+    "Atlas Store — the Viglet Turing reference showcase (stresses the maximum platform surface).",
   // No `buildDate` here — see the header. `--dist` adds it to the built copy.
   snSite: siteName,
   locale: envVars.VITE_LOCALE || "en_US",

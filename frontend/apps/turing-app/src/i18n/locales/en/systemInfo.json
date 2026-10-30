@@ -15,7 +15,7 @@
     "overview": "Overview",
     "systemVariables": "System Variables",
     "application": "Application",
-    "applicationDesc": "Viglet Turing ES version and runtime.",
+    "applicationDesc": "Viglet Turing version and runtime.",
     "version": "Version",
     "javaVersion": "Java Version",
     "javaVendor": "Java Vendor",

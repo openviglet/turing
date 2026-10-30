@@ -1575,3 +1575,4 @@
 - **T1181** — The Linux download builds and uploads as Turing-x86_64.AppImage, and the installer, desktop entry and shipped start scripts say Viglet Turing; an upgrade drops the old Turing ES shortcut.
 - **T1182** — A release's notes come from the root CHANGELOG's patch or minor section, and a release with no such section now fails before it is created instead of falling back to the Dependabot list (design §CLXI.3 superseded: the lookup it called missing already fell back to the minor section, and publish.yml already read it since commit e23a4e44ad).
 - **T1184 (README link)** — The README links the live playground from its opening line and from Try it in 60 seconds, so an evaluator reaches search and cited chat without installing.
+- **T1186** — The console, its locales, the emails, Swagger, MCP and the package texts say Viglet Turing; the skill's brand rule agrees, and a console test fails on a rendered Turing ES.

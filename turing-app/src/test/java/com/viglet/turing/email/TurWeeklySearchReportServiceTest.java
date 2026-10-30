@@ -89,7 +89,7 @@ class TurWeeklySearchReportServiceTest {
 
         service.sendWeeklyReport();
 
-        verify(emailService).sendEmail(eq("Viglet Turing ES - Monthly Intelligence Report"), anyString());
+        verify(emailService).sendEmail(eq("Viglet Turing - Monthly Intelligence Report"), anyString());
     }
 
     @Test

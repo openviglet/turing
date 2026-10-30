@@ -123,7 +123,7 @@ export default defineConfig({
     captureServerPlugin(),
     syncExternalStoreShimPlugin(),
     vigletBootLoader({
-      title: "Viglet Turing ES",
+      title: "Viglet Turing",
       subtitle: "Enterprise Search Intelligence",
       color: "#4169E1",
       colorDark: "#2c4a99",

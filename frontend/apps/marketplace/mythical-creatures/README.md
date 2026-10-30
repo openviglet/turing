@@ -1,6 +1,6 @@
 # Mythical Creatures — The Bestiary
 
-An encyclopedic catalog of mythical creatures from world folklore, powered by **Viglet Turing ES**.
+An encyclopedic catalog of mythical creatures from world folklore, powered by **Viglet Turing**.
 
 The interface uses a mystical purple palette with floating particle animations and a distinctive danger level bar, evoking the feel of an ancient bestiary brought to life.
 
@@ -56,7 +56,7 @@ npm run compile
 npm run package
 ```
 
-The zip is ready to be imported into Viglet Turing ES via the Marketplace.
+The zip is ready to be imported into Viglet Turing via the Marketplace.
 
 ## Tech Stack
 

@@ -1,6 +1,6 @@
 # Space Missions
 
-A searchable archive of humanity's greatest space exploration missions, powered by **Viglet Turing ES**.
+A searchable archive of humanity's greatest space exploration missions, powered by **Viglet Turing**.
 
 The interface features a cyberpunk/HUD aesthetic with starfield animations, scan-line cards, and a cyan-blue color palette inspired by mission control displays.
 
@@ -53,7 +53,7 @@ npm run compile
 npm run package
 ```
 
-The zip is ready to be imported into Viglet Turing ES via the Marketplace.
+The zip is ready to be imported into Viglet Turing via the Marketplace.
 
 ## Tech Stack
 

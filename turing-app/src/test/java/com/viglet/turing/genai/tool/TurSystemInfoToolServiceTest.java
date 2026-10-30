@@ -173,7 +173,7 @@ class TurSystemInfoToolServiceTest {
 
         String result = service.getSystemStatus();
         assertThat(result)
-                .contains("Viglet Turing ES")
+                .contains("Viglet Turing")
                 .contains("Database")
                 .contains("JVM Memory")
                 .contains("Disk")
@@ -191,7 +191,7 @@ class TurSystemInfoToolServiceTest {
 
         String result = service.getSystemStatus();
         assertThat(result)
-                .contains("Viglet Turing ES")
+                .contains("Viglet Turing")
                 .contains("DOWN");
     }
 

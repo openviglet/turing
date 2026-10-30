@@ -2,7 +2,7 @@
 
 > _"Here there be dragons."_ — Every map-maker, eventually.
 
-Welcome, traveler, to the **Bestiary of Impossible Beasts** — a living codex for the strange, the winged, the scaled, and the sleepless. This is a **Viglet Turing ES** marketplace sample that turns enterprise search into something altogether more _mythical_: a grimoire you can actually query.
+Welcome, traveler, to the **Bestiary of Impossible Beasts** — a living codex for the strange, the winged, the scaled, and the sleepless. This is a **Viglet Turing** marketplace sample that turns enterprise search into something altogether more _mythical_: a grimoire you can actually query.
 
 Open the tome and you will find dragons hoarding their gold, krakens gnawing at the bones of lost ships, phoenixes smouldering in the corners of the index, and kitsune whose search results always seem to rearrange themselves when you aren't looking.
 
@@ -10,7 +10,7 @@ Open the tome and you will find dragons hoarding their gold, krakens gnawing at 
 
 ## ✨ What This Project Is
 
-A ready-to-import **search experience** built on top of Viglet Turing ES. It ships with:
+A ready-to-import **search experience** built on top of Viglet Turing. It ships with:
 
 - A **complete SN site** (schema, facets, locale configuration)
 - **A catalog of creatures** drawn from world folklore — Greek, Norse, Celtic, Chinese, Slavic, Mesoamerican and more
@@ -67,7 +67,7 @@ The generated `mythical-creatures.zip` bundles the SN site export, the indexed c
 - Tailwind CSS 4 with mystical purple gradients
 - Tabler Icons
 - `@viglet/turing-react-sdk` for the search primitives
-- Viglet Turing ES as the engine underneath it all
+- Viglet Turing as the engine underneath it all
 
 ---
 

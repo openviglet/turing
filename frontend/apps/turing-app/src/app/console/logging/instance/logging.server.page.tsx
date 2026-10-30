@@ -19,7 +19,7 @@ export default function LoggingServerPage() {
 
   const logging = useLoggingPage<TurLoggingGeneral>({
     fetchService: (params) => turLoggingInstanceService.server(params),
-    breadcrumbLabel: "Turing ES Server",
+    breadcrumbLabel: "Turing Server",
     errorMessage: "Connection error or timeout while fetching server logging.",
     buildParams: () => ({
       level: level || undefined,

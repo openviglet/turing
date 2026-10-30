@@ -252,9 +252,10 @@ the docs. (`_documentation-update-plan.md` is retired — do not resurrect it;
 4. **Update `COVERAGE.md` in the same pass.** Add or update the feature's row (page +
    anchor + ✅/🧩/🔒 status) so the matrix never drifts from what shipped. Confirm the
    "Orphans" section still reads **None**.
-5. **Product name & brand.** User-facing text says **Viglet Turing ES**; public links
-   point at the `openviglet/turing-ce` repo (the public one), never the private
-   `openviglet/turing`.
+5. **Product name & brand.** User-facing text says **Viglet Turing** first and
+   **Turing** after, never "Turing ES" (the acronym was dropped on 2026-10-17; T1186).
+   Public links point at `openviglet/turing`; `openviglet/turing-ce` is being retired
+   (T1180, T1183), and only the Docker image keeps the `turing-ce` name.
 
 **The page ships in the task's own commit.** Code, what `ship` wrote, the end-user page
 and the `COVERAGE.md` row are one Turing commit — there is no second repo any more. Run

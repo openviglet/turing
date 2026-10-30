@@ -117,7 +117,7 @@ export function BentoFirstRunTour({ open, onOpenChange }: Readonly<BentoFirstRun
           <div className="flex items-center gap-3">
             <TurLogo className="size-8" />
             <DialogTitle className="text-sm font-medium tracking-tight text-muted-foreground">
-              {t("bento.tour.welcome", { defaultValue: "Welcome to Turing ES" })}
+              {t("bento.tour.welcome", { defaultValue: "Welcome to Turing" })}
             </DialogTitle>
           </div>
 

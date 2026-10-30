@@ -231,7 +231,7 @@ function StorefrontContent() {
             <>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card px-3 py-1 text-xs text-muted-foreground">
                 <IconSparkles className="size-3.5 text-primary" />
-                Powered by Viglet Turing ES — search &amp; AI agents
+                Powered by Viglet Turing — search &amp; AI agents
               </div>
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
                 Everything for the modern life,
@@ -439,7 +439,7 @@ function StorefrontContent() {
 
       <footer className="border-t border-border/60 bg-card/40">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:px-6">
-          <span>Atlas Store — a Viglet Turing ES reference showcase</span>
+          <span>Atlas Store — a Viglet Turing reference showcase</span>
           <span className="flex items-center gap-3">
             <a href="#/ops" className="hover:text-foreground">Ops tour</a>
             <a href="#/embed-demo" className="hover:text-foreground">Embed demo</a>

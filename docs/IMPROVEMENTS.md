@@ -2351,30 +2351,3 @@ existing demo host with a guest role that can browse but not save, reset on a sc
 with the LLM calls capped as the playground's already are. If a live console is too
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
-
-### CLXI.6 The product says Viglet Turing everywhere a user reads it (T1186)
-
-**Where it showed.** T1181 renamed what ships in a release (the AppImage, the installer,
-the desktop entry, the start scripts) from "Turing ES" to "Viglet Turing" / "Turing".
-The product itself still says the old name where a user reads it: the console's login
-and setup titles and footer (`login.page.tsx`, `setup.page.tsx`, `register.page.tsx`,
-`search-footer.tsx`, the bento header and first-run tour), the weekly report email
-(`weekly-search-report.html`), the Vite app title, and the SDK, CLI and flow-dsl READMEs
-and CLI help text.
-
-**Why it costs.** The names dropped the acronyms on 2026-10-17: "Viglet Turing" first,
-"Turing" after. A visitor who installs the renamed download then logs into "Viglet
-Turing ES". The guidance disagrees with itself too: agents.md says "Viglet Turing",
-while the `turing-roadmap-docs` skill's brand rule still says user-facing text reads
-"Viglet Turing ES", so the next change can bring the acronym back.
-
-**What to build.**
-- One pass over user-facing strings (UI, i18n defaults, email templates, package READMEs,
-  CLI help): "Viglet Turing ES" becomes "Viglet Turing", a later "Turing ES" becomes
-  "Turing". Internal names stay: Maven `<name>`, class names, comments, image names.
-- The skill's brand rule says "Viglet Turing", matching agents.md.
-- A frontend test or a grep gate over `src/` for "Turing ES" in rendered strings, so the
-  acronym does not come back.
-
-**Not in scope.** The `turing-ce` image and repository names (T1183 and the image
-decision in §CLXI.1).

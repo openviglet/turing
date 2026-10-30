@@ -65,7 +65,7 @@ class TurStartupConfigurationCheckTest {
 
         String stderr = captured.toString(StandardCharsets.UTF_8);
         assertThat(stderr)
-                .contains("Viglet Turing ES cannot start")
+                .contains("Viglet Turing cannot start")
                 .contains("TURING_AI_CRYPTO_KEY")
                 .contains("OPENAI_API_KEY");
     }

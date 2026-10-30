@@ -1,6 +1,6 @@
 # Vinyl Records — The Crate
 
-A marketplace-style browser for vintage vinyl records, powered by **Viglet Turing ES**.
+A marketplace-style browser for vintage vinyl records, powered by **Viglet Turing**.
 
 The interface uses warm amber/brown tones and features a spinning vinyl record SVG animation on the landing page, evoking the tactile feel of digging through record crates.
 
@@ -55,7 +55,7 @@ npm run compile
 npm run package
 ```
 
-The zip is ready to be imported into Viglet Turing ES via the Marketplace.
+The zip is ready to be imported into Viglet Turing via the Marketplace.
 
 ## Tech Stack
 

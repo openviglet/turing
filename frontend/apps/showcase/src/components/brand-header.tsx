@@ -17,7 +17,7 @@ export function BrandHeader() {
           <span className="flex flex-col leading-none">
             <span className="font-bold text-sm tracking-tight">Atlas Store</span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-              Turing ES Showcase
+              Turing Showcase
             </span>
           </span>
         </a>

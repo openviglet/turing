@@ -17,12 +17,12 @@ class SwaggerConfigTest {
 
         assertNotNull(openAPI);
         assertNotNull(openAPI.getInfo());
-        assertEquals("Turing ES", openAPI.getInfo().getTitle());
+        assertEquals("Turing", openAPI.getInfo().getTitle());
         assertEquals("Semantic Navigation, Chatbot using Search Engine.", openAPI.getInfo().getDescription());
         assertEquals("v2.0", openAPI.getInfo().getVersion());
         assertEquals("Apache 2.0", openAPI.getInfo().getLicense().getName());
         assertEquals("https://www.viglet.org/turing/", openAPI.getInfo().getLicense().getUrl());
-        assertEquals("Turing ES Documentation", openAPI.getExternalDocs().getDescription());
+        assertEquals("Turing Documentation", openAPI.getExternalDocs().getDescription());
         assertEquals("https://openviglet.github.io/turing/docs/", openAPI.getExternalDocs().getUrl());
     }
 }

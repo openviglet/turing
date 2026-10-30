@@ -32,7 +32,7 @@ const SetupPage = () => {
           <TurLogo size={52} />
         </StartupFirst.Logo>
 
-        <StartupFirst.Title>Viglet Turing ES</StartupFirst.Title>
+        <StartupFirst.Title>Viglet Turing</StartupFirst.Title>
         <StartupFirst.Description>{t("setup.subtitle")}</StartupFirst.Description>
 
         <div className="flex flex-wrap justify-center gap-2 mb-5">
@@ -48,7 +48,7 @@ const SetupPage = () => {
           <SetupForm />
         </StartupFirst.Card>
 
-        <StartupFirst.Footer>Viglet Turing ES &mdash; Enterprise Search Intelligence</StartupFirst.Footer>
+        <StartupFirst.Footer>Viglet Turing &mdash; Enterprise Search Intelligence</StartupFirst.Footer>
       </StartupFirst.Content>
     </StartupFirst>
   )

@@ -34,12 +34,12 @@ public class SwaggerConfig {
 	@Bean
 	public OpenAPI apiInfo() {
 		return new OpenAPI()
-				.info(new Info().title("Turing ES")
+				.info(new Info().title("Turing")
 						.description("Semantic Navigation, Chatbot using Search Engine.")
 						.version("v2.0")
 						.license(new License().name("Apache 2.0").url("https://www.viglet.org/turing/")))
 				.externalDocs(new ExternalDocumentation()
-						.description("Turing ES Documentation")
+						.description("Turing Documentation")
 						.url("https://openviglet.github.io/turing/docs/"));
 	}
 }

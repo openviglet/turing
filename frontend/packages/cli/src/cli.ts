@@ -130,7 +130,7 @@ async function main(argv: string[]): Promise<void> {
     case "version":
     case "--version":
     case "-v":
-      log("turing CLI (Viglet Turing ES)");
+      log("turing CLI (Viglet Turing)");
       return;
     case undefined:
     case "help":
@@ -343,7 +343,7 @@ async function evalRecord(rest: string[]): Promise<void> {
 function printHelp(): void {
   log(
     [
-      "turing — the Viglet Turing ES developer CLI.",
+      "turing — the Viglet Turing developer CLI.",
       "",
       "Usage:",
       "  turing init <name> [--dir <path>] [--force]",

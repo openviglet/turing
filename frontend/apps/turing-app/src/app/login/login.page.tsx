@@ -33,7 +33,7 @@ const LoginPage = () => {
           <TurLogo size={52} />
         </Login.Logo>
 
-        <Login.Title>Viglet Turing ES</Login.Title>
+        <Login.Title>Viglet Turing</Login.Title>
         <Login.Tagline>{t("login.heroTagline")}</Login.Tagline>
 
         <Login.Features>
@@ -53,7 +53,7 @@ const LoginPage = () => {
         </Login.Card>
 
         <Login.Footer>
-          Viglet Turing ES &mdash; Enterprise{" "}
+          Viglet Turing &mdash; Enterprise{" "}
           <IconSearch className="inline h-3.5 w-3.5 align-[-2px] text-blue-500" />{" "}
           Intelligence
         </Login.Footer>

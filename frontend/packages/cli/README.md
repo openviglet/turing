@@ -1,6 +1,6 @@
 # @viglet/turing-cli
 
-> `turing` — the [Viglet Turing ES](https://openviglet.github.io/turing) developer CLI.
+> `turing` — the [Viglet Turing](https://openviglet.github.io/turing) developer CLI.
 
 Scaffold an agent project, run a full local stack, deploy agents/flows/tools/skills
 to any environment, tail live chat events, run YAML eval suites in CI, and gate a
@@ -223,4 +223,4 @@ environment or flags:
 
 ## License
 
-Apache-2.0 — © Viglet. Part of the [Viglet Turing ES](https://github.com/openviglet/turing) project.
+Apache-2.0 — © Viglet. Part of the [Viglet Turing](https://github.com/openviglet/turing) project.

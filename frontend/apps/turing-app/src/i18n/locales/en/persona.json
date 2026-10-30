@@ -230,7 +230,7 @@
       "whatFits": "What fits",
       "whatToAdjust": "What to adjust",
       "nothingToAdjust": "Nothing to adjust — content well aligned to this persona.",
-      "reportBrand": "Viglet Turing ES · Persona Match",
+      "reportBrand": "Viglet Turing · Persona Match",
       "reportByContentTitle": "{{name}} — By content",
       "reportByContentSub": "What each content serves each persona for.",
       "reportByPersonaTitle": "{{name}} — By persona",
@@ -441,7 +441,7 @@
       "promoteToDataset": "Promote to eval dataset",
       "promoted": "Promoted. The dataset is now available in the Eval Studio.",
       "openEvalStudio": "Open Eval Studio",
-      "reportBrand": "Viglet Turing ES · Synthetic User Research",
+      "reportBrand": "Viglet Turing · Synthetic User Research",
       "reportFooter": "Report synthesized from synthetic cohort interviews. A discovery co-pilot — validate with real users before acting.",
       "protocol": {
         "DYNAMIC_SCRIPT": "Dynamic interview",

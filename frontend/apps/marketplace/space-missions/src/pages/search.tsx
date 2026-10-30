@@ -627,7 +627,7 @@ function SearchContent() {
       {/* ── Footer ── */}
       <footer className="border-t border-border/20 bg-card/20 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground font-mono">
-          <span>Powered by Viglet Turing ES</span>
+          <span>Powered by Viglet Turing</span>
           <span className="flex items-center gap-1.5">
             <IconSatellite className="size-3" />
             Space Missions Database

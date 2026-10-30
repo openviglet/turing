@@ -52,7 +52,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurMcpBackboneToolService {
 
-    private static final String PRODUCT = "Viglet Turing ES";
+    private static final String PRODUCT = "Viglet Turing";
 
     private final TurAIAgentRepository turAIAgentRepository;
     private final TurLlmSummaryService llmSummaryService;

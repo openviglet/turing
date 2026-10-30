@@ -16,8 +16,6 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- 📋 **T1186** (deps: —) **The console, the report email and the SDK and CLI texts still name the product Viglet Turing ES** — A visitor who installs the renamed download then logs into the old name, and the brand rule in the roadmap skill still asks for it. → §CLXI.6
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

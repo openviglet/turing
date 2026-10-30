@@ -32,7 +32,7 @@ function AssistantTurn({ skin }: { skin: SkinName }) {
       role="assistant"
       classNames={chatMessageClassNames[skin]}
       avatar="T"
-      name={skin === "viglet" ? "Viglet Turing ES" : "Assistant"}
+      name={skin === "viglet" ? "Viglet Turing" : "Assistant"}
       actions={
         <TuringCopyButton
           value={ANSWER}
@@ -79,7 +79,7 @@ function StreamingTurn({ skin }: { skin: SkinName }) {
       role="assistant"
       classNames={chatMessageClassNames[skin]}
       avatar="T"
-      name={skin === "viglet" ? "Viglet Turing ES" : "Assistant"}
+      name={skin === "viglet" ? "Viglet Turing" : "Assistant"}
       status={
         <TuringThinkingDots
           classNames={thinkingDotsClassNames[skin]}

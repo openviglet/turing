@@ -2,7 +2,7 @@
   "setup": {
     "title": "Criar Senha do Administrador",
     "subtitle": "Complete a configuracao inicial para comecar",
-    "description": "Defina a senha do administrador da sua instancia do Turing ES",
+    "description": "Defina a senha do administrador da sua instancia do Turing",
     "firstAccess": "Primeiro Acesso",
     "password": "Senha",
     "enterPassword": "Digite a senha do administrador",

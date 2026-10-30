@@ -130,7 +130,7 @@ const GRADIENT = "linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)";
 
 const FULL_FEATURED: PlatformInfo = {
   discovery: {
-    product: "Viglet Turing ES",
+    product: "Viglet Turing",
     multiTenant: false,
     keycloak: true,
     authThirdparty: true,
@@ -163,7 +163,7 @@ const FULL_FEATURED: PlatformInfo = {
 
 const MINIMAL: PlatformInfo = {
   discovery: {
-    product: "Viglet Turing ES",
+    product: "Viglet Turing",
     multiTenant: false,
     keycloak: false,
     authThirdparty: false,
@@ -187,7 +187,7 @@ const MINIMAL: PlatformInfo = {
 
 const ENTERPRISE: PlatformInfo = {
   discovery: {
-    product: "Viglet Turing ES",
+    product: "Viglet Turing",
     multiTenant: true,
     keycloak: true,
     authThirdparty: true,

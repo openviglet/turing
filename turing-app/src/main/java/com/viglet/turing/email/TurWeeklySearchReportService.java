@@ -108,7 +108,7 @@ public class TurWeeklySearchReportService {
         log.info("Generating monthly search report...");
         try {
             String html = buildReportHtml();
-            emailService.sendEmail("Viglet Turing ES - Monthly Intelligence Report", html);
+            emailService.sendEmail("Viglet Turing - Monthly Intelligence Report", html);
             log.info("Monthly search report sent successfully.");
         } catch (Exception e) {
             log.error("Failed to send monthly search report", e);

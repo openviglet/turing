@@ -67,7 +67,7 @@ class TurMcpBackboneToolServiceTest {
 
         JsonNode m = json.readTree(service(true).describeBackbone());
 
-        assertThat(m.get("product").asString()).isEqualTo("Viglet Turing ES");
+        assertThat(m.get("product").asString()).isEqualTo("Viglet Turing");
         assertThat(m.get("role").asString()).contains("Headless enterprise-search backbone");
         JsonNode caps = m.get("capabilities");
         assertThat(caps.get("search").asBoolean()).isTrue();

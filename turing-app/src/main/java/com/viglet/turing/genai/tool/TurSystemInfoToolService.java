@@ -62,7 +62,7 @@ public class TurSystemInfoToolService {
     public String getSystemStatus() {
         log.info("[SystemInfo Tool] get_system_status called");
         StringBuilder sb = new StringBuilder();
-        sb.append("=== Viglet Turing ES — System Status ===\n\n");
+        sb.append("=== Viglet Turing — System Status ===\n\n");
 
         appendAppVersion(sb);
         appendDatabaseStatus(sb);

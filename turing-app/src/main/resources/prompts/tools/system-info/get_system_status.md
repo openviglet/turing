@@ -1,4 +1,4 @@
-Gets a comprehensive overview of the Viglet Turing ES system status.
+Gets a comprehensive overview of the Viglet Turing system status.
 Shows application version, database, JVM memory, disk space, MongoDB, MinIO, and JVM details.
 Use this tool FIRST when investigating system health or performance issues.
 

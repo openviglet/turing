@@ -14,7 +14,7 @@ interface TourStep {
 const STEPS: TourStep[] = [
   {
     title: "Welcome to Atlas Store",
-    body: "A reference app that stresses the maximum Viglet Turing ES surface — typed catalog, faceted + hybrid search, RAG chat, agents, skills and creative bets. This tour narrates each capability.",
+    body: "A reference app that stresses the maximum Viglet Turing surface — typed catalog, faceted + hybrid search, RAG chat, agents, skills and creative bets. This tour narrates each capability.",
   },
   {
     title: "Faceted search (T452)",

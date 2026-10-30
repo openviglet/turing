@@ -23,7 +23,7 @@ export function SearchFooter() {
           <div className="flex items-center gap-2 text-muted-foreground">
             <TurLogo size={20} />
             <span className="text-xs">
-              &copy; {new Date().getFullYear()} Viglet Turing ES
+              &copy; {new Date().getFullYear()} Viglet Turing
             </span>
           </div>
 

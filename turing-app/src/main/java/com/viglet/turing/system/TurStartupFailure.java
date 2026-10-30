@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public final class TurStartupFailure {
 
     private static final String RULE = "=".repeat(78);
-    private static final String HEADING = "Viglet Turing ES cannot start";
+    private static final String HEADING = "Viglet Turing cannot start";
 
     private TurStartupFailure() {
         // utility

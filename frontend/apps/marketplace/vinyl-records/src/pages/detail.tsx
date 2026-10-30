@@ -411,7 +411,7 @@ export default function DetailPage() {
       {/* ── Footer ── */}
       <footer className="border-t border-border/30 bg-card/30 mt-12">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-          <span>Powered by Viglet Turing ES</span>
+          <span>Powered by Viglet Turing</span>
           <span className="flex items-center gap-1.5">
             <IconVinyl className="size-3.5" />
             The Crate — Vinyl Records

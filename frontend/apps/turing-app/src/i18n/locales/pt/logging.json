@@ -1,6 +1,6 @@
 {
   "logging": {
-    "turingServer": "Servidor Turing ES",
+    "turingServer": "Servidor Turing",
     "turingServerDesc": "Instância do servidor de logs",
     "indexing": "Indexação",
     "indexingDesc": "Instância do serviço de indexação",

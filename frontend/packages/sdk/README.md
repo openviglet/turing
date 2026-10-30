@@ -1,6 +1,6 @@
 # @viglet/turing-sdk
 
-Vanilla JavaScript SDK for **Viglet Turing ES** — a framework-agnostic,
+Vanilla JavaScript SDK for **Viglet Turing** — a framework-agnostic,
 **zero-dependency** client for the Turing Semantic Navigation API, plus
 observable controllers for the common front-end flows. No React, no axios.
 

@@ -133,7 +133,7 @@ dist/
 function readme(name: string): string {
   return `# ${titleCase(name)}
 
-A Viglet Turing ES agent project scaffolded by \`turing init\`.
+A Viglet Turing agent project scaffolded by \`turing init\`.
 
 ## Layout
 

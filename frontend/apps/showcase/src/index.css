@@ -31,7 +31,7 @@
 /* ── Atlas Store brand palette ──
    Retail identity: indigo primary (shared with Turing brand) + a warm amber
    accent reserved for price / sale highlights. Distinct from the admin console
-   yet recognisably part of the Viglet Turing ES family. */
+   yet recognisably part of the Viglet Turing family. */
 :root {
   --radius: 0.75rem;
   --background: oklch(0.99 0.003 260);

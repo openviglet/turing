@@ -1,6 +1,6 @@
 # @viglet/turing-flow-dsl
 
-T98 / §VII.11.h — typed TypeScript DSL for Viglet Turing ES chat flows.
+T98 / §VII.11.h — typed TypeScript DSL for Viglet Turing chat flows.
 
 Author chat flows as TypeScript source with full IDE inference, then transpile
 to the JSON wire shape the chat-flow editor's "Import JSON" button and the

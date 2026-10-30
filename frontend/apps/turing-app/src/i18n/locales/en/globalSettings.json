@@ -147,7 +147,7 @@
     "transcriptionPromptPlaceholder": "Product support call about enterprise search. Speakers use Portuguese and English technical terms.",
     "transcriptionKeywords": "Domain keywords",
     "transcriptionKeywordsDesc": "Comma-separated terms the model should spell correctly — product names, model ids, jargon. Used by the gpt-transcribe family; capped at 100 terms.",
-    "transcriptionKeywordsPlaceholder": "Viglet Turing ES, Solr, Semantic Navigation, RRF",
+    "transcriptionKeywordsPlaceholder": "Viglet Turing, Solr, Semantic Navigation, RRF",
     "transcriptionKeywordsFromThesaurus": "Add Thesaurus terms",
     "transcriptionKeywordsFromThesaurusDesc": "Top the keyword list up from your Thesaurus, so the vocabulary the search engine already expands also reaches the transcriber. Your own keywords always come first.",
     "transcriptionDiarization": "Identify speakers",

@@ -76,7 +76,7 @@ const manifest = {
   version: pkg.version || "0.0.0",
   author: existing.author || "Alexandre Oliveira",
   repository: existing.repository || "https://github.com/openviglet/turing",
-  description: existing.description || `${siteName} — Turing ES example application`,
+  description: existing.description || `${siteName} — Turing example application`,
   // No `buildDate` here — see the header. `--dist` adds it to the built copy.
   snSite: envVars.VITE_SN_SITE || siteName,
   locale: envVars.VITE_LOCALE || "en_US",

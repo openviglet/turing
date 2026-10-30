@@ -147,7 +147,7 @@
     "transcriptionPromptPlaceholder": "Ligação de suporte sobre busca corporativa. Os participantes usam termos técnicos em português e inglês.",
     "transcriptionKeywords": "Palavras-chave do domínio",
     "transcriptionKeywordsDesc": "Termos separados por vírgula que o modelo deve grafar corretamente — nomes de produto, ids de modelo, jargão. Usado pela família gpt-transcribe; limitado a 100 termos.",
-    "transcriptionKeywordsPlaceholder": "Viglet Turing ES, Solr, Navegação Semântica, RRF",
+    "transcriptionKeywordsPlaceholder": "Viglet Turing, Solr, Navegação Semântica, RRF",
     "transcriptionKeywordsFromThesaurus": "Incluir termos do Thesaurus",
     "transcriptionKeywordsFromThesaurusDesc": "Complementa a lista de palavras-chave com o seu Thesaurus, para que o vocabulário que o motor de busca já expande também chegue ao transcritor. Suas palavras-chave vêm sempre primeiro.",
     "transcriptionDiarization": "Identificar quem fala",

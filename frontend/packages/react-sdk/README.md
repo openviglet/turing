@@ -1,6 +1,6 @@
 # @viglet/turing-react-sdk
 
-React SDK for **Viglet Turing ES** — headless hooks and UI components for building custom search experiences on top of the Turing Semantic Navigation API.
+React SDK for **Viglet Turing** — headless hooks and UI components for building custom search experiences on top of the Turing Semantic Navigation API.
 
 ## Installation
 

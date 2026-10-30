@@ -230,7 +230,7 @@ function BestiaryPage() {
             The Bestiary
           </span>
         </div>
-        <span style={{ fontSize: "11px", color: "#64748b" }}>Powered by Viglet Turing ES</span>
+        <span style={{ fontSize: "11px", color: "#64748b" }}>Powered by Viglet Turing</span>
       </header>
 
       {/* Hero / Search */}

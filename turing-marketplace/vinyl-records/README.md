@@ -2,7 +2,7 @@
 
 > _"The needle drops. The room changes."_
 
-This is **Vinyl Records — The Crate**, a **Viglet Turing ES** marketplace sample that treats search the way a real record shop treats its customers: warm lighting, amber wood tones, and a stubborn belief that _how_ you find music matters as much as what you find.
+This is **Vinyl Records — The Crate**, a **Viglet Turing** marketplace sample that treats search the way a real record shop treats its customers: warm lighting, amber wood tones, and a stubborn belief that _how_ you find music matters as much as what you find.
 
 Flip through **Kind of Blue**, **OK Computer**, **Discovery**, **The Köln Concert**, **Rumours**, **Back to Black**, **In Rainbows**. First pressings, reissues, near-mints and battle-worn Fairs. Every card is a crate you can dig through without smelling the cardboard.
 
@@ -66,7 +66,7 @@ The generated `vinyl-records.zip` packs the SN site export, the content index, a
 - Tailwind CSS 4 with warm amber/brown gradients
 - Tabler Icons
 - `@viglet/turing-react-sdk` for the search primitives
-- Viglet Turing ES spinning the whole thing at 33⅓
+- Viglet Turing spinning the whole thing at 33⅓
 
 ---
 

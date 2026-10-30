@@ -1,4 +1,4 @@
-# Atlas Store — Viglet Turing ES reference showcase
+# Atlas Store — Viglet Turing reference showcase
 
 **Atlas Store** is the canonical reference application for [Viglet Turing
 ES](https://github.com/openviglet/turing). It is a commerce-catalog copilot
@@ -196,4 +196,4 @@ template.
 | `on_sale` | `BOOL` | facet |
 | `release_date` | `DATE` | year facet |
 
-Built with **Viglet Turing ES**.
+Built with **Viglet Turing**.

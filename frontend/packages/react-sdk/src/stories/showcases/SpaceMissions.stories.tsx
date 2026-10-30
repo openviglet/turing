@@ -206,7 +206,7 @@ function SpaceMissionsPage() {
             MISSION CONTROL
           </span>
         </div>
-        <span style={{ fontSize: "11px", color: "#475569", fontFamily: "monospace" }}>Viglet Turing ES</span>
+        <span style={{ fontSize: "11px", color: "#475569", fontFamily: "monospace" }}>Viglet Turing</span>
       </header>
 
       {/* Hero */}

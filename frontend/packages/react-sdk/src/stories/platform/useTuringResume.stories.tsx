@@ -213,7 +213,7 @@ function ResumeDemo({ latencyMs, nothingParked, failResume, dark }: ResumeDemoPr
         {/* Gradient header */}
         <div style={{ background: GRADIENT, padding: "18px 20px", color: "white" }}>
           <div style={{ fontSize: "12px", opacity: 0.85, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-            ↩️ Viglet Turing ES
+            ↩️ Viglet Turing
           </div>
           <div style={{ fontSize: "20px", fontWeight: 700, marginTop: "4px" }}>
             Welcome back 👋

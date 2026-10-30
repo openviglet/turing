@@ -86,7 +86,7 @@ public class TurLLMCatalogChangeEmailService {
                 return; // already emailed this exact set
             }
             emailService.sendEmail(
-                    "Viglet Turing ES - Model catalog changes affecting your models",
+                    "Viglet Turing - Model catalog changes affecting your models",
                     renderHtml(notifications));
             lastSignature = signature;
             log.info("Emailed model-catalog change feed ({} notification(s))", notifications.size());
@@ -122,7 +122,7 @@ public class TurLLMCatalogChangeEmailService {
                   <div style="max-width:640px;margin:0 auto;background:%s;border:1px solid %s;border-radius:12px;overflow:hidden;">
                     <div style="background:linear-gradient(135deg,#2563eb,#4f46e5);padding:20px 24px;">
                       <h1 style="margin:0;color:#fff;font-size:18px;">Model catalog changes</h1>
-                      <p style="margin:6px 0 0;color:#e0e7ff;font-size:13px;">These catalog changes affect models you have configured in Viglet Turing ES.</p>
+                      <p style="margin:6px 0 0;color:#e0e7ff;font-size:13px;">These catalog changes affect models you have configured in Viglet Turing.</p>
                     </div>
                     <table style="width:100%%;border-collapse:collapse;">%s</table>
                     <p style="padding:16px 24px;margin:0;color:#6b7280;font-size:12px;">Review these instances in the LLM section of your Turing admin. This is an automated notification; disable it with turing.model-catalog.change-feed.email-enabled=false.</p>

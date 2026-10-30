@@ -86,7 +86,7 @@ function printHelp(): void {
    
   console.log(
     [
-      "turing-flow-dsl — typed chat-flow sources for Viglet Turing ES.",
+      "turing-flow-dsl — typed chat-flow sources for Viglet Turing.",
       "",
       "Usage:",
       "  turing-flow-dsl build  <input-dir> [--out <output-dir>]",
