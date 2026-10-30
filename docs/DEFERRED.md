@@ -21,3 +21,4 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
+- ⏸ **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — set aside (Waits on the owner's next successful 2026.3 publish run.): No 2026.3 release exists there yet: publish run 41103220225 failed. → §CLXI.1

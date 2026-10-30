@@ -1570,3 +1570,4 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
+- **T1180 (workflow and README)** — publish.yml creates the 2026.3 GitHub Release on openviglet/turing and the README badge and download link point there (commit e23a4e44ad); the image stays turing-ce.

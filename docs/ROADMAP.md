@@ -20,10 +20,9 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- 📋 **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — Visitors land on the repository the site names and find an older line than the README announces. → §CLXI.1
 - 📋 **T1181** (deps: —) **The Linux download is still named Turing-ES-x86_64.AppImage, with the acronym the product name dropped** — The download is the last place a visitor meets the old name, and it reads as another or older product. → §CLXI.2
 - 📋 **T1182** (deps: —) **A patch release's notes are only the Dependabot pull request list, saying nothing a user would notice** — The release page is where an evaluator checks what changed, and the notes it shows say nothing about the product. → §CLXI.3
-- 📋 **T1183** (deps: T1180) **turing-ce still reads as the live repository, with the old ES name and addresses and no notice pointing elsewhere** — Two repositories for one product split the stars and send visitors to the stale one. → §CLXI.4
+- 📋 **T1183** (deps: T1180 ✅) **turing-ce still reads as the live repository, with the old ES name and addresses and no notice pointing elsewhere** — Two repositories for one product split the stars and send visitors to the stale one. → §CLXI.4
 - 📋 **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — A demo that opens without installing is what every launch channel is missing, and the playground already exists. → §CLXI.5
 
 ## Done when — T1133
@@ -46,6 +45,12 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
+
+## Done when — T1180
+
+- **A 2026.3 release is Latest on openviglet/turing** gh release list -R
+  openviglet/turing shows a v2026.3.x tag marked Latest, with the jar and install assets
+  attached.
 
 ## Non-goals (do NOT add as tasks)
 
