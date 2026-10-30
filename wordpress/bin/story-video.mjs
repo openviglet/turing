@@ -8,11 +8,14 @@
 //
 // Writes tests/e2e/artifacts/video/: story.mp4 (both caption tracks), story.en.srt and
 // story.pt-BR.srt, and story-30s.mp4, a cut for social posts that keeps the last seconds of
-// each chapter, where its result shows. Rendered files are release assets, never committed.
+// each chapter, where its result shows. Rendered files are release assets, never committed;
+// the one exception is a WebP still per chapter, copied into dumont-site/public/wordpress/
+// for the site's WordPress page.
 // Refuses a recording that is missing a chapter or older than the story it was recorded from,
 // so a re-record after a UI change is never skipped by accident.
 import { execFileSync } from 'node:child_process';
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	readFileSync,
@@ -324,6 +327,44 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 	clock += length;
 }
 segments.push( still( cards.length - 1 ) );
+
+/**
+ * Where a chapter's best moment is in its clip: the highlight the spec marked, or just before
+ * its end.
+ *
+ * @param {number} i The chapter's index.
+ */
+const best = ( i ) => {
+	const { start, end, highlight } = chapters[ i ];
+	return Math.max( 0, ( highlight ?? end - 0.8 ) - start );
+};
+
+// One still per chapter, its result on screen, for the site's WordPress page (D197): taken
+// from the recording, so the page shows what the story ran, and copied into the site.
+const stills = join( out, 'stills' );
+const site = join( root, '..', 'dumont-site', 'public', 'wordpress' );
+mkdirSync( stills, { recursive: true } );
+mkdirSync( site, { recursive: true } );
+for ( const i of chapters.keys() ) {
+	const file = join( stills, `chapter-${ i + 1 }.webp` );
+	ffmpeg( [
+		'-ss',
+		best( i ).toFixed( 2 ),
+		'-i',
+		join( out, 'parts', `chapter-${ i + 1 }.mp4` ),
+		'-frames:v',
+		'1',
+		'-vf',
+		'scale=1280:-1',
+		'-c:v',
+		'libwebp',
+		'-quality',
+		'80',
+		file,
+	] );
+	copyFileSync( file, join( site, `chapter-${ i + 1 }.webp` ) );
+}
+
 const video = finish( concat( segments, 'joined.mp4' ), cues, 'story' );
 
 // The short cut: each chapter's last seconds, where its result shows, with no cards between.
@@ -339,9 +380,12 @@ const short = [
 const shortCues = [];
 clock = intro;
 for ( const i of chapters.keys() ) {
+	// The seconds leading up to its best moment, and a little after.
 	const clip = cut( `short-${ i + 1 }.mp4`, [
-		'-sseof',
-		`-${ shortSeconds }`,
+		'-ss',
+		Math.max( 0, best( i ) + 0.8 - shortSeconds ).toFixed( 2 ),
+		'-t',
+		String( shortSeconds ),
 		'-i',
 		join( out, 'parts', `chapter-${ i + 1 }.mp4` ),
 	] );

@@ -107,21 +107,33 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 
 	// Recorded for the video (playwright.story-record.config.mjs, D204): typing shows, the
 	// pointer is drawn, each chapter lingers on its result, and where each one starts and ends
-	// in story.webm goes to chapters.json for bin/story-video.mjs to cut.
+	// in story.webm goes to chapters.json for bin/story-video.mjs to cut. A chapter whose best
+	// moment is not its last calls `highlight()` there: the site's still and the short cut
+	// are taken at it, and a recording lingers on it.
 	const record = !! test.info().project.metadata?.record;
 	const started = Date.now();
+	const now = () => ( Date.now() - started ) / 1000;
 	const chapters = [];
+	let highlighted = null;
+	const highlight = async () => {
+		if ( record ) {
+			await page.waitForTimeout( 1500 );
+		}
+		highlighted = now() - 0.8;
+	};
 	const chapter = ( title, body ) =>
 		test.step( title, async () => {
-			const start = ( Date.now() - started ) / 1000;
+			const start = now();
+			highlighted = null;
 			await body();
-			if ( record ) {
-				await page.waitForTimeout( 1500 );
+			if ( null === highlighted ) {
+				await highlight();
 			}
 			chapters.push( {
 				title,
 				start,
-				end: ( Date.now() - started ) / 1000,
+				highlight: highlighted,
+				end: now(),
 			} );
 		} );
 	const type = async ( field, text ) => {
@@ -160,6 +172,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			block.locator( '.viglet-dumont-search__understood' )
 		).toContainText( 'Price: ≤ 400' );
 		await expect( titles.first() ).toHaveText( /jacket|waterproof/i );
+		await highlight();
 
 		await search( page, story.misspelt );
 		await expect(
@@ -195,6 +208,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await expect(
 				answer.locator( '.viglet-dumont-assistant__source a' )
 			).toContainText( [ story.cites ] );
+			await highlight();
 			await page.keyboard.press( 'Escape' );
 		}
 	);
