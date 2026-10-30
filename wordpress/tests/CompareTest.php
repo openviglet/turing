@@ -41,6 +41,22 @@ final class CompareTest extends PluginTestCase {
 		$this->assertFalse( $row->invoke( null, 'Availability', array( 'In stock', 'in stock ' ) )['differs'], 'the same, whatever the case' );
 	}
 
+	public function test_a_price_formatted_as_html_reaches_the_facts_as_plain_text(): void {
+		// D249: WooCommerce writes the currency as an entity, which a model reads as text.
+		Functions\stubs(
+			array(
+				'wp_strip_all_tags' => static fn ( $text ) => trim( strip_tags( $text ) ),
+			)
+		);
+		$text = new \ReflectionMethod( Viglet_Dumont_Compare::class, 'text' );
+
+		$this->assertSame(
+			'$151.20',
+			$text->invoke( null, '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">&#36;</span>151.20</bdi></span>' )
+		);
+		$this->assertSame( '2 × 3 cm', $text->invoke( null, '2 &times; 3 cm' ) );
+	}
+
 	private function jackets(): array {
 		return array(
 			'products' => array(

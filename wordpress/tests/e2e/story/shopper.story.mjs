@@ -316,9 +316,10 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await expect(
 			page.locator( '.viglet-dumont-compare__table thead th' )
 		).toHaveCount( 3 );
-		await expect(
-			page.locator( '.viglet-dumont-compare__summary-text' )
-		).not.toBeEmpty( { timeout: 90_000 } );
+		const summary = page.locator( '.viglet-dumont-compare__summary-text' );
+		await expect( summary ).not.toBeEmpty( { timeout: 90_000 } );
+		// The table's prices reach the model as text, not HTML entities (D249).
+		await expect( summary ).not.toContainText( '&#' );
 	} );
 
 	const copilot = page.locator( '.viglet-dumont-copilot' );

@@ -59,17 +59,17 @@ class Viglet_Dumont_Compare {
 				'name'  => $product->get_name(),
 				'url'   => (string) get_permalink( $product->get_id() ),
 				'image' => (string) wp_get_attachment_image_url( (int) $product->get_image_id(), 'woocommerce_thumbnail' ),
-				'price' => wp_strip_all_tags( (string) wc_price( (float) $product->get_price() ) ),
+				'price' => self::text( (string) wc_price( (float) $product->get_price() ) ),
 			),
 			$products
 		);
 
 		$statuses = wc_get_product_stock_status_options();
 		$fixed    = array(
-			__( 'Price', 'viglet-dumont' )        => static fn ( WC_Product $p ) => '' === (string) $p->get_price() ? '' : wp_strip_all_tags( (string) wc_price( (float) $p->get_price() ) ),
+			__( 'Price', 'viglet-dumont' )        => static fn ( WC_Product $p ) => '' === (string) $p->get_price() ? '' : self::text( (string) wc_price( (float) $p->get_price() ) ),
 			__( 'Availability', 'viglet-dumont' ) => static fn ( WC_Product $p ) => (string) ( $statuses[ $p->get_stock_status() ] ?? $p->get_stock_status() ),
-			__( 'Weight', 'viglet-dumont' )       => static fn ( WC_Product $p ) => $p->has_weight() ? wc_format_weight( (float) $p->get_weight() ) : '',
-			__( 'Dimensions', 'viglet-dumont' )   => static fn ( WC_Product $p ) => $p->has_dimensions() ? wc_format_dimensions( $p->get_dimensions( false ) ) : '',
+			__( 'Weight', 'viglet-dumont' )       => static fn ( WC_Product $p ) => $p->has_weight() ? self::text( wc_format_weight( (float) $p->get_weight() ) ) : '',
+			__( 'Dimensions', 'viglet-dumont' )   => static fn ( WC_Product $p ) => $p->has_dimensions() ? self::text( wc_format_dimensions( $p->get_dimensions( false ) ) ) : '',
 			__( 'Rating', 'viglet-dumont' )       => static fn ( WC_Product $p ) => $p->get_rating_count() > 0 ? number_format_i18n( (float) $p->get_average_rating(), 1 ) : '',
 		);
 
@@ -80,7 +80,7 @@ class Viglet_Dumont_Compare {
 		foreach ( self::attribute_labels( $products ) as $name => $label ) {
 			$rows[] = self::row(
 				$label,
-				array_map( static fn ( WC_Product $p ) => wp_strip_all_tags( (string) $p->get_attribute( $name ) ), $products )
+				array_map( static fn ( WC_Product $p ) => self::text( (string) $p->get_attribute( $name ) ), $products )
 			);
 		}
 
@@ -89,6 +89,16 @@ class Viglet_Dumont_Compare {
 			// Only what every product has: a row with a gap compares nothing.
 			'rows'     => array_values( array_filter( $rows ) ),
 		);
+	}
+
+	/**
+	 * A cell as plain text (D249): WooCommerce formats prices and measures as HTML, and its
+	 * entities (`&#36;`) are text to a language model, which writes them back into the summary.
+	 *
+	 * @param string $html The formatted value.
+	 */
+	private static function text( string $html ): string {
+		return html_entity_decode( wp_strip_all_tags( $html ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	/**
@@ -115,9 +125,10 @@ class Viglet_Dumont_Compare {
 			'You help a shopper compare products, in two to four short sentences: what they have in common, then where they differ. Name no winner, recommend nothing and judge nothing. Use only the facts given; every number you write must appear in them exactly. Write in the language of the locale %s. Answer as plain text: no heading, no list, no markdown.',
 			$locale
 		);
-		// The same products, unchanged, answer from Turing's cache.
+		// The same products, unchanged, answer from Turing's cache. The facts are in the key too,
+		// so a summary written from differently built facts (D249) is not served again.
 		$modified = array_map( static fn ( int $id ) => (string) get_post_modified_time( 'U', true, $id ), $ids );
-		$key      = 'viglet-dumont-compare-' . md5( $locale . "\n" . implode( ',', $ids ) . "\n" . implode( ',', $modified ) );
+		$key      = 'viglet-dumont-compare-' . md5( $locale . "\n" . implode( ',', $ids ) . "\n" . implode( ',', $modified ) . "\n" . wp_json_encode( $data ) );
 
 		$result = ( new Viglet_Dumont_API_Client() )->summary( $key, $data, $prompt, $again );
 		if ( is_wp_error( $result ) ) {
