@@ -16,7 +16,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1174** (deps: —) **A copilot kit product's reason lists raw indexed fields, site key and image URL included, as why it fits** — A shopper reads that reason under each product, so plumbing fields there make the kit look broken. → §CLVIII.11
 - 📋 **T1175** (deps: —) **The copilot kit stages any document that is not a guide type, a site's pages included, as a product** — A staged page cannot be bought, so the client's add-to-cart fails for it and the kit looks broken. → §CLVIII.12
 - 📋 **T1176** (deps: —) **A question typed in the SN search box finds nothing, because every word, question words included, must match** — Shoppers type questions, and zero results also means no answer panel, so the box fails the visitor who asks. → §CLVIII.13
 - 📋 **T1177** (deps: —) **After the stemming release a guide titled with the exact query phrase no longer outranks products matching its synonym** — A Dumont demo's curated searches lost their guide-first order, and an exact title phrase is the strongest signal a search has. → §CLVIII.14

@@ -47,6 +47,7 @@ import com.viglet.turing.api.exception.TurNotFoundException;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
@@ -139,6 +140,25 @@ class TurSNNLFilterServiceTest {
         assertThat(vocabulary).containsOnlyKeys("city");
         assertThat(vocabulary.get("city")).containsExactly("São Paulo", "Campinas");
         assertThat(service.facetVocabulary("nowhere", "pt_BR", 2)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("T1174: a facet's label is its locale's row, else its facetName, else the humanized name")
+    void facetLabelsReadTheLocaleLabel() {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        TurSNSiteFieldExt city = field("city", TurSEFieldType.STRING, true);
+        TurSNSiteFieldExtFacet cityPt = new TurSNSiteFieldExtFacet();
+        cityPt.setLocale(Locale.forLanguageTag("pt-BR"));
+        cityPt.setLabel("Cidade");
+        city.getFacetLocales().add(cityPt);
+        TurSNSiteFieldExt contract = field("contract_type", TurSEFieldType.STRING, true);
+        contract.setFacetName("Contract");
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(city, contract,
+                field("work_mode", TurSEFieldType.STRING, true), field("title", TurSEFieldType.TEXT, false),
+                field("salary", TurSEFieldType.FLOAT, true)));
+
+        assertThat(service.facetLabels("vagas", "pt_BR")).containsExactly(Map.entry("city", "Cidade"),
+                Map.entry("contract_type", "Contract"), Map.entry("work_mode", "Work Mode"));
     }
 
     @Test

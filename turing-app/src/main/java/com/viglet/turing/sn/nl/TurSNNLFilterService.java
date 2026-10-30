@@ -41,7 +41,10 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.api.exception.TurNotFoundException;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.commons.sn.field.TurSNFieldLabel;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
@@ -199,6 +202,39 @@ public class TurSNNLFilterService {
         siteValues(site.get().getName(), searchLocale, fields).forEach((field, values) ->
                 vocabulary.put(field, values.stream().limit(perField).toList()));
         return vocabulary;
+    }
+
+    /**
+     * T1174 — the label of each of the site's enabled, non-numeric facet fields,
+     * as the facet header reads it: the label of the {@code locale}'s facet row,
+     * else the field's {@code facetName}, else the humanized field name. An
+     * unknown site answers an empty map.
+     *
+     * @param locale the search locale; {@code null} means the site's first locale
+     */
+    @Transactional(readOnly = true)
+    public Map<String, String> facetLabels(String siteName, String locale) {
+        Optional<TurSNSite> site = turSNSiteRepository.findByNameIgnoreCase(siteName);
+        if (site.isEmpty()) {
+            return Map.of();
+        }
+        String searchLocale = StringUtils.hasText(locale) ? locale : firstLocale(site.get());
+        Map<String, String> labels = new LinkedHashMap<>();
+        for (TurSNSiteFieldExt ext : turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site.get(), 1)) {
+            TurNLFacetField field = TurNLFacetField.of(ext);
+            if (!field.facet() || field.numeric() || labels.containsKey(field.name())) {
+                continue;
+            }
+            String localeLabel = Optional.ofNullable(ext.getFacetLocales()).orElse(Set.of()).stream()
+                    .filter(facet -> facet.getLocale() != null
+                            && facet.getLocale().toString().equalsIgnoreCase(searchLocale))
+                    .map(TurSNSiteFieldExtFacet::getLabel)
+                    .filter(StringUtils::hasText)
+                    .findFirst().orElse(null);
+            labels.put(field.name(), localeLabel != null ? localeLabel
+                    : TurSNFieldLabel.orHumanized(ext.getFacetName(), ext.getName()));
+        }
+        return labels;
     }
 
     private String firstLocale(TurSNSite site) {

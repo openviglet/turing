@@ -2287,35 +2287,6 @@ host hands to Google Analytics, and the consent that gates them.
 
 ## CLVIII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLVIII.11 A kit product's reason uses the site's facets only (T1174)
-
-**Where it showed.** Dumont's WordPress plugin, Build my kit on the demo store (Dumont
-D201's live run, 2026-10-30): `POST /api/sn/Demo/copilot/kit` staged products with a
-`reason` such as `product_cat: Tents; site_key: localhost`, or `image:
-http://…/fairfield- grid-fleece-sky.webp; product_cat: Fleece and midlayers`. The block
-prints `reason` under the product, so the shopper reads a host key and an image URL as
-why a fleece fits.
-
-**Why.** `TurCatalogKitService.reason` joins up to `REASON_ATTRIBUTES` of the document's
-attributes, the gap-matching ones first and then any other, so the slots fill with
-whatever `TurCatalogCopilotService.shortAttributes` kept: it drops only title, url,
-abstract, text and id. Field names are shown raw.
-
-**What it should do.**
-- Only facet fields of the SN site go into a reason, under the facet's label in the
-  request's locale (`facetLocales`, else `facetName`): `Category: Tents`.
-- No filler: a product with no gap-matching facet gets the facets it has, at most
-  `REASON_ATTRIBUTES`, or `reason: null`.
-
-**Where the fix goes.** `plan()` already reads `vocabulary` (the site's enabled,
-non-numeric facet fields, T1169); its keys are the allow-list, so no new read. When that
-read fails it is an empty map, and the reason is then null, never raw fields.
-
-**Workaround.** None in Dumont; the block shows `reason` as given (`kitProduct`).
-
-**Gate.** A unit test on `reason` with `site_key` and `image` beside two facets: only
-the facets appear, labelled; with an empty vocabulary, `null`.
-
 ### CLVIII.12 A kit stages only the types the request names as products (T1175)
 
 **Where it showed.** Dumont's WordPress plugin, Build my kit on the Dumont demo (D203's

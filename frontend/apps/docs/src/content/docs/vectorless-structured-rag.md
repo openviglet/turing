@@ -385,8 +385,11 @@ the needs the catalog had nothing for in `unfilled`, and up to two `guides`.
   outright (a `Waterproof jackets` category for a rain shell), the need searches
   inside it: its words run with that value as a filter. A value the site does not
   have is ignored, and when the filter finds nothing the words run on their own.
-- **Each product says why it fits from its own attributes** (`reason`, e.g.
-  `weight: 1.2 kg; capacity: 2 people`), the ones matching the need first.
+- **Each product says why it fits from its own facet values** (`reason`, e.g.
+  `Category: Tents; Capacity: 2 people`), the ones matching the need first. Only the
+  site's facet fields count, each under its facet label in the request's locale, so
+  plumbing fields such as a site key or an image URL never appear. A product with no
+  facet value gets `reason: null`.
 - **Availability.** Name the field that says whether a product can be bought in
   `availabilityField`. With `availability: "MARK"` (the default) an unavailable
   product stays, with `available: false`; with `"DROP"` it is left out. Values such

@@ -10,6 +10,7 @@
 package com.viglet.turing.genai.catalog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.viglet.turing.commons.sn.field.TurSNFieldLabel;
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
@@ -181,9 +183,10 @@ public class TurCatalogKitService {
             plan = plan.substring(0, MAX_PLAN_CHARS);
         }
 
+        Map<String, List<String>> vocabulary = vocabulary(siteName, locale);
+        Map<String, String> reasonLabels = reasonLabels(siteName, locale, vocabulary);
         Plan named;
         try {
-            Map<String, List<String>> vocabulary = vocabulary(siteName, locale);
             named = parse(callModel(chatModel.get(), siteName,
                     gapPrompt(siteName, plan, gapLimit, vocabulary)), gapLimit, vocabulary);
         } catch (RuntimeException e) {
@@ -207,7 +210,8 @@ public class TurCatalogKitService {
             if (!retrieval.siteFound()) {
                 return Result.error("Catalog site not found: " + siteName);
             }
-            List<KitProduct> products = stageProducts(retrieval, gap, opts, productLimit, staged, guideTypes);
+            List<KitProduct> products = stageProducts(retrieval, gap, opts, productLimit, staged, guideTypes,
+                    reasonLabels);
             if (products.isEmpty()) {
                 unfilled.add(gap.name());
             } else {
@@ -264,7 +268,7 @@ public class TurCatalogKitService {
      * the guides and is never a product. {@code staged} records each product taken.
      */
     private static List<KitProduct> stageProducts(TurCatalogCopilotService.Retrieval retrieval, Gap gap,
-            Options opts, int limit, Set<String> staged, Set<String> guideTypes) {
+            Options opts, int limit, Set<String> staged, Set<String> guideTypes, Map<String, String> reasonLabels) {
         List<KitProduct> products = new ArrayList<>();
         List<TurCatalogCitation> citations = retrieval.citations();
         for (int i = 0; i < citations.size() && products.size() < limit; i++) {
@@ -277,7 +281,8 @@ public class TurCatalogKitService {
             boolean dropped = Boolean.FALSE.equals(available) && opts.availability() == Availability.DROP;
             if (citation.id() != null && !dropped && staged.add(citation.id())) {
                 products.add(new KitProduct(citation.rank(), citation.id(), citation.title(), citation.url(),
-                        citation.score(), reason(attributes, gap, opts.availabilityField()), available));
+                        citation.score(), reason(attributes, gap, opts.availabilityField(), reasonLabels),
+                        available));
             }
         }
         return List.copyOf(products);
@@ -286,11 +291,14 @@ public class TurCatalogKitService {
     /**
      * The product's reason, from its own attributes only: the ones whose name or
      * value shares a word with the gap (its name, query or why) first, then the
-     * others, at most {@link #REASON_ATTRIBUTES}, as {@code key: value; …}.
-     * {@code null} when the product lists no attribute.
+     * others, at most {@link #REASON_ATTRIBUTES}, as {@code label: value; …}.
+     * T1174 — only the site's facet fields count, the keys of {@code labels},
+     * each under its label; a site key or an image URL is never a reason.
+     * {@code null} when the product has none of them.
      */
-    static String reason(Map<String, String> attributes, Gap gap, String availabilityField) {
-        if (attributes == null || attributes.isEmpty()) {
+    static String reason(Map<String, String> attributes, Gap gap, String availabilityField,
+            Map<String, String> labels) {
+        if (attributes == null || attributes.isEmpty() || labels == null || labels.isEmpty()) {
             return null;
         }
         Set<String> gapWords = words(String.join(" ", gap.name(), gap.query(),
@@ -298,18 +306,43 @@ public class TurCatalogKitService {
         List<Map.Entry<String, String>> matching = new ArrayList<>();
         List<Map.Entry<String, String>> others = new ArrayList<>();
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
-            if (entry.getKey().equals(availabilityField)) {
+            String label = labels.get(entry.getKey());
+            if (label == null || entry.getKey().equals(availabilityField) || !StringUtils.hasText(entry.getValue())) {
                 continue;
             }
-            Set<String> entryWords = words(entry.getKey() + " " + entry.getValue());
+            Set<String> entryWords = words(label + " " + entry.getValue());
             entryWords.retainAll(gapWords);
-            (entryWords.isEmpty() ? others : matching).add(entry);
+            (entryWords.isEmpty() ? others : matching).add(Map.entry(label, entry.getValue()));
         }
         matching.addAll(others);
         List<String> parts = matching.stream().limit(REASON_ATTRIBUTES)
                 .map(e -> e.getKey() + ": " + e.getValue())
                 .toList();
         return parts.isEmpty() ? null : String.join("; ", parts);
+    }
+
+    /**
+     * T1174 — the label of each facet field in {@code vocabulary}, whose keys are
+     * the allow-list of a reason. A label read that fails falls back to the
+     * humanized field name; an empty vocabulary gives no reason at all.
+     */
+    private Map<String, String> reasonLabels(String siteName, String locale, Map<String, List<String>> vocabulary) {
+        if (vocabulary.isEmpty()) {
+            return Map.of();
+        }
+        Map<String, String> labels;
+        try {
+            labels = nlFilterService.facetLabels(siteName, locale);
+        } catch (RuntimeException e) {
+            log.warn("[CatalogKit] could not read the facet labels of site '{}': {}", siteName, e.getMessage());
+            labels = Map.of();
+        }
+        Map<String, String> reasonLabels = new HashMap<>();
+        for (String field : vocabulary.keySet()) {
+            String label = labels == null ? null : labels.get(field);
+            reasonLabels.put(field, label != null ? label : TurSNFieldLabel.orHumanized(null, field));
+        }
+        return reasonLabels;
     }
 
     private static Set<String> words(String text) {

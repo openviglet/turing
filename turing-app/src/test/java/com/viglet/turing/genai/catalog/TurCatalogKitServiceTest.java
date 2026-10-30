@@ -177,28 +177,50 @@ class TurCatalogKitServiceTest {
         assertEquals(List.of("Navigation"), result.unfilled());
     }
 
-    /** T1159 — each product's reason quotes its own attributes, the gap's words first. */
+    /** T1159 — each product's reason quotes its own facet values, the gap's words first, labelled (T1174). */
     @Test
     void eachProductsReasonComesFromItsOwnAttributes() {
         modelReplies("GAP: Shelter | lightweight tent | nights on the trail, light to carry");
+        Map<String, List<String>> vocabulary = new LinkedHashMap<>();
+        vocabulary.put("color", List.of("green"));
+        vocabulary.put("weight", List.of("1.2 kg, light"));
+        vocabulary.put("capacity", List.of("2 people", "3 people"));
+        when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
+                .thenReturn(vocabulary);
+        when(nlFilterService.facetLabels("outdoor", "en")).thenReturn(Map.of("color", "Colour", "weight", "Weight"));
+        Map<String, String> first = new LinkedHashMap<>();
+        first.put("site_key", "localhost");
+        first.put("color", "green");
+        first.put("weight", "1.2 kg, light");
+        first.put("capacity", "2 people");
         when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("lightweight tent"))).thenReturn(
                 new TurCatalogCopilotService.Retrieval(List.of(product("t1"), product("t2")), List.of(), 2, null,
-                        true, List.of(
-                                new java.util.LinkedHashMap<>(java.util.Map.of("color", "green")) {
-                                    {
-                                        put("weight", "1.2 kg, light");
-                                        put("capacity", "2 people");
-                                    }
-                                },
-                                java.util.Map.of("capacity", "3 people"))));
+                        true, List.of(first, Map.of("image", "http://x/tent.webp", "capacity", "3 people"))));
 
         TurCatalogKitService.Result result = service.plan("outdoor", "en", "a trip", null, null);
 
         List<TurCatalogKitService.KitProduct> products = result.stages().getFirst().products();
-        assertEquals("weight: 1.2 kg, light; color: green", products.get(0).reason(),
-                "the attribute sharing a word with the gap leads");
-        assertEquals("capacity: 3 people", products.get(1).reason());
+        assertEquals("Weight: 1.2 kg, light; Colour: green", products.get(0).reason(),
+                "the facet sharing a word with the gap leads");
+        assertEquals("Capacity: 3 people", products.get(1).reason(), "an unlabelled facet is humanized");
         assertNull(products.get(0).available(), "no availability field was named");
+    }
+
+    /** T1174 — a site key or an image URL is never a reason; no facet vocabulary, no reason. */
+    @Test
+    void aReasonUsesTheSitesFacetsOnly() {
+        TurCatalogKitService.Gap gap = new TurCatalogKitService.Gap("Shelter", "tent", "nights out");
+        Map<String, String> attributes = new LinkedHashMap<>();
+        attributes.put("site_key", "localhost");
+        attributes.put("image", "http://x/fairfield-grid-fleece-sky.webp");
+        attributes.put("product_cat", "Tents");
+        attributes.put("brand", "Acme");
+
+        assertEquals("Category: Tents; Brand: Acme", TurCatalogKitService.reason(attributes, gap, null,
+                Map.of("product_cat", "Category", "brand", "Brand")));
+        assertNull(TurCatalogKitService.reason(attributes, gap, null, Map.of()));
+        assertNull(TurCatalogKitService.reason(Map.of("site_key", "localhost"), gap, null,
+                Map.of("product_cat", "Category")));
     }
 
     /** T1159 — a named availability field marks, or drops, an unavailable product. */
