@@ -34,6 +34,9 @@ const messages = [];
 const availabilityField = 'stock_status';
 // The document type a journal post is indexed with, cited beside the kit as a guide.
 const guideTypes = [ 'post' ];
+// Only products are staged (D255, Turing T1175); a page never is. A Turing older than T1175
+// ignores the field, and the shop's word drops what is not a product (D241).
+const productTypes = [ 'product' ];
 
 /**
  * One staged product as the block shows it.
@@ -302,6 +305,7 @@ async function buildKit() {
 				availabilityField,
 				availability: 'MARK',
 				guideTypes,
+				productTypes,
 			},
 			{ csrf: false }
 		);

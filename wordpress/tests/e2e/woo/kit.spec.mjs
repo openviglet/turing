@@ -120,6 +120,7 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 		availabilityField: 'stock_status',
 		availability: 'MARK',
 		guideTypes: [ 'post' ],
+		productTypes: [ 'product' ],
 	} );
 	await expect(
 		kit.locator( '.viglet-dumont-copilot__stage h3' )
