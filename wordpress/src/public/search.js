@@ -198,7 +198,10 @@ export async function addToCart( productId ) {
 					'Content-Type': 'application/json',
 					Nonce: config.shop.nonce,
 				},
-				body: JSON.stringify( { id: productId, quantity: 1 } ),
+				body: JSON.stringify( {
+					id: await cartItemId( productId ),
+					quantity: 1,
+				} ),
 			}
 		);
 		const body = await response.json().catch( () => ( {} ) );
@@ -206,6 +209,36 @@ export async function addToCart( productId ) {
 	} catch {
 		return { ok: false, message: '' };
 	}
+}
+
+/**
+ * What goes in the cart for a product (D245): itself, or for a variable product (one sold in
+ * colours or sizes) its first variation the shop can sell, since WooCommerce adds a variation
+ * and never the product it belongs to. Without one, the product itself, and WooCommerce says
+ * why it cannot be added.
+ *
+ * @param {number} productId The product's post id.
+ * @return {Promise<number>} The id to add.
+ */
+async function cartItemId( productId ) {
+	const read = async ( id ) => {
+		const response = await window.fetch(
+			`${ config.shop.storeApi }products/${ id }`,
+			{ credentials: 'same-origin' }
+		);
+		return response.ok ? response.json() : null;
+	};
+	const product = await read( productId );
+	if ( 'variable' !== product?.type ) {
+		return productId;
+	}
+	for ( const { id } of product.variations || [] ) {
+		const variation = await read( id );
+		if ( variation?.is_purchasable && variation?.is_in_stock ) {
+			return id;
+		}
+	}
+	return productId;
 }
 
 /**

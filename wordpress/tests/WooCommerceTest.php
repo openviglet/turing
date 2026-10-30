@@ -193,4 +193,37 @@ final class WooCommerceTest extends PluginTestCase {
 
 		$this->assertSame( 'index', $this->options[ \Viglet_Dumont_Queue::OPTION ][77]['action'] ?? null );
 	}
+
+	public function test_a_variation_s_stock_change_queues_the_product_it_belongs_to(): void {
+		// D245: one colour of a variable product sold out; the variation is not indexed itself.
+		$variation = new WP_Post(
+			array(
+				'ID'          => 78,
+				'post_type'   => 'product_variation',
+				'post_status' => 'publish',
+				'post_parent' => 77,
+			)
+		);
+		Functions\when( 'get_post' )->alias( fn ( $id ) => 78 === $id ? $variation : $this->product );
+		Functions\when( 'viglet_dumont_get_settings' )->justReturn( $this->settings( array( 'auto_index' => 1 ) ) );
+		Functions\when( 'get_post_meta' )->justReturn( '' );
+		Functions\stubs(
+			array(
+				'wp_cache_delete'          => true,
+				'wp_is_post_revision'      => false,
+				'wp_next_scheduled'        => true,
+				'wp_schedule_single_event' => true,
+			)
+		);
+		Functions\when( 'update_option' )->alias(
+			function ( $name, $value ) {
+				$this->options[ $name ] = $value;
+				return true;
+			}
+		);
+
+		Viglet_Dumont_WooCommerce::stock_changed( 78 );
+
+		$this->assertSame( array( 77 ), array_keys( $this->options[ \Viglet_Dumont_Queue::OPTION ] ?? array() ) );
+	}
 }

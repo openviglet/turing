@@ -48,16 +48,23 @@ class Viglet_Dumont_WooCommerce {
 		}
 		add_action( 'woocommerce_product_set_stock_status', array( self::class, 'stock_changed' ) );
 		add_action( 'woocommerce_product_set_stock', array( self::class, 'stock_changed' ) );
+		add_action( 'woocommerce_variation_set_stock_status', array( self::class, 'stock_changed' ) );
+		add_action( 'woocommerce_variation_set_stock', array( self::class, 'stock_changed' ) );
 	}
 
 	/**
-	 * Queue a product whose stock changed.
+	 * Queue a product whose stock changed. A variation (one colour of a variable product) is
+	 * not indexed itself, so the product it belongs to is sent again (D245).
 	 *
 	 * @param int|WC_Product $product The product, or its id.
 	 */
 	public static function stock_changed( $product ): void {
 		$id   = $product instanceof WC_Product ? $product->get_id() : (int) $product;
 		$post = get_post( $id );
+		if ( $post instanceof WP_Post && 'product_variation' === $post->post_type ) {
+			$id   = (int) $post->post_parent;
+			$post = get_post( $id );
+		}
 		if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status ) {
 			return;
 		}

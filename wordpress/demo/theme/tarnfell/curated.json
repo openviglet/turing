@@ -42,7 +42,7 @@
 		"filter": "pa_use:Mountaineering",
 		"shows": "A filter by attribute narrows the tents to the ones for mountains.",
 		"first": "Blencathra mountain tent",
-		"count": 6
+		"count": 3
 	},
 	{
 		"locale": "pt_BR",
@@ -85,6 +85,6 @@
 		"filter": "pa_use:Montanhismo",
 		"shows": "Um filtro por atributo deixa só as barracas de montanha.",
 		"first": "Barraca de montanha Blencathra",
-		"count": 6
+		"count": 3
 	}
 ]

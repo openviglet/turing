@@ -5,6 +5,7 @@
  *
  * - three jackets: Rain (149.90, on sale from 199, red), Wool (89, blue) and Linen (39, out of
  *   stock, red), each with a SKU and the global attribute Color;
+ * - a variable Wool hat (25) in Red, sold out, and Blue (D245);
  * - products indexed, mapped with their price (as ranges), stock and color as facets.
  *
  * Prints JSON: { products: { rain, wool, linen } } post ids.
@@ -56,6 +57,41 @@ foreach ( $jackets as $key => list( $name, $sku, $regular, $sale, $stock, $color
 	$ids[ $key ] = $product->save();
 	wp_set_object_terms( $ids[ $key ], array( (int) $term['term_id'] ), 'pa_color' );
 }
+
+// A variable product (D245): one hat in two colours, Red sold out and Blue in stock, so the
+// cart has to be given the colour the shop can sell.
+$hat_id = wc_get_product_id_by_sku( 'WH-01' );
+$hat    = $hat_id ? wc_get_product( $hat_id ) : new WC_Product_Variable();
+$hat->set_name( 'Wool hat' );
+$hat->set_sku( 'WH-01' );
+$hat->set_description( 'A wool hat for the field, in red or blue.' );
+$hat->set_status( 'publish' );
+$colours = array();
+foreach ( array( 'Red', 'Blue' ) as $color ) {
+	$colours[ $color ] = term_exists( $color, 'pa_color' ) ?: wp_insert_term( $color, 'pa_color' );
+}
+$attribute = new WC_Product_Attribute();
+$attribute->set_id( wc_attribute_taxonomy_id_by_name( 'color' ) );
+$attribute->set_name( 'pa_color' );
+$attribute->set_options( array_map( static fn ( $term ) => (int) $term['term_id'], array_values( $colours ) ) );
+$attribute->set_visible( true );
+$attribute->set_variation( true );
+$hat->set_attributes( array( $attribute ) );
+$ids['hat'] = $hat->save();
+wp_set_object_terms( $ids['hat'], array_map( static fn ( $term ) => (int) $term['term_id'], array_values( $colours ) ), 'pa_color' );
+foreach ( array( 'Red' => 'outofstock', 'Blue' => 'instock' ) as $color => $stock ) {
+	$sku       = 'WH-01-' . strtoupper( $color );
+	$found     = wc_get_product_id_by_sku( $sku );
+	$variation = $found ? wc_get_product( $found ) : new WC_Product_Variation();
+	$variation->set_parent_id( $ids['hat'] );
+	$variation->set_sku( $sku );
+	$variation->set_attributes( array( 'pa_color' => get_term( (int) $colours[ $color ]['term_id'], 'pa_color' )->slug ) );
+	$variation->set_regular_price( '25' );
+	$variation->set_stock_status( $stock );
+	$variation->set_status( 'publish' );
+	$variation->save();
+}
+WC_Product_Variable::sync( $ids['hat'] );
 
 // A page with the Ask the catalog block (woo/copilot.spec.mjs); global-setup drafts it again.
 $ask_shop = get_page_by_path( 'ask-the-shop' );

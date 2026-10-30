@@ -144,10 +144,11 @@ for ( const { plan, gaps } of plans ) {
 		const cart = await page.evaluate( async () =>
 			( await window.fetch( '/?rest_route=/wc/store/v1/cart' ) ).json()
 		);
+		// By name: a product sold in colours goes in as one of its variations (D245).
 		expect(
-			cart.items.map( ( entry ) => entry.id ).sort(),
+			cart.items.map( ( entry ) => entry.name ).sort(),
 			'the cart holds one product per need'
-		).toEqual( chosen.map( ( p ) => postIdOf( p.id ) ).sort() );
+		).toEqual( chosen.map( ( p ) => p.title ).sort() );
 		// A kit runs past a thousand, so the total is grouped as the shop's locale writes it.
 		const total = new Intl.NumberFormat( 'en-US', {
 			style: 'currency',

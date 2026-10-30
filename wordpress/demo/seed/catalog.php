@@ -1,9 +1,10 @@
 <?php
 /**
  * The demo storefront's catalog (D194), run on the demo's own WordPress by `run-docker.cmd demo`,
- * and by the browser suite's `demo-setup` when it is missing: the Tarnfell pages (setup.php), then about 150 products of a fictional brand
- * across eight categories, each with colour, material, use and size attributes, a price, some
- * on sale and some out of stock, and a description that answers what a shopper asks (how
+ * and by the browser suite's `demo-setup` when it is missing: the Tarnfell pages (setup.php), then about 45 products of a fictional brand
+ * across eight categories, each sold in its colours (variations, D245) and with material, use
+ * and size attributes, a price, some colours on sale and some out of stock, and a description
+ * that answers what a shopper asks (how
  * waterproof, how heavy, how warm, how to wash it). No reviews or ratings: invented ones would
  * read as genuine.
  *
@@ -11,7 +12,7 @@
  * as facets and a few synonyms are set in Turing. The searches that show each feature are in
  * the theme's curated.json, which demo/curated.spec.mjs checks.
  *
- * Prints JSON: { products: <count>, guides: <count>, pages: { … } }.
+ * Prints JSON: { products: <count>, colours: <count>, guides: <count>, pages: { … } }.
  *
  * @package Viglet_Dumont
  */
@@ -237,47 +238,68 @@ foreach ( $categories as $slug => $name ) {
 	}
 }
 
+// One variable product per design, its colours as variations (D245): a shop sells a jacket in
+// four colours, not four jackets, so search, compare and the kit show the design once.
 $count = 0;
 foreach ( $models as $m => list( $category, $model, $price, $materials, $uses, $sizes, $colours, $lead, $facts ) ) {
 	list( $title, $lead, $facts ) = $pt['models'][ $model ] ?? array( $model, $lead, $facts );
 	$materials                    = array_map( static fn ( $value ) => $tr( 'terms', $value ), $materials );
 	$uses                         = array_map( static fn ( $value ) => $tr( 'terms', $value ), $uses );
 	$sizes                        = array_map( static fn ( $value ) => $tr( 'terms', $value ), $sizes );
+	$names                        = array_map( static fn ( $value ) => $tr( 'terms', $value ), $colours );
+
+	// The SKUs keep the English colour, so a product is found again in either language.
+	$sku     = sprintf( 'TF-%02d', $m + 1 );
+	$id      = wc_get_product_id_by_sku( $sku );
+	$product = $id ? wc_get_product( $id ) : new WC_Product_Variable();
+	$product->set_name( $title );
+	$product->set_sku( $sku );
+	$product->set_short_description( $lead );
+	$product->set_description( "{$lead}\n\n{$facts}\n\n" . $tr( 'labels', 'Colour' ) . ': ' . implode( ', ', $names ) . '. ' . $tr( 'labels', 'Materials' ) . ': ' . implode( ', ', $materials ) . ".\n\n" . $tr( 'labels', 'Care' ) . ": {$care[ $category ]}" );
+	$product->set_category_ids( array( $category_ids[ $category ] ) );
+	$product->set_image_id( tarnfell_product_image( $m, $model, $category, $colours[0], "{$title}, " . mb_strtolower( $names[0] ) ) );
+	$product->set_status( 'publish' );
+
+	$attributes = array();
+	foreach ( array( 'color' => $names, 'material' => $materials, 'use' => $uses, 'size' => $sizes ) as $slug => $values ) {
+		$ids       = array_map( static fn ( $value ) => $term( "pa_{$slug}", $value ), $values );
+		$attribute = new WC_Product_Attribute();
+		$attribute->set_id( wc_attribute_taxonomy_id_by_name( $slug ) );
+		$attribute->set_name( "pa_{$slug}" );
+		$attribute->set_options( $ids );
+		$attribute->set_visible( true );
+		$attribute->set_variation( 'color' === $slug );
+		$attributes[] = $attribute;
+	}
+	$product->set_attributes( $attributes );
+	$saved = $product->save();
+	foreach ( array( 'color' => $names, 'material' => $materials, 'use' => $uses, 'size' => $sizes ) as $slug => $values ) {
+		wp_set_object_terms( $saved, $values, "pa_{$slug}" );
+	}
+
 	foreach ( $colours as $c => $colour_en ) {
 		++$count;
-		// The SKU keeps the English colour, so a product is found again in either language.
-		$sku     = sprintf( 'TF-%02d-%s', $m + 1, strtoupper( substr( $colour_en, 0, 3 ) ) );
-		$colour  = $tr( 'terms', $colour_en );
-		$id      = wc_get_product_id_by_sku( $sku );
-		$product = $id ? wc_get_product( $id ) : new WC_Product_Simple();
-		$product->set_name( "{$title}, " . mb_strtolower( $colour ) );
-		$product->set_sku( $sku );
-		$product->set_short_description( $lead );
-		$product->set_description( "{$lead}\n\n{$facts}\n\n" . $tr( 'labels', 'Colour' ) . ": {$colour}. " . $tr( 'labels', 'Materials' ) . ': ' . implode( ', ', $materials ) . ".\n\n" . $tr( 'labels', 'Care' ) . ": {$care[ $category ]}" );
-		$product->set_regular_price( (string) $price );
-		// One colour in five on sale, a fifth off; one product in eleven sold out.
-		$product->set_sale_price( 0 === ( $m + $c ) % 5 ? number_format( $price * 0.8, 2, '.', '' ) : '' );
-		$product->set_stock_status( 0 === $count % 11 ? 'outofstock' : 'instock' );
-		$product->set_category_ids( array( $category_ids[ $category ] ) );
-		$product->set_image_id( tarnfell_product_image( $m, $model, $category, $colour_en, "{$title}, " . mb_strtolower( $colour ) ) );
-		$product->set_status( 'publish' );
-
-		$attributes = array();
-		foreach ( array( 'color' => array( $colour ), 'material' => $materials, 'use' => $uses, 'size' => $sizes ) as $slug => $values ) {
-			$ids       = array_map( static fn ( $value ) => $term( "pa_{$slug}", $value ), $values );
-			$attribute = new WC_Product_Attribute();
-			$attribute->set_id( wc_attribute_taxonomy_id_by_name( $slug ) );
-			$attribute->set_name( "pa_{$slug}" );
-			$attribute->set_options( $ids );
-			$attribute->set_visible( true );
-			$attributes[] = $attribute;
+		$colour_sku = sprintf( 'TF-%02d-%s', $m + 1, strtoupper( substr( $colour_en, 0, 3 ) ) );
+		$found      = wc_get_product_id_by_sku( $colour_sku );
+		$variation  = $found ? wc_get_product( $found ) : null;
+		// A demo seeded before D245 sold each colour as a product of its own: it goes.
+		if ( $variation && ! $variation->is_type( 'variation' ) ) {
+			$variation->delete( true );
+			$variation = null;
 		}
-		$product->set_attributes( $attributes );
-		$saved = $product->save();
-		foreach ( array( 'color' => array( $colour ), 'material' => $materials, 'use' => $uses, 'size' => $sizes ) as $slug => $values ) {
-			wp_set_object_terms( $saved, $values, "pa_{$slug}" );
-		}
+		$variation = $variation ?? new WC_Product_Variation();
+		$variation->set_parent_id( $saved );
+		$variation->set_sku( $colour_sku );
+		$variation->set_attributes( array( 'pa_color' => get_term( $term( 'pa_color', $names[ $c ] ), 'pa_color' )->slug ) );
+		$variation->set_regular_price( (string) $price );
+		// One colour in five on sale, a fifth off; one colour in eleven sold out.
+		$variation->set_sale_price( 0 === ( $m + $c ) % 5 ? number_format( $price * 0.8, 2, '.', '' ) : '' );
+		$variation->set_stock_status( 0 === $count % 11 ? 'outofstock' : 'instock' );
+		$variation->set_image_id( tarnfell_product_image( $m, $model, $category, $colour_en, "{$title}, " . mb_strtolower( $names[ $c ] ) ) );
+		$variation->set_status( 'publish' );
+		$variation->save();
 	}
+	WC_Product_Variable::sync( $saved );
 }
 
 // The trail journal: guides and how-tos that name the products above.
@@ -347,7 +369,8 @@ foreach ( $pt['synonyms'] ?? array(
 
 echo wp_json_encode(
 	array(
-		'products' => $count,
+		'products' => count( $models ),
+		'colours'  => $count,
 		'guides'   => count( $guides ),
 		'pages'    => $pages,
 	)

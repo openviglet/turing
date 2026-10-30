@@ -41,7 +41,7 @@ const portuguese = {
 	1: 'Chega: as buscas populares mostram o catálogo',
 	2: 'Diz o que precisa, numa frase',
 	3: 'Pergunta ao Assistente do site e recebe a resposta com as fontes',
-	4: 'Compara três jaquetas lado a lado',
+	4: 'Compara três produtos lado a lado',
 	5: 'Monta o kit e o põe no carrinho',
 	6: 'Confere um item: Relacionados e uma pergunta sobre ele',
 	7: 'Compra, em modo de teste',

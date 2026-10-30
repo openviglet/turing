@@ -301,7 +301,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		}
 	);
 
-	await chapter( '4. Compares three jackets side by side', async () => {
+	await chapter( '4. Compares three products side by side', async () => {
 		await search( page, say.compare );
 		const boxes = block
 			.locator( '.viglet-dumont-search__results' )

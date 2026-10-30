@@ -95,6 +95,30 @@ test( 'a product card shows its price and adds the product to the cart', async (
 	).not.toHaveText( /Added|^$/ );
 } );
 
+test( 'a product sold in colours adds the colour the shop can sell', async ( {
+	page,
+	seed,
+} ) => {
+	// D245: WooCommerce adds a variation, never the product it belongs to; Red is sold out.
+	await page.goto(
+		`/?page_id=${ seed.searchPageId }&q=hat&fq[]=type:product`
+	);
+	const hat = results( page ).filter( { hasText: 'Wool hat' } );
+	// The shop's price is filled in once the block has taken over the card it rendered.
+	await expect( hat.locator( '.viglet-dumont-search__price' ) ).toHaveText(
+		/\$25\.00/
+	);
+	await hat.getByRole( 'button', { name: 'Add to cart: Wool hat' } ).click();
+	await expect(
+		hat.locator( '.viglet-dumont-search__cart-status' )
+	).toHaveText( 'Added to your cart.' );
+	const cart = await page.evaluate( async () =>
+		( await window.fetch( '/?rest_route=/wc/store/v1/cart' ) ).json()
+	);
+	const item = cart.items.find( ( entry ) => 'Wool hat' === entry.name );
+	expect( item?.variation.map( ( v ) => v.value ) ).toEqual( [ 'Blue' ] );
+} );
+
 test( 'out of stock is a facet value, and color is one too', async ( {
 	page,
 	seed,
