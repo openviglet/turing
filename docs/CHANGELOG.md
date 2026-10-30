@@ -976,6 +976,7 @@
 - **T1177** — On Lucene the query as typed, as a phrase on the site's title field, adds a 10x boost, so a guide titled with the exact phrase again outranks products matching only a synonym.
 - **T1178** — The SN chat also takes documentId, its chunks leading the context and sources with the rest kept as alternatives, and the vanilla SDK gains postCopilot and carries documentId in both calls.
 - **T1179** — Search and click metrics group a term by dropping diacritics only, never letters, and every report and the latest searches show the spelling visitors typed most.
+- **T1185 (Elasticsearch)** — Elasticsearch adds a match_phrase of the query on the site's TEXT title, boosted 10 like Lucene, under one shared plain-phrase rule; an IT proves the guide ranks first.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

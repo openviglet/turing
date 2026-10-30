@@ -37,6 +37,7 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.lucene.TurLuceneCustomFacets;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.TurSNQueryRelaxer;
 import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSort;
 import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum;
@@ -344,7 +345,7 @@ public class TurElasticsearch {
      * goes out as it always did.
      */
     private Query buildQuery(TurSNSite turSNSite, TurSEParameters turSEParameters) {
-        Query query = buildTextQuery(turSEParameters);
+        Query query = withTitlePhraseBoost(turSNSite, turSEParameters.getQuery(), buildTextQuery(turSEParameters));
         List<Query> filters = filters(turSNSite, turSEParameters);
         if (filters.isEmpty()) {
             return query;
@@ -391,6 +392,32 @@ public class TurElasticsearch {
             }
         });
         return byName;
+    }
+
+    /** T1185 — what a title holding the query as a phrase adds, as on Lucene (T1177). */
+    static final float TITLE_PHRASE_BOOST = 10f;
+
+    /**
+     * T1185 — Lucene's title-phrase boost (T1177) on Elasticsearch: a
+     * {@code match_phrase} of the query as typed on the site's title field,
+     * boosted beside the text query, so a guide titled with the exact phrase
+     * outranks documents matching only a synonym or its words apart. A boost only,
+     * for a plain phrase ({@link TurSNQueryRelaxer#isPlainPhrase}) on a TEXT title.
+     */
+    Query withTitlePhraseBoost(TurSNSite turSNSite, String queryString, Query text) {
+        if (!TurSNQueryRelaxer.isPlainPhrase(queryString)) {
+            return text;
+        }
+        String titleField = StringUtils.hasText(turSNSite.getDefaultTitleField())
+                ? turSNSite.getDefaultTitleField()
+                : TurSNFieldName.TITLE;
+        TurSNSiteFieldExt ext = enabledFieldsByName(turSNSite).get(titleField);
+        if (ext == null || ext.getType() != TurSEFieldType.TEXT) {
+            return text;
+        }
+        String phrase = queryString.trim();
+        return Query.of(q -> q.bool(b -> b.must(text)
+                .should(s -> s.matchPhrase(m -> m.field(titleField).query(phrase).boost(TITLE_PHRASE_BOOST)))));
     }
 
     private Query buildTextQuery(TurSEParameters turSEParameters) {

@@ -491,6 +491,58 @@ class TurSNEngineConformanceIT {
         assertThat(new HashSet<>(solr(strict, true))).as("Solr, relaxed").isEqualTo(expected);
     }
 
+    /**
+     * T1185 — a title holding the query as a phrase ranks first on Elasticsearch,
+     * as on Lucene (T1177), above a document that repeats the words in its body.
+     */
+    @org.junit.jupiter.api.Test
+    void aTitleHoldingTheQueryAsAPhraseRanksFirstOnElasticsearch() throws Exception {
+        String index = "turing_title_phrase_it";
+        String url = "http://" + ES.getHost() + ":" + ES.getMappedPort(9200);
+        Map<String, TurSEFieldType> types = new LinkedHashMap<>();
+        types.put(TurSNFieldName.ID, TurSEFieldType.STRING);
+        types.put("title", TurSEFieldType.TEXT);
+        types.put("text", TurSEFieldType.TEXT);
+        TurElasticsearchUtils.createIndex(url, index, types);
+        ElasticsearchClient client = client(url);
+        TurElasticsearchInstance instance = new TurElasticsearchInstance(client, URI.create(url).toURL(), index);
+        TurSNSite phraseSite = new TurSNSite();
+        phraseSite.setId("site-phrase");
+        phraseSite.setName("phrase");
+        List<TurSNSiteFieldExt> fields = types.entrySet().stream().map(e -> {
+            TurSNSiteFieldExt ext = new TurSNSiteFieldExt();
+            ext.setName(e.getKey());
+            ext.setType(e.getValue());
+            return ext;
+        }).toList();
+        TurSNSiteFieldExtRepository fieldRepository = mock(TurSNSiteFieldExtRepository.class);
+        when(fieldRepository.findByTurSNSiteAndEnabled(any(), anyInt())).thenReturn(fields);
+        when(fieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(), anyInt()))
+                .thenReturn(List.of());
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        when(siteRepository.findByNameIgnoreCase("phrase")).thenReturn(Optional.of(phraseSite));
+        TurSNSiteCustomSortRepository sortRepository = mock(TurSNSiteCustomSortRepository.class);
+        TurElasticsearch engine = new TurElasticsearch(siteRepository, fieldRepository, sortRepository,
+                mock(TurLuceneCustomFacets.class));
+        engine.indexing(instance, phraseSite, Map.of(TurSNFieldName.ID, "guide", "title",
+                "How to choose a waterproof jacket", "text", "Ratings, breathability and fit."));
+        engine.indexing(instance, phraseSite, Map.of(TurSNFieldName.ID, "shell", "title",
+                "Jacket shell, waterproof and light", "text",
+                "A waterproof jacket. This waterproof jacket is a jacket that stays waterproof."));
+        client.indices().refresh(r -> r.index(index));
+
+        TurSNSiteSearchContext context = new TurSNSiteSearchContext("phrase", new TurSNConfig(),
+                new TurSEParameters(request(p -> p.setQ("waterproof jacket"))), java.util.Locale.US,
+                URI.create("http://localhost/search"));
+        List<String> ids = engine.retrieveElasticsearchFromSN(instance, context)
+                .orElseThrow(() -> new AssertionError("Elasticsearch answered nothing"))
+                .getResults().stream()
+                .map(result -> result.getFields().get(TurSNFieldName.ID).toString())
+                .toList();
+
+        assertThat(ids).containsExactly("guide", "shell");
+    }
+
     static Stream<Arguments> missingPlacements() {
         return Stream.of(Arguments.of("closingSoonest", true), Arguments.of("openEndedFirst", false));
     }

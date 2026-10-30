@@ -83,6 +83,16 @@ public final class TurSNQueryRelaxer {
         return total < 2 || kept.isEmpty() ? Optional.empty() : Optional.of(String.join(" ", kept));
     }
 
+    /**
+     * T1185 — whether {@code query} reads as a plain phrase of two words or more,
+     * using none of the engines' syntax: the queries every engine boosts when a
+     * title holds them as typed, so Lucene, Solr and Elasticsearch agree on which.
+     */
+    public static boolean isPlainPhrase(String query) {
+        return query != null && !query.isBlank() && query.trim().split("\\s+").length >= 2
+                && !usesSyntax(query) && query.chars().noneMatch(c -> "?\\+-!&|/".indexOf(c) >= 0);
+    }
+
     private static boolean usesSyntax(String query) {
         for (char c : query.toCharArray()) {
             if ("\"*:()[]{}~^".indexOf(c) >= 0) {

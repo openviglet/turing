@@ -583,8 +583,7 @@ public class TurLuceneQueryBuilder {
      * the engine's syntax, or a title field that holds no positions.
      */
     private Optional<Query> titlePhraseBoost(String queryStr, TurSNSite turSNSite, Locale locale) {
-        if (!StringUtils.hasText(queryStr) || queryStr.trim().split("\\s+").length < 2
-                || queryStr.chars().anyMatch(c -> "\"*:()[]{}~^?\\+-!&|/".indexOf(c) >= 0)) {
+        if (!com.viglet.turing.sn.TurSNQueryRelaxer.isPlainPhrase(queryStr)) {
             return Optional.empty();
         }
         String titleField = StringUtils.hasText(turSNSite.getDefaultTitleField())
