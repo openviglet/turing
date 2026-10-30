@@ -18,6 +18,18 @@ $viglet_dumont_id      = wp_unique_id( 'viglet-dumont-copilot-' );
 $viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' ) ? (string) $attributes['heading'] : __( 'Ask the catalog', 'viglet-dumont' );
 $viglet_dumont_kit     = (bool) ( $attributes['kit'] ?? true );
 
+// On a product's page (or any indexed post's), the question is about it (D242): Turing pins
+// its document first, and the box says what "this" is.
+$viglet_dumont_subject = is_singular() ? get_post() : null;
+$viglet_dumont_indexer = new Viglet_Dumont_Indexer();
+if ( ! $viglet_dumont_subject instanceof WP_Post || ! $viglet_dumont_indexer->should_index( $viglet_dumont_subject ) ) {
+	$viglet_dumont_subject = null;
+}
+$viglet_dumont_ask = $viglet_dumont_subject
+	/* translators: %s: the name of the product or post the page shows. */
+	? sprintf( __( 'Ask about %s', 'viglet-dumont' ), get_the_title( $viglet_dumont_subject ) )
+	: __( 'What are you looking for?', 'viglet-dumont' );
+
 wp_interactivity_state(
 	'viglet-dumont/copilot',
 	array(
@@ -50,7 +62,8 @@ wp_interactivity_state(
 		),
 		'kitBusy'      => false,
 		'kitStatus'    => '',
-		'askLabel'     => __( 'What are you looking for?', 'viglet-dumont' ),
+		'askLabel'     => $viglet_dumont_ask,
+		'documentId'   => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
 		'askButton'    => __( 'Ask', 'viglet-dumont' ),
 		'planLabel'    => __( 'Describe your plan', 'viglet-dumont' ),
 		'planButton'   => __( 'Build my kit', 'viglet-dumont' ),
@@ -154,7 +167,7 @@ wp_interactivity_state(
 	</div>
 	<?php endif; ?>
 	<form class="viglet-dumont-copilot__form" data-wp-on--submit="actions.ask">
-		<label for="<?php echo esc_attr( $viglet_dumont_id ); ?>" data-wp-text="state.formLabel"><?php esc_html_e( 'What are you looking for?', 'viglet-dumont' ); ?></label>
+		<label for="<?php echo esc_attr( $viglet_dumont_id ); ?>" data-wp-text="state.formLabel"><?php echo esc_html( $viglet_dumont_ask ); ?></label>
 		<input
 			type="text"
 			id="<?php echo esc_attr( $viglet_dumont_id ); ?>"

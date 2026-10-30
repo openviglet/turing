@@ -40,7 +40,8 @@ const words = {
 			plan: 'Describe your plan',
 			build: 'Build my kit',
 			cartTotal: 'Cart total:',
-			question: 'What are you looking for?',
+			// On a product's page the box names the product (D242).
+			question: /^Ask about /,
 			ask: 'Ask',
 			nativeNothing: 'No results found.',
 			period: 'Period',
@@ -86,7 +87,7 @@ const words = {
 			plan: 'Descreva seu plano',
 			build: 'Montar meu kit',
 			cartTotal: 'Total do carrinho:',
-			question: 'O que você procura?',
+			question: /^Pergunte sobre /,
 			ask: 'Perguntar',
 			nativeNothing: 'Nenhum resultado encontrado.',
 			period: 'Período',

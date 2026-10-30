@@ -154,7 +154,14 @@ const { state } = store( 'viglet-dumont/copilot', {
 			try {
 				answer = await client.post(
 					`/sn/${ site }/copilot`,
-					{ messages, locale: config.locale },
+					{
+						messages,
+						locale: config.locale,
+						// The product on the page, answered about first (D242, Turing T1178).
+						...( state.documentId
+							? { documentId: state.documentId }
+							: {} ),
+					},
 					{ csrf: false }
 				);
 			} catch {

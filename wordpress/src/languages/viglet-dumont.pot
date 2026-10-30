@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-30T12:46:25+00:00\n"
+"POT-Creation-Date: 2026-10-30T22:16:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -517,15 +517,25 @@ msgstr ""
 msgid "Ask the catalog"
 msgstr ""
 
-#. translators: %s: the product's name.
+#. translators: %s: the name of the product or post the page shows.
 #: src/blocks/copilot/render.php:30
+#, php-format
+msgid "Ask about %s"
+msgstr ""
+
+#: src/blocks/copilot/render.php:31
+msgid "What are you looking for?"
+msgstr ""
+
+#. translators: %s: the product's name.
+#: src/blocks/copilot/render.php:42
 #: src/blocks/search/render.php:90
 #, php-format
 msgid "Add to cart: %s"
 msgstr ""
 
 #. translators: %s: a product's name.
-#: src/blocks/copilot/render.php:33
+#: src/blocks/copilot/render.php:45
 #: src/blocks/related/render.php:114
 #: src/blocks/search/render.php:94
 #, php-format
@@ -533,128 +543,123 @@ msgid "Compare %s"
 msgstr ""
 
 #. translators: %d: how many products, two to four.
-#: src/blocks/copilot/render.php:35
+#: src/blocks/copilot/render.php:47
 #: src/blocks/related/render.php:53
 #: src/blocks/search/render.php:92
 #, php-format
 msgid "Compare %d products"
 msgstr ""
 
-#: src/blocks/copilot/render.php:36
+#: src/blocks/copilot/render.php:48
 #: src/blocks/search/render.php:95
 msgid "Added to your cart."
 msgstr ""
 
-#: src/blocks/copilot/render.php:37
+#: src/blocks/copilot/render.php:49
 #: src/blocks/search/render.php:96
 msgid "It could not be added to the cart."
 msgstr ""
 
-#: src/blocks/copilot/render.php:38
+#: src/blocks/copilot/render.php:50
 msgid "Looking through the catalog…"
 msgstr ""
 
-#: src/blocks/copilot/render.php:39
+#: src/blocks/copilot/render.php:51
 msgid "The catalog could not answer right now."
 msgstr ""
 
-#: src/blocks/copilot/render.php:40
+#: src/blocks/copilot/render.php:52
 msgid "Nothing in the catalog matches that."
 msgstr ""
 
-#: src/blocks/copilot/render.php:53
-#: src/blocks/copilot/render.php:157
-msgid "What are you looking for?"
-msgstr ""
-
-#: src/blocks/copilot/render.php:54
-#: src/blocks/copilot/render.php:166
+#: src/blocks/copilot/render.php:67
+#: src/blocks/copilot/render.php:179
 msgid "Ask"
 msgstr ""
 
-#: src/blocks/copilot/render.php:55
+#: src/blocks/copilot/render.php:68
 msgid "Describe your plan"
 msgstr ""
 
-#: src/blocks/copilot/render.php:56
+#: src/blocks/copilot/render.php:69
 msgid "Build my kit"
 msgstr ""
 
-#: src/blocks/copilot/render.php:57
+#: src/blocks/copilot/render.php:70
 msgid "Putting your kit together…"
 msgstr ""
 
-#: src/blocks/copilot/render.php:58
+#: src/blocks/copilot/render.php:71
 msgid "The catalog has nothing for that plan."
 msgstr ""
 
 #. translators: %s: the needs the catalog has no product for, comma-separated.
-#: src/blocks/copilot/render.php:60
+#: src/blocks/copilot/render.php:73
 #, php-format
 msgid "Nothing in the catalog yet for: %s."
 msgstr ""
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:62
+#: src/blocks/copilot/render.php:75
 #, php-format
 msgid "Keep %s in the kit"
 msgstr ""
 
 #. translators: %d: how many products.
-#: src/blocks/copilot/render.php:64
+#: src/blocks/copilot/render.php:77
 #, php-format
 msgid "Add %d products to the cart"
 msgstr ""
 
-#: src/blocks/copilot/render.php:65
+#: src/blocks/copilot/render.php:78
 msgid "Add 1 product to the cart"
 msgstr ""
 
 #. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
-#: src/blocks/copilot/render.php:67
+#: src/blocks/copilot/render.php:80
 #, php-format
 msgid "Added %1$d to your cart. Cart total: %2$s."
 msgstr ""
 
 #. translators: 1: how many were added, 2: how many were asked for.
-#: src/blocks/copilot/render.php:69
+#: src/blocks/copilot/render.php:82
 #, php-format
 msgid "Added %1$d of %2$d to your cart; the rest could not be added."
 msgstr ""
 
-#: src/blocks/copilot/render.php:83
+#: src/blocks/copilot/render.php:96
 msgid "Mode"
 msgstr ""
 
-#: src/blocks/copilot/render.php:84
+#: src/blocks/copilot/render.php:97
 msgid "Ask a question"
 msgstr ""
 
-#: src/blocks/copilot/render.php:85
+#: src/blocks/copilot/render.php:98
 msgid "Plan a kit"
 msgstr ""
 
-#: src/blocks/copilot/render.php:99
+#: src/blocks/copilot/render.php:112
 #: src/blocks/search/parts/main.php:72
 msgid "Was"
 msgstr ""
 
-#: src/blocks/copilot/render.php:101
+#: src/blocks/copilot/render.php:114
 #: src/blocks/search/parts/main.php:75
 msgid "Add to cart"
 msgstr ""
 
-#: src/blocks/copilot/render.php:105
+#: src/blocks/copilot/render.php:118
 #: src/blocks/related/render.php:115
 #: src/blocks/search/parts/main.php:79
 msgid "Compare"
 msgstr ""
 
-#: src/blocks/copilot/render.php:134
+#: src/blocks/copilot/render.php:147
 msgid "Out of stock"
 msgstr ""
 
-#: src/blocks/copilot/render.php:143
+#: src/blocks/copilot/render.php:156
 msgid "Guides for this plan"
 msgstr ""
 
@@ -809,8 +814,8 @@ msgstr ""
 #: src/blocks/search/render.php:112
 #: src/includes/class-viglet-dumont-native-search.php:240
 #: src/includes/class-viglet-dumont-native-search.php:242
-#: src/includes/class-viglet-dumont-native-search.php:412
-#: src/includes/class-viglet-dumont-native-search.php:586
+#: src/includes/class-viglet-dumont-native-search.php:410
+#: src/includes/class-viglet-dumont-native-search.php:584
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -1087,8 +1092,8 @@ msgstr ""
 
 #: src/includes/class-viglet-dumont-compare.php:69
 #: src/includes/class-viglet-dumont-search-block.php:107
-#: src/includes/class-viglet-dumont-woocommerce.php:99
-#: src/includes/class-viglet-dumont-woocommerce.php:131
+#: src/includes/class-viglet-dumont-woocommerce.php:106
+#: src/includes/class-viglet-dumont-woocommerce.php:138
 msgid "Price"
 msgstr ""
 
@@ -1109,16 +1114,16 @@ msgstr ""
 msgid "Rating"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:108
+#: src/includes/class-viglet-dumont-compare.php:118
 msgid "Two products or more are needed to compare."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:133
+#: src/includes/class-viglet-dumont-compare.php:144
 #: src/includes/class-viglet-dumont-insights.php:155
 msgid "Turing wrote no summary."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:139
+#: src/includes/class-viglet-dumont-compare.php:150
 msgid "The summary named a figure the table does not hold, so it is not shown."
 msgstr ""
 
@@ -1510,33 +1515,33 @@ msgstr ""
 msgid "Only what this plugin added can be removed here; change the rest in Turing's console."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:100
+#: src/includes/class-viglet-dumont-woocommerce.php:107
 msgid "Regular price"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:101
+#: src/includes/class-viglet-dumont-woocommerce.php:108
 msgid "Sale price"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:102
+#: src/includes/class-viglet-dumont-woocommerce.php:109
 msgid "Stock status"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:103
+#: src/includes/class-viglet-dumont-woocommerce.php:110
 msgid "SKU"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:104
+#: src/includes/class-viglet-dumont-woocommerce.php:111
 msgid "Average rating"
 msgstr ""
 
 #. translators: %s: a product field, e.g. Price.
-#: src/includes/class-viglet-dumont-woocommerce.php:111
+#: src/includes/class-viglet-dumont-woocommerce.php:118
 #, php-format
 msgid "Product: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:150
+#: src/includes/class-viglet-dumont-woocommerce.php:157
 msgid "Stock"
 msgstr ""
 
