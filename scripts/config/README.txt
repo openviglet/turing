@@ -1,7 +1,7 @@
-Viglet Turing ES - Distribution
+Viglet Turing - Distribution
 ================================
 
-Viglet Turing ES is an open-source enterprise search platform powered by AI
+Viglet Turing is an open-source enterprise search platform powered by AI
 that enables semantic navigation, content indexing, and intelligent search.
 
 Prerequisites
@@ -12,7 +12,7 @@ Directory Structure
 -------------------
   turing-install/
   ├── bin/                              Start scripts
-  │   └── turing.sh/.bat               Start Turing ES
+  │   └── turing.sh/.bat               Start Turing
   ├── server/                           Application server
   │   ├── viglet-turing.jar             Main application (Spring Boot)
   │   └── viglet-turing.properties      Configuration (edit this!)
@@ -26,11 +26,11 @@ Quick Start
 -----------
 1. Edit server/viglet-turing.properties with your database settings.
 
-2. Start Turing ES (Linux/macOS):
+2. Start Turing (Linux/macOS):
      chmod +x bin/turing.sh
      ./bin/turing.sh
 
-   Start Turing ES (Windows):
+   Start Turing (Windows):
      bin\turing.bat
 
 3. Open http://localhost:2700 in your browser.

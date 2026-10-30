@@ -20,10 +20,10 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- 📋 **T1181** (deps: —) **The Linux download is still named Turing-ES-x86_64.AppImage, with the acronym the product name dropped** — The download is the last place a visitor meets the old name, and it reads as another or older product. → §CLXI.2
 - 📋 **T1182** (deps: —) **A patch release's notes are only the Dependabot pull request list, saying nothing a user would notice** — The release page is where an evaluator checks what changed, and the notes it shows say nothing about the product. → §CLXI.3
 - 📋 **T1183** (deps: T1180 ✅) **turing-ce still reads as the live repository, with the old ES name and addresses and no notice pointing elsewhere** — Two repositories for one product split the stars and send visitors to the stale one. → §CLXI.4
 - 📋 **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — A demo that opens without installing is what every launch channel is missing, and the playground already exists. → §CLXI.5
+- 📋 **T1186** (deps: —) **The console, the report email and the SDK and CLI texts still name the product Viglet Turing ES** — A visitor who installs the renamed download then logs into the old name, and the brand rule in the roadmap skill still asks for it. → §CLXI.6
 
 ## Done when — T1133
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # --------------------------------------------------------------------------
 # package-dist.sh
-# Builds Turing ES from source and creates distribution packages:
+# Builds Turing from source and creates distribution packages:
 #   - turing-install.zip    (portable, works on Linux and Windows)
-#   - Turing-ES.AppImage    (Linux self-contained executable)
+#   - Turing.AppImage    (Linux self-contained executable)
 #   - turing-install.exe    (Windows installer, if makensis is available)
 #
 # Usage:  ./scripts/package-dist.sh [--skip-build]
@@ -26,7 +26,7 @@ cd "$PROJECT_ROOT"
 
 # --------------- Build ---------------
 if [ "$SKIP_BUILD" = false ]; then
-  echo "==> Building Turing ES..."
+  echo "==> Building Turing..."
   ./mvnw clean install -DskipTests -Dgpg.skip=true -Dturing.open-browser=false
 fi
 
@@ -86,7 +86,7 @@ echo "    $(du -h "$ZIP_OUTPUT" | cut -f1)"
 #  2. AppImage
 # =====================================================================
 echo "==> Preparing AppImage..."
-APPDIR="${PROJECT_ROOT}/target/Turing-ES.AppDir"
+APPDIR="${PROJECT_ROOT}/target/Turing.AppDir"
 rm -rf "$APPDIR"
 mkdir -p "$APPDIR/usr/lib/turing"
 
@@ -112,7 +112,7 @@ if [ ! -f "$APPIMAGETOOL" ]; then
   chmod +x "$APPIMAGETOOL"
 fi
 
-APPIMAGE_OUTPUT="${PROJECT_ROOT}/target/Turing-ES-${ARCH}.AppImage"
+APPIMAGE_OUTPUT="${PROJECT_ROOT}/target/Turing-${ARCH}.AppImage"
 ARCH="$ARCH" "$APPIMAGETOOL" "$APPDIR" "$APPIMAGE_OUTPUT"
 chmod +x "$APPIMAGE_OUTPUT"
 echo "    $(du -h "$APPIMAGE_OUTPUT" | cut -f1)"
@@ -132,4 +132,4 @@ fi
 # =====================================================================
 echo ""
 echo "==> All done. Outputs in target/:"
-ls -lh "${PROJECT_ROOT}/target/${DIST_NAME}".{zip,exe} "${PROJECT_ROOT}/target/"Turing-ES-*.AppImage 2>/dev/null || true
+ls -lh "${PROJECT_ROOT}/target/${DIST_NAME}".{zip,exe} "${PROJECT_ROOT}/target/"Turing-*.AppImage 2>/dev/null || true

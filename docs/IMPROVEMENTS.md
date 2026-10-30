@@ -2340,23 +2340,6 @@ patch there so it becomes Latest, and move the README's release badge and downlo
 `ghcr.io/openviglet/turing-ce` name for now; renaming it is a separate decision, since
 every compose file in the wild pulls it.
 
-### CLXI.2 Release files carry the product name without the acronym (T1181)
-
-**Where it showed.** The v2026.3.6 assets include `Turing-ES-x86_64.AppImage`, built by
-`scripts/package-dist.sh` (`Turing-ES.AppDir`, `Turing-ES-${ARCH}.AppImage`) and
-uploaded by `publish.yml`.
-
-**Why it costs.** On 2026-10-17 the product names dropped the acronyms: "Viglet Turing"
-first, "Turing" after, with what it is written beside it. The README, the site and the
-docs already follow that; the download is the one place a visitor still meets "Turing
-ES", and it reads as a different or older product (visibility repo, produtos/turing.md,
-2026-10-30).
-
-**Design.** Rename the AppDir and AppImage to `Turing-x86_64.AppImage` in the packaging
-script and the upload step, and check the installer's display name and desktop entry for
-the same acronym. Any doc that links the old filename moves with it. Older releases keep
-their assets as published.
-
 ### CLXI.3 Release notes are written for people (T1182)
 
 **Where it showed.** The body of v2026.3.6 is the generated list of Dependabot pull
@@ -2414,3 +2397,30 @@ existing demo host with a guest role that can browse but not save, reset on a sc
 with the LLM calls capped as the playground's already are. If a live console is too
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
+
+### CLXI.6 The product says Viglet Turing everywhere a user reads it (T1186)
+
+**Where it showed.** T1181 renamed what ships in a release (the AppImage, the installer,
+the desktop entry, the start scripts) from "Turing ES" to "Viglet Turing" / "Turing".
+The product itself still says the old name where a user reads it: the console's login
+and setup titles and footer (`login.page.tsx`, `setup.page.tsx`, `register.page.tsx`,
+`search-footer.tsx`, the bento header and first-run tour), the weekly report email
+(`weekly-search-report.html`), the Vite app title, and the SDK, CLI and flow-dsl READMEs
+and CLI help text.
+
+**Why it costs.** The names dropped the acronyms on 2026-10-17: "Viglet Turing" first,
+"Turing" after. A visitor who installs the renamed download then logs into "Viglet
+Turing ES". The guidance disagrees with itself too: agents.md says "Viglet Turing",
+while the `turing-roadmap-docs` skill's brand rule still says user-facing text reads
+"Viglet Turing ES", so the next change can bring the acronym back.
+
+**What to build.**
+- One pass over user-facing strings (UI, i18n defaults, email templates, package READMEs,
+  CLI help): "Viglet Turing ES" becomes "Viglet Turing", a later "Turing ES" becomes
+  "Turing". Internal names stay: Maven `<name>`, class names, comments, image names.
+- The skill's brand rule says "Viglet Turing", matching agents.md.
+- A frontend test or a grep gate over `src/` for "Turing ES" in rendered strings, so the
+  acronym does not come back.
+
+**Not in scope.** The `turing-ce` image and repository names (T1183 and the image
+decision in §CLXI.1).

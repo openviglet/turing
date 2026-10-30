@@ -1571,3 +1571,4 @@
 ## Block CJ — Releases ship from the repository the README names
 
 - **T1180 (workflow and README)** — publish.yml creates the 2026.3 GitHub Release on openviglet/turing and the README badge and download link point there (commit e23a4e44ad); the image stays turing-ce.
+- **T1181** — The Linux download builds and uploads as Turing-x86_64.AppImage, and the installer, desktop entry and shipped start scripts say Viglet Turing; an upgrade drops the old Turing ES shortcut.

@@ -1,6 +1,6 @@
 @echo off
 rem --------------------------------------------------------------------------
-rem Start Viglet Turing ES.
+rem Start Viglet Turing.
 rem
 rem Usage:  bin\turing.bat [JVM options...]
 rem
@@ -34,7 +34,7 @@ if exist "%PROPS%" (
     set "SPRING_CONFIG=--spring.config.additional-location=file:%PROPS%"
 )
 
-echo Starting Viglet Turing ES...
+echo Starting Viglet Turing...
 echo   Java:   !JAVA_CMD!
 echo   JAR:    %JAR%
 if exist "%PROPS%" echo   Config: %PROPS%

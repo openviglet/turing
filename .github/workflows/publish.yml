@@ -105,7 +105,7 @@ jobs:
           gh release upload ${TAG_NAME} turing-utils/target/turing-utils.zip --repo ${RELEASE_REPO} --clobber
           gh release upload ${TAG_NAME} target/turing-install.zip --repo ${RELEASE_REPO} --clobber
           gh release upload ${TAG_NAME} target/turing-install.exe --repo ${RELEASE_REPO} --clobber
-          gh release upload ${TAG_NAME} target/Turing-ES-x86_64.AppImage --repo ${RELEASE_REPO} --clobber
+          gh release upload ${TAG_NAME} target/Turing-x86_64.AppImage --repo ${RELEASE_REPO} --clobber
       - name: Publish package
         run: |
           mvn --batch-mode -pl turing-commons,turing-java-sdk -P release -am deploy -DskipTests -Dturing.open-browser=false

@@ -1,7 +1,7 @@
 @echo off
 rem --------------------------------------------------------------------------
 rem package-dist.bat
-rem Builds Turing ES from source and creates distribution packages:
+rem Builds Turing from source and creates distribution packages:
 rem   - turing-install.zip   (portable, works on Linux and Windows)
 rem   - turing-install.exe   (Windows installer via NSIS, if available)
 rem
@@ -29,7 +29,7 @@ pushd "%PROJECT_ROOT%"
 
 rem --------------- Build ---------------
 if "%SKIP_BUILD%"=="true" goto :skip_build
-echo ==^> Building Turing ES...
+echo ==^> Building Turing...
 where mvn >nul 2>&1
 if %errorlevel%==0 (
     call mvn clean install -DskipTests -Dgpg.skip=true -Dturing.open-browser=false

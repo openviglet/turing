@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # --------------------------------------------------------------------------
-# Start Viglet Turing ES.
+# Start Viglet Turing.
 #
 # Usage:  ./bin/turing.sh [JVM options...] [-- Spring options...]
 #
@@ -50,7 +50,7 @@ fi
 
 CMD+=("${SPRING_ARGS[@]+"${SPRING_ARGS[@]}"}")
 
-echo "Starting Viglet Turing ES..."
+echo "Starting Viglet Turing..."
 echo "  JAR:    $JAR"
 [ -f "$PROPS" ] && echo "  Config: $PROPS"
 echo ""

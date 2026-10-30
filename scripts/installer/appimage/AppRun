@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # --------------------------------------------------------------------------
-# AppRun - Entry point for the Turing ES AppImage.
+# AppRun - Entry point for the Turing AppImage.
 #
 # Usage:
-#   ./Turing-ES.AppImage
-#   ./Turing-ES.AppImage --server.port=2701
+#   ./Turing.AppImage
+#   ./Turing.AppImage --server.port=2701
 # --------------------------------------------------------------------------
 set -euo pipefail
 
@@ -23,5 +23,5 @@ if [ -f "$PROPS" ]; then
   SPRING_CONFIG="--spring.config.additional-location=file:$PROPS"
 fi
 
-echo "Starting Viglet Turing ES..."
+echo "Starting Viglet Turing..."
 exec java -Xmx1g -Xms1g -jar "$JAR" $SPRING_CONFIG "$@"

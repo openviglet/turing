@@ -1,5 +1,5 @@
 ; --------------------------------------------------------------------------
-; Viglet Turing ES - NSIS Installer Script
+; Viglet Turing - NSIS Installer Script
 ;
 ; Requires NSIS 3.x
 ; --------------------------------------------------------------------------
@@ -13,7 +13,7 @@
 ; --------------------------------------------------------------------------
 ; General
 ; --------------------------------------------------------------------------
-Name "Viglet Turing ES"
+Name "Viglet Turing"
 !ifndef OUTDIR
   !define OUTDIR "..\..\target"
 !endif
@@ -27,10 +27,10 @@ SetCompressor /SOLID lzma
 ; Version info
 ; --------------------------------------------------------------------------
 VIProductVersion "2026.2.4.0"
-VIAddVersionKey "ProductName" "Viglet Turing ES"
+VIAddVersionKey "ProductName" "Viglet Turing"
 VIAddVersionKey "FileVersion" "2026.2.4.0"
 VIAddVersionKey "CompanyName" "Viglet"
-VIAddVersionKey "FileDescription" "Viglet Turing ES Installer"
+VIAddVersionKey "FileDescription" "Viglet Turing Installer"
 VIAddVersionKey "LegalCopyright" "Apache License 2.0"
 
 ; --------------------------------------------------------------------------
@@ -76,8 +76,8 @@ Page custom JavaPageCreate JavaPageLeave
 ; --------------------------------------------------------------------------
 ; Component descriptions
 ; --------------------------------------------------------------------------
-LangString DESC_SecMain       ${LANG_ENGLISH} "Turing ES search platform (required). Includes the server, CLI tools, and administration console."
-LangString DESC_SecMain       ${LANG_PORTUGUESE} "Plataforma de busca Turing ES (obrigatorio). Inclui o servidor, ferramentas CLI e console de administracao."
+LangString DESC_SecMain       ${LANG_ENGLISH} "Turing search platform (required). Includes the server, CLI tools, and administration console."
+LangString DESC_SecMain       ${LANG_PORTUGUESE} "Plataforma de busca Turing (obrigatorio). Inclui o servidor, ferramentas CLI e console de administracao."
 
 LangString DESC_SecExamples   ${LANG_ENGLISH} "Sample search sites with SPA templates and demo content. Great for learning and testing."
 LangString DESC_SecExamples   ${LANG_PORTUGUESE} "Sites de busca de exemplo com templates SPA e conteudo de demonstracao. Otimo para aprender e testar."
@@ -137,7 +137,7 @@ Function JavaPageCreate
     ${EndIf}
 
     ${NSD_CreateLabel} 0 0 100% 36u \
-        "Turing ES requires Java 21 or later. Select the Java installation directory (the folder containing the 'bin' subdirectory with java.exe)."
+        "Turing requires Java 21 or later. Select the Java installation directory (the folder containing the 'bin' subdirectory with java.exe)."
     Pop $0
 
     ${NSD_CreateLabel} 0 44u 100% 12u "Java Home directory:"
@@ -181,7 +181,7 @@ Function JavaPageLeave
 
     ${IfNot} ${FileExists} "$JavaHome\bin\java.exe"
         MessageBox MB_YESNO|MB_ICONEXCLAMATION \
-            "java.exe was not found in:$\n$JavaHome\bin\$\n$\nTuring ES requires Java 21+. Continue anyway?" \
+            "java.exe was not found in:$\n$JavaHome\bin\$\n$\nTuring requires Java 21+. Continue anyway?" \
             IDYES +2
         Abort
     ${EndIf}
@@ -192,7 +192,7 @@ FunctionEnd
 ; --------------------------------------------------------------------------
 
 ; ---- Core (always installed) ----
-Section "Turing ES (required)" SecMain
+Section "Turing (required)" SecMain
     SectionIn RO
 
     SetOutPath "$INSTDIR"
@@ -230,7 +230,7 @@ Section "Turing ES (required)" SecMain
 
     ; Add/Remove Programs
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VigletTuring" \
-        "DisplayName" "Viglet Turing ES"
+        "DisplayName" "Viglet Turing"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VigletTuring" \
         "UninstallString" '"$INSTDIR\uninstall.exe"'
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VigletTuring" \
@@ -251,7 +251,9 @@ Section "Turing ES (required)" SecMain
 
     ; Start Menu shortcuts
     CreateDirectory "$SMPROGRAMS\Viglet Turing"
-    CreateShortcut "$SMPROGRAMS\Viglet Turing\Turing ES.lnk" \
+    ; T1181 - an upgrade drops the shortcut a release before 2026.3.7 named "Turing ES".
+    Delete "$SMPROGRAMS\Viglet Turing\Turing ES.lnk"
+    CreateShortcut "$SMPROGRAMS\Viglet Turing\Turing.lnk" \
         "$INSTDIR\bin\turing.bat" "" "$INSTDIR\turing.ico" "" SW_SHOWMINIMIZED
     CreateShortcut "$SMPROGRAMS\Viglet Turing\Uninstall.lnk" \
         "$INSTDIR\uninstall.exe"
