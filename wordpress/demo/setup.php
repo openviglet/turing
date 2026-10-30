@@ -10,8 +10,9 @@
 
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.
 
-// The Turing search block and its parts, in the page so the plugin finds it (has_block).
-$search = '<!-- wp:viglet-dumont/search {"placeholder":"Search jackets, boots, tents…","showAnswer":true,"suggestFilters":true,"applyFilters":true,"resultsLayout":"grid","align":"wide"} -->
+// The Turing search block and its parts, in the page so the plugin finds it (has_block), with
+// popular searches under the box (D202), where the story's shopper arrives (D203).
+$search = '<!-- wp:viglet-dumont/search {"placeholder":"Search jackets, boots, tents…","showAnswer":true,"suggestFilters":true,"applyFilters":true,"showTrending":true,"resultsLayout":"grid","align":"wide"} -->
 <!-- wp:viglet-dumont/search-box /-->
 
 <!-- wp:viglet-dumont/search-filters /-->
@@ -27,6 +28,8 @@ $pages = array(
 	'journal'     => array( 'Trail journal', '', '' ),
 	// WordPress's own search beside Turing's, on one query (D195).
 	'compare-searches' => array( 'Compare searches', '<!-- wp:tarnfell/compare /-->', '' ),
+	// Products ticked in the results or the copilot, side by side (D200).
+	'compare-products' => array( 'Compare products', '<!-- wp:viglet-dumont/compare /-->', '' ),
 );
 
 // Named in the site's language (D223): seed/pt_BR.php carries the Portuguese.
@@ -70,6 +73,12 @@ foreach ( $pages as $slug => list( $title, $content, $template ) ) {
 
 // The compare page names every curated search: indexed, it would be a result for each.
 update_post_meta( $ids['compare-searches'], '_viglet_dumont_exclude', '1' );
+update_post_meta( $ids['compare-products'], '_viglet_dumont_exclude', '1' );
+// The home, the search page and the journal hold no text of their own: indexed, a page is one
+// more document Turing's kit can stage as a product (D203).
+foreach ( array( 'home-demo', 'search-gear', 'journal' ) as $chrome ) {
+	update_post_meta( $ids[ $chrome ], '_viglet_dumont_exclude', '1' );
+}
 // The showcase describes features, not gear: never a search result.
 update_post_meta( $ids['showcase'], '_viglet_dumont_exclude', '1' );
 
@@ -93,6 +102,8 @@ $settings['assistant_launcher'] = 1;
 
 // A launched store: WooCommerce shows visitors a "coming soon" page until it is.
 update_option( 'woocommerce_coming_soon', 'no' );
+// Checkout in test mode (D203): an offline payment, so an order is placed and nothing is charged.
+update_option( 'woocommerce_cheque_settings', array( 'enabled' => 'yes' ) + (array) get_option( 'woocommerce_cheque_settings', array() ) );
 viglet_dumont_update_settings( $settings );
 
 echo wp_json_encode( $ids ), "\n";
