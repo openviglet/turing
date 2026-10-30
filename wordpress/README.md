@@ -257,6 +257,11 @@ shopper's visit in eight chapters, end to end on the demo with `OPENAI_API_KEY` 
 searches, a sentence turned into filters, the Site assistant, a comparison, Build my kit, a
 product page, a test-mode checkout, and the owner's Search insights. Nothing is replayed, and it
 leaves `story.webm` in `tests/e2e/artifacts/story/`. It plays in English for now (D244).
+`npm run e2e:story:record` plays it again at 1920×1080 and a human pace, and
+`npm run story:video` (ffmpeg on the PATH) cuts it into the demo video,
+`tests/e2e/artifacts/video/story.mp4`, with a title card per chapter and English captions. The
+video is a release asset, never committed, and the script refuses a recording older than the
+story.
 
 To look at one page in detail, logged in or not:
 

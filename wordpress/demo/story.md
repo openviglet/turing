@@ -40,7 +40,7 @@ Then she misspells a name and the search offers the correction, and she tries a 
 shop does not use, which finds nothing (chapter 8 comes back to it).
 
 - `helvelyn` → the correction `helvellyn`.
-- `packraft` → no results.
+- `bothy bag` → no results.
 
 ## 3. Asks
 
@@ -87,5 +87,8 @@ The shop owner's view of the same visit.
 - **Compare searches**: `raincoat` (`capa de chuva`) on WordPress's own search finds
   nothing; Turing finds the guide and the rain jackets through a synonym.
 - **Search insights** (wp-admin, today): her searches are among the top ones, and a search
-  that found nothing, `packraft`, is listed with **Add a synonym**. Saved as
-  `packraft, dry bag`, the same search now finds the dry bags.
+  that found nothing, `bothy bag`, is listed with **Add a synonym**, which opens Search
+  tuning with it filled in. She saves `bothy bag, bivvy bag`, so the next shopper who asks
+  for a bothy bag finds the Coniston bivvy bag. (The story saves the synonym and does not
+  search with it: a search that finds something leaves the "found nothing" list for the
+  day, and the story must replay.)
