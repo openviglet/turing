@@ -18,7 +18,7 @@
 // for the site's WordPress page.
 // Refuses a recording that is missing a chapter or older than the story it was recorded from,
 // so a re-record after a UI change is never skipped by accident.
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import {
 	copyFileSync,
 	existsSync,
@@ -222,6 +222,40 @@ for ( const [ i, html ] of cards.entries() ) {
 	await page.evaluate( () => document.fonts.ready );
 	await page.screenshot( { path: join( out, 'parts', `card-${ i }.png` ) } );
 }
+
+// The store's own pages, for what Ana says over the opening and closing cards (D261): she
+// talks about her shop, so the shop is on screen. The demo stack must be up; without it the
+// cards stay as they are.
+const storeUrl = process.env.STORE_URL || 'http://localhost:38082';
+const screens = [];
+const shot = async ( path, scroll = 0 ) => {
+	try {
+		await page.goto( new URL( path, storeUrl ).href, {
+			waitUntil: 'networkidle',
+		} );
+		await page.evaluate( ( y ) => window.scrollTo( 0, y ), scroll );
+		await page.waitForTimeout( 400 );
+		const file = join( out, 'parts', `screen-${ screens.length }.png` );
+		await page.screenshot( { path: file } );
+		screens.push( file );
+	} catch {
+		// A page the store does not have, or no store at all: one shot fewer.
+	}
+};
+await shot( '/' );
+await shot( '/', 900 );
+await shot( '/?post_type=product' );
+const product = await page
+	.locator(
+		'a.woocommerce-LoopProduct-link, .wc-block-components-product-name, a[href*="/product/"]'
+	)
+	.first()
+	.getAttribute( 'href', { timeout: 3000 } )
+	.catch( () => null );
+if ( product ) {
+	await shot( product );
+}
+await shot( '/?pagename=journal' );
 await browser.close();
 
 // Each card and clip encoded alike, so they join without another encode.
@@ -503,22 +537,143 @@ const say = ( at, lineTakes ) => {
 };
 
 /**
- * A card, held for as long as its line runs.
+ * Where a take falls silent between phrases, in seconds from its start.
  *
- * @param {number} i    The card's index.
- * @param {string} name The line spoken over it.
+ * @param {string} file The take.
  */
-const titleCard = ( i, name ) => {
-	const lineTakes = takes( name );
-	const length = Math.max( cardSeconds, needs( lineTakes ) );
-	segments.push( still( i, length ) );
-	say( clock, lineTakes );
-	clock += length;
+const pauses = ( file ) =>
+	[
+		...spawnSync(
+			'ffmpeg',
+			[
+				'-hide_banner',
+				'-i',
+				file,
+				'-af',
+				'silencedetect=n=-35dB:d=0.3',
+				'-f',
+				'null',
+				'-',
+			],
+			{ encoding: 'utf8' }
+		).stderr.matchAll( /silence_end: ([\d.]+)/g ),
+	].map( ( match ) => Number( match[ 1 ] ) );
+
+/**
+ * A still with slow motion, a zoom in and a drift sideways, encoded like the rest.
+ *
+ * @param {string} image  The still.
+ * @param {number} length How long it plays.
+ * @param {number} n      Which shot it is, so the drift changes side from one to the next.
+ * @param {string} name   The shot's file name.
+ */
+const kenBurns = ( image, length, n, name ) => {
+	const file = join( out, 'parts', name );
+	const frames = Math.max( 1, Math.round( length * 30 ) );
+	const side = [ 0, 1, 0.5 ][ n % 3 ];
+	ffmpeg( [
+		'-loop',
+		'1',
+		'-i',
+		image,
+		'-vf',
+		`scale=${ size.width * 2 }:${ size.height * 2 }:force_original_aspect_ratio=increase,` +
+			`crop=${ size.width * 2 }:${ size.height * 2 },` +
+			`zoompan=z='1+0.12*on/${ frames }':x='(iw-iw/zoom)*${ side }':` +
+			`y='(ih-ih/zoom)/2':d=${ frames }:s=${ size.width }x${ size.height }:fps=30,` +
+			'format=yuv420p',
+		'-frames:v',
+		String( frames ),
+		'-c:v',
+		'libx264',
+		'-preset',
+		'veryfast',
+		'-crf',
+		'20',
+		'-an',
+		file,
+	] );
+	return file;
 };
 
-titleCard( 0, 'intro' );
+// The title holds this long, then what Ana says is shown, a shot to each phrase or so.
+const titleSeconds = 3;
+// A shot holds at least this long, cut at the first pause after it.
+const shotSeconds = 4;
+
+/**
+ * A card, held for as long as its line runs: its title, then, while she goes on, the shots
+ * given, each changing at a pause in her voice.
+ *
+ * @param {number}   i     The card's index.
+ * @param {string}   name  The line spoken over it.
+ * @param {string[]} shots Stills to show after the title.
+ */
+const titleCard = ( i, name, shots = [] ) => {
+	const lineTakes = takes( name );
+	const length = Math.max( cardSeconds, needs( lineTakes ) );
+	say( clock, lineTakes );
+	clock += length;
+	if ( ! shots.length || length < titleSeconds + shotSeconds ) {
+		segments.push( still( i, length ) );
+		return;
+	}
+	// The cuts follow the longest take's pauses, as they fall on the video.
+	const longest = lineTakes.reduce( ( a, b ) =>
+		b.length > a.length ? b : a
+	);
+	const cuts = [];
+	let last = titleSeconds;
+	for ( const pause of pauses( longest.file ) ) {
+		const at = pause + voiceLead;
+		if ( at - last >= shotSeconds && length - at >= 2 ) {
+			cuts.push( at );
+			last = at;
+		}
+	}
+	segments.push( still( i, titleSeconds ) );
+	const bounds = [ titleSeconds, ...cuts, length ];
+	for ( let n = 0; n < bounds.length - 1; n++ ) {
+		segments.push(
+			kenBurns(
+				shots[ n % shots.length ],
+				bounds[ n + 1 ] - bounds[ n ],
+				n,
+				`card-${ i }-shot-${ n }.mp4`
+			)
+		);
+	}
+};
+
+/**
+ * Stills from a chapter's clip, for Ana's line over its card to show what is coming.
+ *
+ * @param {string} clip The chapter's clip.
+ * @param {number} i    The chapter's index.
+ */
+const previews = ( clip, i ) => {
+	const length = seconds( clip );
+	return [ 0.2, 0.5, best( i ) / length, 0.8 ].map( ( share, n ) => {
+		const file = join(
+			out,
+			'parts',
+			`chapter-${ i + 1 }-preview-${ n }.png`
+		);
+		ffmpeg( [
+			'-ss',
+			Math.min( length - 0.1, share * length ).toFixed( 3 ),
+			'-i',
+			clip,
+			'-frames:v',
+			'1',
+			file,
+		] );
+		return file;
+	} );
+};
+
+titleCard( 0, 'intro', screens );
 for ( const [ i, { start, end } ] of chapters.entries() ) {
-	titleCard( i + 1, `chapter-${ i + 1 }` );
 	const clip = cut( `chapter-${ i + 1 }.mp4`, [
 		'-ss',
 		start.toFixed( 2 ),
@@ -527,6 +682,7 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 		'-i',
 		webm,
 	] );
+	titleCard( i + 1, `chapter-${ i + 1 }`, previews( clip, i ) );
 	const from = clock;
 	const result = takes( `chapter-${ i + 1 }-result` );
 	if ( result.length ) {
@@ -560,7 +716,7 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 	}
 	cues.push( { from, to: clock, chapter: i } );
 }
-titleCard( cards.length - 1, 'outro' );
+titleCard( cards.length - 1, 'outro', [ ...screens ].reverse() );
 
 // One still per chapter, its result on screen, for the site's WordPress page (D197): taken
 // from the recording, so the page shows what the story ran, and copied into the site.

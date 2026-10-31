@@ -44,12 +44,18 @@ test( 'search, filter, remove the filter and change page without a mouse', async
 	await expect( second ).toHaveAttribute( 'aria-current', 'true' );
 } );
 
-test( 'the correction is reached and taken from the keyboard', async ( {
+test( 'the search as typed is reached and taken from the keyboard, then the correction', async ( {
 	page,
 	seed,
 	keyboard,
 } ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=worskhop` );
+	const instead = block( page ).locator(
+		'.viglet-dumont-search__showing-for button'
+	);
+	await expect( instead ).toBeVisible();
+	await keyboard.tabTo( instead );
+	await page.keyboard.press( 'Enter' );
 	const correction = block( page ).locator(
 		'.viglet-dumont-search__correction button'
 	);

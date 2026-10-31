@@ -24,10 +24,16 @@ for ( const search of curated ) {
 		params.set( 'pagename', 'search-gear' );
 		await page.goto( `/?${ params }` );
 
+		// A curated misspelling is searched as corrected (D259).
 		if ( search.correction ) {
 			await expect(
-				block( page ).locator( '.viglet-dumont-search__correction' )
+				block( page ).locator( '.viglet-dumont-search__showing-for' )
 			).toContainText( search.correction );
+			await expect(
+				block( page )
+					.locator( '.viglet-dumont-search__title a' )
+					.first()
+			).toBeVisible();
 			return;
 		}
 		await expect(

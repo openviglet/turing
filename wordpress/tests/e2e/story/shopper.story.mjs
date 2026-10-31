@@ -74,9 +74,9 @@ const words = {
 		understood: 'Preço: ≤ 2200',
 		needFound: /barraca/i,
 		misspelt: 'helvelyn',
-		// Viglet Turing logs it as typed, accent kept (measured on the 2026.3 image; an earlier
-		// build folded it, T1179).
-		nothing: 'abrigo de emergência',
+		// No failed search of her own: chapter 8 fixes one from the store's history
+		// (demo/seed/searches.php), a singular the catalog spells in the plural (Turing T1196).
+		logged: 'bastão de caminhada',
 		question: 'Que mochila eu levo para uma noite num refúgio?',
 		cites: 'De que tamanho deve ser sua mochila?',
 		// Measured on the pt_BR demo: three jackets of different kinds to compare. "jaqueta
@@ -85,7 +85,7 @@ const words = {
 		plan: 'Dois dias atravessando a montanha em julho, primeira vez',
 		check: 'Isso me mantém seca num dia de chuva na montanha?',
 		backstage: 'puffer',
-		synonym: 'abrigo de emergência, bivaque',
+		synonym: 'bastão de caminhada, bastões de caminhada',
 		ui: {
 			popular: 'Buscas populares',
 			compareBox: /^Comparar /,
@@ -131,7 +131,7 @@ const dropSynonym = () =>
 		'eval',
 		'$t = new Viglet_Dumont_Tuning(); $all = $t->all();' +
 			` foreach ( $all["synonyms"] as $s ) { if ( in_array( ${ JSON.stringify(
-				story().nothing
+				story().logged ?? story().nothing
 			) }, $s["terms"], true ) ) { $t->remove_synonym( $s["id"] ); } }`,
 	] );
 
@@ -290,18 +290,26 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await answered( block.locator( '.viglet-dumont-search__answer-text' ) );
 		await highlight();
 
+		// A typo is searched as corrected (D259): the shopper sees the products, not an
+		// empty page with a suggestion.
 		await search( page, say.misspelt );
 		await expect(
-			block.locator( '.viglet-dumont-search__correction' )
+			block.locator( '.viglet-dumont-search__showing-for' )
 		).toContainText( 'helvellyn' );
+		await expect( titles.first() ).toBeVisible();
 		await linger();
 
-		await search( page, say.nothing );
-		await expect(
-			block.locator( '.viglet-dumont-search__summary' )
-		).not.toBeEmpty();
-		await expect( titles ).toHaveCount( 0 );
-		await linger( 2.5 );
+		// A search the shopper makes that finds nothing, for chapter 8 to fix. The pt_BR story
+		// has none: its store's own history already holds one, so the visit never shows an
+		// empty page.
+		if ( say.nothing ) {
+			await search( page, say.nothing );
+			await expect(
+				block.locator( '.viglet-dumont-search__summary' )
+			).not.toBeEmpty();
+			await expect( titles ).toHaveCount( 0 );
+			await linger( 2.5 );
+		}
 	} );
 
 	await chapter(

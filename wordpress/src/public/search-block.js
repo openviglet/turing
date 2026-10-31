@@ -36,6 +36,10 @@ let instant = null;
 let baseTitle = '';
 // The sentence last sent to Turing's nl-filters, so a late reading of an older one is dropped.
 let reading = '';
+// D259: set while the block searches a correction itself, so that search keeps its notice; and
+// the query the visitor asked to search as typed, which is not corrected again.
+let correcting = false;
+let keepAsTyped = '';
 // What an applied reading replaced (D199), so Undo puts the search back as the visitor typed it.
 let beforeReading = null;
 // The readings this page already paid for, by sentence: each one is an LLM call.
@@ -185,6 +189,10 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		get hasCorrection() {
 			return '' !== state.corrected;
 		},
+		// A misspelling that found nothing, searched again as Turing corrected it (D259).
+		get hasShowingFor() {
+			return '' !== state.showingFor;
+		},
 		get isLoading() {
 			return 'loading' === state.status;
 		},
@@ -323,6 +331,13 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			state.query = state.corrected;
 			run( state.corrected );
 		},
+		// The visitor meant what they typed: search it as it is, and do not correct it again.
+		searchInstead() {
+			const original = state.insteadOf;
+			keepAsTyped = original;
+			state.query = original;
+			run( original );
+		},
 		// The facets re-render from the answer, which would leave the focus nowhere; the
 		// search box is where the next step starts. In the drawer the visitor may pick more
 		// than one, so the focus stays there.
@@ -394,7 +409,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			);
 			state.query = suggestion.q;
 			lastQuery = suggestion.q.trim() || '*';
-			state.corrected = '';
+			clearCorrection();
 			send( {
 				q: lastQuery,
 				fq: fq.includes( suggestion.fq )
@@ -415,7 +430,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			state.understood = '';
 			state.query = '*' === q ? '' : q;
 			lastQuery = q;
-			state.corrected = '';
+			clearCorrection();
 			send( { q, fq, page: 1 } );
 			writeUrl( true );
 			focusInput();
@@ -752,7 +767,7 @@ function applyReading( q, fqs ) {
 	);
 	state.query = q;
 	lastQuery = q || '*';
-	state.corrected = '';
+	clearCorrection();
 	send( { q: lastQuery, fq: [ ...fq, ...fqs ], page: 1 } );
 	writeUrl( true );
 }
@@ -1061,6 +1076,44 @@ function focusInput() {
 }
 
 /**
+ * Forget a correction: the "Did you mean" offer, and the notice of a corrected search unless
+ * this is that search itself.
+ */
+function clearCorrection() {
+	state.corrected = '';
+	if ( ! correcting ) {
+		state.showingFor = '';
+		state.insteadOf = '';
+	}
+}
+
+/**
+ * Turing's correction of the last search (D259). A search that found nothing is searched again
+ * as corrected, and says so, as a shop does: an empty page for a typo loses the shopper. One that
+ * found something only offers it, as before; and one the visitor asked for as typed is left alone.
+ *
+ * @param {string} corrected The corrected query.
+ */
+function offerCorrection( corrected ) {
+	// The corrected search re-reads the answer it replaces while it loads: that correction is
+	// the one already being searched, not a new one.
+	if ( ! corrected || correcting || corrected === lastQuery ) {
+		return;
+	}
+	const original = lastQuery;
+	if ( state.total > 0 || keepAsTyped === original ) {
+		state.corrected = corrected;
+		return;
+	}
+	correcting = true;
+	state.showingFor = corrected;
+	state.insteadOf = original;
+	state.query = corrected;
+	run( corrected );
+	correcting = false;
+}
+
+/**
  * Search, and keep the query in the address bar so the page can be shared or reloaded.
  *
  * @param {string}  query  What to search for; empty searches everything.
@@ -1071,7 +1124,7 @@ function focusInput() {
 function run( query, prefix = false ) {
 	const typed = query.trim();
 	lastQuery = typed || '*';
-	state.corrected = '';
+	clearCorrection();
 	send( {
 		q: lastQuery,
 		mode: prefix ? 'instant' : 'standard',
@@ -1136,7 +1189,7 @@ function readUrl() {
 	state.query = params.get( 'q' ) ?? params.get( 's' ) ?? '';
 	state.sort = params.get( 'sort' ) || 'relevance';
 	lastQuery = state.query.trim() || '*';
-	state.corrected = '';
+	clearCorrection();
 	send( {
 		q: lastQuery,
 		fq: [ siteFilter, ...params.getAll( 'fq[]' ) ],
@@ -1168,7 +1221,7 @@ async function suggestCorrection( query ) {
 			query
 		);
 		if ( query === lastQuery && spell?.correctedText ) {
-			state.corrected = spell.corrected?.text || '';
+			offerCorrection( spell.corrected?.text || '' );
 		}
 	} catch {
 		// No suggestion is not an error the visitor needs to see.
@@ -1499,7 +1552,7 @@ function sync( s ) {
 		} ) );
 	const spell = response?.spellCheck;
 	if ( spell?.correctedText && ! spell.usingCorrectedText ) {
-		state.corrected = spell.correctedTextValue || '';
+		offerCorrection( spell.correctedTextValue || '' );
 	} else if (
 		'success' === s.status &&
 		0 === state.total &&

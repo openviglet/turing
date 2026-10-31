@@ -195,26 +195,34 @@ test( 'typing suggests, and picking a suggestion searches it', async ( {
 	await expect( page ).toHaveURL( /q=workshop/ );
 } );
 
-test( 'a misspelling offers the correction, and taking it searches again', async ( {
+// D259: a misspelling that finds nothing is searched as corrected and says so; the search as
+// typed is one click away, and then the correction is only offered.
+test( 'a misspelling that finds nothing shows the corrected results, and the search as typed is one click away', async ( {
 	page,
 	seed,
 	look,
 	axe,
 } ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=worskhop` );
-	const correction = block( page ).locator(
-		'.viglet-dumont-search__correction'
+	const showing = block( page ).locator(
+		'.viglet-dumont-search__showing-for'
 	);
-	await expect( correction ).toBeVisible();
-	await expect( correction.locator( 'button' ) ).toHaveText( 'workshop' );
-	await look( 'search-block-did-you-mean' );
-	await axe( 'search block offering a correction', inBlock );
-	await expect( block( page ) ).toHaveScreenshot(
-		'search-block-did-you-mean.png'
-	);
-
-	await correction.locator( 'button' ).click();
+	await expect( showing ).toContainText( 'workshop' );
 	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect( showing.locator( 'button' ) ).toHaveText( 'worskhop' );
+	await look( 'search-block-showing-for' );
+	await axe( 'search block showing corrected results', inBlock );
+	// The notice alone: the four results tie on relevance, so their order is Turing's to pick.
+	await expect( showing ).toHaveScreenshot( 'search-block-showing-for.png' );
+
+	await showing.locator( 'button' ).click();
+	await expect( showing ).toBeHidden();
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__correction button' )
+	).toHaveText( 'workshop' );
+	await expect( page.locator( 'input[type="search"]' ).first() ).toHaveValue(
+		'worskhop'
+	);
 } );
 
 test( 'everything spans pages, and the next page shows other results', async ( {
@@ -251,9 +259,11 @@ test( 'a result is a card: type, date, address and the matched words marked', as
 		'datetime',
 		/^\d{4}-\d{2}-\d{2}T/
 	);
+	// A result on this very site shows its path without the domain (D263); this site's plain
+	// permalinks (?p=) have none, so the crumb says nothing rather than localhost.
 	await expect(
 		first.locator( '.viglet-dumont-search__crumb' )
-	).toContainText( 'localhost' );
+	).not.toContainText( 'localhost' );
 	await expect(
 		first.locator( '.viglet-dumont-search__snippet mark' )
 	).toHaveText( 'Workshop' );

@@ -34,6 +34,13 @@ $tr = static fn ( string $group, string $text ): string => $pt[ $group ][ $text 
 $brazil = 'pt_BR' === get_locale();
 $money  = static fn ( float $usd ): float => $brazil ? round( $usd * 5.5, -1 ) - 0.1 : $usd;
 if ( $brazil ) {
+	// WooCommerce made its pages in English before the site spoke Portuguese.
+	foreach ( array( 'shop' => 'Loja', 'cart' => 'Carrinho', 'checkout' => 'Finalizar compra', 'myaccount' => 'Minha conta' ) as $wc_page => $wc_title ) {
+		$wc_id = function_exists( 'wc_get_page_id' ) ? wc_get_page_id( $wc_page ) : 0;
+		if ( $wc_id > 0 ) {
+			wp_update_post( array( 'ID' => $wc_id, 'post_title' => $wc_title ) );
+		}
+	}
 	update_option( 'woocommerce_currency', 'BRL' );
 	update_option( 'woocommerce_default_country', 'BR:SP' );
 	update_option( 'woocommerce_price_thousand_sep', '.' );
