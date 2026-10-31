@@ -19,12 +19,13 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- 📋 **T1189** (deps: —) **/answer reads only locale, and a locale the site has no index for answers from the global collection** — A caller with the search spelling, or a locale like en on an en_US site, gets an apology and no sources from another corpus, with no error. → §CLXIII.2
+- 🛠 **T1189** (deps: —) **/answer reads only locale, and a locale the site has no index for answers from the global collection** — A caller with the search spelling, or a locale like en on an en_US site, gets an apology and no sources from another corpus, with no error. → §CLXIII.2
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 - 📋 **T1190** (deps: —) **A kit stage leads with the dearest product and a winter bag for a July first-timer's plan** — A store ticks each stage's first product, so the kit costs 1,455 dollars and contradicts the season the plan named. → §CLXII.2
 - 📋 **T1191** (deps: —) **A kit product's reason quotes Site: localhost, a bookkeeping field, to the shopper** — Every staged product shows a debug-looking line in a shopper-facing kit. → §CLXII.3
+- 📋 **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — jaqueta impermeável misses the Borrowdale jacket that jaqueta impermeavel and impermeável alone both find, so Brazilian shoppers lose results. → §CLXII.4
 
 ## Done when — T1133
 

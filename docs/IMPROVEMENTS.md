@@ -2450,6 +2450,32 @@ sends the model (T1169), where `site=localhost` is noise too. The vocabulary
 **Done when.** The demo kit's reasons name category, colour, material or use and never
 the site.
 
+### CLXII.4 Accented multi-word queries match like their folded spelling (T1194)
+
+Met on Dumont's WordPress demo store in pt_BR (Lucene SN site `Demo`, locale `pt_BR`,
+published `ghcr.io/openviglet/turing:latest`).
+
+**What happens.** `GET /api/sn/Demo/search?_setlocale=pt_BR&q=…`:
+- `jaqueta impermeável` → **4** results; *Jaqueta impermeável do dia a dia Borrowdale* is missing.
+- `jaqueta impermeavel` (no accent) → **9**, Borrowdale second.
+- `impermeável` alone → **20**, Borrowdale among them.
+
+So an accented word finds its documents alone, and stops finding some of them once it is
+combined with another word. A Brazilian shopper types the accent; the store's own
+product named with both words is not found.
+
+**Suspect.** T1170 stems with `KeywordRepeatFilter` + Snowball and folds accents; the
+query side of a multi-term query may build its clauses from a different token stream
+than the index (an accented token kept unfolded beside its stem, or required as a
+phrase), so the two-word query's AND/phrase logic misses documents the single word
+reaches.
+
+**Should.** `jaqueta impermeável` and `jaqueta impermeavel` return the same documents,
+and every document matching both words alone is among them.
+
+**Done when.** An IT on a pt_BR site indexes "Jaqueta impermeável do dia a dia" and
+finds it with the accented and unaccented two-word queries.
+
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release
