@@ -2227,6 +2227,9 @@ the old three and each content-fit call fails with a 404.
 - The pinned list and its stale comment go away.
 - A site test covers both paths: options taken from the endpoint, and the picker hidden on an empty list.
 
+With T1192 shipped, the demo's site returns its own agent's personas, so the picker gets
+a non-empty list rather than hiding.
+
 **Needs** the demo to run an image with T1143 (2026.3.6 or later): today it answers 401
 on `/personas`, which means it runs an older build.
 
@@ -2415,10 +2418,14 @@ store ticks each stage's first product, so a first-timer's July kit is the deare
 and a winter bag: $1,455. The plan named a season and a level; neither ordered the
 alternatives.
 
-**Should.** Within a stage, products are ranked by fit to what the plan states — season
-against a product's season/temperature attributes, "first time" against price and weight
-— and the stage's reason says why the first one leads. A product the plan contradicts (a
-winter bag in July) is listed after one it does not, or not at all.
+**Cause.** `stageProducts` keeps the gap query's retrieval order, and the gap query
+drops the constraints the plan stated ("sleeping bag", not "summer sleeping bag").
+
+**Should.** Generic, with no attribute names or domain rules in code: the gap prompt
+asks the model to carry the plan's stated constraints into each gap query, and a stage's
+candidates are re-ranked against the whole plan plus the gap through the copilot's
+existing hybrid/reranker path (fail-open to retrieval order). A product the plan
+contradicts (a winter bag in July) then ranks after one it does not.
 
 **Done when.** That plan leads with a summer or three-season bag and a tent sized for
 one or two, covered by a kit eval case.
@@ -2431,10 +2438,14 @@ Met recording Dumont's WordPress demo video (D246), kit API (T1159).
 localhost" — the `site` field Dumont indexes to tell sites apart is quoted to the
 shopper as if it described the product. On video it reads as a debug line.
 
-**Should.** A reason quotes only fields that describe the product to a shopper: never
-the source bookkeeping (`site`, `site_key`, `source_apps`, ids, dates of indexing).
-Which fields qualify follows the SN site's field settings (facet fields a shopper sees),
-so a connector's own fields stay out without each connector asking.
+**Cause.** T1174 already limits reasons to the site's facet fields, under their labels;
+"Site" is a label, so the demo site has `site` as a facet and T1174 lets it through.
+Field settings alone cannot keep it out.
+
+**Should.** A facet field with a single value across the catalog distinguishes no
+product, so it is never a reason, and is left out of the facet vocabulary the gap prompt
+sends the model (T1169), where `site=localhost` is noise too. The vocabulary
+`facetVocabulary` already reads gives the count; no connector has to configure anything.
 
 **Done when.** The demo kit's reasons name category, colour, material or use and never
 the site.
@@ -2474,21 +2485,22 @@ step is green.
 Met on Dumont's WordPress demo stack, Turing `ghcr.io/openviglet/turing:latest`.
 
 **What happens.** `GET /api/sn/Demo/answer?q=light%20rain%20jacket&locale=en_US` answers
-with 9 sources and 567 characters. The same call with `_setlocale=en_US` — the parameter
-`/search` and `/search/similar` read — answers "I'm sorry, but that information is not
-available in the website's database." with `citations: []` and
-`{"sourceCount":0,"kbMode":"VECTOR"}`: without a locale it reads, `/answer` retrieves
-from the global `lucene-vector/turing` collection rather than the site's `demo_en_US`,
-and says nothing about why.
+with 9 sources. The same call with `_setlocale=en_US` (the parameter `/search` reads)
+answers "I'm sorry, but that information is not available" with `citations: []` and
+`sourceCount: 0`, retrieved from the global `lucene-vector/turing` collection rather
+than `demo_en_US`. First filed as a fresh-store bug, which a correct locale disproved.
 
-**First reading was wrong.** This line first claimed a fresh store's `/answer` searched
-the default agent's collection. Re-measured, the site's collection is used whenever the
-locale arrives; the empty box in Dumont's recorded video was the recording's 1.5 s pause
-taking the still before the answer streamed in.
+**The cause is wider than the spelling.** `TurSNAnswerAPI` reads only `locale` and turns
+a missing or invalid one into `Locale.ENGLISH`; `TurSNAnswerService` (line 139) then
+finds no `TurSNSiteLocale` for any locale the site has no index for (`en` on an `en_US`
+site included), passes a null collection, and retrieval falls back to the global store.
 
-**Should.** `/answer` reads `_setlocale` as the search endpoints do (or the SN site's
-default locale when neither is given), and a request it cannot place in a locale is a
-400 naming the parameter, never a grounded-looking apology from another corpus.
+**Should.** `/answer` reads `_setlocale` and keeps `locale` as an alias, so no caller
+breaks. It resolves the locale through T707's `resolveIndexedLocale`, lifted from
+`TurSNSiteGenAiAPI` to a shared seam: the requested locale if indexed, else the site's
+default indexed locale, as chat does. A site with no indexed locale answers the error
+event; a null collection never reaches the global store. Check `TurSNSiteDslSearchAPI`,
+which also reads `locale` with default `en`.
 
-**Done when.** Both spellings answer from the site's collection, and an IT asks without
-any locale and gets the site default's sources.
+**Done when.** Both spellings and `en` on an `en_US` site answer from the site's
+collection, and an IT asks without any locale and gets the site default's sources.
