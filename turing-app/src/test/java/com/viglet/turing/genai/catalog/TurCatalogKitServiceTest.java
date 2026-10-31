@@ -113,9 +113,26 @@ class TurCatalogKitServiceTest {
     /** T1190 — the gap prompt asks for the plan's constraints in each query. */
     @Test
     void theGapPromptCarriesThePlansConstraintsIntoEachQuery() {
-        String prompt = TurCatalogKitService.gapPrompt("outdoor", "July, first time", 3, Map.of());
+        String prompt = TurCatalogKitService.gapPrompt("outdoor", "en", "July, first time", 3, Map.of());
 
         assertTrue(prompt.contains("Carry into each query what the plan states that bears on that need"));
+    }
+
+    /** T1197 — the gap prompt names the request's language, or the plan's when there is none. */
+    @Test
+    void theGapPromptNamesTheRequestsLanguage() {
+        String ptBr = TurCatalogKitService.gapPrompt("recanto", "pt_BR", "Dois dias na montanha", 3,
+                Map.of("category", List.of("Jaquetas")));
+        assertTrue(ptBr.contains("in Portuguese (Brazil);"));
+        assertTrue(ptBr.contains("copy any field=value exactly as listed, never translated"));
+
+        String none = TurCatalogKitService.gapPrompt("outdoor", null, "a trip", 3, Map.of());
+        assertTrue(none.contains("in the language the plan is written in."));
+        assertFalse(none.contains("field=value"));
+        String blank = TurCatalogKitService.gapPrompt("outdoor", "  ", "a trip", 3, Map.of());
+        assertTrue(blank.contains("in the language the plan is written in."));
+        String unparseable = TurCatalogKitService.gapPrompt("outdoor", "not a locale!", "a trip", 3, Map.of());
+        assertTrue(unparseable.contains("in the language the plan is written in."));
     }
 
     /** T1169 — the gap prompt carries the catalog's facet values, so queries use its words. */
@@ -124,7 +141,7 @@ class TurCatalogKitServiceTest {
         Map<String, List<String>> vocabulary = new LinkedHashMap<>();
         vocabulary.put("category", List.of("Jackets", "Fleece"));
         vocabulary.put("empty", List.of());
-        String prompt = TurCatalogKitService.gapPrompt("outdoor", "a rainy weekend", 3, vocabulary);
+        String prompt = TurCatalogKitService.gapPrompt("outdoor", "en", "a rainy weekend", 3, vocabulary);
 
         assertTrue(prompt.contains("- category=Jackets\n- category=Fleece"));
         assertFalse(prompt.contains("category: Jackets"), "T1171: a field: values block gets copied into queries");
@@ -132,7 +149,7 @@ class TurCatalogKitServiceTest {
         assertTrue(prompt.contains("| field=value (optional)"));
         assertFalse(prompt.contains("empty"));
         assertTrue(prompt.contains("PLAN: a rainy weekend"));
-        String bare = TurCatalogKitService.gapPrompt("outdoor", "a trip", 3, Map.of());
+        String bare = TurCatalogKitService.gapPrompt("outdoor", "en", "a trip", 3, Map.of());
         assertFalse(bare.contains("catalog's own values"));
         assertFalse(bare.contains("field=value"));
     }

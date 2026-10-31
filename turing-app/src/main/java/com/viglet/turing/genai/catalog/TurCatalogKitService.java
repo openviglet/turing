@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
@@ -200,7 +202,7 @@ public class TurCatalogKitService {
         Plan named;
         try {
             named = parse(callModel(chatModel.get(), siteName,
-                    gapPrompt(siteName, plan, gapLimit, vocabulary)), gapLimit, vocabulary);
+                    gapPrompt(siteName, locale, plan, gapLimit, vocabulary)), gapLimit, vocabulary);
         } catch (RuntimeException e) {
             log.warn("[CatalogKit] gap naming failed for site '{}': {}", siteName, e.getMessage());
             return Result.error("Could not name the needs of the plan: " + e.getMessage());
@@ -488,9 +490,11 @@ public class TurCatalogKitService {
      * T1171 — the facet values are listed as {@code field=value} choices for an
      * optional fourth part, not as a {@code field: values} block: the model copied
      * that layout into its queries ({@code product_cat: Fleece and midlayers}), which
-     * no field matches as text.
+     * no field matches as text. T1197 — the prompt names the request's language, so
+     * the summary, the stages and the queries match a non-English index.
      */
-    static String gapPrompt(String siteName, String plan, int gapLimit, Map<String, List<String>> vocabulary) {
+    static String gapPrompt(String siteName, String locale, String plan, int gapLimit,
+            Map<String, List<String>> vocabulary) {
         StringBuilder words = new StringBuilder();
         if (vocabulary != null) {
             vocabulary.entrySet().stream()
@@ -517,9 +521,27 @@ public class TurCatalogKitService {
                 Carry into each query what the plan states that bears on that need (when, \
                 where, for whom, at what level, for how many), so it asks for what fits \
                 this plan and not for the need in general.
+                Write the summary, the need names, the search queries and the reasons \
+                in %s%s.
 
                 PLAN: %s""".formatted(siteName, gapLimit, catalogWords,
-                words.isEmpty() ? "" : " | field=value (optional)", plan);
+                words.isEmpty() ? "" : " | field=value (optional)", language(locale),
+                words.isEmpty() ? "" : "; copy any field=value exactly as listed, never translated", plan);
+    }
+
+    /** The locale's English display name, or the plan's own language when it has none. */
+    static String language(String locale) {
+        try {
+            if (StringUtils.hasText(locale)) {
+                String name = LocaleUtils.toLocale(locale.strip()).getDisplayName(Locale.ENGLISH);
+                if (StringUtils.hasText(name)) {
+                    return name;
+                }
+            }
+        } catch (RuntimeException e) {
+            // an unparseable locale falls back to the plan's language
+        }
+        return "the language the plan is written in";
     }
 
     /**

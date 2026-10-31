@@ -18,8 +18,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1197** (deps: —) **A pt_BR kit writes its summary and stages in English: the gap prompt is never told the language** — A Brazilian store's kit shows English stage names over Portuguese products. → §CLXII.7
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**
