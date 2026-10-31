@@ -14,7 +14,7 @@ image::.github/banner.png[Viglet Turing, Enterprise Search,align="center"]
 
 image:https://img.shields.io/github/v/release/openviglet/turing?style=flat-square&logo=github&label=release&color=2563eb[Latest release,link="https://github.com/openviglet/turing/releases/latest"]
 image:https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square&logo=apache[License,link="LICENSE"]
-image:https://img.shields.io/badge/ghcr.io-openviglet%2Fturing--ce-2563eb?style=flat-square&logo=docker&logoColor=white[Container image,link="https://github.com/orgs/openviglet/packages/container/package/turing-ce"]
+image:https://img.shields.io/badge/ghcr.io-openviglet%2Fturing--ce-2563eb?style=flat-square&logo=docker&logoColor=white[Container image,link="https://github.com/orgs/openviglet/packages/container/package/turing"]
 image:https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk&logoColor=white[Java 21]
 image:https://img.shields.io/badge/Spring%20Boot-4-6DB33F?style=flat-square&logo=springboot&logoColor=white[Spring Boot 4]
 image:https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black[React 19]
@@ -53,7 +53,7 @@ it yourself:
 [source,bash]
 ----
 docker run -p 2700:2700 -e TURING_ADMIN_PASSWORD=turing123 \
-  ghcr.io/openviglet/turing-ce:latest
+  ghcr.io/openviglet/turing:latest
 ----
 
 Then open **http://localhost:2700/console** and log in as `admin` / `turing123`.

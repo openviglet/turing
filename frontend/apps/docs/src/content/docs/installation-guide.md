@@ -234,8 +234,8 @@ Start the Solr service after the collection is created.
 Pull the pre-built image published to the GitHub Container Registry (`ghcr.io`) by the **Publish Docker Image** GitHub Action:
 
 ```bash
-docker pull ghcr.io/openviglet/turing-ce:latest
-docker run -p 2700:2700 -e TURING_ADMIN_PASSWORD=your_password ghcr.io/openviglet/turing-ce:latest
+docker pull ghcr.io/openviglet/turing:latest
+docker run -p 2700:2700 -e TURING_ADMIN_PASSWORD=your_password ghcr.io/openviglet/turing:latest
 ```
 
 `TURING_ADMIN_PASSWORD` (minimum 6 characters) seeds the `admin` password while the container boots, so the console opens on the login page instead of the first-access setup screen. Omit it and you choose the password in the browser on first access (see [Login](/docs/administration-guide/#login)).
@@ -457,7 +457,7 @@ docker-compose up
 ```
 
 :::tip[Deploy with the pre-built image]
-The commands above build Turing from source for local development. For deployment, replace the `build:` of the `turing` service with the published image instead (`image: ghcr.io/openviglet/turing-ce:latest`) so the stack pulls the image from `ghcr.io` rather than compiling it.
+The commands above build Turing from source for local development. For deployment, replace the `build:` of the `turing` service with the published image instead (`image: ghcr.io/openviglet/turing:latest`) so the stack pulls the image from `ghcr.io` rather than compiling it.
 :::
 
 :::note

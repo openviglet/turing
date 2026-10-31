@@ -2,8 +2,10 @@
 setlocal enabledelayedexpansion
 
 REM ============================================================================
-REM publish-docker.cmd — Build the Viglet Turing ES Docker image LOCALLY and
-REM push it to the GitHub Container Registry (ghcr.io/openviglet/turing-ce).
+REM publish-docker.cmd — Build the Viglet Turing Docker image LOCALLY and
+REM push it to the GitHub Container Registry (ghcr.io/openviglet/turing).
+REM Releases up to 2026.3.6 are on ghcr.io/openviglet/turing-ce, which is no
+REM longer pushed to.
 REM
 REM Unlike .github/workflows/publish-docker.yml (which clones + builds the source
 REM INSIDE the container), this builds the Spring Boot fat-jar on the HOST using
@@ -37,7 +39,7 @@ REM   publish-docker.cmd --noclean  Skip the post-push GHCR cleanup step.
 REM ============================================================================
 
 set "REGISTRY=ghcr.io"
-set "IMAGE_NAME=openviglet/turing-ce"
+set "IMAGE_NAME=openviglet/turing"
 set "IMAGE=%REGISTRY%/%IMAGE_NAME%"
 set "JAR=turing-app\target\viglet-turing.jar"
 
@@ -79,7 +81,7 @@ echo ============================================================
 REM --- Build the fat-jar on the host (authenticated ~/.m2) -------------------
 if "%SKIP_BUILD%"=="0" (
     echo [INFO] Building viglet-turing.jar on the host ^(mvn clean install, no tests / IT^) ...
-    call mvnw.cmd clean install -DskipTests -Dmaven.test.skip=true -DskipITs -pl turing-app -am
+    call "%~dp0mvnw.cmd" clean install -DskipTests -Dmaven.test.skip=true -DskipITs -pl turing-app -am
     if errorlevel 1 (
         echo [ERROR] Maven build failed.
         exit /b 1
@@ -107,8 +109,14 @@ if not "%CR_PAT%"=="" (
 )
 
 REM --- Build the runtime image (multi-tag: latest, version, sha) and push ----
+REM buildx pushes an OCI index (image + provenance attestation), and GHCR reads the
+REM repository link and description from the INDEX annotations, not the image's
+REM LABELs: without them the package is created private and linked to no repo.
 docker buildx build ^
     --file Dockerfile.local ^
+    --annotation "index:org.opencontainers.image.source=https://github.com/openviglet/turing" ^
+    --annotation "index:org.opencontainers.image.description=Viglet Turing: enterprise search with semantic navigation, RAG chat and AI agents" ^
+    --annotation "index:org.opencontainers.image.licenses=Apache-2.0" ^
     --tag %IMAGE%:latest ^
     --tag %IMAGE%:%VERSION% ^
     --tag %IMAGE%:sha-%SHA_SHORT% ^

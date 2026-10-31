@@ -78,7 +78,7 @@ jobs:
           # T1180: the 2026.3 line is released on this repository (openviglet/turing),
           # not on turing-ce, so the repository the site names shows the current
           # release. The built-in token can write releases here; the Docker image
-          # (publish-docker.yml) keeps publishing ghcr.io/openviglet/turing-ce.
+          # (publish-docker.yml) publishes ghcr.io/openviglet/turing.
           GH_TOKEN: ${{ github.token }}
           RELEASE_REPO: ${{ github.repository }}
         run: |
@@ -116,7 +116,7 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-  # T1113: every release also publishes ghcr.io/openviglet/turing-ce, so `latest`
+  # T1113: every release also publishes ghcr.io/openviglet/turing, so `latest`
   # carries the fixes the release notes announce instead of an older build.
   docker:
     needs: publish

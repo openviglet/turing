@@ -30,7 +30,7 @@ services:
     container_name: turing
     # Pre-built image published by CI. To build from this working tree instead,
     # comment out `image:` and uncomment `build: .`.
-    image: ghcr.io/openviglet/turing-ce:latest
+    image: ghcr.io/openviglet/turing:latest
     # build: .
     restart: unless-stopped
     ports:

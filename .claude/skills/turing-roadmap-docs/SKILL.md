@@ -255,7 +255,8 @@ the docs. (`_documentation-update-plan.md` is retired — do not resurrect it;
 5. **Product name & brand.** User-facing text says **Viglet Turing** first and
    **Turing** after, never "Turing ES" (the acronym was dropped on 2026-10-17; T1186).
    Public links point at `openviglet/turing`; `openviglet/turing-ce` is being retired
-   (T1180, T1183), and only the Docker image keeps the `turing-ce` name.
+   (T1180, T1183). The Docker image is `ghcr.io/openviglet/turing` (`turing-ce` only
+   holds images up to 2026.3.6).
 
 **The page ships in the task's own commit.** Code, what `ship` wrote, the end-user page
 and the `COVERAGE.md` row are one Turing commit — there is no second repo any more. Run

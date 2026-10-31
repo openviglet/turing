@@ -1,4 +1,4 @@
-# Builds the Viglet Turing ES Docker image from the root Dockerfile and pushes
+# Builds the Viglet Turing Docker image from the root Dockerfile and pushes
 # it to the GitHub Container Registry (ghcr.io). The Dockerfile is multi-stage
 # and self-contained (it clones + builds the source itself), so this workflow
 # only needs Docker Buildx — no JDK/Node/Maven setup. For more information see:
@@ -36,7 +36,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: openviglet/turing-ce
+  IMAGE_NAME: openviglet/turing
 
 jobs:
   docker:
@@ -75,6 +75,10 @@ jobs:
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v6
+        env:
+          # GHCR links the package to the repo from the INDEX annotation (buildx
+          # pushes an index with a provenance attestation), not the image LABEL.
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -96,3 +100,4 @@ jobs:
             github_token=${{ secrets.GITHUB_TOKEN }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}

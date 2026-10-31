@@ -24,6 +24,12 @@ RUN jar --create --file /defaults.zip --no-manifest -C /seed/defaults .
 FROM eclipse-temurin:21-jre
 ARG CACHE_BUST=
 LABEL org.opencontainers.image.revision=$CACHE_BUST
+# GHCR links the package to the repository named here, so it shows on the repo page
+# and inherits its visibility. Without it a first push makes an unlinked package.
+LABEL org.opencontainers.image.source=https://github.com/openviglet/turing
+LABEL org.opencontainers.image.title="Viglet Turing"
+LABEL org.opencontainers.image.description="Viglet Turing: enterprise search with semantic navigation, RAG chat and AI agents"
+LABEL org.opencontainers.image.licenses=Apache-2.0
 # T1113 — /api/discovery reports this commit, so a user can tell which build answers.
 ENV TURING_BUILD_COMMIT=$CACHE_BUST
 # ffmpeg — used by Turing for audio/video transcoding (e.g. transcription,

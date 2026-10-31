@@ -27,9 +27,9 @@ function ComposeTerminal() {
       <pre className="overflow-x-auto p-5 font-mono text-[0.8rem] leading-relaxed text-[#d7def5]">
         <code>
           <span className={P}>$</span> docker run -p 2700:2700{" "}
-          <span className={F}>ghcr.io/openviglet/turing-ce</span>
+          <span className={F}>ghcr.io/openviglet/turing</span>
           {"\n\n"}
-          <span className={C}># pulling ghcr.io/openviglet/turing-ce:latest ...</span>
+          <span className={C}># pulling ghcr.io/openviglet/turing:latest ...</span>
           {"\n"}
           <span className={OK}>✓</span> image pulled{"   "}
           <span className={C}>no build step</span>
@@ -73,7 +73,7 @@ export function SelfHost() {
           </ul>
           <div className="mt-7">
             <CopyCommand
-              command="docker run -p 2700:2700 ghcr.io/openviglet/turing-ce"
+              command="docker run -p 2700:2700 ghcr.io/openviglet/turing"
               className="border-border bg-muted text-foreground"
             />
           </div>

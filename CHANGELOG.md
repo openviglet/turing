@@ -1,6 +1,6 @@
 ## 2026.3.7
 
-Releases of the 2026.3 line now ship from this repository, openviglet/turing. Earlier 2026.3 builds (up to 2026.3.6) are on openviglet/turing-ce, and the Docker image stays `ghcr.io/openviglet/turing-ce`.
+Releases of the 2026.3 line now ship from this repository, openviglet/turing. Earlier 2026.3 builds (up to 2026.3.6) are on openviglet/turing-ce. The Docker image is now `ghcr.io/openviglet/turing`; `ghcr.io/openviglet/turing-ce` keeps the images up to 2026.3.6 and gets no new ones.
 
 #### SEARCH
 * Text search is stemmed by the site's locale on Lucene and on new Elasticsearch cores, so a plural finds its singular.

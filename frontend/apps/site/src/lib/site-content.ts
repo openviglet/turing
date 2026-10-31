@@ -819,7 +819,7 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
     faq: [
       {
         q: "How do I run Turing on my own machine?",
-        a: "One command: docker run -p 2700:2700 ghcr.io/openviglet/turing-ce, then open the console on port 2700. A docker compose file in the repository brings up the full stack with Solr, MariaDB and monitoring.",
+        a: "One command: docker run -p 2700:2700 ghcr.io/openviglet/turing, then open the console on port 2700. A docker compose file in the repository brings up the full stack with Solr, MariaDB and monitoring.",
       },
       {
         q: "Can it run with no cloud LLM at all?",
