@@ -316,7 +316,7 @@ msgstr "Carregando estatísticas..."
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:115
+#: src/blocks/search/render.php:118
 #: src/includes/class-viglet-dumont-native-search.php:245
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
@@ -644,13 +644,13 @@ msgid "Nothing is listening at %s on that port: Turing is down, or the port is w
 msgstr "Nada responde em %s nessa porta: o Turing está fora do ar, ou a porta está errada."
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-dumont-indexer.php:208
+#: src/includes/class-viglet-dumont-indexer.php:217
 #, php-format
 msgid "Indexing complete. %d documents indexed."
 msgstr "Indexação concluída. %d documentos indexados."
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-dumont-indexer.php:210
+#: src/includes/class-viglet-dumont-indexer.php:219
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
@@ -1255,7 +1255,7 @@ msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma pági
 msgid "Search this site"
 msgstr "Buscar neste site"
 
-#: src/blocks/assistant/render.php:58
+#: src/blocks/assistant/render.php:63
 #: src/includes/class-viglet-dumont-native-search.php:234
 msgid "Close"
 msgstr "Fechar"
@@ -1432,22 +1432,22 @@ msgstr "Resposta gerada a partir deste site"
 msgid "Sources"
 msgstr "Fontes"
 
-#: src/blocks/assistant/render.php:71
+#: src/blocks/assistant/render.php:76
 #: src/blocks/search/parts/answer.php:30
 msgid "Was this helpful?"
 msgstr "Isto ajudou?"
 
-#: src/blocks/assistant/render.php:72
+#: src/blocks/assistant/render.php:77
 #: src/blocks/search/parts/answer.php:31
 msgid "Yes"
 msgstr "Sim"
 
-#: src/blocks/assistant/render.php:73
+#: src/blocks/assistant/render.php:78
 #: src/blocks/search/parts/answer.php:32
 msgid "No"
 msgstr "Não"
 
-#: src/blocks/assistant/render.php:75
+#: src/blocks/assistant/render.php:80
 #: src/blocks/search/parts/answer.php:34
 msgid "Thank you."
 msgstr "Obrigado."
@@ -2049,29 +2049,29 @@ msgstr "Produto: %s"
 msgid "Stock"
 msgstr "Estoque"
 
-#: src/blocks/copilot/render.php:112
+#: src/blocks/copilot/render.php:109
 #: src/blocks/search/parts/main.php:72
 msgid "Was"
 msgstr "De"
 
-#: src/blocks/copilot/render.php:114
+#: src/blocks/copilot/render.php:111
 #: src/blocks/search/parts/main.php:75
 msgid "Add to cart"
 msgstr "Adicionar ao carrinho"
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:42
+#: src/blocks/copilot/render.php:39
 #: src/blocks/search/render.php:90
 #, php-format
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
-#: src/blocks/copilot/render.php:48
+#: src/blocks/copilot/render.php:45
 #: src/blocks/search/render.php:95
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
-#: src/blocks/copilot/render.php:49
+#: src/blocks/copilot/render.php:46
 #: src/blocks/search/render.php:96
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
@@ -2192,24 +2192,24 @@ msgstr "Adicionar um sinônimo"
 msgid "Ask the catalog"
 msgstr "Pergunte ao catálogo"
 
-#: src/blocks/copilot/render.php:50
+#: src/blocks/copilot/render.php:47
 msgid "Looking through the catalog…"
 msgstr "Procurando no catálogo…"
 
-#: src/blocks/copilot/render.php:51
+#: src/blocks/copilot/render.php:48
 msgid "The catalog could not answer right now."
 msgstr "O catálogo não pôde responder agora."
 
-#: src/blocks/copilot/render.php:52
+#: src/blocks/copilot/render.php:49
 msgid "Nothing in the catalog matches that."
 msgstr "Nada no catálogo corresponde a isso."
 
-#: src/blocks/copilot/render.php:31
+#: src/blocks/copilot/render.php:28
 msgid "What are you looking for?"
 msgstr "O que você procura?"
 
-#: src/blocks/copilot/render.php:67
-#: src/blocks/copilot/render.php:179
+#: src/blocks/copilot/render.php:64
+#: src/blocks/copilot/render.php:176
 msgid "Ask"
 msgstr "Perguntar"
 
@@ -2363,14 +2363,14 @@ msgstr "(diferente)"
 msgid "Where they differ"
 msgstr "Onde diferem"
 
-#: src/blocks/copilot/render.php:118
+#: src/blocks/copilot/render.php:115
 #: src/blocks/related/render.php:115
 #: src/blocks/search/parts/main.php:79
 msgid "Compare"
 msgstr "Comparar"
 
 #. translators: %d: how many products, two to four.
-#: src/blocks/copilot/render.php:47
+#: src/blocks/copilot/render.php:44
 #: src/blocks/related/render.php:53
 #: src/blocks/search/render.php:92
 #, php-format
@@ -2378,7 +2378,7 @@ msgid "Compare %d products"
 msgstr "Comparar %d produtos"
 
 #. translators: %s: a product's name.
-#: src/blocks/copilot/render.php:45
+#: src/blocks/copilot/render.php:42
 #: src/blocks/related/render.php:114
 #: src/blocks/search/render.php:94
 #, php-format
@@ -2570,39 +2570,39 @@ msgstr "Um botão no canto de todas as páginas abre um chat que responde a part
 msgid "Ask this site"
 msgstr "Pergunte a este site"
 
-#: src/blocks/assistant/render.php:28
+#: src/blocks/assistant/render.php:32
 msgid "Reading this site’s posts…"
 msgstr "Lendo os posts deste site…"
 
-#: src/blocks/assistant/render.php:29
+#: src/blocks/assistant/render.php:33
 msgid "The assistant could not answer right now. Try again in a moment."
 msgstr "O assistente não conseguiu responder agora. Tente de novo em instantes."
 
-#: src/blocks/assistant/render.php:57
+#: src/blocks/assistant/render.php:62
 msgid "New conversation"
 msgstr "Nova conversa"
 
-#: src/blocks/assistant/render.php:60
+#: src/blocks/assistant/render.php:65
 msgid "Answers are generated by AI from this site’s posts and may be wrong. Check the posts they cite."
 msgstr "As respostas são geradas por IA a partir dos posts deste site e podem estar erradas. Confira os posts que elas citam."
 
-#: src/blocks/assistant/render.php:61
+#: src/blocks/assistant/render.php:66
 msgid "Conversation"
 msgstr "Conversa"
 
-#: src/blocks/assistant/render.php:65
+#: src/blocks/assistant/render.php:70
 msgid "Posts it used"
 msgstr "Posts usados"
 
-#: src/blocks/assistant/render.php:80
+#: src/blocks/assistant/render.php:85
 msgid "Try asking"
 msgstr "Experimente perguntar"
 
-#: src/blocks/assistant/render.php:88
+#: src/blocks/assistant/render.php:93
 msgid "Your question"
 msgstr "Sua pergunta"
 
-#: src/blocks/assistant/render.php:96
+#: src/blocks/assistant/render.php:101
 msgid "Send"
 msgstr "Enviar"
 
@@ -2666,73 +2666,73 @@ msgstr "Bloco Pergunte ao catálogo"
 msgid "Shown by"
 msgstr "Aparece em"
 
-#: src/blocks/copilot/render.php:68
+#: src/blocks/copilot/render.php:65
 msgid "Describe your plan"
 msgstr "Descreva seu plano"
 
-#: src/blocks/copilot/render.php:69
+#: src/blocks/copilot/render.php:66
 msgid "Build my kit"
 msgstr "Montar meu kit"
 
-#: src/blocks/copilot/render.php:70
+#: src/blocks/copilot/render.php:67
 msgid "Putting your kit together…"
 msgstr "Montando seu kit…"
 
-#: src/blocks/copilot/render.php:71
+#: src/blocks/copilot/render.php:68
 msgid "The catalog has nothing for that plan."
 msgstr "O catálogo não tem nada para esse plano."
 
 #. translators: %s: the needs the catalog has no product for, comma-separated.
-#: src/blocks/copilot/render.php:73
+#: src/blocks/copilot/render.php:70
 #, php-format
 msgid "Nothing in the catalog yet for: %s."
 msgstr "Ainda não há nada no catálogo para: %s."
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:75
+#: src/blocks/copilot/render.php:72
 #, php-format
 msgid "Keep %s in the kit"
 msgstr "Manter %s no kit"
 
 #. translators: %d: how many products.
-#: src/blocks/copilot/render.php:77
+#: src/blocks/copilot/render.php:74
 #, php-format
 msgid "Add %d products to the cart"
 msgstr "Adicionar %d produtos ao carrinho"
 
-#: src/blocks/copilot/render.php:78
+#: src/blocks/copilot/render.php:75
 msgid "Add 1 product to the cart"
 msgstr "Adicionar 1 produto ao carrinho"
 
 #. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
-#: src/blocks/copilot/render.php:80
+#: src/blocks/copilot/render.php:77
 #, php-format
 msgid "Added %1$d to your cart. Cart total: %2$s."
 msgstr "%1$d adicionados ao carrinho. Total do carrinho: %2$s."
 
 #. translators: 1: how many were added, 2: how many were asked for.
-#: src/blocks/copilot/render.php:82
+#: src/blocks/copilot/render.php:79
 #, php-format
 msgid "Added %1$d of %2$d to your cart; the rest could not be added."
 msgstr "%1$d de %2$d adicionados ao carrinho; os demais não puderam ser adicionados."
 
-#: src/blocks/copilot/render.php:96
+#: src/blocks/copilot/render.php:93
 msgid "Mode"
 msgstr "Modo"
 
-#: src/blocks/copilot/render.php:97
+#: src/blocks/copilot/render.php:94
 msgid "Ask a question"
 msgstr "Fazer uma pergunta"
 
-#: src/blocks/copilot/render.php:98
+#: src/blocks/copilot/render.php:95
 msgid "Plan a kit"
 msgstr "Planejar um kit"
 
-#: src/blocks/copilot/render.php:147
+#: src/blocks/copilot/render.php:144
 msgid "Out of stock"
 msgstr "Fora de estoque"
 
-#: src/blocks/copilot/render.php:156
+#: src/blocks/copilot/render.php:153
 msgid "Guides for this plan"
 msgstr "Guias para este plano"
 
@@ -2802,7 +2802,11 @@ msgid "The SN site %s answers searches without a key."
 msgstr "O site SN %s responde a buscas sem chave."
 
 #. translators: %s: the name of the product or post the page shows.
-#: src/blocks/copilot/render.php:30
+#: src/blocks/copilot/render.php:27
 #, php-format
 msgid "Ask about %s"
 msgstr "Pergunte sobre %s"
+
+#: src/blocks/search/render.php:116
+msgid "Reading your search…"
+msgstr "Lendo sua busca…"

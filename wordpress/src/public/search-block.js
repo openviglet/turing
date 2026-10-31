@@ -192,8 +192,14 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		get showSkeleton() {
 			return state.isLoading && 0 === state.results.length;
 		},
+		// A sentence still being read is not empty yet: its words as typed found nothing,
+		// and the filters read from them are about to search again (D262).
 		get isEmpty() {
-			return 'success' === state.status && 0 === state.total;
+			return (
+				'success' === state.status &&
+				0 === state.total &&
+				! state.readingSentence
+			);
 		},
 		get isError() {
 			return 'error' === state.status;
@@ -210,9 +216,10 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			if ( 'success' !== state.status ) {
 				return '';
 			}
-			return state.total > 0
-				? counted( state.foundLabels, state.total )
-				: state.noneLabel;
+			if ( state.total > 0 ) {
+				return counted( state.foundLabels, state.total );
+			}
+			return state.readingSentence ? state.readingLabel : state.noneLabel;
 		},
 	},
 	actions: {
@@ -222,6 +229,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			state.active = -1;
 			// A reading of the previous sentence is not one of this one.
 			reading = '';
+			state.readingSentence = false;
 			state.suggested = [];
 			window.clearTimeout( instant );
 			if ( state.query.trim().length > 1 ) {
@@ -621,6 +629,27 @@ function readsAsSentence( query ) {
  */
 async function suggestFilters( query ) {
 	const text = query.trim();
+	// Only a reading that applies itself replaces the search the visitor sees.
+	state.readingSentence =
+		state.suggestEnabled &&
+		state.applyEnabled &&
+		'*' !== text &&
+		readsAsSentence( text );
+	try {
+		await readFilters( text );
+	} finally {
+		if ( reading === text ) {
+			state.readingSentence = false;
+		}
+	}
+}
+
+/**
+ * The reading itself, for suggestFilters.
+ *
+ * @param {string} text The sentence, trimmed.
+ */
+async function readFilters( text ) {
 	reading = text;
 	state.suggested = [];
 	state.understood = '';

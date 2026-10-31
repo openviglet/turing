@@ -77,3 +77,38 @@ for ( const sentence of sentences ) {
 		).toBeVisible();
 	} );
 }
+
+// D262: the sentence as typed finds nothing ("under $200" is no word of any product), and the
+// block searches again once its filters are read. Until then it says it is reading, never
+// "No results found": the demo video held on that line for seconds.
+test( 'a sentence being read never shows its words as typed found nothing', async ( {
+	page,
+} ) => {
+	test.skip( 'en_US' !== demoLocale(), 'the labels are checked in English' );
+	let release;
+	const held = new Promise( ( resolve ) => {
+		release = resolve;
+	} );
+	await page.route( '**/nl-filters', async ( route ) => {
+		await held;
+		await route.fulfill( { json: { available: false } } );
+	} );
+	await page.goto(
+		`/?pagename=search-gear&q=${ encodeURIComponent(
+			'a waterproof jacket under $200'
+		) }`
+	);
+	const summary = block( page ).locator( '.viglet-dumont-search__summary' );
+	await expect( summary ).toHaveText( 'Reading your search…' );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__empty' )
+	).toBeHidden();
+	release();
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__understood' )
+	).toContainText( 'Price: ≤ 200' );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__title a' ).first()
+	).toBeVisible();
+	await expect( summary ).not.toHaveText( 'Reading your search…' );
+} );

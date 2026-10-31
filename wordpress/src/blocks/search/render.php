@@ -38,81 +38,84 @@ foreach ( viglet_dumont_get_indexable_types() as $viglet_dumont_type ) {
 $viglet_dumont_price = Viglet_Dumont_Search_Block::price_field();
 
 $viglet_dumont_state = array(
-	'query'          => Viglet_Dumont_Search_Block::query(),
-	'status'         => 'idle',
-	'results'        => array(),
-	'spotlights'     => array(),
-	'facets'         => array(),
-	'pages'          => array(),
-	'suggestions'    => array(),
-	'applied'        => array(),
-	'total'          => 0,
-	'corrected'      => '',
-	'error'          => '',
-	'open'           => false,
-	'active'         => -1,
-	'recent'         => array(),
-	'inputId'        => $viglet_dumont_id,
-	'listId'         => $viglet_dumont_id . '-suggestions',
+	'query'           => Viglet_Dumont_Search_Block::query(),
+	'status'          => 'idle',
+	'results'         => array(),
+	'spotlights'      => array(),
+	'facets'          => array(),
+	'pages'           => array(),
+	'suggestions'     => array(),
+	'applied'         => array(),
+	'total'           => 0,
+	'corrected'       => '',
+	'error'           => '',
+	'open'            => false,
+	'active'          => -1,
+	'recent'          => array(),
+	'inputId'         => $viglet_dumont_id,
+	'listId'          => $viglet_dumont_id . '-suggestions',
 	// A count's forms for one and for more, which search-block.js picks between (D184).
-	'optionsLabels'  => array(
+	'optionsLabels'   => array(
 		/* translators: %d: how many suggestions the search box offers. */
 		'one'   => _n( '%d suggestion. Use the up and down arrows to choose it.', '%d suggestions. Use the up and down arrows to choose one.', 1, 'viglet-dumont' ),
 		/* translators: %d: how many suggestions the search box offers. */
 		'other' => _n( '%d suggestion. Use the up and down arrows to choose it.', '%d suggestions. Use the up and down arrows to choose one.', 2, 'viglet-dumont' ),
 	),
-	'drawerOpen'     => false,
-	'expanded'       => array(),
-	'filtersLabel0'  => __( 'Filters', 'viglet-dumont' ),
+	'drawerOpen'      => false,
+	'expanded'        => array(),
+	'filtersLabel0'   => __( 'Filters', 'viglet-dumont' ),
 	/* translators: %d: how many filters are applied. */
-	'filtersLabelN'  => __( 'Filters (%d)', 'viglet-dumont' ),
+	'filtersLabelN'   => __( 'Filters (%d)', 'viglet-dumont' ),
 	/* translators: %d: how many more values the facet has. */
-	'moreValues'     => __( 'Show %d more', 'viglet-dumont' ),
-	'fewerLabel'     => __( 'Show fewer', 'viglet-dumont' ),
-	'answerEnabled'  => ! empty( $attributes['showAnswer'] ),
-	'answer'         => '',
-	'answerSources'  => array(),
-	'answerStatus'   => 'idle',
-	'answerRated'    => false,
+	'moreValues'      => __( 'Show %d more', 'viglet-dumont' ),
+	'fewerLabel'      => __( 'Show fewer', 'viglet-dumont' ),
+	'answerEnabled'   => ! empty( $attributes['showAnswer'] ),
+	'answer'          => '',
+	'answerSources'   => array(),
+	'answerStatus'    => 'idle',
+	'answerRated'     => false,
 	// The filters a sentence names (D170), and the names of the core fields they may filter.
-	'suggestEnabled' => ! empty( $attributes['suggestFilters'] ),
-	'suggested'      => array(),
+	'suggestEnabled'  => ! empty( $attributes['suggestFilters'] ),
+	'suggested'       => array(),
 	// D199: with applyFilters on, the filters a sentence names are applied, said in a line and
 	// undone with one click, instead of offered; a price it names is read in code as well, so
 	// "under R$400" filters with no language model in Turing.
-	'applyEnabled'   => ! empty( $attributes['suggestFilters'] ) && ! empty( $attributes['applyFilters'] ),
-	'priceField'     => $viglet_dumont_price ? $viglet_dumont_price['field'] : '',
-	'understood'     => '',
+	'applyEnabled'    => ! empty( $attributes['suggestFilters'] ) && ! empty( $attributes['applyFilters'] ),
+	'priceField'      => $viglet_dumont_price ? $viglet_dumont_price['field'] : '',
+	'understood'      => '',
 	/* translators: %s: the filters read from the visitor's sentence, comma-separated. */
-	'understoodText' => __( 'Understood: %s', 'viglet-dumont' ),
+	'understoodText'  => __( 'Understood: %s', 'viglet-dumont' ),
 	// A product result's "Add to cart" (D173): its name for a screen reader, and what it did.
 	/* translators: %s: the product's name. */
-	'cartLabel'      => __( 'Add to cart: %s', 'viglet-dumont' ),
+	'cartLabel'       => __( 'Add to cart: %s', 'viglet-dumont' ),
 	/* translators: %d: how many products, two to four. */
-	'compareLabel'   => __( 'Compare %d products', 'viglet-dumont' ),
+	'compareLabel'    => __( 'Compare %d products', 'viglet-dumont' ),
 	/* translators: %s: a product's name. */
-	'compareFor'     => __( 'Compare %s', 'viglet-dumont' ),
-	'cartAdded'      => __( 'Added to your cart.', 'viglet-dumont' ),
-	'cartFailed'     => __( 'It could not be added to the cart.', 'viglet-dumont' ),
-	'fieldLabels'    => array_merge(
+	'compareFor'      => __( 'Compare %s', 'viglet-dumont' ),
+	'cartAdded'       => __( 'Added to your cart.', 'viglet-dumont' ),
+	'cartFailed'      => __( 'It could not be added to the cart.', 'viglet-dumont' ),
+	'fieldLabels'     => array_merge(
 		array(
 			'type'             => __( 'Type', 'viglet-dumont' ),
 			'publication_date' => __( 'Published', 'viglet-dumont' ),
 		),
 		$viglet_dumont_price ? array( $viglet_dumont_price['field'] => $viglet_dumont_price['label'] ) : array()
 	),
-	'sort'           => Viglet_Dumont_Search_Block::sort(),
-	'perPage'        => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
-	'typeLabels'     => $viglet_dumont_types,
-	'homeUrl'        => home_url( '/' ),
-	'foundLabels'    => array(
+	'sort'            => Viglet_Dumont_Search_Block::sort(),
+	'perPage'         => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
+	'typeLabels'      => $viglet_dumont_types,
+	'homeUrl'         => home_url( '/' ),
+	'foundLabels'     => array(
 		/* translators: %d: how many results Turing found. */
 		'one'   => _n( '%d result', '%d results', 1, 'viglet-dumont' ),
 		/* translators: %d: how many results Turing found. */
 		'other' => _n( '%d result', '%d results', 2, 'viglet-dumont' ),
 	),
-	'noneLabel'      => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
-	'errorLabel'     => __( 'Search is unavailable right now.', 'viglet-dumont' ),
+	'noneLabel'       => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
+	// While a sentence's filters are read, its words as typed are not the search (D262).
+	'readingLabel'    => __( 'Reading your search…', 'viglet-dumont' ),
+	'readingSentence' => false,
+	'errorLabel'      => __( 'Search is unavailable right now.', 'viglet-dumont' ),
 );
 
 // In the block editor the script does not run: draw Turing's answer to * on the server instead,

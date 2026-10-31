@@ -61,7 +61,10 @@ test( 'on a product page the Site assistant asks about that product', async ( {
 			.fill( 'Will it keep me dry?' );
 		await corner.getByRole( 'button', { name: 'Send' } ).click();
 		await expect(
-			corner.locator( '.viglet-dumont-assistant__message' ).last()
+			corner
+				.locator( '.viglet-dumont-assistant__message' )
+				.last()
+				.locator( '.viglet-dumont-assistant__text' )
 		).toHaveText( 'It is.' );
 	};
 
