@@ -30,6 +30,26 @@ function replaceOrThrow(html, re, replacement, label) {
   return html.replace(re, replacement);
 }
 
+/**
+ * A BreadcrumbList for every page below the landing one. Without it Google builds the result's
+ * breadcrumb from the URL and drops `turing`, so a page reads "openviglet.github.io › compare" as
+ * though it belonged to the host. A page that renders its own (aem, persona) keeps it, and the
+ * docs area emits its own (apps/docs/src/components/Head.astro).
+ */
+function breadcrumbJsonLd(route, canonical, appHtml) {
+  if (route.path === "/" || appHtml.includes('"BreadcrumbList"')) return "";
+  const items = [
+    { name: "Viglet Turing", item: `${SITE_URL}/` },
+    { name: route.title.replace(/\s*\|\s*Viglet Turing$/, ""), item: canonical },
+  ];
+  const json = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, ...it })),
+  }).replace(/</g, "\\u003c");
+  return `<script type="application/ld+json">${json}</script>`;
+}
+
 function buildHtml(route) {
   const appHtml = render(route.path);
   const canonical = `${SITE_URL}${route.path}`;
@@ -69,6 +89,7 @@ function buildHtml(route) {
     `<link rel="canonical" href="${canonical}" />`,
     "canonical link"
   );
+  html = replaceOrThrow(html, /<\/head>/, `${breadcrumbJsonLd(route, canonical, appHtml)}</head>`, "</head>");
   // inject the prerendered app markup
   html = replaceOrThrow(
     html,
