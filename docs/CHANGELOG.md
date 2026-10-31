@@ -1545,6 +1545,7 @@
 - **T1097** — turing.viglet.org and its Storybooks load Google Analytics only after the visitor accepts, via a banner with equal Accept and Decline and a footer Cookie settings link, as viglet.org W42 decided (design §CXV.5 recorded in `frontend/apps/site/src/lib/analytics.ts`).
 - **T1192** — A bundle's agents import before its sites and a new agent keeps its bundle id, so a site naming it offers that agent's personas whatever the default agent; an unresolved reference is a warning (design §CXV.8 superseded: import order alone was not enough: the agent import gave a new agent a fresh id, so the site's reference could never match).
 - **T1193** — The site playground loads its personas from the demo site's /personas and hides the picker when that list is empty or fails; the pinned ids are gone, with samples only for the offline script.
+- **T1198** — A fresh install adopts the imported agent a seeded SN site names (lowest id when several) as the default AI agent, so the demo's persona agent gets the LLM and answers on turing-docs.
 
 ## Block CE — Semantic retrieval for SN sites
 

@@ -32,9 +32,11 @@ import org.springframework.core.env.Environment;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -57,6 +59,7 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
     @Mock private TurAIAgentRepository turAIAgentRepository;
     @Mock private TurSecretCryptoService turSecretCryptoService;
     @Mock private TurGlobalSettingsService turGlobalSettingsService;
+    @Mock private TurSNSiteGenAiRepository turSNSiteGenAiRepository;
     @Mock private ApplicationArguments args;
 
     private TurLLMInstanceOnStartup runner;
@@ -65,7 +68,8 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
     void setUp() {
         runner = new TurLLMInstanceOnStartup(environment, turLLMInstanceRepository,
                 turLLMVendorRepository, turAIAgentRepository, turSecretCryptoService,
-                turGlobalSettingsService);
+                turGlobalSettingsService, turSNSiteGenAiRepository);
+        when(turSNSiteGenAiRepository.findAll()).thenReturn(List.of());
 
         when(environment.getProperty("turing.startup.default-llm.enabled",
                 Boolean.class, Boolean.TRUE)).thenReturn(Boolean.TRUE);
@@ -134,6 +138,30 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
         // The env-key LLM was wired onto the imported agent.
         assertThat(imported.getLlmInstances()).hasSize(1);
         verify(turAIAgentRepository).save(imported);
+    }
+
+    /** T1198 — the agent a seeded site names wins over findAll()'s first. */
+    @Test
+    void anAgentASiteNamesIsAdoptedOverAnEarlierUnnamedOne() {
+        TurAIAgent admissions = new TurAIAgent();
+        admissions.setId("agent-criaturas-admissoes");
+        TurAIAgent demo = new TurAIAgent();
+        demo.setId("agent-turing-demo");
+        TurAIAgent other = new TurAIAgent();
+        other.setId("agent-z");
+        when(turAIAgentRepository.findAll()).thenReturn(List.of(admissions, other, demo));
+        TurSNSiteGenAi unbound = new TurSNSiteGenAi();
+        TurSNSiteGenAi namesOther = new TurSNSiteGenAi();
+        namesOther.setTurAIAgent(other);
+        TurSNSiteGenAi namesDemo = new TurSNSiteGenAi();
+        namesDemo.setTurAIAgent(demo);
+        when(turSNSiteGenAiRepository.findAll()).thenReturn(List.of(unbound, namesOther, namesDemo));
+
+        runner.run(args);
+
+        verify(turGlobalSettingsService).updateDefaultAiAgentId("agent-turing-demo");
+        assertThat(demo.getLlmInstances()).hasSize(1);
+        assertThat(admissions.getLlmInstances()).isEmpty();
     }
 
     @Test

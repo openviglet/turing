@@ -28,14 +28,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -156,19 +161,22 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
     private final TurAIAgentRepository turAIAgentRepository;
     private final TurSecretCryptoService turSecretCryptoService;
     private final TurGlobalSettingsService turGlobalSettingsService;
+    private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
 
     public TurLLMInstanceOnStartup(Environment environment,
             TurLLMInstanceRepository turLLMInstanceRepository,
             TurLLMVendorRepository turLLMVendorRepository,
             TurAIAgentRepository turAIAgentRepository,
             TurSecretCryptoService turSecretCryptoService,
-            TurGlobalSettingsService turGlobalSettingsService) {
+            TurGlobalSettingsService turGlobalSettingsService,
+            TurSNSiteGenAiRepository turSNSiteGenAiRepository) {
         this.environment = environment;
         this.turLLMInstanceRepository = turLLMInstanceRepository;
         this.turLLMVendorRepository = turLLMVendorRepository;
         this.turAIAgentRepository = turAIAgentRepository;
         this.turSecretCryptoService = turSecretCryptoService;
         this.turGlobalSettingsService = turGlobalSettingsService;
+        this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
     }
 
     @Override
@@ -307,7 +315,7 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
         }
         List<TurAIAgent> agents = turAIAgentRepository.findAll();
         if (!agents.isEmpty()) {
-            TurAIAgent adopted = agents.get(0);
+            TurAIAgent adopted = siteNamedAgent().orElse(agents.get(0));
             turGlobalSettingsService.updateDefaultAiAgentId(adopted.getId());
             log.info("Adopted imported agent '{}' ('{}') as the global default AI agent{}.",
                     adopted.getId(), adopted.getTitle(),
@@ -315,6 +323,19 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
             return adopted;
         }
         return createGenericDefaultAgent(llm);
+    }
+
+    /**
+     * T1198 — the imported agent a seeded SN site names in its GenAI binding, the
+     * lowest id when several do. With several bundles each shipping an agent,
+     * {@code findAll()}'s first is arbitrary; the one a site names is the agent the
+     * bundle meant to answer, so it is the one that gets the LLM and RAG infra.
+     */
+    private Optional<TurAIAgent> siteNamedAgent() {
+        return turSNSiteGenAiRepository.findAll().stream()
+                .map(TurSNSiteGenAi::getTurAIAgent)
+                .filter(Objects::nonNull)
+                .min(Comparator.comparing(TurAIAgent::getId));
     }
 
     /** Creates the generic helpful-assistant agent for a truly fresh install. */
