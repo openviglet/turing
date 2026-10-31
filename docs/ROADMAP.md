@@ -17,7 +17,7 @@
 ## Block CJ — Releases ship from the repository the README names
 
 - 📋 **T1188** (deps: —) **The release fails on an intermittent TurSdkContractIT failure: similar returns nothing for the partition probes** — MoreLikeThis answers [] for both probes in 2 of 3 class runs, so publish.yml stops at the IT step and the Java SDK never reaches Maven Central (Dumont D144). → §CLXIII.1
-- 📋 **T1189** (deps: —) **On a fresh store an SN site's /answer finds no sources: it searches the default agent's collection, not the site's** — A caller using the search spelling gets no sources and no error; first filed as a fresh-store bug, which a correct locale disproved. → §CLXIII.2
+- 📋 **T1189** (deps: —) **C:/Program Files/Git/answer ignores _setlocale, so a call spelled like /search gets an apology from another collection** — A caller using the search spelling gets no sources and no error; first filed as a fresh-store bug, which a correct locale disproved. → §CLXIII.2
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
