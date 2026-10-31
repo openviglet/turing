@@ -18,6 +18,8 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
+- 📋 **T1199** (deps: —) **Spell-check changes numbers: R$ 2.200 is corrected to r$ 2.100** — A client that searches the correction searches a price the shopper never named. → §CLXII.8
+
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

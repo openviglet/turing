@@ -2406,6 +2406,23 @@ The first keeps the existing rule and is the recommended one.
 **Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
 counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
+### CLXII.8 Spell-check never corrects numbers (T1199)
+
+Met recording Dumont's pt_BR demo video (search block, SN site `recanto-da-serra`).
+
+**What happens.** The sentence `uma barraca para duas pessoas até R$ 2.200` finds
+nothing as typed (its filters are read afterwards), and the spell-check Viglet Turing
+returns for it is `uma barraca para duas pessoas até r$ 2.100`: a different number, and
+the currency lowercased. A client that searches the correction — Dumont's search block
+does for a query that found nothing (D259) — searches a price the shopper never named.
+
+**Should.** Spell-check corrects words, never numbers, prices, units or tokens with
+digits (`2.200`, `R$`, `45L`, `42`), and keeps the case of what it does not change; a
+query whose only "errors" are those gets no correction.
+
+**Done when.** That sentence returns no correction, covered by a test on the spell-check
+that includes numbers with thousand separators and currency symbols in pt_BR and en_US.
+
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release
