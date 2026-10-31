@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 81963,
+    "path": "demo/narration/pt-BR/chapter-1.mp3",
+    "sha256": "e24b37eb0491bc3ce031c1693d53214f409ae856d59f8acd8276f075e4fadf90"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00213,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 81963,
+    "sha256": "e24b37eb0491bc3ce031c1693d53214f409ae856d59f8acd8276f075e4fadf90"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:17:00Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Uma cliente chega. As buscas populares j\u00e1 mostram o que o cat\u00e1logo tem.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:x0Is0umGXq1CR2Bl2Kgn"
+}

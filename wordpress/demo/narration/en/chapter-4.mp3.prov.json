@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 41003,
+    "path": "demo/narration/en/chapter-4.mp3",
+    "sha256": "3bd8ba26b6d82098507884b93b4dc6f70fb9560417ad3b199f380acd18d2f86f"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00123,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 41003,
+    "sha256": "3bd8ba26b6d82098507884b93b4dc6f70fb9560417ad3b199f380acd18d2f86f"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:18:05Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "She compares three products side by side.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:9JCAHozqVJzlheDHBeQP"
+}

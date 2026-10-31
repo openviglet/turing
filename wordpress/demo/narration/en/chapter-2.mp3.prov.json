@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 58975,
+    "path": "demo/narration/en/chapter-2.mp3",
+    "sha256": "394d8e4eb9b66c42eff5979d42b4ad60a477ccfb542ae7b6200a44e057d7da83"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00198,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 58975,
+    "sha256": "394d8e4eb9b66c42eff5979d42b4ad60a477ccfb542ae7b6200a44e057d7da83"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:17:21Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "She types what she needs in a sentence, and the results follow it.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:aUfRg2dvZbyY6cGtwxpe"
+}

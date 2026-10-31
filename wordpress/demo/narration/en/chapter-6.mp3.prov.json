@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 79037,
+    "path": "demo/narration/en/chapter-6.mp3",
+    "sha256": "a37cebd52ddcb4a551dd1740aa9a39d2a5e30bcb5b9df7bf3fdec0b92cf068fa"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00243,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00243,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 79037,
+    "sha256": "a37cebd52ddcb4a551dd1740aa9a39d2a5e30bcb5b9df7bf3fdec0b92cf068fa"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:18:55Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "On a product page, related gear appears, and she can ask about that very product.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:4EesVaHMsLr2lKpXCgAM"
+}

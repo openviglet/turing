@@ -1,0 +1,39 @@
+{
+	"voice": "XrExE9yKIg1WjnnlVkGX",
+	"voiceName": "Matilda (ElevenLabs premade voice)",
+	"model": "eleven_multilingual_v2",
+	"chapters": {
+		"1": {
+			"en": "A shopper arrives. Popular searches already show what the catalog holds.",
+			"pt-BR": "Uma cliente chega. As buscas populares já mostram o que o catálogo tem."
+		},
+		"2": {
+			"en": "She types what she needs in a sentence, and the results follow it.",
+			"pt-BR": "Ela escreve o que precisa numa frase, e os resultados acompanham."
+		},
+		"3": {
+			"en": "She asks the Site assistant, and the answer cites the pages it came from.",
+			"pt-BR": "Ela pergunta ao Assistente do site, e a resposta cita as páginas de onde veio."
+		},
+		"4": {
+			"en": "She compares three products side by side.",
+			"pt-BR": "Ela compara três produtos lado a lado."
+		},
+		"5": {
+			"en": "She describes her trip. The copilot builds a kit from what the shop sells, priced and in stock, and puts it in the cart in one click.",
+			"pt-BR": "Ela descreve a viagem. O copiloto monta um kit com o que a loja vende, com preço e estoque, e o põe no carrinho com um clique."
+		},
+		"6": {
+			"en": "On a product page, related gear appears, and she can ask about that very product.",
+			"pt-BR": "Na página de um produto aparecem itens relacionados, e ela pode perguntar sobre aquele produto."
+		},
+		"7": {
+			"en": "She checks out, here in test mode.",
+			"pt-BR": "Ela finaliza a compra, aqui em modo de teste."
+		},
+		"8": {
+			"en": "Backstage: the WordPress search runs on Turing, and her searches show up in the insights.",
+			"pt-BR": "Nos bastidores: a busca do WordPress roda no Turing, e as buscas dela aparecem nos insights."
+		}
+	}
+}

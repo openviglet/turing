@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 88650,
+    "path": "demo/narration/en/chapter-8.mp3",
+    "sha256": "33f88c0a7e1e5b73b079fcba3ebeff6eca70e810f8da302521a461f8c7c80a18"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00267,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00267,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 88650,
+    "sha256": "33f88c0a7e1e5b73b079fcba3ebeff6eca70e810f8da302521a461f8c7c80a18"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:19:53Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Backstage: the WordPress search runs on Turing, and her searches show up in the insights.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:TVdfzNv0V5smYZgCnznc"
+}

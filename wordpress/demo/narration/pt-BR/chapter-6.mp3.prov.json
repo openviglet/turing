@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 95337,
+    "path": "demo/narration/pt-BR/chapter-6.mp3",
+    "sha256": "3746d8f93b03641d1ba376ed27ac95d742620058cf5a75eea28791608abfdfc4"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00285,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00285,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 95337,
+    "sha256": "3746d8f93b03641d1ba376ed27ac95d742620058cf5a75eea28791608abfdfc4"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:19:05Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Na p\u00e1gina de um produto aparecem itens relacionados, e ela pode perguntar sobre aquele produto.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:Ra2eSSwn3xAnr9hPDd5u"
+}

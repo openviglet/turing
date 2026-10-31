@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 67334,
+    "path": "demo/narration/en/chapter-3.mp3",
+    "sha256": "0d6af9664a8edf39a24af6746df9588634c1065a25d9c467e3d51c4c287ee8e6"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00219,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 67334,
+    "sha256": "0d6af9664a8edf39a24af6746df9588634c1065a25d9c467e3d51c4c287ee8e6"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:17:41Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "She asks the Site assistant, and the answer cites the pages it came from.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:p9YLamUEwWXLlJRAdBnR"
+}

@@ -4,6 +4,11 @@
 // them, and the chapter names as captions in English and pt_BR. Every frame between the cards
 // is the product running. Needs ffmpeg on the PATH.
 //
+// Narration (D246): a chapter's take in demo/narration/<language>/chapter-<n>.mp3 is read from
+// its card on, one audio track per language; a take longer than the card and the clip holds
+// the clip's last frame until it ends. `npm run story:narration` buys the takes; without
+// them the video is silent, as before.
+//
 //   npm run e2e:story:record && npm run story:video
 //
 // Writes tests/e2e/artifacts/video/: story.mp4 (both caption tracks), story.en.srt and
@@ -28,6 +33,12 @@ import { chromium } from '@playwright/test';
 
 const root = join( dirname( fileURLToPath( import.meta.url ) ), '..' );
 const recorded = join( root, 'tests', 'e2e', 'artifacts', 'story' );
+const narration = join( root, 'demo', 'narration' );
+// Each narrated language, as ffmpeg names it on the audio track.
+const voices = { en: 'eng', 'pt-BR': 'por' };
+// The narration starts this long after its card shows, and ends this long before the next.
+const voiceLead = 0.4;
+const voiceTail = 0.5;
 const out = join( root, 'tests', 'e2e', 'artifacts', 'video' );
 const size = { width: 1920, height: 1080 };
 const cardSeconds = 2.5;
@@ -220,6 +231,27 @@ const cut = ( name, input ) => {
 };
 
 /**
+ * A clip whose last frame holds a while longer, encoded like the rest.
+ *
+ * @param {string} clip  The clip.
+ * @param {number} extra How many seconds to hold its last frame.
+ * @param {string} name  The held clip's file name.
+ */
+const held = ( clip, extra, name ) => {
+	const file = join( out, 'parts', name );
+	const [ flag, filters, ...rest ] = encode;
+	ffmpeg( [
+		'-i',
+		clip,
+		flag,
+		`tpad=stop_mode=clone:stop_duration=${ extra.toFixed( 3 ) },${ filters }`,
+		...rest,
+		file,
+	] );
+	return file;
+};
+
+/**
  * Join segments without another encode.
  *
  * @param {string[]} segments The parts, in order.
@@ -275,8 +307,9 @@ const subtitles = ( cues, language, file ) => {
  * @param {string}                                             joined The joined video.
  * @param {Array<{from: number, to: number, chapter: number}>} cues   When each chapter shows.
  * @param {string}                                             name   The file's base name.
+ * @param {Array<{file: string, language: string}>}            tracks The narration, one track per language.
  */
-const finish = ( joined, cues, name ) => {
+const finish = ( joined, cues, name, tracks = [] ) => {
 	const en = subtitles( cues, 'en', join( out, `${ name }.en.srt` ) );
 	const pt = subtitles( cues, 'pt-BR', join( out, `${ name }.pt-BR.srt` ) );
 	const file = join( out, `${ name }.mp4` );
@@ -287,16 +320,26 @@ const finish = ( joined, cues, name ) => {
 		en,
 		'-i',
 		pt,
+		...tracks.flatMap( ( track ) => [ '-i', track.file ] ),
 		'-map',
-		'0',
+		'0:v',
+		...tracks.flatMap( ( track, i ) => [ '-map', `${ i + 3 }:a` ] ),
 		'-map',
 		'1',
 		'-map',
 		'2',
-		'-c',
+		'-c:v',
 		'copy',
+		'-c:a',
+		'aac',
+		'-b:a',
+		'160k',
 		'-c:s',
 		'mov_text',
+		...tracks.flatMap( ( track, i ) => [
+			`-metadata:s:a:${ i }`,
+			`language=${ track.language }`,
+		] ),
 		'-metadata:s:s:0',
 		'language=eng',
 		'-metadata:s:s:1',
@@ -306,12 +349,63 @@ const finish = ( joined, cues, name ) => {
 	return file;
 };
 
+/**
+ * A chapter's narration takes, by language: the files that exist, with their lengths.
+ *
+ * @param {number} n The chapter's number.
+ */
+const takes = ( n ) =>
+	Object.keys( voices ).flatMap( ( language ) => {
+		const file = join( narration, language, `chapter-${ n }.mp3` );
+		return existsSync( file )
+			? [ { language, file, length: seconds( file ) } ]
+			: [];
+	} );
+
+/**
+ * One language's narration as a single track the video's length: each take placed where its
+ * chapter's card shows.
+ *
+ * @param {string}                            language Which language.
+ * @param {Array<{at: number, file: string}>} placed   Its takes and when each starts.
+ * @param {number}                            total    The video's length in seconds.
+ */
+const voiceTrack = ( language, placed, total ) => {
+	const file = join( out, 'parts', `voice.${ language }.m4a` );
+	const delays = placed.map(
+		( { at }, i ) =>
+			`[${ i }:a]adelay=${ Math.round( at * 1000 ) }:all=1[d${ i }]`
+	);
+	const mix = `${ placed.map( ( _, i ) => `[d${ i }]` ).join( '' ) }amix=inputs=${
+		placed.length
+	}:normalize=0,apad=whole_dur=${ total.toFixed( 3 ) }[a]`;
+	ffmpeg( [
+		...placed.flatMap( ( { file: take } ) => [ '-i', take ] ),
+		'-filter_complex',
+		[ ...delays, mix ].join( ';' ),
+		'-map',
+		'[a]',
+		'-t',
+		total.toFixed( 3 ),
+		'-c:a',
+		'aac',
+		'-b:a',
+		'160k',
+		file,
+	] );
+	return file;
+};
+
 // The video: intro, then each chapter's card and clip, then the outro.
 const segments = [ still( 0 ) ];
 const cues = [];
+const spoken = Object.fromEntries(
+	Object.keys( voices ).map( ( language ) => [ language, [] ] )
+);
 let clock = cardSeconds;
 for ( const [ i, { start, end } ] of chapters.entries() ) {
 	segments.push( still( i + 1 ) );
+	const cardAt = clock;
 	clock += cardSeconds;
 	const clip = cut( `chapter-${ i + 1 }.mp4`, [
 		'-ss',
@@ -321,8 +415,24 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 		'-i',
 		webm,
 	] );
-	segments.push( clip );
-	const length = seconds( clip );
+	const chapterTakes = takes( i + 1 );
+	// The longest take sets how long the chapter must last; the clip's last frame holds.
+	const needed =
+		Math.max( 0, ...chapterTakes.map( ( take ) => take.length ) ) +
+		voiceLead +
+		voiceTail -
+		cardSeconds;
+	const hold = needed - seconds( clip );
+	const shown =
+		hold > 0.05 ? held( clip, hold, `chapter-${ i + 1 }-held.mp4` ) : clip;
+	segments.push( shown );
+	for ( const take of chapterTakes ) {
+		spoken[ take.language ].push( {
+			at: cardAt + voiceLead,
+			file: take.file,
+		} );
+	}
+	const length = seconds( shown );
 	cues.push( { from: clock, to: clock + length, chapter: i } );
 	clock += length;
 }
@@ -365,7 +475,19 @@ for ( const i of chapters.keys() ) {
 	copyFileSync( file, join( site, `chapter-${ i + 1 }.webp` ) );
 }
 
-const video = finish( concat( segments, 'joined.mp4' ), cues, 'story' );
+const joined = concat( segments, 'joined.mp4' );
+const joinedLength = seconds( joined );
+const video = finish(
+	joined,
+	cues,
+	'story',
+	Object.entries( spoken )
+		.filter( ( [ , placed ] ) => placed.length )
+		.map( ( [ language, placed ] ) => ( {
+			language: voices[ language ],
+			file: voiceTrack( language, placed, joinedLength ),
+		} ) )
+);
 
 // The short cut: each chapter's last seconds, where its result shows, with no cards between.
 const intro = 2;

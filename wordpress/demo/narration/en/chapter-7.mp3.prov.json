@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 33061,
+    "path": "demo/narration/en/chapter-7.mp3",
+    "sha256": "b719c85a795108805842d3c7ef7f482cddc958e4d7c55c35579e3435b74d4492"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00102,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 33061,
+    "sha256": "b719c85a795108805842d3c7ef7f482cddc958e4d7c55c35579e3435b74d4492"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:19:32Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "She checks out, here in test mode.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:ZkDpm3K1OAK5EpLlUouP"
+}

@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 127520,
+    "path": "demo/narration/en/chapter-5.mp3",
+    "sha256": "16f84cf9a4c13eabd70d841fda5c52f59aff5d8f284035c0337a4c4a21cb8b28"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00399,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 127520,
+    "sha256": "16f84cf9a4c13eabd70d841fda5c52f59aff5d8f284035c0337a4c4a21cb8b28"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:18:31Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "She describes her trip. The copilot builds a kit from what the shop sells, priced and in stock, and puts it in the cart in one click.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:r3GNZ5GTWKT0lFcOVNyp"
+}

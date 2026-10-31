@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 75275,
+    "path": "demo/narration/en/chapter-1.mp3",
+    "sha256": "f03bcbf235186d4c921c7a701e974078df245766de90f8e068a69f7bd23e9d67"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00216,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 75275,
+    "sha256": "f03bcbf235186d4c921c7a701e974078df245766de90f8e068a69f7bd23e9d67"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:16:49Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "A shopper arrives. Popular searches already show what the catalog holds.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:ylOkxucugmiw2YnjsTKS"
+}

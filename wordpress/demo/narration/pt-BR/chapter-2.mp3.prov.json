@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 67334,
+    "path": "demo/narration/pt-BR/chapter-2.mp3",
+    "sha256": "a84e7beb5b49fa17c4adeb2646b2b75c9cf2f3a6480b777f17570b2ec823ceae"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00195,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 67334,
+    "sha256": "a84e7beb5b49fa17c4adeb2646b2b75c9cf2f3a6480b777f17570b2ec823ceae"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:17:31Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Ela escreve o que precisa numa frase, e os resultados acompanham.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:PWGCwMkN7B8PbzbRmrbw"
+}

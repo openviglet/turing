@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 99935,
+    "path": "demo/narration/pt-BR/chapter-8.mp3",
+    "sha256": "3d1421212cc098824a823b2b175ce56b912bd033b877d9a01b21752e41721627"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00276,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00276,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 99935,
+    "sha256": "3d1421212cc098824a823b2b175ce56b912bd033b877d9a01b21752e41721627"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:20:02Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Nos bastidores: a busca do WordPress roda no Turing, e as buscas dela aparecem nos insights.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:fGv51TjJ8C47M7Nj2hh9"
+}

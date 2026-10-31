@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 131700,
+    "path": "demo/narration/pt-BR/chapter-5.mp3",
+    "sha256": "eeb308e85264f5a935a21f162c272efaa89d8dfec2afa1ca52cf7a0964c2bb71"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00378,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 131700,
+    "sha256": "eeb308e85264f5a935a21f162c272efaa89d8dfec2afa1ca52cf7a0964c2bb71"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:18:46Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Ela descreve a viagem. O copiloto monta um kit com o que a loja vende, com pre\u00e7o e estoque, e o p\u00f5e no carrinho com um clique.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:1VXYiHI3aDcFJSHimSSx"
+}

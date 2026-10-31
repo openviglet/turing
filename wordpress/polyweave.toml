@@ -1,0 +1,22 @@
+# polyweave (github.com/alegauss/polyweave) speaks the demo video's narration (D246): one
+# take per chapter and language, bought from ElevenLabs inside the budget below and kept in
+# polyweave's ledger. `node bin/story-narration.mjs` drives it; the takes are committed
+# under demo/narration/, so building the video spends nothing.
+
+[layers]
+on = ["sound"]
+
+[project]
+name = "viglet-dumont-wordpress"
+
+[service.elevenlabs]
+base    = "https://api.elevenlabs.io"
+key_env = "ELEVENLABS_API_KEY"
+prices  = { "eleven_multilingual_v2" = { per = "character", rate = 0.00003 } }
+
+# The owner's ceiling for the narration (2026-10-31): the whole script is about 1,500
+# characters, a few cents.
+[budget.elevenlabs]
+amount  = 2.0
+unit    = "USD"
+expires = "2026-12-31"

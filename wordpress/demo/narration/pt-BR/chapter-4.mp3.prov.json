@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 40585,
+    "path": "demo/narration/pt-BR/chapter-4.mp3",
+    "sha256": "77b0f4ba4f68fce28d985176ee559f62fe7548bb4811b156eed9a271e937e030"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_multilingual_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00114,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 40585,
+    "sha256": "77b0f4ba4f68fce28d985176ee559f62fe7548bb4811b156eed9a271e937e030"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T16:18:18Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Ela compara tr\u00eas produtos lado a lado.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:lnko1znP8mk9qVSuLQuR"
+}
