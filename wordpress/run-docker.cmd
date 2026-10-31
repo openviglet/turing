@@ -30,8 +30,6 @@ if "%TURING_PORT%"=="" set "TURING_PORT=2700"
 if "%SN_SITE%"=="" set "SN_SITE=Sample"
 if "%TURING_LOCALE%"=="" set "TURING_LOCALE=en_US"
 if "%TURING_ADMIN_PASSWORD%"=="" set "TURING_ADMIN_PASSWORD=dumont-dev"
-rem A Turing built from a local checkout wins over the published image, as in trabalharei.
-if "%TURING_IMAGE%"=="" docker image inspect turing-ce:local >nul 2>&1 && set "TURING_IMAGE=turing-ce:local"
 
 set "DC=docker compose"
 set "WP=%DC% run --rm --no-deps cli wp"

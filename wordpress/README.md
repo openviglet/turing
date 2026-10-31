@@ -336,13 +336,12 @@ and a `cron` service runs due events every 15 seconds, as a host with a system c
 saved post reaches Turing without `wp dumont queue run`.
 
 Start the stack through `run-docker.cmd`, not a bare `docker compose up`: the script is what
-picks `turing-ce:local`, and a bare `up` recreates Turing on the published image.
+installs WordPress and provisions the SN site.
 
 Turing runs as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
-local login. When an image `turing-ce:local` exists, it is used instead of the published one,
-which lags the Turing source; build it from a Turing checkout after `mvnw package` with
-`docker build -f Dockerfile.local -t turing-ce:local .` (the published 2026.3.4 image answers
-every API-key import with HTTP 500). Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
+local login, on the published `ghcr.io/openviglet/turing:latest`. To run a Turing built from a
+checkout instead, build it after `mvnw package` with `docker build -f Dockerfile.local -t
+turing:local .` and set `TURING_IMAGE=turing:local`. Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
 `TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT`, `SN_DEMO_SITE` or `DEMO_LOCALE` before the first run
 to change the defaults.
 To move an installed stack to another port (another project holds 8080, say), set `WP_PORT`,

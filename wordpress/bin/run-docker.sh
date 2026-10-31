@@ -32,10 +32,6 @@ fi
 : "${SN_SITE:=Sample}"
 : "${TURING_LOCALE:=en_US}"
 : "${TURING_ADMIN_PASSWORD:=dumont-dev}"
-# A Turing built from a local checkout wins over the published image, as in run-docker.cmd.
-if [ -z "${TURING_IMAGE:-}" ] && docker image inspect turing-ce:local >/dev/null 2>&1; then
-	TURING_IMAGE=turing-ce:local
-fi
 export WP_PORT TURING_PORT TURING_ADMIN_PASSWORD
 if [ -n "${TURING_IMAGE:-}" ]; then
 	export TURING_IMAGE

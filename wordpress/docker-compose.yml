@@ -9,10 +9,10 @@ name: viglet-dumont-wp
 
 services:
   # Turing as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
-  # single tenant, local login. TURING_IMAGE picks a locally built image (run-docker.cmd uses
-  # turing-ce:local when it exists).
+  # single tenant, local login. TURING_IMAGE picks another image, such as one built from a
+  # Turing checkout.
   turing:
-    image: ${TURING_IMAGE:-ghcr.io/openviglet/turing-ce:latest}
+    image: ${TURING_IMAGE:-ghcr.io/openviglet/turing:latest}
     ports:
       - "127.0.0.1:${TURING_PORT:-2700}:2700"
     environment:
