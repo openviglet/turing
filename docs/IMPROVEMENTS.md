@@ -2432,6 +2432,28 @@ and every document matching both words alone is among them.
 **Done when.** An IT on a pt_BR site indexes "Jaqueta impermeável do dia a dia" and
 finds it with the accented and unaccented two-word queries.
 
+### CLXII.5 Clear a site's search metrics (T1195)
+
+Met recording Dumont's WordPress demo video (D246/D261).
+
+**What happens.** An SN site's search metrics (top terms, failed searches,
+click-through) can be read through `/api/sn/{snSiteId}/metrics/*` but never cleared.
+Checking a demo before recording — evaluating candidate searches, polling the index
+after a reindex, running the browser suite — logs hundreds of searches: the demo's
+insights then lead with "Glaramara duas pessoas, 39 searches" and the failed-search list
+fills with probes until the story's one failed search falls off it. The only ways out
+are SQL on H2 or a new SN site.
+
+**Should.** An admin-only `DELETE /api/sn/{snSiteId}/metrics` (optionally
+`?before=<date>`, and a console button beside the period picker) clears a site's access
+and click metrics, logged as an audit event; and a request may say it is not to be
+counted (the search APIs already take `populateMetrics=false` for some calls — honoured
+by every search, autocomplete and answer endpoint), so a test or a probe never lands in
+a shop's insights.
+
+**Done when.** A site's metrics can be emptied from the console and the API, and a
+search sent with `populateMetrics=false` is never counted.
+
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release

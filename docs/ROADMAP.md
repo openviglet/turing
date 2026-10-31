@@ -8,7 +8,7 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-- 📋 **T1192** (deps: —) **An import bundle whose site names its agent loses that link, and the site falls back to the default agent** — The demo's personas then 404 on content-fit whenever the global default is not the bundle's agent. → §CXV.8
+- 🛠 **T1192** (deps: —) **An import bundle whose site names its agent loses that link, and the site falls back to the default agent** — The demo's personas then 404 on content-fit whenever the global default is not the bundle's agent. → §CXV.8
 - 📋 **T1193** (deps: —) **The site's playground pins three persona ids that the demo backend may not offer** — A demo whose catalog drifts from the pinned list breaks content-fit with a 404, while the site lists personas that do not exist. → §CXV.9
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
@@ -22,6 +22,7 @@
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 - 📋 **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — jaqueta impermeável misses the Borrowdale jacket that jaqueta impermeavel and impermeável alone both find, so Brazilian shoppers lose results. → §CLXII.4
+- 📋 **T1195** (deps: —) **An SN site's search metrics cannot be cleared, so probes and tests fill a demo's insights for good** — Before a demo is recorded its insights lead with test searches, and the story's one failed search falls off the list. → §CLXII.5
 
 ## Done when — T1133
 
