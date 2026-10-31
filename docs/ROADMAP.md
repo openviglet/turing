@@ -21,7 +21,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1191** (deps: —) **A kit product's reason quotes Site: localhost, a bookkeeping field, to the shopper** — Every staged product shows a debug-looking line in a shopper-facing kit. → §CLXII.3
 - 📋 **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — jaqueta impermeável misses the Borrowdale jacket that jaqueta impermeavel and impermeável alone both find, so Brazilian shoppers lose results. → §CLXII.4
 
 ## Done when — T1133

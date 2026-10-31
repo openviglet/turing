@@ -979,6 +979,7 @@
 - **T1185** — Solr boosts the query phrase on a synonym-free title_phrase copy the four configsets now carry, when the core has it; an IT that fails without the boost proves the guide ranks first.
 - **T1187** — createChatController takes documentId, and a turn's SendOverrides.documentId replaces it, forwarded to the site chat like filters.
 - **T1190** — Each kit gap query carries the plan's constraints, and a stage's candidates are re-ranked against the whole plan through TurRagReranker, fail-open to retrieval order; the July case is a unit test, not a live eval.
+- **T1191** — The kit drops facet fields with a single catalog-wide value from its vocabulary, so a connector's site field is never a product reason nor a gap word.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

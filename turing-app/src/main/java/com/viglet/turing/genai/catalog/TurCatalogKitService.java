@@ -456,15 +456,32 @@ public class TurCatalogKitService {
 
     /**
      * T1169 — the site's facet values, so the model words its gap queries the way
-     * the catalog does. A read that fails sends the prompt without them.
+     * the catalog does. A read that fails sends the prompt without them. T1191 — a
+     * field with a single value across the catalog (a {@code site} a connector
+     * indexes) tells no product apart, so it is neither a gap filter nor a reason.
      */
     private Map<String, List<String>> vocabulary(String siteName, String locale) {
+        Map<String, List<String>> read;
         try {
-            return nlFilterService.facetVocabulary(siteName, locale, VOCABULARY_VALUES);
+            read = nlFilterService.facetVocabulary(siteName, locale, VOCABULARY_VALUES);
         } catch (RuntimeException e) {
             log.warn("[CatalogKit] could not read the facet values of site '{}': {}", siteName, e.getMessage());
             return Map.of();
         }
+        return distinguishing(read);
+    }
+
+    /** The fields of {@code vocabulary} with more than one value, in their order. */
+    static Map<String, List<String>> distinguishing(Map<String, List<String>> vocabulary) {
+        Map<String, List<String>> kept = new java.util.LinkedHashMap<>();
+        if (vocabulary != null) {
+            vocabulary.forEach((field, values) -> {
+                if (values != null && values.size() > 1) {
+                    kept.put(field, values);
+                }
+            });
+        }
+        return kept;
     }
 
     /**

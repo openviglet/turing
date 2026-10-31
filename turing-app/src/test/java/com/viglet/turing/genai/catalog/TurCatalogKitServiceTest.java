@@ -162,7 +162,7 @@ class TurCatalogKitServiceTest {
                 GAP: Shell | rain jacket | wet July | product_cat=Waterproof jackets
                 GAP: Light | headlamp | early starts""");
         when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
-                .thenReturn(Map.of("product_cat", List.of("Waterproof jackets")));
+                .thenReturn(Map.of("product_cat", List.of("Waterproof jackets", "Tents")));
         when(copilotService.retrieve("outdoor", "en", "rain jacket",
                 new TurDslQuery.Term("product_cat", "Waterproof jackets"))).thenReturn(
                         new TurCatalogCopilotService.Retrieval(List.of(product("j1")), List.of(), 1, null, true));
@@ -179,7 +179,7 @@ class TurCatalogKitServiceTest {
         modelReplies("GAP: Shell | waterproof jacket | rain all weekend");
         retrievalReturns("waterproof jacket", product("j1"));
         when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
-                .thenReturn(Map.of("category", List.of("Jackets")));
+                .thenReturn(Map.of("category", List.of("Jackets", "Tents")));
 
         service.plan("outdoor", "en", "a rainy weekend camping trip", null, null);
 
@@ -241,8 +241,8 @@ class TurCatalogKitServiceTest {
     void eachProductsReasonComesFromItsOwnAttributes() {
         modelReplies("GAP: Shelter | lightweight tent | nights on the trail, light to carry");
         Map<String, List<String>> vocabulary = new LinkedHashMap<>();
-        vocabulary.put("color", List.of("green"));
-        vocabulary.put("weight", List.of("1.2 kg, light"));
+        vocabulary.put("color", List.of("green", "red"));
+        vocabulary.put("weight", List.of("1.2 kg, light", "2 kg"));
         vocabulary.put("capacity", List.of("2 people", "3 people"));
         when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
                 .thenReturn(vocabulary);
@@ -263,6 +263,35 @@ class TurCatalogKitServiceTest {
                 "the facet sharing a word with the gap leads");
         assertEquals("Capacity: 3 people", products.get(1).reason(), "an unlabelled facet is humanized");
         assertNull(products.get(0).available(), "no availability field was named");
+    }
+
+    /**
+     * T1191 — a facet with one value across the catalog (the site a connector
+     * indexes) tells no product apart: it is no reason and never reaches the prompt.
+     */
+    @Test
+    void aSingleValuedFacetIsNeitherAReasonNorAGapWord() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        Map<String, List<String>> vocabulary = new LinkedHashMap<>();
+        vocabulary.put("site", List.of("localhost"));
+        vocabulary.put("product_cat", List.of("Tents", "Jackets"));
+        when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
+                .thenReturn(vocabulary);
+        when(nlFilterService.facetLabels("outdoor", "en")).thenReturn(Map.of("site", "Site",
+                "product_cat", "Category"));
+        Map<String, String> attributes = new LinkedHashMap<>();
+        attributes.put("site", "localhost");
+        attributes.put("product_cat", "Tents");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("tent"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("t1")), List.of(), 1, null, true,
+                        List.of(attributes)));
+
+        var products = service.plan("outdoor", "en", "a trip", null, null).stages().getFirst().products();
+
+        assertEquals("Category: Tents", products.getFirst().reason());
+        ArgumentCaptor<Prompt> sent = ArgumentCaptor.forClass(Prompt.class);
+        verify(chatModel).call(sent.capture());
+        assertFalse(sent.getValue().getContents().contains("site=localhost"));
     }
 
     /** T1175 — with product types named, a page between two products is not staged. */

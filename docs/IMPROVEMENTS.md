@@ -2406,26 +2406,6 @@ choice is the owner's.
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLXII.3 Kit reasons quote only shopper-facing fields (T1191)
-
-Met recording Dumont's WordPress demo video (D246), kit API (T1159).
-
-**What happens.** Every staged product's reason reads like "Category: Tents; Site:
-localhost" — the `site` field Dumont indexes to tell sites apart is quoted to the
-shopper as if it described the product. On video it reads as a debug line.
-
-**Cause.** T1174 already limits reasons to the site's facet fields, under their labels;
-"Site" is a label, so the demo site has `site` as a facet and T1174 lets it through.
-Field settings alone cannot keep it out.
-
-**Should.** A facet field with a single value across the catalog distinguishes no
-product, so it is never a reason, and is left out of the facet vocabulary the gap prompt
-sends the model (T1169), where `site=localhost` is noise too. The vocabulary
-`facetVocabulary` already reads gives the count; no connector has to configure anything.
-
-**Done when.** The demo kit's reasons name category, colour, material or use and never
-the site.
-
 ### CLXII.4 Accented multi-word queries match like their folded spelling (T1194)
 
 Met on Dumont's WordPress demo store in pt_BR (Lucene SN site `Demo`, locale `pt_BR`,

@@ -402,8 +402,10 @@ the needs the catalog had nothing for in `unfilled`, and up to two `guides`.
 - **Each product says why it fits from its own facet values** (`reason`, e.g.
   `Category: Tents; Capacity: 2 people`), the ones matching the need first. Only the
   site's facet fields count, each under its facet label in the request's locale, so
-  plumbing fields such as a site key or an image URL never appear. A product with no
-  facet value gets `reason: null`.
+  plumbing fields such as a site key or an image URL never appear. A facet with a
+  single value across the catalog (the site a connector indexes) tells no product
+  apart, so it is never a reason and is not shown to the model either. A product with
+  no facet value gets `reason: null`.
 - **Availability.** Name the field that says whether a product can be bought in
   `availabilityField`. With `availability: "MARK"` (the default) an unavailable
   product stays, with `available: false`; with `"DROP"` it is left out. Values such
