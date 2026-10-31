@@ -148,6 +148,8 @@ if [ "$DEMO_LOCALE" != en_US ]; then
 	wpd language plugin install woocommerce "$DEMO_LOCALE" >/dev/null 2>&1 || true
 fi
 wpd eval-file /demo/seed/catalog.php
+# The seed sets the shop's addresses in its language (D266), after WooCommerce registered them.
+wpd rewrite flush --hard
 # The seed makes products indexable after saving them, so nothing queued them: send them now.
 wpd dumont reindex
 # The store's search history, once the catalog it finds is indexed (D269).

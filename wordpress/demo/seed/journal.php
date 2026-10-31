@@ -3,7 +3,8 @@
  * The demo storefront's trail journal (D194), loaded by catalog.php after the products: buying
  * guides and how-tos that name the shop's products, so one search finds both a guide and what
  * it recommends, which WordPress's own search cannot put together. Idempotent: a post is found
- * again by its slug.
+ * again by its key, the English slug below, kept in `_tarnfell_key`; its address follows its
+ * title in the site's language (D266), and its photo is named by the key.
  *
  * @package Viglet_Dumont
  */
@@ -114,10 +115,20 @@ foreach ( $journal as $n => list( $slug, $title, $category, $paragraphs ) ) {
 		"\n\n",
 		array_map( static fn ( $p ) => "<!-- wp:paragraph -->\n<p>" . esc_html( $p ) . "</p>\n<!-- /wp:paragraph -->", $paragraphs )
 	);
-	$found       = get_page_by_path( $slug, OBJECT, 'post' );
-	$args        = array(
+	// By its key, else by its English slug: a journal seeded before D266 has no key yet.
+	$keyed = get_posts(
+		array(
+			'post_type'   => 'post',
+			'post_status' => 'any',
+			'meta_key'    => '_tarnfell_key',
+			'meta_value'  => $slug,
+			'numberposts' => 1,
+		)
+	);
+	$found = $keyed ? $keyed[0] : get_page_by_path( $slug, OBJECT, 'post' );
+	$args  = array(
 		'post_type'     => 'post',
-		'post_name'     => $slug,
+		'post_name'     => sanitize_title( $title ),
 		'post_title'    => $title,
 		'post_content'  => $content,
 		'post_excerpt'  => $paragraphs[0],
@@ -126,6 +137,7 @@ foreach ( $journal as $n => list( $slug, $title, $category, $paragraphs ) ) {
 	);
 	// At an id of its own, as the products are (catalog.php, D239).
 	$ids[ $slug ] = $found ? (int) wp_update_post( array( 'ID' => $found->ID ) + $args ) : (int) wp_insert_post( $args + array( 'import_id' => 20000 + 100 * $n ) );
+	update_post_meta( $ids[ $slug ], '_tarnfell_key', $slug );
 	$backdate( $ids[ $slug ], $slug );
 	// A fell landscape of its own (D218, images.php).
 	$image = tarnfell_guide_image( $n, $slug, $title );

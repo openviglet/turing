@@ -36,6 +36,8 @@ test( 'the demo storefront is up, with its catalog', async () => {
 	}
 	demo( [ 'plugin', 'activate', 'woocommerce' ] );
 	demo( [ 'eval-file', '/demo/seed/catalog.php' ] );
+	// The shop's addresses in the demo's language (D266), set after WooCommerce registered them.
+	demo( [ 'rewrite', 'flush', '--hard' ] );
 	demo( [ 'dumont', 'reindex' ] );
 	// Turing commits within a few seconds; the specs read what was just indexed.
 	await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );

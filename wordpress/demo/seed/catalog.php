@@ -41,12 +41,15 @@ if ( $brazil ) {
 			wp_update_post( array( 'ID' => $wc_id, 'post_title' => $wc_title ) );
 		}
 	}
+	// A Brazilian shop's addresses (D266): /produto/… and /categoria-produto/…, not English.
+	update_option( 'woocommerce_permalinks', array( 'product_base' => 'produto', 'category_base' => 'categoria-produto' ) + (array) get_option( 'woocommerce_permalinks', array() ) );
 	update_option( 'woocommerce_currency', 'BRL' );
 	update_option( 'woocommerce_default_country', 'BR:SP' );
 	update_option( 'woocommerce_price_thousand_sep', '.' );
 	update_option( 'woocommerce_price_decimal_sep', ',' );
 	update_option( 'woocommerce_currency_pos', 'left_space' );
 } else {
+	update_option( 'woocommerce_permalinks', array( 'product_base' => 'product', 'category_base' => 'product-category' ) + (array) get_option( 'woocommerce_permalinks', array() ) );
 	update_option( 'woocommerce_currency', 'USD' );
 	update_option( 'woocommerce_default_country', 'US:OR' );
 	update_option( 'woocommerce_price_thousand_sep', ',' );

@@ -150,6 +150,8 @@ rem A shop: WooCommerce on, with the demo's catalog (demo/seed), which runs demo
 %WPD% plugin activate woocommerce || exit /b 1
 if /i not "%DEMO_LOCALE%"=="en_US" %WPD% language plugin install woocommerce %DEMO_LOCALE% >nul 2>&1
 %WPD% eval-file /demo/seed/catalog.php || exit /b 1
+rem The seed sets the shop's addresses in its language (D266), after WooCommerce registered them.
+%WPD% rewrite flush --hard || exit /b 1
 rem The seed makes products indexable after saving them, so nothing queued them: send them now.
 %WPD% dumont reindex || exit /b 1
 rem The store's search history, once the catalog it finds is indexed (D269).

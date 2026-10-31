@@ -248,7 +248,7 @@ await shot( '/', 900 );
 await shot( '/?post_type=product' );
 const product = await page
 	.locator(
-		'a.woocommerce-LoopProduct-link, .wc-block-components-product-name, a[href*="/product/"]'
+		'a.woocommerce-LoopProduct-link, .wc-block-components-product-name, a[href*="/product/"], a[href*="/produto/"]'
 	)
 	.first()
 	.getAttribute( 'href', { timeout: 3000 } )
