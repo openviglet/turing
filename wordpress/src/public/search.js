@@ -176,6 +176,40 @@ export function postIdOf( documentId ) {
 }
 
 /**
+ * Where a result opens (D239): its indexed URL, unless that URL is on another origin and the
+ * document is one of this site's own posts (`<site key>:post:<id>`), which then opens here as
+ * `?p=<id>`. An index built by another WordPress, such as the hosted one a WordPress Playground
+ * demo searches, holds that WordPress's addresses.
+ *
+ * @param {string} url        The URL Turing indexed.
+ * @param {string} documentId Turing's id of the document.
+ * @return {string} The URL to link to.
+ */
+export function siteUrl( url, documentId ) {
+	const prefix = `${ config.siteKey }:post:`;
+	const id = String( documentId || '' );
+	if (
+		! id.startsWith( prefix ) ||
+		! /^\d+$/.test( id.slice( prefix.length ) )
+	) {
+		return url;
+	}
+	try {
+		if (
+			new URL( String( url || '' ), window.location.href ).origin ===
+			window.location.origin
+		) {
+			return url;
+		}
+	} catch {
+		// Not a URL at all: the post on this site is the better link.
+	}
+	const here = new URL( config.home || '/', window.location.href );
+	here.searchParams.set( 'p', id.slice( prefix.length ) );
+	return here.href;
+}
+
+/**
  * Write a model's answer into an element as the small Markdown it is written in (D247):
  * paragraphs, line breaks, bulleted and numbered lists, bold and italic. Built from DOM nodes
  * and text nodes only, never from HTML, so nothing the model writes becomes markup: a

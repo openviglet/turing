@@ -124,7 +124,8 @@ foreach ( $journal as $n => list( $slug, $title, $category, $paragraphs ) ) {
 		'post_status'   => 'publish',
 		'post_category' => array( $category_id ),
 	);
-	$ids[ $slug ] = $found ? (int) wp_update_post( array( 'ID' => $found->ID ) + $args ) : (int) wp_insert_post( $args );
+	// At an id of its own, as the products are (catalog.php, D239).
+	$ids[ $slug ] = $found ? (int) wp_update_post( array( 'ID' => $found->ID ) + $args ) : (int) wp_insert_post( $args + array( 'import_id' => 20000 + 100 * $n ) );
 	$backdate( $ids[ $slug ], $slug );
 	// A fell landscape of its own (D218, images.php).
 	$image = tarnfell_guide_image( $n, $slug, $title );

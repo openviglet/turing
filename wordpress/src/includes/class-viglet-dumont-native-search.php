@@ -748,6 +748,8 @@ class Viglet_Dumont_Native_Search {
 			'site'    => (string) $this->settings['site_name'],
 			'locale'  => (string) $this->settings['locale'],
 			'siteKey' => ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key(),
+			// Where a post of this site opens when its indexed URL is another WordPress's (D239).
+			'home'    => home_url( '/' ),
 			'facets'  => array_values( $facets ),
 		);
 		$analytics = $this->analytics();

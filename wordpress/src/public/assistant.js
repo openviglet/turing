@@ -14,6 +14,7 @@ import {
 	createClient,
 	recordAnswerSignal,
 	renderMarkdown,
+	siteUrl,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
@@ -77,10 +78,14 @@ function sourcesOf( message ) {
 	const cited = ( message.citations || [] ).map( ( c ) => ( {
 		url: c.url,
 		title: c.documentTitle,
+		sourceId: c.sourceId,
 	} ) );
 	return ( cited.length ? cited : message.sources || [] )
 		.filter( ( s ) => s.url && ! seen.has( s.url ) && seen.add( s.url ) )
-		.map( ( s ) => ( { url: s.url, title: s.title || s.url } ) );
+		.map( ( s ) => ( {
+			url: siteUrl( s.url, s.sourceId ),
+			title: s.title || s.url,
+		} ) );
 }
 
 /**

@@ -21,6 +21,7 @@ import {
 	postIdOf,
 	renderMarkdown,
 	shopProduct,
+	siteUrl,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
@@ -49,7 +50,7 @@ function kitProduct( product, stage ) {
 	return {
 		key: `${ stage }-${ product.id }`,
 		title: product.title || product.url,
-		url: product.url,
+		url: siteUrl( product.url, product.id ),
 		reason: product.reason || '',
 		productId: postIdOf( product.id ),
 		price: '',
@@ -184,7 +185,7 @@ const { state } = store( 'viglet-dumont/copilot', {
 				key: `${ citation.rank }-${ citation.id }`,
 				rank: citation.rank,
 				title: citation.title || citation.url,
-				url: citation.url,
+				url: siteUrl( citation.url, citation.id ),
 				productId: postIdOf( citation.id ),
 				price: '',
 				regular: '',
@@ -336,7 +337,7 @@ async function buildKit() {
 		guides: ( kit.guides || [] ).map( ( guide ) => ( {
 			key: String( guide.id || guide.url ),
 			title: guide.title || guide.url,
-			url: guide.url,
+			url: siteUrl( guide.url, guide.id ),
 		} ) ),
 	};
 	state.status = '';

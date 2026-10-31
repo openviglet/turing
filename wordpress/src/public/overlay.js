@@ -13,6 +13,7 @@ import { getConfig } from '@wordpress/interactivity';
 import {
 	config,
 	createSiteSearch,
+	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
@@ -185,7 +186,7 @@ function render( s ) {
 			: labels.none;
 		results = s.documents.slice( 0, shown ).map( ( d ) => ( {
 			id: String( d.raw?.fields?.id ?? '' ),
-			url: d.url,
+			url: siteUrl( d.url, d.raw?.fields?.id ),
 			title: plainText( d.title ) || d.url,
 		} ) );
 	}

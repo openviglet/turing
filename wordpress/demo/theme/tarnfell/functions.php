@@ -61,12 +61,13 @@ require get_theme_file_path( 'inc/compare.php' );
 
 /**
  * "How it works" (D195): the tour's markers and notes, on a page opened with ?tour=1 only, so
- * no other visit pays for its script.
+ * no other visit pays for its script. A store that is only ever a demo, such as the WordPress
+ * Playground one (D239), defines TARNFELL_TOUR and shows it on every page.
  */
 function tarnfell_tour(): void {
 	// A read-only page parameter: nothing is changed, so there is no nonce to check.
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	if ( empty( $_GET['tour'] ) ) {
+	if ( empty( $_GET['tour'] ) && ! ( defined( 'TARNFELL_TOUR' ) && TARNFELL_TOUR ) ) {
 		return;
 	}
 	wp_enqueue_script( 'tarnfell-tour', get_theme_file_uri( 'assets/tour.js' ), array(), wp_get_theme()->get( 'Version' ), array( 'in_footer' => true ) );

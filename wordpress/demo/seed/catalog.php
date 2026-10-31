@@ -319,7 +319,13 @@ foreach ( $models as $m => list( $category, $model, $price, $materials, $uses, $
 		$attributes[] = $attribute;
 	}
 	$product->set_attributes( $attributes );
+	// A new design at an id of its own (D239): 10000 plus 100 per design, so the same product has
+	// the same id on every fresh seed, Docker or WordPress Playground, whichever of its pictures
+	// are photos. The hosted demo index links its results by that id.
+	$pin = static fn ( array $data ): array => $data + array( 'import_id' => 10000 + 100 * $m );
+	add_filter( 'woocommerce_new_product_data', $pin );
 	$saved = $product->save();
+	remove_filter( 'woocommerce_new_product_data', $pin );
 	$backdate( $saved, $model );
 	foreach ( array( 'color' => $names, 'material' => $materials, 'use' => $uses, 'size' => $sizes ) as $slug => $values ) {
 		wp_set_object_terms( $saved, $values, "pa_{$slug}" );

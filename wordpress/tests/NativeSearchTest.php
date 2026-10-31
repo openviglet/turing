@@ -148,6 +148,8 @@ final class NativeSearchTest extends PluginTestCase {
 
 		$this->assertSame( 'https://search.example.org', $config['url'] );
 		$this->assertSame( 'Sample Site', $config['site'] );
+		// Where a result indexed by another WordPress opens on this one (D239).
+		$this->assertSame( 'https://site.example.org', $config['home'] );
 		$this->assertSame(
 			array(
 				array(

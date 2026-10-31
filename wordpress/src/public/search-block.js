@@ -17,6 +17,7 @@ import {
 	postIdOf,
 	renderMarkdown,
 	siteFilter,
+	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
@@ -524,7 +525,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 							key: `${ source.url }#${ i }`,
 							rank: source.rank ?? source.footnote ?? i + 1,
 							title: source.title || source.url,
-							url: source.url,
+							url: siteUrl( source.url, source.sourceId ),
 						} ) );
 				} );
 			}
@@ -1335,15 +1336,16 @@ function card( d, position ) {
 	const at = new Date( fields.publication_date ?? d.date );
 	const valid = d.date || fields.publication_date ? ! isNaN( at ) : false;
 	const title = plain( d.title ) || d.url;
+	const url = siteUrl( d.url, fields.id );
 	return {
 		id: String( fields.id ?? '' ),
 		position,
-		url: d.url,
+		url,
 		title,
 		type: state.typeLabels[ type ] || type,
 		date: valid ? dateFormat.format( at ) : '',
 		iso: valid ? at.toISOString() : '',
-		crumb: crumb( d.url ),
+		crumb: crumb( url ),
 		image: d.image || '',
 		snippet: highlighted( d.description ),
 		// What the server draws before the highlights go in (D209).
@@ -1544,7 +1546,7 @@ function sync( s ) {
 	state.spotlights = ( response?.spotlights || [] )
 		.filter( ( spot ) => spot.url )
 		.map( ( spot ) => ( {
-			url: spot.url,
+			url: siteUrl( spot.url, spot.referenceId ),
 			title: plain( spot.title ) || spot.url,
 			content: plain( spot.content ),
 		} ) );
