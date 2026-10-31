@@ -126,7 +126,7 @@ _Not a page: it sits outside `src/content/docs`, so Starlight never renders it. 
 | Block / feature | Page | Status |
 |---|---|---|
 | Installation | [installation-guide](./src/content/docs/installation-guide.md) | ✅ |
-| **Block CH** (T1113): every release publishes the `turing-ce` image and moves `latest` to it, a version branch publishes as `<branch>-snapshot`, and `GET /api/discovery` reports the answering build's `version` and `commit` | [installation-guide § Option 1: Docker](./src/content/docs/installation-guide.md#option-1-docker-fastest) | 🧩 |
+| **Block CH** (T1113): every release publishes the Docker image and moves `latest` to it, a version branch publishes as `<branch>-snapshot`, and `GET /api/discovery` reports the answering build's `version` and `commit` | [installation-guide § Option 1: Docker](./src/content/docs/installation-guide.md#option-1-docker-fastest) | 🧩 |
 | Configuration (`application.yaml`) | [configuration-reference](./src/content/docs/configuration-reference.md) | ✅ |
 | **Block F / F.16**: GenAI overview + Gemini native primitives | [genai-llm](./src/content/docs/genai-llm.md) | ✅ |
 | **Block AD**: 11 vendor types, per-vendor auth | [llm-instances](./src/content/docs/llm-instances.md) | ✅ |
@@ -178,7 +178,7 @@ These shipped blocks are engineering, repository, or marketing concerns with no 
 | **CF** T1152: each embedded chunk of a document imported for several sites is tagged with the site it was written for | Internal vector-store metadata; no setting changes and chat already isolates sites by collection |
 | **CG** T1107-T1111: engine conformance IT, container ITs on Docker 29, Solr configset currency fields, core creation on Solr 10, exclusive-start Solr ranges | Test infrastructure and engine bug fixes with no new setting; the behaviour they restore is the one the search-engine and manifest pages already describe |
 | **D.1/D.2/D.5/D.7/D.8/D.11**, **E.1/E.5/E.8/E.9**, **H.1/H.2** | Internal engine/DX/SDK-migration work; user-facing slices surface on the pages above |
-| **Block P**: open-core source split (`turing` → `turing-ce`) | Repository/licensing change; not a product feature |
+| **Block P**: open-core source split into a separate public repository (retired) | Repository/licensing change; not a product feature |
 | **Block Q**: `viglet-core` shared backend platform | Cross-product internal library (separate repo); no Turing-user surface |
 | **Block J.9**: multi-tenancy parity (`viglet-core-tenancy`) | Internal shared-library lift; the Turing-facing feature is [multi-tenancy](./src/content/docs/multi-tenancy.md) |
 | **Block J.10 internals** (T960, T964, T968, T970, T973): install-binding assertion, its per-request refresh, and the wire/response contract tests | Cryptographic binding between an install and the managed endpoint, plus the tests that hold its wire format. Invisible to the operator; what they do see is documented under [llm-instances § Viglet AI](./src/content/docs/llm-instances.md#viglet-ai-start-without-a-key-of-your-own) |

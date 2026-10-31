@@ -76,8 +76,7 @@ jobs:
       - name: Deploy Version
         env:
           # T1180: the 2026.3 line is released on this repository (openviglet/turing),
-          # not on turing-ce, so the repository the site names shows the current
-          # release. The built-in token can write releases here; the Docker image
+          # the one the site names, so it shows the current release. The built-in token can write releases here; the Docker image
           # (publish-docker.yml) publishes ghcr.io/openviglet/turing.
           GH_TOKEN: ${{ github.token }}
           RELEASE_REPO: ${{ github.repository }}

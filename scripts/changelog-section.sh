@@ -2,14 +2,9 @@
 # ---------------------------------------------------------------------------
 # changelog-section.sh — print the CHANGELOG.md section for one version.
 #
-# Shared by the two places that need release notes for the public repo:
-#   * scripts/publish-ce.sh  -> body of the squashed "Release vX.Y.Z" commit
-#   * .github/workflows/publish.yml -> body of the GitHub Release on openviglet/turing,
-#     which fails rather than publish a release without these notes (T1182)
-#
-# Both must say the same thing: a public repo whose history is one commit per
-# release only stays legible if that commit and its Release carry the change
-# list. Keeping the extraction in one file keeps them from drifting.
+# Used by .github/workflows/publish.yml as the body of the GitHub Release on
+# openviglet/turing, which fails rather than publish a release without these
+# notes (T1182).
 #
 # Usage:
 #   scripts/changelog-section.sh <version> [changelog-file]

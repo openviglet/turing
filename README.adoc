@@ -202,8 +202,7 @@ java -jar turing-app/target/viglet-turing.jar
 Manifests are in link:k8s/[`k8s/`]; a single-file deployment is in link:k8s.yaml[`k8s.yaml`].
 
 Packaged installers (Windows `.exe`, `.zip`, Linux AppImage) are attached to every
-https://github.com/openviglet/turing/releases[release] (up to 2026.3.6, on
-https://github.com/openviglet/turing-ce/releases[turing-ce]).
+https://github.com/openviglet/turing/releases[release].
 
 == Code examples
 

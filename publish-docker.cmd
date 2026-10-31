@@ -4,8 +4,6 @@ setlocal enabledelayedexpansion
 REM ============================================================================
 REM publish-docker.cmd — Build the Viglet Turing Docker image LOCALLY and
 REM push it to the GitHub Container Registry (ghcr.io/openviglet/turing).
-REM Releases up to 2026.3.6 are on ghcr.io/openviglet/turing-ce, which is no
-REM longer pushed to.
 REM
 REM Unlike .github/workflows/publish-docker.yml (which clones + builds the source
 REM INSIDE the container), this builds the Spring Boot fat-jar on the HOST using
