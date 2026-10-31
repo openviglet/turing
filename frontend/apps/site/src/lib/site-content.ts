@@ -22,33 +22,7 @@ import {
   Workflow,
   type LucideIcon,
 } from "lucide-react";
-import type { TuringPersonaOption } from "@viglet/turing-react-ui";
 import { withBase } from "@/lib/site-url";
-
-/**
- * T638 / §XXVII.4: the personas the playground offers ("same question,
- * different eyes" + "validate content as persona X"). Ids match the stable ids
- * the demo backend seeds onto the default agent (T637,
- * `TurLLMInstanceOnStartup.seedDemoPersonas`); there is no public persona-list
- * endpoint, so the site pins them here. Keep the ids in sync with that seed.
- */
-export const PLAYGROUND_PERSONAS: TuringPersonaOption[] = [
-  {
-    id: "persona-skeptical-developer",
-    name: "Skeptical Developer",
-    description: "Senior engineer. Wants precise, verifiable answers and distrusts hype.",
-  },
-  {
-    id: "persona-enterprise-buyer",
-    name: "Enterprise Buyer",
-    description: "Decision-maker scanning for business value, security and compliance.",
-  },
-  {
-    id: "persona-first-time-user",
-    name: "First-time User",
-    description: "New to the product. Needs plain, jargon-free explanations.",
-  },
-];
 
 export interface Pillar {
   icon: LucideIcon;

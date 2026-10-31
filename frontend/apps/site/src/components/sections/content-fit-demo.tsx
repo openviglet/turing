@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import { fetchPersonaContentFit, type TurContentFit } from "@viglet/turing-sdk";
 import { TuringContentFit, TuringPersonaPicker } from "@viglet/turing-react-ui";
-import { PLAYGROUND_PERSONAS } from "@/lib/site-content";
+import { OFFLINE_SAMPLE_PERSONAS, usePlaygroundPersonas } from "@/lib/playground-personas";
 import { useTuringDemo } from "@/lib/turing-demo";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,7 @@ const SAMPLE_CONTENT =
 
 // Scripted offline verdict (keeps the tab alive without a backend).
 function scriptedFit(personaId: string): TurContentFit {
-  const persona = PLAYGROUND_PERSONAS.find((p) => p.id === personaId) ?? PLAYGROUND_PERSONAS[0];
+  const persona = OFFLINE_SAMPLE_PERSONAS.find((p) => p.id === personaId) ?? OFFLINE_SAMPLE_PERSONAS[0];
   return {
     personaId: persona.id,
     personaName: persona.name,
@@ -40,15 +40,27 @@ export interface ContentFitDemoProps {
 
 export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) {
   const { client, site, live } = useTuringDemo();
-  const [personaId, setPersonaId] = useState<string>(PLAYGROUND_PERSONAS[0].id);
+  const personas = usePlaygroundPersonas(client, site);
+  const [chosenId, setChosenId] = useState<string | null>(null);
   const [content, setContent] = useState(SAMPLE_CONTENT);
   const [result, setResult] = useState<TurContentFit | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // T1193: only an id the site lists is ever sent; the first one until a pick.
+  const personaId = personas?.some((p) => p.id === chosenId) ? chosenId : (personas?.[0]?.id ?? null);
+
+  if (personas?.length === 0) {
+    return (
+      <div className={cn("flex items-center justify-center bg-card p-6 text-sm text-muted-foreground",
+        bare ? "h-full" : "min-h-40 rounded-2xl border border-border")}>
+        This demo site offers no personas to validate as.
+      </div>
+    );
+  }
 
   async function validate() {
     const text = content.trim();
-    if (!text || busy) return;
+    if (!text || busy || !personaId) return;
     setBusy(true);
     setError(null);
     try {
@@ -77,9 +89,9 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
       )}
     >
       <TuringPersonaPicker
-        options={PLAYGROUND_PERSONAS}
+        options={personas ?? []}
         value={personaId}
-        onChange={(id) => setPersonaId(id ?? PLAYGROUND_PERSONAS[0].id)}
+        onChange={(id) => setChosenId(id)}
         labels={{ heading: "Validate as" }}
         classNames={{
           container: "flex flex-wrap items-center gap-1.5 border-b border-border px-4 py-2",
@@ -115,7 +127,7 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
           <button
             type="button"
             onClick={() => void validate()}
-            disabled={!content.trim() || busy}
+            disabled={!content.trim() || busy || !personaId}
             className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-40"
           >
             {busy ? <Loader2 className="size-4 animate-spin" /> : <ShieldCheck className="size-4" />}

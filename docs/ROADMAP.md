@@ -8,8 +8,6 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-- 📋 **T1193** (deps: —) **The site's playground pins three persona ids that the demo backend may not offer** — A demo whose catalog drifts from the pinned list breaks content-fit with a 404, while the site lists personas that do not exist. → §CXV.9
-
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)

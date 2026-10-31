@@ -16,7 +16,7 @@ import {
   TuringThinkingDots,
 } from "@viglet/turing-react-ui";
 import { RichAnswer } from "@/components/rich-answer";
-import { PLAYGROUND_PERSONAS } from "@/lib/site-content";
+import { usePlaygroundPersonas } from "@/lib/playground-personas";
 import { useTuringDemo } from "@/lib/turing-demo";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +35,7 @@ interface DemoMsg {
 
 const DEFAULT_GREETING =
   "Hi! I'm the Turing assistant. Ask me anything about the platform.";
-// T638: the "default voice" option has no entry in PLAYGROUND_PERSONAS, so give
+// T638: the "default voice" option has no entry in the persona list, so give
 // it its own one-line hint for the active-persona caption below the picker.
 const DEFAULT_PERSONA_HINT = "The agent's own voice, with no persona applied.";
 const DEFAULT_SUGGESTIONS = [
@@ -175,6 +175,9 @@ export function ChatDemo({
   // agent's default voice. Changing it starts a fresh conversation so the
   // contrast is clean.
   const [personaId, setPersonaId] = useState<string | null>(null);
+  // T1193: the site's own personas while live; only an id it lists is ever sent.
+  const personas = usePlaygroundPersonas(client, site);
+  const activePersonaId = personas?.some((p) => p.id === personaId) ? personaId : null;
   const controllerRef = useRef<ChatController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const busyRef = useRef(false);
@@ -216,7 +219,7 @@ export function ChatDemo({
     if (!client || !site) return;
     const c = createChatController(client, {
       site,
-      personaId: personaId ?? undefined,
+      personaId: activePersonaId ?? undefined,
       // T458/T460: route chat lifecycle (start, funnel steps, conversion) and
       // client-side abandonment into GA4 via the shared bus. Additive: a failed
       // emit never breaks the chat.
@@ -263,7 +266,7 @@ export function ChatDemo({
       if (typeof unsub === "function") unsub();
       if (typeof unsubSimilar === "function") unsubSimilar();
     };
-  }, [client, site, personaId, analytics]);
+  }, [client, site, activePersonaId, analytics]);
 
   useEffect(() => {
     busyRef.current = busy;
@@ -338,9 +341,9 @@ export function ChatDemo({
   // T638: one-line hint for the persona currently answering, shown under the
   // picker so visitors know what each "eye" means without hunting for a tooltip.
   const activePersonaHint =
-    personaId == null
+    activePersonaId == null
       ? DEFAULT_PERSONA_HINT
-      : PLAYGROUND_PERSONAS.find((p) => p.id === personaId)?.description ?? DEFAULT_PERSONA_HINT;
+      : personas?.find((p) => p.id === activePersonaId)?.description ?? DEFAULT_PERSONA_HINT;
 
   return (
     <div
@@ -366,14 +369,14 @@ export function ChatDemo({
       {/* T638: persona intro + picker + active-persona caption. The one-line
           concept sits above the pills; the selected persona's description sits
           below so its meaning is always visible (no tooltip hunt, mobile-safe). */}
-      {showPersonas && (
+      {showPersonas && personas != null && personas.length > 0 && (
       <div className="border-b border-border px-4 py-2">
         <p className="mb-1.5 text-[0.7rem] leading-snug text-muted-foreground/80">
           Hear the same answer through different eyes. Pick a persona to answer as.
         </p>
         <TuringPersonaPicker
-          options={PLAYGROUND_PERSONAS}
-          value={personaId}
+          options={personas}
+          value={activePersonaId}
           onChange={setPersonaId}
           includeDefault
           labels={{ heading: "Answer as", defaultOption: "Default" }}

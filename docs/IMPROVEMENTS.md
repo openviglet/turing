@@ -2183,31 +2183,6 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
-### CXV.9 The playground offers the personas the site's catalog lists (T1193)
-
-**Where it showed.** `PLAYGROUND_PERSONAS` in
-`frontend/apps/site/src/lib/site-content.ts` hard-codes `persona-skeptical-developer`,
-`persona-enterprise-buyer` and `persona-first-time-user`. Its comment says there is no
-public persona-list endpoint and cites `TurLLMInstanceOnStartup.seedDemoPersonas`. Both
-are stale: T655 moved the personas into the demo's import bundle, and T1143 added the
-anonymous `GET /api/sn/{site}/personas`, which returns exactly the ids content-fit
-accepts. Both SDKs already call it (`fetchSitePersonas`).
-
-**Why it costs.** Every persona the site offers is a promise the backend may not keep.
-When the demo's catalog changes, or the demo runs another agent, the picker still offers
-the old three and each content-fit call fails with a 404.
-
-**What to build.**
-- The playground loads its persona options from `fetchSitePersonas` for the site it targets. It hides the persona features when the list is empty or the call fails, rather than offering ids the backend will refuse.
-- The pinned list and its stale comment go away.
-- A site test covers both paths: options taken from the endpoint, and the picker hidden on an empty list.
-
-With T1192 shipped, the demo's site returns its own agent's personas, so the picker gets
-a non-empty list rather than hiding.
-
-**Needs** the demo to run an image with T1143 (2026.3.6 or later): today it answers 401
-on `/personas`, which means it runs an older build.
-
 ## CXLIV Filters on the similar and duplicate searches (T1132)
 
 **Where it happened.** Dumont's WordPress plugin added a Related content block (D177) on
