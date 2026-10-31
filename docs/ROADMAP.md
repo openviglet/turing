@@ -18,7 +18,7 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1199** (deps: —) **Spell-check changes numbers: R$ 2.200 is corrected to r$ 2.100** — A client that searches the correction searches a price the shopper never named. → §CLXII.8
+- 📋 **T1199** (deps: —) **Spell-check changes numbers and case: R$ 2.200 is corrected to r$ 2.100 (Lucene and Solr)** — A client that searches the correction searches a price the shopper never named. → §CLXII.8
 
 ## Done when — T1133
 

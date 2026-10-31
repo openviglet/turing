@@ -2416,12 +2416,20 @@ returns for it is `uma barraca para duas pessoas até r$ 2.100`: a different num
 the currency lowercased. A client that searches the correction — Dumont's search block
 does for a query that found nothing (D259) — searches a price the shopper never named.
 
-**Should.** Spell-check corrects words, never numbers, prices, units or tokens with
-digits (`2.200`, `R$`, `45L`, `42`), and keeps the case of what it does not change; a
-query whose only "errors" are those gets no correction.
+**Cause.** Two engines produce the correction. Lucene's `computeSpellCheck` lowercases
+the whole query and asks `DirectSpellChecker` about every token, numbers included.
+Solr's `/tur_spell` collation has no such filter either, and with auto-correction on,
+`prepareQueryAutoCorrection` runs the corrected query, so the wrong price is searched
+server-side. Elasticsearch and Content AI return no correction.
 
-**Done when.** That sentence returns no correction, covered by a test on the spell-check
-that includes numbers with thousand separators and currency symbols in pt_BR and en_US.
+**Should.** One shared guard applied to both producers: a token with a digit or a symbol
+(`2.200`, `R$`, `45L`, `42`) is never replaced, and an unchanged token keeps the case it
+was typed in; a query whose only changes were to such tokens gets no correction (and
+Solr does not auto-correct to it).
+
+**Done when.** That sentence returns no correction on Lucene and Solr; unit tests on the
+guard cover thousand separators and currency in pt_BR and en_US, and a correction of a
+real misspelling next to a price keeps the price and its case.
 
 ## CLXIII Release pipeline reliability
 
