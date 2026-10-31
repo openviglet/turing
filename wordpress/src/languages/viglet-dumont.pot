@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T19:51:41+00:00\n"
+"POT-Creation-Date: 2026-10-31T22:46:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -840,7 +840,7 @@ msgstr ""
 msgid "Reading your search…"
 msgstr ""
 
-#: src/blocks/search/render.php:120
+#: src/blocks/search/render.php:121
 #: src/includes/class-viglet-dumont-native-search.php:245
 msgid "Search is unavailable right now."
 msgstr ""
@@ -950,48 +950,48 @@ msgid "Server returned HTTP %d"
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:208
+#: src/includes/class-viglet-dumont-api-client.php:233
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:277
+#: src/includes/class-viglet-dumont-api-client.php:302
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:285
+#: src/includes/class-viglet-dumont-api-client.php:310
 msgid "Invalid JSON response from server"
 msgstr ""
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
-#: src/includes/class-viglet-dumont-api-client.php:394
+#: src/includes/class-viglet-dumont-api-client.php:419
 #, php-format
 msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
 msgstr ""
 
 #. translators: %s: the Turing address the plugin is set to.
-#: src/includes/class-viglet-dumont-api-client.php:429
+#: src/includes/class-viglet-dumont-api-client.php:454
 #, php-format
 msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
 msgstr ""
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:610
+#: src/includes/class-viglet-dumont-api-client.php:635
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:634
+#: src/includes/class-viglet-dumont-api-client.php:659
 msgid "Turing did not answer."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:691
+#: src/includes/class-viglet-dumont-api-client.php:716
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:696
+#: src/includes/class-viglet-dumont-api-client.php:721
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
@@ -1029,7 +1029,7 @@ msgstr ""
 
 #. translators: 1: the post id, 2: why sending it failed.
 #: src/includes/class-viglet-dumont-cli-queue.php:60
-#: src/includes/class-viglet-dumont-cli.php:181
+#: src/includes/class-viglet-dumont-cli.php:182
 #, php-format
 msgid "Post %1$d: %2$s"
 msgstr ""
@@ -1096,8 +1096,20 @@ msgstr ""
 msgid "%d documents removed."
 msgstr ""
 
+#. translators: %d: posts sent that Turing did not answer for in time.
+#: src/includes/class-viglet-dumont-cli.php:188
+#, php-format
+msgid "Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp dumont status shows what it holds."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts sent without an answer, 3: posts that failed.
+#: src/includes/class-viglet-dumont-cli.php:193
+#, php-format
+msgid "%1$d sent, %2$d not confirmed, %3$d failed."
+msgstr ""
+
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-cli.php:184
+#: src/includes/class-viglet-dumont-cli.php:196
 #, php-format
 msgid "%1$d sent, %2$d failed."
 msgstr ""
@@ -1417,11 +1429,11 @@ msgstr ""
 msgid "Search (Ctrl+K)"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-operations.php:181
+#: src/includes/class-viglet-dumont-operations.php:188
 msgid "Turing could not be searched for this site's documents."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-operations.php:229
+#: src/includes/class-viglet-dumont-operations.php:236
 msgid "Skipped: the reindex had failures."
 msgstr ""
 

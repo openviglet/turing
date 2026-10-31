@@ -111,9 +111,14 @@ class Viglet_Dumont_API_Client {
 	/**
 	 * Import job items into Turing (index documents).
 	 *
+	 * Turing embeds each document for RAG while it imports (about half a second each), so the
+	 * wait follows the batch: two seconds a document, never under 30, which the
+	 * `viglet_dumont_http_timeout` filter can change (D256). A request that outlives it is
+	 * `timed_out`: sent, with an outcome nobody knows, since Turing goes on importing it.
+	 *
 	 * @param array $job_items Array of TurSNJobItem-compatible arrays.
-	 * @return array{success: bool, message: string, note: string|array, code: int} `code` is 0
-	 *         when no response arrived; `note` is the message for the event log (D180).
+	 * @return array{success: bool, message: string, note: string|array, code: int, timed_out: bool}
+	 *         `code` is 0 when no response arrived; `note` is the message for the event log (D180).
 	 */
 	public function import( array $job_items ): array {
 		if ( Viglet_Dumont_Settings::demo() ) {
@@ -121,10 +126,19 @@ class Viglet_Dumont_API_Client {
 		}
 		$payload = array( 'snJobItems' => $job_items );
 
-		$response = $this->request( 'POST', '/api/sn/import', null, $payload );
+		/**
+		 * Seconds to wait for Turing to answer one import.
+		 *
+		 * @param int $timeout   Two seconds a document, at least 30.
+		 * @param int $documents How many documents the import carries.
+		 */
+		$timeout  = (int) apply_filters( 'viglet_dumont_http_timeout', max( 30, 2 * count( $job_items ) ), count( $job_items ) );
+		$response = $this->request( 'POST', '/api/sn/import', null, $payload, array( 'timeout' => max( 1, $timeout ) ) );
 
 		if ( is_wp_error( $response ) ) {
-			return $this->outcome( false, $response->get_error_message(), 0 );
+			$outcome              = $this->outcome( false, $response->get_error_message(), 0 );
+			$outcome['timed_out'] = self::timed_out( $response );
+			return $outcome;
 		}
 
 		$code = (int) wp_remote_retrieve_response_code( $response );
@@ -143,15 +157,26 @@ class Viglet_Dumont_API_Client {
 	 * @param bool         $ok   Whether it went through.
 	 * @param string|array $note A note from Viglet_Dumont_Events::note(), or text as it came.
 	 * @param int          $code The HTTP status, 0 when no response arrived.
-	 * @return array{success: bool, message: string, note: string|array, code: int}
+	 * @return array{success: bool, message: string, note: string|array, code: int, timed_out: bool}
 	 */
 	private function outcome( bool $ok, $note, int $code ): array {
 		return array(
-			'success' => $ok,
-			'message' => Viglet_Dumont_Events::text( $note ),
-			'note'    => $note,
-			'code'    => $code,
+			'success'   => $ok,
+			'message'   => Viglet_Dumont_Events::text( $note ),
+			'note'      => $note,
+			'code'      => $code,
+			'timed_out' => false,
 		);
+	}
+
+	/**
+	 * Whether a transport error is the wait running out (cURL error 28), not a refusal or a
+	 * connection that never opened.
+	 *
+	 * @param WP_Error $error The error wp_remote_request() returned.
+	 */
+	private static function timed_out( WP_Error $error ): bool {
+		return 1 === preg_match( '/cURL error 28\b|timed out/i', $error->get_error_message() );
 	}
 
 	/**

@@ -134,6 +134,18 @@ final class OperationsTest extends PluginTestCase {
 		$this->assertSame( array( 1, 2, 3 ), array_keys( $result['errors'] ) );
 	}
 
+	public function test_a_batch_turing_did_not_answer_in_time_is_unconfirmed_not_failed(): void {
+		// D256: Turing finished the import after the client stopped waiting.
+		Functions\when( 'wp_remote_request' )->justReturn( new \WP_Error( 'http_request_failed', 'cURL error 28: Operation timed out after 30001 milliseconds' ) );
+
+		$result = $this->operations()->index( array( 1, 2, 3 ) );
+
+		$this->assertSame( 0, $result['sent'] );
+		$this->assertSame( 3, $result['unconfirmed'] );
+		$this->assertSame( 0, $result['failed'] );
+		$this->assertSame( array(), $result['errors'] );
+	}
+
 	public function test_the_orphans_are_the_held_ids_wordpress_does_not_publish(): void {
 		WP_Query::$ids = array( 1, 2 );
 		$this->held    = array( 'site-a:post:1', 'site-a:post:2', 'site-a:post:9', 'site-a:page:1' );

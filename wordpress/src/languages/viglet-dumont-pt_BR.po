@@ -316,7 +316,7 @@ msgstr "Carregando estatísticas..."
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:120
+#: src/blocks/search/render.php:121
 #: src/includes/class-viglet-dumont-native-search.php:245
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
@@ -457,7 +457,7 @@ msgid "Provisioning failed with HTTP %1$d: %2$s"
 msgstr "O envio dos campos falhou com HTTP %1$d: %2$s"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:208
+#: src/includes/class-viglet-dumont-api-client.php:233
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr "O Turing não conseguiu planejar os campos (HTTP %d)."
@@ -473,12 +473,12 @@ msgid "Deindex failed with HTTP %d"
 msgstr "A remoção falhou com HTTP %d"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:277
+#: src/includes/class-viglet-dumont-api-client.php:302
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr "A busca falhou com HTTP %d"
 
-#: src/includes/class-viglet-dumont-api-client.php:285
+#: src/includes/class-viglet-dumont-api-client.php:310
 msgid "Invalid JSON response from server"
 msgstr "Resposta JSON inválida do servidor"
 
@@ -500,7 +500,7 @@ msgstr "%1$d enviados, %2$d aguardando, %3$d desistiram de tentar."
 
 #. translators: 1: the post id, 2: why sending it failed.
 #: src/includes/class-viglet-dumont-cli-queue.php:60
-#: src/includes/class-viglet-dumont-cli.php:181
+#: src/includes/class-viglet-dumont-cli.php:182
 #, php-format
 msgid "Post %1$d: %2$s"
 msgstr "Post %1$d: %2$s"
@@ -568,7 +568,7 @@ msgid "%d documents removed."
 msgstr "%d documentos removidos."
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-cli.php:184
+#: src/includes/class-viglet-dumont-cli.php:196
 #, php-format
 msgid "%1$d sent, %2$d failed."
 msgstr "%1$d enviados, %2$d falharam."
@@ -701,7 +701,7 @@ msgstr "URL da imagem destacada"
 msgid "Bulk: %1$d sent, %2$d failed."
 msgstr "Em lote: %1$d enviados, %2$d falharam."
 
-#: src/includes/class-viglet-dumont-operations.php:181
+#: src/includes/class-viglet-dumont-operations.php:188
 msgid "Turing could not be searched for this site's documents."
 msgstr "Não foi possível buscar no Turing os documentos deste site."
 
@@ -711,7 +711,7 @@ msgstr "Não foi possível buscar no Turing os documentos deste site."
 msgid "%d documents WordPress no longer publishes removed."
 msgstr "%d documentos que o WordPress não publica mais foram removidos."
 
-#: src/includes/class-viglet-dumont-operations.php:229
+#: src/includes/class-viglet-dumont-operations.php:236
 msgid "Skipped: the reindex had failures."
 msgstr "Ignorada: a reindexação teve falhas."
 
@@ -1343,15 +1343,15 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:634
+#: src/includes/class-viglet-dumont-api-client.php:659
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:691
+#: src/includes/class-viglet-dumont-api-client.php:716
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:696
+#: src/includes/class-viglet-dumont-api-client.php:721
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1461,7 +1461,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:610
+#: src/includes/class-viglet-dumont-api-client.php:635
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -2768,7 +2768,7 @@ msgid "“Rain jacket under $400, blue” filters by colour and price at once, a
 msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma vez, e uma linha diz o que foi entendido, com Desfazer. Um preço é lido mesmo sem um modelo de linguagem."
 
 #. translators: %s: the Turing address the plugin is set to.
-#: src/includes/class-viglet-dumont-api-client.php:429
+#: src/includes/class-viglet-dumont-api-client.php:454
 #, php-format
 msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
 msgstr "O WordPress Playground não conseguiu acessar o Turing em %s. No Playground, o Turing precisa estar em um endereço público: um endereço privado, como localhost, não é acessível pelo navegador em que o Playground roda."
@@ -2778,7 +2778,7 @@ msgid "Search and the AI features work from the visitors' browsers; Search tunin
 msgstr "A busca e os recursos de IA funcionam pelos navegadores dos visitantes; Ajuste da busca e Insights de busca ficam ocultos."
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
-#: src/includes/class-viglet-dumont-api-client.php:394
+#: src/includes/class-viglet-dumont-api-client.php:419
 #, php-format
 msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
 msgstr "O modo demo (%s) está ligado: este site não guarda chave do Turing e nunca escreve nele, então nada é indexado, removido ou provisionado daqui."
@@ -2818,3 +2818,15 @@ msgstr "Mostrando resultados para"
 #: src/blocks/search/parts/correction.php:23
 msgid "Search instead for"
 msgstr "Buscar por"
+
+#. translators: %d: posts sent that Turing did not answer for in time.
+#: src/includes/class-viglet-dumont-cli.php:188
+#, php-format
+msgid "Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp dumont status shows what it holds."
+msgstr "O Turing não respondeu a tempo para %d posts. Eles foram enviados e o Turing pode ainda estar indexando: wp dumont status mostra o que ele tem."
+
+#. translators: 1: posts sent, 2: posts sent without an answer, 3: posts that failed.
+#: src/includes/class-viglet-dumont-cli.php:193
+#, php-format
+msgid "%1$d sent, %2$d not confirmed, %3$d failed."
+msgstr "%1$d enviados, %2$d não confirmados, %3$d falharam."

@@ -171,17 +171,30 @@ class Viglet_Dumont_CLI {
 	}
 
 	/**
-	 * Report an index run, naming each failed post, and exit non-zero when any failed.
+	 * Report an index run, naming each failed post, and exit non-zero when any failed. Posts
+	 * Turing did not answer for in time were sent and are not failures (D256).
 	 *
-	 * @param array{sent: int, failed: int, errors: array<int, string>} $result The run.
+	 * @param array{sent: int, failed: int, errors: array<int, string>, unconfirmed: int} $result The run.
 	 */
 	private function finish( array $result ): void {
 		foreach ( $result['errors'] as $post_id => $error ) {
 			/* translators: 1: the post id, 2: why sending it failed. */
 			WP_CLI::warning( sprintf( __( 'Post %1$d: %2$s', 'viglet-dumont' ), $post_id, $error ) );
 		}
-		/* translators: 1: posts sent, 2: posts that failed. */
-		$summary = sprintf( __( '%1$d sent, %2$d failed.', 'viglet-dumont' ), $result['sent'], $result['failed'] );
+		if ( $result['unconfirmed'] > 0 ) {
+			WP_CLI::warning(
+				sprintf(
+					/* translators: %d: posts sent that Turing did not answer for in time. */
+					__( 'Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp dumont status shows what it holds.', 'viglet-dumont' ),
+					$result['unconfirmed']
+				)
+			);
+			/* translators: 1: posts sent, 2: posts sent without an answer, 3: posts that failed. */
+			$summary = sprintf( __( '%1$d sent, %2$d not confirmed, %3$d failed.', 'viglet-dumont' ), $result['sent'], $result['unconfirmed'], $result['failed'] );
+		} else {
+			/* translators: 1: posts sent, 2: posts that failed. */
+			$summary = sprintf( __( '%1$d sent, %2$d failed.', 'viglet-dumont' ), $result['sent'], $result['failed'] );
+		}
 		if ( $result['failed'] > 0 ) {
 			WP_CLI::error( $summary );
 		}

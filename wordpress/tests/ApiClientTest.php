@@ -21,6 +21,32 @@ final class ApiClientTest extends PluginTestCase {
 		$this->assertSame( 'application/json; charset=utf-8', $headers['Content-Type'] );
 	}
 
+	public function test_an_import_waits_two_seconds_a_document_and_never_under_thirty(): void {
+		$client = new Viglet_Dumont_API_Client( $this->settings() );
+
+		$client->import( array_fill( 0, 5, array() ) );
+		$client->import( array_fill( 0, 50, array() ) );
+
+		// D256: Turing embeds each document while it imports, so a batch of 50 outlived 30 s.
+		$this->assertSame( 30, $this->requests[0][1]['timeout'] );
+		$this->assertSame( 100, $this->requests[1][1]['timeout'] );
+	}
+
+	public function test_an_import_turing_did_not_answer_in_time_is_timed_out_not_refused(): void {
+		Functions\when( 'wp_remote_request' )->justReturn( new WP_Error( 'http_request_failed', 'cURL error 28: Operation timed out after 30001 milliseconds with 0 bytes received' ) );
+
+		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->import( array( array() ) );
+
+		$this->assertFalse( $result['success'] );
+		$this->assertTrue( $result['timed_out'] );
+	}
+
+	public function test_a_connection_that_never_opened_is_not_timed_out(): void {
+		Functions\when( 'wp_remote_request' )->justReturn( new WP_Error( 'http_request_failed', 'cURL error 7: Failed to connect to localhost port 2700' ) );
+
+		$this->assertFalse( ( new Viglet_Dumont_API_Client( $this->settings() ) )->import( array( array() ) )['timed_out'] );
+	}
+
 	/**
 	 * Answer every request with an HTTP 400 and this body, from inside WordPress Playground
 	 * or not (D237).
@@ -177,10 +203,12 @@ final class ApiClientTest extends PluginTestCase {
 
 		$this->assertSame(
 			array(
-				'success' => false,
-				'message' => 'timed out',
-				'note'    => 'timed out',
-				'code'    => 0,
+				'success'   => false,
+				'message'   => 'timed out',
+				'note'      => 'timed out',
+				'code'      => 0,
+				// Only an import waits long enough to be worth telling apart (D256).
+				'timed_out' => false,
 			),
 			$result
 		);

@@ -86,14 +86,18 @@ class Viglet_Dumont_Operations {
 	/**
 	 * Send the given posts now: a create for each one that is indexable, a delete for the rest.
 	 *
+	 * A batch Turing did not answer in time was still sent, and Turing goes on importing it
+	 * (D256): it counts as `unconfirmed`, never as failed.
+	 *
 	 * @param int[]         $post_ids The posts.
 	 * @param callable|null $progress Called with the number of posts done after each batch.
-	 * @return array{sent: int, failed: int, errors: array<int, string>}
+	 * @return array{sent: int, failed: int, errors: array<int, string>, unconfirmed: int}
 	 */
 	public function index( array $post_ids, ?callable $progress = null ): array {
-		$batch_size = max( 1, (int) $this->settings['batch_size'] );
-		$sent       = 0;
-		$errors     = array();
+		$batch_size  = max( 1, (int) $this->settings['batch_size'] );
+		$sent        = 0;
+		$unconfirmed = 0;
+		$errors      = array();
 
 		$this->indexer->provision();
 
@@ -109,6 +113,8 @@ class Viglet_Dumont_Operations {
 			$result = $this->client->import( $items );
 			if ( $result['success'] ) {
 				$sent += count( $chunk );
+			} elseif ( ! empty( $result['timed_out'] ) ) {
+				$unconfirmed += count( $chunk );
 			} else {
 				foreach ( $chunk as $post_id ) {
 					$errors[ (int) $post_id ] = $result['message'];
@@ -127,9 +133,10 @@ class Viglet_Dumont_Operations {
 		);
 
 		return array(
-			'sent'   => $sent,
-			'failed' => count( $errors ),
-			'errors' => $errors,
+			'sent'        => $sent,
+			'failed'      => count( $errors ),
+			'errors'      => $errors,
+			'unconfirmed' => $unconfirmed,
 		);
 	}
 
@@ -215,7 +222,7 @@ class Viglet_Dumont_Operations {
 	 * Everything: the fields first, then every published post, then the orphans.
 	 *
 	 * @param callable|null $progress Called with the number of posts done after each batch.
-	 * @return array{sent: int, failed: int, errors: array<int, string>, swept: int, sweep_error: string}
+	 * @return array{sent: int, failed: int, errors: array<int, string>, unconfirmed: int, swept: int, sweep_error: string}
 	 */
 	public function reindex( ?callable $progress = null ): array {
 		$this->indexer->provision( true );
