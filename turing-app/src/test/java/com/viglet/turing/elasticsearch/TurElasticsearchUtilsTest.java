@@ -30,6 +30,10 @@ class TurElasticsearchUtilsTest {
         assertTrue(pt.contains("\"language\":\"Portuguese\""));
         assertTrue(pt.contains("\"" + TurElasticsearchUtils.TEXT_ANALYZER + "\""));
         assertTrue(pt.contains("\"preserve_original\":true"));
+        // T1196 — the light stem runs before the Snowball one in Portuguese only.
+        assertTrue(pt.contains("\"lowercase\",\"keyword_repeat\",\"turing_light\",\"remove_duplicates\","
+                + "\"keyword_repeat\",\"turing_stem\""));
+        assertTrue(!TurElasticsearchUtils.textAnalysisSettings("English").contains("\"turing_light\",\""));
     }
 
     @Test

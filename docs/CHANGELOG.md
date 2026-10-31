@@ -981,6 +981,7 @@
 - **T1190** — Each kit gap query carries the plan's constraints, and a stage's candidates are re-ranked against the whole plan through TurRagReranker, fail-open to retrieval order; the July case is a unit test, not a live eval.
 - **T1191** — The kit drops facet fields with a single catalog-wide value from its vocabulary, so a connector's site field is never a product reason nor a gap word.
 - **T1195 (clear API and console button)** — DELETE /api/sn/{id}/metrics?before= clears a site's searches and clicks, audited and refused to partitioned keys, with a confirmed Clear metrics button on Top search terms.
+- **T1196** — In pt_BR the light Portuguese stem now runs before Snowball on Lucene and Elasticsearch, so bastão finds Bastões, pão finds pães and mão finds mãos after a reindex.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

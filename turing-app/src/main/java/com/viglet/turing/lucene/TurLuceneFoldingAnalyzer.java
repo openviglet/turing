@@ -26,6 +26,7 @@ import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilter;
 import org.apache.lucene.analysis.miscellaneous.RemoveDuplicatesTokenFilter;
+import org.apache.lucene.analysis.pt.PortugueseLightStemFilter;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 
@@ -53,10 +54,12 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 public class TurLuceneFoldingAnalyzer extends Analyzer {
 
+    private static final String PORTUGUESE = "Portuguese";
+
     /** ISO language → Snowball stemmer name. */
     private static final Map<String, String> STEMMERS = Map.ofEntries(
             Map.entry("en", "English"),
-            Map.entry("pt", "Portuguese"),
+            Map.entry("pt", PORTUGUESE),
             Map.entry("es", "Spanish"),
             Map.entry("fr", "French"),
             Map.entry("de", "German"),
@@ -103,6 +106,13 @@ public class TurLuceneFoldingAnalyzer extends Analyzer {
     public static TokenStream stem(TokenStream tokens, String stemmer) {
         if (stemmer == null) {
             return tokens;
+        }
+        if (PORTUGUESE.equals(stemmer)) {
+            // T1196 — Snowball leaves bastão/bastões, pão/pães and mão/mãos apart; the
+            // light stemmer brings each plural to its singular, and that form is then
+            // stemmed beside the word, so singular and plural share a term.
+            tokens = new RemoveDuplicatesTokenFilter(
+                    new PortugueseLightStemFilter(new KeywordRepeatFilter(tokens)));
         }
         return new RemoveDuplicatesTokenFilter(
                 new SnowballFilter(new KeywordRepeatFilter(tokens), stemmer));

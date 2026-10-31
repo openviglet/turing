@@ -2406,26 +2406,6 @@ The first keeps the existing rule and is the recommended one.
 **Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
 counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
-### CLXII.6 Portuguese plurals in -ões, -ães and -ãos (T1196)
-
-Met on Dumont's WordPress demo store in pt_BR (Lucene SN site `recanto-da-serra`,
-published `ghcr.io/openviglet/turing:latest`).
-
-**What happens.** The store sells *Bastões de caminhada Scafell* (trekking poles). A
-shopper searching the singular, `bastão de caminhada`, gets **0 results** (logged as a
-failed search four times in the demo's history). Portuguese plurals in -ão/-ões
-(bastão/bastões, cartão/cartões, botão/botões), -ão/-ães (pão/pães) and -ão/-ãos
-(mão/mãos) differ in their last syllables, and the Snowball Portuguese stemmer T1170
-added does not bring singular and plural to one stem for them.
-
-**Should.** In pt_BR a singular and its plural find the same documents, these irregular
-endings included: a Portuguese plural normaliser before (or beside) the stemmer, or the
-light Portuguese stemmer (`PortugueseLightStemFilter`), which handles -ões/-ães/-ãos,
-measured against the current one on the demo catalog.
-
-**Done when.** `bastão de caminhada` finds the Scafell poles on a pt_BR site, covered by
-an IT, and the T1170 plural cases still pass.
-
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release

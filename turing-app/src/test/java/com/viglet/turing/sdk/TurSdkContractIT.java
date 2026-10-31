@@ -566,6 +566,24 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         }
     }
 
+    /** T1196 — in pt_BR the singular in -ão finds the product the catalog names in -ões. */
+    @Test
+    void aPortugueseSingularInAoFindsItsPluralInOes() throws Exception {
+        Map<String, Object> attributes = new HashMap<>(Map.of("id", "t1196-scafell",
+                "title", "Bastões de caminhada Scafell"));
+        processQueue.processIndexingQueue(new TurSNJobItems(new TurSNJobItem(TurSNJobAction.CREATE,
+                List.of(SITE), Locale.forLanguageTag("pt-BR"), attributes, null)));
+        try {
+            List<String> ids = documentIds(postJson("/sn/" + SITE + "/search/query", """
+                    {"q":"bastão de caminhada","locale":"pt_BR","rows":50}""", null));
+            assertTrue(ids.contains("t1196-scafell"), "'bastão de caminhada' must find the poles: " + ids);
+        } finally {
+            processQueue.processIndexingQueue(new TurSNJobItems(new TurSNJobItem(TurSNJobAction.DELETE,
+                    List.of(SITE), Locale.forLanguageTag("pt-BR"),
+                    new HashMap<>(Map.of("id", "t1196-scafell")), null)));
+        }
+    }
+
     /** Documents matching {@code *}, which also populates the search cache. */
     private int totalDocuments() throws Exception {
         return json.readTree(postJson("/sn/" + SITE + "/search/query",

@@ -87,6 +87,7 @@ class TurElasticsearchStemmingIT {
             add(index, "boots", "Leather hiking boots", "Footwear");
         }
         add("stem_pt", "jaqueta", "Jaqueta impermeável", "Jaquetas");
+        add("stem_pt", "bastoes", "Bastões de caminhada Scafell", "Bastões");
         for (String index : List.of("stem_en", "stem_pt", "stem_none")) {
             client.indices().refresh(r -> r.index(index));
         }
@@ -121,6 +122,13 @@ class TurElasticsearchStemmingIT {
     void portugueseStemsAndFolds() throws Exception {
         assertThat(match("stem_pt", "title", "jaquetas")).containsExactly("jaqueta");
         assertThat(match("stem_pt", "title", "impermeavel")).containsExactly("jaqueta");
+    }
+
+    @Test
+    @DisplayName("T1196 — a pt_BR singular in -ão finds its plural in -ões")
+    void portuguesePluralsInOes() throws Exception {
+        assertThat(match("stem_pt", "title", "bastão")).containsExactly("bastoes");
+        assertThat(match("stem_pt", "title", "bastao")).containsExactly("bastoes");
     }
 
     @Test

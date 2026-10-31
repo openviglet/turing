@@ -147,13 +147,18 @@ public class TurElasticsearchUtils {
         if (stemmer == null) {
             return null;
         }
+        // T1196 — Portuguese plurals in -ões/-ães/-ãos reach their singular through
+        // the light stemmer first, as on Lucene.
+        boolean portuguese = "Portuguese".equals(stemmer);
         return """
                 {"analysis":{\
                 "filter":{"turing_stem":{"type":"snowball","language":"%s"},\
+                "turing_light":{"type":"stemmer","language":"light_portuguese"},\
                 "turing_fold":{"type":"asciifolding","preserve_original":true}},\
                 "analyzer":{"%s":{"type":"custom","tokenizer":"standard",\
-                "filter":["lowercase","keyword_repeat","turing_stem","remove_duplicates","turing_fold"]}}}}"""
-                .formatted(stemmer, TEXT_ANALYZER);
+                "filter":["lowercase",%s"keyword_repeat","turing_stem","remove_duplicates","turing_fold"]}}}}"""
+                .formatted(stemmer, TEXT_ANALYZER,
+                        portuguese ? "\"keyword_repeat\",\"turing_light\",\"remove_duplicates\"," : "");
     }
 
     /** {@code textAnalyzer} names the TEXT fields' analyzer, or {@code null} for ES's standard one. */

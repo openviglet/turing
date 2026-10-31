@@ -18,8 +18,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1196** (deps: —) **In pt_BR a singular in -ão finds nothing where the catalog spells the plural in -ões** — bastão de caminhada misses the store's Bastões de caminhada, a search Brazilian shoppers type. → §CLXII.6
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

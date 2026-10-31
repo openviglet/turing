@@ -63,7 +63,11 @@ class TurLuceneStemmingTest {
             "boots", "Leather boots with ankle support",
             "bag", "Down sleeping bag rated to minus five",
             "jaqueta", "Jaqueta impermeável para trilha",
-            "botas", "Botas de couro para caminhada");
+            "botas", "Botas de couro para caminhada",
+            "bastoes", "Bastões de caminhada Scafell",
+            "cartao", "Cartão presente da loja",
+            "paes", "Pães de fermentação natural",
+            "maos", "Luvas para as mãos");
 
     private Set<String> snSearch(Analyzer indexAnalyzer, String q, Locale locale) throws Exception {
         TurSNSearchParams params = new TurSNSearchParams();
@@ -111,6 +115,17 @@ class TurLuceneStemmingTest {
         assertEquals(Set.of("jaqueta"), snSearch(pt, "jaquetas", PT_BR));
         assertEquals(Set.of("jaqueta"), snSearch(pt, "jaquetas para trilha", PT_BR));
         assertEquals(Set.of("botas"), snSearch(pt, "bota", PT_BR));
+    }
+
+    /** T1196 — the plurals that change their last syllable: -ão/-ões, -ão/-ães, -ão/-ãos. */
+    @Test
+    void portuguesePluralsInOesAesAndAosFindTheirSingular() throws Exception {
+        TurLucenePerFieldAnalyzer pt = new TurLucenePerFieldAnalyzer(PT_BR);
+        assertEquals(Set.of("bastoes"), snSearch(pt, "bastão de caminhada", PT_BR));
+        assertEquals(Set.of("bastoes"), snSearch(pt, "bastao", PT_BR));
+        assertEquals(Set.of("cartao"), snSearch(pt, "cartões", PT_BR));
+        assertEquals(Set.of("paes"), snSearch(pt, "pão", PT_BR));
+        assertEquals(Set.of("maos"), snSearch(pt, "mão", PT_BR));
     }
 
     @Test
