@@ -40,4 +40,6 @@ export interface TurImportResult {
   /** Result of the agent half of the bundle. Null when no {@code agents[]} present. */
   agentSummary: TurAgentImportSummary | null
   agentConflicts: TurAgentConflict[]
+  /** T1192 — references the bundle names that resolved to nothing (a site's AI agent). */
+  warnings?: string[]
 }

@@ -118,6 +118,50 @@ class TurImportExchangeTest {
     }
 
     /**
+     * T1192 — a bundle's agents land before its sites, so a site naming an agent
+     * of the same bundle resolves it; a reference that still resolves to nothing
+     * comes back as a warning on the result.
+     */
+    @Test
+    void importsTheBundlesAgentsBeforeItsSitesAndReportsUnresolvedReferences(@TempDir Path tempDir)
+            throws Exception {
+        TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
+        var agentImport = org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class);
+        TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
+                org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
+                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                agentImport));
+        File extract = tempDir.resolve("extract").toFile();
+        Files.createDirectories(extract.toPath());
+        TurSNSiteExchange site = new TurSNSiteExchange();
+        site.setName("site-1");
+        var agent = new com.viglet.turing.exchange.agent.TurAIAgentExchange();
+        agent.setId("agent-demo");
+        TurExchange exchange = new TurExchange();
+        exchange.setSnSites(List.of(site));
+        exchange.setAgents(List.of(agent));
+        Files.writeString(new File(extract, "export.json").toPath(),
+                JsonMapper.builder().build().writeValueAsString(exchange), StandardCharsets.UTF_8);
+        MultipartFile multipartFile = new MockMultipartFile("file", "any.zip", "application/zip", new byte[] { 1 });
+        org.mockito.Mockito.doReturn(extract).when(turImportExchange).extractZipFile(multipartFile);
+        org.mockito.Mockito.when(agentImport.importAgents(org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.anyBoolean()))
+                .thenReturn(new com.viglet.turing.exchange.agent.TurAIAgentImportService.ImportResult(
+                        List.of("Demo"), List.of(), 0, 0, 0, 0, 0, null));
+        org.mockito.Mockito.when(turSNSiteImport.importSNSite(org.mockito.ArgumentMatchers.any()))
+                .thenReturn(List.of("SN Site 'site-1' names AI Agent 'ghost'"));
+
+        var result = turImportExchange.importFromMultipartFile(multipartFile);
+
+        var order = org.mockito.Mockito.inOrder(agentImport, turSNSiteImport);
+        order.verify(agentImport).importAgents(org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.anyBoolean());
+        order.verify(turSNSiteImport).importSNSite(org.mockito.ArgumentMatchers.any());
+        assertEquals(List.of("SN Site 'site-1' names AI Agent 'ghost'"), result.warnings());
+    }
+
+    /**
      * T373 — a Cloud seed bundle carries GLOBAL default infra and no site at
      * all. Before this branch existed the root-level se/llm/store entries were
      * parsed and then silently dropped, so the seeded defaults never landed.

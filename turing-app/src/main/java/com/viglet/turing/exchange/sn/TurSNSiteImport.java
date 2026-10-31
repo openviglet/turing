@@ -68,6 +68,8 @@ import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepos
 import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
 import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
@@ -141,9 +143,15 @@ public class TurSNSiteImport {
 		this.cacheManager = cacheManager;
 	}
 
+	/**
+	 * Imports the bundle's sites. T1192 — returns a warning for each reference
+	 * the bundle names that resolves to nothing (a site's AI agent), so the import
+	 * summary reports it instead of the site silently falling back to a default.
+	 */
 	@Transactional
-	public void importSNSite(TurExchange turExchange) {
+	public List<String> importSNSite(TurExchange turExchange) {
 		importReferencedInstances(turExchange);
+		List<String> warnings = new ArrayList<>();
 
 		for (TurSNSiteExchange turSNSiteExchange : turExchange.getSnSites()) {
 			// Delete existing site if present (handles re-import with same ID)
@@ -164,7 +172,7 @@ public class TurSNSiteImport {
 			}
 
 			// Save GenAi configuration (preserves original ID)
-			saveGenAi(turSNSiteExchange, turSNSite, turExchange);
+			saveGenAi(turSNSiteExchange, turSNSite, turExchange, warnings);
 
 			TurSNSite savedSite = turSNSiteRepository.saveAndFlush(turSNSite);
 			log.info("Saved SN Site: {} ({})", savedSite.getName(), savedSite.getId());
@@ -194,6 +202,7 @@ public class TurSNSiteImport {
 			log.info("Imported SN Site: {} ({})", savedSite.getName(), savedSite.getId());
 		}
 		clearSemanticNavigationCaches();
+		return List.copyOf(warnings);
 	}
 
 	/**
@@ -402,7 +411,8 @@ public class TurSNSiteImport {
 				});
 	}
 
-	private void saveGenAi(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite, TurExchange turExchange) {
+	private void saveGenAi(TurSNSiteExchange turSNSiteExchange, TurSNSite turSNSite, TurExchange turExchange,
+			List<String> warnings) {
 		TurSNSiteGenAiExchange genAiExchange = turSNSiteExchange.getTurSNSiteGenAi();
 		if (genAiExchange != null) {
 			TurSNSiteGenAi genAi = new TurSNSiteGenAi();
@@ -410,7 +420,13 @@ public class TurSNSiteImport {
 			genAi.setSitePrompt(genAiExchange.getSitePrompt());
 			if (genAiExchange.getTurAIAgent() != null) {
 				turAIAgentRepository.findById(genAiExchange.getTurAIAgent())
-						.ifPresent(genAi::setTurAIAgent);
+						.ifPresentOrElse(genAi::setTurAIAgent, () -> {
+							String warning = "SN Site '" + turSNSiteExchange.getName() + "' names AI Agent '"
+									+ genAiExchange.getTurAIAgent()
+									+ "', which is neither in the bundle nor installed; it uses the default agent.";
+							log.warn(warning);
+							warnings.add(warning);
+						});
 			}
 
 			TurSNSiteGenAi savedGenAi = turSNSiteGenAiRepository.save(genAi);

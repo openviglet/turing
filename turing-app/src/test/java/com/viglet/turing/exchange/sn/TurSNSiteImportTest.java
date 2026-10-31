@@ -235,6 +235,35 @@ class TurSNSiteImportTest {
                 verify(turSEInstanceRepository).findById("se-1");
         }
 
+        /** T1192 — an agent reference that resolves to nothing is a warning, not a silent drop. */
+        @Test
+        void shouldReportAnAgentReferenceThatResolvesToNothing() {
+                TurSEInstance existingSe = new TurSEInstance();
+                existingSe.setId("se-1");
+                TurSNSiteGenAiExchange genAiRef = new TurSNSiteGenAiExchange();
+                genAiRef.setTurAIAgent("agent-ghost");
+                TurSNSiteExchange siteExchange = new TurSNSiteExchange();
+                siteExchange.setId("site-1");
+                siteExchange.setName("Site 1");
+                siteExchange.setTurSEInstance("se-1");
+                siteExchange.setTurSNSiteGenAi(genAiRef);
+                TurExchange exchange = new TurExchange();
+                exchange.setSnSites(List.of(siteExchange));
+
+                when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.empty());
+                when(turSEInstanceRepository.findById("se-1")).thenReturn(Optional.of(existingSe));
+                when(turAIAgentRepository.findById("agent-ghost")).thenReturn(Optional.empty());
+                when(turSNSiteGenAiRepository.save(any(TurSNSiteGenAi.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
+                when(turSNSiteRepository.saveAndFlush(any(TurSNSite.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
+
+                List<String> warnings = turSNSiteImport.importSNSite(exchange);
+
+                org.assertj.core.api.Assertions.assertThat(warnings).singleElement().asString()
+                                .contains("Site 1").contains("agent-ghost");
+        }
+
         @Test
         void shouldAssignFirstAvailableSEInstanceWhenMissingInExchange() {
                 TurSEInstance existingSe = new TurSEInstance();

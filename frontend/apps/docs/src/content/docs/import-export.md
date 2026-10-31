@@ -156,6 +156,12 @@ curl -X POST "http://localhost:2700/api/import" \
   -F "file=@turing-sites-export.zip"
 ```
 
+### Bundles that carry agents
+
+A bundle may carry AI agents (`agents`) and their personas (`personas`) beside its sites. They are imported **before** the sites, and a new agent keeps the id the bundle gives it, so a site whose GenAI settings name an agent of the same bundle (`turSNSiteGenAi.turAIAgent`) is linked to that agent. The site then offers that agent's audience personas whatever the installation's Default AI Agent is.
+
+When a site names an agent that is neither in the bundle nor installed, the site still imports and falls back to the Default AI Agent, and the import result carries a `warnings` entry naming the site and the agent. The admin console shows it on the import screen.
+
 ---
 
 ## Content Import (SN Job Items)

@@ -2183,31 +2183,6 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
-### CXV.8 An imported site keeps the agent its bundle names (T1192)
-
-**Where it showed.** On turing-demo, `POST
-/api/sn/turing-docs/persona/persona-enterprise-buyer/content-fit` answers 404 "Persona
-not found in this site's catalog". The demo seed
-(`cloud/docker/demo-seed-src/turing-docs/export.json`) carries the three personas on
-`agent-turing-demo`, but its site has no `turSNSiteGenAi`, so the site resolves the
-global Default AI Agent. Startup adopts an imported agent as the default only when no
-default is set yet, so a boot that provisions the generic agent before the seed import
-leaves the personas on an agent no site uses.
-
-**Why it costs.** Which personas a site offers then depends on boot order and on a
-global setting, not on the bundle. Naming the agent in the bundle does not help today:
-`TurImportExchange` imports the site before the agents (line 228), and `TurSNSiteImport`
-resolves `turSNSiteGenAi.turAIAgent` with `findById(...).ifPresent`, so the reference to
-an agent in the same bundle is dropped without a word.
-
-**What to build.**
-- Import the bundle's agents and personas before its sites, so a site's agent reference resolves within one bundle.
-- An agent reference that still resolves to nothing is logged as a warning and reported in the import summary, never dropped silently.
-- An IT imports one bundle with a site naming its own agent and asserts `GET /api/sn/{site}/personas` lists that agent's audience personas while the global default is a different agent.
-
-**Then, in the cloud repository.** The demo seed's site names `agent-turing-demo`, so
-the demo stops depending on the global default.
-
 ### CXV.9 The playground offers the personas the site's catalog lists (T1193)
 
 **Where it showed.** `PLAYGROUND_PERSONAS` in

@@ -380,6 +380,11 @@ public class TurAIAgentImportService {
                 continue;
             }
             TurAIAgent agent = existing != null ? existing : new TurAIAgent();
+            // T1192 — as T655 does for personas: a brand-new agent keeps the
+            // bundle's id, so a site of the same bundle that names it resolves it.
+            if (existing == null && a.getId() != null) {
+                agent.setId(a.getId());
+            }
             applyAgentScalars(agent, a);
             wireAgentReferences(agent, a, refs);
             agent = agentRepository.save(agent);

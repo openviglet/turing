@@ -84,7 +84,21 @@ public class TurImportExchange {
 							   List<SiteConflict> conflicts,
 							   boolean searchEngineAvailable,
 							   AgentImportSummary agentSummary,
-							   List<AgentConflict> agentConflicts) {
+							   List<AgentConflict> agentConflicts,
+							   List<String> warnings) {
+
+		public ImportResult {
+			warnings = warnings == null ? List.of() : warnings;
+		}
+
+		/** The result before T1192: no warnings. */
+		public ImportResult(boolean siteImported, String siteName, int contentDocuments, int contentFiles,
+				boolean templateImported, String templateName, int templateFiles, String error,
+				List<SiteConflict> conflicts, boolean searchEngineAvailable, AgentImportSummary agentSummary,
+				List<AgentConflict> agentConflicts) {
+			this(siteImported, siteName, contentDocuments, contentFiles, templateImported, templateName,
+					templateFiles, error, conflicts, searchEngineAvailable, agentSummary, agentConflicts, List.of());
+		}
 
 		public static ImportResult error(String error) {
 			return new ImportResult(false, null, 0, 0, false, null, 0, error,
@@ -181,8 +195,14 @@ public class TurImportExchange {
 		List<SiteConflict> conflicts = detectConflicts(extractFolder);
 		boolean skipStructure = !overwrite && !conflicts.isEmpty();
 
+		// T1192 — the AI agent block (same envelope, side-by-side with snSites) goes
+		// first, so a site naming an agent of its own bundle resolves it. Reads
+		// chat-flow + Groovy sibling files from extractFolder before cleanup.
+		AgentImportSummary agentSummary = importAgentsFromExportFile(extractFolder, overwrite);
+
 		String siteName;
 		boolean siteImported;
+		List<String> warnings = List.of();
 		if (skipStructure) {
 			siteName = conflicts.getFirst().name();
 			siteImported = false;
@@ -198,6 +218,7 @@ public class TurImportExchange {
 			// happened instead of naming a site called "unknown".
 			siteName = structural.siteName();
 			siteImported = structural.siteName() != null;
+			warnings = structural.warnings();
 		}
 
 		// content is optional
@@ -223,10 +244,6 @@ public class TurImportExchange {
 			}
 		}
 
-		// AI agent block is optional — same envelope, side-by-side with snSites.
-		// Reads chat-flow + Groovy sibling files from extractFolder before cleanup.
-		AgentImportSummary agentSummary = importAgentsFromExportFile(extractFolder, overwrite);
-
 		cleanupSafely(extractFolder, parentExtractFolder);
 
 		log.info("Import complete — site: '{}', content: {} docs from {} files, template: '{}'  ({} files), agents imported: {}, skipped: {}",
@@ -239,7 +256,7 @@ public class TurImportExchange {
 				contentDocuments, contentFiles,
 				templateImported, templateName, templateFileCount,
 				null, conflicts, searchEngineAvailable,
-				agentSummary, List.of());
+				agentSummary, List.of(), warnings);
 	}
 
 	/** The resolved export root and (optional) wrapper directory above it. */
@@ -717,14 +734,14 @@ public class TurImportExchange {
 	 * @param siteName the site that landed, or {@code null} when the bundle
 	 *                 legitimately carried none
 	 */
-	private record StructuralImport(boolean failed, String siteName) {
+	private record StructuralImport(boolean failed, String siteName, List<String> warnings) {
 
 		static StructuralImport failure() {
-			return new StructuralImport(true, null);
+			return new StructuralImport(true, null, List.of());
 		}
 
-		static StructuralImport of(String siteName) {
-			return new StructuralImport(false, siteName);
+		static StructuralImport of(String siteName, List<String> warnings) {
+			return new StructuralImport(false, siteName, warnings);
 		}
 	}
 
@@ -735,11 +752,11 @@ public class TurImportExchange {
 				extractFolder.getAbsolutePath().concat(File.separator).concat(EXPORT_FILE))) {
 
 			TurExchange turExchange = mapper.readValue(fis, TurExchange.class);
-			processTurExchange(turExchange);
+			List<String> warnings = processTurExchange(turExchange);
 			if (turExchange.getSnSites() != null && !turExchange.getSnSites().isEmpty()) {
-				return StructuralImport.of(turExchange.getSnSites().getFirst().getName());
+				return StructuralImport.of(turExchange.getSnSites().getFirst().getName(), warnings);
 			}
-			return StructuralImport.of(null);
+			return StructuralImport.of(null, warnings);
 		} catch (Exception e) {
 			log.error("Error importing SN Site: {}", e.getMessage(), e);
 			return StructuralImport.failure();
@@ -754,10 +771,11 @@ public class TurImportExchange {
 		}
 	}
 
-	private void processTurExchange(TurExchange turExchange) {
+	private List<String> processTurExchange(TurExchange turExchange) {
 		if (turExchange.getSnSites() != null && !turExchange.getSnSites().isEmpty()) {
 			logSNSites(turExchange.getSnSites());
-			turSNSiteImport.importSNSite(turExchange);
+			List<String> warnings = turSNSiteImport.importSNSite(turExchange);
+			return warnings == null ? List.of() : warnings;
 		} else if (hasRootInfraReferences(turExchange)) {
 			// A seed bundle (T373) carries GLOBAL default infra and no site at
 			// all. Without this branch the root-level se/llm/store/embedding
@@ -767,6 +785,7 @@ public class TurImportExchange {
 		} else {
 			log.warn("No SN Sites found in export file");
 		}
+		return List.of();
 	}
 
 	private boolean hasRootInfraReferences(TurExchange turExchange) {

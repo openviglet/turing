@@ -8,7 +8,6 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-- 🛠 **T1192** (deps: —) **An import bundle whose site names its agent loses that link, and the site falls back to the default agent** — The demo's personas then 404 on content-fit whenever the global default is not the bundle's agent. → §CXV.8
 - 📋 **T1193** (deps: —) **The site's playground pins three persona ids that the demo backend may not offer** — A demo whose catalog drifts from the pinned list breaks content-fit with a 404, while the site lists personas that do not exist. → §CXV.9
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
