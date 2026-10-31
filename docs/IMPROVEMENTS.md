@@ -2406,6 +2406,30 @@ The first keeps the existing rule and is the recommended one.
 **Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
 counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
+### CLXII.7 The kit writes in the request's language (T1197)
+
+Met recording Dumont's pt_BR demo video (Recanto da Serra), kit API (T1159).
+
+**What happens.** `POST /api/sn/recanto-da-serra/copilot/kit` with `locale: pt_BR` and
+the plan "Dois dias atravessando a montanha em julho, primeira vez" returns its summary
+("A shopper plans a two-day mountain crossing in July for the first time.") and every
+stage's name and reason in English ("Experience comfort and warmth", "To stay warm in
+cold mountain conditions…"), while the staged products are the store's Portuguese ones.
+`TurCatalogKitService.plan` passes `locale` to retrieval, the vocabulary and the reason
+labels, but `gapPrompt(siteName, plan, gapLimit, vocabulary)` never receives it, and the
+prompt carries no language line at all, so its English template sets the language.
+
+**Should.** The gap prompt names the request's language (the locale's display name) and
+asks for the summary, the gap names, the reasons and the search queries in it: an
+English query misses on a pt_BR index. With no locale, or one that does not parse, it
+asks for the plan's own language, as the other prompts here do. The vocabulary's
+`field=value` pairs are still copied exactly, never translated. Only this prompt needs
+it: the copilot already says "Respond in the user's language" and `rankedForPlan`
+reranks without writing prose.
+
+**Done when.** A pt_BR kit comes back with its summary and stages in Portuguese, covered
+by tests on `gapPrompt` with a locale, without one and with an unparseable one.
+
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release
