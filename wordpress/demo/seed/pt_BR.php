@@ -12,14 +12,15 @@
 
 return array(
 	'categories' => array(
-		'waterproof-jackets' => 'Jaquetas impermeáveis',
-		'insulated-jackets'  => 'Jaquetas térmicas',
-		'fleece-midlayers'   => 'Fleeces e segundas camadas',
-		'hiking-boots'       => 'Botas de trilha',
-		'backpacks'          => 'Mochilas',
-		'tents'              => 'Barracas',
-		'sleeping-bags'      => 'Sacos de dormir',
-		'accessories'        => 'Acessórios',
+		'waterproof-jackets'  => 'Jaquetas impermeáveis',
+		'waterproof-trousers' => 'Calças impermeáveis',
+		'insulated-jackets'   => 'Jaquetas térmicas',
+		'fleece-midlayers'    => 'Fleeces e segundas camadas',
+		'hiking-boots'        => 'Botas de trilha',
+		'backpacks'           => 'Mochilas',
+		'tents'               => 'Barracas',
+		'sleeping-bags'       => 'Sacos de dormir e isolantes',
+		'accessories'         => 'Acessórios',
 	),
 
 	// Attribute values, as the facets and the product pages show them.
@@ -91,14 +92,15 @@ return array(
 	),
 
 	'care'       => array(
-		'waterproof-jackets' => 'Lave a 30 °C com um limpador técnico e seque na secadora em temperatura baixa para reativar o acabamento repelente à água.',
-		'insulated-jackets'  => 'Lave a 30 °C com sabão próprio para pluma ou enchimento sintético e seque na secadora em temperatura baixa com duas bolinhas de tênis limpas.',
-		'fleece-midlayers'   => 'Lave na máquina a 30 °C. Não passe a ferro.',
-		'hiking-boots'       => 'Escove a lama, seque longe de fontes de calor e reimpermeabilize com um tratamento para couro ou tecido.',
-		'backpacks'          => 'Limpe com um pano úmido. Não lave na máquina.',
-		'tents'              => 'Monte para secar antes de guardar, dobrada sem apertar e longe do sol.',
-		'sleeping-bags'      => 'Guarde solto no saco de armazenamento, sem comprimir. Lave raramente, com sabão especializado.',
-		'accessories'        => 'Enxágue e seque depois do uso; veja a etiqueta para lavar.',
+		'waterproof-jackets'  => 'Lave a 30 °C com um limpador técnico e seque na secadora em temperatura baixa para reativar o acabamento repelente à água.',
+		'waterproof-trousers' => 'Lave a 30 °C com um limpador técnico, com os zíperes fechados, e seque na secadora em temperatura baixa para reativar o acabamento repelente à água.',
+		'insulated-jackets'   => 'Lave a 30 °C com sabão próprio para pluma ou enchimento sintético e seque na secadora em temperatura baixa com duas bolinhas de tênis limpas.',
+		'fleece-midlayers'    => 'Lave na máquina a 30 °C. Não passe a ferro.',
+		'hiking-boots'        => 'Escove a lama, seque longe de fontes de calor e reimpermeabilize com um tratamento para couro ou tecido.',
+		'backpacks'           => 'Limpe com um pano úmido. Não lave na máquina.',
+		'tents'               => 'Monte para secar antes de guardar, dobrada sem apertar e longe do sol.',
+		'sleeping-bags'       => 'Guarde solto no saco de armazenamento, sem comprimir. Lave raramente, com sabão especializado.',
+		'accessories'         => 'Enxágue e seque depois do uso; veja a etiqueta para lavar.',
 	),
 
 	// Each model by its English name: its name, the lead and the facts.

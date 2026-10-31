@@ -32,6 +32,8 @@ const words = {
 		question: 'What size backpack do I need for a night in a hut?',
 		cites: 'What size backpack do you need?',
 		compare: 'waterproof jacket',
+		// The category she narrows to first, so she compares three jackets (D257).
+		compareIn: [ 'Category', 'Waterproof jackets' ],
 		plan: 'Two days crossing the mountains in July, first time',
 		check: 'Will this keep me dry on a wet day in the hills?',
 		// A word WordPress's own search finds nothing for (curated.json, `native: null`).
@@ -84,6 +86,7 @@ const words = {
 		// Measured on the pt_BR demo: three jackets of different kinds to compare. "jaqueta
 		// impermeável" offers one, the accent dropping the others (Turing T1194).
 		compare: 'jaqueta',
+		compareIn: [ 'Categoria', 'Jaquetas impermeáveis' ],
 		plan: 'Dois dias atravessando a montanha em julho, primeira vez',
 		check: 'Isso me mantém seca num dia de chuva na montanha?',
 		backstage: 'puffer',
@@ -410,6 +413,23 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 
 	await chapter( '4. Compares three products side by side', async () => {
 		await search( page, say.compare );
+		// Narrowed to the category first: the filters are part of the chapter, and the three
+		// compared are jackets, never a jacket beside gloves and trousers (D257).
+		const [ facetLabel, category ] = say.compareIn;
+		await block
+			.locator( '.viglet-dumont-search__facet' )
+			.filter( {
+				has: page.locator( 'summary', { hasText: facetLabel } ),
+			} )
+			.locator( 'label' )
+			.filter( { hasText: category } )
+			.locator( 'input' )
+			.click();
+		await expect(
+			block
+				.locator( '.viglet-dumont-search__chip' )
+				.filter( { hasText: category } )
+		).toBeVisible();
 		const boxes = block
 			.locator( '.viglet-dumont-search__results' )
 			.getByRole( 'checkbox', { name: ui.compareBox } );

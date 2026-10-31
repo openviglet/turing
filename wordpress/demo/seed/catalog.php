@@ -73,14 +73,17 @@ foreach ( array( 'color' => 'Colour', 'material' => 'Material', 'use' => 'Use', 
 }
 
 $categories = array(
-	'waterproof-jackets' => 'Waterproof jackets',
-	'insulated-jackets'  => 'Insulated jackets',
-	'fleece-midlayers'   => 'Fleece and midlayers',
-	'hiking-boots'       => 'Hiking boots',
-	'backpacks'          => 'Backpacks',
-	'tents'              => 'Tents',
-	'sleeping-bags'      => 'Sleeping bags',
-	'accessories'        => 'Accessories',
+	'waterproof-jackets'  => 'Waterproof jackets',
+	// Trousers filed as jackets put them in a jacket comparison (D257).
+	'waterproof-trousers' => 'Waterproof trousers',
+	'insulated-jackets'   => 'Insulated jackets',
+	'fleece-midlayers'    => 'Fleece and midlayers',
+	'hiking-boots'        => 'Hiking boots',
+	'backpacks'           => 'Backpacks',
+	'tents'               => 'Tents',
+	// It holds the sleeping mat and the liner too.
+	'sleeping-bags'       => 'Sleeping bags and mats',
+	'accessories'         => 'Accessories',
 );
 
 $apparel = array( 'S', 'M', 'L', 'XL' );
@@ -101,7 +104,7 @@ $models = array(
 	array( 'waterproof-jackets', 'Wasdale running shell', 159, array( 'Nylon' ), array( 'Running' ), $apparel, array( 'Ember', 'Sky', 'Black' ),
 		'A minimal waterproof for fell running, with taped seams that meet race kit rules.',
 		'Weight 150 g (size M). Hydrostatic head 20,000 mm. Elasticated cuffs, a fitted hood and a back vent.' ),
-	array( 'waterproof-jackets', 'Skiddaw waterproof trousers', 119, array( 'Nylon' ), array( 'Hiking', 'Mountaineering' ), $apparel, array( 'Black', 'Slate' ),
+	array( 'waterproof-trousers', 'Skiddaw waterproof trousers', 119, array( 'Nylon' ), array( 'Hiking', 'Mountaineering' ), $apparel, array( 'Black', 'Slate' ),
 		'Waterproof overtrousers with full-length side zips, to pull on over boots when the rain sets in.',
 		'Weight 290 g (size M). Hydrostatic head 15,000 mm. Reinforced ankles against crampon scuffs.' ),
 	// Insulated jackets.
@@ -237,14 +240,15 @@ $models = array(
 );
 
 $care = array(
-	'waterproof-jackets' => 'Wash at 30 °C with a technical cleaner, then tumble dry low to restore the water-repellent finish.',
-	'insulated-jackets'  => 'Wash at 30 °C with a down or synthetic wash and tumble dry low with two clean tennis balls.',
-	'fleece-midlayers'   => 'Machine wash at 30 °C. Do not iron.',
-	'hiking-boots'       => 'Brush off mud, dry away from direct heat and reproof with a leather or fabric treatment.',
-	'backpacks'          => 'Wipe clean with a damp cloth. Do not machine wash.',
-	'tents'              => 'Pitch to dry before storing, loosely packed and out of sunlight.',
-	'sleeping-bags'      => 'Store loose in its storage sack, not compressed. Wash rarely, with a specialist wash.',
-	'accessories'        => 'Rinse and dry after use; see the label for washing.',
+	'waterproof-jackets'  => 'Wash at 30 °C with a technical cleaner, then tumble dry low to restore the water-repellent finish.',
+	'waterproof-trousers' => 'Wash at 30 °C with a technical cleaner, zips closed, then tumble dry low to restore the water-repellent finish.',
+	'insulated-jackets'   => 'Wash at 30 °C with a down or synthetic wash and tumble dry low with two clean tennis balls.',
+	'fleece-midlayers'    => 'Machine wash at 30 °C. Do not iron.',
+	'hiking-boots'        => 'Brush off mud, dry away from direct heat and reproof with a leather or fabric treatment.',
+	'backpacks'           => 'Wipe clean with a damp cloth. Do not machine wash.',
+	'tents'               => 'Pitch to dry before storing, loosely packed and out of sunlight.',
+	'sleeping-bags'       => 'Store loose in its storage sack, not compressed. Wash rarely, with a specialist wash.',
+	'accessories'         => 'Rinse and dry after use; see the label for washing.',
 );
 $categories = array_replace( $categories, $pt['categories'] ?? array() );
 $care       = array_replace( $care, $pt['care'] ?? array() );

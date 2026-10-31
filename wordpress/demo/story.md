@@ -53,8 +53,8 @@ written from the shop's guides and products, with the sources it read: the backp
 
 ## 4. Compares
 
-She searches `waterproof jacket` (`jaqueta impermeável`), ticks **Compare** on the first
-three products (a rain jacket, gloves and trousers) and opens them side by side, each with
+She searches `waterproof jacket` (`jaqueta`), narrows it to the **Waterproof jackets**
+category, ticks **Compare** on the first three jackets and opens them side by side, each with
 the colours it comes in. The rows that differ are marked, and a summary written by AI from
 the table sits above it.
 

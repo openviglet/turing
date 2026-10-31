@@ -74,13 +74,14 @@ function tarnfell_kind( string $model, string $category ): string {
 	}
 
 	return array(
-		'waterproof-jackets' => 'jacket',
-		'insulated-jackets'  => 'jacket',
-		'fleece-midlayers'   => 'top',
-		'hiking-boots'       => 'boot',
-		'backpacks'          => 'pack',
-		'tents'              => 'tent',
-		'sleeping-bags'      => 'bag',
+		'waterproof-jackets'  => 'jacket',
+		'waterproof-trousers' => 'trousers',
+		'insulated-jackets'   => 'jacket',
+		'fleece-midlayers'    => 'top',
+		'hiking-boots'        => 'boot',
+		'backpacks'           => 'pack',
+		'tents'               => 'tent',
+		'sleeping-bags'       => 'bag',
 	)[ $category ] ?? 'drybags';
 }
 
