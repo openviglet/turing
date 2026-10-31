@@ -5,10 +5,11 @@ import { GradientAvatar, GradientAvatarFallback } from "@/components/ui/gradient
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSnClickThrough, useSnTopTerms } from "@/api/queries/sn-site-metrics.queries";
+import { useClearSnMetrics, useSnClickThrough, useSnTopTerms } from "@/api/queries/sn-site-metrics.queries";
+import { Button } from "@/components/ui/button";
 import { type TurSNTopTermsPeriod } from "@/services/sn/sn.site.metrics.service";
 import { useSubPageBreadcrumb } from "@/hooks/use-sub-page-breadcrumb";
-import { IconArrowDown, IconArrowUp, IconChartBar, IconClick, IconSearch } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowUp, IconChartBar, IconClick, IconSearch, IconTrash } from "@tabler/icons-react";
 import { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
@@ -90,6 +91,13 @@ export default function SNSiteTopSearchTermsPage({ baseRoute = ROUTES.BENTO_SN_I
     [clickThrough],
   );
   const neverClicked = (clickThrough?.neverClicked ?? []).slice(0, 5);
+  // T1195 — probes and tests run before a demo would otherwise lead these insights for good.
+  const clearMetrics = useClearSnMetrics();
+  const confirmClear = () => {
+    if (window.confirm(t("sn.topSearchTerms.clearMetricsConfirm"))) {
+      clearMetrics.mutate(id);
+    }
+  };
 
   const hasResults = (topTerms?.topTerms?.length ?? 0) > 0;
   const variation = topTerms?.variationPeriod ?? 0;
@@ -250,21 +258,26 @@ export default function SNSiteTopSearchTermsPage({ baseRoute = ROUTES.BENTO_SN_I
     <>
       {header}
       <div className="px-6">
-        <Tabs
-          value={resolvedPeriod}
-          onValueChange={(value) =>
-            navigate(`${baseRoute}/${id}/top-terms/${value}`)
-          }
-          className="mb-4"
-        >
-          <TabsList>
-            {periodValues.map((value) => (
-              <TabsTrigger key={value} value={value}>
-                {t(periodLabelKeys[value])}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <Tabs
+            value={resolvedPeriod}
+            onValueChange={(value) =>
+              navigate(`${baseRoute}/${id}/top-terms/${value}`)
+            }
+          >
+            <TabsList>
+              {periodValues.map((value) => (
+                <TabsTrigger key={value} value={value}>
+                  {t(periodLabelKeys[value])}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+          <Button variant="outline" size="sm" onClick={confirmClear} disabled={clearMetrics.isPending}>
+            <IconTrash className="size-4" />
+            {t("sn.topSearchTerms.clearMetrics")}
+          </Button>
+        </div>
         {renderContent()}
       </div>
     </>

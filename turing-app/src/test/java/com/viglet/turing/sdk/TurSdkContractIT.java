@@ -187,6 +187,9 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     private TurDevTokenRepository devTokenRepository;
 
     @Autowired
+    private com.viglet.turing.sn.insights.TurSNSiteMetricsResetService metricsResetService;
+
+    @Autowired
     private com.viglet.turing.sn.TurSNPartitionWriteGuard partitionWriteGuard;
 
     private final HttpClient http = HttpClient.newHttpClient();
@@ -505,6 +508,36 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         } finally {
             spotlightRepository.deleteById(saved.getId());
         }
+    }
+
+    /**
+     * T1195 — clearing a site's metrics on the real schema: a search logged with
+     * targeting rules (a collection table) and a click before the cut go, the
+     * ones after it stay.
+     */
+    @Test
+    void clearingMetricsRemovesTheSearchesAndClicksBeforeTheCut() {
+        var site = siteRepository.findByName(SITE).orElseThrow();
+        Instant cut = Instant.now().plusSeconds(3600);
+        String term = "t1195-" + java.util.UUID.randomUUID();
+        TurSNSiteMetricAccess old = new TurSNSiteMetricAccess();
+        old.setAccessDate(cut.minusSeconds(60));
+        old.setTerm(term);
+        old.setTargetingRules(new java.util.HashSet<>(java.util.Set.of("role:probe")));
+        old.setTurSNSite(site);
+        metricAccessRepository.save(old);
+        TurSNSiteMetricAccess kept = new TurSNSiteMetricAccess();
+        kept.setAccessDate(cut.plusSeconds(60));
+        kept.setTerm(term);
+        kept.setTurSNSite(site);
+        metricAccessRepository.save(kept);
+
+        var cleared = metricsResetService.clear(site, cut, "it");
+
+        assertTrue(cleared.searches() >= 1, "the search before the cut must go: " + cleared);
+        assertTrue(metricAccessRepository.findById(old.getId()).isEmpty(), "the old search is gone");
+        assertTrue(metricAccessRepository.findById(kept.getId()).isPresent(), "the later search stays");
+        metricAccessRepository.deleteById(kept.getId());
     }
 
     /**

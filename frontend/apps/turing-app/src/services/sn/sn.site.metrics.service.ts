@@ -33,7 +33,19 @@ export interface TurSNClickThroughReport {
   metricsEnabled: boolean;
 }
 
+/** T1195 — what `DELETE /sn/{siteId}/metrics` removed. */
+export interface TurSNMetricsCleared {
+  searches: number;
+  clicks: number;
+}
+
 export class TurSNSiteMetricsService {
+  /** T1195 — empties the site's search and click metrics. */
+  async clear(siteId: string): Promise<TurSNMetricsCleared> {
+    const response = await axios.delete<TurSNMetricsCleared>(`/sn/${siteId}/metrics`);
+    return response.data;
+  }
+
   async clickThrough(
     siteId: string,
     period: TurSNTopTermsPeriod,

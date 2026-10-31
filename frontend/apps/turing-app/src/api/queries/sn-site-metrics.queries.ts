@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { TurSNSiteMetricsTerm } from '@/models/sn/sn-site-metrics-term.model';
 import {
   TurSNSiteMetricsService,
@@ -26,6 +26,15 @@ export function useSnTopTerms(
       : ['sn-site-metrics', 'pending'],
     queryFn: () => service.topTermsByPeriod(siteId as string, period, rows),
     enabled: Boolean(siteId),
+  });
+}
+
+/** T1195 — clears a site's search and click metrics, then refetches every metrics read. */
+export function useClearSnMetrics() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (siteId: string) => service.clear(siteId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.snSiteMetrics.all() }),
   });
 }
 

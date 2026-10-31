@@ -337,7 +337,9 @@
       "searchTotal": "Total de buscas",
       "ctr": "Taxa de clique",
       "ctrOverall": "cliques por busca",
-      "neverClicked": "Encontrados, nunca abertos"
+      "neverClicked": "Encontrados, nunca abertos",
+      "clearMetrics": "Limpar métricas",
+      "clearMetricsConfirm": "Apagar todas as buscas e cliques registrados neste site? Os insights começam vazios. Não é possível desfazer."
     },
     "fieldCoverage": {
       "title": "Cobertura de Campos",

@@ -1,13 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const useSnTopTerms = vi.fn();
 const useSnClickThrough = vi.fn();
+const clearMetrics = vi.fn();
 
 vi.mock("@/api/queries/sn-site-metrics.queries", () => ({
   useSnTopTerms: () => useSnTopTerms(),
   useSnClickThrough: () => useSnClickThrough(),
+  useClearSnMetrics: () => ({ mutate: clearMetrics, isPending: false }),
 }));
 
 vi.mock("@/hooks/use-sub-page-breadcrumb", () => ({
@@ -67,5 +69,19 @@ describe("SNSiteTopSearchTermsPage — click-through", () => {
 
     expect(screen.getByText("workshop")).toBeInTheDocument();
     expect(screen.queryByText("sn.topSearchTerms.ctr")).not.toBeInTheDocument();
+  });
+
+  /** T1195 — clearing the metrics asks first, and clears this site's only when confirmed. */
+  it("clears the site's metrics once the admin confirms", () => {
+    useSnClickThrough.mockReturnValue({ data: undefined });
+    const confirm = vi.spyOn(window, "confirm").mockReturnValueOnce(false).mockReturnValueOnce(true);
+
+    renderPage();
+    fireEvent.click(screen.getByText("sn.topSearchTerms.clearMetrics"));
+    expect(clearMetrics).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText("sn.topSearchTerms.clearMetrics"));
+
+    expect(clearMetrics).toHaveBeenCalledWith("site-1");
+    confirm.mockRestore();
   });
 });

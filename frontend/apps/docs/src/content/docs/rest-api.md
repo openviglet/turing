@@ -751,6 +751,20 @@ Clicks are recorded only when `turing.search.metrics.enabled` is on (env `TURING
 
 From the vanilla SDK: `fetchClickThrough(client, siteId, { period: "this-month", locale: "pt-BR" })`.
 
+<a id="clearing-metrics"></a>
+
+### Clearing a site's metrics
+
+Probes, tests and evaluation runs are logged like any visitor's search, so before a demo they can fill the insights above. Clear them:
+
+```
+DELETE /api/sn/{siteId}/metrics?before=
+```
+
+It removes the site's recorded searches and clicks, all of them, or with `before` (an ISO-8601 instant) only those recorded earlier. The answer says how many went: `{ "searches": 412, "clicks": 37 }`. It needs authentication, a key bound to a [partition](#partitioned-keys) is refused, and every clear is logged with the user who made it. It cannot be undone.
+
+In the console, the **Top search terms** page has a **Clear metrics** button beside the period picker, which asks before clearing.
+
 ---
 
 ## Integration API

@@ -20,6 +20,7 @@
  */
 package com.viglet.turing.api.sn.console;
 
+import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.api.exception.TurNotFoundException;
 import com.viglet.turing.api.sn.bean.TurSNSiteMetricsTopTermsBean;
 import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
+import com.viglet.turing.sn.insights.TurSNSiteMetricsResetService;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
@@ -63,13 +66,31 @@ public class TurSNSiteMetricsAPI {
 	private final TurSNSiteRepository turSNSiteRepository;
 	private final TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository;
 	private final TurSNSearchInsightsService turSNSearchInsightsService;
+	private final TurSNSiteMetricsResetService turSNSiteMetricsResetService;
 
 	public TurSNSiteMetricsAPI(TurSNSiteRepository turSNSiteRepository,
 			TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository,
-			TurSNSearchInsightsService turSNSearchInsightsService) {
+			TurSNSearchInsightsService turSNSearchInsightsService,
+			TurSNSiteMetricsResetService turSNSiteMetricsResetService) {
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSNSiteMetricAccessRepository = turSNSiteMetricAccessRepository;
 		this.turSNSearchInsightsService = turSNSearchInsightsService;
+		this.turSNSiteMetricsResetService = turSNSiteMetricsResetService;
+	}
+
+	/**
+	 * T1195 — empties the site's search and click metrics, or only those recorded
+	 * before {@code before}. Refused to a partitioned key, which may only read its
+	 * partition's reports.
+	 */
+	@Operation(summary = "Clear a Semantic Navigation Site's search and click metrics")
+	@DeleteMapping
+	public TurSNSiteMetricsResetService.Cleared clearMetrics(@PathVariable String snSiteId,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant before,
+			Principal principal) {
+		TurSNSite site = turSNSiteRepository.findById(snSiteId)
+				.orElseThrow(() -> new TurNotFoundException("SN site not found: " + snSiteId));
+		return turSNSiteMetricsResetService.clear(site, before, principal == null ? "anonymous" : principal.getName());
 	}
 
 	@GetMapping("live")

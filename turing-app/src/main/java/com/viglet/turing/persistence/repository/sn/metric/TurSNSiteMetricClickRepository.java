@@ -40,6 +40,9 @@ import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricClick;
  */
 public interface TurSNSiteMetricClickRepository extends JpaRepository<TurSNSiteMetricClick, String> {
 
+    /** T1195 — clears a site's clicks recorded before {@code before}. */
+    long deleteByTurSNSiteAndAccessDateBefore(TurSNSite turSNSite, Instant before);
+
     @Query("select new com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickTerm("
             + "c.sanatizedTerm, COUNT(c), AVG(CAST(c.position as double))) from TurSNSiteMetricClick c "
             + "where c.turSNSite = :site and c.accessDate between :start and :end "

@@ -56,7 +56,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
 
         Instant now = Instant.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
         TurSNSiteMetricAccess metric1 = new TurSNSiteMetricAccess();
@@ -85,7 +85,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
 
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
@@ -101,7 +101,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
         TurSNSite site = new TurSNSite();
         TurSNSiteMetricAccessTerm term = mock(TurSNSiteMetricAccessTerm.class);
 
@@ -129,7 +129,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
 
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
@@ -144,7 +144,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
         TurSNSite site = new TurSNSite();
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
@@ -170,7 +170,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
 
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
@@ -185,7 +185,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
         TurSNSite site = new TurSNSite();
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
@@ -211,7 +211,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
 
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
@@ -226,7 +226,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
         TurSNSite site = new TurSNSite();
 
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
@@ -246,7 +246,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
         TurSNSite site = new TurSNSite();
         Instant from = Instant.parse("2026-10-01T00:00:00Z");
         Instant to = Instant.parse("2026-10-24T00:00:00Z");
@@ -276,7 +276,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSearchInsightsService insights = new TurSNSearchInsightsService(metricRepository);
         org.springframework.test.util.ReflectionTestUtils.setField(insights, "metricsEnabled", true);
-        TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository, insights);
+        TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository, insights, null);
         when(siteRepository.findById("site")).thenReturn(Optional.of(new TurSNSite()));
 
         assertThat(api.turSNSiteMetricsFailedSearches("site", "today", null, null, 5).metricsEnabled()).isTrue();
@@ -289,7 +289,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
         TurSNSite site = new TurSNSite();
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
         when(metricRepository.termsWithLastSeenBetweenDates(org.mockito.ArgumentMatchers.eq(site),
@@ -310,7 +310,7 @@ class TurSNSiteMetricsAPITest {
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         TurSNSiteMetricAccessRepository metricRepository = mock(TurSNSiteMetricAccessRepository.class);
         TurSNSiteMetricsAPI api = new TurSNSiteMetricsAPI(siteRepository, metricRepository,
-                new TurSNSearchInsightsService(metricRepository));
+                new TurSNSearchInsightsService(metricRepository), null);
         when(siteRepository.findById("ghost")).thenReturn(Optional.empty());
         when(siteRepository.findById("site")).thenReturn(Optional.of(new TurSNSite()));
 

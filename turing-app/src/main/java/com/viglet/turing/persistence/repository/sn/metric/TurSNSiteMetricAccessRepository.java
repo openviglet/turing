@@ -37,6 +37,9 @@ import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
  * @since 0.3.6
  */
 public interface TurSNSiteMetricAccessRepository extends JpaRepository<TurSNSiteMetricAccess, String> {
+	/** T1195 — derived, so each row's targeting rules go with it. */
+	long deleteByTurSNSiteAndAccessDateBefore(TurSNSite turSNSite, Instant before);
+
 	@Query("SELECT t FROM TurSNSiteMetricAccess t WHERE t.turSNSite.id = :siteId AND t.accessDate >= :since ORDER BY t.accessDate ASC")
 	List<TurSNSiteMetricAccess> findLastMinuteMetrics(@Param("siteId") String siteId, @Param("since") Instant since);
 

@@ -18,7 +18,7 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1195** (deps: —) **An SN site's search metrics cannot be cleared, so probes and tests fill a demo's insights for good** — Before a demo is recorded its insights lead with test searches, and the story's one failed search falls off the list. → §CLXII.5
+- 📋 **T1196** (deps: —) **In pt_BR a singular in -ão finds nothing where the catalog spells the plural in -ões** — bastão de caminhada misses the store's Bastões de caminhada, a search Brazilian shoppers type. → §CLXII.6
 
 ## Done when — T1133
 

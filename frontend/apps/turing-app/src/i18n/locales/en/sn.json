@@ -337,7 +337,9 @@
       "searchTotal": "Search total",
       "ctr": "Click-through",
       "ctrOverall": "clicks per search",
-      "neverClicked": "Found, never opened"
+      "neverClicked": "Found, never opened",
+      "clearMetrics": "Clear metrics",
+      "clearMetricsConfirm": "Clear every search and click recorded for this site? Its insights start empty. This cannot be undone."
     },
     "fieldCoverage": {
       "title": "Field Coverage",

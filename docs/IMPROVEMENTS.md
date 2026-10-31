@@ -2385,23 +2385,46 @@ stays green.
 
 Met recording Dumont's WordPress demo video (D246/D261).
 
-**What happens.** An SN site's search metrics (top terms, failed searches,
-click-through) can be read through `/api/sn/{snSiteId}/metrics/*` but never cleared.
-Checking a demo before recording — evaluating candidate searches, polling the index
-after a reindex, running the browser suite — logs hundreds of searches: the demo's
-insights then lead with "Glaramara duas pessoas, 39 searches" and the failed-search list
-fills with probes until the story's one failed search falls off it. The only ways out
-are SQL on H2 or a new SN site.
+**Landed.** `DELETE /api/sn/{snSiteId}/metrics?before=` and the console's **Clear
+metrics** button on Top search terms empty a site's searches and clicks
+(`TurSNSiteMetricsResetService`), audited, refused to a partitioned key.
 
-**Should.** An admin-only `DELETE /api/sn/{snSiteId}/metrics` (optionally
-`?before=<date>`, and a console button beside the period picker) clears a site's access
-and click metrics, logged as an audit event; and a request may say it is not to be
-counted (the search APIs already take `populateMetrics=false` for some calls — honoured
-by every search, autocomplete and answer endpoint), so a test or a probe never lands in
-a shop's insights.
+**What is left.** A request should be able to say it is not to be counted, so a test or
+a probe never lands in a shop's insights: `populateMetrics=false` honoured by every
+search, autocomplete and answer endpoint. Today only the authenticated legacy POST body
+(`TurSNSitePostParamsBean`) carries it; the GET search, `POST /search/query` (which sets
+it from `mode` alone) and autocomplete never let a caller opt out.
 
-**Done when.** A site's metrics can be emptied from the console and the API, and a
-search sent with `populateMetrics=false` is never counted.
+**The decision it waits on.** `TurSNSearchRequest` leaves `populateMetrics` out on
+purpose: it is a privileged field an anonymous caller must not set. Choose one:
+- honour the flag only on an authenticated request (a key or a session), so a probe
+  with a key opts out and an anonymous visitor cannot hide searches; or
+- accept it from anyone, reading hidden anonymous searches as harmless.
+
+The first keeps the existing rule and is the recommended one.
+
+**Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
+counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
+
+### CLXII.6 Portuguese plurals in -ões, -ães and -ãos (T1196)
+
+Met on Dumont's WordPress demo store in pt_BR (Lucene SN site `recanto-da-serra`,
+published `ghcr.io/openviglet/turing:latest`).
+
+**What happens.** The store sells *Bastões de caminhada Scafell* (trekking poles). A
+shopper searching the singular, `bastão de caminhada`, gets **0 results** (logged as a
+failed search four times in the demo's history). Portuguese plurals in -ão/-ões
+(bastão/bastões, cartão/cartões, botão/botões), -ão/-ães (pão/pães) and -ão/-ãos
+(mão/mãos) differ in their last syllables, and the Snowball Portuguese stemmer T1170
+added does not bring singular and plural to one stem for them.
+
+**Should.** In pt_BR a singular and its plural find the same documents, these irregular
+endings included: a Portuguese plural normaliser before (or beside) the stemmer, or the
+light Portuguese stemmer (`PortugueseLightStemFilter`), which handles -ões/-ães/-ãos,
+measured against the current one on the demo catalog.
+
+**Done when.** `bastão de caminhada` finds the Scafell poles on a pt_BR site, covered by
+an IT, and the T1170 plural cases still pass.
 
 ## CLXIII Release pipeline reliability
 
