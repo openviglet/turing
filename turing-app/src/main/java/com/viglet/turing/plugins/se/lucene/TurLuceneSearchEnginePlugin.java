@@ -56,8 +56,8 @@ import org.apache.lucene.search.spell.SuggestWord;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -169,8 +169,8 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
                 .collect(java.util.stream.Collectors.toSet());
         Map<String, TurSESimilarResult> merged = new LinkedHashMap<>();
         for (String seedId : seedIds) {
-            String like = seedText(instance, seedId, mltFields);
-            if (like.isBlank()) {
+            Map<String, Collection<Object>> like = seedFields(instance, seedId, mltFields);
+            if (like.isEmpty()) {
                 continue;
             }
             for (TurSESimilarResult hit : searchSimilarDocuments(instance, like, seedId,
@@ -592,7 +592,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     /** Text fields {@link MoreLikeThis} scores against. */
     private static final String[] SIMILAR_MLT_FIELDS = {
             TurSNFieldName.TITLE, TurSNFieldName.ABSTRACT, TurSNFieldName.TEXT};
-    /** Cap the seed text fed to MLT so a huge document can't blow up the query. */
+    /** Cap each field's seed text fed to MLT so a huge document can't blow up the query. */
     private static final int SIMILAR_MAX_SEED_CHARS = 1_000;
     /** Max result documents used to seed the query-level "Related" MoreLikeThis. */
     private static final int MLT_MAX_SEED_DOCS = 10;
@@ -708,30 +708,32 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
                 : turLuceneQueryBuilder.buildQuery(site, constraints);
         return turLuceneInstanceProcess.initLuceneInstance(siteLocale)
                 .map(instance -> {
-                    String like = seedText(instance, id, mltFields);
-                    return like.isBlank()
+                    Map<String, Collection<Object>> like = seedFields(instance, id, mltFields);
+                    return like.isEmpty()
                             ? List.<TurSESimilarResult>of()
                             : searchSimilarDocuments(instance, like, id, rows, mltFields, filter);
                 })
                 .orElse(List.of());
     }
 
-    /** Runs a Lucene {@link MoreLikeThis} query built from the seed text, excluding the seed and capping at {@code rows}. */
-    private List<TurSESimilarResult> searchSimilarDocuments(TurLuceneInstance instance, String like,
-            String id, int rows, String[] mltFields, Query filter) {
+    /** Runs a Lucene {@link MoreLikeThis} query built from the seed fields, excluding the seed and capping at {@code rows}. */
+    private List<TurSESimilarResult> searchSimilarDocuments(TurLuceneInstance instance,
+            Map<String, Collection<Object>> like, String id, int rows, String[] mltFields, Query filter) {
         try {
-            IndexReader reader = instance.getReader();
+            // One snapshot for the term statistics and the search: a second
+            // refresh in between would close the reader MoreLikeThis reads.
             IndexSearcher searcher = instance.getSearcher();
-            MoreLikeThis mlt = new MoreLikeThis(reader);
+            MoreLikeThis mlt = new MoreLikeThis(searcher.getIndexReader());
             mlt.setAnalyzer(new StandardAnalyzer());
             mlt.setFieldNames(mltFields);
             mlt.setMinTermFreq(1);
             mlt.setMinDocFreq(1);
             mlt.setMinWordLen(3);
             mlt.setMaxQueryTerms(40);
-            // Seed the interesting-term extraction from the first configured MLT
-            // field; setFieldNames above is what actually scans all MLT fields.
-            Query query = mlt.like(mltFields[0], new StringReader(like));
+            // T1188 — each field's terms are weighed against that field: seeding
+            // everything as one field (the first of an unordered list) left a
+            // document whose text lives elsewhere with an empty query.
+            Query query = mlt.like(like);
             if (filter != null) {
                 query = new org.apache.lucene.search.BooleanQuery.Builder()
                         .add(query, org.apache.lucene.search.BooleanClause.Occur.MUST)
@@ -785,38 +787,37 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     /**
-     * Builds the MoreLikeThis seed text from the seed document's configured MLT
-     * fields (ALL stored values, so a multi-valued body field like {@code
-     * paragraphs} contributes fully), capped to {@link #SIMILAR_MAX_SEED_CHARS}.
-     * Returns an empty string when the seed id is not found or has no text in
-     * those fields.
+     * Builds the MoreLikeThis seed from the seed document's configured MLT
+     * fields, keyed by field (ALL stored values, so a multi-valued body field
+     * like {@code paragraphs} contributes fully), each field capped to
+     * {@link #SIMILAR_MAX_SEED_CHARS}. Returns an empty map when the seed id is
+     * not found or has no text in those fields.
      */
-    private String seedText(TurLuceneInstance instance, String id, String[] mltFields) {
+    private Map<String, Collection<Object>> seedFields(TurLuceneInstance instance, String id,
+            String[] mltFields) {
         try {
             IndexSearcher searcher = instance.getSearcher();
             TopDocs topDocs = searcher.search(new TermQuery(new Term(TurSNFieldName.ID, id)), 1);
             if (topDocs.scoreDocs.length == 0) {
-                return "";
+                return Map.of();
             }
             Document doc = searcher.storedFields().document(topDocs.scoreDocs[0].doc);
-            StringBuilder sb = new StringBuilder();
+            Map<String, Collection<Object>> seed = new LinkedHashMap<>();
             for (String field : mltFields) {
-                for (String value : doc.getValues(field)) {
-                    if (value != null && !value.isBlank()) {
-                        if (!sb.isEmpty()) {
-                            sb.append(' ');
-                        }
-                        sb.append(value.trim());
-                    }
+                String text = String.join(" ", java.util.Arrays.stream(doc.getValues(field))
+                        .filter(value -> value != null && !value.isBlank())
+                        .map(String::trim)
+                        .toList());
+                if (!text.isEmpty()) {
+                    seed.put(field, List.of(text.length() > SIMILAR_MAX_SEED_CHARS
+                            ? text.substring(0, SIMILAR_MAX_SEED_CHARS)
+                            : text));
                 }
             }
-            String text = sb.toString().trim();
-            return text.length() > SIMILAR_MAX_SEED_CHARS
-                    ? text.substring(0, SIMILAR_MAX_SEED_CHARS)
-                    : text;
+            return seed;
         } catch (Exception e) {
-            log.warn("[Lucene] seedText for id '{}' failed: {}", id, e.getMessage());
-            return "";
+            log.warn("[Lucene] seedFields for id '{}' failed: {}", id, e.getMessage());
+            return Map.of();
         }
     }
 

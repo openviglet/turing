@@ -53,7 +53,9 @@ import com.viglet.turing.lucene.TurLuceneInstance;
 import com.viglet.turing.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.se.result.TurSEResults;
 
 /**
@@ -69,6 +71,8 @@ class TurLuceneSearchEnginePluginTest {
     private TurLucene turLucene;
     @Mock
     private TurLuceneInstanceProcess turLuceneInstanceProcess;
+    @Mock
+    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
 
     @InjectMocks
     private TurLuceneSearchEnginePlugin plugin;
@@ -554,6 +558,38 @@ class TurLuceneSearchEnginePluginTest {
         assertFalse(similar.isEmpty());
         assertTrue(similar.stream().noneMatch(r -> "doc1".equals(r.getId())));
         assertTrue(similar.stream().anyMatch(r -> "doc2".equals(r.getId())));
+    }
+
+    /**
+     * T1188 — the site's MLT fields come back in no fixed order; a seed whose
+     * text lives only in the last of them must still find its neighbours.
+     */
+    @Test
+    void shouldFindSimilarWhenSeedTextIsOnlyInALaterMltField() throws Exception {
+        Directory dir = new ByteBuffersDirectory();
+        IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()));
+        for (String id : List.of("probe-a", "probe-b")) {
+            Document doc = new Document();
+            doc.add(new StringField("id", id, Field.Store.YES));
+            doc.add(new TextField("title", "partition probe " + id, Field.Store.YES));
+            writer.addDocument(doc);
+        }
+        writer.commit();
+        TurLuceneInstance instance = new TurLuceneInstance(writer, dir, Path.of("mem-index"), new FacetsConfig());
+        TurSNSite site = new TurSNSite();
+        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
+        siteLocale.setTurSNSite(site);
+        List<TurSNSiteFieldExt> mltFields = List.of("description", "title").stream().map(name -> {
+            TurSNSiteFieldExt field = new TurSNSiteFieldExt();
+            field.setName(name);
+            return field;
+        }).toList();
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1)).thenReturn(mltFields);
+        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale)).thenReturn(Optional.of(instance));
+
+        var similar = plugin.getSimilarDocuments(siteLocale, "probe-a", 5);
+
+        assertEquals(List.of("probe-b"), similar.stream().map(r -> r.getId()).toList());
     }
 
     @Test
