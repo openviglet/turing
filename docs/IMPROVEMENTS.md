@@ -2386,30 +2386,26 @@ assertion, which is what proves the partition checks assert anything.
 **Done when:** the class passes ten runs in a row locally and the release workflow's IT
 step is green.
 
-### CLXIII.2 The answer searches the site's own collection (T1189)
+### CLXIII.2 The answer reads the locale as search does (T1189)
 
-Met on Dumont's WordPress demo stack (D246 recording), on a fresh store with the
-published `ghcr.io/openviglet/turing:latest` (revision 83635be6, three commits behind
-2026.3's HEAD).
+Met on Dumont's WordPress demo stack, Turing `ghcr.io/openviglet/turing:latest`.
 
-**What happens.** `GET /api/sn/Demo/answer?q=light%20rain%20jacket&_setlocale=en_US`
-streams "I'm sorry, but that information is not available in the website's database."
-with `citations: []` and a trace of `{"sourceCount":0,"kbMode":"VECTOR"}` — for every
-query tried ("waterproof jacket", "Catbells", ...). The site holds 74 documents, search
-finds them, and the Site assistant's `/chat/conversation` on the same site answers with
-sources.
+**What happens.** `GET /api/sn/Demo/answer?q=light%20rain%20jacket&locale=en_US` answers
+with 9 sources and 567 characters. The same call with `_setlocale=en_US` — the parameter
+`/search` and `/search/similar` read — answers "I'm sorry, but that information is not
+available in the website's database." with `citations: []` and
+`{"sourceCount":0,"kbMode":"VECTOR"}`: without a locale it reads, `/answer` retrieves
+from the global `lucene-vector/turing` collection rather than the site's `demo_en_US`,
+and says nothing about why.
 
-**Evidence.** Indexing opened `/app/store/lucene-vector/demo_en_US` and wrote the site's
-chunks there. The only vector index opened when the answer ran was
-`/app/store/lucene-vector/turing` — the global default collection. T1116 resolves
-`/answer` through the chat route, falling back to the default agent; on a fresh store
-with no site-level agent that fallback takes the default agent's knowledge base, not the
-site's. The same stack on an older store answered (Dumont's committed still of the
-story, chapter 2).
+**First reading was wrong.** This line first claimed a fresh store's `/answer` searched
+the default agent's collection. Re-measured, the site's collection is used whenever the
+locale arrives; the empty box in Dumont's recorded video was the recording's 1.5 s pause
+taking the still before the answer streamed in.
 
-**Should.** An SN site's answer retrieves from that site's vector collection whichever
-agent writes it; a fallback agent changes the model and prompt, never the corpus.
+**Should.** `/answer` reads `_setlocale` as the search endpoints do (or the SN site's
+default locale when neither is given), and a request it cannot place in a locale is a
+400 naming the parameter, never a grounded-looking apology from another corpus.
 
-**Done when.** On a fresh store, `/answer` for a site with embedded documents returns
-citations from that site, covered by an IT that provisions a site, indexes one document
-and asks about it.
+**Done when.** Both spellings answer from the site's collection, and an IT asks without
+any locale and gets the site default's sources.
