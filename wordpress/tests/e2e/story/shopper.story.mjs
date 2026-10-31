@@ -16,8 +16,10 @@ const demo = ( args ) => wp( args, 'cli-demo' );
 const words = {
 	en_US: {
 		popular: 'rain jacket',
-		need: 'light rain jacket under $400',
-		needFound: /jacket|waterproof/i,
+		// Measured on the demo stack: the price is understood, both results are tents within
+		// it, and the answer names the two-person one with its price and cites it.
+		need: 'a two-person tent under $400',
+		needFound: /tent/i,
 		misspelt: 'helvelyn',
 		// A word the shop does not use. It must never find anything, or it leaves the
 		// insights' "found nothing" list for the day and the story cannot replay: so chapter 8
@@ -66,8 +68,8 @@ const words = {
 	},
 	pt_BR: {
 		popular: 'jaqueta de chuva',
-		need: 'jaqueta de chuva leve até R$ 400',
-		needFound: /jaqueta|impermeável/i,
+		need: 'uma barraca para duas pessoas até R$ 400',
+		needFound: /barraca/i,
 		misspelt: 'helvelyn',
 		nothing: 'abrigo de emergência',
 		// How Turing's metrics log it: accents folded (Turing T1179).
@@ -204,11 +206,27 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	const now = () => ( Date.now() - started ) / 1000;
 	const chapters = [];
 	let highlighted = null;
-	const highlight = async () => {
+	// A viewer needs time to read what Turing put on screen: the recording holds on every
+	// result, and longest on the moment a chapter is about.
+	const linger = async ( seconds = 3.5 ) => {
 		if ( record ) {
-			await page.waitForTimeout( 1500 );
+			await page.waitForTimeout( seconds * 1000 );
 		}
-		highlighted = now() - 0.8;
+	};
+	const highlight = async () => {
+		await linger( 5 );
+		highlighted = now() - 2.5;
+	};
+	// What the video shows is checked, recorded or not: an AI answer is text a shopper can
+	// read, never empty and never the model's apology for finding nothing (Turing T1189 put
+	// sources and no answer on screen, and the recording kept it).
+	const answered = async ( locator ) => {
+		await expect( locator ).toHaveText( /\S{3,}(\s+\S+){5,}/, {
+			timeout: 90_000,
+		} );
+		await expect( locator ).not.toHaveText(
+			/not available|I'm sorry|could not answer|não (está|há) dispon|desculp/i
+		);
 	};
 	const chapter = ( title, body ) =>
 		test.step( title, async () => {
@@ -252,6 +270,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 				name
 			);
 			await expect( titles.first() ).toBeVisible();
+			await linger();
 		}
 	);
 
@@ -261,18 +280,21 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			block.locator( '.viglet-dumont-search__understood' )
 		).toContainText( 'Price: ≤ 400' );
 		await expect( titles.first() ).toHaveText( say.needFound );
+		await answered( block.locator( '.viglet-dumont-search__answer-text' ) );
 		await highlight();
 
 		await search( page, say.misspelt );
 		await expect(
 			block.locator( '.viglet-dumont-search__correction' )
 		).toContainText( 'helvellyn' );
+		await linger();
 
 		await search( page, say.nothing );
 		await expect(
 			block.locator( '.viglet-dumont-search__summary' )
 		).not.toBeEmpty();
 		await expect( titles ).toHaveCount( 0 );
+		await linger( 2.5 );
 	} );
 
 	await chapter(
@@ -297,6 +319,9 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await expect(
 				answer.locator( '.viglet-dumont-assistant__source a' )
 			).toContainText( [ say.cites ] );
+			await answered(
+				answer.locator( '.viglet-dumont-assistant__text' )
+			);
 			await highlight();
 			await page.keyboard.press( 'Escape' );
 		}
@@ -308,6 +333,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			.locator( '.viglet-dumont-search__results' )
 			.getByRole( 'checkbox', { name: ui.compareBox } );
 		await expect( boxes.nth( 2 ) ).toBeVisible();
+		await linger( 2 );
 		for ( let i = 0; i < 3; i++ ) {
 			await boxes.nth( i ).check();
 		}
@@ -318,7 +344,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			page.locator( '.viglet-dumont-compare__table thead th' )
 		).toHaveCount( 3 );
 		const summary = page.locator( '.viglet-dumont-compare__summary-text' );
-		await expect( summary ).not.toBeEmpty( { timeout: 90_000 } );
+		await answered( summary );
 		// The table's prices reach the model as text, not HTML entities (D249).
 		await expect( summary ).not.toContainText( '&#' );
 	} );
@@ -340,6 +366,12 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await expect(
 			kit.locator( '.viglet-dumont-copilot__stage' ).first()
 		).toBeVisible( { timeout: 90_000 } );
+		await answered( kit.locator( '.viglet-dumont-copilot__kit-summary' ) );
+		await expect(
+			kit.locator( '.viglet-dumont-copilot__kit-item' )
+		).not.toHaveCount( 0 );
+		await kit.scrollIntoViewIfNeeded();
+		await linger( 6 );
 		const add = kit.locator( '.viglet-dumont-copilot__kit-cart button' );
 		await expect( add ).toBeEnabled();
 		await add.click();
@@ -361,13 +393,22 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 					.locator( '.wp-block-viglet-dumont-related' )
 					.getByRole( 'link' )
 			).not.toHaveCount( 0 );
+			await linger( 2.5 );
 			await type( copilot.getByLabel( ui.question ), say.check );
 			await copilot
 				.getByRole( 'button', { name: ui.ask, exact: true } )
 				.click();
+			const answer = copilot
+				.locator( '.viglet-dumont-copilot__answer' )
+				.first();
+			await answered( answer );
+			// The question is about the product on the page (D242): the answer cites it.
+			const product = (
+				await page.locator( 'h1' ).first().textContent()
+			).trim();
 			await expect(
-				copilot.locator( '.viglet-dumont-copilot__answer' ).first()
-			).not.toBeEmpty( { timeout: 90_000 } );
+				copilot.getByRole( 'link', { name: product, exact: true } )
+			).not.toHaveCount( 0 );
 		}
 	);
 
@@ -389,6 +430,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await expect( page ).toHaveURL( /order-received/, {
 			timeout: 60_000,
 		} );
+		await linger();
 	} );
 
 	await chapter(
@@ -408,6 +450,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 					.locator( '.viglet-dumont-search__title a' )
 					.first()
 			).toBeVisible();
+			await linger( 5 );
 
 			await page.goto( '/wp-login.php' );
 			await page.fill( '#user_login', 'admin' );
@@ -427,6 +470,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await expect(
 				card( ui.top ).locator( 'tbody tr' )
 			).not.toHaveCount( 0 );
+			await linger();
 			// The search as Turing logged it, which can differ from how she typed it.
 			const logged = say.logged ?? say.nothing;
 			const row = card( ui.failed )
