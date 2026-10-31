@@ -983,6 +983,7 @@
 - **T1195 (clear API and console button)** — DELETE /api/sn/{id}/metrics?before= clears a site's searches and clicks, audited and refused to partitioned keys, with a confirmed Clear metrics button on Top search terms.
 - **T1196** — In pt_BR the light Portuguese stem now runs before Snowball on Lucene and Elasticsearch, so bastão finds Bastões, pão finds pães and mão finds mãos after a reindex.
 - **T1197** — A kit's gap prompt now names the request's locale (or the plan's language), so a pt_BR kit writes its summary, stages, reasons and searches in Portuguese.
+- **T1199** — Spell-check on Lucene and Solr never replaces a number or symbol token and keeps the typed case; a price-only change yields no correction or auto-correction (design §CLXII.8 recorded in `turing-app/src/main/java/com/viglet/turing/plugins/se/TurSpellCheckGuard.java`).
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

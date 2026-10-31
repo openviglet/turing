@@ -35,6 +35,7 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtReposi
 import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
 import com.viglet.turing.plugins.se.TurSESynonymApplyResult;
 import com.viglet.turing.plugins.se.TurSESynonymRule;
+import com.viglet.turing.plugins.se.TurSpellCheckGuard;
 import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.sn.TurSNUtils;
@@ -866,7 +867,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
             if (!corrected) {
                 return new TurSESpellCheckResult();
             }
-            return new TurSESpellCheckResult(true, String.join(" ", out));
+            return TurSpellCheckGuard.guard(term, String.join(" ", out));
         } catch (Exception e) {
             log.warn("[Lucene] spell-check for '{}' failed: {}", term, e.getMessage());
             return new TurSESpellCheckResult();

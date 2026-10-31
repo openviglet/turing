@@ -46,6 +46,7 @@ import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepos
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.plugins.se.TurSpellCheckGuard;
 import com.viglet.turing.se.result.TurSEResult;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.observability.TurSearchPipelineObservation;
@@ -212,7 +213,8 @@ public class TurSolr {
                                 .map(spellCheckResponse -> {
                                     String correctedText = spellCheckResponse.getCollatedResult();
                                     if (StringUtils.isNotEmpty(correctedText)) {
-                                        return new TurSESpellCheckResult(true, correctedText);
+                                        return TurSpellCheckGuard.guard(escapeSpellCheckTerm(term),
+                                                correctedText);
                                     }
                                     return new TurSESpellCheckResult();
                                 }).orElse(new TurSESpellCheckResult()))

@@ -228,6 +228,8 @@ The HL Pre and HL Post values are injected directly around matched terms in the 
 | **Spell Check** | Enables spelling suggestion when the query term is not found or returns few results |
 | **Spell Check Fixes** | When enabled, automatically re-runs the search using the corrected term and returns those results instead of showing a "Did you mean?" prompt |
 
+A correction only replaces words. Numbers and tokens with a symbol (`R$ 2.200`, `45L`, `$2,200`) are kept as typed, and so is the case of every word it did not change. If a query's only differences would be to such tokens, no correction is offered, and Spell Check Fixes does not re-run the search.
+
 #### More Like This (MLT)
 
 | Setting | Description |

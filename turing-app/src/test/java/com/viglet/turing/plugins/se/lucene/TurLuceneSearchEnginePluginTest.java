@@ -617,6 +617,18 @@ class TurLuceneSearchEnginePluginTest {
     }
 
     @Test
+    void shouldKeepPriceAndCaseNextToCorrectedTerm() throws Exception {
+        TurLuceneInstance instance = inMemoryInstance();
+        when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
+                .thenReturn(Optional.of(instance));
+
+        var result = plugin.spellCheck("site-lc", "Mission mision R$ 2.200", Locale.ENGLISH);
+
+        assertTrue(result.isCorrected());
+        assertEquals("Mission mission R$ 2.200", result.getCorrectedText());
+    }
+
+    @Test
     void shouldNotCorrectTermAlreadyInIndex() throws Exception {
         TurLuceneInstance instance = inMemoryInstance();
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))

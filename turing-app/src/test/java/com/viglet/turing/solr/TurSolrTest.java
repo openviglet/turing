@@ -291,6 +291,20 @@ class TurSolrTest {
     }
 
     @Test
+    void testSpellCheckTermNeverChangesPriceOrCase() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        QueryResponse response = mock(QueryResponse.class);
+        SpellCheckResponse spell = mock(SpellCheckResponse.class);
+        when(spell.getCollatedResult()).thenReturn("uma barraca para duas pessoas até r$ 2.100");
+        when(response.getSpellCheckResponse()).thenReturn(spell);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        var result = turSolr.spellCheckTerm(turSolrInstance, "uma barraca para duas pessoas até R$ 2.200");
+
+        assertThat(result.isCorrected()).isFalse();
+    }
+
+    @Test
     void testFirstRowPositionFromCurrentPage() {
         TurSNSearchParams searchParams = new TurSNSearchParams();
         searchParams.setP(3);

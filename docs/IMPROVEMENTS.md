@@ -2406,31 +2406,6 @@ The first keeps the existing rule and is the recommended one.
 **Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
 counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
-### CLXII.8 Spell-check never corrects numbers (T1199)
-
-Met recording Dumont's pt_BR demo video (search block, SN site `recanto-da-serra`).
-
-**What happens.** The sentence `uma barraca para duas pessoas até R$ 2.200` finds
-nothing as typed (its filters are read afterwards), and the spell-check Viglet Turing
-returns for it is `uma barraca para duas pessoas até r$ 2.100`: a different number, and
-the currency lowercased. A client that searches the correction — Dumont's search block
-does for a query that found nothing (D259) — searches a price the shopper never named.
-
-**Cause.** Two engines produce the correction. Lucene's `computeSpellCheck` lowercases
-the whole query and asks `DirectSpellChecker` about every token, numbers included.
-Solr's `/tur_spell` collation has no such filter either, and with auto-correction on,
-`prepareQueryAutoCorrection` runs the corrected query, so the wrong price is searched
-server-side. Elasticsearch and Content AI return no correction.
-
-**Should.** One shared guard applied to both producers: a token with a digit or a symbol
-(`2.200`, `R$`, `45L`, `42`) is never replaced, and an unchanged token keeps the case it
-was typed in; a query whose only changes were to such tokens gets no correction (and
-Solr does not auto-correct to it).
-
-**Done when.** That sentence returns no correction on Lucene and Solr; unit tests on the
-guard cover thousand separators and currency in pt_BR and en_US, and a correction of a
-real misspelling next to a price keeps the price and its case.
-
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release
