@@ -1,5 +1,9 @@
 package com.viglet.turing.api.sn.dsl;
 
+import java.util.Locale;
+
+import com.viglet.turing.api.sn.search.TurSNSiteSearchService;
+import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
@@ -48,17 +52,28 @@ import org.springframework.web.bind.annotation.*;
 public class TurSNSiteDslSearchAPI {
 
     private final TurDslSearchService turDslSearchService;
+    private final TurSNSiteSearchService turSNSiteSearchService;
 
-    public TurSNSiteDslSearchAPI(TurDslSearchService turDslSearchService) {
+    public TurSNSiteDslSearchAPI(TurDslSearchService turDslSearchService,
+            TurSNSiteSearchService turSNSiteSearchService) {
         this.turDslSearchService = turDslSearchService;
+        this.turSNSiteSearchService = turSNSiteSearchService;
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TurDslSearchResponse> search(
             @PathVariable String siteName,
-            @RequestParam(name = "locale", defaultValue = "en") String locale,
+            @RequestParam(name = TurSNParamType.LOCALE, required = false) String setLocale,
+            @RequestParam(name = "locale", required = false) String locale,
             @RequestBody TurDslQueryRequest request) {
-        return turDslSearchService.search(siteName, locale, request)
+        // T1189 — `_setlocale` as search reads it, `locale` kept as an alias; a
+        // locale the site has no index for searches its default indexed one.
+        Locale resolved = turSNSiteSearchService.resolveIndexedLocale(
+                setLocale != null && !setLocale.isBlank() ? setLocale : locale, siteName);
+        if (resolved == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return turDslSearchService.search(siteName, resolved.toString(), request)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -66,8 +81,9 @@ public class TurSNSiteDslSearchAPI {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TurDslSearchResponse> searchGet(
             @PathVariable String siteName,
-            @RequestParam(name = "locale", defaultValue = "en") String locale) {
-        return search(siteName, locale,
+            @RequestParam(name = TurSNParamType.LOCALE, required = false) String setLocale,
+            @RequestParam(name = "locale", required = false) String locale) {
+        return search(siteName, setLocale, locale,
                 new TurDslQueryRequest(null, null, null, null, null, null, null,
                         null, null, null, null, null, null, null,
                         null, null, null, null, null, null,

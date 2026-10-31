@@ -16,7 +16,7 @@ GET  /api/sn/{siteName}/_search?locale=en
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `siteName` | path | required | The Semantic Navigation site name |
-| `locale` | query | `en` | Search locale (e.g., `en`, `pt`, `en_US`) |
+| `_setlocale` | query | site default | Search locale (e.g., `en_US` or `en-US`). `locale` is accepted as an alias. A locale the site has no index for, or none, searches the site's default locale. |
 
 The `GET` method performs a `match_all` search. The `POST` method accepts a JSON request body following the Elasticsearch `_search` format.
 

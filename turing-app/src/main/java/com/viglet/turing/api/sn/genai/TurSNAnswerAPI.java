@@ -11,10 +11,8 @@ package com.viglet.turing.api.sn.genai;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.viglet.turing.api.sn.search.TurSNSiteSearchService;
+import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.genai.answer.TurSNAnswerService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,11 +55,14 @@ public class TurSNAnswerAPI {
     private final com.viglet.turing.genai.citation.TurCitationDriftService driftService;
     private final com.viglet.turing.genai.answer.TurAnswerShareService answerShareService;
     private final com.viglet.turing.genai.answer.TurAnswerSignalService answerSignalService;
+    private final TurSNSiteSearchService turSNSiteSearchService;
 
     public TurSNAnswerAPI(TurSNAnswerService answerService,
             com.viglet.turing.genai.citation.TurCitationDriftService driftService,
             com.viglet.turing.genai.answer.TurAnswerShareService answerShareService,
-            com.viglet.turing.genai.answer.TurAnswerSignalService answerSignalService) {
+            com.viglet.turing.genai.answer.TurAnswerSignalService answerSignalService,
+            TurSNSiteSearchService turSNSiteSearchService) {
+        this.turSNSiteSearchService = turSNSiteSearchService;
         this.answerService = answerService;
         this.driftService = driftService;
         this.answerShareService = answerShareService;
@@ -70,9 +73,14 @@ public class TurSNAnswerAPI {
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> answer(@PathVariable String siteName,
             @RequestParam("q") String query,
+            @RequestParam(value = TurSNParamType.LOCALE, required = false) String setLocale,
             @RequestParam(value = "locale", required = false) String locale,
             @RequestParam(value = "fq", required = false) List<String> fq) {
-        return answerService.answer(siteName, query, resolveLocale(locale), parseFilters(fq));
+        // T1189 — `_setlocale` as search reads it, `locale` kept as an alias; a
+        // locale the site has no index for answers from its default indexed one.
+        String requested = setLocale != null && !setLocale.isBlank() ? setLocale : locale;
+        return answerService.answer(siteName, query,
+                turSNSiteSearchService.resolveIndexedLocale(requested, siteName), parseFilters(fq));
     }
 
     /**
@@ -225,17 +233,5 @@ public class TurSNAnswerAPI {
             filters.computeIfAbsent(field, k -> new java.util.ArrayList<>()).add(value);
         }
         return filters;
-    }
-
-    /** Parses the requested locale, defaulting to English when absent/invalid. */
-    private static Locale resolveLocale(String requested) {
-        if (requested == null || requested.isBlank()) {
-            return Locale.ENGLISH;
-        }
-        try {
-            return LocaleUtils.toLocale(requested.trim().replace('-', '_'));
-        } catch (IllegalArgumentException e) {
-            return Locale.ENGLISH;
-        }
     }
 }

@@ -20,7 +20,7 @@ Accept: text/event-stream
 | Parameter | Required | Meaning |
 |---|---|---|
 | `q` | yes | The question. Blank or missing returns a single `error` event rather than an empty stream. |
-| `locale` | no | Which locale core to answer from, e.g. `pt_BR` or `pt-BR` (both accepted). Unparseable or absent falls back to English. |
+| `_setlocale` | no | Which locale core to answer from, e.g. `pt_BR` or `pt-BR` (both accepted), read as `/search` reads it. `locale` is accepted as an alias. A locale the site has no index for (`en` on an `en_US` site), an unparseable one or none answers from the site's default locale; a site with no indexed locale returns a single `error` event. |
 | `fq` | no | Filter query, repeatable: `fq=type:manual&fq=product:turing`. The active facet filters reach retrieval, so the answer is synthesized **within** the narrowed set. |
 
 The `fq` values are the same field/value pairs your facets already produce, so an answer beside a filtered result list can simply pass the filter state through and stay consistent with what the user is looking at.

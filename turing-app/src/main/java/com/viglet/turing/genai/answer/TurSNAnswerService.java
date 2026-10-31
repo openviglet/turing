@@ -136,11 +136,15 @@ public class TurSNAnswerService {
                 .findFirst()
                 .orElseGet(() -> agent.getLlmInstances().iterator().next());
 
-        String collectionName = null;
-        TurSNSiteLocale siteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, locale);
-        if (siteLocale != null) {
-            collectionName = siteLocale.getCore();
+        // T1189 — a locale the site has no index for never answers: a null
+        // collection would send retrieval to the global store, another corpus.
+        TurSNSiteLocale siteLocale = locale == null ? null
+                : turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, locale);
+        if (siteLocale == null) {
+            return Flux.just(TurAnswerStreamFramer.errorEvent(
+                    "No index for locale '" + locale + "' on site: " + siteName));
         }
+        String collectionName = siteLocale.getCore();
 
         TurGenAiContext context = turGenAiContextFactory.build(genAi, collectionName, site.getName());
         // T838 — steerable answers: the active facet filters reach retrieval so the

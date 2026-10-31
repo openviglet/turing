@@ -149,6 +149,8 @@ class TurSNAnswerServiceTest {
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
         when(chatRouteResolver.resolve(genAi)).thenReturn(RAG);
         when(turDefaultAgentResolver.resolveEffectiveAgent(genAi)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH))
+                .thenReturn(indexedLocale());
         lenient().when(turGenAiContextFactory.build(any(), any()))
                 .thenReturn(org.mockito.Mockito.mock(TurGenAiContext.class));
         when(turGenAi.assistantConversationStreaming(any(), any(), any(), any()))
@@ -184,6 +186,8 @@ class TurSNAnswerServiceTest {
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
         when(chatRouteResolver.resolve(null)).thenReturn(RAG);
         when(turDefaultAgentResolver.resolveEffectiveAgent(null)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH))
+                .thenReturn(indexedLocale());
         lenient().when(turGenAiContextFactory.build(any(), any()))
                 .thenReturn(org.mockito.Mockito.mock(TurGenAiContext.class));
         when(turGenAi.assistantConversationStreaming(any(), any(), any(), any()))
@@ -208,5 +212,34 @@ class TurSNAnswerServiceTest {
 
         assertThat(eventNames(events)).containsExactly("error");
         assertThat(events.get(0).data()).contains("AI is not enabled for site: site1").contains("NO_GENAI");
+    }
+
+    /**
+     * T1189 — a locale the site has no index for answers the error event, and
+     * retrieval never runs with no collection (which reads the global store).
+     */
+    @Test
+    void aLocaleWithoutAnIndexNeverReachesRetrieval() {
+        TurSNSite site = new TurSNSite();
+        TurAIAgent agent = new TurAIAgent();
+        TurLLMInstance llm = new TurLLMInstance();
+        llm.setEnabled(1);
+        agent.setLlmInstances(java.util.Set.of(llm));
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(null)).thenReturn(RAG);
+        when(turDefaultAgentResolver.resolveEffectiveAgent(null)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH)).thenReturn(null);
+
+        List<ServerSentEvent<String>> events = collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of()));
+
+        assertThat(eventNames(events)).containsExactly("error");
+        assertThat(events.get(0).data()).contains("No index for locale 'en'");
+        org.mockito.Mockito.verifyNoInteractions(turGenAi);
+    }
+
+    private static TurSNSiteLocale indexedLocale() {
+        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
+        siteLocale.setCore("sn_site1_en");
+        return siteLocale;
     }
 }

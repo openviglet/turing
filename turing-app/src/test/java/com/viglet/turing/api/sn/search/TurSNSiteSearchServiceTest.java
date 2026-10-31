@@ -274,6 +274,35 @@ class TurSNSiteSearchServiceTest {
         assertThat(service.resolveDefaultLocale("missing")).isNull();
     }
 
+    /** T1189 — both spellings of an indexed locale resolve to it. */
+    @Test
+    void testResolveIndexedLocaleKeepsAnIndexedLocaleInEitherSpelling() {
+        TurSNSearchProcess searchProcess = mock(TurSNSearchProcess.class);
+        TurSNSiteSearchService service = new TurSNSiteSearchService(searchProcess,
+                mock(TurSNSiteSearchCachedAPI.class), mock(TurSNSiteSearchSnapshotService.class));
+        when(searchProcess.existsByTurSNSiteAndLanguage("site", Locale.US)).thenReturn(true);
+
+        assertThat(service.resolveIndexedLocale("en_US", "site")).isEqualTo(Locale.US);
+        assertThat(service.resolveIndexedLocale("en-US", "site")).isEqualTo(Locale.US);
+    }
+
+    /** T1189 — {@code en} on an {@code en_US} site, or no locale at all, reads the site default. */
+    @Test
+    void testResolveIndexedLocaleFallsBackToTheSiteDefault() {
+        TurSNSearchProcess searchProcess = mock(TurSNSearchProcess.class);
+        TurSNSiteSearchSnapshotService snapshots = mock(TurSNSiteSearchSnapshotService.class);
+        TurSNSiteSearchService service = new TurSNSiteSearchService(searchProcess,
+                mock(TurSNSiteSearchCachedAPI.class), snapshots);
+        when(snapshots.getSnapshot("site", null)).thenReturn(Optional.of(
+                snapshot("site", false, List.of(locale(Locale.US, 0)))));
+        when(searchProcess.existsByTurSNSiteAndLanguage("site", Locale.ENGLISH)).thenReturn(false);
+        when(searchProcess.existsByTurSNSiteAndLanguage("site", Locale.US)).thenReturn(true);
+
+        assertThat(service.resolveIndexedLocale("en", "site")).isEqualTo(Locale.US);
+        assertThat(service.resolveIndexedLocale(null, "site")).isEqualTo(Locale.US);
+        assertThat(service.resolveIndexedLocale("not a locale", "site")).isEqualTo(Locale.US);
+    }
+
     @Test
     void testGetTurSNConfigEnablesHlOnlyWhenSnapshotHasHlFields() {
         TurSNSiteSearchSnapshotService snapshots = mock(TurSNSiteSearchSnapshotService.class);

@@ -256,4 +256,41 @@ public class TurSNSiteSearchService {
                 .orElse(null);
     }
 
+    /**
+     * T707 / T1189 — resolves a locale that actually has an index for this site,
+     * for every surface that answers from one (chat, {@code /answer}, the DSL
+     * search). The requested locale ({@code en_US} or {@code en-US}) when the site
+     * is indexed in it; otherwise the site's default indexed locale, so a client
+     * asking for {@code en} on an {@code en_US} site, or for nothing, gets the
+     * content that exists. Returns the requested locale unchanged when no indexed
+     * fallback is available (the caller still guards), and {@code null} when
+     * nothing was requested and the site has no locale.
+     */
+    public Locale resolveIndexedLocale(String requested, String siteName) {
+        Locale locale = parseLocale(requested);
+        if (locale == null) {
+            locale = resolveDefaultLocale(siteName);
+        }
+        if (locale != null && turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
+            return locale;
+        }
+        Locale fallback = resolveDefaultLocale(siteName);
+        if (fallback != null && !fallback.equals(locale)
+                && turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, fallback)) {
+            return fallback;
+        }
+        return locale;
+    }
+
+    private static Locale parseLocale(String requested) {
+        if (StringUtils.isBlank(requested)) {
+            return null;
+        }
+        try {
+            return LocaleUtils.toLocale(requested.trim().replace('-', '_'));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
 }

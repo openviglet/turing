@@ -24,7 +24,6 @@ package com.viglet.turing.api.sn.genai;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -239,39 +238,14 @@ public class TurSNSiteGenAiAPI {
 						.toList();
 	}
 
-	private Locale resolveLocale(String requested, String siteName) {
-		if (requested == null || requested.isBlank()) {
-			return turSNSiteSearchService.resolveDefaultLocale(siteName);
-		}
-		try {
-			return LocaleUtils.toLocale(requested);
-		} catch (IllegalArgumentException e) {
-			return turSNSiteSearchService.resolveDefaultLocale(siteName);
-		}
-	}
-
 	/**
-	 * T707 — resolves a locale that actually has an index for this site. A
-	 * client that requests a locale the site was never indexed in (e.g. {@code en}
-	 * when only {@code en-US} exists) previously got the misleading
-	 * "Language Model is not enabled for this site." Now we fall back to the
-	 * site's default indexed locale so chat answers from the content that exists,
-	 * instead of refusing. Returns the requested locale unchanged when it is
-	 * indexed, or when no indexed fallback is available (the caller still guards).
+	 * T707 — a locale the site was never indexed in (e.g. {@code en} when only
+	 * {@code en-US} exists) falls back to the site's default indexed locale, so
+	 * chat answers from the content that exists instead of refusing. Shared with
+	 * {@code /answer} since T1189.
 	 */
 	private Locale resolveIndexedLocale(String requested, String siteName) {
-		Locale locale = resolveLocale(requested, siteName);
-		if (locale != null && turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, locale)) {
-			return locale;
-		}
-		Locale fallback = turSNSiteSearchService.resolveDefaultLocale(siteName);
-		if (fallback != null && !fallback.equals(locale)
-				&& turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, fallback)) {
-			log.debug("RAG chat: requested locale '{}' not indexed for SN Site '{}', falling back to '{}'",
-					requested, siteName, fallback);
-			return fallback;
-		}
-		return locale;
+		return turSNSiteSearchService.resolveIndexedLocale(requested, siteName);
 	}
 
 	@GetMapping

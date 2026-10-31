@@ -2480,28 +2480,3 @@ finds it with the accented and unaccented two-word queries.
 
 What keeps a release from failing on its own tests for reasons the code under release
 did not cause.
-
-### CLXIII.2 The answer reads the locale as search does (T1189)
-
-Met on Dumont's WordPress demo stack, Turing `ghcr.io/openviglet/turing:latest`.
-
-**What happens.** `GET /api/sn/Demo/answer?q=light%20rain%20jacket&locale=en_US` answers
-with 9 sources. The same call with `_setlocale=en_US` (the parameter `/search` reads)
-answers "I'm sorry, but that information is not available" with `citations: []` and
-`sourceCount: 0`, retrieved from the global `lucene-vector/turing` collection rather
-than `demo_en_US`. First filed as a fresh-store bug, which a correct locale disproved.
-
-**The cause is wider than the spelling.** `TurSNAnswerAPI` reads only `locale` and turns
-a missing or invalid one into `Locale.ENGLISH`; `TurSNAnswerService` (line 139) then
-finds no `TurSNSiteLocale` for any locale the site has no index for (`en` on an `en_US`
-site included), passes a null collection, and retrieval falls back to the global store.
-
-**Should.** `/answer` reads `_setlocale` and keeps `locale` as an alias, so no caller
-breaks. It resolves the locale through T707's `resolveIndexedLocale`, lifted from
-`TurSNSiteGenAiAPI` to a shared seam: the requested locale if indexed, else the site's
-default indexed locale, as chat does. A site with no indexed locale answers the error
-event; a null collection never reaches the global store. Check `TurSNSiteDslSearchAPI`,
-which also reads `locale` with default `en`.
-
-**Done when.** Both spellings and `en` on an `en_US` site answer from the site's
-collection, and an IT asks without any locale and gets the site default's sources.

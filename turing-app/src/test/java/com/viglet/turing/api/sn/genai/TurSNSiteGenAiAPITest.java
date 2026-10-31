@@ -94,6 +94,12 @@ class TurSNSiteGenAiAPITest {
         var realResolver = new com.viglet.turing.genai.TurSNChatRouteResolver(turDefaultAgentResolver,
                 catalogCopilotService);
         when(chatRouteResolver.resolve(any())).thenAnswer(inv -> realResolver.resolve(inv.getArgument(0)));
+        // T1189 — the locale seam chat shares with /answer, real over the mocks above.
+        var realSearchService = new TurSNSiteSearchService(turSNSearchProcess,
+                org.mockito.Mockito.mock(com.viglet.turing.api.sn.search.TurSNSiteSearchCachedAPI.class),
+                org.mockito.Mockito.mock(com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService.class));
+        org.mockito.Mockito.lenient().when(turSNSiteSearchService.resolveIndexedLocale(any(), any()))
+                .thenAnswer(inv -> realSearchService.resolveIndexedLocale(inv.getArgument(0), inv.getArgument(1)));
         mockMvc = MockMvcBuilders.standaloneSetup(api).build();
     }
 
