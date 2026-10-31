@@ -1581,7 +1581,9 @@ function sync( s ) {
 			// The structured response marks the current page by its type.
 			current: !! p.current || 'CURRENT' === p.type,
 		} ) );
-	const spell = response?.spellCheck;
+	// Read from a settled answer only: a search still loading holds the previous response, whose
+	// correction is of another query, such as a whole sentence whose filters were just read (D270).
+	const spell = 'success' === s.status ? response?.spellCheck : null;
 	if ( spell?.correctedText && ! spell.usingCorrectedText ) {
 		offerCorrection( spell.correctedTextValue || '' );
 	} else if (

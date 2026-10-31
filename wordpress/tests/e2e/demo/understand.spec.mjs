@@ -33,7 +33,8 @@ const sentences = [
 		locale: 'pt_BR',
 		query: 'jaqueta impermeável tamanho M até R$ 1.000',
 		fq: [ 'pa_size:M', 'price:[* TO 1000]' ],
-		understood: 'Entendido: Tamanho: M, Price: ≤ 1000',
+		// The price facet's label is Portuguese on a Brazilian store (D268, D270).
+		understood: 'Entendido: Tamanho: M, Preço: ≤ 1000',
 		left: 'jaqueta impermeável',
 	},
 ];
