@@ -2385,3 +2385,31 @@ assertion, which is what proves the partition checks assert anything.
 
 **Done when:** the class passes ten runs in a row locally and the release workflow's IT
 step is green.
+
+### CLXIII.2 The answer searches the site's own collection (T1189)
+
+Met on Dumont's WordPress demo stack (D246 recording), on a fresh store with the
+published `ghcr.io/openviglet/turing:latest` (revision 83635be6, three commits behind
+2026.3's HEAD).
+
+**What happens.** `GET /api/sn/Demo/answer?q=light%20rain%20jacket&_setlocale=en_US`
+streams "I'm sorry, but that information is not available in the website's database."
+with `citations: []` and a trace of `{"sourceCount":0,"kbMode":"VECTOR"}` — for every
+query tried ("waterproof jacket", "Catbells", ...). The site holds 74 documents, search
+finds them, and the Site assistant's `/chat/conversation` on the same site answers with
+sources.
+
+**Evidence.** Indexing opened `/app/store/lucene-vector/demo_en_US` and wrote the site's
+chunks there. The only vector index opened when the answer ran was
+`/app/store/lucene-vector/turing` — the global default collection. T1116 resolves
+`/answer` through the chat route, falling back to the default agent; on a fresh store
+with no site-level agent that fallback takes the default agent's knowledge base, not the
+site's. The same stack on an older store answered (Dumont's committed still of the
+story, chapter 2).
+
+**Should.** An SN site's answer retrieves from that site's vector collection whichever
+agent writes it; a fallback agent changes the model and prompt, never the corpus.
+
+**Done when.** On a fresh store, `/answer` for a site with embedded documents returns
+citations from that site, covered by an IT that provisions a site, indexes one document
+and asks about it.
