@@ -60,17 +60,17 @@
 	{
 		"locale": "pt_BR",
 		"query": "capa de chuva",
-		"shows": "Um sinônimo: nenhum produto diz capa de chuva, e o guia e as jaquetas impermeáveis voltam.",
-		"first": "Como escolher uma jaqueta impermeável",
-		"then": "Jaqueta impermeável do dia a dia Borrowdale",
+		"shows": "Um sinônimo: nenhum produto diz capa de chuva, e a jaqueta de chuva e o guia para escolher uma voltam.",
+		"first": "Jaqueta de chuva leve Catbells",
+		"then": "Como escolher uma jaqueta impermeável",
 		"native": "Como escolher uma jaqueta impermeável"
 	},
 	{
 		"locale": "pt_BR",
 		"query": "puffer",
-		"shows": "A palavra do cliente para jaqueta de pluma: os guias, depois a jaqueta.",
-		"first": "Pluma ou sintético: como escolher uma jaqueta térmica",
-		"then": "Como lavar uma jaqueta de pluma",
+		"shows": "A palavra do cliente para jaqueta de pluma: um guia de pluma, depois a jaqueta.",
+		"first": "Como lavar uma jaqueta de pluma",
+		"then": "Jaqueta de pluma Blencathra",
 		"native": null
 	},
 	{
