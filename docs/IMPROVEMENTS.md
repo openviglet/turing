@@ -2355,3 +2355,33 @@ costly to keep safe, a short recorded walk-through on the site is the fallback; 
 choice is the owner's.
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+## CLXIII Release pipeline reliability
+
+What keeps a release from failing on its own tests for reasons the code under release
+did not cause.
+
+### CLXIII.1 The partition IT's similar check is intermittent (T1188)
+
+`TurSdkContractIT.aPartitionedKeyStaysInsideItsPartition` fails at its control assertion
+("without a filter B is A's neighbour, or this test asserts nothing", line 783) in the
+release workflow (run of 2026-10-30, which left 2026.3.7 bumped and unreleased) and in 2
+of 3 local runs of the whole class; run alone it passes.
+
+**Measured on a failing run:** `/search/similar` answers `[]` for probe A and for probe
+B, with no key, in `MLT` and `VECTOR` mode and with an `fq`, while `/search/document`
+reads B. So MoreLikeThis itself finds nothing, not the partition guard.
+
+**Ruled out:** a response cache (the path has none); the partition context leaking
+between requests (it is request-scoped); the site's MLT fields (`title, origin,
+creature_type, description` on both kinds of run); a stale reader
+(`getReader`/`getSearcher` both `openIfChanged`). The test order is fixed, so what
+varies is the index's own state — segments and deletes left by the earlier tests'
+probes, merged on their own clock.
+
+**Next:** log `seedText` and the built MLT query in `searchSimilarDocuments` when it
+returns nothing, reproduce with the class run, and fix the cause; never relax the
+assertion, which is what proves the partition checks assert anything.
+
+**Done when:** the class passes ten runs in a row locally and the release workflow's IT
+step is green.

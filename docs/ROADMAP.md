@@ -16,6 +16,8 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
+- 📋 **T1188** (deps: —) **The release fails on an intermittent TurSdkContractIT failure: similar returns nothing for the partition probes** — MoreLikeThis answers [] for both probes in 2 of 3 class runs, so publish.yml stops at the IT step and the Java SDK never reaches Maven Central (Dumont D144). → §CLXIII.1
+
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 ## Done when — T1133
