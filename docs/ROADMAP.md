@@ -18,7 +18,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — jaqueta impermeável misses the Borrowdale jacket that jaqueta impermeavel and impermeável alone both find, so Brazilian shoppers lose results. → §CLXII.4
 - 📋 **T1195** (deps: —) **An SN site's search metrics cannot be cleared, so probes and tests fill a demo's insights for good** — Before a demo is recorded its insights lead with test searches, and the story's one failed search falls off the list. → §CLXII.5
 
 ## Done when — T1133

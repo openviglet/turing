@@ -2366,21 +2366,20 @@ published `ghcr.io/openviglet/turing:latest`).
 - `jaqueta impermeavel` (no accent) → **9**, Borrowdale second.
 - `impermeável` alone → **20**, Borrowdale among them.
 
-So an accented word finds its documents alone, and stops finding some of them once it is
-combined with another word. A Brazilian shopper types the accent; the store's own
-product named with both words is not found.
+**Not reproduced on 2026.3.**
+`TurSdkContractIT.anAccentedTwoWordQueryFindsWhatItsFoldedSpellingFinds` indexes that
+title in pt_BR and all three queries find it. The query analysis is ruled out: the
+folding analyzer and the synonym analyzer (one-word, multi-word and accented rules) both
+build clauses that match the document for either spelling, the accented one adding the
+stem. Lucene never applies the spell-check correction, and the relaxed retry fires only
+on zero results.
 
-**Suspect.** T1170 stems with `KeywordRepeatFilter` + Snowball and folds accents; the
-query side of a multi-term query may build its clauses from a different token stream
-than the index (an accented token kept unfolded beside its stem, or required as a
-phrase), so the two-word query's AND/phrase logic misses documents the single word
-reaches.
+**Next.** Read the demo's own index for the Borrowdale document: its stored title and
+the terms of its title field (Unicode NFD text, which accent folding does not touch, or
+an index written before T1080 are the suspects), and the image version the demo runs.
 
-**Should.** `jaqueta impermeável` and `jaqueta impermeavel` return the same documents,
-and every document matching both words alone is among them.
-
-**Done when.** An IT on a pt_BR site indexes "Jaqueta impermeável do dia a dia" and
-finds it with the accented and unaccented two-word queries.
+**Done when.** The demo's two-word queries return the same documents, and the IT above
+stays green.
 
 ### CLXII.5 Clear a site's search metrics (T1195)
 

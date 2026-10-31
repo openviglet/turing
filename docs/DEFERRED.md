@@ -25,3 +25,4 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
+- ⏸ **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — set aside (Unreproduced on 2026.3.): jaqueta impermeável misses the Borrowdale jacket that jaqueta impermeavel and impermeável alone both find, so Brazilian shoppers lose results. → §CLXII.4

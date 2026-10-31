@@ -507,6 +507,32 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         }
     }
 
+    /**
+     * T1194 — in pt_BR an accented word combined with another finds what its
+     * folded spelling finds: the two-word query with the accent keeps the product
+     * named with both words.
+     */
+    @Test
+    void anAccentedTwoWordQueryFindsWhatItsFoldedSpellingFinds() throws Exception {
+        Map<String, Object> attributes = new HashMap<>(Map.of("id", "t1194-borrowdale",
+                "title", "Jaqueta impermeável do dia a dia Borrowdale",
+                "description", "Uma jaqueta leve para a chuva da cidade."));
+        processQueue.processIndexingQueue(new TurSNJobItems(new TurSNJobItem(TurSNJobAction.CREATE,
+                List.of(SITE), Locale.forLanguageTag("pt-BR"), attributes, null)));
+        try {
+            for (String q : List.of("jaqueta impermeável", "jaqueta impermeavel", "impermeável")) {
+                List<String> ids = documentIds(postJson("/sn/" + SITE + "/search/query",
+                        """
+                                {"q":"%s","locale":"pt_BR","rows":50}""".formatted(q), null));
+                assertTrue(ids.contains("t1194-borrowdale"), "'" + q + "' must find the jacket: " + ids);
+            }
+        } finally {
+            processQueue.processIndexingQueue(new TurSNJobItems(new TurSNJobItem(TurSNJobAction.DELETE,
+                    List.of(SITE), Locale.forLanguageTag("pt-BR"),
+                    new HashMap<>(Map.of("id", "t1194-borrowdale")), null)));
+        }
+    }
+
     /** Documents matching {@code *}, which also populates the search cache. */
     private int totalDocuments() throws Exception {
         return json.readTree(postJson("/sn/" + SITE + "/search/query",
