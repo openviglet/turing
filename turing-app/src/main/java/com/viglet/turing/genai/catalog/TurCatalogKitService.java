@@ -19,10 +19,12 @@ import java.util.Set;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldLabel;
+import com.viglet.turing.genai.rag.TurRagReranker;
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
@@ -67,14 +69,16 @@ public class TurCatalogKitService {
     private final TurDefaultChatModelResolver chatModelResolver;
     private final TurLLMTokenUsageService tokenUsageService;
     private final TurSNNLFilterService nlFilterService;
+    private final TurRagReranker reranker;
 
     public TurCatalogKitService(TurCatalogCopilotService copilotService,
             TurDefaultChatModelResolver chatModelResolver, TurLLMTokenUsageService tokenUsageService,
-            TurSNNLFilterService nlFilterService) {
+            TurSNNLFilterService nlFilterService, TurRagReranker reranker) {
         this.copilotService = copilotService;
         this.chatModelResolver = chatModelResolver;
         this.tokenUsageService = tokenUsageService;
         this.nlFilterService = nlFilterService;
+        this.reranker = reranker;
     }
 
     /** One need the plan implies, with the products retrieval found for it. */
@@ -218,6 +222,7 @@ public class TurCatalogKitService {
             if (!retrieval.siteFound()) {
                 return Result.error("Catalog site not found: " + siteName);
             }
+            retrieval = rankedForPlan(chatModel.get(), plan, gap, retrieval);
             List<KitProduct> products = stageProducts(retrieval, gap, opts, productLimit, staged, guideTypes,
                     reasonLabels);
             if (products.isEmpty()) {
@@ -228,6 +233,71 @@ public class TurCatalogKitService {
         }
         return new Result(named.summary(), List.copyOf(stages), List.copyOf(unfilled), null,
                 guides(siteName, locale, plan, guideTypes, staged));
+    }
+
+    /**
+     * T1190 — the gap's candidates re-ordered against the whole plan and the gap
+     * through the shared {@link TurRagReranker}, so a product the plan contradicts
+     * (its season, its people, its level) ranks after one it does not. Retrieval
+     * order ranks the gap query alone, which carries only part of the plan. The
+     * citations, context blocks and attributes move together; any failure keeps
+     * retrieval order.
+     */
+    TurCatalogCopilotService.Retrieval rankedForPlan(ChatModel chatModel, String plan, Gap gap,
+            TurCatalogCopilotService.Retrieval retrieval) {
+        List<TurCatalogCitation> citations = retrieval.citations();
+        if (reranker == null || citations.size() < 2) {
+            return retrieval;
+        }
+        List<Document> candidates = new ArrayList<>(citations.size());
+        Map<String, Integer> indexById = new HashMap<>();
+        for (int i = 0; i < citations.size(); i++) {
+            String key = String.valueOf(i);
+            indexById.put(key, i);
+            candidates.add(new Document(key, candidateText(retrieval, i), Map.of()));
+        }
+        String query = "PLAN: " + plan + "\nNEED: " + gap.name() + " (" + gap.query() + ")"
+                + (gap.reason() == null ? "" : ", " + gap.reason());
+        List<Document> ordered;
+        try {
+            ordered = reranker.reorder(chatModel, query, candidates);
+        } catch (RuntimeException e) {
+            log.warn("[CatalogKit] re-ranking gap '{}' failed: {}", gap.name(), e.getMessage());
+            return retrieval;
+        }
+        if (ordered == null || ordered.size() != candidates.size()) {
+            return retrieval;
+        }
+        List<TurCatalogCitation> rankedCitations = new ArrayList<>(citations.size());
+        List<String> rankedBlocks = new ArrayList<>(citations.size());
+        List<Map<String, String>> rankedAttributes = new ArrayList<>(citations.size());
+        List<String> blocks = retrieval.contextBlocks();
+        for (Document document : ordered) {
+            Integer i = indexById.remove(document.getId());
+            if (i == null) {
+                return retrieval;
+            }
+            rankedCitations.add(citations.get(i));
+            if (i < blocks.size()) {
+                rankedBlocks.add(blocks.get(i));
+            }
+            rankedAttributes.add(retrieval.attributesAt(i));
+        }
+        return new TurCatalogCopilotService.Retrieval(rankedCitations,
+                rankedBlocks.size() == blocks.size() ? rankedBlocks : blocks, retrieval.totalHits(),
+                retrieval.groundedSummary(), retrieval.siteFound(), rankedAttributes);
+    }
+
+    /** What the reranker reads of a candidate: its context block, else its title and attributes. */
+    private static String candidateText(TurCatalogCopilotService.Retrieval retrieval, int i) {
+        List<String> blocks = retrieval.contextBlocks();
+        if (i < blocks.size() && StringUtils.hasText(blocks.get(i))) {
+            return blocks.get(i);
+        }
+        TurCatalogCitation citation = retrieval.citations().get(i);
+        StringBuilder text = new StringBuilder(citation.title() == null ? "" : citation.title());
+        retrieval.attributesAt(i).forEach((k, v) -> text.append("\n").append(k).append(": ").append(v));
+        return text.isEmpty() ? String.valueOf(citation.id()) : text.toString();
     }
 
     /**
@@ -426,7 +496,10 @@ public class TurCatalogKitService {
                 Reply in plain lines only, no other text:
                 SUMMARY: one sentence restating the plan
                 GAP: short need name | search query for the catalog | why the plan needs it%s
-                The search query is plain words a shopper would type, never a field name.
+                The search query is plain words a shopper would type, never a field name. \
+                Carry into each query what the plan states that bears on that need (when, \
+                where, for whom, at what level, for how many), so it asks for what fits \
+                this plan and not for the need in general.
 
                 PLAN: %s""".formatted(siteName, gapLimit, catalogWords,
                 words.isEmpty() ? "" : " | field=value (optional)", plan);

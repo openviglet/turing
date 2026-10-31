@@ -27,6 +27,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 
+import com.viglet.turing.genai.rag.TurRagReranker;
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
@@ -45,6 +46,7 @@ class TurCatalogKitServiceTest {
     private TurDefaultChatModelResolver chatModelResolver;
     private ChatModel chatModel;
     private TurSNNLFilterService nlFilterService;
+    private TurRagReranker reranker;
     private TurCatalogKitService service;
 
     @BeforeEach
@@ -53,10 +55,67 @@ class TurCatalogKitServiceTest {
         chatModelResolver = mock(TurDefaultChatModelResolver.class);
         chatModel = mock(ChatModel.class);
         nlFilterService = mock(TurSNNLFilterService.class);
+        reranker = mock(TurRagReranker.class);
         when(chatModelResolver.resolve()).thenReturn(Optional.of(chatModel));
         when(chatModelResolver.defaultInstance()).thenReturn(Optional.empty());
+        // Retrieval order unless a test says otherwise.
+        when(reranker.reorder(any(), anyString(), any())).thenAnswer(inv -> inv.getArgument(2));
         service = new TurCatalogKitService(copilotService, chatModelResolver, mock(TurLLMTokenUsageService.class),
-                nlFilterService);
+                nlFilterService, reranker);
+    }
+
+    /**
+     * T1190 — the July first-timer's plan: retrieval leads with the dearest tent
+     * and a winter bag, and the stage leads with what the plan fits once its
+     * candidates are ranked against the whole plan.
+     */
+    @Test
+    void aStageLeadsWithWhatThePlanFitsNotWhatRetrievalRankedFirst() {
+        modelReplies("GAP: Sleeping | summer sleeping bag | warm enough for July nights");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("summer sleeping bag"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("winter"), product("summer"),
+                        product("three-season")), List.of("Bowfell winter down bag", "Fairfield summer bag",
+                                "Skiddaw three-season bag"), 3, null, true,
+                        List.of(Map.of("season", "winter"), Map.of("season", "summer"),
+                                Map.of("season", "three-season"))));
+        ArgumentCaptor<String> query = ArgumentCaptor.forClass(String.class);
+        when(reranker.reorder(any(), query.capture(), any())).thenAnswer(inv -> {
+            List<org.springframework.ai.document.Document> docs = inv.getArgument(2);
+            return List.of(docs.get(1), docs.get(2), docs.get(0));
+        });
+
+        var products = service.plan("outdoor", "en", "two days crossing the mountains in July, first time",
+                null, null).stages().getFirst().products();
+
+        assertEquals(List.of("summer", "three-season", "winter"),
+                products.stream().map(TurCatalogKitService.KitProduct::id).toList());
+        assertTrue(query.getValue().contains("PLAN: two days crossing the mountains in July, first time"),
+                "the candidates are ranked against the whole plan, not the gap query alone");
+        assertTrue(query.getValue().contains("Sleeping"));
+    }
+
+    /** T1190 — a reranker that fails, or returns a partial list, keeps retrieval order. */
+    @Test
+    void aFailedRerankKeepsRetrievalOrder() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        retrievalReturns("tent", product("t1"), product("t2"));
+        when(reranker.reorder(any(), anyString(), any())).thenThrow(new IllegalStateException("down"));
+
+        assertEquals(List.of("t1", "t2"), service.plan("outdoor", "en", "a trip", null, null).stages()
+                .getFirst().products().stream().map(TurCatalogKitService.KitProduct::id).toList());
+
+        org.mockito.Mockito.doAnswer(inv -> List.of(((List<?>) inv.getArgument(2)).get(1)))
+                .when(reranker).reorder(any(), anyString(), any());
+        assertEquals(List.of("t1", "t2"), service.plan("outdoor", "en", "a trip", null, null).stages()
+                .getFirst().products().stream().map(TurCatalogKitService.KitProduct::id).toList());
+    }
+
+    /** T1190 — the gap prompt asks for the plan's constraints in each query. */
+    @Test
+    void theGapPromptCarriesThePlansConstraintsIntoEachQuery() {
+        String prompt = TurCatalogKitService.gapPrompt("outdoor", "July, first time", 3, Map.of());
+
+        assertTrue(prompt.contains("Carry into each query what the plan states that bears on that need"));
     }
 
     /** T1169 — the gap prompt carries the catalog's facet values, so queries use its words. */

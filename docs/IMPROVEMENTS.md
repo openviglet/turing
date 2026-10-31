@@ -2406,30 +2406,6 @@ choice is the owner's.
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLXII.2 Kit stages ranked by fit to the plan (T1190)
-
-Met recording Dumont's WordPress demo video (D246), kit API (T1159) on the demo store.
-
-**What happens.** The plan "Two days crossing the mountains in July, first time" returns
-a Shelter stage of Blencathra mountain tent ($549), Langdale family tent ($399.20),
-Haystacks one-person tent ($289), and a Sleeping stage of Bowfell **winter** down bag
-($429), Fairfield synthetic summer bag ($71.20), Skiddaw three-season down bag ($259). A
-store ticks each stage's first product, so a first-timer's July kit is the dearest tent
-and a winter bag: $1,455. The plan named a season and a level; neither ordered the
-alternatives.
-
-**Cause.** `stageProducts` keeps the gap query's retrieval order, and the gap query
-drops the constraints the plan stated ("sleeping bag", not "summer sleeping bag").
-
-**Should.** Generic, with no attribute names or domain rules in code: the gap prompt
-asks the model to carry the plan's stated constraints into each gap query, and a stage's
-candidates are re-ranked against the whole plan plus the gap through the copilot's
-existing hybrid/reranker path (fail-open to retrieval order). A product the plan
-contradicts (a winter bag in July) then ranks after one it does not.
-
-**Done when.** That plan leads with a summer or three-season bag and a tent sized for
-one or two, covered by a kit eval case.
-
 ### CLXII.3 Kit reasons quote only shopper-facing fields (T1191)
 
 Met recording Dumont's WordPress demo video (D246), kit API (T1159).

@@ -395,6 +395,10 @@ the needs the catalog had nothing for in `unfilled`, and up to two `guides`.
   outright (a `Waterproof jackets` category for a rain shell), the need searches
   inside it: its words run with that value as a filter. A value the site does not
   have is ignored, and when the filter finds nothing the words run on their own.
+- **A stage leads with what fits the plan.** Each need's search carries what the plan
+  states about it (when, for whom, at what level), and its products are then ranked
+  against the whole plan through the site's reranker, so a winter bag does not lead
+  a July plan's sleeping stage. When the reranker cannot run, the search order stands.
 - **Each product says why it fits from its own facet values** (`reason`, e.g.
   `Category: Tents; Capacity: 2 people`), the ones matching the need first. Only the
   site's facet fields count, each under its facet label in the request's locale, so
