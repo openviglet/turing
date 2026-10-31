@@ -84,6 +84,61 @@ test( 'a sentence offers the filters it names, and a click applies one', async (
 	await expect( summary( page ) ).not.toHaveText( '5 results' );
 } );
 
+test( 'a sentence short of a question is answered once its filters are read', async ( {
+	page,
+	seed,
+} ) => {
+	// D260: four words, so no question by length, but a filter was read from it.
+	const text = 'posts by admin recently';
+	const answered = [];
+	await page.route( '**/api/sn/*/answer?**', ( route ) => {
+		answered.push(
+			new URL( route.request().url() ).searchParams.get( 'q' )
+		);
+		return route.fulfill( {
+			status: 200,
+			contentType: 'text/event-stream',
+			body: 'event:token\ndata:Posts by admin.\n\n',
+		} );
+	} );
+	await page.route( '**/nl-filters', ( route ) =>
+		route.fulfill( { json: { ...reading, text } } )
+	);
+	await page.goto(
+		`/?page_id=${ seed.askPageId }&q=${ encodeURIComponent( text ) }`
+	);
+	await expect( suggested( page ) ).toHaveCount( 1 );
+	await expect.poll( () => answered ).toEqual( [ text ] );
+} );
+
+test( 'a sentence short of a question that names no filter is not answered', async ( {
+	page,
+	seed,
+} ) => {
+	let answered = 0;
+	await page.route( '**/api/sn/*/answer?**', ( route ) => {
+		answered++;
+		return route.fulfill( {
+			status: 200,
+			contentType: 'text/event-stream',
+			body: '',
+		} );
+	} );
+	await page.route( '**/nl-filters', ( route ) =>
+		route.fulfill( {
+			json: { ...reading, available: false, filters: [], fq: [] },
+		} )
+	);
+	await page.goto(
+		`/?page_id=${ seed.askPageId }&q=${ encodeURIComponent(
+			'posts by admin recently'
+		) }`
+	);
+	await expect( summary( page ) ).not.toBeEmpty();
+	await page.waitForLoadState( 'networkidle' );
+	expect( answered ).toBe( 0 );
+} );
+
 test( 'a lookup asks for no reading', async ( { page, seed } ) => {
 	let asked = 0;
 	await page.route( '**/nl-filters', async ( route ) => {

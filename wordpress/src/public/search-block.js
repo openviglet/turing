@@ -749,6 +749,7 @@ async function readFilters( text ) {
 	if ( ! fqs.length ) {
 		return;
 	}
+	answerUnderstood( text );
 	if ( state.applyEnabled ) {
 		applyReading( q, fqs );
 		return;
@@ -758,6 +759,20 @@ async function readFilters( text ) {
 		q,
 		label: filterLabel( fq ),
 	} ) );
+}
+
+/**
+ * Answer a sentence filters were read from (D260): it is about a need, whatever its length, so
+ * "rain jacket under $400" is answered as "a rain jacket under $400" is. ask() left it alone
+ * when it ran short of a question's five words; the five-word rule stays for a query nothing
+ * was read from. The sentence is asked as typed, with the words the filters came from.
+ *
+ * @param {string} text The sentence, trimmed.
+ */
+function answerUnderstood( text ) {
+	if ( answerer && ! isQuestion( text ) ) {
+		answerer.ask( text, { locale: config.locale } );
+	}
 }
 
 /**
