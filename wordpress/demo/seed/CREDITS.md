@@ -35,3 +35,11 @@ scenes: no real person, place name, brand or logo was asked for. The repository 
 WebP of each, the size a shop shows, with its `.prov.json` recording the prompt and the service;
 the full-size PNG Ideogram returns is not committed. A product or guide without a photo is drawn
 by the seed, as above.
+
+## Footage
+
+The demo video's opening and closing play clips of the hills fetched from
+[Pixabay](https://pixabay.com) (`npm run demo:broll`, D261), under the
+[Pixabay Content License](https://pixabay.com/service/license-summary/), which allows this use
+without attribution. Each clip's `.json` in [`../broll/`](../broll/) still names its page and its
+author, and the clips themselves are not committed.

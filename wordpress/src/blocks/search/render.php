@@ -117,6 +117,7 @@ $viglet_dumont_state = array(
 	// While a sentence's filters are read, its words as typed are not the search (D262).
 	'readingLabel'    => __( 'Reading your search…', 'viglet-dumont' ),
 	'readingSentence' => false,
+	'typingSentence'  => false,
 	'errorLabel'      => __( 'Search is unavailable right now.', 'viglet-dumont' ),
 );
 

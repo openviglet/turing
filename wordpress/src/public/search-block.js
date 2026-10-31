@@ -206,7 +206,8 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			return (
 				'success' === state.status &&
 				0 === state.total &&
-				! state.readingSentence
+				! state.readingSentence &&
+				! state.typingSentence
 			);
 		},
 		get isError() {
@@ -226,6 +227,9 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			}
 			if ( state.total > 0 ) {
 				return counted( state.foundLabels, state.total );
+			}
+			if ( state.typingSentence ) {
+				return '';
 			}
 			return state.readingSentence ? state.readingLabel : state.noneLabel;
 		},
@@ -1100,7 +1104,22 @@ function offerCorrection( corrected ) {
 	if ( ! corrected || correcting || corrected === lastQuery ) {
 		return;
 	}
+	// A search made while the visitor is still typing is no search they settled on: correcting
+	// it would replace the words under their fingers. Only a settled one is corrected or offered.
+	if ( 'instant' === search.getState().request?.mode ) {
+		return;
+	}
 	const original = lastQuery;
+	// A sentence is no typo: its words as typed finding nothing is expected, its filters are read
+	// instead, and Turing's spelling of it ("corrected" R$ 2.200 to r$ 2.100, T1199) is not what
+	// the shopper meant. It is never searched as corrected, and offered only when no filter was
+	// read from it.
+	if ( readsAsSentence( original ) ) {
+		if ( ! state.readingSentence && '' === state.understood ) {
+			state.corrected = corrected;
+		}
+		return;
+	}
 	if ( state.total > 0 || keepAsTyped === original ) {
 		state.corrected = corrected;
 		return;
@@ -1514,6 +1533,9 @@ function sync( s ) {
 	state.status = s.status;
 	state.error = s.error || '';
 	state.total = response?.queryContext?.count ?? 0;
+	// A sentence still being typed finds nothing until it is whole: no empty state for it yet.
+	state.typingSentence =
+		'instant' === s.request?.mode && readsAsSentence( lastQuery );
 	const offset =
 		( Math.max( 1, Number( s.request?.page ) || 1 ) - 1 ) *
 		( Number( s.request?.rows ) || state.perPage );

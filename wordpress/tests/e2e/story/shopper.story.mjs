@@ -1,11 +1,13 @@
 // One shopper's story (D203): demo/story.md played chapter by chapter on the demo storefront,
 // each chapter a step of one test so the video follows a single visit. Turing is asked for
 // real, language model included; nothing is replayed. Leaves tests/e2e/artifacts/story/story.webm.
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test } from '../fixtures.mjs';
 import { wp } from '../global-setup.mjs';
 import { demoLocale } from '../demo/curated.mjs';
+import { current, lines, takeFile } from '../../../bin/narration-takes.mjs';
 
 const turingURL = process.env.TURING_URL || 'http://localhost:2700';
 const out = join( 'tests', 'e2e', 'artifacts', 'story' );
@@ -124,15 +126,46 @@ const words = {
 };
 const story = () => words[ demoLocale() ];
 
+// How long each of Ana's lines runs, in the store's language (D261): the recording paces the
+// action to them. A line with no current take runs 0 s, and the action does not wait.
+const narrationLanguage = () => ( 'pt_BR' === demoLocale() ? 'pt-BR' : 'en' );
+const takeLength = ( name ) => {
+	const file = takeFile( narrationLanguage(), name );
+	const text = Object.fromEntries( lines() )[ name ]?.[ narrationLanguage() ];
+	if ( ! current( file, text ) ) {
+		return 0;
+	}
+	return Number(
+		execFileSync( 'ffprobe', [
+			'-v',
+			'error',
+			'-show_entries',
+			'format=duration',
+			'-of',
+			'default=noprint_wrappers=1:nokey=1',
+			file,
+		] )
+			.toString()
+			.trim()
+	);
+};
+
 // The synonym chapter 8 saves, removed again so the story replays on the same stack. Only
 // that one: the demo's own synonyms are the plugin's too (demo/seed/catalog.php).
+// The term goes to PHP as JSON with its accents escaped: through the Windows command line a raw
+// "bastão" arrives mangled, matches nothing, and each run left its synonym behind.
+const ascii = ( text ) =>
+	JSON.stringify( text ).replace(
+		/[^ -~]/g,
+		( c ) => `\\u${ c.charCodeAt( 0 ).toString( 16 ).padStart( 4, '0' ) }`
+	);
 const dropSynonym = () =>
 	demo( [
 		'eval',
-		'$t = new Viglet_Dumont_Tuning(); $all = $t->all();' +
-			` foreach ( $all["synonyms"] as $s ) { if ( in_array( ${ JSON.stringify(
-				story().logged ?? story().nothing
-			) }, $s["terms"], true ) ) { $t->remove_synonym( $s["id"] ); } }`,
+		`$term = json_decode( '${ ascii(
+			story().logged ?? story().nothing
+		) }' ); $t = new Viglet_Dumont_Tuning();` +
+			' foreach ( $t->all()["synonyms"] as $s ) { if ( in_array( $term, $s["terms"], true ) ) { $t->remove_synonym( $s["id"] ); } }',
 	] );
 
 test.beforeAll( async ( { request } ) => {
@@ -213,6 +246,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	const now = () => ( Date.now() - started ) / 1000;
 	const chapters = [];
 	let highlighted = null;
+	let voiced = null;
 	// A viewer needs time to read what Turing put on screen: the recording holds on every
 	// result, and longest on the moment a chapter is about.
 	const linger = async ( seconds = 3.5 ) => {
@@ -239,6 +273,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		test.step( title, async () => {
 			const start = now();
 			highlighted = null;
+			voiced = null;
 			await body();
 			if ( null === highlighted ) {
 				await highlight();
@@ -247,15 +282,38 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 				title,
 				start,
 				highlight: highlighted,
+				...( voiced ? { voice: voiced } : {} ),
 				end: now(),
 			} );
 		} );
-	const type = async ( field, text ) => {
+	// Ana talks over the action, not before it (D261): a chapter's line starts where `speak()`
+	// is called, and the action it describes is paced to end as she does, so Enter is pressed as
+	// her last word lands. Her take's length is read from the narration the video will carry; a
+	// run that is not recorded waits for nothing.
+	const speak = ( name ) => {
+		const length = record ? takeLength( name ) : 0;
+		voiced = { name, at: now() };
+		return now() + ( length ? length + 0.4 : 0 );
+	};
+	const until = async ( deadline ) => {
+		const left = ( deadline ?? 0 ) - now();
+		if ( record && left > 0 ) {
+			await page.waitForTimeout( left * 1000 );
+		}
+	};
+	const type = async ( field, text, deadline = null ) => {
 		if ( ! record ) {
 			return field.fill( text );
 		}
 		await field.fill( '' );
-		return field.pressSequentially( text, { delay: 55 } );
+		// Typed over what is left of her line, a little ahead of its end; never slower than
+		// a person reads, never faster than one types.
+		const left = deadline ? ( deadline - now() - 0.8 ) * 1000 : 0;
+		const delay = deadline
+			? Math.min( 220, Math.max( 40, left / Math.max( 1, text.length ) ) )
+			: 55;
+		await field.pressSequentially( text, { delay } );
+		return until( deadline );
 	};
 	if ( record ) {
 		await page.addInitScript( pointer );
@@ -270,6 +328,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			} );
 			const chip = chips.getByRole( 'link' ).first();
 			await expect( chip ).toBeVisible();
+			await until( speak( 'chapter-1' ) );
 			const name = ( await chip.textContent() ).trim();
 			// A chip searches for itself, and the chips step aside for the results.
 			await chip.click();
@@ -282,7 +341,10 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	);
 
 	await chapter( '2. Says what she needs, in a sentence', async () => {
-		await search( page, say.need );
+		await page.goto( '/?pagename=search-gear' );
+		const box = block.locator( 'input[type="search"]' ).first();
+		await type( box, say.need, speak( 'chapter-2' ) );
+		await box.press( 'Enter' );
 		await expect(
 			block.locator( '.viglet-dumont-search__understood' )
 		).toContainText( say.understood );
@@ -321,7 +383,11 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 				.first()
 				.click();
 			const dialog = page.getByRole( 'dialog' );
-			await type( dialog.getByRole( 'textbox' ), say.question );
+			await type(
+				dialog.getByRole( 'textbox' ),
+				say.question,
+				speak( 'chapter-3' )
+			);
 			await dialog.locator( 'form button[type="submit"]' ).click();
 			const answer = dialog
 				.locator( '.viglet-dumont-assistant__message' )
@@ -348,12 +414,14 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			.locator( '.viglet-dumont-search__results' )
 			.getByRole( 'checkbox', { name: ui.compareBox } );
 		await expect( boxes.nth( 2 ) ).toBeVisible();
-		await linger( 2 );
+		const comparing = speak( 'chapter-4' );
+		await linger( 1.5 );
 		for ( let i = 0; i < 3; i++ ) {
 			await boxes.nth( i ).check();
 		}
 		const bar = block.locator( '.viglet-dumont-search__compare-bar' );
 		await expect( bar.getByRole( 'link' ) ).toHaveText( ui.compareBar );
+		await until( comparing );
 		await bar.getByRole( 'link' ).click();
 		await expect(
 			page.locator( '.viglet-dumont-compare__table thead th' )
@@ -374,7 +442,11 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			.locator( '.viglet-dumont-copilot__modes' )
 			.getByRole( 'button', { name: ui.planMode } )
 			.click();
-		await type( copilot.getByLabel( ui.plan ), say.plan );
+		await type(
+			copilot.getByLabel( ui.plan ),
+			say.plan,
+			speak( 'chapter-5' )
+		);
 		await copilot
 			.getByRole( 'button', { name: ui.build, exact: true } )
 			.click();
@@ -403,13 +475,14 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		'6. Checks one item: Related, and a question about it',
 		async () => {
 			await page.goto( item );
+			const looking = speak( 'chapter-6' );
 			await expect(
 				page
 					.locator( '.wp-block-viglet-dumont-related' )
 					.getByRole( 'link' )
 			).not.toHaveCount( 0 );
 			await linger( 2.5 );
-			await type( copilot.getByLabel( ui.question ), say.check );
+			await type( copilot.getByLabel( ui.question ), say.check, looking );
 			await copilot
 				.getByRole( 'button', { name: ui.ask, exact: true } )
 				.click();
@@ -430,6 +503,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	await chapter( '7. Buys, in test mode', async () => {
 		const form = say.checkout;
 		await page.goto( '/checkout/' );
+		const paying = speak( 'chapter-7' );
 		// Exact: "Nome" is also inside "Sobrenome".
 		const field = ( name ) => page.getByLabel( name, { exact: true } );
 		await field( form.email ).fill( 'shopper@example.org' );
@@ -441,6 +515,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await field( form.postcode[ 0 ] ).fill( form.postcode[ 1 ] );
 		// The demo's one payment method, offline: an order is placed and nothing is charged.
 		await page.getByRole( 'radio', { name: form.payment } ).check();
+		await until( paying );
 		await page.getByRole( 'button', { name: form.place } ).click();
 		await expect( page ).toHaveURL( /order-received/, {
 			timeout: 60_000,
@@ -465,7 +540,8 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 					.locator( '.viglet-dumont-search__title a' )
 					.first()
 			).toBeVisible();
-			await linger( 5 );
+			await until( speak( 'chapter-8' ) );
+			await linger( 1.5 );
 
 			await page.goto( '/wp-login.php' );
 			await page.fill( '#user_login', 'admin' );

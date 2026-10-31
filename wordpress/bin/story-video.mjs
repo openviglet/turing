@@ -23,6 +23,7 @@ import {
 	copyFileSync,
 	existsSync,
 	mkdirSync,
+	readdirSync,
 	readFileSync,
 	statSync,
 	writeFileSync,
@@ -596,6 +597,53 @@ const kenBurns = ( image, length, n, name ) => {
 	return file;
 };
 
+/**
+ * A stretch of footage, cut and framed like the rest: from a few seconds in, where a clip has
+ * settled, looped if it is shorter than the shot.
+ *
+ * @param {string} video  The footage.
+ * @param {number} length How long it plays.
+ * @param {string} name   The shot's file name.
+ */
+const footage = ( video, length, name ) => {
+	const file = join( out, 'parts', name );
+	ffmpeg( [
+		'-stream_loop',
+		'-1',
+		'-ss',
+		'2',
+		'-i',
+		video,
+		'-t',
+		length.toFixed( 3 ),
+		'-vf',
+		`scale=${ size.width }:${ size.height }:force_original_aspect_ratio=increase,` +
+			`crop=${ size.width }:${ size.height },fps=30,format=yuv420p`,
+		'-c:v',
+		'libx264',
+		'-preset',
+		'veryfast',
+		'-crf',
+		'20',
+		'-an',
+		file,
+	] );
+	return file;
+};
+
+/**
+ * One shot of a card's sequence: footage plays, a still moves.
+ *
+ * @param {string} source The footage or the still.
+ * @param {number} length How long it plays.
+ * @param {number} n      Which shot it is.
+ * @param {string} name   The shot's file name.
+ */
+const shotOf = ( source, length, n, name ) =>
+	source.endsWith( '.mp4' )
+		? footage( source, length, name )
+		: kenBurns( source, length, n, name );
+
 // The title holds this long, then what Ana says is shown, a shot to each phrase or so.
 const titleSeconds = 3;
 // A shot holds at least this long, cut at the first pause after it.
@@ -635,7 +683,7 @@ const titleCard = ( i, name, shots = [] ) => {
 	const bounds = [ titleSeconds, ...cuts, length ];
 	for ( let n = 0; n < bounds.length - 1; n++ ) {
 		segments.push(
-			kenBurns(
+			shotOf(
 				shots[ n % shots.length ],
 				bounds[ n + 1 ] - bounds[ n ],
 				n,
@@ -645,34 +693,42 @@ const titleCard = ( i, name, shots = [] ) => {
 	}
 };
 
-/**
- * Stills from a chapter's clip, for Ana's line over its card to show what is coming.
- *
- * @param {string} clip The chapter's clip.
- * @param {number} i    The chapter's index.
- */
-const previews = ( clip, i ) => {
-	const length = seconds( clip );
-	return [ 0.2, 0.5, best( i ) / length, 0.8 ].map( ( share, n ) => {
-		const file = join(
-			out,
-			'parts',
-			`chapter-${ i + 1 }-preview-${ n }.png`
-		);
-		ffmpeg( [
-			'-ss',
-			Math.min( length - 0.1, share * length ).toFixed( 3 ),
-			'-i',
-			clip,
-			'-frames:v',
-			'1',
-			file,
-		] );
-		return file;
-	} );
-};
+// The opening and closing talk about the shop and the hills: the photos bought for it
+// (demo/photos, D265) between the shop's own pages, so the screen is not only screenshots.
+const photos = [ 'guide', 'product' ].flatMap( ( kind ) => {
+	const dir = join( root, 'demo', 'photos', kind );
+	return existsSync( dir )
+		? readdirSync( dir )
+				.filter( ( name ) => name.endsWith( '.webp' ) )
+				.map( ( name ) => join( dir, name ) )
+		: [];
+} );
+// Footage of the hills from Pixabay (`npm run demo:broll`), where it was fetched.
+const brollDir = join( root, 'demo', 'broll' );
+const clips = existsSync( brollDir )
+	? readdirSync( brollDir )
+			.filter( ( name ) => name.endsWith( '.mp4' ) )
+			.map( ( name ) => join( brollDir, name ) )
+	: [];
+// Footage first, then a photo, then one of the shop's pages, in turn.
+const broll = [];
+for (
+	let n = 0;
+	n < Math.max( clips.length, photos.length, screens.length );
+	n++
+) {
+	for ( const source of [
+		clips[ n ],
+		photos[ n ],
+		n < 3 ? screens[ n ] : null,
+	] ) {
+		if ( source ) {
+			broll.push( source );
+		}
+	}
+}
 
-titleCard( 0, 'intro', screens );
+titleCard( 0, 'intro', broll );
 for ( const [ i, { start, end } ] of chapters.entries() ) {
 	const clip = cut( `chapter-${ i + 1 }.mp4`, [
 		'-ss',
@@ -682,8 +738,15 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 		'-i',
 		webm,
 	] );
-	titleCard( i + 1, `chapter-${ i + 1 }`, previews( clip, i ) );
+	// The chapter's card is its title alone: Ana's line about it is spoken over the action
+	// itself, where the recording marked it (`speak()` in the story), its end on the Enter.
+	segments.push( still( i + 1 ) );
+	clock += cardSeconds;
 	const from = clock;
+	const { voice } = chapters[ i ];
+	if ( voice ) {
+		say( from + Math.max( 0, voice.at - start ), takes( voice.name ) );
+	}
 	const result = takes( `chapter-${ i + 1 }-result` );
 	if ( result.length ) {
 		// Up to the result, the result held while she talks about it, then the rest.
@@ -716,7 +779,7 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 	}
 	cues.push( { from, to: clock, chapter: i } );
 }
-titleCard( cards.length - 1, 'outro', [ ...screens ].reverse() );
+titleCard( cards.length - 1, 'outro', [ ...broll ].reverse() );
 
 // One still per chapter, its result on screen, for the site's WordPress page (D197): taken
 // from the recording, so the page shows what the story ran, and copied into the site.
