@@ -355,7 +355,7 @@ class Viglet_Dumont_Native_Search {
 				'type'        => $state['typeLabels'][ $type ] ?? $type,
 				'date'        => $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : '',
 				'iso'         => $timestamp ? gmdate( 'c', $timestamp ) : '',
-				'crumb'       => implode( ' › ', array_filter( array_merge( array( $parts['host'] ?? '' ), explode( '/', $parts['path'] ?? '' ) ) ) ),
+				'crumb'       => self::crumb( $url ),
 				'image'       => (string) $field( $fields, 'image', 'image' ),
 				'snippet'     => self::snippet( (string) $field( $fields, 'description', 'abstract' ) ),
 				// The snippet as plain text, so the server draws it at its height; the script then
@@ -487,6 +487,27 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
+	 * Where a result lives, as a reader scans it: the path's segments, after the host only when
+	 * the result is on another site (D263). A shopper on this site needs no domain, and a demo's
+	 * localhost would read as one.
+	 *
+	 * @param string $url The result's URL.
+	 */
+	public static function crumb( string $url ): string {
+		$parts = wp_parse_url( $url );
+		$home  = wp_parse_url( home_url( '/' ) );
+		$here  = is_array( $home ) ? (string) ( $home['host'] ?? '' ) : '';
+		$host  = (string) ( $parts['host'] ?? '' );
+		if ( '' !== $host && isset( $parts['port'] ) ) {
+			$host .= ':' . $parts['port'];
+		}
+		$own   = '' === $host || strtolower( (string) ( $parts['host'] ?? '' ) ) === strtolower( $here );
+		$crumb = array_merge( $own ? array() : array( $host ), explode( '/', (string) ( $parts['path'] ?? '' ) ) );
+
+		return implode( ' › ', array_filter( $crumb, static fn ( string $part ): bool => '' !== $part ) );
+	}
+
+	/**
 	 * A description with Turing's highlights as the parts search-block.js's highlighted() makes:
 	 * each a run of text, marked or not.
 	 *
@@ -547,7 +568,7 @@ class Viglet_Dumont_Native_Search {
 				'type'  => $labels['typeLabels'][ $fields['type'] ?? '' ] ?? (string) ( $fields['type'] ?? '' ),
 				'date'  => $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : '',
 				'iso'   => $timestamp ? gmdate( 'c', $timestamp ) : '',
-				'crumb' => implode( ' › ', array_filter( array_merge( array( $parts['host'] ?? '' ), explode( '/', $parts['path'] ?? '' ) ) ) ),
+				'crumb' => self::crumb( $url ),
 				'image' => (string) ( $fields['image'] ?? '' ),
 			);
 		}

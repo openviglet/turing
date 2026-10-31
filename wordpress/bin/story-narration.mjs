@@ -1,49 +1,32 @@
-// Speaks the demo video's narration (D246): one take per chapter and language, from
+// Speaks the demo video's narration (D246, D261): one take per line and language, from
 // demo/narration/script.json, bought from ElevenLabs through polyweave (`python -m polyweave
 // sound.speak`), which holds the spend to the budget in polyweave.toml and records each take's
 // provenance beside it. A take is bought only when it is missing or its line, voice or model
 // changed, so running this again spends nothing. `npm run story:video` mixes the takes in.
 //
 //   npm run story:narration
+//   npm run story:narration -- --language pt-BR    one language's takes only
 //
 // Needs ELEVENLABS_API_KEY and polyweave (`pip install polyweave-gamekit`). This loop is what
 // polyweave's voice.lines does for a game's table; it goes when voice.lines takes a plain
 // lines file (polyweave PW665).
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { current, lines, root, script, takeFile } from './narration-takes.mjs';
 
-const root = join( dirname( fileURLToPath( import.meta.url ) ), '..' );
-const narration = join( root, 'demo', 'narration' );
-const script = JSON.parse(
-	readFileSync( join( narration, 'script.json' ), 'utf8' )
-);
-
-/**
- * Whether a take already says this line, in this voice and model.
- *
- * @param {string} file The take.
- * @param {string} text The line it must say.
- */
-function current( file, text ) {
-	const record = `${ file }.prov.json`;
-	if ( ! existsSync( file ) || ! existsSync( record ) ) {
-		return false;
-	}
-	const prov = JSON.parse( readFileSync( record, 'utf8' ) );
-	return (
-		prov.prompt === text &&
-		prov.details?.voice === script.voice &&
-		prov.engine?.model === script.model
-	);
-}
+const only = process.argv.includes( '--language' )
+	? process.argv[ process.argv.indexOf( '--language' ) + 1 ]
+	: null;
 
 let bought = 0;
-for ( const [ chapter, lines ] of Object.entries( script.chapters ) ) {
-	for ( const [ language, text ] of Object.entries( lines ) ) {
-		const relative = `demo/narration/${ language }/chapter-${ chapter }.mp3`;
-		const file = join( root, relative );
+for ( const [ name, texts ] of lines() ) {
+	for ( const [ language, text ] of Object.entries( texts ) ) {
+		if ( only && language !== only ) {
+			continue;
+		}
+		const file = takeFile( language, name );
+		const relative = `demo/narration/${ language }/${ name }.mp3`;
 		if ( current( file, text ) ) {
 			continue;
 		}

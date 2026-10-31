@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 131700,
+    "bytes": 186870,
     "path": "demo/narration/pt-BR/chapter-5.mp3",
-    "sha256": "eeb308e85264f5a935a21f162c272efaa89d8dfec2afa1ca52cf7a0964c2bb71"
+    "sha256": "d0fae3e6f7c55c94f43831a7dc17a015932c00642d0e8dd8fb9af2be25f513ac"
   },
   "balance_after": null,
   "balance_before": null,
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00378,
+  "expected_credits": 0.00537,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 131700,
-    "sha256": "eeb308e85264f5a935a21f162c272efaa89d8dfec2afa1ca52cf7a0964c2bb71"
+    "bytes": 186870,
+    "sha256": "d0fae3e6f7c55c94f43831a7dc17a015932c00642d0e8dd8fb9af2be25f513ac"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:18:46Z",
+  "produced_at": "2026-10-31T17:40:59Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Ela descreve a viagem. O copiloto monta um kit com o que a loja vende, com pre\u00e7o e estoque, e o p\u00f5e no carrinho com um clique.",
+  "prompt": "[excited] T\u00e1, essa \u00e9 a minha parte favorita. S\u00e9rio, a favorita. O cliente nem busca nada. Ele s\u00f3 descreve a viagem, tipo, dois dias atravessando a montanha em julho, primeira vez.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:1VXYiHI3aDcFJSHimSSx"
+  "task_id": "elevenlabs:b7IBTn3bRLuJjO3fUukU"
 }

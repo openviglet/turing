@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 162211,
+    "path": "demo/narration/en/chapter-3-result.mp3",
+    "sha256": "004d36b2f6198cc05648efdad3a504b2fe2c0572211e7887634f51a74c88b989"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.0048,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 162211,
+    "sha256": "004d36b2f6198cc05648efdad3a504b2fe2c0572211e7887634f51a74c88b989"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:34:20Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "The assistant answers from my own guides, and every source is a link they can open. Viglet Turing reads my site, it doesn't make things up. [happy] I love that!",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:ZAFUqWUnLfNSLmSO7Z9S"
+}

@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6683117,
+    "path": "demo/photos/product/coniston-merino-base-layer.png",
+    "sha256": "b350680b05c6c077e281e1b47e2b2d7517a3e30d149c282485c3b4c4508b86fa"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, an overhead flat-lay product photo of a navy merino wool base layer top laid flat and centered on a pale natural oak tabletop in soft cool daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Pale natural oak tabletop filling the entire frame, honey-toned wood with subtle straight grain running horizontally. Soft diffused cool-toned daylight from a north-facing window falls evenly across the surface with no harsh highlights or deep shadows. A soft diffused shadow pools gently under the sleeves and hood where they lift slightly off the wood.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Navy blue merino wool base layer top, neatly laid flat and centered, occupying roughly 70% of the frame as the unambiguous focal subject. Hood arranged naturally at the top with drawstring cords trailing slightly to one side. Long sleeves extended outward symmetrically with cuffs folded once. Ribbed crew collar visible at the neckline. Flatlock seams run cleanly along the shoulders and side panels with a slight sheen. Soft brushed merino fiber texture catches the even daylight across the fabric body.\"\n      }\n    ]\n  }\n}",
+    "seed": 1723136285,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6683117,
+    "sha256": "b350680b05c6c077e281e1b47e2b2d7517a3e30d149c282485c3b4c4508b86fa"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:21:50Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, sleeves and hood arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Coniston merino base layer, in navy blue. A merino wool base layer that stays fresh for days, soft enough for sensitive skin. Weight 190 g (size M). 200 g/m\u00b2 merino. Flatlock seams that do not rub under a pack. Colour: Black, Navy, Moss. Materials: Merino wool. Care: Machine wash at 30 \u00b0C. Do not iron. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:PGYkD8FlRwWhGmoUNZ7fDA"
+}

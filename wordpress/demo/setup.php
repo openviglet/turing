@@ -43,9 +43,9 @@ $pages['showcase'] = array(
 	implode(
 		"\n\n",
 		array(
-			'<!-- wp:paragraph --><p>' . $say( 'Each block on this page is a Turing feature the plugin brings to WordPress. Open it with How it works for a note on each.' ) . '</p><!-- /wp:paragraph -->',
+			'<!-- wp:paragraph --><p>' . $say( 'Each block on this page is a Viglet Turing feature the plugin brings to WordPress. Open it with How it works for a note on each.' ) . '</p><!-- /wp:paragraph -->',
 			// Shown by the theme only while Turing's chat cannot answer (D198).
-			'<!-- wp:paragraph {"className":"tarnfell-ai-off"} --><p class="tarnfell-ai-off"><strong>' . $say( 'The AI features on this page are off.' ) . '</strong> ' . $say( 'This demo\'s Turing has no language model, so the answer, the catalog copilot and the Site assistant stay hidden. Start the stack with OPENAI_API_KEY set to try them.' ) . '</p><!-- /wp:paragraph -->',
+			'<!-- wp:paragraph {"className":"tarnfell-ai-off"} --><p class="tarnfell-ai-off"><strong>' . $say( 'The AI features on this page are off.' ) . '</strong> ' . $say( 'This demo\'s Viglet Turing has no language model, so the answer, the catalog copilot and the Site assistant stay hidden. Start the stack with OPENAI_API_KEY set to try them.' ) . '</p><!-- /wp:paragraph -->',
 			$heading( 'Search, with an answer' ),
 			$search,
 			// These two head themselves with the feature's name.
@@ -82,10 +82,20 @@ foreach ( array( 'home-demo', 'search-gear', 'journal' ) as $chrome ) {
 // The showcase describes features, not gear: never a search result.
 update_post_meta( $ids['showcase'], '_viglet_dumont_exclude', '1' );
 
+// WordPress's own first post and page are no part of a shop, and in its search they would
+// read as a fresh install (D264).
+foreach ( array( array( 'hello-world', 'post' ), array( 'sample-page', 'page' ) ) as list( $default, $kind ) ) {
+	$post = get_page_by_path( $default, OBJECT, $kind );
+	if ( $post ) {
+		wp_delete_post( $post->ID, true );
+	}
+}
+
 update_option( 'show_on_front', 'page' );
 update_option( 'page_on_front', $ids['home-demo'] );
 update_option( 'page_for_posts', $ids['journal'] );
-update_option( 'blogname', 'Tarnfell' );
+// The store's name in its language: Tarnfell in English, Recanto da Serra in Portuguese.
+update_option( 'blogname', $names['Tarnfell'] ?? 'Tarnfell' );
 update_option( 'blogdescription', $names['Gear for the high ground'] ?? 'Gear for the high ground' );
 
 // The hero's search box opens the instant search, and Enter goes to the page above.

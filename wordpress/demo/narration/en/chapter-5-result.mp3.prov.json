@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 196901,
+    "path": "demo/narration/en/chapter-5-result.mp3",
+    "sha256": "d770cc266d34c32f0d04b982107e05cb883e17d115dae0dfe0078592a1d73267"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0132,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00591,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 196901,
+    "sha256": "d770cc266d34c32f0d04b982107e05cb883e17d115dae0dfe0078592a1d73267"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:35:23Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Viglet Turing turns the plan into the things they'll need, and fills each one with gear I really sell, priced and in stock. One click, and the whole kit is in the cart! [laughs] Can you believe it?",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:HnT0tbV65qjHHGCFQFG8"
+}

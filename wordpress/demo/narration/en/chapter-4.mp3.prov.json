@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 41003,
+    "bytes": 49780,
     "path": "demo/narration/en/chapter-4.mp3",
-    "sha256": "3bd8ba26b6d82098507884b93b4dc6f70fb9560417ad3b199f380acd18d2f86f"
+    "sha256": "6db270138044744ab40aa3c5cfdc6847cf9424b0866a9881cc1dcf6bc15694e7"
   },
   "balance_after": null,
   "balance_before": null,
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00123,
+  "expected_credits": 0.00171,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 41003,
-    "sha256": "3bd8ba26b6d82098507884b93b4dc6f70fb9560417ad3b199f380acd18d2f86f"
+    "bytes": 49780,
+    "sha256": "6db270138044744ab40aa3c5cfdc6847cf9424b0866a9881cc1dcf6bc15694e7"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:18:05Z",
+  "produced_at": "2026-10-31T17:28:20Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "She compares three products side by side.",
+  "prompt": "When products look alike, they compare them side by side.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:9JCAHozqVJzlheDHBeQP"
+  "task_id": "elevenlabs:ue6zqz0shUZoiO5DxbBs"
 }

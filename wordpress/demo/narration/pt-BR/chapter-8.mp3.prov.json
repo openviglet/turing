@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 99935,
+    "bytes": 339007,
     "path": "demo/narration/pt-BR/chapter-8.mp3",
-    "sha256": "3d1421212cc098824a823b2b175ce56b912bd033b877d9a01b21752e41721627"
+    "sha256": "6795575c6531d9d4fcd78e247e53b46ed7e72dd25c38623ca2092a255772bc1e"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.00276,
+  "credits": 0.0,
   "details": {
     "cue": null,
     "delivery": {},
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00276,
+  "expected_credits": 0.00855,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 99935,
-    "sha256": "3d1421212cc098824a823b2b175ce56b912bd033b877d9a01b21752e41721627"
+    "bytes": 339007,
+    "sha256": "6795575c6531d9d4fcd78e247e53b46ed7e72dd25c38623ca2092a255772bc1e"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:20:02Z",
+  "produced_at": "2026-10-31T17:42:34Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Nos bastidores: a busca do WordPress roda no Turing, e as buscas dela aparecem nos insights.",
+  "prompt": "[excited] Agora, a minha compara\u00e7\u00e3o favorita: o antes e o depois. \u00c0 esquerda, a minha antiga busca do WordPress. Algu\u00e9m digita puffer, e n\u00e3o acha nada. \u00c0 direita, o Viglet Turing encontra as minhas jaquetas na hora. Mesma loja, mesmos produtos, uma experi\u00eancia completamente diferente.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:fGv51TjJ8C47M7Nj2hh9"
+  "task_id": "elevenlabs:kprOzSX03uKfSk0uZBx0"
 }

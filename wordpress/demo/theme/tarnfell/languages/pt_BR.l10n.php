@@ -54,7 +54,7 @@ return array(
 		'Search both at once…'                                       => 'Buscar nas duas de uma vez…',
 		'Try a search'                                               => 'Experimente uma busca',
 		'WordPress search'                                           => 'Busca do WordPress',
-		'Turing search'                                              => 'Busca do Turing',
+		'Viglet Turing search'                                       => 'Busca do Viglet Turing',
 		'No results found.'                                          => 'Nenhum resultado encontrado.',
 		"%d result\0%d results"                                      => "%d resultado\0%d resultados",
 	),

@@ -19,6 +19,7 @@ const words = {
 		// Measured on the demo stack: the price is understood, both results are tents within
 		// it, and the answer names the two-person one with its price and cites it.
 		need: 'a two-person tent under $400',
+		understood: 'Price: ≤ 400',
 		needFound: /tent/i,
 		misspelt: 'helvelyn',
 		// A word the shop does not use. It must never find anything, or it leaves the
@@ -68,15 +69,19 @@ const words = {
 	},
 	pt_BR: {
 		popular: 'jaqueta de chuva',
-		need: 'uma barraca para duas pessoas até R$ 400',
+		// The store sells in reais (D268): R$ 2.200 keeps the same two tents $400 does.
+		need: 'uma barraca para duas pessoas até R$ 2.200',
+		understood: 'Preço: ≤ 2200',
 		needFound: /barraca/i,
 		misspelt: 'helvelyn',
+		// Viglet Turing logs it as typed, accent kept (measured on the 2026.3 image; an earlier
+		// build folded it, T1179).
 		nothing: 'abrigo de emergência',
-		// How Turing's metrics log it: accents folded (Turing T1179).
-		logged: 'abrigo de emergencia',
 		question: 'Que mochila eu levo para uma noite num refúgio?',
 		cites: 'De que tamanho deve ser sua mochila?',
-		compare: 'jaqueta impermeável',
+		// Measured on the pt_BR demo: three jackets of different kinds to compare. "jaqueta
+		// impermeável" offers one, the accent dropping the others (Turing T1194).
+		compare: 'jaqueta',
 		plan: 'Dois dias atravessando a montanha em julho, primeira vez',
 		check: 'Isso me mantém seca num dia de chuva na montanha?',
 		backstage: 'puffer',
@@ -101,15 +106,17 @@ const words = {
 			saveSynonym: 'Adicionar sinônimo',
 			removeSynonym: ( terms ) => `Remover ${ terms }`,
 		},
-		// WooCommerce's own Portuguese, read off a pt_BR demo; the store still sells in the US.
+		// WooCommerce's own Portuguese, read off a pt_BR demo, at a Brazilian address (D268).
 		checkout: {
 			email: 'Endereço de e-mail',
 			first: 'Nome',
 			last: 'Sobrenome',
 			address: 'Endereço',
 			city: 'Cidade',
-			state: [ 'Estado', 'OR' ],
-			postcode: [ 'CEP', '97201' ],
+			street: 'Avenida Paulista, 1000',
+			town: 'São Paulo',
+			state: [ 'Estado', 'SP' ],
+			postcode: [ 'CEP', '01310-100' ],
 			payment: /^Pagamentos? por cheques?$/i,
 			place: /^Finalizar pedido$/i,
 		},
@@ -278,7 +285,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await search( page, say.need );
 		await expect(
 			block.locator( '.viglet-dumont-search__understood' )
-		).toContainText( 'Price: ≤ 400' );
+		).toContainText( say.understood );
 		await expect( titles.first() ).toHaveText( say.needFound );
 		await answered( block.locator( '.viglet-dumont-search__answer-text' ) );
 		await highlight();
@@ -420,8 +427,8 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await field( form.email ).fill( 'shopper@example.org' );
 		await field( form.first ).fill( 'Ana' );
 		await field( form.last ).fill( 'Fell' );
-		await field( form.address ).fill( '1 Lake Road' );
-		await field( form.city ).fill( 'Portland' );
+		await field( form.address ).fill( form.street ?? '1 Lake Road' );
+		await field( form.city ).fill( form.town ?? 'Portland' );
 		await field( form.state[ 0 ] ).selectOption( form.state[ 1 ] );
 		await field( form.postcode[ 0 ] ).fill( form.postcode[ 1 ] );
 		// The demo's one payment method, offline: an order is placed and nothing is charged.

@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 58975,
+    "bytes": 75275,
     "path": "demo/narration/en/chapter-2.mp3",
-    "sha256": "394d8e4eb9b66c42eff5979d42b4ad60a477ccfb542ae7b6200a44e057d7da83"
+    "sha256": "b89f3dcbe943a81bc910d9aceee906900c6b260b20e46adb221d9b976e6a2fe7"
   },
   "balance_after": null,
   "balance_before": null,
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00198,
+  "expected_credits": 0.00267,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 58975,
-    "sha256": "394d8e4eb9b66c42eff5979d42b4ad60a477ccfb542ae7b6200a44e057d7da83"
+    "bytes": 75275,
+    "sha256": "b89f3dcbe943a81bc910d9aceee906900c6b260b20e46adb221d9b976e6a2fe7"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:17:21Z",
+  "produced_at": "2026-10-31T17:26:32Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "She types what she needs in a sentence, and the results follow it.",
+  "prompt": "My customers don't type keywords. They write what they need, the way they'd say it to me.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:aUfRg2dvZbyY6cGtwxpe"
+  "task_id": "elevenlabs:9GCZpt01yn4yFTNJpsiJ"
 }

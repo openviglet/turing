@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 67334,
+    "bytes": 47272,
     "path": "demo/narration/en/chapter-3.mp3",
-    "sha256": "0d6af9664a8edf39a24af6746df9588634c1065a25d9c467e3d51c4c287ee8e6"
+    "sha256": "544d1cbfff04a47fb91507916baeff2574b24cc0cb1e534e52ff156dcd971d3c"
   },
   "balance_after": null,
   "balance_before": null,
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00219,
+  "expected_credits": 0.00168,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 67334,
-    "sha256": "0d6af9664a8edf39a24af6746df9588634c1065a25d9c467e3d51c4c287ee8e6"
+    "bytes": 47272,
+    "sha256": "544d1cbfff04a47fb91507916baeff2574b24cc0cb1e534e52ff156dcd971d3c"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:17:41Z",
+  "produced_at": "2026-10-31T17:27:30Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "She asks the Site assistant, and the answer cites the pages it came from.",
+  "prompt": "People ask the questions they'd be shy to ask in a shop.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:p9YLamUEwWXLlJRAdBnR"
+  "task_id": "elevenlabs:ukB2Z8xO0eXrQJrD5Ttl"
 }

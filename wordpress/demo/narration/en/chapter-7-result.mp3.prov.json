@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 52287,
+    "path": "demo/narration/en/chapter-7-result.mp3",
+    "sha256": "f2eb6011d63541f102a4ed3af5d8d47e4373bb4583c5b71a48c6832ea7db32e1"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00198,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 52287,
+    "sha256": "f2eb6011d63541f102a4ed3af5d8d47e4373bb4583c5b71a48c6832ea7db32e1"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:31:32Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[happy] The search and the help just get them here so much faster.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:NEhaOuvqFc0CqtZqcoTH"
+}

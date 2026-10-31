@@ -308,7 +308,7 @@ final class NativeSearchTest extends PluginTestCase {
 		$result = $page['results'][0];
 		$this->assertSame( 'Workshop on search', $result['title'] );
 		$this->assertSame( 'Post', $result['type'] );
-		$this->assertSame( 'example.org › workshop', $result['crumb'] );
+		$this->assertSame( 'example.org › workshop', $result['crumb'], 'a result on another site names its domain' );
 		$this->assertSame(
 			array(
 				array(
@@ -334,5 +334,14 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertCount( 2, $page['pages'], 'the page links, not Next' );
 		$this->assertSame( array( '40' ), array_column( $page['facets'][0]['items'], 'label' ), 'a value with no results dropped' );
 		$this->assertSame( 'seats:40', $page['facets'][0]['items'][0]['target']['filterQuery'] );
+	}
+
+	/**
+	 * D263: the crumb drops this site's domain, and keeps another site's.
+	 */
+	public function test_crumb_names_the_host_only_for_another_site(): void {
+		$this->assertSame( 'product › catbells', Viglet_Dumont_Native_Search::crumb( 'https://site.example.org/product/catbells/' ) );
+		$this->assertSame( 'other.example › journal › hut', Viglet_Dumont_Native_Search::crumb( 'https://other.example/journal/hut/' ) );
+		$this->assertSame( 'other.example:8081 › hut', Viglet_Dumont_Native_Search::crumb( 'http://other.example:8081/hut' ) );
 	}
 }

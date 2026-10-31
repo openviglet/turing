@@ -14,7 +14,7 @@
 <footer class="wp-block-group alignfull has-lichen-color has-ink-background-color has-text-color has-background" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50)"><!-- wp:columns {"align":"wide"} -->
 <div class="wp-block-columns alignwide"><!-- wp:column -->
 <div class="wp-block-column"><!-- wp:heading {"level":2,"fontSize":"large","textColor":"paper"} -->
-<h2 class="wp-block-heading has-paper-color has-text-color has-large-font-size">Tarnfell</h2>
+<h2 class="wp-block-heading has-paper-color has-text-color has-large-font-size"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"fontSize":"small"} -->

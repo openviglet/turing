@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5636619,
+    "path": "demo/photos/product/scafell-waterproof-hiking-boot.png",
+    "sha256": "76624851aaba76e7118e6c0209aea49dfa5f1d9be922e16d99f47e18ef337e1d"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a single brown leather hiking boot resting upright on a mossy granite rock along a damp mountain trail in the green fells, with rolling slopes receding into overcast haze behind it.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells on an overcast morning, damp with recent rain. Rolling green fell slopes recede diagonally toward the upper-left into soft atmospheric haze, with a low cloud bank hugging the far ridgeline. Overcast diffused daylight with neutral cool-toned white balance and no warm cast. The ground is wet packed earth and scree, darkened by recent rain.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Narrow dirt-and-scree trail winding away from the rock into the mid-ground, receding diagonally toward the upper-left of the frame. Wet packed earth mixed with small grey stones, softly blurred by shallow depth of field.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite rock beneath the boot, occupying the lower-center of the frame. Deep emerald moss cushions its surface in thick velvety patches, with small fern fronds curling around the edges. Tiny water beads cling to the moss from recent rain.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Single brown leather waterproof hiking boot resting upright on the mossy rock, anchored just right of center, viewed from a slight three-quarter angle. Full-grain brown leather upper with subtle creasing at the toe box, black rubber rand wrapping the base with a faint sheen of moisture, thick lugged Vibram sole visible at the bottom, waxed laces loosely tied, stiff ankle collar. No visible branding or logos anywhere on the boot. Tack-sharp focus showing every grain of the leather and every lug of the sole.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of wet heather in the immediate foreground at the bottom edge of the frame, deep purple-brown stems blurred into soft color. A single fallen pine needle lies across the heather, slender and rust-brown.\"\n      }\n    ]\n  }\n}",
+    "seed": 266370449,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5636619,
+    "sha256": "76624851aaba76e7118e6c0209aea49dfa5f1d9be922e16d99f47e18ef337e1d"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:18:23Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, shallow depth of field with the item in sharp focus and the landscape softly blurred behind. Nobody in the frame. The item is Scafell waterproof hiking boot, in brown. A waterproof leather boot for rough, wet ground, stiff enough for a long day on scree. Weight 1,380 g a pair (size 42). A Gore-Tex membrane, a Vibram sole and a rubber rand. Fits a C1 crampon. Colour: Brown, Black. Materials: Leather, Gore-Tex. Care: Brush off mud, dry away from direct heat and reproof with... Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:b7jHNB3MRnayutYjp2FRog"
+}

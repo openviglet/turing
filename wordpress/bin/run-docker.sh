@@ -150,5 +150,7 @@ fi
 wpd eval-file /demo/seed/catalog.php
 # The seed makes products indexable after saving them, so nothing queued them: send them now.
 wpd dumont reindex
+# The store's search history, once the catalog it finds is indexed (D269).
+wpd eval-file /demo/seed/searches.php
 
 echo "Demo storefront: $demo_url/   (admin / admin), SN site $SN_DEMO_SITE"

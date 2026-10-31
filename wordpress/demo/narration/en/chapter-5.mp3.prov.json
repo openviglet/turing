@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 127520,
+    "bytes": 62318,
     "path": "demo/narration/en/chapter-5.mp3",
-    "sha256": "16f84cf9a4c13eabd70d841fda5c52f59aff5d8f284035c0337a4c4a21cb8b28"
+    "sha256": "f938da745d5f39d454705a49f834131c3fe84ade40a6e093c0503ed37cbcdb1d"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00234,
   "details": {
     "cue": null,
     "delivery": {},
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00399,
+  "expected_credits": 0.00234,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 127520,
-    "sha256": "16f84cf9a4c13eabd70d841fda5c52f59aff5d8f284035c0337a4c4a21cb8b28"
+    "bytes": 62318,
+    "sha256": "f938da745d5f39d454705a49f834131c3fe84ade40a6e093c0503ed37cbcdb1d"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:18:31Z",
+  "produced_at": "2026-10-31T17:29:05Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "She describes her trip. The copilot builds a kit from what the shop sells, priced and in stock, and puts it in the cart in one click.",
+  "prompt": "[excited] And this is my favourite part: a customer just describes their trip.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:r3GNZ5GTWKT0lFcOVNyp"
+  "task_id": "elevenlabs:QUS2Zyb89WCLXrU87Hub"
 }

@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 242877,
+    "path": "demo/narration/en/chapter-2-result.mp3",
+    "sha256": "766d5d15d8b37da7fcf80f9f45b9f53b5ad270cac149e98d13a9cff012cec7a0"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00747,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 242877,
+    "sha256": "766d5d15d8b37da7fcf80f9f45b9f53b5ad270cac149e98d13a9cff012cec7a0"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:33:46Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[excited] And look at this! Viglet Turing reads \"under four hundred dollars\" as a price filter, keeps just the two tents that fit, and writes a short answer naming the best one, with its sources. My old search found nothing at all for this sentence!",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:W2EIMXwjSLOJIfqTcat0"
+}

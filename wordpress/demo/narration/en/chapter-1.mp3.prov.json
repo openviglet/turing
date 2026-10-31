@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 75275,
+    "bytes": 61065,
     "path": "demo/narration/en/chapter-1.mp3",
-    "sha256": "f03bcbf235186d4c921c7a701e974078df245766de90f8e068a69f7bd23e9d67"
+    "sha256": "c410ab7e13db88335aa66783c010a20e916f0127b7e10458acbc26fbfb3efe59"
   },
   "balance_after": null,
   "balance_before": null,
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00216,
+  "expected_credits": 0.00171,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 75275,
-    "sha256": "f03bcbf235186d4c921c7a701e974078df245766de90f8e068a69f7bd23e9d67"
+    "bytes": 61065,
+    "sha256": "c410ab7e13db88335aa66783c010a20e916f0127b7e10458acbc26fbfb3efe59"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:16:49Z",
+  "produced_at": "2026-10-31T17:25:39Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "A shopper arrives. Popular searches already show what the catalog holds.",
+  "prompt": "This is my search page. Before, it was just an empty box.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:ylOkxucugmiw2YnjsTKS"
+  "task_id": "elevenlabs:kbzQ8erKz3nFUBAQETxR"
 }

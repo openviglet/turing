@@ -17,6 +17,6 @@
 		<path d="m15 9 3.2 5.2-2.2-.9-1.6 2.2-1.2-1.8Z" fill="#F4F1EA"/>
 		<path d="M7 31h26M11 35h18" stroke="#2E5E73" stroke-width="2.4" stroke-linecap="round"/>
 	</svg>
-	<span class="wp-block-site-title">Tarnfell</span>
+	<span class="wp-block-site-title"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></span>
 </a>
 <!-- /wp:html -->

@@ -1,0 +1,42 @@
+{
+  "artefact": {
+    "bytes": 481114,
+    "path": "demo/narration/music.mp3",
+    "sha256": "93e62241de148236a31f76929be8bffba9795ea15eefeb5c9079b27d67728c85"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.2,
+  "details": {
+    "cue": null,
+    "format": "mp3",
+    "influence": 0.3,
+    "loop": true,
+    "seconds": 30
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_text_to_sound_v2",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.2,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 481114,
+    "sha256": "93e62241de148236a31f76929be8bffba9795ea15eefeb5c9079b27d67728c85"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:22:44Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "soft warm ambient background music, gentle acoustic guitar and light pads, calm and hopeful, no drums, seamless loop",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:93e62241de148236"
+}

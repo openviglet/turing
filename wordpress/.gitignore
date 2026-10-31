@@ -5,3 +5,10 @@ build/
 .phpunit.cache/
 tests/e2e/artifacts/
 tests/e2e/.auth/
+
+# The demo video's narration and music (D246): bought by `npm run story:narration`, never
+# committed. Their .prov.json records and polyweave's ledgers are.
+demo/narration/**/*.mp3
+# The demo store's photos (D265): bought by `npm run demo:photos`, never committed; the seed draws
+# its own pictures without them. Their .prov.json records are committed.
+demo/photos/**/*.png

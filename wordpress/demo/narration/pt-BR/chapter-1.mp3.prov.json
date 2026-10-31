@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 81963,
+    "bytes": 193140,
     "path": "demo/narration/pt-BR/chapter-1.mp3",
-    "sha256": "e24b37eb0491bc3ce031c1693d53214f409ae856d59f8acd8276f075e4fadf90"
+    "sha256": "e6a230f9392a62830116cc5c1d4ae89872435005c2d9b1478f0f1c4b2cf63dff"
   },
   "balance_after": null,
   "balance_before": null,
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00213,
+  "expected_credits": 0.00516,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 81963,
-    "sha256": "e24b37eb0491bc3ce031c1693d53214f409ae856d59f8acd8276f075e4fadf90"
+    "bytes": 193140,
+    "sha256": "e6a230f9392a62830116cc5c1d4ae89872435005c2d9b1478f0f1c4b2cf63dff"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:17:00Z",
+  "produced_at": "2026-10-31T17:38:46Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Uma cliente chega. As buscas populares j\u00e1 mostram o que o cat\u00e1logo tem.",
+  "prompt": "Vamos come\u00e7ar por onde todo mundo come\u00e7a: a p\u00e1gina de busca. Sabe aquele momento em que voc\u00ea entra numa loja e n\u00e3o faz ideia do que digitar? Eu perdia tanta gente bem aqui.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:x0Is0umGXq1CR2Bl2Kgn"
+  "task_id": "elevenlabs:dTpzu7wW346HBp9fcEbT"
 }

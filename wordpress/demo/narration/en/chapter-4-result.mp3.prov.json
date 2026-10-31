@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 121251,
+    "path": "demo/narration/en/chapter-4-result.mp3",
+    "sha256": "29e978a9a47554ec432b605ace83c7edbbca53c041e352833dc39c46d510eb9b"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00378,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 121251,
+    "sha256": "29e978a9a47554ec432b605ace83c7edbbca53c041e352833dc39c46d510eb9b"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:34:52Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "The table lines them up, and Viglet Turing writes a short summary from that very table. The differences are clear at a glance!",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:RMBKxO7zqANKGjGdgahO"
+}

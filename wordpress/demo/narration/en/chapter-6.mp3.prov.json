@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 79037,
+    "bytes": 39331,
     "path": "demo/narration/en/chapter-6.mp3",
-    "sha256": "a37cebd52ddcb4a551dd1740aa9a39d2a5e30bcb5b9df7bf3fdec0b92cf068fa"
+    "sha256": "f49a0282ef8b3c5c88db5872fca1439acd57207dc0496a4d02dcf6d41c884eda"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.00243,
+  "credits": 0.0,
   "details": {
     "cue": null,
     "delivery": {},
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00243,
+  "expected_credits": 0.00129,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 79037,
-    "sha256": "a37cebd52ddcb4a551dd1740aa9a39d2a5e30bcb5b9df7bf3fdec0b92cf068fa"
+    "bytes": 39331,
+    "sha256": "f49a0282ef8b3c5c88db5872fca1439acd57207dc0496a4d02dcf6d41c884eda"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:18:55Z",
+  "produced_at": "2026-10-31T17:30:21Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "On a product page, related gear appears, and she can ask about that very product.",
+  "prompt": "On a product page, they take a closer look.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:4EesVaHMsLr2lKpXCgAM"
+  "task_id": "elevenlabs:9kSTPj4A3LrzrWevZWiS"
 }

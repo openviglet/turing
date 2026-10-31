@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 67334,
+    "bytes": 268790,
     "path": "demo/narration/pt-BR/chapter-2.mp3",
-    "sha256": "a84e7beb5b49fa17c4adeb2646b2b75c9cf2f3a6480b777f17570b2ec823ceae"
+    "sha256": "ddae9ac9e3978112b9a7d52d3d5bdeca1310faaf64d8c6314651649943f65cc7"
   },
   "balance_after": null,
   "balance_before": null,
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00195,
+  "expected_credits": 0.00732,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 67334,
-    "sha256": "a84e7beb5b49fa17c4adeb2646b2b75c9cf2f3a6480b777f17570b2ec823ceae"
+    "bytes": 268790,
+    "sha256": "ddae9ac9e3978112b9a7d52d3d5bdeca1310faaf64d8c6314651649943f65cc7"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:17:31Z",
+  "produced_at": "2026-10-31T18:32:03Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Ela escreve o que precisa numa frase, e os resultados acompanham.",
+  "prompt": "O neg\u00f3cio dos meus clientes \u00e9 o seguinte: eles n\u00e3o digitam palavras-chave. Eles escrevem do jeito que falam comigo no balc\u00e3o. Algo como, uma barraca para duas pessoas at\u00e9 dois mil e duzentos reais. A minha busca antiga travava com frases assim.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:PWGCwMkN7B8PbzbRmrbw"
+  "task_id": "elevenlabs:FcOX66BZhuTlaXMAtUdT"
 }

@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 442661,
+    "path": "demo/narration/pt-BR/chapter-2-result.mp3",
+    "sha256": "121dcd5aec18d552858fa593adcef2a8dca80bed39cc6e1f15e926bf004dd8d2"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.01164,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 442661,
+    "sha256": "121dcd5aec18d552858fa593adcef2a8dca80bed39cc6e1f15e926bf004dd8d2"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:32:47Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[excited] E olha isso! O Viglet Turing entendeu at\u00e9 dois mil e duzentos reais como um filtro de pre\u00e7o, sozinho, e deixou s\u00f3 as duas barracas que cabem nele. E l\u00e1 em cima, uma resposta curta indicando a melhor, com o pre\u00e7o e o porqu\u00ea, e todas as fontes logo abaixo. [laughs] A minha busca antiga do WordPress n\u00e3o achava nada com essa frase. Nada! Agora parece uma amiga que conhece a loja.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:EQmAmIiIPtpzz0Fa250B"
+}

@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 95337,
+    "bytes": 114981,
     "path": "demo/narration/pt-BR/chapter-6.mp3",
-    "sha256": "3746d8f93b03641d1ba376ed27ac95d742620058cf5a75eea28791608abfdfc4"
+    "sha256": "572c9a642a728aedd8f788c4fd479f33dc5afb98f7261e6f47ddee656c0b1be1"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.00285,
+  "credits": 0.0,
   "details": {
     "cue": null,
     "delivery": {},
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00285,
+  "expected_credits": 0.00291,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 95337,
-    "sha256": "3746d8f93b03641d1ba376ed27ac95d742620058cf5a75eea28791608abfdfc4"
+    "bytes": 114981,
+    "sha256": "572c9a642a728aedd8f788c4fd479f33dc5afb98f7261e6f47ddee656c0b1be1"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:19:05Z",
+  "produced_at": "2026-10-31T17:41:34Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Na p\u00e1gina de um produto aparecem itens relacionados, e ela pode perguntar sobre aquele produto.",
+  "prompt": "Antes de pagar, as pessoas gostam de olhar um produto com mais calma. Justo, eu tamb\u00e9m fa\u00e7o isso!",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:Ra2eSSwn3xAnr9hPDd5u"
+  "task_id": "elevenlabs:5ke2cvQen8abzzSbq4a1"
 }

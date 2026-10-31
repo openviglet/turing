@@ -1227,10 +1227,13 @@ function highlighted( html ) {
  */
 function crumb( url ) {
 	try {
-		const { host, pathname } = new URL( url );
-		return [ host, ...pathname.split( '/' ).filter( Boolean ) ].join(
-			' › '
-		);
+		const { host, pathname } = new URL( url, window.location.href );
+		const path = pathname.split( '/' ).filter( Boolean );
+		// A result on this very site needs no domain: the shopper is already here (D263).
+		// One from another site sharing the SN site keeps it, so it says where it leads.
+		return (
+			host === window.location.host ? path : [ host, ...path ]
+		).join( ' › ' );
 	} catch {
 		return url;
 	}

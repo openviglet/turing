@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 88650,
+    "bytes": 166390,
     "path": "demo/narration/en/chapter-8.mp3",
-    "sha256": "33f88c0a7e1e5b73b079fcba3ebeff6eca70e810f8da302521a461f8c7c80a18"
+    "sha256": "a03a76fb2e094d10f62dd0d238852d42c65715ad25af6bb9256608016ba4fbcc"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.00267,
+  "credits": 0.00837,
   "details": {
     "cue": null,
     "delivery": {},
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00267,
+  "expected_credits": 0.00447,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 88650,
-    "sha256": "33f88c0a7e1e5b73b079fcba3ebeff6eca70e810f8da302521a461f8c7c80a18"
+    "bytes": 166390,
+    "sha256": "a03a76fb2e094d10f62dd0d238852d42c65715ad25af6bb9256608016ba4fbcc"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:19:53Z",
+  "produced_at": "2026-10-31T17:36:20Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Backstage: the WordPress search runs on Turing, and her searches show up in the insights.",
+  "prompt": "[excited] Now, the before and after! On the left, my old WordPress search: nothing for \"raincoat\". On the right, Viglet Turing finds my rain jackets.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:TVdfzNv0V5smYZgCnznc"
+  "task_id": "elevenlabs:8fOlCH0spKzmtWLvoWxV"
 }

@@ -28,6 +28,25 @@ $pages = json_decode( (string) ob_get_clean(), true );
 $pt = 'pt_BR' === get_locale() ? require __DIR__ . '/pt_BR.php' : array();
 $tr = static fn ( string $group, string $text ): string => $pt[ $group ][ $text ] ?? $text;
 
+// A Brazilian store sells in reais (D268): the catalog's dollar prices at about R$ 5.50 to the
+// dollar, rounded to the tens and ending in ,90 as a Brazilian shop prices. The store's currency,
+// country and number format follow, and the price ranges with them.
+$brazil = 'pt_BR' === get_locale();
+$money  = static fn ( float $usd ): float => $brazil ? round( $usd * 5.5, -1 ) - 0.1 : $usd;
+if ( $brazil ) {
+	update_option( 'woocommerce_currency', 'BRL' );
+	update_option( 'woocommerce_default_country', 'BR:SP' );
+	update_option( 'woocommerce_price_thousand_sep', '.' );
+	update_option( 'woocommerce_price_decimal_sep', ',' );
+	update_option( 'woocommerce_currency_pos', 'left_space' );
+} else {
+	update_option( 'woocommerce_currency', 'USD' );
+	update_option( 'woocommerce_default_country', 'US:OR' );
+	update_option( 'woocommerce_price_thousand_sep', ',' );
+	update_option( 'woocommerce_price_decimal_sep', '.' );
+	update_option( 'woocommerce_currency_pos', 'left' );
+}
+
 // Each product's and guide's picture, drawn here rather than downloaded (D218).
 require_once __DIR__ . '/images.php';
 
@@ -238,6 +257,27 @@ foreach ( $categories as $slug => $name ) {
 	}
 }
 
+// A shop's catalog grew over months, not on the day it was seeded (D264): each product and
+// guide is dated somewhere in the past eight months, the same day for the same item on every
+// seed, and changed some time after. A whole catalog dated today reads as a demo.
+$backdate = static function ( int $post_id, string $key ): void {
+	global $wpdb;
+	$days     = 7 + abs( crc32( $key ) ) % 240;
+	$created  = time() - $days * DAY_IN_SECONDS - abs( crc32( "{$key}:hour" ) ) % DAY_IN_SECONDS;
+	$modified = $created + abs( crc32( "{$key}:edit" ) ) % max( 1, $days - 1 ) * DAY_IN_SECONDS;
+	$wpdb->update(
+		$wpdb->posts,
+		array(
+			'post_date'         => wp_date( 'Y-m-d H:i:s', $created ),
+			'post_date_gmt'     => gmdate( 'Y-m-d H:i:s', $created ),
+			'post_modified'     => wp_date( 'Y-m-d H:i:s', $modified ),
+			'post_modified_gmt' => gmdate( 'Y-m-d H:i:s', $modified ),
+		),
+		array( 'ID' => $post_id )
+	);
+	clean_post_cache( $post_id );
+};
+
 // One variable product per design, its colours as variations (D245): a shop sells a jacket in
 // four colours, not four jackets, so search, compare and the kit show the design once.
 $count = 0;
@@ -273,6 +313,7 @@ foreach ( $models as $m => list( $category, $model, $price, $materials, $uses, $
 	}
 	$product->set_attributes( $attributes );
 	$saved = $product->save();
+	$backdate( $saved, $model );
 	foreach ( array( 'color' => $names, 'material' => $materials, 'use' => $uses, 'size' => $sizes ) as $slug => $values ) {
 		wp_set_object_terms( $saved, $values, "pa_{$slug}" );
 	}
@@ -291,11 +332,12 @@ foreach ( $models as $m => list( $category, $model, $price, $materials, $uses, $
 		$variation->set_parent_id( $saved );
 		$variation->set_sku( $colour_sku );
 		$variation->set_attributes( array( 'pa_color' => get_term( $term( 'pa_color', $names[ $c ] ), 'pa_color' )->slug ) );
-		$variation->set_regular_price( (string) $price );
+		$variation->set_regular_price( number_format( $money( $price ), 2, '.', '' ) );
 		// One colour in five on sale, a fifth off; one colour in eleven sold out.
-		$variation->set_sale_price( 0 === ( $m + $c ) % 5 ? number_format( $price * 0.8, 2, '.', '' ) : '' );
+		$variation->set_sale_price( 0 === ( $m + $c ) % 5 ? number_format( $money( $price * 0.8 ), 2, '.', '' ) : '' );
 		$variation->set_stock_status( 0 === $count % 11 ? 'outofstock' : 'instock' );
-		$variation->set_image_id( tarnfell_product_image( $m, $model, $category, $colour_en, "{$title}, " . mb_strtolower( $names[ $c ] ) ) );
+		// A photo shows one colour: a colour without a picture of its own shows the product's (D265).
+		$variation->set_image_id( tarnfell_photo( 'product', sanitize_title( $model ) ) ? 0 : tarnfell_product_image( $m, $model, $category, $colour_en, "{$title}, " . mb_strtolower( $names[ $c ] ) ) );
 		$variation->set_status( 'publish' );
 		$variation->save();
 	}
@@ -329,12 +371,12 @@ $mapping['product'] = array(
 			'field'       => 'price',
 			'type'        => 'FLOAT',
 			'facet'       => false,
-			'facet_label' => 'Price',
+			'facet_label' => $tr( 'labels', 'Price' ),
 			'range'       => true,
 			'ranges'      => array(
-				array( 'label' => '', 'from' => null, 'to' => 100 ),
-				array( 'label' => '', 'from' => 100, 'to' => 250 ),
-				array( 'label' => '', 'from' => 250, 'to' => null ),
+				array( 'label' => '', 'from' => null, 'to' => $brazil ? 500 : 100 ),
+				array( 'label' => '', 'from' => $brazil ? 500 : 100, 'to' => $brazil ? 1500 : 250 ),
+				array( 'label' => '', 'from' => $brazil ? 1500 : 250, 'to' => null ),
 			),
 		),
 		array(

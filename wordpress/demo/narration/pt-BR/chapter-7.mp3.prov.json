@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 49362,
+    "bytes": 135461,
     "path": "demo/narration/pt-BR/chapter-7.mp3",
-    "sha256": "a27394f6db6e3cac7b8cc25b969b3c3c850eef096ef527f56666b5aa32113f4a"
+    "sha256": "4113da5f95cc4f72edcc8e00f1d9212ead60f60ed4eb191219d37c91fe2a10f2"
   },
   "balance_after": null,
   "balance_before": null,
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00135,
+  "expected_credits": 0.00387,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 49362,
-    "sha256": "a27394f6db6e3cac7b8cc25b969b3c3c850eef096ef527f56666b5aa32113f4a"
+    "bytes": 135461,
+    "sha256": "4113da5f95cc4f72edcc8e00f1d9212ead60f60ed4eb191219d37c91fe2a10f2"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:19:43Z",
+  "produced_at": "2026-10-31T17:42:04Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Ela finaliza a compra, aqui em modo de teste.",
+  "prompt": "E a\u00ed eles finalizam a compra, igualzinho a qualquer loja WooCommerce. Fica tranquilo, isso \u00e9 uma demonstra\u00e7\u00e3o, ningu\u00e9m \u00e9 cobrado.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:ve4h85r4gc9bG0vPUpbd"
+  "task_id": "elevenlabs:GPSkg7hu8HADCRCOjBFb"
 }

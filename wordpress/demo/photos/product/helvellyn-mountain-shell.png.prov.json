@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6378686,
+    "path": "demo/photos/product/helvellyn-mountain-shell.png",
+    "sha256": "2326cd8a3f013e67f23e0adda32f0dd8387dbbd223d65ff4629f7b83c473b906"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"An overhead iPhone flat-lay photograph of a pale icy blue three-layer waterproof mountain shell laid out centered on a pale natural wooden tabletop in soft even daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A pale natural wooden tabletop fills the entire frame, viewed from directly overhead. Fine straight grain runs horizontally across the planks with faint knots and soft tonal variation between boards. Soft diffused daylight falls evenly from above with no harsh shadows, neutral cool-toned white balance, accurate color rendering throughout.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Pale icy blue three-layer waterproof mountain shell laid flat and centered on the table, front-facing, occupying roughly 70% of the frame. Matte Gore-Tex face with subtle sheen at the seams and slight pebble grain texture. Helmet-compatible hood with stiffened peak fanned open above the collar. Full-length center zipper running down the chest with small metal pulls catching faint highlights. Two chest pockets positioned high above where a harness would sit, two lower pockets above the hipbelt line. Pit zips visible under each armpit. Drawcord cinches at hem and cuffs. Crisp taped seams along shoulders and side panels. Sleeves arranged naturally with a slight outward curve.\"\n      }\n    ]\n  }\n}",
+    "seed": 699256721,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6378686,
+    "sha256": "2326cd8a3f013e67f23e0adda32f0dd8387dbbd223d65ff4629f7b83c473b906"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:18:07Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, sleeves and hood arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Helvellyn mountain shell, in pale icy blue. A three-layer waterproof shell for ridges in wind-driven rain, with a helmet-compatible hood. Weight 420 g (size M). Hydrostatic head 28,000 mm. Pit zips, a stiffened peak, pockets placed above a harness and a hipbelt. Colour: Slate, Ember, Glacier. Materials: Gore-Tex. Care: Wash at 30 \u00b0C with a technical cleaner, then tumble dry low to... Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:u8RK75PPQr-q4NUhx9a7Sg"
+}

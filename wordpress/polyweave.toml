@@ -4,7 +4,7 @@
 # under demo/narration/, so building the video spends nothing.
 
 [layers]
-on = ["sound"]
+on = ["sound", "picture"]
 
 [project]
 name = "viglet-dumont-wordpress"
@@ -12,11 +12,25 @@ name = "viglet-dumont-wordpress"
 [service.elevenlabs]
 base    = "https://api.elevenlabs.io"
 key_env = "ELEVENLABS_API_KEY"
-prices  = { "eleven_multilingual_v2" = { per = "character", rate = 0.00003 } }
+# A sound (the video's music bed) is about 20 credits a second: 30 s is ~600 credits,
+# about USD 0.10 on the Starter plan, held here at a conservative 0.20 a call.
+prices  = { "eleven_v3" = { per = "character", rate = 0.00003 }, "eleven_multilingual_v2" = { per = "character", rate = 0.00003 }, "eleven_text_to_sound_v2" = 0.20 }
 
 # The owner's ceiling for the narration (2026-10-31): the whole script is about 1,500
 # characters, a few cents.
 [budget.elevenlabs]
 amount  = 2.0
+unit    = "USD"
+expires = "2026-12-31"
+
+# The demo store's photos (D265): one per product and guide, bought by bin/demo-photos.mjs.
+[service.ideogram]
+base    = "https://api.ideogram.ai"
+key_env = "IDEOGRAM_API_KEY"
+prices  = { "4.0" = 0.06, "4.0:TURBO" = 0.03 }
+
+# The owner asked for them (2026-10-31): 68 pictures at 0.06 is about USD 4.
+[budget.ideogram]
+amount  = 6.0
 unit    = "USD"
 expires = "2026-12-31"

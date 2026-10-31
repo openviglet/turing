@@ -8,6 +8,10 @@
  *
  * Loaded by catalog.php, which calls tarnfell_product_image() and tarnfell_guide_image().
  *
+ * A photo bought by `npm run demo:photos` (D265) wins over a drawing: demo/photos/product/<model
+ * slug>.webp and demo/photos/guide/<guide slug>.webp, cropped to the drawing's frame. Where none
+ * was bought, the seed draws its own.
+ *
  * @package Viglet_Dumont
  */
 
@@ -428,7 +432,49 @@ function tarnfell_import_image( string $key, string $name, string $alt, callable
 }
 
 /**
+ * The photo bought for a product or a guide, if there is one.
+ *
+ * @param string $kind 'product' or 'guide'.
+ * @param string $slug The English model's slug, or the guide's.
+ */
+function tarnfell_photo( string $kind, string $slug ): string {
+	$file = dirname( __DIR__ ) . "/photos/{$kind}/{$slug}.webp";
+
+	return is_readable( $file ) ? $file : '';
+}
+
+/**
+ * Import a photo, cut to a frame from its centre and scaled to it, as WebP.
+ *
+ * @param string $photo  The photo.
+ * @param string $key    The key it is imported under.
+ * @param string $name   The file name, without extension.
+ * @param string $alt    The picture's alternative text.
+ * @param int    $width  The frame's width.
+ * @param int    $height The frame's height.
+ */
+function tarnfell_import_photo( string $photo, string $key, string $name, string $alt, int $width, int $height ): int {
+	return tarnfell_import_image(
+		$key,
+		$name,
+		$alt,
+		static function ( string $path ) use ( $photo, $width, $height ) {
+			$in    = imagecreatefromwebp( $photo );
+			$w     = imagesx( $in );
+			$h     = imagesy( $in );
+			$scale = max( $width / $w, $height / $h );
+			$cw    = (int) round( $width / $scale );
+			$ch    = (int) round( $height / $scale );
+			$out   = imagecreatetruecolor( $width, $height );
+			imagecopyresampled( $out, $in, 0, 0, (int) ( ( $w - $cw ) / 2 ), (int) ( ( $h - $ch ) / 2 ), $width, $height, $cw, $ch );
+			imagewebp( $out, $path, 82 );
+		}
+	);
+}
+
+/**
  * A product's picture: its model's kind, in its colour, on its model's backdrop. 800 px square.
+ * Its photo instead, in every colour, when one was bought.
  *
  * @param int    $model_index The model's place in the catalog, from 0.
  * @param string $model       The model's English name.
@@ -441,6 +487,11 @@ function tarnfell_product_image( int $model_index, string $model, string $catego
 	$hex      = TARNFELL_COLOURS[ $colour ] ?? '#5B6670';
 	$backdrop = TARNFELL_BACKDROPS[ $model_index % count( TARNFELL_BACKDROPS ) ];
 	$name     = sanitize_title( "{$model}-{$colour}" );
+	$photo    = tarnfell_photo( 'product', sanitize_title( $model ) );
+	if ( $photo ) {
+		$slug = sanitize_title( $model );
+		return tarnfell_import_photo( $photo, 'photo:' . md5_file( $photo ) . ":product:{$slug}", $slug, $alt, 800, 800 );
+	}
 
 	return tarnfell_import_image(
 		'v' . TARNFELL_IMAGES_VERSION . ":product:{$name}",
@@ -462,6 +513,11 @@ function tarnfell_product_image( int $model_index, string $model, string $catego
  * @param string $alt   What the picture shows, in the site's language.
  */
 function tarnfell_guide_image( int $index, string $slug, string $alt ): int {
+	$photo = tarnfell_photo( 'guide', $slug );
+	if ( $photo ) {
+		return tarnfell_import_photo( $photo, 'photo:' . md5_file( $photo ) . ":guide:{$slug}", $slug, $alt, 800, 450 );
+	}
+
 	return tarnfell_import_image(
 		'v' . TARNFELL_IMAGES_VERSION . ":guide:{$slug}",
 		$slug,

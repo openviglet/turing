@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 122505,
+    "path": "demo/narration/en/chapter-6-result.mp3",
+    "sha256": "c907ae65b4b22ccc62b8f2c6ff35caa137988fb28ab1a2d3f952aa67b7e593e9"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00396,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 122505,
+    "sha256": "c907ae65b4b22ccc62b8f2c6ff35caa137988fb28ab1a2d3f952aa67b7e593e9"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:35:53Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Related gear shows up right below, and when they ask a question there, Viglet Turing answers about that exact product, and cites it.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:WtSLWZYsGJdO2LqOovhl"
+}

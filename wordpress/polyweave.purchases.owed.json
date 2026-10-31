@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "artefact": "demo/photos/product/coniston-merino-base-layer.png",
+    "at": "2026-10-31T18:16:22Z",
+    "credits": 0.06,
+    "expected_credits": 0.06,
+    "measured": false,
+    "outputs": 1,
+    "service": "ideogram",
+    "task_id": "ideogram:sent:d0ce47bbe9cf"
+  }
+]

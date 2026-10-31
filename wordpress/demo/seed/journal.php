@@ -125,6 +125,7 @@ foreach ( $journal as $n => list( $slug, $title, $category, $paragraphs ) ) {
 		'post_category' => array( $category_id ),
 	);
 	$ids[ $slug ] = $found ? (int) wp_update_post( array( 'ID' => $found->ID ) + $args ) : (int) wp_insert_post( $args );
+	$backdate( $ids[ $slug ], $slug );
 	// A fell landscape of its own (D218, images.php).
 	$image = tarnfell_guide_image( $n, $slug, $title );
 	if ( $image ) {

@@ -68,7 +68,7 @@ function tarnfell_render_compare(): string {
 					<?php echo tarnfell_native_results( $query ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped where built. ?>
 				</section>
 				<section class="tarnfell-compare__turing" aria-labelledby="tarnfell-turing">
-					<h2 id="tarnfell-turing"><?php esc_html_e( 'Turing search', 'tarnfell' ); ?></h2>
+					<h2 id="tarnfell-turing"><?php esc_html_e( 'Viglet Turing search', 'tarnfell' ); ?></h2>
 					<?php
 					// The plugin's search block with its results alone; it reads `q` like this page.
 					echo do_blocks( '<!-- wp:viglet-dumont/search {"perPage":5,"showFacets":false} --><!-- wp:viglet-dumont/search-results /--><!-- /wp:viglet-dumont/search -->' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- the block escapes its own output.

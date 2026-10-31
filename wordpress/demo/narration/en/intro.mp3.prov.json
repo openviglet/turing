@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 234100,
+    "path": "demo/narration/en/intro.mp3",
+    "sha256": "e6eb05ffc44b4fb4364f5f026eb86fa835d67d1630dacaa6ab90caf68101fa34"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.0066,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 234100,
+    "sha256": "e6eb05ffc44b4fb4364f5f026eb86fa835d67d1630dacaa6ab90caf68101fa34"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:24:59Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[excited] Hi! I'm Ana, and Tarnfell is my outdoor shop, built on WordPress. A few weeks ago I switched its search to Viglet Turing, and honestly? [laughs] It changed everything. Let me show you what my customers see now!",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:QY9r2KQAGDcjDwHTuqNZ"
+}

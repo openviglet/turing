@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6414277,
+    "path": "demo/photos/product/borrowdale-everyday-waterproof.png",
+    "sha256": "5b0e316da96745cc00a587ccc9872d1ac63bddc141a17c56ffb38c1b422ca2cc"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a top-down flat-lay product photo of a navy blue waterproof jacket arranged centered on a pale natural oak tabletop in soft even daylight, with the hood at the top and sleeves spread symmetrically.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Pale natural oak tabletop filling the entire frame, viewed directly from above. Visible wood grain runs horizontally across the planks with light knots and subtle tonal variation between boards. Soft diffused cool-toned daylight from a north-facing window falls evenly across the surface with no harsh highlights. A soft diffused shadow sits beneath the jacket edges, grounding it on the wood.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Navy blue waterproof jacket laid flat and centered, occupying roughly 70% of the frame as the unambiguous focal subject. Hood arranged naturally at the top with drawcord ends trailing slightly to one side. Long sleeves spread symmetrically outward with cuffs relaxed. Hem falls straight across the lower third at hip length. Two-way front zipper runs vertically down the center with both sliders visible, slight sheen along the teeth. Soft inner lining peeks faintly at the collar opening. Matte polyester shell with fine weave texture, gentle drape folds where sleeves meet the body. No labels, tags, or logos visible.\"\n      }\n    ]\n  }\n}",
+    "seed": 773895878,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6414277,
+    "sha256": "5b0e316da96745cc00a587ccc9872d1ac63bddc141a17c56ffb38c1b422ca2cc"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:19:22Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, sleeves and hood arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Borrowdale everyday waterproof, in navy blue. A waterproof jacket for town and low-level walks, long enough to cover the hips. Weight 380 g (size M). Hydrostatic head 10,000 mm. A soft lining against the skin, a two-way zip and an inside pocket for a phone. Colour: Navy, Moss, Sand, Black. Materials: Polyester. Care: Wash at 30 \u00b0C with a technical cleaner,... Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:8wauBE8mSA-T0fHo2WrUhA"
+}

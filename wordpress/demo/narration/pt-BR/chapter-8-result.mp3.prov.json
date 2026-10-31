@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 341515,
+    "path": "demo/narration/pt-BR/chapter-8-result.mp3",
+    "sha256": "abf0f3dbd16d6e8c92dc17cfc7179f8fcea1fe95054a7394a932e010943ce450"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.01014,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 341515,
+    "sha256": "abf0f3dbd16d6e8c92dc17cfc7179f8fcea1fe95054a7394a932e010943ce450"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:42:52Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "E aqui est\u00e1 a minha arma secreta. Cada busca dos meus clientes aparece nos meus insights, inclusive as que n\u00e3o acharam nada. Quando eu vejo uma, transformo num sin\u00f4nimo com um clique, e a pr\u00f3xima pessoa encontra o que queria. [happy] Ent\u00e3o a minha loja fica melhor a cada dia, e eu vou aprendendo o que os meus clientes querem de verdade.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:J7GdCET03Jfbg0jlEZjD"
+}

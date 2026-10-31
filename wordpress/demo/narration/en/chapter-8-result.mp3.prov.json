@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 181437,
+    "path": "demo/narration/en/chapter-8-result.mp3",
+    "sha256": "de0b49961da8fc0d1c3fa34a18733b5123acf9a8e487eea498bba8c88c5bed16"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00567,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00567,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 181437,
+    "sha256": "de0b49961da8fc0d1c3fa34a18733b5123acf9a8e487eea498bba8c88c5bed16"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:32:24Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "And every search my customers make shows up in my insights. One that found nothing becomes a synonym in a single click, so the next person finds it. That's how my shop keeps getting better!",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:RkJpG1t4r06xJYoJSkWW"
+}

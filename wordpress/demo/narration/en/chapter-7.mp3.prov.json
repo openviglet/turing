@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 33061,
+    "bytes": 91994,
     "path": "demo/narration/en/chapter-7.mp3",
-    "sha256": "b719c85a795108805842d3c7ef7f482cddc958e4d7c55c35579e3435b74d4492"
+    "sha256": "e19016c97d02466310c5958fd5101e63e06d5ebc1d0978c35351d03d2bb5040c"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00258,
   "details": {
     "cue": null,
     "delivery": {},
@@ -19,25 +19,25 @@
   "elapsed_s": null,
   "engine": {
     "commercial": true,
-    "model": "eleven_multilingual_v2",
+    "model": "eleven_v3",
     "name": "elevenlabs",
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00102,
+  "expected_credits": 0.00258,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 33061,
-    "sha256": "b719c85a795108805842d3c7ef7f482cddc958e4d7c55c35579e3435b74d4492"
+    "bytes": 91994,
+    "sha256": "e19016c97d02466310c5958fd5101e63e06d5ebc1d0978c35351d03d2bb5040c"
   },
   "params": {},
-  "produced_at": "2026-10-31T16:19:32Z",
+  "produced_at": "2026-10-31T17:31:11Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "She checks out, here in test mode.",
+  "prompt": "Then they check out, like in any WooCommerce shop. It's a demo, so nothing is charged.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:ZkDpm3K1OAK5EpLlUouP"
+  "task_id": "elevenlabs:1Yqbp9XTcUF5eJUUvoh0"
 }

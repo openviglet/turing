@@ -152,6 +152,8 @@ if /i not "%DEMO_LOCALE%"=="en_US" %WPD% language plugin install woocommerce %DE
 %WPD% eval-file /demo/seed/catalog.php || exit /b 1
 rem The seed makes products indexable after saving them, so nothing queued them: send them now.
 %WPD% dumont reindex || exit /b 1
+rem The store's search history, once the catalog it finds is indexed (D269).
+%WPD% eval-file /demo/seed/searches.php || exit /b 1
 
 echo.
 echo Demo storefront: %DEMOURL%/   (admin / admin), SN site %SN_DEMO_SITE%

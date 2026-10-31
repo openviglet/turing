@@ -30,15 +30,26 @@ import {
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import { current, lines, narration, takeFile } from './narration-takes.mjs';
 
 const root = join( dirname( fileURLToPath( import.meta.url ) ), '..' );
 const recorded = join( root, 'tests', 'e2e', 'artifacts', 'story' );
-const narration = join( root, 'demo', 'narration' );
 // Each narrated language, as ffmpeg names it on the audio track.
-const voices = { en: 'eng', 'pt-BR': 'por' };
+// The video's language: its cards, and the only narration it carries when one is named.
+const videoLanguage = process.argv.includes( '--language' )
+	? process.argv[ process.argv.indexOf( '--language' ) + 1 ]
+	: 'en';
+const voices = Object.fromEntries(
+	Object.entries( { en: 'eng', 'pt-BR': 'por' } ).filter(
+		( [ code ] ) =>
+			! process.argv.includes( '--language' ) || code === videoLanguage
+	)
+);
 // The narration starts this long after its card shows, and ends this long before the next.
 const voiceLead = 0.4;
 const voiceTail = 0.5;
+// The music bed under the voice: low enough that every word stays clear.
+const musicVolume = 0.12;
 const out = join( root, 'tests', 'e2e', 'artifacts', 'video' );
 const size = { width: 1920, height: 1080 };
 const cardSeconds = 2.5;
@@ -169,20 +180,42 @@ const browser = await chromium.launch( {
 	channel: process.env.E2E_CHANNEL || 'msedge',
 } );
 const page = await browser.newPage( { viewport: size } );
+// The cards speak the video's language (`--language pt-BR`), as the store it shows does: a
+// Portuguese video of Recanto da Serra with English cards reads as two demos stitched together.
+const words =
+	'pt-BR' === videoLanguage
+		? {
+				brand: 'Viglet Dumont para WordPress',
+				title: 'Uma cliente, uma visita',
+				line: 'De uma necessidade vaga a um carrinho pago, com a busca e a IA do Viglet Turing.',
+				chapter: 'Capítulo',
+				store: 'Recanto da Serra, a loja de demonstração',
+				name: ( number, name ) => portuguese[ number ] ?? name,
+				tryIt: 'Experimente',
+				tryLine:
+					'Abra a loja de demonstração ou instale o plugin a partir da versão publicada.',
+			}
+		: {
+				brand: 'Viglet Dumont for WordPress',
+				title: 'One shopper, one visit',
+				line: 'From a vague need to a paid-for cart, on Viglet Turing search and AI.',
+				chapter: 'Chapter',
+				store: 'Tarnfell, the demo store',
+				name: ( number, name ) => name,
+				tryIt: 'Try it',
+				tryLine:
+					'Open the demo store, or install the plugin from the release.',
+			};
 const cards = [
-	card(
-		'Viglet Dumont for WordPress',
-		'One shopper, one visit',
-		'From a vague need to a paid-for cart, on Turing search and AI.'
-	),
+	card( words.brand, words.title, words.line ),
 	...parts.map( ( { number, name } ) =>
-		card( `Chapter ${ number }`, name, 'Tarnfell, the demo store' )
+		card(
+			`${ words.chapter } ${ number }`,
+			words.name( number, name ),
+			words.store
+		)
 	),
-	card(
-		'Try it',
-		'openviglet.github.io/dumont',
-		'Open the demo store, or install the plugin from the release.'
-	),
+	card( words.tryIt, 'openviglet.github.io/dumont', words.tryLine ),
 ];
 for ( const [ i, html ] of cards.entries() ) {
 	await page.setContent( html );
@@ -203,13 +236,17 @@ const encode = [
 	'20',
 	'-an',
 ];
-const still = ( i ) => {
-	const file = join( out, 'parts', `card-${ i }.mp4` );
+const still = ( i, length = cardSeconds ) => {
+	const file = join(
+		out,
+		'parts',
+		length === cardSeconds ? `card-${ i }.mp4` : `card-${ i }-held.mp4`
+	);
 	ffmpeg( [
 		'-loop',
 		'1',
 		'-t',
-		String( cardSeconds ),
+		length.toFixed( 3 ),
 		'-i',
 		join( out, 'parts', `card-${ i }.png` ),
 		...encode,
@@ -231,21 +268,25 @@ const cut = ( name, input ) => {
 };
 
 /**
- * A clip whose last frame holds a while longer, encoded like the rest.
+ * One frame of a clip, held still for a while: the screen Ana talks about (D261).
  *
- * @param {string} clip  The clip.
- * @param {number} extra How many seconds to hold its last frame.
- * @param {string} name  The held clip's file name.
+ * @param {string} clip   The clip.
+ * @param {number} at     Where the frame is, in seconds into the clip.
+ * @param {number} length How long it holds.
+ * @param {string} name   The held still's file name, without a suffix.
  */
-const held = ( clip, extra, name ) => {
-	const file = join( out, 'parts', name );
-	const [ flag, filters, ...rest ] = encode;
+const freeze = ( clip, at, length, name ) => {
+	const frame = join( out, 'parts', `${ name }.png` );
+	ffmpeg( [ '-ss', at.toFixed( 3 ), '-i', clip, '-frames:v', '1', frame ] );
+	const file = join( out, 'parts', `${ name }.mp4` );
 	ffmpeg( [
+		'-loop',
+		'1',
+		'-t',
+		length.toFixed( 3 ),
 		'-i',
-		clip,
-		flag,
-		`tpad=stop_mode=clone:stop_duration=${ extra.toFixed( 3 ) },${ filters }`,
-		...rest,
+		frame,
+		...encode,
 		file,
 	] );
 	return file;
@@ -349,22 +390,38 @@ const finish = ( joined, cues, name, tracks = [] ) => {
 	return file;
 };
 
+const texts = Object.fromEntries( lines() );
+const music = join( narration, 'music.mp3' );
+
 /**
- * A chapter's narration takes, by language: the files that exist, with their lengths.
+ * A line's takes, by language: only one that says the script's current line (an older take
+ * stays out of the video), with its length.
  *
- * @param {number} n The chapter's number.
+ * @param {string} name The line, as narration-takes.mjs names it.
  */
-const takes = ( n ) =>
+const takes = ( name ) =>
 	Object.keys( voices ).flatMap( ( language ) => {
-		const file = join( narration, language, `chapter-${ n }.mp3` );
-		return existsSync( file )
+		const file = takeFile( language, name );
+		return current( file, texts[ name ]?.[ language ] )
 			? [ { language, file, length: seconds( file ) } ]
 			: [];
 	} );
 
 /**
- * One language's narration as a single track the video's length: each take placed where its
- * chapter's card shows.
+ * How long a line needs the screen: its longest take, with a breath before and after.
+ *
+ * @param {Array<{length: number}>} lineTakes The line's takes.
+ */
+const needs = ( lineTakes ) =>
+	lineTakes.length
+		? Math.max( ...lineTakes.map( ( take ) => take.length ) ) +
+			voiceLead +
+			voiceTail
+		: 0;
+
+/**
+ * One language's narration as a single track the video's length, each take placed where its
+ * screen shows, over the music bed when there is one.
  *
  * @param {string}                            language Which language.
  * @param {Array<{at: number, file: string}>} placed   Its takes and when each starts.
@@ -372,17 +429,33 @@ const takes = ( n ) =>
  */
 const voiceTrack = ( language, placed, total ) => {
 	const file = join( out, 'parts', `voice.${ language }.m4a` );
-	const delays = placed.map(
+	const inputs = placed.flatMap( ( { file: take } ) => [ '-i', take ] );
+	const graph = placed.map(
 		( { at }, i ) =>
 			`[${ i }:a]adelay=${ Math.round( at * 1000 ) }:all=1[d${ i }]`
 	);
-	const mix = `${ placed.map( ( _, i ) => `[d${ i }]` ).join( '' ) }amix=inputs=${
-		placed.length
-	}:normalize=0,apad=whole_dur=${ total.toFixed( 3 ) }[a]`;
+	let labels = placed.map( ( _, i ) => `[d${ i }]` ).join( '' );
+	let count = placed.length;
+	if ( existsSync( music ) ) {
+		// Quiet under the voice, faded in and out, looped for as long as the video runs.
+		const fadeOut = Math.max( 0, total - 3 ).toFixed( 3 );
+		inputs.push( '-stream_loop', '-1', '-i', music );
+		graph.push(
+			`[${ placed.length }:a]atrim=0:${ total.toFixed( 3 ) },` +
+				`volume=${ musicVolume },afade=t=in:d=2,` +
+				`afade=t=out:st=${ fadeOut }:d=3[m]`
+		);
+		labels += '[m]';
+		count++;
+	}
+	graph.push(
+		`${ labels }amix=inputs=${ count }:normalize=0,` +
+			`apad=whole_dur=${ total.toFixed( 3 ) }[a]`
+	);
 	ffmpeg( [
-		...placed.flatMap( ( { file: take } ) => [ '-i', take ] ),
+		...inputs,
 		'-filter_complex',
-		[ ...delays, mix ].join( ';' ),
+		graph.join( ';' ),
 		'-map',
 		'[a]',
 		'-t',
@@ -396,48 +469,6 @@ const voiceTrack = ( language, placed, total ) => {
 	return file;
 };
 
-// The video: intro, then each chapter's card and clip, then the outro.
-const segments = [ still( 0 ) ];
-const cues = [];
-const spoken = Object.fromEntries(
-	Object.keys( voices ).map( ( language ) => [ language, [] ] )
-);
-let clock = cardSeconds;
-for ( const [ i, { start, end } ] of chapters.entries() ) {
-	segments.push( still( i + 1 ) );
-	const cardAt = clock;
-	clock += cardSeconds;
-	const clip = cut( `chapter-${ i + 1 }.mp4`, [
-		'-ss',
-		start.toFixed( 2 ),
-		'-to',
-		end.toFixed( 2 ),
-		'-i',
-		webm,
-	] );
-	const chapterTakes = takes( i + 1 );
-	// The longest take sets how long the chapter must last; the clip's last frame holds.
-	const needed =
-		Math.max( 0, ...chapterTakes.map( ( take ) => take.length ) ) +
-		voiceLead +
-		voiceTail -
-		cardSeconds;
-	const hold = needed - seconds( clip );
-	const shown =
-		hold > 0.05 ? held( clip, hold, `chapter-${ i + 1 }-held.mp4` ) : clip;
-	segments.push( shown );
-	for ( const take of chapterTakes ) {
-		spoken[ take.language ].push( {
-			at: cardAt + voiceLead,
-			file: take.file,
-		} );
-	}
-	const length = seconds( shown );
-	cues.push( { from: clock, to: clock + length, chapter: i } );
-	clock += length;
-}
-segments.push( still( cards.length - 1 ) );
-
 /**
  * Where a chapter's best moment is in its clip: the highlight the spec marked, or just before
  * its end.
@@ -448,6 +479,88 @@ const best = ( i ) => {
 	const { start, end, highlight } = chapters[ i ];
 	return Math.max( 0, ( highlight ?? end - 0.8 ) - start );
 };
+
+// The video: the opening card, then each chapter's card and clip, then the closing card. A
+// card holds for as long as Ana's line over it runs, and her line about a chapter's result is
+// spoken over that moment held still, so she always talks about what is on screen (D261).
+const spoken = Object.fromEntries(
+	Object.keys( voices ).map( ( language ) => [ language, [] ] )
+);
+const segments = [];
+const cues = [];
+let clock = 0;
+
+/**
+ * Place a line's takes from a moment of the video on.
+ *
+ * @param {number}                                  at        When its screen starts.
+ * @param {Array<{language: string, file: string}>} lineTakes The line's takes.
+ */
+const say = ( at, lineTakes ) => {
+	for ( const take of lineTakes ) {
+		spoken[ take.language ].push( { at: at + voiceLead, file: take.file } );
+	}
+};
+
+/**
+ * A card, held for as long as its line runs.
+ *
+ * @param {number} i    The card's index.
+ * @param {string} name The line spoken over it.
+ */
+const titleCard = ( i, name ) => {
+	const lineTakes = takes( name );
+	const length = Math.max( cardSeconds, needs( lineTakes ) );
+	segments.push( still( i, length ) );
+	say( clock, lineTakes );
+	clock += length;
+};
+
+titleCard( 0, 'intro' );
+for ( const [ i, { start, end } ] of chapters.entries() ) {
+	titleCard( i + 1, `chapter-${ i + 1 }` );
+	const clip = cut( `chapter-${ i + 1 }.mp4`, [
+		'-ss',
+		start.toFixed( 2 ),
+		'-to',
+		end.toFixed( 2 ),
+		'-i',
+		webm,
+	] );
+	const from = clock;
+	const result = takes( `chapter-${ i + 1 }-result` );
+	if ( result.length ) {
+		// Up to the result, the result held while she talks about it, then the rest.
+		const at = Math.min( best( i ), seconds( clip ) - 0.1 );
+		const before = cut( `chapter-${ i + 1 }-a.mp4`, [
+			'-t',
+			at.toFixed( 3 ),
+			'-i',
+			clip,
+		] );
+		segments.push( before );
+		clock += seconds( before );
+		const length = needs( result );
+		segments.push(
+			freeze( clip, at, length, `chapter-${ i + 1 }-result` )
+		);
+		say( clock, result );
+		clock += length;
+		const after = cut( `chapter-${ i + 1 }-b.mp4`, [
+			'-ss',
+			at.toFixed( 3 ),
+			'-i',
+			clip,
+		] );
+		segments.push( after );
+		clock += seconds( after );
+	} else {
+		segments.push( clip );
+		clock += seconds( clip );
+	}
+	cues.push( { from, to: clock, chapter: i } );
+}
+titleCard( cards.length - 1, 'outro' );
 
 // One still per chapter, its result on screen, for the site's WordPress page (D197): taken
 // from the recording, so the page shows what the story ran, and copied into the site.
@@ -472,7 +585,10 @@ for ( const i of chapters.keys() ) {
 		'80',
 		file,
 	] );
-	copyFileSync( file, join( site, `chapter-${ i + 1 }.webp` ) );
+	// The site's WordPress page is English: another language's recording keeps its stills here.
+	if ( 'en' === videoLanguage ) {
+		copyFileSync( file, join( site, `chapter-${ i + 1 }.webp` ) );
+	}
 }
 
 const joined = concat( segments, 'joined.mp4' );

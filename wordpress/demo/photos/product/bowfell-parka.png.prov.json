@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5944385,
+    "path": "demo/photos/product/bowfell-parka.png",
+    "sha256": "a6ba2b01e8ba3203ffe30d55d7cfedba5de02547279f920726ee39dd372aee72"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, an overhead flat-lay of a navy Bowfell long down parka arranged centered on a pale oak tabletop in soft even daylight, hood at the top and sleeves spread symmetrically outward.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Pale natural oak tabletop filling the entire frame, fine wood grain running diagonally beneath the garment. Soft diffused north-facing window daylight with neutral cool-toned white balance, no harsh highlights. A gentle even shadow falls under the parka's edges where it rests flat against the wood.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Navy blue Bowfell long down parka laid flat and centered, viewed top-down, occupying roughly 80% of the frame height as the unambiguous focal subject. Deep saturated indigo matte technical shell with subtle sheen along the baffle ridges. Hood arranged naturally at the top with gentle folds, drawcord ends trailing slightly to one side. Front zipper closed down the centerline. Horizontal quilted baffles run across the body showing puffy down fill with subtle tonal variation between chambers. Two side pockets visible with subtle stitching. Sleeves spread symmetrically outward, cuffs relaxed. Hem falls straight across near the lower edge of the frame at thigh length.\"\n      }\n    ]\n  }\n}",
+    "seed": 1141781467,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5944385,
+    "sha256": "a6ba2b01e8ba3203ffe30d55d7cfedba5de02547279f920726ee39dd372aee72"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:21:17Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, sleeves and hood arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Bowfell parka, in navy blue. A long down parka for winter camps and still nights, down to the thighs. Weight 890 g (size M). 300 g of 750-fill down. Warm to about -20 \u00b0C at rest. Colour: Black, Navy. Materials: Down, Polyester. Care: Wash at 30 \u00b0C with a down or synthetic wash and tumble dry low with two clean... Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:gegHsAQ-TXGca6yKx049nA"
+}
