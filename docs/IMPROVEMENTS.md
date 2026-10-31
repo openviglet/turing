@@ -2183,6 +2183,31 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
+### CXV.8 An imported site keeps the agent its bundle names (T1192)
+
+**Where it showed.** On turing-demo, `POST
+/api/sn/turing-docs/persona/persona-enterprise-buyer/content-fit` answers 404 "Persona
+not found in this site's catalog". The demo seed
+(`cloud/docker/demo-seed-src/turing-docs/export.json`) carries the three personas on
+`agent-turing-demo`, but its site has no `turSNSiteGenAi`, so the site resolves the
+global Default AI Agent. Startup adopts an imported agent as the default only when no
+default is set yet, so a boot that provisions the generic agent before the seed import
+leaves the personas on an agent no site uses.
+
+**Why it costs.** Which personas a site offers then depends on boot order and on a
+global setting, not on the bundle. Naming the agent in the bundle does not help today:
+`TurImportExchange` imports the site before the agents (line 228), and `TurSNSiteImport`
+resolves `turSNSiteGenAi.turAIAgent` with `findById(...).ifPresent`, so the reference to
+an agent in the same bundle is dropped without a word.
+
+**What to build.**
+- Import the bundle's agents and personas before its sites, so a site's agent reference resolves within one bundle.
+- An agent reference that still resolves to nothing is logged as a warning and reported in the import summary, never dropped silently.
+- An IT imports one bundle with a site naming its own agent and asserts `GET /api/sn/{site}/personas` lists that agent's audience personas while the global default is a different agent.
+
+**Then, in the cloud repository.** The demo seed's site names `agent-turing-demo`, so
+the demo stops depending on the global default.
+
 ## CXLIV Filters on the similar and duplicate searches (T1132)
 
 **Where it happened.** Dumont's WordPress plugin added a Related content block (D177) on
@@ -2355,6 +2380,42 @@ costly to keep safe, a short recorded walk-through on the site is the fallback; 
 choice is the owner's.
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+### CLXII.2 Kit stages ranked by fit to the plan (T1190)
+
+Met recording Dumont's WordPress demo video (D246), kit API (T1159) on the demo store.
+
+**What happens.** The plan "Two days crossing the mountains in July, first time" returns
+a Shelter stage of Blencathra mountain tent ($549), Langdale family tent ($399.20),
+Haystacks one-person tent ($289), and a Sleeping stage of Bowfell **winter** down bag
+($429), Fairfield synthetic summer bag ($71.20), Skiddaw three-season down bag ($259). A
+store ticks each stage's first product, so a first-timer's July kit is the dearest tent
+and a winter bag: $1,455. The plan named a season and a level; neither ordered the
+alternatives.
+
+**Should.** Within a stage, products are ranked by fit to what the plan states — season
+against a product's season/temperature attributes, "first time" against price and weight
+— and the stage's reason says why the first one leads. A product the plan contradicts (a
+winter bag in July) is listed after one it does not, or not at all.
+
+**Done when.** That plan leads with a summer or three-season bag and a tent sized for
+one or two, covered by a kit eval case.
+
+### CLXII.3 Kit reasons quote only shopper-facing fields (T1191)
+
+Met recording Dumont's WordPress demo video (D246), kit API (T1159).
+
+**What happens.** Every staged product's reason reads like "Category: Tents; Site:
+localhost" — the `site` field Dumont indexes to tell sites apart is quoted to the
+shopper as if it described the product. On video it reads as a debug line.
+
+**Should.** A reason quotes only fields that describe the product to a shopper: never
+the source bookkeeping (`site`, `site_key`, `source_apps`, ids, dates of indexing).
+Which fields qualify follows the SN site's field settings (facet fields a shopper sees),
+so a connector's own fields stay out without each connector asking.
+
+**Done when.** The demo kit's reasons name category, colour, material or use and never
+the site.
 
 ## CLXIII Release pipeline reliability
 

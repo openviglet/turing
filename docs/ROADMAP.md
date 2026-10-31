@@ -8,6 +8,8 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
+- 📋 **T1192** (deps: —) **An import bundle whose site names its agent loses that link, and the site falls back to the default agent** — The demo's personas then 404 on content-fit whenever the global default is not the bundle's agent. → §CXV.8
+
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
@@ -20,6 +22,9 @@
 - 📋 **T1189** (deps: —) **C:/Program Files/Git/answer ignores _setlocale, so a call spelled like /search gets an apology from another collection** — A caller using the search spelling gets no sources and no error; first filed as a fresh-store bug, which a correct locale disproved. → §CLXIII.2
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+- 📋 **T1190** (deps: —) **A kit stage leads with the dearest product and a winter bag for a July first-timer's plan** — A store ticks each stage's first product, so the kit costs 1,455 dollars and contradicts the season the plan named. → §CLXII.2
+- 📋 **T1191** (deps: —) **A kit product's reason quotes Site: localhost, a bookkeeping field, to the shopper** — Every staged product shows a debug-looking line in a shopper-facing kit. → §CLXII.3
 
 ## Done when — T1133
 
