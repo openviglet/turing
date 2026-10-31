@@ -59,6 +59,15 @@ class Viglet_Dumont_Indexer {
 	}
 
 	/**
+	 * The indexed post this page is about (D242): the singular post shown, when it is one the
+	 * site indexes, so a question asked on it can name its document to Turing. Otherwise null.
+	 */
+	public function subject(): ?WP_Post {
+		$post = is_singular() ? get_post() : null;
+		return $post instanceof WP_Post && $this->should_index( $post ) ? $post : null;
+	}
+
+	/**
 	 * Check if a post should be indexed based on settings.
 	 *
 	 * @param WP_Post $post The candidate post.

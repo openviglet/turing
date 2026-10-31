@@ -20,12 +20,9 @@ $viglet_dumont_kit     = (bool) ( $attributes['kit'] ?? true );
 
 // On a product's page (or any indexed post's), the question is about it (D242): Turing pins
 // its document first, and the box says what "this" is.
-$viglet_dumont_subject = is_singular() ? get_post() : null;
 $viglet_dumont_indexer = new Viglet_Dumont_Indexer();
-if ( ! $viglet_dumont_subject instanceof WP_Post || ! $viglet_dumont_indexer->should_index( $viglet_dumont_subject ) ) {
-	$viglet_dumont_subject = null;
-}
-$viglet_dumont_ask = $viglet_dumont_subject
+$viglet_dumont_subject = $viglet_dumont_indexer->subject();
+$viglet_dumont_ask     = $viglet_dumont_subject
 	/* translators: %s: the name of the product or post the page shows. */
 	? sprintf( __( 'Ask about %s', 'viglet-dumont' ), get_the_title( $viglet_dumont_subject ) )
 	: __( 'What are you looking for?', 'viglet-dumont' );

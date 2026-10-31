@@ -16,17 +16,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 $viglet_dumont_id          = wp_unique_id( 'viglet-dumont-assistant-' );
 $viglet_dumont_heading     = '' !== (string) ( $attributes['heading'] ?? '' ) ? (string) $attributes['heading'] : __( 'Ask this site', 'viglet-dumont' );
 $viglet_dumont_suggestions = ( new Viglet_Dumont_Assistant() )->suggestions( (string) ( $attributes['suggestions'] ?? '' ) );
+// On a product's page (or any indexed post's), the question is about it (D242): Turing reads
+// its document first. The conversation lasts across pages, so each turn names its own page.
+$viglet_dumont_indexer = new Viglet_Dumont_Indexer();
+$viglet_dumont_subject = $viglet_dumont_indexer->subject();
 
 wp_interactivity_state(
 	'viglet-dumont/assistant',
 	array(
-		'available' => false,
-		'question'  => '',
-		'messages'  => array(),
-		'streaming' => false,
-		'status'    => '',
-		'thinking'  => __( 'Reading this site’s posts…', 'viglet-dumont' ),
-		'failed'    => __( 'The assistant could not answer right now. Try again in a moment.', 'viglet-dumont' ),
+		'available'  => false,
+		'question'   => '',
+		'messages'   => array(),
+		'streaming'  => false,
+		'status'     => '',
+		'thinking'   => __( 'Reading this site’s posts…', 'viglet-dumont' ),
+		'failed'     => __( 'The assistant could not answer right now. Try again in a moment.', 'viglet-dumont' ),
+		'documentId' => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
 	)
 );
 ?>

@@ -24,6 +24,16 @@ let chat = null;
 const rated = new Set();
 
 /**
+ * What a turn asked on this page carries (D242): the indexed post it shows, which Turing reads
+ * first (T1178). Per turn, since the conversation follows the visitor from page to page.
+ *
+ * @return {Object} The chat controller's send overrides.
+ */
+function turn() {
+	return state.documentId ? { documentId: state.documentId } : {};
+}
+
+/**
  * A page of this site, or nothing: the assistant may take the visitor to a post, never away.
  *
  * @param {string} url Where the agent asked to go.
@@ -165,10 +175,10 @@ const { state } = store( 'viglet-dumont/assistant', {
 				return;
 			}
 			state.question = '';
-			void chat.send( question );
+			void chat.send( question, turn() );
 		},
 		suggest() {
-			void chat.send( getContext().suggestion.text );
+			void chat.send( getContext().suggestion.text, turn() );
 		},
 		restart() {
 			chat.reset();
