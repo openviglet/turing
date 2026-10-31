@@ -2410,3 +2410,30 @@ counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
 What keeps a release from failing on its own tests for reasons the code under release
 did not cause.
+
+## CLXIV populateMetrics on the structured search (T1200)
+
+**Where it happened.** Dumont's WordPress search block (Dumont D267). A shopper's
+sentence is searched as typed (`POST /api/sn/{site}/search/query`, mode `STANDARD`),
+then, once nl-filters reads it, again with the filters applied and the filter words
+taken out. Both are logged, and the typed one usually found nothing, so the shop's
+insights list a failed search for a shopper who found the product.
+
+**What the API offers.** The legacy `POST /api/sn/{site}/search` takes
+`{"populateMetrics": false}` (the plugin's server-rendered first page uses it, D209).
+The structured request has no such field: `TurSNSearchRequestAdapter.toPostParams` sets
+`populateMetrics` from the mode alone (`mode != INSTANT`). T1145 asked for an opt-out
+and was retired because instant mode already stays out of the log (T1120). But instant
+mode also rewrites the last term as a prefix, so the provisional search would match
+differently from the one the shopper is shown, which is the wrong trade for a search
+that only waits for its own refinement.
+
+**Workaround.** None. Dumont D267 waits on this rather than sending the sentence as
+instant.
+
+**What Turing should do.** Accept `populateMetrics` (default true) on
+`TurSNSearchRequest`, honoured by `toPostParams` beside the mode (instant stays out
+whatever it says), and pass it through `@viglet/turing-sdk`'s `searchRequest`.
+
+**Done when.** A structured `STANDARD` search with `populateMetrics: false` returns the
+same results as without it and writes no `TurSNSiteMetricAccess` row, with a test.
