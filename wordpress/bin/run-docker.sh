@@ -132,7 +132,8 @@ if [ -z "$demo_key" ]; then
 	echo "Turing was not provisioned for $SN_DEMO_SITE; the demo has no API key." >&2
 	exit 1
 fi
-wpd eval "\$s = get_option( 'viglet_dumont_settings', array() ); \$s['api_key'] = '$demo_key'; update_option( 'viglet_dumont_settings', \$s );"
+# The key, and the language it indexes and searches in (D272), as the site's own settings.
+wpd eval "\$s = get_option( 'viglet_dumont_settings', array() ); \$s['api_key'] = '$demo_key'; \$s['locale'] = '$DEMO_LOCALE'; update_option( 'viglet_dumont_settings', \$s );"
 
 wpd theme activate tarnfell
 # The site speaks DEMO_LOCALE, and the seed writes the catalog in it (D217).

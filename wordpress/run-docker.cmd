@@ -138,7 +138,8 @@ if "%KEY%"=="" (
     powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%DEMO_LOCALE%" -NoToken
 )
 if "%KEY%"=="" ( echo Turing was not provisioned for %SN_DEMO_SITE%; the demo has no API key. & exit /b 1 )
-%WPD% eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
+rem The key, and the language it indexes and searches in (D272), as the site's own settings.
+%WPD% eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; $s['locale'] = '%DEMO_LOCALE%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
 
 %WPD% theme activate tarnfell || exit /b 1
 rem The site speaks DEMO_LOCALE, and the seed writes the catalog in it (D217).

@@ -226,8 +226,10 @@ services:
       <<: *wp-env
       WORDPRESS_DB_HOST: db-demo
       VIGLET_DUMONT_TURING_SITE: ${SN_DEMO_SITE:-Demo}
-      # The demo's language (D217): en_US, or pt_BR for the catalog in Portuguese.
-      VIGLET_DUMONT_TURING_LOCALE: ${DEMO_LOCALE:-en_US}
+      # The demo's language (D217) is its plugin's own setting, which run-docker demo writes
+      # from DEMO_LOCALE (D272). Read from here, a `docker compose run cli-demo` started
+      # without DEMO_LOCALE indexed into en_US while the site searched pt_BR. Empty is unset.
+      VIGLET_DUMONT_TURING_LOCALE: ""
     volumes:
       - wp-demo:/var/www/html
       - ./src:/var/www/html/wp-content/plugins/viglet-dumont
