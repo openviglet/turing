@@ -977,6 +977,7 @@
 - **T1178** — The SN chat also takes documentId, its chunks leading the context and sources with the rest kept as alternatives, and the vanilla SDK gains postCopilot and carries documentId in both calls.
 - **T1179** — Search and click metrics group a term by dropping diacritics only, never letters, and every report and the latest searches show the spelling visitors typed most.
 - **T1185** — Solr boosts the query phrase on a synonym-free title_phrase copy the four configsets now carry, when the core has it; an IT that fails without the boost proves the guide ranks first.
+- **T1187** — createChatController takes documentId, and a turn's SendOverrides.documentId replaces it, forwarded to the site chat like filters.
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

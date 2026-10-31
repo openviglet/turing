@@ -186,6 +186,11 @@ export interface SendOverrides {
    * {@link ChatControllerOptions.filters} for it (site mode only).
    */
   readonly filters?: Readonly<Record<string, readonly string[]>>;
+  /**
+   * T1187 — pins the document this turn is about, replacing
+   * {@link ChatControllerOptions.documentId} for it (site mode only).
+   */
+  readonly documentId?: string;
 }
 
 export interface ChatControllerOptions {
@@ -232,6 +237,12 @@ export interface ChatControllerOptions {
    * (site mode), ahead of the answer, so a page can offer "see these results".
    */
   readonly onFilters?: (filters: TurNLFilters) => void;
+  /**
+   * T1187 — the indexed id of the document every site-mode turn is about (the
+   * product on the page): its content leads the answer and its sources (T1178),
+   * never a filter. A turn's {@link SendOverrides.documentId} replaces it.
+   */
+  readonly documentId?: string;
   /** Opt into agent mode. */
   readonly agent?: ChatControllerAgent;
   /**
@@ -730,6 +741,7 @@ export function createChatController(
       activeConversationId,
       effectiveLlmInstanceId,
       overrides?.filters ?? options.filters,
+      overrides?.documentId ?? options.documentId,
     );
   }
 
@@ -746,6 +758,7 @@ export function createChatController(
     activeConversationId: string,
     effectiveLlmInstanceId: string | undefined,
     turnFilters: Readonly<Record<string, readonly string[]>> | undefined = options.filters,
+    turnDocumentId: string | undefined = options.documentId,
   ): Promise<void> {
     try {
       // Pre-commit an empty assistant bubble so a UI can render a typing
@@ -807,6 +820,7 @@ export function createChatController(
           forcedVariant,
           personaId: ragPersonaId,
           filters: turnFilters,
+          documentId: turnDocumentId,
           onFilters: options.onFilters,
           onToken,
           onToolCall,

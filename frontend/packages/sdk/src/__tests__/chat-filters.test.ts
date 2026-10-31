@@ -115,3 +115,34 @@ describe("createChatController — T1086 filters", () => {
     expect(bodyOf(1)).toMatchObject({ filters: { uf: ["RJ"] }, includeFilters: true });
   });
 });
+
+describe("createChatController — T1187 documentId", () => {
+  it("pins its document on every turn, and a turn's own documentId replaces it", async () => {
+    const fetchRaw = vi
+      .fn()
+      .mockResolvedValueOnce(sse([{ content: "a" }]))
+      .mockResolvedValueOnce(sse([{ content: "b" }]));
+    const get = vi.fn().mockResolvedValue({ enabled: true, reason: "NONE" });
+    const client = { fetchRaw, get } as unknown as TuringClient;
+
+    const chat = createChatController(client, { site: "shop", conversationId: "conv1", documentId: "jacket-42" });
+    await chat.send("will it keep me dry?");
+    await chat.send("and this one?", { documentId: "boot-7" });
+
+    const bodyOf = (call: number) =>
+      JSON.parse(((fetchRaw.mock.calls[call] as unknown[])[1] as RequestInit).body as string);
+    expect(bodyOf(0).documentId).toBe("jacket-42");
+    expect(bodyOf(1).documentId).toBe("boot-7");
+  });
+
+  it("sends no documentId when none is pinned", async () => {
+    const fetchRaw = vi.fn().mockResolvedValueOnce(sse([{ content: "a" }]));
+    const get = vi.fn().mockResolvedValue({ enabled: true, reason: "NONE" });
+    const client = { fetchRaw, get } as unknown as TuringClient;
+
+    const chat = createChatController(client, { site: "shop", conversationId: "conv1" });
+    await chat.send("hello");
+
+    expect(sentBody(fetchRaw).documentId).toBeUndefined();
+  });
+});

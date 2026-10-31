@@ -31,6 +31,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CJ — Releases ship from the repository the README names
 
+## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2351,3 +2353,5 @@ existing demo host with a guest role that can browse but not save, reset on a sc
 with the LLM calls capped as the playground's already are. If a live console is too
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
+
+## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)

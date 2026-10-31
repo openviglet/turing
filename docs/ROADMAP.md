@@ -16,6 +16,8 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
+## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**
