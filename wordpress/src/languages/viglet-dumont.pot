@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T22:46:16+00:00\n"
+"POT-Creation-Date: 2026-10-31T22:52:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-dumont\n"
@@ -529,7 +529,7 @@ msgstr ""
 
 #. translators: %s: the product's name.
 #: src/blocks/copilot/render.php:39
-#: src/blocks/search/render.php:92
+#: src/blocks/search/render.php:93
 #, php-format
 msgid "Add to cart: %s"
 msgstr ""
@@ -537,7 +537,7 @@ msgstr ""
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:42
 #: src/blocks/related/render.php:114
-#: src/blocks/search/render.php:96
+#: src/blocks/search/render.php:97
 #, php-format
 msgid "Compare %s"
 msgstr ""
@@ -545,18 +545,18 @@ msgstr ""
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:44
 #: src/blocks/related/render.php:53
-#: src/blocks/search/render.php:94
+#: src/blocks/search/render.php:95
 #, php-format
 msgid "Compare %d products"
 msgstr ""
 
 #: src/blocks/copilot/render.php:45
-#: src/blocks/search/render.php:97
+#: src/blocks/search/render.php:98
 msgid "Added to your cart."
 msgstr ""
 
 #: src/blocks/copilot/render.php:46
-#: src/blocks/search/render.php:98
+#: src/blocks/search/render.php:99
 msgid "It could not be added to the cart."
 msgstr ""
 
@@ -709,21 +709,25 @@ msgstr ""
 msgid "Clear recent searches"
 msgstr ""
 
-#: src/blocks/search/parts/correction.php:21
+#: src/blocks/search/parts/correction.php:22
 msgid "Showing results for"
 msgstr ""
 
-#: src/blocks/search/parts/correction.php:23
+#: src/blocks/search/parts/correction.php:24
 msgid "Search instead for"
 msgstr ""
 
-#: src/blocks/search/parts/correction.php:27
+#: src/blocks/search/parts/correction.php:28
+msgid "Showing close matches: nothing matched every word you searched for."
+msgstr ""
+
+#: src/blocks/search/parts/correction.php:31
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr ""
 
 #: src/blocks/search/parts/facets.php:22
-#: src/blocks/search/render.php:68
+#: src/blocks/search/render.php:69
 msgid "Filters"
 msgstr ""
 
@@ -777,8 +781,8 @@ msgid "Popular:"
 msgstr ""
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:62
-#: src/blocks/search/render.php:64
+#: src/blocks/search/render.php:63
+#: src/blocks/search/render.php:65
 #, php-format
 msgid "%d suggestion. Use the up and down arrows to choose it."
 msgid_plural "%d suggestions. Use the up and down arrows to choose one."
@@ -786,40 +790,40 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:70
+#: src/blocks/search/render.php:71
 #, php-format
 msgid "Filters (%d)"
 msgstr ""
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:72
+#: src/blocks/search/render.php:73
 #, php-format
 msgid "Show %d more"
 msgstr ""
 
-#: src/blocks/search/render.php:73
+#: src/blocks/search/render.php:74
 msgid "Show fewer"
 msgstr ""
 
 #. translators: %s: the filters read from the visitor's sentence, comma-separated.
-#: src/blocks/search/render.php:89
+#: src/blocks/search/render.php:90
 #, php-format
 msgid "Understood: %s"
 msgstr ""
 
-#: src/blocks/search/render.php:101
+#: src/blocks/search/render.php:102
 #: assets/admin/mapping.js:169
 #: assets/admin/mapping.js:323
 msgid "Type"
 msgstr ""
 
-#: src/blocks/search/render.php:102
+#: src/blocks/search/render.php:103
 msgid "Published"
 msgstr ""
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:112
-#: src/blocks/search/render.php:114
+#: src/blocks/search/render.php:113
+#: src/blocks/search/render.php:115
 #: src/includes/class-viglet-dumont-native-search.php:240
 #: src/includes/class-viglet-dumont-native-search.php:242
 #: src/includes/class-viglet-dumont-native-search.php:410
@@ -830,17 +834,17 @@ msgid_plural "%d results"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/blocks/search/render.php:116
+#: src/blocks/search/render.php:117
 #: src/includes/class-viglet-dumont-native-search.php:244
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
-#: src/blocks/search/render.php:118
+#: src/blocks/search/render.php:119
 msgid "Reading your search…"
 msgstr ""
 
-#: src/blocks/search/render.php:121
+#: src/blocks/search/render.php:122
 #: src/includes/class-viglet-dumont-native-search.php:245
 msgid "Search is unavailable right now."
 msgstr ""

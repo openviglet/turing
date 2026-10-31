@@ -50,6 +50,7 @@ $viglet_dumont_state = array(
 	'corrected'       => '',
 	'showingFor'      => '',
 	'insteadOf'       => '',
+	'closeMatches'    => false,
 	'error'           => '',
 	'open'            => false,
 	'active'          => -1,

@@ -310,13 +310,13 @@ msgstr "Visão geral do conteúdo"
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#: src/blocks/search/render.php:116
+#: src/blocks/search/render.php:117
 #: src/includes/class-viglet-dumont-native-search.php:244
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:121
+#: src/blocks/search/render.php:122
 #: src/includes/class-viglet-dumont-native-search.php:245
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
@@ -325,7 +325,7 @@ msgstr "A busca está indisponível no momento."
 msgid "Search…"
 msgstr "Buscar…"
 
-#: src/blocks/search/parts/correction.php:27
+#: src/blocks/search/parts/correction.php:31
 #: src/templates/search-results.php:78
 msgid "Did you mean:"
 msgstr "Você quis dizer:"
@@ -344,7 +344,7 @@ msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
 #: src/blocks/search/parts/facets.php:22
-#: src/blocks/search/render.php:68
+#: src/blocks/search/render.php:69
 msgid "Filters"
 msgstr "Filtros"
 
@@ -928,7 +928,7 @@ msgstr "Origem"
 msgid "Turing field"
 msgstr "Campo no Turing"
 
-#: src/blocks/search/render.php:101
+#: src/blocks/search/render.php:102
 #: assets/admin/mapping.js:169
 #: assets/admin/mapping.js:323
 msgid "Type"
@@ -1188,18 +1188,18 @@ msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:70
+#: src/blocks/search/render.php:71
 #, php-format
 msgid "Filters (%d)"
 msgstr "Filtros (%d)"
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:72
+#: src/blocks/search/render.php:73
 #, php-format
 msgid "Show %d more"
 msgstr "Mostrar mais %d"
 
-#: src/blocks/search/render.php:73
+#: src/blocks/search/render.php:74
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
@@ -1806,8 +1806,8 @@ msgid "similar"
 msgstr "semelhante"
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:62
-#: src/blocks/search/render.php:64
+#: src/blocks/search/render.php:63
+#: src/blocks/search/render.php:65
 #, php-format
 msgid "%d suggestion. Use the up and down arrows to choose it."
 msgid_plural "%d suggestions. Use the up and down arrows to choose one."
@@ -1815,8 +1815,8 @@ msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
 msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:112
-#: src/blocks/search/render.php:114
+#: src/blocks/search/render.php:113
+#: src/blocks/search/render.php:115
 #: src/includes/class-viglet-dumont-native-search.php:240
 #: src/includes/class-viglet-dumont-native-search.php:242
 #: src/includes/class-viglet-dumont-native-search.php:410
@@ -1968,7 +1968,7 @@ msgstr "Filtrar pelo que você pediu:"
 msgid "Apply this filter"
 msgstr "Aplicar este filtro"
 
-#: src/blocks/search/render.php:102
+#: src/blocks/search/render.php:103
 msgid "Published"
 msgstr "Publicado"
 
@@ -2061,18 +2061,18 @@ msgstr "Adicionar ao carrinho"
 
 #. translators: %s: the product's name.
 #: src/blocks/copilot/render.php:39
-#: src/blocks/search/render.php:92
+#: src/blocks/search/render.php:93
 #, php-format
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
 #: src/blocks/copilot/render.php:45
-#: src/blocks/search/render.php:97
+#: src/blocks/search/render.php:98
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
 #: src/blocks/copilot/render.php:46
-#: src/blocks/search/render.php:98
+#: src/blocks/search/render.php:99
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
 
@@ -2372,7 +2372,7 @@ msgstr "Comparar"
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:44
 #: src/blocks/related/render.php:53
-#: src/blocks/search/render.php:94
+#: src/blocks/search/render.php:95
 #, php-format
 msgid "Compare %d products"
 msgstr "Comparar %d produtos"
@@ -2380,7 +2380,7 @@ msgstr "Comparar %d produtos"
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:42
 #: src/blocks/related/render.php:114
-#: src/blocks/search/render.php:96
+#: src/blocks/search/render.php:97
 #, php-format
 msgid "Compare %s"
 msgstr "Comparar %s"
@@ -2754,7 +2754,7 @@ msgid "Undo"
 msgstr "Desfazer"
 
 #. translators: %s: the filters read from the visitor's sentence, comma-separated.
-#: src/blocks/search/render.php:89
+#: src/blocks/search/render.php:90
 #, php-format
 msgid "Understood: %s"
 msgstr "Entendido: %s"
@@ -2807,15 +2807,15 @@ msgstr "O site SN %s responde a buscas sem chave."
 msgid "Ask about %s"
 msgstr "Pergunte sobre %s"
 
-#: src/blocks/search/render.php:118
+#: src/blocks/search/render.php:119
 msgid "Reading your search…"
 msgstr "Lendo sua busca…"
 
-#: src/blocks/search/parts/correction.php:21
+#: src/blocks/search/parts/correction.php:22
 msgid "Showing results for"
 msgstr "Mostrando resultados para"
 
-#: src/blocks/search/parts/correction.php:23
+#: src/blocks/search/parts/correction.php:24
 msgid "Search instead for"
 msgstr "Buscar por"
 
@@ -2830,3 +2830,7 @@ msgstr "O Turing não respondeu a tempo para %d posts. Eles foram enviados e o T
 #, php-format
 msgid "%1$d sent, %2$d not confirmed, %3$d failed."
 msgstr "%1$d enviados, %2$d não confirmados, %3$d falharam."
+
+#: src/blocks/search/parts/correction.php:28
+msgid "Showing close matches: nothing matched every word you searched for."
+msgstr "Mostrando resultados próximos: nada correspondeu a todas as palavras buscadas."

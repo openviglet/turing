@@ -190,6 +190,10 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		get hasCorrection() {
 			return '' !== state.corrected;
 		},
+		// A sentence whose every word found nothing, searched again for any of them (D258).
+		get hasCloseMatches() {
+			return state.closeMatches && state.hasResults;
+		},
 		// A misspelling that found nothing, searched again as Turing corrected it (D259).
 		get hasShowingFor() {
 			return '' !== state.showingFor;
@@ -660,6 +664,8 @@ async function suggestFilters( query ) {
 	} finally {
 		if ( reading === text ) {
 			state.readingSentence = false;
+			// Read as no filters: the words as typed, which found nothing, are the search (D258).
+			relaxSentence();
 		}
 	}
 }
@@ -1082,10 +1088,11 @@ function focusInput() {
 
 /**
  * Forget a correction: the "Did you mean" offer, and the notice of a corrected search unless
- * this is that search itself.
+ * this is that search itself. A new search is no longer close matches either (D258).
  */
 function clearCorrection() {
 	state.corrected = '';
+	state.closeMatches = false;
 	if ( ! correcting ) {
 		state.showingFor = '';
 		state.insteadOf = '';
@@ -1584,4 +1591,44 @@ function sync( s ) {
 	) {
 		void suggestCorrection( lastQuery );
 	}
+	relaxSentence();
+}
+
+// Words a sentence carries that name nothing wanted, in the languages the plugin ships: searched
+// as any-of, each would match half the catalog (D258).
+const fillerWords = new Set(
+	(
+		'a an and at by for from in into of on or the to with ' +
+		'a as com da das de do dos e em na nas no nos o os ou para pra por um uma'
+	).split( ' ' )
+);
+
+/**
+ * A sentence whose words, every one required, find nothing is searched again for any of them,
+ * best match first, with the filters read from it kept (D258). "waterproof hiking boots for wet
+ * hills" under $150 finds nothing as typed while the answer above it recommends the boot that
+ * fits; an empty page beside that answer tells the shopper the product does not exist. Said
+ * with a notice, never silently, and once per search: close matches that find nothing stay
+ * empty. A query that is not a sentence goes to a correction instead (D259).
+ */
+function relaxSentence() {
+	const request = search.getState().request || {};
+	const words = String( request.q || '' )
+		.split( /\s+/ )
+		.filter( ( word ) => word && ! fillerWords.has( word.toLowerCase() ) );
+	if (
+		state.closeMatches ||
+		'success' !== state.status ||
+		state.total > 0 ||
+		// The filters read from the sentence search again first; an empty search before them
+		// is not the one to relax.
+		state.readingSentence ||
+		'instant' === request.mode ||
+		words.length < 2 ||
+		! readsAsSentence( lastQuery )
+	) {
+		return;
+	}
+	state.closeMatches = true;
+	send( { q: words.join( ' OR ' ), page: 1 } );
 }
