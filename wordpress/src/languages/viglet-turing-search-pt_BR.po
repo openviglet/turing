@@ -19,7 +19,7 @@ msgid "Integrate WordPress with Viglet Turing search engine for powerful content
 msgstr "Integre o WordPress ao mecanismo de busca Viglet Turing para indexar e buscar o seu conteúdo."
 
 #: src/admin/views/settings-page.php:40
-#: assets/admin/health.js:189
+#: assets/admin/health.js:195
 msgid "Connection"
 msgstr "Conexão"
 
@@ -33,18 +33,18 @@ msgstr "Indexação"
 #: src/blocks/search/parts/box.php:48
 #: src/includes/class-viglet-dumont-native-search.php:233
 #: src/includes/class-viglet-dumont-post-state.php:99
-#: assets/admin/insights.js:159
-#: assets/admin/tuning.js:382
+#: assets/admin/insights.js:165
+#: assets/admin/tuning.js:396
 #: src/admin/js/editor-panel.js:293
-#: src/admin/js/search-block-editor.js:108
+#: src/admin/js/search-block-editor.js:111
 msgid "Search"
 msgstr "Busca"
 
 #: src/admin/views/settings-page.php:52
-#: assets/admin/insights.js:169
-#: assets/admin/mapping.js:339
-#: assets/admin/tuning.js:262
-#: assets/admin/tuning.js:389
+#: assets/admin/insights.js:175
+#: assets/admin/mapping.js:348
+#: assets/admin/tuning.js:273
+#: assets/admin/tuning.js:406
 msgid "Actions"
 msgstr "Ações"
 
@@ -378,39 +378,39 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:267
+#: src/includes/class-viglet-dumont-admin.php:270
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:268
+#: src/includes/class-viglet-dumont-admin.php:271
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:269
+#: src/includes/class-viglet-dumont-admin.php:272
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:270
+#: src/includes/class-viglet-dumont-admin.php:273
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:271
+#: src/includes/class-viglet-dumont-admin.php:274
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:272
+#: src/includes/class-viglet-dumont-admin.php:275
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:273
+#: src/includes/class-viglet-dumont-admin.php:276
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:274
+#: src/includes/class-viglet-dumont-admin.php:277
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:292
+#: src/includes/class-viglet-dumont-admin.php:295
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -719,7 +719,7 @@ msgstr "Excluído da busca"
 
 #: src/includes/class-viglet-dumont-post-state.php:72
 #: src/includes/class-viglet-dumont-post-state.php:80
-#: assets/admin/health.js:399
+#: assets/admin/health.js:414
 #: src/admin/js/editor-panel.js:284
 msgid "Failed"
 msgstr "Falhou"
@@ -796,111 +796,111 @@ msgid "never"
 msgstr "nunca"
 
 #. translators: 1: the SN site, 2: the site key.
-#: assets/admin/health.js:201
+#: assets/admin/health.js:207
 #, js-format
 msgid "SN site %1$s, site key %2$s."
 msgstr "Site SN %1$s, chave do site %2$s."
 
 #. translators: %s: why Turing refused the fields.
-#: assets/admin/health.js:213
+#: assets/admin/health.js:219
 #, js-format
 msgid "The mapped fields are not provisioned: %s"
 msgstr "Os campos mapeados não estão no Turing: %s"
 
-#: assets/admin/health.js:226
+#: assets/admin/health.js:232
 msgid "Documents"
 msgstr "Documentos"
 
-#: assets/admin/health.js:233
+#: assets/admin/health.js:239
 msgid "Post type"
 msgstr "Tipo de post"
 
-#: assets/admin/health.js:236
+#: assets/admin/health.js:245
 msgid "Published in WordPress"
 msgstr "Publicados no WordPress"
 
-#: assets/admin/health.js:242
+#: assets/admin/health.js:251
 msgid "Indexed in Turing"
 msgstr "Indexados no Turing"
 
-#: assets/admin/health.js:257
+#: assets/admin/health.js:266
 msgid "unknown"
 msgstr "desconhecido"
 
-#: assets/admin/health.js:267
+#: assets/admin/health.js:276
 msgid "(differs: run a reindex)"
 msgstr "(diferente: rode uma reindexação)"
 
-#: assets/admin/health.js:284
+#: assets/admin/health.js:293
 msgid "Queue"
 msgstr "Fila"
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:290
+#: assets/admin/health.js:299
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr "%1$d aguardando, %2$d desistiram de tentar."
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:302
+#: assets/admin/health.js:311
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr "Última execução %1$s: %2$d enviados, %3$d falharam."
 
-#: assets/admin/health.js:310
+#: assets/admin/health.js:319
 msgid "The queue has not sent anything yet."
 msgstr "A fila ainda não enviou nada."
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:324
+#: assets/admin/health.js:333
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr "%d tarefas com falha voltaram para a fila."
 
-#: assets/admin/health.js:333
+#: assets/admin/health.js:342
 msgid "Retry failed"
 msgstr "Tentar de novo as que falharam"
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:346
+#: assets/admin/health.js:355
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr "%1$d enviados, %2$d falharam."
 
-#: assets/admin/health.js:356
+#: assets/admin/health.js:365
 msgid "Send queue now"
 msgstr "Enviar a fila agora"
 
-#: assets/admin/health.js:366
+#: assets/admin/health.js:375
 msgid "Last events"
 msgstr "Últimos eventos"
 
-#: assets/admin/health.js:374
+#: assets/admin/health.js:383
 msgid "When"
 msgstr "Quando"
 
-#: assets/admin/health.js:377
+#: assets/admin/health.js:386
 msgid "What"
 msgstr "O quê"
 
-#: assets/admin/health.js:380
+#: assets/admin/health.js:389
 msgid "Post"
 msgstr "Post"
 
-#: assets/admin/health.js:383
+#: assets/admin/health.js:392
 msgid "Result"
 msgstr "Resultado"
 
-#: assets/admin/health.js:398
+#: assets/admin/health.js:410
 msgid "OK"
 msgstr "OK"
 
-#: assets/admin/health.js:413
+#: assets/admin/health.js:428
 msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
 #: assets/admin/mapping.js:32
-#: assets/admin/mapping.js:335
+#: assets/admin/mapping.js:341
 msgid "In Turing"
 msgstr "No Turing"
 
@@ -913,28 +913,28 @@ msgid "Conflict"
 msgstr "Conflito"
 
 #: assets/admin/mapping.js:150
-#: assets/admin/mapping.js:317
+#: assets/admin/mapping.js:320
 msgid "Source"
 msgstr "Origem"
 
 #: assets/admin/mapping.js:160
-#: assets/admin/mapping.js:320
+#: assets/admin/mapping.js:323
 msgid "Turing field"
 msgstr "Campo no Turing"
 
 #: src/blocks/search/render.php:102
 #: assets/admin/mapping.js:169
-#: assets/admin/mapping.js:323
+#: assets/admin/mapping.js:329
 msgid "Type"
 msgstr "Tipo"
 
 #: assets/admin/mapping.js:181
-#: assets/admin/mapping.js:326
+#: assets/admin/mapping.js:332
 msgid "Multiple"
 msgstr "Múltiplo"
 
 #: assets/admin/mapping.js:189
-#: assets/admin/mapping.js:329
+#: assets/admin/mapping.js:335
 msgid "Facet"
 msgstr "Faceta"
 
@@ -942,57 +942,57 @@ msgstr "Faceta"
 msgid "Facet label"
 msgstr "Rótulo da faceta"
 
-#: assets/admin/mapping.js:222
+#: assets/admin/mapping.js:225
 msgid "Search weight"
 msgstr "Peso na busca"
 
-#: assets/admin/mapping.js:252
+#: assets/admin/mapping.js:255
 msgid "Remove field"
 msgstr "Remover campo"
 
-#: assets/admin/mapping.js:254
+#: assets/admin/mapping.js:257
 #: assets/admin/tuning.js:51
 msgid "Remove"
 msgstr "Remover"
 
-#: assets/admin/mapping.js:294
+#: assets/admin/mapping.js:297
 msgid "Leave this type out of search"
 msgstr "Deixar este tipo fora da busca"
 
-#: assets/admin/mapping.js:307
+#: assets/admin/mapping.js:310
 msgid "Only the standard fields are sent for this type."
 msgstr "Este tipo envia apenas os campos padrão."
 
 #: src/includes/class-viglet-dumont-compare.php:71
-#: assets/admin/mapping.js:332
+#: assets/admin/mapping.js:338
 msgid "Weight"
 msgstr "Peso"
 
-#: assets/admin/mapping.js:378
+#: assets/admin/mapping.js:390
 msgid "Add field"
 msgstr "Adicionar campo"
 
-#: assets/admin/mapping.js:381
+#: assets/admin/mapping.js:393
 msgid "Preview document"
 msgstr "Pré-visualizar documento"
 
 #. translators: %s: the post's title.
-#: assets/admin/mapping.js:394
+#: assets/admin/mapping.js:406
 #, js-format
 msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
 msgstr "O que \"%s\" envia, como está salvo (alterações não salvas não aparecem):"
 
-#: assets/admin/mapping.js:481
+#: assets/admin/mapping.js:493
 msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them."
 msgstr "Todo tipo de post sempre envia título, texto, URL, datas, autor, categorias e tags. Adicione as taxonomias e os campos personalizados que devem virar campos próprios, com tipo, e marque como faceta os que servem de filtro. Salvar envia os campos ao Turing; depois, rode uma reindexação para que os posts existentes os tenham."
 
 #. translators: %s: why Turing could not say where each field stands.
-#: assets/admin/mapping.js:495
+#: assets/admin/mapping.js:507
 #, js-format
 msgid "Turing did not say where the fields stand: %s"
 msgstr "O Turing não informou a situação dos campos: %s"
 
-#: assets/admin/mapping.js:539
+#: assets/admin/mapping.js:551
 msgid "Save and send to Turing"
 msgstr "Salvar e enviar ao Turing"
 
@@ -1080,15 +1080,15 @@ msgstr "2. Teste"
 msgid "Create the SN site %s"
 msgstr "Criar o site SN %s"
 
-#: assets/admin/setup.js:272
+#: assets/admin/setup.js:273
 msgid "3. First index"
 msgstr "3. Primeira indexação"
 
-#: assets/admin/setup.js:276
+#: assets/admin/setup.js:278
 msgid "Sends every published post of the indexed types now. New and edited posts are sent on their own after that."
 msgstr "Envia agora todos os posts publicados dos tipos indexados. Depois disso, posts novos e editados são enviados sozinhos."
 
-#: assets/admin/setup.js:287
+#: assets/admin/setup.js:289
 msgid "Index everything now"
 msgstr "Indexar tudo agora"
 
@@ -1112,16 +1112,16 @@ msgstr "Vale quando o post for salvo."
 msgid "Reindex now"
 msgstr "Reindexar agora"
 
-#: src/admin/js/copilot-block-editor.js:44
-#: src/admin/js/search-block-editor.js:110
+#: src/admin/js/copilot-block-editor.js:47
+#: src/admin/js/search-block-editor.js:113
 msgid "Placeholder"
 msgstr "Texto de exemplo"
 
-#: src/admin/js/search-block-editor.js:116
+#: src/admin/js/search-block-editor.js:119
 msgid "Show filters (facets)"
 msgstr "Mostrar filtros (facetas)"
 
-#: src/admin/js/search-block-editor.js:266
+#: src/admin/js/search-block-editor.js:281
 msgid "Turing search"
 msgstr "Busca Turing"
 
@@ -1217,11 +1217,11 @@ msgstr "Mais antigos"
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: src/admin/js/search-block-editor.js:122
+#: src/admin/js/search-block-editor.js:128
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 
-#: src/admin/js/search-block-editor.js:242
+#: src/admin/js/search-block-editor.js:257
 msgid "Results per page"
 msgstr "Resultados por página"
 
@@ -1274,51 +1274,51 @@ msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
-#: src/admin/js/search-block-editor.js:183
+#: src/admin/js/search-block-editor.js:189
 msgid "Where the filters sit"
 msgstr "Onde ficam os filtros"
 
-#: src/admin/js/search-block-editor.js:187
+#: src/admin/js/search-block-editor.js:196
 msgid "Left"
 msgstr "À esquerda"
 
-#: src/admin/js/search-block-editor.js:191
+#: src/admin/js/search-block-editor.js:200
 msgid "Right"
 msgstr "À direita"
 
-#: src/admin/js/search-block-editor.js:195
+#: src/admin/js/search-block-editor.js:204
 msgid "Above the results"
 msgstr "Acima dos resultados"
 
-#: src/admin/js/search-block-editor.js:206
+#: src/admin/js/search-block-editor.js:215
 msgid "Results as"
 msgstr "Resultados em"
 
-#: src/admin/js/related-block-editor.js:96
-#: src/admin/js/search-block-editor.js:210
+#: src/admin/js/related-block-editor.js:108
+#: src/admin/js/search-block-editor.js:219
 msgid "A list"
 msgstr "Lista"
 
-#: src/admin/js/related-block-editor.js:92
-#: src/admin/js/search-block-editor.js:214
+#: src/admin/js/related-block-editor.js:104
+#: src/admin/js/search-block-editor.js:223
 msgid "A grid"
 msgstr "Grade"
 
-#: src/admin/js/related-block-editor.js:105
-#: src/admin/js/search-block-editor.js:224
+#: src/admin/js/related-block-editor.js:117
+#: src/admin/js/search-block-editor.js:233
 msgid "Show the image"
 msgstr "Mostrar a imagem"
 
-#: src/admin/js/search-block-editor.js:226
+#: src/admin/js/search-block-editor.js:237
 msgid "Show the type"
 msgstr "Mostrar o tipo"
 
-#: src/admin/js/related-block-editor.js:107
-#: src/admin/js/search-block-editor.js:227
+#: src/admin/js/related-block-editor.js:121
+#: src/admin/js/search-block-editor.js:241
 msgid "Show the date"
 msgstr "Mostrar a data"
 
-#: src/admin/js/search-block-editor.js:230
+#: src/admin/js/search-block-editor.js:245
 msgid "Show the snippet"
 msgstr "Mostrar o trecho"
 
@@ -1409,12 +1409,12 @@ msgstr "Ligado"
 msgid "Off"
 msgstr "Desligado"
 
-#: assets/admin/health.js:124
+#: assets/admin/health.js:127
 #: src/admin/js/editor-panel.js:236
 msgid "Check again"
 msgstr "Verificar de novo"
 
-#: assets/admin/health.js:125
+#: assets/admin/health.js:128
 msgid "Check AI features"
 msgstr "Verificar recursos de IA"
 
@@ -1446,11 +1446,11 @@ msgstr "Não"
 msgid "Thank you."
 msgstr "Obrigado."
 
-#: src/admin/js/search-block-editor.js:130
+#: src/admin/js/search-block-editor.js:136
 msgid "Answer questions from this site’s content"
 msgstr "Responder perguntas com o conteúdo deste site"
 
-#: src/admin/js/search-block-editor.js:134
+#: src/admin/js/search-block-editor.js:140
 msgid "A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources."
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
@@ -1536,84 +1536,84 @@ msgstr "Só o que este plugin adicionou pode ser removido aqui; altere o resto n
 msgid "Set in Turing’s console"
 msgstr "Definido no console do Turing"
 
-#: assets/admin/tuning.js:244
+#: assets/admin/tuning.js:255
 msgid "Synonyms"
 msgstr "Sinônimos"
 
-#: assets/admin/tuning.js:248
+#: assets/admin/tuning.js:259
 msgid "Words a visitor may type for the same thing. A search for any of them finds posts with the others."
 msgstr "Palavras que um visitante pode digitar para a mesma coisa. Uma busca por qualquer uma delas encontra posts com as outras."
 
-#: assets/admin/tuning.js:258
+#: assets/admin/tuning.js:269
 msgid "Words"
 msgstr "Palavras"
 
 #. translators: %s: the synonym's words.
-#: assets/admin/tuning.js:276
+#: assets/admin/tuning.js:290
 #, js-format
 msgid "Remove %s"
 msgstr "Remover %s"
 
-#: assets/admin/tuning.js:308
+#: assets/admin/tuning.js:322
 msgid "Words that mean the same, separated by commas"
 msgstr "Palavras com o mesmo sentido, separadas por vírgulas"
 
-#: assets/admin/tuning.js:317
+#: assets/admin/tuning.js:331
 msgid "Add synonym"
 msgstr "Adicionar sinônimo"
 
-#: assets/admin/tuning.js:368
+#: assets/admin/tuning.js:382
 msgid "Promoted results"
 msgstr "Resultados em destaque"
 
-#: assets/admin/tuning.js:372
+#: assets/admin/tuning.js:386
 msgid "Up to three posts shown first, as featured, when a visitor searches for these words."
 msgstr "Até três posts mostrados primeiro, em destaque, quando um visitante busca por estas palavras."
 
-#: assets/admin/tuning.js:385
-#: assets/admin/tuning.js:499
+#: assets/admin/tuning.js:399
+#: assets/admin/tuning.js:525
 msgid "Shown first"
 msgstr "Mostrados primeiro"
 
 #. translators: %s: the search the posts are promoted for.
-#: assets/admin/tuning.js:408
+#: assets/admin/tuning.js:428
 #, js-format
 msgid "Remove the promotion for %s"
 msgstr "Remover o destaque para %s"
 
-#: assets/admin/tuning.js:450
+#: assets/admin/tuning.js:470
 msgid "When visitors search for"
 msgstr "Quando os visitantes buscarem por"
 
-#: assets/admin/tuning.js:460
+#: assets/admin/tuning.js:480
 msgid "Find a post to show first"
 msgstr "Encontre um post para mostrar primeiro"
 
-#: assets/admin/tuning.js:468
+#: assets/admin/tuning.js:489
 msgid "Posts found"
 msgstr "Posts encontrados"
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:485
+#: assets/admin/tuning.js:510
 #, js-format
 msgid "Show %s first"
 msgstr "Mostrar %s primeiro"
 
-#: assets/admin/tuning.js:492
+#: assets/admin/tuning.js:517
 msgid "Add"
 msgstr "Adicionar"
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:515
+#: assets/admin/tuning.js:545
 #, js-format
 msgid "Take %s out"
 msgstr "Tirar %s"
 
-#: assets/admin/tuning.js:522
+#: assets/admin/tuning.js:552
 msgid "Take out"
 msgstr "Tirar"
 
-#: assets/admin/tuning.js:534
+#: assets/admin/tuning.js:567
 msgid "Promote"
 msgstr "Destacar"
 
@@ -1629,53 +1629,53 @@ msgstr "posts fixos primeiro"
 msgid "No suggestions from recent searches."
 msgstr "Nenhuma sugestão das buscas recentes."
 
-#: assets/admin/tuning.js:86
+#: assets/admin/tuning.js:87
 msgid "Suggested synonyms"
 msgstr "Sinônimos sugeridos"
 
 #. translators: %s: the suggested words.
-#: assets/admin/tuning.js:109
+#: assets/admin/tuning.js:114
 #, js-format
 msgid "Accept %s"
 msgstr "Aceitar %s"
 
-#: assets/admin/tuning.js:113
+#: assets/admin/tuning.js:118
 msgid "Accept"
 msgstr "Aceitar"
 
-#: assets/admin/tuning.js:120
+#: assets/admin/tuning.js:125
 msgid "Suggest from recent searches"
 msgstr "Sugerir a partir das buscas recentes"
 
-#: assets/admin/tuning.js:165
+#: assets/admin/tuning.js:170
 msgid "No results."
 msgstr "Nenhum resultado."
 
-#: assets/admin/tuning.js:173
+#: assets/admin/tuning.js:178
 msgid "Featured:"
 msgstr "Destaque:"
 
-#: assets/admin/tuning.js:190
+#: assets/admin/tuning.js:195
 msgid "Try it"
 msgstr "Experimente"
 
-#: assets/admin/tuning.js:205
+#: assets/admin/tuning.js:210
 msgid "A search to watch"
 msgstr "Uma busca para acompanhar"
 
-#: assets/admin/tuning.js:206
+#: assets/admin/tuning.js:214
 msgid "Its first results, now and before your last change here."
 msgstr "Os primeiros resultados, agora e antes da sua última alteração aqui."
 
-#: assets/admin/tuning.js:215
+#: assets/admin/tuning.js:223
 msgid "Try"
 msgstr "Experimentar"
 
-#: assets/admin/tuning.js:222
+#: assets/admin/tuning.js:232
 msgid "Before"
 msgstr "Antes"
 
-#: assets/admin/tuning.js:223
+#: assets/admin/tuning.js:234
 msgid "Now"
 msgstr "Agora"
 
@@ -1733,7 +1733,7 @@ msgid "Related posts"
 msgstr "Posts relacionados"
 
 #: src/admin/js/related-block-editor.js:45
-#: src/admin/js/related-block-editor.js:136
+#: src/admin/js/related-block-editor.js:151
 msgid "Related content"
 msgstr "Conteúdo relacionado"
 
@@ -1743,39 +1743,39 @@ msgstr "Conteúdo relacionado"
 msgid "Heading"
 msgstr "Título"
 
-#: src/admin/js/related-block-editor.js:53
+#: src/admin/js/related-block-editor.js:56
 msgid "How many"
 msgstr "Quantos"
 
-#: src/admin/js/related-block-editor.js:60
+#: src/admin/js/related-block-editor.js:63
 msgid "Alike by"
 msgstr "Parecidos por"
 
-#: src/admin/js/related-block-editor.js:61
+#: src/admin/js/related-block-editor.js:64
 msgid "Meaning needs a site with embeddings in Turing; without them, shared words are used."
 msgstr "Significado exige um site com embeddings no Turing; sem eles, são usadas as palavras em comum."
 
-#: src/admin/js/related-block-editor.js:68
+#: src/admin/js/related-block-editor.js:71
 msgid "Turing’s choice"
 msgstr "Escolha do Turing"
 
-#: src/admin/js/related-block-editor.js:72
+#: src/admin/js/related-block-editor.js:78
 msgid "Shared words"
 msgstr "Palavras em comum"
 
-#: src/admin/js/related-block-editor.js:76
+#: src/admin/js/related-block-editor.js:85
 msgid "Meaning"
 msgstr "Significado"
 
-#: src/admin/js/related-block-editor.js:83
+#: src/admin/js/related-block-editor.js:92
 msgid "Only the same post type"
 msgstr "Só o mesmo tipo de post"
 
-#: src/admin/js/related-block-editor.js:88
+#: src/admin/js/related-block-editor.js:100
 msgid "Show as"
 msgstr "Mostrar como"
 
-#: src/admin/js/related-block-editor.js:110
+#: src/admin/js/related-block-editor.js:125
 msgid "Show the excerpt"
 msgstr "Mostrar o resumo"
 
@@ -1837,7 +1837,7 @@ msgstr "Transforme as partes dele (caixa, filtros, resultados, páginas) em bloc
 msgid "Back to the default order"
 msgstr "Voltar à ordem padrão"
 
-#: src/admin/js/search-block-editor.js:103
+#: src/admin/js/search-block-editor.js:106
 msgid "Arrange its parts"
 msgstr "Organizar as partes"
 
@@ -1891,7 +1891,7 @@ msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
 #: src/includes/class-viglet-dumont-mapping.php:344
-#: assets/admin/insights.js:24
+#: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
@@ -1966,11 +1966,11 @@ msgstr "Aplicar este filtro"
 msgid "Published"
 msgstr "Publicado"
 
-#: src/admin/js/search-block-editor.js:143
+#: src/admin/js/search-block-editor.js:149
 msgid "Suggest the filters a sentence names"
 msgstr "Sugerir os filtros que uma frase cita"
 
-#: src/admin/js/search-block-editor.js:147
+#: src/admin/js/search-block-editor.js:153
 msgid "“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click."
 msgstr "“Posts sobre php do ano passado” oferece filtros de Tipo e Publicado para aplicar com um clique. Cada frase é uma chamada ao LLM; nada é aplicado sem um clique."
 
@@ -2083,77 +2083,77 @@ msgstr "Insights"
 msgid "Last 24 hours"
 msgstr "Últimas 24 horas"
 
-#: assets/admin/insights.js:25
+#: assets/admin/insights.js:28
 msgid "All time"
 msgstr "Todo o período"
 
 #. translators: %s: a search visitors made.
-#: assets/admin/insights.js:190
+#: assets/admin/insights.js:199
 #, js-format
 msgid "Write about this: “%s”"
 msgstr "Escrever sobre isto: “%s”"
 
-#: assets/admin/insights.js:197
+#: assets/admin/insights.js:206
 msgid "Write about this"
 msgstr "Escrever sobre isto"
 
-#: assets/admin/insights.js:276
+#: assets/admin/insights.js:285
 msgid "Searches"
 msgstr "Buscas"
 
-#: assets/admin/insights.js:308
+#: assets/admin/insights.js:317
 msgid "What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out."
 msgstr "O que os visitantes buscaram neste site, o que não encontrou nada e o que nunca abriram, a partir das métricas de busca do Turing. Buscas feitas durante a digitação ficam de fora."
 
-#: assets/admin/insights.js:315
+#: assets/admin/insights.js:324
 msgid "Period"
 msgstr "Período"
 
-#: assets/admin/insights.js:339
+#: assets/admin/insights.js:348
 msgid "No searches in this period yet. They appear here once visitors use the site’s search."
 msgstr "Ainda não há buscas neste período. Elas aparecem aqui quando os visitantes usam a busca do site."
 
 #. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
-#: assets/admin/insights.js:350
+#: assets/admin/insights.js:359
 #, js-format
 msgid "%1$s searches, %2$s clicks, %3$s click-through."
 msgstr "%1$s buscas, %2$s cliques, %3$s de taxa de clique."
 
 #: src/includes/class-viglet-dumont-insights.php:183
-#: assets/admin/insights.js:361
+#: assets/admin/insights.js:370
 msgid "Top searches"
 msgstr "Buscas mais feitas"
 
-#: assets/admin/insights.js:362
+#: assets/admin/insights.js:371
 msgid "No searches in this period."
 msgstr "Nenhuma busca neste período."
 
-#: assets/admin/insights.js:370
+#: assets/admin/insights.js:379
 msgid "Clicks"
 msgstr "Cliques"
 
-#: assets/admin/insights.js:374
+#: assets/admin/insights.js:383
 msgid "Click-through"
 msgstr "Taxa de clique"
 
 #: src/includes/class-viglet-dumont-insights.php:184
-#: assets/admin/insights.js:381
+#: assets/admin/insights.js:393
 msgid "Searches that found nothing"
 msgstr "Buscas que não encontraram nada"
 
-#: assets/admin/insights.js:385
+#: assets/admin/insights.js:397
 msgid "Every search found something."
 msgstr "Toda busca encontrou algo."
 
-#: assets/admin/insights.js:393
+#: assets/admin/insights.js:405
 msgid "Last searched"
 msgstr "Última busca"
 
-#: assets/admin/insights.js:406
+#: assets/admin/insights.js:421
 msgid "Found, but never opened"
 msgstr "Encontradas, mas nunca abertas"
 
-#: assets/admin/insights.js:410
+#: assets/admin/insights.js:425
 msgid "Every search that found results led to a click."
 msgstr "Toda busca com resultados levou a um clique."
 
@@ -2170,19 +2170,19 @@ msgid "All search insights"
 msgstr "Todos os insights de busca"
 
 #. translators: %s: a search that found nothing.
-#: assets/admin/insights.js:211
+#: assets/admin/insights.js:220
 #, js-format
 msgid "Add a synonym: “%s”"
 msgstr "Adicionar um sinônimo: “%s”"
 
-#: assets/admin/insights.js:218
+#: assets/admin/insights.js:227
 msgid "Add a synonym"
 msgstr "Adicionar um sinônimo"
 
 #: src/blocks/copilot/render.php:18
 #: src/admin/js/copilot-block-editor.js:36
 #: src/admin/js/copilot-block-editor.js:39
-#: src/admin/js/copilot-block-editor.js:68
+#: src/admin/js/copilot-block-editor.js:74
 msgid "Ask the catalog"
 msgstr "Pergunte ao catálogo"
 
@@ -2207,11 +2207,11 @@ msgstr "O que você procura?"
 msgid "Ask"
 msgstr "Perguntar"
 
-#: src/admin/js/copilot-block-editor.js:45
+#: src/admin/js/copilot-block-editor.js:48
 msgid "A waterproof jacket under 200"
 msgstr "Uma jaqueta impermeável por menos de 200"
 
-#: src/admin/js/copilot-block-editor.js:69
+#: src/admin/js/copilot-block-editor.js:75
 msgid "Visitors ask in plain words and Turing’s catalog copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
 msgstr "Os visitantes perguntam com palavras comuns e o copiloto de catálogo do Turing responde a partir deste site, citando os itens. Aparece só quando o Turing tem um modelo de linguagem para isso."
 
@@ -2253,55 +2253,55 @@ msgstr "Ativar a IA generativa deste site no Turing"
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
-#: assets/admin/tuning.js:561
+#: assets/admin/tuning.js:594
 msgid "Boosts"
 msgstr "Impulsos"
 
-#: assets/admin/tuning.js:565
+#: assets/admin/tuning.js:598
 msgid "Rank some posts higher among the results that match. A boost never adds a result, it only changes the order."
 msgstr "Coloque alguns posts mais acima entre os resultados encontrados. Um impulso nunca acrescenta um resultado, só muda a ordem."
 
-#: assets/admin/tuning.js:572
+#: assets/admin/tuning.js:605
 msgid "Turing did not say which boosts are set; saving replaces them."
 msgstr "O Turing não informou quais impulsos estão definidos; salvar substitui todos."
 
-#: assets/admin/tuning.js:591
+#: assets/admin/tuning.js:624
 msgid "Newer first"
 msgstr "Mais recentes primeiro"
 
-#: assets/admin/tuning.js:592
+#: assets/admin/tuning.js:628
 msgid "Recently published posts rank higher."
 msgstr "Posts publicados recentemente ficam mais acima."
 
-#: assets/admin/tuning.js:601
+#: assets/admin/tuning.js:637
 msgid "Sticky posts first"
 msgstr "Posts fixos primeiro"
 
-#: assets/admin/tuning.js:605
+#: assets/admin/tuning.js:641
 msgid "Posts marked “Stick to the top of the blog” rank higher."
 msgstr "Posts marcados como “Fixar no topo do blog” ficam mais acima."
 
-#: assets/admin/tuning.js:613
+#: assets/admin/tuning.js:650
 msgid "By post type"
 msgstr "Por tipo de conteúdo"
 
-#: assets/admin/tuning.js:617
+#: assets/admin/tuning.js:655
 msgid "Up ranks a type’s posts higher; Down ranks every other type higher."
 msgstr "Acima coloca os posts do tipo mais acima; Abaixo coloca todos os outros tipos mais acima."
 
-#: assets/admin/tuning.js:634
+#: assets/admin/tuning.js:672
 msgid "Up"
 msgstr "Acima"
 
-#: assets/admin/tuning.js:638
+#: assets/admin/tuning.js:679
 msgid "Normal"
 msgstr "Normal"
 
-#: assets/admin/tuning.js:645
+#: assets/admin/tuning.js:686
 msgid "Down"
 msgstr "Abaixo"
 
-#: assets/admin/tuning.js:665
+#: assets/admin/tuning.js:706
 msgid "Save boosts"
 msgstr "Salvar impulsos"
 
@@ -2309,7 +2309,7 @@ msgstr "Salvar impulsos"
 msgid "Turing is not keeping search metrics, so no new searches are recorded."
 msgstr "O Turing não está guardando métricas de busca, então nenhuma busca nova é registrada."
 
-#: assets/admin/insights.js:328
+#: assets/admin/insights.js:337
 msgid "Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 msgstr "O Turing não está guardando métricas de busca, então nenhuma busca ou clique novo é registrado. O administrador do Turing as ativa com turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 
@@ -2322,26 +2322,26 @@ msgstr "Não há buscas neste período para resumir."
 msgid "Turing wrote no summary."
 msgstr "O Turing não escreveu um resumo."
 
-#: assets/admin/insights.js:95
+#: assets/admin/insights.js:98
 msgid "Summary"
 msgstr "Resumo"
 
-#: assets/admin/insights.js:113
+#: assets/admin/insights.js:116
 msgid "Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call."
 msgstr "O modelo de linguagem do Turing lê as buscas deste período e diz o que os visitantes procuraram e o que vale a pena escrever. Cada resumo é uma chamada a um LLM."
 
-#: assets/admin/insights.js:126
+#: assets/admin/insights.js:129
 msgid "Write another"
 msgstr "Escrever outro"
 
-#: assets/admin/insights.js:127
+#: assets/admin/insights.js:130
 msgid "Summarize this period"
 msgstr "Resumir este período"
 
 #: src/blocks/compare/render.php:21
 #: src/admin/js/compare-block-editor.js:34
 #: src/admin/js/compare-block-editor.js:37
-#: src/admin/js/compare-block-editor.js:47
+#: src/admin/js/compare-block-editor.js:50
 msgid "Compare products"
 msgstr "Comparar produtos"
 
@@ -2391,7 +2391,7 @@ msgstr "Dimensões"
 msgid "Rating"
 msgstr "Avaliação"
 
-#: src/admin/js/compare-block-editor.js:48
+#: src/admin/js/compare-block-editor.js:51
 msgid "Shows the products a shopper ticked Compare on in the search results, side by side. The search results link here once this page is published."
 msgstr "Mostra lado a lado os produtos que o cliente marcou em Comparar nos resultados da busca. Os resultados passam a apontar para cá quando esta página é publicada."
 
@@ -2440,11 +2440,11 @@ msgstr "Buscas populares"
 msgid "Popular:"
 msgstr "Populares:"
 
-#: src/admin/js/search-block-editor.js:170
+#: src/admin/js/search-block-editor.js:176
 msgid "Show popular searches under the box"
 msgstr "Mostrar as buscas populares sob a caixa"
 
-#: src/admin/js/search-block-editor.js:174
+#: src/admin/js/search-block-editor.js:180
 msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
 msgstr "Até oito das palavras mais buscadas da semana, cada uma conferida para encontrar algo, antes que o visitante digite."
 
@@ -2472,27 +2472,27 @@ msgstr "Enquanto não houver nenhuma"
 msgid "One search per line, shown while the site has no popular searches of its own. Each is still checked to find something."
 msgstr "Uma busca por linha, mostrada enquanto o site não tem buscas populares próprias. Cada uma ainda é conferida para encontrar algo."
 
-#: assets/admin/insights.js:249
+#: assets/admin/insights.js:258
 msgid "New"
 msgstr "Nova"
 
-#: assets/admin/insights.js:253
+#: assets/admin/insights.js:262
 msgid "Steady"
 msgstr "Estável"
 
 #. translators: %s: how much more it was searched than in the period before, e.g. 40%.
-#: assets/admin/insights.js:259
+#: assets/admin/insights.js:268
 #, js-format
 msgid "Up %s"
 msgstr "Subiu %s"
 
 #. translators: %s: how much less it was searched than in the period before, e.g. 40%.
-#: assets/admin/insights.js:261
+#: assets/admin/insights.js:270
 #, js-format
 msgid "Down %s"
 msgstr "Caiu %s"
 
-#: assets/admin/insights.js:271
+#: assets/admin/insights.js:280
 msgid "Against the period before"
 msgstr "Em relação ao período anterior"
 
@@ -2500,7 +2500,7 @@ msgstr "Em relação ao período anterior"
 msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing's console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing's setting as it is."
 msgstr "Enviado com os campos: na próxima indexação, ou quando a tela Campos é salva. Um agente escolhido para este site no console do Turing é mantido; um site sem agente responde pelo Agente de IA padrão. Desligar aqui depois deixa a configuração do Turing como está."
 
-#: assets/admin/mapping.js:505
+#: assets/admin/mapping.js:517
 msgid "Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console."
 msgstr "Salvar também liga a IA generativa deste site no Turing, respondendo pelo Agente de IA padrão até que um agente seja escolhido no console do Turing."
 
@@ -2559,8 +2559,8 @@ msgid "A button in the corner of every page opens a chat that answers from this 
 msgstr "Um botão no canto de todas as páginas abre um chat que responde a partir dos posts deste site e lista os posts que usou. Ele só aparece enquanto o chat do Turing estiver ligado para este site. Sem isso, coloque o bloco Assistente do site onde quiser."
 
 #: src/blocks/assistant/render.php:17
-#: src/admin/js/assistant-block-editor.js:38
-#: src/admin/js/assistant-block-editor.js:58
+#: src/admin/js/assistant-block-editor.js:41
+#: src/admin/js/assistant-block-editor.js:67
 msgid "Ask this site"
 msgstr "Pergunte a este site"
 
@@ -2608,15 +2608,15 @@ msgstr "Assistente do site"
 msgid "Button and heading"
 msgstr "Botão e título"
 
-#: src/admin/js/assistant-block-editor.js:43
+#: src/admin/js/assistant-block-editor.js:49
 msgid "Suggested questions"
 msgstr "Perguntas sugeridas"
 
-#: src/admin/js/assistant-block-editor.js:44
+#: src/admin/js/assistant-block-editor.js:53
 msgid "One per line. Left empty, the assistant suggests this week’s popular searches."
 msgstr "Uma por linha. Em branco, o assistente sugere as buscas populares da semana."
 
-#: src/admin/js/assistant-block-editor.js:59
+#: src/admin/js/assistant-block-editor.js:68
 msgid "A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Turing’s chat is on for this site."
 msgstr "Um botão que abre um chat que responde a partir dos posts deste site, com os posts que usou. Ele só aparece enquanto o chat do Turing estiver ligado para este site."
 
@@ -2730,11 +2730,11 @@ msgstr "Fora de estoque"
 msgid "Guides for this plan"
 msgstr "Guias para este plano"
 
-#: src/admin/js/copilot-block-editor.js:54
+#: src/admin/js/copilot-block-editor.js:57
 msgid "Offer Build my kit"
 msgstr "Oferecer Montar meu kit"
 
-#: src/admin/js/copilot-block-editor.js:55
+#: src/admin/js/copilot-block-editor.js:61
 msgid "A visitor describes a plan and gets the products it needs, grouped by need, to put in the cart together."
 msgstr "O visitante descreve um plano e recebe os produtos de que ele precisa, agrupados por necessidade, para colocar no carrinho de uma vez."
 
@@ -2753,11 +2753,11 @@ msgstr "Desfazer"
 msgid "Understood: %s"
 msgstr "Entendido: %s"
 
-#: src/admin/js/search-block-editor.js:157
+#: src/admin/js/search-block-editor.js:163
 msgid "Apply them instead of suggesting"
 msgstr "Aplicá-los em vez de sugerir"
 
-#: src/admin/js/search-block-editor.js:161
+#: src/admin/js/search-block-editor.js:167
 msgid "“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model."
 msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma vez, e uma linha diz o que foi entendido, com Desfazer. Um preço é lido mesmo sem um modelo de linguagem."
 

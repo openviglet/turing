@@ -5,7 +5,7 @@
  * Description: Integrates WordPress with Viglet Turing search engine for powerful content indexing and search.
  * Version:     1.0.0
  * Author:      Viglet
- * Author URI:  https://viglet.com
+ * Author URI:  https://www.viglet.org
  * License:     MIT
  * Text Domain: viglet-turing-search
  * Domain Path: /languages
