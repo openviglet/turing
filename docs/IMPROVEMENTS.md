@@ -2401,7 +2401,10 @@ purpose: it is a privileged field an anonymous caller must not set. Choose one:
   with a key opts out and an anonymous visitor cannot hide searches; or
 - accept it from anyone, reading hidden anonymous searches as harmless.
 
-The first keeps the existing rule and is the recommended one.
+The first keeps the existing rule and is the recommended one. But since T1120 any caller
+can already stay out of the log with `mode: instant`, so an anonymous visitor can hide
+searches today; T1200 takes the `false`-only opt-out on `POST /search/query`, leaving
+this decision to GET search, autocomplete and `/answer`.
 
 **Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
 counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
@@ -2413,27 +2416,26 @@ did not cause.
 
 ## CLXIV populateMetrics on the structured search (T1200)
 
-**Where it happened.** Dumont's WordPress search block (Dumont D267). A shopper's
-sentence is searched as typed (`POST /api/sn/{site}/search/query`, mode `STANDARD`),
-then, once nl-filters reads it, again with the filters applied and the filter words
-taken out. Both are logged, and the typed one usually found nothing, so the shop's
+**Where it happened.** Dumont's WordPress search block (Dumont D267) searches a
+shopper's sentence as typed (`POST /api/sn/{site}/search/query`, `STANDARD`), then again
+refined by nl-filters. Both are logged and the typed one usually found nothing, so the
 insights list a failed search for a shopper who found the product.
 
-**What the API offers.** The legacy `POST /api/sn/{site}/search` takes
-`{"populateMetrics": false}` (the plugin's server-rendered first page uses it, D209).
-The structured request has no such field: `TurSNSearchRequestAdapter.toPostParams` sets
-`populateMetrics` from the mode alone (`mode != INSTANT`). T1145 asked for an opt-out
-and was retired because instant mode already stays out of the log (T1120). But instant
-mode also rewrites the last term as a prefix, so the provisional search would match
-differently from the one the shopper is shown, which is the wrong trade for a search
-that only waits for its own refinement.
+**What the API offers.** Only the authenticated legacy POST takes `populateMetrics`. The
+structured request sets it from the mode alone (`toPostParams`: `mode != INSTANT`), and
+instant mode also rewrites the last term as a prefix (T1120), so it matches differently.
 
-**Workaround.** None. Dumont D267 waits on this rather than sending the sentence as
-instant.
+**What Turing should do.** Accept `populateMetrics` on `TurSNSearchRequest`, honouring
+`false` only: it can remove a count, never add one (instant stays out whatever it says).
+Instant already lets any caller stay out of the log, so an anonymous `false` grants
+nothing new; `userId` and the conditional maps stay privileged. Correct the javadoc on
+`TurSNSearchRequest` and the adapter that calls the field privileged. The echoed request
+never carries `false`, or a client adopting it would leave its refined search uncounted
+too. `@viglet/turing-sdk`'s `searchRequest` passes it through and skips its own search
+events for it, as T1129 does for instant. GET search, autocomplete and `/answer` stay
+with T1195.
 
-**What Turing should do.** Accept `populateMetrics` (default true) on
-`TurSNSearchRequest`, honoured by `toPostParams` beside the mode (instant stays out
-whatever it says), and pass it through `@viglet/turing-sdk`'s `searchRequest`.
-
-**Done when.** A structured `STANDARD` search with `populateMetrics: false` returns the
-same results as without it and writes no `TurSNSiteMetricAccess` row, with a test.
+**Done when.** A `STANDARD` search with `populateMetrics: false` returns the same
+results and writes no `TurSNSiteMetricAccess` row; `true` on an instant search writes
+none; the echo carries no `false`; the SDK emits no search event for it; each with a
+test.
