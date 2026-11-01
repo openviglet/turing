@@ -276,6 +276,13 @@ export interface TurSearchRequest {
    * keeps the query out of the search log. Echoed back on `request`.
    */
   mode?: TurSearchMode;
+  /**
+   * T1200 — `false` keeps a provisional search out of the search log (and out
+   * of the controller's search events) while it still runs exactly as typed,
+   * unlike `mode: "instant"`. Only `false` does anything, and it is never
+   * echoed back on `request`, so the search you refine from it is counted.
+   */
+  populateMetrics?: boolean;
 }
 
 /** T1120 — `"standard"` (the default) or `"instant"` for an as-you-type search. */

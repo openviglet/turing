@@ -87,6 +87,32 @@ class TurSNSearchRequestAdapterTest {
         assertThat(TurSNSearchRequestAdapter.toPostParams(request).isPopulateMetrics()).isTrue();
     }
 
+    /** T1200 — a standard search can opt out of the log, runs as typed, and the echo opts back in. */
+    @Test
+    void testPopulateMetricsFalseKeepsAStandardSearchOutOfTheLog() {
+        TurSNSearchRequest request = new TurSNSearchRequest();
+        request.setQ("work");
+        request.setPopulateMetrics(false);
+
+        TurSNSearchParams params = TurSNSearchRequestAdapter.toSearchParams(request, Locale.US);
+        TurSNSearchRequest echo = TurSNSearchRequestAdapter.effectiveRequest(request, params, Locale.US);
+
+        assertThat(params.getQ()).isEqualTo("work");
+        assertThat(TurSNSearchRequestAdapter.toPostParams(request).isPopulateMetrics()).isFalse();
+        assertThat(echo.isPopulateMetrics()).isTrue();
+    }
+
+    /** T1200 — {@code true} cannot put an instant search into the log. */
+    @Test
+    void testPopulateMetricsTrueDoesNotLogAnInstantSearch() {
+        TurSNSearchRequest request = new TurSNSearchRequest();
+        request.setQ("work");
+        request.setMode(com.viglet.turing.commons.sn.search.TurSNSearchMode.INSTANT);
+        request.setPopulateMetrics(true);
+
+        assertThat(TurSNSearchRequestAdapter.toPostParams(request).isPopulateMetrics()).isFalse();
+    }
+
     @Test
     void testEmptyRequestKeepsGetDefaults() {
         TurSNSearchParams params = TurSNSearchRequestAdapter

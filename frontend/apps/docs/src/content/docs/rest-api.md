@@ -246,8 +246,8 @@ For the full Targeting Rules reference (rule types, Solr query generation, fallb
 ### POST-native search
 
 `POST /api/sn/{siteName}/search` above is the **authenticated** endpoint: it accepts
-the impersonation fields (`userId`, `populateMetrics`, the conditional targeting
-maps) and returns `401` without a principal.
+the impersonation fields (`userId`, the conditional targeting maps) and
+`populateMetrics: true`, and returns `401` without a principal.
 
 For public, client-side search there is a second, **anonymous** POST endpoint that
 takes a clean read-only JSON body:
@@ -279,6 +279,7 @@ pages.
 | `responseFormat` | `string` | `LINKS` (default) or `STRUCTURED` (see below) |
 | `includeSortOptions` | `boolean` | `false`. When `true`, a `STRUCTURED` response also carries `sortOptions` |
 | `mode` | `string` | `standard` (default) or `instant`. Send `instant` from a search box that updates while the visitor types: the last term of `q` matches as a prefix (`work` finds "Workshop"), and the query is not recorded in the search metrics. A query that already uses syntax (a phrase, `field:value`, a wildcard, `AND`/`OR`/`NOT`) and a last term shorter than 2 characters run as typed. `request.q` echoes what was typed |
+| `populateMetrics` | `boolean` | `true`. Send `false` to keep a provisional search out of the search metrics while it still runs exactly as typed, for example a first search your client refines right after. Only `false` has an effect (`true` does not record an `instant` search), and the echoed `request` never carries `false`, so the refined search built from it is recorded |
 
 The endpoint is anonymous and **CSRF-exempt**, so a browser client needs no
 `/csrf` priming round-trip.

@@ -393,7 +393,7 @@ createSearchController(client, { site: "my-site" }, undefined, {
 });
 ```
 
-While `consent` returns `false`, no event is emitted and no cookie is set. The session id is stamped on the first event after it returns `true`. With `sessionCookie: false` the controller writes no cookie, and search events are not stitched to a later chat lead. A search sent with `mode: "instant"` (as the visitor types) emits no search event; only the one the visitor submits does.
+While `consent` returns `false`, no event is emitted and no cookie is set. The session id is stamped on the first event after it returns `true`. With `sessionCookie: false` the controller writes no cookie, and search events are not stitched to a later chat lead. A search sent with `mode: "instant"` (as the visitor types) emits no search event; only the one the visitor submits does. Neither does a request sent through `searchRequest` with `populateMetrics: false`, which the server also leaves out of the search metrics. The opt-out covers that one call: the controller's stored `request` drops it, so the next toggle or `searchQuery` is counted.
 
 ---
 

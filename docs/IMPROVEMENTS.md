@@ -2392,8 +2392,9 @@ metrics** button on Top search terms empty a site's searches and clicks
 **What is left.** A request should be able to say it is not to be counted, so a test or
 a probe never lands in a shop's insights: `populateMetrics=false` honoured by every
 search, autocomplete and answer endpoint. Today only the authenticated legacy POST body
-(`TurSNSitePostParamsBean`) carries it; the GET search, `POST /search/query` (which sets
-it from `mode` alone) and autocomplete never let a caller opt out.
+(`TurSNSitePostParamsBean`) carries it; since T1200 `POST /search/query` takes a
+`false`-only opt-out from any caller, and the GET search and autocomplete still never
+let one opt out.
 
 **The decision it waits on.** `TurSNSearchRequest` leaves `populateMetrics` out on
 purpose: it is a privileged field an anonymous caller must not set. Choose one:
@@ -2403,8 +2404,8 @@ purpose: it is a privileged field an anonymous caller must not set. Choose one:
 
 The first keeps the existing rule and is the recommended one. But since T1120 any caller
 can already stay out of the log with `mode: instant`, so an anonymous visitor can hide
-searches today; T1200 takes the `false`-only opt-out on `POST /search/query`, leaving
-this decision to GET search, autocomplete and `/answer`.
+searches today; T1200 shipped the anonymous `false`-only opt-out on `POST /search/query`
+on that reasoning, leaving this decision to GET search, autocomplete and `/answer`.
 
 **Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
 counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
@@ -2413,29 +2414,3 @@ counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
 What keeps a release from failing on its own tests for reasons the code under release
 did not cause.
-
-## CLXIV populateMetrics on the structured search (T1200)
-
-**Where it happened.** Dumont's WordPress search block (Dumont D267) searches a
-shopper's sentence as typed (`POST /api/sn/{site}/search/query`, `STANDARD`), then again
-refined by nl-filters. Both are logged and the typed one usually found nothing, so the
-insights list a failed search for a shopper who found the product.
-
-**What the API offers.** Only the authenticated legacy POST takes `populateMetrics`. The
-structured request sets it from the mode alone (`toPostParams`: `mode != INSTANT`), and
-instant mode also rewrites the last term as a prefix (T1120), so it matches differently.
-
-**What Turing should do.** Accept `populateMetrics` on `TurSNSearchRequest`, honouring
-`false` only: it can remove a count, never add one (instant stays out whatever it says).
-Instant already lets any caller stay out of the log, so an anonymous `false` grants
-nothing new; `userId` and the conditional maps stay privileged. Correct the javadoc on
-`TurSNSearchRequest` and the adapter that calls the field privileged. The echoed request
-never carries `false`, or a client adopting it would leave its refined search uncounted
-too. `@viglet/turing-sdk`'s `searchRequest` passes it through and skips its own search
-events for it, as T1129 does for instant. GET search, autocomplete and `/answer` stay
-with T1195.
-
-**Done when.** A `STANDARD` search with `populateMetrics: false` returns the same
-results and writes no `TurSNSiteMetricAccess` row; `true` on an instant search writes
-none; the echo carries no `false`; the SDK emits no search event for it; each with a
-test.

@@ -57,7 +57,8 @@ import com.viglet.turing.commons.utils.TurCommonsUtils;
  * <p>
  * The derived {@link TurSNSitePostParamsBean} is an <strong>internal</strong>
  * carrier only: it never receives {@code userId} or the conditional targeting
- * maps, so an anonymous caller cannot reach the impersonation surface.
+ * maps, so an anonymous caller cannot reach the impersonation surface. Its
+ * {@code populateMetrics} can only be lowered by the request (T1200).
  * </p>
  *
  * @author Alexandre Oliveira
@@ -118,7 +119,9 @@ public final class TurSNSearchRequestAdapter {
         postParams.setTargetingRules(
                 request.getTargetingRules() == null ? List.of() : request.getTargetingRules());
         // T1120 — a half-typed word is not a search the visitor made: keep it out of the log.
-        postParams.setPopulateMetrics(request.getMode() != TurSNSearchMode.INSTANT);
+        // T1200 — the caller can also opt out, never back in.
+        postParams.setPopulateMetrics(
+                request.getMode() != TurSNSearchMode.INSTANT && request.isPopulateMetrics());
         return postParams;
     }
 

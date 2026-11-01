@@ -42,9 +42,10 @@ import lombok.ToString;
  * <p>
  * It is deliberately <em>not</em> {@link TurSNSitePostParamsBean}: that bean is
  * the impersonation/metrics-oriented payload of the authenticated POST and
- * carries {@code userId}, {@code populateMetrics} and the conditional targeting
- * maps. Those fields are privileged and must never be settable by an anonymous
- * caller, which is exactly why this request omits them.
+ * carries {@code userId} and the conditional targeting maps. Those fields are
+ * privileged and must never be settable by an anonymous caller, which is
+ * exactly why this request omits them. {@link #populateMetrics} is the one
+ * exception, and only because it can withhold a count, never add one (T1200).
  * </p>
  *
  * @author Alexandre Oliveira
@@ -142,4 +143,15 @@ public class TurSNSearchRequest implements Serializable {
      * @since 2026.3.6
      */
     private TurSNSearchMode mode = TurSNSearchMode.STANDARD;
+
+    /**
+     * T1200 — {@code false} keeps this search out of the search log while it runs
+     * exactly as typed, for a provisional first search a client refines right
+     * after. Only {@code false} is honoured: {@code true} cannot put an instant
+     * search into the log. Never echoed as {@code false}, so the refined search
+     * built from the echo is counted.
+     *
+     * @since 2026.3.6
+     */
+    private boolean populateMetrics = true;
 }

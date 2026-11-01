@@ -79,4 +79,23 @@ describe("createSearchController — consent-aware analytics (T1129)", () => {
     expect(events.filter((e) => e.name === "turing_search")).toHaveLength(1);
     expect(events.some((e) => e.name === "turing_search_refined")).toBe(false);
   });
+
+  it("T1200 - sends populateMetrics false, reports no search for it, and does not carry it on", async () => {
+    const events: TuringAnalyticsEvent[] = [];
+    const analytics = createTuringAnalytics({ sinks: [(e) => events.push(e)] });
+    const c = client();
+    const search = createSearchController(c, { site: "s1", locale: "en_US" }, undefined, {
+      analytics,
+      chat: false,
+    });
+
+    await search.searchRequest({ q: "red shoes", populateMetrics: false });
+    expect(vi.mocked(c.post).mock.calls[0][1]).toMatchObject({ populateMetrics: false });
+    expect(events.filter((e) => e.name === "turing_search")).toHaveLength(0);
+    expect(search.getState().request.populateMetrics).toBeUndefined();
+
+    await search.searchQuery("red shoes");
+    expect(vi.mocked(c.post).mock.calls[1][1]).not.toHaveProperty("populateMetrics");
+    expect(events.filter((e) => e.name === "turing_search")).toHaveLength(1);
+  });
 });

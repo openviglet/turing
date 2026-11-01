@@ -436,11 +436,14 @@ export function createSearchController(
   async function executeRequest(searchRequest: TurSearchRequest): Promise<void> {
     const requestId = ++latestRequestId;
     const signal = nextSignal();
+    // T1200 — the opt-out applies to this call only: the request the next
+    // toggle starts from never carries it.
+    const { populateMetrics, ...carried } = searchRequest;
     store.setState({
       status: "loading",
       error: null,
-      request: searchRequest,
-      params: requestToSearchParams(searchRequest),
+      request: carried,
+      params: requestToSearchParams(carried),
     });
 
     try {
@@ -469,13 +472,14 @@ export function createSearchController(
         // The server echoes the request with every default resolved — adopt it
         // so the next toggle starts from what actually ran, not from what we
         // guessed.
-        request: searchResult.request ?? searchRequest,
-        params: requestToSearchParams(searchResult.request ?? searchRequest),
+        request: searchResult.request ?? carried,
+        params: requestToSearchParams(searchResult.request ?? carried),
       });
 
       // T1129 — an as-you-type request is not a search the visitor settled on:
-      // "work", "works", "workshop" must not report three searches.
-      if (searchRequest.mode !== "instant") {
+      // "work", "works", "workshop" must not report three searches. T1200: nor
+      // is one the caller kept out of the search log.
+      if (searchRequest.mode !== "instant" && populateMetrics !== false) {
         const resultCount = searchResult?.queryContext?.count ?? documents.length;
         emitSearchEvents(q, resultCount);
       }

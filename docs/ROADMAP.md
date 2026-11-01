@@ -12,8 +12,6 @@
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1200** (deps: —) **A structured search can stay out of search metrics only as instant, which also rewrites its last term as a prefix** — A client whose first search is provisional either logs a failed search or shows results matched differently. → §CLXIV
-
 ## Block BV — The quality gate stops at the package boundary
 
 ## Block CJ — Releases ship from the repository the README names
