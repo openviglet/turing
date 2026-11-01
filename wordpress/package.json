@@ -6,10 +6,11 @@
   "scripts": {
     "build": "wp-scripts build health.js mapping.js setup.js tuning.js insights.js --webpack-src-dir=assets/admin --output-path=src/admin/build && node bin/copy-sdk.mjs",
     "start": "wp-scripts start health.js mapping.js setup.js tuning.js insights.js --webpack-src-dir=assets/admin --output-path=src/admin/build && node bin/copy-sdk.mjs",
-    "lint:js": "wp-scripts lint-js assets/admin src/public bin src/admin/js/search-block-editor.js src/admin/js/related-block-editor.js src/admin/js/copilot-block-editor.js src/admin/js/compare-block-editor.js src/admin/js/assistant-block-editor.js tests/e2e playwright.config.mjs playwright.ai.config.mjs playwright.demo.config.mjs playwright.tour.config.mjs playwright.story.config.mjs playwright.story-record.config.mjs --ignore-pattern \"tests/e2e/artifacts/**\"",
+    "lint:js": "wp-scripts lint-js assets/admin src/public bin src/admin/js/search-block-editor.js src/admin/js/related-block-editor.js src/admin/js/copilot-block-editor.js src/admin/js/compare-block-editor.js src/admin/js/assistant-block-editor.js tests/e2e playwright.config.mjs playwright.ai.config.mjs playwright.demo.config.mjs playwright.tour.config.mjs playwright.story.config.mjs playwright.story-record.config.mjs playwright.playground.config.mjs --ignore-pattern \"tests/e2e/artifacts/**\"",
     "test:e2e": "playwright test",
     "test:e2e:ai": "playwright test -c playwright.ai.config.mjs",
     "test:e2e:demo": "playwright test -c playwright.demo.config.mjs",
+    "test:e2e:playground": "playwright test -c playwright.playground.config.mjs",
     "e2e:look": "node tests/e2e/look.mjs",
     "e2e:tour": "playwright test -c playwright.tour.config.mjs",
     "e2e:story": "playwright test -c playwright.story.config.mjs",
