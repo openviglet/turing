@@ -112,7 +112,7 @@ class Viglet_Dumont_Native_Search {
 			VIGLET_DUMONT_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-search-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( 'viglet-dumont-search-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
 		wp_register_style( 'viglet-dumont-search-block', VIGLET_DUMONT_URL . 'blocks/search/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/search' );
@@ -135,7 +135,7 @@ class Viglet_Dumont_Native_Search {
 			VIGLET_DUMONT_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-related-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( 'viglet-dumont-related-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
 		wp_register_style( 'viglet-dumont-related-block', VIGLET_DUMONT_URL . 'blocks/related/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/related' );
@@ -154,7 +154,7 @@ class Viglet_Dumont_Native_Search {
 			VIGLET_DUMONT_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-copilot-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( 'viglet-dumont-copilot-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
 		wp_register_style( 'viglet-dumont-copilot-block', VIGLET_DUMONT_URL . 'blocks/copilot/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/copilot' );
@@ -173,7 +173,7 @@ class Viglet_Dumont_Native_Search {
 			VIGLET_DUMONT_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-assistant-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( 'viglet-dumont-assistant-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
 		wp_register_style( 'viglet-dumont-assistant-block', VIGLET_DUMONT_URL . 'blocks/assistant/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/assistant' );
@@ -192,7 +192,7 @@ class Viglet_Dumont_Native_Search {
 			VIGLET_DUMONT_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-compare-block-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( 'viglet-dumont-compare-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
 		wp_register_style( 'viglet-dumont-compare-block', VIGLET_DUMONT_URL . 'blocks/compare/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/compare' );
@@ -229,23 +229,23 @@ class Viglet_Dumont_Native_Search {
 				$this->search_page(),
 				array(
 					'labels' => array(
-						'title'    => __( 'Search this site', 'viglet-dumont' ),
-						'search'   => __( 'Search', 'viglet-dumont' ),
-						'close'    => __( 'Close', 'viglet-dumont' ),
-						'results'  => __( 'Results', 'viglet-dumont' ),
-						'loading'  => __( 'Searching…', 'viglet-dumont' ),
+						'title'    => __( 'Search this site', 'viglet-turing-search' ),
+						'search'   => __( 'Search', 'viglet-turing-search' ),
+						'close'    => __( 'Close', 'viglet-turing-search' ),
+						'results'  => __( 'Results', 'viglet-turing-search' ),
+						'loading'  => __( 'Searching…', 'viglet-turing-search' ),
 						// A count's forms for one and for more, which overlay.js picks between (D184).
 						'found'    => array(
 							/* translators: %d: how many results Turing found. */
-							'one'   => _n( '%d result', '%d results', 1, 'viglet-dumont' ),
+							'one'   => _n( '%d result', '%d results', 1, 'viglet-turing-search' ),
 							/* translators: %d: how many results Turing found. */
-							'other' => _n( '%d result', '%d results', 2, 'viglet-dumont' ),
+							'other' => _n( '%d result', '%d results', 2, 'viglet-turing-search' ),
 						),
-						'none'     => __( 'No results found. Try different keywords.', 'viglet-dumont' ),
-						'error'    => __( 'Search is unavailable right now.', 'viglet-dumont' ),
-						'all'      => __( 'See all results', 'viglet-dumont' ),
-						'hint'     => __( 'Enter: all results · Up and Down: choose one · Esc: close', 'viglet-dumont' ),
-						'shortcut' => __( 'Search (Ctrl+K)', 'viglet-dumont' ),
+						'none'     => __( 'No results found. Try different keywords.', 'viglet-turing-search' ),
+						'error'    => __( 'Search is unavailable right now.', 'viglet-turing-search' ),
+						'all'      => __( 'See all results', 'viglet-turing-search' ),
+						'hint'     => __( 'Enter: all results · Up and Down: choose one · Esc: close', 'viglet-turing-search' ),
+						'shortcut' => __( 'Search (Ctrl+K)', 'viglet-turing-search' ),
 					),
 				)
 			)
@@ -407,7 +407,7 @@ class Viglet_Dumont_Native_Search {
 			'pages'         => $pages,
 			// What search-block.js's getters derive, which the server cannot run.
 			/* translators: %d: how many results Turing found. */
-			'summary'       => $total > 0 ? sprintf( _n( '%d result', '%d results', $total, 'viglet-dumont' ), number_format_i18n( $total ) ) : $state['noneLabel'],
+			'summary'       => $total > 0 ? sprintf( _n( '%d result', '%d results', $total, 'viglet-turing-search' ), number_format_i18n( $total ) ) : $state['noneLabel'],
 			'hasResults'    => $total > 0,
 			'isEmpty'       => 0 === $total,
 			'isLoading'     => false,
@@ -602,7 +602,7 @@ class Viglet_Dumont_Native_Search {
 			'facets'     => $facets,
 			'total'      => $total,
 			/* translators: %d: how many results Turing found. */
-			'summary'    => $total > 0 ? sprintf( _n( '%d result', '%d results', $total, 'viglet-dumont' ), $total ) : $labels['noneLabel'],
+			'summary'    => $total > 0 ? sprintf( _n( '%d result', '%d results', $total, 'viglet-turing-search' ), $total ) : $labels['noneLabel'],
 			'hasFacets'  => ! empty( $facets ),
 			'hasResults' => $total > 0,
 			'isEmpty'    => 0 === $total,

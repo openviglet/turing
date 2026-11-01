@@ -60,34 +60,34 @@ class Viglet_Dumont_Post_State {
 		$indexer = new Viglet_Dumont_Indexer( $this->settings );
 
 		if ( 'publish' !== $post->post_status ) {
-			return $this->state( 'unpublished', __( 'Not published', 'viglet-dumont' ) );
+			return $this->state( 'unpublished', __( 'Not published', 'viglet-turing-search' ) );
 		}
 		if ( ! $indexer->should_index( $post ) ) {
-			return $this->state( 'excluded', __( 'Excluded', 'viglet-dumont' ) );
+			return $this->state( 'excluded', __( 'Excluded', 'viglet-turing-search' ) );
 		}
 
 		$job = ( new Viglet_Dumont_Queue( $this->settings ) )->jobs()[ $post->ID ] ?? null;
 		if ( is_array( $job ) ) {
 			if ( ! empty( $job['failed'] ) ) {
-				return $this->state( 'failed', __( 'Failed', 'viglet-dumont' ), (string) $job['error'] );
+				return $this->state( 'failed', __( 'Failed', 'viglet-turing-search' ), (string) $job['error'] );
 			}
-			return $this->state( 'queued', __( 'Queued', 'viglet-dumont' ), (string) $job['error'] );
+			return $this->state( 'queued', __( 'Queued', 'viglet-turing-search' ), (string) $job['error'] );
 		}
 
 		$recorded = get_post_meta( $post->ID, Viglet_Dumont_Queue::STATE_META, true );
 		$recorded = is_array( $recorded ) ? $recorded : array();
 		if ( '' !== ( $recorded['error'] ?? '' ) ) {
-			return $this->state( 'failed', __( 'Failed', 'viglet-dumont' ), (string) $recorded['error'] );
+			return $this->state( 'failed', __( 'Failed', 'viglet-turing-search' ), (string) $recorded['error'] );
 		}
 		if ( ! empty( $recorded['indexed_at'] ) ) {
 			return $this->state(
 				'indexed',
 				/* translators: %s: how long ago, e.g. "2 mins". */
-				sprintf( __( 'Indexed %s ago', 'viglet-dumont' ), human_time_diff( (int) $recorded['indexed_at'] ) )
+				sprintf( __( 'Indexed %s ago', 'viglet-turing-search' ), human_time_diff( (int) $recorded['indexed_at'] ) )
 			);
 		}
 
-		return $this->state( 'not_indexed', __( 'Not indexed yet', 'viglet-dumont' ) );
+		return $this->state( 'not_indexed', __( 'Not indexed yet', 'viglet-turing-search' ) );
 	}
 
 	/**
@@ -96,7 +96,7 @@ class Viglet_Dumont_Post_State {
 	 * @param array $columns The list's columns.
 	 */
 	public function add_column( array $columns ): array {
-		$columns['viglet_dumont'] = __( 'Search', 'viglet-dumont' );
+		$columns['viglet_dumont'] = __( 'Search', 'viglet-turing-search' );
 		return $columns;
 	}
 
@@ -137,7 +137,7 @@ class Viglet_Dumont_Post_State {
 			VIGLET_DUMONT_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-editor', 'viglet-dumont', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( 'viglet-dumont-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
 	}
 
 	/**
@@ -246,7 +246,7 @@ class Viglet_Dumont_Post_State {
 		if ( '' === $text ) {
 			return array(
 				'fits'  => array(),
-				'error' => __( 'Save some text first: the fit is judged on the saved post.', 'viglet-dumont' ),
+				'error' => __( 'Save some text first: the fit is judged on the saved post.', 'viglet-turing-search' ),
 			);
 		}
 		$client = new Viglet_Dumont_API_Client( $this->settings );
@@ -288,10 +288,10 @@ class Viglet_Dumont_Post_State {
 	 */
 	private static function misfit_reason( string $code ): string {
 		$labels = array(
-			'too-complex'     => __( 'Too complex', 'viglet-dumont' ),
-			'jargon'          => __( 'Jargon', 'viglet-dumont' ),
-			'tone'            => __( 'Tone', 'viglet-dumont' ),
-			'missing-context' => __( 'Missing context', 'viglet-dumont' ),
+			'too-complex'     => __( 'Too complex', 'viglet-turing-search' ),
+			'jargon'          => __( 'Jargon', 'viglet-turing-search' ),
+			'tone'            => __( 'Tone', 'viglet-turing-search' ),
+			'missing-context' => __( 'Missing context', 'viglet-turing-search' ),
 		);
 
 		return $labels[ $code ] ?? $code;
@@ -305,7 +305,7 @@ class Viglet_Dumont_Post_State {
 	public function rest_fit( WP_REST_Request $request ): WP_REST_Response {
 		$post = get_post( (int) $request['id'] );
 		if ( ! $post instanceof WP_Post ) {
-			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-dumont' ) ), 404 );
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
 		}
 
 		return new WP_REST_Response( $this->audience_fit( $post ), 200 );
@@ -325,7 +325,7 @@ class Viglet_Dumont_Post_State {
 		if ( '' === $text ) {
 			return array(
 				'excerpt' => '',
-				'error'   => __( 'Save some text first: the draft is written from the saved post.', 'viglet-dumont' ),
+				'error'   => __( 'Save some text first: the draft is written from the saved post.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -349,7 +349,7 @@ class Viglet_Dumont_Post_State {
 		if ( empty( $result['success'] ) || '' === $excerpt ) {
 			return array(
 				'excerpt' => '',
-				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no draft.', 'viglet-dumont' ),
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no draft.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -367,7 +367,7 @@ class Viglet_Dumont_Post_State {
 	public function rest_excerpt( WP_REST_Request $request ): WP_REST_Response {
 		$post = get_post( (int) $request['id'] );
 		if ( ! $post instanceof WP_Post ) {
-			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-dumont' ) ), 404 );
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
 		}
 
 		return new WP_REST_Response( $this->draft_excerpt( $post, (bool) $request['again'] ), 200 );
@@ -436,7 +436,7 @@ class Viglet_Dumont_Post_State {
 	public function rest_assist( WP_REST_Request $request ): WP_REST_Response {
 		$post = get_post( (int) $request['id'] );
 		if ( ! $post instanceof WP_Post ) {
-			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-dumont' ) ), 404 );
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
 		}
 
 		return new WP_REST_Response( $this->assist( $post ), 200 );
@@ -450,7 +450,7 @@ class Viglet_Dumont_Post_State {
 	public function rest_state( WP_REST_Request $request ): WP_REST_Response {
 		$post = get_post( (int) $request['id'] );
 		if ( ! $post instanceof WP_Post ) {
-			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-dumont' ) ), 404 );
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
 		}
 
 		return new WP_REST_Response( $this->describe( $post ), 200 );

@@ -66,11 +66,11 @@ class Viglet_Dumont_Compare {
 
 		$statuses = wc_get_product_stock_status_options();
 		$fixed    = array(
-			__( 'Price', 'viglet-dumont' )        => static fn ( WC_Product $p ) => '' === (string) $p->get_price() ? '' : self::text( (string) wc_price( (float) $p->get_price() ) ),
-			__( 'Availability', 'viglet-dumont' ) => static fn ( WC_Product $p ) => (string) ( $statuses[ $p->get_stock_status() ] ?? $p->get_stock_status() ),
-			__( 'Weight', 'viglet-dumont' )       => static fn ( WC_Product $p ) => $p->has_weight() ? self::text( wc_format_weight( (float) $p->get_weight() ) ) : '',
-			__( 'Dimensions', 'viglet-dumont' )   => static fn ( WC_Product $p ) => $p->has_dimensions() ? self::text( wc_format_dimensions( $p->get_dimensions( false ) ) ) : '',
-			__( 'Rating', 'viglet-dumont' )       => static fn ( WC_Product $p ) => $p->get_rating_count() > 0 ? number_format_i18n( (float) $p->get_average_rating(), 1 ) : '',
+			__( 'Price', 'viglet-turing-search' )        => static fn ( WC_Product $p ) => '' === (string) $p->get_price() ? '' : self::text( (string) wc_price( (float) $p->get_price() ) ),
+			__( 'Availability', 'viglet-turing-search' ) => static fn ( WC_Product $p ) => (string) ( $statuses[ $p->get_stock_status() ] ?? $p->get_stock_status() ),
+			__( 'Weight', 'viglet-turing-search' )       => static fn ( WC_Product $p ) => $p->has_weight() ? self::text( wc_format_weight( (float) $p->get_weight() ) ) : '',
+			__( 'Dimensions', 'viglet-turing-search' )   => static fn ( WC_Product $p ) => $p->has_dimensions() ? self::text( wc_format_dimensions( $p->get_dimensions( false ) ) ) : '',
+			__( 'Rating', 'viglet-turing-search' )       => static fn ( WC_Product $p ) => $p->get_rating_count() > 0 ? number_format_i18n( (float) $p->get_average_rating(), 1 ) : '',
 		);
 
 		$rows = array();
@@ -115,7 +115,7 @@ class Viglet_Dumont_Compare {
 		if ( count( $table['products'] ) < 2 ) {
 			return array(
 				'summary' => '',
-				'error'   => __( 'Two products or more are needed to compare.', 'viglet-dumont' ),
+				'error'   => __( 'Two products or more are needed to compare.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -141,13 +141,13 @@ class Viglet_Dumont_Compare {
 		if ( empty( $result['success'] ) || '' === $summary ) {
 			return array(
 				'summary' => '',
-				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no summary.', 'viglet-dumont' ),
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no summary.', 'viglet-turing-search' ),
 			);
 		}
 		if ( ! self::grounded( $summary, $data ) ) {
 			return array(
 				'summary' => '',
-				'error'   => __( 'The summary named a figure the table does not hold, so it is not shown.', 'viglet-dumont' ),
+				'error'   => __( 'The summary named a figure the table does not hold, so it is not shown.', 'viglet-turing-search' ),
 			);
 		}
 

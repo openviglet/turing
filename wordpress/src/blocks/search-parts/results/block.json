@@ -6,7 +6,7 @@
 	"category": "widgets",
 	"icon": "list-view",
 	"description": "The Turing search block’s results: the count, the sort, the answer and the list.",
-	"textdomain": "viglet-dumont",
+	"textdomain": "viglet-turing-search",
 	"ancestor": [
 		"viglet-dumont/search"
 	],

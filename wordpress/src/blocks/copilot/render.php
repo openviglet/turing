@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $viglet_dumont_id      = wp_unique_id( 'viglet-dumont-copilot-' );
-$viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' ) ? (string) $attributes['heading'] : __( 'Ask the catalog', 'viglet-dumont' );
+$viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' ) ? (string) $attributes['heading'] : __( 'Ask the catalog', 'viglet-turing-search' );
 $viglet_dumont_kit     = (bool) ( $attributes['kit'] ?? true );
 
 // On a product's page (or any indexed post's), the question is about it (D242): Turing pins
@@ -24,8 +24,8 @@ $viglet_dumont_indexer = new Viglet_Dumont_Indexer();
 $viglet_dumont_subject = $viglet_dumont_indexer->subject();
 $viglet_dumont_ask     = $viglet_dumont_subject
 	/* translators: %s: the name of the product or post the page shows. */
-	? sprintf( __( 'Ask about %s', 'viglet-dumont' ), get_the_title( $viglet_dumont_subject ) )
-	: __( 'What are you looking for?', 'viglet-dumont' );
+	? sprintf( __( 'Ask about %s', 'viglet-turing-search' ), get_the_title( $viglet_dumont_subject ) )
+	: __( 'What are you looking for?', 'viglet-turing-search' );
 
 wp_interactivity_state(
 	'viglet-dumont/copilot',
@@ -36,17 +36,17 @@ wp_interactivity_state(
 		'busy'         => false,
 		'status'       => '',
 		/* translators: %s: the product's name. */
-		'cartLabel'    => __( 'Add to cart: %s', 'viglet-dumont' ),
+		'cartLabel'    => __( 'Add to cart: %s', 'viglet-turing-search' ),
 		// Compare on a cited product (D212), into the list the search cards use.
 		/* translators: %s: a product's name. */
-		'compareFor'   => __( 'Compare %s', 'viglet-dumont' ),
+		'compareFor'   => __( 'Compare %s', 'viglet-turing-search' ),
 		/* translators: %d: how many products, two to four. */
-		'compareLabel' => __( 'Compare %d products', 'viglet-dumont' ),
-		'cartAdded'    => __( 'Added to your cart.', 'viglet-dumont' ),
-		'cartFailed'   => __( 'It could not be added to the cart.', 'viglet-dumont' ),
-		'thinking'     => __( 'Looking through the catalog…', 'viglet-dumont' ),
-		'failed'       => __( 'The catalog could not answer right now.', 'viglet-dumont' ),
-		'nothing'      => __( 'Nothing in the catalog matches that.', 'viglet-dumont' ),
+		'compareLabel' => __( 'Compare %d products', 'viglet-turing-search' ),
+		'cartAdded'    => __( 'Added to your cart.', 'viglet-turing-search' ),
+		'cartFailed'   => __( 'It could not be added to the cart.', 'viglet-turing-search' ),
+		'thinking'     => __( 'Looking through the catalog…', 'viglet-turing-search' ),
+		'failed'       => __( 'The catalog could not answer right now.', 'viglet-turing-search' ),
+		'nothing'      => __( 'Nothing in the catalog matches that.', 'viglet-turing-search' ),
 		// Build my kit (D201).
 		'kitOffered'   => $viglet_dumont_kit,
 		'mode'         => 'ask',
@@ -61,22 +61,22 @@ wp_interactivity_state(
 		'kitStatus'    => '',
 		'askLabel'     => $viglet_dumont_ask,
 		'documentId'   => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
-		'askButton'    => __( 'Ask', 'viglet-dumont' ),
-		'planLabel'    => __( 'Describe your plan', 'viglet-dumont' ),
-		'planButton'   => __( 'Build my kit', 'viglet-dumont' ),
-		'kitThinking'  => __( 'Putting your kit together…', 'viglet-dumont' ),
-		'kitNothing'   => __( 'The catalog has nothing for that plan.', 'viglet-dumont' ),
+		'askButton'    => __( 'Ask', 'viglet-turing-search' ),
+		'planLabel'    => __( 'Describe your plan', 'viglet-turing-search' ),
+		'planButton'   => __( 'Build my kit', 'viglet-turing-search' ),
+		'kitThinking'  => __( 'Putting your kit together…', 'viglet-turing-search' ),
+		'kitNothing'   => __( 'The catalog has nothing for that plan.', 'viglet-turing-search' ),
 		/* translators: %s: the needs the catalog has no product for, comma-separated. */
-		'kitUnfilled'  => __( 'Nothing in the catalog yet for: %s.', 'viglet-dumont' ),
+		'kitUnfilled'  => __( 'Nothing in the catalog yet for: %s.', 'viglet-turing-search' ),
 		/* translators: %s: the product's name. */
-		'includeFor'   => __( 'Keep %s in the kit', 'viglet-dumont' ),
+		'includeFor'   => __( 'Keep %s in the kit', 'viglet-turing-search' ),
 		/* translators: %d: how many products. */
-		'kitAdd'       => __( 'Add %d products to the cart', 'viglet-dumont' ),
-		'kitAddOne'    => __( 'Add 1 product to the cart', 'viglet-dumont' ),
+		'kitAdd'       => __( 'Add %d products to the cart', 'viglet-turing-search' ),
+		'kitAddOne'    => __( 'Add 1 product to the cart', 'viglet-turing-search' ),
 		/* translators: 1: how many products were added, 2: the cart's total, as the shop formats it. */
-		'kitAdded'     => __( 'Added %1$d to your cart. Cart total: %2$s.', 'viglet-dumont' ),
+		'kitAdded'     => __( 'Added %1$d to your cart. Cart total: %2$s.', 'viglet-turing-search' ),
 		/* translators: 1: how many were added, 2: how many were asked for. */
-		'kitPartial'   => __( 'Added %1$d of %2$d to your cart; the rest could not be added.', 'viglet-dumont' ),
+		'kitPartial'   => __( 'Added %1$d of %2$d to your cart; the rest could not be added.', 'viglet-turing-search' ),
 	)
 );
 ?>
@@ -90,9 +90,9 @@ wp_interactivity_state(
 >
 	<h2 id="<?php echo esc_attr( $viglet_dumont_id ); ?>-heading"><?php echo esc_html( $viglet_dumont_heading ); ?></h2>
 	<?php if ( $viglet_dumont_kit ) : ?>
-	<div class="viglet-dumont-copilot__modes" role="group" aria-label="<?php esc_attr_e( 'Mode', 'viglet-dumont' ); ?>">
-		<button type="button" data-mode="ask" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.asking"><?php esc_html_e( 'Ask a question', 'viglet-dumont' ); ?></button>
-		<button type="button" data-mode="kit" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.planning"><?php esc_html_e( 'Plan a kit', 'viglet-dumont' ); ?></button>
+	<div class="viglet-dumont-copilot__modes" role="group" aria-label="<?php esc_attr_e( 'Mode', 'viglet-turing-search' ); ?>">
+		<button type="button" data-mode="ask" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.asking"><?php esc_html_e( 'Ask a question', 'viglet-turing-search' ); ?></button>
+		<button type="button" data-mode="kit" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.planning"><?php esc_html_e( 'Plan a kit', 'viglet-turing-search' ); ?></button>
 	</div>
 	<?php endif; ?>
 	<ol class="viglet-dumont-copilot__turns" hidden data-wp-bind--hidden="state.planning">
@@ -106,13 +106,13 @@ wp_interactivity_state(
 							<span class="viglet-dumont-copilot__rank" data-wp-text="context.item.rank"></span>
 							<a data-wp-bind--href="context.item.url" data-wp-text="context.item.title"></a>
 							<span class="viglet-dumont-copilot__shop" hidden data-wp-bind--hidden="!context.item.price">
-								<del hidden data-wp-bind--hidden="!context.item.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-dumont' ); ?></span> <span data-wp-text="context.item.regular"></span></del>
+								<del hidden data-wp-bind--hidden="!context.item.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-turing-search' ); ?></span> <span data-wp-text="context.item.regular"></span></del>
 								<strong data-wp-text="context.item.price"></strong>
-								<button type="button" class="wp-element-button" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="context.item.adding" data-wp-bind--hidden="!context.item.buyable" data-wp-bind--aria-label="context.item.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-dumont' ); ?></button>
+								<button type="button" class="wp-element-button" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="context.item.adding" data-wp-bind--hidden="!context.item.buyable" data-wp-bind--aria-label="context.item.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-turing-search' ); ?></button>
 								<span role="status" data-wp-text="context.item.cartStatus"></span>
 								<label class="viglet-dumont-copilot__compare" hidden data-wp-bind--hidden="!state.canCompare">
 									<input type="checkbox" data-wp-bind--aria-label="context.item.compareFor" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
-									<?php esc_html_e( 'Compare', 'viglet-dumont' ); ?>
+									<?php esc_html_e( 'Compare', 'viglet-turing-search' ); ?>
 								</label>
 							</span>
 						</li>
@@ -141,7 +141,7 @@ wp_interactivity_state(
 									<span class="viglet-dumont-copilot__kit-reason" data-wp-text="context.product.reason"></span>
 								</span>
 								<strong hidden data-wp-bind--hidden="!context.product.price" data-wp-text="context.product.price"></strong>
-								<span class="viglet-dumont-copilot__out" hidden data-wp-bind--hidden="!context.product.out"><?php esc_html_e( 'Out of stock', 'viglet-dumont' ); ?></span>
+								<span class="viglet-dumont-copilot__out" hidden data-wp-bind--hidden="!context.product.out"><?php esc_html_e( 'Out of stock', 'viglet-turing-search' ); ?></span>
 							</li>
 						</template>
 					</ul>
@@ -150,7 +150,7 @@ wp_interactivity_state(
 		</ol>
 		<p class="viglet-dumont-copilot__unfilled" hidden data-wp-bind--hidden="!state.kit.unfilled" data-wp-text="state.kit.unfilled"></p>
 		<div class="viglet-dumont-copilot__guides" hidden data-wp-bind--hidden="!state.kit.guides.length">
-			<h3><?php esc_html_e( 'Guides for this plan', 'viglet-dumont' ); ?></h3>
+			<h3><?php esc_html_e( 'Guides for this plan', 'viglet-turing-search' ); ?></h3>
 			<ul>
 				<template data-wp-each--guide="state.kit.guides" data-wp-each-key="context.guide.key">
 					<li><a data-wp-bind--href="context.guide.url" data-wp-text="context.guide.title"></a></li>
@@ -173,7 +173,7 @@ wp_interactivity_state(
 			data-wp-bind--value="state.question"
 			data-wp-on--input="actions.type"
 		/>
-		<button type="submit" class="wp-element-button" data-wp-bind--disabled="state.busy" data-wp-text="state.formButton"><?php esc_html_e( 'Ask', 'viglet-dumont' ); ?></button>
+		<button type="submit" class="wp-element-button" data-wp-bind--disabled="state.busy" data-wp-text="state.formButton"><?php esc_html_e( 'Ask', 'viglet-turing-search' ); ?></button>
 	</form>
 	<p class="viglet-dumont-copilot__status" role="status" data-wp-text="state.status"></p>
 </section>

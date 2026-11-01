@@ -19,15 +19,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <p class="viglet-dumont-search__showing-for" role="status" hidden data-wp-bind--hidden="!state.hasShowingFor">
-	<?php esc_html_e( 'Showing results for', 'viglet-dumont' ); ?>
+	<?php esc_html_e( 'Showing results for', 'viglet-turing-search' ); ?>
 	<strong data-wp-text="state.showingFor"></strong>.
-	<?php esc_html_e( 'Search instead for', 'viglet-dumont' ); ?>
+	<?php esc_html_e( 'Search instead for', 'viglet-turing-search' ); ?>
 	<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.searchInstead" data-wp-text="state.insteadOf"></button>
 </p>
 <p class="viglet-dumont-search__close-matches" role="status" hidden data-wp-bind--hidden="!state.hasCloseMatches">
-	<?php esc_html_e( 'Showing close matches: nothing matched every word you searched for.', 'viglet-dumont' ); ?>
+	<?php esc_html_e( 'Showing close matches: nothing matched every word you searched for.', 'viglet-turing-search' ); ?>
 </p>
 <p class="viglet-dumont-search__correction" hidden data-wp-bind--hidden="!state.hasCorrection">
-	<?php esc_html_e( 'Did you mean:', 'viglet-dumont' ); ?>
+	<?php esc_html_e( 'Did you mean:', 'viglet-turing-search' ); ?>
 	<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.applyCorrection" data-wp-text="state.corrected"></button>
 </p>

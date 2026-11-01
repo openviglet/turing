@@ -192,7 +192,7 @@ class Viglet_Dumont_Mapping {
 				'mandatory'   => false,
 				'multiValued' => false,
 				'facet'       => true,
-				'facetName'   => array( $locale => __( 'Site', 'viglet-dumont' ) ),
+				'facetName'   => array( $locale => __( 'Site', 'viglet-turing-search' ) ),
 			),
 			// Whether a post is sticky, for Search tuning's "sticky posts first" boost.
 			'sticky'   => array(
@@ -331,27 +331,27 @@ class Viglet_Dumont_Mapping {
 	public static function date_ranges(): array {
 		return array(
 			array(
-				'label' => __( 'Upcoming', 'viglet-dumont' ),
+				'label' => __( 'Upcoming', 'viglet-turing-search' ),
 				'from'  => 'NOW',
 				'to'    => null,
 			),
 			array(
-				'label' => __( 'Last 7 days', 'viglet-dumont' ),
+				'label' => __( 'Last 7 days', 'viglet-turing-search' ),
 				'from'  => 'NOW-7DAYS',
 				'to'    => 'NOW',
 			),
 			array(
-				'label' => __( 'Last 30 days', 'viglet-dumont' ),
+				'label' => __( 'Last 30 days', 'viglet-turing-search' ),
 				'from'  => 'NOW-30DAYS',
 				'to'    => 'NOW',
 			),
 			array(
-				'label' => __( 'This year', 'viglet-dumont' ),
+				'label' => __( 'This year', 'viglet-turing-search' ),
 				'from'  => 'NOW/YEAR',
 				'to'    => 'NOW',
 			),
 			array(
-				'label' => __( 'Before this year', 'viglet-dumont' ),
+				'label' => __( 'Before this year', 'viglet-turing-search' ),
 				'from'  => null,
 				'to'    => 'NOW/YEAR',
 			),
@@ -376,7 +376,7 @@ class Viglet_Dumont_Mapping {
 			return array(
 				'sent'    => false,
 				'success' => true,
-				'message' => __( 'No mapped field to provision.', 'viglet-dumont' ),
+				'message' => __( 'No mapped field to provision.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -386,7 +386,7 @@ class Viglet_Dumont_Mapping {
 			return array(
 				'sent'    => false,
 				'success' => true,
-				'message' => __( 'The fields are already provisioned.', 'viglet-dumont' ),
+				'message' => __( 'The fields are already provisioned.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -454,7 +454,7 @@ class Viglet_Dumont_Mapping {
 				'status' => 'conflict',
 				'detail' => sprintf(
 					/* translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares. */
-					__( '%1$s is %2$s in Turing, %3$s here', 'viglet-dumont' ),
+					__( '%1$s is %2$s in Turing, %3$s here', 'viglet-turing-search' ),
 					(string) ( $change['attribute'] ?? '' ),
 					(string) ( $change['liveValue'] ?? '' ),
 					(string) ( $change['manifestValue'] ?? '' )
@@ -483,7 +483,7 @@ class Viglet_Dumont_Mapping {
 			$sources[] = array(
 				'source' => 'taxonomy:' . $taxonomy->name,
 				/* translators: %s: the taxonomy's name. */
-				'label'  => sprintf( __( 'Taxonomy: %s', 'viglet-dumont' ), $taxonomy->label ),
+				'label'  => sprintf( __( 'Taxonomy: %s', 'viglet-turing-search' ), $taxonomy->label ),
 			);
 		}
 
@@ -499,7 +499,7 @@ class Viglet_Dumont_Mapping {
 			$sources[] = array(
 				'source' => 'meta:' . $key,
 				/* translators: %s: the meta key. */
-				'label'  => sprintf( __( 'Meta: %s', 'viglet-dumont' ), $key ),
+				'label'  => sprintf( __( 'Meta: %s', 'viglet-turing-search' ), $key ),
 			);
 		}
 
@@ -507,12 +507,12 @@ class Viglet_Dumont_Mapping {
 			$sources[] = array(
 				'source' => 'core:' . $core,
 				/* translators: %s: the core field, e.g. excerpt. */
-				'label'  => sprintf( __( 'Post: %s', 'viglet-dumont' ), $core ),
+				'label'  => sprintf( __( 'Post: %s', 'viglet-turing-search' ), $core ),
 			);
 		}
 		$sources[] = array(
 			'source' => 'thumbnail',
-			'label'  => __( 'Featured image URL', 'viglet-dumont' ),
+			'label'  => __( 'Featured image URL', 'viglet-turing-search' ),
 		);
 		if ( Viglet_Dumont_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Dumont_WooCommerce::active() ) {
 			$sources = array_merge( $sources, Viglet_Dumont_WooCommerce::sources() );
@@ -757,14 +757,14 @@ class Viglet_Dumont_Mapping {
 	private static function range_label( $from, $to ): string {
 		if ( null === $from ) {
 			/* translators: %s: a range's upper bound. */
-			return sprintf( __( 'Up to %s', 'viglet-dumont' ), $to );
+			return sprintf( __( 'Up to %s', 'viglet-turing-search' ), $to );
 		}
 		if ( null === $to ) {
 			/* translators: %s: a range's lower bound. */
-			return sprintf( __( '%s or more', 'viglet-dumont' ), $from );
+			return sprintf( __( '%s or more', 'viglet-turing-search' ), $from );
 		}
 
 		/* translators: 1: a range's lower bound, 2: its upper bound. */
-		return sprintf( __( '%1$s – %2$s', 'viglet-dumont' ), $from, $to );
+		return sprintf( __( '%1$s – %2$s', 'viglet-turing-search' ), $from, $to );
 	}
 }

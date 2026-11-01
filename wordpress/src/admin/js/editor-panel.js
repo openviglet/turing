@@ -71,27 +71,27 @@
                         variant: 'link',
                         style: { flexShrink: 0 },
                         onClick: function () { addLink(item); },
-                        'aria-label': __('Add a link to', 'viglet-dumont') + ' ' + item.title
-                    }, __('Add a link', 'viglet-dumont')) : null
+                        'aria-label': __('Add a link to', 'viglet-turing-search') + ' ' + item.title
+                    }, __('Add a link', 'viglet-turing-search')) : null
                 );
             }));
         }
 
         return el('div', { className: 'viglet-dumont-assist', style: { marginTop: '16px' } },
-            el('h3', null, __('Assist', 'viglet-dumont')),
+            el('h3', null, __('Assist', 'viglet-turing-search')),
             result && result.error ? el('p', null, result.error) : null,
             result && !result.error ? el('div', { 'aria-live': 'polite' },
-                el('h4', null, __('Already covered?', 'viglet-dumont')),
+                el('h4', null, __('Already covered?', 'viglet-turing-search')),
                 result.covered.length
                     ? list(result.covered, false)
-                    : el('p', null, __('Nothing on the site looks like this post.', 'viglet-dumont')),
-                el('h4', null, __('Link ideas', 'viglet-dumont')),
+                    : el('p', null, __('Nothing on the site looks like this post.', 'viglet-turing-search')),
+                el('h4', null, __('Link ideas', 'viglet-turing-search')),
                 result.links.length
                     ? list(result.links, true)
-                    : el('p', null, __('No related posts yet.', 'viglet-dumont')),
+                    : el('p', null, __('No related posts yet.', 'viglet-turing-search')),
                 'title' === result.basis
                     ? el('p', { className: 'viglet-dumont-assist__note' },
-                        __('Compared by title: once this post is indexed, Turing compares the whole text.', 'viglet-dumont'))
+                        __('Compared by title: once this post is indexed, Turing compares the whole text.', 'viglet-turing-search'))
                     : null
             ) : null,
             el(components.Button, {
@@ -99,7 +99,7 @@
                 isBusy: busy,
                 disabled: busy || !props.postId,
                 onClick: find
-            }, result ? __('Look again', 'viglet-dumont') : __('Find related posts', 'viglet-dumont'))
+            }, result ? __('Look again', 'viglet-turing-search') : __('Find related posts', 'viglet-turing-search'))
         );
     }
 
@@ -137,28 +137,28 @@
         }
 
         return el('div', { className: 'viglet-dumont-assist__excerpt' },
-            el('h4', null, __('Excerpt', 'viglet-dumont')),
+            el('h4', null, __('Excerpt', 'viglet-turing-search')),
             draft && draft.error ? el('p', null, draft.error) : null,
             draft && draft.excerpt ? el('div', { 'aria-live': 'polite' },
                 el('blockquote', { className: 'viglet-dumont-assist__draft', style: { margin: '0 0 8px', fontStyle: 'italic' } }, draft.excerpt),
                 used
-                    ? el('p', null, __('In the excerpt field. Save the post to keep it.', 'viglet-dumont'))
+                    ? el('p', null, __('In the excerpt field. Save the post to keep it.', 'viglet-turing-search'))
                     : el(components.Button, {
                         variant: 'primary',
                         onClick: function () {
                             editPost({ excerpt: draft.excerpt });
                             setUsed(true);
                         }
-                    }, __('Use this excerpt', 'viglet-dumont'))
+                    }, __('Use this excerpt', 'viglet-turing-search'))
             ) : null,
             el('p', null, el(components.Button, {
                 variant: 'secondary',
                 isBusy: busy,
                 disabled: busy || !props.postId,
                 onClick: function () { write(!!draft); }
-            }, draft && draft.excerpt ? __('Draft another', 'viglet-dumont') : __('Draft an excerpt', 'viglet-dumont'))),
+            }, draft && draft.excerpt ? __('Draft another', 'viglet-turing-search') : __('Draft an excerpt', 'viglet-turing-search'))),
             el('p', { className: 'viglet-dumont-assist__note' },
-                __('Written by Turing’s language model from the saved post. Nothing changes until you use it and save.', 'viglet-dumont'))
+                __('Written by Turing’s language model from the saved post. Nothing changes until you use it and save.', 'viglet-turing-search'))
         );
     }
 
@@ -202,14 +202,14 @@
         }
 
         return el('div', { className: 'viglet-dumont-assist__fit' },
-            el('h4', null, __('Fits the audience?', 'viglet-dumont')),
+            el('h4', null, __('Fits the audience?', 'viglet-turing-search')),
             result && result.error ? el('p', null, result.error) : null,
             result && result.fits.length ? el('ul', { className: 'viglet-dumont-assist__list', 'aria-live': 'polite', style: { margin: '0 0 12px' } },
                 result.fits.map(function (fit) {
                     return el('li', { key: fit.persona, style: { marginBottom: '8px' } },
                         el('strong', null, sprintf(
                             /* translators: 1: an audience persona's name, 2: how well the post suits it, 0 to 100. */
-                            __('%1$s: %2$d%%', 'viglet-dumont'),
+                            __('%1$s: %2$d%%', 'viglet-turing-search'),
                             fit.persona,
                             fit.score
                         )),
@@ -221,7 +221,7 @@
                                 misfit.suggestion ? el('br') : null,
                                 misfit.suggestion ? sprintf(
                                     /* translators: %s: a rewrite Turing suggests for a passage. */
-                                    __('Try: %s', 'viglet-dumont'),
+                                    __('Try: %s', 'viglet-turing-search'),
                                     misfit.suggestion
                                 ) : null
                             );
@@ -233,11 +233,11 @@
                 isBusy: busy,
                 disabled: busy,
                 onClick: check
-            }, result ? __('Check again', 'viglet-dumont') : __('Check audience fit', 'viglet-dumont'))),
+            }, result ? __('Check again', 'viglet-turing-search') : __('Check audience fit', 'viglet-turing-search'))),
             el('p', { className: 'viglet-dumont-assist__note' },
                 sprintf(
                     /* translators: %s: the audience personas, comma separated. */
-                    __('Judged by Turing against %s, from the saved post.', 'viglet-dumont'),
+                    __('Judged by Turing against %s, from the saved post.', 'viglet-turing-search'),
                     personas.map(function (p) { return p.name; }).join(', ')
                 ))
         );
@@ -265,7 +265,7 @@
             wp.apiFetch({ path: '/viglet-dumont/v1/post/' + post.id + '/state' })
                 .then(setState)
                 .catch(function (error) {
-                    setState({ state: 'failed', label: __('Unknown', 'viglet-dumont'), detail: error.message || '' });
+                    setState({ state: 'failed', label: __('Unknown', 'viglet-turing-search'), detail: error.message || '' });
                 });
         }
 
@@ -281,7 +281,7 @@
             wp.apiFetch({ path: '/viglet-dumont/v1/post/' + post.id + '/reindex', method: 'POST' })
                 .then(setState)
                 .catch(function (error) {
-                    setState({ state: 'failed', label: __('Failed', 'viglet-dumont'), detail: error.message || '' });
+                    setState({ state: 'failed', label: __('Failed', 'viglet-turing-search'), detail: error.message || '' });
                 })
                 .finally(function () {
                     setBusy(false);
@@ -290,15 +290,15 @@
 
         return el(
             Panel,
-            { name: 'viglet-dumont-search', title: __('Search', 'viglet-dumont'), className: 'viglet-dumont-search-panel' },
+            { name: 'viglet-dumont-search', title: __('Search', 'viglet-turing-search'), className: 'viglet-dumont-search-panel' },
             el('p', { 'aria-live': 'polite' },
-                el('strong', null, state ? state.label : __('Checking…', 'viglet-dumont')),
+                el('strong', null, state ? state.label : __('Checking…', 'viglet-turing-search')),
                 state && state.detail ? el('br') : null,
                 state && state.detail ? el('span', { className: 'viglet-dumont-search-panel__detail' }, state.detail) : null
             ),
             el(components.ToggleControl, {
-                label: __('Exclude from search', 'viglet-dumont'),
-                help: __('Takes effect when the post is saved.', 'viglet-dumont'),
+                label: __('Exclude from search', 'viglet-turing-search'),
+                help: __('Takes effect when the post is saved.', 'viglet-turing-search'),
                 checked: !!post.meta[EXCLUDE_META],
                 onChange: function (value) {
                     var meta = {};
@@ -311,12 +311,12 @@
                 isBusy: busy,
                 disabled: busy || !post.id,
                 onClick: reindex
-            }, __('Reindex now', 'viglet-dumont')),
+            }, __('Reindex now', 'viglet-turing-search')),
             // Search tuning (D172) opens with this post chosen; only an admin may tune search.
             post.canTune && post.id ? el('p', null, el(components.Button, {
                 variant: 'link',
                 href: 'admin.php?page=viglet-dumont-tuning&promote=' + post.id
-            }, __('Promote for a search…', 'viglet-dumont'))) : null,
+            }, __('Promote for a search…', 'viglet-turing-search'))) : null,
             el(Assist, { postId: post.id }),
             el(ExcerptDraft, { postId: post.id }),
             el(AudienceFit, { postId: post.id })

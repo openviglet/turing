@@ -74,7 +74,7 @@
 				el(
 					PanelBody,
 					{
-						title: __( 'Layout', 'viglet-dumont' ),
+						title: __( 'Layout', 'viglet-turing-search' ),
 						initialOpen: false,
 					},
 					el(
@@ -83,11 +83,11 @@
 						arranged
 							? __(
 									'Its parts are blocks: move them, or put other blocks between them.',
-									'viglet-dumont'
+									'viglet-turing-search'
 								)
 							: __(
 									'Make its parts (box, filters, results, pages) blocks you can reorder.',
-									'viglet-dumont'
+									'viglet-turing-search'
 								)
 					),
 					el(
@@ -99,21 +99,27 @@
 								: arrange,
 						},
 						arranged
-							? __( 'Back to the default order', 'viglet-dumont' )
-							: __( 'Arrange its parts', 'viglet-dumont' )
+							? __(
+									'Back to the default order',
+									'viglet-turing-search'
+								)
+							: __( 'Arrange its parts', 'viglet-turing-search' )
 					)
 				),
 				el(
 					PanelBody,
-					{ title: __( 'Search', 'viglet-dumont' ) },
+					{ title: __( 'Search', 'viglet-turing-search' ) },
 					el( TextControl, {
-						label: __( 'Placeholder', 'viglet-dumont' ),
+						label: __( 'Placeholder', 'viglet-turing-search' ),
 						value: attributes.placeholder,
 						onChange: ( placeholder ) =>
 							setAttributes( { placeholder } ),
 					} ),
 					el( ToggleControl, {
-						label: __( 'Show filters (facets)', 'viglet-dumont' ),
+						label: __(
+							'Show filters (facets)',
+							'viglet-turing-search'
+						),
 						checked: attributes.showFacets,
 						onChange: ( showFacets ) =>
 							setAttributes( { showFacets } ),
@@ -121,7 +127,7 @@
 					el( ToggleControl, {
 						label: __(
 							'Let visitors sort (relevance, newest, oldest)',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						checked: attributes.showSort,
 						onChange: ( showSort ) => setAttributes( { showSort } ),
@@ -129,11 +135,11 @@
 					el( ToggleControl, {
 						label: __(
 							'Answer questions from this site’s content',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						help: __(
 							'A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						checked: attributes.showAnswer,
 						onChange: ( showAnswer ) =>
@@ -142,11 +148,11 @@
 					el( ToggleControl, {
 						label: __(
 							'Suggest the filters a sentence names',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						help: __(
 							'“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						checked: attributes.suggestFilters,
 						onChange: ( suggestFilters ) =>
@@ -156,11 +162,11 @@
 						el( ToggleControl, {
 							label: __(
 								'Apply them instead of suggesting',
-								'viglet-dumont'
+								'viglet-turing-search'
 							),
 							help: __(
 								'“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model.',
-								'viglet-dumont'
+								'viglet-turing-search'
 							),
 							checked: attributes.applyFilters,
 							onChange: ( applyFilters ) =>
@@ -169,32 +175,35 @@
 					el( ToggleControl, {
 						label: __(
 							'Show popular searches under the box',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						help: __(
 							'Up to eight of this week’s most searched words, each one checked to find something, before a visitor types.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						checked: attributes.showTrending,
 						onChange: ( showTrending ) =>
 							setAttributes( { showTrending } ),
 					} ),
 					el( SelectControl, {
-						label: __( 'Where the filters sit', 'viglet-dumont' ),
+						label: __(
+							'Where the filters sit',
+							'viglet-turing-search'
+						),
 						value: attributes.facetsPosition,
 						options: [
 							{
-								label: __( 'Left', 'viglet-dumont' ),
+								label: __( 'Left', 'viglet-turing-search' ),
 								value: 'left',
 							},
 							{
-								label: __( 'Right', 'viglet-dumont' ),
+								label: __( 'Right', 'viglet-turing-search' ),
 								value: 'right',
 							},
 							{
 								label: __(
 									'Above the results',
-									'viglet-dumont'
+									'viglet-turing-search'
 								),
 								value: 'top',
 							},
@@ -203,15 +212,15 @@
 							setAttributes( { facetsPosition } ),
 					} ),
 					el( SelectControl, {
-						label: __( 'Results as', 'viglet-dumont' ),
+						label: __( 'Results as', 'viglet-turing-search' ),
 						value: attributes.resultsLayout,
 						options: [
 							{
-								label: __( 'A list', 'viglet-dumont' ),
+								label: __( 'A list', 'viglet-turing-search' ),
 								value: 'list',
 							},
 							{
-								label: __( 'A grid', 'viglet-dumont' ),
+								label: __( 'A grid', 'viglet-turing-search' ),
 								value: 'grid',
 							},
 						],
@@ -221,13 +230,19 @@
 					...[
 						[
 							'showImage',
-							__( 'Show the image', 'viglet-dumont' ),
+							__( 'Show the image', 'viglet-turing-search' ),
 						],
-						[ 'showType', __( 'Show the type', 'viglet-dumont' ) ],
-						[ 'showDate', __( 'Show the date', 'viglet-dumont' ) ],
+						[
+							'showType',
+							__( 'Show the type', 'viglet-turing-search' ),
+						],
+						[
+							'showDate',
+							__( 'Show the date', 'viglet-turing-search' ),
+						],
 						[
 							'showSnippet',
-							__( 'Show the snippet', 'viglet-dumont' ),
+							__( 'Show the snippet', 'viglet-turing-search' ),
 						],
 					].map( ( [ name, label ] ) =>
 						el( ToggleControl, {
@@ -239,7 +254,7 @@
 						} )
 					),
 					el( SelectControl, {
-						label: __( 'Results per page', 'viglet-dumont' ),
+						label: __( 'Results per page', 'viglet-turing-search' ),
 						value: String( attributes.perPage ),
 						options: [ 5, 10, 20, 50 ].map( ( n ) => ( {
 							label: String( n ),
@@ -265,7 +280,7 @@
 									icon: 'search',
 									label: __(
 										'Turing search',
-										'viglet-dumont'
+										'viglet-turing-search'
 									),
 								} ),
 						} )

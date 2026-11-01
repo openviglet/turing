@@ -37,7 +37,7 @@ return array(
 		'Tents, bags and stoves for the night up high.'              => 'Barracas, sacos de dormir e fogareiros para a noite lá no alto.',
 		'From the trail journal'                                     => 'Do diário de trilha',
 		// The footer and the guides.
-		'Gear for the high ground, since the first wet boot. A demo store for Viglet Dumont: every product and post here is invented.' => 'Equipamento para as alturas, desde a primeira bota molhada. Uma loja de demonstração do Viglet Dumont: todo produto e post aqui é inventado.',
+		'Gear for the high ground, since the first wet boot. A demo store for Viglet Turing Search: every product and post here is invented.' => 'Equipamento para as alturas, desde a primeira bota molhada. Uma loja de demonstração do Viglet Turing Search: todo produto e post aqui é inventado.',
 		'Help'                                                       => 'Ajuda',
 		'Search the shop'                                            => 'Buscar na loja',
 		'Trail journal'                                              => 'Diário de trilha',

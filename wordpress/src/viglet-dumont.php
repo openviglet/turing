@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: Viglet Dumont for WordPress
+ * Plugin Name: Viglet Turing Search
  * Plugin URI:  https://openviglet.github.io/dumont
  * Description: Integrates WordPress with Viglet Turing search engine for powerful content indexing and search.
- * Version:     2.0.0
+ * Version:     1.0.0
  * Author:      Viglet
  * Author URI:  https://viglet.com
  * License:     MIT
- * Text Domain: viglet-dumont
+ * Text Domain: viglet-turing-search
  * Domain Path: /languages
  * Requires at least: 6.6
  * Requires PHP: 8.1
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'VIGLET_DUMONT_VERSION', '2.0.0' );
+define( 'VIGLET_DUMONT_VERSION', '1.0.0' );
 define( 'VIGLET_DUMONT_FILE', __FILE__ );
 define( 'VIGLET_DUMONT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VIGLET_DUMONT_URL', plugin_dir_url( __FILE__ ) );
@@ -87,17 +87,17 @@ function viglet_dumont_ai_status(): array {
 	$settings = viglet_dumont_get_settings();
 	$declared = Viglet_Dumont_Mapping::declares_generative_ai( $settings );
 	$labels   = array(
-		'answer'     => __( 'Answers with sources', 'viglet-dumont' ),
-		'chat'       => __( 'Chat', 'viglet-dumont' ),
-		'nl_filters' => __( 'Natural-language filters', 'viglet-dumont' ),
-		'copilot'    => __( 'Catalog copilot', 'viglet-dumont' ),
+		'answer'     => __( 'Answers with sources', 'viglet-turing-search' ),
+		'chat'       => __( 'Chat', 'viglet-turing-search' ),
+		'nl_filters' => __( 'Natural-language filters', 'viglet-turing-search' ),
+		'copilot'    => __( 'Catalog copilot', 'viglet-turing-search' ),
 	);
 	// Where a visitor meets each feature (D179): the block, and the setting on it when there is one.
 	$blocks = array(
-		'answer'     => __( 'Turing search block, with "Answer questions from this site’s content" on', 'viglet-dumont' ),
-		'chat'       => __( 'Site assistant block, or its launcher on every page', 'viglet-dumont' ),
-		'nl_filters' => __( 'Turing search block, with "Suggest the filters a sentence names" on', 'viglet-dumont' ),
-		'copilot'    => __( 'Ask the catalog block', 'viglet-dumont' ),
+		'answer'     => __( 'Turing search block, with "Answer questions from this site’s content" on', 'viglet-turing-search' ),
+		'chat'       => __( 'Site assistant block, or its launcher on every page', 'viglet-turing-search' ),
+		'nl_filters' => __( 'Turing search block, with "Suggest the filters a sentence names" on', 'viglet-turing-search' ),
+		'copilot'    => __( 'Ask the catalog block', 'viglet-turing-search' ),
 	);
 
 	return array_map(
@@ -111,7 +111,7 @@ function viglet_dumont_ai_status(): array {
 			// The manifest turns the site's generative AI on (Turing T1116). Once it does, an
 			// answer still off is Turing's to explain, and its reason stands alone.
 			'fix'     => ! $row['on'] && 'answer' === $row['feature'] && ! $declared
-				? __( 'Turn on Generative AI under Settings › Search, then save the fields on the Fields screen.', 'viglet-dumont' )
+				? __( 'Turn on Generative AI under Settings › Search, then save the fields on the Fields screen.', 'viglet-turing-search' )
 				: '',
 		),
 		( new Viglet_Dumont_API_Client( $settings ) )->ai_features()
@@ -133,7 +133,7 @@ function viglet_dumont_update_settings( array $settings ): bool {
 function viglet_dumont_init(): void {
 	// A site that installed the GitHub zip or Composer gets no language pack from wordpress.org:
 	// the pt_BR the plugin ships is loaded from its own languages/ folder.
-	load_plugin_textdomain( 'viglet-dumont', false, dirname( plugin_basename( VIGLET_DUMONT_FILE ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
+	load_plugin_textdomain( 'viglet-turing-search', false, dirname( plugin_basename( VIGLET_DUMONT_FILE ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 
 	$settings = viglet_dumont_get_settings();
 
@@ -843,7 +843,7 @@ function viglet_dumont_rest_preview_mapping( WP_REST_Request $request ): WP_REST
 		)
 	);
 	if ( empty( $posts ) ) {
-		return new WP_REST_Response( array( 'message' => __( 'No published post of this type to preview.', 'viglet-dumont' ) ), 404 );
+		return new WP_REST_Response( array( 'message' => __( 'No published post of this type to preview.', 'viglet-turing-search' ) ), 404 );
 	}
 
 	$item = ( new Viglet_Dumont_Indexer() )->build_create_item( $posts[0] );
@@ -868,7 +868,7 @@ function viglet_dumont_rest_preview_mapping( WP_REST_Request $request ): WP_REST
 function viglet_dumont_rest_save_mapping( WP_REST_Request $request ): WP_REST_Response {
 	$mapping = $request->get_param( 'mapping' );
 	if ( ! is_array( $mapping ) ) {
-		return new WP_REST_Response( array( 'message' => __( 'The body needs a mapping object keyed by post type.', 'viglet-dumont' ) ), 400 );
+		return new WP_REST_Response( array( 'message' => __( 'The body needs a mapping object keyed by post type.', 'viglet-turing-search' ) ), 400 );
 	}
 
 	return new WP_REST_Response( array( 'mapping' => ( new Viglet_Dumont_Mapping() )->save( $mapping ) ), 200 );

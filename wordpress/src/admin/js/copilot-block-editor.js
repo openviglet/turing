@@ -33,28 +33,34 @@
 				null,
 				el(
 					PanelBody,
-					{ title: __( 'Ask the catalog', 'viglet-dumont' ) },
+					{ title: __( 'Ask the catalog', 'viglet-turing-search' ) },
 					el( TextControl, {
-						label: __( 'Heading', 'viglet-dumont' ),
-						placeholder: __( 'Ask the catalog', 'viglet-dumont' ),
+						label: __( 'Heading', 'viglet-turing-search' ),
+						placeholder: __(
+							'Ask the catalog',
+							'viglet-turing-search'
+						),
 						value: attributes.heading,
 						onChange: ( heading ) => setAttributes( { heading } ),
 					} ),
 					el( TextControl, {
-						label: __( 'Placeholder', 'viglet-dumont' ),
+						label: __( 'Placeholder', 'viglet-turing-search' ),
 						placeholder: __(
 							'A waterproof jacket under 200',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						value: attributes.placeholder,
 						onChange: ( placeholder ) =>
 							setAttributes( { placeholder } ),
 					} ),
 					el( ToggleControl, {
-						label: __( 'Offer Build my kit', 'viglet-dumont' ),
+						label: __(
+							'Offer Build my kit',
+							'viglet-turing-search'
+						),
 						help: __(
 							'A visitor describes a plan and gets the products it needs, grouped by need, to put in the cart together.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						checked: attributes.kit,
 						onChange: ( kit ) => setAttributes( { kit } ),
@@ -65,10 +71,10 @@
 				icon: 'format-chat',
 				label:
 					attributes.heading ||
-					__( 'Ask the catalog', 'viglet-dumont' ),
+					__( 'Ask the catalog', 'viglet-turing-search' ),
 				instructions: __(
 					'Visitors ask in plain words and Turing’s catalog copilot answers from this site, citing its items. It shows only when Turing has a language model for it.',
-					'viglet-dumont'
+					'viglet-turing-search'
 				),
 			} )
 		);

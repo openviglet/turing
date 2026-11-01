@@ -12,13 +12,7 @@ msgstr ""
 "Language: pt_BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: viglet-dumont\n"
-
-#: src/admin/views/settings-page.php:26
-#: src/includes/class-viglet-dumont-admin.php:65
-#: src/includes/class-viglet-dumont-admin.php:66
-msgid "Viglet Dumont"
-msgstr "Viglet Dumont"
+"X-Domain: viglet-turing-search\n"
 
 #: src/admin/views/settings-page.php:31
 msgid "Integrate WordPress with Viglet Turing search engine for powerful content indexing and search."
@@ -2834,3 +2828,9 @@ msgstr "%1$d enviados, %2$d não confirmados, %3$d falharam."
 #: src/blocks/search/parts/correction.php:28
 msgid "Showing close matches: nothing matched every word you searched for."
 msgstr "Mostrando resultados próximos: nada correspondeu a todas as palavras buscadas."
+
+#: src/admin/views/settings-page.php:26
+#: src/includes/class-viglet-dumont-admin.php:65
+#: src/includes/class-viglet-dumont-admin.php:66
+msgid "Viglet Turing Search"
+msgstr "Viglet Turing Search"

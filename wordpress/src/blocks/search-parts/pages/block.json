@@ -6,7 +6,7 @@
 	"category": "widgets",
 	"icon": "ellipsis",
 	"description": "The Turing search block’s result pages.",
-	"textdomain": "viglet-dumont",
+	"textdomain": "viglet-turing-search",
 	"ancestor": [
 		"viglet-dumont/search"
 	],

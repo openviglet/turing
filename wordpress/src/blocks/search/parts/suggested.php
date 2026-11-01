@@ -20,14 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <?php if ( ! empty( $attributes['suggestFilters'] ) ) : ?>
 	<div class="viglet-dumont-search__suggested" hidden data-wp-bind--hidden="!state.hasSuggested">
-		<span class="viglet-dumont-search__suggested-label" id="<?php echo esc_attr( $viglet_dumont_id ); ?>-suggested"><?php esc_html_e( 'Filter by what you asked for:', 'viglet-dumont' ); ?></span>
+		<span class="viglet-dumont-search__suggested-label" id="<?php echo esc_attr( $viglet_dumont_id ); ?>-suggested"><?php esc_html_e( 'Filter by what you asked for:', 'viglet-turing-search' ); ?></span>
 		<ul aria-labelledby="<?php echo esc_attr( $viglet_dumont_id ); ?>-suggested">
 			<template data-wp-each--suggestion="state.suggested" data-wp-each-key="context.suggestion.fq">
 				<li>
 					<button type="button" class="viglet-dumont-search__chip viglet-dumont-search__chip--suggested" data-wp-on--click="actions.applySuggestion">
 						<span aria-hidden="true">+</span>
 						<span data-wp-text="context.suggestion.label"></span>
-						<span class="screen-reader-text"><?php esc_html_e( 'Apply this filter', 'viglet-dumont' ); ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Apply this filter', 'viglet-turing-search' ); ?></span>
 					</button>
 				</li>
 			</template>
@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php if ( ! empty( $attributes['applyFilters'] ) ) : ?>
 		<p class="viglet-dumont-search__understood" role="status" hidden data-wp-bind--hidden="!state.understood">
 			<span data-wp-text="state.understood"></span>
-			<button type="button" class="viglet-dumont-search__undo" data-wp-on--click="actions.undoUnderstood"><?php esc_html_e( 'Undo', 'viglet-dumont' ); ?></button>
+			<button type="button" class="viglet-dumont-search__undo" data-wp-on--click="actions.undoUnderstood"><?php esc_html_e( 'Undo', 'viglet-turing-search' ); ?></button>
 		</p>
 	<?php endif; ?>
 <?php endif; ?>

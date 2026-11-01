@@ -18,7 +18,7 @@
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"fontSize":"small"} -->
-<p class="has-small-font-size"><?php esc_html_e( 'Gear for the high ground, since the first wet boot. A demo store for Viglet Dumont: every product and post here is invented.', 'tarnfell' ); ?></p>
+<p class="has-small-font-size"><?php esc_html_e( 'Gear for the high ground, since the first wet boot. A demo store for Viglet Turing Search: every product and post here is invented.', 'tarnfell' ); ?></p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
 

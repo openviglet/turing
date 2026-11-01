@@ -3,7 +3,7 @@
 # argument (the site's Pages workflow passes _site/playground): demo/playground/blueprint.json
 # and the three zips its URLs name.
 #
-#   viglet-dumont.zip   the plugin, as bin/build-zip.sh packages it (run npm run build first)
+#   viglet-turing-search.zip   the plugin, as bin/build-zip.sh packages it (run npm run build first)
 #   tarnfell.zip        the demo theme, one tarnfell/ folder
 #   tarnfell-demo.zip   demo/setup.php, the catalog seed and its photos, one tarnfell-demo/ folder
 #
@@ -16,7 +16,7 @@ cd "$(dirname "$0")/.."
 mkdir -p "$out"
 out=$(cd "$out" && pwd)
 
-cp "$(sh bin/build-zip.sh)" "$out/viglet-dumont.zip"
+cp "$(sh bin/build-zip.sh)" "$out/viglet-turing-search.zip"
 (cd demo/theme && zip -qr "$out/tarnfell.zip" tarnfell)
 
 rm -rf build/tarnfell-demo

@@ -185,7 +185,7 @@ class Viglet_Dumont_Operations {
 			return array(
 				'success' => false,
 				'orphans' => array(),
-				'message' => __( 'Turing could not be searched for this site\'s documents.', 'viglet-dumont' ),
+				'message' => __( 'Turing could not be searched for this site\'s documents.', 'viglet-turing-search' ),
 			);
 		}
 		if ( $dry_run || empty( $orphans ) ) {
@@ -233,7 +233,7 @@ class Viglet_Dumont_Operations {
 			? array(
 				'success' => false,
 				'orphans' => array(),
-				'message' => __( 'Skipped: the reindex had failures.', 'viglet-dumont' ),
+				'message' => __( 'Skipped: the reindex had failures.', 'viglet-turing-search' ),
 			)
 			: $this->sweep();
 

@@ -48,7 +48,7 @@ wp_enqueue_style(
 				<?php
 				printf(
 					/* translators: %s: the search query. */
-					esc_html__( 'Search results for: %s', 'viglet-dumont' ),
+					esc_html__( 'Search results for: %s', 'viglet-turing-search' ),
 					'<span>' . esc_html( $query ) . '</span>'
 				);
 				?>
@@ -59,7 +59,7 @@ wp_enqueue_style(
 					<?php
 					printf(
 						/* translators: %d: how many results the search found. */
-						esc_html( _n( '%d result found', '%d results found', $total, 'viglet-dumont' ) ),
+						esc_html( _n( '%d result found', '%d results found', $total, 'viglet-turing-search' ) ),
 						(int) $total
 					);
 					?>
@@ -75,7 +75,7 @@ wp_enqueue_style(
 
 		<?php if ( ! empty( $did_you_mean ) ) : ?>
 			<div class="vd-search__dym">
-				<?php esc_html_e( 'Did you mean:', 'viglet-dumont' ); ?>
+				<?php esc_html_e( 'Did you mean:', 'viglet-turing-search' ); ?>
 				<a href="<?php echo esc_url( home_url( '/?s=' . rawurlencode( $did_you_mean ) ) ); ?>">
 					<?php echo esc_html( $did_you_mean ); ?>
 				</a>
@@ -110,7 +110,7 @@ wp_enqueue_style(
 			<div class="vd-search__results">
 				<?php if ( empty( $results ) && ! $error ) : ?>
 					<div class="vd-search__empty">
-						<p><?php esc_html_e( 'No results found. Try different keywords.', 'viglet-dumont' ); ?></p>
+						<p><?php esc_html_e( 'No results found. Try different keywords.', 'viglet-turing-search' ); ?></p>
 					</div>
 				<?php else : ?>
 					<?php foreach ( $results as $viglet_dumont_item ) : ?>
@@ -174,8 +174,8 @@ wp_enqueue_style(
 									'format'    => '',
 									'current'   => $page,
 									'total'     => $total_pages,
-									'prev_text' => '&laquo; ' . __( 'Previous', 'viglet-dumont' ),
-									'next_text' => __( 'Next', 'viglet-dumont' ) . ' &raquo;',
+									'prev_text' => '&laquo; ' . __( 'Previous', 'viglet-turing-search' ),
+									'next_text' => __( 'Next', 'viglet-turing-search' ) . ' &raquo;',
 									'type'      => 'list',
 								)
 							)

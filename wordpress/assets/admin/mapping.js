@@ -29,9 +29,9 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 
 const STATUS_LABEL = {
-	provisioned: __( 'In Turing', 'viglet-dumont' ),
-	pending: __( 'Added on the next save', 'viglet-dumont' ),
-	conflict: __( 'Conflict', 'viglet-dumont' ),
+	provisioned: __( 'In Turing', 'viglet-turing-search' ),
+	pending: __( 'Added on the next save', 'viglet-turing-search' ),
+	conflict: __( 'Conflict', 'viglet-turing-search' ),
 };
 
 function emptyField( sources ) {
@@ -68,24 +68,24 @@ function RangeRows( { ranges, onChange } ) {
 
 	return (
 		<fieldset>
-			<legend>{ __( 'Ranges', 'viglet-dumont' ) }</legend>
+			<legend>{ __( 'Ranges', 'viglet-turing-search' ) }</legend>
 			<p className="description">
 				{ __(
 					'Leave a bound empty for an open end, and a label empty to name the range after its bounds.',
-					'viglet-dumont'
+					'viglet-turing-search'
 				) }
 			</p>
 			{ ranges.map( ( range, index ) => (
 				<Flex key={ index } justify="flex-start" align="flex-end">
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'Label', 'viglet-dumont' ) }
+						label={ __( 'Label', 'viglet-turing-search' ) }
 						value={ range.label || '' }
 						onChange={ ( v ) => setRange( index, 'label', v ) }
 					/>
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'From', 'viglet-dumont' ) }
+						label={ __( 'From', 'viglet-turing-search' ) }
 						type="number"
 						value={ range.from ?? '' }
 						onChange={ ( v ) =>
@@ -94,7 +94,7 @@ function RangeRows( { ranges, onChange } ) {
 					/>
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'To', 'viglet-dumont' ) }
+						label={ __( 'To', 'viglet-turing-search' ) }
 						type="number"
 						value={ range.to ?? '' }
 						onChange={ ( v ) =>
@@ -108,7 +108,7 @@ function RangeRows( { ranges, onChange } ) {
 							onChange( ranges.filter( ( r, i ) => i !== index ) )
 						}
 					>
-						{ __( 'Remove range', 'viglet-dumont' ) }
+						{ __( 'Remove range', 'viglet-turing-search' ) }
 					</Button>
 				</Flex>
 			) ) }
@@ -122,7 +122,7 @@ function RangeRows( { ranges, onChange } ) {
 					] )
 				}
 			>
-				{ __( 'Add range', 'viglet-dumont' ) }
+				{ __( 'Add range', 'viglet-turing-search' ) }
 			</Button>
 		</fieldset>
 	);
@@ -147,7 +147,7 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 					<SelectControl
 						__nextHasNoMarginBottom
 						hideLabelFromVision
-						label={ __( 'Source', 'viglet-dumont' ) }
+						label={ __( 'Source', 'viglet-turing-search' ) }
 						value={ field.source }
 						options={ options }
 						onChange={ set( 'source' ) }
@@ -157,7 +157,7 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 					<TextControl
 						__nextHasNoMarginBottom
 						hideLabelFromVision
-						label={ __( 'Turing field', 'viglet-dumont' ) }
+						label={ __( 'Turing field', 'viglet-turing-search' ) }
 						value={ field.field }
 						onChange={ set( 'field' ) }
 					/>
@@ -166,7 +166,7 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 					<SelectControl
 						__nextHasNoMarginBottom
 						hideLabelFromVision
-						label={ __( 'Type', 'viglet-dumont' ) }
+						label={ __( 'Type', 'viglet-turing-search' ) }
 						value={ field.type }
 						options={ types.map( ( t ) => ( {
 							value: t,
@@ -178,7 +178,7 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 				<td>
 					<CheckboxControl
 						__nextHasNoMarginBottom
-						label={ __( 'Multiple', 'viglet-dumont' ) }
+						label={ __( 'Multiple', 'viglet-turing-search' ) }
 						checked={ !! field.multi }
 						onChange={ set( 'multi' ) }
 					/>
@@ -186,19 +186,19 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 				<td>
 					<CheckboxControl
 						__nextHasNoMarginBottom
-						label={ __( 'Facet', 'viglet-dumont' ) }
+						label={ __( 'Facet', 'viglet-turing-search' ) }
 						checked={ !! field.facet }
 						onChange={ set( 'facet' ) }
 					/>
 					{ rangeable && (
 						<CheckboxControl
 							__nextHasNoMarginBottom
-							label={ __( 'Ranges', 'viglet-dumont' ) }
+							label={ __( 'Ranges', 'viglet-turing-search' ) }
 							help={
 								'DATE' === field.type
 									? __(
 											'Upcoming, last 7 and 30 days, this year, before.',
-											'viglet-dumont'
+											'viglet-turing-search'
 										)
 									: undefined
 							}
@@ -209,7 +209,10 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 					{ ( field.facet || ( rangeable && field.range ) ) && (
 						<TextControl
 							__nextHasNoMarginBottom
-							label={ __( 'Facet label', 'viglet-dumont' ) }
+							label={ __(
+								'Facet label',
+								'viglet-turing-search'
+							) }
 							value={ field.facet_label }
 							onChange={ set( 'facet_label' ) }
 						/>
@@ -219,7 +222,7 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 					<TextControl
 						__nextHasNoMarginBottom
 						hideLabelFromVision
-						label={ __( 'Search weight', 'viglet-dumont' ) }
+						label={ __( 'Search weight', 'viglet-turing-search' ) }
 						type="number"
 						min={ 1 }
 						max={ 100 }
@@ -249,9 +252,9 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 						variant="tertiary"
 						isDestructive
 						onClick={ onRemove }
-						label={ __( 'Remove field', 'viglet-dumont' ) }
+						label={ __( 'Remove field', 'viglet-turing-search' ) }
 					>
-						{ __( 'Remove', 'viglet-dumont' ) }
+						{ __( 'Remove', 'viglet-turing-search' ) }
 					</Button>
 				</td>
 			</tr>
@@ -293,7 +296,7 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 					__nextHasNoMarginBottom
 					label={ __(
 						'Leave this type out of search',
-						'viglet-dumont'
+						'viglet-turing-search'
 					) }
 					checked={ !! value.exclude }
 					onChange={ ( exclude ) =>
@@ -306,7 +309,7 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 					<p>
 						{ __(
 							'Only the standard fields are sent for this type.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 					</p>
 				) : (
@@ -314,29 +317,38 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 						<thead>
 							<tr>
 								<th scope="col">
-									{ __( 'Source', 'viglet-dumont' ) }
+									{ __( 'Source', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Turing field', 'viglet-dumont' ) }
+									{ __(
+										'Turing field',
+										'viglet-turing-search'
+									) }
 								</th>
 								<th scope="col">
-									{ __( 'Type', 'viglet-dumont' ) }
+									{ __( 'Type', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Multiple', 'viglet-dumont' ) }
+									{ __( 'Multiple', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Facet', 'viglet-dumont' ) }
+									{ __( 'Facet', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Weight', 'viglet-dumont' ) }
+									{ __( 'Weight', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'In Turing', 'viglet-dumont' ) }
+									{ __(
+										'In Turing',
+										'viglet-turing-search'
+									) }
 								</th>
 								<th scope="col">
 									<span className="screen-reader-text">
-										{ __( 'Actions', 'viglet-dumont' ) }
+										{ __(
+											'Actions',
+											'viglet-turing-search'
+										) }
 									</span>
 								</th>
 							</tr>
@@ -375,10 +387,10 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 							setFields( [ ...fields, emptyField( sources ) ] )
 						}
 					>
-						{ __( 'Add field', 'viglet-dumont' ) }
+						{ __( 'Add field', 'viglet-turing-search' ) }
 					</Button>
 					<Button variant="tertiary" onClick={ loadPreview }>
-						{ __( 'Preview document', 'viglet-dumont' ) }
+						{ __( 'Preview document', 'viglet-turing-search' ) }
 					</Button>
 				</Flex>
 				{ previewError && (
@@ -393,7 +405,7 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 								/* translators: %s: the post's title. */
 								__(
 									'What "%s" sends, as saved (unsaved changes are not in it):',
-									'viglet-dumont'
+									'viglet-turing-search'
 								),
 								preview.post.title
 							) }
@@ -480,7 +492,7 @@ function Mapping() {
 			<p>
 				{ __(
 					'Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them.',
-					'viglet-dumont'
+					'viglet-turing-search'
 				) }
 			</p>
 			{ error && (
@@ -494,7 +506,7 @@ function Mapping() {
 						/* translators: %s: why Turing could not say where each field stands. */
 						__(
 							'Turing did not say where the fields stand: %s',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						data.status_error
 					) }
@@ -504,7 +516,7 @@ function Mapping() {
 				<Notice status="info" isDismissible={ false }>
 					{ __(
 						"Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console.",
-						'viglet-dumont'
+						'viglet-turing-search'
 					) }
 				</Notice>
 			) }
@@ -536,7 +548,7 @@ function Mapping() {
 					disabled={ saving }
 					onClick={ save }
 				>
-					{ __( 'Save and send to Turing', 'viglet-dumont' ) }
+					{ __( 'Save and send to Turing', 'viglet-turing-search' ) }
 				</Button>
 			</Flex>
 		</Flex>

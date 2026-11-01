@@ -111,34 +111,34 @@ class Viglet_Dumont_Events {
 
 		switch ( $key ) {
 			case 'imported':
-				return __( 'Documents imported successfully', 'viglet-dumont' );
+				return __( 'Documents imported successfully', 'viglet-turing-search' );
 			case 'import_failed':
 				/* translators: 1: the HTTP status code, 2: the response body. */
-				$format = __( 'Import failed with HTTP %1$d: %2$s', 'viglet-dumont' );
+				$format = __( 'Import failed with HTTP %1$d: %2$s', 'viglet-turing-search' );
 				break;
 			case 'removed':
-				return __( 'Documents removed successfully', 'viglet-dumont' );
+				return __( 'Documents removed successfully', 'viglet-turing-search' );
 			case 'deindex_failed':
 				/* translators: %d: the HTTP status code Turing answered with. */
-				$format = __( 'Deindex failed with HTTP %d', 'viglet-dumont' );
+				$format = __( 'Deindex failed with HTTP %d', 'viglet-turing-search' );
 				break;
 			case 'provisioned':
-				return __( 'Fields provisioned', 'viglet-dumont' );
+				return __( 'Fields provisioned', 'viglet-turing-search' );
 			case 'provision_breaking':
 				/* translators: %s: the fields whose type Turing would have to change. */
-				$format = __( 'Turing kept the site\'s schema: a mapped field would change an existing field\'s type (%s). Rename the field or migrate it in Turing.', 'viglet-dumont' );
+				$format = __( 'Turing kept the site\'s schema: a mapped field would change an existing field\'s type (%s). Rename the field or migrate it in Turing.', 'viglet-turing-search' );
 				break;
 			case 'provision_failed':
 				/* translators: 1: the HTTP status code, 2: Turing's error message. */
-				$format = __( 'Provisioning failed with HTTP %1$d: %2$s', 'viglet-dumont' );
+				$format = __( 'Provisioning failed with HTTP %1$d: %2$s', 'viglet-turing-search' );
 				break;
 			case 'bulk':
 				/* translators: 1: posts sent, 2: posts that failed. */
-				$format = __( 'Bulk: %1$d sent, %2$d failed.', 'viglet-dumont' );
+				$format = __( 'Bulk: %1$d sent, %2$d failed.', 'viglet-turing-search' );
 				break;
 			case 'swept':
 				/* translators: %d: documents removed from Turing. */
-				$format = __( '%d documents WordPress no longer publishes removed.', 'viglet-dumont' );
+				$format = __( '%d documents WordPress no longer publishes removed.', 'viglet-turing-search' );
 				break;
 			default:
 				return $key;

@@ -31,7 +31,7 @@ if ( ! $viglet_dumont_posts ) {
 		printf(
 			'<p %s>%s</p>',
 			get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-related__empty' ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by WordPress.
-			esc_html__( 'Related posts appear here once this post is indexed and Turing finds posts like it.', 'viglet-dumont' )
+			esc_html__( 'Related posts appear here once this post is indexed and Turing finds posts like it.', 'viglet-turing-search' )
 		);
 	}
 	return;
@@ -39,7 +39,7 @@ if ( ! $viglet_dumont_posts ) {
 
 $viglet_dumont_heading = '' !== trim( (string) ( $attributes['heading'] ?? '' ) )
 	? (string) $attributes['heading']
-	: __( 'Related posts', 'viglet-dumont' );
+	: __( 'Related posts', 'viglet-turing-search' );
 $viglet_dumont_id      = wp_unique_id( 'viglet-dumont-related-' );
 $viglet_dumont_doc_ids = new Viglet_Dumont_Indexer();
 // A product among them offers Compare, ticked into the list the search cards use (D212).
@@ -50,7 +50,7 @@ if ( $viglet_dumont_shop ) {
 		'viglet-dumont/related',
 		array(
 			/* translators: %d: how many products, two to four. */
-			'compareLabel' => __( 'Compare %d products', 'viglet-dumont' ),
+			'compareLabel' => __( 'Compare %d products', 'viglet-turing-search' ),
 		)
 	);
 }
@@ -111,8 +111,8 @@ if ( $viglet_dumont_shop ) {
 				<?php if ( $viglet_dumont_shop && 'product' === $viglet_dumont_related->post_type ) : ?>
 					<label class="viglet-dumont-related__compare" hidden data-wp-bind--hidden="!state.canCompare">
 						<?php /* translators: %s: a product's name. */ ?>
-						<input type="checkbox" aria-label="<?php echo esc_attr( sprintf( __( 'Compare %s', 'viglet-dumont' ), get_the_title( $viglet_dumont_related ) ) ); ?>" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
-						<?php esc_html_e( 'Compare', 'viglet-dumont' ); ?>
+						<input type="checkbox" aria-label="<?php echo esc_attr( sprintf( __( 'Compare %s', 'viglet-turing-search' ), get_the_title( $viglet_dumont_related ) ) ); ?>" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
+						<?php esc_html_e( 'Compare', 'viglet-turing-search' ); ?>
 					</label>
 				<?php endif; ?>
 			</li>

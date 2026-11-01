@@ -31,10 +31,13 @@
 				null,
 				el(
 					PanelBody,
-					{ title: __( 'Compare products', 'viglet-dumont' ) },
+					{ title: __( 'Compare products', 'viglet-turing-search' ) },
 					el( TextControl, {
-						label: __( 'Heading', 'viglet-dumont' ),
-						placeholder: __( 'Compare products', 'viglet-dumont' ),
+						label: __( 'Heading', 'viglet-turing-search' ),
+						placeholder: __(
+							'Compare products',
+							'viglet-turing-search'
+						),
 						value: attributes.heading,
 						onChange: ( heading ) => setAttributes( { heading } ),
 					} )
@@ -44,10 +47,10 @@
 				icon: 'columns',
 				label:
 					attributes.heading ||
-					__( 'Compare products', 'viglet-dumont' ),
+					__( 'Compare products', 'viglet-turing-search' ),
 				instructions: __(
 					'Shows the products a shopper ticked Compare on in the search results, side by side. The search results link here once this page is published.',
-					'viglet-dumont'
+					'viglet-turing-search'
 				),
 			} )
 		);

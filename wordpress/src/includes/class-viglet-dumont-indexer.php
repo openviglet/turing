@@ -214,9 +214,9 @@ class Viglet_Dumont_Indexer {
 			'percent' => min( $percent, 100 ),
 			'message' => $done
 				/* translators: %d: how many documents were indexed. */
-				? sprintf( __( 'Indexing complete. %d documents indexed.', 'viglet-dumont' ), $new_offset )
+				? sprintf( __( 'Indexing complete. %d documents indexed.', 'viglet-turing-search' ), $new_offset )
 				/* translators: 1: documents indexed so far, 2: documents to index in all. */
-				: sprintf( __( 'Indexed %1$d of %2$d documents...', 'viglet-dumont' ), $new_offset, $total ),
+				: sprintf( __( 'Indexed %1$d of %2$d documents...', 'viglet-turing-search' ), $new_offset, $total ),
 		);
 	}
 

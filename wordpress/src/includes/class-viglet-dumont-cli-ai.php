@@ -45,7 +45,7 @@ class Viglet_Dumont_CLI_AI {
 				array_map(
 					static fn ( array $row ) => array(
 						'feature' => $row['label'],
-						'on'      => $row['on'] ? __( 'yes', 'viglet-dumont' ) : __( 'no', 'viglet-dumont' ),
+						'on'      => $row['on'] ? __( 'yes', 'viglet-turing-search' ) : __( 'no', 'viglet-turing-search' ),
 						'why'     => trim( $row['reason'] . ' ' . $row['fix'] ),
 					),
 					$rows
@@ -57,7 +57,7 @@ class Viglet_Dumont_CLI_AI {
 		$off = count( array_filter( $rows, static fn ( array $row ) => ! $row['on'] ) );
 		if ( $off > 0 ) {
 			/* translators: %d: how many AI features are off. */
-			WP_CLI::error( sprintf( _n( '%d AI feature is off.', '%d AI features are off.', $off, 'viglet-dumont' ), $off ) );
+			WP_CLI::error( sprintf( _n( '%d AI feature is off.', '%d AI features are off.', $off, 'viglet-turing-search' ), $off ) );
 		}
 	}
 }

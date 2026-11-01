@@ -1,6 +1,6 @@
 <?php
 /**
- * Tarnfell: the demo storefront theme for the Viglet Dumont plugin (D193).
+ * Tarnfell: the demo storefront theme for the Viglet Turing Search plugin (D193).
  *
  * @package Tarnfell
  */

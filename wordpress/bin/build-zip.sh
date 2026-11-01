@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
-# Build the installable plugin zip: build/viglet-dumont-<version>.zip, holding one
-# viglet-dumont/ folder, which is what both WordPress and Composer's package repository expect.
+# Build the installable plugin zip: build/viglet-turing-search-<version>.zip, holding one
+# viglet-turing-search/ folder (the plugin directory slug), which is what both WordPress and Composer's package repository expect.
 #
 # The version comes from the plugin header, and a version argument (the release tag without its
 # wordpress-v prefix) must match it, so a tag can never publish a zip that says otherwise.
@@ -36,10 +36,10 @@ if [ -n "$(find src/admin/build -mindepth 1 -type d)" ]; then
 fi
 
 rm -rf build
-mkdir -p build/viglet-dumont
-cp -R src/. build/viglet-dumont/
-cp composer.json build/viglet-dumont/
-(cd build && zip -qr "viglet-dumont-$version.zip" viglet-dumont)
-rm -rf build/viglet-dumont
+mkdir -p build/viglet-turing-search
+cp -R src/. build/viglet-turing-search/
+cp composer.json build/viglet-turing-search/
+(cd build && zip -qr "viglet-turing-search-$version.zip" viglet-turing-search)
+rm -rf build/viglet-turing-search
 
-echo "build/viglet-dumont-$version.zip"
+echo "build/viglet-turing-search-$version.zip"

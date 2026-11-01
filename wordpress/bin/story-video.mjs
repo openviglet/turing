@@ -186,7 +186,7 @@ const page = await browser.newPage( { viewport: size } );
 const words =
 	'pt-BR' === videoLanguage
 		? {
-				brand: 'Viglet Dumont para WordPress',
+				brand: 'Viglet Turing Search',
 				title: 'Uma cliente, uma visita',
 				line: 'De uma necessidade vaga a um carrinho pago, com a busca e a IA do Viglet Turing.',
 				chapter: 'Capítulo',
@@ -197,7 +197,7 @@ const words =
 					'Abra a loja de demonstração ou instale o plugin a partir da versão publicada.',
 			}
 		: {
-				brand: 'Viglet Dumont for WordPress',
+				brand: 'Viglet Turing Search',
 				title: 'One shopper, one visit',
 				line: 'From a vague need to a paid-for cart, on Viglet Turing search and AI.',
 				chapter: 'Chapter',

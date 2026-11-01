@@ -37,7 +37,7 @@ function RowAction( { item, onRemove, label } ) {
 	if ( ! item.ours ) {
 		return (
 			<span className="description">
-				{ __( 'Set in Turing’s console', 'viglet-dumont' ) }
+				{ __( 'Set in Turing’s console', 'viglet-turing-search' ) }
 			</span>
 		);
 	}
@@ -48,7 +48,7 @@ function RowAction( { item, onRemove, label } ) {
 			onClick={ () => onRemove( item ) }
 			aria-label={ label }
 		>
-			{ __( 'Remove', 'viglet-dumont' ) }
+			{ __( 'Remove', 'viglet-turing-search' ) }
 		</Button>
 	);
 }
@@ -78,12 +78,17 @@ function Suggestions( { act } ) {
 				<p>
 					{ __(
 						'No suggestions from recent searches.',
-						'viglet-dumont'
+						'viglet-turing-search'
 					) }
 				</p>
 			) }
 			{ suggestions && suggestions.length > 0 && (
-				<ul aria-label={ __( 'Suggested synonyms', 'viglet-dumont' ) }>
+				<ul
+					aria-label={ __(
+						'Suggested synonyms',
+						'viglet-turing-search'
+					) }
+				>
 					{ suggestions.map( ( suggestion ) => (
 						<li key={ suggestion.terms.join( '|' ) }>
 							{ suggestion.terms.join( ' = ' ) }{ ' ' }
@@ -106,18 +111,18 @@ function Suggestions( { act } ) {
 								}
 								aria-label={ sprintf(
 									/* translators: %s: the suggested words. */
-									__( 'Accept %s', 'viglet-dumont' ),
+									__( 'Accept %s', 'viglet-turing-search' ),
 									suggestion.terms.join( ', ' )
 								) }
 							>
-								{ __( 'Accept', 'viglet-dumont' ) }
+								{ __( 'Accept', 'viglet-turing-search' ) }
 							</Button>
 						</li>
 					) ) }
 				</ul>
 			) }
 			<Button variant="tertiary" isBusy={ busy } onClick={ suggest }>
-				{ __( 'Suggest from recent searches', 'viglet-dumont' ) }
+				{ __( 'Suggest from recent searches', 'viglet-turing-search' ) }
 			</Button>
 		</div>
 	);
@@ -162,7 +167,7 @@ function TryIt( { version } ) {
 			<h3>{ label }</h3>
 			{ rows === null && <Spinner /> }
 			{ rows && rows.length === 0 && (
-				<p>{ __( 'No results.', 'viglet-dumont' ) }</p>
+				<p>{ __( 'No results.', 'viglet-turing-search' ) }</p>
 			) }
 			{ rows && rows.length > 0 && (
 				<ol>
@@ -172,7 +177,7 @@ function TryIt( { version } ) {
 								<strong>
 									{ __(
 										'Featured:',
-										'viglet-dumont'
+										'viglet-turing-search'
 									) }{ ' ' }
 								</strong>
 							) }
@@ -187,7 +192,7 @@ function TryIt( { version } ) {
 	return (
 		<Card>
 			<CardHeader>
-				<h2>{ __( 'Try it', 'viglet-dumont' ) }</h2>
+				<h2>{ __( 'Try it', 'viglet-turing-search' ) }</h2>
 			</CardHeader>
 			<CardBody>
 				<form
@@ -202,25 +207,31 @@ function TryIt( { version } ) {
 					<TextControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
-						label={ __( 'A search to watch', 'viglet-dumont' ) }
+						label={ __(
+							'A search to watch',
+							'viglet-turing-search'
+						) }
 						help={ __(
 							'Its first results, now and before your last change here.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						value={ query }
 						onChange={ setQuery }
 					/>
 					<p>
 						<Button variant="secondary" type="submit">
-							{ __( 'Try', 'viglet-dumont' ) }
+							{ __( 'Try', 'viglet-turing-search' ) }
 						</Button>
 					</p>
 				</form>
 				{ asked && (
 					<Flex align="flex-start" gap={ 6 }>
 						{ before &&
-							list( before, __( 'Before', 'viglet-dumont' ) ) }
-						{ list( after, __( 'Now', 'viglet-dumont' ) ) }
+							list(
+								before,
+								__( 'Before', 'viglet-turing-search' )
+							) }
+						{ list( after, __( 'Now', 'viglet-turing-search' ) ) }
 					</Flex>
 				) }
 			</CardBody>
@@ -241,13 +252,13 @@ function Synonyms( { rows, act } ) {
 	return (
 		<Card>
 			<CardHeader>
-				<h2>{ __( 'Synonyms', 'viglet-dumont' ) }</h2>
+				<h2>{ __( 'Synonyms', 'viglet-turing-search' ) }</h2>
 			</CardHeader>
 			<CardBody>
 				<p>
 					{ __(
 						'Words a visitor may type for the same thing. A search for any of them finds posts with the others.',
-						'viglet-dumont'
+						'viglet-turing-search'
 					) }
 				</p>
 				{ rows.length > 0 && (
@@ -255,11 +266,14 @@ function Synonyms( { rows, act } ) {
 						<thead>
 							<tr>
 								<th scope="col">
-									{ __( 'Words', 'viglet-dumont' ) }
+									{ __( 'Words', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
 									<span className="screen-reader-text">
-										{ __( 'Actions', 'viglet-dumont' ) }
+										{ __(
+											'Actions',
+											'viglet-turing-search'
+										) }
 									</span>
 								</th>
 							</tr>
@@ -275,7 +289,7 @@ function Synonyms( { rows, act } ) {
 												/* translators: %s: the synonym's words. */
 												__(
 													'Remove %s',
-													'viglet-dumont'
+													'viglet-turing-search'
 												),
 												row.terms.join( ', ' )
 											) }
@@ -307,14 +321,14 @@ function Synonyms( { rows, act } ) {
 						__next40pxDefaultSize
 						label={ __(
 							'Words that mean the same, separated by commas',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						value={ terms }
 						onChange={ setTerms }
 					/>
 					<p>
 						<Button variant="secondary" type="submit">
-							{ __( 'Add synonym', 'viglet-dumont' ) }
+							{ __( 'Add synonym', 'viglet-turing-search' ) }
 						</Button>
 					</p>
 				</form>
@@ -365,13 +379,13 @@ function Promoted( { rows, act } ) {
 	return (
 		<Card>
 			<CardHeader>
-				<h2>{ __( 'Promoted results', 'viglet-dumont' ) }</h2>
+				<h2>{ __( 'Promoted results', 'viglet-turing-search' ) }</h2>
 			</CardHeader>
 			<CardBody>
 				<p>
 					{ __(
 						'Up to three posts shown first, as featured, when a visitor searches for these words.',
-						'viglet-dumont'
+						'viglet-turing-search'
 					) }
 				</p>
 				{ rows.length > 0 && (
@@ -379,14 +393,20 @@ function Promoted( { rows, act } ) {
 						<thead>
 							<tr>
 								<th scope="col">
-									{ __( 'Search', 'viglet-dumont' ) }
+									{ __( 'Search', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Shown first', 'viglet-dumont' ) }
+									{ __(
+										'Shown first',
+										'viglet-turing-search'
+									) }
 								</th>
 								<th scope="col">
 									<span className="screen-reader-text">
-										{ __( 'Actions', 'viglet-dumont' ) }
+										{ __(
+											'Actions',
+											'viglet-turing-search'
+										) }
 									</span>
 								</th>
 							</tr>
@@ -407,7 +427,7 @@ function Promoted( { rows, act } ) {
 												/* translators: %s: the search the posts are promoted for. */
 												__(
 													'Remove the promotion for %s',
-													'viglet-dumont'
+													'viglet-turing-search'
 												),
 												row.query
 											) }
@@ -449,7 +469,7 @@ function Promoted( { rows, act } ) {
 						__next40pxDefaultSize
 						label={ __(
 							'When visitors search for',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						value={ query }
 						onChange={ setQuery }
@@ -459,13 +479,18 @@ function Promoted( { rows, act } ) {
 						__next40pxDefaultSize
 						label={ __(
 							'Find a post to show first',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						value={ find }
 						onChange={ setFind }
 					/>
 					{ find.trim().length > 1 && found.length > 0 && (
-						<ul aria-label={ __( 'Posts found', 'viglet-dumont' ) }>
+						<ul
+							aria-label={ __(
+								'Posts found',
+								'viglet-turing-search'
+							) }
+						>
 							{ found.map( ( post ) => (
 								<li key={ post.id }>
 									{ post.title }{ ' ' }
@@ -484,19 +509,24 @@ function Promoted( { rows, act } ) {
 											/* translators: %s: a post's title. */
 											__(
 												'Show %s first',
-												'viglet-dumont'
+												'viglet-turing-search'
 											),
 											post.title
 										) }
 									>
-										{ __( 'Add', 'viglet-dumont' ) }
+										{ __( 'Add', 'viglet-turing-search' ) }
 									</Button>
 								</li>
 							) ) }
 						</ul>
 					) }
 					{ chosen.length > 0 && (
-						<ol aria-label={ __( 'Shown first', 'viglet-dumont' ) }>
+						<ol
+							aria-label={ __(
+								'Shown first',
+								'viglet-turing-search'
+							) }
+						>
 							{ chosen.map( ( post ) => (
 								<li key={ post.id }>
 									{ post.title }{ ' ' }
@@ -514,12 +544,15 @@ function Promoted( { rows, act } ) {
 											/* translators: %s: a post's title. */
 											__(
 												'Take %s out',
-												'viglet-dumont'
+												'viglet-turing-search'
 											),
 											post.title
 										) }
 									>
-										{ __( 'Take out', 'viglet-dumont' ) }
+										{ __(
+											'Take out',
+											'viglet-turing-search'
+										) }
 									</Button>
 								</li>
 							) ) }
@@ -531,7 +564,7 @@ function Promoted( { rows, act } ) {
 							type="submit"
 							disabled={ ! query.trim() || ! chosen.length }
 						>
-							{ __( 'Promote', 'viglet-dumont' ) }
+							{ __( 'Promote', 'viglet-turing-search' ) }
 						</Button>
 					</p>
 				</form>
@@ -558,20 +591,20 @@ function Boosts( { boosts, types, act } ) {
 	return (
 		<Card>
 			<CardHeader>
-				<h2>{ __( 'Boosts', 'viglet-dumont' ) }</h2>
+				<h2>{ __( 'Boosts', 'viglet-turing-search' ) }</h2>
 			</CardHeader>
 			<CardBody>
 				<p>
 					{ __(
 						'Rank some posts higher among the results that match. A boost never adds a result, it only changes the order.',
-						'viglet-dumont'
+						'viglet-turing-search'
 					) }
 				</p>
 				{ ! boosts && (
 					<Notice status="warning" isDismissible={ false }>
 						{ __(
 							'Turing did not say which boosts are set; saving replaces them.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 					</Notice>
 				) }
@@ -588,10 +621,13 @@ function Boosts( { boosts, types, act } ) {
 					<Flex direction="column" gap={ 4 }>
 						<ToggleControl
 							__nextHasNoMarginBottom
-							label={ __( 'Newer first', 'viglet-dumont' ) }
+							label={ __(
+								'Newer first',
+								'viglet-turing-search'
+							) }
 							help={ __(
 								'Recently published posts rank higher.',
-								'viglet-dumont'
+								'viglet-turing-search'
 							) }
 							checked={ recency }
 							onChange={ setRecency }
@@ -600,23 +636,25 @@ function Boosts( { boosts, types, act } ) {
 							__nextHasNoMarginBottom
 							label={ __(
 								'Sticky posts first',
-								'viglet-dumont'
+								'viglet-turing-search'
 							) }
 							help={ __(
 								'Posts marked “Stick to the top of the blog” rank higher.',
-								'viglet-dumont'
+								'viglet-turing-search'
 							) }
 							checked={ sticky }
 							onChange={ setSticky }
 						/>
 						{ types.length > 1 && (
-							<h3>{ __( 'By post type', 'viglet-dumont' ) }</h3>
+							<h3>
+								{ __( 'By post type', 'viglet-turing-search' ) }
+							</h3>
 						) }
 						{ types.length > 1 && (
 							<p className="description">
 								{ __(
 									'Up ranks a type’s posts higher; Down ranks every other type higher.',
-									'viglet-dumont'
+									'viglet-turing-search'
 								) }
 							</p>
 						) }
@@ -631,20 +669,23 @@ function Boosts( { boosts, types, act } ) {
 									options={ [
 										{
 											value: 'up',
-											label: __( 'Up', 'viglet-dumont' ),
+											label: __(
+												'Up',
+												'viglet-turing-search'
+											),
 										},
 										{
 											value: '',
 											label: __(
 												'Normal',
-												'viglet-dumont'
+												'viglet-turing-search'
 											),
 										},
 										{
 											value: 'down',
 											label: __(
 												'Down',
-												'viglet-dumont'
+												'viglet-turing-search'
 											),
 										},
 									] }
@@ -662,7 +703,7 @@ function Boosts( { boosts, types, act } ) {
 					</Flex>
 					<p>
 						<Button variant="secondary" type="submit">
-							{ __( 'Save boosts', 'viglet-dumont' ) }
+							{ __( 'Save boosts', 'viglet-turing-search' ) }
 						</Button>
 					</p>
 				</form>

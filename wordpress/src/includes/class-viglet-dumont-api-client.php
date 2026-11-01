@@ -101,9 +101,9 @@ class Viglet_Dumont_API_Client {
 		return array(
 			'success' => ( $code >= 200 && $code < 400 ),
 			'message' => ( $code >= 200 && $code < 400 )
-				? __( 'Connection successful', 'viglet-dumont' )
+				? __( 'Connection successful', 'viglet-turing-search' )
 				/* translators: %d: the HTTP status code Turing answered with. */
-				: sprintf( __( 'Server returned HTTP %d', 'viglet-dumont' ), $code ),
+				: sprintf( __( 'Server returned HTTP %d', 'viglet-turing-search' ), $code ),
 			'code'    => $code,
 		);
 	}
@@ -230,7 +230,7 @@ class Viglet_Dumont_API_Client {
 			return new WP_Error(
 				'plan_failed',
 				/* translators: %d: the HTTP status code Turing answered with. */
-				sprintf( __( 'Turing could not plan the fields (HTTP %d).', 'viglet-dumont' ), $code )
+				sprintf( __( 'Turing could not plan the fields (HTTP %d).', 'viglet-turing-search' ), $code )
 			);
 		}
 
@@ -299,7 +299,7 @@ class Viglet_Dumont_API_Client {
 				'search_failed',
 				sprintf(
 					/* translators: %d: the HTTP status code Turing answered with. */
-					__( 'Search failed with HTTP %d', 'viglet-dumont' ),
+					__( 'Search failed with HTTP %d', 'viglet-turing-search' ),
 					$code
 				)
 			);
@@ -307,7 +307,7 @@ class Viglet_Dumont_API_Client {
 
 		$data = json_decode( $body, true );
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			return new WP_Error( 'invalid_response', __( 'Invalid JSON response from server', 'viglet-dumont' ) );
+			return new WP_Error( 'invalid_response', __( 'Invalid JSON response from server', 'viglet-turing-search' ) );
 		}
 
 		return $data;
@@ -416,7 +416,7 @@ class Viglet_Dumont_API_Client {
 			'viglet_dumont_demo',
 			sprintf(
 				/* translators: %s: the constant or environment variable that turns demo mode on. */
-				__( 'Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here.', 'viglet-dumont' ),
+				__( 'Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here.', 'viglet-turing-search' ),
 				Viglet_Dumont_Settings::DEMO
 			)
 		);
@@ -451,7 +451,7 @@ class Viglet_Dumont_API_Client {
 			'viglet_dumont_playground',
 			sprintf(
 				/* translators: %s: the Turing address the plugin is set to. */
-				__( 'WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in.', 'viglet-dumont' ),
+				__( 'WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in.', 'viglet-turing-search' ),
 				$server_url
 			)
 		);
@@ -632,7 +632,7 @@ class Viglet_Dumont_API_Client {
 		}
 		if ( $code < 200 || $code >= 300 ) {
 			/* translators: %d: the HTTP status Turing answered with. */
-			return new WP_Error( 'viglet_dumont_http', sprintf( __( 'Turing answered HTTP %d.', 'viglet-dumont' ), $code ) );
+			return new WP_Error( 'viglet_dumont_http', sprintf( __( 'Turing answered HTTP %d.', 'viglet-turing-search' ), $code ) );
 		}
 		$decoded = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 
@@ -656,7 +656,7 @@ class Viglet_Dumont_API_Client {
 			$decoded = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 			return is_array( $decoded ) ? $decoded : null;
 		};
-		$unreachable = __( 'Turing did not answer.', 'viglet-dumont' );
+		$unreachable = __( 'Turing did not answer.', 'viglet-turing-search' );
 
 		$chat = $json( $this->request( 'GET', $site . '/chat/enabled' ) );
 
@@ -713,12 +713,12 @@ class Viglet_Dumont_API_Client {
 			array(
 				'feature' => 'nl_filters',
 				'on'      => ! empty( $nl['available'] ),
-				'reason'  => null === $nl ? $unreachable : ( empty( $nl['available'] ) ? __( 'No language model is set up for it in Turing.', 'viglet-dumont' ) : '' ),
+				'reason'  => null === $nl ? $unreachable : ( empty( $nl['available'] ) ? __( 'No language model is set up for it in Turing.', 'viglet-turing-search' ) : '' ),
 			),
 			array(
 				'feature' => 'copilot',
 				'on'      => ! empty( $copilot['available'] ),
-				'reason'  => null === $copilot ? $unreachable : ( empty( $copilot['available'] ) ? __( 'Turing has no catalog copilot set up.', 'viglet-dumont' ) : '' ),
+				'reason'  => null === $copilot ? $unreachable : ( empty( $copilot['available'] ) ? __( 'Turing has no catalog copilot set up.', 'viglet-turing-search' ) : '' ),
 			),
 		);
 	}

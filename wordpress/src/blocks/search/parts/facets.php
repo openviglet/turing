@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<aside
 		id="<?php echo esc_attr( $viglet_dumont_id ); ?>-facets"
 		class="viglet-dumont-search__facets"
-		aria-label="<?php esc_attr_e( 'Filters', 'viglet-dumont' ); ?>"
+		aria-label="<?php esc_attr_e( 'Filters', 'viglet-turing-search' ); ?>"
 		hidden
 		data-wp-bind--hidden="!state.hasFacets"
 		data-wp-class--is-open="state.drawerOpen"
@@ -45,8 +45,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</details>
 		</template>
 		<div class="viglet-dumont-search__drawer-actions">
-			<button type="button" class="wp-element-button" data-wp-on--click="actions.closeDrawer"><?php esc_html_e( 'Show results', 'viglet-dumont' ); ?></button>
-			<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.clearFilters"><?php esc_html_e( 'Clear all filters', 'viglet-dumont' ); ?></button>
+			<button type="button" class="wp-element-button" data-wp-on--click="actions.closeDrawer"><?php esc_html_e( 'Show results', 'viglet-turing-search' ); ?></button>
+			<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.clearFilters"><?php esc_html_e( 'Clear all filters', 'viglet-turing-search' ); ?></button>
 		</div>
 	</aside>
 <?php endif; ?>

@@ -23,12 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="viglet-dumont-header__inner">
 			<h1>
 				<span class="dashicons dashicons-search"></span>
-				<?php esc_html_e( 'Viglet Dumont', 'viglet-dumont' ); ?>
+				<?php esc_html_e( 'Viglet Turing Search', 'viglet-turing-search' ); ?>
 			</h1>
 			<span class="viglet-dumont-version">v<?php echo esc_html( VIGLET_DUMONT_VERSION ); ?></span>
 		</div>
 		<p class="viglet-dumont-header__desc">
-			<?php esc_html_e( 'Integrate WordPress with Viglet Turing search engine for powerful content indexing and search.', 'viglet-dumont' ); ?>
+			<?php esc_html_e( 'Integrate WordPress with Viglet Turing search engine for powerful content indexing and search.', 'viglet-turing-search' ); ?>
 		</p>
 	</div>
 
@@ -37,19 +37,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<nav class="viglet-dumont-tabs__nav">
 				<a href="#connection" class="viglet-dumont-tab active" data-tab="connection">
 					<span class="dashicons dashicons-admin-site-alt3"></span>
-					<?php esc_html_e( 'Connection', 'viglet-dumont' ); ?>
+					<?php esc_html_e( 'Connection', 'viglet-turing-search' ); ?>
 				</a>
 				<a href="#indexing" class="viglet-dumont-tab" data-tab="indexing">
 					<span class="dashicons dashicons-database-add"></span>
-					<?php esc_html_e( 'Indexing', 'viglet-dumont' ); ?>
+					<?php esc_html_e( 'Indexing', 'viglet-turing-search' ); ?>
 				</a>
 				<a href="#search" class="viglet-dumont-tab" data-tab="search">
 					<span class="dashicons dashicons-search"></span>
-					<?php esc_html_e( 'Search', 'viglet-dumont' ); ?>
+					<?php esc_html_e( 'Search', 'viglet-turing-search' ); ?>
 				</a>
 				<a href="#actions" class="viglet-dumont-tab" data-tab="actions">
 					<span class="dashicons dashicons-controls-play"></span>
-					<?php esc_html_e( 'Actions', 'viglet-dumont' ); ?>
+					<?php esc_html_e( 'Actions', 'viglet-turing-search' ); ?>
 				</a>
 			</nav>
 		</div>
@@ -68,7 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						esc_html(
 							sprintf(
 								/* translators: %s: the constant or environment variable's name. */
-								__( 'Set by %s outside WordPress; change it there.', 'viglet-dumont' ),
+								__( 'Set by %s outside WordPress; change it there.', 'viglet-turing-search' ),
 								$viglet_dumont_sources[ $key ]['name']
 							)
 						)
@@ -81,45 +81,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="viglet-dumont-panel" id="panel-connection">
 				<div class="viglet-dumont-card">
 					<div class="viglet-dumont-card__header">
-						<h2><?php esc_html_e( 'Server Connection', 'viglet-dumont' ); ?></h2>
-						<p><?php esc_html_e( 'Configure the connection to your Viglet Turing server.', 'viglet-dumont' ); ?></p>
+						<h2><?php esc_html_e( 'Server Connection', 'viglet-turing-search' ); ?></h2>
+						<p><?php esc_html_e( 'Configure the connection to your Viglet Turing server.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-dumont-card__body">
 						<div class="viglet-dumont-field">
-							<label for="server_url"><?php esc_html_e( 'Server URL', 'viglet-dumont' ); ?></label>
+							<label for="server_url"><?php esc_html_e( 'Server URL', 'viglet-turing-search' ); ?></label>
 							<input type="url" id="server_url"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[server_url]"
 									value="<?php echo esc_attr( $settings['server_url'] ); ?>"
 									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'server_url' ) ); ?>
 									placeholder="http://localhost:2700" />
-							<p class="description"><?php esc_html_e( 'The full URL of your Turing server (e.g., http://localhost:2700).', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'The full URL of your Turing server (e.g., http://localhost:2700).', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_dumont_env_note( 'server_url' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field">
-							<label for="site_name"><?php esc_html_e( 'Site Name', 'viglet-dumont' ); ?></label>
+							<label for="site_name"><?php esc_html_e( 'Site Name', 'viglet-turing-search' ); ?></label>
 							<input type="text" id="site_name"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[site_name]"
 									value="<?php echo esc_attr( $settings['site_name'] ); ?>"
 									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'site_name' ) ); ?>
 									placeholder="default" />
-							<p class="description"><?php esc_html_e( 'The Turing Semantic Navigation site name to use for indexing and search.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'The Turing Semantic Navigation site name to use for indexing and search.', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_dumont_env_note( 'site_name' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field">
-							<label for="site_key"><?php esc_html_e( 'Site Key', 'viglet-dumont' ); ?></label>
+							<label for="site_key"><?php esc_html_e( 'Site Key', 'viglet-turing-search' ); ?></label>
 							<input type="text" id="site_key"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[site_key]"
 									value="<?php echo esc_attr( $settings['site_key'] ); ?>"
 									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'site_key' ) ); ?>
 									placeholder="<?php echo esc_attr( ( new Viglet_Dumont_Indexer( array_merge( $settings, array( 'site_key' => '' ) ) ) )->site_key() ); ?>" />
-							<p class="description"><?php esc_html_e( 'Starts every document id and fills the site_key field, so several WordPress sites can share one SN site. Empty uses this site\'s address. Changing it needs an Index All.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Starts every document id and fills the site_key field, so several WordPress sites can share one SN site. Empty uses this site\'s address. Changing it needs an Index All.', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_dumont_env_note( 'site_key' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field">
-							<label for="api_key"><?php esc_html_e( 'API Key', 'viglet-dumont' ); ?></label>
+							<label for="api_key"><?php esc_html_e( 'API Key', 'viglet-turing-search' ); ?></label>
 							<?php
 							// The key is never printed back: the field stays empty and keeps the stored key unless one is typed.
 							?>
@@ -127,25 +127,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[api_key]"
 									value=""
 									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'api_key' ) ); ?>
-									placeholder="<?php echo '' !== (string) $settings['api_key'] ? esc_attr__( 'A key is stored', 'viglet-dumont' ) : ''; ?>"
+									placeholder="<?php echo '' !== (string) $settings['api_key'] ? esc_attr__( 'A key is stored', 'viglet-turing-search' ) : ''; ?>"
 									autocomplete="new-password" />
-							<p class="description"><?php esc_html_e( 'Optional. API key for authentication with the Turing server.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Optional. API key for authentication with the Turing server.', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_dumont_env_note( 'api_key' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field">
-							<label for="public_url"><?php esc_html_e( 'Public Turing URL', 'viglet-dumont' ); ?></label>
+							<label for="public_url"><?php esc_html_e( 'Public Turing URL', 'viglet-turing-search' ); ?></label>
 							<input type="url" id="public_url"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[public_url]"
 									value="<?php echo esc_attr( $settings['public_url'] ); ?>"
 									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'public_url' ) ); ?> />
-							<p class="description"><?php esc_html_e( 'Where visitors\' browsers reach Turing, when it differs from the Server URL this server uses. Empty uses the Server URL.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Where visitors\' browsers reach Turing, when it differs from the Server URL this server uses. Empty uses the Server URL.', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_dumont_env_note( 'public_url' ); ?>
 						</div>
 
 						<div class="viglet-dumont-field-row">
 							<div class="viglet-dumont-field">
-								<label for="locale"><?php esc_html_e( 'Locale', 'viglet-dumont' ); ?></label>
+								<label for="locale"><?php esc_html_e( 'Locale', 'viglet-turing-search' ); ?></label>
 								<?php $viglet_dumont_env_note( 'locale' ); ?>
 								<select id="locale" name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[locale]" <?php disabled( Viglet_Dumont_Settings::is_overridden( 'locale' ) ); ?>>
 									<?php
@@ -171,7 +171,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</div>
 
 							<div class="viglet-dumont-field">
-								<label for="source_app"><?php esc_html_e( 'Source App Identifier', 'viglet-dumont' ); ?></label>
+								<label for="source_app"><?php esc_html_e( 'Source App Identifier', 'viglet-turing-search' ); ?></label>
 								<input type="text" id="source_app"
 										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[source_app]"
 										value="<?php echo esc_attr( $settings['source_app'] ); ?>"
@@ -184,7 +184,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="viglet-dumont-card__footer">
 						<button type="button" id="viglet-dumont-ping" class="button button-secondary">
 							<span class="dashicons dashicons-migrate"></span>
-							<?php esc_html_e( 'Test Connection', 'viglet-dumont' ); ?>
+							<?php esc_html_e( 'Test Connection', 'viglet-turing-search' ); ?>
 						</button>
 						<span id="viglet-dumont-ping-result" class="viglet-dumont-status"></span>
 					</div>
@@ -195,18 +195,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="viglet-dumont-panel" id="panel-indexing" style="display:none;">
 				<div class="viglet-dumont-card">
 					<div class="viglet-dumont-card__header">
-						<h2><?php esc_html_e( 'Content Indexing', 'viglet-dumont' ); ?></h2>
-						<p><?php esc_html_e( 'Choose which content types and metadata to index in Turing.', 'viglet-dumont' ); ?></p>
+						<h2><?php esc_html_e( 'Content Indexing', 'viglet-turing-search' ); ?></h2>
+						<p><?php esc_html_e( 'Choose which content types and metadata to index in Turing.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-dumont-card__body">
-						<h3><?php esc_html_e( 'Post Types', 'viglet-dumont' ); ?></h3>
+						<h3><?php esc_html_e( 'Post Types', 'viglet-turing-search' ); ?></h3>
 						<div class="viglet-dumont-toggles">
 							<label class="viglet-dumont-toggle">
 								<input type="checkbox"
 										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[index_posts]"
 										value="1" <?php checked( $settings['index_posts'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
-								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Posts', 'viglet-dumont' ); ?></span>
+								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Posts', 'viglet-turing-search' ); ?></span>
 							</label>
 
 							<label class="viglet-dumont-toggle">
@@ -214,7 +214,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[index_pages]"
 										value="1" <?php checked( $settings['index_pages'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
-								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Pages', 'viglet-dumont' ); ?></span>
+								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Pages', 'viglet-turing-search' ); ?></span>
 							</label>
 
 							<?php foreach ( $post_types as $type ) : ?>
@@ -231,14 +231,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 						<hr class="viglet-dumont-separator" />
 
-						<h3><?php esc_html_e( 'Metadata', 'viglet-dumont' ); ?></h3>
+						<h3><?php esc_html_e( 'Metadata', 'viglet-turing-search' ); ?></h3>
 						<div class="viglet-dumont-toggles">
 							<label class="viglet-dumont-toggle">
 								<input type="checkbox"
 										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[index_categories]"
 										value="1" <?php checked( $settings['index_categories'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
-								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Categories', 'viglet-dumont' ); ?></span>
+								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Categories', 'viglet-turing-search' ); ?></span>
 							</label>
 
 							<label class="viglet-dumont-toggle">
@@ -246,7 +246,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[index_tags]"
 										value="1" <?php checked( $settings['index_tags'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
-								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Tags', 'viglet-dumont' ); ?></span>
+								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Tags', 'viglet-turing-search' ); ?></span>
 							</label>
 
 							<label class="viglet-dumont-toggle">
@@ -254,48 +254,48 @@ if ( ! defined( 'ABSPATH' ) ) {
 										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[index_comments]"
 										value="1" <?php checked( $settings['index_comments'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
-								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Comments', 'viglet-dumont' ); ?></span>
+								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Comments', 'viglet-turing-search' ); ?></span>
 							</label>
 						</div>
 
 						<hr class="viglet-dumont-separator" />
 
-						<h3><?php esc_html_e( 'Advanced', 'viglet-dumont' ); ?></h3>
+						<h3><?php esc_html_e( 'Advanced', 'viglet-turing-search' ); ?></h3>
 
 						<div class="viglet-dumont-field">
-							<label for="index_custom_fields"><?php esc_html_e( 'Custom Fields', 'viglet-dumont' ); ?></label>
+							<label for="index_custom_fields"><?php esc_html_e( 'Custom Fields', 'viglet-turing-search' ); ?></label>
 							<input type="text" id="index_custom_fields"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[index_custom_fields]"
 									value="<?php echo esc_attr( $settings['index_custom_fields'] ); ?>"
 									class="regular-text"
 									placeholder="field1, field2, field3" />
-							<p class="description"><?php esc_html_e( 'Comma-separated list of custom field names to include in the index.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Comma-separated list of custom field names to include in the index.', 'viglet-turing-search' ); ?></p>
 						</div>
 
 						<div class="viglet-dumont-field">
-							<label for="exclude_ids"><?php esc_html_e( 'Exclude Posts/Pages', 'viglet-dumont' ); ?></label>
+							<label for="exclude_ids"><?php esc_html_e( 'Exclude Posts/Pages', 'viglet-turing-search' ); ?></label>
 							<input type="text" id="exclude_ids"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[exclude_ids]"
 									value="<?php echo esc_attr( $settings['exclude_ids'] ); ?>"
 									class="regular-text"
 									placeholder="1, 5, 23" />
-							<p class="description"><?php esc_html_e( 'Comma-separated list of post/page IDs to exclude from indexing.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Comma-separated list of post/page IDs to exclude from indexing.', 'viglet-turing-search' ); ?></p>
 						</div>
 
 						<div class="viglet-dumont-field-row">
 							<div class="viglet-dumont-field">
-								<label for="batch_size"><?php esc_html_e( 'Batch Size', 'viglet-dumont' ); ?></label>
+								<label for="batch_size"><?php esc_html_e( 'Batch Size', 'viglet-turing-search' ); ?></label>
 								<input type="number" id="batch_size"
 										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[batch_size]"
 										value="<?php echo esc_attr( $settings['batch_size'] ); ?>"
 										min="10" max="200" step="10" />
-								<p class="description"><?php esc_html_e( 'Number of documents to send per batch (10-200).', 'viglet-dumont' ); ?></p>
+								<p class="description"><?php esc_html_e( 'Number of documents to send per batch (10-200).', 'viglet-turing-search' ); ?></p>
 							</div>
 						</div>
 
 						<hr class="viglet-dumont-separator" />
 
-						<h3><?php esc_html_e( 'Automation', 'viglet-dumont' ); ?></h3>
+						<h3><?php esc_html_e( 'Automation', 'viglet-turing-search' ); ?></h3>
 						<div class="viglet-dumont-toggles">
 							<label class="viglet-dumont-toggle">
 								<input type="checkbox"
@@ -303,8 +303,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['auto_index'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
-									<?php esc_html_e( 'Auto-index on publish', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'Automatically index content when published or updated.', 'viglet-dumont' ); ?></small>
+									<?php esc_html_e( 'Auto-index on publish', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'Automatically index content when published or updated.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 
@@ -314,8 +314,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['auto_deindex'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
-									<?php esc_html_e( 'Auto-remove on delete/unpublish', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'Automatically remove content from the index when trashed or unpublished.', 'viglet-dumont' ); ?></small>
+									<?php esc_html_e( 'Auto-remove on delete/unpublish', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'Automatically remove content from the index when trashed or unpublished.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 						</div>
@@ -327,8 +327,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="viglet-dumont-panel" id="panel-search" style="display:none;">
 				<div class="viglet-dumont-card">
 					<div class="viglet-dumont-card__header">
-						<h2><?php esc_html_e( 'Search Settings', 'viglet-dumont' ); ?></h2>
-						<p><?php esc_html_e( 'Configure how Turing search replaces the default WordPress search.', 'viglet-dumont' ); ?></p>
+						<h2><?php esc_html_e( 'Search Settings', 'viglet-turing-search' ); ?></h2>
+						<p><?php esc_html_e( 'Configure how Turing search replaces the default WordPress search.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-dumont-card__body">
 						<div class="viglet-dumont-toggles">
@@ -338,25 +338,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['search_enabled'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
-									<?php esc_html_e( 'Replace WordPress search with Turing', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'When enabled, all search queries will be handled by the Turing search engine.', 'viglet-dumont' ); ?></small>
+									<?php esc_html_e( 'Replace WordPress search with Turing', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'When enabled, all search queries will be handled by the Turing search engine.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 						</div>
 
 						<div class="viglet-dumont-field">
-							<label for="search_mode"><?php esc_html_e( 'Results page', 'viglet-dumont' ); ?></label>
+							<label for="search_mode"><?php esc_html_e( 'Results page', 'viglet-turing-search' ); ?></label>
 							<select id="search_mode" name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[search_mode]">
-								<option value="theme" <?php selected( $settings['search_mode'], 'theme' ); ?>><?php esc_html_e( 'The theme\'s own search page (block and classic themes)', 'viglet-dumont' ); ?></option>
-								<option value="template" <?php selected( $settings['search_mode'], 'template' ); ?>><?php esc_html_e( 'The plugin\'s results page, with facets (classic themes)', 'viglet-dumont' ); ?></option>
+								<option value="theme" <?php selected( $settings['search_mode'], 'theme' ); ?>><?php esc_html_e( 'The theme\'s own search page (block and classic themes)', 'viglet-turing-search' ); ?></option>
+								<option value="template" <?php selected( $settings['search_mode'], 'template' ); ?>><?php esc_html_e( 'The plugin\'s results page, with facets (classic themes)', 'viglet-turing-search' ); ?></option>
 							</select>
-							<p class="description"><?php esc_html_e( 'With the theme\'s page, Turing ranks the results and the theme shows them with its own header, footer and styles. If Turing does not answer, WordPress search answers instead.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'With the theme\'s page, Turing ranks the results and the theme shows them with its own header, footer and styles. If Turing does not answer, WordPress search answers instead.', 'viglet-turing-search' ); ?></p>
 						</div>
 
 						<hr class="viglet-dumont-separator" />
 
 						<div class="viglet-dumont-field">
-							<label for="results_per_page"><?php esc_html_e( 'Results Per Page', 'viglet-dumont' ); ?></label>
+							<label for="results_per_page"><?php esc_html_e( 'Results Per Page', 'viglet-turing-search' ); ?></label>
 							<input type="number" id="results_per_page"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[results_per_page]"
 									value="<?php echo esc_attr( $settings['results_per_page'] ); ?>"
@@ -372,34 +372,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['instant_overlay'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
-									<?php esc_html_e( 'Instant search from anywhere', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'Ctrl+K (⌘K on a Mac) and the theme\'s own search box open a search that answers as the visitor types.', 'viglet-dumont' ); ?></small>
+									<?php esc_html_e( 'Instant search from anywhere', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'Ctrl+K (⌘K on a Mac) and the theme\'s own search box open a search that answers as the visitor types.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 						</div>
 
 						<div class="viglet-dumont-field">
-							<label for="search_page"><?php esc_html_e( 'Full search page', 'viglet-dumont' ); ?></label>
+							<label for="search_page"><?php esc_html_e( 'Full search page', 'viglet-turing-search' ); ?></label>
 							<?php
 							wp_dropdown_pages(
 								array(
 									'id'                => 'search_page',
 									'name'              => esc_attr( VIGLET_DUMONT_OPTION ) . '[search_page]',
 									'selected'          => (int) $settings['search_page'],
-									'show_option_none'  => esc_html__( 'Automatic: the page with the Turing search block', 'viglet-dumont' ),
+									'show_option_none'  => esc_html__( 'Automatic: the page with the Turing search block', 'viglet-turing-search' ),
 									'option_none_value' => '0',
 								)
 							);
 							?>
-							<p class="description"><?php esc_html_e( 'Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme\'s search page answers.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme\'s search page answers.', 'viglet-turing-search' ); ?></p>
 						</div>
 					</div>
 				</div>
 
 				<div class="viglet-dumont-card">
 					<div class="viglet-dumont-card__header">
-						<h2><?php esc_html_e( 'Search Analytics', 'viglet-dumont' ); ?></h2>
-						<p><?php esc_html_e( 'What the search block and the instant search report about the searches visitors make. Events carry the query, the result and its rank, never who the visitor is. With a consent plugin that supports the WP Consent API, nothing is sent until the visitor allows statistics.', 'viglet-dumont' ); ?></p>
+						<h2><?php esc_html_e( 'Search Analytics', 'viglet-turing-search' ); ?></h2>
+						<p><?php esc_html_e( 'What the search block and the instant search report about the searches visitors make. Events carry the query, the result and its rank, never who the visitor is. With a consent plugin that supports the WP Consent API, nothing is sent until the visitor allows statistics.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-dumont-card__body">
 						<div class="viglet-dumont-toggles">
@@ -409,8 +409,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['track_clicks'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
-									<?php esc_html_e( 'Report result clicks to Turing', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'Turing counts which result was opened for each search, for its click-through rates. Turing records them only with search metrics turned on.', 'viglet-dumont' ); ?></small>
+									<?php esc_html_e( 'Report result clicks to Turing', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'Turing counts which result was opened for each search, for its click-through rates. Turing records them only with search metrics turned on.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 							<label class="viglet-dumont-toggle">
@@ -419,27 +419,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['analytics_ga'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
-									<?php esc_html_e( 'Send search events to Google Analytics', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'Searches, searches with no results, refined searches and result clicks, through the Google tag or Tag Manager the site already loads.', 'viglet-dumont' ); ?></small>
+									<?php esc_html_e( 'Send search events to Google Analytics', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'Searches, searches with no results, refined searches and result clicks, through the Google tag or Tag Manager the site already loads.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 						</div>
 
 						<div class="viglet-dumont-field">
-							<label for="ga_measurement_id"><?php esc_html_e( 'Measurement ID', 'viglet-dumont' ); ?></label>
+							<label for="ga_measurement_id"><?php esc_html_e( 'Measurement ID', 'viglet-turing-search' ); ?></label>
 							<input type="text" id="ga_measurement_id"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[ga_measurement_id]"
 									value="<?php echo esc_attr( $settings['ga_measurement_id'] ); ?>"
 									placeholder="G-XXXXXXXXXX" spellcheck="false" autocomplete="off" />
-							<p class="description"><?php esc_html_e( 'Optional. Leave it empty to send to whatever the Google tag is set up for.', 'viglet-dumont' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Optional. Leave it empty to send to whatever the Google tag is set up for.', 'viglet-turing-search' ); ?></p>
 						</div>
 					</div>
 				</div>
 
 				<div class="viglet-dumont-card">
 					<div class="viglet-dumont-card__header">
-						<h2><?php esc_html_e( 'Related Content', 'viglet-dumont' ); ?></h2>
-						<p><?php esc_html_e( 'The posts Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:', 'viglet-dumont' ); ?></p>
+						<h2><?php esc_html_e( 'Related Content', 'viglet-turing-search' ); ?></h2>
+						<p><?php esc_html_e( 'The posts Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-dumont-card__body">
 						<div class="viglet-dumont-toggles">
@@ -464,31 +464,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<div class="viglet-dumont-card">
 					<div class="viglet-dumont-card__header">
-						<h2><?php esc_html_e( 'Popular Searches', 'viglet-dumont' ); ?></h2>
-						<p><?php esc_html_e( 'The chips a search block shows under its box when "Show popular searches" is on: this week\'s most searched words, each checked to find something.', 'viglet-dumont' ); ?></p>
+						<h2><?php esc_html_e( 'Popular Searches', 'viglet-turing-search' ); ?></h2>
+						<p><?php esc_html_e( 'The chips a search block shows under its box when "Show popular searches" is on: this week\'s most searched words, each checked to find something.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-dumont-card__body">
 						<div class="viglet-dumont-field">
-							<label for="trending_block"><?php esc_html_e( 'Never show', 'viglet-dumont' ); ?></label>
+							<label for="trending_block"><?php esc_html_e( 'Never show', 'viglet-turing-search' ); ?></label>
 							<textarea id="trending_block" rows="3"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[trending_block]"
 									aria-describedby="trending_block_help"><?php echo esc_textarea( implode( "\n", (array) $settings['trending_block'] ) ); ?></textarea>
-							<p class="description" id="trending_block_help"><?php esc_html_e( 'One word or phrase per line. A search holding any of them never becomes a chip.', 'viglet-dumont' ); ?></p>
+							<p class="description" id="trending_block_help"><?php esc_html_e( 'One word or phrase per line. A search holding any of them never becomes a chip.', 'viglet-turing-search' ); ?></p>
 						</div>
 						<div class="viglet-dumont-field">
-							<label for="trending_fallback"><?php esc_html_e( 'When there are none yet', 'viglet-dumont' ); ?></label>
+							<label for="trending_fallback"><?php esc_html_e( 'When there are none yet', 'viglet-turing-search' ); ?></label>
 							<textarea id="trending_fallback" rows="3"
 									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[trending_fallback]"
 									aria-describedby="trending_fallback_help"><?php echo esc_textarea( implode( "\n", (array) $settings['trending_fallback'] ) ); ?></textarea>
-							<p class="description" id="trending_fallback_help"><?php esc_html_e( 'One search per line, shown while the site has no popular searches of its own. Each is still checked to find something.', 'viglet-dumont' ); ?></p>
+							<p class="description" id="trending_fallback_help"><?php esc_html_e( 'One search per line, shown while the site has no popular searches of its own. Each is still checked to find something.', 'viglet-turing-search' ); ?></p>
 						</div>
 					</div>
 				</div>
 
 				<div class="viglet-dumont-card">
 					<div class="viglet-dumont-card__header">
-						<h2><?php esc_html_e( 'Generative AI', 'viglet-dumont' ); ?></h2>
-						<p><?php esc_html_e( 'Answers with sources and chat over this site\'s content, through Turing\'s Default AI Agent. Each answer is an LLM call billed to whoever runs Turing\'s AI provider.', 'viglet-dumont' ); ?></p>
+						<h2><?php esc_html_e( 'Generative AI', 'viglet-turing-search' ); ?></h2>
+						<p><?php esc_html_e( 'Answers with sources and chat over this site\'s content, through Turing\'s Default AI Agent. Each answer is an LLM call billed to whoever runs Turing\'s AI provider.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-dumont-card__body">
 						<div class="viglet-dumont-toggles">
@@ -498,8 +498,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['generative_ai'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
-									<?php esc_html_e( 'Turn on generative AI for this site in Turing', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing\'s console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing\'s setting as it is.', 'viglet-dumont' ); ?></small>
+									<?php esc_html_e( 'Turn on generative AI for this site in Turing', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing\'s console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing\'s setting as it is.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 							<label class="viglet-dumont-toggle">
@@ -508,8 +508,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['assistant_launcher'], 1 ); ?> />
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label">
-									<?php esc_html_e( 'Site assistant on every page', 'viglet-dumont' ); ?>
-									<small><?php esc_html_e( 'A button in the corner of every page opens a chat that answers from this site\'s posts and lists the posts it used. It shows only while Turing\'s chat is on for this site. Without it, place the Site assistant block where you want it.', 'viglet-dumont' ); ?></small>
+									<?php esc_html_e( 'Site assistant on every page', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'A button in the corner of every page opens a chat that answers from this site\'s posts and lists the posts it used. It shows only while Turing\'s chat is on for this site. Without it, place the Site assistant block where you want it.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 						</div>
@@ -519,7 +519,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<!-- Save Button (visible on settings tabs) -->
 			<div class="viglet-dumont-save" id="viglet-dumont-save">
-				<?php submit_button( __( 'Save Settings', 'viglet-dumont' ), 'primary large', 'submit', false ); ?>
+				<?php submit_button( __( 'Save Settings', 'viglet-turing-search' ), 'primary large', 'submit', false ); ?>
 			</div>
 		</form>
 
@@ -527,8 +527,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="viglet-dumont-panel" id="panel-actions" style="display:none;">
 			<div class="viglet-dumont-card">
 				<div class="viglet-dumont-card__header">
-					<h2><?php esc_html_e( 'Indexing Actions', 'viglet-dumont' ); ?></h2>
-					<p><?php esc_html_e( 'Manage your Turing search index.', 'viglet-dumont' ); ?></p>
+					<h2><?php esc_html_e( 'Indexing Actions', 'viglet-turing-search' ); ?></h2>
+					<p><?php esc_html_e( 'Manage your Turing search index.', 'viglet-turing-search' ); ?></p>
 				</div>
 				<div class="viglet-dumont-card__body">
 
@@ -536,12 +536,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="viglet-dumont-action-section">
 						<div class="viglet-dumont-action-row">
 							<div>
-								<h3><?php esc_html_e( 'Connection Status', 'viglet-dumont' ); ?></h3>
-								<p><?php esc_html_e( 'Test the connection to your Turing server.', 'viglet-dumont' ); ?></p>
+								<h3><?php esc_html_e( 'Connection Status', 'viglet-turing-search' ); ?></h3>
+								<p><?php esc_html_e( 'Test the connection to your Turing server.', 'viglet-turing-search' ); ?></p>
 							</div>
 							<button type="button" id="viglet-dumont-action-ping" class="button button-secondary">
 								<span class="dashicons dashicons-migrate"></span>
-								<?php esc_html_e( 'Test Connection', 'viglet-dumont' ); ?>
+								<?php esc_html_e( 'Test Connection', 'viglet-turing-search' ); ?>
 							</button>
 						</div>
 						<div id="viglet-dumont-action-ping-result" class="viglet-dumont-action-result"></div>
@@ -553,19 +553,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="viglet-dumont-action-section">
 						<div class="viglet-dumont-action-row">
 							<div>
-								<h3><?php esc_html_e( 'Index All Content', 'viglet-dumont' ); ?></h3>
-								<p><?php esc_html_e( 'Send all published content to the Turing index. This may take a while for large sites.', 'viglet-dumont' ); ?></p>
+								<h3><?php esc_html_e( 'Index All Content', 'viglet-turing-search' ); ?></h3>
+								<p><?php esc_html_e( 'Send all published content to the Turing index. This may take a while for large sites.', 'viglet-turing-search' ); ?></p>
 							</div>
 							<div class="viglet-dumont-action-buttons">
-								<label class="screen-reader-text" for="viglet-dumont-index-type"><?php esc_html_e( 'Content to index', 'viglet-dumont' ); ?></label>
+								<label class="screen-reader-text" for="viglet-dumont-index-type"><?php esc_html_e( 'Content to index', 'viglet-turing-search' ); ?></label>
 								<select id="viglet-dumont-index-type">
-									<option value="all"><?php esc_html_e( 'All Content', 'viglet-dumont' ); ?></option>
-									<option value="post"><?php esc_html_e( 'Posts Only', 'viglet-dumont' ); ?></option>
-									<option value="page"><?php esc_html_e( 'Pages Only', 'viglet-dumont' ); ?></option>
+									<option value="all"><?php esc_html_e( 'All Content', 'viglet-turing-search' ); ?></option>
+									<option value="post"><?php esc_html_e( 'Posts Only', 'viglet-turing-search' ); ?></option>
+									<option value="page"><?php esc_html_e( 'Pages Only', 'viglet-turing-search' ); ?></option>
 								</select>
 								<button type="button" id="viglet-dumont-index-all" class="button button-primary">
 									<span class="dashicons dashicons-database-add"></span>
-									<?php esc_html_e( 'Start Indexing', 'viglet-dumont' ); ?>
+									<?php esc_html_e( 'Start Indexing', 'viglet-turing-search' ); ?>
 								</button>
 							</div>
 						</div>
@@ -584,12 +584,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="viglet-dumont-action-section">
 						<div class="viglet-dumont-action-row">
 							<div>
-								<h3><?php esc_html_e( 'Delete All Indexed Content', 'viglet-dumont' ); ?></h3>
-								<p><?php esc_html_e( 'Remove all WordPress content from the Turing index. This does not affect your WordPress content.', 'viglet-dumont' ); ?></p>
+								<h3><?php esc_html_e( 'Delete All Indexed Content', 'viglet-turing-search' ); ?></h3>
+								<p><?php esc_html_e( 'Remove all WordPress content from the Turing index. This does not affect your WordPress content.', 'viglet-turing-search' ); ?></p>
 							</div>
 							<button type="button" id="viglet-dumont-delete-all" class="button button-link-delete">
 								<span class="dashicons dashicons-trash"></span>
-								<?php esc_html_e( 'Delete All', 'viglet-dumont' ); ?>
+								<?php esc_html_e( 'Delete All', 'viglet-turing-search' ); ?>
 							</button>
 						</div>
 						<div id="viglet-dumont-delete-result" class="viglet-dumont-action-result"></div>
@@ -600,11 +600,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- Content Stats -->
 			<div class="viglet-dumont-card viglet-dumont-card--stats" id="viglet-dumont-stats">
 				<div class="viglet-dumont-card__header">
-					<h2><?php esc_html_e( 'Content Overview', 'viglet-dumont' ); ?></h2>
+					<h2><?php esc_html_e( 'Content Overview', 'viglet-turing-search' ); ?></h2>
 				</div>
 				<div class="viglet-dumont-card__body">
 					<div class="viglet-dumont-stats-grid" id="viglet-dumont-stats-grid">
-						<p class="viglet-dumont-loading"><?php esc_html_e( 'Loading stats...', 'viglet-dumont' ); ?></p>
+						<p class="viglet-dumont-loading"><?php esc_html_e( 'Loading stats...', 'viglet-turing-search' ); ?></p>
 					</div>
 				</div>
 			</div>

@@ -38,29 +38,29 @@ class Viglet_Dumont_CLI_Queue {
 
 		if ( ! empty( $assoc_args['retry-failed'] ) ) {
 			/* translators: %d: how many failed jobs were put back in line. */
-			WP_CLI::log( sprintf( __( 'Replaying %d failed jobs.', 'viglet-dumont' ), $queue->retry_failed() ) );
+			WP_CLI::log( sprintf( __( 'Replaying %d failed jobs.', 'viglet-turing-search' ), $queue->retry_failed() ) );
 		}
 
 		$sent = 0;
 		do {
 			$result = $queue->process( true );
 			if ( $result['locked'] ) {
-				WP_CLI::error( __( 'Another worker is sending the queue; try again in a few minutes.', 'viglet-dumont' ) );
+				WP_CLI::error( __( 'Another worker is sending the queue; try again in a few minutes.', 'viglet-turing-search' ) );
 			}
 			$sent += $result['sent'];
 		} while ( 0 === $result['failed'] && $queue->counts()['pending'] > 0 );
 
 		$counts = $queue->counts();
 		/* translators: 1: jobs sent, 2: jobs still waiting, 3: jobs that stopped retrying. */
-		$summary = sprintf( __( '%1$d sent, %2$d waiting, %3$d stopped retrying.', 'viglet-dumont' ), $sent, $counts['pending'], $counts['failed'] );
+		$summary = sprintf( __( '%1$d sent, %2$d waiting, %3$d stopped retrying.', 'viglet-turing-search' ), $sent, $counts['pending'], $counts['failed'] );
 
 		if ( $result['failed'] > 0 ) {
 			foreach ( $result['errors'] as $post_id => $error ) {
 				/* translators: 1: the post id, 2: why sending it failed. */
-				WP_CLI::warning( sprintf( __( 'Post %1$d: %2$s', 'viglet-dumont' ), $post_id, $error ) );
+				WP_CLI::warning( sprintf( __( 'Post %1$d: %2$s', 'viglet-turing-search' ), $post_id, $error ) );
 			}
 			/* translators: 1: how many jobs failed, 2: the queue summary. */
-			WP_CLI::error( sprintf( __( 'Stopped after %1$d failed. %2$s', 'viglet-dumont' ), $result['failed'], $summary ) );
+			WP_CLI::error( sprintf( __( 'Stopped after %1$d failed. %2$s', 'viglet-turing-search' ), $result['failed'], $summary ) );
 		}
 		WP_CLI::success( $summary );
 	}
@@ -86,7 +86,7 @@ class Viglet_Dumont_CLI_Queue {
 		}
 
 		if ( empty( $rows ) ) {
-			WP_CLI::success( __( 'The queue is empty.', 'viglet-dumont' ) );
+			WP_CLI::success( __( 'The queue is empty.', 'viglet-turing-search' ) );
 			return;
 		}
 		WP_CLI\Utils\format_items( 'table', $rows, array( 'post', 'action', 'attempts', 'next', 'failed', 'error' ) );

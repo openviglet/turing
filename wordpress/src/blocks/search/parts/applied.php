@@ -15,17 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<ul class="viglet-dumont-search__applied" hidden data-wp-bind--hidden="!state.hasApplied" aria-label="<?php esc_attr_e( 'Active filters', 'viglet-dumont' ); ?>">
+<ul class="viglet-dumont-search__applied" hidden data-wp-bind--hidden="!state.hasApplied" aria-label="<?php esc_attr_e( 'Active filters', 'viglet-turing-search' ); ?>">
 	<template data-wp-each--filter="state.applied">
 		<li>
 			<button type="button" class="viglet-dumont-search__chip" data-wp-on--click="actions.removeFilter">
 				<span data-wp-text="context.filter.label"></span>
 				<span aria-hidden="true">×</span>
-				<span class="screen-reader-text"><?php esc_html_e( 'Remove this filter', 'viglet-dumont' ); ?></span>
+				<span class="screen-reader-text"><?php esc_html_e( 'Remove this filter', 'viglet-turing-search' ); ?></span>
 			</button>
 		</li>
 	</template>
 	<li>
-		<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.clearFilters"><?php esc_html_e( 'Clear all filters', 'viglet-dumont' ); ?></button>
+		<button type="button" class="viglet-dumont-search__link" data-wp-on--click="actions.clearFilters"><?php esc_html_e( 'Clear all filters', 'viglet-turing-search' ); ?></button>
 	</li>
 </ul>

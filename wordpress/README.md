@@ -1,4 +1,4 @@
-# Viglet Dumont for WordPress
+# Viglet Turing Search
 
 The WordPress plugin that indexes a site's content into Viglet Turing and answers its search
 from it. The plugin itself is [`src/`](src/); [`src/readme.txt`](src/readme.txt) is its
@@ -7,9 +7,9 @@ WordPress readme and changelog.
 ## Install
 
 Each release is a zip on the Dumont GitHub releases page, tagged `wordpress-v<version>`, holding
-one `viglet-dumont/` folder.
+one `viglet-turing-search/` folder, the slug it has in the WordPress.org plugin directory.
 
-**From wp-admin**: download `viglet-dumont-<version>.zip` and upload it under
+**From wp-admin**: download `viglet-turing-search-<version>.zip` and upload it under
 Plugins > Add New > Upload Plugin.
 
 **With Composer** (a site built in CI, or one running with `DISALLOW_FILE_MODS`): Composer
@@ -24,18 +24,18 @@ directory:
             "type": "package",
             "package": {
                 "name": "viglet/dumont-wordpress",
-                "version": "2.0.0",
+                "version": "1.0.0",
                 "type": "wordpress-plugin",
                 "dist": {
                     "type": "zip",
-                    "url": "https://github.com/openviglet/dumont/releases/download/wordpress-v2.0.0/viglet-dumont-2.0.0.zip"
+                    "url": "https://github.com/openviglet/dumont/releases/download/wordpress-v1.0.0/viglet-turing-search-1.0.0.zip"
                 },
                 "require": { "composer/installers": "^2.0" }
             }
         }
     ],
     "require": {
-        "viglet/dumont-wordpress": "2.0.0"
+        "viglet/dumont-wordpress": "1.0.0"
     }
 }
 ```
@@ -291,13 +291,13 @@ WP-CLI (Docker works where it is not installed):
 
 ```sh
 docker run --rm -v "$PWD:/plugin" -w /plugin wordpress:cli-2.12-php8.5 sh -c '
-  wp i18n make-pot . src/languages/viglet-dumont.pot --slug=viglet-dumont --domain=viglet-dumont \
+  wp i18n make-pot . src/languages/viglet-turing-search.pot --slug=viglet-turing-search --domain=viglet-turing-search \
     --exclude=node_modules,vendor,src/admin/build,tests,build,demo &&
-  wp i18n update-po src/languages/viglet-dumont.pot src/languages &&
+  wp i18n update-po src/languages/viglet-turing-search.pot src/languages &&
   wp i18n make-mo src/languages && wp i18n make-json src/languages --no-purge'
 ```
 
-then translate the new entries in `viglet-dumont-pt_BR.po` and run the last two commands
+then translate the new entries in `viglet-turing-search-pt_BR.po` and run the last two commands
 again. The JSON files are named after the source script (`assets/admin/health.js`), and
 `viglet_dumont_script_translation_path` maps the built script to it.
 

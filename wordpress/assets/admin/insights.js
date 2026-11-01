@@ -19,10 +19,13 @@ import { createRoot, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
 const PERIODS = [
-	{ value: 'today', label: __( 'Last 24 hours', 'viglet-dumont' ) },
-	{ value: 'this-week', label: __( 'Last 7 days', 'viglet-dumont' ) },
-	{ value: 'this-month', label: __( 'Last 30 days', 'viglet-dumont' ) },
-	{ value: 'all-time', label: __( 'All time', 'viglet-dumont' ) },
+	{ value: 'today', label: __( 'Last 24 hours', 'viglet-turing-search' ) },
+	{ value: 'this-week', label: __( 'Last 7 days', 'viglet-turing-search' ) },
+	{
+		value: 'this-month',
+		label: __( 'Last 30 days', 'viglet-turing-search' ),
+	},
+	{ value: 'all-time', label: __( 'All time', 'viglet-turing-search' ) },
 ];
 
 const percent = new Intl.NumberFormat(
@@ -92,7 +95,7 @@ function Summary( { period } ) {
 	return (
 		<Card>
 			<CardHeader>
-				<h2>{ __( 'Summary', 'viglet-dumont' ) }</h2>
+				<h2>{ __( 'Summary', 'viglet-turing-search' ) }</h2>
 			</CardHeader>
 			<CardBody>
 				{ answer?.error && (
@@ -112,7 +115,7 @@ function Summary( { period } ) {
 					<p className="description">
 						{ __(
 							'Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 					</p>
 				) }
@@ -123,8 +126,11 @@ function Summary( { period } ) {
 					onClick={ () => ask( !! answer?.summary ) }
 				>
 					{ answer?.summary
-						? __( 'Write another', 'viglet-dumont' )
-						: __( 'Summarize this period', 'viglet-dumont' ) }
+						? __( 'Write another', 'viglet-turing-search' )
+						: __(
+								'Summarize this period',
+								'viglet-turing-search'
+							) }
 				</Button>
 			</CardBody>
 		</Card>
@@ -156,7 +162,7 @@ function Terms( { title, empty, terms, columns, write, synonym } ) {
 						<thead>
 							<tr>
 								<th scope="col">
-									{ __( 'Search', 'viglet-dumont' ) }
+									{ __( 'Search', 'viglet-turing-search' ) }
 								</th>
 								{ columns.map( ( column ) => (
 									<th scope="col" key={ column.label }>
@@ -166,7 +172,10 @@ function Terms( { title, empty, terms, columns, write, synonym } ) {
 								{ write && (
 									<th scope="col">
 										<span className="screen-reader-text">
-											{ __( 'Actions', 'viglet-dumont' ) }
+											{ __(
+												'Actions',
+												'viglet-turing-search'
+											) }
 										</span>
 									</th>
 								) }
@@ -189,14 +198,14 @@ function Terms( { title, empty, terms, columns, write, synonym } ) {
 													/* translators: %s: a search visitors made. */
 													__(
 														'Write about this: “%s”',
-														'viglet-dumont'
+														'viglet-turing-search'
 													),
 													term.term
 												) }
 											>
 												{ __(
 													'Write about this',
-													'viglet-dumont'
+													'viglet-turing-search'
 												) }
 											</a>
 											{ synonym && (
@@ -210,14 +219,14 @@ function Terms( { title, empty, terms, columns, write, synonym } ) {
 															/* translators: %s: a search that found nothing. */
 															__(
 																'Add a synonym: “%s”',
-																'viglet-dumont'
+																'viglet-turing-search'
 															),
 															term.term
 														) }
 													>
 														{ __(
 															'Add a synonym',
-															'viglet-dumont'
+															'viglet-turing-search'
 														) }
 													</a>
 												</>
@@ -246,19 +255,19 @@ function Trend( { term } ) {
 		return null;
 	}
 	if ( 0 === term.previous ) {
-		return __( 'New', 'viglet-dumont' );
+		return __( 'New', 'viglet-turing-search' );
 	}
 	const change = ( term.searches - term.previous ) / term.previous;
 	if ( Math.abs( change ) < 0.1 ) {
-		return __( 'Steady', 'viglet-dumont' );
+		return __( 'Steady', 'viglet-turing-search' );
 	}
 	const amount = percent.format( Math.abs( change ) );
 	const label =
 		change > 0
 			? /* translators: %s: how much more it was searched than in the period before, e.g. 40%. */
-				sprintf( __( 'Up %s', 'viglet-dumont' ), amount )
+				sprintf( __( 'Up %s', 'viglet-turing-search' ), amount )
 			: /* translators: %s: how much less it was searched than in the period before, e.g. 40%. */
-				sprintf( __( 'Down %s', 'viglet-dumont' ), amount );
+				sprintf( __( 'Down %s', 'viglet-turing-search' ), amount );
 	return (
 		<>
 			<span aria-hidden="true">{ change > 0 ? '▲' : '▼' } </span>
@@ -268,12 +277,12 @@ function Trend( { term } ) {
 }
 
 const trendColumn = {
-	label: __( 'Against the period before', 'viglet-dumont' ),
+	label: __( 'Against the period before', 'viglet-turing-search' ),
 	cell: ( term ) => <Trend term={ term } />,
 };
 
 const searchesColumn = {
-	label: __( 'Searches', 'viglet-dumont' ),
+	label: __( 'Searches', 'viglet-turing-search' ),
 	cell: ( term ) => count.format( term.searches ),
 };
 
@@ -307,12 +316,12 @@ function Insights() {
 			<p>
 				{ __(
 					'What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out.',
-					'viglet-dumont'
+					'viglet-turing-search'
 				) }
 			</p>
 			<SelectControl
 				__nextHasNoMarginBottom
-				label={ __( 'Period', 'viglet-dumont' ) }
+				label={ __( 'Period', 'viglet-turing-search' ) }
 				value={ period }
 				options={ PERIODS }
 				onChange={ setPeriod }
@@ -327,7 +336,7 @@ function Insights() {
 				<Notice status="warning" isDismissible={ false }>
 					{ __(
 						'Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED).',
-						'viglet-dumont'
+						'viglet-turing-search'
 					) }
 				</Notice>
 			) }
@@ -338,7 +347,7 @@ function Insights() {
 					<Notice status="info" isDismissible={ false }>
 						{ __(
 							'No searches in this period yet. They appear here once visitors use the site’s search.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 					</Notice>
 				) }
@@ -349,7 +358,7 @@ function Insights() {
 							/* translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click. */
 							__(
 								'%1$s searches, %2$s clicks, %3$s click-through.',
-								'viglet-dumont'
+								'viglet-turing-search'
 							),
 							count.format( report.searches ),
 							count.format( report.clicks ),
@@ -358,20 +367,23 @@ function Insights() {
 					</p>
 					<Summary key={ period } period={ period } />
 					<Terms
-						title={ __( 'Top searches', 'viglet-dumont' ) }
+						title={ __( 'Top searches', 'viglet-turing-search' ) }
 						empty={ __(
 							'No searches in this period.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						terms={ report.top }
 						columns={ [
 							searchesColumn,
 							{
-								label: __( 'Clicks', 'viglet-dumont' ),
+								label: __( 'Clicks', 'viglet-turing-search' ),
 								cell: ( term ) => count.format( term.clicks ),
 							},
 							{
-								label: __( 'Click-through', 'viglet-dumont' ),
+								label: __(
+									'Click-through',
+									'viglet-turing-search'
+								),
 								cell: ( term ) => percent.format( term.ctr ),
 							},
 							...( 'all-time' === period ? [] : [ trendColumn ] ),
@@ -380,17 +392,20 @@ function Insights() {
 					<Terms
 						title={ __(
 							'Searches that found nothing',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						empty={ __(
 							'Every search found something.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						terms={ report.failed }
 						columns={ [
 							searchesColumn,
 							{
-								label: __( 'Last searched', 'viglet-dumont' ),
+								label: __(
+									'Last searched',
+									'viglet-turing-search'
+								),
 								cell: ( term ) =>
 									term.lastSeen
 										? when.format(
@@ -405,11 +420,11 @@ function Insights() {
 					<Terms
 						title={ __(
 							'Found, but never opened',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						empty={ __(
 							'Every search that found results led to a click.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						terms={ report.unopened }
 						columns={ [ searchesColumn ] }

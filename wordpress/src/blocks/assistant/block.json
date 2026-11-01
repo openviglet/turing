@@ -7,7 +7,7 @@
 	"icon": "format-chat",
 	"description": "A button that opens a conversation with Turing's chat: visitors ask in their own words and get an answer generated from this site's posts, with the posts it used.",
 	"keywords": [ "chat", "assistant", "question", "turing" ],
-	"textdomain": "viglet-dumont",
+	"textdomain": "viglet-turing-search",
 	"attributes": {
 		"heading": {
 			"type": "string",

@@ -16,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $viglet_dumont_query       = Viglet_Dumont_Search_Block::query();
-$viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' ) ? $attributes['placeholder'] : __( 'Search…', 'viglet-dumont' );
+$viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' ) ? $attributes['placeholder'] : __( 'Search…', 'viglet-turing-search' );
 ?>
 <form role="search" class="viglet-dumont-search__form" data-wp-on--submit="actions.submit">
-	<label class="screen-reader-text" for="<?php echo esc_attr( $viglet_dumont_id ); ?>"><?php esc_html_e( 'Search', 'viglet-dumont' ); ?></label>
+	<label class="screen-reader-text" for="<?php echo esc_attr( $viglet_dumont_id ); ?>"><?php esc_html_e( 'Search', 'viglet-turing-search' ); ?></label>
 	<div class="viglet-dumont-search__field">
 		<input
 			type="search"
@@ -42,16 +42,16 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 		/>
 		<button type="button" class="viglet-dumont-search__clear" hidden data-wp-bind--hidden="!state.hasQuery" data-wp-on--click="actions.clear">
 			<span aria-hidden="true">×</span>
-			<span class="screen-reader-text"><?php esc_html_e( 'Clear the search', 'viglet-dumont' ); ?></span>
+			<span class="screen-reader-text"><?php esc_html_e( 'Clear the search', 'viglet-turing-search' ); ?></span>
 		</button>
 	</div>
-	<button type="submit" class="wp-element-button"><?php esc_html_e( 'Search', 'viglet-dumont' ); ?></button>
+	<button type="submit" class="wp-element-button"><?php esc_html_e( 'Search', 'viglet-turing-search' ); ?></button>
 	<div class="viglet-dumont-search__popup" hidden data-wp-bind--hidden="!state.isExpanded" data-wp-on--mousedown="actions.keepFocus">
 		<ul
 			id="<?php echo esc_attr( $viglet_dumont_id ); ?>-suggestions"
 			class="viglet-dumont-search__suggestions"
 			role="listbox"
-			aria-label="<?php esc_attr_e( 'Suggestions', 'viglet-dumont' ); ?>"
+			aria-label="<?php esc_attr_e( 'Suggestions', 'viglet-turing-search' ); ?>"
 		>
 			<template data-wp-each--option="state.options" data-wp-each-key="context.option.id">
 				<li
@@ -64,7 +64,7 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 				><strong data-wp-text="context.option.prefix"></strong><span data-wp-text="context.option.rest"></span></li>
 			</template>
 		</ul>
-		<button type="button" class="viglet-dumont-search__link" hidden data-wp-bind--hidden="!state.showsRecent" data-wp-on--click="actions.clearRecent"><?php esc_html_e( 'Clear recent searches', 'viglet-dumont' ); ?></button>
+		<button type="button" class="viglet-dumont-search__link" hidden data-wp-bind--hidden="!state.showsRecent" data-wp-on--click="actions.clearRecent"><?php esc_html_e( 'Clear recent searches', 'viglet-turing-search' ); ?></button>
 	</div>
 	<p class="screen-reader-text" aria-live="polite" data-wp-text="state.optionsAnnouncement"></p>
 </form>

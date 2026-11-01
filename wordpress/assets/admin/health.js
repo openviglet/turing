@@ -23,10 +23,10 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 
 const EVENT_LABEL = {
-	index: __( 'Indexed', 'viglet-dumont' ),
-	delete: __( 'Removed', 'viglet-dumont' ),
-	provision: __( 'Fields sent', 'viglet-dumont' ),
-	sweep: __( 'Sweep', 'viglet-dumont' ),
+	index: __( 'Indexed', 'viglet-turing-search' ),
+	delete: __( 'Removed', 'viglet-turing-search' ),
+	provision: __( 'Fields sent', 'viglet-turing-search' ),
+	sweep: __( 'Sweep', 'viglet-turing-search' ),
 };
 
 /**
@@ -36,7 +36,7 @@ const EVENT_LABEL = {
  * @param {{when?: string}} item An event or the last run.
  */
 function formatTime( item ) {
-	return item?.when || __( 'never', 'viglet-dumont' );
+	return item?.when || __( 'never', 'viglet-turing-search' );
 }
 
 /**
@@ -61,13 +61,13 @@ function AiFeatures() {
 	return (
 		<Card>
 			<CardHeader>
-				<h2>{ __( 'AI features', 'viglet-dumont' ) }</h2>
+				<h2>{ __( 'AI features', 'viglet-turing-search' ) }</h2>
 			</CardHeader>
 			<CardBody>
 				<p>
 					{ __(
 						'Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off.',
-						'viglet-dumont'
+						'viglet-turing-search'
 					) }
 				</p>
 				{ error && (
@@ -80,16 +80,16 @@ function AiFeatures() {
 						<thead>
 							<tr>
 								<th scope="col">
-									{ __( 'Feature', 'viglet-dumont' ) }
+									{ __( 'Feature', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'State', 'viglet-dumont' ) }
+									{ __( 'State', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Shown by', 'viglet-dumont' ) }
+									{ __( 'Shown by', 'viglet-turing-search' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Why', 'viglet-dumont' ) }
+									{ __( 'Why', 'viglet-turing-search' ) }
 								</th>
 							</tr>
 						</thead>
@@ -99,8 +99,11 @@ function AiFeatures() {
 									<th scope="row">{ row.label }</th>
 									<td>
 										{ row.on
-											? __( 'On', 'viglet-dumont' )
-											: __( 'Off', 'viglet-dumont' ) }
+											? __( 'On', 'viglet-turing-search' )
+											: __(
+													'Off',
+													'viglet-turing-search'
+												) }
 									</td>
 									<td>{ row.block || '—' }</td>
 									<td>
@@ -121,8 +124,11 @@ function AiFeatures() {
 						onClick={ check }
 					>
 						{ rows
-							? __( 'Check again', 'viglet-dumont' )
-							: __( 'Check AI features', 'viglet-dumont' ) }
+							? __( 'Check again', 'viglet-turing-search' )
+							: __(
+									'Check AI features',
+									'viglet-turing-search'
+								) }
 					</Button>
 				</p>
 			</CardBody>
@@ -186,7 +192,7 @@ function Health() {
 
 			<Card>
 				<CardHeader>
-					<h2>{ __( 'Connection', 'viglet-dumont' ) }</h2>
+					<h2>{ __( 'Connection', 'viglet-turing-search' ) }</h2>
 				</CardHeader>
 				<CardBody>
 					<Notice
@@ -200,7 +206,7 @@ function Health() {
 							/* translators: 1: the SN site, 2: the site key. */
 							__(
 								'SN site %1$s, site key %2$s.',
-								'viglet-dumont'
+								'viglet-turing-search'
 							),
 							status.site_name,
 							status.site_key
@@ -212,7 +218,7 @@ function Health() {
 								/* translators: %s: why Turing refused the fields. */
 								__(
 									'The mapped fields are not provisioned: %s',
-									'viglet-dumont'
+									'viglet-turing-search'
 								),
 								provisionError
 							) }
@@ -223,25 +229,28 @@ function Health() {
 
 			<Card>
 				<CardHeader>
-					<h2>{ __( 'Documents', 'viglet-dumont' ) }</h2>
+					<h2>{ __( 'Documents', 'viglet-turing-search' ) }</h2>
 				</CardHeader>
 				<CardBody>
 					<table className="widefat striped">
 						<thead>
 							<tr>
 								<th scope="col">
-									{ __( 'Post type', 'viglet-dumont' ) }
+									{ __(
+										'Post type',
+										'viglet-turing-search'
+									) }
 								</th>
 								<th scope="col">
 									{ __(
 										'Published in WordPress',
-										'viglet-dumont'
+										'viglet-turing-search'
 									) }
 								</th>
 								<th scope="col">
 									{ __(
 										'Indexed in Turing',
-										'viglet-dumont'
+										'viglet-turing-search'
 									) }
 								</th>
 							</tr>
@@ -256,7 +265,7 @@ function Health() {
 											{ counts.indexed === null
 												? __(
 														'unknown',
-														'viglet-dumont'
+														'viglet-turing-search'
 													)
 												: counts.indexed }
 											{ counts.indexed !== null &&
@@ -266,7 +275,7 @@ function Health() {
 														{ ' ' +
 															__(
 																'(differs: run a reindex)',
-																'viglet-dumont'
+																'viglet-turing-search'
 															) }
 													</strong>
 												) }
@@ -281,7 +290,7 @@ function Health() {
 
 			<Card>
 				<CardHeader>
-					<h2>{ __( 'Queue', 'viglet-dumont' ) }</h2>
+					<h2>{ __( 'Queue', 'viglet-turing-search' ) }</h2>
 				</CardHeader>
 				<CardBody>
 					<p>
@@ -289,7 +298,7 @@ function Health() {
 							/* translators: 1: jobs waiting, 2: jobs that stopped retrying. */
 							__(
 								'%1$d waiting, %2$d stopped retrying.',
-								'viglet-dumont'
+								'viglet-turing-search'
 							),
 							status.queue.pending,
 							status.queue.failed
@@ -301,7 +310,7 @@ function Health() {
 									/* translators: 1: when, 2: documents sent, 3: documents that failed. */
 									__(
 										'Last run %1$s: %2$d sent, %3$d failed.',
-										'viglet-dumont'
+										'viglet-turing-search'
 									),
 									formatTime( status.last_run ),
 									status.last_run.sent,
@@ -309,7 +318,7 @@ function Health() {
 								)
 							: __(
 									'The queue has not sent anything yet.',
-									'viglet-dumont'
+									'viglet-turing-search'
 								) }
 					</p>
 					<Flex justify="flex-start">
@@ -323,14 +332,14 @@ function Health() {
 										/* translators: %d: failed jobs put back in line. */
 										__(
 											'%d failed jobs put back in line.',
-											'viglet-dumont'
+											'viglet-turing-search'
 										),
 										r.replayed
 									)
 								)
 							}
 						>
-							{ __( 'Retry failed', 'viglet-dumont' ) }
+							{ __( 'Retry failed', 'viglet-turing-search' ) }
 						</Button>
 						<Button
 							variant="primary"
@@ -345,7 +354,7 @@ function Health() {
 										/* translators: 1: sent, 2: failed. */
 										__(
 											'Sent %1$d, %2$d failed.',
-											'viglet-dumont'
+											'viglet-turing-search'
 										),
 										r.sent,
 										r.failed
@@ -353,7 +362,7 @@ function Health() {
 								)
 							}
 						>
-							{ __( 'Send queue now', 'viglet-dumont' ) }
+							{ __( 'Send queue now', 'viglet-turing-search' ) }
 						</Button>
 					</Flex>
 				</CardBody>
@@ -363,7 +372,7 @@ function Health() {
 
 			<Card>
 				<CardHeader>
-					<h2>{ __( 'Last events', 'viglet-dumont' ) }</h2>
+					<h2>{ __( 'Last events', 'viglet-turing-search' ) }</h2>
 				</CardHeader>
 				<CardBody>
 					{ status.events && status.events.length ? (
@@ -371,16 +380,19 @@ function Health() {
 							<thead>
 								<tr>
 									<th scope="col">
-										{ __( 'When', 'viglet-dumont' ) }
+										{ __( 'When', 'viglet-turing-search' ) }
 									</th>
 									<th scope="col">
-										{ __( 'What', 'viglet-dumont' ) }
+										{ __( 'What', 'viglet-turing-search' ) }
 									</th>
 									<th scope="col">
-										{ __( 'Post', 'viglet-dumont' ) }
+										{ __( 'Post', 'viglet-turing-search' ) }
 									</th>
 									<th scope="col">
-										{ __( 'Result', 'viglet-dumont' ) }
+										{ __(
+											'Result',
+											'viglet-turing-search'
+										) }
 									</th>
 								</tr>
 							</thead>
@@ -395,10 +407,13 @@ function Health() {
 										<td>{ event.post_id || '—' }</td>
 										<td>
 											{ event.ok
-												? __( 'OK', 'viglet-dumont' )
+												? __(
+														'OK',
+														'viglet-turing-search'
+													)
 												: __(
 														'Failed',
-														'viglet-dumont'
+														'viglet-turing-search'
 													) }
 											{ event.message
 												? ': ' + event.message
@@ -412,7 +427,7 @@ function Health() {
 						<p>
 							{ __(
 								'Nothing has been sent yet.',
-								'viglet-dumont'
+								'viglet-turing-search'
 							) }
 						</p>
 					) }

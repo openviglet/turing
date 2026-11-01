@@ -6,7 +6,7 @@
 	"category": "widgets",
 	"icon": "search",
 	"description": "The Turing search block’s box: the field, its suggestions and “Did you mean”.",
-	"textdomain": "viglet-dumont",
+	"textdomain": "viglet-turing-search",
 	"ancestor": [
 		"viglet-dumont/search"
 	],

@@ -7,7 +7,7 @@
 	"icon": "columns",
 	"description": "The products a shopper ticked Compare on, side by side: a table of what they all have, the rows where they differ marked. Needs WooCommerce.",
 	"keywords": [ "compare", "comparison", "shop", "products" ],
-	"textdomain": "viglet-dumont",
+	"textdomain": "viglet-turing-search",
 	"attributes": {
 		"heading": {
 			"type": "string",

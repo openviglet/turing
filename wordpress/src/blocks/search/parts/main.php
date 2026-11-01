@@ -30,11 +30,11 @@ $viglet_dumont_recent = array_map(
 );
 ?>
 <div class="viglet-dumont-search__main">
-	<ol class="viglet-dumont-search__spotlights" aria-label="<?php esc_attr_e( 'Featured', 'viglet-dumont' ); ?>" hidden data-wp-bind--hidden="!state.hasSpotlights">
+	<ol class="viglet-dumont-search__spotlights" aria-label="<?php esc_attr_e( 'Featured', 'viglet-turing-search' ); ?>" hidden data-wp-bind--hidden="!state.hasSpotlights">
 		<template data-wp-each--spot="state.spotlights" data-wp-each-key="context.spot.url">
 			<li class="viglet-dumont-search__result viglet-dumont-search__result--featured">
 				<div class="viglet-dumont-search__body">
-					<p class="viglet-dumont-search__meta"><span class="viglet-dumont-search__featured"><?php esc_html_e( 'Featured', 'viglet-dumont' ); ?></span></p>
+					<p class="viglet-dumont-search__meta"><span class="viglet-dumont-search__featured"><?php esc_html_e( 'Featured', 'viglet-turing-search' ); ?></span></p>
 					<h2 class="viglet-dumont-search__title"><a data-wp-bind--href="context.spot.url" data-wp-text="context.spot.title"></a></h2>
 					<p class="viglet-dumont-search__snippet" data-wp-text="context.spot.content"></p>
 				</div>
@@ -69,14 +69,14 @@ $viglet_dumont_recent = array_map(
 						?>
 						<div class="viglet-dumont-search__shop" hidden data-wp-bind--hidden="!context.result.price">
 							<p class="viglet-dumont-search__price">
-								<del hidden data-wp-bind--hidden="!context.result.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-dumont' ); ?></span> <span data-wp-text="context.result.regular"></span></del>
+								<del hidden data-wp-bind--hidden="!context.result.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-turing-search' ); ?></span> <span data-wp-text="context.result.regular"></span></del>
 								<span data-wp-text="context.result.price"></span>
 							</p>
-							<button type="button" class="wp-element-button viglet-dumont-search__cart" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="state.resultAdding" data-wp-bind--aria-label="context.result.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-dumont' ); ?></button>
+							<button type="button" class="wp-element-button viglet-dumont-search__cart" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="state.resultAdding" data-wp-bind--aria-label="context.result.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-turing-search' ); ?></button>
 							<span class="viglet-dumont-search__cart-status" role="status" data-wp-text="state.resultCartStatus"></span>
 							<label class="viglet-dumont-search__compare" hidden data-wp-bind--hidden="!state.canCompare">
 								<input type="checkbox" data-wp-bind--aria-label="context.result.compareFor" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
-								<?php esc_html_e( 'Compare', 'viglet-dumont' ); ?>
+								<?php esc_html_e( 'Compare', 'viglet-turing-search' ); ?>
 							</label>
 						</div>
 					<?php endif; ?>
@@ -98,7 +98,7 @@ $viglet_dumont_recent = array_map(
 
 	<div class="viglet-dumont-search__empty" hidden data-wp-bind--hidden="!state.isEmpty">
 		<?php if ( $viglet_dumont_recent ) : ?>
-			<p><?php esc_html_e( 'Or start from the latest posts:', 'viglet-dumont' ); ?></p>
+			<p><?php esc_html_e( 'Or start from the latest posts:', 'viglet-turing-search' ); ?></p>
 			<ul>
 				<?php foreach ( $viglet_dumont_recent as $viglet_dumont_post ) : ?>
 					<li><a href="<?php echo esc_url( $viglet_dumont_post['url'] ); ?>"><?php echo esc_html( $viglet_dumont_post['title'] ); ?></a></li>
@@ -108,7 +108,7 @@ $viglet_dumont_recent = array_map(
 	</div>
 
 	<div class="viglet-dumont-search__error" hidden data-wp-bind--hidden="!state.isError">
-		<button type="button" class="wp-element-button" data-wp-on--click="actions.retry"><?php esc_html_e( 'Try again', 'viglet-dumont' ); ?></button>
-		<a data-wp-bind--href="state.wordpressSearchUrl"><?php esc_html_e( 'Search with WordPress instead', 'viglet-dumont' ); ?></a>
+		<button type="button" class="wp-element-button" data-wp-on--click="actions.retry"><?php esc_html_e( 'Try again', 'viglet-turing-search' ); ?></button>
+		<a data-wp-bind--href="state.wordpressSearchUrl"><?php esc_html_e( 'Search with WordPress instead', 'viglet-turing-search' ); ?></a>
 	</div>
 </div>

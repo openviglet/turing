@@ -22,7 +22,7 @@ $viglet_dumont_sort  = Viglet_Dumont_Search_Block::sort();
 	<p class="viglet-dumont-search__summary" aria-live="polite" data-wp-text="state.summary"></p>
 	<?php if ( ! empty( $attributes['showSort'] ) ) : ?>
 		<p class="viglet-dumont-search__sort" hidden data-wp-bind--hidden="!state.hasResults">
-			<label for="<?php echo esc_attr( $viglet_dumont_id ); ?>-sort"><?php esc_html_e( 'Sort by', 'viglet-dumont' ); ?></label>
+			<label for="<?php echo esc_attr( $viglet_dumont_id ); ?>-sort"><?php esc_html_e( 'Sort by', 'viglet-turing-search' ); ?></label>
 			<select id="<?php echo esc_attr( $viglet_dumont_id ); ?>-sort" data-wp-bind--value="state.sort" data-wp-on--change="actions.sortBy">
 				<?php foreach ( $viglet_dumont_sorts as $viglet_dumont_value => $viglet_dumont_label ) : ?>
 					<option value="<?php echo esc_attr( $viglet_dumont_value ); ?>" <?php selected( $viglet_dumont_sort, $viglet_dumont_value ); ?>><?php echo esc_html( $viglet_dumont_label ); ?></option>

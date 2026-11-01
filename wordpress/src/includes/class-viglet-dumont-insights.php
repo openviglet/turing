@@ -117,7 +117,7 @@ class Viglet_Dumont_Insights {
 		if ( ! $report['top'] && ! $report['failed'] ) {
 			return array(
 				'summary' => '',
-				'error'   => __( 'There are no searches in this period to summarize.', 'viglet-dumont' ),
+				'error'   => __( 'There are no searches in this period to summarize.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -152,7 +152,7 @@ class Viglet_Dumont_Insights {
 		if ( empty( $result['success'] ) || '' === $summary ) {
 			return array(
 				'summary' => '',
-				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no summary.', 'viglet-dumont' ),
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no summary.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -180,14 +180,14 @@ class Viglet_Dumont_Insights {
 
 		$lists = array_filter(
 			array(
-				__( 'Top searches', 'viglet-dumont' ) => array_slice( $report['top'], 0, 5 ),
-				__( 'Searches that found nothing', 'viglet-dumont' ) => array_slice( $report['failed'], 0, 5 ),
+				__( 'Top searches', 'viglet-turing-search' ) => array_slice( $report['top'], 0, 5 ),
+				__( 'Searches that found nothing', 'viglet-turing-search' ) => array_slice( $report['failed'], 0, 5 ),
 			)
 		);
 		if ( ! empty( $report['metricsOff'] ) ) {
-			echo '<p>' . esc_html__( 'Turing is not keeping search metrics, so no new searches are recorded.', 'viglet-dumont' ) . '</p>';
+			echo '<p>' . esc_html__( 'Turing is not keeping search metrics, so no new searches are recorded.', 'viglet-turing-search' ) . '</p>';
 		} elseif ( ! $lists ) {
-			echo '<p>' . esc_html__( 'No searches this week yet.', 'viglet-dumont' ) . '</p>';
+			echo '<p>' . esc_html__( 'No searches this week yet.', 'viglet-turing-search' ) . '</p>';
 		}
 		foreach ( $lists as $title => $terms ) {
 			echo '<h3>' . esc_html( $title ) . '</h3><ul>';
@@ -203,7 +203,7 @@ class Viglet_Dumont_Insights {
 		printf(
 			'<p><a href="%1$s">%2$s</a></p>',
 			esc_url( admin_url( 'admin.php?page=viglet-dumont-insights' ) ),
-			esc_html__( 'All search insights', 'viglet-dumont' )
+			esc_html__( 'All search insights', 'viglet-turing-search' )
 		);
 	}
 

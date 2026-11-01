@@ -32,18 +32,27 @@
 				null,
 				el(
 					PanelBody,
-					{ title: __( 'Site assistant', 'viglet-dumont' ) },
+					{ title: __( 'Site assistant', 'viglet-turing-search' ) },
 					el( TextControl, {
-						label: __( 'Button and heading', 'viglet-dumont' ),
-						placeholder: __( 'Ask this site', 'viglet-dumont' ),
+						label: __(
+							'Button and heading',
+							'viglet-turing-search'
+						),
+						placeholder: __(
+							'Ask this site',
+							'viglet-turing-search'
+						),
 						value: attributes.heading,
 						onChange: ( heading ) => setAttributes( { heading } ),
 					} ),
 					el( TextareaControl, {
-						label: __( 'Suggested questions', 'viglet-dumont' ),
+						label: __(
+							'Suggested questions',
+							'viglet-turing-search'
+						),
 						help: __(
 							'One per line. Left empty, the assistant suggests this week’s popular searches.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						value: attributes.suggestions,
 						onChange: ( suggestions ) =>
@@ -55,10 +64,10 @@
 				icon: 'format-chat',
 				label:
 					attributes.heading ||
-					__( 'Ask this site', 'viglet-dumont' ),
+					__( 'Ask this site', 'viglet-turing-search' ),
 				instructions: __(
 					'A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Turing’s chat is on for this site.',
-					'viglet-dumont'
+					'viglet-turing-search'
 				),
 			} )
 		);

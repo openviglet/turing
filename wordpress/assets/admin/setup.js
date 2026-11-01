@@ -22,11 +22,11 @@ import { createRoot, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
 const STEP_LABEL = {
-	url: __( 'Address', 'viglet-dumont' ),
-	reach: __( 'Network', 'viglet-dumont' ),
-	turing: __( 'Turing', 'viglet-dumont' ),
-	key: __( 'API key', 'viglet-dumont' ),
-	site: __( 'SN site', 'viglet-dumont' ),
+	url: __( 'Address', 'viglet-turing-search' ),
+	reach: __( 'Network', 'viglet-turing-search' ),
+	turing: __( 'Turing', 'viglet-turing-search' ),
+	key: __( 'API key', 'viglet-turing-search' ),
+	site: __( 'SN site', 'viglet-turing-search' ),
 };
 
 function Checks( { result } ) {
@@ -94,7 +94,7 @@ function Setup() {
 		setBusy( 'index' );
 		setProgress( {
 			percent: 0,
-			message: __( 'Starting…', 'viglet-dumont' ),
+			message: __( 'Starting…', 'viglet-turing-search' ),
 		} );
 		const batch = ( offset ) =>
 			apiFetch( {
@@ -140,7 +140,7 @@ function Setup() {
 
 			<Card>
 				<CardHeader>
-					<h2>{ __( '1. Connection', 'viglet-dumont' ) }</h2>
+					<h2>{ __( '1. Connection', 'viglet-turing-search' ) }</h2>
 				</CardHeader>
 				<CardBody>
 					{ lockedNames.length > 0 && (
@@ -149,7 +149,7 @@ function Setup() {
 								/* translators: %s: the constants or environment variables, comma-separated. */
 								__(
 									'Set outside WordPress, read-only here: %s.',
-									'viglet-dumont'
+									'viglet-turing-search'
 								),
 								lockedNames.join( ', ' )
 							) }
@@ -157,10 +157,10 @@ function Setup() {
 					) }
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'Turing URL', 'viglet-dumont' ) }
+						label={ __( 'Turing URL', 'viglet-turing-search' ) }
 						help={ __(
 							'The address of your Turing, e.g. https://search.example.org.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						type="url"
 						value={ form.server_url }
@@ -169,16 +169,16 @@ function Setup() {
 					/>
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'API key', 'viglet-dumont' ) }
+						label={ __( 'API key', 'viglet-turing-search' ) }
 						help={
 							form.has_api_key
 								? __(
 										'A key is stored. Leave this empty to keep it.',
-										'viglet-dumont'
+										'viglet-turing-search'
 									)
 								: __(
 										'Create one in Turing under API Tokens.',
-										'viglet-dumont'
+										'viglet-turing-search'
 									)
 						}
 						type="password"
@@ -189,10 +189,10 @@ function Setup() {
 					/>
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'SN site', 'viglet-dumont' ) }
+						label={ __( 'SN site', 'viglet-turing-search' ) }
 						help={ __(
 							'The Semantic Navigation site this WordPress publishes to and searches.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						value={ form.site_name }
 						disabled={ locked( 'site_name' ) }
@@ -200,10 +200,10 @@ function Setup() {
 					/>
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'Locale', 'viglet-dumont' ) }
+						label={ __( 'Locale', 'viglet-turing-search' ) }
 						help={ __(
 							'The language the content is indexed in, e.g. pt_BR or en_US.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 						value={ form.locale }
 						disabled={ locked( 'locale' ) }
@@ -211,12 +211,12 @@ function Setup() {
 					/>
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'Site key', 'viglet-dumont' ) }
+						label={ __( 'Site key', 'viglet-turing-search' ) }
 						help={ sprintf(
 							/* translators: %s: the key derived from this site's address. */
 							__(
 								"Keeps this site's documents apart when several sites share one SN site. Empty uses %s.",
-								'viglet-dumont'
+								'viglet-turing-search'
 							),
 							form.derived_key
 						) }
@@ -232,7 +232,7 @@ function Setup() {
 					>
 						{ __(
 							'Save and test the connection',
-							'viglet-dumont'
+							'viglet-turing-search'
 						) }
 					</Button>
 				</CardBody>
@@ -241,7 +241,7 @@ function Setup() {
 			{ result && (
 				<Card>
 					<CardHeader>
-						<h2>{ __( '2. Test', 'viglet-dumont' ) }</h2>
+						<h2>{ __( '2. Test', 'viglet-turing-search' ) }</h2>
 					</CardHeader>
 					<CardBody>
 						<Checks result={ result } />
@@ -256,7 +256,7 @@ function Setup() {
 									/* translators: %s: the SN site's name. */
 									__(
 										'Create the SN site %s',
-										'viglet-dumont'
+										'viglet-turing-search'
 									),
 									form.site_name
 								) }
@@ -269,13 +269,15 @@ function Setup() {
 			{ result && result.ok && (
 				<Card>
 					<CardHeader>
-						<h2>{ __( '3. First index', 'viglet-dumont' ) }</h2>
+						<h2>
+							{ __( '3. First index', 'viglet-turing-search' ) }
+						</h2>
 					</CardHeader>
 					<CardBody>
 						<p>
 							{ __(
 								'Sends every published post of the indexed types now. New and edited posts are sent on their own after that.',
-								'viglet-dumont'
+								'viglet-turing-search'
 							) }
 						</p>
 						<Button
@@ -284,7 +286,10 @@ function Setup() {
 							disabled={ !! busy }
 							onClick={ indexAll }
 						>
-							{ __( 'Index everything now', 'viglet-dumont' ) }
+							{ __(
+								'Index everything now',
+								'viglet-turing-search'
+							) }
 						</Button>
 						{ progress && (
 							<div style={ { marginTop: 12 } } aria-live="polite">

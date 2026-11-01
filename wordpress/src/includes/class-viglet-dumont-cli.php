@@ -40,16 +40,16 @@ class Viglet_Dumont_CLI {
 		}
 
 		/* translators: 1: Turing's URL answer, 2: the SN site, 3: the site key. */
-		WP_CLI::log( sprintf( __( 'Connection: %1$s. SN site: %2$s. Site key: %3$s.', 'viglet-dumont' ), $status['connection']['message'], $status['site_name'], $status['site_key'] ) );
+		WP_CLI::log( sprintf( __( 'Connection: %1$s. SN site: %2$s. Site key: %3$s.', 'viglet-turing-search' ), $status['connection']['message'], $status['site_name'], $status['site_key'] ) );
 		/* translators: 1: jobs waiting, 2: jobs that stopped retrying. */
-		WP_CLI::log( sprintf( __( 'Queue: %1$d waiting, %2$d stopped retrying.', 'viglet-dumont' ), $status['queue']['pending'], $status['queue']['failed'] ) );
+		WP_CLI::log( sprintf( __( 'Queue: %1$d waiting, %2$d stopped retrying.', 'viglet-turing-search' ), $status['queue']['pending'], $status['queue']['failed'] ) );
 		foreach ( $status['sources'] as $key => $source ) {
 			/* translators: 1: the setting, 2: constant, env or option, 3: the constant's or variable's name. */
-			WP_CLI::log( sprintf( __( 'Setting %1$s comes from %2$s (%3$s).', 'viglet-dumont' ), $key, $source['source'], $source['name'] ) );
+			WP_CLI::log( sprintf( __( 'Setting %1$s comes from %2$s (%3$s).', 'viglet-turing-search' ), $key, $source['source'], $source['name'] ) );
 		}
 		if ( is_array( $status['provisioned'] ) && '' !== ( $status['provisioned']['error'] ?? '' ) ) {
 			/* translators: %s: why Turing refused the fields. */
-			WP_CLI::warning( sprintf( __( 'Fields not provisioned: %s', 'viglet-dumont' ), $status['provisioned']['error'] ) );
+			WP_CLI::warning( sprintf( __( 'Fields not provisioned: %s', 'viglet-turing-search' ), $status['provisioned']['error'] ) );
 		}
 
 		$rows = array();
@@ -94,7 +94,7 @@ class Viglet_Dumont_CLI {
 		// A post asked for by id but not published is removed, so `--ids` also unindexes.
 		$post_ids = array_values( array_unique( array_merge( $post_ids, $ids ) ) );
 
-		$this->finish( $operations->index( $post_ids, $this->progress( __( 'Indexing', 'viglet-dumont' ), count( $post_ids ) ) ) );
+		$this->finish( $operations->index( $post_ids, $this->progress( __( 'Indexing', 'viglet-turing-search' ), count( $post_ids ) ) ) );
 	}
 
 	/**
@@ -108,14 +108,14 @@ class Viglet_Dumont_CLI {
 	public function reindex(): void {
 		$operations = new Viglet_Dumont_Operations();
 		$total      = count( $operations->find_post_ids() );
-		$result     = $operations->reindex( $this->progress( __( 'Reindexing', 'viglet-dumont' ), $total ) );
+		$result     = $operations->reindex( $this->progress( __( 'Reindexing', 'viglet-turing-search' ), $total ) );
 
 		if ( '' !== $result['sweep_error'] ) {
 			/* translators: %s: why the sweep did not run or failed. */
-			WP_CLI::warning( sprintf( __( 'Sweep: %s', 'viglet-dumont' ), $result['sweep_error'] ) );
+			WP_CLI::warning( sprintf( __( 'Sweep: %s', 'viglet-turing-search' ), $result['sweep_error'] ) );
 		} else {
 			/* translators: %d: documents removed from Turing. */
-			WP_CLI::log( sprintf( __( 'Swept %d documents WordPress no longer publishes.', 'viglet-dumont' ), $result['swept'] ) );
+			WP_CLI::log( sprintf( __( 'Swept %d documents WordPress no longer publishes.', 'viglet-turing-search' ), $result['swept'] ) );
 		}
 		$this->finish( $result );
 	}
@@ -150,9 +150,9 @@ class Viglet_Dumont_CLI {
 		WP_CLI::success(
 			$dry_run
 				/* translators: %d: documents that would be removed. */
-				? sprintf( __( '%d documents would be removed.', 'viglet-dumont' ), count( $result['orphans'] ) )
+				? sprintf( __( '%d documents would be removed.', 'viglet-turing-search' ), count( $result['orphans'] ) )
 				/* translators: %d: documents removed. */
-				: sprintf( __( '%d documents removed.', 'viglet-dumont' ), count( $result['orphans'] ) )
+				: sprintf( __( '%d documents removed.', 'viglet-turing-search' ), count( $result['orphans'] ) )
 		);
 	}
 
@@ -179,21 +179,21 @@ class Viglet_Dumont_CLI {
 	private function finish( array $result ): void {
 		foreach ( $result['errors'] as $post_id => $error ) {
 			/* translators: 1: the post id, 2: why sending it failed. */
-			WP_CLI::warning( sprintf( __( 'Post %1$d: %2$s', 'viglet-dumont' ), $post_id, $error ) );
+			WP_CLI::warning( sprintf( __( 'Post %1$d: %2$s', 'viglet-turing-search' ), $post_id, $error ) );
 		}
 		if ( $result['unconfirmed'] > 0 ) {
 			WP_CLI::warning(
 				sprintf(
 					/* translators: %d: posts sent that Turing did not answer for in time. */
-					__( 'Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp dumont status shows what it holds.', 'viglet-dumont' ),
+					__( 'Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp dumont status shows what it holds.', 'viglet-turing-search' ),
 					$result['unconfirmed']
 				)
 			);
 			/* translators: 1: posts sent, 2: posts sent without an answer, 3: posts that failed. */
-			$summary = sprintf( __( '%1$d sent, %2$d not confirmed, %3$d failed.', 'viglet-dumont' ), $result['sent'], $result['unconfirmed'], $result['failed'] );
+			$summary = sprintf( __( '%1$d sent, %2$d not confirmed, %3$d failed.', 'viglet-turing-search' ), $result['sent'], $result['unconfirmed'], $result['failed'] );
 		} else {
 			/* translators: 1: posts sent, 2: posts that failed. */
-			$summary = sprintf( __( '%1$d sent, %2$d failed.', 'viglet-dumont' ), $result['sent'], $result['failed'] );
+			$summary = sprintf( __( '%1$d sent, %2$d failed.', 'viglet-turing-search' ), $result['sent'], $result['failed'] );
 		}
 		if ( $result['failed'] > 0 ) {
 			WP_CLI::error( $summary );

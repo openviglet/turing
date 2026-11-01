@@ -6,7 +6,7 @@
 	"category": "widgets",
 	"icon": "filter",
 	"description": "The Turing search block’s filters: the applied ones and the facets.",
-	"textdomain": "viglet-dumont",
+	"textdomain": "viglet-turing-search",
 	"ancestor": [
 		"viglet-dumont/search"
 	],

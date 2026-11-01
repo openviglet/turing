@@ -1,6 +1,6 @@
 // The plugin on a pt_BR site (the pt-br project switches the stack's language): every admin
 // screen and the search block speak Portuguese, and no string the .po translates shows up
-// in English. A leak is an English source string, from viglet-dumont-pt_BR.po, found in the
+// in English. A leak is an English source string, from viglet-turing-search-pt_BR.po, found in the
 // plugin's own region of the page.
 import { readFileSync } from 'node:fs';
 import { expect, test } from '../fixtures.mjs';
@@ -35,7 +35,7 @@ function entries( source ) {
 }
 
 const translated = entries(
-	readFileSync( 'src/languages/viglet-dumont-pt_BR.po', 'utf8' )
+	readFileSync( 'src/languages/viglet-turing-search-pt_BR.po', 'utf8' )
 ).filter( ( e ) => e.msgid && e.msgstr && e.msgstr !== e.msgid );
 
 // What would read as a leak: a phrase of two words or more, with no placeholder, whose

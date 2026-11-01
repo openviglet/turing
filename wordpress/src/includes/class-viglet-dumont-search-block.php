@@ -75,9 +75,9 @@ class Viglet_Dumont_Search_Block {
 	 */
 	public static function sorts(): array {
 		return array(
-			'relevance' => __( 'Relevance', 'viglet-dumont' ),
-			'newest'    => __( 'Newest', 'viglet-dumont' ),
-			'oldest'    => __( 'Oldest', 'viglet-dumont' ),
+			'relevance' => __( 'Relevance', 'viglet-turing-search' ),
+			'newest'    => __( 'Newest', 'viglet-turing-search' ),
+			'oldest'    => __( 'Oldest', 'viglet-turing-search' ),
 		);
 	}
 
@@ -104,7 +104,7 @@ class Viglet_Dumont_Search_Block {
 				if ( 'woo:price' === $field['source'] ) {
 					return array(
 						'field' => $field['field'],
-						'label' => '' !== $field['facet_label'] ? $field['facet_label'] : __( 'Price', 'viglet-dumont' ),
+						'label' => '' !== $field['facet_label'] ? $field['facet_label'] : __( 'Price', 'viglet-turing-search' ),
 					);
 				}
 			}

@@ -42,58 +42,70 @@
 				null,
 				el(
 					PanelBody,
-					{ title: __( 'Related content', 'viglet-dumont' ) },
+					{ title: __( 'Related content', 'viglet-turing-search' ) },
 					el( TextControl, {
-						label: __( 'Heading', 'viglet-dumont' ),
-						placeholder: __( 'Related posts', 'viglet-dumont' ),
+						label: __( 'Heading', 'viglet-turing-search' ),
+						placeholder: __(
+							'Related posts',
+							'viglet-turing-search'
+						),
 						value: attributes.heading,
 						onChange: ( heading ) => setAttributes( { heading } ),
 					} ),
 					el( RangeControl, {
-						label: __( 'How many', 'viglet-dumont' ),
+						label: __( 'How many', 'viglet-turing-search' ),
 						min: 1,
 						max: 12,
 						value: attributes.count,
 						onChange: ( count ) => setAttributes( { count } ),
 					} ),
 					el( SelectControl, {
-						label: __( 'Alike by', 'viglet-dumont' ),
+						label: __( 'Alike by', 'viglet-turing-search' ),
 						help: __(
 							'Meaning needs a site with embeddings in Turing; without them, shared words are used.',
-							'viglet-dumont'
+							'viglet-turing-search'
 						),
 						value: attributes.mode,
 						options: [
 							{
-								label: __( 'Turing’s choice', 'viglet-dumont' ),
+								label: __(
+									'Turing’s choice',
+									'viglet-turing-search'
+								),
 								value: '',
 							},
 							{
-								label: __( 'Shared words', 'viglet-dumont' ),
+								label: __(
+									'Shared words',
+									'viglet-turing-search'
+								),
 								value: 'MLT',
 							},
 							{
-								label: __( 'Meaning', 'viglet-dumont' ),
+								label: __( 'Meaning', 'viglet-turing-search' ),
 								value: 'VECTOR',
 							},
 						],
 						onChange: ( mode ) => setAttributes( { mode } ),
 					} ),
 					el( ToggleControl, {
-						label: __( 'Only the same post type', 'viglet-dumont' ),
+						label: __(
+							'Only the same post type',
+							'viglet-turing-search'
+						),
 						checked: attributes.sameType,
 						onChange: ( sameType ) => setAttributes( { sameType } ),
 					} ),
 					el( SelectControl, {
-						label: __( 'Show as', 'viglet-dumont' ),
+						label: __( 'Show as', 'viglet-turing-search' ),
 						value: attributes.layout,
 						options: [
 							{
-								label: __( 'A grid', 'viglet-dumont' ),
+								label: __( 'A grid', 'viglet-turing-search' ),
 								value: 'grid',
 							},
 							{
-								label: __( 'A list', 'viglet-dumont' ),
+								label: __( 'A list', 'viglet-turing-search' ),
 								value: 'list',
 							},
 						],
@@ -102,12 +114,15 @@
 					...[
 						[
 							'showImage',
-							__( 'Show the image', 'viglet-dumont' ),
+							__( 'Show the image', 'viglet-turing-search' ),
 						],
-						[ 'showDate', __( 'Show the date', 'viglet-dumont' ) ],
+						[
+							'showDate',
+							__( 'Show the date', 'viglet-turing-search' ),
+						],
 						[
 							'showExcerpt',
-							__( 'Show the excerpt', 'viglet-dumont' ),
+							__( 'Show the excerpt', 'viglet-turing-search' ),
 						],
 					].map( ( [ name, label ] ) =>
 						el( ToggleControl, {
@@ -133,7 +148,10 @@
 					LoadingResponsePlaceholder: () =>
 						el( Placeholder, {
 							icon: 'networking',
-							label: __( 'Related content', 'viglet-dumont' ),
+							label: __(
+								'Related content',
+								'viglet-turing-search'
+							),
 						} ),
 				} )
 			)

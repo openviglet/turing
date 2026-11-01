@@ -103,19 +103,19 @@ class Viglet_Dumont_WooCommerce {
 	 */
 	public static function sources(): array {
 		$labels = array(
-			'price'          => __( 'Price', 'viglet-dumont' ),
-			'regular_price'  => __( 'Regular price', 'viglet-dumont' ),
-			'sale_price'     => __( 'Sale price', 'viglet-dumont' ),
-			'stock_status'   => __( 'Stock status', 'viglet-dumont' ),
-			'sku'            => __( 'SKU', 'viglet-dumont' ),
-			'average_rating' => __( 'Average rating', 'viglet-dumont' ),
+			'price'          => __( 'Price', 'viglet-turing-search' ),
+			'regular_price'  => __( 'Regular price', 'viglet-turing-search' ),
+			'sale_price'     => __( 'Sale price', 'viglet-turing-search' ),
+			'stock_status'   => __( 'Stock status', 'viglet-turing-search' ),
+			'sku'            => __( 'SKU', 'viglet-turing-search' ),
+			'average_rating' => __( 'Average rating', 'viglet-turing-search' ),
 		);
 
 		return array_map(
 			static fn ( string $field ) => array(
 				'source' => 'woo:' . $field,
 				/* translators: %s: a product field, e.g. Price. */
-				'label'  => sprintf( __( 'Product: %s', 'viglet-dumont' ), $labels[ $field ] ),
+				'label'  => sprintf( __( 'Product: %s', 'viglet-turing-search' ), $labels[ $field ] ),
 			),
 			array_keys( self::FIELDS )
 		);
@@ -135,7 +135,7 @@ class Viglet_Dumont_WooCommerce {
 				'type'        => 'FLOAT',
 				'multi'       => false,
 				'facet'       => false,
-				'facet_label' => __( 'Price', 'viglet-dumont' ),
+				'facet_label' => __( 'Price', 'viglet-turing-search' ),
 				'weight'      => null,
 			),
 			// What a result card strikes through when the product is on sale.
@@ -154,7 +154,7 @@ class Viglet_Dumont_WooCommerce {
 				'type'        => 'STRING',
 				'multi'       => false,
 				'facet'       => true,
-				'facet_label' => __( 'Stock', 'viglet-dumont' ),
+				'facet_label' => __( 'Stock', 'viglet-turing-search' ),
 				'weight'      => null,
 			),
 		);

@@ -46,9 +46,9 @@ class Viglet_Dumont_Diagnostics {
 
 		$parts = wp_parse_url( $url );
 		if ( empty( $parts['scheme'] ) || empty( $parts['host'] ) || ! in_array( $parts['scheme'], array( 'http', 'https' ), true ) ) {
-			return $this->stop( $steps, 'url', __( 'The Turing URL must be a full http:// or https:// address, e.g. https://search.example.org.', 'viglet-dumont' ) );
+			return $this->stop( $steps, 'url', __( 'The Turing URL must be a full http:// or https:// address, e.g. https://search.example.org.', 'viglet-turing-search' ) );
 		}
-		$steps[] = $this->pass( 'url', __( 'The URL is well formed.', 'viglet-dumont' ) );
+		$steps[] = $this->pass( 'url', __( 'The URL is well formed.', 'viglet-turing-search' ) );
 
 		$response = wp_remote_get( $url . '/api/discovery', array( 'timeout' => 10 ) );
 		if ( is_wp_error( $response ) ) {
@@ -59,7 +59,7 @@ class Viglet_Dumont_Diagnostics {
 		if ( $playground ) {
 			return $this->stop( $steps, 'reach', $playground->get_error_message() );
 		}
-		$steps[] = $this->pass( 'reach', __( 'The server answers.', 'viglet-dumont' ) );
+		$steps[] = $this->pass( 'reach', __( 'The server answers.', 'viglet-turing-search' ) );
 
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
@@ -68,10 +68,10 @@ class Viglet_Dumont_Diagnostics {
 				$steps,
 				'turing',
 				/* translators: %d: the HTTP status the server answered with. */
-				sprintf( __( 'The server answered HTTP %d where Turing answers its discovery document: this URL is not a Turing, or a proxy is in the way.', 'viglet-dumont' ), $code )
+				sprintf( __( 'The server answered HTTP %d where Turing answers its discovery document: this URL is not a Turing, or a proxy is in the way.', 'viglet-turing-search' ), $code )
 			);
 		}
-		$steps[] = $this->pass( 'turing', __( 'It is a Turing.', 'viglet-dumont' ) );
+		$steps[] = $this->pass( 'turing', __( 'It is a Turing.', 'viglet-turing-search' ) );
 
 		// Demo mode (D238) holds no key: the SN site is checked the way visitors reach it.
 		if ( Viglet_Dumont_Settings::demo() ) {
@@ -79,7 +79,7 @@ class Viglet_Dumont_Diagnostics {
 		}
 
 		if ( '' === (string) ( $this->settings['api_key'] ?? '' ) ) {
-			return $this->stop( $steps, 'key', __( 'No API key is set. Create one in Turing under API Tokens and paste it here.', 'viglet-dumont' ) );
+			return $this->stop( $steps, 'key', __( 'No API key is set. Create one in Turing under API Tokens and paste it here.', 'viglet-turing-search' ) );
 		}
 
 		$client  = new Viglet_Dumont_API_Client( $this->settings );
@@ -92,23 +92,23 @@ class Viglet_Dumont_Diagnostics {
 				$steps,
 				'key',
 				$refused
-					? __( 'Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites.', 'viglet-dumont' )
+					? __( 'Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites.', 'viglet-turing-search' )
 					: $message
 			);
 		}
-		$steps[] = $this->pass( 'key', __( 'Turing accepts the API key.', 'viglet-dumont' ) );
+		$steps[] = $this->pass( 'key', __( 'Turing accepts the API key.', 'viglet-turing-search' ) );
 
 		$exists  = ! empty( $plan['siteExists'] );
 		$steps[] = $exists
 			? $this->pass(
 				'site',
 				/* translators: %s: the SN site's name. */
-				sprintf( __( 'The SN site %s exists.', 'viglet-dumont' ), $this->settings['site_name'] )
+				sprintf( __( 'The SN site %s exists.', 'viglet-turing-search' ), $this->settings['site_name'] )
 			)
 			: $this->fail(
 				'site',
 				/* translators: %s: the SN site's name. */
-				sprintf( __( 'There is no SN site named %s in Turing yet. Create it from here, or check the name.', 'viglet-dumont' ), $this->settings['site_name'] )
+				sprintf( __( 'There is no SN site named %s in Turing yet. Create it from here, or check the name.', 'viglet-turing-search' ), $this->settings['site_name'] )
 			);
 
 		return array(
@@ -129,7 +129,7 @@ class Viglet_Dumont_Diagnostics {
 			'key',
 			sprintf(
 				/* translators: %s: the constant or environment variable that turns demo mode on. */
-				__( 'Demo mode (%s): no API key is needed, and none is sent.', 'viglet-dumont' ),
+				__( 'Demo mode (%s): no API key is needed, and none is sent.', 'viglet-turing-search' ),
 				Viglet_Dumont_Settings::DEMO
 			)
 		);
@@ -141,7 +141,7 @@ class Viglet_Dumont_Diagnostics {
 				'site',
 				sprintf(
 					/* translators: 1: the SN site's name, 2: what Turing answered. */
-					__( 'The SN site %1$s does not answer a search without a key (%2$s): in demo mode it has to exist and be PUBLIC.', 'viglet-dumont' ),
+					__( 'The SN site %1$s does not answer a search without a key (%2$s): in demo mode it has to exist and be PUBLIC.', 'viglet-turing-search' ),
 					$this->settings['site_name'],
 					$ping['message']
 				)
@@ -150,7 +150,7 @@ class Viglet_Dumont_Diagnostics {
 		$steps[] = $this->pass(
 			'site',
 			/* translators: %s: the SN site's name. */
-			sprintf( __( 'The SN site %s answers searches without a key.', 'viglet-dumont' ), $this->settings['site_name'] )
+			sprintf( __( 'The SN site %s answers searches without a key.', 'viglet-turing-search' ), $this->settings['site_name'] )
 		);
 
 		return array(
@@ -171,19 +171,19 @@ class Viglet_Dumont_Diagnostics {
 
 		if ( preg_match( '/resolve host|Could not resolve|getaddrinfo|Name or service not known/i', $message ) ) {
 			/* translators: %s: the host name. */
-			return sprintf( __( '%s does not resolve (DNS): check the address for typos, or whether this server can see that network.', 'viglet-dumont' ), $host );
+			return sprintf( __( '%s does not resolve (DNS): check the address for typos, or whether this server can see that network.', 'viglet-turing-search' ), $host );
 		}
 		if ( preg_match( '/SSL|TLS|certificate/i', $message ) ) {
 			/* translators: %s: the transport's own message. */
-			return sprintf( __( 'The secure connection failed (TLS): the certificate is invalid, expired or self-signed. Details: %s', 'viglet-dumont' ), $message );
+			return sprintf( __( 'The secure connection failed (TLS): the certificate is invalid, expired or self-signed. Details: %s', 'viglet-turing-search' ), $message );
 		}
 		if ( preg_match( '/timed out|timeout/i', $message ) ) {
 			/* translators: %s: the host name. */
-			return sprintf( __( '%s did not answer in time: a firewall may be dropping the connection, or Turing is down.', 'viglet-dumont' ), $host );
+			return sprintf( __( '%s did not answer in time: a firewall may be dropping the connection, or Turing is down.', 'viglet-turing-search' ), $host );
 		}
 		if ( preg_match( '/refused|Failed to connect/i', $message ) ) {
 			/* translators: %s: the host name. */
-			return sprintf( __( 'Nothing is listening at %s on that port: Turing is down, or the port is wrong.', 'viglet-dumont' ), $host );
+			return sprintf( __( 'Nothing is listening at %s on that port: Turing is down, or the port is wrong.', 'viglet-turing-search' ), $host );
 		}
 
 		return $message;

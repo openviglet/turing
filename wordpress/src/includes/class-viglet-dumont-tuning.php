@@ -65,7 +65,7 @@ class Viglet_Dumont_Tuning {
 		}
 
 		/* translators: %s: the SN site's name. */
-		return new WP_Error( 'viglet_dumont_no_site', sprintf( __( 'Turing has no SN site named %s.', 'viglet-dumont' ), $this->settings['site_name'] ) );
+		return new WP_Error( 'viglet_dumont_no_site', sprintf( __( 'Turing has no SN site named %s.', 'viglet-turing-search' ), $this->settings['site_name'] ) );
 	}
 
 	/**
@@ -135,7 +135,7 @@ class Viglet_Dumont_Tuning {
 	public function add_synonym( array $terms ) {
 		$terms = array_values( array_unique( array_filter( array_map( 'trim', $terms ) ) ) );
 		if ( count( $terms ) < 2 ) {
-			return new WP_Error( 'viglet_dumont_synonym', __( 'A synonym needs two words or more.', 'viglet-dumont' ) );
+			return new WP_Error( 'viglet_dumont_synonym', __( 'A synonym needs two words or more.', 'viglet-turing-search' ) );
 		}
 		$site = $this->site_id();
 		if ( is_wp_error( $site ) ) {
@@ -177,7 +177,7 @@ class Viglet_Dumont_Tuning {
 		$query = trim( $query );
 		$posts = array_slice( array_filter( array_map( 'get_post', array_map( 'intval', $post_ids ) ) ), 0, 3 );
 		if ( '' === $query || ! $posts ) {
-			return new WP_Error( 'viglet_dumont_spotlight', __( 'Name a search and at least one post.', 'viglet-dumont' ) );
+			return new WP_Error( 'viglet_dumont_spotlight', __( 'Name a search and at least one post.', 'viglet-turing-search' ) );
 		}
 		$site = $this->site_id();
 		if ( is_wp_error( $site ) ) {
@@ -288,10 +288,10 @@ class Viglet_Dumont_Tuning {
 		// A recency boost is Turing's date form, `asc` on a DATE field; the rest match a value.
 		$wanted = array();
 		if ( $recency ) {
-			$wanted[] = array( __( 'newer first', 'viglet-dumont' ), 'publication_date', 1, 'asc', 5.0 );
+			$wanted[] = array( __( 'newer first', 'viglet-turing-search' ), 'publication_date', 1, 'asc', 5.0 );
 		}
 		if ( $sticky ) {
-			$wanted[] = array( __( 'sticky posts first', 'viglet-dumont' ), 'sticky', 1, 'true', 3.0 );
+			$wanted[] = array( __( 'sticky posts first', 'viglet-turing-search' ), 'sticky', 1, 'true', 3.0 );
 		}
 		foreach ( $types as $type => $direction ) {
 			$type = sanitize_key( (string) $type );
@@ -412,7 +412,7 @@ class Viglet_Dumont_Tuning {
 			return $item;
 		}
 		if ( ! $item || ! $this->is_ours( $item ) ) {
-			return new WP_Error( 'viglet_dumont_not_ours', __( 'Only what this plugin added can be removed here; change the rest in Turing\'s console.', 'viglet-dumont' ) );
+			return new WP_Error( 'viglet_dumont_not_ours', __( 'Only what this plugin added can be removed here; change the rest in Turing\'s console.', 'viglet-turing-search' ) );
 		}
 		$removed = $this->client->call( 'DELETE', "/api/sn/{$site}/{$kind}/" . rawurlencode( $id ) );
 		if ( is_wp_error( $removed ) ) {

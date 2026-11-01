@@ -7,7 +7,7 @@
 	"icon": "search",
 	"description": "Search this site through Turing: a search box with suggestions, did-you-mean, facets, results and pages.",
 	"keywords": [ "search", "turing", "facets" ],
-	"textdomain": "viglet-dumont",
+	"textdomain": "viglet-turing-search",
 	"providesContext": {
 		"viglet-dumont/search/placeholder": "placeholder",
 		"viglet-dumont/search/showFacets": "showFacets",

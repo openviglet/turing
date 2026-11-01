@@ -2,7 +2,7 @@
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
 	"meta": {
 		"title": "Tarnfell, a WooCommerce store searched by Viglet Turing",
-		"description": "The Viglet Dumont WordPress plugin on the Tarnfell demo store, searching a hosted Viglet Turing. Nothing is installed and a reload starts it again (D239).",
+		"description": "The Viglet Turing Search plugin on the Tarnfell demo store, searching a hosted Viglet Turing. Nothing is installed and a reload starts it again (D239).",
 		"author": "openviglet",
 		"categories": [ "Search", "WooCommerce" ]
 	},
@@ -31,7 +31,7 @@
 			"step": "installPlugin",
 			"pluginData": {
 				"resource": "url",
-				"url": "https://openviglet.github.io/dumont/playground/viglet-dumont.zip"
+				"url": "https://openviglet.github.io/dumont/playground/viglet-turing-search.zip"
 			},
 			"options": {
 				"activate": true

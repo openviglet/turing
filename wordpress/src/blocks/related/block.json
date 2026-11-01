@@ -7,7 +7,7 @@
 	"icon": "networking",
 	"description": "The posts Turing finds most like the one being read, from its similar-documents search.",
 	"keywords": [ "related", "similar", "turing" ],
-	"textdomain": "viglet-dumont",
+	"textdomain": "viglet-turing-search",
 	"usesContext": [ "postId", "postType" ],
 	"attributes": {
 		"heading": {
