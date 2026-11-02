@@ -1,8 +1,13 @@
-## 2026.3.7
+## 2026.3.8
 
-Releases of the 2026.3 line now ship from this repository, openviglet/turing, and the Docker image is `ghcr.io/openviglet/turing`.
+Releases of the 2026.3 line now ship from this repository, openviglet/turing, and the Docker image is `ghcr.io/openviglet/turing`. The repository that carried the community edition took over the openviglet/turing name with the full history; the previous one is archived as openviglet/turing-legacy. This release also carries the changes prepared for 2026.3.7, which was never published.
 
 #### SEARCH
+* An exact title phrase outranks synonym-only matches on Lucene, Solr and Elasticsearch.
+* A search with no results retries with the query's main words.
+* Portuguese plurals in -ões, -ães and -ãos are stemmed to their singular on Lucene and Elasticsearch.
+* Spell-check no longer changes numbers, symbols or the case you typed.
+* Similar documents no longer come back empty for documents that only have a title.
 * Text search is stemmed by the site's locale on Lucene and on new Elasticsearch cores, so a plural finds its singular.
 * Facet filters and custom sorts now apply on Elasticsearch.
 * Hybrid sites recall semantic hits the lexical page missed, keep the request's filters on them, and can tune the ranking per site.
@@ -12,6 +17,9 @@ Releases of the 2026.3 line now ship from this repository, openviglet/turing, an
 * Similar documents honour the search's filters and locale.
 
 #### SEMANTIC NAVIGATION COPILOT AND CHAT
+* A question can pin the document it is about as result 1, in SN chat, the copilot and both SDKs.
+* The copilot ranks each kit stage against the whole plan and writes the kit in the request's language.
+* `/answer` honours `_setlocale` and answers from the site's indexed locale.
 * The copilot stages the catalog products a described plan needs, explains each choice, respects availability, and cites the site's guides beside the kit; both SDKs expose the kit call.
 * A follow-up question in SN chat and the copilot is retrieved as a standalone question, and Live Preview shows the query it searched.
 * Deleting a document also removes its chunks from the RAG collection (Milvus included), and orphaned chunks can be purged.
@@ -24,10 +32,13 @@ Releases of the 2026.3 line now ship from this repository, openviglet/turing, an
 
 #### ANALYTICS, COST AND SDK
 * Failed searches, content gaps and click-through rates per term are available as REST metrics, per partition.
+* A site's search metrics can be cleared from the API and the console, and a structured search can opt out of them with `populateMetrics: false`.
 * The JS and React SDKs ask for consent before sending search analytics or result clicks, send GA4 search events, report search abandonment, and cancel a search a newer one supersedes.
 * SN chat, NL filters and summaries are recorded in the cost ledger against their site; a call with no known price is shown as unpriced, not free.
 
 #### FIXES
+* Importing a bundle keeps its agent ids and imports agents before sites; a seeded site's imported agent becomes the default AI agent.
+* Frontend dependencies with high-severity advisories (browserslist, adm-zip, source-map-js, zod, follow-redirects) are patched.
 * Streamed answers keep the space before each token.
 * Wrong-type query parameters return 400 naming the parameter.
 * Relative dates in natural-language filters resolve against today.
