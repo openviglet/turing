@@ -105,3 +105,5 @@ frontend/apps/marketplace/vinyl-records/vinyl-records.zip
 # fails in the browser. It is a debugging artefact of one run, not a baseline.
 frontend/apps/turing-app/src/**/__screenshots__/
 frontend/apps/turing-app/.vitest-attachments/
+# The vitest 4 browser runner writes the same artefacts under `.vitest/`.
+frontend/apps/turing-app/.vitest/
