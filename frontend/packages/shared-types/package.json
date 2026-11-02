@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@viglet/eslint-config": "workspace:*",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "globals": "^17.13.0",
     "typescript": "^5.9.3"
   }
