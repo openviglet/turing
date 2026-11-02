@@ -93,7 +93,9 @@ function readResolved(source) {
     if (!inPackages) continue;
     // `  name@version:`, or `  'name@version':` — pnpm quotes any key starting
     // with `@`, which is every scoped package. The name may itself be scoped.
-    const m = /^ {2}'?((?:@[^/@\s]+\/)?[^@\s]+)@([^:'\s]+)'?:$/.exec(line);
+    // The version may be a tarball URL (`xlsx@https://cdn.sheetjs.com/…tgz:`,
+    // T1206), so it runs to the key's closing colon, not to the first one.
+    const m = /^ {2}'?((?:@[^/@\s]+\/)?[^@\s]+)@([^'\s]+?)'?:$/.exec(line);
     if (!m) continue;
     const [, name, version] = m;
     if (!byName.has(name)) byName.set(name, new Set());

@@ -2076,30 +2076,6 @@ The standing concerns that outlived it, both learned the hard way:
   The encoded-slash allowance let a traversal reach the storage key, and the only thing
   stopping it was a containment check in `viglet-core-storage`.
 
-### XXXVII.20 xlsx from the SheetJS CDN (T1206)
-
-**What happens.** `frontend/apps/turing-app/package.json` declares `"xlsx": "^0.18.5"`,
-the last release of SheetJS on npm, which carries a prototype pollution and a ReDoS with
-no fixed version on npm: SheetJS publishes the fixed releases only on its own CDN. The
-console needs xlsx for the design system's `exportToXlsx` (the AI agent history, the
-logging grids).
-
-**Found from.** Dumont D134 (the same alert in Dumont's console) and VDS219: the console
-now imports `exportToXlsx` from `@viglet/viglet-design-system/xlsx`, and the design
-system's xlsx peer becomes optional, so the version installed is the console's own
-choice.
-
-**What it should do.** Declare xlsx as SheetJS's CDN tarball,
-`https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz`, with its integrity in the
-lockfile
-(`sha512-oLDq3jw7AcLqKWH2AhCpVTZl8mf6X2YReP+Neh0SJUzV/BdZYjth94tG5toiMB1PPrYtxOCfaoUCkvtuH+3AJA==`,
-the hash the design system's own lockfile pins; pnpm 11 refuses a tarball without one),
-and an override that lifts any `xlsx@<0.20.2` to it, as Dumont's `pnpm-workspace.yaml`
-does.
-
-**Done when.** The lockfile holds no xlsx 0.18.5, and the console's exports still write
-a sheet.
-
 ## LXXI The no-entity-caching rule is enforced only where it was first broken (Block AC)
 
 _Fully shipped — Block AC (T898, T898b–T898e, T952, T953). See

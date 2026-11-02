@@ -22,8 +22,6 @@
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
-- 📋 **T1206** (deps: —) **The console declares xlsx 0.18.5, whose prototype pollution and ReDoS have no fixed release on npm** — SheetJS ships the fixed releases only on its CDN, so the alert stays open until the console takes one from there. → §XXXVII.20
-
 ## Done when — T1133
 
 - **Every SN endpoint takes a partitioned key and keeps it in its partition**

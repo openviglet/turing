@@ -176,17 +176,17 @@ overrides:
   "source-map-js": ">=1.2.2 <2"
   "zod": ">=4.6.6 <5"
   "follow-redirects": ">=1.16.2 <2"
+  # T1206 — xlsx is frozen on npm at 0.18.5 (prototype pollution, ReDoS); the
+  # fixed releases ship only on SheetJS's CDN. The console declares the tarball
+  # itself, and this lifts any other requester's npm copy onto it, so the
+  # design system's optional xlsx peer resolves to the same fixed one.
+  "xlsx@<0.20.2": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
 
-# T654 / §XXXVII.16 — audit gate exclusions. xlsx (SheetJS) has NO npm fix (npm
-# is frozen at 0.18.5; fixes ship only on the vendor CDN, which pnpm's
-# blockExoticSubdeps policy disallows as a subdependency). It is EXPORT-ONLY in
-# Turing (`exportToXlsx`; the app never parses untrusted spreadsheets), so the
-# ReDoS + prototype-pollution parse paths are unreachable — accepted risk. Any
-# NEW high in another package still fails `pnpm audit --audit-level high`.
+# Audit gate exclusions. Any NEW high in another package still fails
+# `pnpm audit --audit-level high`. The two xlsx ignores T654 kept here went with
+# T1206: the tree no longer holds an xlsx they apply to.
 auditConfig:
   ignoreGhsas:
-    - GHSA-5pgg-2g8v-p4x9 # xlsx ReDoS (parse-path, unreachable — export only)
-    - GHSA-4r6h-8v6p-xvw6 # xlsx prototype pollution (parse-path, unreachable)
     # T927 — react-router "RSC Mode CSRF Bypass Allows Action Execution Before
     # 400 Response". The flaw is in the RSC request handler: an action runs before
     # the origin check rejects the request. Unreachable here, and not merely
