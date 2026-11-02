@@ -2335,23 +2335,6 @@ with the LLM calls capped as the playground's already are. If a live console is 
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
 
-### CLXI.7 turing-ce takes over the openviglet/turing name (T1201)
-
-**Where it showed.** On 2026-11-02 turing-ce has 22 stars and openviglet/turing has one.
-GitHub ties stars, watchers and forks to the repository object, never to its name, and
-offers no way to move them. CLXI.4 planned to archive turing-ce, which would have left
-the stars on a dead repository.
-
-**Design.** This replaces CLXI.4. Push every branch and tag of openviglet/turing over
-turing-ce (a forced push that replaces the filtered mirror's history with the full one),
-copy the description, homepage and topics, then rename openviglet/turing to
-turing-legacy and turing-ce to turing. The second rename takes the name back from the
-redirect the first one leaves, so every existing clone, link and badge resolves to the
-starred repository. Pages already serves the github-pages branch on turing-ce, so the
-site at openviglet.github.io/turing survives the swap. Release assets (27 GB over 47
-releases) stay on turing-legacy; the repository secrets cannot be read through the API
-and are re-entered by the owner.
-
 ### CLXI.8 The issue history follows the name (T1202)
 
 **Where it showed.** After the swap of CLXI.7, the 82 issues of the old
