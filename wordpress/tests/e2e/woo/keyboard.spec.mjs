@@ -40,9 +40,10 @@ test( 'a shopper searches and adds a jacket to the cart without a mouse', async 
 	expect( ring ).toBe( true );
 
 	await page.keyboard.press( 'Enter' );
-	const rain = page
-		.locator( '.viglet-dumont-search__results li' )
-		.filter( { hasText: 'Rain jacket' } );
+	// By its title link: another result's text can name the Rain jacket too.
+	const rain = page.locator( '.viglet-dumont-search__results li' ).filter( {
+		has: page.getByRole( 'link', { name: 'Rain jacket', exact: true } ),
+	} );
 	await expect(
 		rain.locator( '.viglet-dumont-search__cart-status' )
 	).toHaveText( 'Added to your cart.' );
