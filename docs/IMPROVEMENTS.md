@@ -2335,20 +2335,23 @@ with the LLM calls capped as the playground's already are. If a live console is 
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
 
-### CLXI.10 The owner re-enters secrets and image access (T1204)
+### CLXI.10 The owner re-enters the Sonar token and image access (T1204)
 
-**Where it showed.** The old openviglet/turing held seven Actions secrets (GH_PKG_TOKEN,
-GPG_PASSPHRASE, GPG_PRIVATE_KEY, NPM_TOKEN, OSSRH_TOKEN, OSSRH_USERNAME, SONAR_TOKEN);
-turing-ce held none. Secret values cannot be read back through the API, so the swap of
-CLXI.7 leaves the starred repository unable to sign, deploy to Maven Central, publish to
-npm or report to Sonar. The ghcr.io/openviglet/turing package grants Actions write
-access per repository, and that grant names the old repository object.
+**Where it showed.** The old openviglet/turing held seven repository-level Actions
+secrets; turing-ce held none, and secret values cannot be read back through the API. Six
+of them (GH_PKG_TOKEN, GPG_PASSPHRASE, GPG_PRIVATE_KEY, NPM_TOKEN, OSSRH_TOKEN,
+OSSRH_USERNAME) also exist as openviglet organization secrets with visibility ALL, so
+the renamed repository already receives them. Only SONAR_TOKEN, which `validate.yml`
+reads, existed at repository level alone. The org copies are distinct values: the old
+repository's GH_PKG_TOKEN was rotated on 2026-06-14, after the org copy of 2026-04-06,
+so a failing `publish-github-pages.yml` push points at an expired org token. The
+ghcr.io/openviglet/turing package grants Actions write access per repository, and that
+grant names the old repository object.
 
-**Design.** The owner re-enters the seven secrets on openviglet/turing (Settings,
-Secrets and variables, Actions) and, in the package settings of
-ghcr.io/openviglet/turing and of the npm-facing packages, adds openviglet/turing under
-Manage Actions access with the Write role. A green `publish.yml` dispatch on 2026.3
-closes it.
+**Design.** The owner adds SONAR_TOKEN on openviglet/turing (or as an org secret),
+refreshes the org GH_PKG_TOKEN if it has expired, and, in the package settings of
+ghcr.io/openviglet/turing, adds openviglet/turing under Manage Actions access with the
+Write role. A green `publish.yml` dispatch on 2026.3 closes it.
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
