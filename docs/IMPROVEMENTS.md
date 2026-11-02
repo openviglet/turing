@@ -2335,19 +2335,6 @@ with the LLM calls capped as the playground's already are. If a live console is 
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
 
-### CLXI.8 The issue history follows the name (T1202)
-
-**Where it showed.** After the swap of CLXI.7, the 82 issues of the old
-openviglet/turing (34 open) belong to turing-legacy, because issues travel with the
-repository object and not with its name. The starred repository starts with an empty
-tracker.
-
-**Design.** Transfer every issue, open and closed, from turing-legacy to
-openviglet/turing with `gh issue transfer`, which keeps comments and leaves a redirect
-at the old number. This has to happen before turing-legacy is archived (CLXI.9), because
-an archived repository refuses a transfer. Labels that do not exist on the target are
-dropped by GitHub, so the labels are copied first.
-
 ### CLXI.9 turing-legacy is archived with a notice (T1203)
 
 **Where it showed.** After CLXI.7 the old openviglet/turing lives on as turing-legacy,

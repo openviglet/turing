@@ -1591,3 +1591,4 @@
 - **T1189** — /answer and the DSL _search read _setlocale with locale as alias and resolve it through chat's indexed-locale seam, now on TurSNSiteSearchService; a site with no indexed locale answers an error, never the global store.
 - 🗑 **T1183** — superseded by T1201: Archiving turing-ce would leave its 22 stars on a dead repository, so turing-ce takes over the openviglet/turing name instead.
 - **T1201** — The starred former turing-ce now carries the openviglet/turing name, every branch and tag of the full history, the site and v2026.2.9; the old repository is turing-legacy.
+- **T1202** — All 82 issues (34 open) moved from turing-legacy to openviglet/turing with their comments and labels, and turing-legacy holds none.
