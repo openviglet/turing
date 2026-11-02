@@ -65,8 +65,9 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
      * partition), its configuration reads, similar documents and the stored
      * document read (both confined to the partition), autocomplete (suggested
      * from the partition's documents), spell-check (no correction), the
-     * thesaurus' related terms, result clicks, and the JSON imports (each
-     * document is stamped with the partition).
+     * thesaurus' related terms, result clicks, the JSON imports (each
+     * document is stamped with the partition), and (T1209) the site
+     * configuration reads, the manifest and its plan, and summaries.
      */
     static final List<Route> ENFORCED = List.of(
             new Route("GET", Pattern.compile(
@@ -82,7 +83,15 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
             // catalog, never the index, so there is nothing a partition must confine.
             new Route("GET", Pattern.compile("^/api/sn/[^/]+/personas$")),
             new Route("POST", Pattern.compile("^/api/sn/[^/]+/persona/[^/]+/content-fit$")),
-            new Route("POST", Pattern.compile("^/api/sn/import(?:/bulk)?$")));
+            new Route("POST", Pattern.compile("^/api/sn/import(?:/bulk)?$")),
+            // T1209 — the SN site configuration, read-only: the list and one site,
+            // never the export, which carries every partition's content.
+            new Route("GET", Pattern.compile("^/api/sn(?:/(?!export$)[^/]+)?$")),
+            // T1209 — the manifest and its plan: the controller refuses a manifest
+            // that would change the shared schema, so only a re-post goes through.
+            new Route("POST", Pattern.compile("^/api/sn/manifest(?:/plan)?$")),
+            // T1209 — summaries of the caller's own data, cached per partition.
+            new Route("POST", Pattern.compile("^/api/v2/summary$")));
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,

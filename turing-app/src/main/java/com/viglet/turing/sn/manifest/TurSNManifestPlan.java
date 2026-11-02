@@ -51,4 +51,19 @@ public record TurSNManifestPlan(@JsonUnwrapped VigletManifestDiff diff,
             List<String> customSortsToChange) {
         this(diff, customFacetsToChange, customSortsToChange, false, false);
     }
+
+    /**
+     * T1209 — whether provisioning would change the site at all: create it, add a
+     * field or a locale, rewrite a field, or converge a custom facet, a custom
+     * sort, the GenAI binding or the facet behaviour.
+     */
+    public boolean changesAnything() {
+        return !diff.siteExists() || notEmpty(diff.fieldsToAdd()) || diff.hasBreakingChanges()
+                || notEmpty(diff.localesToAdd()) || notEmpty(customFacetsToChange)
+                || notEmpty(customSortsToChange) || genAiToChange || facetSettingsToChange;
+    }
+
+    private static boolean notEmpty(List<?> list) {
+        return list != null && !list.isEmpty();
+    }
 }

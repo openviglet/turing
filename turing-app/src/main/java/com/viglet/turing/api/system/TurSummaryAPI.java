@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.domain.sn.TurSNSiteDomain;
 import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,17 +32,28 @@ public class TurSummaryAPI {
             @RequestParam(defaultValue = "false") boolean regenerate) {
 
         TurLlmSummaryService.SummaryResult result = llmSummaryService.generate(
-                request.cacheKey(), request.data(), request.systemPrompt(), regenerate, null,
+                cacheKey(request.cacheKey()), request.data(), request.systemPrompt(), regenerate, null,
                 siteName(request.site()));
 
         return ResponseEntity.ok(result);
     }
 
     /**
+     * T1209 — a partitioned key's summaries are cached apart from every other
+     * key's, so two sites sharing an SN site that pick the same cache key never
+     * read each other's summary. The data summarised is always the caller's own.
+     */
+    static String cacheKey(String cacheKey) {
+        return TurApiKeyPartitionContext.current()
+                .map(partition -> "partition:" + partition.field() + "=" + partition.value() + ":" + cacheKey)
+                .orElse(cacheKey);
+    }
+
+    /**
      * T1150 — the site the spend is recorded against, by the name the cost summary
      * reads. The lookup is tenant-scoped, so a key can only name a site of its own
-     * tenant; a partitioned key never reaches this endpoint. A name that resolves
-     * to nothing is refused rather than dropped, or the spend would vanish.
+     * tenant. A name that resolves to nothing is refused rather than dropped, or
+     * the spend would vanish.
      */
     private String siteName(String site) {
         if (site == null || site.isBlank()) {

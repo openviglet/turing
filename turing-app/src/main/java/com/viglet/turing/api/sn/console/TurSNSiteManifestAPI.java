@@ -40,6 +40,7 @@ import com.viglet.turing.sn.manifest.TurSNManifestPlan;
 import com.viglet.turing.sn.manifest.TurSNManifestProvisionResult;
 import com.viglet.turing.sn.manifest.TurSNManifestRequest;
 import com.viglet.turing.sn.manifest.TurSNSiteManifestService;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -72,6 +73,10 @@ import lombok.extern.slf4j.Slf4j;
  * them), converged by field and name and reported as {@code customFacetsChanged}
  * / {@code customFacetsToChange}.</p>
  *
+ * <p>Partitioned keys (T1209): a key bound to a partition of a shared site may
+ * plan and re-post its manifest, which keeps a connector's idempotent provision
+ * working, but a manifest that would change anything is refused with 403.</p>
+ *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
@@ -86,6 +91,14 @@ public class TurSNSiteManifestAPI {
     // --- S1192: extracted duplicated literals ---
     private static final String ERROR = "error";
 
+    /**
+     * T1209 — why a partitioned key may plan and re-post a manifest but not change
+     * it: the schema is the shared site's, so a change reaches every partition.
+     */
+    static final String SHARED_SCHEMA = "This API key is bound to a partition of a shared site, and this "
+            + "manifest would change the site's schema, which every partition shares; provision it with "
+            + "an unpartitioned key";
+
 
     private final TurSNSiteManifestService manifestService;
     private final VigletManifestDeriver manifestDeriver;
@@ -95,6 +108,10 @@ public class TurSNSiteManifestAPI {
     @Secured({"ROLE_ADMIN", "SN_CREATE"})
     public ResponseEntity<Object> provision(@RequestBody TurSNManifestRequest manifest) {
         try {
+            if (TurApiKeyPartitionContext.current().isPresent()
+                    && manifestService.planRequest(manifest).changesAnything()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(ERROR, SHARED_SCHEMA));
+            }
             TurSNManifestProvisionResult result = manifestService.provisionRequest(manifest);
             return ResponseEntity.ok(result);
         } catch (TurSNManifestMigrationRequiredException e) {

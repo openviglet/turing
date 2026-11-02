@@ -28,7 +28,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.viglet.turing.commons.se.TurSEPartition;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.domain.sn.TurSNSiteDomain;
 import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
 import com.viglet.turing.system.TurLlmSummaryService;
@@ -78,5 +83,22 @@ class TurSummaryAPITest {
                 .hasMessageContaining("Ghost");
         verify(llmSummaryService, never()).generate(anyString(), anyString(), anyString(), anyBoolean(), any(),
                 any());
+    }
+
+    /** T1209 — a partitioned key's summary never shares a cache entry with another key's. */
+    @Test
+    void aPartitionedKeyCachesItsSummaryApart() {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/v2/summary");
+        request.setAttribute(TurApiKeyPartitionContext.class.getName(),
+                new TurSEPartition("site_key", "a.example.org"));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        try {
+            api.generate(new TurSummaryAPI.SummaryRequest("k", "data", "prompt", null), false);
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
+
+        verify(llmSummaryService).generate(eq("partition:site_key=a.example.org:k"), eq("data"), eq("prompt"),
+                eq(false), isNull(), isNull());
     }
 }
