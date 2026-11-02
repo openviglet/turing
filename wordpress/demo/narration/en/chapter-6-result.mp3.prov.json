@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 122505,
+    "bytes": 229084,
     "path": "demo/narration/en/chapter-6-result.mp3",
-    "sha256": "c907ae65b4b22ccc62b8f2c6ff35caa137988fb28ab1a2d3f952aa67b7e593e9"
+    "sha256": "b4a9382f4573ef51c159a76b627bf3080b4cdfff1018b61815d34f0da32b04eb"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00282,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00396,
+  "expected_credits": 0.00702,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 122505,
-    "sha256": "c907ae65b4b22ccc62b8f2c6ff35caa137988fb28ab1a2d3f952aa67b7e593e9"
+    "bytes": 229084,
+    "sha256": "b4a9382f4573ef51c159a76b627bf3080b4cdfff1018b61815d34f0da32b04eb"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:35:53Z",
+  "produced_at": "2026-11-02T19:57:33Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Related gear shows up right below, and when they ask a question there, Viglet Turing answers about that exact product, and cites it.",
+  "prompt": "Related gear shows up right below it, and when they ask a question on that page, Viglet Turing answers about that exact product, not some other one, and it cites it. Will this keep me dry on a wet day? It knows which jacket they mean.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:WtSLWZYsGJdO2LqOovhl"
+  "task_id": "elevenlabs:wYDyst1lSi28xANCbaVY"
 }

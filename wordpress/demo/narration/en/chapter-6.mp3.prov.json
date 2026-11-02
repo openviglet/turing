@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 39331,
+    "bytes": 102025,
     "path": "demo/narration/en/chapter-6.mp3",
-    "sha256": "f49a0282ef8b3c5c88db5872fca1439acd57207dc0496a4d02dcf6d41c884eda"
+    "sha256": "6b62e5a964893952fcd3d7b51df17a9bbebe0a30578e891dc95abb1e1d3b7100"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00108,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00129,
+  "expected_credits": 0.0027,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 39331,
-    "sha256": "f49a0282ef8b3c5c88db5872fca1439acd57207dc0496a4d02dcf6d41c884eda"
+    "bytes": 102025,
+    "sha256": "6b62e5a964893952fcd3d7b51df17a9bbebe0a30578e891dc95abb1e1d3b7100"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:30:21Z",
+  "produced_at": "2026-11-02T19:57:09Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "On a product page, they take a closer look.",
+  "prompt": "Before paying, people like to take a closer look at one product. Fair enough, I do it too!",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:9kSTPj4A3LrzrWevZWiS"
+  "task_id": "elevenlabs:5vXByP6ZRzkMhrHCk63P"
 }

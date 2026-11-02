@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 234100,
+    "bytes": 468157,
     "path": "demo/narration/en/intro.mp3",
-    "sha256": "e6eb05ffc44b4fb4364f5f026eb86fa835d67d1630dacaa6ab90caf68101fa34"
+    "sha256": "07b47b0fa3cbfe425ebca297da7d2c2722545637a8ddfa8e249f58c2d5fea4e8"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00528,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.0066,
+  "expected_credits": 0.01317,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 234100,
-    "sha256": "e6eb05ffc44b4fb4364f5f026eb86fa835d67d1630dacaa6ab90caf68101fa34"
+    "bytes": 468157,
+    "sha256": "07b47b0fa3cbfe425ebca297da7d2c2722545637a8ddfa8e249f58c2d5fea4e8"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:24:59Z",
+  "produced_at": "2026-11-02T19:52:07Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "[excited] Hi! I'm Ana, and Tarnfell is my outdoor shop, built on WordPress. A few weeks ago I switched its search to Viglet Turing, and honestly? [laughs] It changed everything. Let me show you what my customers see now!",
+  "prompt": "[excited] Hi! I'm Ana, and this is Tarnfell, my little outdoor shop. Tents, jackets, boots, everything for the hills, all running on WordPress. [laughs] Now, I'll be honest with you: for years my search box was the saddest part of the shop. People typed something, got nothing, and left. A few weeks ago I switched the search to Viglet Turing, and oh, it changed everything. So grab a coffee, and let me show you what my customers see now!",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:QY9r2KQAGDcjDwHTuqNZ"
+  "task_id": "elevenlabs:MI8CJD1u2DYbRim6hW9G"
 }

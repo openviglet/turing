@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 196901,
+    "bytes": 376206,
     "path": "demo/narration/en/chapter-5-result.mp3",
-    "sha256": "d770cc266d34c32f0d04b982107e05cb883e17d115dae0dfe0078592a1d73267"
+    "sha256": "6c33099072a9023824a9726cc86a66f5ca849f071b6e1003040e7613790df342"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0132,
+  "credits": 0.00438,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00591,
+  "expected_credits": 0.01092,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 196901,
-    "sha256": "d770cc266d34c32f0d04b982107e05cb883e17d115dae0dfe0078592a1d73267"
+    "bytes": 376206,
+    "sha256": "6c33099072a9023824a9726cc86a66f5ca849f071b6e1003040e7613790df342"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:35:23Z",
+  "produced_at": "2026-11-02T19:56:44Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Viglet Turing turns the plan into the things they'll need, and fills each one with gear I really sell, priced and in stock. One click, and the whole kit is in the cart! [laughs] Can you believe it?",
+  "prompt": "And Viglet Turing turns that plan into the things they'll need, a place to sleep, something warm, and fills each one with gear I really sell, with the price and the stock straight from my shop. They can swap any item for another one, and with one click, the whole kit is in the cart. [laughs] Can you believe it? It's like having my best salesperson on every page.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:HnT0tbV65qjHHGCFQFG8"
+  "task_id": "elevenlabs:tFCZAXPqY0xOXjeI2RDt"
 }

@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 181437,
+    "bytes": 328558,
     "path": "demo/narration/en/chapter-8-result.mp3",
-    "sha256": "de0b49961da8fc0d1c3fa34a18733b5123acf9a8e487eea498bba8c88c5bed16"
+    "sha256": "d4c7f594d599377025101458d5058091dc9ee3d1eb3fe61ebae4418b92f77dfb"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.00567,
+  "credits": 0.00402,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00567,
+  "expected_credits": 0.01008,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 181437,
-    "sha256": "de0b49961da8fc0d1c3fa34a18733b5123acf9a8e487eea498bba8c88c5bed16"
+    "bytes": 328558,
+    "sha256": "d4c7f594d599377025101458d5058091dc9ee3d1eb3fe61ebae4418b92f77dfb"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:32:24Z",
+  "produced_at": "2026-11-02T19:59:03Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "And every search my customers make shows up in my insights. One that found nothing becomes a synonym in a single click, so the next person finds it. That's how my shop keeps getting better!",
+  "prompt": "And here's my secret weapon. Every search my customers make shows up in my insights, including the ones that found nothing. When I see one, I turn it into a synonym with a single click, and the next person finds what they wanted. [happy] So my shop keeps getting better, every single day, and I'm learning what my customers really want.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:RkJpG1t4r06xJYoJSkWW"
+  "task_id": "elevenlabs:yLCt3L1mg5PCc50v6CHm"
 }

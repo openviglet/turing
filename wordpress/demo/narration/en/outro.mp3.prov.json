@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 158449,
+    "bytes": 231592,
     "path": "demo/narration/en/outro.mp3",
-    "sha256": "41d9a4f2355212bc80808064850b3ca38499e4966d248441706576818f7250e1"
+    "sha256": "10aadcbca3bf39b14412f5a27459fa35f8f729bf2cc391231c35c90ed9c1d46f"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00309,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00453,
+  "expected_credits": 0.00771,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 158449,
-    "sha256": "41d9a4f2355212bc80808064850b3ca38499e4966d248441706576818f7250e1"
+    "bytes": 231592,
+    "sha256": "10aadcbca3bf39b14412f5a27459fa35f8f729bf2cc391231c35c90ed9c1d46f"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:36:49Z",
+  "produced_at": "2026-11-02T19:59:22Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "[excited] That's Tarnfell, with Viglet Turing! If you run a WordPress shop too, the plugin and this demo are at the address on screen. Come and try it!",
+  "prompt": "[excited] So that's Tarnfell, with Viglet Turing! If you run a WordPress shop too, and you're tired of that sad little search box, the plugin and this whole demo are at the address on screen. Come and try it, I think you're going to love it as much as I do!",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:4XDgIl4KjmZKBcfZRGYI"
+  "task_id": "elevenlabs:GaKO1E14zpiu3QQw4Qjm"
 }

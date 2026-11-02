@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 75275,
+    "bytes": 217381,
     "path": "demo/narration/en/chapter-2.mp3",
-    "sha256": "b89f3dcbe943a81bc910d9aceee906900c6b260b20e46adb221d9b976e6a2fe7"
+    "sha256": "5bb06f06b0635e8b30bd5e9f2ff98b44e0b4901a33e9d35e4d5a8a50b8ba1009"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00264,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00267,
+  "expected_credits": 0.0066,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 75275,
-    "sha256": "b89f3dcbe943a81bc910d9aceee906900c6b260b20e46adb221d9b976e6a2fe7"
+    "bytes": 217381,
+    "sha256": "5bb06f06b0635e8b30bd5e9f2ff98b44e0b4901a33e9d35e4d5a8a50b8ba1009"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:26:32Z",
+  "produced_at": "2026-11-02T19:53:42Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "My customers don't type keywords. They write what they need, the way they'd say it to me.",
+  "prompt": "Here's the thing about my customers: they don't type keywords. They write the way they talk to me at the counter. Something like, a two-person tent under four hundred dollars. My old search choked on sentences like that.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:9GCZpt01yn4yFTNJpsiJ"
+  "task_id": "elevenlabs:L0BfPU24tJsXTtJ1Vcx4"
 }

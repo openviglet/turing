@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 166390,
+    "bytes": 296794,
     "path": "demo/narration/en/chapter-8.mp3",
-    "sha256": "a03a76fb2e094d10f62dd0d238852d42c65715ad25af6bb9256608016ba4fbcc"
+    "sha256": "475e7e4739de1b6d3ef135914c949be34cedf4acbbbc9e7473feb6e83730fa78"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.00837,
+  "credits": 0.00315,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00447,
+  "expected_credits": 0.00786,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 166390,
-    "sha256": "a03a76fb2e094d10f62dd0d238852d42c65715ad25af6bb9256608016ba4fbcc"
+    "bytes": 296794,
+    "sha256": "475e7e4739de1b6d3ef135914c949be34cedf4acbbbc9e7473feb6e83730fa78"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:36:20Z",
+  "produced_at": "2026-11-02T19:58:40Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "[excited] Now, the before and after! On the left, my old WordPress search: nothing for \"raincoat\". On the right, Viglet Turing finds my rain jackets.",
+  "prompt": "[excited] Now, my favourite comparison: the before and after. On the left, my old WordPress search. Someone types raincoat, and gets nothing. On the right, Viglet Turing finds my rain jackets right away. Same shop, same products, completely different experience.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:8fOlCH0spKzmtWLvoWxV"
+  "task_id": "elevenlabs:nnaABmtKOiKqv7CxdR3q"
 }

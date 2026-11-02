@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 121251,
+    "bytes": 271298,
     "path": "demo/narration/en/chapter-4-result.mp3",
-    "sha256": "29e978a9a47554ec432b605ace83c7edbbca53c041e352833dc39c46d510eb9b"
+    "sha256": "4ddcf9b137471569f76551aae7e7ee14333d346cf675eb966e89711e2f81bb7a"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00324,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00378,
+  "expected_credits": 0.00813,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 121251,
-    "sha256": "29e978a9a47554ec432b605ace83c7edbbca53c041e352833dc39c46d510eb9b"
+    "bytes": 271298,
+    "sha256": "4ddcf9b137471569f76551aae7e7ee14333d346cf675eb966e89711e2f81bb7a"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:34:52Z",
+  "produced_at": "2026-11-02T19:55:44Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "The table lines them up, and Viglet Turing writes a short summary from that very table. The differences are clear at a glance!",
+  "prompt": "The table lines everything up, attribute by attribute, and Viglet Turing writes a short summary from that very same table, so it never wanders off. The differences are clear at a glance. [laughs] Before, people emailed me to ask which one to buy. Now the page tells them.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:RMBKxO7zqANKGjGdgahO"
+  "task_id": "elevenlabs:eC1PwDiDMLFFK6NjeVC8"
 }

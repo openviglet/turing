@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 91994,
+    "bytes": 125430,
     "path": "demo/narration/en/chapter-7.mp3",
-    "sha256": "e19016c97d02466310c5958fd5101e63e06d5ebc1d0978c35351d03d2bb5040c"
+    "sha256": "2b376e3c0233672753ba0beafff1ae463c37d8df31eaf025e0ecbce4a8a3a9b2"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.00258,
+  "credits": 0.00132,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00258,
+  "expected_credits": 0.0033,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 91994,
-    "sha256": "e19016c97d02466310c5958fd5101e63e06d5ebc1d0978c35351d03d2bb5040c"
+    "bytes": 125430,
+    "sha256": "2b376e3c0233672753ba0beafff1ae463c37d8df31eaf025e0ecbce4a8a3a9b2"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:31:11Z",
+  "produced_at": "2026-11-02T19:57:54Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "Then they check out, like in any WooCommerce shop. It's a demo, so nothing is charged.",
+  "prompt": "And then they check out, just like in any WooCommerce shop. Don't worry, this is a demo, so nobody is charged.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:1Yqbp9XTcUF5eJUUvoh0"
+  "task_id": "elevenlabs:lrqkcUBHdtu0LxCGlABH"
 }

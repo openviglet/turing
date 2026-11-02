@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 61065,
+    "bytes": 159703,
     "path": "demo/narration/en/chapter-1.mp3",
-    "sha256": "c410ab7e13db88335aa66783c010a20e916f0127b7e10458acbc26fbfb3efe59"
+    "sha256": "8143a26056c78f4e964a2bdfab54ee24c0e5156f70056057b29c3e0b3d2a944a"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00204,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00171,
+  "expected_credits": 0.00507,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 61065,
-    "sha256": "c410ab7e13db88335aa66783c010a20e916f0127b7e10458acbc26fbfb3efe59"
+    "bytes": 159703,
+    "sha256": "8143a26056c78f4e964a2bdfab54ee24c0e5156f70056057b29c3e0b3d2a944a"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:25:39Z",
+  "produced_at": "2026-11-02T19:52:53Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "This is my search page. Before, it was just an empty box.",
+  "prompt": "Let's start where everyone starts: the search page. You know that moment when you land on a shop and have no idea what to type? I used to lose so many people right here.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:kbzQ8erKz3nFUBAQETxR"
+  "task_id": "elevenlabs:Pv1W2FtXswHKbsIaZ9o8"
 }

@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 162211,
+    "bytes": 280075,
     "path": "demo/narration/en/chapter-3-result.mp3",
-    "sha256": "004d36b2f6198cc05648efdad3a504b2fe2c0572211e7887634f51a74c88b989"
+    "sha256": "5df173016b7ff3127d1bf17f227833d651476d73756419837e51f6ebca5d5fc9"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00336,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.0048,
+  "expected_credits": 0.00843,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 162211,
-    "sha256": "004d36b2f6198cc05648efdad3a504b2fe2c0572211e7887634f51a74c88b989"
+    "bytes": 280075,
+    "sha256": "5df173016b7ff3127d1bf17f227833d651476d73756419837e51f6ebca5d5fc9"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:34:20Z",
+  "produced_at": "2026-11-02T19:54:56Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "The assistant answers from my own guides, and every source is a link they can open. Viglet Turing reads my site, it doesn't make things up. [happy] I love that!",
+  "prompt": "The Site assistant answers from my own guides, the ones I wrote, and every source is a link they can open and check. That's what I love most: Viglet Turing reads my site, it doesn't make things up. [happy] It feels like I'm there, answering every customer myself, even at midnight.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:ZAFUqWUnLfNSLmSO7Z9S"
+  "task_id": "elevenlabs:0qmTx1qI1isZa4U9UOed"
 }

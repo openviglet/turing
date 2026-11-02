@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 49780,
+    "bytes": 90740,
     "path": "demo/narration/en/chapter-4.mp3",
-    "sha256": "6db270138044744ab40aa3c5cfdc6847cf9424b0866a9881cc1dcf6bc15694e7"
+    "sha256": "c2e0f6ba6861462a5c791ad6860ce3cd9e1760a17abcb4f6a14c42f6e6684173"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00117,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00171,
+  "expected_credits": 0.00294,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 49780,
-    "sha256": "6db270138044744ab40aa3c5cfdc6847cf9424b0866a9881cc1dcf6bc15694e7"
+    "bytes": 90740,
+    "sha256": "c2e0f6ba6861462a5c791ad6860ce3cd9e1760a17abcb4f6a14c42f6e6684173"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:28:20Z",
+  "produced_at": "2026-11-02T19:55:19Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "When products look alike, they compare them side by side.",
+  "prompt": "Some of my products look a lot alike, I know. So people pick a few and compare them, side by side.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:ue6zqz0shUZoiO5DxbBs"
+  "task_id": "elevenlabs:QKaWhkSoGJgXOcMxofz6"
 }

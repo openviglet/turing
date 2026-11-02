@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 47272,
+    "bytes": 164718,
     "path": "demo/narration/en/chapter-3.mp3",
-    "sha256": "544d1cbfff04a47fb91507916baeff2574b24cc0cb1e534e52ff156dcd971d3c"
+    "sha256": "8f675516500d88e8a5dea872765f47d422d90f40fc791a4c99219a3b8b98a643"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00195,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00168,
+  "expected_credits": 0.00486,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 47272,
-    "sha256": "544d1cbfff04a47fb91507916baeff2574b24cc0cb1e534e52ff156dcd971d3c"
+    "bytes": 164718,
+    "sha256": "8f675516500d88e8a5dea872765f47d422d90f40fc791a4c99219a3b8b98a643"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:27:30Z",
+  "produced_at": "2026-11-02T19:54:30Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "People ask the questions they'd be shy to ask in a shop.",
+  "prompt": "And people ask questions. The kind they'd feel a bit silly asking in a shop, like what size backpack do I need for a night in a hut. So they ask the site instead.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:ukB2Z8xO0eXrQJrD5Ttl"
+  "task_id": "elevenlabs:lLfkLbynzUdvUZGfwCo1"
 }

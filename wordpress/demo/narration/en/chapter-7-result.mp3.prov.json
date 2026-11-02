@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 52287,
+    "bytes": 132954,
     "path": "demo/narration/en/chapter-7-result.mp3",
-    "sha256": "f2eb6011d63541f102a4ed3af5d8d47e4373bb4583c5b71a48c6832ea7db32e1"
+    "sha256": "10fc84ec6ee47ed15f6974fee7d2be17d674e6d7486cff8949e879426383cd64"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00177,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00198,
+  "expected_credits": 0.00441,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 52287,
-    "sha256": "f2eb6011d63541f102a4ed3af5d8d47e4373bb4583c5b71a48c6832ea7db32e1"
+    "bytes": 132954,
+    "sha256": "10fc84ec6ee47ed15f6974fee7d2be17d674e6d7486cff8949e879426383cd64"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:31:32Z",
+  "produced_at": "2026-11-02T19:58:14Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "[happy] The search and the help just get them here so much faster.",
+  "prompt": "[happy] The checkout itself is the same as always. What changed is everything before it: the search and the help just got them here so much faster.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:NEhaOuvqFc0CqtZqcoTH"
+  "task_id": "elevenlabs:HxrfP8oEwIUVycuVjxiC"
 }

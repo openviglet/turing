@@ -1,13 +1,13 @@
 {
   "artefact": {
-    "bytes": 106204,
+    "bytes": 259595,
     "path": "demo/narration/en/chapter-1-result.mp3",
-    "sha256": "2a478dbebd10f6653a66c9b0de16258d97b1f5fbeb1eed88a69b5cff8a51e2c2"
+    "sha256": "27febfbf9feebb6dd31fe3f593305c2ff09408556e05a5c324c4e41c1ce61b77"
   },
   "balance_after": null,
   "balance_before": null,
   "bought": "sound",
-  "credits": 0.0,
+  "credits": 0.00306,
   "details": {
     "cue": null,
     "delivery": {},
@@ -24,20 +24,20 @@
     "plan": "starter",
     "tier": "starter"
   },
-  "expected_credits": 0.00357,
+  "expected_credits": 0.00768,
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 106204,
-    "sha256": "2a478dbebd10f6653a66c9b0de16258d97b1f5fbeb1eed88a69b5cff8a51e2c2"
+    "bytes": 259595,
+    "sha256": "27febfbf9feebb6dd31fe3f593305c2ff09408556e05a5c324c4e41c1ce61b77"
   },
   "params": {},
-  "produced_at": "2026-10-31T17:26:05Z",
+  "produced_at": "2026-11-02T19:53:19Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "[happy] Now the popular searches give people somewhere to start, and one tap brings back exactly the gear that matches!",
+  "prompt": "[happy] Now look! The popular searches give people somewhere to start. One tap, and Viglet Turing brings back exactly the gear that matches, products and my guides together. Nobody is staring at an empty box anymore, and honestly, that alone made me smile.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:NgPPQH5JGoZbhsDsABJV"
+  "task_id": "elevenlabs:3gSAhTsua88ITMa27r2W"
 }
