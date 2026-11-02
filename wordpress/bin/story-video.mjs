@@ -11,9 +11,11 @@
 //
 //   npm run e2e:story:record && npm run story:video
 //
-// Writes tests/e2e/artifacts/video/: story.mp4 (both caption tracks), story.en.srt and
-// story.pt-BR.srt, and story-30s.mp4, a cut for social posts that keeps the last seconds of
-// each chapter, where its result shows. Rendered files are release assets, never committed;
+// Writes tests/e2e/artifacts/video/: story.mp4, with a caption track per narrated language
+// whose cues are what Ana says (D278); beside it story.<language>.srt and .vtt, and
+// story.<language>.chapters.txt in YouTube's `0:00 Title` form; and story-30s.mp4, a cut for
+// social posts that keeps the last seconds of each chapter, where its result shows, captioned
+// with the chapter titles since it has no voice. Rendered files are release assets, never committed;
 // the one exception is a WebP still per chapter, copied into dumont-site/public/wordpress/
 // for the site's WordPress page.
 // Refuses a recording that is missing a chapter or older than the story it was recorded from,
@@ -384,33 +386,160 @@ const subtitles = ( cues, language, file ) => {
 	return file;
 };
 
+// A caption's lines: at most two of about this many characters, so a cue reads at a glance.
+const captionWidth = 42;
+
 /**
- * The finished file: the joined video with both caption tracks, English first.
+ * A narrated line as caption cues (D278): its stage directions (`[excited]`) out, its words in
+ * cues of two short lines, each cue on screen for its share of the take, by its characters.
  *
- * @param {string}                                             joined The joined video.
- * @param {Array<{from: number, to: number, chapter: number}>} cues   When each chapter shows.
- * @param {string}                                             name   The file's base name.
- * @param {Array<{file: string, language: string}>}            tracks The narration, one track per language.
+ * @param {{at: number, length: number, text: string}} placed A take and when it starts.
+ * @return {Array<{from: number, to: number, text: string}>} The cues.
  */
-const finish = ( joined, cues, name, tracks = [] ) => {
-	const en = subtitles( cues, 'en', join( out, `${ name }.en.srt` ) );
-	const pt = subtitles( cues, 'pt-BR', join( out, `${ name }.pt-BR.srt` ) );
+const captionCues = ( { at, length, text } ) => {
+	const spokenWords = String( text || '' )
+		.replace( /\[[^\]]*\]\s*/g, '' )
+		.split( /\s+/ )
+		.filter( Boolean );
+	const rows = [];
+	for ( const word of spokenWords ) {
+		const last = rows.length ? rows.at( -1 ) : null;
+		if ( null !== last && `${ last } ${ word }`.length <= captionWidth ) {
+			rows[ rows.length - 1 ] = `${ last } ${ word }`;
+		} else {
+			rows.push( word );
+		}
+	}
+	const blocks = [];
+	for ( let i = 0; i < rows.length; i += 2 ) {
+		blocks.push( rows.slice( i, i + 2 ).join( '\n' ) );
+	}
+	const total = blocks.reduce( ( sum, block ) => sum + block.length, 0 ) || 1;
+	let from = at;
+	return blocks.map( ( block ) => {
+		const to = from + ( length * block.length ) / total;
+		const cue = { from, to, text: block };
+		from = to;
+		return cue;
+	} );
+};
+
+/**
+ * Write one language's narration as captions, SRT for YouTube and WebVTT for an HTML <track>.
+ *
+ * @param {Array<{at: number, length: number, text: string}>} placed   The language's takes.
+ * @param {string}                                            language Which language.
+ * @param {string}                                            name     The video's base name.
+ * @return {string} The SRT file.
+ */
+const narrationCaptions = ( placed, language, name ) => {
+	const cues = [ ...placed ]
+		.sort( ( a, b ) => a.at - b.at )
+		.flatMap( captionCues );
+	const srt = join( out, `${ name }.${ language }.srt` );
+	writeFileSync(
+		srt,
+		cues
+			.map(
+				( cue, i ) =>
+					`${ i + 1 }\n${ stamp( cue.from ) } --> ${ stamp( cue.to ) }\n${
+						cue.text
+					}\n`
+			)
+			.join( '\n' )
+	);
+	writeFileSync(
+		join( out, `${ name }.${ language }.vtt` ),
+		'WEBVTT\n\n' +
+			cues
+				.map(
+					( cue ) =>
+						`${ stamp( cue.from ).replace( ',', '.' ) } --> ${ stamp(
+							cue.to
+						).replace( ',', '.' ) }\n${ cue.text }\n`
+				)
+				.join( '\n' )
+	);
+	return srt;
+};
+
+/**
+ * The chapters as YouTube reads them from a description, `00:00 Title` a line, beside the video
+ * in each of its languages: the chapter titles are a list there, not captions (D278).
+ *
+ * @param {Array<{from: number, chapter: number}>} cues     When each chapter starts.
+ * @param {string}                                 language Which language.
+ * @param {string}                                 name     The video's base name.
+ */
+const chapterList = ( cues, language, name ) => {
+	const at = ( s ) =>
+		`${ Math.floor( s / 60 ) }:${ String( Math.floor( s % 60 ) ).padStart(
+			2,
+			'0'
+		) }`;
+	const titled = cues.map( ( cue ) => {
+		const { number, name: title } = parts[ cue.chapter ];
+		return `${ at( cue.from ) } ${ number }. ${
+			'pt-BR' === language ? portuguese[ number ] : title
+		}`;
+	} );
+	writeFileSync(
+		join( out, `${ name }.${ language }.chapters.txt` ),
+		[
+			`0:00 ${ 'pt-BR' === language ? 'Abertura' : 'Intro' }`,
+			...titled,
+		].join( '\n' ) + '\n'
+	);
+};
+
+/**
+ * The finished file: the joined video with its caption tracks. A narrated video's captions are
+ * its narration, one track per narrated language; one with no voice keeps the chapter titles,
+ * in English and Portuguese.
+ *
+ * @param {string}                                             joined   The joined video.
+ * @param {Array<{from: number, to: number, chapter: number}>} cues     When each chapter shows.
+ * @param {string}                                             name     The file's base name.
+ * @param {Array<{file: string, language: string}>}            tracks   The narration, one track per language.
+ * @param {Array<{file: string, language: string}>}            captions The narration's captions, one per language.
+ */
+const finish = ( joined, cues, name, tracks = [], captions = [] ) => {
+	const subtitleTracks = captions.length
+		? captions
+		: [
+				{
+					file: subtitles(
+						cues,
+						'en',
+						join( out, `${ name }.en.srt` )
+					),
+					language: 'eng',
+				},
+				{
+					file: subtitles(
+						cues,
+						'pt-BR',
+						join( out, `${ name }.pt-BR.srt` )
+					),
+					language: 'por',
+				},
+			];
 	const file = join( out, `${ name }.mp4` );
 	ffmpeg( [
 		'-i',
 		joined,
-		'-i',
-		en,
-		'-i',
-		pt,
+		...subtitleTracks.flatMap( ( track ) => [ '-i', track.file ] ),
 		...tracks.flatMap( ( track ) => [ '-i', track.file ] ),
 		'-map',
 		'0:v',
-		...tracks.flatMap( ( track, i ) => [ '-map', `${ i + 3 }:a` ] ),
-		'-map',
-		'1',
-		'-map',
-		'2',
+		...tracks.flatMap( ( track, i ) => [
+			'-map',
+			`${ i + 1 + subtitleTracks.length }:a`,
+		] ),
+		...subtitleTracks.flatMap( ( track, i ) => [
+			'-map',
+			String( i + 1 ),
+		] ),
 		'-c:v',
 		'copy',
 		'-c:a',
@@ -423,10 +552,10 @@ const finish = ( joined, cues, name, tracks = [] ) => {
 			`-metadata:s:a:${ i }`,
 			`language=${ track.language }`,
 		] ),
-		'-metadata:s:s:0',
-		'language=eng',
-		'-metadata:s:s:1',
-		'language=por',
+		...subtitleTracks.flatMap( ( track, i ) => [
+			`-metadata:s:s:${ i }`,
+			`language=${ track.language }`,
+		] ),
 		file,
 	] );
 	return file;
@@ -444,8 +573,9 @@ const music = join( narration, 'music.mp3' );
 const takes = ( name ) =>
 	Object.keys( voices ).flatMap( ( language ) => {
 		const file = takeFile( language, name );
-		return current( file, texts[ name ]?.[ language ] )
-			? [ { language, file, length: seconds( file ) } ]
+		const text = texts[ name ]?.[ language ];
+		return current( file, text )
+			? [ { language, file, length: seconds( file ), text } ]
 			: [];
 	} );
 
@@ -540,7 +670,12 @@ let clock = 0;
  */
 const say = ( at, lineTakes ) => {
 	for ( const take of lineTakes ) {
-		spoken[ take.language ].push( { at: at + voiceLead, file: take.file } );
+		spoken[ take.language ].push( {
+			at: at + voiceLead,
+			file: take.file,
+			length: take.length,
+			text: take.text,
+		} );
 	}
 };
 
@@ -824,16 +959,24 @@ for ( const i of chapters.keys() ) {
 
 const joined = concat( segments, 'joined.mp4' );
 const joinedLength = seconds( joined );
+const narrated = Object.entries( spoken ).filter(
+	( [ , placed ] ) => placed.length
+);
+for ( const language of Object.keys( voices ) ) {
+	chapterList( cues, language, 'story' );
+}
 const video = finish(
 	joined,
 	cues,
 	'story',
-	Object.entries( spoken )
-		.filter( ( [ , placed ] ) => placed.length )
-		.map( ( [ language, placed ] ) => ( {
-			language: voices[ language ],
-			file: voiceTrack( language, placed, joinedLength ),
-		} ) )
+	narrated.map( ( [ language, placed ] ) => ( {
+		language: voices[ language ],
+		file: voiceTrack( language, placed, joinedLength ),
+	} ) ),
+	narrated.map( ( [ language, placed ] ) => ( {
+		language: voices[ language ],
+		file: narrationCaptions( placed, language, 'story' ),
+	} ) )
 );
 
 // The short cut: each chapter's last seconds, where its result shows, with no cards between.
@@ -879,5 +1022,6 @@ const length = ( file ) => {
 process.stdout.write(
 	`${ video }: ${ length( video ) }, ${ chapters.length } chapters\n` +
 		`${ teaser }: ${ length( teaser ) }\n` +
-		'captions in English and pt_BR beside each, and inside as two tracks\n'
+		"the narration's captions (SRT and WebVTT) and the chapter list beside the video, " +
+		'the captions inside it as tracks\n'
 );
