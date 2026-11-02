@@ -16,6 +16,7 @@ import {
   BentoHero,
   BentoScrollSaveBar,
   BentoTileGrid,
+  bentoChipClass,
 } from "@/components/bento";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { GradientSwitch } from "@/components/ui/gradient-switch";
@@ -194,6 +195,11 @@ function Composition() {
           hasStatus
           enabled={1}
         />
+        {/* T1208 — the design system's tile stopped painting its `tone` (its
+            icon now sits in a neutral well), so no surface above renders a
+            toned chip any more. A caller still tones one through
+            `bentoChipClass`, as the AI agent sub-heroes do; this is that chip. */}
+        <span className={`inline-block h-9 w-9 rounded-2xl ${bentoChipClass("blue")}`} />
       </div>
 
       <div data-surface="list-mosaic">
