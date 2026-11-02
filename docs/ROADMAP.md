@@ -16,7 +16,6 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- 📋 **T1203** (deps: T1202 ✅) **turing-legacy still reads as a live repository and serves a second copy of the site** — A visitor who lands on the old repository has to be sent to the one that carries the name. → §CLXI.9
 - 📋 **T1204** (deps: T1201 ✅) **The publish workflows on the renamed repository have no secrets and no write access to the ghcr turing image** — Secrets and package access belong to the repository object, and only the owner can enter their values. → §CLXI.10
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)

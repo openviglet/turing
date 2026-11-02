@@ -1592,3 +1592,4 @@
 - 🗑 **T1183** — superseded by T1201: Archiving turing-ce would leave its 22 stars on a dead repository, so turing-ce takes over the openviglet/turing name instead.
 - **T1201** — The starred former turing-ce now carries the openviglet/turing name, every branch and tag of the full history, the site and v2026.2.9; the old repository is turing-legacy.
 - **T1202** — All 82 issues (34 open) moved from turing-legacy to openviglet/turing with their comments and labels, and turing-legacy holds none.
+- **T1203** — turing-legacy is archived, its README and description point at openviglet/turing, and its Pages site redirects each path to openviglet.github.io/turing since GitHub refused to turn it off.

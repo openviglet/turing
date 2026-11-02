@@ -2335,17 +2335,6 @@ with the LLM calls capped as the playground's already are. If a live console is 
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
 
-### CLXI.9 turing-legacy is archived with a notice (T1203)
-
-**Where it showed.** After CLXI.7 the old openviglet/turing lives on as turing-legacy,
-with its README, its Pages site at openviglet.github.io/turing-legacy and its open
-default branch. Nothing on it says that development continues elsewhere.
-
-**Design.** Once its issues have moved (CLXI.8): turn its Pages site off, replace the
-README on its default branch with a short notice naming openviglet/turing, the site and
-the image, set its description to say it is archived, and archive it. Its releases and
-their assets stay readable, which is why it is archived and not deleted.
-
 ### CLXI.10 The owner re-enters secrets and image access (T1204)
 
 **Where it showed.** The old openviglet/turing held seven Actions secrets (GH_PKG_TOKEN,
