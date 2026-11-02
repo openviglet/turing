@@ -2,7 +2,7 @@
 
 > _"That's one small query for a user, one giant index for mankind."_
 
-Strap in. This is **Space Missions** — a **Viglet Turing ES** marketplace sample that turns the search bar into **Mission Control**. Apollo 11 is in here. So is Voyager 1, still whispering at the edge of the heliosphere. ISS Expedition 1. Chandrayaan. Perseverance. The triumphs, the losses, the ongoing.
+Strap in. This is **Space Missions** — a **Viglet Turing** marketplace sample that turns the search bar into **Mission Control**. Apollo 11 is in here. So is Voyager 1, still whispering at the edge of the heliosphere. ISS Expedition 1. Chandrayaan. Perseverance. The triumphs, the losses, the ongoing.
 
 The interface borrows from the glowing cyan of old HUD displays: starfields drift across the hero, cards scan like telemetry readouts, and every mission opens into a **Mission Telemetry** sidebar that reads like a flight plan ripped from a console at Houston.
 
@@ -67,7 +67,7 @@ The generated `space-missions.zip` contains the SN site export, the content inde
 - Tailwind CSS 4 with cyan/blue HUD gradients
 - Tabler Icons
 - `@viglet/turing-react-sdk` for the search primitives
-- Viglet Turing ES at the core
+- Viglet Turing at the core
 
 ---
 
