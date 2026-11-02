@@ -186,29 +186,33 @@ const page = await browser.newPage( { viewport: size } );
 const words =
 	'pt-BR' === videoLanguage
 		? {
+				what: 'Plugin open source para WordPress e WooCommerce',
 				brand: 'Viglet Turing Search',
-				title: 'Uma cliente, uma visita',
-				line: 'De uma necessidade vaga a um carrinho pago, com a busca e a IA do Viglet Turing.',
+				line: 'Uma cliente, uma visita: de uma necessidade vaga a um carrinho pago.',
 				chapter: 'Capítulo',
 				store: 'Recanto da Serra, a loja de demonstração',
 				name: ( number, name ) => portuguese[ number ] ?? name,
 				tryIt: 'Experimente',
+				tryTitle: 'A loja de demonstração no seu navegador',
 				tryLine:
-					'Abra a loja de demonstração ou instale o plugin a partir da versão publicada.',
+					'openviglet.github.io/dumont/wordpress · sem instalar nada<br>github.com/openviglet/dumont',
 			}
 		: {
+				what: 'Open source plugin for WordPress and WooCommerce',
 				brand: 'Viglet Turing Search',
-				title: 'One shopper, one visit',
-				line: 'From a vague need to a paid-for cart, on Viglet Turing search and AI.',
+				line: 'One shopper, one visit: from a vague need to a paid-for cart.',
 				chapter: 'Chapter',
 				store: 'Tarnfell, the demo store',
 				name: ( number, name ) => name,
 				tryIt: 'Try it',
+				tryTitle: 'The demo store in your browser',
 				tryLine:
-					'Open the demo store, or install the plugin from the release.',
+					'openviglet.github.io/dumont/wordpress · nothing to install<br>github.com/openviglet/dumont',
 			};
+// The opening says what this is, for a viewer who arrives from a search or watches muted; the
+// closing says where to try it (D275).
 const cards = [
-	card( words.brand, words.title, words.line ),
+	card( words.what, words.brand, words.line ),
 	...parts.map( ( { number, name } ) =>
 		card(
 			`${ words.chapter } ${ number }`,
@@ -216,7 +220,7 @@ const cards = [
 			words.store
 		)
 	),
-	card( words.tryIt, 'openviglet.github.io/dumont', words.tryLine ),
+	card( words.tryIt, words.tryTitle, words.tryLine ),
 ];
 for ( const [ i, html ] of cards.entries() ) {
 	await page.setContent( html );
@@ -272,10 +276,13 @@ const encode = [
 	'-an',
 ];
 const still = ( i, length = cardSeconds ) => {
+	// Named by its length too: the closing card is held twice, at two lengths (D275).
 	const file = join(
 		out,
 		'parts',
-		length === cardSeconds ? `card-${ i }.mp4` : `card-${ i }-held.mp4`
+		length === cardSeconds
+			? `card-${ i }.mp4`
+			: `card-${ i }-held-${ length.toFixed( 2 ) }.mp4`
 	);
 	ffmpeg( [
 		'-loop',
@@ -780,6 +787,11 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 	cues.push( { from, to: clock, chapter: i } );
 }
 titleCard( cards.length - 1, 'outro', [ ...broll ].reverse() );
+// The video ends on the closing card, alone and long enough to read its two addresses: under
+// the outro it gives way to the footage after its title (D275).
+const closingSeconds = 6;
+segments.push( still( cards.length - 1, closingSeconds ) );
+clock += closingSeconds;
 
 // One still per chapter, its result on screen, for the site's WordPress page (D197): taken
 // from the recording, so the page shows what the story ran, and copied into the site.
