@@ -10,6 +10,8 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
+- 📋 **T1209** (deps: —) **A partitioned API key gets 403 on the manifest, SN site config, tuning, summary and AI probe routes** — A site sharing an SN site keeps an unbound key that reaches every other site's documents, or loses its admin screens. → §CLXV
+
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 ## Block BV — The quality gate stops at the package boundary

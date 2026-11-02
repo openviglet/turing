@@ -2410,3 +2410,35 @@ counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
 What keeps a release from failing on its own tests for reasons the code under release
 did not cause.
+
+## CLXV Partitioned keys on the admin and AI routes (T1209)
+
+**Where it happened.** Dumont D190: several WordPress sites share one SN site
+(`site_key`), and each should hold only a key bound to its partition (T1133). The
+plugin's admin screens call routes `TurApiKeyPartitionGuardFilter` does not enforce, so
+a partitioned key gets 403:
+
+- the SN site's manifest and plan, which the Fields screen reads and writes;
+- `/api/sn/{site}` configuration reads (Health, Setup);
+- the tuning APIs the Tuning screen uses (synonyms, promotions);
+- `POST /api/v2/summary` (Insights summary, editor excerpt) and the AI probes Health runs.
+
+**What came back.** 403 on each, so today a site either keeps the shared, unbound key
+(which reads and deletes the other sites' documents) or loses those screens.
+
+**Decision (the owner, 2026-11-02).** Turing widens what a partitioned key may do, each
+route confined to the partition, rather than Dumont keeping a shared key or giving the
+screens up.
+
+**What it should do.** Add each route to `ENFORCED` with a partition rule:
+- manifest and plan: readable; a write that changes the shared schema stays refused, since
+  it reaches every partition (say so in the 403's reason);
+- SN site configuration: read-only;
+- synonyms and promotions: stored per partition and applied only to that partition's
+  searches, the unpartitioned set still applying to all;
+- summary: the cache key carries the partition, and its data is the caller's;
+- AI probes: answer without reading another partition's documents.
+
+Extend `TurSdkContractIT` with two partitions over these routes.
+
+**Workaround.** None: Dumont D190 waits on this line.
