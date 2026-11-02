@@ -41,6 +41,8 @@ let reading = '';
 // the query the visitor asked to search as typed, which is not corrected again.
 let correcting = false;
 let keepAsTyped = '';
+// The sentence last searched uncounted while its filters are read (D267), counted again if none are.
+let uncounted = '';
 // What an applied reading replaced (D199), so Undo puts the search back as the visitor typed it.
 let beforeReading = null;
 // The readings this page already paid for, by sentence: each one is an LLM call.
@@ -747,8 +749,10 @@ async function readFilters( text ) {
 		q = q.replace( price.words, ' ' ).replace( /\s+/g, ' ' ).trim();
 	}
 	if ( ! fqs.length ) {
+		countAsTyped( text );
 		return;
 	}
+	uncounted = '';
 	answerUnderstood( text );
 	if ( state.applyEnabled ) {
 		applyReading( q, fqs );
@@ -759,6 +763,20 @@ async function readFilters( text ) {
 		q,
 		label: filterLabel( fq ),
 	} ) );
+}
+
+/**
+ * A sentence searched uncounted that no filter was read from is the search the shopper made:
+ * send it again, counted (D267). The echoed request carries no `populateMetrics`.
+ *
+ * @param {string} text The sentence, trimmed.
+ */
+function countAsTyped( text ) {
+	if ( uncounted !== text ) {
+		return;
+	}
+	uncounted = '';
+	send( {} );
 }
 
 /**
@@ -1171,9 +1189,33 @@ function run( query, prefix = false ) {
 		q: lastQuery,
 		mode: prefix ? 'instant' : 'standard',
 		page: 1,
+		...( prefix ? {} : provisional( lastQuery ) ),
 	} );
 	// A search the visitor settled on is a step Back returns to; typing is not.
 	writeUrl( ! prefix );
+}
+
+/**
+ * A sentence the block is about to read and refine (D199) is searched first uncounted (D267):
+ * its words as typed usually find nothing, and counted they would list a failed search in the
+ * shop's insights for a shopper the refined search answered. Turing keeps `populateMetrics:
+ * false` off the request it echoes (T1200), so the refined search is counted. When nothing
+ * is read, readFilters() sends the search as typed again, counted.
+ *
+ * @param {string} query What is about to be searched.
+ * @return {Object} The request fields to add: none for a search that is counted.
+ */
+function provisional( query ) {
+	if (
+		! state.suggestEnabled ||
+		! state.applyEnabled ||
+		'*' === query ||
+		! readsAsSentence( query )
+	) {
+		return {};
+	}
+	uncounted = query;
+	return { populateMetrics: false };
 }
 
 /**
@@ -1184,9 +1226,13 @@ function run( query, prefix = false ) {
  * @param {Object} changes Fields of the structured request.
  */
 function send( changes ) {
+	// The controller keeps a provisional search's `populateMetrics: false` on its own copy of the
+	// request (Turing never echoes it, T1200): a search built from that copy is counted unless it
+	// asks not to be (D267).
+	const { populateMetrics, ...request } = search.getState().request || {};
 	search.searchRequest( {
 		locale: config.locale,
-		...search.getState().request,
+		...request,
 		rows: state.perPage,
 		sort: state.sort,
 		mode: 'standard',
@@ -1236,6 +1282,7 @@ function readUrl() {
 		q: lastQuery,
 		fq: [ siteFilter, ...params.getAll( 'fq[]' ) ],
 		page: Math.max( 1, Number( params.get( 'pg' ) ) || 1 ),
+		...provisional( lastQuery ),
 	} );
 	retitle();
 }
@@ -1647,5 +1694,6 @@ function relaxSentence() {
 		return;
 	}
 	state.closeMatches = true;
-	send( { q: words.join( ' OR ' ), page: 1 } );
+	// Uncounted (D267): the log would read "waterproof OR hiking OR boots", a query nobody typed.
+	send( { q: words.join( ' OR ' ), page: 1, populateMetrics: false } );
 }

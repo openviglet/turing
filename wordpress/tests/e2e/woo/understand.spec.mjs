@@ -44,13 +44,14 @@ test( 'a price a sentence names filters with no language model, and Undo puts it
 	} );
 
 	// Undo is the search as typed: every word back as a keyword, which here finds nothing,
-	// and that is the search this feature exists to spare the shopper.
+	// and that is the search this feature exists to spare the shopper. Since D258 the block
+	// then lists close matches, any of the words, and says so.
 	await understood( page ).getByRole( 'button', { name: 'Undo' } ).click();
 	await expect( box( page ) ).toHaveValue( 'jacket under $100' );
 	await expect( understood( page ) ).toBeHidden();
-	await expect( summary( page ) ).toHaveText(
-		'No results found. Try different keywords.'
-	);
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__close-matches' )
+	).toContainText( 'Showing close matches' );
 	expect( new URL( page.url() ).searchParams.getAll( 'fq[]' ) ).not.toContain(
 		'price:[* TO 100]'
 	);
@@ -94,6 +95,72 @@ test( "Turing's reading and the price read in code apply together", async ( {
 		/Rain jacket|Linen jacket/,
 	] );
 	await expect( box( page ) ).toHaveValue( 'jacket' );
+} );
+
+/**
+ * The structured searches the block sends to Turing, in order, as their JSON bodies.
+ *
+ * @param {import('@playwright/test').Page} page The page.
+ * @return {Object[]} Filled as the page searches.
+ */
+function searches( page ) {
+	const sent = [];
+	page.on( 'request', ( request ) => {
+		if (
+			'POST' === request.method() &&
+			/\/api\/sn\/[^/]+\/search\/query/.test( request.url() )
+		) {
+			sent.push( request.postDataJSON() );
+		}
+	} );
+	return sent;
+}
+
+test( 'a sentence whose filters are read is counted once, refined, never as typed', async ( {
+	page,
+} ) => {
+	// D267: the typed words find nothing, and counted they would read as a failed search.
+	await page.route( '**/nl-filters', ( route ) =>
+		route.fulfill( { json: { available: false } } )
+	);
+	const sent = searches( page );
+	await page.goto(
+		`/?pagename=find-gear&q=${ encodeURIComponent( 'jacket under $100' ) }`
+	);
+	await expect( summary( page ) ).toHaveText( '2 results' );
+
+	const typed = sent.filter( ( body ) => 'jacket under $100' === body.q );
+	// The page of results, not the one-row probes the block makes beside it.
+	const refined = sent.filter(
+		( body ) => 'jacket' === body.q && 'standard' === body.mode
+	);
+	expect( typed.length ).toBeGreaterThan( 0 );
+	expect( typed.every( ( body ) => false === body.populateMetrics ) ).toBe(
+		true
+	);
+	expect( refined ).toHaveLength( 1 );
+	expect( refined[ 0 ] ).not.toHaveProperty( 'populateMetrics' );
+} );
+
+test( 'a sentence nothing is read from is counted as typed', async ( {
+	page,
+} ) => {
+	await page.route( '**/nl-filters', ( route ) =>
+		route.fulfill( { json: { available: false } } )
+	);
+	const sent = searches( page );
+	const typed = 'jacket under 2 kg for hiking';
+	await page.goto(
+		`/?pagename=find-gear&q=${ encodeURIComponent( typed ) }`
+	);
+	await expect
+		.poll( () =>
+			sent.some(
+				( body ) => typed === body.q && ! ( 'populateMetrics' in body )
+			)
+		)
+		.toBe( true );
+	expect( sent[ 0 ] ).toMatchObject( { q: typed, populateMetrics: false } );
 } );
 
 test( 'an amount that is not money is not read as a price', async ( {
