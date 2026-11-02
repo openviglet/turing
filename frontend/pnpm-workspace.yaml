@@ -165,7 +165,17 @@ overrides:
   # (GHSA-xcpc-8h2w-3j85). Transitive only via @module-federation/dts-plugin
   # (build-time .d.ts extraction for Module Federation) — never runs at
   # app runtime. 0.6.0 is API-compatible; force the patched line.
-  "adm-zip": ">=0.6.0"
+  # T1207 — 0.6.0 itself carries four later advisories; 0.6.1 patches them.
+  "adm-zip": ">=0.6.1 <0.7"
+  # T1207 — 2026-11 highs whose fix is a patch inside the major already
+  # resolved, capped at that major for the T913 reason above. Requesters:
+  # browserslist via @babel/helper-compilation-targets, source-map-js via
+  # @tailwindcss/node, zod via @astrojs/sitemap and eslint-plugin-react-hooks,
+  # follow-redirects via axios in the marketplace apps.
+  "browserslist": ">=4.28.7 <5"
+  "source-map-js": ">=1.2.2 <2"
+  "zod": ">=4.6.6 <5"
+  "follow-redirects": ">=1.16.2 <2"
 
 # T654 / §XXXVII.16 — audit gate exclusions. xlsx (SheetJS) has NO npm fix (npm
 # is frozen at 0.18.5; fixes ship only on the vendor CDN, which pnpm's
