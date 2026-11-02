@@ -2315,25 +2315,6 @@ patch there so it becomes Latest, and move the README's release badge and downlo
 `ghcr.io/openviglet/turing-ce` name for now; renaming it is a separate decision, since
 every compose file in the wild pulls it.
 
-### CLXI.4 turing-ce is archived with a notice (T1183)
-
-**Where it showed.** turing-ce still holds the 22 stars and the newest release, its
-README is titled "Viglet Turing ES — Community Edition" and points at docs.viglet.org
-and turing.viglet.org, which now redirect to openviglet.github.io/turing. The repository
-is not archived, so it reads as the live one.
-
-**Why it costs.** Two repositories for one product split the stars and send visitors to
-the wrong place. The owner confirmed on 2026-10-30 that once releases and the image
-leave from openviglet/turing, turing-ce is archived with a notice in its README
-(visibility repo, produtos/turing-ce.md).
-
-**Design.** After CLXI.1 ships and one release has left openviglet/turing: replace the
-turing-ce README with a short notice naming openviglet/turing, the site and the image,
-push it as the last commit, set its homepage to the new site, and archive the
-repository. Stop the publish job from pushing snapshots there. The image name is
-untouched (see CLXI.1). openviglet/turing's own homepage field still says
-turing.viglet.org and moves to openviglet.github.io/turing in the same pass.
-
 ### CLXI.5 A demo that opens without installing (T1184)
 
 **Where it showed.** The site's "Try it live" playground already runs search and cited
@@ -2353,6 +2334,62 @@ existing demo host with a guest role that can browse but not save, reset on a sc
 with the LLM calls capped as the playground's already are. If a live console is too
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
+
+### CLXI.7 turing-ce takes over the openviglet/turing name (T1201)
+
+**Where it showed.** On 2026-11-02 turing-ce has 22 stars and openviglet/turing has one.
+GitHub ties stars, watchers and forks to the repository object, never to its name, and
+offers no way to move them. CLXI.4 planned to archive turing-ce, which would have left
+the stars on a dead repository.
+
+**Design.** This replaces CLXI.4. Push every branch and tag of openviglet/turing over
+turing-ce (a forced push that replaces the filtered mirror's history with the full one),
+copy the description, homepage and topics, then rename openviglet/turing to
+turing-legacy and turing-ce to turing. The second rename takes the name back from the
+redirect the first one leaves, so every existing clone, link and badge resolves to the
+starred repository. Pages already serves the github-pages branch on turing-ce, so the
+site at openviglet.github.io/turing survives the swap. Release assets (27 GB over 47
+releases) stay on turing-legacy; the repository secrets cannot be read through the API
+and are re-entered by the owner.
+
+### CLXI.8 The issue history follows the name (T1202)
+
+**Where it showed.** After the swap of CLXI.7, the 82 issues of the old
+openviglet/turing (34 open) belong to turing-legacy, because issues travel with the
+repository object and not with its name. The starred repository starts with an empty
+tracker.
+
+**Design.** Transfer every issue, open and closed, from turing-legacy to
+openviglet/turing with `gh issue transfer`, which keeps comments and leaves a redirect
+at the old number. This has to happen before turing-legacy is archived (CLXI.9), because
+an archived repository refuses a transfer. Labels that do not exist on the target are
+dropped by GitHub, so the labels are copied first.
+
+### CLXI.9 turing-legacy is archived with a notice (T1203)
+
+**Where it showed.** After CLXI.7 the old openviglet/turing lives on as turing-legacy,
+with its README, its Pages site at openviglet.github.io/turing-legacy and its open
+default branch. Nothing on it says that development continues elsewhere.
+
+**Design.** Once its issues have moved (CLXI.8): turn its Pages site off, replace the
+README on its default branch with a short notice naming openviglet/turing, the site and
+the image, set its description to say it is archived, and archive it. Its releases and
+their assets stay readable, which is why it is archived and not deleted.
+
+### CLXI.10 The owner re-enters secrets and image access (T1204)
+
+**Where it showed.** The old openviglet/turing held seven Actions secrets (GH_PKG_TOKEN,
+GPG_PASSPHRASE, GPG_PRIVATE_KEY, NPM_TOKEN, OSSRH_TOKEN, OSSRH_USERNAME, SONAR_TOKEN);
+turing-ce held none. Secret values cannot be read back through the API, so the swap of
+CLXI.7 leaves the starred repository unable to sign, deploy to Maven Central, publish to
+npm or report to Sonar. The ghcr.io/openviglet/turing package grants Actions write
+access per repository, and that grant names the old repository object.
+
+**Design.** The owner re-enters the seven secrets on openviglet/turing (Settings,
+Secrets and variables, Actions) and, in the package settings of
+ghcr.io/openviglet/turing and of the npm-facing packages, adds openviglet/turing under
+Manage Actions access with the Write role. A green `publish.yml` dispatch on 2026.3
+closes it.
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
