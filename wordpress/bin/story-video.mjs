@@ -233,7 +233,12 @@ for ( const [ i, html ] of cards.entries() ) {
 // The store's own pages, for what Ana says over the opening and closing cards (D261): she
 // talks about her shop, so the shop is on screen. The demo stack must be up; without it the
 // cards stay as they are.
-const storeUrl = process.env.STORE_URL || 'http://localhost:38082';
+// Each language's store has its own port (D283).
+const storeUrl =
+	process.env.STORE_URL ||
+	( 'pt-BR' === videoLanguage
+		? 'http://localhost:38083'
+		: 'http://localhost:38082' );
 const screens = [];
 const shot = async ( path, scroll = 0 ) => {
 	try {

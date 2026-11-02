@@ -52,7 +52,13 @@ const variantSteps = [
 
 // The demo storefront (D194) on its own WordPress (run-docker.cmd demo, D219): its specs need no
 // switch and leave the site above alone (D220). `npm run test:e2e:demo` runs them alone.
-export const demoURL = process.env.WP_DEMO_URL || 'http://localhost:38082';
+// Two demo stores run side by side (D283): Tarnfell in English, and with DEMO_LOCALE=pt_BR
+// Recanto da Serra, each with the WP-CLI container that reaches its WordPress.
+const demoPortuguese = 'pt_BR' === process.env.DEMO_LOCALE;
+export const demoURL =
+	process.env.WP_DEMO_URL ||
+	( demoPortuguese ? 'http://localhost:38083' : 'http://localhost:38082' );
+export const demoCli = demoPortuguese ? 'cli-demo-pt' : 'cli-demo';
 export const demoProjects = [
 	{ name: 'demo-setup', testMatch: 'setup/demo.setup.mjs' },
 	{

@@ -6,9 +6,9 @@ import { dirname } from 'node:path';
 import { test } from '@playwright/test';
 import { assertSameSite, wp } from '../global-setup.mjs';
 import { demoFile } from '../demo/curated.mjs';
-import { demoURL } from '../../../playwright.config.mjs';
+import { demoCli, demoURL } from '../../../playwright.config.mjs';
 
-const demo = ( args ) => wp( args, 'cli-demo' );
+const demo = ( args ) => wp( args, demoCli );
 
 test( 'the demo storefront is up, with its catalog', async () => {
 	test.setTimeout( 5 * 60 * 1000 );
@@ -19,7 +19,7 @@ test( 'the demo storefront is up, with its catalog', async () => {
 			'The demo WordPress is not installed: run `run-docker.cmd demo` first.'
 		);
 	}
-	assertSameSite( demoURL, 'cli-demo', 'WP_DEMO_URL' );
+	assertSameSite( demoURL, demoCli, 'WP_DEMO_URL' );
 	// The specs check the curated searches in the language the demo speaks (DEMO_LOCALE, D217).
 	const locale = demo( [ 'eval', 'echo get_locale();' ] )
 		.trim()

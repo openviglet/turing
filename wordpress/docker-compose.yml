@@ -25,7 +25,7 @@ services:
       TURING_TENANCY_AUTOPROVISION: "false"
       TURING_OPEN_BROWSER: "false"
       TURING_URL: http://localhost:${TURING_PORT:-2700}
-      TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${WP_MS_PORT:-8081},http://localhost:${WP_DEMO_PORT:-38082},http://localhost:${TURING_PORT:-2700}
+      TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${WP_MS_PORT:-8081},http://localhost:${WP_DEMO_PORT:-38082},http://localhost:${WP_DEMO_PT_PORT:-38083},http://localhost:${TURING_PORT:-2700}
       # In-memory broker: no journal lock (AMQ219007) when the container is recreated.
       SPRING_ARTEMIS_EMBEDDED_PERSISTENT: "false"
       # Generative AI (answers, chat, summaries): with a key in the shell, a boot that finds no
@@ -196,7 +196,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  # The demo storefront (D219): Tarnfell on a WordPress and database of its own on WP_DEMO_PORT,
+  # The demo storefront (D219), English since D283: Tarnfell on a WordPress and database of its own on WP_DEMO_PORT,
   # the same Turing with its own SN site (SN_DEMO_SITE), so it stays up while the browser tests
   # run against the site above. `run-docker.cmd demo` starts, installs and seeds it.
   db-demo:
@@ -268,6 +268,70 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  # The pt-BR demo storefront (D283): Recanto da Serra on a WordPress and database of its own on
+  # WP_DEMO_PT_PORT, beside Tarnfell above, so recording or resetting one store never deletes
+  # the other. The same Turing, its own SN site. `run-docker.cmd demo pt` sets it up.
+  db-demo-pt:
+    image: mariadb:11.4
+    profiles: ["demo"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-demo-pt:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-demo-pt:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["demo"]
+    depends_on:
+      db-demo-pt:
+        condition: service_healthy
+    ports:
+      - "${WP_DEMO_PT_PORT:-38083}:80"
+    environment: &wp-demo-pt-env
+      <<: *wp-demo-env
+      WORDPRESS_DB_HOST: db-demo-pt
+    volumes:
+      - wp-demo-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cron-demo-pt:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["demo"]
+    depends_on:
+      - wordpress-demo-pt
+    user: "33:33"
+    environment: *wp-demo-pt-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp-demo-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-demo-pt:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-demo-pt-env
+    volumes:
+      - wp-demo-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   db:
   wp:
@@ -276,3 +340,5 @@ volumes:
   wp-ms:
   db-demo:
   wp-demo:
+  db-demo-pt:
+  wp-demo-pt:

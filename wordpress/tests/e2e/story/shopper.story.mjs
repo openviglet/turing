@@ -8,10 +8,11 @@ import { expect, test } from '../fixtures.mjs';
 import { wp } from '../global-setup.mjs';
 import { demoLocale } from '../demo/curated.mjs';
 import { current, lines, takeFile } from '../../../bin/narration-takes.mjs';
+import { demoCli } from '../../../playwright.config.mjs';
 
 const turingURL = process.env.TURING_URL || 'http://localhost:2700';
 const out = join( 'tests', 'e2e', 'artifacts', 'story' );
-const demo = ( args ) => wp( args, 'cli-demo' );
+const demo = ( args ) => wp( args, demoCli );
 
 // What she searches for (demo/story.md) and the words the pages answer in, in each language
 // the demo speaks (DEMO_LOCALE, D217, D244).

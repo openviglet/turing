@@ -235,7 +235,7 @@ Beyond behaviour, the suite also checks:
   ("Network"). `E2E_MULTISITE=1 npm run test:e2e` seeds both sites and adds the `network`
   project, which checks that each site's search block finds only its own documents.
 - **Demo storefront**: the `demo` project checks the curated searches, the comparison page
-  and the tour on the demo's own WordPress (`run-docker.cmd demo`, `localhost:38082`), after
+  and the tour on a demo store of its own (`run-docker.cmd demo`: `localhost:38082` in English, `localhost:38083` with `DEMO_LOCALE=pt_BR`), after
   `demo-setup` seeds its catalog if missing. It needs no switch, so `npm run test:e2e` runs it
   beside the rest and `npm run test:e2e:demo` runs it alone.
 
@@ -266,7 +266,7 @@ shopper's visit in eight chapters, end to end on the demo with `OPENAI_API_KEY` 
 searches, a sentence turned into filters, the Site assistant, a comparison, Build my kit, a
 product page, a test-mode checkout, and the owner's Search insights. Nothing is replayed, and it
 leaves `story.webm` in `tests/e2e/artifacts/story/`. It plays in the language the demo speaks:
-English, or pt_BR on a demo started with `DEMO_LOCALE=pt_BR`.
+English on Tarnfell, or pt_BR on Recanto da Serra with `DEMO_LOCALE=pt_BR` (D283: both stores run side by side).
 `npm run e2e:story:record` plays it again at 1920×1080 and a human pace, and
 `npm run story:video` (ffmpeg on the PATH) cuts it into the demo video,
 `tests/e2e/artifacts/video/story.mp4`, with a title card per chapter, and `story-30s.mp4`, the
@@ -325,8 +325,9 @@ run-docker.cmd                         :: WordPress http://localhost:8080/wp-adm
                                        :: Turing    http://localhost:2700 (admin / dumont-dev)
 run-docker.cmd wp dumont queue run     :: any WP-CLI command
 run-docker.cmd wp dumont ai status     :: which of Turing's AI features the site can use (exits 1 if any is off)
-run-docker.cmd demo                    :: also the Tarnfell demo storefront on http://localhost:38082
-run-docker.cmd demo reset              :: drop the demo's WordPress and database only
+run-docker.cmd demo                    :: also the demo stores: Tarnfell http://localhost:38082, Recanto da Serra http://localhost:38083
+run-docker.cmd demo en                 :: only one of them (en or pt)
+run-docker.cmd demo reset pt           :: drop one store's WordPress and database only (en or pt)
 run-docker.cmd multisite               :: also a two-site network on http://localhost:8081
 run-docker.cmd logs turing             :: follow a log: wordpress, turing or db
 run-docker.cmd stop                    :: keep the data
@@ -334,7 +335,7 @@ run-docker.cmd reset                   :: drop WordPress, its database and Turin
 ```
 
 On Linux and macOS, `sh bin/run-docker.sh` starts the same stack, and `sh bin/run-docker.sh
-demo` (or `demo reset`) the demo storefront; both provision Turing through PowerShell (`pwsh`).
+demo` (or `demo en|pt`, `demo reset en|pt`) the demo storefronts; both provision Turing through PowerShell (`pwsh`).
 
 WP-Cron's loopback cannot reach the site URL inside the container, so `DISABLE_WP_CRON` is on
 and a `cron` service runs due events every 15 seconds, as a host with a system cron does: a
@@ -347,7 +348,7 @@ Turing runs as trabalharei runs it for development: embedded H2, Lucene and Arte
 local login, on the published `ghcr.io/openviglet/turing:latest`. To run a Turing built from a
 checkout instead, build it after `mvnw package` with `docker build -f Dockerfile.local -t
 turing:local .` and set `TURING_IMAGE=turing:local`. Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
-`TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT`, `SN_DEMO_SITE` or `DEMO_LOCALE` before the first run
+`TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT`, `WP_DEMO_PT_PORT`, `SN_DEMO_SITE` or `SN_DEMO_PT_SITE` before the first run
 to change the defaults.
 To move an installed stack to another port (another project holds 8080, say), set `WP_PORT`,
 run `run-docker.cmd`, then
@@ -368,17 +369,19 @@ accessibility, results 90 and 96. axe finds nothing on home, search and a post; 
 only WooCommerce's own mini-cart drawer. The name was checked with a web search only (no
 brand or store called Tarnfell): run a trademark registry search before any public use.
 
-The demo is a WordPress of its own (`wordpress-demo`, `db-demo` and `cron-demo`, the compose
-`demo` profile) on `WP_DEMO_PORT` (38082), sharing the one Turing under its own SN site,
-`SN_DEMO_SITE` (`Demo`), with its own API key. The site on `WP_PORT` stays the browser tests'
-and is never switched to Tarnfell, so the demo can stay up while the tests run and neither
-site's searches return the other's documents. WP-CLI on the demo is
-`docker compose run --rm --no-deps cli-demo wp <command>`. `DEMO_LOCALE=pt_BR` before
-`run-docker.cmd demo` turns the demo into Portuguese: the site's language, the plugin's locale
-and the SN site's, and a catalog and journal seeded from `demo/seed/pt_BR.php` with
-Portuguese synonyms; run it again with `en_US` (the default) to go back. The `demo` Playwright project
-runs against it (`WP_DEMO_URL`, default `http://localhost:38082`) and seeds its catalog only
-when it is missing; `npm run test:e2e:demo` runs those specs alone, without touching the test
+The demo is two stores side by side (D283), each a WordPress of its own in the compose `demo`
+profile, sharing the one Turing under its own SN site with its own API key: Tarnfell in
+English (`wordpress-demo`, `db-demo`, `cron-demo`) on `WP_DEMO_PORT` (38082), SN site
+`SN_DEMO_SITE` (`tarnfell`), and Recanto da Serra in Portuguese (`wordpress-demo-pt`,
+`db-demo-pt`, `cron-demo-pt`) on `WP_DEMO_PT_PORT` (38083), SN site `SN_DEMO_PT_SITE`
+(`recanto-da-serra`), its catalog and journal seeded from `demo/seed/pt_BR.php` with
+Portuguese synonyms. Resetting one never touches the other's orders or search history. The site
+on `WP_PORT` stays the browser tests' and is never switched to a store, so the demos can stay up
+while the tests run and no site's searches return another's documents. WP-CLI on a store is
+`docker compose run --rm --no-deps cli-demo wp <command>` (`cli-demo-pt` for the Portuguese
+one). The `demo` Playwright project runs against Tarnfell (`WP_DEMO_URL`, default
+`http://localhost:38082`), or Recanto da Serra with `DEMO_LOCALE=pt_BR` (38083), and seeds its
+catalog only when it is missing; `npm run test:e2e:demo` runs those specs alone, without touching the test
 site. A test site that ran the demo before this split keeps its `TF-` products and journal:
 `run-docker.cmd reset` clears them.
 

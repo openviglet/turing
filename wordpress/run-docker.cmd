@@ -5,11 +5,14 @@ rem
 rem   run-docker.cmd            start both, install WordPress and provision Turing on first run
 rem   run-docker.cmd multisite  also start a two-site multisite network on WP_MS_PORT (8081),
 rem                             sharing the SN site SN_MS_SITE (Network), for the browser tests
-rem   run-docker.cmd demo       also start the demo storefront on WP_DEMO_PORT (38082): a WordPress
-rem                             of its own with the Tarnfell theme (demo/theme), WooCommerce and
-rem                             its catalog, on its own SN site SN_DEMO_SITE (Demo), in
-rem                             DEMO_LOCALE (en_US; pt_BR seeds the catalog in Portuguese)
-rem   run-docker.cmd demo reset stop the demo and delete its WordPress and database only
+rem   run-docker.cmd demo       also start the two demo storefronts (D283), each a WordPress of its
+rem                             own with the Tarnfell theme (demo/theme), WooCommerce, its catalog
+rem                             and its own SN site: Tarnfell in English on WP_DEMO_PORT (38082),
+rem                             SN site SN_DEMO_SITE (tarnfell), and Recanto da Serra in Portuguese
+rem                             on WP_DEMO_PT_PORT (38083), SN site SN_DEMO_PT_SITE
+rem                             (recanto-da-serra)
+rem   run-docker.cmd demo en|pt start one of them
+rem   run-docker.cmd demo reset en|pt  stop one store and delete its WordPress and database only
 rem   run-docker.cmd stop       stop the containers, keep the data
 rem   run-docker.cmd reset      stop and delete WordPress, its database and Turing's store
 rem   run-docker.cmd logs [svc] follow a log: wordpress (default), turing or db
@@ -97,28 +100,57 @@ echo The plugin has an API key for the local Turing.
 exit /b 0
 
 :demo
-rem The demo has a WordPress and an SN site of its own (D219): the browser tests' site is
-rem never touched, so both are up at once.
+rem Two demo stores side by side (D283), each a WordPress and an SN site of its own beside the
+rem browser tests' site (D219), sharing its Turing: Tarnfell in English and Recanto da Serra in
+rem Portuguese. `demo` sets up both, `demo en` or `demo pt` one, and `demo reset en|pt` deletes
+rem only the one named, so recording one store never costs the other its orders and searches.
 if "%WP_DEMO_PORT%"=="" set "WP_DEMO_PORT=38082"
-if "%SN_DEMO_SITE%"=="" set "SN_DEMO_SITE=Demo"
-if "%DEMO_LOCALE%"=="" set "DEMO_LOCALE=en_US"
-if /i "%~2"=="reset" (
-    %DC% --profile demo rm -s -f wordpress-demo cron-demo db-demo
-    docker volume rm viglet-dumont-wp_wp-demo viglet-dumont-wp_db-demo
+if "%WP_DEMO_PT_PORT%"=="" set "WP_DEMO_PT_PORT=38083"
+if "%SN_DEMO_SITE%"=="" set "SN_DEMO_SITE=tarnfell"
+if "%SN_DEMO_PT_SITE%"=="" set "SN_DEMO_PT_SITE=recanto-da-serra"
+set "RESET="
+set "WHICH=%~2"
+if /i "%WHICH%"=="reset" (
+    set "RESET=1"
+    set "WHICH=%~3"
+)
+if "%WHICH%"=="" (
+    if defined RESET ( echo Name the store to reset: run-docker.cmd demo reset en or pt & exit /b 1 )
+    call "%~f0" demo en || exit /b 1
+    call "%~f0" demo pt || exit /b 1
+    exit /b 0
+)
+set "LOCALE="
+if /i "%WHICH%"=="en" (
+    set "SFX="
+    set "PORT=%WP_DEMO_PORT%"
+    set "SITE=%SN_DEMO_SITE%"
+    set "LOCALE=en_US"
+)
+if /i "%WHICH%"=="pt" (
+    set "SFX=-pt"
+    set "PORT=%WP_DEMO_PT_PORT%"
+    set "SITE=%SN_DEMO_PT_SITE%"
+    set "LOCALE=pt_BR"
+)
+if not defined LOCALE ( echo Unknown demo store: %WHICH%. Use en or pt. & exit /b 1 )
+if defined RESET (
+    %DC% --profile demo rm -s -f wordpress-demo%SFX% cron-demo%SFX% db-demo%SFX%
+    docker volume rm viglet-dumont-wp_wp-demo%SFX% viglet-dumont-wp_db-demo%SFX%
     exit /b 0
 )
 rem The single site and Turing first: the demo shares that Turing.
 call "%~f0" || exit /b 1
-set "WPD=%DC% run --rm --no-deps cli-demo wp"
-set "DEMOURL=http://localhost:%WP_DEMO_PORT%"
-%DC% --profile demo up -d || exit /b 1
+set "WPD=%DC% run --rm --no-deps cli-demo%SFX% wp"
+set "DEMOURL=http://localhost:%PORT%"
+%DC% --profile demo up -d wordpress-demo%SFX% cron-demo%SFX% || exit /b 1
 
-echo Waiting for the demo WordPress...
+echo Waiting for the demo WordPress (%LOCALE%)...
 set /a TRIES=0
 :waitdemo
 set /a TRIES+=1
 %WPD% db check >nul 2>&1 && goto :readydemo
-if %TRIES% geq 60 ( echo The demo WordPress did not come up. See: run-docker.cmd logs wordpress-demo & exit /b 1 )
+if %TRIES% geq 60 ( echo The demo WordPress did not come up. See: run-docker.cmd logs wordpress-demo%SFX% & exit /b 1 )
 timeout /t 2 /nobreak >nul
 goto :waitdemo
 
@@ -133,24 +165,24 @@ if errorlevel 1 (
 set "KEY="
 for /f "delims=" %%k in ('%WPD% option pluck viglet_dumont_settings api_key 2^>nul') do set "KEY=%%k"
 if "%KEY%"=="" (
-    for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%DEMO_LOCALE%"') do set "KEY=%%k"
+    for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SITE%" -Locale "%LOCALE%"') do set "KEY=%%k"
 ) else (
-    powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_DEMO_SITE%" -Locale "%DEMO_LOCALE%" -NoToken
+    powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SITE%" -Locale "%LOCALE%" -NoToken
 )
-if "%KEY%"=="" ( echo Turing was not provisioned for %SN_DEMO_SITE%; the demo has no API key. & exit /b 1 )
+if "%KEY%"=="" ( echo Turing was not provisioned for %SITE%; the demo has no API key. & exit /b 1 )
 rem The key, the SN site and the language it indexes and searches in (D272, D274), as the site's
 rem own settings.
-%WPD% eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; $s['site_name'] = '%SN_DEMO_SITE%'; $s['locale'] = '%DEMO_LOCALE%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
+%WPD% eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; $s['site_name'] = '%SITE%'; $s['locale'] = '%LOCALE%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
 
 %WPD% theme activate tarnfell || exit /b 1
-rem The site speaks DEMO_LOCALE, and the seed writes the catalog in it (D217).
-if /i not "%DEMO_LOCALE%"=="en_US" %WPD% language core install %DEMO_LOCALE% >nul 2>&1
-%WPD% site switch-language %DEMO_LOCALE% || exit /b 1
+rem The store speaks its language, and the seed writes the catalog in it (D217).
+if /i not "%LOCALE%"=="en_US" %WPD% language core install %LOCALE% >nul 2>&1
+%WPD% site switch-language %LOCALE% || exit /b 1
 %WPD% rewrite structure "/%%postname%%/" --hard || exit /b 1
 rem A shop: WooCommerce on, with the demo's catalog (demo/seed), which runs demo/setup.php first.
 %WPD% plugin is-installed woocommerce >nul 2>&1 || %WPD% plugin install woocommerce || exit /b 1
 %WPD% plugin activate woocommerce || exit /b 1
-if /i not "%DEMO_LOCALE%"=="en_US" %WPD% language plugin install woocommerce %DEMO_LOCALE% >nul 2>&1
+if /i not "%LOCALE%"=="en_US" %WPD% language plugin install woocommerce %LOCALE% >nul 2>&1
 %WPD% eval-file /demo/seed/catalog.php || exit /b 1
 rem The seed sets the shop's addresses in its language (D266), after WooCommerce registered them.
 %WPD% rewrite flush --hard || exit /b 1
@@ -160,8 +192,8 @@ rem The store's search history, once the catalog it finds is indexed (D269).
 %WPD% eval-file /demo/seed/searches.php || exit /b 1
 
 echo.
-echo Demo storefront: %DEMOURL%/   (admin / admin), SN site %SN_DEMO_SITE%
-echo Demo WP-CLI:     docker compose run --rm --no-deps cli-demo wp ...
+echo Demo storefront (%LOCALE%): %DEMOURL%/   (admin / admin), SN site %SITE%
+echo Demo WP-CLI:     docker compose run --rm --no-deps cli-demo%SFX% wp ...
 exit /b 0
 
 :multisite

@@ -37,10 +37,13 @@ Credits for all of it: `demo/seed/CREDITS.md`.
 
 ## Making it again
 
-1. **The stack, in the video's language.** pt-BR: `DEMO_LOCALE=pt_BR SN_DEMO_SITE=recanto-da-serra
-   run-docker.cmd demo` (the store becomes *Recanto da Serra*, in reais, on its own SN site). English:
-   `run-docker.cmd demo` (Tarnfell, SN site `Demo`). Any manual `wp` call on the demo container
-   needs the same two variables, or it reindexes into the other language's core.
+1. **The stores.** `run-docker.cmd demo` sets up both, side by side (D283): Tarnfell in English on
+   `localhost:38082` (SN site `tarnfell`) and Recanto da Serra in reais on `localhost:38083` (SN
+   site `recanto-da-serra`). `run-docker.cmd demo reset pt` rebuilds one without touching the other.
+   WP-CLI on the Portuguese store is `cli-demo-pt`; each store keeps its SN site and language in
+   its own settings (D272, D274), so a manual `wp` call needs no variables. (Before D283 any
+   manual `wp` call on the demo container needed both variables, or it reindexed into the other
+   language's core.)
 2. **The assets**: `npm run story:narration`, `npm run demo:photos`, `npm run demo:broll`.
 3. **Check what the video will show before recording.** Run each search the story makes in the
    real search block and look at the results, the filter line and the answer; change a query that
