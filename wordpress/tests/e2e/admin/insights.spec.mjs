@@ -1,5 +1,6 @@
 // The Search insights screen (D178): a search that found nothing shows up with "Write about
 // this", and a period with no searches says so rather than showing zeros.
+import { wp } from '../global-setup.mjs';
 import { expect, test } from '../fixtures.mjs';
 
 const turingURL = process.env.TURING_URL || 'http://localhost:2700';
@@ -47,6 +48,13 @@ test( 'a search that found nothing is listed, with a draft to write about it', a
 } );
 
 test( 'the dashboard shows the week’s searches', async ( { page, axe } ) => {
+	// A search that finds something, so a fresh stack (CI) has a top search this week, and the
+	// widget's report as the log reads now: logging in rendered the dashboard and cached it empty.
+	const searched = await page.request.get(
+		`${ turingURL }/api/sn/Sample/search?q=seminar&_setlocale=en_US`
+	);
+	expect( searched.ok() ).toBe( true );
+	wp( [ 'transient', 'delete', 'viglet_dumont_insights_widget' ] );
 	await page.goto( '/wp-admin/' );
 	const widget = page.locator( '#viglet_dumont_insights' );
 	await expect(

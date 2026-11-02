@@ -1,5 +1,5 @@
 // Where each post stands: the Search column in the post list and the block editor's panel.
-import { expect, test } from '../fixtures.mjs';
+import { expect, openPostSettings, test } from '../fixtures.mjs';
 
 test( 'the post list has a Search column saying where each post stands', async ( {
 	page,
@@ -33,12 +33,7 @@ test( 'the block editor has a Search panel with the state, Exclude and Reindex n
 		name: 'Search',
 		exact: true,
 	} );
-	if ( ! ( await panelToggle.isVisible().catch( () => false ) ) ) {
-		await page
-			.getByRole( 'button', { name: 'Settings', exact: true } )
-			.click();
-		await page.getByRole( 'tab', { name: 'Post' } ).click();
-	}
+	await openPostSettings( page );
 	const panel = page.locator( '.viglet-dumont-search-panel' );
 	if (
 		! ( await panel

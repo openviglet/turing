@@ -1,5 +1,5 @@
 // Browser tests for the plugin's admin screens and the site, against the run-docker.cmd stack
-// (WordPress on localhost:8080 with a local Turing). Not run in CI, which has no Turing.
+// (WordPress on localhost:8080 with a local Turing). CI runs it too, in the workflow's e2e job.
 //
 //   run-docker.cmd          # once: the stack
 //   run-docker.cmd demo     # once: the demo storefront beside it, on localhost:38082
@@ -139,7 +139,9 @@ export default defineConfig( {
 			use: { viewport: { width: 390, height: 844 }, isMobile: true },
 		},
 		...variants,
-		...demoProjects,
+		// CI starts the test stack alone (bin/run-docker.sh), not the demo stores, so their
+		// specs run on a laptop and in their own configs (D182).
+		...( process.env.CI ? [] : demoProjects ),
 		// The multisite network beside the single site (run-docker.cmd multisite); its specs
 		// address both sites by URL, so it needs no switch and depends on nothing.
 		...( process.env.E2E_MULTISITE

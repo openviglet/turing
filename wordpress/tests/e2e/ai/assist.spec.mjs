@@ -1,6 +1,6 @@
 // The editor's excerpt draft (D171) against a real LLM: Turing's summary of the grant post
 // keeps its fact, and using it fills the excerpt field without saving the post.
-import { expect, test } from '../fixtures.mjs';
+import { expect, openPostSettings, test } from '../fixtures.mjs';
 import { ai, record } from './helpers.mjs';
 
 test( 'the excerpt drafted for the grant post keeps its deadline', async ( {
@@ -17,12 +17,7 @@ test( 'the excerpt drafted for the grant post keeps its deadline', async ( {
 		await guide.click();
 	}
 	const panel = page.locator( '.viglet-dumont-search-panel' );
-	if ( ! ( await panel.isVisible().catch( () => false ) ) ) {
-		await page
-			.getByRole( 'button', { name: 'Settings', exact: true } )
-			.click();
-		await page.getByRole( 'tab', { name: 'Post' } ).click();
-	}
+	await openPostSettings( page );
 	const draftButton = panel.getByRole( 'button', {
 		name: 'Draft an excerpt',
 	} );
@@ -70,12 +65,7 @@ test( 'the grant post is scored for the audience persona of the site, with a rea
 		await guide.click();
 	}
 	const panel = page.locator( '.viglet-dumont-search-panel' );
-	if ( ! ( await panel.isVisible().catch( () => false ) ) ) {
-		await page
-			.getByRole( 'button', { name: 'Settings', exact: true } )
-			.click();
-		await page.getByRole( 'tab', { name: 'Post' } ).click();
-	}
+	await openPostSettings( page );
 	const check = panel.getByRole( 'button', { name: 'Check audience fit' } );
 	if ( ! ( await check.isVisible().catch( () => false ) ) ) {
 		await page

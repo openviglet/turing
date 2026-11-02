@@ -132,6 +132,30 @@ export const test = base.extend( {
 } );
 
 /**
+ * Show the post's settings sidebar on its Post tab, whichever state the editor opened in.
+ *
+ * Asked of the Settings button once the editor has drawn it: an isVisible() check answers at
+ * once, so before the editor had rendered it read an open sidebar (a fresh site's default, as in
+ * CI) as closed, and the click closed it.
+ *
+ * @param {import('@playwright/test').Page} page
+ */
+export async function openPostSettings( page ) {
+	const settings = page.getByRole( 'button', {
+		name: 'Settings',
+		exact: true,
+	} );
+	await expect( settings ).toBeVisible();
+	if ( 'true' !== ( await settings.getAttribute( 'aria-pressed' ) ) ) {
+		await settings.click();
+	}
+	const tab = page.getByRole( 'tab', { name: 'Post' } );
+	if ( 'true' !== ( await tab.getAttribute( 'aria-selected' ) ) ) {
+		await tab.click();
+	}
+}
+
+/**
  * The focused control shows a ring: an outline or a box shadow, drawn under :focus-visible.
  *
  * @param {import('@playwright/test').Locator} locator

@@ -1,7 +1,7 @@
 // The editor panel's Assist section (D171): what the site already has near this post, links to
 // related posts the author can add, and an excerpt drafted by Turing. It never changes the post
 // on its own, so the specs leave without saving.
-import { expect, test } from '../fixtures.mjs';
+import { expect, openPostSettings, test } from '../fixtures.mjs';
 
 /**
  * Open the post in the editor with the Search panel showing.
@@ -22,12 +22,7 @@ async function openPanel( page, seed ) {
 		name: 'Search',
 		exact: true,
 	} );
-	if ( ! ( await panelToggle.isVisible().catch( () => false ) ) ) {
-		await page
-			.getByRole( 'button', { name: 'Settings', exact: true } )
-			.click();
-		await page.getByRole( 'tab', { name: 'Post' } ).click();
-	}
+	await openPostSettings( page );
 	const panel = page.locator( '.viglet-dumont-search-panel' );
 	if (
 		! ( await panel

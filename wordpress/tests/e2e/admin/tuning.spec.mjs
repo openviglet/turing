@@ -2,7 +2,7 @@
 // and a promoted post heads the results for its search. Both are removed again from the
 // screen; afterEach also clears whatever a failed run left behind.
 import { wp } from '../global-setup.mjs';
-import { expect, test } from '../fixtures.mjs';
+import { expect, openPostSettings, test } from '../fixtures.mjs';
 
 const screen = '/wp-admin/admin.php?page=viglet-dumont-tuning';
 
@@ -204,12 +204,7 @@ test( 'the editor\'s "Promote for a search" opens the form with the post chosen'
 		await guide.click();
 	}
 	const promote = page.getByRole( 'link', { name: 'Promote for a search…' } );
-	if ( ! ( await promote.isVisible().catch( () => false ) ) ) {
-		await page
-			.getByRole( 'button', { name: 'Settings', exact: true } )
-			.click();
-		await page.getByRole( 'tab', { name: 'Post' } ).click();
-	}
+	await openPostSettings( page );
 	await expect( promote ).toHaveAttribute(
 		'href',
 		new RegExp( `promote=${ seed.postId }$` )
