@@ -5,8 +5,10 @@ Playwright on the live demo stack, told by **Ana**, the store's owner, in the st
 `npm run story:video` assembles it into `tests/e2e/artifacts/video/story.mp4` (not committed:
 a release asset, D246).
 
-Status, 2026-10-31: the **pt-BR** video is done (Recanto da Serra, 7m28s). The English one is
-D261's remainder. Open lines that show in it are listed at the end.
+Status, 2026-11-02: the **pt-BR** video is recorded again (Recanto da Serra, 7m37s) on a Turing
+image carrying T1190, T1191 and T1196, with the opening and closing cards of D275 and the
+narration as captions (D278). The English one is D276, waiting on the English takes. Open lines
+that show in it are listed at the end.
 
 ## What it is made of
 
@@ -62,10 +64,11 @@ Credits for all of it: `demo/seed/CREDITS.md`.
 
 ## Open, and seen in the video
 
-- D261: the English video.
+- D276: the English video (the takes are a purchase to approve).
 - D265: 54 photos still to buy (Ideogram credit); the rest are drawings.
-- D266: the pt-BR store's addresses are English (`product › …`).
-- D267: a refined sentence is counted as a failed search in the insights.
-- Turing T1190, T1191: the kit's first picks and its "Site: localhost" reasons. T1197 (the kit in
-  the request's language) is fixed in Turing's source, not yet in the published image the stack runs.
-- D246: attaching the video to a release and embedding it on the site.
+- D282: the video on the site, the docs, the README and the release (YouTube embeds).
+- D283: the English and pt-BR stores side by side, so recording one does not delete the other.
+
+Gone from it since the first cut: the English addresses on the pt-BR store (D266), a refined
+sentence counted as a failed search (D267), and the kit's "Site: localhost" reasons (T1191).
+Chapter 8's failed search is now "cantil": "bastão de caminhada" finds its products since T1196.

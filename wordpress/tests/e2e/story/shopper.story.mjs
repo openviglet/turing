@@ -79,8 +79,9 @@ const words = {
 		needFound: /barraca/i,
 		misspelt: 'helvelyn',
 		// No failed search of her own: chapter 8 fixes one from the store's history
-		// (demo/seed/searches.php), a singular the catalog spells in the plural (Turing T1196).
-		logged: 'bastão de caminhada',
+		// (demo/seed/searches.php), a word the shop does not use for its insulated bottle. It was
+		// "bastão de caminhada" until Turing T1196 matched a singular to its plural.
+		logged: 'cantil',
 		question: 'Que mochila eu levo para uma noite num refúgio?',
 		cites: 'De que tamanho deve ser sua mochila?',
 		// Measured on the pt_BR demo: three jackets of different kinds to compare. "jaqueta
@@ -90,7 +91,7 @@ const words = {
 		plan: 'Dois dias atravessando a montanha em julho, primeira vez',
 		check: 'Isso me mantém seca num dia de chuva na montanha?',
 		backstage: 'puffer',
-		synonym: 'bastão de caminhada, bastões de caminhada',
+		synonym: 'cantil, garrafa térmica',
 		ui: {
 			popular: 'Buscas populares',
 			compareBox: /^Comparar /,

@@ -19,7 +19,10 @@ if ( get_option( $flag ) ) {
 	return;
 }
 
-// What people look for, most first. Every one finds something, so none reads as a failed search.
+// What people look for, most first. Every one finds something but, in Portuguese, "cantil": a
+// word the shop does not use for its insulated bottle, which the story's chapter 8 finds among
+// the searches that found nothing and turns into a synonym. The English story searches its own
+// ("bothy bag") during the visit.
 $searches = 'pt_BR' === get_locale()
 	? array(
 		'barraca'              => 14,
@@ -31,6 +34,7 @@ $searches = 'pt_BR' === get_locale()
 		'lanterna de cabeça'   => 4,
 		'bastão de caminhada'  => 3,
 		'garrafa térmica'      => 2,
+		'cantil'               => 2,
 	)
 	: array(
 		'rain jacket'          => 14,
