@@ -225,7 +225,10 @@ services:
     environment: &wp-demo-env
       <<: *wp-env
       WORDPRESS_DB_HOST: db-demo
-      VIGLET_DUMONT_TURING_SITE: ${SN_DEMO_SITE:-Demo}
+      # The demo's SN site, like its language below, is its plugin's own setting, which
+      # run-docker demo writes from SN_DEMO_SITE (D274): read from here, a `docker compose run
+      # cli-demo` started without SN_DEMO_SITE indexed into Demo. Empty is unset.
+      VIGLET_DUMONT_TURING_SITE: ""
       # The demo's language (D217) is its plugin's own setting, which run-docker demo writes
       # from DEMO_LOCALE (D272). Read from here, a `docker compose run cli-demo` started
       # without DEMO_LOCALE indexed into en_US while the site searched pt_BR. Empty is unset.
