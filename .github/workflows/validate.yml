@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven and SonarCloud
+name: Java CI with Maven
 
 on:
   workflow_dispatch:
@@ -16,8 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
       - name: Use Node.js 26.3.1
         uses: actions/setup-node@v7
         with:
@@ -28,20 +26,13 @@ jobs:
           java-version: "21"
           distribution: "temurin"
           cache: maven
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v6
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Maven packages
         uses: actions/cache@v6
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+      - name: Build and test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dgpg.skip=true -Dsonar.projectKey=viglet_turing -Dturing.open-browser=false
+        run: mvn -B verify -Dgpg.skip=true -Dturing.open-browser=false

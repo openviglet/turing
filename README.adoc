@@ -19,7 +19,6 @@ image:https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk
 image:https://img.shields.io/badge/Spring%20Boot-4-6DB33F?style=flat-square&logo=springboot&logoColor=white[Spring Boot 4]
 image:https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black[React 19]
 image:https://img.shields.io/badge/docs-turing.viglet.org%2Fdocs-brightgreen?style=flat-square&logo=readthedocs&logoColor=white[Documentation,link="https://openviglet.github.io/turing/docs/"]
-image:https://img.shields.io/badge/Sonar-Code%20Quality-brightgreen?style=flat-square&logo=SonarCloud[Code quality,link="https://sonarcloud.io/project/overview?id=viglet_turing"]
 
 **Try it live, no install:** https://openviglet.github.io/turing/#playground[search and cited chat in the browser] ·
 **Site:** https://openviglet.github.io/turing[openviglet.github.io/turing] ·

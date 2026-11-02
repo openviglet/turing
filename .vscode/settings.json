@@ -1,10 +1,4 @@
 {
-  // SonarLint integration
-  "sonarlint.connectedMode.project": {
-    "connectionId": "viglet",
-    "projectKey": "viglet_turing"
-  },
-
   // Java Language Server memory tuning
   "java.jdt.ls.vmargs": "-Xms4096m -Xmx8192m -XX:+UseG1GC -XX:+UseStringDeduplication",
   "java.format.settings.url": "./eclipse-java-style.xml",

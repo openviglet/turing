@@ -319,7 +319,6 @@ Turing maintains high code quality standards. You can check the project health a
 
 | Tool | Link |
 |---|---|
-| SonarCloud | [sonarcloud.io/organizations/viglet-turing](https://sonarcloud.io/organizations/viglet-turing/projects) |
 | GitHub Actions | [openviglet/turing/actions](https://github.com/openviglet/turing/actions) |
 | GitHub Security | [openviglet/turing/security](https://github.com/openviglet/turing/security/code-scanning) |
 

@@ -18,8 +18,6 @@ dist/
 .sts4-cache
 .metals
 .bloop
-.sonar_lock
-scripts/sonar/.sonar-token
 .mtj.tmp/
 
 # ── JVM crash logs ───────────────────────────────────────────
@@ -99,7 +97,6 @@ frontend/apps/marketplace/vinyl-records/vinyl-records.zip
 /turing-app/src/test/resources/h2-snapshot
 /frontend/packages/sdk/.turbo
 /frontend/packages/react-ui/.turbo
-scripts/sonar/scan.log
 /frontend/packages/cli/.turbo
 /frontend/packages/flow-dsl/.turbo
 .roadkeep/

@@ -43,8 +43,6 @@
         <!-- viglet-core is now an external project (github.com/openviglet/viglet-core),
              published to GitHub Packages and versioned independently from Turing. -->
         <viglet-core.version>2026.3.13</viglet-core.version>
-        <sonar.organization>viglet</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <maven.deploy.skip>true</maven.deploy.skip>
         <gpg.keyname>30AA85DC937DA16691466FE2A0CCF43371503F2D</gpg.keyname>
         <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
@@ -72,11 +70,6 @@
                 <configuration>
                     <publishingServerId>central</publishingServerId>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>5.8.0.7211</version>
             </plugin>
             <plugin>
                 <groupId>pl.project13.maven</groupId>

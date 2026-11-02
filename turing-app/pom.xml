@@ -17,11 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <sonar.organization>viglet</sonar.organization>
-        <sonar.projectKey>viglet_turing</sonar.projectKey>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.cpd.exclusions>**/persistence/dto/**,**/persistence/model/**
-        </sonar.cpd.exclusions>
         <skip.npm>false</skip.npm>
         <!-- Skip Surefire (unit tests) only, while leaving Failsafe ITs to run.
              Use `mvn verify -DskipUTs=true` to run integration tests without
