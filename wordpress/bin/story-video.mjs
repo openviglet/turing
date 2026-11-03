@@ -648,7 +648,13 @@ const finish = ( joined, cues, name, tracks = [], captions = [] ) => {
 };
 
 const texts = Object.fromEntries( lines() );
-const music = join( narration, 'music.mp3' );
+// The music bed: demo/narration/music.mp3, or another track to try with `--music <file>`.
+const music = process.argv.includes( '--music' )
+	? process.argv[ process.argv.indexOf( '--music' ) + 1 ]
+	: join( narration, 'music.mp3' );
+if ( process.argv.includes( '--music' ) && ! existsSync( music ) ) {
+	refuse( `--music names no file: ${ music }` );
+}
 
 /**
  * A line's takes, by language: only one that says the script's current line (an older take
@@ -760,6 +766,27 @@ const measure = ( args ) => {
 	return JSON.parse( reports.at( -1 ) );
 };
 
+// The level `musicVolume` and the ducking were set against: the first bed's own loudness. Any
+// other track is brought to it first, so a louder master does not sit louder under the voice.
+const musicReference = -18;
+let musicTrimDb = null;
+
+/**
+ * The gain, in dB, that brings the music bed to `musicReference`, measured once.
+ */
+const musicTrim = () => {
+	if ( null === musicTrimDb ) {
+		const measured = Number(
+			measure( [ '-i', music, '-af', 'loudnorm=print_format=json' ] )
+				.input_i
+		);
+		musicTrimDb = Number.isFinite( measured )
+			? Number( ( musicReference - measured ).toFixed( 2 ) )
+			: 0;
+	}
+	return musicTrimDb;
+};
+
 /**
  * One language's narration as a single track the video's length, each take placed where its
  * screen shows, over the music bed when there is one.
@@ -784,6 +811,7 @@ const voiceTrack = ( language, placed, total ) => {
 		inputs.push( '-stream_loop', '-1', '-i', music );
 		graph.push(
 			`[${ placed.length }:a]atrim=0:${ total.toFixed( 3 ) },` +
+				`volume=${ musicTrim() }dB,` +
 				`volume='${ duckExpression( placed ) }':eval=frame,afade=t=in:d=2,` +
 				`afade=t=out:st=${ fadeOut }:d=3[m]`
 		);
@@ -1722,9 +1750,10 @@ const writeProject = ( total ) => {
 			'-t',
 			total.toFixed( 3 ),
 			'-af',
-			`afade=t=in:d=2,afade=t=out:st=${ Math.max( 0, total - 3 ).toFixed(
-				3
-			) }:d=3`,
+			`volume=${ musicTrim() }dB,afade=t=in:d=2,afade=t=out:st=${ Math.max(
+				0,
+				total - 3
+			).toFixed( 3 ) }:d=3`,
 			'-c:a',
 			'aac',
 			'-b:a',

@@ -131,6 +131,11 @@ project does not carry the moves yet.
 
 ## The mix (D291)
 
+- Another track can be tried without replacing `music.mp3`: `--music <file>`. Any bed is
+  first brought to -18 LUFS, the level the ducking was tuned on, so a louder master does not
+  sit louder under the voice. Cut it into a loop first with polyweave (`python -m polyweave
+  sound.loop --track <wav> --out <loop.wav>`), which keeps the cut on the beat and checks the
+  seam; `sound.stems` says whether it carries vocals.
 - The music bed ducks under every line: 0.12 under a take, 0.3 between takes, with a 0.4 s
   ramp either side (about 8 dB). The project carries the same envelope as volume keyframes
   on A2, so it can be moved in Fairlight.
