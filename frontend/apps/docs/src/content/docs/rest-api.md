@@ -56,7 +56,7 @@ The server then confines that key, whatever the request asks for:
 | `GET /api/sn/{siteId}/synonym`, `/synonym/{id}` | As for any key. Changing synonyms is refused with `403`, because the site has one set of synonyms that every partition shares |
 | Every other endpoint, including chat, answer, natural-language filters, duplicates, ranking expressions and the other tuning APIs, the other metrics, the zip import and MCP | Refused with `403` (`401` on MCP) until it enforces partitions |
 
-A key without a partition, and a browser session, are not affected. The partition field must be a stored field, because the import reads it back from the stored document before it replaces or deletes one.
+A key without a partition, and a browser session, are not affected. A session the key opens keeps its partition, so a client that resends the session cookie without the key is confined the same way, and a request that sends a key is answered as that key even beside another key's session. The partition field must be a stored field, because the import reads it back from the stored document before it replaces or deletes one.
 
 ### Public Endpoints (no authentication required)
 

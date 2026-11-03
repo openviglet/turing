@@ -22,6 +22,8 @@ package com.viglet.turing.spring.security.auth;
 
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -56,14 +58,15 @@ public final class TurApiKeyPartitionContext {
         }
     }
 
-    /** The partition bound to {@code request}'s key, if any. */
+    /** The partition bound to {@code request}'s key, or (T1210) to the session it replays, if any. */
     public static Optional<TurSEPartition> of(HttpServletRequest request) {
         return Optional.ofNullable(request.getAttribute(ATTRIBUTE))
                 .filter(TurSEPartition.class::isInstance)
-                .map(TurSEPartition.class::cast);
+                .map(TurSEPartition.class::cast)
+                .or(TurApiKeyPartitionContext::authenticated);
     }
 
-    /** The partition bound to the current request's key, if any. */
+    /** The partition bound to the current request's key, or (T1210) to its session, if any. */
     public static Optional<TurSEPartition> current() {
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
@@ -71,6 +74,20 @@ public final class TurApiKeyPartitionContext {
         }
         return Optional.ofNullable(attributes.getAttribute(ATTRIBUTE, RequestAttributes.SCOPE_REQUEST))
                 .filter(TurSEPartition.class::isInstance)
-                .map(TurSEPartition.class::cast);
+                .map(TurSEPartition.class::cast)
+                .or(TurApiKeyPartitionContext::authenticated);
+    }
+
+    /**
+     * T1210 — the partition the current authentication was made with. A key's
+     * authentication outlives its request in the session, and a request that
+     * sends only the session's cookie must stay inside the same partition.
+     */
+    private static Optional<TurSEPartition> authenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return Optional.ofNullable(authentication)
+                .map(Authentication::getDetails)
+                .filter(TurApiKeyAuthenticationDetails.class::isInstance)
+                .map(details -> ((TurApiKeyAuthenticationDetails) details).getPartition());
     }
 }

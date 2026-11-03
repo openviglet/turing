@@ -44,7 +44,10 @@ public class TurAuthTokenHeaderFilter extends OncePerRequestFilter {
             @NotNull FilterChain filterChain)
             throws ServletException, IOException {
         String appId = request.getHeader(KEY);
-        if (appId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        // T1210 — a usable key authenticates the request even when a session already
+        // did: the key is what this request presents, and a session another key opened
+        // would otherwise answer for it, in that key's partition or in none.
+        if (appId != null) {
             // T646 / §XXXVII.8 — reject disabled/expired tokens.
             turDevTokenRepository.findByToken(appId).filter(TurDevToken::isUsable).ifPresent(token -> {
                 TurUser turUser = turUserRepository.findByUsername(token.getCreatedBy());
@@ -55,11 +58,14 @@ public class TurAuthTokenHeaderFilter extends OncePerRequestFilter {
                 turAuthorityResolver.resolve(turUser != null ? turUser.getUsername() : null, authorities);
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         turUser, null, authorities);
-                authenticationToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 // T1133 — a key bound to a partition of a shared site carries it.
                 TurApiKeyPartitionContext.bind(request, token);
+                // T1210 — and so does the authentication the session keeps, or a
+                // request replaying the session's cookie would leave the partition.
+                authenticationToken.setDetails(TurApiKeyPartitionContext.of(request)
+                        .<Object>map(partition -> new TurApiKeyAuthenticationDetails(request, partition))
+                        .orElseGet(() -> new WebAuthenticationDetailsSource().buildDetails(request)));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             });
         }
         filterChain.doFilter(request, response);

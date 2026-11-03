@@ -968,6 +968,51 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         }
     }
 
+    /**
+     * T1210 — the session a partitioned key opens keeps its partition: replaying
+     * the cookie without the key reaches no other partition's document, no route
+     * the guard refuses and no admin API.
+     */
+    @Test
+    void aPartitionedKeysSessionStaysInsideItsPartition() throws Exception {
+        String keyA = partitionedKey("a");
+        indexPartitionProbe(TurSNJobAction.CREATE, "a");
+        indexPartitionProbe(TurSNJobAction.CREATE, "b");
+        try {
+            String everything = """
+                    {"q":"*","locale":"%s","rows":200}""".formatted(LOCALE);
+            HttpResponse<String> keyed = postJson("/sn/" + SITE + "/search/query", everything, keyA);
+            String cookie = keyed.headers().allValues("Set-Cookie").stream()
+                    .map(header -> header.split(";", 2)[0])
+                    .filter(pair -> pair.startsWith("TURJSESSIONID=") || pair.startsWith("JSESSIONID="))
+                    .findFirst().orElse(null);
+            org.junit.jupiter.api.Assumptions.assumeTrue(cookie != null,
+                    "the key opened no session, so there is none to replay");
+
+            HttpResponse<String> replayed = http.send(HttpRequest.newBuilder(URI.create(base() + "/sn/" + SITE
+                    + "/search/query")).header("Content-Type", "application/json").header("Cookie", cookie)
+                    .POST(BodyPublishers.ofString(everything)).build(), BodyHandlers.ofString());
+            assertEquals(List.of(partitionProbeId("a")), documentIds(replayed),
+                    "the replayed session must search partition A only");
+            // A key presented beside another key's session is what answers.
+            HttpResponse<String> keyBesideSession = http.send(HttpRequest.newBuilder(URI.create(base() + "/sn/"
+                    + SITE + "/search/query")).header("Content-Type", "application/json").header("Cookie", cookie)
+                    .header("Key", partitionedKey("b")).POST(BodyPublishers.ofString(everything)).build(),
+                    BodyHandlers.ofString());
+            assertEquals(List.of(partitionProbeId("b")), documentIds(keyBesideSession),
+                    "key B beside A's session must search partition B only");
+            for (String path : List.of("/sn/" + SITE + "/search/duplicates?id=" + partitionProbeId("a")
+                    + "&_setlocale=" + LOCALE, "/dev/token")) {
+                assertEquals(403, http.send(HttpRequest.newBuilder(URI.create(base() + path))
+                        .header("Cookie", cookie).GET().build(), BodyHandlers.ofString()).statusCode(),
+                        "the replayed session reached " + path);
+            }
+        } finally {
+            indexPartitionProbe(TurSNJobAction.DELETE, "a");
+            indexPartitionProbe(TurSNJobAction.DELETE, "b");
+        }
+    }
+
     private HttpResponse<String> deleteWithKey(String path, String key) throws Exception {
         return http.send(HttpRequest.newBuilder(URI.create(base() + path)).header("Key", key).DELETE().build(),
                 BodyHandlers.ofString());

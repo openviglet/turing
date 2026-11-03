@@ -1509,6 +1509,7 @@
 - **T1133e** — The search and click logs record the partition of a partitioned key's requests, and its failed-searches, content-gaps and clicks reports read only that partition.
 - **T1165** — turing-app builds again: the okhttp client follows Spring AI's anthropic-java-core 2.72.0, and a test now names the version to pin when the two jars drift.
 - **T1209** — Partitioned keys reach spotlights confined to their partition and read synonyms, which stay one site-wide set; the contract IT drives two partitions (design §CLXV recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
+- **T1210** — A partitioned key's session keeps its partition and the guard, and a key sent beside another session answers as itself (design §CLXVI recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
 
 ## Block CA — Search response fields arrive as they were indexed
 
