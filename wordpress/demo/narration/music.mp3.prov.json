@@ -1,42 +1,33 @@
 {
   "artefact": {
-    "bytes": 481114,
+    "bytes": 3025023,
     "path": "demo/narration/music.mp3",
-    "sha256": "93e62241de148236a31f76929be8bffba9795ea15eefeb5c9079b27d67728c85"
+    "sha256": "ce12a49fbe4a75a1de7b85f02e4566fe871cf558a24ad3407152fead25f9190d"
   },
-  "balance_after": null,
-  "balance_before": null,
-  "bought": "sound",
-  "credits": 0.2,
-  "details": {
-    "cue": null,
-    "format": "mp3",
-    "influence": 0.3,
-    "loop": true,
-    "seconds": 30
+  "borrowed": {
+    "commit": null,
+    "path": "C:/Users/alexa/AppData/Local/Temp/claude/D--Git-viglet-dumont-2026-3/57db0c9e-2049-4263-9926-d15f0c88103e/scratchpad/music-candidate/monday-market-open.loop.mp3",
+    "project": null
   },
+  "credit": "Music: Monday Market Open, generated with Google Gemini (Lyria)",
   "elapsed_s": null,
   "engine": {
-    "commercial": true,
-    "model": "eleven_text_to_sound_v2",
-    "name": "elevenlabs",
-    "plan": "starter",
-    "tier": "starter"
+    "name": "provenance.borrow"
   },
-  "expected_credits": 0.2,
-  "inputs": [],
-  "kind": "fetch",
-  "measurements": {
-    "bytes": 481114,
-    "sha256": "93e62241de148236a31f76929be8bffba9795ea15eefeb5c9079b27d67728c85"
-  },
+  "inputs": [
+    {
+      "path": "C:/Users/alexa/AppData/Local/Temp/claude/D--Git-viglet-dumont-2026-3/57db0c9e-2049-4263-9926-d15f0c88103e/scratchpad/music-candidate/monday-market-open.loop.mp3",
+      "role": "borrowed",
+      "sha256": "ce12a49fbe4a75a1de7b85f02e4566fe871cf558a24ad3407152fead25f9190d"
+    }
+  ],
+  "kind": "borrow",
+  "licence": "Google Gemini generative AI terms; commercial use not confirmed",
+  "measurements": {},
   "params": {},
-  "produced_at": "2026-10-31T17:22:44Z",
+  "produced_at": "2026-11-03T22:43:44Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
-  },
-  "prompt": "soft warm ambient background music, gentle acoustic guitar and light pads, calm and hopeful, no drums, seamless loop",
-  "service": "elevenlabs",
-  "task_id": "elevenlabs:93e62241de148236"
+  }
 }
