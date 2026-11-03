@@ -908,6 +908,71 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         }
     }
 
+    /**
+     * T1209 — the admin routes a site sharing an SN site needs, over two partitions:
+     * a key reads the site's configuration and synonyms, cannot change the shared
+     * schema or synonyms, and its spotlights are its partition's alone.
+     */
+    @Test
+    void aPartitionedKeyReachesTheAdminRoutesInsideItsPartition() throws Exception {
+        String keyA = partitionedKey("a");
+        String keyB = partitionedKey("b");
+        var site = siteRepository.findByName(SITE).orElseThrow();
+        String spotlights = "/sn/" + site.getId() + "/spotlight";
+        String spotlightId = null;
+        try {
+            assertEquals(200, getWithKey("/sn/" + site.getId(), keyA).statusCode(),
+                    "key A reads the site configuration");
+            assertEquals(403, getWithKey("/sn/export", keyA).statusCode(), "the export carries every partition");
+
+            HttpResponse<String> change = postJson("/sn/manifest", """
+                    {"name":"%s","locales":["%s"],"fields":[{"name":"t1209_new","type":"STRING"}]}"""
+                    .formatted(SITE, LOCALE), keyA);
+            assertEquals(403, change.statusCode(), "key A must not change the shared schema: " + change.body());
+            assertTrue(change.body().contains("every partition shares"), change.body());
+
+            assertEquals(200, getWithKey("/sn/" + site.getId() + "/synonym", keyA).statusCode(),
+                    "key A reads the synonyms");
+            HttpResponse<String> synonym = postJson("/sn/" + site.getId() + "/synonym", "{}", keyA);
+            assertEquals(403, synonym.statusCode(), synonym.body());
+            assertTrue(synonym.body().contains("shared by every partition"), synonym.body());
+
+            HttpResponse<String> created = postJson(spotlights, """
+                    {"name":"t1209 pin","language":"en_US","turSNSite":{"id":"%s"},
+                     "partitionField":"%s","partitionValue":"t1133-b",
+                     "turSNSiteSpotlightTerms":[{"name":"t1209pin"}],
+                     "turSNSiteSpotlightDocuments":[{"position":1,"title":"t1209-pinned","type":"page",
+                     "link":"/t1209","referenceId":"t1209-pinned"}]}"""
+                    .formatted(site.getId(), RESERVED_FACET_FIELD), keyA);
+            assertEquals(200, created.statusCode(), created.body());
+            JsonNode spotlight = json.readTree(created.body());
+            spotlightId = spotlight.path("id").asString();
+            assertEquals("t1133-a", spotlight.path("partitionValue").asString(),
+                    "a spotlight is the creating key's partition's, whatever the body says");
+
+            assertTrue(getWithKey(spotlights, keyA).body().contains(spotlightId), "key A lists its spotlight");
+            assertTrue(!getWithKey(spotlights, keyB).body().contains(spotlightId), "key B listed A's spotlight");
+            assertEquals("false", deleteWithKey(spotlights + "/" + spotlightId, keyB).body().trim(),
+                    "key B deleted A's spotlight");
+
+            String pin = """
+                    {"q":"t1209pin","locale":"%s"}""".formatted(LOCALE);
+            assertTrue(postJson("/sn/" + SITE + "/search/query", pin, keyA).body().contains("t1209-pinned"),
+                    "key A's search shows its own spotlight");
+            assertTrue(!postJson("/sn/" + SITE + "/search/query", pin, keyB).body().contains("t1209-pinned"),
+                    "key B's search showed A's spotlight");
+        } finally {
+            if (spotlightId != null) {
+                deleteWithKey(spotlights + "/" + spotlightId, keyA);
+            }
+        }
+    }
+
+    private HttpResponse<String> deleteWithKey(String path, String key) throws Exception {
+        return http.send(HttpRequest.newBuilder(URI.create(base() + path)).header("Key", key).DELETE().build(),
+                BodyHandlers.ofString());
+    }
+
     private String partitionedKey(String partition) {
         TurDevToken token = new TurDevToken();
         token.setTitle("T1133 partition " + partition);

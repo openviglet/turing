@@ -10,8 +10,6 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
-- ⏳ **T1209** (deps: —) **A partitioned API key gets 403 on the manifest, SN site config, tuning, summary and AI probe routes** — Synonyms and promotions stored per partition, the AI probes, and TurSdkContractIT over two partitions are left. → §CLXV
-
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 ## Block BV — The quality gate stops at the package boundary
@@ -56,16 +54,6 @@
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
-
-## Done when — T1209
-
-- **Partitioned synonyms and promotions** A partition's spotlights apply only to its own
-  searches beside the unpartitioned ones, and synonyms are readable but refused to
-  write.
-- **AI probes confined** The AI probes Health runs answer a partitioned key without
-  reading another partition's documents.
-- **Two partitions in the SDK contract IT** TurSdkContractIT drives two partitions over
-  these routes and neither reaches the other's documents.
 
 ## Non-goals (do NOT add as tasks)
 

@@ -45,6 +45,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
@@ -261,6 +262,54 @@ class TurSNSpotlightProcessTest {
 
                 assertThat(result).containsKey(1);
                 assertThat(result.get(1)).hasSize(2);
+        }
+
+        /** T1209 — a partitioned search shows its own and site-wide spotlights, never another partition's. */
+        @Test
+        void testGetSpotlightsFromQueryKeepsAPartitionsSpotlightsToItsOwnSearches() {
+                TurSNSite spotlightSite = new TurSNSite();
+                spotlightSite.setName("demo-site");
+
+                TurSNSearchParams searchParams = new TurSNSearchParams();
+                searchParams.setQ("java");
+                searchParams.setLocale(Locale.US);
+                searchParams.setP(1);
+                searchParams.setRows(10);
+                TurSEParameters parameters = new TurSEParameters(searchParams);
+                parameters.setPartition(new TurSEPartition("site_key", "a"));
+                TurSNSiteSearchContext context = new TurSNSiteSearchContext("demo-site", new TurSNConfig(),
+                                parameters, Locale.US, URI.create("http://localhost/search?q=java"));
+
+                TurSNSiteSpotlight own = new TurSNSiteSpotlight();
+                own.bindTo(new TurSEPartition("site_key", "a"));
+                TurSNSiteSpotlight other = new TurSNSiteSpotlight();
+                other.bindTo(new TurSEPartition("site_key", "b"));
+                TurSNSiteSpotlight siteWide = new TurSNSiteSpotlight();
+                when(turSpotlightCache.findTermsBySNSiteAndLanguage("demo-site", Locale.US))
+                                .thenReturn(List.of(new TurSNSpotlightTermCacheBean("java", own),
+                                                new TurSNSpotlightTermCacheBean("java", other),
+                                                new TurSNSpotlightTermCacheBean("java", siteWide)));
+                TurSNSiteSpotlightDocument ownDoc = new TurSNSiteSpotlightDocument();
+                ownDoc.setPosition(1);
+                TurSNSiteSpotlightDocument otherDoc = new TurSNSiteSpotlightDocument();
+                otherDoc.setPosition(2);
+                TurSNSiteSpotlightDocument siteWideDoc = new TurSNSiteSpotlightDocument();
+                siteWideDoc.setPosition(3);
+                when(turSNSiteSpotlightDocumentRepository.findByTurSNSiteSpotlight(own)).thenReturn(Set.of(ownDoc));
+                org.mockito.Mockito.lenient().when(turSNSiteSpotlightDocumentRepository.findByTurSNSiteSpotlight(other))
+                                .thenReturn(Set.of(otherDoc));
+                when(turSNSiteSpotlightDocumentRepository.findByTurSNSiteSpotlight(siteWide))
+                                .thenReturn(Set.of(siteWideDoc));
+
+                TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSpotlightCache, turSNSiteLocaleRepository,
+                                new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
+
+                Map<Integer, List<TurSNSiteSpotlightDocument>> result = process.getSpotlightsFromQuery(context,
+                                spotlightSite);
+
+                assertThat(result).containsOnlyKeys(1, 3);
         }
 
         @Test

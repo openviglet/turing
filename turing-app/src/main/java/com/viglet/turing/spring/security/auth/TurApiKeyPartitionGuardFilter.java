@@ -67,8 +67,8 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
      * from the partition's documents), spell-check (no correction), the
      * thesaurus' related terms, result clicks, the JSON imports (each
      * document is stamped with the partition), and (T1209) the site
-     * configuration reads, the manifest and its plan, summaries and the AI
-     * probes.
+     * configuration reads, the manifest and its plan, summaries, the AI
+     * probes, the partition's own spotlights and the synonym reads.
      */
     static final List<Route> ENFORCED = List.of(
             new Route("GET", Pattern.compile(
@@ -97,7 +97,25 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
             // capabilities' vector probe says only whether the store holds a chunk,
             // so none returns a document. Chat, answer and nl-filters stay refused.
             new Route("GET", Pattern.compile(
-                    "^/api/sn/[^/]+/(?:ai/capabilities|chat/enabled|copilot/available|summary/available)$")));
+                    "^/api/sn/[^/]+/(?:ai/capabilities|chat/enabled|copilot/available|summary/available)$")),
+            // T1209 — spotlights: the API confines a partitioned key to its
+            // partition's own, and a search shows them only to that partition.
+            new Route("GET", Pattern.compile("^/api/sn/[^/]+/spotlight(?:/[^/]+)?$")),
+            new Route("POST", Pattern.compile("^/api/sn/[^/]+/spotlight$")),
+            new Route("PUT", Pattern.compile("^/api/sn/[^/]+/spotlight/[^/]+$")),
+            new Route("DELETE", Pattern.compile("^/api/sn/[^/]+/spotlight/[^/]+$")),
+            // T1209 — synonyms are one set per engine core, shared by every
+            // partition: readable, never written (see SHARED).
+            new Route("GET", Pattern.compile("^/api/sn/[^/]+/synonym(?:/[^/]+)?$")));
+
+    /**
+     * T1209 — routes a partitioned key is refused on for a reason of their own,
+     * named in the 403 so a client can say why rather than "not yet".
+     */
+    static final List<Route> SHARED = List.of(
+            new Route("POST", Pattern.compile("^/api/sn/[^/]+/synonym(?:/.*)?$")),
+            new Route("PUT", Pattern.compile("^/api/sn/[^/]+/synonym/.*$")),
+            new Route("DELETE", Pattern.compile("^/api/sn/[^/]+/synonym/.*$")));
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
@@ -110,8 +128,16 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
                 request.getRequestURI());
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write("{\"error\":\"This API key is bound to a partition of a shared site, "
-                + "and this endpoint does not enforce partitions yet\"}");
+        response.getWriter().write(shared(request.getMethod(), path(request))
+                ? "{\"error\":\"This API key is bound to a partition of a shared site, and the site's synonyms "
+                        + "are one set shared by every partition; change them with an unpartitioned key\"}"
+                : "{\"error\":\"This API key is bound to a partition of a shared site, "
+                        + "and this endpoint does not enforce partitions yet\"}");
+    }
+
+    /** T1209 — whether this request is refused because what it writes is shared by every partition. */
+    static boolean shared(String method, String uri) {
+        return SHARED.stream().anyMatch(route -> route.matches(method, uri));
     }
 
     /** Whether a partitioned key may make this request. */

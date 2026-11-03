@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.api.sn.queue.TurSpotlightContent;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
+import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
@@ -357,6 +358,14 @@ public class TurSNSpotlightProcess {
 				for (TurSNSiteSpotlightDocument document : turSNSiteSpotlightDocuments) {
 					TurSEResult turSEResult = turSolr.findById(turSolrInstance, turSNSite, document.getReferenceId(),
 							context);
+					// T1209 — findById is confined to the search's partition, so a
+					// pinned document of another partition comes back empty: it is
+					// left out rather than shown from the spotlight's stored fields.
+					if (context.getTurSEParameters().getPartition() != null
+							&& (turSEResult == null || turSEResult.getFields() == null
+									|| turSEResult.getFields().isEmpty())) {
+						continue;
+					}
 					if (turSEResult != null) {
 						TurSNUtils.addSNDocumentWithPosition(context.getUri(), fieldExtMap, facetMap,
 								turSNSiteSearchDocumentsBean, turSEResult, true, currentPositionFromList);
@@ -395,9 +404,13 @@ public class TurSNSpotlightProcess {
 		String userQuery = context.getTurSEParameters().getQuery();
 		Analyzer analyzer = analyzerFor(context.getLocale());
 		MemoryIndex userQueryIndex = buildUserQueryIndex(analyzer, userQuery);
+		// T1209 — a partition's spotlights show only in its own searches; a
+		// site-wide one shows in every search.
+		TurSEPartition partition = context.getTurSEParameters().getPartition();
 		turSpotlightCache.findTermsBySNSiteAndLanguage(turSNSite.getName(), context.getLocale())
 				.forEach(turSNSiteSpotlightTerm -> {
-					if (matchesByLuceneQuery(userQueryIndex, turSNSiteSpotlightTerm.getTerm(), analyzer)
+					if (turSNSiteSpotlightTerm.getSpotlight().appliesTo(partition)
+							&& matchesByLuceneQuery(userQueryIndex, turSNSiteSpotlightTerm.getTerm(), analyzer)
 							&& !turSNSiteSpotlights.contains(turSNSiteSpotlightTerm.getSpotlight())) {
 						turSNSiteSpotlights.add(turSNSiteSpotlightTerm.getSpotlight());
 					}

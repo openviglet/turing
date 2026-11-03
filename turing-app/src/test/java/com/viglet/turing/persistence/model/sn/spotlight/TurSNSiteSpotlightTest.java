@@ -35,6 +35,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 
 /**
@@ -282,5 +283,23 @@ class TurSNSiteSpotlightTest {
         assertThat(turSNSiteSpotlight.getModificationDate()).isNull();
         assertThat(turSNSiteSpotlight.getUnmanagedId()).isNull();
         assertThat(turSNSiteSpotlight.getLanguage()).isNull();
+    }
+
+    /** T1209 — a site-wide spotlight shows in every search, partitioned or not. */
+    @Test
+    void aSiteWideSpotlightAppliesToEverySearch() {
+        assertThat(turSNSiteSpotlight.partition()).isEmpty();
+        assertThat(turSNSiteSpotlight.appliesTo(null)).isTrue();
+        assertThat(turSNSiteSpotlight.appliesTo(new TurSEPartition("site_key", "a"))).isTrue();
+    }
+
+    /** T1209 — a partition's spotlight shows only in that partition's searches. */
+    @Test
+    void aPartitionsSpotlightAppliesOnlyToItsOwnSearches() {
+        turSNSiteSpotlight.bindTo(new TurSEPartition("site_key", "a"));
+
+        assertThat(turSNSiteSpotlight.appliesTo(new TurSEPartition("site_key", "a"))).isTrue();
+        assertThat(turSNSiteSpotlight.appliesTo(new TurSEPartition("site_key", "b"))).isFalse();
+        assertThat(turSNSiteSpotlight.appliesTo(null)).isFalse();
     }
 }

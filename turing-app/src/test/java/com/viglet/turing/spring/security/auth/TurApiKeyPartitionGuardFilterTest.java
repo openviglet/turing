@@ -76,7 +76,17 @@ class TurApiKeyPartitionGuardFilterTest {
             "POST, /api/sn/manifest/plan, true",
             "POST, /api/sn/manifest/derive, false",
             "POST, /api/v2/summary, true",
-            "GET, /api/sn/site-1/synonym, false",
+            "GET, /api/sn/site-1/synonym, true",
+            "GET, /api/sn/site-1/synonym/s1, true",
+            "POST, /api/sn/site-1/synonym, false",
+            "POST, /api/sn/site-1/synonym/apply, false",
+            "DELETE, /api/sn/site-1/synonym/s1, false",
+            "GET, /api/sn/site-1/spotlight, true",
+            "GET, /api/sn/site-1/spotlight/sp1, true",
+            "POST, /api/sn/site-1/spotlight, true",
+            "PUT, /api/sn/site-1/spotlight/sp1, true",
+            "DELETE, /api/sn/site-1/spotlight/sp1, true",
+            "GET, /api/sn/site-1/ranking-expression, false",
             "GET, /api/sn/shared/ai/capabilities, true",
             "GET, /api/sn/shared/chat/enabled, true",
             "GET, /api/sn/shared/copilot/available, true",
@@ -99,6 +109,21 @@ class TurApiKeyPartitionGuardFilterTest {
         filter.doFilter(request, response, chain);
 
         assertThat(response.getStatus()).isEqualTo(403);
+        assertThat(chain.getRequest()).isNull();
+    }
+
+    /** T1209 — a synonym write is refused for what it is: the set every partition shares. */
+    @Test
+    void refusesASynonymWriteNamingTheSharedSet() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/sn/site-1/synonym");
+        TurApiKeyPartitionContext.bind(request, partitioned());
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain chain = new MockFilterChain();
+
+        filter.doFilter(request, response, chain);
+
+        assertThat(response.getStatus()).isEqualTo(403);
+        assertThat(response.getContentAsString()).contains("shared by every partition");
         assertThat(chain.getRequest()).isNull();
     }
 

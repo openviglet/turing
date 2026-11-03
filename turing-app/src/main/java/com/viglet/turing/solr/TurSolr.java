@@ -239,6 +239,10 @@ public class TurSolr {
     public TurSEResult findById(TurSolrInstance turSolrInstance, TurSNSite turSNSite, String id,
             TurSNSiteSearchContext context) {
         SolrQuery query = new SolrQuery().setQuery(ID + ": \"" + id + "\"");
+        // T1209 — a partitioned search reads only its partition's documents by id too.
+        if (context != null && context.getTurSEParameters() != null) {
+            TurSolrQueryBuilder.preparePartition(context.getTurSEParameters().getPartition(), query);
+        }
         return executeSolrQuery(turSolrInstance, query)
                 .map(queryResponse -> queryResponse.getResults().stream().findFirst()
                         .map(solrDocument -> turSolrResultProcessor.createTurSEResult(

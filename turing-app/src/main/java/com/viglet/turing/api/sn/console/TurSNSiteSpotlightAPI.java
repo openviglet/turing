@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.persistence.dto.sn.spotlight.TurSNSiteSpotlightDto;
 import com.viglet.turing.persistence.mapper.sn.spotlight.TurSNSiteSpotlightMapper;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
@@ -45,6 +46,7 @@ import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightDocumentRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightTermRepository;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -98,12 +100,27 @@ public class TurSNSiteSpotlightAPI {
         evictionScheduler.clearOnce(TurSpotlightCache.SPOTLIGHT_TERM_CACHE);
     }
 
+    /**
+     * T1209 — the spotlight {@code id}, when the request may see it: any of them
+     * without a partitioned key, and only the partition's own with one, so a
+     * partitioned key never reads, changes or deletes another partition's or a
+     * site-wide spotlight.
+     */
+    private Optional<TurSNSiteSpotlight> visible(String id) {
+        Optional<TurSEPartition> partition = TurApiKeyPartitionContext.current();
+        return turSNSiteSpotlightRepository.findById(id)
+                .filter(spotlight -> partition.isEmpty() || spotlight.partition().equals(partition));
+    }
+
     @Operation(summary = "Semantic Navigation Site Spotlight List")
     @GetMapping
     public List<TurSNSiteSpotlightDto> turSNSiteSpotlightList(@PathVariable String ignoredSnSiteId) {
+        Optional<TurSEPartition> partition = TurApiKeyPartitionContext.current();
         return turSNSiteRepository.findById(ignoredSnSiteId)
                 .map(site -> turSNSiteSpotlightMapper.toDtoList(this.turSNSiteSpotlightRepository
-                        .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), site)))
+                        .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), site).stream()
+                        .filter(spotlight -> partition.isEmpty() || spotlight.partition().equals(partition))
+                        .toList()))
                 .orElse(Collections.emptyList());
     }
 
@@ -112,7 +129,7 @@ public class TurSNSiteSpotlightAPI {
     public TurSNSiteSpotlightDto turSNSiteSpotlightGet(@PathVariable String ignoredSnSiteId,
             @PathVariable String id) {
 
-        Optional<TurSNSiteSpotlight> turSNSiteSpotlight = turSNSiteSpotlightRepository.findById(id);
+        Optional<TurSNSiteSpotlight> turSNSiteSpotlight = visible(id);
         if (turSNSiteSpotlight.isPresent()) {
             turSNSiteSpotlight.get()
                     .setTurSNSiteSpotlightDocuments(turSNSiteSpotlightDocumentRepository
@@ -132,7 +149,7 @@ public class TurSNSiteSpotlightAPI {
         clearSpotlightCaches();
         TurSNSiteSpotlight turSNSiteSpotlight = turSNSiteSpotlightMapper.toEntity(turSNSiteSpotlightDto);
 
-        return turSNSiteSpotlightRepository.findById(id).map(turSNSiteSpotlightEdit -> {
+        return visible(id).map(turSNSiteSpotlightEdit -> {
             turSNSiteSpotlightEdit.setDescription(turSNSiteSpotlight.getDescription());
             turSNSiteSpotlightEdit.setLanguage(turSNSiteSpotlight.getLanguage());
             turSNSiteSpotlightEdit.setModificationDate(turSNSiteSpotlight.getModificationDate());
@@ -173,6 +190,9 @@ public class TurSNSiteSpotlightAPI {
     public boolean turSNSiteSpotlightDelete(@PathVariable String id,
             @PathVariable String ignoredSnSiteId) {
         clearSpotlightCaches();
+        if (TurApiKeyPartitionContext.current().isPresent() && visible(id).isEmpty()) {
+            return false;
+        }
         turSNSiteSpotlightRepository.deleteById(id);
         return true;
     }
@@ -184,6 +204,9 @@ public class TurSNSiteSpotlightAPI {
             @PathVariable String ignoredSnSiteId) {
         clearSpotlightCaches();
         TurSNSiteSpotlight turSNSiteSpotlight = turSNSiteSpotlightMapper.toEntity(turSNSiteSpotlightDto);
+        // T1209 — a partitioned key's spotlight is its partition's: it shows only
+        // in that partition's searches. Without one it is site-wide, as before.
+        turSNSiteSpotlight.bindTo(TurApiKeyPartitionContext.current().orElse(null));
         return turSNSiteSpotlightMapper.toDto(saveSpotlight(turSNSiteSpotlight, turSNSiteSpotlight));
     }
 

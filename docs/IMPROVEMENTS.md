@@ -2410,27 +2410,3 @@ counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
 What keeps a release from failing on its own tests for reasons the code under release
 did not cause.
-
-## CLXV Partitioned keys on the admin and AI routes (T1209)
-
-**Where it happened.** Dumont D190: several WordPress sites share one SN site
-(`site_key`), and each should hold only a key bound to its partition (T1133). The
-plugin's Tuning screen calls synonym and spotlight routes
-`TurApiKeyPartitionGuardFilter` does not enforce, so a partitioned key gets 403 there.
-
-**Shipped so far.** Site configuration reads, the manifest plan and a no-op re-post (a
-change gets 403), summaries cached per partition, and the AI probes that read no
-document.
-
-**Decision (the owner, 2026-11-03).** Synonyms are pushed to the engine as one resource
-per core (Solr managed synonyms, the ES synonym set), so a per-partition set would need
-a second, Turing-side expansion. Instead:
-
-- spotlights carry a partition: a partitioned key lists, creates and deletes only its own,
-  and a search applies its own plus the unpartitioned ones;
-- synonyms stay site-wide: a partitioned key may read them, and a write is refused with a
-  403 that says the set is shared by every partition;
-- ranking expressions stay refused.
-
-**What is left.** The spotlight partition (column, API filter, search match), the
-synonym read, and `TurSdkContractIT` over two partitions on these routes.

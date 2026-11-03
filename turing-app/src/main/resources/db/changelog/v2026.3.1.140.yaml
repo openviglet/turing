@@ -1,0 +1,27 @@
+databaseChangeLog:
+  # T1209 — a spotlight may belong to one partition of a shared SN site, the one
+  # of the API key that created it: it then applies only to that partition's
+  # searches. Both null = a site-wide spotlight, as every one made before this.
+  - changeSet:
+      id: v2026.3.1.140-01-sn-site-spotlight-partition
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sn_site_spotlight
+        - not:
+            - columnExists:
+                tableName: sn_site_spotlight
+                columnName: partitionField
+      changes:
+        - addColumn:
+            tableName: sn_site_spotlight
+            columns:
+              - column:
+                  name: partitionField
+                  type: varchar(255)
+                  remarks: "T1209 field of the partition this spotlight belongs to (e.g. site_key)."
+              - column:
+                  name: partitionValue
+                  type: varchar(255)
+                  remarks: "T1209 value of the partition this spotlight belongs to."

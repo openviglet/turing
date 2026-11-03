@@ -26,11 +26,13 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
@@ -96,6 +98,16 @@ public class TurSNSiteSpotlight implements Serializable {
     @Column
     private Locale language;
 
+    /** T1209 — the field of the partition this spotlight belongs to; {@code null}: site-wide. */
+    @Setter
+    @Column
+    private String partitionField;
+
+    /** T1209 — the value of the partition this spotlight belongs to; {@code null}: site-wide. */
+    @Setter
+    @Column
+    private String partitionValue;
+
     // bi-directional many-to-one association to TurSNSite
     @Setter
     @ManyToOne
@@ -117,6 +129,30 @@ public class TurSNSiteSpotlight implements Serializable {
         if (turSNSiteSpotlightTerms != null) {
             this.turSNSiteSpotlightTerms.addAll(turSNSiteSpotlightTerms);
         }
+    }
+
+    /** T1209 — the partition this spotlight belongs to, if any. */
+    public Optional<TurSEPartition> partition() {
+        if (partitionField == null || partitionField.isBlank() || partitionValue == null
+                || partitionValue.isBlank()) {
+            return Optional.empty();
+        }
+        return Optional.of(new TurSEPartition(partitionField, partitionValue));
+    }
+
+    /** T1209 — binds this spotlight to {@code partition}, or makes it site-wide when {@code null}. */
+    public void bindTo(TurSEPartition partition) {
+        this.partitionField = partition == null ? null : partition.field();
+        this.partitionValue = partition == null ? null : partition.value();
+    }
+
+    /**
+     * T1209 — whether a search confined to {@code partition} ({@code null}: an
+     * unpartitioned search) shows this spotlight. A site-wide spotlight shows in
+     * every search; a partition's own shows only in that partition's.
+     */
+    public boolean appliesTo(TurSEPartition partition) {
+        return partition().map(own -> own.equals(partition)).orElse(true);
     }
 
     public void setTurSNSiteSpotlightDocuments(Set<TurSNSiteSpotlightDocument> turSNSiteSpotlightDocuments) {
