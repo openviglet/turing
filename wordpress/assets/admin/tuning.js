@@ -580,13 +580,29 @@ function Promoted( { rows, act } ) {
  *
  * @param {Object}                                props        The props.
  * @param {?Object}                               props.boosts {recency, sticky, types}, null when Turing could not say.
+ * @param {string}                                props.off    Why this site's key cannot reach boosts (D190), or empty.
  * @param {Array<{name: string, label: string}>}  props.types  The indexed post types.
  * @param {(request: Object) => Promise<boolean>} props.act    Sends a change.
  */
-function Boosts( { boosts, types, act } ) {
+function Boosts( { boosts, off, types, act } ) {
 	const [ recency, setRecency ] = useState( !! boosts?.recency );
 	const [ sticky, setSticky ] = useState( !! boosts?.sticky );
 	const [ directions, setDirections ] = useState( boosts?.types || {} );
+
+	if ( off ) {
+		return (
+			<Card>
+				<CardHeader>
+					<h2>{ __( 'Boosts', 'viglet-turing-search' ) }</h2>
+				</CardHeader>
+				<CardBody>
+					<Notice status="info" isDismissible={ false }>
+						{ off }
+					</Notice>
+				</CardBody>
+			</Card>
+		);
+	}
 
 	return (
 		<Card>
@@ -761,6 +777,7 @@ function Tuning() {
 			<Boosts
 				key={ JSON.stringify( data.boosts ) }
 				boosts={ data.boosts }
+				off={ data.boosts_off || '' }
 				types={ data.types }
 				act={ act }
 			/>

@@ -616,6 +616,41 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * What a non-2xx answer says. A 403 with Turing's own reason says it (D190): a key bound
+	 * to this site's partition is refused where Turing cannot confine it, and the reason names
+	 * why, such as a set every site sharing the SN site shares.
+	 *
+	 * @param array $response The response.
+	 */
+	private static function refusal( array $response ): string {
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+		if ( 403 === $code && is_array( $body ) && is_string( $body['error'] ?? null ) && '' !== $body['error'] ) {
+			/* translators: %s: Turing's reason for refusing the request. */
+			return sprintf( __( 'Turing refused this site’s API key here: %s', 'viglet-turing-search' ), rtrim( $body['error'], '.' ) . '.' );
+		}
+
+		/* translators: %d: the HTTP status Turing answered with. */
+		return sprintf( __( 'Turing answered HTTP %d.', 'viglet-turing-search' ), $code );
+	}
+
+	/**
+	 * Whether an error is Turing refusing a key bound to this site's partition (D190): the
+	 * feature behind it is off for this site, not broken.
+	 *
+	 * @param mixed $error What a call returned.
+	 */
+	public static function refused_by_partition( $error ): bool {
+		if ( ! is_wp_error( $error ) ) {
+			return false;
+		}
+		$data = $error->get_error_data();
+
+		return is_array( $data ) && 403 === (int) ( $data['status'] ?? 0 )
+			&& str_contains( $error->get_error_message(), 'partition' );
+	}
+
+	/**
 	 * A JSON answer as an array: an error for a failed request, an empty array for a 404
 	 * (Turing's "not in the index").
 	 *
@@ -631,8 +666,7 @@ class Viglet_Dumont_API_Client {
 			return array();
 		}
 		if ( $code < 200 || $code >= 300 ) {
-			/* translators: %d: the HTTP status Turing answered with. */
-			return new WP_Error( 'viglet_dumont_http', sprintf( __( 'Turing answered HTTP %d.', 'viglet-turing-search' ), $code ) );
+			return new WP_Error( 'viglet_dumont_http', self::refusal( $response ), array( 'status' => $code ) );
 		}
 		$decoded = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 
@@ -641,13 +675,85 @@ class Viglet_Dumont_API_Client {
 
 	/**
 	 * Which of Turing's AI features this SN site can use (D169), each with the reason when it
-	 * is off. Chat and the catalog copilot have a probe; answer and natural-language filters
-	 * do not (Turing T1123), so this reads the start of an answer stream and parses a short
-	 * phrase, which spends LLM calls when they are on. Call it on demand, never per page.
+	 * is off. Turing's capabilities probe answers all four from configuration, without calling
+	 * a model, and a key bound to the site's partition may read it (Turing T1209, D190). A
+	 * Turing without it falls back to the probes below. Call it on demand, never per page.
 	 *
 	 * @return array<int, array{feature: string, on: bool, reason: string}>
 	 */
 	public function ai_features(): array {
+		$site         = '/api/sn/' . rawurlencode( $this->site_name );
+		$capabilities = $this->request( 'GET', $site . '/ai/capabilities' );
+		if ( ! is_wp_error( $capabilities ) && 200 === (int) wp_remote_retrieve_response_code( $capabilities ) ) {
+			$decoded = json_decode( (string) wp_remote_retrieve_body( $capabilities ), true );
+			if ( is_array( $decoded ) ) {
+				return self::capabilities( $decoded );
+			}
+		}
+
+		return $this->probed_ai_features();
+	}
+
+	/**
+	 * The four rows from Turing's capabilities answer: `{chat, answer, nlFilters, copilot}`,
+	 * each `{enabled, reason}` with the reason as Turing's enum name.
+	 *
+	 * @param array $capabilities The decoded answer.
+	 * @return array<int, array{feature: string, on: bool, reason: string}>
+	 */
+	private static function capabilities( array $capabilities ): array {
+		$rows = array();
+		foreach ( array(
+			'answer'     => 'answer',
+			'chat'       => 'chat',
+			'nl_filters' => 'nlFilters',
+			'copilot'    => 'copilot',
+		) as $feature => $key ) {
+			$capability = (array) ( $capabilities[ $key ] ?? array() );
+			$on         = ! empty( $capability['enabled'] );
+			$rows[]     = array(
+				'feature' => $feature,
+				'on'      => $on,
+				'reason'  => $on ? '' : self::ai_reason( $feature, (string) ( $capability['reason'] ?? '' ) ),
+			);
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Why an AI feature is off, in words, from the reason Turing names it by.
+	 *
+	 * @param string $feature The feature.
+	 * @param string $reason  Turing's reason, e.g. `NO_GENAI`.
+	 */
+	private static function ai_reason( string $feature, string $reason ): string {
+		$reasons = array(
+			'NO_GENAI'          => __( 'Generative AI is off for this SN site in Turing.', 'viglet-turing-search' ),
+			'NO_AGENT'          => __( 'The SN site has no AI agent in Turing.', 'viglet-turing-search' ),
+			'AGENT_DISABLED'    => __( 'The SN site’s AI agent is turned off in Turing.', 'viglet-turing-search' ),
+			'RAG_DISABLED'      => __( 'The SN site’s AI agent does not answer from the site’s content.', 'viglet-turing-search' ),
+			'MISSING_LLM'       => __( 'The SN site’s AI agent has no language model.', 'viglet-turing-search' ),
+			'MISSING_EMBEDDING' => __( 'The SN site’s AI agent has no embedding model.', 'viglet-turing-search' ),
+			'MISSING_STORE'     => __( 'The SN site’s AI agent has no vector store.', 'viglet-turing-search' ),
+		);
+		if ( 'MISSING_DEFAULT_LLM' === $reason ) {
+			return 'copilot' === $feature
+				? __( 'Turing has no catalog copilot set up.', 'viglet-turing-search' )
+				: __( 'No language model is set up for it in Turing.', 'viglet-turing-search' );
+		}
+
+		return $reasons[ $reason ] ?? $reason;
+	}
+
+	/**
+	 * The AI features from one probe each, for a Turing without the capabilities probe. Answer
+	 * and natural-language filters have none (Turing T1123), so this reads the start of an
+	 * answer stream and parses a short phrase, which spends LLM calls when they are on.
+	 *
+	 * @return array<int, array{feature: string, on: bool, reason: string}>
+	 */
+	private function probed_ai_features(): array {
 		$site        = '/api/sn/' . rawurlencode( $this->site_name );
 		$json        = static function ( $response ): ?array {
 			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
@@ -680,6 +786,9 @@ class Viglet_Dumont_API_Client {
 		$answer_reason = '';
 		if ( is_wp_error( $answer ) ) {
 			$answer_reason = $answer->get_error_message();
+		} elseif ( 200 !== (int) wp_remote_retrieve_response_code( $answer ) ) {
+			// A refusal is not a stream: without this, a 403's body read as "on".
+			$answer_reason = self::refusal( $answer );
 		} elseif ( $error ) {
 			$answer_reason = (string) ( json_decode( $error[1], true )['message'] ?? '' );
 		} elseif ( '' === $stream ) {

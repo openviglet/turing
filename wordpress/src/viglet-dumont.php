@@ -79,7 +79,8 @@ function viglet_dumont_public_config(): array {
 /**
  * Which of Turing's AI features this site can use, for Health and `wp dumont ai status`: each
  * row with a label, whether it is on, the reason when it is not, and what to do about it.
- * It spends LLM calls when features are on (Turing T1123), so it runs on demand only.
+ * Against a Turing without the capabilities probe it spends LLM calls when features are on
+ * (Turing T1123), so it runs on demand only.
  *
  * @return array<int, array{feature: string, label: string, on: bool, reason: string, fix: string}>
  */

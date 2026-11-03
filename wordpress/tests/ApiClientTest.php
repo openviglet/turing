@@ -187,6 +187,99 @@ final class ApiClientTest extends PluginTestCase {
 		$this->assertSame( 512, $answer[1]['limit_response_size'] );
 	}
 
+	public function test_ai_features_read_turings_capabilities_in_one_call_when_it_has_them(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode(
+						array(
+							'site'      => 'Sample',
+							'chat'      => array(
+								'enabled' => false,
+								'reason'  => 'NO_GENAI',
+							),
+							'answer'    => array(
+								'enabled' => false,
+								'reason'  => 'NO_GENAI',
+							),
+							'nlFilters' => array(
+								'enabled' => false,
+								'reason'  => 'MISSING_DEFAULT_LLM',
+							),
+							'copilot'   => array(
+								'enabled' => true,
+								'reason'  => 'NONE',
+							),
+						)
+					),
+				);
+			}
+		);
+
+		$rows = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ai_features();
+
+		$this->assertSame(
+			array(
+				'answer'     => array( false, 'Generative AI is off for this SN site in Turing.' ),
+				'chat'       => array( false, 'Generative AI is off for this SN site in Turing.' ),
+				'nl_filters' => array( false, 'No language model is set up for it in Turing.' ),
+				'copilot'    => array( true, '' ),
+			),
+			array_combine(
+				array_column( $rows, 'feature' ),
+				array_map( static fn ( $row ) => array( $row['on'], $row['reason'] ), $rows )
+			)
+		);
+		$this->assertCount( 1, $this->requests, 'one probe, and no model is called' );
+		$this->assertStringEndsWith( '/ai/capabilities', $this->requests[0][0] );
+	}
+
+	public function test_a_refused_answer_probe_is_off_with_turings_reason_not_on(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url ) {
+				if ( str_contains( $url, '/answer' ) ) {
+					return array(
+						'response' => array( 'code' => 403 ),
+						'body'     => '{"error":"This API key is bound to a partition of a shared site, and this endpoint does not enforce partitions yet"}',
+					);
+				}
+				return array(
+					'response' => array( 'code' => 404 ),
+					'body'     => '',
+				);
+			}
+		);
+
+		$answer = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ai_features()[0];
+
+		$this->assertSame( 'answer', $answer['feature'] );
+		$this->assertFalse( $answer['on'], 'a 403 body is not an answer stream' );
+		$this->assertStringContainsString( 'bound to a partition', $answer['reason'] );
+	}
+
+	public function test_a_partition_refusal_is_told_apart_from_other_failures(): void {
+		$answer = static fn ( int $code, string $body ) => Functions\when( 'wp_remote_request' )->justReturn(
+			array(
+				'response' => array( 'code' => $code ),
+				'body'     => $body,
+			)
+		);
+		$answer( 403, '{"error":"This API key is bound to a partition of a shared site, and this endpoint does not enforce partitions yet"}' );
+
+		$refused = ( new Viglet_Dumont_API_Client( $this->settings() ) )->call( 'GET', '/api/sn/s1/ranking-expression' );
+
+		$this->assertTrue( Viglet_Dumont_API_Client::refused_by_partition( $refused ) );
+		$this->assertStringContainsString( 'does not enforce partitions yet', $refused->get_error_message() );
+
+		$answer( 500, '' );
+		$failed = ( new Viglet_Dumont_API_Client( $this->settings() ) )->call( 'GET', '/api/sn/s1/ranking-expression' );
+
+		$this->assertFalse( Viglet_Dumont_API_Client::refused_by_partition( $failed ) );
+		$this->assertSame( 'Turing answered HTTP 500.', $failed->get_error_message() );
+	}
+
 	public function test_an_import_answered_with_an_error_status_is_a_failure(): void {
 		$this->status = 422;
 

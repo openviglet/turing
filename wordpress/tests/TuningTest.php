@@ -145,4 +145,94 @@ final class TuningTest extends PluginTestCase {
 			$this->calls()
 		);
 	}
+
+	/**
+	 * Turing's 403 for a key bound to this site's partition.
+	 *
+	 * @param string $error Turing's reason.
+	 */
+	private function refuse_with( string $error ): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) use ( $error ) {
+				$this->requests[] = array( $url, $args );
+				$path             = (string) parse_url( $url, PHP_URL_PATH );
+				if ( '/api/sn' === $path ) {
+					return array(
+						'response' => array( 'code' => 200 ),
+						'body'     => json_encode(
+							array(
+								array(
+									'id'   => 's1',
+									'name' => 'sample site',
+								),
+							)
+						),
+					);
+				}
+				if ( 'GET' === $args['method'] && in_array( $path, array( '/api/sn/s1/synonym', '/api/sn/s1/spotlight' ), true ) ) {
+					return array(
+						'response' => array( 'code' => 200 ),
+						'body'     => '[]',
+					);
+				}
+				return array(
+					'response' => array( 'code' => 403 ),
+					'body'     => json_encode( array( 'error' => $error ) ),
+				);
+			}
+		);
+	}
+
+	public function test_boosts_are_off_and_say_why_when_the_sites_key_is_bound_to_its_partition(): void {
+		$this->refuse_with( 'This API key is bound to a partition of a shared site, and this endpoint does not enforce partitions yet' );
+
+		Functions\when( 'get_post_type_object' )->justReturn( null );
+
+		$all = ( new Viglet_Dumont_Tuning( $this->settings() ) )->all();
+
+		$this->assertNull( $all['boosts'] );
+		$this->assertStringContainsString( 'bound to a partition of a shared site', $all['boosts_off'] );
+	}
+
+	public function test_a_refused_synonym_names_turings_reason(): void {
+		$this->refuse_with( 'This API key is bound to a partition of a shared site, and the site\'s synonyms are one set shared by every partition; change them with an unpartitioned key' );
+
+		$result = ( new Viglet_Dumont_Tuning( $this->settings() ) )->add_synonym( array( 'lecture', 'talk' ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertStringContainsString( 'shared by every partition', $result->get_error_message() );
+		$this->assertNotContains( 'POST /api/sn/s1/synonym/apply', $this->calls(), 'nothing is applied after a refusal' );
+	}
+
+	public function test_boosts_turing_could_not_read_for_another_reason_are_not_off(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url ) {
+				$path = (string) parse_url( $url, PHP_URL_PATH );
+				if ( '/api/sn/s1/ranking-expression' === $path ) {
+					return array(
+						'response' => array( 'code' => 500 ),
+						'body'     => '',
+					);
+				}
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode(
+						'/api/sn' === $path ? array(
+							array(
+								'id'   => 's1',
+								'name' => 'sample site',
+							),
+						) : array()
+					),
+				);
+			}
+		);
+
+		Functions\when( 'get_post_type_object' )->justReturn( null );
+
+		$all = ( new Viglet_Dumont_Tuning( $this->settings() ) )->all();
+
+		$this->assertNull( $all['boosts'] );
+		$this->assertSame( '', $all['boosts_off'] );
+	}
 }

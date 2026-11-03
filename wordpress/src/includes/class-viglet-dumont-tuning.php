@@ -116,6 +116,9 @@ class Viglet_Dumont_Tuning {
 			'synonyms'   => $synonym_rows,
 			'spotlights' => $spotlight_rows,
 			'boosts'     => is_wp_error( $boosts ) ? null : $boosts,
+			// D190: a key bound to this site's partition cannot reach the ranking expressions,
+			// which apply to every site sharing the SN site, so boosts are off and say why.
+			'boosts_off' => Viglet_Dumont_API_Client::refused_by_partition( $boosts ) ? $boosts->get_error_message() : '',
 			'types'      => array_map(
 				static fn ( string $type ) => array(
 					'name'  => $type,
