@@ -60,7 +60,12 @@ if not resolve then
 end
 
 local manager = resolve:GetProjectManager()
-local project = manager:LoadProject(NAME) or manager:CreateProject(NAME)
+-- The project already open is used as it is: loading the open project again fails, creating one
+-- under a name taken fails too, and the second run of this script stopped there.
+local open = manager:GetCurrentProject()
+local project = (open and open:GetName() == NAME and open)
+	or manager:LoadProject(NAME)
+	or manager:CreateProject(NAME)
 if not project then
 	say("could not open or create the project " .. NAME)
 	return
@@ -157,3 +162,28 @@ if log then
 		log:close()
 	end)
 end
+
+-- What it did, in a window: a script run from the Scripts menu prints nowhere a person sees,
+-- and Resolve may not let it write the log either.
+pcall(function()
+	local fusionApp = fu or fusion or (resolve and resolve:Fusion())
+	local ui = fusionApp.UIManager
+	local dispatcher = bmd.UIDispatcher(ui)
+	local window = dispatcher:AddWindow({
+		ID = "VigletFinish",
+		WindowTitle = "Viglet finish: " .. NAME,
+		Geometry = { 200, 200, 760, 320 },
+	}, ui:VGroup({
+		ui:TextEdit({ ID = "Report", ReadOnly = true, Text = table.concat(logged, "\n") }),
+		ui:Button({ ID = "Close", Text = "Close", Weight = 0 }),
+	}))
+	function window.On.VigletFinish.Close()
+		dispatcher:ExitLoop()
+	end
+	function window.On.Close.Clicked()
+		dispatcher:ExitLoop()
+	end
+	window:Show()
+	dispatcher:RunLoop()
+	window:Hide()
+end)
