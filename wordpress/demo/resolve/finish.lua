@@ -25,7 +25,14 @@ local function say(text)
 	print("finish: " .. text)
 end
 
-local resolve = (Resolve and Resolve()) or bmd.scriptapp("Resolve")
+-- Everything below runs inside pcall, so a failure says why in the Console instead of ending
+-- the script without a word, which is what a menu script does on an error.
+local function finish()
+-- The Console gives `resolve` (or `Resolve()`); a script from the Scripts menu gets `bmd`.
+local resolve = resolve
+	or (type(Resolve) == "function" and Resolve())
+	or (bmd and bmd.scriptapp("Resolve"))
+	or (fusion and fusion.GetResolve and fusion:GetResolve())
 if not resolve then
 	say("no Resolve to talk to; run this from inside DaVinci Resolve")
 	return
@@ -113,3 +120,11 @@ project:SetRenderSettings({
 local job = project:AddRenderJob()
 say((job and job ~= "") and "render queued on the Deliver page" or "the render was not queued")
 manager:SaveProject()
+say("done: project " .. NAME .. " is open with the timeline")
+end
+
+say("starting, " .. NAME)
+local ok, problem = pcall(finish)
+if not ok then
+	say("stopped: " .. tostring(problem))
+end
