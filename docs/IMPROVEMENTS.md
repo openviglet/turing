@@ -2444,6 +2444,30 @@ repeat in code.
 `sourceWords`, and `q` drops them, covered by a test per bound form and per language the
 lexicon ships.
 
+### CLXII.10 Copilot citations carry the document type (T1212)
+
+**Where it happened.** Dumont's WordPress plugin, the Ask the catalog block on the
+Tarnfell demo store (SN site `tarnfell`), 2026-11-03 (Dumont D288).
+
+**The request.** `POST /api/sn/tarnfell/copilot` with a product question. The answer
+cited five guides (posts) beside the product.
+
+**What came back.** Each citation is `TurCatalogCitation(rank, id, title, url,
+rankingExplanation)`: nothing says which document type it is. The kit's request names
+`guideTypes` and `productTypes` (T1167, T1175) and its answer separates `guides` from
+staged products, but the copilot's citations are one undifferentiated list.
+
+**Expected.** Each citation carries the document's `type` (the indexed `type` field), so
+a client can render a product as a product (price, cart, compare) and a guide as a link
+without asking another system.
+
+**Workaround.** Dumont D288 prices every cited id in one WooCommerce Store API list call
+and treats whatever the shop does not return as a non-product. That works only where the
+client has a shop to ask; any other client of the copilot has no way to tell.
+
+**What Turing should do.** Add `type` to `TurCatalogCitation` (and to the JS and Java
+SDK types), filled from the document's indexed type, covered by the copilot API test.
+
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release
