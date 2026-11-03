@@ -71,9 +71,12 @@ Credits for all of it: `demo/seed/CREDITS.md`.
    version runs scripts only from inside the app: copy it into
    `%APPDATA%\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Utility\`, restart
    Resolve, and pick it under Workspace > Scripts with the Console open. It creates
-   the project `story.<lang>`, imports the timeline, prints how many clips came in offline,
-   adds the captions as a subtitle track, applies the Fairlight preset "Viglet story voice"
-   when one is saved, and queues a YouTube render without starting it.
+   the project `story.<lang>` (or uses it, when it is the one open), imports the timeline
+   under a new dated name, applies the Fairlight preset "Viglet story voice" when one is
+   saved, queues a YouTube render without starting it, and shows what it did in a window:
+   a script from that menu prints nowhere and may not write files. The captions are the one
+   step by hand: Resolve 21 drops FCPXML captions and its API will not import an `.srt`, so
+   File > Import > Subtitle, then `story.<lang>.srt` in the project folder.
 7. **The clips** (D279): `--chapter 2`, `3` and `5` are the ones to publish (a sentence read as
    a price filter, the Site assistant with its sources, the kit). Each opens on the chapter's
    title under the product's name, plays the chapter with both of Ana's lines, holds the result

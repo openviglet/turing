@@ -1828,28 +1828,8 @@ const writeProject = ( total ) => {
 			) }" name="music" audioRole="music"><adjust-volume><param name="amount"><keyframeAnimation>${ keys }</keyframeAnimation></param></adjust-volume></asset-clip>`
 		);
 	}
-	// The narration's captions as FCPXML captions, the same cues as the .srt: Resolve's scripting
-	// API imports media but would not import the .srt, so the timeline carries them itself (D293).
-	const captionLanguage = videoLanguage.split( '-' )[ 0 ];
-	[ ...( spoken[ videoLanguage ] ?? [] ) ]
-		.sort( ( a, b ) => a.at - b.at )
-		.flatMap( captionCues )
-		.forEach( ( cue, n ) => {
-			const item = holder( cue.from );
-			item.anchored.push(
-				`<caption lane="3" offset="${ time(
-					local( item, cue.from )
-				) }" start="0s" duration="${ time(
-					cue.to - cue.from
-				) }" role="SRT?captionFormat=SRT.${ captionLanguage }"><text placement="bottom"><text-style ref="caption-style">${ xml(
-					cue.text
-				) }</text-style></text>${
-					0 === n
-						? '<text-style-def id="caption-style"><text-style font="Arial" fontSize="13" fontColor="1 1 1 1" backgroundColor="0 0 0 1"/></text-style-def>'
-						: ''
-				}</caption>`
-			);
-		} );
+	// No captions here: Resolve 21 drops FCPXML <caption> on import (tried, D293), and its scripting
+	// API will not import an .srt. The .srt beside the project is imported by hand.
 	for ( const cue of cues ) {
 		const { number, name } = parts[ cue.chapter ];
 		const item = holder( cue.from );

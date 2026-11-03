@@ -110,20 +110,11 @@ say(string.format(
 	(#offline > 0) and (": " .. table.concat(offline, ", ", 1, math.min(#offline, 10))) or ""
 ))
 
--- The narration's captions: the FCPXML carries them as captions, which Resolve imports onto a
--- subtitle track; the .srt is the fallback where it did not.
-local captions = {}
-if timeline:GetTrackCount("subtitle") > 0 then
-	say(string.format(
-		"captions came in with the timeline: %d on the subtitle track",
-		#(timeline:GetItemListInTrack("subtitle", 1) or {})
-	))
-else
-	captions = pool:ImportMedia({ SRT }) or {}
-end
-if timeline:GetTrackCount("subtitle") > 0 and not captions[1] then
-	-- Nothing to do: placed above.
-elseif captions[1] then
+-- The narration's captions. Resolve 21 neither imports FCPXML captions nor lets this API import
+-- an .srt (both tried, D293), so where the import below comes back empty the report says which
+-- file to import by hand: File > Import > Subtitle.
+local captions = pool:ImportMedia({ SRT }) or {}
+if captions[1] then
 	if timeline:GetTrackCount("subtitle") < 1 then
 		timeline:AddTrack("subtitle")
 	end
@@ -131,7 +122,7 @@ elseif captions[1] then
 	say((placed and next(placed)) and "captions on the subtitle track"
 		or "captions imported, not placed: drag them onto the timeline")
 else
-	say("could not import " .. SRT)
+	say("captions: import them by hand, File > Import > Subtitle, then " .. SRT)
 end
 
 local saved = false
