@@ -36,12 +36,7 @@ said back as *Understood: …*, and the box keeps the words that are left.
   `light rain jacket`, rain jackets first.
 - pt_BR: `jaqueta de chuva leve até R$ 400` → *Entendido: Price: ≤ 400*.
 
-Then she misspells a name and the search offers the correction, and she tries a word the
-shop does not use, which finds nothing (chapter 8 comes back to it).
-
-- `helvelyn` → the correction `helvellyn`.
-- en_US: `bothy bag` → no results.
-- pt_BR: `abrigo de emergência` → no results.
+The chapter ends there: every search the story makes is one Ana talks about (D289).
 
 ## 3. Asks
 
@@ -89,9 +84,9 @@ The shop owner's view of the same visit.
 - **Compare searches**: `raincoat` (pt_BR: `puffer`) on WordPress's own search finds
   nothing; Turing finds the jackets through a synonym.
 - **Search insights** (wp-admin, today): her searches are among the top ones, and a search
-  that found nothing, `bothy bag` (`abrigo de emergência`), is listed with **Add a
-  synonym**, which opens Search tuning with it filled in. She saves `bothy bag, bivvy bag`
-  (`abrigo de emergência, bivaque`), so the next shopper who asks for one finds the
-  Coniston bivvy bag. (The story saves the synonym and does not
+  from the store's history that found nothing, `bothy bag` (`cantil`), is listed with **Add
+  a synonym**, which opens Search tuning with it filled in. She saves `bothy bag, bivvy bag`
+  (`cantil, garrafa térmica`), so the next shopper who asks for one finds what the shop
+  calls it. (The story saves the synonym and does not
   search with it: a search that finds something leaves the "found nothing" list for the
   day, and the story must replay.)

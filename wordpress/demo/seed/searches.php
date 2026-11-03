@@ -19,10 +19,10 @@ if ( get_option( $flag ) ) {
 	return;
 }
 
-// What people look for, most first. Every one finds something but, in Portuguese, "cantil": a
-// word the shop does not use for its insulated bottle, which the story's chapter 8 finds among
-// the searches that found nothing and turns into a synonym. The English story searches its own
-// ("bothy bag") during the visit.
+// What people look for, most first. Every one finds something but the last: a word the shop
+// does not use ("cantil" for its insulated bottle, "bothy bag" for its emergency shelter), which
+// the story's chapter 8 finds among the searches that found nothing and turns into a synonym.
+// The visit itself makes no search that finds nothing (D289).
 $searches = 'pt_BR' === get_locale()
 	? array(
 		'barraca'              => 14,
@@ -46,6 +46,7 @@ $searches = 'pt_BR' === get_locale()
 		'head torch'           => 4,
 		'trekking poles'       => 3,
 		'insulated bottle'     => 2,
+		'bothy bag'            => 2,
 	);
 
 $client = new Viglet_Dumont_API_Client( $settings );

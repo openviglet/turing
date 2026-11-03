@@ -63,6 +63,13 @@ Credits for all of it: `demo/seed/CREDITS.md`.
   probe a store with `populateMetrics: false`, or on another site.
 - A take is placed only if its `.prov.json` says the current line, voice and model: change a line,
   buy it again.
+- The Turing image must carry T1190, T1191, T1196 and T1200 (`ghcr.io/openviglet/turing`
+  2026.3.8 or later). A `latest` pulled before 2026-11-02 lacks T1200, so it counts every
+  sentence the block searches uncounted, and chapter 8 lists it as a failed search:
+  `docker pull ghcr.io/openviglet/turing:latest`, then `docker compose up -d turing`.
+- Chapter 8 shows today's insights, so the store's own tests and probes show there too. Before
+  recording, clear the SN site's metrics (`DELETE /api/sn/<site id>/metrics`, T1195), delete
+  the `tarnfell_searches_<site>` option and run `demo/seed/searches.php` again.
 - The Playground blueprint indexes into the same SN site, `tarnfell`, under the site key
   `tarnfell`, while the local store's key is `localhost`. A local Playground run leaves a second
   copy of the catalog there, and Build my kit (which has no site filter) shows every product

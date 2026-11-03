@@ -24,11 +24,11 @@ const words = {
 		need: 'a two-person tent under $400',
 		understood: 'Price: ≤ 400',
 		needFound: /tent/i,
-		misspelt: 'helvelyn',
-		// A word the shop does not use. It must never find anything, or it leaves the
-		// insights' "found nothing" list for the day and the story cannot replay: so chapter 8
-		// saves the synonym and does not search with it.
-		nothing: 'bothy bag',
+		// No failed search of her own (D289): chapter 8 fixes one from the store's history
+		// (demo/seed/searches.php), a word the shop does not use. It must never find anything,
+		// or it leaves the "found nothing" list and the story cannot replay: so chapter 8 saves
+		// the synonym and does not search with it.
+		logged: 'bothy bag',
 		// One of the curated prompts (demo/theme/tarnfell/ai-prompts.json), and the guide it cites.
 		question: 'What size backpack do I need for a night in a hut?',
 		cites: 'What size backpack do you need?',
@@ -78,7 +78,6 @@ const words = {
 		need: 'uma barraca para duas pessoas até R$ 2.200',
 		understood: 'Preço: ≤ 2200',
 		needFound: /barraca/i,
-		misspelt: 'helvelyn',
 		// No failed search of her own: chapter 8 fixes one from the store's history
 		// (demo/seed/searches.php), a word the shop does not use for its insulated bottle. It was
 		// "bastão de caminhada" until Turing T1196 matched a singular to its plural.
@@ -168,7 +167,7 @@ const dropSynonym = () =>
 	demo( [
 		'eval',
 		`$term = json_decode( '${ ascii(
-			story().logged ?? story().nothing
+			story().logged
 		) }' ); $t = new Viglet_Dumont_Tuning();` +
 			' foreach ( $t->all()["synonyms"] as $s ) { if ( in_array( $term, $s["terms"], true ) ) { $t->remove_synonym( $s["id"] ); } }',
 	] );
@@ -355,28 +354,9 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		).toContainText( say.understood );
 		await expect( titles.first() ).toHaveText( say.needFound );
 		await answered( block.locator( '.viglet-dumont-search__answer-text' ) );
+		// The chapter ends on its result: every search the story makes is one Ana talks about
+		// (D289). A typo searched as corrected is site/search.spec.mjs's to show.
 		await highlight();
-
-		// A typo is searched as corrected (D259): the shopper sees the products, not an
-		// empty page with a suggestion.
-		await search( page, say.misspelt );
-		await expect(
-			block.locator( '.viglet-dumont-search__showing-for' )
-		).toContainText( 'helvellyn' );
-		await expect( titles.first() ).toBeVisible();
-		await linger();
-
-		// A search the shopper makes that finds nothing, for chapter 8 to fix. The pt_BR story
-		// has none: its store's own history already holds one, so the visit never shows an
-		// empty page.
-		if ( say.nothing ) {
-			await search( page, say.nothing );
-			await expect(
-				block.locator( '.viglet-dumont-search__summary' )
-			).not.toBeEmpty();
-			await expect( titles ).toHaveCount( 0 );
-			await linger( 2.5 );
-		}
 	} );
 
 	await chapter(
@@ -585,7 +565,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			).not.toHaveCount( 0 );
 			await linger();
 			// The search as Turing logged it, which can differ from how she typed it.
-			const logged = say.logged ?? say.nothing;
+			const logged = say.logged;
 			const row = card( ui.failed )
 				.locator( 'tr' )
 				.filter( { hasText: logged } );
