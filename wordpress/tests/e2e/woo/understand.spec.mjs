@@ -97,6 +97,47 @@ test( "Turing's reading and the price read in code apply together", async ( {
 	await expect( box( page ) ).toHaveValue( 'jacket' );
 } );
 
+test( 'a price Turing read but the block dropped leaves none of its words behind', async ( {
+	page,
+} ) => {
+	// D285: Turing takes only the amount out of its query, and its price comes back ungrounded,
+	// so the block applies its own reading of "under $100" instead.
+	await page.route( '**/nl-filters', ( route ) =>
+		route.fulfill( {
+			json: {
+				available: true,
+				text: 'jacket under $100',
+				q: 'jacket under $',
+				filters: [
+					{
+						field: 'price',
+						values: [],
+						rangeEnd: '100',
+						sourceWords: [ '100' ],
+						grounded: false,
+						range: true,
+						confidence: 1,
+					},
+				],
+				fq: [ 'price:[* TO 100]' ],
+				dropped: [],
+			},
+		} )
+	);
+	await page.goto(
+		`/?pagename=find-gear&q=${ encodeURIComponent( 'jacket under $100' ) }`
+	);
+
+	await expect( understood( page ) ).toContainText(
+		'Understood: Price: ≤ 100'
+	);
+	await expect( box( page ) ).toHaveValue( 'jacket' );
+	await expect( summary( page ) ).toHaveText( '2 results' );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__close-matches' )
+	).toBeHidden();
+} );
+
 /**
  * The structured searches the block sends to Turing, in order, as their JSON bodies.
  *

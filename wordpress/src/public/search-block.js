@@ -726,6 +726,7 @@ async function readFilters( text ) {
 				! applied.includes( fq )
 			);
 		} );
+		q = keptWords( text, q, answer.filters || [], fqs );
 	}
 	const size = await readSize( text );
 	if ( reading !== text ) {
@@ -763,6 +764,49 @@ async function readFilters( text ) {
 		q,
 		label: filterLabel( fq ),
 	} ) );
+}
+
+/**
+ * The words a reading leaves to search (D285). Turing's `q` is the sentence without the words of
+ * every filter it read, the ones this block drops included: a price it reads as "400" out of
+ * "under $400" leaves "under $", and the block's own price reader then finds no "under $400" in
+ * it to remove. So when a filter that took words is dropped, the query is the typed sentence
+ * without the words of the filters kept; otherwise Turing's `q` stands.
+ *
+ * @param {string}   text    The sentence, trimmed.
+ * @param {string}   q       Turing's query without the filters' words.
+ * @param {Object[]} filters Turing's filters, each with the `sourceWords` it was read from.
+ * @param {string[]} kept    The filter queries this block applies.
+ */
+function keptWords( text, q, filters, kept ) {
+	const keptFields = new Set( kept.map( ( fq ) => fq.split( ':' )[ 0 ] ) );
+	const dropsWords = filters.some(
+		( filter ) =>
+			! keptFields.has( filter.field ) &&
+			( filter.sourceWords || [] ).length
+	);
+	if ( ! dropsWords ) {
+		return q;
+	}
+	return filters
+		.filter( ( filter ) => keptFields.has( filter.field ) )
+		.flatMap( ( filter ) => filter.sourceWords || [] )
+		.reduce(
+			( rest, word ) =>
+				rest.replace(
+					new RegExp(
+						`(?<![\\p{L}\\p{N}])${ word.replace(
+							/[.*+?^${}()|[\]\\]/g,
+							'\\$&'
+						) }(?![\\p{L}\\p{N}])`,
+						'iu'
+					),
+					' '
+				),
+			text
+		)
+		.replace( /\s+/g, ' ' )
+		.trim();
 }
 
 /**
