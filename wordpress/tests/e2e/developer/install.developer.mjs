@@ -8,6 +8,31 @@ import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
+import { narrationFor } from '../../../bin/narration-takes.mjs';
+
+// The walkthrough's narration (demo/narration/developer.json): how long each line runs, so the
+// recording paces the action to it. A line with no current take runs 0 s.
+const narration = narrationFor( 'developer' );
+const takeLength = ( name ) => {
+	const file = narration.takeFile( 'en', name );
+	const text = Object.fromEntries( narration.lines() )[ name ]?.en;
+	if ( ! narration.current( file, text ) ) {
+		return 0;
+	}
+	return Number(
+		execFileSync( 'ffprobe', [
+			'-v',
+			'error',
+			'-show_entries',
+			'format=duration',
+			'-of',
+			'default=noprint_wrappers=1:nokey=1',
+			file,
+		] )
+			.toString()
+			.trim()
+	);
+};
 
 const turingURL = process.env.TURING_URL || 'http://localhost:2700';
 const turingPassword = process.env.TURING_ADMIN_PASSWORD || 'dumont-dev';
@@ -130,6 +155,8 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 	const now = () => ( Date.now() - started ) / 1000;
 	const chapters = [];
 	let highlighted = null;
+	let voiced = null;
+	let focused = [];
 	const linger = async ( seconds = 3 ) => {
 		if ( record ) {
 			await page.waitForTimeout( seconds * 1000 );
@@ -139,10 +166,36 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 		await linger( 5 );
 		highlighted = now() - 2.5;
 	};
+	// The narrator talks over the action, as Ana does in the story (D261): a chapter's line
+	// starts where `speak()` is called, and the step it describes waits for it to end. Its
+	// length is the take the video will carry; a run that is not recorded waits for nothing.
+	const speak = ( name ) => {
+		const length = record ? takeLength( name ) : 0;
+		voiced = { name, at: now() };
+		return now() + ( length ? length + 0.4 : 0 );
+	};
+	const until = async ( deadline ) => {
+		const left = ( deadline ?? 0 ) - now();
+		if ( record && left > 0 ) {
+			await page.waitForTimeout( left * 1000 );
+		}
+	};
+	// The element a step acts on, for the video to push in on (D292).
+	const focus = async ( locator ) => {
+		if ( ! record ) {
+			return;
+		}
+		const box = await locator.boundingBox().catch( () => null );
+		if ( box ) {
+			focused.push( { at: now(), box } );
+		}
+	};
 	const chapter = ( title, body ) =>
 		test.step( title, async () => {
 			const start = now();
 			highlighted = null;
+			voiced = null;
+			focused = [];
 			await body();
 			if ( null === highlighted ) {
 				await highlight();
@@ -151,17 +204,18 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 				title,
 				start,
 				highlight: highlighted,
+				...( voiced ? { voice: voiced } : {} ),
+				...( focused.length ? { focus: focused } : {} ),
 				end: now(),
 			} );
 		} );
-	const type = ( field, text ) =>
-		record
-			? field
-					.fill( '' )
-					.then( () =>
-						field.pressSequentially( text, { delay: 45 } )
-					)
-			: field.fill( text );
+	const type = async ( field, text ) => {
+		if ( ! record ) {
+			return field.fill( text );
+		}
+		await field.fill( '' );
+		return field.pressSequentially( text, { delay: 45 } );
+	};
 
 	await page.goto( '/wp-login.php' );
 	await page.fill( '#user_login', 'admin' );
@@ -173,10 +227,12 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 
 	await chapter( '1. Installs the plugin from its release zip', async () => {
 		await page.goto( '/wp-admin/plugin-install.php' );
+		const installing = speak( 'chapter-1' );
 		await page.locator( '.upload-view-toggle' ).click();
 		await linger( 1.5 );
+		await focus( page.locator( '.upload-plugin' ) );
 		await page.locator( '#pluginzip' ).setInputFiles( zip );
-		await linger( 1 );
+		await until( installing );
 		await page.locator( '#install-plugin-submit' ).click();
 		const activate = page.getByRole( 'link', { name: 'Activate Plugin' } );
 		await expect( activate ).toBeVisible();
@@ -196,11 +252,13 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 			await page.goto( '/wp-admin/admin.php?page=viglet-dumont-setup' );
 			const field = ( label ) =>
 				page.getByLabel( label, { exact: true } );
+			const connecting = speak( 'chapter-2' );
+			await focus( field( 'Turing URL' ) );
 			await type( field( 'Turing URL' ), connectURL );
 			await type( field( 'API key' ), apiKey );
 			await type( field( 'SN site' ), snSite );
 			await type( field( 'Locale' ), 'en_US' );
-			await linger( 1 );
+			await until( connecting );
 			await page
 				.getByRole( 'button', { name: 'Save and test the connection' } )
 				.click();
@@ -213,6 +271,11 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 			await expect(
 				page.getByRole( 'heading', { name: '3. First index' } )
 			).toBeVisible();
+			await focus(
+				page
+					.locator( '.components-card' )
+					.filter( { hasText: '2. Test' } )
+			);
 			await highlight();
 		}
 	);
@@ -223,6 +286,7 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 			await page.goto(
 				'/wp-admin/admin.php?page=viglet-dumont#indexing'
 			);
+			const choosing = speak( 'chapter-3' );
 			await page.click( '.viglet-dumont-tab[data-tab="indexing"]' );
 			const products = page.locator(
 				'input[name$="[index_custom_types][]"][value="product"]'
@@ -233,10 +297,13 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 				.locator( 'label.viglet-dumont-toggle' )
 				.filter( { has: products } );
 			await toggle.scrollIntoViewIfNeeded();
+			await focus(
+				page.locator( '#panel-indexing .viglet-dumont-card' ).first()
+			);
 			await linger( 1.5 );
 			await toggle.click();
 			await expect( products ).toBeChecked();
-			await linger( 1.5 );
+			await until( choosing );
 			await Promise.all( [
 				page.waitForURL( /settings-updated=true/ ),
 				page.getByRole( 'button', { name: 'Save Settings' } ).click(),
@@ -245,6 +312,7 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 			await page.click( '.viglet-dumont-tab[data-tab="indexing"]' );
 			await expect( products ).toBeChecked();
 			await toggle.scrollIntoViewIfNeeded();
+			await highlight();
 		}
 	);
 
@@ -257,7 +325,13 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 			name: 'Index everything now',
 		} );
 		await expect( index ).toBeVisible();
-		await linger( 1.5 );
+		const indexing = speak( 'chapter-4' );
+		await focus(
+			page
+				.locator( '.components-card' )
+				.filter( { hasText: '3. First index' } )
+		);
+		await until( indexing - 2.5 );
 		await index.click();
 		await expect( page.locator( '[aria-live="polite"] p' ) ).toHaveText(
 			/done|complete|indexed/i,
@@ -272,7 +346,11 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 			await page.goto( '/?pagename=search-gear' );
 			const block = page.locator( '.viglet-dumont-search' );
 			const box = block.locator( 'input[type="search"]' ).first();
+			const searching = speak( 'chapter-5' );
+			await focus( box );
+			await linger( 1.5 );
 			await type( box, query );
+			await until( searching );
 			await box.press( 'Enter' );
 			await expect(
 				block.locator( '.viglet-dumont-search__title a' ).first()
@@ -283,6 +361,7 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 
 	await chapter( '6. Insights show what visitors searched for', async () => {
 		await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+		const looking = speak( 'chapter-6' );
 		await page.getByLabel( 'Period' ).selectOption( 'today' );
 		const top = page.locator( '.components-card' ).filter( {
 			has: page.getByRole( 'heading', { name: 'Top searches' } ),
@@ -290,13 +369,15 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 		await expect(
 			top.locator( 'tbody tr' ).filter( { hasText: query } )
 		).not.toHaveCount( 0 );
+		await until( looking );
+		await focus( top );
 		await highlight();
 	} );
 
 	mkdirSync( out, { recursive: true } );
 	writeFileSync(
 		join( out, 'chapters.json' ),
-		JSON.stringify( { record, chapters }, null, 2 )
+		JSON.stringify( { record, language: 'en', chapters }, null, 2 )
 	);
 	const video = page.video();
 	await page.close();

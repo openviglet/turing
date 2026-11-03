@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 227830,
+    "path": "demo/narration/developer/en/intro.mp3",
+    "sha256": "7202470a8471e83443aafe36eb8f2ab6a7d398893855ac3d5c4d700f17153fc7"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00312,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "iP95p4xoKVk53GoZ742B"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00777,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 227830,
+    "sha256": "7202470a8471e83443aafe36eb8f2ab6a7d398893855ac3d5c4d700f17153fc7"
+  },
+  "params": {},
+  "produced_at": "2026-11-03T22:49:02Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "This is Viglet Turing Search, an open source plugin for WordPress and WooCommerce. In the next few minutes I'll put it on a WordPress shop that has never had it, connect it to Viglet Turing, index the catalog, and show what the shop and its owner get from it.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:QZ9zty8N1IVnlqWDOcAB"
+}

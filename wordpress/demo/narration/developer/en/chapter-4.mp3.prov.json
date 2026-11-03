@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 104950,
+    "path": "demo/narration/developer/en/chapter-4.mp3",
+    "sha256": "5358bba54cb650b55a7c84957a2fc174b40219ef02c67c87025f368ce89b59eb"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00138,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "iP95p4xoKVk53GoZ742B"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00342,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 104950,
+    "sha256": "5358bba54cb650b55a7c84957a2fc174b40219ef02c67c87025f368ce89b59eb"
+  },
+  "params": {},
+  "produced_at": "2026-11-03T22:51:21Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Back on Setup, the first index sends every published item of those types, in batches, with its progress on screen.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:4wVVyHlDhg4UdJ4qAH26"
+}

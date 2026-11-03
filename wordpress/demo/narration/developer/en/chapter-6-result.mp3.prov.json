@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 155941,
+    "path": "demo/narration/developer/en/chapter-6-result.mp3",
+    "sha256": "eab56b68e26f9311df091569943d1a485dcd1bc364183cee0c720395f5d625e0"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00186,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "iP95p4xoKVk53GoZ742B"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00462,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 155941,
+    "sha256": "eab56b68e26f9311df091569943d1a485dcd1bc364183cee0c720395f5d625e0"
+  },
+  "params": {},
+  "produced_at": "2026-11-03T22:52:51Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "The search I just made is already counted. Top searches, searches that found nothing, and results nobody opened: each one tells the shop what to fix next.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:VCWcOzSMttU4bZ1cMtmT"
+}

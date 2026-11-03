@@ -6,18 +6,24 @@
 //
 //   npm run story:narration
 //   npm run story:narration -- --language pt-BR    one language's takes only
+//   npm run story:narration -- --script developer  the developer walkthrough's (D281)
 //
 // Needs ELEVENLABS_API_KEY and polyweave (`pip install polyweave-gamekit`). This loop is what
 // polyweave's voice.lines does for a game's table; it goes when voice.lines takes a plain
 // lines file (polyweave PW665).
 import { execFileSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
-import { dirname } from 'node:path';
-import { current, lines, root, script, takeFile } from './narration-takes.mjs';
+import { dirname, relative as relativeTo } from 'node:path';
+import { narrationFor, root } from './narration-takes.mjs';
 
 const only = process.argv.includes( '--language' )
 	? process.argv[ process.argv.indexOf( '--language' ) + 1 ]
 	: null;
+const { current, lines, script, takeFile } = narrationFor(
+	process.argv.includes( '--script' )
+		? process.argv[ process.argv.indexOf( '--script' ) + 1 ]
+		: 'story'
+);
 
 let bought = 0;
 for ( const [ name, texts ] of lines() ) {
@@ -26,7 +32,7 @@ for ( const [ name, texts ] of lines() ) {
 			continue;
 		}
 		const file = takeFile( language, name );
-		const relative = `demo/narration/${ language }/${ name }.mp3`;
+		const relative = relativeTo( root, file ).replace( /\\/g, '/' );
 		if ( current( file, text ) ) {
 			continue;
 		}

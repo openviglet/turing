@@ -1,0 +1,62 @@
+{
+	"narrator": "A developer who puts the plugin on clients' sites, walking a colleague through it: calm, plain and quietly upbeat. Every step he names is one the walkthrough (tests/e2e/developer/install.developer.mjs) performs on a WordPress the plugin was never installed on (run-docker.cmd fresh).",
+	"voice": "iP95p4xoKVk53GoZ742B",
+	"voiceName": "Chris (ElevenLabs premade voice)",
+	"model": "eleven_v3",
+	"intro": {
+		"en": "This is Viglet Turing Search, an open source plugin for WordPress and WooCommerce. In the next few minutes I'll put it on a WordPress shop that has never had it, connect it to Viglet Turing, index the catalog, and show what the shop and its owner get from it."
+	},
+	"chapters": {
+		"1": {
+			"card": {
+				"en": "It installs like any other plugin. Under Plugins, Add New, I upload the release zip and install it. The same package also works from Composer."
+			},
+			"result": {
+				"en": "Activated. It adds one menu, Viglet Turing Search, and everything it does lives under it: settings, setup, fields, health, tuning and insights."
+			}
+		},
+		"2": {
+			"card": {
+				"en": "The Setup page asks for four things: the address of your Turing, an API key created in Turing, the name of the Semantic Navigation site, and the language the content is written in."
+			},
+			"result": {
+				"en": "[pleased] It tests every step on the way: the address, the network, Turing itself, the key, and the site. This site didn't exist yet, so one click created it, with the fields the plugin needs."
+			}
+		},
+		"3": {
+			"card": {
+				"en": "By default it indexes posts and pages. This one is a shop, so under Settings, Indexing, I turn on products as well."
+			},
+			"result": {
+				"en": "Saved. Categories, tags and custom fields can go in the same way, and the Fields page maps each content type's fields."
+			}
+		},
+		"4": {
+			"card": {
+				"en": "Back on Setup, the first index sends every published item of those types, in batches, with its progress on screen."
+			},
+			"result": {
+				"en": "Done. The whole catalog and its guides are in Viglet Turing. From now on, a new or edited post is sent on its own, in the background."
+			}
+		},
+		"5": {
+			"card": {
+				"en": "Over on the storefront, the search block now asks Viglet Turing. I'll type a plain search."
+			},
+			"result": {
+				"en": "[upbeat] Results, with filters built from the shop's own fields: category, stock, colour, size and price. Nobody had to configure those by hand."
+			}
+		},
+		"6": {
+			"card": {
+				"en": "And the owner sees what visitors look for, under Insights."
+			},
+			"result": {
+				"en": "The search I just made is already counted. Top searches, searches that found nothing, and results nobody opened: each one tells the shop what to fix next."
+			}
+		}
+	},
+	"outro": {
+		"en": "That's the whole setup: a zip, a key and one index. The code is on GitHub, the documentation is on the Viglet site, and the demo store runs right in your browser, with nothing to install."
+	}
+}

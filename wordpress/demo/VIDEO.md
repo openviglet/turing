@@ -97,8 +97,11 @@ Credits for all of it: `demo/seed/CREDITS.md`.
 ## The developer walkthrough (D281)
 
 A second, shorter piece for whoever puts the plugin on a client's site: install, connect,
-index, then the storefront and the insights. Its recording exists; its narration and assembly
-are still open on D281.
+index, then the storefront and the insights, `developer.en.mp4` (3m26s). Narrated by **Chris**
+(ElevenLabs premade voice, `eleven_v3`): calm, plain and quietly upbeat, so it never sounds
+like Ana's story. Its lines are `demo/narration/developer.json`, its takes
+`demo/narration/developer/en/`, bought with `node bin/story-narration.mjs --script developer`.
+English only.
 
 1. **The store.** `run-docker.cmd fresh` (or `sh bin/run-docker.sh fresh`) adds a WordPress on
    `localhost:38084` that the plugin was never installed on: Tarnfell's theme, WooCommerce and
@@ -109,9 +112,13 @@ are still open on D281.
    builds the release zip as `bin/build-zip.sh` lays it, deletes the SN site `tarnfell-shop` in
    Turing so the Setup page creates it, mints an API key, and plays six chapters: upload and
    activate the zip, connect on the Setup page, turn on Products under Settings, Indexing, run
-   the first index, search the storefront, open Insights. It leaves `walkthrough.webm` and
-   `chapters.json` in `tests/e2e/artifacts/developer/`.
-3. **Again**: the run installs the plugin, so it skips a store that has it. Either
+   the first index, search the storefront, open Insights. Each step is paced to Chris's line
+   as the story is to Ana's. It leaves `walkthrough.webm` and `chapters.json` in
+   `tests/e2e/artifacts/developer/`.
+3. **Assemble**: `node bin/story-video.mjs --story developer --language en` (add `--project`
+   for Resolve): its own cards, closing on the repository, the docs and the demo, no footage
+   of the hills, and every file named `developer.*`.
+4. **Again**: the run installs the plugin, so it skips a store that has it. Either
    `run-docker.cmd fresh reset` then `run-docker.cmd fresh`, or, faster, `wp plugin deactivate`
    and `wp plugin delete viglet-turing-search` on `cli-fresh`, then `wp eval-file
    /demo/seed/forget-plugin.php`.

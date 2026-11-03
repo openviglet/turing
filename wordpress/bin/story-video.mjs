@@ -38,22 +38,31 @@ import {
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
-import { current, lines, narration, takeFile } from './narration-takes.mjs';
+import { narration, narrationFor } from './narration-takes.mjs';
+
+// Which video (D281): Ana's story, or with `--story developer` the developer walkthrough, its
+// own recording, narration, cards and file names. The walkthrough is English only.
+const story = process.argv.includes( '--story' )
+	? process.argv[ process.argv.indexOf( '--story' ) + 1 ]
+	: 'story';
+const developer = 'developer' === story;
+const { current, lines, takeFile } = narrationFor( story );
+// The base of every file this writes: story.<lang>.mp4, or developer.<lang>.mp4.
+const base = developer ? 'developer' : 'story';
 
 const root = join( dirname( fileURLToPath( import.meta.url ) ), '..' );
 // A vertical cut (D280) is a chapter clip from the phone-width recording, 9:16, its cards laid
 // out for it and its captions burned in above the band a vertical player draws its controls on.
 const vertical = process.argv.includes( '--vertical' );
-const recorded = join(
-	root,
-	'tests',
-	'e2e',
-	'artifacts',
-	vertical ? 'story-vertical' : 'story'
-);
-const recordCommand = vertical
+let recordedFolder = vertical ? 'story-vertical' : 'story';
+let recordCommand = vertical
 	? 'npm run e2e:story:vertical'
 	: 'npm run e2e:story:record';
+if ( developer ) {
+	recordedFolder = 'developer';
+	recordCommand = 'npm run e2e:developer:record';
+}
+const recorded = join( root, 'tests', 'e2e', 'artifacts', recordedFolder );
 // Each narrated language, as ffmpeg names it on the audio track.
 // The video's language: its cards, and the only narration it carries when one is named.
 const videoLanguage = process.argv.includes( '--language' )
@@ -80,7 +89,7 @@ const size = vertical
 	? { width: 1080, height: 1920 }
 	: { width: 1920, height: 1080 };
 const cardSeconds = 2.5;
-const chapterCount = 8;
+const chapterCount = developer ? 6 : 8;
 // The short cut: this much of the end of each chapter, between a short intro and outro.
 const shortSeconds = 3;
 // One chapter's clip (D279), when `--chapter` names one, and the length it stays under.
@@ -114,7 +123,7 @@ function refuse( reason ) {
 }
 
 const timeline = join( recorded, 'chapters.json' );
-const webm = join( recorded, 'story.webm' );
+const webm = join( recorded, developer ? 'walkthrough.webm' : 'story.webm' );
 if ( ! existsSync( timeline ) || ! existsSync( webm ) ) {
 	refuse( `no recording yet: run \`${ recordCommand }\` first.` );
 }
@@ -160,8 +169,12 @@ if (
 	refuse( `--chapter takes a chapter's number, 1 to ${ chapterCount }.` );
 }
 for ( const source of [
-	join( root, 'demo', 'story.md' ),
-	join( root, 'tests', 'e2e', 'story', 'shopper.story.mjs' ),
+	...( developer
+		? [ join( root, 'tests', 'e2e', 'developer', 'install.developer.mjs' ) ]
+		: [
+				join( root, 'demo', 'story.md' ),
+				join( root, 'tests', 'e2e', 'story', 'shopper.story.mjs' ),
+			] ),
 ] ) {
 	if ( statSync( source ).mtimeMs > statSync( timeline ).mtimeMs ) {
 		refuse(
@@ -248,7 +261,22 @@ const browser = await chromium.launch( {
 const page = await browser.newPage( { viewport: size } );
 // The cards speak the video's language (`--language pt-BR`), as the store it shows does: a
 // Portuguese video of Recanto da Serra with English cards reads as two demos stitched together.
-const words =
+// The developer walkthrough (D281) is English and closes on the code, the docs and the Playground.
+const developerWords = {
+	what: 'For developers and agencies',
+	brand: 'Viglet Turing Search',
+	line: 'Install, connect, index: a WordPress shop searching through Viglet Turing.',
+	chapter: 'Step',
+	store: 'On a WordPress that never had the plugin',
+	name: ( number, name ) => name,
+	tryIt: 'Code, docs and a demo',
+	tryTitle: 'Viglet Turing Search',
+	tryLine:
+		'github.com/openviglet/dumont<br>openviglet.github.io/dumont/docs/connectors/wordpress<br>openviglet.github.io/dumont/wordpress · the demo, nothing to install',
+	fullIt: 'See the whole setup',
+	fullTitle: 'The full walkthrough',
+};
+const storyWords =
 	'pt-BR' === videoLanguage
 		? {
 				what: 'Plugin open source para WordPress e WooCommerce',
@@ -278,6 +306,7 @@ const words =
 				fullIt: 'See the whole visit',
 				fullTitle: 'The full video and the demo store',
 			};
+const words = developer ? developerWords : storyWords;
 // The opening says what this is, for a viewer who arrives from a search or watches muted; the
 // closing says where to try it (D275).
 const cards = [
@@ -461,7 +490,10 @@ const subtitles = ( cues, language, file ) => {
 		cues
 			.map( ( cue, i ) => {
 				const { number, name } = parts[ cue.chapter ];
-				const text = 'en' === language ? name : portuguese[ number ];
+				const text =
+					'en' === language || developer
+						? name
+						: portuguese[ number ];
 				return `${ i + 1 }\n${ stamp( cue.from ) } --> ${ stamp(
 					cue.to
 				) }\n${ number }. ${ text }\n`;
@@ -566,7 +598,7 @@ const chapterList = ( cues, language, name ) => {
 	const titled = cues.map( ( cue ) => {
 		const { number, name: title } = parts[ cue.chapter ];
 		return `${ at( cue.from ) } ${ number }. ${
-			'pt-BR' === language ? portuguese[ number ] : title
+			'pt-BR' === language && ! developer ? portuguese[ number ] : title
 		}`;
 	} );
 	writeFileSync(
@@ -1412,7 +1444,8 @@ if ( null !== clipChapter ) {
 	process.exit( 0 );
 }
 
-titleCard( 0, 'intro', broll );
+// The developer walkthrough opens and closes on its cards alone: the hills belong to Ana's shop.
+titleCard( 0, 'intro', developer ? [] : broll );
 for ( const [ i, { start, end } ] of chapters.entries() ) {
 	const clip = follow(
 		cut( `chapter-${ i + 1 }.mp4`, [
@@ -1477,7 +1510,7 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 	}
 	cues.push( { from, to: clock, chapter: i } );
 }
-titleCard( cards.length - 1, 'outro', [ ...broll ].reverse() );
+titleCard( cards.length - 1, 'outro', developer ? [] : [ ...broll ].reverse() );
 // The video ends on the closing card, alone and long enough to read its two addresses: under
 // the outro it gives way to the footage after its title (D275).
 const closingSeconds = 6;
@@ -1511,7 +1544,7 @@ for ( const i of chapters.keys() ) {
 		file,
 	] );
 	// The site's WordPress page is English: another language's recording keeps its stills here.
-	if ( 'en' === videoLanguage ) {
+	if ( 'en' === videoLanguage && ! developer ) {
 		copyFileSync( file, join( site, `chapter-${ i + 1 }.webp` ) );
 	}
 }
@@ -1606,19 +1639,19 @@ const narrated = Object.entries( spoken ).filter(
 	( [ , placed ] ) => placed.length
 );
 for ( const language of Object.keys( voices ) ) {
-	chapterList( cues, language, 'story' );
+	chapterList( cues, language, base );
 }
 const video = finish(
 	joined,
 	cues,
-	'story',
+	base,
 	narrated.map( ( [ language, placed ] ) => ( {
 		language: voices[ language ],
 		file: voiceTrack( language, placed, joinedLength ),
 	} ) ),
 	narrated.map( ( [ language, placed ] ) => ( {
 		language: voices[ language ],
-		file: narrationCaptions( placed, language, 'story' ),
+		file: narrationCaptions( placed, language, base ),
 	} ) )
 );
 
@@ -1635,7 +1668,7 @@ const video = finish(
  * @return {string} The project file.
  */
 const writeProject = ( total ) => {
-	const dir = join( out, `story${ videoSuffix }.project` );
+	const dir = join( out, `${ base }${ videoSuffix }.project` );
 	const media = join( dir, 'media' );
 	mkdirSync( media, { recursive: true } );
 	const fps = 30;
@@ -1859,7 +1892,7 @@ const writeProject = ( total ) => {
 			}">${ media_ }</asset>`;
 		} ),
 	];
-	const file = join( dir, `story${ videoSuffix }.fcpxml` );
+	const file = join( dir, `${ base }${ videoSuffix }.fcpxml` );
 	writeFileSync(
 		file,
 		'<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n' +
@@ -1875,15 +1908,15 @@ const writeProject = ( total ) => {
 	);
 	// What FCPXML cannot carry (D293): demo/resolve/finish.lua, run inside Resolve, imports this
 	// timeline and the captions and queues the render. Written here with this project's paths.
-	const srt = join( out, `story.${ videoLanguage }.srt` );
-	const captions = join( dir, `story.${ videoLanguage }.srt` );
+	const srt = join( out, `${ base }.${ videoLanguage }.srt` );
+	const captions = join( dir, `${ base }.${ videoLanguage }.srt` );
 	if ( existsSync( srt ) ) {
 		copyFileSync( srt, captions );
 	}
 	writeFileSync(
 		join( dir, 'finish.lua' ),
 		readFileSync( join( root, 'demo', 'resolve', 'finish.lua' ), 'utf8' )
-			.replace( '__NAME__', `story${ videoSuffix }` )
+			.replace( '__NAME__', `${ base }${ videoSuffix }` )
 			.replace( '__FCPXML__', file )
 			.replace( '__SRT__', captions )
 			.replace( '__RENDER_DIR__', dir )
@@ -1922,7 +1955,7 @@ short.push( join( out, 'parts', `card-${ cards.length - 1 }.mp4` ) );
 const teaser = finish(
 	concat( short, 'joined-30s.mp4' ),
 	shortCues,
-	'story-30s'
+	`${ base }-30s`
 );
 
 const length = ( file ) => {

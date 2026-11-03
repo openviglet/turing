@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 53541,
+    "path": "demo/narration/developer/en/chapter-6.mp3",
+    "sha256": "458039a9287651079713c0458d7b1e74a5dbf47d70c64a4890ad9b08925ea394"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00069,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "iP95p4xoKVk53GoZ742B"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00174,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 53541,
+    "sha256": "458039a9287651079713c0458d7b1e74a5dbf47d70c64a4890ad9b08925ea394"
+  },
+  "params": {},
+  "produced_at": "2026-11-03T22:52:34Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "And the owner sees what visitors look for, under Insights.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:lrINKzII7xsEEgQdVAKf"
+}
