@@ -2415,30 +2415,22 @@ did not cause.
 
 **Where it happened.** Dumont D190: several WordPress sites share one SN site
 (`site_key`), and each should hold only a key bound to its partition (T1133). The
-plugin's admin screens call routes `TurApiKeyPartitionGuardFilter` does not enforce, so
-a partitioned key gets 403:
+plugin's Tuning screen calls synonym and spotlight routes
+`TurApiKeyPartitionGuardFilter` does not enforce, so a partitioned key gets 403 there.
 
-- the SN site's manifest and plan, which the Fields screen reads and writes;
-- `/api/sn/{site}` configuration reads (Health, Setup);
-- the tuning APIs the Tuning screen uses (synonyms, promotions);
-- `POST /api/v2/summary` (Insights summary, editor excerpt) and the AI probes Health runs.
+**Shipped so far.** Site configuration reads, the manifest plan and a no-op re-post (a
+change gets 403), summaries cached per partition, and the AI probes that read no
+document.
 
-**What came back.** 403 on each, so today a site either keeps the shared, unbound key
-(which reads and deletes the other sites' documents) or loses those screens.
+**Decision (the owner, 2026-11-03).** Synonyms are pushed to the engine as one resource
+per core (Solr managed synonyms, the ES synonym set), so a per-partition set would need
+a second, Turing-side expansion. Instead:
 
-**Decision (the owner, 2026-11-02).** Turing widens what a partitioned key may do, each
-route confined to the partition, rather than Dumont keeping a shared key or giving the
-screens up.
+- spotlights carry a partition: a partitioned key lists, creates and deletes only its own,
+  and a search applies its own plus the unpartitioned ones;
+- synonyms stay site-wide: a partitioned key may read them, and a write is refused with a
+  403 that says the set is shared by every partition;
+- ranking expressions stay refused.
 
-**What it should do.** Add each route to `ENFORCED` with a partition rule:
-- manifest and plan: readable; a write that changes the shared schema stays refused, since
-  it reaches every partition (say so in the 403's reason);
-- SN site configuration: read-only;
-- synonyms and promotions: stored per partition and applied only to that partition's
-  searches, the unpartitioned set still applying to all;
-- summary: the cache key carries the partition, and its data is the caller's;
-- AI probes: answer without reading another partition's documents.
-
-Extend `TurSdkContractIT` with two partitions over these routes.
-
-**Workaround.** None: Dumont D190 waits on this line.
+**What is left.** The spotlight partition (column, API filter, search match), the
+synonym read, and `TurSdkContractIT` over two partitions on these routes.

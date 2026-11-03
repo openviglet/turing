@@ -67,7 +67,8 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
      * from the partition's documents), spell-check (no correction), the
      * thesaurus' related terms, result clicks, the JSON imports (each
      * document is stamped with the partition), and (T1209) the site
-     * configuration reads, the manifest and its plan, and summaries.
+     * configuration reads, the manifest and its plan, summaries and the AI
+     * probes.
      */
     static final List<Route> ENFORCED = List.of(
             new Route("GET", Pattern.compile(
@@ -91,7 +92,12 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
             // that would change the shared schema, so only a re-post goes through.
             new Route("POST", Pattern.compile("^/api/sn/manifest(?:/plan)?$")),
             // T1209 — summaries of the caller's own data, cached per partition.
-            new Route("POST", Pattern.compile("^/api/v2/summary$")));
+            new Route("POST", Pattern.compile("^/api/v2/summary$")),
+            // T1209 — the AI probes: each answers from configuration, and the
+            // capabilities' vector probe says only whether the store holds a chunk,
+            // so none returns a document. Chat, answer and nl-filters stay refused.
+            new Route("GET", Pattern.compile(
+                    "^/api/sn/[^/]+/(?:ai/capabilities|chat/enabled|copilot/available|summary/available)$")));
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,

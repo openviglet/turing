@@ -51,7 +51,8 @@ The server then confines that key, whatever the request asks for:
 | `POST /api/sn/manifest/plan` | As for any key |
 | `POST /api/sn/manifest` | Answers as for any key when the manifest matches the site as it is, so a connector can re-post it on every run. A manifest that would create the site or change anything on it is refused with `403`, because the schema is shared by every partition: provision it with a key without a partition |
 | `POST /api/v2/summary` | Summarises the data you send, and caches the summary apart from every other key's, so two partitions using the same `cacheKey` never read each other's |
-| Every other endpoint, including chat, answer, duplicates, synonyms and the other tuning APIs, the other metrics, the zip import and MCP | Refused with `403` (`401` on MCP) until it enforces partitions |
+| `GET /api/sn/{site}/ai/capabilities`, `/chat/enabled`, `/copilot/available`, `/summary/available` | As for any key: each answers from the site's configuration, and none returns a document |
+| Every other endpoint, including chat, answer, natural-language filters, duplicates, synonyms and the other tuning APIs, the other metrics, the zip import and MCP | Refused with `403` (`401` on MCP) until it enforces partitions |
 
 A key without a partition, and a browser session, are not affected. The partition field must be a stored field, because the import reads it back from the stored document before it replaces or deletes one.
 

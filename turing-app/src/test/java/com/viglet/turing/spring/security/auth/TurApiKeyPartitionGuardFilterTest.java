@@ -76,7 +76,14 @@ class TurApiKeyPartitionGuardFilterTest {
             "POST, /api/sn/manifest/plan, true",
             "POST, /api/sn/manifest/derive, false",
             "POST, /api/v2/summary, true",
-            "GET, /api/sn/site-1/synonym, false"
+            "GET, /api/sn/site-1/synonym, false",
+            "GET, /api/sn/shared/ai/capabilities, true",
+            "GET, /api/sn/shared/chat/enabled, true",
+            "GET, /api/sn/shared/copilot/available, true",
+            "GET, /api/sn/site-1/summary/available, true",
+            "GET, /api/sn/shared/answer, false",
+            "POST, /api/sn/shared/nl-filters, false",
+            "GET, /api/sn/shared/chat, false"
     })
     void allowsOnlyTheEndpointsThatEnforceThePartition(String method, String uri, boolean allowed) {
         assertThat(TurApiKeyPartitionGuardFilter.allows(method, uri)).isEqualTo(allowed);

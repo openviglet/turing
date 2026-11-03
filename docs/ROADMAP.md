@@ -59,8 +59,9 @@
 
 ## Done when — T1209
 
-- **Partitioned synonyms and promotions** Each partition's synonyms and promotions apply
-  only to its own searches, and the unpartitioned set still applies to all.
+- **Partitioned synonyms and promotions** A partition's spotlights apply only to its own
+  searches beside the unpartitioned ones, and synonyms are readable but refused to
+  write.
 - **AI probes confined** The AI probes Health runs answer a partitioned key without
   reading another partition's documents.
 - **Two partitions in the SDK contract IT** TurSdkContractIT drives two partitions over
