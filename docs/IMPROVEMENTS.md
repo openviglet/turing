@@ -2406,6 +2406,44 @@ on that reasoning, leaving this decision to GET search, autocomplete and `/answe
 **Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
 counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
+### CLXII.9 A range filter's source words cover its bound and currency (T1211)
+
+**Where it happened.** Dumont's WordPress plugin, the search block on the Tarnfell demo
+store (SN site `tarnfell`, locale `en_US`), recording the demo video on 2026-11-03
+(Dumont D276).
+
+**The request.**
+
+```
+POST /api/sn/tarnfell/nl-filters
+{"text":"a two-person tent under $400","locale":"en_US"}
+```
+
+**What came back.**
+
+```
+{"available":true,"q":"a two-person tent under $",
+ "filters":[{"field":"price","rangeStart":null,"rangeEnd":"400",
+             "sourceWords":["400"],"grounded":false,"range":true}],
+ "fq":["price:[* TO 400]"], ...}
+```
+
+**Expected.** `q` is the text with the words the filter came from removed, and for a
+range that is the bound word and the amount with its currency: `sourceWords`
+`["under","$400"]` (or the span "under $400"), `q` "a two-person tent". The same holds
+for "over", "between ... and ...", "até R$ 2.200", "acima de". Today a client that
+applies the filter searches "under $" as well, finds nothing with every word, and falls
+back to close matches.
+
+**Workaround.** Dumont D285: the block rebuilds the remaining query from the visitor's
+text, removing the words of the filters it applies and the whole phrase its own price
+reader matched, instead of trusting `q`. It works only for the readings the client can
+repeat in code.
+
+**What Turing should do.** Range filters report every word they consumed in
+`sourceWords`, and `q` drops them, covered by a test per bound form and per language the
+lexicon ships.
+
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release
