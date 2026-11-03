@@ -64,8 +64,13 @@ Credits for all of it: `demo/seed/CREDITS.md`.
    as an FCPXML for DaVinci Resolve (File > Import > Timeline), with every file it uses copied
    into its `media/` folder (D290). V1 is the recording, transcoded once to H.264 and cut by
    chapter, with each held result as a still; V2 the cards; V3 the opening and closing shots,
-   as rendered; A1 each take; A2 the music bed at the video's level. Chapters are markers. The
-   captions are the `.srt` beside the MP4, imported by hand for now (D293).
+   as rendered; A1 each take; A2 the music bed at the video's level. Chapters are markers.
+   The project folder also gets `finish.py` (from `demo/resolve/finish.py`, D293), for what
+   FCPXML cannot carry. Resolve's free version runs scripts only from inside the app: in
+   Workspace > Console > Py3, `exec(open(r"<project folder>\finish.py").read())`. It creates
+   the project `story.<lang>`, imports the timeline, prints how many clips came in offline,
+   adds the captions as a subtitle track, applies the Fairlight preset "Viglet story voice"
+   when one is saved, and queues a YouTube render without starting it.
 7. **The clips** (D279): `--chapter 2`, `3` and `5` are the ones to publish (a sentence read as
    a price filter, the Site assistant with its sources, the kit). Each opens on the chapter's
    title under the product's name, plays the chapter with both of Ana's lines, holds the result

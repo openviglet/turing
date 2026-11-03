@@ -1809,6 +1809,21 @@ const writeProject = ( total ) => {
 			spineXml +
 			'\n</spine>\n</sequence>\n</project>\n</event>\n</library>\n</fcpxml>\n'
 	);
+	// What FCPXML cannot carry (D293): demo/resolve/finish.py, run inside Resolve, imports this
+	// timeline and the captions and queues the render. Written here with this project's paths.
+	const srt = join( out, `story.${ videoLanguage }.srt` );
+	const captions = join( dir, `story.${ videoLanguage }.srt` );
+	if ( existsSync( srt ) ) {
+		copyFileSync( srt, captions );
+	}
+	writeFileSync(
+		join( dir, 'finish.py' ),
+		readFileSync( join( root, 'demo', 'resolve', 'finish.py' ), 'utf8' )
+			.replace( '__NAME__', `story${ videoSuffix }` )
+			.replace( '__FCPXML__', file )
+			.replace( '__SRT__', captions )
+			.replace( '__RENDER_DIR__', dir )
+	);
 	return file;
 };
 
