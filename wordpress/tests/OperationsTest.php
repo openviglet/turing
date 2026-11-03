@@ -190,6 +190,18 @@ final class OperationsTest extends PluginTestCase {
 		$this->assertNotSame( '', $result['sweep_error'] );
 	}
 
+	public function test_status_counts_as_published_only_what_the_index_would_hold(): void {
+		// D284: a post kept out of the index is never in Turing, so it is not a difference.
+		Functions\when( 'get_post_meta' )->alias( static fn ( $id, $key ) => 2 === $id && '_viglet_dumont_exclude' === $key ? '1' : '' );
+		$this->held = array( 'site-a:post:1', 'site-a:post:3' );
+		Functions\stubs( array( 'wp_cache_delete' => true ) );
+
+		$counts = $this->operations()->status()['types']['post'];
+
+		$this->assertSame( 2, $counts['published'] );
+		$this->assertSame( $counts['published'], $counts['indexed'] );
+	}
+
 	public function test_since_narrows_by_modification_date(): void {
 		$this->operations()->find_post_ids( 'page', array(), '2026-10-01' );
 

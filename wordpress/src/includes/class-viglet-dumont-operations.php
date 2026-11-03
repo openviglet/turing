@@ -260,13 +260,13 @@ class Viglet_Dumont_Operations {
 	/**
 	 * The connection, the SN site, published versus indexed documents per type, and the queue.
 	 *
-	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed} Per type, `published` is what WordPress publishes and `indexed` what Turing holds; null when it cannot say.
+	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed} Per type, `published` is what WordPress publishes for the index and `indexed` what Turing holds; null when it cannot say.
 	 */
 	public function status(): array {
 		$types = array();
 		foreach ( viglet_dumont_get_indexable_types() as $type ) {
 			$types[ $type ] = array(
-				'published' => count( $this->find_post_ids( $type ) ),
+				'published' => $this->count_indexable( $type ),
 				'indexed'   => $this->count_in_turing( $type ),
 			);
 		}
@@ -282,6 +282,25 @@ class Viglet_Dumont_Operations {
 			'sources'     => Viglet_Dumont_Settings::sources(),
 			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
 		);
+	}
+
+	/**
+	 * How many published posts of a type the indexer would send. A post kept out of the index (by
+	 * its own checkbox, the excluded ids or an excluded type) is never in Turing, so counting it
+	 * would report a difference no reindex can close (D284).
+	 *
+	 * @param string $type The post type.
+	 */
+	private function count_indexable( string $type ): int {
+		$count = 0;
+		foreach ( $this->find_post_ids( $type ) as $post_id ) {
+			$post = get_post( $post_id );
+			if ( $post instanceof WP_Post && $this->indexer->should_index( $post ) ) {
+				++$count;
+			}
+		}
+
+		return $count;
 	}
 
 	/**

@@ -8,6 +8,11 @@ import { expect, test } from '../fixtures.mjs';
 const turingURL = process.env.TURING_URL || 'http://localhost:2700';
 let pageId = 0;
 
+// A chip by its whole text: a stack reused across runs holds longer searches that contain the
+// word ("which OR workshop OR covers OR facets?"), and a partial match would find them too (D284).
+const chip = ( chips, name ) =>
+	chips.getByRole( 'link', { name, exact: true } );
+
 test.beforeAll( async ( { request } ) => {
 	// Three searches each this week: one Turing answers, one it cannot.
 	for ( const q of [ 'seminar', 'zzpopularnothing' ] ) {
@@ -46,15 +51,11 @@ test( 'popular searches that find something become chips, and a chip searches fo
 } ) => {
 	await page.goto( `/?page_id=${ pageId }` );
 	const chips = page.getByRole( 'navigation', { name: 'Popular searches' } );
-	await expect(
-		chips.getByRole( 'link', { name: 'seminar' } )
-	).toBeVisible();
-	await expect(
-		chips.getByRole( 'link', { name: 'zzpopularnothing' } )
-	).toHaveCount( 0 );
+	await expect( chip( chips, 'seminar' ) ).toBeVisible();
+	await expect( chip( chips, 'zzpopularnothing' ) ).toHaveCount( 0 );
 	await look( 'trending' );
 
-	await chips.getByRole( 'link', { name: 'seminar' } ).click();
+	await chip( chips, 'seminar' ).click();
 	await expect(
 		page.locator( '.viglet-dumont-search__title a' ).first()
 	).toHaveText( /Seminar on/ );
@@ -69,9 +70,7 @@ test( 'spellings of one want show as one chip, under the most searched', async (
 	// chips that both answer stand in for "raincoat" and "rain jacket".
 	const chips = page.getByRole( 'navigation', { name: 'Popular searches' } );
 	await page.goto( `/?page_id=${ pageId }` );
-	await expect(
-		chips.getByRole( 'link', { name: 'seminar' } )
-	).toBeVisible();
+	await expect( chip( chips, 'seminar' ) ).toBeVisible();
 	const [ first, second ] = (
 		await chips.getByRole( 'link' ).allTextContents()
 	)
@@ -99,12 +98,8 @@ test( 'spellings of one want show as one chip, under the most searched', async (
 		] );
 		fresh();
 		await page.reload();
-		await expect(
-			chips.getByRole( 'link', { name: first, exact: true } )
-		).toBeVisible();
-		await expect(
-			chips.getByRole( 'link', { name: second, exact: true } )
-		).toHaveCount( 0 );
+		await expect( chip( chips, first ) ).toBeVisible();
+		await expect( chip( chips, second ) ).toHaveCount( 0 );
 	} finally {
 		wp( [
 			'option',
@@ -141,12 +136,8 @@ test.describe( 'as the site owner', () => {
 			const chips = page.getByRole( 'navigation', {
 				name: 'Popular searches',
 			} );
-			await expect(
-				chips.getByRole( 'link', { name: 'workshop' } )
-			).toBeVisible();
-			await expect(
-				chips.getByRole( 'link', { name: 'seminar' } )
-			).toHaveCount( 0 );
+			await expect( chip( chips, 'workshop' ) ).toBeVisible();
+			await expect( chip( chips, 'seminar' ) ).toHaveCount( 0 );
 		} finally {
 			await save( '' );
 		}
