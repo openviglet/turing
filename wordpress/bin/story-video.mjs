@@ -20,6 +20,11 @@
 // for the site's WordPress page.
 // Refuses a recording that is missing a chapter or older than the story it was recorded from,
 // so a re-record after a UI change is never skipped by accident.
+//
+// One chapter alone (D279): `--chapter <n>` writes story-chapter-<n>.<language>.mp4 instead, a
+// clip under a minute for someone searching for that one thing: a title card, the chapter with
+// its two lines, its result held still to the end of the second, and a card pointing at the full
+// video and the demo store. Built from the same recording, so a new recording rebuilds the clips.
 import { execFileSync, spawnSync } from 'node:child_process';
 import {
 	copyFileSync,
@@ -64,6 +69,12 @@ const cardSeconds = 2.5;
 const chapterCount = 8;
 // The short cut: this much of the end of each chapter, between a short intro and outro.
 const shortSeconds = 3;
+// One chapter's clip (D279), when `--chapter` names one, and the length it stays under.
+const clipChapter = process.argv.includes( '--chapter' )
+	? Number( process.argv[ process.argv.indexOf( '--chapter' ) + 1 ] )
+	: null;
+const clipLimit = 58;
+const clipClosingSeconds = 5;
 
 // Each chapter's caption in Portuguese, by its number in demo/story.md. The English one is
 // the spec's own step title.
@@ -103,6 +114,16 @@ if ( chapters.length !== chapterCount ) {
 	refuse(
 		`the recording has ${ chapters.length } of ${ chapterCount } chapters: the story failed part way. Re-record it.`
 	);
+}
+if (
+	null !== clipChapter &&
+	! (
+		Number.isInteger( clipChapter ) &&
+		clipChapter >= 1 &&
+		clipChapter <= chapterCount
+	)
+) {
+	refuse( `--chapter takes a chapter's number, 1 to ${ chapterCount }.` );
 }
 for ( const source of [
 	join( root, 'demo', 'story.md' ),
@@ -203,6 +224,8 @@ const words =
 				tryTitle: 'A loja de demonstração no seu navegador',
 				tryLine:
 					'openviglet.github.io/dumont/wordpress · sem instalar nada<br>github.com/openviglet/dumont',
+				fullIt: 'Veja a visita inteira',
+				fullTitle: 'O vídeo completo e a loja de demonstração',
 			}
 		: {
 				what: 'Open source plugin for WordPress and WooCommerce',
@@ -215,6 +238,8 @@ const words =
 				tryTitle: 'The demo store in your browser',
 				tryLine:
 					'openviglet.github.io/dumont/wordpress · nothing to install<br>github.com/openviglet/dumont',
+				fullIt: 'See the whole visit',
+				fullTitle: 'The full video and the demo store',
 			};
 // The opening says what this is, for a viewer who arrives from a search or watches muted; the
 // closing says where to try it (D275).
@@ -229,6 +254,16 @@ const cards = [
 	),
 	card( words.tryIt, words.tryTitle, words.tryLine ),
 ];
+// A clip's own two cards (D279): it opens on what the chapter shows, under the product's name,
+// for a viewer who has seen none of the rest, and closes on where the full video and the
+// Playground are; the site's WordPress page carries both.
+if ( null !== clipChapter ) {
+	const { number, name } = parts[ clipChapter - 1 ];
+	cards.push(
+		card( words.brand, words.name( number, name ), words.what ),
+		card( words.fullIt, words.fullTitle, words.tryLine )
+	);
+}
 for ( const [ i, html ] of cards.entries() ) {
 	await page.setContent( html );
 	await page.evaluate( () => document.fonts.ready );
@@ -246,6 +281,9 @@ const storeUrl =
 		: 'http://localhost:38082' );
 const screens = [];
 const shot = async ( path, scroll = 0 ) => {
+	if ( null !== clipChapter ) {
+		return; // A clip opens and closes on its cards alone.
+	}
 	try {
 		await page.goto( new URL( path, storeUrl ).href, {
 			waitUntil: 'networkidle',
@@ -878,6 +916,121 @@ for (
 			broll.push( source );
 		}
 	}
+}
+
+/**
+ * One chapter as a clip of its own (D279): its card, the action with her line over it, the result
+ * held while she talks about it, and the closing card. Where that runs past the limit, the stretch
+ * between her line and the result, where nothing is said, plays faster until it fits.
+ *
+ * @param {number} i The chapter's index.
+ */
+const chapterClip = ( i ) => {
+	const { start, end, voice } = chapters[ i ];
+	const name = `story-chapter-${ i + 1 }`;
+	const clip = cut( `clip-${ i + 1 }.mp4`, [
+		'-ss',
+		start.toFixed( 2 ),
+		'-to',
+		end.toFixed( 2 ),
+		'-i',
+		webm,
+	] );
+	const at = Math.min( best( i ), seconds( clip ) - 0.1 );
+	const lineTakes = voice ? takes( voice.name ) : [];
+	const lineAt = voice ? Math.max( 0, voice.at - start ) : 0;
+	// Played as recorded up to where her line ends.
+	const spokenUntil = Math.min( at, lineAt + needs( lineTakes ) );
+	const result = takes( `chapter-${ i + 1 }-result` );
+	const held = result.length ? needs( result ) : cardSeconds;
+	const fixed = cardSeconds + spokenUntil + held + clipClosingSeconds;
+	const silent = at - spokenUntil;
+	if ( fixed + 1 > clipLimit ) {
+		refuse(
+			`chapter ${ i + 1 }'s lines alone run ${ fixed.toFixed(
+				1
+			) } s, past a clip's ${ clipLimit } s: shorten them in demo/narration/script.json.`
+		);
+	}
+	const speed = Math.max( 1, silent / ( clipLimit - fixed ) );
+
+	const opening = still( cards.length - 2 );
+	let clipClock = cardSeconds;
+	const pieces = [ opening ];
+	say( clipClock + lineAt, lineTakes );
+	if ( spokenUntil > 0 ) {
+		pieces.push(
+			cut( `clip-${ i + 1 }-a.mp4`, [
+				'-t',
+				spokenUntil.toFixed( 3 ),
+				'-i',
+				clip,
+			] )
+		);
+		clipClock += seconds( pieces.at( -1 ) );
+	}
+	if ( silent > 0.05 ) {
+		// The encode's own filter, after the stretch is sped up.
+		const file = join( out, 'parts', `clip-${ i + 1 }-fast.mp4` );
+		ffmpeg( [
+			'-ss',
+			spokenUntil.toFixed( 3 ),
+			'-to',
+			at.toFixed( 3 ),
+			'-i',
+			clip,
+			...encode.map( ( arg, n ) =>
+				encode[ n - 1 ] === '-vf'
+					? `setpts=(PTS-STARTPTS)/${ speed.toFixed( 3 ) },${ arg }`
+					: arg
+			),
+			file,
+		] );
+		pieces.push( file );
+		clipClock += seconds( file );
+	}
+	pieces.push( freeze( clip, at, held, `clip-${ i + 1 }-result` ) );
+	say( clipClock, result );
+	clipClock += held;
+	pieces.push( still( cards.length - 1, clipClosingSeconds ) );
+	clipClock += clipClosingSeconds;
+
+	const joined = concat( pieces, `${ name }-joined.mp4` );
+	const total = seconds( joined );
+	const narrated = Object.entries( spoken ).filter(
+		( [ , placed ] ) => placed.length
+	);
+	const file = finish(
+		joined,
+		[
+			{
+				from: cardSeconds,
+				to: clipClock - clipClosingSeconds,
+				chapter: i,
+			},
+		],
+		name,
+		narrated.map( ( [ language, placed ] ) => ( {
+			language: voices[ language ],
+			file: voiceTrack( language, placed, total ),
+		} ) ),
+		narrated.map( ( [ language, placed ] ) => ( {
+			language: voices[ language ],
+			file: narrationCaptions( placed, language, name ),
+		} ) )
+	);
+	return { file, total, speed };
+};
+
+if ( null !== clipChapter ) {
+	const { file, total, speed } = chapterClip( clipChapter - 1 );
+	process.stdout.write(
+		`${ file }: ${ total.toFixed( 1 ) } s` +
+			( speed > 1
+				? `, the stretch after her line at ${ speed.toFixed( 2 ) }x\n`
+				: '\n' )
+	);
+	process.exit( 0 );
 }
 
 titleCard( 0, 'intro', broll );

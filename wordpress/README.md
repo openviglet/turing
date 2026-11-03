@@ -276,8 +276,9 @@ English on Tarnfell, or pt_BR on Recanto da Serra with `DEMO_LOCALE=pt_BR` (D283
 `tests/e2e/artifacts/video/story.mp4`, with a title card per chapter, and `story-30s.mp4`, the
 last seconds of each chapter for social posts; with `-- --language en` (or `pt-BR`) it carries
 that language alone and is named for it, `story.en.mp4` and `story-30s.en.mp4`. Both carry English and pt_BR captions, also
-written beside them as `.srt`. The videos are release assets, never committed, and the script
-refuses a recording older than the story.
+written beside them as `.srt`. `-- --chapter <n>` cuts one chapter as a clip of its own instead,
+`story-chapter-<n>.<lang>.mp4`, under a minute (D279). The videos are release assets, never
+committed, and the script refuses a recording older than the story.
 
 To look at one page in detail, logged in or not:
 

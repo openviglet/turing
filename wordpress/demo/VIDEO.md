@@ -21,6 +21,7 @@ narration as captions (D278). The **pt-BR** one (Recanto da Serra, 7m37s) was re
 | Footage of the hills | `demo/broll/*.mp4` (not committed; `.json` with source, author, licence are) | `npm run demo:broll` with `PIXABAY_API_KEY` |
 | The recording | `tests/e2e/artifacts/story/story.webm` + `chapters.json` | `npm run e2e:story:record` (`tests/e2e/story/shopper.story.mjs`) |
 | The video | `tests/e2e/artifacts/video/story.<lang>.mp4` | `node bin/story-video.mjs --language en` (or `pt-BR`) |
+| A clip per chapter | `tests/e2e/artifacts/video/story-chapter-<n>.<lang>.mp4` | `node bin/story-video.mjs --language en --chapter <n>` (D279) |
 
 Credits for all of it: `demo/seed/CREDITS.md`.
 
@@ -56,6 +57,13 @@ Credits for all of it: `demo/seed/CREDITS.md`.
    narration and cards, into `story.<lang>.mp4`, so one never overwrites the other. Only the
    English run copies its stills into the site's WordPress page.
 6. **Look at it**: frames across the whole video, and the moment each line ends against its Enter.
+7. **The clips** (D279): `--chapter 2`, `3` and `5` are the ones to publish (a sentence read as
+   a price filter, the Site assistant with its sources, the kit). Each opens on the chapter's
+   title under the product's name, plays the chapter with both of Ana's lines, holds the result
+   to the end of her second, and closes on the full-video and Playground card. Where that runs
+   past 58 s, the stretch between her first line and the result, where she says nothing, plays
+   faster until it fits (chapter 5 at about 2x). The recording carries no language: build a
+   language's clips right after recording that language's store.
 
 ## Rules learned making it
 
