@@ -232,8 +232,12 @@ Beyond behaviour, the suite also checks:
   in English at the start of every run. `--project=site` and the like skip the variants.
 - **Multisite**: `run-docker.cmd multisite` adds a two-site network on
   `localhost:8081` (`/` and `/second/`), sharing the local Turing under its own SN site
-  ("Network"). `E2E_MULTISITE=1 npm run test:e2e` seeds both sites and adds the `network`
-  project, which checks that each site's search block finds only its own documents.
+  ("Network"). Each site holds its own API key, bound to its site key, after one key without
+  a partition has provisioned the fields. `E2E_MULTISITE=1 npm run test:e2e` seeds both sites
+  and adds the `network` project, which checks that each site's search block finds only its
+  own documents and that one site's key never reads, lists or deletes the other's. It needs
+  a Turing with partitioned keys on every route the plugin calls (T1209, T1210): until a
+  release carries them, set `TURING_IMAGE` to one built from a Turing checkout.
 - **Demo storefront**: the `demo` project checks the curated searches, the comparison page
   and the tour on a demo store of its own (`run-docker.cmd demo`: `localhost:38082` in English, `localhost:38083` with `DEMO_LOCALE=pt_BR`), after
   `demo-setup` seeds its catalog if missing. It needs no switch, so `npm run test:e2e` runs it

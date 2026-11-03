@@ -1,6 +1,8 @@
 # Provisions the local Turing of docker-compose.yml for the plugin: waits for it, creates the SN
 # site through /api/sn/manifest (the same call the plugin makes, so a rerun converges) and mints
 # a developer API key. Prints the key on stdout and nothing else; progress goes to stderr.
+# With -PartitionValue the key is bound to that partition of the SN site (Turing T1133, D190):
+# it reaches only the documents whose -PartitionField (site_key) holds that value.
 #
 # Called by run-docker.cmd. Local only: it refuses any URL that is not localhost.
 param(
@@ -8,7 +10,10 @@ param(
     [string]$Password = 'dumont-dev',
     [string]$Site = 'Sample',
     [string]$Locale = 'en_US',
-    [switch]$NoToken
+    [string]$PartitionField = 'site_key',
+    [string]$PartitionValue = '',
+    [switch]$NoToken,
+    [switch]$TokenOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -59,6 +64,21 @@ while ($true) {
     }
 }
 
+function Token() {
+    $body = @{ title = 'viglet-dumont-wp'; description = 'WordPress plugin, local Docker' }
+    if ($PartitionValue) {
+        $body.title = "viglet-dumont-wp $PartitionValue"
+        $body.partitionField = $PartitionField
+        $body.partitionValue = $PartitionValue
+    }
+    $token = (Call 'POST' '/api/dev/token' $body).token
+    if (-not $token) { Say 'Turing answered no API key.'; exit 1 }
+    Write-Output $token
+}
+
+# A key for a site already provisioned, without converging the SN site again.
+if ($TokenOnly) { Token; exit 0 }
+
 $engines = @(Call 'GET' '/api/se' $null)
 $engine = @($engines | Where-Object { $_.enabled }) + $engines | Select-Object -First 1
 if (-not $engine) { Say 'No search engine instance in this Turing.'; exit 1 }
@@ -78,6 +98,4 @@ Call 'POST' '/api/sn/manifest' $manifest | Out-Null
 Say "SN site '$Site' ($Locale) is provisioned."
 
 if ($NoToken) { exit 0 }
-$token = (Call 'POST' '/api/dev/token' @{ title = 'viglet-dumont-wp'; description = 'WordPress plugin, local Docker' }).token
-if (-not $token) { Say 'Turing answered no API key.'; exit 1 }
-Write-Output $token
+Token

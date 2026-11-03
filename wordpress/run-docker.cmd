@@ -224,20 +224,45 @@ if errorlevel 1 (
 )
 %WPMS% plugin activate viglet-dumont --network >nul 2>&1
 
-rem One key for the network's SN site, stored on both of its sites.
+rem Each site of the network holds its own key, bound to its site key (D190), so neither can
+rem reach the other's documents. A key without a partition provisions the SN site's fields
+rem once, since a partitioned key may not change the schema every site shares.
+set "SETUP=powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_MS_SITE%" -Locale "%TURING_LOCALE%""
 set "KEY="
 for /f "delims=" %%k in ('%WPMS% option pluck viglet_dumont_settings api_key 2^>nul') do set "KEY=%%k"
-if "%KEY%"=="" (
-    for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_MS_SITE%" -Locale "%TURING_LOCALE%"') do set "KEY=%%k"
-) else (
-    powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_MS_SITE%" -Locale "%TURING_LOCALE%" -NoToken
+if not "%KEY%"=="" (
+    %SETUP% -NoToken
+    goto :networkready
 )
+for /f "delims=" %%k in ('%SETUP%') do set "KEY=%%k"
 if "%KEY%"=="" ( echo Turing was not provisioned for %SN_MS_SITE%; the network has no API key. & exit /b 1 )
-for %%u in (%MSURL%/ %MSURL%/second/) do %WPMS% --url=%%u eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
+call :storekey %MSURL%/ %KEY% || exit /b 1
+echo Provisioning the network's fields...
+%WPMS% --url=%MSURL%/ dumont reindex >nul || exit /b 1
+for %%u in (%MSURL%/ %MSURL%/second/) do call :partitionkey %%u || exit /b 1
+
+:networkready
 
 echo.
 echo Network:    %MSURL%/wp-admin/network/   (admin / admin), sites / and /second/, SN site %SN_MS_SITE%
 exit /b 0
+
+:storekey
+rem %1 the site URL, %2 the key it stores.
+%WPMS% --url=%1 eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%2'; update_option( 'viglet_dumont_settings', $s );"
+exit /b %ERRORLEVEL%
+
+:partitionkey
+rem %1 the site URL: mints a key bound to that site's key and stores it there.
+set "SITEKEY="
+for /f "delims=" %%s in ('%WPMS% --url^=%1 eval "echo ( new Viglet_Dumont_Indexer() )->site_key();"') do set "SITEKEY=%%s"
+if "%SITEKEY%"=="" ( echo %1 has no site key. & exit /b 1 )
+set "PKEY="
+for /f "delims=" %%k in ('%SETUP% -TokenOnly -PartitionValue "%SITEKEY%"') do set "PKEY=%%k"
+if "%PKEY%"=="" ( echo Turing minted no key for %SITEKEY%. & exit /b 1 )
+echo %1 holds a key bound to site_key %SITEKEY%.
+call :storekey %1 %PKEY%
+exit /b %ERRORLEVEL%
 
 :logs
 set "SVC=%~2"
