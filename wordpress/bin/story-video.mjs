@@ -1388,10 +1388,91 @@ for ( const i of chapters.keys() ) {
 	}
 }
 
-const joined = concat(
-	videoPieces.map( ( piece ) => piece.file ),
-	'joined.mp4'
-);
+// Dissolves (D291) where a card meets the recording or a shot, and between the shots: the
+// still crossfades over the first or last half second of the clip beside it. The still goes on
+// through the blend instead of overlapping the clip, so no piece moves and every take stays where
+// it was placed. Inside a chapter the cuts stay hard: they are the product responding.
+const dissolveSeconds = 0.5;
+
+/**
+ * A clip with a still crossfading over one end of it.
+ *
+ * @param {string}     file  The clip.
+ * @param {string}     image The still.
+ * @param {'in'|'out'} end   'out' fades the still out over the clip's start, 'in' fades it in
+ *                           over the clip's end.
+ * @param {number}     n     The piece's index, for the file's name.
+ */
+const blend = ( file, image, end, n ) => {
+	const length = seconds( file );
+	const fade =
+		'out' === end
+			? `fade=t=out:st=0:d=${ dissolveSeconds }:alpha=1`
+			: `fade=t=in:st=${ ( length - dissolveSeconds ).toFixed(
+					3
+				) }:d=${ dissolveSeconds }:alpha=1`;
+	const blended = join( out, 'parts', `dissolve-${ n }-${ end }.mp4` );
+	ffmpeg( [
+		'-i',
+		file,
+		'-loop',
+		'1',
+		'-t',
+		length.toFixed( 3 ),
+		'-i',
+		image,
+		'-filter_complex',
+		`[1:v]scale=${ size.width }:${ size.height },fps=30,format=yuva420p,${ fade }[still];` +
+			'[0:v][still]overlay=shortest=1,format=yuv420p[v]',
+		'-map',
+		'[v]',
+		'-c:v',
+		'libx264',
+		'-preset',
+		'veryfast',
+		'-crf',
+		'20',
+		'-an',
+		blended,
+	] );
+	return blended;
+};
+
+/**
+ * A clip's last frame, as a still to dissolve from.
+ *
+ * @param {string} file The clip.
+ * @param {number} n    The piece's index, for the file's name.
+ */
+const lastFrame = ( file, n ) => {
+	const frame = join( out, 'parts', `dissolve-${ n }-last.png` );
+	ffmpeg( [ '-sseof', '-0.1', '-i', file, '-frames:v', '1', frame ] );
+	return frame;
+};
+
+const joinedFiles = videoPieces.map( ( piece ) => piece.file );
+for ( let n = 0; n < videoPieces.length - 1; n++ ) {
+	const [ from, to ] = [ videoPieces[ n ], videoPieces[ n + 1 ] ];
+	if ( 'V1' === from.track && 'V1' === to.track ) {
+		continue;
+	}
+	if ( to.still ) {
+		// Into a card: the card fades in over the end of what plays before it.
+		joinedFiles[ n ] = blend( joinedFiles[ n ], to.source, 'in', n );
+	} else {
+		// Out of a card or a shot: it fades out over the start of what comes next.
+		const image = from.still
+			? from.source
+			: lastFrame( joinedFiles[ n ], n );
+		joinedFiles[ n + 1 ] = blend(
+			joinedFiles[ n + 1 ],
+			image,
+			'out',
+			n + 1
+		);
+	}
+}
+const joined = concat( joinedFiles, 'joined.mp4' );
 const joinedLength = seconds( joined );
 const narrated = Object.entries( spoken ).filter(
 	( [ , placed ] ) => placed.length

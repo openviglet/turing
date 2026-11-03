@@ -118,7 +118,13 @@ Its first run found D299: the Setup page could not create an SN site at all.
   gain, a limiter 1.5 dB under the ceiling (AAC overshoots a sample-peak limit), and a few
   corrections until it is within 0.3 LU. loudnorm alone stopped at -15.1. The script prints
   what each mix measured beside the video's length.
-- Still to come on D291: dissolves where a card meets the recording, and J-cuts.
+- Dissolves, half a second, wherever a card meets the recording or a shot and between the
+  opening and closing shots: the still crossfades over the clip beside it and goes on through
+  the blend, so no piece moves and every take stays in sync. Inside a chapter the cuts stay
+  hard. The Resolve project keeps hard cuts there for now (D300).
+- No J-cuts: every chapter's line starts 0.2 to 1.1 s into the chapter's action, after its
+  card, because the action is paced to the line. A line recorded to start under its card
+  would be the case for one.
 
 ## Rules learned making it
 
