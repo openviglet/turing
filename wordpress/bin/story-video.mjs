@@ -11,7 +11,7 @@
 //
 //   npm run e2e:story:record && npm run story:video
 //
-// Writes tests/e2e/artifacts/video/: story.mp4, with a caption track per narrated language
+// Writes tests/e2e/artifacts/video/: story.mp4 (story.<language>.mp4 with --language), with a caption track per narrated language
 // whose cues are what Ana says (D278); beside it story.<language>.srt and .vtt, and
 // story.<language>.chapters.txt in YouTube's `0:00 Title` form; and story-30s.mp4, a cut for
 // social posts that keeps the last seconds of each chapter, where its result shows, captioned
@@ -48,6 +48,11 @@ const voices = Object.fromEntries(
 			! process.argv.includes( '--language' ) || code === videoLanguage
 	)
 );
+// One language's video is named for it (D276): the stores differ, so each language is its own
+// recording and its own file, and assembling one never overwrites the other.
+const videoSuffix = process.argv.includes( '--language' )
+	? `.${ videoLanguage }`
+	: '';
 // The narration starts this long after its card shows, and ends this long before the next.
 const voiceLead = 0.4;
 const voiceTail = 0.5;
@@ -529,7 +534,7 @@ const finish = ( joined, cues, name, tracks = [], captions = [] ) => {
 					language: 'por',
 				},
 			];
-	const file = join( out, `${ name }.mp4` );
+	const file = join( out, `${ name }${ videoSuffix }.mp4` );
 	ffmpeg( [
 		'-i',
 		joined,

@@ -2,13 +2,13 @@
 
 A narrated walk through the demo store: a shopper's visit in eight chapters, recorded by
 Playwright on the live demo stack, told by **Ana**, the store's owner, in the store's language.
-`npm run story:video` assembles it into `tests/e2e/artifacts/video/story.mp4` (not committed:
-a release asset, D246).
+`node bin/story-video.mjs --language <lang>` assembles one language's video into
+`tests/e2e/artifacts/video/story.<lang>.mp4` (not committed: a release asset, D246).
 
-Status, 2026-11-02: the **pt-BR** video is recorded again (Recanto da Serra, 7m37s) on a Turing
-image carrying T1190, T1191 and T1196, with the opening and closing cards of D275 and the
-narration as captions (D278). The English one is D276, waiting on the English takes. Open lines
-that show in it are listed at the end.
+Status, 2026-11-03: the **English** video, the primary one (D276), is recorded on Tarnfell
+(6m53s) on a Turing image carrying T1190, T1191 and T1196, with the cards of D275 and the
+narration as captions (D278). The **pt-BR** one (Recanto da Serra, 7m37s) was recorded on
+2026-11-02. Open lines that show in them are listed at the end.
 
 ## What it is made of
 
@@ -20,7 +20,7 @@ that show in it are listed at the end.
 | Product and guide photos | `demo/photos/<kind>/<slug>.webp` (800 px, committed; PNGs are not) | `npm run demo:photos`: Ideogram 4.0 through polyweave; the seed imports a photo where one exists, draws one where none does |
 | Footage of the hills | `demo/broll/*.mp4` (not committed; `.json` with source, author, licence are) | `npm run demo:broll` with `PIXABAY_API_KEY` |
 | The recording | `tests/e2e/artifacts/story/story.webm` + `chapters.json` | `npm run e2e:story:record` (`tests/e2e/story/shopper.story.mjs`) |
-| The video | `tests/e2e/artifacts/video/story.mp4` | `node bin/story-video.mjs --language pt-BR` |
+| The video | `tests/e2e/artifacts/video/story.<lang>.mp4` | `node bin/story-video.mjs --language en` (or `pt-BR`) |
 
 Credits for all of it: `demo/seed/CREDITS.md`.
 
@@ -49,10 +49,12 @@ Credits for all of it: `demo/seed/CREDITS.md`.
    real search block and look at the results, the filter line and the answer; change a query that
    does not show a perfect result (`say` in the spec). The story itself fails on an empty or
    apologising AI answer.
-4. **Record**: `DEMO_LOCALE=pt_BR npm run e2e:story:record`. A run that fails writes no new
-   `chapters.json`; the video script refuses a recording older than the spec.
-5. **Assemble**: `node bin/story-video.mjs --language pt-BR` (only that language's narration, the
-   cards in it; the site's English stills are left alone).
+4. **Record**: `npm run e2e:story:record` for Tarnfell, `DEMO_LOCALE=pt_BR npm run
+   e2e:story:record` for Recanto da Serra. A run that fails writes no new `chapters.json`; the
+   video script refuses a recording older than the spec.
+5. **Assemble**: `node bin/story-video.mjs --language en` (or `pt-BR`): only that language's
+   narration and cards, into `story.<lang>.mp4`, so one never overwrites the other. Only the
+   English run copies its stills into the site's WordPress page.
 6. **Look at it**: frames across the whole video, and the moment each line ends against its Enter.
 
 ## Rules learned making it
@@ -61,13 +63,17 @@ Credits for all of it: `demo/seed/CREDITS.md`.
   probe a store with `populateMetrics: false`, or on another site.
 - A take is placed only if its `.prov.json` says the current line, voice and model: change a line,
   buy it again.
+- The Playground blueprint indexes into the same SN site, `tarnfell`, under the site key
+  `tarnfell`, while the local store's key is `localhost`. A local Playground run leaves a second
+  copy of the catalog there, and Build my kit (which has no site filter) shows every product
+  twice with a "Site: localhost" reason. Before recording, `fq[]=site_key:tarnfell` must find
+  nothing; delete those documents if it does.
 - In user-facing words it is always **Viglet Turing**, never Turing alone.
 - A clean video asks for a believable store: dated over months (D264), its own name, currency and
   pages in its language (D263, D268), a search history (D269), photos (D265).
 
 ## Open, and seen in the video
 
-- D276: the English video (the takes are a purchase to approve).
 - D265: 54 photos still to buy (Ideogram credit); the rest are drawings.
 - D282: the video on the site, the docs, the README and the release (YouTube embeds).
 - D283: the English and pt-BR stores side by side, so recording one does not delete the other.
