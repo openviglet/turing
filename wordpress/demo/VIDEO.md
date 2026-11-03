@@ -21,6 +21,7 @@ narration as captions (D278). The **pt-BR** one (Recanto da Serra, 7m37s) was re
 | Footage of the hills | `demo/broll/*.mp4` (not committed; `.json` with source, author, licence are) | `npm run demo:broll` with `PIXABAY_API_KEY` |
 | The recording | `tests/e2e/artifacts/story/story.webm` + `chapters.json` | `npm run e2e:story:record` (`tests/e2e/story/shopper.story.mjs`) |
 | The video | `tests/e2e/artifacts/video/story.<lang>.mp4` | `node bin/story-video.mjs --language en` (or `pt-BR`) |
+| An editable project | `tests/e2e/artifacts/video/story.<lang>.project/` (`story.<lang>.fcpxml` + `media/`) | `node bin/story-video.mjs --language en --project` (D290) |
 | A clip per chapter | `tests/e2e/artifacts/video/story-chapter-<n>.<lang>.mp4` | `node bin/story-video.mjs --language en --chapter <n>` (D279) |
 | The phone-width recording | `tests/e2e/artifacts/story-vertical/story.webm` + `chapters.json` | `npm run e2e:story:vertical` (D280) |
 | A vertical clip per chapter, 9:16 | `tests/e2e/artifacts/video/story-chapter-<n>-vertical.<lang>.mp4` | `node bin/story-video.mjs --language en --vertical --chapter <n>` |
@@ -59,6 +60,12 @@ Credits for all of it: `demo/seed/CREDITS.md`.
    narration and cards, into `story.<lang>.mp4`, so one never overwrites the other. Only the
    English run copies its stills into the site's WordPress page.
 6. **Look at it**: frames across the whole video, and the moment each line ends against its Enter.
+   To change a cut, a level or a timing by hand, add `--project`: the same timeline is written
+   as an FCPXML for DaVinci Resolve (File > Import > Timeline), with every file it uses copied
+   into its `media/` folder (D290). V1 is the recording, transcoded once to H.264 and cut by
+   chapter, with each held result as a still; V2 the cards; V3 the opening and closing shots,
+   as rendered; A1 each take; A2 the music bed at the video's level. Chapters are markers. The
+   captions are the `.srt` beside the MP4, imported by hand for now (D293).
 7. **The clips** (D279): `--chapter 2`, `3` and `5` are the ones to publish (a sentence read as
    a price filter, the Site assistant with its sources, the kit). Each opens on the chapter's
    title under the product's name, plays the chapter with both of Ana's lines, holds the result

@@ -279,7 +279,8 @@ that language alone and is named for it, `story.en.mp4` and `story-30s.en.mp4`. 
 written beside them as `.srt`. `-- --chapter <n>` cuts one chapter as a clip of its own instead,
 `story-chapter-<n>.<lang>.mp4`, under a minute (D279). `npm run e2e:story:vertical` records the
 story again at a phone's width, and `-- --vertical --chapter <n>` cuts that one as a 9:16 clip
-with its captions burned in (D280). The videos are release assets, never
+with its captions burned in (D280). `-- --project` also writes the video's timeline as a
+DaVinci Resolve project, `story.<lang>.project/`, so a cut can be changed by hand (D290). The videos are release assets, never
 committed, and the script refuses a recording older than the story.
 
 To look at one page in detail, logged in or not:

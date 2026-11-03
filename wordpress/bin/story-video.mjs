@@ -727,7 +727,6 @@ const best = ( i ) => {
 const spoken = Object.fromEntries(
 	Object.keys( voices ).map( ( language ) => [ language, [] ] )
 );
-const segments = [];
 const cues = [];
 let clock = 0;
 
@@ -860,6 +859,35 @@ const titleSeconds = 3;
 // A shot holds at least this long, cut at the first pause after it.
 const shotSeconds = 4;
 
+// The video's timeline (D290): each piece in order, with what an editor needs to rebuild it,
+// its track, the file it comes from, where in that file it starts, and its length as rendered.
+// The MP4 joins its files and `--project` writes it out for DaVinci Resolve, so the two are
+// read from one list and cannot disagree.
+const videoPieces = [];
+
+/**
+ * Put a rendered piece on the timeline.
+ *
+ * @param {string}                                                       file  The piece, encoded for the join.
+ * @param {{track: string, source: string, at: number, still?: boolean}} piece Where it comes from: V1 the recording
+ *                                                                             and its held frames, V2 the cards, V3 the shots.
+ */
+const place = ( file, piece ) => {
+	videoPieces.push( { ...piece, file, length: seconds( file ) } );
+};
+
+/**
+ * A card as the editor gets it: the PNG, held.
+ *
+ * @param {number} i The card's index.
+ */
+const cardPiece = ( i ) => ( {
+	track: 'V2',
+	source: join( out, 'parts', `card-${ i }.png` ),
+	at: 0,
+	still: true,
+} );
+
 /**
  * A card, held for as long as its line runs: its title, then, while she goes on, the shots
  * given, each changing at a pause in her voice.
@@ -874,7 +902,7 @@ const titleCard = ( i, name, shots = [] ) => {
 	say( clock, lineTakes );
 	clock += length;
 	if ( ! shots.length || length < titleSeconds + shotSeconds ) {
-		segments.push( still( i, length ) );
+		place( still( i, length ), cardPiece( i ) );
 		return;
 	}
 	// The cuts follow the longest take's pauses, as they fall on the video.
@@ -890,17 +918,17 @@ const titleCard = ( i, name, shots = [] ) => {
 			last = at;
 		}
 	}
-	segments.push( still( i, titleSeconds ) );
+	place( still( i, titleSeconds ), cardPiece( i ) );
 	const bounds = [ titleSeconds, ...cuts, length ];
 	for ( let n = 0; n < bounds.length - 1; n++ ) {
-		segments.push(
-			shotOf(
-				shots[ n % shots.length ],
-				bounds[ n + 1 ] - bounds[ n ],
-				n,
-				`card-${ i }-shot-${ n }.mp4`
-			)
+		const shotFile = shotOf(
+			shots[ n % shots.length ],
+			bounds[ n + 1 ] - bounds[ n ],
+			n,
+			`card-${ i }-shot-${ n }.mp4`
 		);
+		// A shot is placed as rendered: its zoom and drift, or its trim of looped footage.
+		place( shotFile, { track: 'V3', source: shotFile, at: 0 } );
 	}
 };
 
@@ -1147,13 +1175,15 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 	] );
 	// The chapter's card is its title alone: Ana's line about it is spoken over the action
 	// itself, where the recording marked it (`speak()` in the story), its end on the Enter.
-	segments.push( still( i + 1 ) );
+	place( still( i + 1 ), cardPiece( i + 1 ) );
 	clock += cardSeconds;
 	const from = clock;
 	const { voice } = chapters[ i ];
 	if ( voice ) {
 		say( from + Math.max( 0, voice.at - start ), takes( voice.name ) );
 	}
+	// Where the chapter's clip starts in the recording, as the cut above seeked it.
+	const inRecording = Number( start.toFixed( 2 ) );
 	const result = takes( `chapter-${ i + 1 }-result` );
 	if ( result.length ) {
 		// Up to the result, the result held while she talks about it, then the rest.
@@ -1164,12 +1194,16 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 			'-i',
 			clip,
 		] );
-		segments.push( before );
+		place( before, { track: 'V1', source: webm, at: inRecording } );
 		clock += seconds( before );
 		const length = needs( result );
-		segments.push(
-			freeze( clip, at, length, `chapter-${ i + 1 }-result` )
-		);
+		const held = freeze( clip, at, length, `chapter-${ i + 1 }-result` );
+		place( held, {
+			track: 'V1',
+			source: held.replace( /\.mp4$/, '.png' ),
+			at: 0,
+			still: true,
+		} );
 		say( clock, result );
 		clock += length;
 		const after = cut( `chapter-${ i + 1 }-b.mp4`, [
@@ -1178,10 +1212,14 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 			'-i',
 			clip,
 		] );
-		segments.push( after );
+		place( after, {
+			track: 'V1',
+			source: webm,
+			at: inRecording + Number( at.toFixed( 3 ) ),
+		} );
 		clock += seconds( after );
 	} else {
-		segments.push( clip );
+		place( clip, { track: 'V1', source: webm, at: inRecording } );
 		clock += seconds( clip );
 	}
 	cues.push( { from, to: clock, chapter: i } );
@@ -1190,7 +1228,10 @@ titleCard( cards.length - 1, 'outro', [ ...broll ].reverse() );
 // The video ends on the closing card, alone and long enough to read its two addresses: under
 // the outro it gives way to the footage after its title (D275).
 const closingSeconds = 6;
-segments.push( still( cards.length - 1, closingSeconds ) );
+place(
+	still( cards.length - 1, closingSeconds ),
+	cardPiece( cards.length - 1 )
+);
 clock += closingSeconds;
 
 // One still per chapter, its result on screen, for the site's WordPress page (D197): taken
@@ -1222,7 +1263,10 @@ for ( const i of chapters.keys() ) {
 	}
 }
 
-const joined = concat( segments, 'joined.mp4' );
+const joined = concat(
+	videoPieces.map( ( piece ) => piece.file ),
+	'joined.mp4'
+);
 const joinedLength = seconds( joined );
 const narrated = Object.entries( spoken ).filter(
 	( [ , placed ] ) => placed.length
@@ -1243,6 +1287,217 @@ const video = finish(
 		file: narrationCaptions( placed, language, 'story' ),
 	} ) )
 );
+
+/**
+ * The video as a DaVinci Resolve project (D290): `story.<lang>.project/`, an FCPXML read from the
+ * same timeline as the MP4, beside a media folder holding every file it points at. V1 is the
+ * recording cut by chapter with the held results as stills, V2 the cards, V3 the opening and
+ * closing shots, A1 each of Ana's takes where the video places it, A2 the music bed at the
+ * video's level; each chapter is a marker. The recording is transcoded once to H.264, since
+ * Playwright's VP8 WebM is not something every editor reads. Paths are absolute file URLs to
+ * that media folder, which is what Resolve's import resolves; a moved folder is relinked there.
+ *
+ * @param {number} total The video's length in seconds.
+ * @return {string} The project file.
+ */
+const writeProject = ( total ) => {
+	const dir = join( out, `story${ videoSuffix }.project` );
+	const media = join( dir, 'media' );
+	mkdirSync( media, { recursive: true } );
+	const fps = 30;
+	const time = ( s ) => `${ Math.max( 0, Math.round( s * fps ) ) }/${ fps }s`;
+	const xml = ( text ) =>
+		String( text )
+			.replace( /&/g, '&amp;' )
+			.replace( /</g, '&lt;' )
+			.replace( />/g, '&gt;' )
+			.replace( /"/g, '&quot;' );
+	const url = ( file ) =>
+		'file:///' +
+		file
+			.replace( /\\/g, '/' )
+			.replace( /^\//, '' )
+			.split( '/' )
+			.map( ( part, n ) =>
+				0 === n && /^[A-Za-z]:$/.test( part )
+					? part
+					: encodeURIComponent( part )
+			)
+			.join( '/' );
+
+	// Every source copied into the project's media folder once, the recording transcoded.
+	const assets = new Map();
+	const asset = ( source, kind ) => {
+		if ( assets.has( source ) ) {
+			return assets.get( source );
+		}
+		let file;
+		if ( source === webm ) {
+			file = join( media, 'recording.mp4' );
+			ffmpeg( [
+				'-i',
+				webm,
+				'-vf',
+				`fps=${ fps },format=yuv420p`,
+				'-c:v',
+				'libx264',
+				'-preset',
+				'veryfast',
+				'-crf',
+				'18',
+				'-an',
+				file,
+			] );
+		} else {
+			file = join(
+				media,
+				`${ assets.size }-${ source.split( /[\\/]/ ).pop() }`
+			);
+			copyFileSync( source, file );
+		}
+		const entry = {
+			id: `r${ assets.size + 3 }`,
+			name: file.split( /[\\/]/ ).pop(),
+			file,
+			kind,
+			length: 'image' === kind ? 0 : seconds( file ),
+		};
+		assets.set( source, entry );
+		return entry;
+	};
+
+	// The spine: V1 pieces directly, V2 and V3 pieces over a gap on their own lane.
+	let offset = 0;
+	const spine = videoPieces.map( ( piece ) => {
+		const item = {
+			offset,
+			length: piece.length,
+			start: 'V1' === piece.track ? piece.at : 0,
+			asset: asset( piece.source, piece.still ? 'image' : 'video' ),
+			piece,
+			anchored: [],
+			markers: [],
+		};
+		offset += piece.length;
+		return item;
+	} );
+	// What starts at a moment of the video hangs from the spine item playing then, at that
+	// item's own time.
+	const holder = ( at ) =>
+		spine.find( ( item ) => at < item.offset + item.length ) ??
+		spine.at( -1 );
+	const local = ( item, at ) => item.start + ( at - item.offset );
+
+	for ( const [ language, placed ] of Object.entries( spoken ) ) {
+		for ( const take of placed ) {
+			const item = holder( take.at );
+			item.anchored.push(
+				`<asset-clip ref="${
+					asset( take.file, 'audio' ).id
+				}" lane="-1" offset="${ time(
+					local( item, take.at )
+				) }" start="0s" duration="${ time(
+					take.length
+				) }" name="${ xml(
+					`${ language } ${ take.file.split( /[\\/]/ ).pop() }`
+				) }" audioRole="dialogue"/>`
+			);
+		}
+	}
+	if ( existsSync( music ) ) {
+		const bed = asset( music, 'audio' );
+		const level = ( 20 * Math.log10( musicVolume ) ).toFixed( 1 );
+		for ( let at = 0; at < total; at += bed.length ) {
+			const item = holder( at );
+			item.anchored.push(
+				`<asset-clip ref="${ bed.id }" lane="-2" offset="${ time(
+					local( item, at )
+				) }" start="0s" duration="${ time(
+					Math.min( bed.length, total - at )
+				) }" name="music" audioRole="music"><adjust-volume amount="${ level }dB"/></asset-clip>`
+			);
+		}
+	}
+	for ( const cue of cues ) {
+		const { number, name } = parts[ cue.chapter ];
+		const item = holder( cue.from );
+		item.markers.push(
+			`<marker start="${ time(
+				local( item, cue.from )
+			) }" duration="1/${ fps }s" value="${ xml(
+				`${ number }. ${ words.name( number, name ) }`
+			) }"/>`
+		);
+	}
+
+	const clip = ( item, lane ) => {
+		const tag = 'image' === item.asset.kind ? 'video' : 'asset-clip';
+		const at = lane ? ` lane="${ lane }" offset="0s"` : '';
+		const inner = lane
+			? ''
+			: [ ...item.anchored, ...item.markers ].join( '' );
+		return `<${ tag } ref="${ item.asset.id }" name="${ xml(
+			item.asset.name
+		) }"${ at }${
+			lane ? '' : ` offset="${ time( item.offset ) }"`
+		} start="${ time( item.start ) }" duration="${ time(
+			item.length
+		) }"${ inner ? `>${ inner }</${ tag }>` : '/>' }`;
+	};
+	const spineXml = spine
+		.map( ( item ) => {
+			if ( 'V1' === item.piece.track ) {
+				return clip( item );
+			}
+			const lane = 'V2' === item.piece.track ? 1 : 2;
+			return `<gap name="Gap" offset="${ time(
+				item.offset
+			) }" start="0s" duration="${ time( item.length ) }">${ clip(
+				item,
+				lane
+			) }${ [ ...item.anchored, ...item.markers ].join( '' ) }</gap>`;
+		} )
+		.join( '\n' );
+	// A gap's own time starts at 0 and a V1 clip's at its in point, so `local()` already
+	// placed what hangs from each in that item's time.
+
+	const resources = [
+		`<format id="r1" name="FFVideoFormat${ size.height }p${ fps }" frameDuration="1/${ fps }s" width="${ size.width }" height="${ size.height }"/>`,
+		`<format id="r2" name="FFVideoFormatRateUndefined" width="${ size.width }" height="${ size.height }"/>`,
+		...[ ...assets.values() ].map( ( entry ) => {
+			const media_ = `<media-rep kind="original-media" src="${ xml(
+				url( entry.file )
+			) }"/>`;
+			if ( 'audio' === entry.kind ) {
+				return `<asset id="${ entry.id }" name="${ xml(
+					entry.name
+				) }" start="0s" duration="${ time(
+					entry.length
+				) }" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">${ media_ }</asset>`;
+			}
+			return `<asset id="${ entry.id }" name="${ xml(
+				entry.name
+			) }" start="0s" duration="${ time( entry.length ) }" hasVideo="1" format="${
+				'image' === entry.kind ? 'r2' : 'r1'
+			}">${ media_ }</asset>`;
+		} ),
+	];
+	const file = join( dir, `story${ videoSuffix }.fcpxml` );
+	writeFileSync(
+		file,
+		'<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n' +
+			'<fcpxml version="1.10">\n<resources>\n' +
+			resources.join( '\n' ) +
+			'\n</resources>\n<library>\n<event name="Viglet Turing Search demo">\n' +
+			`<project name="story${ videoSuffix }">\n` +
+			`<sequence format="r1" duration="${ time(
+				offset
+			) }" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">\n<spine>\n` +
+			spineXml +
+			'\n</spine>\n</sequence>\n</project>\n</event>\n</library>\n</fcpxml>\n'
+	);
+	return file;
+};
 
 // The short cut: each chapter's last seconds, where its result shows, with no cards between.
 const intro = 2;
@@ -1284,9 +1539,15 @@ const length = ( file ) => {
 		Math.round( total % 60 )
 	).padStart( 2, '0' ) }s`;
 };
+const project = process.argv.includes( '--project' )
+	? writeProject( joinedLength )
+	: null;
 process.stdout.write(
 	`${ video }: ${ length( video ) }, ${ chapters.length } chapters\n` +
 		`${ teaser }: ${ length( teaser ) }\n` +
 		"the narration's captions (SRT and WebVTT) and the chapter list beside the video, " +
-		'the captions inside it as tracks\n'
+		'the captions inside it as tracks\n' +
+		( project
+			? `${ project }: the same timeline as a DaVinci Resolve project, its media beside it\n`
+			: '' )
 );
