@@ -1711,7 +1711,27 @@ const writeProject = ( total ) => {
 		}
 	}
 	if ( existsSync( music ) ) {
-		const bed = asset( music, 'audio' );
+		// One clip the video's length, looped and faded as the MP4's bed is: placed as a clip per
+		// loop, Resolve spread the pieces over both audio tracks among the takes.
+		const looped = join( out, 'parts', 'music-bed.m4a' );
+		ffmpeg( [
+			'-stream_loop',
+			'-1',
+			'-i',
+			music,
+			'-t',
+			total.toFixed( 3 ),
+			'-af',
+			`afade=t=in:d=2,afade=t=out:st=${ Math.max( 0, total - 3 ).toFixed(
+				3
+			) }:d=3`,
+			'-c:a',
+			'aac',
+			'-b:a',
+			'192k',
+			looped,
+		] );
+		const bed = asset( looped, 'audio' );
 		// The ducking as volume keyframes (D291), the same envelope the MP4 renders, so it can be
 		// moved in Fairlight: a point where each ramp starts and ends, read off `musicGain()`.
 		const placed =
@@ -1726,27 +1746,25 @@ const writeProject = ( total ) => {
 			.sort( ( a, b ) => a - b );
 		const db = ( t ) =>
 			`${ ( 20 * Math.log10( musicGain( placed, t ) ) ).toFixed( 1 ) }dB`;
-		for ( let at = 0; at < total; at += bed.length ) {
-			const until = Math.min( at + bed.length, total );
-			const keys = [
-				at,
-				...turns.filter( ( t ) => t > at && t < until ),
-				until,
-			]
-				.map(
-					( t ) =>
-						`<keyframe time="${ time( t - at ) }" value="${ db( t ) }"/>`
-				)
-				.join( '' );
-			const item = holder( at );
-			item.anchored.push(
-				`<asset-clip ref="${ bed.id }" lane="-2" offset="${ time(
-					local( item, at )
-				) }" start="0s" duration="${ time(
-					until - at
-				) }" name="music" audioRole="music"><adjust-volume><param name="amount"><keyframeAnimation>${ keys }</keyframeAnimation></param></adjust-volume></asset-clip>`
-			);
-		}
+		const until = Math.min( bed.length, total );
+		const keys = [
+			0,
+			...turns.filter( ( t ) => t > 0 && t < until ),
+			until,
+		]
+			.map(
+				( t ) =>
+					`<keyframe time="${ time( t ) }" value="${ db( t ) }"/>`
+			)
+			.join( '' );
+		const item = holder( 0 );
+		item.anchored.push(
+			`<asset-clip ref="${ bed.id }" lane="-2" offset="${ time(
+				local( item, 0 )
+			) }" start="0s" duration="${ time(
+				until
+			) }" name="music" audioRole="music"><adjust-volume><param name="amount"><keyframeAnimation>${ keys }</keyframeAnimation></param></adjust-volume></asset-clip>`
+		);
 	}
 	for ( const cue of cues ) {
 		const { number, name } = parts[ cue.chapter ];

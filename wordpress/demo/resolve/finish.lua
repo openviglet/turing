@@ -21,8 +21,15 @@ local RENDER_DIR = [[__RENDER_DIR__]]
 -- name, and every run applies it.
 local FAIRLIGHT_PRESET = "Viglet story voice"
 
+-- Also written to finish.log beside the project: a script picked from the Scripts menu prints
+-- nowhere a person can read.
+local log = io.open(RENDER_DIR .. "\\finish.log", "w")
 local function say(text)
 	print("finish: " .. text)
+	if log then
+		log:write(os.date("%H:%M:%S ") .. text .. "\n")
+		log:flush()
+	end
 end
 
 -- Everything below runs inside pcall, so a failure says why in the Console instead of ending
@@ -46,7 +53,9 @@ if not project then
 end
 local pool = project:GetMediaPool()
 
-local timeline = pool:ImportTimelineFromFile(FCPXML, { timelineName = NAME, importSourceClips = true })
+-- A new timeline each run, named for when, so a second run never collides with the first.
+local timelineName = NAME .. " " .. os.date("%Y-%m-%d %H.%M.%S")
+local timeline = pool:ImportTimelineFromFile(FCPXML, { timelineName = timelineName, importSourceClips = true })
 if not timeline then
 	say("Resolve did not import " .. FCPXML)
 	return
@@ -127,4 +136,7 @@ say("starting, " .. NAME)
 local ok, problem = pcall(finish)
 if not ok then
 	say("stopped: " .. tostring(problem))
+end
+if log then
+	log:close()
 end
