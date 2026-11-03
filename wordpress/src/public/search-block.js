@@ -1634,6 +1634,9 @@ function learnFacets() {
 		q: lastQuery,
 		fq: [ siteFilter ],
 		rows: 1,
+		// The block's own bookkeeping, not a search the visitor made: counted, every filtered
+		// search would read as two in the insights (D294).
+		populateMetrics: false,
 	} );
 }
 

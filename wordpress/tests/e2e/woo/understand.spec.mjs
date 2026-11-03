@@ -181,6 +181,12 @@ test( 'a sentence whose filters are read is counted once, refined, never as type
 	);
 	expect( refined ).toHaveLength( 1 );
 	expect( refined[ 0 ] ).not.toHaveProperty( 'populateMetrics' );
+	// D294: the one-row probe that learns the unfiltered facets is never counted.
+	const probes = sent.filter( ( body ) => 1 === body.rows );
+	expect( probes.length ).toBeGreaterThan( 0 );
+	expect( probes.every( ( body ) => false === body.populateMetrics ) ).toBe(
+		true
+	);
 } );
 
 test( 'a sentence nothing is read from is counted as typed', async ( {
