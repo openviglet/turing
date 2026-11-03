@@ -388,39 +388,52 @@ export async function cartTotal() {
 }
 
 /**
- * A WooCommerce product as the shop sells it now, from the Store API: its price in the
- * shop's currency (and the regular one when on sale) and whether it can be bought.
+ * WooCommerce products as the shop sells them now, from the Store API: each one's price in the
+ * shop's currency (and the regular one when on sale) and whether it can be bought. One request
+ * for every id (D288): the list answers with the products among them and leaves out the rest,
+ * such as a cited guide, where asking for each by id would log a failed request per guide.
+ * Turing's citations do not say which are products yet (T1212), so the shop is what tells.
  *
- * @param {number} productId The product's post id.
- * @return {Promise<{price: string, regular: string, buyable: boolean}|null>} Null when it
- *                                                                            is not a product.
+ * @param {number[]} productIds Post ids, products or not.
+ * @return {Promise<Map<number, {price: string, regular: string, buyable: boolean}>>} The
+ *                                                                                     products found, by id.
  */
-export async function shopProduct( productId ) {
-	if ( ! config.shop || ! productId ) {
-		return null;
+export async function shopProducts( productIds ) {
+	const found = new Map();
+	const ids = [ ...new Set( productIds.filter( Boolean ) ) ];
+	if ( ! config.shop || ! ids.length ) {
+		return found;
 	}
 	try {
-		const response = await window.fetch(
-			`${ config.shop.storeApi }products/${ productId }`,
-			{ credentials: 'same-origin' }
+		const url = new URL( `${ config.shop.storeApi }products` );
+		url.searchParams.set( 'include', ids.join( ',' ) );
+		url.searchParams.set(
+			'per_page',
+			String( Math.min( 100, ids.length ) )
 		);
+		const response = await window.fetch( url, {
+			credentials: 'same-origin',
+		} );
 		if ( ! response.ok ) {
-			return null;
+			return found;
 		}
-		const product = await response.json();
-		const prices = product.prices || {};
-		const money = ( minor ) => shopMoney( minor, prices );
-		return {
-			price: money( prices.price ),
-			regular:
-				prices.regular_price && prices.regular_price !== prices.price
-					? money( prices.regular_price )
-					: '',
-			buyable: !! product.is_purchasable && !! product.is_in_stock,
-		};
+		for ( const product of await response.json() ) {
+			const prices = product.prices || {};
+			const money = ( minor ) => shopMoney( minor, prices );
+			found.set( Number( product.id ), {
+				price: money( prices.price ),
+				regular:
+					prices.regular_price &&
+					prices.regular_price !== prices.price
+						? money( prices.regular_price )
+						: '',
+				buyable: !! product.is_purchasable && !! product.is_in_stock,
+			} );
+		}
 	} catch {
-		return null;
+		// No prices is not an error the visitor needs to see: the products stay links.
 	}
+	return found;
 }
 
 // The products ticked for comparison (D200), for this tab only. One list for every card that

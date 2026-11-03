@@ -20,7 +20,7 @@ import {
 	createClient,
 	postIdOf,
 	renderMarkdown,
-	shopProduct,
+	shopProducts,
 	siteUrl,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
@@ -215,14 +215,14 @@ const { state } = store( 'viglet-dumont/copilot', {
 			state.status = '';
 			// The shop's own price and stock, for each cited product; the rest stay links.
 			const turn = state.turns[ state.turns.length - 1 ];
-			await Promise.all(
-				turn.items.map( async ( item ) => {
-					const product = await shopProduct( item.productId );
-					if ( product ) {
-						Object.assign( item, product );
-					}
-				} )
+			const shop = await shopProducts(
+				turn.items.map( ( item ) => item.productId )
 			);
+			for ( const item of turn.items ) {
+				if ( shop.has( item.productId ) ) {
+					Object.assign( item, shop.get( item.productId ) );
+				}
+			}
 		},
 		async addToCart() {
 			const { item } = getContext();
@@ -344,21 +344,21 @@ async function buildKit() {
 	// The shop's price, and its word on stock: a product the index calls available but the
 	// shop cannot sell is marked and left out of the cart.
 	const notProducts = new Set();
-	await Promise.all(
-		state.kit.stages
-			.flatMap( ( stage ) => stage.products )
-			.map( async ( product ) => {
-				const shop = await shopProduct( product.productId );
-				if ( shop ) {
-					product.price = shop.price;
-					if ( ! shop.buyable ) {
-						product.out = true;
-					}
-				} else if ( config.shop ) {
-					notProducts.add( product.key );
-				}
-			} )
+	const staged = state.kit.stages.flatMap( ( stage ) => stage.products );
+	const shopped = await shopProducts(
+		staged.map( ( product ) => product.productId )
 	);
+	for ( const product of staged ) {
+		const shop = shopped.get( product.productId );
+		if ( shop ) {
+			product.price = shop.price;
+			if ( ! shop.buyable ) {
+				product.out = true;
+			}
+		} else if ( config.shop ) {
+			notProducts.add( product.key );
+		}
+	}
 	dropNotProducts( notProducts, unfilled );
 	tickFirstSellable( state.kit.stages );
 }

@@ -26,6 +26,9 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 		page,
 		'/wc/store/v1/products&search=Rain%20jacket'
 	);
+	// A guide cited beside it (D288): no product, so it stays a link, and pricing it makes no
+	// failed request, which the fixture would report.
+	const guide = await firstId( page, '/wp/v2/posts&per_page=1' );
 	const asked = [];
 	await page.route( '**/copilot/available', ( route ) =>
 		route.fulfill( { json: { available: true } } )
@@ -43,8 +46,14 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 						title: 'Rain jacket',
 						url: `/?p=${ rain }`,
 					},
+					{
+						rank: 2,
+						id: `localhost:post:${ guide }`,
+						title: 'A guide',
+						url: `/?p=${ guide }`,
+					},
 				],
-				totalHits: 1,
+				totalHits: 2,
 			},
 		} );
 	} );
@@ -59,11 +68,17 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 	await expect(
 		block.locator( '.viglet-dumont-copilot__answer' )
 	).toHaveText( 'The Rain jacket is waterproof and on sale [1].' );
-	const item = block.locator( '.viglet-dumont-copilot__item' );
-	await expect( item ).toHaveCount( 1 );
+	const items = block.locator( '.viglet-dumont-copilot__item' );
+	await expect( items ).toHaveCount( 2 );
+	const item = items.filter( { hasText: 'Rain jacket' } );
 	// The shop's own price for it, the regular one struck through.
 	await expect( item.locator( 'strong' ) ).toHaveText( '$149.90' );
 	await expect( item.locator( 'del' ) ).toContainText( '$199.00' );
+	const cited = items.filter( { hasText: 'A guide' } );
+	await expect( cited ).not.toContainText( '$' );
+	await expect(
+		cited.getByRole( 'button', { name: /^Add to cart/ } )
+	).toBeHidden();
 	expect( asked[ 0 ].messages ).toEqual( [
 		{ role: 'user', content: 'a waterproof jacket' },
 	] );
