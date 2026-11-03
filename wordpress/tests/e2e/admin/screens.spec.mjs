@@ -56,11 +56,14 @@ test( 'Fields shows the seats facet in Turing and previews a document', async ( 
 	const json = post.locator( 'pre' );
 	await expect( json ).toContainText( '"site_key"' );
 	await expect( json ).toContainText( '"seats"' );
+	// The previewed post is the latest modified one, which other specs change: its title is
+	// data, like the document, so neither is in the picture (D284).
+	const previewed = post.getByText( /sends, as saved/ );
 	await look( 'fields' );
 	await axe( 'Fields', plugin );
 	await expect( page.locator( '#wpbody-content' ) ).toHaveScreenshot(
 		'fields.png',
-		{ mask: [ json ] }
+		{ mask: [ json, previewed ] }
 	);
 } );
 
