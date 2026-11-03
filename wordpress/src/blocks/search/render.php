@@ -182,7 +182,7 @@ $viglet_dumont_classes = implode(
 		// The inner blocks (the parts, and any block a theme puts between them), each already
 		// rendered and escaped by its own render callback, as WordPress hands $content to every
 		// block that wraps others.
-		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inner blocks, escaped by their own render callbacks.
 		?>
 	<?php else : ?>
 		<?php

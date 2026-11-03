@@ -73,8 +73,7 @@ class Viglet_Dumont_Native_Search {
 	 * @return array The directives, with noindex on a refined search.
 	 */
 	public static function robots( array $robots ): array {
-		// A read-only look at the URL: nothing is changed, so there is no nonce to check.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a read-only look at the URL.
 		$refined = isset( $_GET['fq'] ) || isset( $_GET['pg'] ) || isset( $_GET['sort'] );
 		if ( $refined && is_singular() && has_block( 'viglet-dumont/search', get_queried_object() ) ) {
 			$robots['noindex'] = true;
@@ -293,8 +292,7 @@ class Viglet_Dumont_Native_Search {
 	 * asks the block renderer endpoint with `context=edit`), where its script does not run.
 	 */
 	public static function is_editor_preview(): bool {
-		// A read-only look at the request: nothing is changed, so there is no nonce to check.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a read-only look at the request.
 		return defined( 'REST_REQUEST' ) && REST_REQUEST && 'edit' === sanitize_key( wp_unslash( $_GET['context'] ?? '' ) );
 	}
 

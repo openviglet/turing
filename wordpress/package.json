@@ -12,6 +12,7 @@
     "test:e2e:demo": "playwright test -c playwright.demo.config.mjs",
     "test:e2e:playground": "playwright test -c playwright.playground.config.mjs",
     "e2e:look": "node tests/e2e/look.mjs",
+    "check:wporg": "node bin/wporg-check.mjs",
     "e2e:tour": "playwright test -c playwright.tour.config.mjs",
     "e2e:story": "playwright test -c playwright.story.config.mjs",
     "e2e:story:record": "playwright test -c playwright.story-record.config.mjs",

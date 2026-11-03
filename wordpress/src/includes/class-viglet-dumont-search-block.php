@@ -63,8 +63,7 @@ class Viglet_Dumont_Search_Block {
 	 * The query the page was opened with (?q=, or WordPress's ?s=).
 	 */
 	public static function query(): string {
-		// A public, read-only page parameter: nothing is changed, so there is no nonce to check.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a public, read-only page parameter.
 		return sanitize_text_field( wp_unslash( $_GET['q'] ?? ( $_GET['s'] ?? '' ) ) );
 	}
 

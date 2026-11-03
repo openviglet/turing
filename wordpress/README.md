@@ -409,4 +409,9 @@ data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that s
    the zip with `bin/build-zip.sh` and attaches it to that tag's release. The script refuses a
    tag that disagrees with the plugin header or with the readme's stable tag.
 3. For WordPress.org, upload `sh bin/build-zip.sh --wporg` instead: the same plugin without the
-   bundled translations.
+   bundled translations, named `viglet-turing-search-<version>-wporg.zip`. Never the plain zip:
+   its translations and `load_plugin_textdomain()` are what the 3 Nov 2026 pre-review flagged.
+   Before uploading, unzip it and run `node bin/wporg-check.mjs --package <its
+   viglet-turing-search/ folder>`, which reads it for what that review found (CI does the same).
+   On Windows, build it in a container: `docker run --rm -v "%cd%:/w" -w /w alpine sh -c "apk
+   add zip && sh bin/build-zip.sh --wporg"`.

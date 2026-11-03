@@ -44,8 +44,7 @@ class Viglet_Dumont_Search {
 	 * Execute search and render results page.
 	 */
 	public function render(): void {
-		// A search page is a public GET that changes nothing, so there is no nonce to verify.
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- a public GET search that changes nothing.
 		$query    = get_search_query();
 		$page     = max( 1, absint( wp_unslash( $_GET['paged'] ?? 1 ) ) );
 		$per_page = (int) $this->settings['results_per_page'];

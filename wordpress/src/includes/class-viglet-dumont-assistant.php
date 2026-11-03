@@ -72,7 +72,7 @@ class Viglet_Dumont_Assistant {
 		}
 		// The block's render.php (blocks/assistant/render.php) escapes every value as it prints
 		// it; kses over the result would strip its dialog, its form and its data-wp-on-- directives.
-		echo render_block( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo render_block( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- the block's render.php escapes every value.
 			array(
 				'blockName'    => self::BLOCK,
 				'attrs'        => array( 'floating' => true ),
