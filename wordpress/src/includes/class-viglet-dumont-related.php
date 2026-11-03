@@ -21,6 +21,26 @@ class Viglet_Dumont_Related {
 	/** How long one post's neighbours are kept before Turing is asked again: an hour. */
 	public const CACHE_TTL = 3600;
 
+	/**
+	 * What a post's thumbnail may carry when the block prints it: core's attachment image tag,
+	 * srcset and sizes included, which wp_kses_post() would strip.
+	 */
+	public const IMAGE_HTML = array(
+		'img' => array(
+			'src'           => true,
+			'srcset'        => true,
+			'sizes'         => true,
+			'alt'           => true,
+			'class'         => true,
+			'width'         => true,
+			'height'        => true,
+			'loading'       => true,
+			'decoding'      => true,
+			'fetchpriority' => true,
+			'style'         => true,
+		),
+	);
+
 	/** The most Turing is asked for at once. */
 	private const MAX_ROWS = 50;
 

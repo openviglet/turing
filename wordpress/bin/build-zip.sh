@@ -4,9 +4,19 @@
 #
 # The version comes from the plugin header, and a version argument (the release tag without its
 # wordpress-v prefix) must match it, so a tag can never publish a zip that says otherwise.
+#
+# --wporg builds the package uploaded to WordPress.org instead (build/viglet-turing-search-<version>-wporg.zip):
+# without the compiled translations and their loader, since translate.wordpress.org serves the
+# language packs there. The .pot stays.
 set -eu
 
 cd "$(dirname "$0")/.."
+
+wporg=
+if [ "${1:-}" = "--wporg" ]; then
+    wporg=1
+    shift
+fi
 
 version=$(sed -n 's/^ \* Version:[[:space:]]*//p' src/viglet-dumont.php)
 stable=$(sed -n 's/^Stable tag:[[:space:]]*//p' src/readme.txt)
@@ -39,7 +49,13 @@ rm -rf build
 mkdir -p build/viglet-turing-search
 cp -R src/. build/viglet-turing-search/
 cp composer.json build/viglet-turing-search/
-(cd build && zip -qr "viglet-turing-search-$version.zip" viglet-turing-search)
+zip_name="viglet-turing-search-$version.zip"
+if [ -n "$wporg" ]; then
+    rm -f build/viglet-turing-search/includes/bundled-translations.php
+    find build/viglet-turing-search/languages -type f ! -name '*.pot' -delete
+    zip_name="viglet-turing-search-$version-wporg.zip"
+fi
+(cd build && zip -qr "$zip_name" viglet-turing-search)
 rm -rf build/viglet-turing-search
 
-echo "build/viglet-turing-search-$version.zip"
+echo "build/$zip_name"

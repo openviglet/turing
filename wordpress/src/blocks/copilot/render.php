@@ -81,7 +81,7 @@ wp_interactivity_state(
 );
 ?>
 <section
-	<?php echo get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-copilot' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the wrapper attributes. ?>
+	<?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-copilot' ) ) ); ?>
 	data-wp-interactive="viglet-dumont/copilot"
 	data-wp-init="callbacks.init"
 	aria-labelledby="<?php echo esc_attr( $viglet_dumont_id ); ?>-heading"

@@ -45,6 +45,12 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-insights.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-trending.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-assistant.php';
 
+// The GitHub zip and Composer carry their own pt_BR; the WordPress.org package leaves the loader
+// out, as WordPress loads its language packs by itself.
+if ( file_exists( VIGLET_DUMONT_DIR . 'includes/bundled-translations.php' ) ) {
+	require_once VIGLET_DUMONT_DIR . 'includes/bundled-translations.php';
+}
+
 if ( is_admin() ) {
 	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
 }
@@ -132,10 +138,6 @@ function viglet_dumont_update_settings( array $settings ): bool {
  * Initialize the plugin.
  */
 function viglet_dumont_init(): void {
-	// A site that installed the GitHub zip or Composer gets no language pack from wordpress.org:
-	// the pt_BR the plugin ships is loaded from its own languages/ folder.
-	load_plugin_textdomain( 'viglet-turing-search', false, dirname( plugin_basename( VIGLET_DUMONT_FILE ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
-
 	$settings = viglet_dumont_get_settings();
 
 	// Per-post "exclude from search", exposed to the block editor so a sidebar can toggle it.

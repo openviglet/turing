@@ -131,37 +131,32 @@ class Viglet_Dumont_Search_Block {
 	}
 
 	/**
-	 * The markup of some pieces, in order.
+	 * Draw some pieces, in order. Each piece escapes its own output where it prints it, so
+	 * nothing here echoes markup it holds in a variable.
 	 *
 	 * @param string[] $pieces     Piece names: files in blocks/search/parts/.
 	 * @param array    $attributes The parent block's attributes.
 	 */
-	public static function pieces( array $pieces, array $attributes ): string {
-		$html = '';
+	public static function render( array $pieces, array $attributes ): void {
 		foreach ( $pieces as $piece ) {
-			$html .= self::piece( $piece, $attributes );
+			self::piece( $piece, $attributes );
 		}
-
-		return $html;
 	}
 
 	/**
-	 * One piece's markup.
+	 * Draw one piece.
 	 *
 	 * @param string $piece      A file in blocks/search/parts/, without `.php`.
 	 * @param array  $attributes The parent block's attributes.
 	 */
-	private static function piece( string $piece, array $attributes ): string {
+	private static function piece( string $piece, array $attributes ): void {
 		$file = VIGLET_DUMONT_DIR . 'blocks/search/parts/' . sanitize_key( $piece ) . '.php';
 		if ( ! file_exists( $file ) ) {
-			return '';
+			return;
 		}
 		$viglet_dumont_id   = self::id();
 		$viglet_dumont_show = static fn ( string $part ): bool => (bool) ( $attributes[ $part ] ?? true );
 
-		ob_start();
 		include $file;
-
-		return (string) ob_get_clean();
 	}
 }

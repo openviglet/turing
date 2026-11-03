@@ -303,7 +303,10 @@ docker run --rm -v "$PWD:/plugin" -w /plugin wordpress:cli-2.12-php8.5 sh -c '
 ```
 
 then translate the new entries in `viglet-turing-search-pt_BR.po` and run the last two commands
-again. The JSON files are named after the source script (`assets/admin/health.js`), and
+again. These files, and `src/includes/bundled-translations.php` that loads them, serve the GitHub
+zip and Composer only: the WordPress.org package (`bin/build-zip.sh --wporg`) leaves them out,
+keeping the `.pot`, as translate.wordpress.org delivers the language packs there. The pt_BR `.po`
+is what to import into translate.wordpress.org. The JSON files are named after the source script (`assets/admin/health.js`), and
 `viglet_dumont_script_translation_path` maps the built script to it.
 
 The tests run on [Brain Monkey](https://giuseppe-mazzapica.gitbook.io/brain-monkey/), with no
@@ -396,3 +399,5 @@ data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that s
    [`wordpress-plugin.yml`](../.github/workflows/wordpress-plugin.yml) runs the checks, builds
    the zip with `bin/build-zip.sh` and attaches it to that tag's release. The script refuses a
    tag that disagrees with the plugin header or with the readme's stable tag.
+3. For WordPress.org, upload `sh bin/build-zip.sh --wporg` instead: the same plugin without the
+   bundled translations.

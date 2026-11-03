@@ -30,7 +30,7 @@ if ( ! $viglet_dumont_posts ) {
 	if ( $viglet_dumont_preview ) {
 		printf(
 			'<p %s>%s</p>',
-			get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-related__empty' ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by WordPress.
+			wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-related__empty' ) ) ),
 			esc_html__( 'Related posts appear here once this post is indexed and Turing finds posts like it.', 'viglet-turing-search' )
 		);
 	}
@@ -57,11 +57,13 @@ if ( $viglet_dumont_shop ) {
 ?>
 <section
 	<?php
-	echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by WordPress.
-		array(
-			'class'               => 'viglet-dumont-related--' . ( 'list' === ( $attributes['layout'] ?? 'grid' ) ? 'list' : 'grid' ),
-			'aria-labelledby'     => $viglet_dumont_id,
-			'data-wp-interactive' => 'viglet-dumont/related',
+	echo wp_kses_data(
+		get_block_wrapper_attributes(
+			array(
+				'class'               => 'viglet-dumont-related--' . ( 'list' === ( $attributes['layout'] ?? 'grid' ) ? 'list' : 'grid' ),
+				'aria-labelledby'     => $viglet_dumont_id,
+				'data-wp-interactive' => 'viglet-dumont/related',
+			)
 		)
 	);
 	?>
@@ -70,8 +72,8 @@ if ( $viglet_dumont_shop ) {
 	<ul class="viglet-dumont-related__list">
 		<?php foreach ( $viglet_dumont_posts as $viglet_dumont_index => $viglet_dumont_related ) : ?>
 			<?php
-			$viglet_dumont_url   = get_permalink( $viglet_dumont_related );
-			$viglet_dumont_image = ! empty( $attributes['showImage'] ) && has_post_thumbnail( $viglet_dumont_related )
+			$viglet_dumont_url     = get_permalink( $viglet_dumont_related );
+			$viglet_dumont_image   = ! empty( $attributes['showImage'] ) && has_post_thumbnail( $viglet_dumont_related )
 				? get_the_post_thumbnail(
 					$viglet_dumont_related,
 					'medium_large',
@@ -81,22 +83,19 @@ if ( $viglet_dumont_shop ) {
 					)
 				)
 				: '';
+			$viglet_dumont_context = array(
+				'id'        => $viglet_dumont_doc_ids->build_doc_id( $viglet_dumont_related->ID ),
+				'position'  => $viglet_dumont_index + 1,
+				'productId' => $viglet_dumont_related->ID,
+			);
 			?>
 			<li
 				class="viglet-dumont-related__item"
-				<?php
-				echo wp_interactivity_data_wp_context( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by WordPress.
-					array(
-						'id'        => $viglet_dumont_doc_ids->build_doc_id( $viglet_dumont_related->ID ),
-						'position'  => $viglet_dumont_index + 1,
-						'productId' => $viglet_dumont_related->ID,
-					)
-				);
-				?>
+				data-wp-context="<?php echo esc_attr( (string) wp_json_encode( $viglet_dumont_context ) ); ?>"
 			>
 				<?php if ( '' !== $viglet_dumont_image ) : ?>
 					<a class="viglet-dumont-related__image" href="<?php echo esc_url( $viglet_dumont_url ); ?>" tabindex="-1" aria-hidden="true" data-wp-on--click="actions.open" data-wp-on--auxclick="actions.open">
-						<?php echo $viglet_dumont_image; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built by WordPress. ?>
+						<?php echo wp_kses( $viglet_dumont_image, Viglet_Dumont_Related::IMAGE_HTML ); ?>
 					</a>
 				<?php endif; ?>
 				<h3 class="viglet-dumont-related__title">

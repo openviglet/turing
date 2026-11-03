@@ -170,25 +170,30 @@ $viglet_dumont_classes = implode(
 );
 ?>
 <div
-	<?php echo get_block_wrapper_attributes( array( 'class' => $viglet_dumont_classes ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the wrapper attributes. ?>
+	<?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => $viglet_dumont_classes ) ) ); ?>
 	data-wp-interactive="viglet-dumont/search"
-	<?php echo $viglet_dumont_elsewhere ? wp_interactivity_data_wp_context( array( 'elsewhere' => $viglet_dumont_elsewhere ) ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the context attribute. ?>
+	<?php if ( $viglet_dumont_elsewhere ) : ?>
+		data-wp-context="<?php echo esc_attr( (string) wp_json_encode( array( 'elsewhere' => $viglet_dumont_elsewhere ) ) ); ?>"
+	<?php endif; ?>
 	data-wp-init="callbacks.init"
 >
-	<?php
-	if ( $viglet_dumont_parts ) {
-		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inner blocks, drawn by WordPress.
-	} else {
+	<?php if ( $viglet_dumont_parts ) : ?>
+		<?php
+		// The inner blocks (the parts, and any block a theme puts between them), each already
+		// rendered and escaped by its own render callback, as WordPress hands $content to every
+		// block that wraps others.
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>
+	<?php else : ?>
+		<?php
 		// The default order, with the filters and the results side by side.
-		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- the pieces escape their own output.
-		echo Viglet_Dumont_Search_Block::pieces( array( 'box', 'correction', 'trending', 'toolbar', 'applied', 'suggested', 'toggle', 'answer' ), $attributes );
-		echo '<div class="viglet-dumont-search__layout">';
-		echo Viglet_Dumont_Search_Block::pieces( array( 'facets', 'main' ), $attributes );
-		echo '</div>';
-		echo Viglet_Dumont_Search_Block::pieces( array( 'pages' ), $attributes );
-		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
-	}
-	?>
+		Viglet_Dumont_Search_Block::render( array( 'box', 'correction', 'trending', 'toolbar', 'applied', 'suggested', 'toggle', 'answer' ), $attributes );
+		?>
+		<div class="viglet-dumont-search__layout">
+			<?php Viglet_Dumont_Search_Block::render( array( 'facets', 'main' ), $attributes ); ?>
+		</div>
+		<?php Viglet_Dumont_Search_Block::render( array( 'pages' ), $attributes ); ?>
+	<?php endif; ?>
 </div>
 <?php
 Viglet_Dumont_Search_Block::done();

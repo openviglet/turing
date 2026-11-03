@@ -21,7 +21,7 @@ $viglet_dumont_ids     = Viglet_Dumont_Compare::ids( sanitize_text_field( wp_uns
 $viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' ) ? $attributes['heading'] : __( 'Compare products', 'viglet-turing-search' );
 $viglet_dumont_table   = count( $viglet_dumont_ids ) >= 2 ? Viglet_Dumont_Compare::table( $viglet_dumont_ids ) : null;
 ?>
-<section <?php echo get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-compare' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by WordPress. ?>>
+<section <?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-compare' ) ) ); ?>>
 	<h2 class="viglet-dumont-compare__heading"><?php echo esc_html( $viglet_dumont_heading ); ?></h2>
 	<?php if ( null === $viglet_dumont_table ) : ?>
 		<p class="viglet-dumont-compare__empty"><?php esc_html_e( 'Tick Compare on two to four products in the search results to see them side by side here.', 'viglet-turing-search' ); ?></p>

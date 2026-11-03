@@ -19,12 +19,11 @@ if ( ! isset( Viglet_Dumont_Search_Block::PARTS[ $viglet_dumont_part ] ) ) {
 	return;
 }
 ?>
-<div <?php echo get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-search__part' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the wrapper attributes. ?>>
+<div <?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-search__part' ) ) ); ?>>
 	<?php
-	$viglet_dumont_html = Viglet_Dumont_Search_Block::pieces(
+	Viglet_Dumont_Search_Block::render(
 		Viglet_Dumont_Search_Block::PARTS[ $viglet_dumont_part ],
 		Viglet_Dumont_Search_Block::attributes_from( $block->context )
 	);
-	echo $viglet_dumont_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- the pieces escape their own output.
 	?>
 </div>

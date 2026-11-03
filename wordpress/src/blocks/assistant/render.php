@@ -34,23 +34,22 @@ wp_interactivity_state(
 		'documentId' => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
 	)
 );
+$viglet_dumont_context = (string) wp_json_encode(
+	array(
+		'suggestions' => array_map(
+			static fn ( string $text ) => array(
+				'key'  => $text,
+				'text' => $text,
+			),
+			$viglet_dumont_suggestions
+		),
+	)
+);
 ?>
 <div
-	<?php echo get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-assistant' . ( empty( $attributes['floating'] ) ? '' : ' is-floating' ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the wrapper attributes. ?>
+	<?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-assistant' . ( empty( $attributes['floating'] ) ? '' : ' is-floating' ) ) ) ); ?>
 	data-wp-interactive="viglet-dumont/assistant"
-	<?php
-	echo wp_interactivity_data_wp_context( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes the context.
-		array(
-			'suggestions' => array_map(
-				static fn ( string $text ) => array(
-					'key'  => $text,
-					'text' => $text,
-				),
-				$viglet_dumont_suggestions
-			),
-		)
-	);
-	?>
+	data-wp-context="<?php echo esc_attr( $viglet_dumont_context ); ?>"
 	data-wp-init="callbacks.init"
 	hidden
 	data-wp-bind--hidden="!state.available"
