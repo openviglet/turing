@@ -202,6 +202,18 @@ test.afterAll( () => {
  * the page before its own scripts.
  */
 function pointer() {
+	// The browser's red spell-check underline reads, in a video, as the shop marking her words
+	// wrong (D295). An input does not inherit spellcheck from the document in Edge, so each
+	// field is turned off as it takes the focus, before a word is typed into it.
+	document.addEventListener(
+		'focusin',
+		( event ) => {
+			if ( 'spellcheck' in event.target ) {
+				event.target.spellcheck = false;
+			}
+		},
+		true
+	);
 	window.addEventListener( 'DOMContentLoaded', () => {
 		const dot = document.createElement( 'div' );
 		dot.setAttribute( 'aria-hidden', 'true' );
