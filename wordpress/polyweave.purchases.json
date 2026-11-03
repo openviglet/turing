@@ -2464,5 +2464,41 @@
     "sha256": "10aadcbca3bf39b14412f5a27459fa35f8f729bf2cc391231c35c90ed9c1d46f",
     "surprised": true,
     "task_id": "elevenlabs:GaKO1E14zpiu3QQw4Qjm"
+  },
+  {
+    "artefact": "demo/narration/en/chapter-2-result.mp3",
+    "at": "2026-11-03T19:33:15Z",
+    "balance_after": null,
+    "balance_before": null,
+    "bought": "sound",
+    "bytes": 374952,
+    "credits": 0.00459,
+    "expected_credits": 0.01149,
+    "measured": true,
+    "outputs": 1,
+    "prompt": "[excited] And look at this! Viglet Turing read under four hundred dollars as a price filter, all by itself, and showed only what fits the budget. And up top, a short answer that names the best one, with the price and why, and every source right below it. [laughs] My old WordPress search found nothing at all for this sentence. Nothing! Now it reads like a friend who knows the shop.",
+    "reference": null,
+    "service": "elevenlabs",
+    "sha256": "204e0db90344e5248ef637282e21d1ca0184fdcc740aaec34e7423e79fad795f",
+    "surprised": true,
+    "task_id": "elevenlabs:kgJkThYafZFTv3TqhfE3"
+  },
+  {
+    "artefact": "demo/narration/pt-BR/chapter-2-result.mp3",
+    "at": "2026-11-03T19:34:17Z",
+    "balance_after": null,
+    "balance_before": null,
+    "bought": "sound",
+    "bytes": 423435,
+    "credits": 0.00456,
+    "expected_credits": 0.01143,
+    "measured": true,
+    "outputs": 1,
+    "prompt": "[excited] E olha isso! O Viglet Turing entendeu at\u00e9 dois mil e duzentos reais como um filtro de pre\u00e7o, sozinho, e mostrou s\u00f3 o que cabe no or\u00e7amento. E l\u00e1 em cima, uma resposta curta indicando a melhor, com o pre\u00e7o e o porqu\u00ea, e todas as fontes logo abaixo. [laughs] A minha busca antiga do WordPress n\u00e3o achava nada com essa frase. Nada! Agora parece uma amiga que conhece a loja.",
+    "reference": null,
+    "service": "elevenlabs",
+    "sha256": "55e1fd438345cb4e1df854d97e9c2e090286a6bca80e0ce5a56e39ac82dbdcfb",
+    "surprised": true,
+    "task_id": "elevenlabs:w8e9oQLEDvCxAd33IlMF"
   }
 ]

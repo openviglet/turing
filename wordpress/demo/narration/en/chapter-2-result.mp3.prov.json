@@ -1,8 +1,8 @@
 {
   "artefact": {
-    "bytes": 376206,
+    "bytes": 374952,
     "path": "demo/narration/en/chapter-2-result.mp3",
-    "sha256": "0cf97523ddfe96b68b89e2a5d57347582092c59aa6a7f59d99c458d3cabeb401"
+    "sha256": "204e0db90344e5248ef637282e21d1ca0184fdcc740aaec34e7423e79fad795f"
   },
   "balance_after": null,
   "balance_before": null,
@@ -28,16 +28,16 @@
   "inputs": [],
   "kind": "fetch",
   "measurements": {
-    "bytes": 376206,
-    "sha256": "0cf97523ddfe96b68b89e2a5d57347582092c59aa6a7f59d99c458d3cabeb401"
+    "bytes": 374952,
+    "sha256": "204e0db90344e5248ef637282e21d1ca0184fdcc740aaec34e7423e79fad795f"
   },
   "params": {},
-  "produced_at": "2026-11-02T19:54:08Z",
+  "produced_at": "2026-11-03T19:33:15Z",
   "producer": {
     "tool": "polyweave",
     "version": "0.1.0"
   },
-  "prompt": "[excited] And look at this! Viglet Turing read under four hundred dollars as a price filter, all by itself, and kept just the two tents that fit. And up top, a short answer that names the best one, with the price and why, and every source right below it. [laughs] My old WordPress search found nothing at all for this sentence. Nothing! Now it reads like a friend who knows the shop.",
+  "prompt": "[excited] And look at this! Viglet Turing read under four hundred dollars as a price filter, all by itself, and showed only what fits the budget. And up top, a short answer that names the best one, with the price and why, and every source right below it. [laughs] My old WordPress search found nothing at all for this sentence. Nothing! Now it reads like a friend who knows the shop.",
   "service": "elevenlabs",
-  "task_id": "elevenlabs:CRVkrQv7ferTVh5o3nhJ"
+  "task_id": "elevenlabs:kgJkThYafZFTv3TqhfE3"
 }
