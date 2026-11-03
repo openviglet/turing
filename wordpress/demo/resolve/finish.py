@@ -2,10 +2,10 @@
 # way every time. `node bin/story-video.mjs --language <lang> --project` writes this file into
 # story.<lang>.project/ with its paths filled in; nothing here needs editing.
 #
-# Resolve's free version runs scripts only from inside the app, so run it there:
-#   Workspace > Console > Py3, then:  exec(open(r"<the project folder>\finish.py").read())
-# or copy it into %APPDATA%\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Utility\
-# and pick it under Workspace > Scripts.
+# Resolve's free version runs scripts only from inside the app, so run it there: copy it into
+# %APPDATA%\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Utility\ and pick it under
+# Workspace > Scripts. (The Console works too once switched to Py3 with the buttons at its top;
+# typing `py3` at its `Lua>` prompt does not switch it.) Resolve needs a 64-bit Python 3 installed.
 #
 # It creates (or opens) a project named for the video, imports the timeline, says whether any
 # clip came in offline (D290's check), adds the narration's captions as a subtitle track, applies
@@ -26,11 +26,25 @@ def say(text):
 
 
 try:
-    resolve  # noqa: F821 - given to a script run inside Resolve
+    resolve  # noqa: F821 - given to a script run from the Console
 except NameError:
-    import DaVinciResolveScript as dvr
+    try:
+        # A script picked under Workspace > Scripts gets Fusion's `bmd` instead.
+        resolve = bmd.scriptapp("Resolve")  # noqa: F821
+    except NameError:
+        import os
+        import sys
 
-    resolve = dvr.scriptapp("Resolve")
+        sys.path.append(
+            os.path.expandvars(
+                r"%PROGRAMDATA%\Blackmagic Design\DaVinci Resolve\Support\Developer\Scripting\Modules"
+            )
+        )
+        import DaVinciResolveScript as dvr
+
+        resolve = dvr.scriptapp("Resolve")
+if not resolve:
+    raise SystemExit("finish: no Resolve to talk to; run this from inside DaVinci Resolve")
 
 manager = resolve.GetProjectManager()
 project = manager.LoadProject(NAME) or manager.CreateProject(NAME)
