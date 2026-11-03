@@ -23,12 +23,26 @@ local FAIRLIGHT_PRESET = "Viglet story voice"
 
 -- Also written to finish.log beside the project: a script picked from the Scripts menu prints
 -- nowhere a person can read.
-local log = io.open(RENDER_DIR .. "\\finish.log", "w")
+-- Opened inside pcall: where Resolve's Lua has no `io`, an unguarded open ended the script before
+-- its first line, with nothing said anywhere. Fusion's own `bmd.writefile` is the fallback.
+local LOG = RENDER_DIR .. "\\finish.log"
+local logged = {}
+local ok_io, log = pcall(function()
+	return io.open(LOG, "w")
+end)
+if not ok_io then
+	log = nil
+end
 local function say(text)
 	print("finish: " .. text)
+	table.insert(logged, text)
 	if log then
-		log:write(os.date("%H:%M:%S ") .. text .. "\n")
-		log:flush()
+		pcall(function()
+			log:write(text .. "\n")
+			log:flush()
+		end)
+	elseif bmd and bmd.writefile then
+		pcall(bmd.writefile, LOG, table.concat(logged, "\n") .. "\n")
 	end
 end
 
@@ -54,7 +68,8 @@ end
 local pool = project:GetMediaPool()
 
 -- A new timeline each run, named for when, so a second run never collides with the first.
-local timelineName = NAME .. " " .. os.date("%Y-%m-%d %H.%M.%S")
+local stamp = (os and os.date) and os.date("%Y-%m-%d %H.%M.%S") or tostring(#pool:GetRootFolder():GetClipList())
+local timelineName = NAME .. " " .. stamp
 local timeline = pool:ImportTimelineFromFile(FCPXML, { timelineName = timelineName, importSourceClips = true })
 if not timeline then
 	say("Resolve did not import " .. FCPXML)
@@ -138,5 +153,7 @@ if not ok then
 	say("stopped: " .. tostring(problem))
 end
 if log then
-	log:close()
+	pcall(function()
+		log:close()
+	end)
 end
