@@ -109,6 +109,17 @@ are still open on D281.
 
 Its first run found D299: the Setup page could not create an SN site at all.
 
+## The frame follows the action (D292)
+
+The story marks the element each step acts on (`focus()` in the spec: the search box, the
+answer, the assistant, the comparison, the kit's plan, the product question) with its box on
+screen, into `chapters.json`. The video eases in on each box over 0.8 s, holds while the step
+runs and eases back out before the next, at most 1.6x so text stays sharp from 1080p, with a
+quarter of the box's size as room; a box too big to zoom, or a step too short for both moves,
+stays at the full frame. The held result frame is taken from the followed clip, so it is
+pushed in too. Vertical cuts are already a phone's page and are left alone. The Resolve
+project does not carry the moves yet.
+
 ## The mix (D291)
 
 - The music bed ducks under every line: 0.12 under a take, 0.3 between takes, with a 0.4 s

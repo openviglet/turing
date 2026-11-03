@@ -1166,6 +1166,81 @@ const verticalCut = ( joined, name, narrated, total ) => {
 	return file;
 };
 
+// The push-in (D292): the most the frame zooms, so text stays sharp from a 1080p source; the
+// room kept around the element; and how long the move takes either way. A focus with less time
+// than both moves and a short hold is left at the full frame.
+const pushIn = { cap: 1.6, margin: 1.25, ease: 0.8, hold: 0.5 };
+
+/**
+ * A chapter's clip with the frame following the action (D292): for each element the story
+ * marked (`focus` in chapters.json), it eases in on that element's box while the step runs and
+ * back out before the next. A vertical cut is already a phone's page, so it is left as it is.
+ *
+ * @param {string}                                                                                                                file    The chapter's clip.
+ * @param {{start: number, end: number, focus?: Array<{at: number, box: {x: number, y: number, width: number, height: number}}>}} chapter Its timings.
+ * @param {string}                                                                                                                name    The followed clip's file name.
+ * @return {string} The followed clip, or the clip when nothing is to follow.
+ */
+const follow = ( file, { start, end, focus = [] }, name ) => {
+	if ( vertical ) {
+		return file;
+	}
+	const windows = focus
+		.map( ( { at, box }, n ) => ( {
+			from: at - start,
+			to: ( focus[ n + 1 ]?.at ?? end ) - start,
+			zoom: Math.min(
+				pushIn.cap,
+				size.width / ( box.width * pushIn.margin ),
+				size.height / ( box.height * pushIn.margin )
+			),
+			cx: Math.min( size.width, Math.max( 0, box.x + box.width / 2 ) ),
+			cy: Math.min( size.height, Math.max( 0, box.y + box.height / 2 ) ),
+		} ) )
+		.filter(
+			( w ) =>
+				w.zoom >= 1.1 && w.to - w.from >= 2 * pushIn.ease + pushIn.hold
+		);
+	if ( ! windows.length ) {
+		return file;
+	}
+	// Each window's weight at the frame's time, 0 to 1, eased (smoothstep).
+	const time = 'in/30';
+	const weight = ( { from, to } ) => {
+		const ramp = `clip(min((${ time }-${ from.toFixed( 3 ) })/${
+			pushIn.ease
+		},(${ to.toFixed( 3 ) }-${ time })/${ pushIn.ease }),0,1)`;
+		return `(${ ramp }*${ ramp }*(3-2*${ ramp }))`;
+	};
+	const sum = ( term ) => windows.map( term ).join( '+' );
+	const zoom = `1+${ sum(
+		( w ) => `${ ( w.zoom - 1 ).toFixed( 4 ) }*${ weight( w ) }`
+	) }`;
+	const centre = ( axis, half ) =>
+		`${ half }+${ sum(
+			( w ) => `${ ( w[ axis ] - half ).toFixed( 1 ) }*${ weight( w ) }`
+		) }`;
+	const followed = join( out, 'parts', name );
+	ffmpeg( [
+		'-i',
+		file,
+		'-vf',
+		`zoompan=z='${ zoom }':` +
+			`x='clip(${ centre( 'cx', size.width / 2 ) }-iw/zoom/2,0,iw-iw/zoom)':` +
+			`y='clip(${ centre( 'cy', size.height / 2 ) }-ih/zoom/2,0,ih-ih/zoom)':` +
+			`d=1:s=${ size.width }x${ size.height }:fps=30,format=yuv420p`,
+		'-c:v',
+		'libx264',
+		'-preset',
+		'veryfast',
+		'-crf',
+		'20',
+		'-an',
+		followed,
+	] );
+	return followed;
+};
+
 /**
  * One chapter as a clip of its own (D279): its card, the action with her line over it, the result
  * held while she talks about it, and the closing card. Where that runs past the limit, the stretch
@@ -1176,14 +1251,18 @@ const verticalCut = ( joined, name, narrated, total ) => {
 const chapterClip = ( i ) => {
 	const { start, end, voice } = chapters[ i ];
 	const name = `story-chapter-${ i + 1 }${ vertical ? '-vertical' : '' }`;
-	const clip = cut( `clip-${ i + 1 }.mp4`, [
-		'-ss',
-		start.toFixed( 2 ),
-		'-to',
-		end.toFixed( 2 ),
-		'-i',
-		webm,
-	] );
+	const clip = follow(
+		cut( `clip-${ i + 1 }.mp4`, [
+			'-ss',
+			start.toFixed( 2 ),
+			'-to',
+			end.toFixed( 2 ),
+			'-i',
+			webm,
+		] ),
+		chapters[ i ],
+		`clip-${ i + 1 }-followed.mp4`
+	);
 	const at = Math.min( best( i ), seconds( clip ) - 0.1 );
 	const lineTakes = voice ? takes( voice.name ) : [];
 	const lineAt = voice ? Math.max( 0, voice.at - start ) : 0;
@@ -1290,14 +1369,18 @@ if ( null !== clipChapter ) {
 
 titleCard( 0, 'intro', broll );
 for ( const [ i, { start, end } ] of chapters.entries() ) {
-	const clip = cut( `chapter-${ i + 1 }.mp4`, [
-		'-ss',
-		start.toFixed( 2 ),
-		'-to',
-		end.toFixed( 2 ),
-		'-i',
-		webm,
-	] );
+	const clip = follow(
+		cut( `chapter-${ i + 1 }.mp4`, [
+			'-ss',
+			start.toFixed( 2 ),
+			'-to',
+			end.toFixed( 2 ),
+			'-i',
+			webm,
+		] ),
+		chapters[ i ],
+		`chapter-${ i + 1 }-followed.mp4`
+	);
 	// The chapter's card is its title alone: Ana's line about it is spoken over the action
 	// itself, where the recording marked it (`speak()` in the story), its end on the Enter.
 	place( still( i + 1 ), cardPiece( i + 1 ) );

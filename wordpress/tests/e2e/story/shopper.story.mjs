@@ -320,11 +320,24 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			/not available|I'm sorry|could not answer|não (está|há) dispon|desculp/i
 		);
 	};
+	// What the frame should follow (D292): the element a step acts on, where it is on screen as
+	// the step starts, for the video to push in on it. A recording keeps it; a test does not.
+	let focused = [];
+	const focus = async ( locator ) => {
+		if ( ! record ) {
+			return;
+		}
+		const box = await locator.boundingBox().catch( () => null );
+		if ( box ) {
+			focused.push( { at: now(), box } );
+		}
+	};
 	const chapter = ( title, body ) =>
 		test.step( title, async () => {
 			const start = now();
 			highlighted = null;
 			voiced = null;
+			focused = [];
 			await body();
 			if ( null === highlighted ) {
 				await highlight();
@@ -334,6 +347,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 				start,
 				highlight: highlighted,
 				...( voiced ? { voice: voiced } : {} ),
+				...( focused.length ? { focus: focused } : {} ),
 				end: now(),
 			} );
 		} );
@@ -398,6 +412,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	await chapter( '2. Says what she needs, in a sentence', async () => {
 		await page.goto( '/?pagename=search-gear' );
 		const box = block.locator( 'input[type="search"]' ).first();
+		await focus( box );
 		await type( box, say.need, speak( 'chapter-2' ) );
 		await box.press( 'Enter' );
 		await expect(
@@ -405,6 +420,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		).toContainText( say.understood );
 		await expect( titles.first() ).toHaveText( say.needFound );
 		await answered( block.locator( '.viglet-dumont-search__answer-text' ) );
+		await focus( block.locator( '.viglet-dumont-search__answer' ) );
 		// The chapter ends on its result: every search the story makes is one Ana talks about
 		// (D289). A typo searched as corrected is site/search.spec.mjs's to show.
 		await highlight();
@@ -419,6 +435,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 				.first()
 				.click();
 			const dialog = page.getByRole( 'dialog' );
+			await focus( dialog );
 			await type(
 				dialog.getByRole( 'textbox' ),
 				say.question,
@@ -439,6 +456,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await answered(
 				answer.locator( '.viglet-dumont-assistant__text' )
 			);
+			await focus( answer );
 			await highlight();
 			await page.keyboard.press( 'Escape' );
 		}
@@ -491,6 +509,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		).toHaveCount( 3 );
 		const summary = page.locator( '.viglet-dumont-compare__summary-text' );
 		await answered( summary );
+		await focus( summary );
 		// The table's prices reach the model as text, not HTML entities (D249).
 		await expect( summary ).not.toContainText( '&#' );
 	} );
@@ -505,6 +524,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			.locator( '.viglet-dumont-copilot__modes' )
 			.getByRole( 'button', { name: ui.planMode } )
 			.click();
+		await focus( copilot.getByLabel( ui.plan ) );
 		await type(
 			copilot.getByLabel( ui.plan ),
 			say.plan,
@@ -545,6 +565,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 					.getByRole( 'link' )
 			).not.toHaveCount( 0 );
 			await linger( 2.5 );
+			await focus( copilot.getByLabel( ui.question ) );
 			await type( copilot.getByLabel( ui.question ), say.check, looking );
 			await copilot
 				.getByRole( 'button', { name: ui.ask, exact: true } )
@@ -553,6 +574,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 				.locator( '.viglet-dumont-copilot__answer' )
 				.first();
 			await answered( answer );
+			await focus( answer );
 			// The question is about the product on the page (D242): the answer cites it.
 			const product = (
 				await page.locator( 'h1' ).first().textContent()
