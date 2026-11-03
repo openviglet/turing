@@ -9,6 +9,9 @@
 #                                     da Serra in Portuguese on WP_DEMO_PT_PORT (38083)
 #   sh bin/run-docker.sh demo en|pt   one of them
 #   sh bin/run-docker.sh demo reset en|pt  stop one store and delete its WordPress and database
+#   sh bin/run-docker.sh fresh        also a WordPress the plugin was never installed on (D281),
+#                                     on WP_FRESH_PORT (38084), for the developer video
+#   sh bin/run-docker.sh fresh reset  delete it, to record that video again
 #
 # The same environment as run-docker.cmd: WP_PORT (8080), TURING_PORT (2700), SN_SITE
 # (Sample), TURING_LOCALE (en_US), TURING_ADMIN_PASSWORD (dumont-dev), TURING_IMAGE, and for
@@ -45,6 +48,14 @@ if [ "${1:-}" = demo ] && [ "${2:-}" = reset ]; then
 	demo_store "$3"
 	docker compose --profile demo rm -s -f "wordpress-demo$sfx" "cron-demo$sfx" "db-demo$sfx"
 	docker volume rm "viglet-dumont-wp_wp-demo$sfx" "viglet-dumont-wp_db-demo$sfx"
+	exit 0
+fi
+
+: "${WP_FRESH_PORT:=38084}"
+export WP_FRESH_PORT
+if [ "${1:-}" = fresh ] && [ "${2:-}" = reset ]; then
+	docker compose --profile fresh rm -s -f wordpress-fresh cron-fresh db-fresh
+	docker volume rm viglet-dumont-wp_wp-fresh viglet-dumont-wp_db-fresh
 	exit 0
 fi
 
@@ -110,6 +121,40 @@ fi
 
 echo "WordPress:  http://localhost:$WP_PORT/wp-admin   (admin / admin)"
 echo "Turing:     http://localhost:$TURING_PORT   (admin / $TURING_ADMIN_PASSWORD), SN site $SN_SITE"
+
+if [ "${1:-}" = fresh ]; then
+	# A WordPress the plugin was never installed on (D281), as run-docker.cmd's :fresh: seeded
+	# once by WP-CLI with src/ mounted, then that copy deactivated and all it stored deleted.
+	wpf() {
+		docker compose run --rm --no-deps cli-fresh wp "$@"
+	}
+	docker compose --profile fresh up -d wordpress-fresh cron-fresh
+	echo 'Waiting for the fresh WordPress...'
+	tries=0
+	until wpf db check >/dev/null 2>&1; do
+		tries=$((tries + 1))
+		if [ "$tries" -ge 60 ]; then
+			echo 'The fresh WordPress did not come up. See: docker compose logs wordpress-fresh' >&2
+			exit 1
+		fi
+		sleep 2
+	done
+	if ! wpf core is-installed >/dev/null 2>&1; then
+		echo 'Installing the fresh WordPress and its catalog...'
+		wpf core install --url="http://localhost:$WP_FRESH_PORT" --title='Tarnfell' \
+			--admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email
+		wpf theme activate tarnfell
+		wpf rewrite structure '/%postname%/' --hard
+		wpf plugin install woocommerce --activate
+		wpf plugin activate viglet-dumont
+		wpf eval-file /demo/seed/catalog.php
+		wpf plugin deactivate viglet-dumont
+		wpf eval-file /demo/seed/forget-plugin.php
+		wpf rewrite flush --hard
+	fi
+	echo "Fresh store: http://localhost:$WP_FRESH_PORT/wp-admin   (admin / admin), no plugin installed"
+	exit 0
+fi
 
 if [ "${1:-}" != demo ]; then
 	exit 0

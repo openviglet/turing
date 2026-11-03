@@ -13,6 +13,10 @@ rem                             on WP_DEMO_PT_PORT (38083), SN site SN_DEMO_PT_S
 rem                             (recanto-da-serra)
 rem   run-docker.cmd demo en|pt start one of them
 rem   run-docker.cmd demo reset en|pt  stop one store and delete its WordPress and database only
+rem   run-docker.cmd fresh      also start a WordPress the plugin was never installed on (D281), on
+rem                             WP_FRESH_PORT (38084): Tarnfell's theme, WooCommerce and catalog,
+rem                             for the developer video to install the release zip on
+rem   run-docker.cmd fresh reset  delete it, to record that video again
 rem   run-docker.cmd stop       stop the containers, keep the data
 rem   run-docker.cmd reset      stop and delete WordPress, its database and Turing's store
 rem   run-docker.cmd logs [svc] follow a log: wordpress (default), turing or db
@@ -37,10 +41,11 @@ if "%TURING_ADMIN_PASSWORD%"=="" set "TURING_ADMIN_PASSWORD=dumont-dev"
 set "DC=docker compose"
 set "WP=%DC% run --rm --no-deps cli wp"
 
-if /i "%~1"=="stop"  ( %DC% --profile multisite --profile demo down & exit /b %ERRORLEVEL% )
-if /i "%~1"=="reset" ( %DC% --profile multisite --profile demo down -v & exit /b %ERRORLEVEL% )
+if /i "%~1"=="stop"  ( %DC% --profile multisite --profile demo --profile fresh down & exit /b %ERRORLEVEL% )
+if /i "%~1"=="reset" ( %DC% --profile multisite --profile demo --profile fresh down -v & exit /b %ERRORLEVEL% )
 if /i "%~1"=="multisite" goto :multisite
 if /i "%~1"=="demo" goto :demo
+if /i "%~1"=="fresh" goto :fresh
 if /i "%~1"=="logs"  goto :logs
 if /i "%~1"=="wp" goto :wp
 if not "%~1"=="" ( echo Unknown command: %~1 & exit /b 1 )
@@ -194,6 +199,50 @@ rem The store's search history, once the catalog it finds is indexed (D269).
 echo.
 echo Demo storefront (%LOCALE%): %DEMOURL%/   (admin / admin), SN site %SITE%
 echo Demo WP-CLI:     docker compose run --rm --no-deps cli-demo%SFX% wp ...
+exit /b 0
+
+:fresh
+rem A WordPress the plugin was never installed on (D281): the store is seeded once, by WP-CLI with
+rem src/ mounted, and then that copy is deactivated and everything it stored deleted. Its web
+rem container never had the plugin, so the developer video installs the release zip in wp-admin.
+if "%WP_FRESH_PORT%"=="" set "WP_FRESH_PORT=38084"
+if /i "%~2"=="reset" (
+    %DC% --profile fresh rm -s -f wordpress-fresh cron-fresh db-fresh
+    docker volume rm viglet-dumont-wp_wp-fresh viglet-dumont-wp_db-fresh
+    exit /b 0
+)
+rem The single site and Turing first: the fresh store connects to that Turing.
+call "%~f0" || exit /b 1
+set "WPF=%DC% run --rm --no-deps cli-fresh wp"
+%DC% --profile fresh up -d wordpress-fresh cron-fresh || exit /b 1
+
+echo Waiting for the fresh WordPress...
+set /a TRIES=0
+:waitfresh
+set /a TRIES+=1
+%WPF% db check >nul 2>&1 && goto :readyfresh
+if %TRIES% geq 60 ( echo The fresh WordPress did not come up. See: run-docker.cmd logs wordpress-fresh & exit /b 1 )
+timeout /t 2 /nobreak >nul
+goto :waitfresh
+
+:readyfresh
+%WPF% core is-installed >nul 2>&1
+if not errorlevel 1 goto :freshready
+echo Installing the fresh WordPress and its catalog...
+%WPF% core install --url=http://localhost:%WP_FRESH_PORT% --title="Tarnfell" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
+%WPF% theme activate tarnfell || exit /b 1
+%WPF% rewrite structure "/%%postname%%/" --hard || exit /b 1
+%WPF% plugin install woocommerce --activate || exit /b 1
+%WPF% plugin activate viglet-dumont || exit /b 1
+%WPF% eval-file /demo/seed/catalog.php || exit /b 1
+%WPF% plugin deactivate viglet-dumont || exit /b 1
+%WPF% eval-file /demo/seed/forget-plugin.php || exit /b 1
+%WPF% rewrite flush --hard || exit /b 1
+
+:freshready
+echo.
+echo Fresh store:  http://localhost:%WP_FRESH_PORT%/wp-admin   (admin / admin), no plugin installed
+echo Fresh WP-CLI: docker compose run --rm --no-deps cli-fresh wp ...
 exit /b 0
 
 :multisite
