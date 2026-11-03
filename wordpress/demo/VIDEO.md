@@ -76,8 +76,9 @@ Credits for all of it: `demo/seed/CREDITS.md`.
    title under the product's name, plays the chapter with both of Ana's lines, holds the result
    to the end of her second, and closes on the full-video and Playground card. Where that runs
    past 58 s, the stretch between her first line and the result, where she says nothing, plays
-   faster until it fits (chapter 5 at about 2x). The recording carries no language: build a
-   language's clips right after recording that language's store.
+   faster until it fits (chapter 5 at about 2x). The recording names the language its store
+   spoke (`language` in `chapters.json`, D298), and the script refuses another `--language`,
+   naming the command that records the right store.
 8. **The vertical clips** (D280), for Shorts and the like: `npm run e2e:story:vertical` plays
    the same story with the same takes laid out 432 CSS pixels wide in a phone-emulated
    1080x1920 viewport (the meta viewport set to `width=432`), so each frame is a whole page at

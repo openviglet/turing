@@ -118,7 +118,24 @@ const webm = join( recorded, 'story.webm' );
 if ( ! existsSync( timeline ) || ! existsSync( webm ) ) {
 	refuse( `no recording yet: run \`${ recordCommand }\` first.` );
 }
-const { record, chapters } = JSON.parse( readFileSync( timeline, 'utf8' ) );
+const {
+	record,
+	language: recordedLanguage,
+	chapters,
+} = JSON.parse( readFileSync( timeline, 'utf8' ) );
+// The store the recording played in (D298): narration and cards in another language would be
+// laid over its pages without a word, as the first English clips were over the pt-BR store.
+if ( record && recordedLanguage !== videoLanguage ) {
+	const recordIn =
+		'pt-BR' === videoLanguage
+			? `DEMO_LOCALE=pt_BR ${ recordCommand }`
+			: recordCommand;
+	refuse(
+		recordedLanguage
+			? `the recording is in ${ recordedLanguage }, not ${ videoLanguage }: run \`${ recordIn }\` first.`
+			: `the recording does not say its language (it predates D298): run \`${ recordIn }\` again.`
+	);
+}
 if ( ! record ) {
 	refuse(
 		`the last story run was the test, not the recording: run \`${ recordCommand }\`.`

@@ -671,7 +671,12 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	mkdirSync( out, { recursive: true } );
 	writeFileSync(
 		join( out, 'chapters.json' ),
-		JSON.stringify( { record, chapters }, null, 2 )
+		// The language the store spoke (D298): the video refuses narration in another one.
+		JSON.stringify(
+			{ record, language: narrationLanguage(), chapters },
+			null,
+			2
+		)
 	);
 	const video = page.video();
 	await page.close();
