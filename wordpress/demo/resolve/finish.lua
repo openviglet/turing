@@ -1,0 +1,115 @@
+-- Finishing the demo video in DaVinci Resolve (D293): what FCPXML cannot carry, applied the same
+-- way every time. `node bin/story-video.mjs --language <lang> --project` writes this file into
+-- story.<lang>.project/ with its paths filled in; nothing here needs editing.
+--
+-- Lua, not Python: Resolve runs Lua with nothing installed, while a Python script is listed only
+-- when Resolve finds a Python of its own (the Microsoft Store one it does not). Resolve's free
+-- version runs scripts only from inside the app: copy this file into
+-- %APPDATA%\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Utility\, restart Resolve
+-- and pick it under Workspace > Scripts, with Workspace > Console open to read what it says.
+--
+-- It creates (or opens) a project named for the video, imports the timeline, says whether any
+-- clip came in offline (D290's check), adds the narration's captions as a subtitle track,
+-- applies the Fairlight preset named below when one is saved, and queues a YouTube render. It
+-- starts no render and changes nothing outside that project.
+
+local NAME = "__NAME__"
+local FCPXML = [[__FCPXML__]]
+local SRT = [[__SRT__]]
+local RENDER_DIR = [[__RENDER_DIR__]]
+-- Save the dialogue chain (EQ, de-esser, Dialogue Leveler) once as a Fairlight preset with this
+-- name, and every run applies it.
+local FAIRLIGHT_PRESET = "Viglet story voice"
+
+local function say(text)
+	print("finish: " .. text)
+end
+
+local resolve = (Resolve and Resolve()) or bmd.scriptapp("Resolve")
+if not resolve then
+	say("no Resolve to talk to; run this from inside DaVinci Resolve")
+	return
+end
+
+local manager = resolve:GetProjectManager()
+local project = manager:LoadProject(NAME) or manager:CreateProject(NAME)
+if not project then
+	say("could not open or create the project " .. NAME)
+	return
+end
+local pool = project:GetMediaPool()
+
+local timeline = pool:ImportTimelineFromFile(FCPXML, { timelineName = NAME, importSourceClips = true })
+if not timeline then
+	say("Resolve did not import " .. FCPXML)
+	return
+end
+project:SetCurrentTimeline(timeline)
+
+-- D290: every clip the timeline uses must have come in with its media.
+local items, offline = {}, {}
+for _, kind in ipairs({ "video", "audio" }) do
+	for track = 1, timeline:GetTrackCount(kind) do
+		for _, item in pairs(timeline:GetItemListInTrack(kind, track) or {}) do
+			table.insert(items, item)
+		end
+	end
+end
+for _, item in ipairs(items) do
+	local media = item:GetMediaPoolItem()
+	local status = media and media:GetClipProperty("Online Status") or ""
+	if type(status) == "table" then
+		status = status["Online Status"] or ""
+	end
+	if not media or string.find(string.lower(tostring(status)), "offline", 1, true) then
+		table.insert(offline, item:GetName())
+	end
+end
+say(string.format(
+	"%d clips on %d video and %d audio tracks, %d offline%s",
+	#items,
+	timeline:GetTrackCount("video"),
+	timeline:GetTrackCount("audio"),
+	#offline,
+	(#offline > 0) and (": " .. table.concat(offline, ", ", 1, math.min(#offline, 10))) or ""
+))
+
+-- The narration's captions, the .srt written beside the MP4, on a subtitle track.
+local captions = pool:ImportMedia({ SRT }) or {}
+if captions[1] then
+	if timeline:GetTrackCount("subtitle") < 1 then
+		timeline:AddTrack("subtitle")
+	end
+	local placed = pool:AppendToTimeline({ { mediaPoolItem = captions[1], startFrame = 0, trackIndex = 1 } })
+	say((placed and next(placed)) and "captions on the subtitle track"
+		or "captions imported, not placed: drag them onto the timeline")
+else
+	say("could not import " .. SRT)
+end
+
+local saved = false
+for _, preset in pairs(resolve:GetFairlightPresets() or {}) do
+	if preset == FAIRLIGHT_PRESET then
+		saved = true
+	end
+end
+if saved then
+	say(project:ApplyFairlightPresetToCurrentTimeline(FAIRLIGHT_PRESET) and "Fairlight preset applied"
+		or "Fairlight preset not applied")
+else
+	say('no Fairlight preset "' .. FAIRLIGHT_PRESET .. '" saved yet: the dialogue chain is left as it is')
+end
+
+-- YouTube 1080p, the captions embedded, queued and not started.
+project:SetCurrentRenderFormatAndCodec("mp4", "H264")
+project:SetRenderSettings({
+	TargetDir = RENDER_DIR,
+	CustomName = NAME .. ".resolve",
+	ExportVideo = true,
+	ExportAudio = true,
+	ExportSubtitle = true,
+	SubtitleFormat = "EmbeddedCaptions",
+})
+local job = project:AddRenderJob()
+say((job and job ~= "") and "render queued on the Deliver page" or "the render was not queued")
+manager:SaveProject()
