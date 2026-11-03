@@ -277,7 +277,9 @@ English on Tarnfell, or pt_BR on Recanto da Serra with `DEMO_LOCALE=pt_BR` (D283
 last seconds of each chapter for social posts; with `-- --language en` (or `pt-BR`) it carries
 that language alone and is named for it, `story.en.mp4` and `story-30s.en.mp4`. Both carry English and pt_BR captions, also
 written beside them as `.srt`. `-- --chapter <n>` cuts one chapter as a clip of its own instead,
-`story-chapter-<n>.<lang>.mp4`, under a minute (D279). The videos are release assets, never
+`story-chapter-<n>.<lang>.mp4`, under a minute (D279). `npm run e2e:story:vertical` records the
+story again at a phone's width, and `-- --vertical --chapter <n>` cuts that one as a 9:16 clip
+with its captions burned in (D280). The videos are release assets, never
 committed, and the script refuses a recording older than the story.
 
 To look at one page in detail, logged in or not:

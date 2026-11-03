@@ -41,7 +41,19 @@ import { chromium } from '@playwright/test';
 import { current, lines, narration, takeFile } from './narration-takes.mjs';
 
 const root = join( dirname( fileURLToPath( import.meta.url ) ), '..' );
-const recorded = join( root, 'tests', 'e2e', 'artifacts', 'story' );
+// A vertical cut (D280) is a chapter clip from the phone-width recording, 9:16, its cards laid
+// out for it and its captions burned in above the band a vertical player draws its controls on.
+const vertical = process.argv.includes( '--vertical' );
+const recorded = join(
+	root,
+	'tests',
+	'e2e',
+	'artifacts',
+	vertical ? 'story-vertical' : 'story'
+);
+const recordCommand = vertical
+	? 'npm run e2e:story:vertical'
+	: 'npm run e2e:story:record';
 // Each narrated language, as ffmpeg names it on the audio track.
 // The video's language: its cards, and the only narration it carries when one is named.
 const videoLanguage = process.argv.includes( '--language' )
@@ -64,7 +76,9 @@ const voiceTail = 0.5;
 // The music bed under the voice: low enough that every word stays clear.
 const musicVolume = 0.12;
 const out = join( root, 'tests', 'e2e', 'artifacts', 'video' );
-const size = { width: 1920, height: 1080 };
+const size = vertical
+	? { width: 1080, height: 1920 }
+	: { width: 1920, height: 1080 };
 const cardSeconds = 2.5;
 const chapterCount = 8;
 // The short cut: this much of the end of each chapter, between a short intro and outro.
@@ -102,13 +116,16 @@ function refuse( reason ) {
 const timeline = join( recorded, 'chapters.json' );
 const webm = join( recorded, 'story.webm' );
 if ( ! existsSync( timeline ) || ! existsSync( webm ) ) {
-	refuse( 'no recording yet: run `npm run e2e:story:record` first.' );
+	refuse( `no recording yet: run \`${ recordCommand }\` first.` );
 }
 const { record, chapters } = JSON.parse( readFileSync( timeline, 'utf8' ) );
 if ( ! record ) {
 	refuse(
-		'the last story run was the test, not the recording: run `npm run e2e:story:record`.'
+		`the last story run was the test, not the recording: run \`${ recordCommand }\`.`
 	);
+}
+if ( vertical && null === clipChapter ) {
+	refuse( '--vertical cuts one chapter: add `--chapter <n>`.' );
 }
 if ( chapters.length !== chapterCount ) {
 	refuse(
@@ -131,7 +148,7 @@ for ( const source of [
 ] ) {
 	if ( statSync( source ).mtimeMs > statSync( timeline ).mtimeMs ) {
 		refuse(
-			`${ source } changed after the recording: run \`npm run e2e:story:record\` again.`
+			`${ source } changed after the recording: run \`${ recordCommand }\` again.`
 		);
 	}
 }
@@ -179,13 +196,16 @@ const style = `
 @font-face { font-family: Source; src: url(${ font(
 	'source-sans-3-latin-wght-normal.woff2'
 ) }); }
-html, body { margin: 0; width: 1920px; height: 1080px; }
-body { display: flex; flex-direction: column; justify-content: center; padding: 0 160px;
+html, body { margin: 0; width: ${ size.width }px; height: ${ size.height }px; }
+body { display: flex; flex-direction: column; justify-content: center;
+	padding: 0 ${ vertical ? 90 : 160 }px;
 	box-sizing: border-box; background: linear-gradient(160deg, #1F3B2D 0%, #2E5E73 100%);
 	color: #F6F3EC; font-family: Source, sans-serif; }
-small { font-size: 44px; letter-spacing: .08em; text-transform: uppercase; color: #C9D8B6; }
-h1 { font-family: Barlow, sans-serif; font-size: 132px; line-height: 1.05; margin: 24px 0; }
-p { font-size: 48px; margin: 0; color: #C9D8B6; }`;
+small { font-size: ${ vertical ? 40 : 44 }px; letter-spacing: .08em; text-transform: uppercase;
+	color: #C9D8B6; }
+h1 { font-family: Barlow, sans-serif; font-size: ${ vertical ? 116 : 132 }px; line-height: 1.05;
+	margin: 24px 0; }
+p { font-size: ${ vertical ? 40 : 48 }px; margin: 0; color: #C9D8B6; overflow-wrap: anywhere; }`;
 
 /**
  * A card's markup.
@@ -435,7 +455,8 @@ const subtitles = ( cues, language, file ) => {
 };
 
 // A caption's lines: at most two of about this many characters, so a cue reads at a glance.
-const captionWidth = 42;
+// Narrower on a vertical cut, whose frame is a little over half as wide.
+const captionWidth = vertical ? 26 : 42;
 
 /**
  * A narrated line as caption cues (D278): its stage directions (`[excited]`) out, its words in
@@ -918,6 +939,80 @@ for (
 	}
 }
 
+// Where a vertical cut's captions sit, in libass's units for an SRT (288 to the frame's height):
+// above the bottom fifth, where Shorts, Reels and TikTok draw the title, the buttons and the
+// progress bar (D280). On a box, since they sit over the page's own text.
+const verticalCaptionStyle =
+	'FontName=Arial,FontSize=11,Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H50000000,' +
+	'BorderStyle=3,Outline=1.2,Shadow=0,Alignment=2,MarginL=14,MarginR=14,MarginV=64';
+
+/**
+ * The finished vertical cut (D280): the narration's captions burned into the picture, since a
+ * vertical player places a caption track over its own controls, then the voice; the SRT and
+ * WebVTT stay beside it.
+ *
+ * @param {string}                                                             joined   The joined cut.
+ * @param {string}                                                             name     The cut's base name.
+ * @param {Array<[string, Array<{at: number, length: number, text: string}>]>} narrated Each language's takes.
+ * @param {number}                                                             total    Its length in seconds.
+ * @return {string} The finished file.
+ */
+const verticalCut = ( joined, name, narrated, total ) => {
+	let picture = joined;
+	if ( narrated.length ) {
+		const [ language, placed ] = narrated[ 0 ];
+		narrationCaptions( placed, language, name );
+		picture = join( out, 'parts', `${ name }-captioned.mp4` );
+		// Run from the captions' folder: a Windows path inside a filter needs escaping that a
+		// bare file name does not.
+		execFileSync(
+			'ffmpeg',
+			[
+				'-y',
+				'-loglevel',
+				'error',
+				'-i',
+				joined,
+				'-vf',
+				`subtitles=${ name }.${ language }.srt:force_style='${ verticalCaptionStyle }'`,
+				'-c:v',
+				'libx264',
+				'-preset',
+				'veryfast',
+				'-crf',
+				'20',
+				'-an',
+				picture,
+			],
+			{ cwd: out, stdio: [ 'ignore', 'inherit', 'inherit' ] }
+		);
+	}
+	const file = join( out, `${ name }${ videoSuffix }.mp4` );
+	const tracks = narrated.map( ( [ language, placed ] ) =>
+		voiceTrack( language, placed, total )
+	);
+	ffmpeg( [
+		'-i',
+		picture,
+		...tracks.flatMap( ( track ) => [ '-i', track ] ),
+		'-map',
+		'0:v',
+		...tracks.flatMap( ( _, i ) => [ '-map', `${ i + 1 }:a` ] ),
+		'-c:v',
+		'copy',
+		'-c:a',
+		'aac',
+		'-b:a',
+		'160k',
+		...narrated.flatMap( ( [ language ], i ) => [
+			`-metadata:s:a:${ i }`,
+			`language=${ voices[ language ] }`,
+		] ),
+		file,
+	] );
+	return file;
+};
+
 /**
  * One chapter as a clip of its own (D279): its card, the action with her line over it, the result
  * held while she talks about it, and the closing card. Where that runs past the limit, the stretch
@@ -927,7 +1022,7 @@ for (
  */
 const chapterClip = ( i ) => {
 	const { start, end, voice } = chapters[ i ];
-	const name = `story-chapter-${ i + 1 }`;
+	const name = `story-chapter-${ i + 1 }${ vertical ? '-vertical' : '' }`;
 	const clip = cut( `clip-${ i + 1 }.mp4`, [
 		'-ss',
 		start.toFixed( 2 ),
@@ -1000,6 +1095,13 @@ const chapterClip = ( i ) => {
 	const narrated = Object.entries( spoken ).filter(
 		( [ , placed ] ) => placed.length
 	);
+	if ( vertical ) {
+		return {
+			file: verticalCut( joined, name, narrated, total ),
+			total,
+			speed,
+		};
+	}
 	const file = finish(
 		joined,
 		[

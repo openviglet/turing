@@ -11,7 +11,9 @@ import { current, lines, takeFile } from '../../../bin/narration-takes.mjs';
 import { demoCli } from '../../../playwright.config.mjs';
 
 const turingURL = process.env.TURING_URL || 'http://localhost:2700';
-const out = join( 'tests', 'e2e', 'artifacts', 'story' );
+// The phone-width recording (D280) keeps its own folder, so it never replaces the desktop one.
+const output = ( vertical ) =>
+	join( 'tests', 'e2e', 'artifacts', vertical ? 'story-vertical' : 'story' );
 const demo = ( args ) => wp( args, demoCli );
 
 // What she searches for (demo/story.md) and the words the pages answer in, in each language
@@ -236,6 +238,39 @@ function pointer() {
 }
 
 /**
+ * Lays each page out at a phone's width inside a larger, mobile-emulated viewport (D280): the
+ * meta viewport says how many CSS pixels wide the page is, and the browser scales that up to
+ * fill the screen, so the recording is a phone's layout at the frame's full resolution. Run in
+ * the page before its own scripts.
+ *
+ * @param {number} width The layout width, in CSS pixels.
+ */
+function layoutAt( width ) {
+	const content = `width=${ width }, initial-scale=${
+		window.innerWidth / width
+	}`;
+	const set = () => {
+		let meta = document.querySelector( 'meta[name="viewport"]' );
+		if ( ! meta && document.head ) {
+			meta = document.createElement( 'meta' );
+			meta.name = 'viewport';
+			document.head.append( meta );
+		}
+		if ( meta && meta.content !== content ) {
+			meta.content = content;
+		}
+	};
+	// As soon as the theme's own tag is parsed, before the first layout, and again if a script
+	// writes it back.
+	new window.MutationObserver( set ).observe( document, {
+		childList: true,
+		subtree: true,
+		attributes: true,
+		attributeFilter: [ 'content' ],
+	} );
+}
+
+/**
  * Search the shop's search page for a query, as a link from anywhere would.
  *
  * @param {import('@playwright/test').Page} page The visit.
@@ -334,6 +369,10 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	if ( record ) {
 		await page.addInitScript( pointer );
 	}
+	const { layoutWidth } = test.info().project.metadata ?? {};
+	if ( layoutWidth ) {
+		await page.addInitScript( layoutAt, layoutWidth );
+	}
 
 	await chapter(
 		'1. Arrives: popular searches show the catalog',
@@ -410,6 +449,13 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		// Narrowed to the category first: the filters are part of the chapter, and the three
 		// compared are jackets, never a jacket beside gloves and trousers (D257).
 		const [ facetLabel, category ] = say.compareIn;
+		// At a phone's width (D280) the filters are a drawer behind a button, opened as a
+		// shopper on a phone would and closed again once the category is chosen.
+		const drawer = block.locator( '.viglet-dumont-search__filters-toggle' );
+		const phone = await drawer.isVisible();
+		if ( phone ) {
+			await drawer.click();
+		}
 		await block
 			.locator( '.viglet-dumont-search__facet' )
 			.filter( {
@@ -419,6 +465,9 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			.filter( { hasText: category } )
 			.locator( 'input' )
 			.click();
+		if ( phone ) {
+			await page.keyboard.press( 'Escape' );
+		}
 		await expect(
 			block
 				.locator( '.viglet-dumont-search__chip' )
@@ -596,6 +645,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		}
 	);
 
+	const out = output( !! test.info().project.metadata?.vertical );
 	mkdirSync( out, { recursive: true } );
 	writeFileSync(
 		join( out, 'chapters.json' ),

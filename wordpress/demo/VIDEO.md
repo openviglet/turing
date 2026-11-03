@@ -22,6 +22,8 @@ narration as captions (D278). The **pt-BR** one (Recanto da Serra, 7m37s) was re
 | The recording | `tests/e2e/artifacts/story/story.webm` + `chapters.json` | `npm run e2e:story:record` (`tests/e2e/story/shopper.story.mjs`) |
 | The video | `tests/e2e/artifacts/video/story.<lang>.mp4` | `node bin/story-video.mjs --language en` (or `pt-BR`) |
 | A clip per chapter | `tests/e2e/artifacts/video/story-chapter-<n>.<lang>.mp4` | `node bin/story-video.mjs --language en --chapter <n>` (D279) |
+| The phone-width recording | `tests/e2e/artifacts/story-vertical/story.webm` + `chapters.json` | `npm run e2e:story:vertical` (D280) |
+| A vertical clip per chapter, 9:16 | `tests/e2e/artifacts/video/story-chapter-<n>-vertical.<lang>.mp4` | `node bin/story-video.mjs --language en --vertical --chapter <n>` |
 
 Credits for all of it: `demo/seed/CREDITS.md`.
 
@@ -64,6 +66,17 @@ Credits for all of it: `demo/seed/CREDITS.md`.
    past 58 s, the stretch between her first line and the result, where she says nothing, plays
    faster until it fits (chapter 5 at about 2x). The recording carries no language: build a
    language's clips right after recording that language's store.
+8. **The vertical clips** (D280), for Shorts and the like: `npm run e2e:story:vertical` plays
+   the same story with the same takes laid out 432 CSS pixels wide in a phone-emulated
+   1080x1920 viewport (the meta viewport set to `width=432`), so each frame is a whole page at
+   a phone's width and the frame's full resolution, into its own folder; it replaces neither
+   recording. A device scale factor does not do this: Playwright films at the viewport's CSS
+   size, so a 432x768 viewport at 2.5x lands small in a corner of the frame. Then
+   `--vertical --chapter <n>` cuts it as above, with the cards laid out for 9:16 and the
+   captions burned into the picture above the bottom fifth, where vertical players draw their
+   own title and buttons over a caption track. On a phone the search filters are a drawer
+   behind Filters, which the story opens and closes. Anything else the story cannot show at
+   that width is a finding for the plugin's layout, filed on its own.
 
 ## Rules learned making it
 
