@@ -109,6 +109,17 @@ are still open on D281.
 
 Its first run found D299: the Setup page could not create an SN site at all.
 
+## The mix (D291)
+
+- The music bed ducks under every line: 0.12 under a take, 0.3 between takes, with a 0.4 s
+  ramp either side (about 8 dB). The project carries the same envelope as volume keyframes
+  on A2, so it can be moved in Fairlight.
+- The mix is set to -14 LUFS integrated, YouTube's playback level, under -1 dBTP: a measured
+  gain, a limiter 1.5 dB under the ceiling (AAC overshoots a sample-peak limit), and a few
+  corrections until it is within 0.3 LU. loudnorm alone stopped at -15.1. The script prints
+  what each mix measured beside the video's length.
+- Still to come on D291: dissolves where a card meets the recording, and J-cuts.
+
 ## Rules learned making it
 
 - Every search sent to the recording's SN site counts in its insights, which chapter 8 shows:

@@ -660,6 +660,89 @@ const needs = ( lineTakes ) =>
 			voiceTail
 		: 0;
 
+// The music bed's level (D291): up between Ana's lines, down to `musicVolume` under each, with
+// a short ramp either side so it never jumps.
+const duck = { between: 0.3, ramp: 0.4 };
+
+/**
+ * How far the music is pulled down at a moment, 0 to 1: a take's span with its ramps.
+ *
+ * @param {Array<{at: number, length: number}>} placed The takes.
+ * @param {number}                              t      The moment, in seconds.
+ */
+const ducked = ( placed, t ) =>
+	Math.max(
+		0,
+		...placed.map( ( { at, length } ) =>
+			Math.min(
+				1,
+				Math.max(
+					0,
+					Math.min(
+						( t - at + duck.ramp ) / duck.ramp,
+						( at + length + duck.ramp - t ) / duck.ramp
+					)
+				)
+			)
+		)
+	);
+
+/**
+ * The music's gain at a moment, as `ducked()` sets it.
+ *
+ * @param {Array<{at: number, length: number}>} placed The takes.
+ * @param {number}                              t      The moment, in seconds.
+ */
+const musicGain = ( placed, t ) =>
+	duck.between - ( duck.between - musicVolume ) * ducked( placed, t );
+
+/**
+ * `musicGain()` as an ffmpeg expression in `t`, for the volume filter.
+ *
+ * @param {Array<{at: number, length: number}>} placed The takes.
+ */
+const duckExpression = ( placed ) => {
+	const dips = placed.map(
+		( { at, length } ) =>
+			`clip(min((t-${ ( at - duck.ramp ).toFixed( 3 ) })/${
+				duck.ramp
+			},(${ ( at + length + duck.ramp ).toFixed( 3 ) }-t)/${
+				duck.ramp
+			}),0,1)`
+	);
+	// Single-quoted in the filtergraph, so its commas need no escaping.
+	const dip = dips.length
+		? dips.reduce( ( a, b ) => `max(${ a },${ b })` )
+		: '0';
+	return `${ duck.between }-${ ( duck.between - musicVolume ).toFixed(
+		3
+	) }*(${ dip })`;
+};
+
+// The mix's loudness target (D291): YouTube's playback level, with a true-peak ceiling. What
+// each language's mix measured is printed beside the video's length, so a regression shows.
+const loudness = { target: -14, peak: -1, measured: {} };
+
+/**
+ * Run ffmpeg to measure, and read the JSON loudnorm prints at the end of its log.
+ *
+ * @param {string[]} args Its input and filter arguments.
+ * @return {Object} loudnorm's report: input_i, input_tp, input_lra, input_thresh, target_offset.
+ */
+const measure = ( args ) => {
+	const log = spawnSync(
+		'ffmpeg',
+		[ '-hide_banner', ...args, '-f', 'null', '-' ],
+		{ encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }
+	).stderr;
+	// The report is the last brace block naming input_i; ffmpeg can print more after it.
+	const reports = log.match( /\{[^{}]*"input_i"[^{}]*\}/g );
+	if ( ! reports ) {
+		refuse( `loudnorm printed no report:\n${ log.slice( -2000 ) }` );
+	}
+	return JSON.parse( reports.at( -1 ) );
+};
+
 /**
  * One language's narration as a single track the video's length, each take placed where its
  * screen shows, over the music bed when there is one.
@@ -678,12 +761,13 @@ const voiceTrack = ( language, placed, total ) => {
 	let labels = placed.map( ( _, i ) => `[d${ i }]` ).join( '' );
 	let count = placed.length;
 	if ( existsSync( music ) ) {
-		// Quiet under the voice, faded in and out, looped for as long as the video runs.
+		// Ducked under each line and up between them (D291), faded in and out, looped for as long
+		// as the video runs.
 		const fadeOut = Math.max( 0, total - 3 ).toFixed( 3 );
 		inputs.push( '-stream_loop', '-1', '-i', music );
 		graph.push(
 			`[${ placed.length }:a]atrim=0:${ total.toFixed( 3 ) },` +
-				`volume=${ musicVolume },afade=t=in:d=2,` +
+				`volume='${ duckExpression( placed ) }':eval=frame,afade=t=in:d=2,` +
 				`afade=t=out:st=${ fadeOut }:d=3[m]`
 		);
 		labels += '[m]';
@@ -691,22 +775,63 @@ const voiceTrack = ( language, placed, total ) => {
 	}
 	graph.push(
 		`${ labels }amix=inputs=${ count }:normalize=0,` +
-			`apad=whole_dur=${ total.toFixed( 3 ) }[a]`
+			`apad=whole_dur=${ total.toFixed( 3 ) }[mix]`
 	);
+	// To YouTube's playback loudness (D291): measure the mix, raise it by the difference, and hold
+	// its peaks under the ceiling with a limiter. loudnorm alone stopped at -15.1 here, its
+	// linear mode refusing a gain that crosses the ceiling and its dynamic one limiting short of
+	// the target, so the gain is applied by hand and corrected once by what the limiter took.
+	const target = `I=${ loudness.target }:TP=${ loudness.peak }:LRA=11`;
+	const report = ( args ) =>
+		Number(
+			measure( [
+				...args,
+				'-af',
+				`loudnorm=${ target }:print_format=json`,
+			] ).input_i
+		);
+	const mixed = join( out, 'parts', `mix.${ language }.wav` );
 	ffmpeg( [
 		...inputs,
 		'-filter_complex',
 		graph.join( ';' ),
 		'-map',
-		'[a]',
+		'[mix]',
 		'-t',
 		total.toFixed( 3 ),
-		'-c:a',
-		'aac',
-		'-b:a',
-		'160k',
-		file,
+		mixed,
 	] );
+	// The limiter holds sample peaks, and AAC overshoots them (measured: a limit at -2.5 dBFS
+	// encoded to -1.1 dBTP): a margin of 1.5 dB keeps the encoded file under the ceiling.
+	const ceiling = 10 ** ( ( loudness.peak - 1.5 ) / 20 );
+	const render = ( gain ) =>
+		ffmpeg( [
+			'-i',
+			mixed,
+			'-af',
+			`volume=${ gain.toFixed( 2 ) }dB,` +
+				`alimiter=limit=${ ceiling.toFixed( 3 ) }:level=false:attack=5:release=80,` +
+				'aresample=48000',
+			'-c:a',
+			'aac',
+			'-b:a',
+			'160k',
+			file,
+		] );
+	let gain = loudness.target - report( [ '-i', mixed ] );
+	render( gain );
+	let measured = report( [ '-i', file ] );
+	// The more the limiter works, the more each step loses: a few corrections reach the target.
+	for (
+		let step = 0;
+		step < 4 && Math.abs( loudness.target - measured ) > 0.3;
+		step++
+	) {
+		gain += loudness.target - measured;
+		render( gain );
+		measured = report( [ '-i', file ] );
+	}
+	loudness.measured[ language ] = measured;
 	return file;
 };
 
@@ -1406,15 +1531,39 @@ const writeProject = ( total ) => {
 	}
 	if ( existsSync( music ) ) {
 		const bed = asset( music, 'audio' );
-		const level = ( 20 * Math.log10( musicVolume ) ).toFixed( 1 );
+		// The ducking as volume keyframes (D291), the same envelope the MP4 renders, so it can be
+		// moved in Fairlight: a point where each ramp starts and ends, read off `musicGain()`.
+		const placed =
+			Object.values( spoken ).find( ( takes_ ) => takes_.length ) ?? [];
+		const turns = placed
+			.flatMap( ( { at, length } ) => [
+				at - duck.ramp,
+				at,
+				at + length,
+				at + length + duck.ramp,
+			] )
+			.sort( ( a, b ) => a - b );
+		const db = ( t ) =>
+			`${ ( 20 * Math.log10( musicGain( placed, t ) ) ).toFixed( 1 ) }dB`;
 		for ( let at = 0; at < total; at += bed.length ) {
+			const until = Math.min( at + bed.length, total );
+			const keys = [
+				at,
+				...turns.filter( ( t ) => t > at && t < until ),
+				until,
+			]
+				.map(
+					( t ) =>
+						`<keyframe time="${ time( t - at ) }" value="${ db( t ) }"/>`
+				)
+				.join( '' );
 			const item = holder( at );
 			item.anchored.push(
 				`<asset-clip ref="${ bed.id }" lane="-2" offset="${ time(
 					local( item, at )
 				) }" start="0s" duration="${ time(
-					Math.min( bed.length, total - at )
-				) }" name="music" audioRole="music"><adjust-volume amount="${ level }dB"/></asset-clip>`
+					until - at
+				) }" name="music" audioRole="music"><adjust-volume><param name="amount"><keyframeAnimation>${ keys }</keyframeAnimation></param></adjust-volume></asset-clip>`
 			);
 		}
 	}
@@ -1543,7 +1692,11 @@ const project = process.argv.includes( '--project' )
 	? writeProject( joinedLength )
 	: null;
 process.stdout.write(
-	`${ video }: ${ length( video ) }, ${ chapters.length } chapters\n` +
+	`${ video }: ${ length( video ) }, ${ chapters.length } chapters, ` +
+		Object.entries( loudness.measured )
+			.map( ( [ language, lufs ] ) => `${ language } mix ${ lufs } LUFS` )
+			.join( ', ' ) +
+		` (target ${ loudness.target })\n` +
 		`${ teaser }: ${ length( teaser ) }\n` +
 		"the narration's captions (SRT and WebVTT) and the chapter list beside the video, " +
 		'the captions inside it as tracks\n' +
