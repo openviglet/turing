@@ -182,6 +182,11 @@ class Viglet_Dumont_API_Client {
 	/**
 	 * Converge the SN site's field schema to a manifest (`POST /api/sn/manifest`).
 	 *
+	 * A site that does not exist yet is created by the same call, and Turing creates it only on a
+	 * named search-engine instance (D299): when it refuses for want of one, the call is made again
+	 * on the first enabled instance it lists. A site that exists never needs it, so the usual
+	 * call stays one request.
+	 *
 	 * @param array $manifest `{name, locales, fields}` as Turing's manifest binds it.
 	 * @return array{success: bool, message: string, note: string|array, code: int} `code` is 0 when no response arrived.
 	 */
@@ -198,6 +203,13 @@ class Viglet_Dumont_API_Client {
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 
+		if ( 400 === $code && empty( $manifest['seInstanceId'] ) && is_array( $body ) && str_contains( (string) ( $body['error'] ?? '' ), 'seInstanceId' ) ) {
+			$instance = $this->search_engine();
+			if ( null !== $instance ) {
+				return $this->provision( $manifest + array( 'seInstanceId' => $instance ) );
+			}
+		}
+
 		if ( $code >= 200 && $code < 300 ) {
 			$note = Viglet_Dumont_Events::note( 'provisioned' );
 		} elseif ( 409 === $code ) {
@@ -207,6 +219,27 @@ class Viglet_Dumont_API_Client {
 		}
 
 		return $this->outcome( $code >= 200 && $code < 300, $note, $code );
+	}
+
+	/**
+	 * The search-engine instance a new SN site is created on: the first enabled one Turing lists
+	 * (`GET /api/se`), or the first at all when none says it is enabled.
+	 *
+	 * @return string|null Its id, or null when Turing lists none or cannot be asked.
+	 */
+	private function search_engine(): ?string {
+		$response = $this->request( 'GET', '/api/se' );
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			return null;
+		}
+		$instances = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+		if ( ! is_array( $instances ) || ! $instances ) {
+			return null;
+		}
+		$enabled = array_values( array_filter( $instances, static fn ( $instance ) => ! empty( $instance['enabled'] ) ) );
+		$chosen  = $enabled[0] ?? $instances[0];
+
+		return isset( $chosen['id'] ) ? (string) $chosen['id'] : null;
 	}
 
 	/**

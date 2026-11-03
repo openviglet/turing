@@ -280,6 +280,54 @@ final class ApiClientTest extends PluginTestCase {
 		$this->assertSame( 'Turing answered HTTP 500.', $failed->get_error_message() );
 	}
 
+	public function test_a_site_turing_cannot_create_without_an_engine_is_created_on_its_first_enabled_one(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				if ( str_ends_with( $url, '/api/se' ) ) {
+					return array(
+						'response' => array( 'code' => 200 ),
+						'body'     => '[{"id":"off","enabled":0},{"id":"se1","enabled":1}]',
+					);
+				}
+				$sent = json_decode( $args['body'], true );
+				return isset( $sent['seInstanceId'] )
+					? array(
+						'response' => array( 'code' => 200 ),
+						'body'     => '{}',
+					)
+					: array(
+						'response' => array( 'code' => 400 ),
+						'body'     => '{"error":"seInstanceId is required to create a new site"}',
+					);
+			}
+		);
+
+		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->provision( array( 'name' => 'new-site' ) );
+
+		// D299: the Setup page's "Create the SN site" failed with that 400 on every new site.
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 3, $this->requests );
+		$this->assertSame( 'se1', json_decode( $this->requests[2][1]['body'], true )['seInstanceId'] );
+	}
+
+	public function test_a_manifest_refused_for_another_reason_is_not_sent_again(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return array(
+					'response' => array( 'code' => 400 ),
+					'body'     => '{"error":"bad field type"}',
+				);
+			}
+		);
+
+		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->provision( array( 'name' => 'x' ) );
+
+		$this->assertFalse( $result['success'] );
+		$this->assertCount( 1, $this->requests );
+	}
+
 	public function test_an_import_answered_with_an_error_status_is_a_failure(): void {
 		$this->status = 422;
 
