@@ -61,9 +61,21 @@ if ( $brazil ) {
 require_once __DIR__ . '/images.php';
 
 // The global attributes, and their taxonomies for this request (WooCommerce registers them on init).
+// Named in the store's language (D297), and renamed on a store seeded before; the slug stays,
+// since the mapping, the facets and the index read it.
 foreach ( array( 'color' => 'Colour', 'material' => 'Material', 'use' => 'Use', 'size' => 'Size' ) as $slug => $label ) {
-	if ( ! wc_attribute_taxonomy_id_by_name( $slug ) ) {
+	$label = $tr( 'labels', $label );
+	$id    = wc_attribute_taxonomy_id_by_name( $slug );
+	if ( ! $id ) {
 		wc_create_attribute(
+			array(
+				'name' => $label,
+				'slug' => $slug,
+			)
+		);
+	} elseif ( wc_get_attribute( $id )->name !== $label ) {
+		wc_update_attribute(
+			$id,
 			array(
 				'name' => $label,
 				'slug' => $slug,
