@@ -225,6 +225,34 @@ test( 'a misspelling that finds nothing shows the corrected results, and the sea
 	);
 } );
 
+// D286: a correction that finds nothing either is undone, so the page is about what was typed.
+test( 'a misspelling whose correction finds nothing either stays as typed, with no correction notice', async ( {
+	page,
+	seed,
+} ) => {
+	await page.route( '**/spell-check?*', ( route ) =>
+		route.fulfill( {
+			json: {
+				correctedText: true,
+				usingCorrectedText: false,
+				original: { text: 'zzqqtyped' },
+				corrected: { text: 'zzqqcorrected' },
+			},
+		} )
+	);
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=zzqqtyped` );
+	const input = page.locator( 'input[type="search"]' ).first();
+	await expect( block( page ) ).toContainText( 'No results found' );
+	await expect( input ).toHaveValue( 'zzqqtyped' );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__showing-for' )
+	).toBeHidden();
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__correction' )
+	).toBeHidden();
+	await expect( page ).toHaveURL( /q=zzqqtyped/ );
+} );
+
 test( 'everything spans pages, and the next page shows other results', async ( {
 	page,
 	seed,

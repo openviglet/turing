@@ -41,6 +41,8 @@ let reading = '';
 // the query the visitor asked to search as typed, which is not corrected again.
 let correcting = false;
 let keepAsTyped = '';
+// D286: a correction that was searched and found nothing, never offered again.
+let fruitless = '';
 // The sentence last searched uncounted while its filters are read (D267), counted again if none are.
 let uncounted = '';
 // What an applied reading replaced (D199), so Undo puts the search back as the visitor typed it.
@@ -1186,7 +1188,12 @@ function clearCorrection() {
 function offerCorrection( corrected ) {
 	// The corrected search re-reads the answer it replaces while it loads: that correction is
 	// the one already being searched, not a new one.
-	if ( ! corrected || correcting || corrected === lastQuery ) {
+	if (
+		! corrected ||
+		correcting ||
+		corrected === lastQuery ||
+		corrected === fruitless
+	) {
 		return;
 	}
 	// A search made while the visitor is still typing is no search they settled on: correcting
@@ -1687,6 +1694,24 @@ function sync( s ) {
 			// The structured response marks the current page by its type.
 			current: !! p.current || 'CURRENT' === p.type,
 		} ) );
+	// A correction that finds nothing either is no better than the search as typed (D286): the
+	// page goes back to what the visitor typed, and that correction is never offered again.
+	if (
+		'success' === s.status &&
+		0 === state.total &&
+		'' !== state.showingFor &&
+		state.showingFor === lastQuery
+	) {
+		const typed = state.insteadOf;
+		fruitless = state.showingFor;
+		keepAsTyped = typed;
+		state.showingFor = '';
+		state.insteadOf = '';
+		state.query = typed;
+		lastQuery = typed;
+		writeUrl( false );
+		return;
+	}
 	// Read from a settled answer only: a search still loading holds the previous response, whose
 	// correction is of another query, such as a whole sentence whose filters were just read (D270).
 	const spell = 'success' === s.status ? response?.spellCheck : null;
