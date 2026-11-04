@@ -1,5 +1,4 @@
 ---
-"@viglet/turing-sdk": minor
 "@viglet/turing-react-sdk": minor
 "@viglet/turing-react-ui": patch
 ---
