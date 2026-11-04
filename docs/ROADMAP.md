@@ -10,13 +10,25 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
+- 📋 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — Duplicates, chat, answer, nl-filters and copilot need the partition in the vector store. → §CXLV
+
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
+
+- 📋 **T1132** (deps: T1133 📋) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — The duplicates search takes no filter: vector points carry no field to filter on. → §CXLIV
 
 ## Block BV — The quality gate stops at the package boundary
 
+- 📋 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — Wire the changesets into the publish workflows, bump the SDK, then dispatch publish-sdk.yml and publish-js-sdk.yml by gh. → §CLIII.2
+
 ## Block CJ — Releases ship from the repository the README names
 
+- 📋 **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — No 2026.3 release exists there yet: publish run 41103220225 failed. → §CLXI.1
+- 📋 **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — The console is still unseen without installing; the owner chose a live guest console that browses but never saves. → §CLXI.5
+
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
+
+- 📋 **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — jaqueta impermeável misses the Borrowdale jacket that jaqueta impermeavel and impermeável alone both find, so Brazilian shoppers lose results. → §CLXII.4
+- 📋 **T1195** (deps: —) **An SN site's search metrics cannot be cleared, so probes and tests fill a demo's insights for good** — GET search, ac and answer must honour populateMetrics=false from an authenticated caller only, so probes stay out of insights. → §CLXII.5
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 

@@ -2211,7 +2211,8 @@ site can still leave it short after filtering.
 - A test: two site keys in one SN site, and `fq=site_key:a` never answers a `b` document.
 
 T1133's key-bound partition applies here without the caller's `fq`; this line's `fq`
-stays for type and visibility.
+stays for type and visibility. Left: `fq` on `/search/duplicates`, on the vector-point
+fields T1133 adds.
 
 ## CXLV A shared SN site is partitioned by the server, not by its clients (T1133)
 
@@ -2232,7 +2233,7 @@ searches, content gaps and clicks per partition. `TurSdkContractIT` tests two
 partitions.
 
 **What is left.** Both need the partition in the per-site vector collection: written as
-point metadata at index time (with a re-embed for existing sites), and a filter on it in
+point metadata at index time (an existing site re-embeds when its admin reindexes, and its vector routes refuse the key until then; owner, 2026-11-04; PgVector, Milvus and Chroma tested by Testcontainers ITs), and a filter on it in
 the neighbour and retrieval searches. Then:
 - duplicates (clusters come from vector neighbours);
 - chat, answer, nl-filters and copilot (RAG retrieval runs on that collection; its
@@ -2268,8 +2269,8 @@ trigger.
 - One visible "unreleased" count per published package: commits under its `src` since
   the published version's commit (`npm view <pkg> gitHead`, or a release tag), reported
   by a script the frontend suite or the release checklist runs.
-- Either the publish workflows consume the changesets into the release notes, or the
-  changeset folder is retired, so there is one release record.
+- The publish workflows consume the changesets into the release notes (owner,
+  2026-11-04), and the agent dispatches both by `gh`.
 - Done when the published SDK exports `postNlFilters` and `TurNLFilters`, and the count
   reads 0 right after a publish.
 
@@ -2315,7 +2316,8 @@ starting with 2026.3 (visibility repo, produtos/turing.md).
 patch there so it becomes Latest, and move the README's release badge and download link
 (`README.adoc` lines 15 and 200) to the same repository. The image keeps its
 `ghcr.io/openviglet/turing-ce` name for now; renaming it is a separate decision, since
-every compose file in the wild pulls it.
+every compose file in the wild pulls it. Publish run 41103220225 failed: read its log
+with `gh`, fix the cause in the repo, and dispatch again (owner, 2026-11-04).
 
 ### CLXI.5 A demo that opens without installing (T1184)
 
@@ -2335,7 +2337,7 @@ alternative judge the console as much as the results.
 existing demo host with a guest role that can browse but not save, reset on a schedule,
 with the LLM calls capped as the playground's already are. If a live console is too
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
-choice is the owner's.
+owner chose the live guest console (2026-11-04).
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
@@ -2357,9 +2359,10 @@ build clauses that match the document for either spelling, the accented one addi
 stem. Lucene never applies the spell-check correction, and the relaxed retry fires only
 on zero results.
 
-**Next.** Read the demo's own index for the Borrowdale document: its stored title and
-the terms of its title field (Unicode NFD text, which accent folding does not touch, or
-an index written before T1080 are the suspects), and the image version the demo runs.
+**Next.** Query the live demo server directly (owner, 2026-11-04). Read the demo's own
+index for the Borrowdale document: its stored title and the terms of its title field
+(Unicode NFD text, which accent folding does not touch, or an index written before T1080
+are the suspects), and the image version the demo runs.
 
 **Done when.** The demo's two-word queries return the same documents, and the IT above
 stays green.
@@ -2380,7 +2383,7 @@ search, autocomplete and answer endpoint. Today only the authenticated legacy PO
 let one opt out.
 
 **The decision it waits on.** `TurSNSearchRequest` leaves `populateMetrics` out on
-purpose: it is a privileged field an anonymous caller must not set. Choose one:
+purpose: it is a privileged field an anonymous caller must not set. The owner chose the first (2026-11-04):
 - honour the flag only on an authenticated request (a key or a session), so a probe
   with a key opts out and an anonymous visitor cannot hide searches; or
 - accept it from anyone, reading hidden anonymous searches as harmless.

@@ -7,25 +7,13 @@
 
 ## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
 
-- ⏸ **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — set aside (A re-embedding decision, and PgVector, Milvus and Chroma to test on.): Duplicates, chat, answer, nl-filters and copilot need the partition in the vector store. → §CXLV
-
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
-
-- ⏸ **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — set aside (Needs filterable fields on vector points, as T1133 does.): The duplicates search takes no filter: vector points carry no field to filter on. → §CXLIV
 
 ## Block BV — The quality gate stops at the package boundary
 
-- ⏸ **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — set aside (npm publish): Needs a person: dispatch publish-sdk.yml (bump sdk first) and publish-js-sdk.yml, then pick changesets-in-the-workflows or retire .changeset. → §CLIII.2
-
 ## Block CJ — Releases ship from the repository the README names
 
-- ⏸ **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — set aside (Waits on the owner's next successful 2026.3 publish run.): No 2026.3 release exists there yet: publish run 41103220225 failed. → §CLXI.1
-- ⏸ **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — set aside (Owner picks guest console or video.): The console is still unseen without installing; the owner picks a live guest console or a video. → §CLXI.5
-
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
-
-- ⏸ **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — set aside (Unreproduced on 2026.3.): jaqueta impermeável misses the Borrowdale jacket that jaqueta impermeavel and impermeável alone both find, so Brazilian shoppers lose results. → §CLXII.4
-- ⏸ **T1195** (deps: —) **An SN site's search metrics cannot be cleared, so probes and tests fill a demo's insights for good** — set aside (Needs a decision.): populateMetrics=false on every search, ac and answer call conflicts with TurSNSearchRequest keeping it privileged; needs a decision. → §CLXII.5
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
