@@ -235,9 +235,14 @@ Beyond behaviour, the suite also checks:
   ("Network"). Each site holds its own API key, bound to its site key, after one key without
   a partition has provisioned the fields. `E2E_MULTISITE=1 npm run test:e2e` seeds both sites
   and adds the `network` project, which checks that each site's search block finds only its
-  own documents and that one site's key never reads, lists or deletes the other's. It needs
-  a Turing with partitioned keys on every route the plugin calls (T1209, T1210): until a
-  release carries them, set `TURING_IMAGE` to one built from a Turing checkout.
+  own documents and that one site's key never reads, lists or deletes the other's, and that
+  the copilot and Build my kit, asked with each site's key as `filters` the way a visitor's
+  browser asks them, cite and stage that site's documents only (D287). It needs a Turing with
+  partitioned keys on every route the plugin calls and filters on the copilot, the kit and
+  nl-filters (T1209, T1210, T1213): until a release carries them, set `TURING_IMAGE` to one
+  built from a Turing checkout. When another project holds port 8081, set `WP_MS_PORT` and
+  `WP_MS_URL` to another; a network installed on the old port then needs `wp search-replace`
+  and `wp config set DOMAIN_CURRENT_SITE` to the new one.
 - **Demo storefront**: the `demo` project checks the curated searches, the comparison page
   and the tour on a demo store of its own (`run-docker.cmd demo`: `localhost:38082` in English, `localhost:38083` with `DEMO_LOCALE=pt_BR`), after
   `demo-setup` seeds its catalog if missing. It needs no switch, so `npm run test:e2e` runs it
