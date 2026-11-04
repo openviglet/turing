@@ -1620,3 +1620,5 @@
 
 ## Block CK — Relevance for dated content: upcoming before past
 
+## Block CL — Deep-dive research over an SN site
+

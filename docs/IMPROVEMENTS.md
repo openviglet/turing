@@ -33,6 +33,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CK — Relevance for dated content: upcoming before past
 
+## Block CL — Deep-dive research over an SN site
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2263,3 +2265,29 @@ condition takes an optional end field or the site maps one "relevant until" fiel
 
 **Done when:** on Lucene, Solr and Elasticsearch, of three equal-text documents dated
 −7, +7 and +180 days, `upcoming` ranks +7, +180, −7.
+
+## CLXVII Deep-dive research over an SN site
+
+### CLXVII.1 A deep-dive research mode for SN sites (T1220)
+
+**Where it came from.** FESPSP, a São Paulo school of sociology and politics nearly a century old, wants visitors to "go deeper than ever before" across its WordPress sites and DSpace repository, all in one SN site (Dumont D303). "What has FESPSP done on public health?" has an answer spread over dozens of documents. The SN surfaces answer one question at a time:
+- `GET /api/sn/{site}/answer` grounds one answer on the top retrieved chunks;
+- `chat/conversation` is turn-by-turn;
+- the `genai/research` module is user-research studies (interviews, personas), not visitor research.
+
+Nothing plans sub-questions, retrieves per sub-question across facets (type, date,
+site), and composes a sectioned, cited overview.
+
+**What Turing should do.** A "deep dive" mode on the SN site (`POST /api/sn/{site}/research`, streaming over SSE, behind the site's GenAI settings and cost budget, D216):
+1. plan 3–6 sub-questions from the question, shown as steps;
+2. retrieve per sub-question with the caller's `filters` map (as T1213), widening by facet when a step finds little;
+3. compose sections with inline citations, a timeline when the sources are dated, and "what the index does not cover" instead of filling gaps;
+4. return the source list grouped by type, ready to render as cards.
+
+Same refusals as `answer`: no source, no claim.
+
+Add an SDK controller (`createResearchController`) for the Dumont plugin.
+
+**Done when:** on a seeded site, a deep dive cites at least one document per section,
+never cites outside the filters, and says what is missing when a sub-question finds
+nothing.
