@@ -1,4 +1,5 @@
-import { TuringD2Diagram, TuringMarkdown } from "@viglet/turing-react-sdk";
+import { TuringD2Diagram } from "@viglet/turing-react-sdk";
+import { TuringMarkdown } from "@viglet/turing-react-sdk/TuringMarkdown";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 

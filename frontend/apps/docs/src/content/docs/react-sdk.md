@@ -26,11 +26,16 @@ and Next bundle it, and a Node script, a test runner in plain Node mode or serve
 rendering that keeps `node_modules` external can `import` it directly. The same holds
 for `@viglet/turing-react-ui`.
 
-`react-markdown` is needed only to render markdown. The `@viglet/turing-react-ui` root
-loads with just `react` and `react-dom`, so its markdown renderer is imported from its
-own subpath: `import { TuringMarkdown } from "@viglet/turing-react-ui/TuringMarkdown"`.
-This package still exports `TuringMarkdown` and `TuringAnswer` from its root, so install
-`react-markdown` alongside it for now.
+`react-markdown` is needed only to render markdown. Both package roots load without it,
+so the two components that render markdown are imported from their own subpaths:
+
+```tsx
+import { TuringMarkdown } from "@viglet/turing-react-sdk/TuringMarkdown";
+import { TuringAnswer } from "@viglet/turing-react-sdk/TuringAnswer";
+```
+
+`@viglet/turing-react-ui/TuringMarkdown` is the same component. A project that uses only
+the hooks never installs `react-markdown`.
 
 ---
 

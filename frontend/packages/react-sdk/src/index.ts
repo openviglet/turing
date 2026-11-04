@@ -394,7 +394,9 @@ export { TuringWorkspacePanel } from "./ui/TuringWorkspacePanel.js";
 export type { TuringWorkspacePanelProps } from "./ui/TuringWorkspacePanel.js";
 export { TuringCopilot } from "./ui/TuringCopilot.js";
 export type { TuringCopilotProps, TuringCopilotClassNames } from "./ui/TuringCopilot.js";
-export { TuringAnswer } from "./ui/TuringAnswer.js";
+// T1216 — `TuringAnswer` renders markdown, which loads the optional
+// react-markdown peer, so it is imported from `@viglet/turing-react-sdk/TuringAnswer`.
+// Its types stay here: they load nothing at runtime.
 export type {
   TuringAnswerProps,
   TuringAnswerClassNames,
@@ -406,9 +408,10 @@ export type {
 // chat / rich-content components from this SDK alongside the API hooks above.
 // react-ui itself stays axios-free so viglet.com keeps consuming it directly
 // (core SDK + react-ui + its own Next transport) without ever seeing axios.
-// react-markdown / @terrastruct/d2 are optional peers here, mirroring react-ui.
-// D2 is lazy-loaded; react-markdown is not yet (T1216): TuringMarkdown and
-// TuringAnswer below import it statically, so this root still needs it.
+// react-markdown / @terrastruct/d2 are optional peers here, mirroring react-ui:
+// D2 is lazy-loaded, and the two components that import react-markdown
+// statically are on subpaths (T1216), `@viglet/turing-react-sdk/TuringMarkdown`
+// and `@viglet/turing-react-sdk/TuringAnswer`, so this root loads without either.
 export {
   TuringHtmlSandbox,
   TuringRichContent,
@@ -435,9 +438,6 @@ export {
   TURING_UI_THEME_CLASS,
   TURING_UI_TOKENS,
 } from "@viglet/turing-react-ui";
-// T1215 — react-ui's root no longer carries TuringMarkdown (it loads the optional
-// react-markdown peer); this SDK keeps re-exporting it, from its subpath.
-export { TuringMarkdown } from "@viglet/turing-react-ui/TuringMarkdown";
 export type {
   TuringHtmlSandboxProps,
   TuringHtmlSandboxClassNames,

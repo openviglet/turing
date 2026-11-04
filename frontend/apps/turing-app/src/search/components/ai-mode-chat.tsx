@@ -1,5 +1,6 @@
 import { GradientAvatar, GradientAvatarFallback } from "@/components/ui/gradient-avatar";
-import { TuringMarkdown, TuringSourceChips, useTuringChat } from "@viglet/turing-react-sdk";
+import { TuringSourceChips, useTuringChat } from "@viglet/turing-react-sdk";
+import { TuringMarkdown } from "@viglet/turing-react-sdk/TuringMarkdown";
 import {
   IconArrowUp,
   IconChevronDown,

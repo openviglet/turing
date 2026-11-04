@@ -25,7 +25,7 @@
  *   {
  *     "forbid":  ["dist/test/"],   // extra posix substrings to reject
  *     "allow":   ["dist/src/testing/"],  // exempt paths a forbid pattern catches
- *     "rootOptionalPeers": { "react-markdown": "T1216: why" }  // optional peers the
+ *     "rootOptionalPeers": { "<peer>": "<task id>: why" }  // optional peers the
  *                                      // root may still load, each with its task
  *   }
  *

@@ -10,8 +10,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-- 📋 **T1216** (deps: —) **Importing the @viglet/turing-react-sdk root without its optional peer react-markdown fails** — Its root exports TuringMarkdown and TuringAnswer, which import react-markdown statically, so a hooks-only consumer must install it. → §CLIII.5
-
 ## Block CJ — Releases ship from the repository the README names
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)

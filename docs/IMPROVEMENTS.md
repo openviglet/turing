@@ -2183,29 +2183,6 @@ the Search Console a month after.
 
 ## CLIII The quality gate stops at the package boundary
 
-### CLIII.5 The react-sdk root loads an optional peer (T1216)
-
-**Where it showed.** T1215 added a publish check to `scripts/check-package-contents.mjs`
-that imports a package's root entry with its optional peers unresolvable. react-ui
-passes it. `@viglet/turing-react-sdk` fails: its root re-exports `TuringMarkdown` (now
-from `@viglet/turing-react-ui/TuringMarkdown`) and exports `TuringAnswer`, which renders
-it, and both import `react-markdown` statically. The package declares `react-markdown`
-an optional peer, and the comment above the re-export block in `src/index.ts` says the
-components lazy-load it, which is not true.
-
-**Why it matters.** A consumer who only uses the hooks (`useTuringSearch`,
-`useTuringChat`) must still install `react-markdown`, or the import fails in a bundler
-and in Node alike.
-
-**What to build.** Pick one per export: move `TuringMarkdown` and `TuringAnswer` to
-react-sdk subpaths (`exports` entries, as react-ui has), or have `TuringAnswer` load the
-renderer lazily. The subpath route is the one react-ui took. Then drop `react-markdown`
-from `sizeBudget.contents.rootOptionalPeers` in react-sdk's `package.json`, which
-records this debt today, update the workspace importers (`apps/turing-app`,
-`apps/showcase`) and correct the comment.
-
-**Done when** the contents check passes for react-sdk with no `rootOptionalPeers` entry.
-
 ## CLIV Persona as a first-class actionable surface (§XXXII)
 
 ## CLV What the SN site manifest cannot declare
