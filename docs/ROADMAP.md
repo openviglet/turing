@@ -18,10 +18,6 @@
 
 ## Block CL — SN sites for research and memory archives
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
-- 📋 **T1222** (deps: —) **Elasticsearch ignores a site's ranking expressions: no boost is built, while Solr and Lucene apply them** — A site moved to Elasticsearch silently loses every boost its console shows, with no warning in the editor or the logs. → §CLXVIII.1
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

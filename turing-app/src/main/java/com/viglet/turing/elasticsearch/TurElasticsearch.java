@@ -81,15 +81,27 @@ public class TurElasticsearch {
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
     private final TurLuceneCustomFacets customFacets;
+    private final TurElasticsearchRankingExpressions rankingExpressions;
 
+    /** Without ranking expressions: the shape before T1222. */
     public TurElasticsearch(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
             TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
             TurLuceneCustomFacets customFacets) {
+        this(turSNSiteRepository, turSNSiteFieldExtRepository, turSNSiteCustomSortRepository, customFacets, null);
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public TurElasticsearch(TurSNSiteRepository turSNSiteRepository,
+            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
+            TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
+            TurLuceneCustomFacets customFacets,
+            TurElasticsearchRankingExpressions rankingExpressions) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteCustomSortRepository = turSNSiteCustomSortRepository;
         this.customFacets = customFacets;
+        this.rankingExpressions = rankingExpressions;
     }
 
     public Optional<TurSEResults> retrieveElasticsearchFromSN(
@@ -345,7 +357,8 @@ public class TurElasticsearch {
      * goes out as it always did.
      */
     private Query buildQuery(TurSNSite turSNSite, TurSEParameters turSEParameters) {
-        Query query = withTitlePhraseBoost(turSNSite, turSEParameters.getQuery(), buildTextQuery(turSEParameters));
+        Query query = withRankingExpressions(turSNSite,
+                withTitlePhraseBoost(turSNSite, turSEParameters.getQuery(), buildTextQuery(turSEParameters)));
         List<Query> filters = filters(turSNSite, turSEParameters);
         if (filters.isEmpty()) {
             return query;
@@ -418,6 +431,19 @@ public class TurElasticsearch {
         String phrase = queryString.trim();
         return Query.of(q -> q.bool(b -> b.must(text)
                 .should(s -> s.matchPhrase(m -> m.field(titleField).query(phrase).boost(TITLE_PHRASE_BOOST)))));
+    }
+
+    /**
+     * T1222 — the site's ranking expressions as {@code should} boosts beside the
+     * text query, as Lucene adds them (T1064) and Solr sends its {@code bq}: they
+     * raise the score of matching documents and never change which match.
+     */
+    Query withRankingExpressions(TurSNSite turSNSite, Query text) {
+        List<Query> boosts = rankingExpressions == null ? List.of() : rankingExpressions.boostQueries(turSNSite);
+        if (boosts.isEmpty()) {
+            return text;
+        }
+        return Query.of(q -> q.bool(b -> b.must(text).should(boosts)));
     }
 
     private Query buildTextQuery(TurSEParameters turSEParameters) {

@@ -156,6 +156,10 @@ class TurSNEngineConformanceIT {
     private TurElasticsearch elasticsearch;
     private TurElasticsearchInstance esInstance;
     private TurLuceneQueryBuilder luceneQueryBuilder;
+    private List<TurSNSiteFieldExt> catalogFields;
+    private TurSNSiteFieldExtRepository catalogFieldRepository;
+    private TurSNSiteRepository catalogSiteRepository;
+    private TurSNSiteCustomSortRepository catalogSortRepository;
     private IndexSearcher luceneSearcher;
     private DirectoryReader luceneReader;
 
@@ -210,7 +214,9 @@ class TurSNEngineConformanceIT {
             ext.setType(e.getValue());
             return ext;
         }).toList();
+        catalogFields = fields;
         TurSNSiteFieldExtRepository fieldRepository = mock(TurSNSiteFieldExtRepository.class);
+        catalogFieldRepository = fieldRepository;
         when(fieldRepository.findByTurSNSiteAndEnabled(any(), anyInt())).thenReturn(fields);
         when(fieldRepository.findAll()).thenReturn(fields);
         when(fieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(), anyInt()))
@@ -256,6 +262,8 @@ class TurSNEngineConformanceIT {
         esInstance = new TurElasticsearchInstance(client, URI.create(url).toURL(), INDEX);
         TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
         when(siteRepository.findByNameIgnoreCase("jobs")).thenReturn(Optional.of(site));
+        catalogSiteRepository = siteRepository;
+        catalogSortRepository = sortRepository;
         elasticsearch = new TurElasticsearch(siteRepository, fieldRepository, sortRepository, customFacets);
         for (Object[] job : JOBS) {
             elasticsearch.indexing(esInstance, site, attributes(job));
@@ -580,6 +588,69 @@ class TurSNEngineConformanceIT {
 
         assertThat(ids).as("the synonym finds the products").contains("catbells-slate");
         assertThat(ids.getFirst()).isEqualTo("guide");
+    }
+
+    /**
+     * T1222 — the same ranking expressions rank the catalog in the same order on
+     * Lucene (T1064) and Elasticsearch: the health job first by its sector's
+     * weight, then the rest from the most recently published. Before T1222,
+     * Elasticsearch ignored them and returned the catalog unordered.
+     */
+    @org.junit.jupiter.api.Test
+    void rankingExpressionsRankTheSameOnLuceneAndElasticsearch() throws Exception {
+        var expressionRepository = mock(
+                com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository.class);
+        var conditionRepository = mock(
+                com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository.class);
+        var healthFirst = rankingExpression("health-first", 10f, "sector", "saude");
+        var recent = rankingExpression("recent", 2f, "publishedAt", "asc");
+        when(conditionRepository.findByTurSNRankingExpression(healthFirst.getKey()))
+                .thenReturn(Set.of(healthFirst.getValue()));
+        when(conditionRepository.findByTurSNRankingExpression(recent.getKey())).thenReturn(Set.of(recent.getValue()));
+        when(expressionRepository.findByTurSNSite(any(), any()))
+                .thenReturn(new java.util.LinkedHashSet<>(List.of(healthFirst.getKey(), recent.getKey())));
+        when(catalogFieldRepository.findByTurSNSite(any(), any())).thenReturn(catalogFields);
+
+        var luceneRanking = new com.viglet.turing.lucene.TurLuceneRankingExpressions(expressionRepository,
+                conditionRepository, catalogFieldRepository);
+        TurLuceneQueryBuilder rankedLucene = new TurLuceneQueryBuilder(catalogFieldRepository, catalogSortRepository,
+                null, null, luceneRanking, null);
+        TurSEParameters seParams = seParameters(request(p -> {
+        }), false);
+        List<String> lucene = new ArrayList<>();
+        for (ScoreDoc hit : luceneSearcher.search(rankedLucene.buildQuery(site, seParams), 10).scoreDocs) {
+            lucene.add(luceneSearcher.storedFields().document(hit.doc).get(TurSNFieldName.ID));
+        }
+
+        var esRanking = new com.viglet.turing.elasticsearch.TurElasticsearchRankingExpressions(
+                expressionRepository, conditionRepository, catalogFieldRepository);
+        TurElasticsearch rankedEs = new TurElasticsearch(catalogSiteRepository, catalogFieldRepository,
+                catalogSortRepository, mock(TurLuceneCustomFacets.class), esRanking);
+        TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),
+                seParams, java.util.Locale.US, URI.create("http://localhost/search"));
+        List<String> es = rankedEs.retrieveElasticsearchFromSN(esInstance, context)
+                .orElseThrow(() -> new AssertionError("Elasticsearch answered nothing"))
+                .getResults().stream()
+                .map(result -> result.getFields().get(TurSNFieldName.ID).toString())
+                .toList();
+
+        List<String> expected = List.of("enfermeira", "creche", "baba", "monitor", "dados");
+        assertThat(lucene).as("Lucene").containsExactlyElementsOf(expected);
+        assertThat(es).as("Elasticsearch").containsExactlyElementsOf(expected);
+    }
+
+    private static Map.Entry<com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression,
+            com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition> rankingExpression(String name,
+                    float weight, String attribute, String value) {
+        var expression = new com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression();
+        expression.setId(name);
+        expression.setName(name);
+        expression.setWeight(weight);
+        var condition = new com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition();
+        condition.setAttribute(attribute);
+        condition.setValue(value);
+        condition.setCondition(com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition.IS);
+        return Map.entry(expression, condition);
     }
 
     static Stream<Arguments> missingPlacements() {

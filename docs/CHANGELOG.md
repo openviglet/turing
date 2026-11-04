@@ -1592,6 +1592,7 @@
 - **T1110** — Turing creates and unloads Solr cores through the v1 Core Admin API, so a new SN site locale gets its core on Solr 9.6.1 and Solr 10, and a refused create is logged.
 - **T1111** — A Solr fq range that opens with an exclusive bound is sent as a range, so Solr returns the same documents for it as Lucene and Elasticsearch.
 - **T1108** — Container ITs reach Docker 29 with no environment variable, through a pinned docker-java API version, and a run where Docker is unreachable says so and can be made to fail.
+- **T1222** — Elasticsearch applies a site's ranking expressions by the Lucene and Solr rules, upcoming included; a conformance row ranks one fixture identically on Lucene and a live Elasticsearch (design §CLXVIII.1 recorded in `turing-app/src/main/java/com/viglet/turing/elasticsearch/TurElasticsearchRankingExpressions.java`).
 
 ## Block CH — Published container images track the shipped source
 

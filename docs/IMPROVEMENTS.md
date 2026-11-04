@@ -33,8 +33,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CL — SN sites for research and memory archives
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2269,24 +2267,3 @@ sites. T1219 and T1220 are its first finds.
 here of what already works.
 
 ## CLXVIII Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
-### CLXVIII.1 Ranking expressions on Elasticsearch (T1222)
-
-**Where it showed up.** Validating T1219 (an upcoming-first DATE form), which asked for
-an Elasticsearch equivalent: there is nothing to extend. Solr turns a site's ranking
-expressions into boost queries (`TurSolrQueryBuilder.boostQueryAttributes`) and Lucene
-into `SHOULD` boost clauses (`TurLuceneRankingExpressions`, T1064), but no class under
-`elasticsearch/` reads `TurSNRankingExpression`. The only Elasticsearch boost is the
-title phrase (T1185). The console shows the expressions and the site ranks as if they
-were absent.
-
-**What Turing should do.** A `TurElasticsearchRankingExpressions` beside the Lucene one, from the same repositories and the same rules:
-- each expression a `bool` whose conditions are all `must`, wrapped as a `should` with the expression's weight, so it raises scores without changing which documents match;
-- `Is` an exact `term` (phrase on TEXT), `Is not` a `must_not` (T1070), `Exists` an `exists` query;
-- a DATE `asc` a `distance_feature` from `now/d` with the same pivot as Lucene (a year halves the boost);
-- a condition that cannot be expressed drops its whole expression, logged at debug, as on Lucene.
-
-T1219's `upcoming` then lands on all three engines with one more arm here.
-
-**Done when:** the same ranking-expression fixture that ranks documents on Lucene and
-Solr ranks them in the same order on Elasticsearch.

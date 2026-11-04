@@ -974,7 +974,7 @@ Each report shows the term and its search count for the selected period. Use thi
 
 ### Result Ranking
 
-Configures boost expressions that influence search relevance. Each ranking expression boosts documents matching a set of conditions by a configured weight, applied at query time. Ranking expressions work on both Solr and the embedded Lucene engine. They raise the score of matching documents and never remove results.
+Configures boost expressions that influence search relevance. Each ranking expression boosts documents matching a set of conditions by a configured weight, applied at query time. Ranking expressions work on Solr, Elasticsearch and the embedded Lucene engine, with the same rules on all three. They raise the score of matching documents and never remove results.
 
 #### Ranking Expression Form
 
