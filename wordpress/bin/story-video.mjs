@@ -1816,7 +1816,9 @@ const writeProject = ( total ) => {
 		const item = {
 			offset,
 			length: piece.length,
-			start: 'V1' === piece.track ? piece.at : gapStart,
+			// The recording starts at its in point, a card (on the spine since D300) at 0, a
+			// shot's gap at gapStart.
+			start: { V1: piece.at, V2: 0 }[ piece.track ] ?? gapStart,
 			asset: asset( piece.source, piece.still ? 'image' : 'video' ),
 			piece,
 			anchored: [],
@@ -2012,51 +2014,45 @@ const writeProject = ( total ) => {
 	};
 
 	/**
-	 * A card or a shot on its lane over its gap. A card reaches half a second into a neighbour
-	 * that is not a still and fades over it, in or out, as the MP4 blends it (D300): a card
-	 * fades in over what plays before it, and out over what plays after.
+	 * A shot on its lane over its gap: rendered to its exact length, it has no handles for a
+	 * transition, so it stays off the spine.
 	 *
 	 * @param {Object} item The gap's item.
-	 * @param {number} n    Its place in the spine.
 	 */
-	const laneClip = ( item, n ) => {
-		const isCard = 'V2' === item.piece.track;
-		const tag = 'image' === item.asset.kind ? 'video' : 'asset-clip';
-		const lane = isCard ? 2 : 1;
-		const before = spine[ n - 1 ];
-		const after = spine[ n + 1 ];
-		const into =
-			isCard && before && ! before.piece.still ? dissolveSeconds : 0;
-		const outOf =
-			isCard && after && ! after.piece.still ? dissolveSeconds : 0;
-		const length = item.length + into + outOf;
-		const fade =
-			into || outOf
-				? `<adjust-blend>${ keyframed( 'amount', [
-						[ 0, into ? '0' : '1' ],
-						[ into, '1' ],
-						[ length - outOf, '1' ],
-						[ length, outOf ? '0' : '1' ],
-					] ) }</adjust-blend>`
-				: '';
-		return `<${ tag } ref="${ item.asset.id }" name="${ xml(
+	const laneClip = ( item ) =>
+		`<asset-clip ref="${ item.asset.id }" name="${ xml(
 			item.asset.name
-		) }" lane="${ lane }" offset="${ time(
-			gapStart - into
-		) }" start="0s" duration="${ time( length ) }"${
-			fade ? `>${ fade }</${ tag }>` : '/>'
-		}`;
-	};
+		) }" lane="1" offset="${ time(
+			gapStart
+		) }" start="0s" duration="${ time( item.length ) }"/>`;
+
+	// The dissolves (D300) as Cross Dissolve transitions on the spine, wherever a card meets the
+	// recording: Resolve 21 imported opacity keyframes on a card (adjust-blend) and did nothing
+	// with them. The recording has handles both sides of every cut and a card is a still, so
+	// the transition centres on the edit. A card beside a shot keeps its cut: a shot has none.
+	const half = Math.round( ( dissolveSeconds * fps ) / 2 );
+	const recording = ( item ) =>
+		'V1' === item.piece.track && ! item.piece.still;
+	const isCard = ( item ) => 'V2' === item.piece.track;
 	const spineXml = spine
 		.map( ( item, n ) => {
-			if ( 'V1' === item.piece.track ) {
-				return clip( item );
+			const before = spine[ n - 1 ];
+			const transition =
+				before &&
+				( ( isCard( before ) && recording( item ) ) ||
+					( recording( before ) && isCard( item ) ) )
+					? `<transition name="Cross Dissolve" offset="${
+							Math.round( item.offset * fps ) - half
+						}/${ fps }s" duration="${ 2 * half }/${ fps }s"/>\n`
+					: '';
+			if ( 'V3' !== item.piece.track ) {
+				return transition + clip( item );
 			}
 			return `<gap name="Gap" offset="${ time(
 				item.offset
 			) }" start="${ time( gapStart ) }" duration="${ time(
 				item.length
-			) }">${ laneClip( item, n ) }${ [
+			) }">${ laneClip( item ) }${ [
 				...item.anchored,
 				...item.markers,
 			].join( '' ) }</gap>`;

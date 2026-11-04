@@ -64,10 +64,11 @@ Credits for all of it: `demo/seed/CREDITS.md`.
    as an FCPXML for DaVinci Resolve (File > Import > Timeline), with every file it uses copied
    into its `media/` folder (D290). V1 is the recording, transcoded once to H.264 and cut by
    chapter, with each held result as a still, and the push-ins as scale and position
-   keyframes (D292); V2 the opening and closing shots, as rendered; V3 the cards, above the
-   shots so each can dissolve over its neighbour as in the MP4, by opacity keyframes over half
-   a second either side (D300); A1 each take; A2 the music bed at the video's level, its
-   ducking as volume keyframes. Chapters are markers.
+   keyframes (D292); the cards on V1 too, in order with the recording, with a Cross Dissolve
+   wherever a card meets the recording (D300; Resolve ignored opacity keyframes on a card,
+   and reads a transition); V2 the opening and closing shots, as rendered, where a card beside
+   a shot keeps its cut, since a shot has no frames to spare; A1 each take; A2 the music bed
+   at the video's level, its ducking as volume keyframes. Chapters are markers.
    The project folder also gets `finish.lua` (from `demo/resolve/finish.lua`, D293), for what
    FCPXML cannot carry. Lua because Resolve runs it with nothing installed, and lists a Python
    script only when it finds a Python of its own (not the Microsoft Store one). The free
