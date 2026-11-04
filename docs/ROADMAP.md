@@ -23,6 +23,7 @@
 ## Block CL — Deep-dive research over an SN site
 
 - 📋 **T1220** (deps: —) **An SN site answers one question at a time: nothing plans sub-questions and composes a sectioned, cited overview** — A visitor who wants to understand a topic across dozens of documents gets one paragraph or a list of links. → §CLXVII.1
+- 📋 **T1221** (deps: —) **Turing was never read end to end as an education and memory site uses it: pt_BR, OCR, images, audio, flows** — FESPSP will use nearly every visitor feature at once, and the gaps are cheaper to find in one analysis than one by one in production. → §CLXVII.2
 
 ## Done when — T1184
 

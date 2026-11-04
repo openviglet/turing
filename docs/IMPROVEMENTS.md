@@ -2291,3 +2291,26 @@ Add an SDK controller (`createResearchController`) for the Dumont plugin.
 **Done when:** on a seeded site, a deep dive cites at least one document per section,
 never cites outside the filters, and says what is missing when a sub-question finds
 nothing.
+
+### CLXVII.2 FESPSP as a reference case: an end-to-end analysis (T1221)
+
+**Analysis task: it delivers T lines, not code.** FESPSP (a São Paulo school of sociology and politics, nearly a century old) is about to use almost every visitor-facing Turing feature at once, through the Dumont WordPress plugin and Dumont's DSpace source (D314):
+- one SN site shared by three WordPress sites and a DSpace repository;
+- pt_BR search with synonyms;
+- answer, chat, chat flows, deep dive (T1220);
+- OCR of scanned historical documents (T515), multimodal image search (T511), seminar transcription;
+- metrics and insights.
+
+The plan is fespsp-institucional FI140–FI171: a reference case for education and memory
+sites, worth reading from Turing's side.
+
+**What to analyse**, against a Turing built from this checkout with the FESPSP lab (FI140) or a copy of its content:
+1. **pt_BR quality:** stemming and accent folding on documents written before the 1943 and 1971 spelling reforms, proper names, multi-word synonyms for the school's historical names.
+2. **OCR** on 1930s–1960s typewritten Portuguese, and how its text is chunked for citations with page numbers.
+3. **Multimodal** on black-and-white archive photos with no caption, and its cost per image.
+4. **Transcription** of pt_BR seminar audio: speaker turns, timestamps in citations.
+5. **Flows** authored for a guided history tour: can `ChatFlowAuthoringSkill` draft one from a curated outline?
+6. **Tenant setup** on turing.viglet.cloud: four site keys, partitioned keys, CORS for three origins, cost budget per feature.
+
+**Delivers:** one T line per gap, naming the FESPSP line that waits on it, and a note
+here of what already works.
