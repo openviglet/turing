@@ -513,6 +513,35 @@
 	overflow-wrap: anywhere;
 }
 
+/* The mapped fields a card shows (D305): one "Label: value" line each. */
+.viglet-dumont-search__fields {
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+	margin: 0.25em 0 0;
+}
+
+.viglet-dumont-search__fields[hidden] {
+	display: none;
+}
+
+.viglet-dumont-search__field {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 0.4em;
+}
+
+.viglet-dumont-search__field dt {
+	font-weight: 600;
+}
+
+.viglet-dumont-search__field dt::after {
+	content: ":";
+}
+
+.viglet-dumont-search__field dd {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
 .viglet-dumont-search__snippet {
 	-webkit-box-orient: vertical;
 	display: -webkit-box;

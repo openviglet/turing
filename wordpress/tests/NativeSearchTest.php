@@ -212,6 +212,120 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertArrayNotHasKey( 'analytics', $config, 'a site that reports nothing says nothing about it' );
 	}
 
+	/**
+	 * A mapped field marked "Show on result cards" reaches the browser as a card line (D305),
+	 * labelled, once even when two types map it, and only when marked.
+	 */
+	public function test_the_public_config_lists_the_card_fields_in_mapping_order(): void {
+		$options = array(
+			'viglet_dumont_mapping' => array(
+				'post' => array(
+					'fields' => array(
+						array(
+							'source'      => 'meta:inicio',
+							'field'       => 'event_start',
+							'type'        => 'DATE',
+							'facet_label' => 'Starts',
+							'card'        => true,
+						),
+						array(
+							'source' => 'meta:local',
+							'field'  => 'venue',
+							'type'   => 'STRING',
+							'card'   => true,
+						),
+						array(
+							'source' => 'meta:sala',
+							'field'  => 'room',
+							'type'   => 'STRING',
+						),
+					),
+				),
+				'page' => array(
+					'fields' => array(
+						array(
+							'source' => 'meta:local',
+							'field'  => 'venue',
+							'type'   => 'STRING',
+							'card'   => true,
+						),
+					),
+				),
+			),
+		);
+		Functions\when( 'get_option' )->alias( static fn ( $name, $fallback = false ) => $options[ $name ] ?? $fallback );
+
+		$this->assertSame(
+			array(
+				array(
+					'field' => 'event_start',
+					'label' => 'Starts',
+					'type'  => 'DATE',
+				),
+				array(
+					'field' => 'venue',
+					'label' => 'venue',
+					'type'  => 'STRING',
+				),
+			),
+			( new Viglet_Dumont_Native_Search( $this->settings() ) )->public_config()['cards']
+		);
+	}
+
+	/** A card line is what a reader can use: a date in the site's format, a list, never a raw URL. */
+	public function test_card_values_format_dates_join_lists_and_drop_urls(): void {
+		Functions\when( 'wp_strip_all_tags' )->alias( 'strip_tags' );
+		Functions\when( 'get_option' )->justReturn( 'd/m/Y' );
+		Functions\when( 'wp_date' )->alias( static fn ( $format, $timestamp ) => gmdate( $format, $timestamp ) );
+
+		$cards = array(
+			array(
+				'field' => 'event_start',
+				'label' => 'Starts',
+				'type'  => 'DATE',
+			),
+			array(
+				'field' => 'authors',
+				'label' => 'Authors',
+				'type'  => 'STRING',
+			),
+			array(
+				'field' => 'link',
+				'label' => 'Link',
+				'type'  => 'STRING',
+			),
+			array(
+				'field' => 'absent',
+				'label' => 'Absent',
+				'type'  => 'STRING',
+			),
+		);
+		$lines = Viglet_Dumont_Native_Search::card_values(
+			$cards,
+			array(
+				'event_start' => '2026-11-20T13:00:00Z',
+				'authors'     => array( 'Ana <mark>Lima</mark>', '', 'Rui Costa' ),
+				'link'        => 'https://example.org/inscricao',
+			)
+		);
+
+		$this->assertSame(
+			array(
+				array(
+					'field' => 'event_start',
+					'label' => 'Starts',
+					'value' => '20/11/2026',
+				),
+				array(
+					'field' => 'authors',
+					'label' => 'Authors',
+					'value' => 'Ana Lima, Rui Costa',
+				),
+			),
+			$lines
+		);
+	}
+
 	public function test_analytics_say_what_is_reported_and_whether_consent_comes_first(): void {
 		$both = new Viglet_Dumont_Native_Search(
 			$this->settings(

@@ -65,6 +65,17 @@ $viglet_dumont_recent = array_map(
 					<?php if ( $viglet_dumont_show( 'showSnippet' ) ) : ?>
 						<p class="viglet-dumont-search__snippet" data-wp-text="context.result.snippetText" data-wp-watch="callbacks.snippet"></p>
 					<?php endif; ?>
+					<?php
+					// The mapped fields marked "Show on result cards" in Fields (D305).
+					?>
+					<dl class="viglet-dumont-search__fields" hidden data-wp-bind--hidden="!context.result.hasFields">
+						<template data-wp-each--line="context.result.fields" data-wp-each-key="context.line.field">
+							<div class="viglet-dumont-search__field">
+								<dt data-wp-text="context.line.label"></dt>
+								<dd data-wp-text="context.line.value"></dd>
+							</div>
+						</template>
+					</dl>
 					<?php if ( Viglet_Dumont_WooCommerce::active() ) : ?>
 						<?php
 						// A WooCommerce product's price and "Add to cart" (D173).

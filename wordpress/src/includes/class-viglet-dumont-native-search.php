@@ -301,6 +301,73 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
+	 * The mapped fields marked "Show on result cards" in Fields (D305), in mapping order and
+	 * once each, labelled as their facet label or else their name. The browser gets the same
+	 * list as `cards` in the public config, so first paint and hydration draw the same lines.
+	 *
+	 * @return array<int, array{field: string, label: string, type: string}>
+	 */
+	public function card_fields(): array {
+		$cards = array();
+		foreach ( ( new Viglet_Dumont_Mapping( $this->settings ) )->all() as $type_mapping ) {
+			if ( $type_mapping['exclude'] ) {
+				continue;
+			}
+			foreach ( $type_mapping['fields'] as $field ) {
+				if ( ! empty( $field['card'] ) && ! isset( $cards[ $field['field'] ] ) ) {
+					$cards[ $field['field'] ] = array(
+						'field' => $field['field'],
+						'label' => '' !== $field['facet_label'] ? $field['facet_label'] : $field['field'],
+						'type'  => $field['type'],
+					);
+				}
+			}
+		}
+
+		return array_values( $cards );
+	}
+
+	/**
+	 * A result's card lines (D305): each card field the document carries, as search-block.js's
+	 * cardValues() writes it. A date in the site's date format, a list joined, and a URL never
+	 * shown raw; a field with nothing left to show is no line.
+	 *
+	 * @param array<int, array{field: string, label: string, type: string}> $cards  card_fields().
+	 * @param array                                                         $fields The document's fields.
+	 * @return array<int, array{field: string, label: string, value: string}>
+	 */
+	public static function card_values( array $cards, array $fields ): array {
+		$lines = array();
+		foreach ( $cards as $card ) {
+			$raw    = $fields[ $card['field'] ] ?? array();
+			$values = array();
+			foreach ( is_array( $raw ) ? $raw : array( $raw ) as $value ) {
+				$value = trim( html_entity_decode( wp_strip_all_tags( (string) $value ) ) );
+				if ( '' === $value || preg_match( '#^https?://#i', $value ) ) {
+					continue;
+				}
+				if ( 'DATE' === $card['type'] ) {
+					$timestamp = is_numeric( $value ) ? (int) ( $value / 1000 ) : strtotime( $value );
+					if ( false === $timestamp ) {
+						continue;
+					}
+					$value = wp_date( get_option( 'date_format' ), $timestamp );
+				}
+				$values[] = $value;
+			}
+			if ( array() !== $values ) {
+				$lines[] = array(
+					'field' => $card['field'],
+					'label' => $card['label'],
+					'value' => implode( ', ', $values ),
+				);
+			}
+		}//end foreach
+
+		return $lines;
+	}
+
+	/**
 	 * The results page on another site this site sends its searches to (D304), or '' when
 	 * they stay here: an index-only site's box lands on the shared search it indexes into.
 	 */
@@ -412,6 +479,7 @@ class Viglet_Dumont_Native_Search {
 		$field   = static fn ( array $fields, string $key, string $fallback ) => $fields[ $names[ $key ] ?? $fallback ] ?? '';
 		$shop    = Viglet_Dumont_WooCommerce::active();
 		$offset  = ( $page - 1 ) * $rows;
+		$cards   = $this->card_fields();
 		$results = array();
 		foreach ( array_values( (array) ( $response['results']['document'] ?? array() ) ) as $i => $document ) {
 			$fields    = (array) ( $document['fields'] ?? array() );
@@ -436,6 +504,8 @@ class Viglet_Dumont_Native_Search {
 				// The snippet as plain text, so the server draws it at its height; the script then
 				// puts the highlights in.
 				'snippetText' => '',
+				'fields'      => self::card_values( $cards, $fields ),
+				'hasFields'   => false,
 				'price'       => '',
 			);
 			// A product's price row, as search-block.js's product() draws it (D173).
@@ -455,6 +525,7 @@ class Viglet_Dumont_Native_Search {
 				);
 			}
 			$result['snippetText'] = implode( '', array_column( $result['snippet'], 'text' ) );
+			$result['hasFields']   = array() !== $result['fields'];
 			$results[]             = $result;
 		}//end foreach
 
@@ -629,6 +700,7 @@ class Viglet_Dumont_Native_Search {
 			);
 		}
 
+		$cards   = $this->card_fields();
 		$results = array();
 		foreach ( (array) ( $response['results']['document'] ?? array() ) as $document ) {
 			$fields    = (array) ( $document['fields'] ?? array() );
@@ -636,14 +708,17 @@ class Viglet_Dumont_Native_Search {
 			$date      = $fields['publication_date'] ?? null;
 			$timestamp = is_numeric( $date ) ? (int) ( $date / 1000 ) : ( $date ? strtotime( (string) $date ) : false );
 			$parts     = wp_parse_url( $url );
+			$values    = self::card_values( $cards, $fields );
 			$results[] = array(
-				'url'   => $url,
-				'title' => wp_strip_all_tags( (string) ( $fields['title'] ?? $url ) ),
-				'type'  => $labels['typeLabels'][ $fields['type'] ?? '' ] ?? (string) ( $fields['type'] ?? '' ),
-				'date'  => $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : '',
-				'iso'   => $timestamp ? gmdate( 'c', $timestamp ) : '',
-				'crumb' => self::crumb( $url ),
-				'image' => (string) ( $fields['image'] ?? '' ),
+				'url'       => $url,
+				'title'     => wp_strip_all_tags( (string) ( $fields['title'] ?? $url ) ),
+				'type'      => $labels['typeLabels'][ $fields['type'] ?? '' ] ?? (string) ( $fields['type'] ?? '' ),
+				'date'      => $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : '',
+				'iso'       => $timestamp ? gmdate( 'c', $timestamp ) : '',
+				'crumb'     => self::crumb( $url ),
+				'image'     => (string) ( $fields['image'] ?? '' ),
+				'fields'    => $values,
+				'hasFields' => array() !== $values,
 			);
 		}
 
@@ -825,6 +900,8 @@ class Viglet_Dumont_Native_Search {
 			// Where a post of this site opens when its indexed URL is another WordPress's (D239).
 			'home'    => home_url( '/' ),
 			'facets'  => array_values( $facets ),
+			// The mapped fields a result card shows as labelled lines (D305).
+			'cards'   => $this->card_fields(),
 		);
 		// The results page on another site (D304), so a theme's own field sends its query there.
 		$remote = $this->remote_search_url();

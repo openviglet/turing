@@ -701,6 +701,8 @@ class Viglet_Dumont_Mapping {
 			'multi'       => ! empty( $field['multi'] ),
 			'facet'       => ! empty( $field['facet'] ),
 			'facet_label' => sanitize_text_field( (string) ( $field['facet_label'] ?? '' ) ),
+			// A labelled line on the search block's result cards (D305), under facet_label.
+			'card'        => ! empty( $field['card'] ),
 			'weight'      => is_numeric( $weight ) ? max( 1.0, min( 100.0, (float) $weight ) ) : null,
 			'range'       => $rangeable && ! empty( $field['range'] ),
 			'ranges'      => $ranges,

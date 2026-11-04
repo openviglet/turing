@@ -45,6 +45,7 @@ function emptyField( sources ) {
 		multi: false,
 		facet: false,
 		facet_label: '',
+		card: false,
 		weight: null,
 		range: false,
 		ranges: [],
@@ -182,6 +183,15 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 						checked={ !! field.multi }
 						onChange={ set( 'multi' ) }
 					/>
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						label={ __(
+							'Show on result cards',
+							'viglet-turing-search'
+						) }
+						checked={ !! field.card }
+						onChange={ set( 'card' ) }
+					/>
 				</td>
 				<td>
 					<CheckboxControl
@@ -206,13 +216,19 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 							onChange={ set( 'range' ) }
 						/>
 					) }
-					{ ( field.facet || ( rangeable && field.range ) ) && (
+					{ ( field.facet ||
+						field.card ||
+						( rangeable && field.range ) ) && (
 						<TextControl
 							__nextHasNoMarginBottom
-							label={ __(
-								'Facet label',
-								'viglet-turing-search'
-							) }
+							label={
+								field.facet || ( rangeable && field.range )
+									? __(
+											'Facet label',
+											'viglet-turing-search'
+										)
+									: __( 'Label', 'viglet-turing-search' )
+							}
 							value={ field.facet_label }
 							onChange={ set( 'facet_label' ) }
 						/>

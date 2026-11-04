@@ -1480,8 +1480,38 @@ function card( d, position ) {
 		snippet: highlighted( d.description ),
 		// What the server draws before the highlights go in (D209).
 		snippetText: plain( d.description ),
+		...cardValues( fields ),
 		...product( fields, title ),
 	};
+}
+
+/**
+ * A result's card lines (D305): each mapped field marked "Show on result cards" that the
+ * document carries, as the server's card_values() writes it. A date in the page's language,
+ * a list joined, and a URL never shown raw.
+ *
+ * @param {Object} fields The document's fields.
+ */
+function cardValues( fields ) {
+	const lines = ( config.cards || [] )
+		.map( ( { field, label, type } ) => {
+			const raw = fields[ field ];
+			const value = ( Array.isArray( raw ) ? raw : [ raw ] )
+				.map( ( v ) => plain( String( v ?? '' ) ).trim() )
+				.filter( ( v ) => v && ! /^https?:\/\//i.test( v ) )
+				.map( ( v ) => {
+					if ( 'DATE' !== type ) {
+						return v;
+					}
+					const at = new Date( /^\d+$/.test( v ) ? Number( v ) : v );
+					return isNaN( at ) ? '' : dateFormat.format( at );
+				} )
+				.filter( Boolean )
+				.join( ', ' );
+			return { field, label, value };
+		} )
+		.filter( ( line ) => line.value );
+	return { fields: lines, hasFields: lines.length > 0 };
 }
 
 /**
