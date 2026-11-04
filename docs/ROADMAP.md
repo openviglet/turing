@@ -18,7 +18,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1211** (deps: —) **nl-filters leaves a range's bound word, currency and formatted amount in q, on numeric and year-dated ranges** — A client that searches the q it is given looks for under and $ too, finds nothing with every word and falls back to close matches. → §CLXII.9
 - 📋 **T1212** (deps: —) **A copilot citation does not say its document type, so a client cannot tell a product from a guide** — A client prices and offers a cart for products only, and without the type it must ask another system for every cited id. → §CLXII.10
 
 ## Block AN — Security hardening (post-audit, §XXXVII)

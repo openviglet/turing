@@ -602,7 +602,7 @@ Relative dates are resolved against the server's date, in English and Portuguese
 |---|---|
 | `q` | What is left to match as free text |
 | `fq` | `field:value` per value and `field:[start TO end]` per range, the form the search takes |
-| `filters[].sourceWords` | The words of the request each value was read from |
+| `filters[].sourceWords` | The words of the request each value was read from. For a range, the whole span: the bound phrase, the currency and the amount as the request formats it (`under $400`, `até R$ 2.200`, `from 2024`), and one span when both ends are named (`between $100 and $200`). Each span leaves `q` at its own position, so an amount repeated elsewhere in the request stays |
 | `filters[].confidence` | `1` when the request spells the value, `0.6` when it was inferred (a synonym, a translation), `0.3` when the engine could not list the field's values to check it |
 | `available` | `false` when no LLM is configured: nothing is filtered and `q` is the whole request |
 

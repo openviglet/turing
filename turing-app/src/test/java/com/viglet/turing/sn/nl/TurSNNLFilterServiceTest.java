@@ -284,8 +284,100 @@ class TurSNNLFilterServiceTest {
         TurSNNLFilters result = service.parse("vagas", "en_US", "posts from 2024");
 
         assertThat(result.fq()).containsExactly("publication_date:[2024-01-01 TO 2024-12-31]");
-        assertThat(result.filters().get(0).sourceWords()).containsExactly("2024");
+        assertThat(result.filters().get(0).sourceWords()).containsExactly("from 2024");
         assertThat(result.filters().get(0).confidence()).isEqualTo(TurSNNLFilterService.INFERRED);
+        assertThat(result.q()).isEqualTo("posts");
+    }
+
+    @Test
+    @DisplayName("T1211 - a year range spelled on both ends leaves neither year nor its connector in q")
+    void aYearRangeOnBothEndsIsOneSpan() {
+        siteWithADateField();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"range":{"publication_date":{"gte":"2020-01-01","lte":"2024-12-31"}}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "noticias entre 2020 e 2024 sobre php");
+
+        assertThat(result.filters().get(0).sourceWords()).containsExactly("entre 2020 e 2024");
+        assertThat(result.q()).isEqualTo("noticias sobre php");
+    }
+
+    private void siteWithAPrice() {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(parser.isAvailable()).thenReturn(true);
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("price", TurSEFieldType.FLOAT, false)));
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "{0}")
+    @org.junit.jupiter.params.provider.CsvSource(delimiter = '|', textBlock = """
+            a two-person tent under $400        | 400  |      | under $400        | a two-person tent
+            a two-person tent below 400 dollars | 400  |      | below 400 dollars | a two-person tent
+            tents for $400 or less              | 400  |      | $400 or less      | tents for
+            tents over $1,200                   |      | 1200 | over $1,200       | tents
+            barraca ate R$ 2.200                | 2200 |      | ate R$ 2.200      | barraca
+            barraca até R$ 2.200                | 2200 |      | até R$ 2.200      | barraca
+            salario acima de 3000 reais         |      | 3000 | acima de 3000 reais | salario
+            barraca abaixo de 1.500,50 reais    | 1500.5 |    | abaixo de 1.500,50 reais | barraca
+            tent between $100 and $200          | 200  | 100  | between $100 and $200 | tent
+            barraca de 100 a 200 reais          | 200  | 100  | de 100 a 200 reais | barraca
+            """)
+    @DisplayName("T1211 - a range's bound phrase, currency and formatted amount all leave q")
+    void aRangeTakesItsBoundPhraseAndCurrency(String text, String lte, String gte, String words, String q) {
+        siteWithAPrice();
+        StringBuilder bounds = new StringBuilder();
+        if (gte != null) {
+            bounds.append("\"gte\":").append(gte);
+        }
+        if (lte != null) {
+            bounds.append(bounds.isEmpty() ? "" : ",").append("\"lte\":").append(lte);
+        }
+        parserAnswers("{\"query\":{\"bool\":{\"filter\":[{\"range\":{\"price\":{" + bounds + "}}}]}}}");
+
+        TurSNNLFilters result = service.parse("vagas", "en_US", text);
+
+        assertThat(result.filters()).singleElement().satisfies(filter -> {
+            assertThat(filter.sourceWords()).containsExactly(words);
+            assertThat(filter.confidence()).isEqualTo(TurSNNLFilterService.LITERAL);
+        });
+        assertThat(result.q()).isEqualTo(q);
+    }
+
+    @Test
+    @DisplayName("T1211 - an amount the text does not spell keeps q whole, and is inferred")
+    void anUnspelledAmountLeavesQWhole() {
+        siteWithAPrice();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"range":{"price":{"lte":400}}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "en_US", "a tent under four hundred dollars");
+
+        assertThat(result.filters().get(0).sourceWords()).isEmpty();
+        assertThat(result.filters().get(0).confidence()).isEqualTo(TurSNNLFilterService.INFERRED);
+        assertThat(result.q()).isEqualTo("a tent under four hundred dollars");
+    }
+
+    @Test
+    @DisplayName("T1211 - a repeated amount leaves q only where the bound phrase reads it")
+    void aRepeatedAmountIsTakenAtItsOwnPosition() {
+        siteWithAPrice();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"range":{"price":{"lte":400}}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "en_US", "a 400 lumen lantern under $400");
+
+        assertThat(result.filters().get(0).sourceWords()).containsExactly("under $400");
+        assertThat(result.q()).isEqualTo("a 400 lumen lantern");
+    }
+
+    @Test
+    @DisplayName("T1211 - leftover removes source words once, at their own position")
+    void leftoverRemovesEachSpanOnce() {
+        TurSNNLFilters.Filter city = new TurSNNLFilters.Filter("city", List.of("Santos"), null, null,
+                List.of("santos"), 1, true);
+
+        assertThat(TurSNNLFilterService.leftover("vagas em santos perto de santos", List.of(city)))
+                .isEqualTo("vagas em perto de santos");
     }
 
     @Test
@@ -299,8 +391,8 @@ class TurSNNLFilterServiceTest {
 
         assertThat(result.fq()).containsExactly("salary:[3000 TO *]");
         assertThat(result.filters().get(0).isRange()).isTrue();
-        assertThat(result.filters().get(0).sourceWords()).containsExactly("3000");
-        assertThat(result.q()).isEqualTo("salario acima de reais");
+        assertThat(result.filters().get(0).sourceWords()).containsExactly("acima de 3000 reais");
+        assertThat(result.q()).isEqualTo("salario");
         verify(dslSearchService, never()).search(any(), any(), any());
     }
 

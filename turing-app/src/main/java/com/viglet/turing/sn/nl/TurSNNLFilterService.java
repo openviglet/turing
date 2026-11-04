@@ -457,17 +457,18 @@ public class TurSNNLFilterService {
         if (schema.get(field).type() == TurSEFieldType.DATE) {
             return dateRangeFilter(field, range, text, dropped);
         }
-        List<String> sourceWords = new ArrayList<>();
+        // T1211 — the bound's span: the amount as the text formats it, with its currency and bound phrase
+        List<TurSNNLRangeSpan.Span> spans = new ArrayList<>();
         boolean literal = true;
         for (String bound : range) {
             if (bound != null) {
-                Optional<String> words = sourceWords(text, bound);
-                words.ifPresent(sourceWords::add);
-                literal &= words.isPresent();
+                Optional<TurSNNLRangeSpan.Span> span = TurSNNLRangeSpan.amount(text, bound);
+                span.ifPresent(spans::add);
+                literal &= span.isPresent();
             }
         }
-        return Optional.of(new TurSNNLFilters.Filter(field, List.of(), range[0], range[1], sourceWords,
-                literal ? LITERAL : INFERRED, false));
+        return Optional.of(new TurSNNLFilters.Filter(field, List.of(), range[0], range[1],
+                TurSNNLRangeSpan.words(text, spans), literal ? LITERAL : INFERRED, false));
     }
 
     /**
@@ -482,20 +483,24 @@ public class TurSNNLFilterService {
         if (relative.isPresent()) {
             return Optional.of(relativeFilter(field, range, relative.get()));
         }
-        List<String> sourceWords = new ArrayList<>();
+        List<TurSNNLRangeSpan.Span> spans = new ArrayList<>();
         for (String bound : range) {
-            Optional<String> words = bound == null ? Optional.of("") : datedBy(text, bound);
-            if (words.isEmpty()) {
+            if (bound == null) {
+                continue;
+            }
+            // T1211 — the year's span takes its date phrase with it ("from 2024")
+            Optional<TurSNNLRangeSpan.Span> span = TurSNNLRangeSpan.dated(text, bound);
+            if (span.isEmpty()) {
                 dropped.add(new TurSNNLFilters.Dropped(field,
                         "[" + orStar(range[0]) + " TO " + orStar(range[1]) + "]", UNGROUNDED_DATE));
                 return Optional.empty();
             }
-            words.filter(StringUtils::hasText).filter(w -> !sourceWords.contains(w)).ifPresent(sourceWords::add);
+            spans.add(span.get());
         }
         boolean literal = java.util.Arrays.stream(range).filter(java.util.Objects::nonNull)
                 .allMatch(bound -> sourceWords(text, bound).isPresent());
-        return Optional.of(new TurSNNLFilters.Filter(field, List.of(), range[0], range[1], sourceWords,
-                literal ? LITERAL : INFERRED, false));
+        return Optional.of(new TurSNNLFilters.Filter(field, List.of(), range[0], range[1],
+                TurSNNLRangeSpan.words(text, spans), literal ? LITERAL : INFERRED, false));
     }
 
     /** The resolved range, spelled like the bounds the model used (a date or an instant). */
@@ -506,12 +511,6 @@ public class TurSNNLFilterService {
                 instant ? resolved.start() + "T00:00:00Z" : resolved.start().toString(),
                 instant ? resolved.end() + "T23:59:59Z" : resolved.end().toString(),
                 List.of(resolved.phrase()), LITERAL, true);
-    }
-
-    /** The words that date {@code bound}: the bound itself, or the year it starts with. */
-    private static Optional<String> datedBy(String text, String bound) {
-        return sourceWords(text, bound)
-                .or(() -> bound.length() >= 4 ? sourceWords(text, bound.substring(0, 4)) : Optional.empty());
     }
 
     private static boolean isInstant(String bound) {
@@ -554,15 +553,50 @@ public class TurSNNLFilterService {
         return Optional.empty();
     }
 
-    /** The text with every filter's source words taken out. */
+    /**
+     * The text with each filter's source words taken out at one position (T1211):
+     * the first occurrence on word boundaries that no earlier filter took, so an
+     * amount repeated elsewhere in the text ("400 lumen ... under $400") stays.
+     */
     static String leftover(String text, List<TurSNNLFilters.Filter> filters) {
-        String rest = text;
+        boolean[] removed = new boolean[text.length()];
         for (TurSNNLFilters.Filter filter : filters) {
             for (String words : filter.sourceWords()) {
-                rest = rest.replace(words, " ");
+                int at = claim(text, words, removed);
+                for (int i = at; at >= 0 && i < at + words.length(); i++) {
+                    removed[i] = true;
+                }
             }
         }
-        return rest.replaceAll("\\s+", " ").trim();
+        StringBuilder rest = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            rest.append(removed[i] ? ' ' : text.charAt(i));
+        }
+        return rest.toString().replaceAll("\\s+", " ").trim();
+    }
+
+    /** Where {@code words} occurs untaken, on word boundaries if it can; -1 when nowhere. */
+    private static int claim(String text, String words, boolean[] removed) {
+        if (!StringUtils.hasText(words)) {
+            return -1;
+        }
+        int fallback = -1;
+        for (int at = text.indexOf(words); at >= 0; at = text.indexOf(words, at + 1)) {
+            boolean taken = false;
+            for (int i = at; i < at + words.length() && !taken; i++) {
+                taken = removed[i];
+            }
+            if (taken) {
+                continue;
+            }
+            if (boundary(text, at - 1) && boundary(text, at + words.length())) {
+                return at;
+            }
+            if (fallback < 0) {
+                fallback = at;
+            }
+        }
+        return fallback;
     }
 
     private static boolean boundary(String text, int index) {
@@ -591,7 +625,7 @@ public class TurSNNLFilterService {
     }
 
     /** Lower case without accents, with each folded character's index in the original. */
-    private static final class Folded {
+    static final class Folded {
         private final String text;
         private final int[] origin;
 

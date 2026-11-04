@@ -2393,48 +2393,6 @@ on that reasoning, leaving this decision to GET search, autocomplete and `/answe
 **Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
 counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
 
-### CLXII.9 A range filter's source words cover its bound and currency (T1211)
-
-**Where it happened.** Dumont's WordPress plugin, the search block on the Tarnfell demo
-store (SN site `tarnfell`, locale `en_US`), recording the demo video on 2026-11-03
-(Dumont D276).
-
-**The request.**
-
-```
-POST /api/sn/tarnfell/nl-filters
-{"text":"a two-person tent under $400","locale":"en_US"}
-```
-
-**What came back.**
-
-```
-{"available":true,"q":"a two-person tent under $",
- "filters":[{"field":"price","rangeStart":null,"rangeEnd":"400",
-             "sourceWords":["400"],"grounded":false,"range":true}],
- "fq":["price:[* TO 400]"], ...}
-```
-
-**Expected.** `q` is the text with the words the filter came from removed, and for a
-range that is the bound word and the amount with its currency: `sourceWords`
-`["under","$400"]` (or the span "under $400"), `q` "a two-person tent". The same holds
-for "over", "between ... and ...", "até R$ 2.200", "acima de". Today a client that
-applies the filter searches "under $" as well, finds nothing with every word, and falls
-back to close matches.
-
-**Workaround.** Dumont D285: the block rebuilds the remaining query from the visitor's
-text, removing the words of the filters it applies and the whole phrase its own price
-reader matched, instead of trusting `q`. It works only for the readings the client can
-repeat in code.
-
-**What Turing should do.** One span step shared by `rangeFilter` and `dateRangeFilter`
-widens the matched bound to its adjacent currency and preceding bound phrase
-(per-language list), matches the amount as the text formats it (`2.200`, `1,200`), and
-reports that span in `sourceWords`. Year-dated ranges share the gap ("posts from 2024"
-leaves "posts from"). `leftover` removes each span at its own position, not every
-occurrence. Tests: each bound form in en and pt, currency before and after, a formatted
-amount, a year-dated range, an unspelled amount, a repeated amount.
-
 ### CLXII.10 Copilot citations carry the document type (T1212)
 
 **Where it happened.** Dumont's WordPress plugin, the Ask the catalog block on the

@@ -985,6 +985,7 @@
 - **T1196** — In pt_BR the light Portuguese stem now runs before Snowball on Lucene and Elasticsearch, so bastão finds Bastões, pão finds pães and mão finds mãos after a reindex.
 - **T1197** — A kit's gap prompt now names the request's locale (or the plan's language), so a pt_BR kit writes its summary, stages, reasons and searches in Portuguese.
 - **T1199** — Spell-check on Lucene and Solr never replaces a number or symbol token and keeps the typed case; a price-only change yields no correction or auto-correction (design §CLXII.8 recorded in `turing-app/src/main/java/com/viglet/turing/plugins/se/TurSpellCheckGuard.java`).
+- **T1211** — nl-filters reads a range bound with its phrase, currency and formatted amount (under $400, ate R$ 2.200, from 2024) as one span, and q drops each span at its own position (design §CLXII.9 recorded in `turing-app/src/main/java/com/viglet/turing/sn/nl/TurSNNLRangeSpan.java`).
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 
