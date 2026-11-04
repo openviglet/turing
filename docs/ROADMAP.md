@@ -20,7 +20,6 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- 📋 **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — No 2026.3 release exists there yet: publish run 41103220225 failed. → §CLXI.1
 - 📋 **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — The console is still unseen without installing; the owner chose a live guest console that browses but never saves. → §CLXI.5
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
@@ -50,12 +49,6 @@
 - **One release record: changesets consumed by the publish or retired**
   frontend/.changeset either feeds the publish workflows' version and notes, or is
   deleted along with its README and scripts.
-
-## Done when — T1180
-
-- **A 2026.3 release is Latest on openviglet/turing** gh release list -R
-  openviglet/turing shows a v2026.3.x tag marked Latest, with the jar and install assets
-  attached.
 
 ## Done when — T1184
 

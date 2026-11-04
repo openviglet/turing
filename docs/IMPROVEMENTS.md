@@ -2299,26 +2299,6 @@ releases, installers and notes still leave from turing-ce. Filed from the portfo
 review of 2026-10-30 (visibility repo, estrategia/portfolio.md and produtos/turing.md):
 what a visitor finds on the Releases tab has to match what the README and the site say.
 
-### CLXI.1 Releases leave from openviglet/turing (T1180)
-
-**Where it showed.** On 2026-10-30 the Releases tab of openviglet/turing shows v2026.2.9
-as Latest, while the README announces 2026.3 and its release badge points at turing-ce,
-where v2026.3.6 is the newest. The 2026.3 `publish.yml` sets `RELEASE_REPO:
-openviglet/turing-ce`; the 2026.2 worktree already publishes to openviglet/turing, which
-is why the older line wins there.
-
-**Why it costs.** Someone who arrives from search or from an AI assistant lands on the
-repository the site and the docs now name, and finds an older line than the one
-described. The owner confirmed on 2026-10-30 that releases leave from openviglet/turing
-starting with 2026.3 (visibility repo, produtos/turing.md).
-
-**Design.** Point the 2026.3 `RELEASE_REPO` at openviglet/turing, cut the next 2026.3
-patch there so it becomes Latest, and move the README's release badge and download link
-(`README.adoc` lines 15 and 200) to the same repository. The image keeps its
-`ghcr.io/openviglet/turing-ce` name for now; renaming it is a separate decision, since
-every compose file in the wild pulls it. Publish run 41103220225 failed: read its log
-with `gh`, fix the cause in the repo, and dispatch again (owner, 2026-11-04).
-
 ### CLXI.5 A demo that opens without installing (T1184)
 
 **Where it showed.** The site's "Try it live" playground already runs search and cited

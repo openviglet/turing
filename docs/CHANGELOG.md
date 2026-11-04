@@ -1591,7 +1591,7 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- **T1180 (workflow and README)** — publish.yml creates the 2026.3 GitHub Release on openviglet/turing and the README badge and download link point there (commit e23a4e44ad); the image stays turing-ce.
+- **T1180** — v2026.3.8 is Latest on openviglet/turing, published by run 41487483079 on 2026-11-02; publish.yml releases to its own repository and the README badge and link point there.
 - **T1181** — The Linux download builds and uploads as Turing-x86_64.AppImage, and the installer, desktop entry and shipped start scripts say Viglet Turing; an upgrade drops the old Turing ES shortcut.
 - **T1182** — A release's notes come from the root CHANGELOG's patch or minor section, and a release with no such section now fails before it is created instead of falling back to the Dependabot list (design §CLXI.3 superseded: the lookup it called missing already fell back to the minor section, and publish.yml already read it since commit e23a4e44ad).
 - **T1184 (README link)** — The README links the live playground from its opening line and from Try it in 60 seconds, so an evaluator reaches search and cited chat without installing.
