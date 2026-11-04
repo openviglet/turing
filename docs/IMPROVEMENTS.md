@@ -23,8 +23,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-## Block BW — What the link-free response and its consumers still lack (§LXX)
-
 ## Block BV — The quality gate stops at the package boundary
 
 ## Block CJ — Releases ship from the repository the README names
@@ -2182,35 +2180,6 @@ but nothing outside the site links to them. Merge each /features/ page into a de
 or give it what only it says (the matching docs.viglet.org pages are the source), link
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
-
-## CXLIV Filters on the similar and duplicate searches (T1132)
-
-**Where it happened.** Dumont's WordPress plugin added a Related content block (D177) on
-`GET /api/sn/{site}/search/similar?id=<site_key>:post:<id>&rows=&mode=`. The endpoint takes
-`id`, `rows`, `_setlocale` and `mode`, and nothing else. There is no `fq[]`, so a caller
-cannot keep the neighbours to:
-- one site of a shared SN site (each WordPress of a multisite network writes its own
-  `site_key`; D153);
-- one content type (a post's related posts, not pages);
-- published or visible documents.
-
-So the answer may be other sites' documents, or types the caller then throws away.
-
-**Workaround.** The plugin asks for 50 (the server's cap) and keeps the ids that start
-with its own `<site_key>:post:` and match the wanted type, in
-`wordpress/src/includes/class-viglet-dumont-related.php` (`neighbours()`). A busy shared
-site can still leave it short after filtering.
-
-**What Turing should do.**
-- `fq[]` on `/search/similar` (and `/search/duplicates`), with the search endpoint's
-  semantics, applied inside the MLT and vector queries rather than after them, so `rows`
-  counts what passes.
-- The SDK's `fetchSimilar` / `createSimilarController` take `fq`.
-- A test: two site keys in one SN site, and `fq=site_key:a` never answers a `b` document.
-
-T1133's key-bound partition applies here without the caller's `fq`; this line's `fq`
-stays for type and visibility. Left: `fq` on `/search/duplicates`, on the vector-point
-fields T1133 adds.
 
 ## CLIII The quality gate stops at the package boundary
 

@@ -114,6 +114,19 @@ public class TurSNDuplicateClusteringService {
      */
     public TurSNDuplicateCluster findCluster(String siteName, String id, double threshold,
             int maxMembers, Locale locale, com.viglet.turing.commons.se.TurSEPartition partition) {
+        return findCluster(siteName, id, threshold, maxMembers, locale, partition, null);
+    }
+
+    /**
+     * T1132 — the cluster narrowed by the search's own filters ({@code fq},
+     * {@code fqAnd}, {@code fqOr} and their operator): the vector pass reads the
+     * most candidates it may, the engine admits the ones the filters pass, and
+     * {@code maxMembers} counts what passed. An engine that cannot restrict a
+     * search to ids answers the seed alone rather than unfiltered members.
+     */
+    public TurSNDuplicateCluster findCluster(String siteName, String id, double threshold,
+            int maxMembers, Locale locale, com.viglet.turing.commons.se.TurSEPartition partition,
+            com.viglet.turing.commons.sn.bean.TurSNFilterParams filters) {
         if (!StringUtils.hasText(siteName) || !StringUtils.hasText(id)) {
             return empty(id);
         }
@@ -134,7 +147,9 @@ public class TurSNDuplicateClusteringService {
             return empty(id);
         }
         Map<String, Object> seedDoc = seed.get(0);
-        if (partition != null && !inPartition(seedDoc, partition)) {
+        // The standard fields leave the partition field out, so read the seed whole.
+        if (partition != null && plugin.getStoredDocumentsByIds(siteLocale, List.of(id)).stream()
+                .noneMatch(stored -> inPartition(stored, partition))) {
             return empty(id);
         }
         TurSNDuplicateClusterMember seedMember = toMember(seedDoc, null);
@@ -143,16 +158,38 @@ public class TurSNDuplicateClusteringService {
         if (!hybridRankingService.isEnabled(site)) {
             return single(seedMember);
         }
+        boolean filtered = hasFilters(filters);
+        if (filtered && !plugin.supportsIdRestriction()) {
+            log.debug("[SN-DUPLICATE] engine for '{}' cannot restrict to ids; answering the seed alone", siteName);
+            return single(seedMember);
+        }
+        int candidates = filtered ? MAX_MEMBERS : limit;
         List<TurSNScoredNeighbor> neighbors = partition == null
-                ? hybridRankingService.findScoredNeighbors(site, seedDoc, limit, minSimilarity)
-                : hybridRankingService.findScoredNeighbors(site, seedDoc, limit, minSimilarity, partition)
+                ? hybridRankingService.findScoredNeighbors(site, seedDoc, candidates, minSimilarity)
+                : hybridRankingService.findScoredNeighbors(site, seedDoc, candidates, minSimilarity, partition)
                         .orElseThrow(() -> new com.viglet.turing.api.exception.TurForbiddenException(
                                 "This site's vectors hold nothing for this API key's partition yet: an "
                                         + "administrator has to reindex the site"));
+        if (filtered && !neighbors.isEmpty()) {
+            java.util.Set<String> admitted = TurSNSearchProcess.admittedIds(plugin, siteName,
+                    siteLocale.getLanguage(), filters, partition,
+                    neighbors.stream().map(TurSNScoredNeighbor::id).toList());
+            neighbors = neighbors.stream().filter(n -> admitted.contains(n.id())).limit(limit).toList();
+        }
         if (neighbors.isEmpty()) {
             return single(seedMember);
         }
         return hydrate(siteLocale, plugin, seedMember, neighbors);
+    }
+
+    /** T1132 — whether any filter was sent. */
+    static boolean hasFilters(com.viglet.turing.commons.sn.bean.TurSNFilterParams filters) {
+        return filters != null && (notEmpty(filters.getDefaultValues()) || notEmpty(filters.getAnd())
+                || notEmpty(filters.getOr()));
+    }
+
+    private static boolean notEmpty(List<String> values) {
+        return values != null && values.stream().anyMatch(StringUtils::hasText);
     }
 
     /** T1133 — whether a stored document carries the partition's value (one of its values, for a list). */

@@ -451,11 +451,20 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(name = "id") String id,
                         @RequestParam(required = false, name = "threshold", defaultValue = "0.92") double threshold,
                         @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "10") int rows,
-                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale) {
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_DEFAULT) List<String> fq,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_AND) List<String> fqAnd,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> fqOr,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR,
+                                        defaultValue = "NONE") com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator fqOperator) {
+                // T1132 — the cluster is narrowed with the search's filter semantics, and
                 // T1133 — a partitioned key clusters only its partition's documents.
+                com.viglet.turing.commons.sn.bean.TurSNFilterParams filters =
+                                com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder()
+                                                .defaultValues(fq).and(fqAnd).or(fqOr).operator(fqOperator).build();
                 return ResponseEntity.ok(duplicateClusteringService.findCluster(siteName, id, threshold, rows,
                                 locale, com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
-                                                .orElse(null)));
+                                                .orElse(null), filters));
         }
 
         @PostMapping("latest")

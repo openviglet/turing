@@ -167,7 +167,9 @@ class TurSNDuplicateClusteringServiceTest {
     @Test
     void aSeedOutsideThePartitionIsTreatedAsMissing() {
         snapshotExists(Locale.ENGLISH);
-        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-b")));
+        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(doc(SEED, "Data Science",
+                "portal-a")));
+        when(plugin.getStoredDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-b")));
 
         TurSNDuplicateCluster cluster = service.findCluster(SITE, SEED, 0.92, 10, Locale.ENGLISH, PARTITION);
 
@@ -178,7 +180,10 @@ class TurSNDuplicateClusteringServiceTest {
     @Test
     void aPartitionTheVectorsDoNotCarryIsRefusedUntilReindexed() {
         snapshotExists(Locale.ENGLISH);
-        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-a")));
+        // The standard fields leave site_key out: the partition is read from the stored document.
+        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(doc(SEED, "Data Science",
+                "portal-a")));
+        when(plugin.getStoredDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-a")));
         when(hybridRankingService.isEnabled(any())).thenReturn(true);
         when(hybridRankingService.findScoredNeighbors(any(), any(), anyInt(), anyDouble(), eq(PARTITION)))
                 .thenReturn(Optional.empty());
@@ -193,6 +198,7 @@ class TurSNDuplicateClusteringServiceTest {
     void aPartitionedSeedIsClusteredWithItsPartitionsNeighbours() {
         snapshotExists(Locale.ENGLISH);
         when(plugin.getDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-a")));
+        when(plugin.getStoredDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-a")));
         when(hybridRankingService.isEnabled(any())).thenReturn(true);
         when(hybridRankingService.findScoredNeighbors(any(), any(), anyInt(), anyDouble(), eq(PARTITION)))
                 .thenReturn(Optional.of(List.of()));
@@ -204,6 +210,51 @@ class TurSNDuplicateClusteringServiceTest {
         assertThat(TurSNDuplicateClusteringService.inPartition(
                 Map.of("site_key", List.of("blog-c", "blog-a")), PARTITION)).isTrue();
         assertThat(TurSNDuplicateClusteringService.inPartition(Map.of(), PARTITION)).isFalse();
+    }
+
+    // ---- T1132: fq narrows the cluster inside the engine -------------------
+
+    private static final com.viglet.turing.commons.sn.bean.TurSNFilterParams POSTS =
+            com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder().defaultValues(List.of("type:post")).build();
+
+    @Test
+    void filtersKeepOnlyTheMembersTheEngineAdmitsAndCountRowsAfterThem() {
+        snapshotExists(Locale.ENGLISH);
+        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED))))
+                .thenReturn(List.of(doc(SEED, "Data Science", "portal-a")));
+        when(hybridRankingService.isEnabled(any())).thenReturn(true);
+        when(plugin.supportsIdRestriction()).thenReturn(true);
+        when(hybridRankingService.findScoredNeighbors(any(), any(), eq(TurSNDuplicateClusteringService.MAX_MEMBERS),
+                anyDouble())).thenReturn(List.of(new TurSNScoredNeighbor("page-1", 0.99),
+                        new TurSNScoredNeighbor("post-2", 0.98), new TurSNScoredNeighbor("post-3", 0.97)));
+        com.viglet.turing.se.result.TurSEResults admitted = com.viglet.turing.se.result.TurSEResults.builder()
+                .results(List.of(
+                        com.viglet.turing.se.result.TurSEResult.builder().fields(Map.of(TurSNFieldName.ID, "post-2"))
+                                .build(),
+                        com.viglet.turing.se.result.TurSEResult.builder().fields(Map.of(TurSNFieldName.ID, "post-3"))
+                                .build()))
+                .build();
+        when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(admitted));
+        when(plugin.getDocumentsByIds(any(), eq(List.of("post-2"))))
+                .thenReturn(List.of(doc("post-2", "Data Science", "portal-b")));
+
+        TurSNDuplicateCluster cluster = service.findCluster(SITE, SEED, 0.92, 1, Locale.ENGLISH, null, POSTS);
+
+        assertThat(cluster.members()).extracting(TurSNDuplicateClusterMember::id).containsExactly(SEED, "post-2");
+    }
+
+    @Test
+    void anEngineThatCannotRestrictToIdsAnswersTheSeedAlone() {
+        snapshotExists(Locale.ENGLISH);
+        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED))))
+                .thenReturn(List.of(doc(SEED, "Data Science", "portal-a")));
+        when(hybridRankingService.isEnabled(any())).thenReturn(true);
+        when(plugin.supportsIdRestriction()).thenReturn(false);
+
+        TurSNDuplicateCluster cluster = service.findCluster(SITE, SEED, 0.92, 10, Locale.ENGLISH, null, POSTS);
+
+        assertThat(cluster.members()).extracting(TurSNDuplicateClusterMember::id).containsExactly(SEED);
+        verify(hybridRankingService, never()).findScoredNeighbors(any(), any(), anyInt(), anyDouble());
     }
 
     // ---- duplicate clustering --------------------------------------------

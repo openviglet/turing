@@ -8,10 +8,6 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-## Block BW — What the link-free response and its consumers still lack (§LXX)
-
-- 📋 **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — The duplicates search takes no filter: vector points carry no field to filter on. → §CXLIV
-
 ## Block BV — The quality gate stops at the package boundary
 
 ## Block CJ — Releases ship from the repository the README names
@@ -19,12 +15,6 @@
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
-
-## Done when — T1132
-
-- **fq[] on /search/duplicates keeps clusters to the documents that match**
-  TurSdkContractIT's two-value test also runs on the duplicates endpoint of a hybrid
-  site.
 
 ## Done when — T1142
 

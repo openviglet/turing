@@ -71,6 +71,8 @@ Certain endpoints are publicly accessible, allowing client applications to perfo
 | `GET /api/sn/*/search` | Semantic Navigation search |
 | `POST /api/sn/*/search/query` | Semantic Navigation search, JSON body ([POST-native search](#post-native-search)) |
 | `POST /api/sn/*/search/list/query` | Select-list projection, JSON body |
+| `GET /api/sn/*/search/similar` | Documents similar to `id`, narrowed by `fq[]`, `fq.and[]`, `fq.or[]` and `fq.op` like a search |
+| `GET /api/sn/*/search/duplicates` | Near-identical copies of `id` (hybrid sites), with `threshold` and `rows`. `fq[]`, `fq.and[]`, `fq.or[]` and `fq.op` keep the cluster to the documents a search with those filters would return, and `rows` counts what passes. An engine that cannot restrict a search to ids answers the seed alone when filters are sent |
 | `GET /api/sn/*/chat` | GenAI chat on an SN Site |
 | `GET /api/sn/*/ac` | Autocomplete |
 | `POST /api/sn/*/ac/query` | Autocomplete, JSON body |

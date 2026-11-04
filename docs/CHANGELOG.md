@@ -1399,7 +1399,7 @@
 - **T1130** — googleAnalyticsSink({ recommended: true }) also sends GA4 search and select_content, so the site-search reports fill on their own, and the search controller's opt-in abandonment emits turing_search_abandoned when a visitor leaves a settled search without a click.
 - **T1131** — GET /api/sn/{siteId}/metrics/clicks reports searches, clicks, CTR and mean clicked position per term plus the found-but-never-opened terms, the console's Top search terms shows a CTR column, fetchClickThrough reads it from the SDK, and /click answers 204 with X-Turing-Metrics: disabled when metrics are off.
 - **T1137** — useTuringSearch takes consent, sessionCookie and abandonment like the vanilla controller, writes no TUR_SESSION cookie on mount, skips instant-mode searches, and the React GA sink sends GA4 recommended events.
-- **T1132 (fq on similar)** — GET /search/similar takes fq[], fq[and] and fq[or] with the search's semantics, applied inside the MLT query on Solr, Lucene and Elasticsearch, and fetchSimilar and createSimilarController take fq.
+- **T1132** — GET /search/duplicates takes fq[], fq.and[], fq.or[] and fq.op, applied by the engine to the vector candidates so rows counts what passes; a partitioned seed is now read whole.
 - **T1140** — fetchSimilar and fetchStoredDocuments in both SDKs send the locale as _setlocale, so a multi-locale site's related rail and detail page read the visitor's locale.
 - 🗑 **T1145** — superseded by T1120: Filed in error: an instant-mode search (T1120) already stays out of the metrics, and the SDK passes it through.
 - **T1144** — A call to a model with no price row books costUsd null instead of $0 (column now nullable), and the cost summary reports unpricedRequests; zero-priced local models still book 0.

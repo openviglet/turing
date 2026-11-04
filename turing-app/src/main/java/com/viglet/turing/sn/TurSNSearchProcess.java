@@ -43,6 +43,9 @@ import com.viglet.turing.api.sn.bean.TurSNSiteFilterQueryBean;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
+import com.viglet.turing.commons.se.TurSEPartition;
+import com.viglet.turing.commons.sn.TurSNConfig;
+import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSiteLocaleBean;
@@ -379,6 +382,27 @@ public class TurSNSearchProcess {
                 return ids -> plugin.getStoredDocumentsByIds(siteLocale, ids).stream()
                                 .map(fields -> TurSEResult.builder().fields(fields).build())
                                 .toList();
+        }
+
+        /**
+         * T1132 — the ids among {@code ids} that {@code filters} and {@code partition}
+         * admit, asked of the engine with the search's own filter semantics. Empty
+         * when the engine answers nothing.
+         */
+        static java.util.Set<String> admittedIds(TurSearchEnginePlugin plugin, String siteName, Locale locale,
+                        TurSNFilterParams filters, TurSEPartition partition, List<String> ids) {
+                TurSEParameters params = new TurSEParameters(new TurSNSearchParams());
+                params.setTurSNFilterParams(filters);
+                params.setPartition(partition);
+                return restrictedSearch(plugin, new TurSNSiteSearchContext(siteName, new TurSNConfig(), params,
+                                locale, null), ids)
+                                .map(results -> results.getResults().stream()
+                                                .map(result -> result.getFields() == null ? null
+                                                                : result.getFields().get(TurSNFieldName.ID))
+                                                .filter(java.util.Objects::nonNull)
+                                                .map(Object::toString)
+                                                .collect(java.util.stream.Collectors.toSet()))
+                                .orElse(java.util.Set.of());
         }
 
         /**
