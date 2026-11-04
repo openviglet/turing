@@ -1625,3 +1625,4 @@
 ## Block CL — SN sites for research and memory archives
 
 - **T1220** — Research streams cited sections inside the caller's filters; a thin step widens by facet and dated sources stream as a timeline; the seeded-site IT is filed as T1220b (design §CLXVII.1 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
+- **T1220b** — An IT over a seeded Lucene site proves research sections cite listed sources inside the filters and report the empty step; it caught a lazy GenAI read off the request thread, now fixed.

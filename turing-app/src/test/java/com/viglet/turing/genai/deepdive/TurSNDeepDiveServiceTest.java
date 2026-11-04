@@ -27,6 +27,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.TurSNChatRouteResolver;
@@ -76,7 +77,8 @@ class TurSNDeepDiveServiceTest {
 
     private TurSNDeepDiveService service() {
         return new TurSNDeepDiveService(searchProcess, routeResolver, agentResolver, chatModelResolver,
-                copilotService, tokenUsageService, budgetGate, nlFilterService);
+                copilotService, tokenUsageService, budgetGate, nlFilterService,
+                mock(PlatformTransactionManager.class));
     }
 
     private void site() {

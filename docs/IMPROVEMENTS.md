@@ -2268,26 +2268,6 @@ sites. T1219 and T1220 are its first finds.
 **Delivers:** one T line per gap, naming the FESPSP line that waits on it, and a note
 here of what already works.
 
-### CLXVII.3 An end-to-end IT for the research stream (T1220b)
-
-**Where it came from.** T1220 shipped `POST /api/sn/{site}/research`
-(`TurSNDeepDiveService`) with unit tests over mocked retrieval and a mocked model. Its
-done-when asked for the stream on a seeded site, and no IT boots one.
-
-**What to build.** A `*IT.java` extending `AbstractTuringSpringIT` on `RANDOM_PORT`,
-seeding a marketplace site on the embedded Lucene engine through `TurImportExchange`
-(the `TurSdkContractIT` pattern: rewrite the Lucene `endpointUrl` to a temp directory).
-The site needs GenAI enabled so `TurSNChatRouteResolver` routes it (the copilot route is
-enough), and a `@TestConfiguration @Primary` default chat model under
-`com.viglet.testsupport.*` that answers the planning prompt with fixed `STEP:` lines and
-the composing prompt with `SECTION:` lines citing `[1]`, `[2]` and one out-of-range
-number.
-
-**Done when:** reading the SSE response, every `section` cites at least one listed
-source and the out-of-range number is gone; posting `filters` for one facet value, every
-source in `sources` carries that value; a step planned on words the site does not hold
-arrives with `hits: 0` and in `uncovered`.
-
 ## CLXVIII Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
 ### CLXVIII.1 Ranking expressions on Elasticsearch (T1222)

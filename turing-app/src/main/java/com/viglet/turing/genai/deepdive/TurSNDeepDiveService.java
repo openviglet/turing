@@ -27,6 +27,8 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.genai.TurDefaultAgentResolver;
@@ -115,12 +117,16 @@ public class TurSNDeepDiveService {
     private final TurLLMTokenUsageService tokenUsageService;
     private final TurChatCostBudgetGate budgetGate;
     private final TurSNNLFilterService nlFilterService;
+    private final TransactionTemplate readOnlyTransaction;
 
     public TurSNDeepDiveService(TurSNSearchProcess turSNSearchProcess, TurSNChatRouteResolver chatRouteResolver,
             TurDefaultAgentResolver defaultAgentResolver, TurDefaultChatModelResolver chatModelResolver,
             TurCatalogCopilotService copilotService, TurLLMTokenUsageService tokenUsageService,
-            TurChatCostBudgetGate budgetGate, TurSNNLFilterService nlFilterService) {
+            TurChatCostBudgetGate budgetGate, TurSNNLFilterService nlFilterService,
+            PlatformTransactionManager transactionManager) {
         this.nlFilterService = nlFilterService;
+        this.readOnlyTransaction = new TransactionTemplate(transactionManager);
+        this.readOnlyTransaction.setReadOnly(true);
         this.turSNSearchProcess = turSNSearchProcess;
         this.chatRouteResolver = chatRouteResolver;
         this.defaultAgentResolver = defaultAgentResolver;
@@ -175,25 +181,49 @@ public class TurSNDeepDiveService {
                     return null;
                 });
             } catch (RuntimeException e) {
-                log.warn("[SNResearch] research failed for site '{}': {}", siteName, e.getMessage());
+                log.warn("[SNResearch] research failed for site '{}': {}", siteName, e.getMessage(), e);
                 sink.next(error("The research service is temporarily unavailable."));
             }
             sink.complete();
         }, FluxSink.OverflowStrategy.BUFFER).subscribeOn(Schedulers.boundedElastic());
     }
 
+    /** What the site's gate read: a refusal, or the effective agent's id (may be {@code null}). */
+    private record Gate(String refusal, String agentId) {
+    }
+
+    /**
+     * The site's readiness, read inside one read-only transaction: this runs on a
+     * worker thread, where no request-bound session holds the site's lazy GenAI
+     * settings open.
+     */
+    private Gate gate(String siteName) {
+        return readOnly(() -> {
+            Optional<TurSNSite> siteOpt = turSNSearchProcess.getSNSite(siteName);
+            if (siteOpt.isEmpty()) {
+                return new Gate("Site not found: " + siteName, null);
+            }
+            TurSNSite site = siteOpt.get();
+            // The same readiness the answer endpoint reads, so /research and /answer agree.
+            TurSNChatRouteResolver.Decision route = chatRouteResolver.resolve(site.getTurSNSiteGenAi());
+            if (!route.available()) {
+                return new Gate("AI is not enabled for site: " + siteName + " (" + route.reason() + ")", null);
+            }
+            TurAIAgent agent = defaultAgentResolver.resolveEffectiveAgent(site.getTurSNSiteGenAi());
+            return new Gate(null, agent == null ? null : agent.getId());
+        });
+    }
+
+    /** {@code read} inside a read-only transaction (T1220b: the worker thread has no session). */
+    private <T> T readOnly(Supplier<T> read) {
+        return readOnlyTransaction.execute(status -> read.get());
+    }
+
     private void run(String siteName, String rawQuestion, Locale locale, Integer maxSteps,
             Consumer<ServerSentEvent<String>> emit) {
-        Optional<TurSNSite> siteOpt = turSNSearchProcess.getSNSite(siteName);
-        if (siteOpt.isEmpty()) {
-            emit.accept(error("Site not found: " + siteName));
-            return;
-        }
-        TurSNSite site = siteOpt.get();
-        // The same readiness the answer endpoint reads, so /research and /answer agree.
-        TurSNChatRouteResolver.Decision route = chatRouteResolver.resolve(site.getTurSNSiteGenAi());
-        if (!route.available()) {
-            emit.accept(error("AI is not enabled for site: " + siteName + " (" + route.reason() + ")"));
+        Gate gate = gate(siteName);
+        if (gate.refusal() != null) {
+            emit.accept(error(gate.refusal()));
             return;
         }
         if (locale == null) {
@@ -209,8 +239,7 @@ public class TurSNDeepDiveService {
             emit.accept(error("No usable default LLM configured for research"));
             return;
         }
-        TurAIAgent agent = defaultAgentResolver.resolveEffectiveAgent(site.getTurSNSiteGenAi());
-        String agentId = agent == null ? null : agent.getId();
+        String agentId = gate.agentId();
         String question = rawQuestion.length() > MAX_QUESTION_CHARS
                 ? rawQuestion.substring(0, MAX_QUESTION_CHARS) : rawQuestion;
         String localeName = locale.toString();
@@ -274,7 +303,8 @@ public class TurSNDeepDiveService {
      */
     private Map<String, Object> retrieveStep(String siteName, String locale, Step step, List<Source> sources,
             Set<String> seen, Supplier<Map<String, List<String>>> vocabulary) {
-        TurCatalogCopilotService.Retrieval retrieval = copilotService.retrieve(siteName, locale, step.query());
+        TurCatalogCopilotService.Retrieval retrieval = readOnly(
+                () -> copilotService.retrieve(siteName, locale, step.query()));
         if (!retrieval.siteFound()) {
             return null;
         }
@@ -282,8 +312,9 @@ public class TurSNDeepDiveService {
         int hits = retrieval.citations().size();
         String[] facet = hits < SOURCES_PER_STEP ? matchingFacet(vocabulary.get(), step) : null;
         if (facet != null) {
-            TurCatalogCopilotService.Retrieval widened = copilotService.retrieve(siteName, locale, step.query(),
-                    new TurDslQuery.Term(facet[0], facet[1]));
+            TurDslQuery.Term term = new TurDslQuery.Term(facet[0], facet[1]);
+            TurCatalogCopilotService.Retrieval widened = readOnly(
+                    () -> copilotService.retrieve(siteName, locale, step.query(), term));
             collect(widened, step, sources, seen, SOURCES_PER_STEP - numbers.size()).stream()
                     .filter(number -> !numbers.contains(number))
                     .forEach(numbers::add);

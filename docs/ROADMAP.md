@@ -19,7 +19,6 @@
 ## Block CL — SN sites for research and memory archives
 
 - 📋 **T1221** (deps: —) **Turing was never read end to end as an education and memory site uses it: pt_BR, OCR, images, audio, flows** — FESPSP will use nearly every visitor feature at once, and the gaps are cheaper to find in one analysis than one by one in production. → §CLXVII.2
-- 📋 **T1220b** (deps: —) **The research stream is tested only over mocks: no seeded site checks its citations, filters and empty steps** — A regression in retrieval scoping or citation checks would ship unnoticed, since the unit tests stub both the search and the model. → §CLXVII.3
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
