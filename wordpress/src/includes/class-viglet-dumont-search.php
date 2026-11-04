@@ -55,15 +55,7 @@ class Viglet_Dumont_Search {
 		$fq   = isset( $_GET['fq'] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_GET['fq'] ) ) : array();
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		$params = array();
-		if ( $sort ) {
-			$params['sort'] = $sort;
-		}
-		if ( ! empty( $fq ) ) {
-			$params['fq[]'] = $fq;
-		}
-
-		$results = $this->client->search( $query, $page, $per_page, $params );
+		$results = $this->client->search( $query, $page, $per_page, $this->request_params( $fq, $sort ) );
 
 		$data = array(
 			'query'        => $query,
@@ -84,6 +76,23 @@ class Viglet_Dumont_Search {
 		}
 
 		$this->render_template( $data );
+	}
+
+	/**
+	 * The filters and sort the results page asks Turing for. Scoped like every other read
+	 * path (D303): on an SN site several WordPress sites share, an unscoped search listed the
+	 * other sites' documents here.
+	 *
+	 * @param array<int, string> $fq   The filters the visitor picked.
+	 * @param string             $sort The sort the visitor picked; empty for relevance.
+	 */
+	public function request_params( array $fq, string $sort ): array {
+		$params = array( 'fq[]' => array_merge( ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters(), $fq ) );
+		if ( '' !== $sort ) {
+			$params['sort'] = $sort;
+		}
+
+		return $params;
 	}
 
 	/**
@@ -110,6 +119,10 @@ class Viglet_Dumont_Search {
 		// The template reads `label` and `facetValues[]` of {label, count, link}, where `link`
 		// is the filter query a click adds; Turing names those `label.text` and `facets[]`.
 		foreach ( (array) ( $response['widget']['facet'] ?? array() ) as $facet ) {
+			// The site's scope is not the visitor's to pick, as on the search block.
+			if ( 'site_key' === ( $facet['name'] ?? '' ) ) {
+				continue;
+			}
 			$data['facets'][] = array(
 				'name'        => $facet['name'] ?? '',
 				'label'       => $facet['label']['text'] ?? ( $facet['name'] ?? '' ),

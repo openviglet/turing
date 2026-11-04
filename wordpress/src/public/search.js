@@ -32,6 +32,21 @@ export const config = getConfig( 'viglet-dumont' );
 export const siteFilter = `site_key:${ config.siteKey }`;
 
 /**
+ * Every filter that keeps a search to the documents this site searches (D303). The one seam
+ * every read path takes, so the sibling site keys an SN site shared with other WordPress
+ * sites can add arrive in one place: today the own key alone, since two `site_key` values
+ * in `fq[]` intersect until Turing lets a field's values be alternatives (T1223).
+ */
+export const scopeFilters = Object.freeze( [ siteFilter ] );
+
+/**
+ * Whether a filter query is the site's scope rather than a filter the visitor chose.
+ *
+ * @param {string} fq A filter query, `<field>:<value>`.
+ */
+export const isScopeFilter = ( fq ) => scopeFilters.includes( fq );
+
+/**
  * The same filter as a field-to-values map, for Turing's generative calls (the assistant's
  * turns, the copilot, the kit and nl-filters: Turing T1086, T1213), so on an SN site several
  * WordPress sites share, each reads only its own documents (D287).
@@ -70,7 +85,7 @@ export function createSiteSearch( {
 	return createSearchController(
 		createClient(),
 		{ site: config.site, locale: config.locale },
-		{ fq: [ siteFilter ], ...params },
+		{ fq: [ ...scopeFilters ], ...params },
 		{
 			chat: false,
 			...( track

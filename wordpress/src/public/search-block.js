@@ -14,8 +14,10 @@ import {
 	createSiteAutoComplete,
 	createSiteSearch,
 	fetchSpellCheck,
+	isScopeFilter,
 	postIdOf,
 	renderMarkdown,
+	scopeFilters,
 	siteFilter,
 	siteFilters,
 	siteUrl,
@@ -423,7 +425,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		// The words Turing read as the filter leave the query, so they no longer match as text.
 		applySuggestion() {
 			const { suggestion } = getContext();
-			const fq = search.getState().request?.fq || [ siteFilter ];
+			const fq = search.getState().request?.fq || [ ...scopeFilters ];
 			state.suggested = state.suggested.filter(
 				( s ) => s.fq !== suggestion.fq
 			);
@@ -457,7 +459,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		clearFilters() {
 			// The SDK's clearAllFilters would drop the site filter too; keep it.
-			send( { fq: [ siteFilter ], page: 1 } );
+			send( { fq: [ ...scopeFilters ], page: 1 } );
 			writeUrl( true );
 		},
 		retry() {
@@ -857,7 +859,7 @@ function answerUnderstood( text ) {
  */
 function applyReading( q, fqs ) {
 	const request = search.getState().request || {};
-	const fq = request.fq || [ siteFilter ];
+	const fq = request.fq || [ ...scopeFilters ];
 	beforeReading = { q: request.q || lastQuery || '*', fq };
 	state.understood = state.understoodText.replace(
 		'%s',
@@ -894,7 +896,7 @@ function allFacets() {
 		probe.searchRequest( {
 			locale: config.locale,
 			q: '*',
-			fq: [ siteFilter ],
+			fq: [ ...scopeFilters ],
 			page: 1,
 		} );
 	} );
@@ -1314,7 +1316,7 @@ function writeUrl( push ) {
 	);
 	url.searchParams.set( 'q', state.query );
 	( request.fq || [] )
-		.filter( ( fq ) => fq !== siteFilter )
+		.filter( ( fq ) => ! isScopeFilter( fq ) )
 		.forEach( ( fq ) => url.searchParams.append( 'fq[]', fq ) );
 	if ( Number( request.page ) > 1 ) {
 		url.searchParams.set( 'pg', String( request.page ) );
@@ -1339,7 +1341,7 @@ function readUrl() {
 	clearCorrection();
 	send( {
 		q: lastQuery,
-		fq: [ siteFilter, ...params.getAll( 'fq[]' ) ],
+		fq: [ ...scopeFilters, ...params.getAll( 'fq[]' ) ],
 		page: Math.max( 1, Number( params.get( 'pg' ) ) || 1 ),
 		...provisional( lastQuery ),
 	} );
@@ -1640,7 +1642,7 @@ function learnFacets() {
 	probe.searchRequest( {
 		locale: config.locale,
 		q: lastQuery,
-		fq: [ siteFilter ],
+		fq: [ ...scopeFilters ],
 		rows: 1,
 		// The block's own bookkeeping, not a search the visitor made: counted, every filtered
 		// search would read as two in the insights (D294).
@@ -1683,12 +1685,12 @@ function sync( s ) {
 		} ) );
 	state.facets = facets(
 		response?.facets || [],
-		( s.request?.fq || [] ).filter( ( fq ) => fq !== siteFilter )
+		( s.request?.fq || [] ).filter( ( fq ) => ! isScopeFilter( fq ) )
 	);
 	// Turing's response stops describing a facet once it filters on it (T1115), so the
 	// applied filters come from the request: every filter but the site's own.
 	state.applied = ( s.request?.fq || [] )
-		.filter( ( fq ) => fq !== siteFilter )
+		.filter( ( fq ) => ! isScopeFilter( fq ) )
 		.map( ( fq ) => ( {
 			label: filterLabel( fq ),
 			target: {

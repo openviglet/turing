@@ -140,6 +140,17 @@ final class IndexerTest extends PluginTestCase {
 	}
 
 	/**
+	 * One seam names what a search reads (D303): the own key, until Turing lets two values of
+	 * site_key be alternatives (T1223) and the sibling keys join it.
+	 */
+	public function test_a_search_is_scoped_to_the_own_site_key(): void {
+		$indexer = new Viglet_Dumont_Indexer( $this->settings( array( 'site_key' => 'site-a' ) ) );
+
+		$this->assertSame( 'site_key:site-a', $indexer->own_filter() );
+		$this->assertSame( array( 'site_key:site-a' ), $indexer->scope_filters() );
+	}
+
+	/**
 	 * Two sites share one SN site: delete-all names this site's key and the plugin's source,
 	 * in one DELETE by fields (Turing T1112), and lists nothing first.
 	 */

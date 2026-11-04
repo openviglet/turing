@@ -209,7 +209,7 @@ class Viglet_Dumont_Trending {
 			if ( ! self::presentable( $query ) || in_array( $want, $shown, true ) || self::holds_any( $query, $blocked ) ) {
 				continue;
 			}
-			$found = $client->search( $query, 1, 1, array( 'fq[]' => array( 'site_key:' . $indexer->site_key() ) ) );
+			$found = $client->search( $query, 1, 1, array( 'fq[]' => $indexer->scope_filters() ) );
 			if ( ! is_wp_error( $found ) && (int) ( $found['queryContext']['count'] ?? 0 ) > 0 ) {
 				$chips[] = $query;
 				$shown[] = $want;

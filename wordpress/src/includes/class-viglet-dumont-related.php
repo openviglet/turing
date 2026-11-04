@@ -209,7 +209,7 @@ class Viglet_Dumont_Related {
 			$indexer->build_doc_id( $post_id ),
 			$rows,
 			$mode,
-			array( 'site_key:' . $indexer->site_key() )
+			array( $indexer->own_filter() )
 		);
 		// A site without embeddings may refuse a semantic question: ask by shared words.
 		if ( is_wp_error( $similar ) && 'VECTOR' === $mode ) {

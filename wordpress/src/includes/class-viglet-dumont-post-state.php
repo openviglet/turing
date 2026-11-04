@@ -415,7 +415,7 @@ class Viglet_Dumont_Post_State {
 				'links'   => array(),
 			);
 		}
-		$found = $client->search( $post->post_title, 1, 6, array( 'fq[]' => array( 'site_key:' . $indexer->site_key() ) ) );
+		$found = $client->search( $post->post_title, 1, 6, array( 'fq[]' => array( $indexer->own_filter() ) ) );
 		$docs  = is_array( $found )
 			? array_map( static fn ( array $doc ) => (array) ( $doc['fields'] ?? array() ), (array) ( $found['results']['document'] ?? array() ) )
 			: array();

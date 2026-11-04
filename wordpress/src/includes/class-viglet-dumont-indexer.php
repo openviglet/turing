@@ -249,7 +249,7 @@ class Viglet_Dumont_Indexer {
 
 		// A ceiling, not a limit anyone should meet: 1000 pages of 100 is a site of 100k documents.
 		for ( $page = 1; $page <= 1000; $page++ ) {
-			$response = $this->client->search( '*', $page, $rows, array( 'fq[]' => 'site_key:' . $this->site_key() ) );
+			$response = $this->client->search( '*', $page, $rows, array( 'fq[]' => $this->own_filter() ) );
 			if ( is_wp_error( $response ) ) {
 				return null;
 			}
@@ -284,6 +284,28 @@ class Viglet_Dumont_Indexer {
 		$key  = self::sanitize_site_key( ( $home['host'] ?? '' ) . ( $home['path'] ?? '' ) );
 
 		return '' !== $key ? $key : 'WordPress';
+	}
+
+	/**
+	 * The filter query that names this site's own documents, for what only ever reads them:
+	 * delete, the sweep's listing, Tuning's preview and the counts the admin shows.
+	 */
+	public function own_filter(): string {
+		return 'site_key:' . $this->site_key();
+	}
+
+	/**
+	 * Every filter query that keeps a visitor's search to the documents this site searches
+	 * (D303): the one seam the search page, its first paint, the editor's preview and the
+	 * template results share with the browser's `scopeFilters` (`public/search.js`).
+	 *
+	 * Today the own key alone: the sibling site keys of a shared SN site join it once Turing
+	 * lets one field's values be alternatives (T1223), as two `site_key` values intersect.
+	 *
+	 * @return array<int, string>
+	 */
+	public function scope_filters(): array {
+		return array( $this->own_filter() );
 	}
 
 	/**

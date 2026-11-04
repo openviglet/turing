@@ -313,7 +313,7 @@ class Viglet_Dumont_Operations {
 			'*',
 			1,
 			0,
-			array( 'fq[]' => array( 'site_key:' . $this->indexer->site_key(), 'type:' . $type ) )
+			array( 'fq[]' => array( $this->indexer->own_filter(), 'type:' . $type ) )
 		);
 
 		return is_wp_error( $response ) ? null : (int) ( $response['queryContext']['count'] ?? 0 );

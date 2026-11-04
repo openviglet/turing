@@ -374,7 +374,7 @@ class Viglet_Dumont_Tuning {
 	 */
 	public function try_query( string $query ) {
 		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
-		$response = $this->client->search( '' === trim( $query ) ? '*' : $query, 1, 5, array( 'fq[]' => array( 'site_key:' . $indexer->site_key() ) ) );
+		$response = $this->client->search( '' === trim( $query ) ? '*' : $query, 1, 5, array( 'fq[]' => array( $indexer->own_filter() ) ) );
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}

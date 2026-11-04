@@ -323,7 +323,7 @@ class Viglet_Dumont_Native_Search {
 				'p'    => $page,
 				'rows' => $rows,
 				'sort' => $state['sort'],
-				'fq[]' => array_merge( array( 'site_key:' . ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key() ), $filters ),
+				'fq[]' => array_merge( ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters(), $filters ),
 			)
 		);
 		// Unanswered here, the script asks as it always did.
@@ -538,12 +538,11 @@ class Viglet_Dumont_Native_Search {
 	 * @return array State to merge over the block's own.
 	 */
 	public function preview_state( int $rows, array $labels ): array {
-		$site_key = ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key();
 		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->search(
 			'*',
 			1,
 			$rows,
-			array( 'fq[]' => array( 'site_key:' . $site_key ) )
+			array( 'fq[]' => ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters() )
 		);
 		if ( ! is_array( $response ) ) {
 			return array(
@@ -684,7 +683,7 @@ class Viglet_Dumont_Native_Search {
 	public function search( string $query, int $page, int $per_page ): ?array {
 		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
 		$client   = new Viglet_Dumont_API_Client( $this->settings );
-		$response = $client->search( '' !== trim( $query ) ? $query : '*', $page, $per_page, array( 'fq[]' => 'site_key:' . $indexer->site_key() ) );
+		$response = $client->search( '' !== trim( $query ) ? $query : '*', $page, $per_page, array( 'fq[]' => $indexer->own_filter() ) );
 		if ( is_wp_error( $response ) ) {
 			return null;
 		}
