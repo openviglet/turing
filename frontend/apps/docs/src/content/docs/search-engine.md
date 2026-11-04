@@ -229,6 +229,8 @@ On **Lucene**, a text field matches regardless of accents (`saude` finds `Saúde
 
 Text whose accents are stored decomposed (Unicode NFD, a letter followed by a combining mark, as text pasted from macOS or exported by some content tools often is) is matched like its usual spelling: a title stored as `impermeável` in that form is found by `impermeável`, `impermeavel` and `jaqueta impermeável`, and its highlight marks the whole word. Reindex the site for this to reach documents already indexed. An Elasticsearch core does the same once it is created or recreated.
 
+On **Solr**, the configsets Turing ships (`en`, `es`, `pt`, `ca`) match the same way: an unaccented search finds the accented word in every language, and decomposed accents are recomposed. A core picks this up from the configset it was created from: on a standalone Solr, update the image (or copy the configset into `$SOLR_HOME/configsets`) and reload the core; on SolrCloud, recreate the collection, which Turing uploads the configset for. Then reindex the site.
+
 On **Elasticsearch**, a core created for a site locale in one of those languages analyzes its text fields the same way (stemmed and accent-folded), and facet fields still match their exact value. Elasticsearch cannot change the analyzer of an existing index, so a core created before this keeps matching the exact word: delete and recreate the core, then reindex the site, to get plural matching.
 
 For the full interface reference (all methods across search, index management, schema management, and document operations) and instructions on implementing a new backend, see [Developer Guide → Search Engine Plugin Architecture](/docs/developer-guide/#search-engine-plugin-architecture).

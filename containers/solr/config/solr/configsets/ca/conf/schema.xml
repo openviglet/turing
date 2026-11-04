@@ -278,6 +278,7 @@
   </fieldType>
   <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
     <analyzer type="index">
+      <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-nfc.txt" />
       <tokenizer class="solr.WhitespaceTokenizerFactory" />
       <filter class="solr.ElisionFilterFactory" articles="lang/contractions_ca.txt" ignoreCase="true" />
       <filter class="solr.LowerCaseFilterFactory" />
@@ -285,14 +286,17 @@
       <filter class="solr.WordDelimiterFilterFactory" preserveOriginal="1" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="0" />
       <filter class="solr.ReversedWildcardFilterFactory" withOriginal="true" maxPosAsterisk="1" maxPosQuestion="0" />
       <filter class="solr.SnowballPorterFilterFactory" language="Catalan" />
+      <filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="true" />
     </analyzer>
     <analyzer type="query">
+      <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-nfc.txt" />
       <tokenizer class="solr.WhitespaceTokenizerFactory" />
       <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt" />
       <filter class="solr.ElisionFilterFactory" articles="lang/contractions_ca.txt" ignoreCase="true" />
       <filter class="solr.LowerCaseFilterFactory" />
       <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_ca.txt" ignoreCase="true" />
       <filter class="solr.SnowballPorterFilterFactory" language="Catalan" />
+      <filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="true" />
     </analyzer>
   </fieldType>
   <fieldType name="text_general_rev" class="solr.TextField" positionIncrementGap="100">
@@ -625,6 +629,7 @@
        synonyms, unlike text_general, so a synonym-only match is never boosted with it. -->
   <fieldType name="text_phrase" class="solr.TextField" positionIncrementGap="100">
     <analyzer>
+      <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-nfc.txt" />
       <tokenizer class="solr.StandardTokenizerFactory" />
       <filter class="solr.LowerCaseFilterFactory" />
       <filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="false" />

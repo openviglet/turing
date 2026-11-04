@@ -2232,32 +2232,6 @@ owner chose the live guest console (2026-11-04). T1184b built it
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLXII.13 Solr folds accents like Lucene and Elasticsearch (T1218)
-
-**Where it showed.** T1217 checked the Solr configsets for the NFD gap T1194 closed on
-Lucene and T1217 on Elasticsearch. The gap on Solr is wider: in
-`containers/solr/config/solr/configsets/{ca,en,es,pt}/conf/schema.xml` only
-`text_phrase` (the T1185 exact-phrase boost field) runs `ASCIIFoldingFilterFactory`. The
-text fields search reads do not fold accents at all, so on a Solr site `saude` does not
-find `Saúde`, which Lucene has done since T1080 and Elasticsearch since T1173, and an
-NFD title is not recomposed either.
-
-**Why it matters.** The search-engine page says the three engines read a search the same
-way; for accents they do not, and a site moved from Lucene to Solr loses
-accent-insensitive matching.
-
-**What to build.** In each configset's text field types, add before the tokenizer a
-`MappingCharFilterFactory` whose mapping file holds the decomposed-to-composed pairs of
-`TurLuceneNfcCharFilter.PAIRS` (generated, not hand-written), and after lowercasing an
-`ASCIIFoldingFilterFactory` with `preserveOriginal="true"`, on index and query side
-alike. The schemas say "managed schema, do not edit", so first settle how Turing ships
-schema changes to an existing Solr core (configset upload plus core reload, then
-reindex). Cover it with a Solr Testcontainers check as `TurElasticsearchStemmingIT` does
-for ES.
-
-**Done when** a Solr core finds `Saúde` by `saude` and an NFD title by its accented and
-unaccented spellings.
-
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release

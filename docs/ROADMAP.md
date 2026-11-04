@@ -14,8 +14,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1218** (deps: —) **On a Solr site an unaccented query does not find the accented word, and an NFD title is not recomposed** — The configsets' text_general folds no accents, unlike Lucene (T1080, T1194) and Elasticsearch (T1173, T1217). → §CLXII.13
-
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
 ## Done when — T1184
