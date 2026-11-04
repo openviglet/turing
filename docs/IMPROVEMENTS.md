@@ -2351,35 +2351,6 @@ are the suspects), and the image version the demo runs.
 **Done when.** The demo's two-word queries return the same documents, and the IT above
 stays green.
 
-### CLXII.5 Clear a site's search metrics (T1195)
-
-Met recording Dumont's WordPress demo video (D246/D261).
-
-**Landed.** `DELETE /api/sn/{snSiteId}/metrics?before=` and the console's **Clear
-metrics** button on Top search terms empty a site's searches and clicks
-(`TurSNSiteMetricsResetService`), audited, refused to a partitioned key.
-
-**What is left.** A request should be able to say it is not to be counted, so a test or
-a probe never lands in a shop's insights: `populateMetrics=false` honoured by every
-search, autocomplete and answer endpoint. Today only the authenticated legacy POST body
-(`TurSNSitePostParamsBean`) carries it; since T1200 `POST /search/query` takes a
-`false`-only opt-out from any caller, and the GET search and autocomplete still never
-let one opt out.
-
-**The decision it waits on.** `TurSNSearchRequest` leaves `populateMetrics` out on
-purpose: it is a privileged field an anonymous caller must not set. The owner chose the first (2026-11-04):
-- honour the flag only on an authenticated request (a key or a session), so a probe
-  with a key opts out and an anonymous visitor cannot hide searches; or
-- accept it from anyone, reading hidden anonymous searches as harmless.
-
-The first keeps the existing rule and is the recommended one. But since T1120 any caller
-can already stay out of the log with `mode: instant`, so an anonymous visitor can hide
-searches today; T1200 shipped the anonymous `false`-only opt-out on `POST /search/query`
-on that reasoning, leaving this decision to GET search, autocomplete and `/answer`.
-
-**Done when.** A search sent with `populateMetrics=false` by an allowed caller is never
-counted, on GET search, `POST /search/query`, autocomplete and `/answer`.
-
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release

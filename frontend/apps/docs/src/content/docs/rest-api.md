@@ -206,6 +206,12 @@ A Turing search UI can be built as a **pure rendering layer**: render results, f
 GET /api/sn/{siteName}/search?q=annual+report&_setlocale=pt_BR
 ```
 
+**Keeping a search out of the metrics:** a request sent with an API key or a signed-in session can add `populateMetrics=false`, so a probe, a test or a monitoring check never shows up in the site's search insights. An anonymous request is counted whatever it sends, so a visitor cannot hide searches. Autocomplete and the answer stream are never counted as searches.
+
+```
+GET /api/sn/{siteName}/search?q=annual+report&populateMetrics=false
+```
+
 #### POST Body Parameters
 
 The POST endpoint accepts the same query parameters plus additional fields in the JSON body:

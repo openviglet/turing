@@ -350,4 +350,33 @@ class TurSNSiteSearchServiceTest {
             com.viglet.turing.persistence.model.sn.TurSNSite site) {
         return com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView.from(site, "solr");
     }
+
+    // ---- T1195: an authenticated GET search may stay out of the site's metrics ----
+
+    private static boolean counted(String populateMetrics, Principal principal) {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/sn/site/search");
+        if (populateMetrics != null) {
+            request.setParameter(TurSNSiteSearchService.POPULATE_METRICS, populateMetrics);
+        }
+        request.setUserPrincipal(principal);
+        TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", null, null, Locale.US, null);
+        TurSNSiteSearchService.applyMetricsOptOut(context, request);
+        return context.getTurSNSitePostParamsBean() == null
+                || context.getTurSNSitePostParamsBean().isPopulateMetrics();
+    }
+
+    @Test
+    void anAuthenticatedGetSearchCanStayOutOfTheMetrics() {
+        Principal key = () -> "connector";
+
+        assertThat(counted("false", key)).isFalse();
+        assertThat(counted("FALSE", key)).isFalse();
+        assertThat(counted("true", key)).isTrue();
+        assertThat(counted(null, key)).isTrue();
+    }
+
+    @Test
+    void anAnonymousGetSearchIsAlwaysCounted() {
+        assertThat(counted("false", null)).isTrue();
+    }
 }

@@ -981,7 +981,7 @@
 - **T1187** — createChatController takes documentId, and a turn's SendOverrides.documentId replaces it, forwarded to the site chat like filters.
 - **T1190** — Each kit gap query carries the plan's constraints, and a stage's candidates are re-ranked against the whole plan through TurRagReranker, fail-open to retrieval order; the July case is a unit test, not a live eval.
 - **T1191** — The kit drops facet fields with a single catalog-wide value from its vocabulary, so a connector's site field is never a product reason nor a gap word.
-- **T1195 (clear API and console button)** — DELETE /api/sn/{id}/metrics?before= clears a site's searches and clicks, audited and refused to partitioned keys, with a confirmed Clear metrics button on Top search terms.
+- **T1195** — An authenticated GET search with populateMetrics=false stays out of the site's metrics, as POST /search/query already did; anonymous searches still count, and ac and answer never counted.
 - **T1196** — In pt_BR the light Portuguese stem now runs before Snowball on Lucene and Elasticsearch, so bastão finds Bastões, pão finds pães and mão finds mãos after a reindex.
 - **T1197** — A kit's gap prompt now names the request's locale (or the plan's language), so a pt_BR kit writes its summary, stages, reasons and searches in Portuguese.
 - **T1199** — Spell-check on Lucene and Solr never replaces a number or symbol token and keeps the typed case; a price-only change yields no correction or auto-correction (design §CLXII.8 recorded in `turing-app/src/main/java/com/viglet/turing/plugins/se/TurSpellCheckGuard.java`).

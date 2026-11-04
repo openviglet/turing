@@ -68,9 +68,30 @@ public class TurSNSiteSearchService {
             String siteName) {
 
         TurSNSiteSearchContext searchContext = getTurSNSiteSearchContext(turSNSearchParams, request, siteName);
+        applyMetricsOptOut(searchContext, request);
         return useCache()
                 ? executeSearchWithCache(searchContext)
                 : executeSearch(searchContext);
+    }
+
+    /** T1195 — the GET search's opt-out from the site's search metrics. */
+    static final String POPULATE_METRICS = "populateMetrics";
+
+    /**
+     * T1195 — {@code populateMetrics=false} keeps a GET search out of the site's
+     * insights, when the request is authenticated (an API key or a session): a
+     * probe or a test sent with a key opts out, and an anonymous visitor cannot
+     * hide searches. Any other value, or an anonymous request, is counted as before.
+     */
+    static void applyMetricsOptOut(TurSNSiteSearchContext searchContext, HttpServletRequest request) {
+        if (!"false".equalsIgnoreCase(request.getParameter(POPULATE_METRICS)) || request.getUserPrincipal() == null) {
+            return;
+        }
+        TurSNSitePostParamsBean postParams = searchContext.getTurSNSitePostParamsBean() != null
+                ? searchContext.getTurSNSitePostParamsBean()
+                : new TurSNSitePostParamsBean();
+        postParams.setPopulateMetrics(false);
+        searchContext.setTurSNSitePostParamsBean(postParams);
     }
 
     public <T> ResponseEntity<T> notFoundResponse() {

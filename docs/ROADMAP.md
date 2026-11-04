@@ -22,8 +22,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1195** (deps: —) **An SN site's search metrics cannot be cleared, so probes and tests fill a demo's insights for good** — GET search, ac and answer must honour populateMetrics=false from an authenticated caller only, so probes stay out of insights. → §CLXII.5
-
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
 ## Done when — T1133
