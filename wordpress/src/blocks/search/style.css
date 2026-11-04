@@ -171,6 +171,11 @@
 	text-align: right;
 }
 
+/* One Compare button per page (D302): a repeated bar is left out. */
+.viglet-dumont-search__compare-bar.viglet-dumont-compare-bar--repeat {
+	display: none;
+}
+
 /* The filters a sentence names (D170): offered, not applied, so drawn dashed. */
 .viglet-dumont-search__suggested {
 	align-items: center;

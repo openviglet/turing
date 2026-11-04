@@ -148,6 +148,24 @@ wp_update_post(
 );
 update_post_meta( $find_id, '_viglet_dumont_exclude', '1' );
 
+// A page holding both blocks that offer Compare (woo/compare.spec.mjs, D302); drafted again too.
+$both    = get_page_by_path( 'search-and-ask' );
+$both_id = $both ? $both->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'search-and-ask',
+		'post_title'   => 'Search and ask',
+		'post_content' => '<!-- wp:viglet-dumont/search /--><!-- wp:viglet-dumont/copilot /-->',
+	)
+);
+wp_update_post(
+	array(
+		'ID'          => $both_id,
+		'post_status' => 'publish',
+	)
+);
+update_post_meta( $both_id, '_viglet_dumont_exclude', '1' );
+
 $settings                       = get_option( 'viglet_dumont_settings', array() );
 $settings['index_custom_types'] = array( 'product' );
 // Related content on a product page, whose product cards offer Compare (compare.spec.mjs, D212).

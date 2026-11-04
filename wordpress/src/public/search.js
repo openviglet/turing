@@ -522,6 +522,27 @@ export const compare = {
 	},
 };
 
+// One Compare button per page (D302): every block that offers Compare draws a bar over the same
+// list, so where several share a page the first in reading order keeps its bar and the others
+// are marked as repeats, which each block's stylesheet hides.
+const compareBars =
+	'.viglet-dumont-search__compare-bar, .viglet-dumont-copilot__compare-bar, .viglet-dumont-related__compare-bar';
+
+/** Mark every compare bar after the first as a repeat. */
+function markRepeatedCompareBars() {
+	document
+		.querySelectorAll( compareBars )
+		.forEach( ( bar, n ) =>
+			bar.classList.toggle( 'viglet-dumont-compare-bar--repeat', n > 0 )
+		);
+}
+
+if ( 'loading' === document.readyState ) {
+	document.addEventListener( 'DOMContentLoaded', markRepeatedCompareBars );
+} else {
+	markRepeatedCompareBars();
+}
+
 /**
  * Report the result a visitor opened: to Turing (`POST /api/sn/{site}/click`, which its
  * click-through rates read) and to the analytics bus. The SDK sends it with `keepalive`, so it

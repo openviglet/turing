@@ -111,6 +111,31 @@ test( 'one jacket ticked in the results and one in a product page’s Related co
 	).toHaveText( [ 'Wool jacket', name ] );
 } );
 
+test( 'a page with the search block and Ask the catalog shows one Compare button', async ( {
+	page,
+} ) => {
+	// D302: both blocks offer Compare over one list, so the page draws one bar, the first.
+	await page.route( '**/copilot/available', ( route ) =>
+		route.fulfill( { json: { available: true } } )
+	);
+	await page.goto( '/?pagename=search-and-ask&q=jacket&fq[]=type:product' );
+	for ( const name of [ 'Rain jacket', 'Wool jacket' ] ) {
+		await card( page, name )
+			.getByRole( 'checkbox', { name: `Compare ${ name }` } )
+			.check();
+	}
+	// The repeat is left out of the page, so a screen reader meets one button too.
+	await expect(
+		page.getByRole( 'link', { name: 'Compare 2 products' } )
+	).toHaveCount( 1 );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__compare-bar' )
+	).toBeVisible();
+	await expect(
+		page.locator( '.viglet-dumont-copilot__compare-bar' )
+	).toBeHidden();
+} );
+
 test( 'a product the copilot cites is ticked for the search results too', async ( {
 	page,
 	seed,

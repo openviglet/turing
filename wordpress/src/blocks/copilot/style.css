@@ -84,6 +84,11 @@
 	text-align: right;
 }
 
+/* One Compare button per page (D302): a repeated bar is left out. */
+.viglet-dumont-copilot__compare-bar.viglet-dumont-compare-bar--repeat {
+	display: none;
+}
+
 /* Build my kit (D201): a mode switch, then the plan's needs, each with its products. */
 .viglet-dumont-copilot__modes {
 	display: inline-flex;

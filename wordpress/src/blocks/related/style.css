@@ -95,3 +95,8 @@
 	margin: 1rem 0 0;
 	text-align: right;
 }
+
+/* One Compare button per page (D302): a repeated bar is left out. */
+.viglet-dumont-related__compare-bar.viglet-dumont-compare-bar--repeat {
+	display: none;
+}
