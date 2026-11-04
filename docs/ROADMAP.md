@@ -20,8 +20,6 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
-- 📋 **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — The console is still unseen without installing; the owner chose a live guest console that browses but never saves. → §CLXI.5
-
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 - 📋 **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — jaqueta impermeável misses the Borrowdale jacket that jaqueta impermeavel and impermeável alone both find, so Brazilian shoppers lose results. → §CLXII.4

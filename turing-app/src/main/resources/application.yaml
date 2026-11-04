@@ -177,6 +177,13 @@ turing:
       max-zip-entries: 5000
       max-zip-entry-bytes: 52428800
       max-zip-total-bytes: 262144000
+  # T1184 — the read-only guest console for a demo host: the login page offers
+  # "Explore the console as a guest", the session browses every screen and saves
+  # nothing (every write answers 403). Local authentication only; the guest user
+  # is seeded at startup without a password.
+  guest-console:
+    enabled: false
+    username: guest
   # T-guardrail / §XXXVII — answer-grounding guardrail: verifies a RAG answer is
   # actually grounded in the retrieved context (and screens it for unsafe content
   # / PII) before it reaches the user. Off by default: with enabled=false, or a

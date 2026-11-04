@@ -19,6 +19,8 @@
     "continueWithGoogle": "Continuar com Google",
     "continueWithMicrosoft": "Continuar com Microsoft",
     "continueWithGithub": "Continuar com GitHub",
+    "exploreAsGuest": "Explorar o console como convidado",
+    "exploreAsGuestHint": "Somente leitura: navegue por todas as telas, nada é salvo.",
     "noAccount": "Não tem uma conta?",
     "createAccount": "Criar conta"
   },

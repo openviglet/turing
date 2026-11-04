@@ -1604,3 +1604,4 @@
 - **T1203** — turing-legacy is archived, its README and description point at openviglet/turing, and its Pages site redirects each path to openviglet.github.io/turing since GitHub refused to turn it off.
 - **T1205** — validate.yml runs mvn verify with no Sonar scanner or token; the POMs, README badge, developer guide, SonarLint setting, local SonarQube stack and scripts no longer mention Sonar.
 - **T1204** — The owner granted openviglet/turing write access to the ghcr turing image; publish run 41487483079 on 2026.3 pushed latest and 2026.3.8.
+- **T1184b** — turing.guest-console.enabled offers a passwordless guest login on the login page; the guest sees every screen with view privileges, and each write or users, tokens or export read answers 403.

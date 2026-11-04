@@ -57,6 +57,7 @@ import com.viglet.core.security.VigletCsrfCookieFilter;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.spring.security.auth.TurApiKeyCsrfExemption;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionGuardFilter;
+import com.viglet.turing.spring.security.auth.TurGuestReadOnlyFilter;
 import com.viglet.turing.spring.security.auth.TurAuthTokenHeaderFilter;
 import com.viglet.turing.spring.security.auth.TurGatewayKeyAuthFilter;
 import com.viglet.turing.spring.security.auth.TurLogoutHandler;
@@ -369,6 +370,7 @@ public class TurSecurityConfigProduction {
                         TurSNSiteApiKeyGateFilter turSNSiteApiKeyGateFilter,
                         TurTenantResolutionFilter turTenantResolutionFilter,
                         TurApiKeyPartitionGuardFilter turApiKeyPartitionGuardFilter,
+                        TurGuestReadOnlyFilter turGuestReadOnlyFilter,
                         TurApiKeyCsrfExemption turApiKeyCsrfExemption,
                         TurLogoutHandler turLogoutHandler,
                         TurConfigProperties turConfigProperties,
@@ -396,6 +398,9 @@ public class TurSecurityConfigProduction {
                 // T1133 — a key bound to a partition of a shared site is refused on
                 // every endpoint that does not enforce the partition.
                 http.addFilterAfter(turApiKeyPartitionGuardFilter, TurAuthTokenHeaderFilter.class);
+                // T1184 — the guest console's session saves nothing: every request of
+                // it that could change something is refused. No-op for anyone else.
+                http.addFilterAfter(turGuestReadOnlyFilter, BasicAuthenticationFilter.class);
                 http.userDetailsService(userDetailsService);
                 http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
                 http.securityContext(securityContext -> securityContext

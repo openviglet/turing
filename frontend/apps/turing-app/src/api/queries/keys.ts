@@ -402,6 +402,11 @@ export const queryKeys = {
     all: () => ['marketplace-items'] as const,
     list: () => [...queryKeys.marketplaceItems.all(), 'list'] as const,
   },
+  // T1184 — whether the host offers the read-only guest console.
+  guestConsole: {
+    all: () => ['guest-console'] as const,
+    status: () => [...queryKeys.guestConsole.all(), 'status'] as const,
+  },
   authDiscovery: {
     all: () => ['auth-discovery'] as const,
     current: () => [...queryKeys.authDiscovery.all(), 'current'] as const,

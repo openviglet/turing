@@ -347,6 +347,17 @@ In-process protection for the anonymous public chat/search surface (all on by de
 | `turing.abuse.chat.max-zip-entry-bytes` | `52428800` | Max uncompressed size of one ZIP entry (zip-bomb guard). |
 | `turing.abuse.chat.max-zip-total-bytes` | `262144000` | Max total uncompressed ZIP size. |
 
+<a id="guest-console"></a>
+
+### Guest Console (`turing.guest-console`)
+
+A read-only admin console for a demo host, so an evaluator can see it without an account. The login page then shows **Explore the console as a guest**, which signs the browser in as the guest user. The guest browses every screen and saves nothing: every request that would change something answers `403`, and the users, groups, API tokens, gateway keys and exports stay hidden. Search and chat on a site's public pages work as they do for any visitor, under the same [abuse controls](#abuse-controls-turingabuse). Local authentication only.
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.guest-console.enabled` | `false` | Offer the guest console on the login page and at `/api/v2/guest/login`. |
+| `turing.guest-console.username` | `guest` | The user the guest session runs as. It is created at startup, without a password, when it is missing. |
+
 <a id="mcp-client-guards"></a>
 
 ### MCP Client Guards (`turing.mcp-client`)

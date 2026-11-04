@@ -10,6 +10,20 @@ const service = new TurAuthorizationService();
  * authentication backend or the embedded JPA-backed one. Cached generously
  * because this only changes when the server is reconfigured + restarted.
  */
+export function useGuestConsoleStatus() {
+  return useQuery<{ enabled: boolean }>({
+    queryKey: queryKeys.guestConsole.status(),
+    queryFn: () => service.guestConsoleStatus(),
+    staleTime: 10 * 60_000,
+    retry: 0,
+  });
+}
+
+/** T1184 — where the guest console's link goes. */
+export function guestConsoleLoginUrl(): string {
+  return service.guestConsoleLoginUrl();
+}
+
 export function useAuthDiscovery() {
   return useQuery<TurDiscoveryAPI>({
     queryKey: queryKeys.authDiscovery.current(),

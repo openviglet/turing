@@ -75,7 +75,7 @@ Certain endpoints are publicly accessible, allowing client applications to perfo
 | `POST /api/genai/chat` | Direct GenAI chat |
 | `POST /api/ocr/**` | OCR text extraction |
 | `POST /api/v2/integration/**` | External integration endpoints |
-| `GET /api/v2/guest/**` | Guest access endpoints |
+| `GET /api/v2/guest/status`, `GET /api/v2/guest/login` | The read-only guest console: `status` says whether the host offers it, and `login` signs the browser in as the guest and opens the console. Off unless the host sets `turing.guest-console.enabled=true` (local authentication only). The guest browses every screen and saves nothing: every request that would change something answers `403`, and so do the users, groups, API tokens, gateway keys and exports |
 | `POST /graphql` | GraphQL queries |
 | `GET /api/login` | Login endpoint |
 

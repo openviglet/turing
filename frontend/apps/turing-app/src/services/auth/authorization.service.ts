@@ -17,6 +17,17 @@ export class TurAuthorizationService {
     return response.json() as Promise<TurRestInfo>;
   }
 
+  /** T1184 — whether this host offers the read-only guest console. */
+  async guestConsoleStatus(): Promise<{ enabled: boolean }> {
+    const response = await axios.get<{ enabled: boolean }>("/v2/guest/status");
+    return response.data;
+  }
+
+  /** T1184 — the URL that signs a visitor in as the read-only guest (a full-page navigation). */
+  guestConsoleLoginUrl(): string {
+    return `${axios.defaults.baseURL ?? ""}/v2/guest/login`;
+  }
+
   async discovery(): Promise<TurDiscoveryAPI> {
     const response = await axios.create().get<TurDiscoveryAPI>("/discovery");
     return response.data;

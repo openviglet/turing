@@ -15,6 +15,8 @@
 
 ## Block CJ — Releases ship from the repository the README names
 
+- ⏸ **T1184** (deps: —) **An evaluator cannot see the admin console without installing, and the README never links the live playground** — set aside (Needs access to turing-demo.viglet.org.): Turn turing.guest-console on at the demo host. → §CLXI.5
+
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 ## Block AN — Security hardening (post-audit, §XXXVII)

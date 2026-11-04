@@ -2317,7 +2317,9 @@ alternative judge the console as much as the results.
 existing demo host with a guest role that can browse but not save, reset on a schedule,
 with the LLM calls capped as the playground's already are. If a live console is too
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
-owner chose the live guest console (2026-11-04).
+owner chose the live guest console (2026-11-04). T1184b built it
+(`turing.guest-console.*`, read-only by `TurGuestReadOnlyFilter`). Left: turn it on at
+`turing-demo.viglet.org`, which needs the host.
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
