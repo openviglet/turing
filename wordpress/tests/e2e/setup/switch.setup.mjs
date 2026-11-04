@@ -18,14 +18,24 @@ test( 'switch the site', async ( {}, testInfo ) => {
 		wp( [ 'plugin', 'activate', plugin ] );
 	}
 	if ( theme ) {
+		let installed = '';
 		try {
 			wp( [ 'theme', 'is-installed', theme ] );
-		} catch {
+			installed = wp( [
+				'theme',
+				'get',
+				theme,
+				'--field=version',
+			] ).trim();
+		} catch {}
+		// A pinned theme is held to its version even when WordPress bundles or updated it:
+		// the baselines were taken against that version's markup (D301).
+		if ( ! installed || ( version && installed !== version ) ) {
 			wp( [
 				'theme',
 				'install',
 				theme,
-				...( version ? [ `--version=${ version }` ] : [] ),
+				...( version ? [ `--version=${ version }`, '--force' ] : [] ),
 			] );
 		}
 		wp( [ 'theme', 'activate', theme ] );

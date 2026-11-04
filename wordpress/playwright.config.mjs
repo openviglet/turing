@@ -22,7 +22,8 @@ const english = [ 'admin', 'site', 'site-tablet', 'site-phone' ];
 const variantSteps = [
 	{
 		name: 'site-classic',
-		metadata: { theme: 'twentytwentyone' },
+		// Pinned like Ollie, so a theme update cannot move the baselines (D301).
+		metadata: { theme: 'twentytwentyone', version: '2.9' },
 		testMatch: 'site/search.spec.mjs',
 	},
 	{
