@@ -104,7 +104,7 @@ Credits for all of it: `demo/seed/CREDITS.md`.
 ## The developer walkthrough (D281)
 
 A second, shorter piece for whoever puts the plugin on a client's site: install, connect,
-index, then the storefront and the insights, `developer.en.mp4` (3m26s). Narrated by **Chris**
+index, then the storefront and the insights, `developer.en.mp4` (3m19s). Narrated by **Chris**
 (ElevenLabs premade voice, `eleven_v3`): calm, plain and quietly upbeat, so it never sounds
 like Ana's story. Its lines are `demo/narration/developer.json`, its takes
 `demo/narration/developer/en/`, bought with `node bin/story-narration.mjs --script developer`.
