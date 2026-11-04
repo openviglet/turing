@@ -1624,3 +1624,4 @@
 
 ## Block CL — SN sites for research and memory archives
 
+- **T1220 (research stream, gates, SDK controller)** — POST /api/sn/{site}/research streams planned sub-questions, cited sections inside the caller's filters and what the index lacks, metered as sn.research; createResearchController in the SDK.

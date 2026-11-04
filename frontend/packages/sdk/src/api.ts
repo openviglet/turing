@@ -2771,6 +2771,172 @@ export async function postAnswer(
   return consumeAnswerStream(response, options);
 }
 
+// ─────────────────────────── Deep-dive research (T1220) ───────────────────────────
+
+/** T1220 — one planned sub-question of a deep dive. */
+export interface TurResearchStep {
+  index: number;
+  question: string;
+  query: string;
+  /** Hits retrieval found; absent until the step has run, `0` when it found nothing. */
+  hits?: number;
+  /** The overview-wide source numbers this step brought. */
+  sources?: number[];
+}
+
+/** T1220 — one composed section: every number in `citations` is a listed source. */
+export interface TurResearchSection {
+  title: string;
+  text: string;
+  citations: number[];
+}
+
+/** T1220 — one cited document; `rank` is the `[n]` the sections cite. */
+export interface TurResearchSource {
+  rank: number;
+  id: string | null;
+  title: string | null;
+  url: string | null;
+  score: number | null;
+  type: string | null;
+}
+
+/** Callbacks for {@link postResearch}, each fired as its event arrives. */
+export interface ResearchStreamHandlers {
+  onPlan?: (summary: string, steps: TurResearchStep[]) => void;
+  onStep?: (step: TurResearchStep) => void;
+  onSection?: (section: TurResearchSection) => void;
+  onUncovered?: (items: string[]) => void;
+  onSources?: (groups: Record<string, TurResearchSource[]>) => void;
+  onError?: (message: string) => void;
+}
+
+/** Final aggregate of one research stream. */
+export interface ResearchResult {
+  summary: string;
+  steps: TurResearchStep[];
+  sections: TurResearchSection[];
+  uncovered: string[];
+  /** The sources by document type (`other` when a document has none). */
+  sourceGroups: Record<string, TurResearchSource[]>;
+  error?: string;
+}
+
+/** Options for {@link postResearch}. */
+export interface PostResearchOptions extends ResearchStreamHandlers {
+  signal?: AbortSignal;
+  /** Every read stays inside these filters (field → accepted values). */
+  filters?: AnswerFilters;
+  /** How many sub-questions to plan, 3 to 6 (server default 5). */
+  maxSteps?: number;
+}
+
+/**
+ * T1220 — streams a deep dive over {@code site} (`POST /sn/{site}/research`):
+ * planned sub-questions, the sources each one found, cited sections, what the
+ * index does not cover and the sources grouped by type. Resolves with the
+ * aggregate once the stream ends; a refusal arrives as `error`, never a throw.
+ */
+export async function postResearch(
+  client: TuringClient,
+  site: string,
+  question: string,
+  locale?: string,
+  options?: PostResearchOptions,
+): Promise<ResearchResult> {
+  const response = await client.fetchRaw(`/sn/${encodeURIComponent(site)}/research`, {
+    method: "POST",
+    headers: { Accept: "text/event-stream", "Content-Type": "application/json" },
+    body: JSON.stringify({ question, locale, filters: options?.filters, maxSteps: options?.maxSteps }),
+    signal: options?.signal,
+  });
+  assertOk(response);
+  if (!response.body) {
+    throw emptyBody(response.url, "Research response");
+  }
+  const result: ResearchResult = { summary: "", steps: [], sections: [], uncovered: [], sourceGroups: {} };
+  const handlers = options ?? {};
+
+  function dispatch(eventName: string, data: string): void {
+    const parsed = parseJson<Record<string, unknown>>(data);
+    if (!parsed) return;
+    switch (eventName) {
+      case "plan": {
+        result.summary = typeof parsed.summary === "string" ? parsed.summary : "";
+        result.steps = Array.isArray(parsed.steps) ? (parsed.steps as TurResearchStep[]) : [];
+        handlers.onPlan?.(result.summary, result.steps);
+        return;
+      }
+      case "step": {
+        const step = parsed as unknown as TurResearchStep;
+        result.steps = result.steps.some((s) => s.index === step.index)
+          ? result.steps.map((s) => (s.index === step.index ? { ...s, ...step } : s))
+          : [...result.steps, step];
+        handlers.onStep?.(step);
+        return;
+      }
+      case "section": {
+        const section = parsed as unknown as TurResearchSection;
+        result.sections = [...result.sections, section];
+        handlers.onSection?.(section);
+        return;
+      }
+      case "uncovered": {
+        result.uncovered = Array.isArray(parsed.items) ? (parsed.items as string[]) : [];
+        handlers.onUncovered?.(result.uncovered);
+        return;
+      }
+      case "sources": {
+        result.sourceGroups = (parsed.groups as Record<string, TurResearchSource[]>) ?? {};
+        handlers.onSources?.(result.sourceGroups);
+        return;
+      }
+      case "error": {
+        result.error = typeof parsed.message === "string" ? parsed.message : data;
+        handlers.onError?.(result.error);
+        return;
+      }
+      default:
+        return; // `done` and unknown events carry nothing the aggregate needs
+    }
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let currentEvent = "";
+  let dataLines: string[] = [];
+  const flush = () => {
+    if (dataLines.length > 0) dispatch(currentEvent || "message", dataLines.join("\n"));
+    currentEvent = "";
+    dataLines = [];
+  };
+  const consume = (line: string) => {
+    if (line === "") return flush();
+    if (line.startsWith(":")) return;
+    if (line.startsWith("event:")) currentEvent = line.slice(6).trim();
+    else if (line.startsWith("data:")) {
+      const raw = line.slice(5);
+      dataLines.push(raw.startsWith(" ") ? raw.slice(1) : raw);
+    }
+  };
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) consume(line.replace(/\r$/, ""));
+    }
+    if (buffer) consume(buffer);
+    flush();
+  } finally {
+    reader.releaseLock();
+  }
+  return result;
+}
+
 /**
  * T840 — re-check whether a produced answer's cited sources have drifted (a source
  * re-indexed after the answer, or its cited passage gone). Returns the per-source

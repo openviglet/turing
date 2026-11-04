@@ -529,8 +529,11 @@ public class TurCatalogKitService {
                 words.isEmpty() ? "" : "; copy any field=value exactly as listed, never translated", plan);
     }
 
-    /** The locale's English display name, or the plan's own language when it has none. */
-    static String language(String locale) {
+    /**
+     * The locale's English display name, or the plan's own language when it has
+     * none. Public since T1220: the deep-dive research prompts name it too.
+     */
+    public static String language(String locale) {
         try {
             if (StringUtils.hasText(locale)) {
                 String name = LocaleUtils.toLocale(locale.strip()).getDisplayName(Locale.ENGLISH);

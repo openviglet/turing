@@ -2264,8 +2264,8 @@ not a new planner.
 3. compose cited sections, a timeline for dated sources, and "what the index does not cover" instead of filling gaps;
 4. return the sources grouped by type, ready for cards.
 
-Same refusals as `answer`. An SDK controller (`createResearchController`) for the Dumont
-plugin.
+Built: `TurSNDeepDiveService`, steps 1, 3-4. An SDK controller
+(`createResearchController`) for the Dumont plugin.
 
 **Done when:** on a seeded site, every section cites a document, nothing outside the
 filters, and an empty step is reported.

@@ -18,7 +18,7 @@
 
 ## Block CL — SN sites for research and memory archives
 
-- 📋 **T1220** (deps: —) **An SN site answers one question at a time: nothing plans sub-questions and composes a sectioned, cited overview** — A visitor who wants to understand a topic across dozens of documents gets one paragraph or a list of links. → §CLXVII.1
+- ⏳ **T1220** (deps: —) **An SN site answers one question at a time: nothing plans sub-questions and composes a sectioned, cited overview** — A thin step does not yet widen by facet, dated sources get no timeline, and no seeded-site IT checks the stream end to end. → §CLXVII.1
 - 📋 **T1221** (deps: —) **Turing was never read end to end as an education and memory site uses it: pt_BR, OCR, images, audio, flows** — FESPSP will use nearly every visitor feature at once, and the gaps are cheaper to find in one analysis than one by one in production. → §CLXVII.2
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
@@ -30,6 +30,18 @@
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
+
+## Done when — T1220
+
+- **A thin step widens by facet before it is reported empty** A step whose retrieval
+  returns fewer than the per-step sources retries inside one of the site's facet values;
+  a unit test shows a widened step citing a document the plain query missed.
+- **Dated sources produce a timeline event** When cited sources carry a DATE field, the
+  stream emits a `timeline` event of dated, cited entries in date order; a test checks
+  the order and that each entry cites a listed source.
+- **A seeded-site IT runs the research stream end to end** An IT over a seeded Lucene
+  site with a stubbed model checks that every section cites a document, no source is
+  outside the filters, and an empty step is reported.
 
 ## Non-goals (do NOT add as tasks)
 

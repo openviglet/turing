@@ -669,6 +669,51 @@ curl -X POST "http://localhost:2700/api/v2/llm/agent/my-agent/chat" \
 
 See [Chat](/docs/chat/) for the full chat interface documentation.
 
+### Deep-dive research
+
+A question whose answer is spread over many documents ("what has the school done on public health?") gets a sectioned overview instead of one paragraph. Turing plans 3 to 6 sub-questions, searches the site for each, and writes one section per sub-question the documents answer, each claim citing the source it comes from as `[n]`.
+
+```
+POST http://localhost:2700/api/sn/{siteName}/research
+```
+
+| Field | Description |
+|---|---|
+| `question` | The question to research (required) |
+| `locale` | The language of the overview; a locale the site has no index for falls back to its default indexed one |
+| `filters` | Field to accepted values, e.g. `{"site_key": ["main"]}`. Every search the research makes stays inside them |
+| `maxSteps` | How many sub-questions to plan, 3 to 6 (default 5) |
+
+The response is a stream of named Server-Sent Events, in this order:
+
+| Event | Data |
+|---|---|
+| `plan` | `summary` (the question restated) and `steps` (`index`, `question`, `query`) |
+| `step` | One per sub-question once searched: `hits` (`0` when the site has nothing on it) and the source numbers it brought |
+| `section` | `title`, `text` with `[n]` citations, and `citations` (the numbers the text cites) |
+| `uncovered` | `items`: the sub-questions and topics the documents do not answer. They are reported, never filled from general knowledge |
+| `sources` | `groups`: the cited documents by their `type` (`other` when a document has none), each with the `rank` the sections cite |
+| `done` | The number of sections and sources |
+| `error` | `message`, when the research is refused or fails; it ends the stream |
+
+Every section cites at least one listed document: a section the model wrote without one is dropped and named in `uncovered`, and a citation to a number no source has is removed. When no sub-question finds anything, the stream ends with `error` instead of an overview.
+
+The research needs the same as the [answer stream](#rag-chat-sn-site): AI enabled on the site and a default LLM. It is metered as the `sn.research` stage, so it shows in the site's cost summary and counts against the site agent's monthly budget, and it is rate-limited like chat for anonymous callers. A partitioned API key is refused.
+
+```bash
+curl -N -X POST "http://localhost:2700/api/sn/Sample/research" \
+  -H "Content-Type: application/json" \
+  -d '{ "question": "What has the school done on public health?", "locale": "pt_BR" }'
+```
+
+From JavaScript, `createResearchController(client, { site })` in `@viglet/turing-sdk` keeps the plan, steps, sections, `uncovered` and the grouped sources in an observable store:
+
+```js
+const research = createResearchController(client, { site: "Sample", locale: "pt_BR" });
+research.subscribe((state) => render(state.sections, state.uncovered, state.sourceGroups));
+await research.ask("What has the school done on public health?", { filters: { site_key: ["main"] } });
+```
+
 <a id="ai-capabilities"></a>
 
 ### AI capabilities of a site

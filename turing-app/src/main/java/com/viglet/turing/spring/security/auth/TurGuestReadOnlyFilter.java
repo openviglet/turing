@@ -76,7 +76,7 @@ public class TurGuestReadOnlyFilter extends OncePerRequestFilter {
     /** Writes any anonymous visitor may make anyway: the public search and chat of a site. */
     static final List<Pattern> PUBLIC_WRITES = List.of(
             Pattern.compile("^/api/sn/[^/]+/(?:search(?:/query|/list/query)?|ac/query|click"
-                    + "|chat/conversation|nl-filters|copilot)$"),
+                    + "|chat/conversation|nl-filters|copilot|research)$"),
             Pattern.compile("^/logout$"));
 
     @Override

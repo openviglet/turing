@@ -48,6 +48,7 @@ export {
   fetchAnswerShare,
   recordAnswerSignal,
   consumeAnswerStream,
+  postResearch,
   deleteSiteConversationState,
   deleteAgentFlowState,
   fetchIntents,
@@ -112,6 +113,12 @@ export type {
   AnswerFilters,
   AnswerShareSnapshot,
   TurAnswerSignalKind,
+  PostResearchOptions,
+  ResearchStreamHandlers,
+  ResearchResult,
+  TurResearchStep,
+  TurResearchSection,
+  TurResearchSource,
   TurChatSessionSlots,
   TurChatSessionSlotsDelta,
   TurWorkspaceArtifact,
@@ -256,6 +263,15 @@ export type {
   ClientToolHandler,
   ClientToolRegistration,
 } from "./controllers/chat.js";
+// T1220 — observable deep-dive research controller.
+export { createResearchController } from "./controllers/research.js";
+export type {
+  ResearchController,
+  ResearchControllerState,
+  ResearchAskOptions,
+  ResearchStatus,
+} from "./controllers/research.js";
+
 // T837 / §LXII.6 — observable answer controller (the vanilla useTuringAnswer).
 export { createAnswerController } from "./controllers/answer.js";
 export type {
