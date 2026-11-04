@@ -15,3 +15,5 @@
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
+## Block CK — Relevance for dated content: upcoming before past
+

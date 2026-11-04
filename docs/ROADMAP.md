@@ -16,6 +16,10 @@
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
+## Block CK — Relevance for dated content: upcoming before past
+
+- 📋 **T1219** (deps: —) **A DATE ranking condition boosts by distance from now in both directions: a past event ties with an upcoming one** — An agenda search cannot put this week's event first without hiding past ones, and on Solr a future date even inflates the boost. → §CLXVI.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

@@ -31,6 +31,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
+## Block CK — Relevance for dated content: upcoming before past
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2236,3 +2238,28 @@ owner chose the live guest console (2026-11-04). T1184b built it
 
 What keeps a release from failing on its own tests for reasons the code under release
 did not cause.
+
+## CLXVI Relevance for dated content: upcoming before past
+
+### CLXVI.1 An upcoming-first form for DATE ranking (T1219)
+
+**Where it came from.** FESPSP's institutional site indexes its agenda (`evento`, start date mapped as DATE through the Dumont WordPress plugin, D147). A search for "debate" should list this week's debate before one from 2023 and one six months away, without hiding past ones (they hold recordings). The only date form a ranking expression has is the recency boost (T1064), a DATE condition `asc`:
+- on Lucene, `LongField.newDistanceFeatureQuery(field, 1f, now, pivot)` in `TurLuceneRankingExpressions` scores by **absolute** distance from now, so last week and next week tie;
+- on Solr, `recip(ms(NOW/DAY,field),3.16e-11,1,1)` goes above 1 for a future date, since `ms()` turns negative.
+
+No workaround written: the site waits on this line.
+
+**What Turing should do.** A second DATE condition value, `upcoming`:
+- today or later is boosted, nearest most, on the same pivot curve;
+- the past gets no boost (it still matches);
+- `asc` keeps meaning "recent past", with future dates as distance zero on Solr, a fix worth its own changelog words.
+
+The console's ranking-expression editor offers it as "Upcoming first", the manifest
+accepts it, and Elasticsearch gets the equivalent (decay from `now` plus a `gte: now`
+step).
+
+An event with a poster period stays current until its end date: decide whether the
+condition takes an optional end field or the site maps one "relevant until" field.
+
+**Done when:** on Lucene, Solr and Elasticsearch, of three equal-text documents dated
+−7, +7 and +180 days, `upcoming` ranks +7, +180, −7.
