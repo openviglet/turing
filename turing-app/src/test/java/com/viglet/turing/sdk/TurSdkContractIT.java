@@ -849,8 +849,12 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
             assertTrue(autocomplete.body().contains("probe a") && !autocomplete.body().contains("probe b"),
                     "key A's suggestions must be its own titles only: " + autocomplete.body());
 
-            assertEquals(403, getWithKey("/sn/" + SITE + "/search/duplicates?id=" + partitionProbeId("a")
-                    + "&_setlocale=" + LOCALE, keyA).statusCode(), "duplicates does not enforce partitions yet");
+            // T1133i — duplicate clusters are confined to the key's partition.
+            HttpResponse<String> duplicates = getWithKey("/sn/" + SITE + "/search/duplicates?id="
+                    + partitionProbeId("a") + "&_setlocale=" + LOCALE, keyA);
+            assertEquals(200, duplicates.statusCode(), duplicates.body());
+            assertTrue(!duplicates.body().contains(partitionProbeId("b")),
+                    "key A's duplicate clusters must not name partition B: " + duplicates.body());
 
             HttpResponse<String> intoB = postJson("/sn/import", """
                     {"turingDocuments":[{"turSNJobAction":"CREATE","siteNames":["%s"],"locale":"en_US",
@@ -1026,8 +1030,9 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
                     BodyHandlers.ofString());
             assertEquals(List.of(partitionProbeId("b")), documentIds(keyBesideSession),
                     "key B beside A's session must search partition B only");
-            for (String path : List.of("/sn/" + SITE + "/search/duplicates?id=" + partitionProbeId("a")
-                    + "&_setlocale=" + LOCALE, "/dev/token")) {
+            // Routes a partitioned key is refused on stay refused to its session (the
+            // export carries every partition's content).
+            for (String path : List.of("/sn/export", "/dev/token")) {
                 assertEquals(403, http.send(HttpRequest.newBuilder(URI.create(base() + path))
                         .header("Cookie", cookie).GET().build(), BodyHandlers.ofString()).statusCode(),
                         "the replayed session reached " + path);
