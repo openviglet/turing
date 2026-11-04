@@ -18,8 +18,6 @@
 
 ## Block CL — SN sites for research and memory archives
 
-- 📋 **T1221** (deps: —) **Turing was never read end to end as an education and memory site uses it: pt_BR, OCR, images, audio, flows** — FESPSP will use nearly every visitor feature at once, and the gaps are cheaper to find in one analysis than one by one in production. → §CLXVII.2
-
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
 - 📋 **T1222** (deps: —) **Elasticsearch ignores a site's ranking expressions: no boost is built, while Solr and Lucene apply them** — A site moved to Elasticsearch silently loses every boost its console shows, with no warning in the editor or the logs. → §CLXVIII.1
