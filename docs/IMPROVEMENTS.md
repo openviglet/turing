@@ -2341,7 +2341,9 @@ build clauses that match the document for either spelling, the accented one addi
 stem. Lucene never applies the spell-check correction, and the relaxed retry fires only
 on zero results.
 
-**Next.** Query the live demo server directly (owner, 2026-11-04). Read the demo's own
+**Next.** Query the live demo server directly (owner, 2026-11-04). On 2026-11-04
+`turing-demo.viglet.org` held no `Demo` site, and `tarnfell` is indexed in en-US only,
+so the case needs a pt_BR index that holds the Borrowdale document. Read the demo's own
 index for the Borrowdale document: its stored title and the terms of its title field
 (Unicode NFD text, which accent folding does not touch, or an index written before T1080
 are the suspects), and the image version the demo runs.
