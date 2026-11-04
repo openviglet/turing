@@ -28,7 +28,16 @@ public final class TurSolrConstants {
     public static final String MM = "mm";
     /** T1176 — the relaxed retry's minimum match: half of the words, rounded down. */
     public static final String RELAXED_MINIMUM_MATCH = "50%";
-    public static final String RECENT_DATES = "{!func}recip(ms(NOW/DAY,%s),3.16e-11,1,1)";
+    /**
+     * The recency boost of a DATE condition {@code asc}. T1219: the distance is
+     * clamped at zero, so a future date scores as today instead of above 1.
+     */
+    public static final String RECENT_DATES = "{!func}recip(max(ms(NOW/DAY,%s),0),3.16e-11,1,1)";
+    /** T1219 — the DATE condition value that boosts today or later, nearest most. */
+    public static final String UPCOMING = "upcoming";
+    /** T1219 — the upcoming-first boost: the recency curve forward in time, zero for the past. */
+    public static final String UPCOMING_DATES =
+            "{!func}if(gte(ms(%1$s,NOW/DAY),0),recip(ms(%1$s,NOW/DAY),3.16e-11,1,1),0)";
     public static final String TUR_SUGGEST = "/tur_suggest";
     public static final String TUR_SPELL = "/tur_spell";
     public static final String FILTER_QUERY_OR = "{!tag=_all_}";

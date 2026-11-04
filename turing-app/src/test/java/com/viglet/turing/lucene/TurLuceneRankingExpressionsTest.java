@@ -235,6 +235,79 @@ class TurLuceneRankingExpressionsTest {
         assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
     }
 
+    /** T1219 — three equal-text agenda events dated −7, +7 and +180 days from NOW. */
+    private static List<ScoreDoc> rankAgenda(List<Query> boosts, List<String> idsOut) throws Exception {
+        Instant now = Instant.ofEpochMilli(NOW);
+        try (Directory dir = new ByteBuffersDirectory()) {
+            try (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {
+                writer.addDocument(job("past-7", "event", now.minus(7, ChronoUnit.DAYS)));
+                writer.addDocument(job("next-7", "event", now.plus(7, ChronoUnit.DAYS)));
+                writer.addDocument(job("next-180", "event", now.plus(180, ChronoUnit.DAYS)));
+                writer.addDocument(job("today", "event", now.truncatedTo(ChronoUnit.DAYS)));
+            }
+            try (DirectoryReader reader = DirectoryReader.open(dir)) {
+                IndexSearcher searcher = new IndexSearcher(reader);
+                BooleanQuery.Builder builder = new BooleanQuery.Builder()
+                        .add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
+                boosts.forEach(boost -> builder.add(boost, BooleanClause.Occur.SHOULD));
+                List<ScoreDoc> hits = List.of(searcher.search(builder.build(), 10).scoreDocs);
+                for (ScoreDoc hit : hits) {
+                    idsOut.add(searcher.storedFields().document(hit.doc).get("id"));
+                }
+                return hits;
+            }
+        }
+    }
+
+    @Test
+    void upcomingRanksNearestFutureFirstAndLeavesThePastUnboosted() throws Exception {
+        fields("publicationDate", TurSEFieldType.DATE);
+        TurSNRankingExpression upcoming = expression("upcoming", 2f, "publicationDate", "upcoming");
+        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(upcoming));
+
+        List<String> ids = new ArrayList<>();
+        List<ScoreDoc> hits = rankAgenda(rankingExpressions().boostQueries(site, NOW), ids);
+
+        assertEquals(List.of("today", "next-7", "next-180", "past-7"), ids);
+        // The past event still matches, with no boost: only the main query's score.
+        assertTrue(hits.get(2).score > hits.get(3).score);
+    }
+
+    @Test
+    void recencyCountsAFutureDateAsTodayInsteadOfDistance() throws Exception {
+        fields("publicationDate", TurSEFieldType.DATE);
+        TurSNRankingExpression recent = expression("recent", 2f, "publicationDate", "asc");
+        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(recent));
+
+        List<String> ids = new ArrayList<>();
+        List<ScoreDoc> hits = rankAgenda(rankingExpressions().boostQueries(site, NOW), ids);
+
+        // Before T1219 +180 scored as 180 days old, and +7 tied with −7. Now every
+        // future date scores as today, the ceiling, and the past decays from it.
+        assertEquals("past-7", ids.getLast());
+        float ceiling = hits.getFirst().score;
+        for (int i = 0; i < 3; i++) {
+            assertEquals(ceiling, hits.get(i).score, 1e-6f);
+        }
+        assertTrue(hits.get(3).score < ceiling);
+    }
+
+    @Test
+    void isNotOnTheUpcomingFormIsSkipped() {
+        fields("publicationDate", TurSEFieldType.DATE);
+        TurSNRankingExpression notUpcoming = new TurSNRankingExpression();
+        notUpcoming.setName("not-upcoming");
+        notUpcoming.setWeight(2f);
+        TurSNRankingCondition isNot = new TurSNRankingCondition();
+        isNot.setAttribute("publicationDate");
+        isNot.setValue("upcoming");
+        isNot.setCondition(TurSNRankingCondition.IS_NOT);
+        when(conditionRepository.findByTurSNRankingExpression(notUpcoming)).thenReturn(Set.of(isNot));
+        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(notUpcoming));
+
+        assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
+    }
+
     @Test
     void recencyPivotMatchesSolrRecipCurve() {
         // recip(x, 3.16e-11, 1, 1) halves at x = 1 / 3.16e-11 ms (about a year).

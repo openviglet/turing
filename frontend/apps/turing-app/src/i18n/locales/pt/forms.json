@@ -1525,7 +1525,10 @@
       "valueRequired": "Valor é obrigatório.",
       "removeCondition": "Remover condição",
       "addCondition": "Adicionar Condição",
-      "conditionMinimum": "Pelo menos uma condição é obrigatória."
+      "conditionMinimum": "Pelo menos uma condição é obrigatória.",
+      "chooseDateForm": "Escolha como as datas ordenam",
+      "mostRecent": "Mais recentes",
+      "upcomingFirst": "Próximos primeiro"
     },
     "fieldGrid": {
       "type": "Tipo",

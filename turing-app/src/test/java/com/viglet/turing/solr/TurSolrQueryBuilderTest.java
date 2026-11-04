@@ -745,6 +745,43 @@ class TurSolrQueryBuilderTest {
         }
 
         @Test
+        void testPrepareSolrQueryBoostsUpcomingDatesForward() {
+                TurSNSite site = new TurSNSite();
+                site.setRowsPerPage(10);
+                site.setSpellCheck(0);
+                site.setSpellCheckFixes(0);
+
+                TurSNRankingExpression expression = new TurSNRankingExpression();
+                expression.setId("expr-upcoming");
+                expression.setWeight(4.0f);
+                TurSNRankingCondition upcoming = new TurSNRankingCondition();
+                upcoming.setAttribute("eventEnd");
+                upcoming.setValue("upcoming");
+
+                when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of(
+                                TurSNSiteFieldExt.builder().name("eventEnd")
+                                                .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE).build()));
+                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
+                                .thenReturn(Set.of(expression));
+                when(turSNRankingConditionRepository.findByTurSNRankingExpression(expression))
+                                .thenReturn(Set.of(upcoming));
+
+                TurSNSearchParams params = new TurSNSearchParams();
+                params.setQ("query");
+                params.setRows(10);
+                TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
+
+                SolrQuery query = builder().prepareSolrQuery(
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                seParameters, new TurSESpellCheckResult(false, ""));
+
+                // T1219 — today or later on the recency curve, nearest most; the past scores 0.
+                assertThat(query.getParams("bq")).containsExactly(
+                                "(_query_:\"{!func}if(gte(ms(eventEnd,NOW/DAY),0),"
+                                                + "recip(ms(eventEnd,NOW/DAY),3.16e-11,1,1),0)\")^4.0");
+        }
+
+        @Test
         void testPrepareSolrQueryBoostQueryNegatesIsNotCondition() {
                 TurSNSite site = new TurSNSite();
                 site.setRowsPerPage(10);

@@ -22,6 +22,8 @@ import static com.viglet.turing.solr.TurSolrConstants.MM;
 import static com.viglet.turing.solr.TurSolrConstants.Q_OP;
 import static com.viglet.turing.solr.TurSolrConstants.RELAXED_MINIMUM_MATCH;
 import static com.viglet.turing.solr.TurSolrConstants.RECENT_DATES;
+import static com.viglet.turing.solr.TurSolrConstants.UPCOMING;
+import static com.viglet.turing.solr.TurSolrConstants.UPCOMING_DATES;
 import static com.viglet.turing.solr.TurSolrConstants.ROWS;
 import static com.viglet.turing.solr.TurSolrConstants.SOLR_DATE_PATTERN;
 import static com.viglet.turing.solr.TurSolrConstants.TRUE;
@@ -267,15 +269,15 @@ public class TurSolrQueryBuilder {
             TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtList.stream()
                     .filter(field -> field.getName().equals(condition.getAttribute()))
                     .findFirst().orElse(TurSNSiteFieldExt.builder().build());
-            if (turSNSiteFieldExt.getType() != null
-                    && turSNSiteFieldExt.getType().equals(TurSEFieldType.DATE)
-                    && condition.getValue().equalsIgnoreCase(ASC)) {
+            String dateFunction = turSNSiteFieldExt.getType() == TurSEFieldType.DATE
+                    ? dateFunction(condition.getValue()) : null;
+            if (dateFunction != null) {
                 if (negated) {
                     log.debug("Ranking expression '{}' skipped: Is not has no meaning on the recency form",
                             expression.getName());
                     return null;
                 }
-                clauses.add(String.format("_query_:\"" + RECENT_DATES + "\"", condition.getAttribute()));
+                clauses.add(String.format("_query_:\"" + dateFunction + "\"", condition.getAttribute()));
                 continue;
             }
             String match = String.format("%s:\"%s\"", condition.getAttribute(), condition.getValue());
@@ -283,6 +285,21 @@ public class TurSolrQueryBuilder {
             clauses.add(negated ? "(*:* -" + match + ")" : match);
         }
         return clauses.isEmpty() ? null : String.join(betweenSpaces(AND), clauses);
+    }
+
+    /**
+     * The function query of a scored DATE condition: {@code asc} (recent past) or
+     * {@code upcoming} (T1219: today or later, nearest most); {@code null} for an
+     * exact date value.
+     */
+    private static String dateFunction(String value) {
+        if (ASC.equalsIgnoreCase(value)) {
+            return RECENT_DATES;
+        }
+        if (UPCOMING.equalsIgnoreCase(value)) {
+            return UPCOMING_DATES;
+        }
+        return null;
     }
 
     private void prepareGroup(TurSEParameters turSEParameters, SolrQuery query) {

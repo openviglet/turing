@@ -15,8 +15,6 @@
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
-## Block CK — Relevance for dated content: upcoming before past
-
 ## Block CL — SN sites for research and memory archives
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)

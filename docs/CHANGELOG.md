@@ -1620,5 +1620,7 @@
 
 ## Block CK — Relevance for dated content: upcoming before past
 
+- **T1219** — A DATE ranking condition takes "upcoming" (today or later, nearest first, past kept unboosted) on Solr and Lucene, picked in the console; "asc" scores a future date as today (design §CLXVI.1 superseded: its done-when said asc must not boost +7 above -7, but its own rule (future = distance zero) gives +7 today's boost, the ceiling; the test checks that ceiling) (design §CLXVI.1 recorded in `frontend/apps/docs/src/content/docs/semantic-navigation.md`).
+
 ## Block CL — SN sites for research and memory archives
 

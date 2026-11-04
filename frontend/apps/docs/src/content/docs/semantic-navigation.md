@@ -1003,7 +1003,14 @@ A slider from **0** to **10** that sets the boost intensity. Higher weight cause
 
 **Example:** A condition `type Is news` with weight `8` causes documents of type "news" to rank significantly higher than other results.
 
-**Recency boost:** on a **date** field, the value `asc` boosts recent documents instead of matching a value. The boost decays smoothly with age: a document about a year old gets half the boost of one published today. For example, `publicationDate Is asc` with weight `3` favours fresh content without hiding older results.
+**Date boosts:** on a **date** field, the **Value** is a choice between two ranking forms instead of free text:
+
+| Form | Stored value | What it boosts |
+|---|---|---|
+| **Most recent** | `asc` | The recent past. The boost decays smoothly with age: a document about a year old gets half the boost of one dated today. A date in the future counts as today, never more. |
+| **Upcoming first** | `upcoming` | Today or later, nearest first, on the same curve: an event next week outranks one in six months. Past dates get no boost but still appear in the results. |
+
+For example, `publicationDate Is Most recent` with weight `3` favours fresh content without hiding older results, and `eventEnd Is Upcoming first` lists an agenda's next events first while keeping past ones (and their recordings) searchable. Put **Upcoming first** on the date that says until when an item is relevant (the end date, where content has one), so an event that runs for a week stays current until it ends. `Is not` has no meaning on either form, and an expression that uses it is skipped.
 
 ---
 

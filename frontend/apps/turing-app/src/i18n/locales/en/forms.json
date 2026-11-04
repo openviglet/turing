@@ -1525,7 +1525,10 @@
       "valueRequired": "Value is required.",
       "removeCondition": "Remove condition",
       "addCondition": "Add Condition",
-      "conditionMinimum": "At least one condition is required."
+      "conditionMinimum": "At least one condition is required.",
+      "chooseDateForm": "Choose how dates rank",
+      "mostRecent": "Most recent",
+      "upcomingFirst": "Upcoming first"
     },
     "fieldGrid": {
       "type": "Type",

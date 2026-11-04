@@ -38,6 +38,7 @@ import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BoostQuery;
+import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.FieldExistsQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
@@ -66,7 +67,8 @@ import lombok.extern.slf4j.Slf4j;
  * The caller adds each clause as {@code SHOULD} next to the main query, so it
  * raises the score of matching documents without changing which documents match.
  * A condition on a DATE field with value {@code asc} is a recency boost on the
- * same curve as Solr's {@code recip(ms(NOW/DAY,field),3.16e-11,1,1)}. Any other
+ * same curve as Solr's {@code recip(ms(NOW/DAY,field),3.16e-11,1,1)}, and one with
+ * value {@code upcoming} boosts today or later, nearest most (T1219). Any other
  * condition is an exact match on the field, typed by the field's configuration.
  *
  * @author Alexandre Oliveira
@@ -77,6 +79,8 @@ import lombok.extern.slf4j.Slf4j;
 public class TurLuceneRankingExpressions {
 
     private static final String ASC = "asc";
+    /** T1219 — the upcoming-first DATE form: today or later, nearest most. */
+    private static final String UPCOMING = "upcoming";
 
     /**
      * Solr's {@code recip(x, m, 1, 1) = 1 / (m·x + 1)} with {@code m = 3.16e-11}
@@ -164,8 +168,8 @@ public class TurLuceneRankingExpressions {
             return null;
         }
         boolean negated = condition.getCondition() == TurSNRankingCondition.IS_NOT;
-        if (negated && type == TurSEFieldType.DATE && ASC.equalsIgnoreCase(value)) {
-            return null; // T1070 — Is not has no meaning on the recency form
+        if (negated && type == TurSEFieldType.DATE && isScoredDateForm(value)) {
+            return null; // T1070 — Is not has no meaning on the recency or upcoming form
         }
         Query match = matchQuery(field, value, type, origin);
         if (match == null || !negated) {
@@ -184,9 +188,7 @@ public class TurLuceneRankingExpressions {
         }
         try {
             return switch (type) {
-                case DATE -> ASC.equalsIgnoreCase(value)
-                        ? LongField.newDistanceFeatureQuery(field, 1f, origin, RECENCY_PIVOT_MS)
-                        : LongPoint.newExactQuery(field, Instant.parse(value).toEpochMilli());
+                case DATE -> dateQuery(field, value, origin);
                 case TEXT -> phraseQuery(field, value);
                 case INT -> IntPoint.newExactQuery(field, Integer.parseInt(value.trim()));
                 case LONG -> LongPoint.newExactQuery(field, Long.parseLong(value.trim()));
@@ -197,6 +199,41 @@ public class TurLuceneRankingExpressions {
         } catch (NumberFormatException | DateTimeParseException e) {
             return null;
         }
+    }
+
+    /**
+     * A DATE condition: {@code asc} boosts the recent past and counts a future date
+     * as distance zero (T1219: the distance-feature query alone scores by absolute
+     * distance, so last and next week tied); {@code upcoming} boosts today or later,
+     * nearest most, and leaves the past unboosted; anything else is an exact date.
+     */
+    private static Query dateQuery(String field, String value, long origin) {
+        if (ASC.equalsIgnoreCase(value)) {
+            Query past = new BooleanQuery.Builder()
+                    .add(LongPoint.newRangeQuery(field, Long.MIN_VALUE, origin), BooleanClause.Occur.FILTER)
+                    .add(LongField.newDistanceFeatureQuery(field, 1f, origin, RECENCY_PIVOT_MS),
+                            BooleanClause.Occur.MUST)
+                    .build();
+            Query future = new ConstantScoreQuery(
+                    LongPoint.newRangeQuery(field, Math.addExact(origin, 1), Long.MAX_VALUE));
+            return new BooleanQuery.Builder()
+                    .add(past, BooleanClause.Occur.SHOULD)
+                    .add(future, BooleanClause.Occur.SHOULD)
+                    .build();
+        }
+        if (UPCOMING.equalsIgnoreCase(value)) {
+            return new BooleanQuery.Builder()
+                    .add(LongPoint.newRangeQuery(field, origin, Long.MAX_VALUE), BooleanClause.Occur.FILTER)
+                    .add(LongField.newDistanceFeatureQuery(field, 1f, origin, RECENCY_PIVOT_MS),
+                            BooleanClause.Occur.MUST)
+                    .build();
+        }
+        return LongPoint.newExactQuery(field, Instant.parse(value).toEpochMilli());
+    }
+
+    /** Whether {@code value} is one of the two scored DATE forms rather than a date. */
+    static boolean isScoredDateForm(String value) {
+        return ASC.equalsIgnoreCase(value) || UPCOMING.equalsIgnoreCase(value);
     }
 
     /** Solr's {@code field:"value"} on an analyzed field: the value as a phrase. */

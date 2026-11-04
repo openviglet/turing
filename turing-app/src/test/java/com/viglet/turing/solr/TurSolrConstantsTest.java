@@ -85,8 +85,16 @@ class TurSolrConstantsTest {
     @Test
     void testRecentDatesConstant() {
         assertThat(TurSolrConstants.RECENT_DATES)
-                .isEqualTo("{!func}recip(ms(NOW/DAY,%s),3.16e-11,1,1)")
+                .isEqualTo("{!func}recip(max(ms(NOW/DAY,%s),0),3.16e-11,1,1)")
                 .contains("%s");
+    }
+
+    @Test
+    void testUpcomingDatesConstant() {
+        assertThat(TurSolrConstants.UPCOMING).isEqualTo("upcoming");
+        assertThat(String.format(TurSolrConstants.UPCOMING_DATES, "eventDate"))
+                .isEqualTo("{!func}if(gte(ms(eventDate,NOW/DAY),0),"
+                        + "recip(ms(eventDate,NOW/DAY),3.16e-11,1,1),0)");
     }
 
     @Test

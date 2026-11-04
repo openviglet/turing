@@ -22,7 +22,7 @@ import type { TurSNRankingExpression } from '@/models/sn/sn-ranking-expression.m
 import type { TurSNSiteField } from '@/models/sn/sn-site-field.model';
 import { TurSNFieldService } from '@/services/sn/sn.field.service';
 import { useEffect, useState } from 'react';
-import { Controller, useFieldArray, type Control, type FieldErrors, type UseFormRegister, type FieldValues, type ArrayPath } from 'react-hook-form';
+import { Controller, useFieldArray, useWatch, type Control, type FieldErrors, type UseFormRegister, type FieldValues, type ArrayPath } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 interface DynamicResultRankingFieldsProps<TFieldValues extends FieldValues = FieldValues> {
@@ -36,6 +36,9 @@ const turSNFieldService = new TurSNFieldService();
 
 /** TurSNRankingCondition.EXISTS: the document has any value in the field (T1065). */
 const CONDITION_EXISTS = 3;
+
+/** T1219 — the scored DATE forms: recent past (`asc`) and today-or-later, nearest first (`upcoming`). */
+const DATE_FORMS = new Set(["asc", "upcoming"]);
 
 export function DynamicResultRankingFields<TFieldValues extends FieldValues = FieldValues>({ control, register, fieldName, snSiteId, errors }: Readonly<DynamicResultRankingFieldsProps<TFieldValues>>) {
     const { t } = useTranslation();
@@ -51,6 +54,14 @@ export function DynamicResultRankingFields<TFieldValues extends FieldValues = Fi
     useEffect(() => {
         turSNFieldService.query(snSiteId).then(setSNFields)
     }, [snSiteId]);
+
+    const conditions = useWatch({ control, name: fieldName as any }) as Array<{ attribute?: string; condition?: number }> | undefined;
+    /** T1219 — a DATE field takes a ranking form ("Most recent" / "Upcoming first"), not free text. */
+    const isDateField = (index: number) => {
+        const row = conditions?.[index];
+        if (!row?.attribute || Number(row.condition) === CONDITION_EXISTS) return false;
+        return snFields.some((f) => f.name === row.attribute && f.type?.toUpperCase() === "DATE");
+    };
 
     const handleAddField = () => {
         append({ attribute: '', condition: '', value: '' } as any);
@@ -122,6 +133,34 @@ export function DynamicResultRankingFields<TFieldValues extends FieldValues = Fi
                             {/* Value input */}
                             <div>
                                 <span className="text-xs text-muted-foreground mb-1 block md:hidden">{t("forms.common.value")}</span>
+                                {isDateField(index) ? (
+                                    <Controller
+                                        control={control}
+                                        name={`${fieldName}.${index}.value` as any}
+                                        rules={{ required: t("forms.resultRankingField.valueRequired") }}
+                                        render={({ field: controllerField }) => {
+                                            const raw: unknown = controllerField.value;
+                                            const current: string = typeof raw === "string" ? raw : "";
+                                            // A value saved before T1219 (an exact date) stays selectable.
+                                            const legacy = current !== "" && !DATE_FORMS.has(current.toLowerCase());
+                                            return (
+                                                <Select onValueChange={controllerField.onChange} value={legacy ? current : current.toLowerCase()}>
+                                                    <SelectTrigger
+                                                        className={fieldErrors?.value ? "border-destructive" : ""}
+                                                        aria-label={t("forms.common.value")}
+                                                    >
+                                                        <SelectValue placeholder={t("forms.resultRankingField.chooseDateForm")} />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="asc">{t("forms.resultRankingField.mostRecent")}</SelectItem>
+                                                        <SelectItem value="upcoming">{t("forms.resultRankingField.upcomingFirst")}</SelectItem>
+                                                        {legacy && <SelectItem value={current}>{current}</SelectItem>}
+                                                    </SelectContent>
+                                                </Select>
+                                            );
+                                        }}
+                                    />
+                                ) : (
                                 <Input
                                     className={fieldErrors?.value ? "border-destructive" : ""}
                                     placeholder={t("forms.common.value")}
@@ -133,6 +172,7 @@ export function DynamicResultRankingFields<TFieldValues extends FieldValues = Fi
                                             || t("forms.resultRankingField.valueRequired"),
                                     })}
                                 />
+                                )}
                                 {fieldErrors?.value && (
                                     <p className="text-xs text-destructive mt-1">{fieldErrors.value.message}</p>
                                 )}

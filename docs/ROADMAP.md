@@ -16,10 +16,6 @@
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
-## Block CK — Relevance for dated content: upcoming before past
-
-- 📋 **T1219** (deps: —) **A DATE ranking condition boosts by distance from now in both directions: a past event ties with an upcoming one** — An agenda search cannot put this week's event first without hiding past ones, and on Solr a future date even inflates the boost. → §CLXVI.1
-
 ## Block CL — SN sites for research and memory archives
 
 - 📋 **T1220** (deps: —) **An SN site answers one question at a time: nothing plans sub-questions and composes a sectioned, cited overview** — A visitor who wants to understand a topic across dozens of documents gets one paragraph or a list of links. → §CLXVII.1

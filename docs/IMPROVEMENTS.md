@@ -31,8 +31,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
-## Block CK — Relevance for dated content: upcoming before past
-
 ## Block CL — SN sites for research and memory archives
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
@@ -2244,28 +2242,6 @@ What keeps a release from failing on its own tests for reasons the code under re
 did not cause.
 
 ## CLXVI Relevance for dated content: upcoming before past
-
-### CLXVI.1 An upcoming-first form for DATE ranking (T1219)
-
-**Where it came from.** FESPSP's institutional site indexes its agenda (`evento`, start and poster-end dates mapped as DATE through the Dumont WordPress plugin, D147). "debate" should list this week's debate before 2023's and one six months away, keeping past ones (they hold recordings). The only date form a ranking expression has is the recency boost (T1064), a DATE condition `asc`:
-- on Lucene, `LongField.newDistanceFeatureQuery(field, 1f, now, pivot)` in `TurLuceneRankingExpressions` scores by **absolute** distance from now, so last and next week tie;
-- on Solr, `recip(ms(NOW/DAY,field),3.16e-11,1,1)` goes above 1 for a future date, since `ms()` turns negative.
-
-**What Turing should do.** A second DATE condition value, `upcoming`:
-- today or later is boosted, nearest most, on the same pivot curve;
-- the past gets no boost (it still matches);
-- `asc` keeps meaning "recent past": future dates count as distance zero on Lucene and Solr alike, a fix worth its own changelog words.
-
-No second field: the condition goes on the field saying until when an item is relevant
-(the end date where content has one), so a week-long poster event stays current until it
-ends.
-
-The console's ranking editor offers DATE fields a choice, "Most recent" (`asc`) or
-"Upcoming first", instead of free text. The manifest declares no ranking expressions,
-and Elasticsearch applies none at all (T1222), so both stay out.
-
-**Done when:** on Lucene and Solr, of three equal-text documents dated −7, +7 and +180
-days, `upcoming` ranks +7, +180, −7, and `asc` no longer boosts +7 above −7.
 
 ## CLXVII Deep-dive research over an SN site
 
