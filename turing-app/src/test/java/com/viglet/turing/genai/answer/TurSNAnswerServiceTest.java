@@ -70,9 +70,80 @@ class TurSNAnswerServiceTest {
     private com.viglet.turing.system.TurGlobalSettingsService globalSettingsService;
     @Mock
     private TurSNChatRouteResolver chatRouteResolver;
+    @Mock
+    private com.viglet.turing.genai.TurSNSiteVectorProbe vectorProbe;
 
     @InjectMocks
     private TurSNAnswerService service;
+
+    private static final com.viglet.turing.commons.se.TurSEPartition PARTITION =
+            new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a");
+
+    /** T1133 — runs {@code call} as a request whose API key is bound to {@link #PARTITION}. */
+    private static <T> T asPartitionedKey(java.util.function.Supplier<T> call) {
+        org.springframework.mock.web.MockHttpServletRequest request =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        request.setAttribute(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.class.getName(),
+                PARTITION);
+        org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
+                new org.springframework.web.context.request.ServletRequestAttributes(request));
+        try {
+            return call.get();
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    private TurAIAgent ragSite(TurSNSite site, TurSNSiteGenAi genAi) {
+        site.setTurSNSiteGenAi(genAi);
+        TurAIAgent agent = new TurAIAgent();
+        TurLLMInstance llm = new TurLLMInstance();
+        llm.setEnabled(1);
+        agent.setLlmInstances(java.util.Set.of(llm));
+        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
+        siteLocale.setCore("sn_site1_en");
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(genAi)).thenReturn(RAG);
+        when(turDefaultAgentResolver.resolveEffectiveAgent(genAi)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH)).thenReturn(siteLocale);
+        return agent;
+    }
+
+    @Test
+    void aPartitionedKeyIsRefusedWhileTheCollectionHoldsNothingOfItsPartition() {
+        TurSNSite site = new TurSNSite();
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        TurAIAgent agent = ragSite(site, genAi);
+        when(vectorProbe.probePartition(agent, "sn_site1_en", PARTITION))
+                .thenReturn(com.viglet.turing.genai.TurSNSiteVectorProbe.Presence.ABSENT);
+
+        List<ServerSentEvent<String>> events = asPartitionedKey(
+                () -> collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of())));
+
+        assertThat(eventNames(events)).containsExactly("error");
+        assertThat(events.get(0).data()).contains("reindex");
+        org.mockito.Mockito.verifyNoInteractions(turGenAi);
+    }
+
+    @Test
+    void aPartitionedKeyAnswersFromAContextConfinedToItsPartition() {
+        TurSNSite site = new TurSNSite();
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        TurAIAgent agent = ragSite(site, genAi);
+        when(vectorProbe.probePartition(agent, "sn_site1_en", PARTITION))
+                .thenReturn(com.viglet.turing.genai.TurSNSiteVectorProbe.Presence.PRESENT);
+        when(turGenAiContextFactory.build(any(), any(), any()))
+                .thenReturn(TurGenAiContext.builder().enabled(true).build());
+        when(turGenAi.assistantConversationStreaming(any(), any(), any(), any()))
+                .thenReturn(Flux.just(new ChatResponse("assistant", "Hello", "token")));
+        lenient().when(followUpQuestionService.generate(any(), any(), any(), any())).thenReturn(List.of());
+
+        asPartitionedKey(() -> collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of())));
+
+        org.mockito.ArgumentCaptor<TurGenAiContext> context = org.mockito.ArgumentCaptor.forClass(TurGenAiContext.class);
+        org.mockito.Mockito.verify(turGenAi).assistantConversationStreaming(context.capture(), any(), any(), any());
+        assertThat(context.getValue().getPartition()).isEqualTo(PARTITION);
+    }
 
     private static final TurSNChatRouteResolver.Decision RAG = new TurSNChatRouteResolver.Decision(
             TurSNChatRouteResolver.Route.RAG, TurSNChatDisabledReason.NONE);

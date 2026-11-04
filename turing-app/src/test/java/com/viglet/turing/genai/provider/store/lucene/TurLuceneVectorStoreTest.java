@@ -162,6 +162,20 @@ class TurLuceneVectorStoreTest {
         assertThat(remaining.stream().map(Document::getId)).doesNotContain("a1");
     }
 
+    /** T1133 — the partition filter keeps another partition's nearest chunk out. */
+    @Test
+    void similaritySearch_partitionFilter_neverAnswersAnotherPartition() {
+        store.add(List.of(
+                new Document("a1", "apple", Map.of("site_key", "blog-a")),
+                new Document("b1", "apple", Map.of("site_key", "blog-b")),
+                new Document("n1", "apple", Map.of())));
+
+        List<Document> results = store.similaritySearch(SearchRequest.builder().query("apple").topK(5)
+                .filterExpression(new FilterExpressionBuilder().eq("site_key", "blog-a").build()).build());
+
+        assertThat(results).extracting(Document::getId).containsExactly("a1");
+    }
+
     @Test
     void similaritySearch_emptyQuery_returnsEmptyList() {
         store.add(List.of(new Document("d1", "apple", Map.of())));

@@ -2229,15 +2229,15 @@ Search applies `TurSEParameters.partition` in Solr, Lucene and Elasticsearch, an
 imports stamp the value. T1133b checks writes by id; T1133c similar and
 `/search/document`; T1133d autocomplete and spell-check; T1112 confines a delete by
 field; T1133e records a `partitionKey` on each search and click and reads failed
-searches, content gaps and clicks per partition. `TurSdkContractIT` tests two
-partitions.
+searches, content gaps and clicks per partition. T1133f confines chat and `/answer` to
+the partition's RAG chunks, without tools. `TurSdkContractIT` tests two partitions.
 
 **What is left.** Both need the partition in the per-site vector collection: written as
 point metadata at index time (an existing site re-embeds when its admin reindexes, and its vector routes refuse the key until then; owner, 2026-11-04; PgVector, Milvus and Chroma tested by Testcontainers ITs), and a filter on it in
 the neighbour and retrieval searches. Then:
 - duplicates (clusters come from vector neighbours);
-- chat, answer, nl-filters and copilot (RAG retrieval runs on that collection; its
-  lexical half goes through search, which already applies the partition).
+- nl-filters and copilot (lexical reads and aggregations without the partition, and
+  the copilot's hybrid ranking on `sn_<siteId>`, whose points carry only locale and type).
 
 Add each to `ENFORCED` and extend the contract test.
 

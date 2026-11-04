@@ -355,7 +355,10 @@ public class TurSNGenAi {
         // `sources[]` SSE event the agent tool path emits (T292).
         // T1085 — a list-style question on a named site takes its filters from the
         // shared NL extractor, checked against the site's own values.
-        com.viglet.turing.sn.nl.TurSNNLFilters nlFilters = siteNlFilters(request, filters, searchQuery);
+        // T1133 — the extractor reads the site's values across every partition and
+        // can send them back in the filters event, so a partitioned caller skips it.
+        com.viglet.turing.sn.nl.TurSNNLFilters nlFilters = context.getPartition() != null ? null
+                : siteNlFilters(request, filters, searchQuery);
         Pinned pinned = pinDocument(context, searchQuery, request.documentId(),
                 retrieveDocuments(context, searchQuery, filters,
                         nlFilters == null ? null : retrievalFilters(nlFilters)));
@@ -414,8 +417,11 @@ public class TurSNGenAi {
                         // T647 / §XXXVII.9 — the public SN chat surface is an
                         // untrusted (anonymous) caller: gate tool invocation by
                         // the anonymous-tools policy in the executor.
+                        // T1133 — a partitioned caller runs without tools: a tool
+                        // searches the site with system authority, outside the partition.
                         new TurAgentChatRequest(agent, llmInstance, mapped, augmentedSystemPrompt,
-                                conversationId, flowId, null, requestPersonaId, true, request.siteName()),
+                                conversationId, flowId, null, requestPersonaId, true, request.siteName(),
+                                context.getPartition() != null),
                         forcedVariant);
         reactor.core.publisher.Flux<TurAgentChatExecutor.ChatResponse> grounded =
                 appendGroundednessCaveat(answer, context, searchQuery, relevantDocuments, locale);
@@ -788,7 +794,8 @@ public class TurSNGenAi {
                     .query(query)
                     .topK(PINNED_CHUNKS)
                     .similarityThreshold(0.0)
-                    .filterExpression(TurRagFilters.buildFilterExpression(Map.of(SOURCE_ID, List.of(id))))
+                    .filterExpression(TurRagFilters.buildFilterExpression(
+                            confined(context, Map.of(SOURCE_ID, List.of(id)))))
                     .build());
         } catch (RuntimeException e) {
             log.warn("RAG chat could not read the pinned document '{}': {}", id, e.getMessage());
@@ -826,7 +833,9 @@ public class TurSNGenAi {
         // token budget, ground over every chunk and skip top-K + rerank entirely.
         // Fail-open: declines to empty → the normal top-K path below runs unchanged.
         boolean callerFilters = filters != null && !filters.isEmpty();
-        if (!callerFilters) {
+        // T1133 — the full-context probe reads every chunk of the collection, so a
+        // partitioned caller always takes the filtered top-K path.
+        if (!callerFilters && context.getPartition() == null) {
             java.util.Optional<List<Document>> fullCorpus =
                     fullContextService.tryFullContext(context, latestUserQuery);
             if (fullCorpus.isPresent()) {
@@ -879,6 +888,25 @@ public class TurSNGenAi {
      *
      * @since 2026.3.4
      */
+    /**
+     * T1133 — {@code filters} with the context's partition added, the partition's
+     * value replacing any the caller sent for the same field; {@code filters}
+     * itself when the context has no partition.
+     */
+    static java.util.Map<String, List<String>> confined(TurGenAiContext context,
+            java.util.Map<String, List<String>> filters) {
+        com.viglet.turing.commons.se.TurSEPartition partition = context.getPartition();
+        if (partition == null) {
+            return filters;
+        }
+        java.util.Map<String, List<String>> confined = new java.util.LinkedHashMap<>();
+        if (filters != null) {
+            confined.putAll(filters);
+        }
+        confined.put(partition.field(), List.of(partition.value()));
+        return confined;
+    }
+
     private List<Document> similaritySearch(TurGenAiContext context, String query,
             java.util.Map<String, List<String>> effectiveFilters) {
         boolean hasFilters = effectiveFilters != null && !effectiveFilters.isEmpty();
@@ -890,8 +918,10 @@ public class TurSNGenAi {
         double similarityThreshold = hasFilters
                 ? globalSettingsService.getRagSnSimilarityThreshold()
                 : 0.4;
+        // T1133 — the partition narrows every search, but is not a caller filter:
+        // the topK and relevance floor stay the ones the caller's filters chose.
         org.springframework.ai.vectorstore.filter.Filter.Expression filterExpr =
-                TurRagFilters.buildFilterExpression(effectiveFilters);
+                TurRagFilters.buildFilterExpression(confined(context, effectiveFilters));
         SearchRequest.Builder reqBuilder = SearchRequest.builder()
                 .query(query)
                 .topK(topK)

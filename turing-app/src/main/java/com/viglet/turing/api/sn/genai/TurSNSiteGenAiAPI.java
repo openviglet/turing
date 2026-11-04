@@ -120,6 +120,15 @@ public class TurSNSiteGenAiAPI {
 	private final com.viglet.turing.genai.catalog.TurCatalogCopilotService catalogCopilotService;
 	// T1087 — the one decision both /chat/enabled and /chat/conversation read.
 	private final com.viglet.turing.genai.TurSNChatRouteResolver chatRouteResolver;
+	// T1133 — whether the collection holds chunks of a partitioned key's partition.
+	private final com.viglet.turing.genai.TurSNSiteVectorProbe vectorProbe;
+
+	/** T1133 — the copilot route reads the index without the partition. */
+	static final String PARTITION_COPILOT_MESSAGE = "This API key is bound to a partition of a shared site, "
+			+ "and this site's catalog assistant does not enforce partitions yet.";
+	/** T1133 — the collection holds no chunk written with the key's partition. */
+	static final String PARTITION_NOT_INDEXED_MESSAGE = "This site's AI index holds nothing for this API "
+			+ "key's partition yet: an administrator has to reindex the site's vectors.";
 
 	public TurSNSiteGenAiAPI(TurSNSearchProcess turSNSearchProcess,
 			TurSNGenAi turGenAi,
@@ -146,7 +155,9 @@ public class TurSNSiteGenAiAPI {
 			com.viglet.turing.service.llm.budget.TurChatCostBudgetGate costBudgetGate,
 			com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty,
 			com.viglet.turing.genai.catalog.TurCatalogCopilotService catalogCopilotService,
-			com.viglet.turing.genai.TurSNChatRouteResolver chatRouteResolver) {
+			com.viglet.turing.genai.TurSNChatRouteResolver chatRouteResolver,
+			com.viglet.turing.genai.TurSNSiteVectorProbe vectorProbe) {
+		this.vectorProbe = vectorProbe;
 		this.turSNSearchProcess = turSNSearchProcess;
 		this.turGenAi = turGenAi;
 		this.turGenAiContextFactory = turGenAiContextFactory;
@@ -334,6 +345,9 @@ public class TurSNSiteGenAiAPI {
 		// T707 — fall back to the site's default indexed locale when the client
 		// requests one that was never indexed, instead of refusing the turn.
 		Locale locale = resolveIndexedLocale(request.locale(), siteName);
+		// T1133 — read on the request thread: the deferred stream may run after it.
+		com.viglet.turing.commons.se.TurSEPartition partition =
+				com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current().orElse(null);
 		// Defer all heavy work (RAG retrieval + prompt build + provider calls) to
 		// subscription time so the SSE handshake (200 text/event-stream) is
 		// committed before any upstream call fires. onErrorResume then turns an
@@ -341,7 +355,7 @@ public class TurSNSiteGenAiAPI {
 		// in-stream assistant message instead of a 503 with a JSON ProblemDetail
 		// body the SSE client can't consume — mirroring TurAIAgentChatAPI /
 		// TurPersonaChatAPI, which already map streaming failures this way.
-		return Flux.defer(() -> buildConversationStream(siteName, request, locale))
+		return Flux.defer(() -> buildConversationStream(siteName, request, locale, partition))
 				.onErrorResume(err -> {
 					log.error("[SNChat] Conversation stream for SN Site '{}' failed: {}",
 							siteName, err.getMessage(), err);
@@ -351,7 +365,7 @@ public class TurSNSiteGenAiAPI {
 	}
 
 	private Flux<TurAgentChatExecutor.ChatResponse> buildConversationStream(String siteName,
-			ConversationRequest request, Locale locale) {
+			ConversationRequest request, Locale locale, com.viglet.turing.commons.se.TurSEPartition partition) {
 		// T641 / §XXXVII.3 — hard cost kill-switch: refuse the anonymous turn
 		// before any embedding/LLM call fires once the configured month-to-date
 		// spend ceiling is reached. Off by default (cap <= 0).
@@ -375,7 +389,9 @@ public class TurSNSiteGenAiAPI {
 			// T1087 — a vectorless site is answered by the catalog copilot, the route
 			// /chat/enabled reported ready, not by the RAG context it has no vectors for.
 			if (route.route() == TurSNChatRouteResolver.Route.COPILOT) {
-				return copilotConversation(siteName, request.messages(), locale);
+				return partition != null
+						? Flux.just(new TurAgentChatExecutor.ChatResponse(ASSISTANT_ROLE, PARTITION_COPILOT_MESSAGE))
+						: copilotConversation(siteName, request.messages(), locale);
 			}
 			TurAIAgent agent = turDefaultAgentResolver.resolveEffectiveAgent(turSNSiteGenAI);
 			TurLLMInstance llmInstance = agent.getLlmInstances().stream()
@@ -389,8 +405,19 @@ public class TurSNSiteGenAiAPI {
 			}
 			log.debug("RAG chat building context for SN Site '{}': locale='{}', collection='{}', agent='{}', llm='{}'",
 					siteName, locale, collectionName, agent.getTitle(), llmInstance.getTitle());
+			// T1133 — a partitioned key reads only chunks written with its partition,
+			// and is refused while the collection holds none (indexed before the
+			// chunks carried the field, until the site's vectors are reindexed).
+			if (partition != null && (collectionName == null || vectorProbe.probePartition(agent, collectionName,
+					partition) == com.viglet.turing.genai.TurSNSiteVectorProbe.Presence.ABSENT)) {
+				return Flux.just(new TurAgentChatExecutor.ChatResponse(ASSISTANT_ROLE,
+						PARTITION_NOT_INDEXED_MESSAGE));
+			}
 			TurGenAiContext context = turGenAiContextFactory.build(turSNSiteGenAI, collectionName,
 					site.getName());
+			if (partition != null) {
+				context = context.withPartition(partition);
+			}
 			Flux<TurAgentChatExecutor.ChatResponse> stream = turGenAi.assistantConversationStreaming(
 					context, agent, llmInstance,
 					new TurSNGenAiChatRequest(request.messages(), request.filters(),

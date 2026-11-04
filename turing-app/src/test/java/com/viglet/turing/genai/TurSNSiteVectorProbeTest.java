@@ -78,6 +78,18 @@ class TurSNSiteVectorProbeTest {
     }
 
     @Test
+    void aPartitionIsPresentOnlyWhereAChunkCarriesIt() {
+        var partition = new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a");
+        Map<String, List<String>> filter = Map.of("site_key", List.of("blog-a"));
+        when(provider.listChunks(eq(store), any(), eq("sample_en"), eq(0), eq(1), eq(filter))).thenReturn(page(3));
+        when(provider.listChunks(eq(store), any(), eq("sample_pt"), eq(0), eq(1), eq(filter))).thenReturn(page(0));
+
+        assertThat(probe.probePartition(agent, "sample_en", partition)).isEqualTo(Presence.PRESENT);
+        assertThat(probe.probePartition(agent, "sample_pt", partition)).isEqualTo(Presence.ABSENT);
+        assertThat(probe.probePartition(null, "sample_en", partition)).isEqualTo(Presence.UNKNOWN);
+    }
+
+    @Test
     void emptyCollectionsReadAbsent() {
         when(provider.listChunks(eq(store), any(), any(), eq(0), eq(1), anyMap())).thenReturn(page(0));
 

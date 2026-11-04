@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -988,6 +989,62 @@ class TurSNGenAiTest {
 
         TurSNGenAi.Pinned none = turSNGenAi.pinDocument(context, "q", null, List.of(fleece));
         assertEquals(0, none.pinnedCount());
+    }
+
+    // ---- T1133: a partitioned caller reads only its partition's chunks ----
+
+    private static final com.viglet.turing.commons.se.TurSEPartition PARTITION =
+            new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a");
+
+    @Test
+    void thePartitionJoinsTheCallersFiltersAndWinsItsOwnField() {
+        TurGenAiContext open = TurGenAiContext.builder().enabled(true).build();
+        TurGenAiContext confined = open.withPartition(PARTITION);
+
+        assertEquals(Map.of("city", List.of("Recife")),
+                TurSNGenAi.confined(open, Map.of("city", List.of("Recife"))));
+        assertEquals(Map.of("city", List.of("Recife"), "site_key", List.of("blog-a")),
+                TurSNGenAi.confined(confined, Map.of("city", List.of("Recife"))));
+        assertEquals(Map.of("site_key", List.of("blog-a")),
+                TurSNGenAi.confined(confined, Map.of("site_key", List.of("blog-b"))));
+        assertEquals(Map.of("site_key", List.of("blog-a")), TurSNGenAi.confined(confined, null));
+        assertSame(open, open.withPartition(null));
+    }
+
+    @Test
+    void aPartitionedTurnSearchesOnlyItsPartitionAndRunsWithoutTools() {
+        var nlFilterService = mock(com.viglet.turing.sn.nl.TurSNNLFilterService.class);
+        TurSNGenAi withService = new TurSNGenAi(turSNSearchProcess, contextFactory, localeRepository,
+                ragContextBuilder, facetExtractor, agentChatExecutor, globalSettingsService, ragReranker,
+                chatFlowEngineService, moderationService, new TurSNFullContextService(), nlFilterService);
+        VectorStore vectorStore = mock(VectorStore.class);
+        Document chunk = new Document("Blog A: the spring sale ends Friday.",
+                Map.of(TurSNGenAi.SOURCE_ID, "a-1", "site_key", "blog-a"));
+        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(chunk));
+        when(agentChatExecutor.execute(any(TurAgentChatRequest.class), any()))
+                .thenReturn(reactor.core.publisher.Flux.empty());
+        // full-context answering on: a partitioned caller must still never read every chunk
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).vectorStore(vectorStore)
+                .fullContextEnabled(true).fullContextTokenBudget(1_000_000).build().withPartition(PARTITION);
+        List<TurSNGenAi.ConversationMessage> history =
+                List.of(new TurSNGenAi.ConversationMessage("user", "list all the sales"));
+
+        withService.assistantConversationStreaming(context,
+                mock(com.viglet.turing.persistence.model.agent.TurAIAgent.class),
+                mock(com.viglet.turing.persistence.model.llm.TurLLMInstance.class),
+                new TurSNGenAiChatRequest(history, null, "conv-1", null, null, Locale.ENGLISH, null, "shared",
+                        true, "a-1"))
+                .collectList().block();
+
+        ArgumentCaptor<SearchRequest> searched = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(vectorStore, org.mockito.Mockito.atLeastOnce()).similaritySearch(searched.capture());
+        assertTrue(searched.getAllValues().stream().allMatch(request -> request.getFilterExpression() != null
+                && request.getFilterExpression().toString().contains("site_key")
+                && request.getFilterExpression().toString().contains("blog-a")));
+        ArgumentCaptor<TurAgentChatRequest> executed = ArgumentCaptor.forClass(TurAgentChatRequest.class);
+        verify(agentChatExecutor).execute(executed.capture(), any());
+        assertTrue(executed.getValue().toolsDenied());
+        verifyNoInteractions(nlFilterService);
     }
 
     // ---- T707: enumeration-intent gate + fallback-on-empty ----

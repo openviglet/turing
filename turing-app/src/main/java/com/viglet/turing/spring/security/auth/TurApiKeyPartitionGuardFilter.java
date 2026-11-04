@@ -68,7 +68,8 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
      * thesaurus' related terms, result clicks, the JSON imports (each
      * document is stamped with the partition), and (T1209) the site
      * configuration reads, the manifest and its plan, summaries, the AI
-     * probes, the partition's own spotlights and the synonym reads.
+     * probes, the partition's own spotlights and the synonym reads, and the RAG
+     * chat and answer, retrieved from the partition's chunks only.
      */
     static final List<Route> ENFORCED = List.of(
             new Route("GET", Pattern.compile(
@@ -95,9 +96,14 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
             new Route("POST", Pattern.compile("^/api/v2/summary$")),
             // T1209 — the AI probes: each answers from configuration, and the
             // capabilities' vector probe says only whether the store holds a chunk,
-            // so none returns a document. Chat, answer and nl-filters stay refused.
+            // so none returns a document. nl-filters and the copilot stay refused.
             new Route("GET", Pattern.compile(
                     "^/api/sn/[^/]+/(?:ai/capabilities|chat/enabled|copilot/available|summary/available)$")),
+            // T1133 — the RAG chat and the answer: retrieval reads only the chunks
+            // written with the partition, the turn runs without tools, and a site
+            // whose chunks predate the partition field refuses until reindexed.
+            new Route("POST", Pattern.compile("^/api/sn/[^/]+/chat/conversation$")),
+            new Route("GET", Pattern.compile("^/api/sn/[^/]+/answer$")),
             // T1209 — spotlights: the API confines a partitioned key to its
             // partition's own, and a search shows them only to that partition.
             new Route("GET", Pattern.compile("^/api/sn/[^/]+/spotlight(?:/[^/]+)?$")),

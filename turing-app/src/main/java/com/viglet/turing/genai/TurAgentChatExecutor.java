@@ -295,6 +295,30 @@ public class TurAgentChatExecutor {
     }
 
     /**
+     * The tool callbacks this turn may use: none for a turn that denies tools
+     * (T1133, a caller confined to a partition of a shared site, which a tool's
+     * system authority would read past), and none for an untrusted (anonymous
+     * public SN chat) caller when the anonymous-tools policy is off (T647 /
+     * §XXXVII.9), so an injection payload cannot trigger native, MCP-client,
+     * custom or skill tools with system authority.
+     */
+    ToolCallback[] permittedCallbacks(TurAgentChatRequest request, ToolCallback[] callbacks) {
+        if (callbacks == null || callbacks.length == 0) {
+            return callbacks;
+        }
+        if (request.toolsDenied()) {
+            log.info("[AgentExec] Stripping {} tool callback(s) for a partitioned caller", callbacks.length);
+            return new ToolCallback[0];
+        }
+        if (request.untrustedCaller() && !abuseControlProperty.getChat().isAnonymousToolsEnabled()) {
+            log.info("[AgentExec] Stripping {} tool callback(s) for untrusted anonymous caller "
+                    + "(turing.abuse.chat.anonymous-tools-enabled=false)", callbacks.length);
+            return new ToolCallback[0];
+        }
+        return callbacks;
+    }
+
+    /**
      * Deepest overload — additionally accepts an optional {@code selectedSkillId}
      * (T325 / §IX.4.d) that pins this turn to a single skill (the "skill mode" of
      * a multi-skill ZIP). When blank/null the full enabled skill set is offered
@@ -405,16 +429,7 @@ public class TurAgentChatExecutor {
         final long tBeforeTools = System.currentTimeMillis();
         ToolCallback[] callbacks = toolResolver.resolve(agent, activePersona,
                 lastUserMessageEarly, activeNode, selectedSkillId);
-        // T647 / §XXXVII.9 — tool trust boundary: strip ALL tool callbacks for an
-        // untrusted (anonymous public SN chat) caller when the anonymous-tools
-        // policy is off, so an anonymous visitor / injection payload can't trigger
-        // native / MCP-client / custom / skill tool execution with system authority.
-        if (request.untrustedCaller() && !abuseControlProperty.getChat().isAnonymousToolsEnabled()
-                && callbacks != null && callbacks.length > 0) {
-            log.info("[AgentExec] Stripping {} tool callback(s) for untrusted anonymous caller "
-                    + "(turing.abuse.chat.anonymous-tools-enabled=false)", callbacks.length);
-            callbacks = new ToolCallback[0];
-        }
+        callbacks = permittedCallbacks(request, callbacks);
         final long tAfterTools = System.currentTimeMillis();
 
         // Build chat options + per-turn tool context map (drives Custom

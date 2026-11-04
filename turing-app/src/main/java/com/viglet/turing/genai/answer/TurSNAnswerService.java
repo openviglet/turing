@@ -23,6 +23,9 @@ import com.viglet.turing.genai.TurGenAiContext;
 import com.viglet.turing.genai.TurGenAiContextFactory;
 import com.viglet.turing.genai.TurSNGenAi;
 import com.viglet.turing.genai.TurSNGenAiChatRequest;
+import com.viglet.turing.genai.TurSNSiteVectorProbe;
+import com.viglet.turing.commons.se.TurSEPartition;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
@@ -66,6 +69,11 @@ public class TurSNAnswerService {
     private final TurFollowUpQuestionService followUpQuestionService;
     private final TurGlobalSettingsService globalSettingsService;
     private final TurSNChatRouteResolver chatRouteResolver;
+    private final TurSNSiteVectorProbe vectorProbe;
+
+    /** T1133 — the collection holds no chunk written with the key's partition. */
+    static final String PARTITION_NOT_INDEXED = "This site's AI index holds nothing for this API key's "
+            + "partition yet: an administrator has to reindex the site's vectors.";
 
     public TurSNAnswerService(TurSNSearchProcess turSNSearchProcess,
             TurDefaultAgentResolver turDefaultAgentResolver,
@@ -74,8 +82,10 @@ public class TurSNAnswerService {
             TurSNGenAi turGenAi,
             TurFollowUpQuestionService followUpQuestionService,
             TurGlobalSettingsService globalSettingsService,
-            TurSNChatRouteResolver chatRouteResolver) {
+            TurSNChatRouteResolver chatRouteResolver,
+            TurSNSiteVectorProbe vectorProbe) {
         this.chatRouteResolver = chatRouteResolver;
+        this.vectorProbe = vectorProbe;
         this.turSNSearchProcess = turSNSearchProcess;
         this.turDefaultAgentResolver = turDefaultAgentResolver;
         this.turGenAiContextFactory = turGenAiContextFactory;
@@ -105,8 +115,10 @@ public class TurSNAnswerService {
         if (query == null || query.isBlank()) {
             return Flux.just(TurAnswerStreamFramer.errorEvent("No query provided"));
         }
+        // T1133 — read on the request thread: the deferred stream may run after it.
+        TurSEPartition partition = TurApiKeyPartitionContext.current().orElse(null);
         return Flux.defer(() -> turSNSearchProcess.getSNSite(siteName)
-                .map(site -> composeAnswer(site, siteName, query, locale, filters))
+                .map(site -> composeAnswer(site, siteName, query, locale, filters, partition))
                 .orElseGet(() -> Flux.just(
                         TurAnswerStreamFramer.errorEvent("Site not found: " + siteName))))
                 .onErrorResume(err -> {
@@ -118,7 +130,7 @@ public class TurSNAnswerService {
     }
 
     private Flux<ServerSentEvent<String>> composeAnswer(TurSNSite site, String siteName,
-            String query, Locale locale, Map<String, List<String>> filters) {
+            String query, Locale locale, Map<String, List<String>> filters, TurSEPartition partition) {
         TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
         // T1116 — the same readiness chat reads, so /answer and /chat/enabled agree:
         // a site with no GenAI binding answers through the Default AI Agent (T622).
@@ -146,7 +158,16 @@ public class TurSNAnswerService {
         }
         String collectionName = siteLocale.getCore();
 
+        // T1133 — a partitioned key answers only from chunks written with its
+        // partition, and is refused while the collection holds none.
+        if (partition != null && vectorProbe.probePartition(agent, collectionName, partition)
+                == TurSNSiteVectorProbe.Presence.ABSENT) {
+            return Flux.just(TurAnswerStreamFramer.errorEvent(PARTITION_NOT_INDEXED));
+        }
         TurGenAiContext context = turGenAiContextFactory.build(genAi, collectionName, site.getName());
+        if (partition != null) {
+            context = context.withPartition(partition);
+        }
         // T838 — steerable answers: the active facet filters reach retrieval so the
         // answer is synthesized within the narrowed candidate set (empty = whole KB).
         Map<String, List<String>> effectiveFilters =

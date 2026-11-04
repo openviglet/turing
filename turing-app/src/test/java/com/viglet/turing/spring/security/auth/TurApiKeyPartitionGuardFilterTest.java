@@ -91,7 +91,10 @@ class TurApiKeyPartitionGuardFilterTest {
             "GET, /api/sn/shared/chat/enabled, true",
             "GET, /api/sn/shared/copilot/available, true",
             "GET, /api/sn/site-1/summary/available, true",
-            "GET, /api/sn/shared/answer, false",
+            "GET, /api/sn/shared/answer, true",
+            "GET, /api/sn/shared/answer/share/a1, false",
+            "POST, /api/sn/shared/chat/conversation, true",
+            "POST, /api/sn/shared/chat/conversation/stream, false",
             "POST, /api/sn/shared/nl-filters, false",
             "GET, /api/sn/shared/chat, false"
     })

@@ -28,7 +28,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class TurGenAiContext {
     private final VectorStore vectorStore;
     private final EmbeddingModel embeddingModel;
@@ -65,7 +65,20 @@ public class TurGenAiContext {
     private final String agentId;
     /** T1127 — the SN site the context answers for, recorded with each call's cost. */
     private final String siteName;
+    /**
+     * T1133 — the partition of a shared SN site the caller's API key is bound to:
+     * every vector read made with this context is confined to the chunks whose
+     * metadata carries it, and the turn runs without tools. {@code null} for an
+     * unpartitioned caller. Set by the request entry point, which still has the
+     * request, never by the factory, which may run after it.
+     */
+    private final com.viglet.turing.commons.se.TurSEPartition partition;
     public static final String COLLECTION_NAME = "turing";
+
+    /** T1133 — this context confined to {@code partition}; itself when {@code null}. */
+    public TurGenAiContext withPartition(com.viglet.turing.commons.se.TurSEPartition partition) {
+        return partition == null ? this : toBuilder().partition(partition).build();
+    }
 
     public static TurGenAiContext disabled() {
         return TurGenAiContext.builder()

@@ -55,6 +55,10 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
  *                             authenticated agent/persona chat (default).
  * @param siteName             nullable — T1127, the Semantic Navigation site the
  *                             turn answers for, recorded with its cost
+ * @param toolsDenied          T1133 — {@code true} when the turn must run without
+ *                             any tool, whatever the policy: a caller confined to a
+ *                             partition of a shared site, which a tool's system
+ *                             authority would reach past
  * @author Alexandre Oliveira
  * @since 2026.3.1
  */
@@ -68,7 +72,16 @@ public record TurAgentChatRequest(
         List<MultipartFile> files,
         String requestPersonaId,
         boolean untrustedCaller,
-        String siteName) {
+        String siteName,
+        boolean toolsDenied) {
+
+    /** The constructor before {@link #toolsDenied}: tools follow the policy. */
+    public TurAgentChatRequest(TurAIAgent agent, TurLLMInstance llmInstance, List<ChatMessageItem> history,
+            String systemPromptOverride, String conversationId, String flowId,
+            List<MultipartFile> files, String requestPersonaId, boolean untrustedCaller, String siteName) {
+        this(agent, llmInstance, history, systemPromptOverride, conversationId, flowId, files,
+                requestPersonaId, untrustedCaller, siteName, false);
+    }
 
     /** The constructor before {@link #siteName}: a turn not made for an SN site. */
     public TurAgentChatRequest(TurAIAgent agent, TurLLMInstance llmInstance, List<ChatMessageItem> history,

@@ -243,6 +243,35 @@ class TurSNSiteGenAiAPITest {
         verify(turGenAiContextFactory, never()).build(any(), any());
     }
 
+    /** T1133 — the copilot reads the index without the partition, so a partitioned key never reaches it. */
+    @Test
+    void aPartitionedKeyOnAVectorlessSiteIsRefusedNotAnsweredByTheCopilot() {
+        when(turSNSearchProcess.existsByTurSNSiteAndLanguage(eq("site1"), any())).thenReturn(true);
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(vectorlessSite()));
+        when(catalogCopilotService.isAvailable()).thenReturn(true);
+        org.springframework.mock.web.MockHttpServletRequest request =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        request.setAttribute(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.class.getName(),
+                new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a"));
+        org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
+                new org.springframework.web.context.request.ServletRequestAttributes(request));
+        java.util.List<com.viglet.turing.genai.TurAgentChatExecutor.ChatResponse> events;
+        try {
+            events = api.conversation("site1", new TurSNSiteGenAiAPI.ConversationRequest(
+                    java.util.List.of(new com.viglet.turing.genai.TurSNGenAi.ConversationMessage("user",
+                            "which models?")),
+                    "en_US", null, null, null, null, null))
+                    .collectList().block();
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+
+        org.assertj.core.api.Assertions.assertThat(events).singleElement()
+                .satisfies(e -> org.assertj.core.api.Assertions.assertThat(e.content())
+                        .isEqualTo(TurSNSiteGenAiAPI.PARTITION_COPILOT_MESSAGE));
+        verify(catalogCopilotService, never()).answer(any(), any(), any());
+    }
+
     @Test
     void singleTurnChatOnAVectorlessSiteIsAnsweredByTheCopilot() throws Exception {
         when(turSNSearchProcess.existsByTurSNSiteAndLanguage(eq("site1"), any())).thenReturn(true);

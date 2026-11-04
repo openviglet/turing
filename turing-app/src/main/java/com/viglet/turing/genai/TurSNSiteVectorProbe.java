@@ -118,6 +118,53 @@ public class TurSNSiteVectorProbe {
         return presence;
     }
 
+    /**
+     * T1133 — whether {@code collection} holds a chunk written with
+     * {@code partition} in its metadata. A site indexed before its chunks carried
+     * the partition field answers {@link Presence#ABSENT} until its vectors are
+     * reindexed, and a partitioned key is refused there rather than answered from
+     * nothing. Kept like {@link #probe}: found or unknown for {@link #TTL}, absent
+     * never.
+     *
+     * @param agent the site's effective agent; {@code null} or one without a store
+     *              answers {@link Presence#UNKNOWN}
+     */
+    public Presence probePartition(TurAIAgent agent, String collection,
+            com.viglet.turing.commons.se.TurSEPartition partition) {
+        TurStoreInstance store = agent == null ? null : agent.getTurStoreInstance();
+        if (store == null || !StringUtils.hasText(collection) || partition == null) {
+            return Presence.UNKNOWN;
+        }
+        String key = store.getId() + "|" + collection + "|" + partition.key();
+        Instant now = clock.instant();
+        Cached cached = cache.get(key);
+        if (cached != null && cached.at().plus(TTL).isAfter(now)) {
+            return cached.presence();
+        }
+        Presence presence;
+        try {
+            TurStoreChunkPage page = storeProviderFactory.getProvider(store).listChunks(store,
+                    secretCryptoService.decrypt(store.getCredentialEncrypted()), collection, 0, 1,
+                    Map.of(partition.field(), List.of(partition.value())));
+            presence = holdsAChunk(page) ? Presence.PRESENT : Presence.ABSENT;
+        } catch (RuntimeException e) {
+            log.debug("Partition probe of collection '{}' could not read its store: {}", collection,
+                    e.getMessage());
+            presence = Presence.UNKNOWN;
+        }
+        if (presence == Presence.ABSENT) {
+            cache.remove(key);
+        } else {
+            cache.put(key, new Cached(presence, now));
+        }
+        return presence;
+    }
+
+    private static boolean holdsAChunk(TurStoreChunkPage page) {
+        return page != null && (page.total() > 0 || !Objects.requireNonNullElse(page.chunks(),
+                List.<TurStoreChunkPage.Chunk>of()).isEmpty());
+    }
+
     private Presence look(TurSNSite site, TurStoreInstance store) {
         List<String> collections = turSNSiteLocaleRepository.findByTurSNSite(site).stream()
                 .map(TurSNSiteLocale::getCore).filter(StringUtils::hasText).distinct().toList();
@@ -129,8 +176,7 @@ public class TurSNSiteVectorProbe {
             String credential = secretCryptoService.decrypt(store.getCredentialEncrypted());
             for (String collection : collections) {
                 TurStoreChunkPage page = provider.listChunks(store, credential, collection, 0, 1, Map.of());
-                if (page != null && (page.total() > 0 || !Objects.requireNonNullElse(page.chunks(),
-                        List.<TurStoreChunkPage.Chunk>of()).isEmpty())) {
+                if (holdsAChunk(page)) {
                     return Presence.PRESENT;
                 }
             }
