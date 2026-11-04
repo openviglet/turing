@@ -162,6 +162,10 @@ test( 'a question gets a streamed answer, the post it used and a follow-up in co
 		query: 'When does the grant close?',
 		conversationId: sent.asked[ 0 ].conversationId,
 	} );
+	// Each turn is held to this site's documents (D287), as its searches are.
+	expect( Object.keys( sent.asked[ 0 ].filters ) ).toEqual( [ 'site_key' ] );
+	expect( sent.asked[ 0 ].filters.site_key ).toHaveLength( 1 );
+	expect( sent.asked[ 0 ].filters.site_key[ 0 ] ).not.toBe( '' );
 
 	// A follow-up carries the conversation so far, in the same conversation.
 	await dialog
