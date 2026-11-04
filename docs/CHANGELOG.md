@@ -1516,6 +1516,7 @@
 - **T1133f** — A partitioned key chats and gets answers from its partition's chunks only, without tools or NL filters, and is refused while the collection holds none of them.
 - **T1133g** — Every DSL read made for a partitioned key is filtered to its partition, so nl-filters checks values against the partition's documents and accepts the key.
 - **T1133h** — TurVectorStorePartitionFilterIT runs PgVector, Milvus and Chroma in Docker and shows each answers only the asked partition's chunk among identical vectors.
+- **T1133i** — sn_ points carry the fields keys are partitioned by, and duplicates for a partitioned key cluster only its partition, refused until a site written before is reindexed.
 
 ## Block CA — Search response fields arrive as they were indexed
 

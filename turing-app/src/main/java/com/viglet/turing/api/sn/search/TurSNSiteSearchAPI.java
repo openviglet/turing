@@ -452,8 +452,10 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(required = false, name = "threshold", defaultValue = "0.92") double threshold,
                         @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "10") int rows,
                         @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale) {
-                return ResponseEntity.ok(
-                                duplicateClusteringService.findCluster(siteName, id, threshold, rows, locale));
+                // T1133 — a partitioned key clusters only its partition's documents.
+                return ResponseEntity.ok(duplicateClusteringService.findCluster(siteName, id, threshold, rows,
+                                locale, com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+                                                .orElse(null)));
         }
 
         @PostMapping("latest")

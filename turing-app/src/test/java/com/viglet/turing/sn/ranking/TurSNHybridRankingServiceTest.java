@@ -30,6 +30,7 @@ import java.util.function.Function;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.document.Document;
@@ -69,13 +70,15 @@ class TurSNHybridRankingServiceTest {
     private TurRagReranker reranker;
     @Mock
     private TurDefaultChatModelResolver defaultChatModelResolver;
+    @Mock
+    private com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository devTokenRepository;
 
     private TurSNHybridRankingService service;
 
     @BeforeEach
     void setUp() {
         service = new TurSNHybridRankingService(ragContextBuilder, globalSettingsService,
-                reranker, defaultChatModelResolver);
+                reranker, defaultChatModelResolver, devTokenRepository);
         lenient().when(globalSettingsService.getDefaultEmbeddingModelId()).thenReturn("emb-1");
         lenient().when(globalSettingsService.getDefaultEmbeddingStoreId()).thenReturn("store-1");
     }
@@ -598,6 +601,43 @@ class TurSNHybridRankingServiceTest {
 
         verify(vectorStore).delete(List.of("doc-1"));
         verify(vectorStore).add(any());
+    }
+
+    /** T1133 — a field some key is partitioned by goes onto the point, so neighbours can be confined. */
+    @Test
+    void indexDocumentWritesThePartitionFieldsKeysUse() {
+        when(ragContextBuilder.build(anyString(), anyString(), anyString())).thenReturn(Optional.of(infra()));
+        when(devTokenRepository.findPartitionFields()).thenReturn(List.of("site_key", " "));
+
+        service.indexDocument(siteWithMode(TurSNRankingMode.HYBRID_RRF), Locale.ENGLISH,
+                Map.of(TurSNFieldName.ID, "doc-1", TurSNFieldName.TITLE, "Hello", "site_key", List.of("blog-a"),
+                        "author", "ana"));
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Document>> added = ArgumentCaptor.forClass(List.class);
+        verify(vectorStore).add(added.capture());
+        assertThat(added.getValue().getFirst().getMetadata()).containsEntry("site_key", "blog-a")
+                .doesNotContainKey("author");
+    }
+
+    @Test
+    void aPartitionedNeighbourSearchIsFilteredAndSaysWhenThePartitionIsMissing() {
+        when(ragContextBuilder.build(anyString(), anyString(), anyString())).thenReturn(Optional.of(infra()));
+        when(vectorStore.similaritySearch(any(SearchRequest.class)))
+                .thenReturn(List.of(Document.builder().id("doc-1").text("").score(1.0).build(),
+                        Document.builder().id("doc-2").text("").score(0.95).build()))
+                .thenReturn(List.of());
+        var partition = new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a");
+        TurSNSite site = siteWithMode(TurSNRankingMode.HYBRID_RRF);
+        Map<String, Object> seed = Map.of(TurSNFieldName.ID, "doc-1", TurSNFieldName.TITLE, "Data Science");
+
+        assertThat(service.findScoredNeighbors(site, seed, 5, 0.9, partition)).hasValueSatisfying(
+                neighbors -> assertThat(neighbors).extracting(TurSNScoredNeighbor::id).containsExactly("doc-2"));
+        ArgumentCaptor<SearchRequest> searched = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(vectorStore).similaritySearch(searched.capture());
+        assertThat(searched.getValue().getFilterExpression().toString()).contains("site_key").contains("blog-a");
+
+        assertThat(service.findScoredNeighbors(site, seed, 5, 0.9, partition)).isEmpty();
     }
 
     @Test

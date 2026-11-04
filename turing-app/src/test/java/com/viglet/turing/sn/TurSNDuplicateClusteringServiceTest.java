@@ -153,6 +153,59 @@ class TurSNDuplicateClusteringServiceTest {
         assertThat(cluster.duplicate()).isFalse();
     }
 
+    // ---- T1133: a partitioned key clusters inside its partition ------------
+
+    private static final com.viglet.turing.commons.se.TurSEPartition PARTITION =
+            new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a");
+
+    private static Map<String, Object> docIn(String id, String siteKey) {
+        Map<String, Object> doc = new java.util.HashMap<>(doc(id, "Data Science", "portal-a"));
+        doc.put("site_key", siteKey);
+        return doc;
+    }
+
+    @Test
+    void aSeedOutsideThePartitionIsTreatedAsMissing() {
+        snapshotExists(Locale.ENGLISH);
+        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-b")));
+
+        TurSNDuplicateCluster cluster = service.findCluster(SITE, SEED, 0.92, 10, Locale.ENGLISH, PARTITION);
+
+        assertThat(cluster.members()).isEmpty();
+        verify(hybridRankingService, never()).isEnabled(any());
+    }
+
+    @Test
+    void aPartitionTheVectorsDoNotCarryIsRefusedUntilReindexed() {
+        snapshotExists(Locale.ENGLISH);
+        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-a")));
+        when(hybridRankingService.isEnabled(any())).thenReturn(true);
+        when(hybridRankingService.findScoredNeighbors(any(), any(), anyInt(), anyDouble(), eq(PARTITION)))
+                .thenReturn(Optional.empty());
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(
+                () -> service.findCluster(SITE, SEED, 0.92, 10, Locale.ENGLISH, PARTITION))
+                .isInstanceOf(com.viglet.turing.api.exception.TurForbiddenException.class)
+                .hasMessageContaining("reindex");
+    }
+
+    @Test
+    void aPartitionedSeedIsClusteredWithItsPartitionsNeighbours() {
+        snapshotExists(Locale.ENGLISH);
+        when(plugin.getDocumentsByIds(any(), eq(List.of(SEED)))).thenReturn(List.of(docIn(SEED, "blog-a")));
+        when(hybridRankingService.isEnabled(any())).thenReturn(true);
+        when(hybridRankingService.findScoredNeighbors(any(), any(), anyInt(), anyDouble(), eq(PARTITION)))
+                .thenReturn(Optional.of(List.of()));
+
+        TurSNDuplicateCluster cluster = service.findCluster(SITE, SEED, 0.92, 10, Locale.ENGLISH, PARTITION);
+
+        assertThat(cluster.members()).extracting(TurSNDuplicateClusterMember::id).containsExactly(SEED);
+        assertThat(TurSNDuplicateClusteringService.inPartition(docIn("x", "blog-a"), PARTITION)).isTrue();
+        assertThat(TurSNDuplicateClusteringService.inPartition(
+                Map.of("site_key", List.of("blog-c", "blog-a")), PARTITION)).isTrue();
+        assertThat(TurSNDuplicateClusteringService.inPartition(Map.of(), PARTITION)).isFalse();
+    }
+
     // ---- duplicate clustering --------------------------------------------
 
     @Test

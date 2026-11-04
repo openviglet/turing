@@ -23,9 +23,15 @@ package com.viglet.turing.persistence.repository.dev.token;
 
 import com.viglet.turing.persistence.model.dev.token.TurDevToken;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TurDevTokenRepository extends JpaRepository<TurDevToken, String> {
 	Optional<TurDevToken> findByToken(String token);
+
+	/** T1133 — every field some API key is partitioned by. */
+	@Query("select distinct t.partitionField from TurDevToken t where t.partitionField is not null")
+	List<String> findPartitionFields();
 }

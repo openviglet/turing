@@ -101,6 +101,19 @@ public class TurSNDuplicateClusteringService {
      */
     public TurSNDuplicateCluster findCluster(String siteName, String id, double threshold,
             int maxMembers, Locale locale) {
+        return findCluster(siteName, id, threshold, maxMembers, locale, null);
+    }
+
+    /**
+     * T1133 — {@link #findCluster(String, String, double, int, Locale)} for a key
+     * bound to {@code partition}: a seed outside the partition is treated as
+     * absent, and only the partition's documents can join the cluster.
+     *
+     * @throws com.viglet.turing.api.exception.TurForbiddenException when the site's
+     *         vectors were written before they carried the partition, until reindexed
+     */
+    public TurSNDuplicateCluster findCluster(String siteName, String id, double threshold,
+            int maxMembers, Locale locale, com.viglet.turing.commons.se.TurSEPartition partition) {
         if (!StringUtils.hasText(siteName) || !StringUtils.hasText(id)) {
             return empty(id);
         }
@@ -121,18 +134,35 @@ public class TurSNDuplicateClusteringService {
             return empty(id);
         }
         Map<String, Object> seedDoc = seed.get(0);
+        if (partition != null && !inPartition(seedDoc, partition)) {
+            return empty(id);
+        }
         TurSNDuplicateClusterMember seedMember = toMember(seedDoc, null);
 
         // Vector-only: a non-hybrid site has no embedded collection to cluster against.
         if (!hybridRankingService.isEnabled(site)) {
             return single(seedMember);
         }
-        List<TurSNScoredNeighbor> neighbors = hybridRankingService
-                .findScoredNeighbors(site, seedDoc, limit, minSimilarity);
+        List<TurSNScoredNeighbor> neighbors = partition == null
+                ? hybridRankingService.findScoredNeighbors(site, seedDoc, limit, minSimilarity)
+                : hybridRankingService.findScoredNeighbors(site, seedDoc, limit, minSimilarity, partition)
+                        .orElseThrow(() -> new com.viglet.turing.api.exception.TurForbiddenException(
+                                "This site's vectors hold nothing for this API key's partition yet: an "
+                                        + "administrator has to reindex the site"));
         if (neighbors.isEmpty()) {
             return single(seedMember);
         }
         return hydrate(siteLocale, plugin, seedMember, neighbors);
+    }
+
+    /** T1133 — whether a stored document carries the partition's value (one of its values, for a list). */
+    static boolean inPartition(Map<String, Object> document,
+            com.viglet.turing.commons.se.TurSEPartition partition) {
+        Object value = document.get(partition.field());
+        if (value instanceof java.util.Collection<?> many) {
+            return many.stream().anyMatch(v -> v != null && partition.value().equals(v.toString().trim()));
+        }
+        return value != null && partition.value().equals(value.toString().trim());
     }
 
     /**

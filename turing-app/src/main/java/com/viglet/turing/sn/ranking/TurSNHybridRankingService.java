@@ -101,18 +101,60 @@ public class TurSNHybridRankingService {
     private final TurGlobalSettingsService globalSettingsService;
     private final TurRagReranker reranker;
     private final TurDefaultChatModelResolver defaultChatModelResolver;
+    private final com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository devTokenRepository;
 
     /** Cached infra per (site, embeddingModel, store) so search latency doesn't pay a rebuild per query. */
     private final Map<String, RagInfrastructure> infraCache = new ConcurrentHashMap<>();
 
+    /** T1133 — how long the partition fields are kept between reads of the API keys. */
+    static final java.time.Duration PARTITION_FIELDS_TTL = java.time.Duration.ofSeconds(60);
+    private record PartitionFields(List<String> fields, long readAt) {
+    }
+
+    private final java.util.concurrent.atomic.AtomicReference<PartitionFields> partitionFields =
+            new java.util.concurrent.atomic.AtomicReference<>();
+
     public TurSNHybridRankingService(TurRagContextBuilder ragContextBuilder,
             TurGlobalSettingsService globalSettingsService,
             TurRagReranker reranker,
-            TurDefaultChatModelResolver defaultChatModelResolver) {
+            TurDefaultChatModelResolver defaultChatModelResolver,
+            com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository devTokenRepository) {
         this.ragContextBuilder = ragContextBuilder;
         this.globalSettingsService = globalSettingsService;
         this.reranker = reranker;
         this.defaultChatModelResolver = defaultChatModelResolver;
+        this.devTokenRepository = devTokenRepository;
+    }
+
+    /**
+     * T1133 — the fields API keys are partitioned by, read from the keys at most
+     * once per {@link #PARTITION_FIELDS_TTL}: indexing calls this per document.
+     * A failed read keeps the last answer.
+     */
+    List<String> partitionFields() {
+        long now = System.nanoTime();
+        PartitionFields known = partitionFields.get();
+        if (known != null && now - known.readAt() < PARTITION_FIELDS_TTL.toNanos()) {
+            return known.fields();
+        }
+        List<String> fields = known == null ? List.of() : known.fields();
+        try {
+            fields = devTokenRepository.findPartitionFields().stream()
+                    .filter(StringUtils::hasText).map(String::trim).distinct().toList();
+        } catch (RuntimeException e) {
+            log.debug("[SN-HYBRID] could not read the partition fields: {}", e.getMessage());
+        }
+        partitionFields.set(new PartitionFields(fields, now));
+        return fields;
+    }
+
+    /** T1133 — a partition field's value as point metadata: a scalar, or a list's first value. */
+    private static String partitionValue(Object value) {
+        Object first = value instanceof java.util.Collection<?> many
+                ? many.stream().filter(java.util.Objects::nonNull).findFirst().orElse(null)
+                : value;
+        String text = first == null ? null : first.toString().trim();
+        return StringUtils.hasText(text) ? text : null;
     }
 
     /**
@@ -194,6 +236,12 @@ public class TurSNHybridRankingService {
             Optional.ofNullable(asString(attributes.get(TurSNFieldName.TYPE)))
                     .filter(StringUtils::hasText)
                     .ifPresent(type -> metadata.put(META_TYPE, type));
+            // T1133 — the fields keys are partitioned by, so a partitioned key's
+            // neighbour search can stay in its partition.
+            for (String field : partitionFields()) {
+                Optional.ofNullable(partitionValue(attributes.get(field)))
+                        .ifPresent(value -> metadata.put(field, value));
+            }
             Document doc = Document.builder().id(id).text(content).metadata(metadata).build();
             // Upsert: the vector store does not dedupe by id, so drop any prior copy first.
             safeDelete(infra, List.of(id));
@@ -574,33 +622,49 @@ public class TurSNHybridRankingService {
      */
     public List<TurSNScoredNeighbor> findScoredNeighbors(TurSNSite turSNSite,
             Map<String, Object> seedAttributes, int topK, double minSimilarity) {
+        return findScoredNeighbors(turSNSite, seedAttributes, topK, minSimilarity, null).orElse(List.of());
+    }
+
+    /**
+     * T1133 — {@link #findScoredNeighbors(TurSNSite, Map, int, double)} confined to
+     * {@code partition}: only points written with the partition's value come back.
+     * Empty (not an empty list) when the search found no point of the partition
+     * at all, not even the seed's own: the collection was written before its points
+     * carried the partition, and a reindex is what fills it.
+     */
+    public Optional<List<TurSNScoredNeighbor>> findScoredNeighbors(TurSNSite turSNSite,
+            Map<String, Object> seedAttributes, int topK, double minSimilarity,
+            com.viglet.turing.commons.se.TurSEPartition partition) {
         if (!isEnabled(turSNSite) || seedAttributes == null || topK < 1) {
-            return List.of();
+            return Optional.of(List.of());
         }
         String seedId = asString(seedAttributes.get(TurSNFieldName.ID));
         String content = buildContent(seedAttributes, embeddedFields(turSNSite));
         if (!StringUtils.hasText(content)) {
-            return List.of();
+            return Optional.of(List.of());
         }
         try {
             RagInfrastructure infra = infraFor(turSNSite);
             if (infra == null) {
-                return List.of();
+                return Optional.of(List.of());
             }
-            SearchRequest request = SearchRequest.builder()
+            SearchRequest.Builder request = SearchRequest.builder()
                     .query(content)
                     .topK(topK + 1)
-                    .similarityThreshold(Math.max(0.0, minSimilarity))
-                    .build();
-            List<Document> hits = infra.vectorStore().similaritySearch(request);
-            if (hits == null || hits.isEmpty()) {
-                return List.of();
+                    .similarityThreshold(Math.max(0.0, minSimilarity));
+            if (partition != null) {
+                request.filterExpression(com.viglet.turing.genai.TurRagFilters.buildFilterExpression(
+                        Map.of(partition.field(), List.of(partition.value()))));
             }
-            return collectNeighbors(hits, seedId, topK, minSimilarity);
+            List<Document> hits = infra.vectorStore().similaritySearch(request.build());
+            if (hits == null || hits.isEmpty()) {
+                return partition != null ? Optional.empty() : Optional.of(List.of());
+            }
+            return Optional.of(collectNeighbors(hits, seedId, topK, minSimilarity));
         } catch (RuntimeException e) {
             log.warn("[SN-HYBRID] neighbors of doc '{}' on site '{}' failed: {} — degrading to lexical",
                     seedId, turSNSite.getName(), e.getMessage());
-            return List.of();
+            return Optional.of(List.of());
         }
     }
 

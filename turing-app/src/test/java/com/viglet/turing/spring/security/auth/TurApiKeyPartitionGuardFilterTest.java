@@ -55,7 +55,7 @@ class TurApiKeyPartitionGuardFilterTest {
             "GET, /api/sn/shared/en_US/related-terms, true",
             "GET, /api/sn/shared/search/similar, true",
             "GET, /api/sn/shared/search/document, true",
-            "GET, /api/sn/shared/search/duplicates, false",
+            "GET, /api/sn/shared/search/duplicates, true",
             "GET, /api/sn/shared/en_US/spell-check, true",
             "POST, /api/sn/shared/chat, false",
             "POST, /api/sn/import/zip, false",
