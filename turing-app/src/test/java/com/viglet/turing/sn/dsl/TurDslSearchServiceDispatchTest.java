@@ -177,4 +177,38 @@ class TurDslSearchServiceDispatchTest {
         // fallback made indistinguishable from a wrong engine.
         assertThat(service.search(SITE, LOCALE, anyRequest())).isEmpty();
     }
+
+    @Test
+    @DisplayName("T1133 - a partitioned key's DSL query is confined to its partition")
+    void aPartitionedRequestIsConfinedToItsPartition() {
+        var service = service("solr");
+        when(solrExecutor.execute(eq(SITE), any(Locale.class), any())).thenReturn(Optional.empty());
+        var request = new org.springframework.mock.web.MockHttpServletRequest();
+        request.setAttribute(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.class.getName(),
+                new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a"));
+        org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
+                new org.springframework.web.context.request.ServletRequestAttributes(request));
+        try {
+            service.search(SITE, LOCALE, anyRequest().withQuery(new TurDslQuery.MatchAll()));
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+
+        var sent = org.mockito.ArgumentCaptor.forClass(TurDslQueryRequest.class);
+        verify(solrExecutor).execute(eq(SITE), any(Locale.class), sent.capture());
+        assertThat(sent.getValue().query()).isEqualTo(new TurDslQuery.Bool(List.of(new TurDslQuery.MatchAll()),
+                List.of(), List.of(), List.of(new TurDslQuery.Term("site_key", "blog-a")), null));
+    }
+
+    @Test
+    @DisplayName("T1133 - without a partition the query is sent as it came")
+    void anUnpartitionedRequestIsUntouched() {
+        TurDslQueryRequest request = anyRequest().withQuery(new TurDslQuery.MatchAll());
+
+        assertThat(TurDslSearchService.confined(request, null)).isSameAs(request);
+        assertThat(TurDslSearchService.confined(anyRequest(),
+                new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a")).query())
+                .isEqualTo(new TurDslQuery.Bool(List.of(), List.of(), List.of(),
+                        List.of(new TurDslQuery.Term("site_key", "blog-a")), null));
+    }
 }

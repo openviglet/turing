@@ -60,6 +60,14 @@ public record TurDslQueryRequest(
         @JsonProperty("search_type") String searchType,
         @JsonProperty("terminate_after") Integer terminateAfter
 ) {
+    /** T1133 — this request with {@code replacement} as its query, every other part kept. */
+    public TurDslQueryRequest withQuery(TurDslQuery replacement) {
+        return new TurDslQueryRequest(replacement, from, size, sort, source, highlight, aggs, postFilter,
+                minScore, searchAfter, collapse, suggest, rescore, timeout, explain, scriptFields, indicesBoost,
+                trackTotalHits, storedFields, scroll, profile, pit, docvalueFields, version, seqNoPrimaryTerm,
+                preference, routing, searchType, terminateAfter);
+    }
+
     /**
      * Highlight configuration following the Elasticsearch format.
      */

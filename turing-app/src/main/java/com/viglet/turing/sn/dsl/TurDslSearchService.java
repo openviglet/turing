@@ -1,6 +1,8 @@
 package com.viglet.turing.sn.dsl;
 
 import com.viglet.turing.api.exception.TurUnsupportedEngineException;
+import com.viglet.turing.commons.se.TurSEPartition;
+import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -84,8 +86,24 @@ public class TurDslSearchService {
                         throw new TurUnsupportedEngineException("The DSL query API", engineType,
                                 new java.util.TreeSet<>(executorMap.keySet()));
                     }
-                    return executor.execute(siteName, parsedLocale, request);
+                    return executor.execute(siteName, parsedLocale,
+                            confined(request, TurApiKeyPartitionContext.current().orElse(null)));
                 });
+    }
+
+    /**
+     * T1133 — {@code request} confined to {@code partition}: its query becomes the
+     * filter clause beside a term on the partition field, so hits, totals and
+     * aggregations all count only the partition's documents. A request with no
+     * query is the whole site, so the term alone stands for it.
+     */
+    static TurDslQueryRequest confined(TurDslQueryRequest request, TurSEPartition partition) {
+        if (partition == null || request == null) {
+            return request;
+        }
+        TurDslQuery term = new TurDslQuery.Term(partition.field(), partition.value());
+        List<TurDslQuery> must = request.query() == null ? List.of() : List.of(request.query());
+        return request.withQuery(new TurDslQuery.Bool(must, List.of(), List.of(), List.of(term), null));
     }
 
 }
