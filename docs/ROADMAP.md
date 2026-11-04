@@ -18,6 +18,10 @@
 
 ## Block CL — SN sites for research and memory archives
 
+## Block CF — What the SN site manifest cannot declare
+
+- 📋 **T1223** (deps: —) **The manifest cannot declare a field's filter values as alternatives: two fq values of site_key intersect to nothing** — A site searching its own and sibling site keys gets zero results, and the only switches flip every facet to OR. → §CLXIX.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

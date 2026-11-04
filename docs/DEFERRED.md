@@ -18,3 +18,6 @@
 ## Block CL — SN sites for research and memory archives
 
 - ⏸ **T1221** (deps: —) **Turing was never read end to end as an education and memory site uses it: pt_BR, OCR, images, audio, flows** — set aside (Needs the FESPSP lab content and its cloud tenant.): FESPSP uses nearly every visitor feature at once; one analysis finds its gaps cheaper than production. → §CLXVII.2
+
+## Block CF — What the SN site manifest cannot declare
+

@@ -33,6 +33,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CL — SN sites for research and memory archives
 
+## Block CF — What the SN site manifest cannot declare
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2267,3 +2269,37 @@ sites. T1219 and T1220 are its first finds.
 here of what already works.
 
 ## CLXVIII Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+## CLXIX What the SN site manifest cannot declare
+
+### CLXIX.1 A manifest field's facet item type (D303) (T1223)
+
+**Where it came from.** Dumont D303 (the WordPress plugin, search across sibling site
+keys): several WordPress sites share one SN site (Dumont D148) and one of them searches
+its own key plus its siblings', so the read path sends
+`fq[]=site_key:a&fq[]=site_key:b`.
+
+**What happens.** `TurLuceneQueryBuilder#addFilterQueries` (and the Solr builder)
+combine the values of one field by `fqItemOperator`, else the field's `facetItemType`,
+else the site's, which defaults to AND. So the two keys intersect and the search returns
+nothing. The two ways out both fail the consumer:
+
+- `fqItemOperator=OR` is request-wide: it also turns a visitor's two picks in another facet
+  from AND into OR, and the JS SDK's GET search (`api.ts` line 98, the query-string builder)
+  serializes `fq[]` but drops `fqOperator`/`fqItemOperator`, though `SearchParams` types them.
+- The site-wide `facetItemType` changes every facet; the field's own `facetItemType` exists
+  (`TurSNSiteFieldExt`) but only the console sets it.
+
+**What Turing should do.**
+1. The manifest field spec (`VigletFieldSpec` -> `TurSNManifestMapper#toJobSpec` -> the field
+   ext) carries an optional `facetItemType` (`AND`/`OR`/`DEFAULT`), converged like `facetName`,
+   so `POST /api/sn/manifest` can declare `site_key` as OR. Absent keeps today's value.
+2. The JS SDK's GET search query string carries `fqOperator`, `fqItemOperator`, `fqAnd[]`,
+   `fqOr[]` when set (they are typed and silently dropped today).
+
+**Workaround in Dumont.** None: D303 waits on this line for the sibling keys.
+
+**Done when:** a manifest declaring `site_key` with `facetItemType: OR` makes
+`fq[]=site_key:a&fq[]=site_key:b` return both sites' documents while two values of
+another AND facet still intersect, on Solr, Lucene and Elasticsearch; and an SDK search
+with `fqItemOperator` sends it.
