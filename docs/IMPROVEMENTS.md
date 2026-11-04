@@ -2200,8 +2200,8 @@ a dispatch of `publish-js-sdk.yml`, which bumps itself. The changesets in
 up and are no signal. CI is manual-dispatch on purpose, so the fix is not a push
 trigger.
 
-**Blocked.** Run 41825673875 (2026-11-04) failed at the PUT: npm's OIDC exchange
-answered 404, so npm's trusted publisher must name openviglet/turing.
+**Blocked.** The vanilla SDK shipped (T1142c). The React SDK's run 41827409676 failed at
+the PUT: its npm trusted publisher must name openviglet/turing too.
 
 **What it should do.**
 - Publish both SDKs now.
