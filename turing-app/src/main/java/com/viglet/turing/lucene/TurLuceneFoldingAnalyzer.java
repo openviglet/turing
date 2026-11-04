@@ -16,6 +16,7 @@
  */
 package com.viglet.turing.lucene;
 
+import java.io.Reader;
 import java.util.Locale;
 import java.util.Map;
 
@@ -86,6 +87,18 @@ public class TurLuceneFoldingAnalyzer extends Analyzer {
     protected TokenStreamComponents createComponents(String fieldName) {
         Tokenizer source = new StandardTokenizer();
         return new TokenStreamComponents(source, fold(stem(new LowerCaseFilter(source), stemmer)));
+    }
+
+    /** T1194 — decomposed (NFD) accents recomposed before tokenizing, index and query side alike. */
+    @Override
+    protected Reader initReader(String fieldName, Reader reader) {
+        return TurLuceneNfcCharFilter.wrap(reader);
+    }
+
+    /** T1194 — and before a prefix or wildcard term is normalized. */
+    @Override
+    protected Reader initReaderForNormalization(String fieldName, Reader reader) {
+        return TurLuceneNfcCharFilter.wrap(reader);
     }
 
     /** Lowercase only, as StandardAnalyzer: a prefix term keeps the spelling typed. */

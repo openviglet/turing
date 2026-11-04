@@ -14,6 +14,8 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
+- 📋 **T1217** (deps: —) **An Elasticsearch core still misses a title stored with decomposed accents (Unicode NFD)** — Its analyzer folds with asciifolding and no char filter, so the combining mark stays in the token, as on Lucene before T1194. → §CLXII.12
+
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
 ## Done when — T1184

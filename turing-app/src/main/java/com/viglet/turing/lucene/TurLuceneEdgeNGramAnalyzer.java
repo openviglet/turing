@@ -16,6 +16,8 @@
  */
 package com.viglet.turing.lucene;
 
+import java.io.Reader;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -40,6 +42,12 @@ public class TurLuceneEdgeNGramAnalyzer extends Analyzer {
     public TurLuceneEdgeNGramAnalyzer(int minGram, int maxGram) {
         this.minGram = minGram;
         this.maxGram = maxGram;
+    }
+
+    /** T1194 — decomposed (NFD) accents recomposed, so a suggestion's prefix matches what is typed. */
+    @Override
+    protected Reader initReader(String fieldName, Reader reader) {
+        return TurLuceneNfcCharFilter.wrap(reader);
     }
 
     @Override

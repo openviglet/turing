@@ -13,7 +13,5 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- ⏸ **T1194** (deps: —) **An accented word combined with another finds fewer documents than either spelling alone, in pt_BR** — set aside (No pt_BR site on the demo server reproduces it.): jaqueta impermeável missed the Borrowdale jacket that each spelling alone found, on a pt_BR demo site. → §CLXII.4
-
 ## Block AN — Security hardening (post-audit, §XXXVII)
 

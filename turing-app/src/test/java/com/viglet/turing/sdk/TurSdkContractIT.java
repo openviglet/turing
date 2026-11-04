@@ -566,6 +566,31 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         }
     }
 
+    /**
+     * T1194 — the same product with its title in Unicode NFD (the á as an a plus a
+     * combining acute, as text pasted from macOS arrives): every spelling a browser
+     * sends still finds it.
+     */
+    @Test
+    void aDecomposedAccentIsFoundByEverySpelling() throws Exception {
+        Map<String, Object> attributes = new HashMap<>(Map.of("id", "t1194-borrowdale-nfd",
+                "title", "Jaqueta impermeável do dia a dia Borrowdale"));
+        processQueue.processIndexingQueue(new TurSNJobItems(new TurSNJobItem(TurSNJobAction.CREATE,
+                List.of(SITE), Locale.forLanguageTag("pt-BR"), attributes, null)));
+        try {
+            for (String q : List.of("jaqueta impermeável", "jaqueta impermeavel", "impermeável")) {
+                List<String> ids = documentIds(postJson("/sn/" + SITE + "/search/query",
+                        """
+                                {"q":"%s","locale":"pt_BR","rows":50}""".formatted(q), null));
+                assertTrue(ids.contains("t1194-borrowdale-nfd"), "'" + q + "' must find the NFD jacket: " + ids);
+            }
+        } finally {
+            processQueue.processIndexingQueue(new TurSNJobItems(new TurSNJobItem(TurSNJobAction.DELETE,
+                    List.of(SITE), Locale.forLanguageTag("pt-BR"),
+                    new HashMap<>(Map.of("id", "t1194-borrowdale-nfd")), null)));
+        }
+    }
+
     /** T1196 — in pt_BR the singular in -ão finds the product the catalog names in -ões. */
     @Test
     void aPortugueseSingularInAoFindsItsPluralInOes() throws Exception {

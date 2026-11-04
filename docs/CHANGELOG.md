@@ -988,6 +988,7 @@
 - **T1211** — nl-filters reads a range bound with its phrase, currency and formatted amount (under $400, ate R$ 2.200, from 2024) as one span, and q drops each span at its own position (design §CLXII.9 recorded in `turing-app/src/main/java/com/viglet/turing/sn/nl/TurSNNLRangeSpan.java`).
 - **T1212** — Each copilot citation carries the document's indexed type (null when none), kept through renumbering and pinning, in the answer projection and both SDKs (design §CLXII.10 recorded in `turing-app/src/main/java/com/viglet/turing/genai/catalog/TurCatalogCitation.java`).
 - **T1213** — Copilot, kit and nl-filters take a filters map that confines every DSL read and the hybrid vector pass; a vectorless chat's filters now reach the copilot too (design §CLXII.11 recorded in `turing-app/src/main/java/com/viglet/turing/sn/dsl/TurDslCallerFilters.java`).
+- **T1194** — Lucene recomposes NFD accents before tokenizing, so a decomposed title is found by accented, unaccented and two-word queries; the demo itself was not re-checked (design §CLXII.4 superseded: the cause is reproducible without the demo: an NFD title indexes one unfolded, unstemmed term) (design §CLXII.4 recorded in `turing-app/src/main/java/com/viglet/turing/lucene/TurLuceneNfcCharFilter.java`).
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

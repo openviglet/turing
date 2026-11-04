@@ -16,9 +16,11 @@
  */
 package com.viglet.turing.plugins.se.lucene;
 
+import java.io.Reader;
 import java.util.Locale;
 
 import com.viglet.turing.lucene.TurLuceneFoldingAnalyzer;
+import com.viglet.turing.lucene.TurLuceneNfcCharFilter;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -50,6 +52,12 @@ public class TurLuceneSynonymAnalyzer extends Analyzer {
     public TurLuceneSynonymAnalyzer(SynonymMap synonymMap, Locale locale) {
         this.synonymMap = synonymMap;
         this.stemmer = TurLuceneFoldingAnalyzer.stemmerFor(locale);
+    }
+
+    /** T1194 — decomposed (NFD) accents recomposed, as the index side does. */
+    @Override
+    protected Reader initReader(String fieldName, Reader reader) {
+        return TurLuceneNfcCharFilter.wrap(reader);
     }
 
     @Override

@@ -2232,33 +2232,28 @@ owner chose the live guest console (2026-11-04). T1184b built it
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLXII.4 Accented multi-word queries match like their folded spelling (T1194)
+### CLXII.12 Elasticsearch recomposes NFD accents (T1217)
 
-Met on Dumont's WordPress demo store in pt_BR (Lucene SN site `Demo`, locale `pt_BR`,
-published `ghcr.io/openviglet/turing:latest`).
+**Where it showed.** T1194 traced the pt_BR miss on Lucene to text stored in Unicode NFD
+(an `a` plus a combining acute, as text pasted from macOS or exported by some CMSs
+arrives). `ASCIIFoldingFilter` maps precomposed letters only, so the token kept the
+mark, and the index held one term with no folded form and no stem. Lucene now recomposes
+it first (`TurLuceneNfcCharFilter`, a `MappingCharFilter` built from
+`java.text.Normalizer`).
 
-**What happens.** `GET /api/sn/Demo/search?_setlocale=pt_BR&q=…`:
-- `jaqueta impermeável` → **4** results; *Jaqueta impermeável do dia a dia Borrowdale* is missing.
-- `jaqueta impermeavel` (no accent) → **9**, Borrowdale second.
-- `impermeável` alone → **20**, Borrowdale among them.
+**What is left.** `TurElasticsearchUtils.textAnalysisSettings` builds the same pipeline
+for ES (`standard` tokenizer, `lowercase`, stem, `asciifolding`) with no char filter, so
+an Elasticsearch core indexes NFD titles the way Lucene did before T1194.
 
-**Not reproduced on 2026.3.**
-`TurSdkContractIT.anAccentedTwoWordQueryFindsWhatItsFoldedSpellingFinds` indexes that
-title in pt_BR and all three queries find it. The query analysis is ruled out: the
-folding analyzer and the synonym analyzer (one-word, multi-word and accented rules) both
-build clauses that match the document for either spelling, the accented one adding the
-stem. Lucene never applies the spell-check correction, and the relaxed retry fires only
-on zero results.
+**What to build.** Add a `mapping` char filter to that analyzer, its `mappings` the
+decomposed-to-composed pairs `TurLuceneNfcCharFilter` already computes (one source of
+truth, exposed as a list), or the `icu_normalizer` char filter where the ICU plugin is
+installed, which a stock ES does not have. A core picks it up when it is created or
+recreated, as T1173 notes for the analyzer itself. Check the Solr configsets for the
+same gap.
 
-**Next.** Query the live demo server directly (owner, 2026-11-04). On 2026-11-04
-`turing-demo.viglet.org` held no `Demo` site, and `tarnfell` is indexed in en-US only,
-so the case needs a pt_BR index that holds the Borrowdale document. Read the demo's own
-index for the Borrowdale document: its stored title and the terms of its title field
-(Unicode NFD text, which accent folding does not touch, or an index written before T1080
-are the suspects), and the image version the demo runs.
-
-**Done when.** The demo's two-word queries return the same documents, and the IT above
-stays green.
+**Done when** an ES core created after the change finds an NFD title by its accented and
+unaccented spellings.
 
 ## CLXIII Release pipeline reliability
 
