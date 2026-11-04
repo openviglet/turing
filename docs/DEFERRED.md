@@ -7,7 +7,7 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-- ⏸ **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — set aside (Waits for b65a6b9891 (T1142b) on origin/2026.3.): Dispatch both SDK publish workflows by gh. → §CLIII.2
+- ⏸ **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — set aside (npm trusted publisher must name openviglet/turing.): Dispatch both SDK publish workflows by gh. → §CLIII.2
 
 ## Block CJ — Releases ship from the repository the README names
 

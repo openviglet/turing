@@ -2200,9 +2200,8 @@ a dispatch of `publish-js-sdk.yml`, which bumps itself. The changesets in
 up and are no signal. CI is manual-dispatch on purpose, so the fix is not a push
 trigger.
 
-**Workaround used.** `wordpress/src/public/search-block.js` (`suggestFilters()`) posts
-`{text, locale}` to `/sn/<site>/nl-filters` through the client's generic
-`client.post(..., { csrf: false })`, with a comment naming T1085.
+**Blocked.** Run 41825673875 (2026-11-04) failed at the PUT: npm's OIDC exchange
+answered 404, so npm's trusted publisher must name openviglet/turing.
 
 **What it should do.**
 - Publish both SDKs now.
