@@ -33,7 +33,9 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CK — Relevance for dated content: upcoming before past
 
-## Block CL — Deep-dive research over an SN site
+## Block CL — SN sites for research and memory archives
+
+## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
 ## Table of contents
 
@@ -2245,52 +2247,52 @@ did not cause.
 
 ### CLXVI.1 An upcoming-first form for DATE ranking (T1219)
 
-**Where it came from.** FESPSP's institutional site indexes its agenda (`evento`, start date mapped as DATE through the Dumont WordPress plugin, D147). A search for "debate" should list this week's debate before one from 2023 and one six months away, without hiding past ones (they hold recordings). The only date form a ranking expression has is the recency boost (T1064), a DATE condition `asc`:
-- on Lucene, `LongField.newDistanceFeatureQuery(field, 1f, now, pivot)` in `TurLuceneRankingExpressions` scores by **absolute** distance from now, so last week and next week tie;
+**Where it came from.** FESPSP's institutional site indexes its agenda (`evento`, start and poster-end dates mapped as DATE through the Dumont WordPress plugin, D147). "debate" should list this week's debate before 2023's and one six months away, keeping past ones (they hold recordings). The only date form a ranking expression has is the recency boost (T1064), a DATE condition `asc`:
+- on Lucene, `LongField.newDistanceFeatureQuery(field, 1f, now, pivot)` in `TurLuceneRankingExpressions` scores by **absolute** distance from now, so last and next week tie;
 - on Solr, `recip(ms(NOW/DAY,field),3.16e-11,1,1)` goes above 1 for a future date, since `ms()` turns negative.
-
-No workaround written: the site waits on this line.
 
 **What Turing should do.** A second DATE condition value, `upcoming`:
 - today or later is boosted, nearest most, on the same pivot curve;
 - the past gets no boost (it still matches);
-- `asc` keeps meaning "recent past", with future dates as distance zero on Solr, a fix worth its own changelog words.
+- `asc` keeps meaning "recent past": future dates count as distance zero on Lucene and Solr alike, a fix worth its own changelog words.
 
-The console's ranking-expression editor offers it as "Upcoming first", the manifest
-accepts it, and Elasticsearch gets the equivalent (decay from `now` plus a `gte: now`
-step).
+No second field: the condition goes on the field saying until when an item is relevant
+(the end date where content has one), so a week-long poster event stays current until it
+ends.
 
-An event with a poster period stays current until its end date: decide whether the
-condition takes an optional end field or the site maps one "relevant until" field.
+The console's ranking editor offers DATE fields a choice, "Most recent" (`asc`) or
+"Upcoming first", instead of free text. The manifest declares no ranking expressions,
+and Elasticsearch applies none at all (T1222), so both stay out.
 
-**Done when:** on Lucene, Solr and Elasticsearch, of three equal-text documents dated
-−7, +7 and +180 days, `upcoming` ranks +7, +180, −7.
+**Done when:** on Lucene and Solr, of three equal-text documents dated −7, +7 and +180
+days, `upcoming` ranks +7, +180, −7, and `asc` no longer boosts +7 above −7.
 
 ## CLXVII Deep-dive research over an SN site
 
 ### CLXVII.1 A deep-dive research mode for SN sites (T1220)
 
-**Where it came from.** FESPSP, a São Paulo school of sociology and politics nearly a century old, wants visitors to "go deeper than ever before" across its WordPress sites and DSpace repository, all in one SN site (Dumont D303). "What has FESPSP done on public health?" has an answer spread over dozens of documents. The SN surfaces answer one question at a time:
+**Where it came from.** FESPSP, a São Paulo school of sociology and politics, wants visitors to "go deeper than ever before" across its WordPress sites and DSpace repository, all in one SN site (Dumont D303). "What has FESPSP done on public health?" has an answer spread over dozens of documents. The SN surfaces answer one question at a time:
 - `GET /api/sn/{site}/answer` grounds one answer on the top retrieved chunks;
 - `chat/conversation` is turn-by-turn;
 - the `genai/research` module is user-research studies (interviews, personas), not visitor research.
 
-Nothing plans sub-questions, retrieves per sub-question across facets (type, date,
-site), and composes a sectioned, cited overview.
+**The seam already exists.** `TurCatalogKitService` (T1159) names steps in one
+plain-lines LLM call (no structured output), runs each through
+`TurCatalogCopilotService.retrieve` under `TurDslCallerFilters` (T1213), and meters
+itself as its own cost stage (T1127). A deep dive is that loop with a composing step,
+not a new planner.
 
-**What Turing should do.** A "deep dive" mode on the SN site (`POST /api/sn/{site}/research`, streaming over SSE, behind the site's GenAI settings and cost budget, D216):
-1. plan 3–6 sub-questions from the question, shown as steps;
-2. retrieve per sub-question with the caller's `filters` map (as T1213), widening by facet when a step finds little;
-3. compose sections with inline citations, a timeline when the sources are dated, and "what the index does not cover" instead of filling gaps;
-4. return the source list grouped by type, ready to render as cards.
+**What Turing should do.** `POST /api/sn/{site}/research`, streaming over SSE, behind the site's GenAI settings, metered as a stage of its own so it counts in the site's cost summary and the agent budget (`TurChatCostBudgetGate`):
+1. plan 3–6 sub-questions, shown as steps;
+2. retrieve per step with the caller's `filters`, widening by facet when thin;
+3. compose cited sections, a timeline for dated sources, and "what the index does not cover" instead of filling gaps;
+4. return the sources grouped by type, ready for cards.
 
-Same refusals as `answer`: no source, no claim.
+Same refusals as `answer`. An SDK controller (`createResearchController`) for the Dumont
+plugin.
 
-Add an SDK controller (`createResearchController`) for the Dumont plugin.
-
-**Done when:** on a seeded site, a deep dive cites at least one document per section,
-never cites outside the filters, and says what is missing when a sub-question finds
-nothing.
+**Done when:** on a seeded site, every section cites a document, nothing outside the
+filters, and an empty step is reported.
 
 ### CLXVII.2 FESPSP as a reference case: an end-to-end analysis (T1221)
 
@@ -2302,15 +2304,38 @@ nothing.
 - metrics and insights.
 
 The plan is fespsp-institucional FI140–FI171: a reference case for education and memory
-sites, worth reading from Turing's side.
+sites. T1219 and T1220 are its first finds.
 
 **What to analyse**, against a Turing built from this checkout with the FESPSP lab (FI140) or a copy of its content:
-1. **pt_BR quality:** stemming and accent folding on documents written before the 1943 and 1971 spelling reforms, proper names, multi-word synonyms for the school's historical names.
-2. **OCR** on 1930s–1960s typewritten Portuguese, and how its text is chunked for citations with page numbers.
-3. **Multimodal** on black-and-white archive photos with no caption, and its cost per image.
+1. **pt_BR quality:** from T1217/T1218 (accent folding, NFD recomposed), test stemming on texts from before the 1943 and 1971 spelling reforms, proper names, multi-word synonyms for the school's historical names.
+2. **OCR** on 1930s–1960s typewritten Portuguese, and how it is chunked for citations with page numbers.
+3. **Multimodal** on uncaptioned black-and-white archive photos, and its cost per image.
 4. **Transcription** of pt_BR seminar audio: speaker turns, timestamps in citations.
-5. **Flows** authored for a guided history tour: can `ChatFlowAuthoringSkill` draft one from a curated outline?
+5. **Flows** for a guided history tour: can `ChatFlowAuthoringSkill` draft one from a curated outline?
 6. **Tenant setup** on turing.viglet.cloud: four site keys, partitioned keys, CORS for three origins, cost budget per feature.
 
 **Delivers:** one T line per gap, naming the FESPSP line that waits on it, and a note
 here of what already works.
+
+## CLXVIII Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+### CLXVIII.1 Ranking expressions on Elasticsearch (T1222)
+
+**Where it showed up.** Validating T1219 (an upcoming-first DATE form), which asked for
+an Elasticsearch equivalent: there is nothing to extend. Solr turns a site's ranking
+expressions into boost queries (`TurSolrQueryBuilder.boostQueryAttributes`) and Lucene
+into `SHOULD` boost clauses (`TurLuceneRankingExpressions`, T1064), but no class under
+`elasticsearch/` reads `TurSNRankingExpression`. The only Elasticsearch boost is the
+title phrase (T1185). The console shows the expressions and the site ranks as if they
+were absent.
+
+**What Turing should do.** A `TurElasticsearchRankingExpressions` beside the Lucene one, from the same repositories and the same rules:
+- each expression a `bool` whose conditions are all `must`, wrapped as a `should` with the expression's weight, so it raises scores without changing which documents match;
+- `Is` an exact `term` (phrase on TEXT), `Is not` a `must_not` (T1070), `Exists` an `exists` query;
+- a DATE `asc` a `distance_feature` from `now/d` with the same pivot as Lucene (a year halves the boost);
+- a condition that cannot be expressed drops its whole expression, logged at debug, as on Lucene.
+
+T1219's `upcoming` then lands on all three engines with one more arm here.
+
+**Done when:** the same ranking-expression fixture that ranks documents on Lucene and
+Solr ranks them in the same order on Elasticsearch.

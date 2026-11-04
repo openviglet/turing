@@ -20,10 +20,14 @@
 
 - 📋 **T1219** (deps: —) **A DATE ranking condition boosts by distance from now in both directions: a past event ties with an upcoming one** — An agenda search cannot put this week's event first without hiding past ones, and on Solr a future date even inflates the boost. → §CLXVI.1
 
-## Block CL — Deep-dive research over an SN site
+## Block CL — SN sites for research and memory archives
 
 - 📋 **T1220** (deps: —) **An SN site answers one question at a time: nothing plans sub-questions and composes a sectioned, cited overview** — A visitor who wants to understand a topic across dozens of documents gets one paragraph or a list of links. → §CLXVII.1
 - 📋 **T1221** (deps: —) **Turing was never read end to end as an education and memory site uses it: pt_BR, OCR, images, audio, flows** — FESPSP will use nearly every visitor feature at once, and the gaps are cheaper to find in one analysis than one by one in production. → §CLXVII.2
+
+## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+- 📋 **T1222** (deps: —) **Elasticsearch ignores a site's ranking expressions: no boost is built, while Solr and Lucene apply them** — A site moved to Elasticsearch silently loses every boost its console shows, with no warning in the editor or the logs. → §CLXVIII.1
 
 ## Done when — T1184
 
