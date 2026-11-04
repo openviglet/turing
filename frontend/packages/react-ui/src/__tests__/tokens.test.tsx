@@ -5,11 +5,11 @@ import { describe, expect, it } from "vitest";
 import {
   TURING_UI_THEME_CLASS,
   TURING_UI_TOKENS,
-} from "../tokens";
-import { TuringChatMessage } from "../TuringChatMessage";
-import { TuringCopyButton } from "../TuringCopyButton";
-import { TuringCodeBlock } from "../TuringCodeBlock";
-import { TuringThinkingDots } from "../TuringThinkingDots";
+} from "../tokens.js";
+import { TuringChatMessage } from "../TuringChatMessage.js";
+import { TuringCopyButton } from "../TuringCopyButton.js";
+import { TuringCodeBlock } from "../TuringCodeBlock.js";
+import { TuringThinkingDots } from "../TuringThinkingDots.js";
 
 /**
  * Token-theming contract (T305). The optional stylesheet drives every component

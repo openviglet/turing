@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hasHtmlBlock, splitRichContent } from "../rich-content";
+import { hasHtmlBlock, splitRichContent } from "../rich-content.js";
 
 describe("splitRichContent", () => {
   it("returns a single markdown segment when there is no html block", () => {

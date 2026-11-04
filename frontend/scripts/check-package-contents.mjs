@@ -33,6 +33,7 @@
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const pkgDir = process.cwd();
 
@@ -132,13 +133,49 @@ for (const [field, value] of declared) {
   }
 }
 
+// ── 3. Every JS entry point loads in plain Node (T1214) ──
+// A bundler resolves `from "./core/provider"`; Node's ESM loader does not, so a
+// package built with `moduleResolution: "bundler"` installed and passed (1) and
+// (2) while a Node script, a plain test runner or unbundled SSR could not import
+// it. Each entry is imported here exactly as Node would, from the built output
+// the tarball ships. `bin` targets are skipped: importing one runs the CLI.
+const bins = new Set(Object.values(pkg.bin ?? {}).map((v) => v.replace(/^\.\//, "")));
+const entries = new Set();
+const addEntry = (target) => {
+  if (typeof target !== "string") return;
+  const rel = target.replace(/^\.\//, "");
+  if (/\.(m?js|cjs)$/.test(rel) && !bins.has(rel)) entries.add(rel);
+};
+addEntry(pkg.main);
+addEntry(pkg.module);
+for (const value of Object.values(pkg.exports ?? {})) {
+  if (typeof value === "string") addEntry(value);
+  else if (value && typeof value === "object") {
+    addEntry(value.import);
+    addEntry(value.default);
+  }
+}
+const loaded = [];
+for (const rel of entries) {
+  try {
+    await import(pathToFileURL(join(pkgDir, rel)).href);
+    loaded.push(rel);
+  } catch (error) {
+    violations.push(
+      `${rel} does not load in plain Node (${error.code ?? error.name}: ${error.message.split("\n")[0]})` +
+        " — emit relative specifiers with their .js extension (moduleResolution NodeNext)",
+    );
+  }
+}
+
 // ── Report ──
 const kb = (n) => `${(n / 1024).toFixed(2)} kB`;
 console.log(
   `\n  ${pkg.name} — publish contents\n\n` +
     `    entries        ${files.length}\n` +
     `    unpacked       ${kb(listing.unpackedSize ?? 0)}\n` +
-    `    entry points   ${declared.map(([f]) => f).join(", ") || "—"}\n`,
+    `    entry points   ${declared.map(([f]) => f).join(", ") || "—"}\n` +
+    `    node loads     ${loaded.length} of ${entries.size}\n`,
 );
 
 if (violations.length > 0) {
@@ -148,4 +185,4 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
-console.log("  ✓ ships every entry point, and no test, story or map file\n");
+console.log("  ✓ ships every entry point, loads each in plain Node, and no test, story or map file\n");

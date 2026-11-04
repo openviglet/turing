@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createTuringClient, fetchStoredDocuments } from "../index";
+import { createTuringClient, fetchStoredDocuments } from "../index.js";
 
 /**
  * T1077 — a detail page reads documents by id, whole, through one GET that

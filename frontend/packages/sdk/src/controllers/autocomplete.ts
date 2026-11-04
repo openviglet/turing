@@ -1,7 +1,7 @@
-import type { TuringClient } from "../client";
-import { fetchAutoComplete, type SearchParams } from "../api";
-import { createStore, type Store } from "../store";
-import type { TuringConfig } from "../types";
+import type { TuringClient } from "../client.js";
+import { fetchAutoComplete, type SearchParams } from "../api.js";
+import { createStore, type Store } from "../store.js";
+import type { TuringConfig } from "../types.js";
 
 /**
  * Vanilla autocomplete controller — the framework-agnostic equivalent of the

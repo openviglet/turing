@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo, useState } from "react";
-import { vinylDocuments } from "../__mocks__/fixtures";
-import type { TurDocument } from "../../core/types";
+import { vinylDocuments } from "../__mocks__/fixtures.js";
+import type { TurDocument } from "../../core/types.js";
 
 /**
  * # useTuringSimilar

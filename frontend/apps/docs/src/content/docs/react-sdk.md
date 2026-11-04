@@ -21,6 +21,11 @@ npm install @viglet/turing-react-sdk
 
 **Peer dependencies:** `react` (^18 or ^19) and `axios` (^1.0).
 
+The package is plain ES modules, so it loads with or without a bundler: Vite, webpack
+and Next bundle it, and a Node script, a test runner in plain Node mode or server
+rendering that keeps `node_modules` external can `import` it directly. The same holds
+for `@viglet/turing-react-ui`.
+
 ---
 
 ## Quick Start

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { absolutizeArtifactUrls, isSandboxUrl, resolveSandboxUrl } from "../sandbox";
+import { absolutizeArtifactUrls, isSandboxUrl, resolveSandboxUrl } from "../sandbox.js";
 
 describe("resolveSandboxUrl", () => {
   it("strips the sandbox: scheme to a relative path (no base)", () => {

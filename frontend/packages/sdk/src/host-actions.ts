@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-import type { ClientToolHandler } from "./controllers/chat";
+import type { ClientToolHandler } from "./controllers/chat.js";
 
 /**
  * T450 / §XXIII.9 — embeddable action widget: default host-action client-tool

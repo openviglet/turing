@@ -5,9 +5,9 @@ import {
   fetchContentGaps,
   fetchFailedSearches,
   postClick,
-} from "../api";
-import type { TuringClient } from "../client";
-import type { TurSearchInsightReport } from "../types";
+} from "../api.js";
+import type { TuringClient } from "../client.js";
+import type { TurSearchInsightReport } from "../types.js";
 
 /**
  * T1119 — failed searches and content gaps are REST metrics a connector reads

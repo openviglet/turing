@@ -2,13 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   postSiteFlowSelect,
   type TurChatFlowSelectResponse,
-} from "../core/api";
+} from "../core/api.js";
 import {
   getOrCreateTurSession,
   readTurSession,
   TUR_SESSION_DEFAULT_COOKIE_NAME,
-} from "../core/session";
-import { useTuringContext } from "../core/use-turing-context";
+} from "../core/session.js";
+import { useTuringContext } from "../core/use-turing-context.js";
 
 export type FlowChooserStatus = "idle" | "selecting" | "success" | "error";
 

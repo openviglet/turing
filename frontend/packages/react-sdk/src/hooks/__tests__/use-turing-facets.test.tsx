@@ -1,9 +1,9 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useTuringFacets } from "../use-turing-facets";
-import type { SearchStoreValue } from "../../core/context";
-import type { TurSearchResponse, TurStructuredSearchResponse } from "../../core/types";
+import { useTuringFacets } from "../use-turing-facets.js";
+import type { SearchStoreValue } from "../../core/context.js";
+import type { TurSearchResponse, TurStructuredSearchResponse } from "../../core/types.js";
 
 /**
  * T936 / §XLV.6 — the secondary rail reaches the hook.
@@ -17,7 +17,7 @@ import type { TurSearchResponse, TurStructuredSearchResponse } from "../../core/
 
 const mockStore = vi.fn<() => SearchStoreValue>();
 
-vi.mock("../../core/use-search-store", () => ({
+vi.mock("../../core/use-search-store.js", () => ({
   useSearchStore: () => mockStore(),
 }));
 

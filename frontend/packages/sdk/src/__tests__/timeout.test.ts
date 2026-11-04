@@ -11,7 +11,7 @@ import {
   postStructuredSearch,
   TuringTimeoutError,
   TuringTransportError,
-} from "../index";
+} from "../index.js";
 
 /**
  * T1079 — a call can be bounded: the client's `timeoutMs` aborts a stalled

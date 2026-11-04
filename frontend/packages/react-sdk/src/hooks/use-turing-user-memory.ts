@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import type { ClientToolHandler } from "../core/types";
-import { useOptionalTuringContext } from "../core/use-turing-context";
+import type { ClientToolHandler } from "../core/types.js";
+import { useOptionalTuringContext } from "../core/use-turing-context.js";
 
 /**
  * T446 / §XXIII.5 — cross-conversation personal memory.

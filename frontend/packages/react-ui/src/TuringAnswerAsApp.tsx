@@ -2,7 +2,7 @@ import { useState } from "react";
 import type {
   TuringGenerativeComponentProps,
   TuringGenerativeRegistry,
-} from "./TuringGenerativeContent";
+} from "./TuringGenerativeContent.js";
 
 /**
  * T442 / §XXIII.1 — "answer-as-an-app": the headless generative-UI components the

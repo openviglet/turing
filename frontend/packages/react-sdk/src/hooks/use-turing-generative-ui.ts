@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/refs -- T1027; rationale in eslint.config.js */
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { ClientToolHandler } from "../core/types";
+import type { ClientToolHandler } from "../core/types.js";
 import type {
   TuringGenerativeItem,
   TuringGenerativeRegistry,

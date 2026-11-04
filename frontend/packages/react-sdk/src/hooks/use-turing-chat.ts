@@ -19,19 +19,19 @@ import {
   postSiteFormSubmit,
   type ChatDisabledReason,
   type TurNLFilters,
-} from "../core/api";
-import { useOptionalTuringContext } from "../core/use-turing-context";
+} from "../core/api.js";
+import { useOptionalTuringContext } from "../core/use-turing-context.js";
 import {
   TUR_SESSION_DEFAULT_COOKIE_NAME,
   TUR_SESSION_DEFAULT_TTL_SECONDS,
   getOrCreateTurSession,
-} from "../core/session";
-import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../core/analytics";
+} from "../core/session.js";
+import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../core/analytics.js";
 import {
   createAbandonmentWatcher,
   type AbandonmentOptions,
   type AbandonmentWatcher,
-} from "../core/analytics-lifecycle";
+} from "../core/analytics-lifecycle.js";
 import type {
   ClientToolHandler,
   ClientToolRegistration,
@@ -41,18 +41,18 @@ import type {
   TurChatFormSubmitResponse,
   TurChatToolCall,
   TurClientToolCall,
-} from "../core/types";
+} from "../core/types.js";
 import {
   newId,
   useStreamingChatCore,
   type ChatMessage,
   type ChatStatus,
-} from "./streaming-chat-core";
+} from "./streaming-chat-core.js";
 
 // Re-exported for backwards compatibility — `ChatMessage` and `ChatStatus`
 // moved to `streaming-chat-core.ts` in T243 (shared with `useTuringLlmChat`)
 // but were, and stay, part of this hook's public surface.
-export type { ChatMessage, ChatStatus } from "./streaming-chat-core";
+export type { ChatMessage, ChatStatus } from "./streaming-chat-core.js";
 
 /** Query-param name carrying the forced A/B variant (T73). */
 const AB_VARIANT_PARAM = "_ab_variant";

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringHtmlSandbox } from "../TuringHtmlSandbox";
-import { SkinShowcase, htmlSandboxClassNames } from "./skins";
+import { TuringHtmlSandbox } from "../TuringHtmlSandbox.js";
+import { SkinShowcase, htmlSandboxClassNames } from "./skins.js";
 
 /**
  * # TuringHtmlSandbox

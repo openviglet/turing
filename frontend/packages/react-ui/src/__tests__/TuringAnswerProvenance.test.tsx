@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { TuringAnswerProvenance } from "../TuringAnswerProvenance";
+import { TuringAnswerProvenance } from "../TuringAnswerProvenance.js";
 
 /**
  * T839 — headless-contract tests for the "why this answer" provenance panel.

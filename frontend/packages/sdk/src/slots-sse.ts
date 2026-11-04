@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-import type { TurChatSessionSlots, TurChatSessionSlotsDelta } from "./api";
+import type { TurChatSessionSlots, TurChatSessionSlotsDelta } from "./api.js";
 
 /**
  * Module-level SSE multiplexer for the {@code /chat/slots/stream} endpoint.

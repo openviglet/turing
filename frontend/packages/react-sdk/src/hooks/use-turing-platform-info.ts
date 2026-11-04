@@ -8,8 +8,8 @@ import {
   type TurDiscoveryInfo,
   type TurFeaturesInfo,
   type TurSystemLocale,
-} from "../core/api";
-import type { TurLlmVendor } from "../core/types";
+} from "../core/api.js";
+import type { TurLlmVendor } from "../core/types.js";
 
 export interface UseTuringPlatformInfoOptions {
   /** Disables the initial fetch when {@code false}. Defaults to {@code true}. */

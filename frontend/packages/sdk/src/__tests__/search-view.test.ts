@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { toSearchView } from "../search-view";
-import type { ProjectableSearchStore } from "../search-view";
-import type { TurSearchResponse, TurStructuredSearchResponse } from "../types";
+import { toSearchView } from "../search-view.js";
+import type { ProjectableSearchStore } from "../search-view.js";
+import type { TurSearchResponse, TurStructuredSearchResponse } from "../types.js";
 
 /**
  * T881 / §LXX.3 — the two-shape projection, asserted without React.

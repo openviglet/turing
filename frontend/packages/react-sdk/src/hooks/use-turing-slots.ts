@@ -5,10 +5,10 @@ import {
   fetchAgentChatSlots,
   fetchSiteChatSlots,
   type TurChatSessionSlots,
-} from "../core/api";
-import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session";
-import { subscribeSlotsSse } from "../core/slots-sse-multiplexer";
-import { useOptionalTuringContext } from "../core/use-turing-context";
+} from "../core/api.js";
+import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session.js";
+import { subscribeSlotsSse } from "../core/slots-sse-multiplexer.js";
+import { useOptionalTuringContext } from "../core/use-turing-context.js";
 
 export type SlotsStatus = "idle" | "loading" | "success" | "error";
 

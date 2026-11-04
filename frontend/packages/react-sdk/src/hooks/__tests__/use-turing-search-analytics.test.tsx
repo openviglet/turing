@@ -1,10 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createTuringAnalytics, type TuringAnalyticsEvent } from "../../core/analytics";
-import { googleAnalyticsSink } from "../../core/analytics-sinks";
-import { clearTurSession, readTurSession } from "../../core/session";
-import { useTuringSearch, type UseTuringSearchOptions } from "../use-turing-search";
+import { createTuringAnalytics, type TuringAnalyticsEvent } from "../../core/analytics.js";
+import { googleAnalyticsSink } from "../../core/analytics-sinks.js";
+import { clearTurSession, readTurSession } from "../../core/session.js";
+import { useTuringSearch, type UseTuringSearchOptions } from "../use-turing-search.js";
 
 /**
  * T1137 — the React search hook's analytics respect consent, skip as-you-type
@@ -12,12 +12,12 @@ import { useTuringSearch, type UseTuringSearchOptions } from "../use-turing-sear
  * recommended events: the vanilla controller's behaviour (T1129, T1130).
  */
 
-vi.mock("../../core/use-turing-context", () => ({
+vi.mock("../../core/use-turing-context.js", () => ({
   useTuringContext: () => ({ config: { site: "s1", locale: "en_US" } }),
 }));
 
-vi.mock("../../core/api", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../core/api")>();
+vi.mock("../../core/api.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../core/api.js")>();
   return {
     ...actual,
     postStructuredSearch: vi.fn(async () => ({ queryContext: { count: 4 }, results: { document: [] } })),
@@ -102,7 +102,7 @@ describe("useTuringSearch — analytics (T1137)", () => {
   });
 
   it("posts no click and emits nothing until consent is given", async () => {
-    const { postClick } = await import("../../core/api");
+    const { postClick } = await import("../../core/api.js");
     vi.mocked(postClick).mockClear();
     let granted = false;
     const { result } = setup({ consent: () => granted });

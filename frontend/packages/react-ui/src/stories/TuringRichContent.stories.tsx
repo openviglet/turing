@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringRichContent } from "../TuringRichContent";
-import { TuringMarkdown } from "../TuringMarkdown";
-import { TuringD2Diagram } from "../TuringD2Diagram";
+import { TuringRichContent } from "../TuringRichContent.js";
+import { TuringMarkdown } from "../TuringMarkdown.js";
+import { TuringD2Diagram } from "../TuringD2Diagram.js";
 import {
   SkinShowcase,
   htmlSandboxClassNames,
   d2ClassNames,
   proseClassName,
   type SkinName,
-} from "./skins";
+} from "./skins.js";
 
 /**
  * # TuringRichContent

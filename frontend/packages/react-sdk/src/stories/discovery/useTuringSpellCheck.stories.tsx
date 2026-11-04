@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo, useState } from "react";
-import type { TurSpellCheck } from "../../core/types";
-import { creatureDocuments, resolveDocsMock } from "../__mocks__/fixtures";
+import type { TurSpellCheck } from "../../core/types.js";
+import { creatureDocuments, resolveDocsMock } from "../__mocks__/fixtures.js";
 
 /**
  * # useTuringSpellCheck

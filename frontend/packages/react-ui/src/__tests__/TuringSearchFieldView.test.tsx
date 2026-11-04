@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import {
   TuringSearchFieldView,
   type TuringSearchFieldViewContextValue,
-} from "../TuringSearchFieldView";
+} from "../TuringSearchFieldView.js";
 
 /**
  * T307 — headless-contract render tests for the search-field view split out of

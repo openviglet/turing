@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session";
-import { useOptionalTuringContext } from "../core/use-turing-context";
+import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session.js";
+import { useOptionalTuringContext } from "../core/use-turing-context.js";
 
 /**
  * T445 / §XXIII.4 — ambient / proactive copilot.

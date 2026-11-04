@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo, useState } from "react";
-import { missionDocuments, resolveDocsMock } from "../__mocks__/fixtures";
+import { missionDocuments, resolveDocsMock } from "../__mocks__/fixtures.js";
 
 /**
  * # useAnswerAsApp

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { createAbandonmentWatcher } from "../analytics-lifecycle";
-import { createChatController } from "../controllers/chat";
-import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics";
-import type { TuringClient } from "../client";
+import { createAbandonmentWatcher } from "../analytics-lifecycle.js";
+import { createChatController } from "../controllers/chat.js";
+import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics.js";
+import type { TuringClient } from "../client.js";
 
 /**
  * T862 — the SSR half of T460's abandonment watcher, deliberately left on the

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { missionDocuments } from "../__mocks__/fixtures";
-import type { TurDslSearchRequest, TurDslSearchHit } from "../../core/api";
+import { missionDocuments } from "../__mocks__/fixtures.js";
+import type { TurDslSearchRequest, TurDslSearchHit } from "../../core/api.js";
 
 /**
  * # useTuringDslSearch

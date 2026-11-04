@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createTuringClient, postNlFilters, type TurNLFilters } from "../index";
+import { createTuringClient, postNlFilters, type TurNLFilters } from "../index.js";
 
 /**
  * T1085 — a site turns a visitor's description into its own search's `q` and

@@ -16,16 +16,16 @@
 // message. `status` is a field on TuringHttpError; TuringTransportError means the
 // request produced no usable response (refused, offline, CORS, empty body).
 // T1079 — TuringTimeoutError (a TuringTransportError) when the client's timeoutMs elapses.
-export { TuringHttpError, TuringTimeoutError, TuringTransportError } from "./errors";
+export { TuringHttpError, TuringTimeoutError, TuringTransportError } from "./errors.js";
 
 // ── Client ──
-export { createTuringClient } from "./client";
+export { createTuringClient } from "./client.js";
 export type {
   TuringClient,
   TuringCallOptions,
   TuringClientConfig,
   TuringRequestOptions,
-} from "./client";
+} from "./client.js";
 
 // ── API (functions + bound helper) ──
 export {
@@ -93,7 +93,7 @@ export {
   createTuringApi,
   CHAT_DISABLED_HINTS,
   LOW_CONFIDENCE_THRESHOLD,
-} from "./api";
+} from "./api.js";
 export type {
   SearchParams,
   ClickTrackParams,
@@ -152,7 +152,7 @@ export type {
   TurSystemLocale,
   TurSummaryResult,
   TuringApi,
-} from "./api";
+} from "./api.js";
 
 // ── Session ──
 export {
@@ -161,52 +161,52 @@ export {
   clearTurSession,
   TUR_SESSION_DEFAULT_COOKIE_NAME,
   TUR_SESSION_DEFAULT_TTL_SECONDS,
-} from "./session";
-export type { TurSessionOptions } from "./session";
+} from "./session.js";
+export type { TurSessionOptions } from "./session.js";
 
 // ── Resolve utilities ──
-export { resolveDocuments, resolveGroups, resolveStructuredGroups } from "./resolve";
-export type { ResolvableSearchResponse } from "./resolve";
+export { resolveDocuments, resolveGroups, resolveStructuredGroups } from "./resolve.js";
+export type { ResolvableSearchResponse } from "./resolve.js";
 
 // T881 — the rest of the response, projected once for both shapes.
-export { toSearchView } from "./search-view";
+export { toSearchView } from "./search-view.js";
 export type {
   ProjectableSearchStore,
   SearchView,
   SearchLocaleView,
   SearchSpellCheckView,
   AppliedFilterView,
-} from "./search-view";
+} from "./search-view.js";
 
 // ── Sandbox artifact URLs (code-interpreter / workspace) ──
-export { resolveSandboxUrl, isSandboxUrl, absolutizeArtifactUrls } from "./sandbox";
+export { resolveSandboxUrl, isSandboxUrl, absolutizeArtifactUrls } from "./sandbox.js";
 
 // ── Rich-content segmentation (```html live preview / games / charts) ──
-export { splitRichContent, hasHtmlBlock } from "./rich-content";
-export type { TurRichSegment } from "./rich-content";
+export { splitRichContent, hasHtmlBlock } from "./rich-content.js";
+export type { TurRichSegment } from "./rich-content.js";
 
 // ── Slots SSE multiplexer (advanced) ──
-export { subscribeSlotsSse } from "./slots-sse";
+export { subscribeSlotsSse } from "./slots-sse.js";
 export type {
   SlotsSseSubscriber,
   SlotsSseSubscription,
   SlotsSseOptions,
-} from "./slots-sse";
+} from "./slots-sse.js";
 
 // ── Workspace SSE multiplexer (T113) ──
-export { subscribeWorkspaceSse, _workspaceSseOpenChannelCount } from "./workspace-sse";
+export { subscribeWorkspaceSse, _workspaceSseOpenChannelCount } from "./workspace-sse.js";
 export type {
   WorkspaceSseSubscriber,
   WorkspaceSseSubscription,
   WorkspaceSseScope,
-} from "./workspace-sse";
+} from "./workspace-sse.js";
 
 // ── Store ──
-export { createStore } from "./store";
-export type { Store, Listener } from "./store";
+export { createStore } from "./store.js";
+export type { Store, Listener } from "./store.js";
 
 // ── Analytics event bus (T458, Block Z) ──
-export { createTuringAnalytics, TURING_ANALYTICS_EVENTS } from "./analytics";
+export { createTuringAnalytics, TURING_ANALYTICS_EVENTS } from "./analytics.js";
 export type {
   TuringAnalytics,
   TuringAnalyticsOptions,
@@ -215,20 +215,20 @@ export type {
   TuringAnalyticsEventName,
   TuringAnalyticsSink,
   TuringAnalyticsValue,
-} from "./analytics";
+} from "./analytics.js";
 // ── Analytics sinks: GA4/GTM, generic, debug (T459) ──
-export { googleAnalyticsSink, onEventSink, debugSink } from "./analytics-sinks";
+export { googleAnalyticsSink, onEventSink, debugSink } from "./analytics-sinks.js";
 export type {
   GoogleAnalyticsSinkOptions,
   DebugSinkOptions,
-} from "./analytics-sinks";
+} from "./analytics-sinks.js";
 // ── Analytics lifecycle: abandonment watcher (T460) ──
-export { createAbandonmentWatcher } from "./analytics-lifecycle";
+export { createAbandonmentWatcher } from "./analytics-lifecycle.js";
 export type {
   AbandonmentOptions,
   AbandonmentReason,
   AbandonmentWatcher,
-} from "./analytics-lifecycle";
+} from "./analytics-lifecycle.js";
 
 // ── Controllers ──
 export {
@@ -237,13 +237,13 @@ export {
   // SDK so the two cannot drift on how a legacy param maps onto the POST body.
   searchParamsToRequest,
   requestToSearchParams,
-} from "./controllers/search";
+} from "./controllers/search.js";
 export type {
   SearchController,
   SearchControllerState,
   SearchControllerOptions,
-} from "./controllers/search";
-export { createChatController } from "./controllers/chat";
+} from "./controllers/search.js";
+export { createChatController } from "./controllers/chat.js";
 export type {
   ChatController,
   ChatControllerState,
@@ -255,38 +255,38 @@ export type {
   SendOverrides,
   ClientToolHandler,
   ClientToolRegistration,
-} from "./controllers/chat";
+} from "./controllers/chat.js";
 // T837 / §LXII.6 — observable answer controller (the vanilla useTuringAnswer).
-export { createAnswerController } from "./controllers/answer";
+export { createAnswerController } from "./controllers/answer.js";
 export type {
   AnswerController,
   AnswerControllerState,
   AnswerAskOptions,
   AnswerStatus,
-} from "./controllers/answer";
+} from "./controllers/answer.js";
 // T450 — embeddable action widget: default host-action client tools.
-export { createHostActions } from "./host-actions";
-export type { HostActions, HostActionsOptions } from "./host-actions";
-export { createAutoComplete } from "./controllers/autocomplete";
+export { createHostActions } from "./host-actions.js";
+export type { HostActions, HostActionsOptions } from "./host-actions.js";
+export { createAutoComplete } from "./controllers/autocomplete.js";
 export type {
   AutoCompleteController,
   AutoCompleteState,
-} from "./controllers/autocomplete";
-export { createSlotsController } from "./controllers/slots";
+} from "./controllers/autocomplete.js";
+export { createSlotsController } from "./controllers/slots.js";
 export type {
   SlotsController,
   SlotsControllerState,
   SlotsControllerOptions,
   SlotsControllerScope,
   SlotsStatus,
-} from "./controllers/slots";
-export { createSimilarController } from "./controllers/similar";
+} from "./controllers/slots.js";
+export { createSimilarController } from "./controllers/similar.js";
 export type {
   SimilarController,
   SimilarControllerState,
   SimilarControllerOptions,
   SimilarStatus,
-} from "./controllers/similar";
+} from "./controllers/similar.js";
 
 // ── Types ──
 export type {
@@ -372,4 +372,4 @@ export type {
   SearchState,
   ResolvedDocument,
   ResolvedGroup,
-} from "./types";
+} from "./types.js";

@@ -1,12 +1,12 @@
 import { useCallback } from "react";
-import { postLlmChat } from "../core/api";
-import type { TurChatConversationMessage } from "../core/types";
+import { postLlmChat } from "../core/api.js";
+import type { TurChatConversationMessage } from "../core/types.js";
 import {
   newId,
   useStreamingChatCore,
   type ChatMessage,
   type ChatStatus,
-} from "./streaming-chat-core";
+} from "./streaming-chat-core.js";
 
 /**
  * Per-call overrides accepted by {@link UseTuringLlmChatReturn#send}. Today

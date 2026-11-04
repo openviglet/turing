@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { TuringWorkspacePanelView } from "@viglet/turing-react-ui";
-import type { TurWorkspaceArtifact } from "../core/api";
+import type { TurWorkspaceArtifact } from "../core/api.js";
 import {
   useTuringWorkspace,
   type UseTuringWorkspaceOptions,
-} from "../hooks/use-turing-workspace";
+} from "../hooks/use-turing-workspace.js";
 
 export interface TuringWorkspacePanelProps extends UseTuringWorkspaceOptions {
   /** Heading shown above the artifact list. Defaults to "Files". */

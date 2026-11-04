@@ -1,7 +1,7 @@
 import axios from "axios";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { postCopilotKit, type TurCatalogKitResult } from "../index";
+import { postCopilotKit, type TurCatalogKitResult } from "../index.js";
 
 /**
  * T1159 — the React SDK posts a plan to the kit endpoint through the host's axios

@@ -5,7 +5,7 @@ import {
   type TuringAnalyticsContext,
   type TuringAnalyticsEventName,
   type TuringAnalyticsValue,
-} from "../../core/analytics";
+} from "../../core/analytics.js";
 
 /**
  * # useTuringAnalytics

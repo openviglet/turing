@@ -13,15 +13,15 @@
  * @author Alexandre Oliveira
  * @since 2026.3.1
  */
-export { TuringHtmlSandbox } from "./TuringHtmlSandbox";
+export { TuringHtmlSandbox } from "./TuringHtmlSandbox.js";
 export type {
   TuringHtmlSandboxProps,
   TuringHtmlSandboxClassNames,
   TuringHtmlSandboxLabels,
   TuringHtmlSandboxIcons,
-} from "./TuringHtmlSandbox";
+} from "./TuringHtmlSandbox.js";
 
-export { TuringRichContent, splitRichContent } from "./TuringRichContent";
+export { TuringRichContent, splitRichContent } from "./TuringRichContent.js";
 export type {
   TuringRichContentProps,
   TuringRichContentClassNames,
@@ -29,48 +29,48 @@ export type {
   TuringMarkdownSegmentProps,
   TuringD2Props,
   TuringHtmlSegmentProps,
-} from "./TuringRichContent";
+} from "./TuringRichContent.js";
 
-export { TuringMarkdown, resolveSandboxUrl } from "./TuringMarkdown";
-export type { TuringMarkdownProps } from "./TuringMarkdown";
+export { TuringMarkdown, resolveSandboxUrl } from "./TuringMarkdown.js";
+export type { TuringMarkdownProps } from "./TuringMarkdown.js";
 
-export { TuringD2Diagram } from "./TuringD2Diagram";
+export { TuringD2Diagram } from "./TuringD2Diagram.js";
 export type {
   TuringD2DiagramProps,
   TuringD2DiagramClassNames,
   TuringD2DiagramLabels,
   TuringD2Renderer,
-} from "./TuringD2Diagram";
+} from "./TuringD2Diagram.js";
 
-export { TuringCopyButton } from "./TuringCopyButton";
+export { TuringCopyButton } from "./TuringCopyButton.js";
 export type {
   TuringCopyButtonProps,
   TuringCopyButtonClassNames,
   TuringCopyButtonLabels,
   TuringCopyButtonIcons,
-} from "./TuringCopyButton";
+} from "./TuringCopyButton.js";
 
-export { TuringThinkingDots } from "./TuringThinkingDots";
+export { TuringThinkingDots } from "./TuringThinkingDots.js";
 export type {
   TuringThinkingDotsProps,
   TuringThinkingDotsClassNames,
-} from "./TuringThinkingDots";
+} from "./TuringThinkingDots.js";
 
-export { TuringCodeBlock } from "./TuringCodeBlock";
+export { TuringCodeBlock } from "./TuringCodeBlock.js";
 export type {
   TuringCodeBlockProps,
   TuringCodeBlockClassNames,
   TuringCodeBlockLabels,
-} from "./TuringCodeBlock";
+} from "./TuringCodeBlock.js";
 
-export { TuringChatMessage } from "./TuringChatMessage";
+export { TuringChatMessage } from "./TuringChatMessage.js";
 export type {
   TuringChatMessageProps,
   TuringChatMessageRole,
   TuringChatMessageClassNames,
-} from "./TuringChatMessage";
+} from "./TuringChatMessage.js";
 
-export { TuringSourceChips } from "./TuringSourceChips";
+export { TuringSourceChips } from "./TuringSourceChips.js";
 export type {
   TuringSourceChipsProps,
   TuringSourceChipsClassNames,
@@ -78,38 +78,38 @@ export type {
   TuringSourceChipsIcons,
   TuringRagSource,
   TuringSourceConfidence,
-} from "./TuringSourceChips";
+} from "./TuringSourceChips.js";
 
-export { TuringToolActivity } from "./TuringToolActivity";
+export { TuringToolActivity } from "./TuringToolActivity.js";
 export type {
   TuringToolActivityProps,
   TuringToolActivityClassNames,
   TuringToolActivityLabels,
   TuringToolActivityIcons,
   TuringToolCall,
-} from "./TuringToolActivity";
+} from "./TuringToolActivity.js";
 
-export { TuringGenerativeContent } from "./TuringGenerativeContent";
+export { TuringGenerativeContent } from "./TuringGenerativeContent.js";
 export type {
   TuringGenerativeContentProps,
   TuringGenerativeContentClassNames,
   TuringGenerativeItem,
   TuringGenerativeComponentProps,
   TuringGenerativeRegistry,
-} from "./TuringGenerativeContent";
+} from "./TuringGenerativeContent.js";
 
 // T636 / §XXVII.4 — persona-adaptive & content-validation primitives
 // ("same question, different eyes" + "validate content as persona X").
-export { TuringPersonaPicker } from "./TuringPersonaPicker";
+export { TuringPersonaPicker } from "./TuringPersonaPicker.js";
 export type {
   TuringPersonaPickerProps,
   TuringPersonaPickerClassNames,
   TuringPersonaPickerLabels,
   TuringPersonaPickerIcons,
   TuringPersonaOption,
-} from "./TuringPersonaPicker";
+} from "./TuringPersonaPicker.js";
 
-export { TuringContentFit } from "./TuringContentFit";
+export { TuringContentFit } from "./TuringContentFit.js";
 export type {
   TuringContentFitProps,
   TuringContentFitClassNames,
@@ -117,7 +117,7 @@ export type {
   TuringContentFitIcons,
   TuringContentFitResult,
   TuringContentFitMisfit,
-} from "./TuringContentFit";
+} from "./TuringContentFit.js";
 
 // T442 / §XXIII.1 — answer-as-an-app generative components (comparison table,
 // spec card, configurator) keyed by the built-in client-tool names. Headless,
@@ -128,7 +128,7 @@ export {
   TuringConfigurator,
   ANSWER_AS_APP_COMPONENTS,
   formatTypedValue,
-} from "./TuringAnswerAsApp";
+} from "./TuringAnswerAsApp.js";
 export type {
   TuringAppFieldType,
   TuringAppControlType,
@@ -142,82 +142,82 @@ export type {
   TuringSpecCardClassNames,
   TuringConfiguratorProps,
   TuringConfiguratorClassNames,
-} from "./TuringAnswerAsApp";
+} from "./TuringAnswerAsApp.js";
 
-export { TuringCitedAnswer, segmentCitedAnswer } from "./TuringCitedAnswer";
+export { TuringCitedAnswer, segmentCitedAnswer } from "./TuringCitedAnswer.js";
 export type {
   TuringCitedAnswerProps,
   TuringCitedAnswerClassNames,
   TuringCitation,
   TuringCitedMark,
-} from "./TuringCitedAnswer";
+} from "./TuringCitedAnswer.js";
 
 // T836 / §LXII.5 — inline `[n]` citation anchors for markdown answers: a rehype
 // plugin turning each `[n]` into a clickable superscript that scroll-links +
 // highlights the matching source card, plus the `components` map that renders it.
-export { rehypeCitationAnchors } from "./rehypeCitationAnchors";
-export type { RehypeCitationAnchorsOptions } from "./rehypeCitationAnchors";
-export { TuringCitationAnchor, citationMarkdownComponents } from "./TuringCitationAnchor";
+export { rehypeCitationAnchors } from "./rehypeCitationAnchors.js";
+export type { RehypeCitationAnchorsOptions } from "./rehypeCitationAnchors.js";
+export { TuringCitationAnchor, citationMarkdownComponents } from "./TuringCitationAnchor.js";
 
 // T839 / §LXII.8 — the "why this answer" auditable provenance panel.
-export { TuringAnswerProvenance } from "./TuringAnswerProvenance";
+export { TuringAnswerProvenance } from "./TuringAnswerProvenance.js";
 export type {
   TuringAnswerProvenanceProps,
   TuringAnswerProvenanceClassNames,
   TuringAnswerProvenanceLabels,
   TuringAnswerProvenanceTrace,
   TuringAnswerProvenanceCitation,
-} from "./TuringAnswerProvenance";
+} from "./TuringAnswerProvenance.js";
 export type {
   TuringCitationAnchorProps,
   TuringCitationAnchorClassNames,
   TuringCitationAnchorData,
   CitationMarkdownComponentsOptions,
-} from "./TuringCitationAnchor";
+} from "./TuringCitationAnchor.js";
 
 // Design-less search primitives migrated from `@viglet/turing-react-sdk` (T306).
 // Pure renderers (props + render-props, no hook/API coupling); their structural
 // data types are redeclared locally to keep this package zero-runtime-dep.
-export { TuringSearchBar } from "./TuringSearchBar";
+export { TuringSearchBar } from "./TuringSearchBar.js";
 export type {
   TuringSearchBarProps,
   TuringSearchBarInputProps,
-} from "./TuringSearchBar";
+} from "./TuringSearchBar.js";
 
-export { TuringResultList } from "./TuringResultList";
+export { TuringResultList } from "./TuringResultList.js";
 export type {
   TuringResultListProps,
   TuringResolvedDocument,
   TuringRawDocument,
-} from "./TuringResultList";
+} from "./TuringResultList.js";
 
 // T882 — a result's facet chips as actions, not as dead badges.
-export { TuringDocumentChips } from "./TuringDocumentChips";
+export { TuringDocumentChips } from "./TuringDocumentChips.js";
 export type {
   TuringDocumentChipsProps,
   TuringDocumentChip,
   TuringFacetToggleTarget,
   TuringFacetAction,
-} from "./TuringDocumentChips";
+} from "./TuringDocumentChips.js";
 
-export { TuringPagination } from "./TuringPagination";
+export { TuringPagination } from "./TuringPagination.js";
 export type {
   TuringPaginationProps,
   TuringPaginationItemData,
-} from "./TuringPagination";
+} from "./TuringPagination.js";
 
 // Headless view half of the legacy `TuringSearchField`, split out in T307. The
 // orchestrating Root (autocomplete + history + url-search hooks) stays in
 // `@viglet/turing-react-sdk` and feeds this view its state/callbacks via props;
 // the baked Tailwind defaults were stripped here to honor the headless contract.
-export { TuringSearchFieldView } from "./TuringSearchFieldView";
+export { TuringSearchFieldView } from "./TuringSearchFieldView.js";
 export type {
   TuringSearchFieldViewProps,
   TuringSearchFieldViewContextValue,
   TuringSearchFieldViewInputProps,
   TuringSearchFieldViewButtonProps,
   TuringSearchFieldViewDropdownProps,
-} from "./TuringSearchFieldView";
+} from "./TuringSearchFieldView.js";
 
 // Headless view half of the legacy `TuringWorkspacePanel`, split out in T308.
 // The SSE subscription (`useTuringWorkspace`) stays in `@viglet/turing-react-sdk`
@@ -225,12 +225,12 @@ export type {
 export {
   TuringWorkspacePanelView,
   formatBytes,
-} from "./TuringWorkspacePanelView";
+} from "./TuringWorkspacePanelView.js";
 export type {
   TuringWorkspacePanelViewProps,
   TuringWorkspaceArtifact,
   TuringWorkspaceStatus,
-} from "./TuringWorkspacePanelView";
+} from "./TuringWorkspacePanelView.js";
 
 // Optional token theming (T305) — an alternative to `classNames`. Import the
 // stylesheet (`@viglet/turing-react-ui/styles.css`) and drive the look via
@@ -238,5 +238,5 @@ export type {
 export {
   TURING_UI_THEME_CLASS,
   TURING_UI_TOKENS,
-} from "./tokens";
-export type { TuringUiTheme, TuringUiTokenName } from "./tokens";
+} from "./tokens.js";
+export type { TuringUiTheme, TuringUiTokenName } from "./tokens.js";

@@ -12,8 +12,8 @@ import {
   fetchAgentContextInfo,
   fetchLlmContextInfo,
   fetchLlmInstances,
-} from "../core/api";
-import type { TurLlmInstance } from "../core/types";
+} from "../core/api.js";
+import type { TurLlmInstance } from "../core/types.js";
 
 export interface UseTuringLlmInstancesOptions {
   /**

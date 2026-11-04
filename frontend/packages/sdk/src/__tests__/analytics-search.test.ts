@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics";
-import { createSearchController } from "../controllers/search";
-import type { TuringClient } from "../client";
-import type { TurSearchResponse } from "../types";
+import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics.js";
+import { createSearchController } from "../controllers/search.js";
+import type { TuringClient } from "../client.js";
+import type { TurSearchResponse } from "../types.js";
 
 /**
  * T462 (Block Z) — search / semantic-navigation conversion events.

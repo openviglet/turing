@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { ResolvedDocument } from "../core/types";
+import type { ResolvedDocument } from "../core/types.js";
 
 /**
  * Helper interface returned by useTuringDocument.

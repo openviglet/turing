@@ -1,9 +1,9 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { useCoBrowseSearch } from "../use-turing-co-browse";
-import type { SearchStoreValue } from "../../core/context";
-import type { TurSearchResponse, TurStructuredSearchResponse } from "../../core/types";
+import { useCoBrowseSearch } from "../use-turing-co-browse.js";
+import type { SearchStoreValue } from "../../core/context.js";
+import type { TurSearchResponse, TurStructuredSearchResponse } from "../../core/types.js";
 
 /**
  * T884 / §LXX.6 — the agent can reach a secondary facet.

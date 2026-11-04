@@ -1,16 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
-import { applyFacetAction, postSearch, postStructuredSearch } from "../api";
+import { applyFacetAction, postSearch, postStructuredSearch } from "../api.js";
 import {
   createSearchController,
   requestToSearchParams,
   searchParamsToRequest,
-} from "../controllers/search";
-import type { TuringClient } from "../client";
+} from "../controllers/search.js";
+import type { TuringClient } from "../client.js";
 import type {
   TurSearchResponse,
   TurStructuredFacetItem,
   TurStructuredSearchResponse,
-} from "../types";
+} from "../types.js";
 
 /**
  * T709 / §XLV — the vanilla SDK goes POST-native.

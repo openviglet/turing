@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { TuringContext, type TuringContextValue } from "./context";
+import { TuringContext, type TuringContextValue } from "./context.js";
 
 export function useTuringContext(): TuringContextValue {
   const ctx = useContext(TuringContext);

@@ -4,8 +4,8 @@ import {
   resolveDocsMock,
   vinylDocuments,
   vinylFacets,
-} from "../__mocks__/fixtures";
-import type { ResolvedDocument } from "../../core/types";
+} from "../__mocks__/fixtures.js";
+import type { ResolvedDocument } from "../../core/types.js";
 
 /**
  * # 🎵 Vinyl Records Showcase

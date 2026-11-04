@@ -18,7 +18,7 @@ import type {
   ResolvedDocument,
   TurChatResponse,
   TurSortOption,
-} from "../../core/types";
+} from "../../core/types.js";
 
 /* ═══════════════════════════════════════════════════════════════
    Default Fields — defines which fields map to title, url, etc.

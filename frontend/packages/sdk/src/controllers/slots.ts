@@ -1,12 +1,12 @@
-import type { TuringClient } from "../client";
+import type { TuringClient } from "../client.js";
 import {
   fetchAgentChatSlots,
   fetchSiteChatSlots,
   type TurChatSessionSlots,
-} from "../api";
-import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../session";
-import { subscribeSlotsSse, type SlotsSseSubscription } from "../slots-sse";
-import { createStore, type Store } from "../store";
+} from "../api.js";
+import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../session.js";
+import { subscribeSlotsSse, type SlotsSseSubscription } from "../slots-sse.js";
+import { createStore, type Store } from "../store.js";
 
 /**
  * Vanilla slots controller — the framework-agnostic equivalent of the React

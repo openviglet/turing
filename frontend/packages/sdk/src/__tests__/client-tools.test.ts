@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { createChatController } from "../controllers/chat";
-import type { TuringClient } from "../client";
+import { createChatController } from "../controllers/chat.js";
+import type { TuringClient } from "../client.js";
 
 /**
  * T438 / T439 — client-tool round-trip through the vanilla chat controller.

@@ -1,4 +1,4 @@
-import type { TuringClient } from "../client";
+import type { TuringClient } from "../client.js";
 import {
   applyFacetAction,
   fetchChat,
@@ -7,17 +7,17 @@ import {
   postClick,
   postStructuredSearch,
   type SearchParams,
-} from "../api";
-import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../analytics";
+} from "../api.js";
+import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../analytics.js";
 import {
   createAbandonmentWatcher,
   type AbandonmentOptions,
   type AbandonmentReason,
   type AbandonmentWatcher,
-} from "../analytics-lifecycle";
-import { getOrCreateTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../session";
-import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "../resolve";
-import { createStore, type Store } from "../store";
+} from "../analytics-lifecycle.js";
+import { getOrCreateTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../session.js";
+import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "../resolve.js";
+import { createStore, type Store } from "../store.js";
 import type {
   ResolvedDocument,
   ResolvedGroup,
@@ -30,7 +30,7 @@ import type {
   TurFacetToggleTarget,
   TurStructuredFacet,
   TurStructuredSearchResponse,
-} from "../types";
+} from "../types.js";
 
 /**
  * Vanilla search controller — the framework-agnostic equivalent of the React

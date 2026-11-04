@@ -4,9 +4,9 @@ import {
   fetchCopilotAvailable,
   postCopilot,
   type TurCatalogCitation,
-} from "../core/api";
-import type { TurChatConversationMessage } from "../core/types";
-import { useOptionalTuringContext } from "../core/use-turing-context";
+} from "../core/api.js";
+import type { TurChatConversationMessage } from "../core/types.js";
+import { useOptionalTuringContext } from "../core/use-turing-context.js";
 
 /** Loading state of the most recent copilot turn. */
 export type CopilotStatus = "idle" | "loading" | "error";

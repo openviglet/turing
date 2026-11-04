@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { createTuringAnalytics, TURING_ANALYTICS_EVENTS } from "../analytics";
-import { debugSink, googleAnalyticsSink, onEventSink } from "../analytics-sinks";
+import { createTuringAnalytics, TURING_ANALYTICS_EVENTS } from "../analytics.js";
+import { debugSink, googleAnalyticsSink, onEventSink } from "../analytics-sinks.js";
 
 /**
  * T459 (Block Z) — GA4/GTM + generic + debug sinks.

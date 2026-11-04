@@ -10,7 +10,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-- 📋 **T1214** (deps: —) **Node's ESM loader cannot import @viglet/turing-react-ui or react-sdk: their dist imports carry no .js** — Only a bundler resolves the extensionless specifiers, so a Node script, a plain test runner or unbundled SSR fails. → §CLIII.3
 - 📋 **T1215** (deps: —) **Importing the @viglet/turing-react-ui root without its optional peer react-markdown fails** — The root entry re-exports TuringMarkdown, which imports react-markdown statically, so the optional peer is required. → §CLIII.4
 
 ## Block CJ — Releases ship from the repository the README names

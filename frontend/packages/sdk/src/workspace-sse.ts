@@ -11,7 +11,7 @@ import type {
   TurWorkspaceArtifact,
   TurWorkspaceArtifacts,
   TurWorkspaceEvent,
-} from "./api";
+} from "./api.js";
 
 /**
  * Module-level SSE multiplexer for the {@code /chat/workspace/stream} endpoint

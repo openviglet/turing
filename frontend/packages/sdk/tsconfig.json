@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "declaration": true,
     // T920 — not emitted: a .d.ts.map names ../src/*.ts, which `files` does not

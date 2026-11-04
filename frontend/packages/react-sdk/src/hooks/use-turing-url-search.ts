@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SearchStoreContext, type SearchStoreValue } from "../core/context";
+import { SearchStoreContext, type SearchStoreValue } from "../core/context.js";
 
 export type UseTuringUrlSearchReturn = SearchStoreValue;
 

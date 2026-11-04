@@ -8,7 +8,7 @@ import type {
   TurChatSource,
   TurChatToolCall,
   TurSearchSuggestions,
-} from "../core/types";
+} from "../core/types.js";
 
 /**
  * Streaming-chat lifecycle status, shared by every chat hook. {@code loading}

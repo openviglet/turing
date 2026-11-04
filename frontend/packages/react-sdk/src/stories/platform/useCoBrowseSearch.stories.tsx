@@ -4,8 +4,8 @@ import {
   resolveDocsMock,
   creatureDocuments,
   creatureFacets,
-} from "../__mocks__/fixtures";
-import type { ResolvedDocument, TurFacetGroup } from "../../core/types";
+} from "../__mocks__/fixtures.js";
+import type { ResolvedDocument, TurFacetGroup } from "../../core/types.js";
 
 /**
  * # useCoBrowseSearch

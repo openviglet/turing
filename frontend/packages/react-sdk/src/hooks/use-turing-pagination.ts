@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useSearchStore } from "../core/use-search-store";
-import type { TurPaginationItem, TurStructuredPage } from "../core/types";
+import { useSearchStore } from "../core/use-search-store.js";
+import type { TurPaginationItem, TurStructuredPage } from "../core/types.js";
 
 // ── Types ──
 

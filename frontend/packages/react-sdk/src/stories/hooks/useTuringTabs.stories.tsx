@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { resolveDocsMock, creatureDocuments, missionDocuments, vinylDocuments } from "../__mocks__/fixtures";
-import type { ResolvedDocument } from "../../core/types";
+import { resolveDocsMock, creatureDocuments, missionDocuments, vinylDocuments } from "../__mocks__/fixtures.js";
+import type { ResolvedDocument } from "../../core/types.js";
 
 /**
  * # useTuringTabs

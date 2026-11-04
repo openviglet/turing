@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useState } from "react";
-import { fetchSortOptions } from "../core/api";
-import { useTuringContext } from "../core/use-turing-context";
-import type { TurSortOption } from "../core/types";
+import { fetchSortOptions } from "../core/api.js";
+import { useTuringContext } from "../core/use-turing-context.js";
+import type { TurSortOption } from "../core/types.js";
 
 export interface UseTuringSortOptionsReturn {
   sortOptions: TurSortOption[];

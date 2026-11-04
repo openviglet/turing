@@ -2,13 +2,13 @@ import { act, render, renderHook, screen, waitFor } from "@testing-library/react
 import { useEffect, useState, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TuringProvider } from "../provider";
-import { useSearchStore } from "../use-search-store";
-import type { SearchParams } from "../api";
+import { TuringProvider } from "../provider.js";
+import { useSearchStore } from "../use-search-store.js";
+import type { SearchParams } from "../api.js";
 import type {
   TurSearchResponse,
   TurStructuredSearchResponse,
-} from "../types";
+} from "../types.js";
 
 /**
  * T877 / §LXIX.5 — the provider/store contract.
@@ -20,8 +20,8 @@ import type {
  * helpers (`applyFacetAction`, `searchParamsToRequest`) stay real, because they
  * are the semantics under test rather than a boundary to stub.
  */
-vi.mock("../api", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../api")>();
+vi.mock("../api.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../api.js")>();
   return {
     ...actual,
     fetchSearch: vi.fn(),
@@ -30,7 +30,7 @@ vi.mock("../api", async (importOriginal) => {
   };
 });
 
-const api = await import("../api");
+const api = await import("../api.js");
 const fetchSearch = vi.mocked(api.fetchSearch);
 const postStructuredSearch = vi.mocked(api.postStructuredSearch);
 const fetchChat = vi.mocked(api.fetchChat);

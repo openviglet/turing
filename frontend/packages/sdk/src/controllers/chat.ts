@@ -1,4 +1,4 @@
-import type { TuringClient } from "../client";
+import type { TuringClient } from "../client.js";
 import {
   deleteAgentFlowState,
   deleteSiteConversationState,
@@ -11,20 +11,20 @@ import {
   postClientToolResult,
   type ChatDisabledReason,
   type TurNLFilters,
-} from "../api";
+} from "../api.js";
 import {
   TUR_SESSION_DEFAULT_COOKIE_NAME,
   TUR_SESSION_DEFAULT_TTL_SECONDS,
   getOrCreateTurSession,
-} from "../session";
-import { postSiteFormSubmit } from "../api";
-import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../analytics";
+} from "../session.js";
+import { postSiteFormSubmit } from "../api.js";
+import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../analytics.js";
 import {
   createAbandonmentWatcher,
   type AbandonmentOptions,
   type AbandonmentWatcher,
-} from "../analytics-lifecycle";
-import { createStore, type Store } from "../store";
+} from "../analytics-lifecycle.js";
+import { createStore, type Store } from "../store.js";
 import type {
   TurChatCitation,
   TurChatConversationMessage,
@@ -35,7 +35,7 @@ import type {
   TurChatSource,
   TurChatToolCall,
   TurClientToolCall,
-} from "../types";
+} from "../types.js";
 
 /**
  * T439 — a frontend ("client") tool handler: runs in the browser when the agent

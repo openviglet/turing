@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchSpellCheck } from "../core/api";
-import { useTuringContext } from "../core/use-turing-context";
-import type { TurSpellCheck } from "../core/types";
+import { fetchSpellCheck } from "../core/api.js";
+import { useTuringContext } from "../core/use-turing-context.js";
+import type { TurSpellCheck } from "../core/types.js";
 
 export interface UseTuringSpellCheckOptions {
   /**

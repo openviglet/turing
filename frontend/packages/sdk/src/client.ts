@@ -21,7 +21,7 @@
  * @since 2026.3.1
  */
 
-import { assertOk, isAbort, TuringTimeoutError, TuringTransportError } from "./errors";
+import { assertOk, isAbort, TuringTimeoutError, TuringTransportError } from "./errors.js";
 
 export interface TuringClientConfig {
   /**

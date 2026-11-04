@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchRelatedTerms } from "../core/api";
-import { useTuringContext } from "../core/use-turing-context";
-import type { TurRelatedTermSuggestion } from "../core/types";
+import { fetchRelatedTerms } from "../core/api.js";
+import { useTuringContext } from "../core/use-turing-context.js";
+import type { TurRelatedTermSuggestion } from "../core/types.js";
 
 export interface UseTuringRelatedTermsOptions {
   /**

@@ -5,13 +5,13 @@ import {
   type TuringAnalytics,
   type TuringAnalyticsContext,
   type TuringAnalyticsSink,
-} from "../core/analytics";
+} from "../core/analytics.js";
 import {
   debugSink,
   googleAnalyticsSink,
   type GoogleAnalyticsSinkOptions,
-} from "../core/analytics-sinks";
-import { useOptionalTuringContext } from "../core/use-turing-context";
+} from "../core/analytics-sinks.js";
+import { useOptionalTuringContext } from "../core/use-turing-context.js";
 
 /**
  * T463 (Block Z) — React entry point for the canonical analytics bus.

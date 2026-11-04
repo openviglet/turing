@@ -1,4 +1,4 @@
-import type { TuringClient } from "../client";
+import type { TuringClient } from "../client.js";
 import {
   createAnswerShare,
   postAnswer,
@@ -6,8 +6,8 @@ import {
   recordAnswerSignal,
   type AnswerFilters,
   type TurAnswerSignalKind,
-} from "../api";
-import { createStore, type Store } from "../store";
+} from "../api.js";
+import { createStore, type Store } from "../store.js";
 import type {
   TurAnswerArtifact,
   TurAnswerCitation,
@@ -15,7 +15,7 @@ import type {
   TurChatSource,
   TurChatToolCall,
   TuringConfig,
-} from "../types";
+} from "../types.js";
 
 /**
  * T837 / §LXII.6 — the vanilla, framework-agnostic answer controller: the

@@ -6,9 +6,9 @@ import {
   type TuringSearchFieldViewButtonProps,
   type TuringSearchFieldViewDropdownProps,
 } from "@viglet/turing-react-ui";
-import { useTuringAutoComplete } from "../hooks/use-turing-autocomplete";
-import { useTuringSearchHistory } from "../hooks/use-turing-search-history";
-import type { UseTuringUrlSearchReturn } from "../hooks/use-turing-url-search";
+import { useTuringAutoComplete } from "../hooks/use-turing-autocomplete.js";
+import { useTuringSearchHistory } from "../hooks/use-turing-search-history.js";
+import type { UseTuringUrlSearchReturn } from "../hooks/use-turing-url-search.js";
 
 // ── Root (data-wiring wrapper) ──
 

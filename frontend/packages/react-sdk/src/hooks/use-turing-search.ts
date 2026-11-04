@@ -10,17 +10,17 @@ import {
   requestToSearchParams,
   searchParamsToRequest,
   type SearchParams,
-} from "../core/api";
-import { useTuringContext } from "../core/use-turing-context";
-import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "../core/resolve";
-import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../core/analytics";
+} from "../core/api.js";
+import { useTuringContext } from "../core/use-turing-context.js";
+import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "../core/resolve.js";
+import { TURING_ANALYTICS_EVENTS, type TuringAnalytics } from "../core/analytics.js";
 import {
   createAbandonmentWatcher,
   type AbandonmentOptions,
   type AbandonmentReason,
   type AbandonmentWatcher,
-} from "../core/analytics-lifecycle";
-import { getOrCreateTurSession } from "../core/session";
+} from "../core/analytics-lifecycle.js";
+import { getOrCreateTurSession } from "../core/session.js";
 import type {
   ResolvedDocument,
   ResolvedGroup,
@@ -32,7 +32,7 @@ import type {
   TurStructuredFacet,
   TurStructuredFacetItem,
   TurStructuredSearchResponse,
-} from "../core/types";
+} from "../core/types.js";
 
 export interface UseTuringSearchReturn {
   /** Current status */

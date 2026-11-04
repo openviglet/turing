@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringAnswer } from "../../ui/TuringAnswer";
+import { TuringAnswer } from "../../ui/TuringAnswer.js";
 
 /**
  * # useTuringAnswer / TuringAnswer (T837)

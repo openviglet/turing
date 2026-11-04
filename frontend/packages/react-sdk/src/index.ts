@@ -1,8 +1,8 @@
 // ── Core ──
-export { TuringProvider } from "./core/provider";
-export { useTuringContext } from "./core/use-turing-context";
-export { useSearchStore } from "./core/use-search-store";
-export type { TuringContextValue, SearchStoreValue } from "./core/context";
+export { TuringProvider } from "./core/provider.js";
+export { useTuringContext } from "./core/use-turing-context.js";
+export { useSearchStore } from "./core/use-search-store.js";
+export type { TuringContextValue, SearchStoreValue } from "./core/context.js";
 
 // ── API ──
 export {
@@ -68,7 +68,7 @@ export {
   postVoiceTranslation,
   CHAT_DISABLED_HINTS,
   LOW_CONFIDENCE_THRESHOLD,
-} from "./core/api";
+} from "./core/api.js";
 export type {
   SearchParams,
   PostChatConversationOptions,
@@ -120,7 +120,7 @@ export type {
   TurVoiceAvailability,
   TurVoiceSession,
   PostVoiceSessionOptions,
-} from "./core/api";
+} from "./core/api.js";
 
 // ── Session ──
 export {
@@ -129,8 +129,8 @@ export {
   clearTurSession,
   TUR_SESSION_DEFAULT_COOKIE_NAME,
   TUR_SESSION_DEFAULT_TTL_SECONDS,
-} from "./core/session";
-export type { TurSessionOptions } from "./core/session";
+} from "./core/session.js";
+export type { TurSessionOptions } from "./core/session.js";
 
 // ── Errors ──
 //
@@ -142,7 +142,7 @@ export type { TurSessionOptions } from "./core/session";
 export { TuringHttpError, TuringTransportError } from "@viglet/turing-sdk";
 
 // ── Resolve utilities ──
-export { resolveDocuments, resolveGroups, resolveStructuredGroups } from "./core/resolve";
+export { resolveDocuments, resolveGroups, resolveStructuredGroups } from "./core/resolve.js";
 // T881 — the rest of the response, projected once for both shapes. Owned by the
 // vanilla SDK so an EDS block gets the same answer this app's page does.
 export { toSearchView } from "@viglet/turing-sdk";
@@ -155,57 +155,57 @@ export type {
 } from "@viglet/turing-sdk";
 
 // ── Hooks ──
-export { useTuringSearch } from "./hooks/use-turing-search";
-export type { UseTuringSearchReturn, UseTuringSearchOptions } from "./hooks/use-turing-search";
-export { useTuringAutoComplete } from "./hooks/use-turing-autocomplete";
-export type { UseTuringAutoCompleteReturn } from "./hooks/use-turing-autocomplete";
-export { useTuringSortOptions } from "./hooks/use-turing-sort-options";
-export type { UseTuringSortOptionsReturn } from "./hooks/use-turing-sort-options";
-export { useTuringUrlSearch } from "./hooks/use-turing-url-search";
-export type { UseTuringUrlSearchReturn } from "./hooks/use-turing-url-search";
-export { useTuringSearchHistory } from "./hooks/use-turing-search-history";
-export type { UseTuringSearchHistoryReturn, SearchHistoryEntry } from "./hooks/use-turing-search-history";
+export { useTuringSearch } from "./hooks/use-turing-search.js";
+export type { UseTuringSearchReturn, UseTuringSearchOptions } from "./hooks/use-turing-search.js";
+export { useTuringAutoComplete } from "./hooks/use-turing-autocomplete.js";
+export type { UseTuringAutoCompleteReturn } from "./hooks/use-turing-autocomplete.js";
+export { useTuringSortOptions } from "./hooks/use-turing-sort-options.js";
+export type { UseTuringSortOptionsReturn } from "./hooks/use-turing-sort-options.js";
+export { useTuringUrlSearch } from "./hooks/use-turing-url-search.js";
+export type { UseTuringUrlSearchReturn } from "./hooks/use-turing-url-search.js";
+export { useTuringSearchHistory } from "./hooks/use-turing-search-history.js";
+export type { UseTuringSearchHistoryReturn, SearchHistoryEntry } from "./hooks/use-turing-search-history.js";
 
 // ── New composable hooks (v2026.3) ──
-export { useTuringDocument } from "./hooks/use-turing-document";
-export type { TuringDocumentHelper } from "./hooks/use-turing-document";
-export { useTuringFacets } from "./hooks/use-turing-facets";
-export type { UseTuringFacetsReturn, EnrichedFacetGroup, EnrichedFacetItem } from "./hooks/use-turing-facets";
-export { useTuringPagination } from "./hooks/use-turing-pagination";
-export type { UseTuringPaginationReturn, PaginationPage } from "./hooks/use-turing-pagination";
-export { useTuringTabs } from "./hooks/use-turing-tabs";
-export type { UseTuringTabsReturn, UseTuringTabsOptions, TabDefinition, EnrichedTab } from "./hooks/use-turing-tabs";
-export { useTuringChat } from "./hooks/use-turing-chat";
-export type { UseTuringChatReturn, UseTuringChatOptions, UseTuringChatAgent, ChatMessage, ChatStatus, SendOverrides } from "./hooks/use-turing-chat";
-export { useGenerativeUI } from "./hooks/use-turing-generative-ui";
-export type { UseGenerativeUIReturn } from "./hooks/use-turing-generative-ui";
-export { useAnswerAsApp } from "./hooks/use-turing-answer-as-app";
-export type { UseAnswerAsAppReturn } from "./hooks/use-turing-answer-as-app";
-export { useCoBrowseSearch } from "./hooks/use-turing-co-browse";
-export type { UseCoBrowseReturn } from "./hooks/use-turing-co-browse";
-export { useTuringProactiveCopilot } from "./hooks/use-turing-proactive-copilot";
+export { useTuringDocument } from "./hooks/use-turing-document.js";
+export type { TuringDocumentHelper } from "./hooks/use-turing-document.js";
+export { useTuringFacets } from "./hooks/use-turing-facets.js";
+export type { UseTuringFacetsReturn, EnrichedFacetGroup, EnrichedFacetItem } from "./hooks/use-turing-facets.js";
+export { useTuringPagination } from "./hooks/use-turing-pagination.js";
+export type { UseTuringPaginationReturn, PaginationPage } from "./hooks/use-turing-pagination.js";
+export { useTuringTabs } from "./hooks/use-turing-tabs.js";
+export type { UseTuringTabsReturn, UseTuringTabsOptions, TabDefinition, EnrichedTab } from "./hooks/use-turing-tabs.js";
+export { useTuringChat } from "./hooks/use-turing-chat.js";
+export type { UseTuringChatReturn, UseTuringChatOptions, UseTuringChatAgent, ChatMessage, ChatStatus, SendOverrides } from "./hooks/use-turing-chat.js";
+export { useGenerativeUI } from "./hooks/use-turing-generative-ui.js";
+export type { UseGenerativeUIReturn } from "./hooks/use-turing-generative-ui.js";
+export { useAnswerAsApp } from "./hooks/use-turing-answer-as-app.js";
+export type { UseAnswerAsAppReturn } from "./hooks/use-turing-answer-as-app.js";
+export { useCoBrowseSearch } from "./hooks/use-turing-co-browse.js";
+export type { UseCoBrowseReturn } from "./hooks/use-turing-co-browse.js";
+export { useTuringProactiveCopilot } from "./hooks/use-turing-proactive-copilot.js";
 export type {
   TuringProactiveSuggestion,
   UseTuringProactiveCopilotOptions,
   UseTuringProactiveCopilotReturn,
-} from "./hooks/use-turing-proactive-copilot";
+} from "./hooks/use-turing-proactive-copilot.js";
 // T792 / §LIV.3 (Block BF) — Vectorless (Structured-Data) RAG copilot.
 // T837 / §LXII.6 — the answer-first surface: headless hook + fused component.
-export { useTuringAnswer } from "./hooks/use-turing-answer";
+export { useTuringAnswer } from "./hooks/use-turing-answer.js";
 export type {
   UseTuringAnswerOptions,
   UseTuringAnswerReturn,
   TuringAnswerAskOptions,
   TuringAnswerStatus,
-} from "./hooks/use-turing-answer";
-export { useTuringCopilot } from "./hooks/use-turing-copilot";
+} from "./hooks/use-turing-answer.js";
+export { useTuringCopilot } from "./hooks/use-turing-copilot.js";
 export type {
   UseTuringCopilotOptions,
   UseTuringCopilotReturn,
   CopilotMessage,
   CopilotStatus,
-} from "./hooks/use-turing-copilot";
-export type { TurCatalogCitation, TurCatalogCopilotResult } from "./core/api";
+} from "./hooks/use-turing-copilot.js";
+export type { TurCatalogCitation, TurCatalogCopilotResult } from "./core/api.js";
 export type {
   TurCatalogKitAvailability,
   TurCatalogKitRequest,
@@ -213,30 +213,30 @@ export type {
   TurCatalogKitStage,
   TurCatalogKitGuide,
   TurCatalogKitResult,
-} from "./core/api";
-export { useTuringUserMemory } from "./hooks/use-turing-user-memory";
+} from "./core/api.js";
+export { useTuringUserMemory } from "./hooks/use-turing-user-memory.js";
 export type {
   TuringUserMemory,
   UseTuringUserMemoryOptions,
   UseTuringUserMemoryReturn,
-} from "./hooks/use-turing-user-memory";
-export { useTuringLlmChat } from "./hooks/use-turing-llm-chat";
+} from "./hooks/use-turing-user-memory.js";
+export { useTuringLlmChat } from "./hooks/use-turing-llm-chat.js";
 export type {
   UseTuringLlmChatReturn,
   UseTuringLlmChatOptions,
   LlmSendOverrides,
-} from "./hooks/use-turing-llm-chat";
+} from "./hooks/use-turing-llm-chat.js";
 
 // ── Analytics (Block Z, T463) ──
-export { useTuringAnalytics } from "./hooks/use-turing-analytics";
+export { useTuringAnalytics } from "./hooks/use-turing-analytics.js";
 export type {
   UseTuringAnalyticsOptions,
   UseTuringAnalyticsReturn,
-} from "./hooks/use-turing-analytics";
+} from "./hooks/use-turing-analytics.js";
 export {
   createTuringAnalytics,
   TURING_ANALYTICS_EVENTS,
-} from "./core/analytics";
+} from "./core/analytics.js";
 export type {
   TuringAnalytics,
   TuringAnalyticsOptions,
@@ -245,161 +245,161 @@ export type {
   TuringAnalyticsEventName,
   TuringAnalyticsSink,
   TuringAnalyticsValue,
-} from "./core/analytics";
-export { googleAnalyticsSink, onEventSink, debugSink } from "./core/analytics-sinks";
+} from "./core/analytics.js";
+export { googleAnalyticsSink, onEventSink, debugSink } from "./core/analytics-sinks.js";
 export type {
   GoogleAnalyticsSinkOptions,
   DebugSinkOptions,
-} from "./core/analytics-sinks";
-export { createAbandonmentWatcher } from "./core/analytics-lifecycle";
+} from "./core/analytics-sinks.js";
+export { createAbandonmentWatcher } from "./core/analytics-lifecycle.js";
 export type {
   AbandonmentOptions,
   AbandonmentReason,
   AbandonmentWatcher,
-} from "./core/analytics-lifecycle";
-export { useTuringSemanticChat } from "./hooks/use-turing-semantic-chat";
+} from "./core/analytics-lifecycle.js";
+export { useTuringSemanticChat } from "./hooks/use-turing-semantic-chat.js";
 export type {
   UseTuringSemanticChatReturn,
   UseTuringSemanticChatOptions,
-} from "./hooks/use-turing-semantic-chat";
-export { useTuringIntents } from "./hooks/use-turing-intents";
-export type { UseTuringIntentsReturn } from "./hooks/use-turing-intents";
-export { useTuringSlots } from "./hooks/use-turing-slots";
+} from "./hooks/use-turing-semantic-chat.js";
+export { useTuringIntents } from "./hooks/use-turing-intents.js";
+export type { UseTuringIntentsReturn } from "./hooks/use-turing-intents.js";
+export { useTuringSlots } from "./hooks/use-turing-slots.js";
 export type {
   UseTuringSlotsReturn,
   UseTuringSlotsOptions,
   UseTuringSlotsAgent,
   SlotsStatus,
-} from "./hooks/use-turing-slots";
-export { useTuringSlot } from "./hooks/use-turing-slot";
+} from "./hooks/use-turing-slots.js";
+export { useTuringSlot } from "./hooks/use-turing-slot.js";
 export type {
   UseTuringSlotReturn,
   UseTuringSlotOptions,
   UseTuringSlotParseMode,
-} from "./hooks/use-turing-slot";
-export { useTuringWorkspace } from "./hooks/use-turing-workspace";
+} from "./hooks/use-turing-slot.js";
+export { useTuringWorkspace } from "./hooks/use-turing-workspace.js";
 export type {
   UseTuringWorkspaceReturn,
   UseTuringWorkspaceOptions,
   UseTuringWorkspaceAgent,
   WorkspaceStatus,
-} from "./hooks/use-turing-workspace";
-export { useTuringRoutineWaiting } from "./hooks/use-turing-routine-waiting";
+} from "./hooks/use-turing-workspace.js";
+export { useTuringRoutineWaiting } from "./hooks/use-turing-routine-waiting.js";
 export type {
   UseTuringRoutineWaitingReturn,
   UseTuringRoutineWaitingOptions,
-} from "./hooks/use-turing-routine-waiting";
-export { useTuringScheduleAgentWaiting } from "./hooks/use-turing-schedule-agent-waiting";
+} from "./hooks/use-turing-routine-waiting.js";
+export { useTuringScheduleAgentWaiting } from "./hooks/use-turing-schedule-agent-waiting.js";
 export type {
   UseTuringScheduleAgentWaitingReturn,
   UseTuringScheduleAgentWaitingOptions,
-} from "./hooks/use-turing-schedule-agent-waiting";
-export { useTuringLlmInstances } from "./hooks/use-turing-llm-instances";
+} from "./hooks/use-turing-schedule-agent-waiting.js";
+export { useTuringLlmInstances } from "./hooks/use-turing-llm-instances.js";
 export type {
   UseTuringLlmInstancesReturn,
   UseTuringLlmInstancesOptions,
-} from "./hooks/use-turing-llm-instances";
-export { useTuringSlotWriter } from "./hooks/use-turing-slot-writer";
+} from "./hooks/use-turing-llm-instances.js";
+export { useTuringSlotWriter } from "./hooks/use-turing-slot-writer.js";
 export type {
   UseTuringSlotWriterReturn,
   UseTuringSlotWriterOptions,
   SlotWriteStatus,
-} from "./hooks/use-turing-slot-writer";
-export { useTuringSlotExtract } from "./hooks/use-turing-slot-extract";
+} from "./hooks/use-turing-slot-writer.js";
+export { useTuringSlotExtract } from "./hooks/use-turing-slot-extract.js";
 export type {
   UseTuringSlotExtractReturn,
   UseTuringSlotExtractOptions,
   SlotExtractStatus,
-} from "./hooks/use-turing-slot-extract";
-export { useTuringHandoff } from "./hooks/use-turing-handoff";
+} from "./hooks/use-turing-slot-extract.js";
+export { useTuringHandoff } from "./hooks/use-turing-handoff.js";
 export type {
   UseTuringHandoffReturn,
   UseTuringHandoffOptions,
   HandoffStatus,
-} from "./hooks/use-turing-handoff";
-export { useTuringVoice } from "./hooks/use-turing-voice";
+} from "./hooks/use-turing-handoff.js";
+export { useTuringVoice } from "./hooks/use-turing-voice.js";
 export type {
   UseTuringVoiceReturn,
   UseTuringVoiceOptions,
-} from "./hooks/use-turing-voice";
-export { useTuringRealtimeVoice } from "./hooks/use-turing-realtime-voice";
+} from "./hooks/use-turing-voice.js";
+export { useTuringRealtimeVoice } from "./hooks/use-turing-realtime-voice.js";
 export type {
   UseTuringRealtimeVoiceReturn,
   UseTuringRealtimeVoiceOptions,
   RealtimeVoiceStatus,
   RealtimeToolCall,
-} from "./hooks/use-turing-realtime-voice";
-export { useTuringFlowState } from "./hooks/use-turing-flow-state";
+} from "./hooks/use-turing-realtime-voice.js";
+export { useTuringFlowState } from "./hooks/use-turing-flow-state.js";
 export type {
   UseTuringFlowStateReturn,
   UseTuringFlowStateOptions,
-} from "./hooks/use-turing-flow-state";
-export { useTuringExperiment } from "./hooks/use-turing-experiment";
-export type { UseTuringExperimentReturn } from "./hooks/use-turing-experiment";
-export { useTuringFlowChooser } from "./hooks/use-turing-flow-chooser";
+} from "./hooks/use-turing-flow-state.js";
+export { useTuringExperiment } from "./hooks/use-turing-experiment.js";
+export type { UseTuringExperimentReturn } from "./hooks/use-turing-experiment.js";
+export { useTuringFlowChooser } from "./hooks/use-turing-flow-chooser.js";
 export type {
   UseTuringFlowChooserReturn,
   UseTuringFlowChooserOptions,
   FlowChooserStatus,
-} from "./hooks/use-turing-flow-chooser";
-export { useTuringClickTracking } from "./hooks/use-turing-click-tracking";
-export type { UseTuringClickTrackingReturn } from "./hooks/use-turing-click-tracking";
+} from "./hooks/use-turing-flow-chooser.js";
+export { useTuringClickTracking } from "./hooks/use-turing-click-tracking.js";
+export type { UseTuringClickTrackingReturn } from "./hooks/use-turing-click-tracking.js";
 
 // ── Block S — SDK parity hooks (v2026.3.4) ──
-export { useTuringSimilar } from "./hooks/use-turing-similar";
+export { useTuringSimilar } from "./hooks/use-turing-similar.js";
 export type {
   UseTuringSimilarReturn,
   UseTuringSimilarOptions,
-} from "./hooks/use-turing-similar";
-export { useTuringSpellCheck } from "./hooks/use-turing-spell-check";
-export { useTuringRelatedTerms } from "./hooks/use-turing-related-terms";
+} from "./hooks/use-turing-similar.js";
+export { useTuringSpellCheck } from "./hooks/use-turing-spell-check.js";
+export { useTuringRelatedTerms } from "./hooks/use-turing-related-terms.js";
 export type {
   UseTuringRelatedTermsReturn,
   UseTuringRelatedTermsOptions,
-} from "./hooks/use-turing-related-terms";
+} from "./hooks/use-turing-related-terms.js";
 export type {
   UseTuringSpellCheckReturn,
   UseTuringSpellCheckOptions,
-} from "./hooks/use-turing-spell-check";
-export { useTuringSlotUpload } from "./hooks/use-turing-slot-upload";
+} from "./hooks/use-turing-spell-check.js";
+export { useTuringSlotUpload } from "./hooks/use-turing-slot-upload.js";
 export type {
   UseTuringSlotUploadReturn,
   UseTuringSlotUploadOptions,
   SlotUploadStatus,
-} from "./hooks/use-turing-slot-upload";
-export { useTuringResume } from "./hooks/use-turing-resume";
+} from "./hooks/use-turing-slot-upload.js";
+export { useTuringResume } from "./hooks/use-turing-resume.js";
 export type {
   UseTuringResumeReturn,
   UseTuringResumeOptions,
   ResumeStatus,
-} from "./hooks/use-turing-resume";
-export { useTuringDslSearch } from "./hooks/use-turing-dsl-search";
+} from "./hooks/use-turing-resume.js";
+export { useTuringDslSearch } from "./hooks/use-turing-dsl-search.js";
 export type {
   UseTuringDslSearchReturn,
   UseTuringDslSearchOptions,
   DslSearchStatus,
-} from "./hooks/use-turing-dsl-search";
-export { useTuringPlatformInfo } from "./hooks/use-turing-platform-info";
+} from "./hooks/use-turing-dsl-search.js";
+export { useTuringPlatformInfo } from "./hooks/use-turing-platform-info.js";
 export type {
   UseTuringPlatformInfoReturn,
   UseTuringPlatformInfoOptions,
-} from "./hooks/use-turing-platform-info";
+} from "./hooks/use-turing-platform-info.js";
 
 // ── UI Components ──
 // TuringSearchBar / TuringResultList / TuringPagination moved to
 // @viglet/turing-react-ui (T306) and are re-exported below alongside the other
 // headless components, so SDK consumers' imports are unchanged.
-export { TuringSearchField } from "./ui/TuringSearchField";
-export { TuringWorkspacePanel } from "./ui/TuringWorkspacePanel";
-export type { TuringWorkspacePanelProps } from "./ui/TuringWorkspacePanel";
-export { TuringCopilot } from "./ui/TuringCopilot";
-export type { TuringCopilotProps, TuringCopilotClassNames } from "./ui/TuringCopilot";
-export { TuringAnswer } from "./ui/TuringAnswer";
+export { TuringSearchField } from "./ui/TuringSearchField.js";
+export { TuringWorkspacePanel } from "./ui/TuringWorkspacePanel.js";
+export type { TuringWorkspacePanelProps } from "./ui/TuringWorkspacePanel.js";
+export { TuringCopilot } from "./ui/TuringCopilot.js";
+export type { TuringCopilotProps, TuringCopilotClassNames } from "./ui/TuringCopilot.js";
+export { TuringAnswer } from "./ui/TuringAnswer.js";
 export type {
   TuringAnswerProps,
   TuringAnswerClassNames,
   TuringAnswerLabels,
-} from "./ui/TuringAnswer";
+} from "./ui/TuringAnswer.js";
 
 // ── Headless UI (re-exported from @viglet/turing-react-ui) ──
 // Single import surface for the admin console: it can pull the design-agnostic
@@ -579,4 +579,4 @@ export type {
   ResultItemProps,
   FacetGroupProps,
   PaginationItemProps,
-} from "./core/types";
+} from "./core/types.js";

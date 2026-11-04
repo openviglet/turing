@@ -3,9 +3,9 @@ import {
   postSiteHandoff,
   type TurChatHandoffChannel,
   type TurChatHandoffResponse,
-} from "../core/api";
-import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session";
-import { useTuringContext } from "../core/use-turing-context";
+} from "../core/api.js";
+import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session.js";
+import { useTuringContext } from "../core/use-turing-context.js";
 
 export type HandoffStatus = "idle" | "building" | "success" | "error";
 

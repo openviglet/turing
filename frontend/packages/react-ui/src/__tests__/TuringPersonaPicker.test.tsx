@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { TuringPersonaPicker, type TuringPersonaOption } from "../TuringPersonaPicker";
+import { TuringPersonaPicker, type TuringPersonaOption } from "../TuringPersonaPicker.js";
 
 const OPTIONS: TuringPersonaOption[] = [
   { id: "p1", name: "Skeptical Developer", description: "Wants proof" },

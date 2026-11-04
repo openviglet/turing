@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { TuringClient } from "../client";
-import { createChatController } from "../controllers/chat";
-import { chatConversationBody, postChatConversation, type TurNLFilters } from "../index";
+import type { TuringClient } from "../client.js";
+import { createChatController } from "../controllers/chat.js";
+import { chatConversationBody, postChatConversation, type TurNLFilters } from "../index.js";
 
 /**
  * T1086 — the chat conversation sends the visitor's filters, and receives the

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringChatMessage } from "../TuringChatMessage";
-import { TuringMarkdown } from "../TuringMarkdown";
-import { TuringCopyButton } from "../TuringCopyButton";
-import { TuringThinkingDots } from "../TuringThinkingDots";
+import { TuringChatMessage } from "../TuringChatMessage.js";
+import { TuringMarkdown } from "../TuringMarkdown.js";
+import { TuringCopyButton } from "../TuringCopyButton.js";
+import { TuringThinkingDots } from "../TuringThinkingDots.js";
 import {
   SkinShowcase,
   chatMessageClassNames,
@@ -10,7 +10,7 @@ import {
   thinkingDotsClassNames,
   chipClassName,
   type SkinName,
-} from "./skins";
+} from "./skins.js";
 
 /**
  * # TuringChatMessage

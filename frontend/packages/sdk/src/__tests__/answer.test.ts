@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { createAnswerController } from "../controllers/answer";
-import { consumeAnswerStream } from "../api";
-import type { TuringClient } from "../client";
+import { createAnswerController } from "../controllers/answer.js";
+import { consumeAnswerStream } from "../api.js";
+import type { TuringClient } from "../client.js";
 
 /**
  * T837 / §LXII.6 — the vanilla answer controller consumes the T833 `/answer`

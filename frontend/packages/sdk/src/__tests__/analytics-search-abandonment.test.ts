@@ -2,12 +2,12 @@
  * @vitest-environment jsdom
  */
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics";
-import { googleAnalyticsSink } from "../analytics-sinks";
-import { createSearchController, type SearchControllerOptions } from "../controllers/search";
-import { clearTurSession } from "../session";
-import type { TuringClient } from "../client";
-import type { TurSearchResponse } from "../types";
+import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics.js";
+import { googleAnalyticsSink } from "../analytics-sinks.js";
+import { createSearchController, type SearchControllerOptions } from "../controllers/search.js";
+import { clearTurSession } from "../session.js";
+import type { TuringClient } from "../client.js";
+import type { TurSearchResponse } from "../types.js";
 
 /**
  * T1130 — GA4 recommended events from the sink, and the search abandonment

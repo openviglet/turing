@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { TuringContext, SearchStoreContext, type SearchStoreValue } from "./context";
+import { TuringContext, SearchStoreContext, type SearchStoreValue } from "./context.js";
 import {
   applyFacetAction,
   fetchChat,
@@ -9,7 +9,7 @@ import {
   postStructuredSearch,
   searchParamsToRequest,
   type SearchParams,
-} from "./api";
+} from "./api.js";
 import type {
   TuringConfig,
   ResolvedDocument,
@@ -20,8 +20,8 @@ import type {
   TurFacetToggleTarget,
   TurStructuredFacet,
   TurStructuredSearchResponse,
-} from "./types";
-import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "./resolve";
+} from "./types.js";
+import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "./resolve.js";
 
 // ── URL helpers ──
 

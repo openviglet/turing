@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useTuringSlots, type UseTuringSlotsOptions } from "./use-turing-slots";
+import { useTuringSlots, type UseTuringSlotsOptions } from "./use-turing-slots.js";
 
 /**
  * How to coerce the raw slot string into the consumer's {@code T}:

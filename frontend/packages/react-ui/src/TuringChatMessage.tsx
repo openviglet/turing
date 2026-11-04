@@ -67,7 +67,7 @@ export interface TuringChatMessageProps {
  *
  * <p>Slots are render-prop style {@link ReactNode}s, not configuration: pass an
  * {@code avatar} element, an {@code actions} cluster ({@link
- * import("./TuringCopyButton").TuringCopyButton}, retry, …), a {@code footer} of
+ * import("./TuringCopyButton.js").TuringCopyButton}, retry, …), a {@code footer} of
  * suggestion chips, etc. Any slot left {@code undefined} renders nothing (and
  * skips its wrapper), so a bare user message collapses to just its content.</p>
  *

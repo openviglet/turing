@@ -3,8 +3,8 @@ import {
   dslSearch,
   type TurDslSearchRequest,
   type TurDslSearchResponse,
-} from "../core/api";
-import { useTuringContext } from "../core/use-turing-context";
+} from "../core/api.js";
+import { useTuringContext } from "../core/use-turing-context.js";
 
 export type DslSearchStatus = "idle" | "loading" | "success" | "error";
 

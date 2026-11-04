@@ -1,12 +1,12 @@
 import type { JSX } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { rehypeCitationAnchors } from "../rehypeCitationAnchors";
+import { rehypeCitationAnchors } from "../rehypeCitationAnchors.js";
 import {
   TuringCitationAnchor,
   citationMarkdownComponents,
-} from "../TuringCitationAnchor";
-import { TuringMarkdown } from "../TuringMarkdown";
+} from "../TuringCitationAnchor.js";
+import { TuringMarkdown } from "../TuringMarkdown.js";
 
 /**
  * T836 — headless-contract tests for the inline `[n]` citation anchors: the

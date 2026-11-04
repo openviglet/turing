@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchSimilar, fetchStoredDocuments } from "../api";
-import { createSimilarController } from "../controllers/similar";
-import type { TuringClient } from "../client";
+import { fetchSimilar, fetchStoredDocuments } from "../api.js";
+import { createSimilarController } from "../controllers/similar.js";
+import type { TuringClient } from "../client.js";
 
 /**
  * T1132 — the similar-documents call takes the search's filter queries, so a

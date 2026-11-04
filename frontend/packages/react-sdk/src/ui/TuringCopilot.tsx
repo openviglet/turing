@@ -1,10 +1,10 @@
 import { Fragment, useState, type FormEvent, type ReactNode } from "react";
-import type { TurCatalogCitation } from "../core/api";
+import type { TurCatalogCitation } from "../core/api.js";
 import {
   useTuringCopilot,
   type CopilotMessage,
   type UseTuringCopilotOptions,
-} from "../hooks/use-turing-copilot";
+} from "../hooks/use-turing-copilot.js";
 
 /**
  * Class-name hooks for skinning {@link TuringCopilot}. Every part is optional;

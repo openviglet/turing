@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchPersonaContentFit, fetchSitePersonas, postSiteFlowSelect } from "../api";
-import { TuringTransportError } from "../errors";
-import type { TuringClient } from "../client";
-import type { TurContentFit } from "../types";
+import { fetchPersonaContentFit, fetchSitePersonas, postSiteFlowSelect } from "../api.js";
+import { TuringTransportError } from "../errors.js";
+import type { TuringClient } from "../client.js";
+import type { TurContentFit } from "../types.js";
 
 /**
  * T635 / §XXVII.4 — the SDK persona surface: the `fetchPersonaContentFit`

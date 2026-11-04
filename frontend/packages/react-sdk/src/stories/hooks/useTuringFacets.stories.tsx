@@ -8,8 +8,8 @@ import {
   missionFacets,
   vinylDocuments,
   vinylFacets,
-} from "../__mocks__/fixtures";
-import type { TurFacetGroup, ResolvedDocument } from "../../core/types";
+} from "../__mocks__/fixtures.js";
+import type { TurFacetGroup, ResolvedDocument } from "../../core/types.js";
 
 /**
  * # useTuringFacets

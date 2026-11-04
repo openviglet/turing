@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
-import { postSemanticChat } from "../core/api";
-import type { TurChatConversationMessage } from "../core/types";
-import type { ChatMessage, ChatStatus } from "./use-turing-chat";
+import { postSemanticChat } from "../core/api.js";
+import type { TurChatConversationMessage } from "../core/types.js";
+import type { ChatMessage, ChatStatus } from "./use-turing-chat.js";
 
 export interface UseTuringSemanticChatOptions {
   /**

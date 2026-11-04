@@ -3,7 +3,7 @@ import {
   ANSWER_AS_APP_COMPONENTS,
   type TuringGenerativeRegistry,
 } from "@viglet/turing-react-ui";
-import { useGenerativeUI, type UseGenerativeUIReturn } from "./use-turing-generative-ui";
+import { useGenerativeUI, type UseGenerativeUIReturn } from "./use-turing-generative-ui.js";
 
 /**
  * T442 / §XXIII.1 — answer-as-an-app convenience hook.

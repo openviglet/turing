@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { TuringDocumentChip, TuringFacetToggleTarget } from "./TuringDocumentChips";
+import type { TuringDocumentChip, TuringFacetToggleTarget } from "./TuringDocumentChips.js";
 
 /**
  * Minimal structural shape of a raw Turing document — redeclared locally so this

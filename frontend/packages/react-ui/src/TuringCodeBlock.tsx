@@ -3,7 +3,7 @@ import {
   type TuringCopyButtonClassNames,
   type TuringCopyButtonIcons,
   type TuringCopyButtonLabels,
-} from "./TuringCopyButton";
+} from "./TuringCopyButton.js";
 
 /** Per-slot class names — the component ships ZERO visual styling of its own. */
 export interface TuringCodeBlockClassNames {

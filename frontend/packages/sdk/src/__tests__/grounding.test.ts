@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { createChatController } from "../controllers/chat";
-import type { TuringClient } from "../client";
-import type { TurChatGrounding } from "../types";
+import { createChatController } from "../controllers/chat.js";
+import type { TuringClient } from "../client.js";
+import type { TurChatGrounding } from "../types.js";
 
 /**
  * T516 / §XXVIII.12 — the answer-grounding guardrail verdict (`grounding` SSE

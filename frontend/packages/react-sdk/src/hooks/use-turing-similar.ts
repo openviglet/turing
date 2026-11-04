@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchSimilar, type TurSimilarMode, type TurSimilarResult } from "../core/api";
-import { useTuringContext } from "../core/use-turing-context";
+import { fetchSimilar, type TurSimilarMode, type TurSimilarResult } from "../core/api.js";
+import { useTuringContext } from "../core/use-turing-context.js";
 
 export interface UseTuringSimilarOptions {
   /**

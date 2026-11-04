@@ -4,8 +4,8 @@ import {
   resolveDocsMock,
   creatureDocuments,
   vinylDocuments,
-} from "../__mocks__/fixtures";
-import type { ResolvedDocument } from "../../core/types";
+} from "../__mocks__/fixtures.js";
+import type { ResolvedDocument } from "../../core/types.js";
 
 /**
  * # useTuringDocument

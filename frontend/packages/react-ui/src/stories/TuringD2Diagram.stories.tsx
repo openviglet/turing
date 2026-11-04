@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringD2Diagram } from "../TuringD2Diagram";
-import { SkinShowcase, d2ClassNames } from "./skins";
+import { TuringD2Diagram } from "../TuringD2Diagram.js";
+import { SkinShowcase, d2ClassNames } from "./skins.js";
 
 /**
  * # TuringD2Diagram

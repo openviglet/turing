@@ -7,16 +7,16 @@ import {
   recordAnswerSignal,
   type AnswerFilters,
   type TurAnswerSignalKind,
-} from "../core/api";
+} from "../core/api.js";
 import type {
   TurAnswerArtifact,
   TurAnswerCitation,
   TurAnswerTrace,
   TurChatSource,
   TurChatToolCall,
-} from "../core/types";
-import { useOptionalTuringContext } from "../core/use-turing-context";
-import { isAbortError } from "./streaming-chat-core";
+} from "../core/types.js";
+import { useOptionalTuringContext } from "../core/use-turing-context.js";
+import { isAbortError } from "./streaming-chat-core.js";
 
 /**
  * T837 / §LXII.6 — headless hook for the answer-first surface. Consumes the T833

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { samplePagination, simplePagination } from "../__mocks__/fixtures";
-import type { TurPaginationItem } from "../../core/types";
+import { samplePagination, simplePagination } from "../__mocks__/fixtures.js";
+import type { TurPaginationItem } from "../../core/types.js";
 
 /**
  * # useTuringPagination

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { TuringSourceChips, type TuringRagSource } from "../TuringSourceChips";
+import { TuringSourceChips, type TuringRagSource } from "../TuringSourceChips.js";
 
 /**
  * T293 — headless-contract tests for the RAG source-chip renderer: grouping by

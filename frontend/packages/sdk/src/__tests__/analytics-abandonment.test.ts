@@ -9,10 +9,10 @@
  * coverage in `analytics-lifecycle-ssr.test.ts`, which stays on `node`.
  */
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createAbandonmentWatcher, type AbandonmentReason } from "../analytics-lifecycle";
-import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics";
-import { createChatController } from "../controllers/chat";
-import type { TuringClient } from "../client";
+import { createAbandonmentWatcher, type AbandonmentReason } from "../analytics-lifecycle.js";
+import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics.js";
+import { createChatController } from "../controllers/chat.js";
+import type { TuringClient } from "../client.js";
 
 /**
  * T460 (Block Z) — abandonment & engagement detection.

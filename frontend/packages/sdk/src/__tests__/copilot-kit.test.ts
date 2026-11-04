@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createTuringApi, createTuringClient, postCopilotKit, type TurCatalogKitResult } from "../index";
+import { createTuringApi, createTuringClient, postCopilotKit, type TurCatalogKitResult } from "../index.js";
 
 /**
  * T1159 — a described plan comes back as staged products by need with one POST.

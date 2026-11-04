@@ -7,7 +7,7 @@ import type {
   TurSearchResponse,
   TurStructuredDocument,
   TurStructuredSearchResponse,
-} from "./types";
+} from "./types.js";
 
 /**
  * T709 — the shape both response formats share. `resolveDocuments` only ever

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { emptyBody, fetchOrThrow } from "./errors";
+import { emptyBody, fetchOrThrow } from "./errors.js";
 import type {
   TurAnswerArtifact,
   TurAnswerCitation,
@@ -30,7 +30,7 @@ import type {
   TurSortOption,
   TurSpellCheck,
   TurRelatedTermSuggestion,
-} from "./types";
+} from "./types.js";
 
 /**
  * Low-level Turing API client for the React SDK.

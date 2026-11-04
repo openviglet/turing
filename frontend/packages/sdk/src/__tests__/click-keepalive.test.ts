@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createTuringClient, postClick } from "../index";
+import { createTuringClient, postClick } from "../index.js";
 
 /**
  * T1128 — a result click reaches the server even though the click starts a

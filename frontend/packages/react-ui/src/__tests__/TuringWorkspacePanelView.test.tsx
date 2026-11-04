@@ -4,7 +4,7 @@ import {
   TuringWorkspacePanelView,
   formatBytes,
   type TuringWorkspaceArtifact,
-} from "../TuringWorkspacePanelView";
+} from "../TuringWorkspacePanelView.js";
 
 /**
  * T308 — headless-contract render tests for the workspace-panel view split out

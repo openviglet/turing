@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { parseHrefToParams } from "../api";
-import { resetDeprecationNotices } from "../deprecation";
-import { createSearchController } from "../controllers/search";
-import type { TuringClient } from "../client";
-import type { TurSearchResponse } from "../types";
+import { parseHrefToParams } from "../api.js";
+import { resetDeprecationNotices } from "../deprecation.js";
+import { createSearchController } from "../controllers/search.js";
+import type { TuringClient } from "../client.js";
+import type { TurSearchResponse } from "../types.js";
 
 /**
  * T713 / §XLV — the query-string round-trip is deprecated, not deleted.

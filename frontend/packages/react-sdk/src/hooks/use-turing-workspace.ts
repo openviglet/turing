@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import type { TurWorkspaceArtifact, TurWorkspaceArtifacts } from "../core/api";
-import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session";
-import { subscribeWorkspaceSse } from "../core/workspace-sse-multiplexer";
-import { useOptionalTuringContext } from "../core/use-turing-context";
+import type { TurWorkspaceArtifact, TurWorkspaceArtifacts } from "../core/api.js";
+import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session.js";
+import { subscribeWorkspaceSse } from "../core/workspace-sse-multiplexer.js";
+import { useOptionalTuringContext } from "../core/use-turing-context.js";
 
 export type WorkspaceStatus = "idle" | "loading" | "success" | "error";
 

@@ -3,9 +3,9 @@ import {
   createTuringAnalytics,
   TURING_ANALYTICS_EVENTS,
   type TuringAnalyticsEvent,
-} from "../analytics";
-import { createChatController } from "../controllers/chat";
-import type { TuringClient } from "../client";
+} from "../analytics.js";
+import { createChatController } from "../controllers/chat.js";
+import type { TuringClient } from "../client.js";
 
 /**
  * T458 (Block Z) — canonical analytics event bus + chat-controller wiring.

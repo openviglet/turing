@@ -5,7 +5,7 @@ import {
   creatureDocuments,
   missionDocuments,
   vinylDocuments,
-} from "../__mocks__/fixtures";
+} from "../__mocks__/fixtures.js";
 
 /**
  * # TuringResultList

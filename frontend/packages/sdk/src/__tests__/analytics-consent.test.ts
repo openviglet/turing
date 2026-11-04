@@ -2,11 +2,11 @@
  * @vitest-environment jsdom
  */
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics";
-import { createSearchController, type SearchControllerOptions } from "../controllers/search";
-import { clearTurSession, readTurSession } from "../session";
-import type { TuringClient } from "../client";
-import type { TurSearchResponse } from "../types";
+import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics.js";
+import { createSearchController, type SearchControllerOptions } from "../controllers/search.js";
+import { clearTurSession, readTurSession } from "../session.js";
+import type { TuringClient } from "../client.js";
+import type { TurSearchResponse } from "../types.js";
 
 /**
  * T1129 — the search controller's analytics respect consent: no event and no

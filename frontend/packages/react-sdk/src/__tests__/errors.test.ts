@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { TuringHttpError, TuringTransportError } from "../index";
+import { TuringHttpError, TuringTransportError } from "../index.js";
 import {
   TuringHttpError as CoreHttpError,
   TuringTransportError as CoreTransportError,
   assertOk,
   emptyBody,
   fetchOrThrow,
-} from "../core/errors";
+} from "../core/errors.js";
 
 /**
  * T1012 — the React SDK throws the vanilla SDK's error types, not its own.

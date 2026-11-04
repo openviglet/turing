@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useEffect, useRef, useState } from "react";
-import { creatureDocuments } from "../__mocks__/fixtures";
-import type { TurDocument } from "../../core/types";
+import { creatureDocuments } from "../__mocks__/fixtures.js";
+import type { TurDocument } from "../../core/types.js";
 
 /**
  * # useTuringChat

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { TuringSearchBar } from "../TuringSearchBar";
-import { TuringResultList, type TuringResolvedDocument } from "../TuringResultList";
-import { TuringPagination, type TuringPaginationItemData } from "../TuringPagination";
+import { TuringSearchBar } from "../TuringSearchBar.js";
+import { TuringResultList, type TuringResolvedDocument } from "../TuringResultList.js";
+import { TuringPagination, type TuringPaginationItemData } from "../TuringPagination.js";
 
 /**
  * T306 — headless-contract render tests for the search primitives migrated from

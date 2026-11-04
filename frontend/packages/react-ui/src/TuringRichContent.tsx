@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from "react";
 import {
   TuringHtmlSandbox,
   type TuringHtmlSandboxProps,
-} from "./TuringHtmlSandbox";
+} from "./TuringHtmlSandbox.js";
 
 /**
  * One ordered segment of an assistant reply.

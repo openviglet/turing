@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { TuringHtmlSandbox } from "../TuringHtmlSandbox";
+import { TuringHtmlSandbox } from "../TuringHtmlSandbox.js";
 
 /**
  * T301 — render tests for the headless contract of `TuringHtmlSandbox`:

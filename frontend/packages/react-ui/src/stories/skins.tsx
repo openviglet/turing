@@ -10,12 +10,12 @@
  * classes instead — the library ships no styling.
  */
 import type { ReactNode } from "react";
-import type { TuringHtmlSandboxClassNames } from "../TuringHtmlSandbox";
-import type { TuringCopyButtonClassNames } from "../TuringCopyButton";
-import type { TuringThinkingDotsClassNames } from "../TuringThinkingDots";
-import type { TuringCodeBlockClassNames } from "../TuringCodeBlock";
-import type { TuringD2DiagramClassNames } from "../TuringD2Diagram";
-import type { TuringChatMessageClassNames } from "../TuringChatMessage";
+import type { TuringHtmlSandboxClassNames } from "../TuringHtmlSandbox.js";
+import type { TuringCopyButtonClassNames } from "../TuringCopyButton.js";
+import type { TuringThinkingDotsClassNames } from "../TuringThinkingDots.js";
+import type { TuringCodeBlockClassNames } from "../TuringCodeBlock.js";
+import type { TuringD2DiagramClassNames } from "../TuringD2Diagram.js";
+import type { TuringChatMessageClassNames } from "../TuringChatMessage.js";
 
 export type SkinName = "shadcn" | "viglet";
 

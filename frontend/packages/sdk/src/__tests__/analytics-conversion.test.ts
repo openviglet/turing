@@ -6,9 +6,9 @@
  * (T862).
  */
 import { describe, expect, it, vi } from "vitest";
-import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics";
-import { createChatController } from "../controllers/chat";
-import type { TuringClient } from "../client";
+import { createTuringAnalytics, type TuringAnalyticsEvent } from "../analytics.js";
+import { createChatController } from "../controllers/chat.js";
+import type { TuringClient } from "../client.js";
 
 /**
  * T461 (Block Z) — funnel steps, conversion, and A/B attribution.

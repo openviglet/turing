@@ -1,7 +1,7 @@
 import {
   useTuringRoutineWaiting,
   type UseTuringRoutineWaitingReturn,
-} from "./use-turing-routine-waiting";
+} from "./use-turing-routine-waiting.js";
 
 export interface UseTuringScheduleAgentWaitingOptions {
   /** AI Agent id whose conversation slot map should be polled. */

@@ -6,7 +6,7 @@ import {
   TuringConfigurator,
   ANSWER_AS_APP_COMPONENTS,
   formatTypedValue,
-} from "../TuringAnswerAsApp";
+} from "../TuringAnswerAsApp.js";
 
 /**
  * T442 — headless-contract tests for the answer-as-an-app generative components:

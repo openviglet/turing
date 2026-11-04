@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { TuringContentFit, type TuringContentFitResult } from "../TuringContentFit";
+import { TuringContentFit, type TuringContentFitResult } from "../TuringContentFit.js";
 
 function result(over: Partial<TuringContentFitResult> = {}): TuringContentFitResult {
   return {

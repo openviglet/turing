@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo, useState } from "react";
-import type { TurLlmInstance } from "../../core/types";
+import type { TurLlmInstance } from "../../core/types.js";
 
 /**
  * # useTuringLlmInstances

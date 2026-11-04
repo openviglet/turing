@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { postVoiceSession } from "../core/api";
-import type { PostVoiceSessionOptions, TurVoiceSession } from "../core/api";
+import { postVoiceSession } from "../core/api.js";
+import type { PostVoiceSessionOptions, TurVoiceSession } from "../core/api.js";
 
 /**
  * T148 / §X.6.b — full-duplex real-time voice for an AI agent (OpenAI Realtime

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SearchStoreContext, type SearchStoreValue } from "./context";
+import { SearchStoreContext, type SearchStoreValue } from "./context.js";
 
 /**
  * Returns the shared search store from TuringProvider.

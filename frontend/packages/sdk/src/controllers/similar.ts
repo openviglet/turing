@@ -1,11 +1,11 @@
-import type { TuringClient } from "../client";
+import type { TuringClient } from "../client.js";
 import {
   fetchSimilar,
   type FetchSimilarParams,
   type TurSimilarMode,
   type TurSimilarResult,
-} from "../api";
-import { createStore, type Store } from "../store";
+} from "../api.js";
+import { createStore, type Store } from "../store.js";
 
 /**
  * Vanilla "similar documents" controller (T400) — the framework-agnostic

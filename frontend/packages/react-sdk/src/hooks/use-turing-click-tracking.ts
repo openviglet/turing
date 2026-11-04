@@ -1,9 +1,9 @@
 import { useCallback } from "react";
-import { postClick } from "../core/api";
-import type { ClickTrackParams } from "../core/api";
-import { readTurSession } from "../core/session";
-import { useSearchStore } from "../core/use-search-store";
-import { useTuringContext } from "../core/use-turing-context";
+import { postClick } from "../core/api.js";
+import type { ClickTrackParams } from "../core/api.js";
+import { readTurSession } from "../core/session.js";
+import { useSearchStore } from "../core/use-search-store.js";
+import { useTuringContext } from "../core/use-turing-context.js";
 
 /**
  * Return shape of {@link useTuringClickTracking}.

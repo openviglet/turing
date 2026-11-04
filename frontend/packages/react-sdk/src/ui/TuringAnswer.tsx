@@ -7,9 +7,9 @@ import {
   type TuringAnswerProvenanceClassNames,
   type TuringAnswerProvenanceLabels,
 } from "@viglet/turing-react-ui";
-import type { AnswerFilters } from "../core/api";
-import type { TurAnswerArtifact, TurAnswerCitation } from "../core/types";
-import { useTuringAnswer, type UseTuringAnswerOptions } from "../hooks/use-turing-answer";
+import type { AnswerFilters } from "../core/api.js";
+import type { TurAnswerArtifact, TurAnswerCitation } from "../core/types.js";
+import { useTuringAnswer, type UseTuringAnswerOptions } from "../hooks/use-turing-answer.js";
 
 /**
  * T837 / §LXII.6 — the design-agnostic fused answer surface: a streaming answer

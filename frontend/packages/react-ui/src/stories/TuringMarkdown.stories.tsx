@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringMarkdown } from "../TuringMarkdown";
-import { SkinShowcase, proseClassName } from "./skins";
+import { TuringMarkdown } from "../TuringMarkdown.js";
+import { SkinShowcase, proseClassName } from "./skins.js";
 
 /**
  * # TuringMarkdown

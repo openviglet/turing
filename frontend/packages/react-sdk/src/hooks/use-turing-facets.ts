@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useSearchStore } from "../core/use-search-store";
-import type { TurFacetGroup, TurFacetItem, TurStructuredFacet } from "../core/types";
+import { useSearchStore } from "../core/use-search-store.js";
+import type { TurFacetGroup, TurFacetItem, TurStructuredFacet } from "../core/types.js";
 
 // ── Types ──
 

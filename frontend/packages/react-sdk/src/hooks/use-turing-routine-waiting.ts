@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useTuringSlots, type UseTuringSlotsOptions } from "./use-turing-slots";
+import { useTuringSlots, type UseTuringSlotsOptions } from "./use-turing-slots.js";
 
 /**
  * Marker-slot prefix the chat-flow engine writes when parking on a

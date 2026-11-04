@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import type { SearchStoreValue } from "../core/context";
-import type { ClientToolHandler } from "../core/types";
+import type { SearchStoreValue } from "../core/context.js";
+import type { ClientToolHandler } from "../core/types.js";
 import type { TurStructuredFacetItem } from "@viglet/turing-sdk";
 
 /**

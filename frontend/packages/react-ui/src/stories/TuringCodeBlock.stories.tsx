@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringCodeBlock } from "../TuringCodeBlock";
-import { SkinShowcase, codeBlockClassNames } from "./skins";
+import { TuringCodeBlock } from "../TuringCodeBlock.js";
+import { SkinShowcase, codeBlockClassNames } from "./skins.js";
 
 /**
  * # TuringCodeBlock

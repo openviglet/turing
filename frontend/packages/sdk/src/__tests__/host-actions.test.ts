@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from "vitest";
-import { createHostActions } from "../host-actions";
+import { createHostActions } from "../host-actions.js";
 
 /**
  * T450 — embeddable action widget. Verifies the default host-action client-tool

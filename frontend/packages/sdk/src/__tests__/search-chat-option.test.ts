@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { createSearchController } from "../controllers/search";
-import type { TuringClient } from "../client";
-import type { TurSearchResponse } from "../types";
+import { createSearchController } from "../controllers/search.js";
+import type { TuringClient } from "../client.js";
+import type { TurSearchResponse } from "../types.js";
 
 /**
  * T484 — the `chat` option on {@link createSearchController}. A search-only

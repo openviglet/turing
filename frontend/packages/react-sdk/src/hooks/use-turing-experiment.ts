@@ -1,4 +1,4 @@
-import { useTuringFlowState, type UseTuringFlowStateOptions } from "./use-turing-flow-state";
+import { useTuringFlowState, type UseTuringFlowStateOptions } from "./use-turing-flow-state.js";
 
 export interface UseTuringExperimentReturn {
   /** Experiment id the conversation is in, or {@code null} when not part of any A/B test. */

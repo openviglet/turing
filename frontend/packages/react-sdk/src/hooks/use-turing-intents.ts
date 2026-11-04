@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useEffect, useState } from "react";
-import { fetchIntents } from "../core/api";
-import { useTuringContext } from "../core/use-turing-context";
-import type { TurIntent } from "../core/types";
+import { fetchIntents } from "../core/api.js";
+import { useTuringContext } from "../core/use-turing-context.js";
+import type { TurIntent } from "../core/types.js";
 
 export interface UseTuringIntentsReturn {
   /** Enabled intents (already sorted by `sortOrder`) */

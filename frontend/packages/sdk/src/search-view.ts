@@ -4,7 +4,7 @@ import type {
   TurSearchResponse,
   TurStructuredFacet,
   TurStructuredSearchResponse,
-} from "./types";
+} from "./types.js";
 
 /**
  * T881 / §LXX.3 — read a search response without caring which shape arrived.

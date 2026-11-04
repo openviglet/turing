@@ -4,7 +4,7 @@ import {
   createTuringClient,
   TuringHttpError,
   TuringTransportError,
-} from "../index";
+} from "../index.js";
 
 /**
  * T1005 — the status and the failure kind are fields on a thrown type now, not

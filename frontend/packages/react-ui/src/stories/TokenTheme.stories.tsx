@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { type CSSProperties } from "react";
-import { TuringChatMessage } from "../TuringChatMessage";
-import { TuringCodeBlock } from "../TuringCodeBlock";
-import { TuringCopyButton } from "../TuringCopyButton";
-import { TuringHtmlSandbox } from "../TuringHtmlSandbox";
-import { TuringThinkingDots } from "../TuringThinkingDots";
-import { type TuringUiTheme } from "../tokens";
+import { TuringChatMessage } from "../TuringChatMessage.js";
+import { TuringCodeBlock } from "../TuringCodeBlock.js";
+import { TuringCopyButton } from "../TuringCopyButton.js";
+import { TuringHtmlSandbox } from "../TuringHtmlSandbox.js";
+import { TuringThinkingDots } from "../TuringThinkingDots.js";
+import { type TuringUiTheme } from "../tokens.js";
 // The OPTIONAL token-theming stylesheet — the artifact apps import as
 // `@viglet/turing-react-ui/styles.css`. Here we load the source directly.
 import "../styles/turing-ui.css";

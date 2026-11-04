@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { vinylDocuments } from "../__mocks__/fixtures";
+import { vinylDocuments } from "../__mocks__/fixtures.js";
 
 /**
  * # useGenerativeUI

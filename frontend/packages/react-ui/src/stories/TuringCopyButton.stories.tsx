@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringCopyButton } from "../TuringCopyButton";
-import { SkinShowcase, copyButtonClassNames } from "./skins";
+import { TuringCopyButton } from "../TuringCopyButton.js";
+import { SkinShowcase, copyButtonClassNames } from "./skins.js";
 
 /**
  * # TuringCopyButton

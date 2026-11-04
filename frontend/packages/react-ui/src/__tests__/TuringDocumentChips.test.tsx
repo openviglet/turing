@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { TuringDocumentChips, type TuringDocumentChip } from "../TuringDocumentChips";
-import { TuringResultList, type TuringResolvedDocument } from "../TuringResultList";
+import { TuringDocumentChips, type TuringDocumentChip } from "../TuringDocumentChips.js";
+import { TuringResultList, type TuringResolvedDocument } from "../TuringResultList.js";
 
 /**
  * T882 / §LXX.4 — a result's facet chip is an action in both response shapes.

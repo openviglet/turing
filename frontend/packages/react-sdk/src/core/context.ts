@@ -9,8 +9,8 @@ import type {
   ResolvedDocument,
   ResolvedGroup,
   SearchStatus,
-} from "./types";
-import type { SearchParams } from "./api";
+} from "./types.js";
+import type { SearchParams } from "./api.js";
 
 // ── Configuration context (always available) ──
 

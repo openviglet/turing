@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
-import { fetchAutoComplete, type SearchParams } from "../core/api";
-import { useTuringContext } from "../core/use-turing-context";
+import { fetchAutoComplete, type SearchParams } from "../core/api.js";
+import { useTuringContext } from "../core/use-turing-context.js";
 
 export interface UseTuringAutoCompleteReturn {
   suggestions: string[];

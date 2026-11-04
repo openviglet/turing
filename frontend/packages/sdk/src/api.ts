@@ -1,6 +1,6 @@
-import type { TuringCallOptions, TuringClient } from "./client";
-import { warnDeprecated } from "./deprecation";
-import { assertOk, emptyBody } from "./errors";
+import type { TuringCallOptions, TuringClient } from "./client.js";
+import { warnDeprecated } from "./deprecation.js";
+import { assertOk, emptyBody } from "./errors.js";
 import type {
   TurAnswerArtifact,
   TurAnswerCitation,
@@ -39,7 +39,7 @@ import type {
   TurAiCapabilities,
   TurSpellCheck,
   TurRelatedTermSuggestion,
-} from "./types";
+} from "./types.js";
 
 /**
  * Low-level Turing API client functions for the vanilla SDK. Every function

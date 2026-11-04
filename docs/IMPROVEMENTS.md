@@ -2183,29 +2183,6 @@ the Search Console a month after.
 
 ## CLIII The quality gate stops at the package boundary
 
-### CLIII.3 The React packages load only through a bundler (T1214)
-
-**Where it showed.** The smoke test after the first `publish-npm.yml` run (T1142,
-2026-11-04) installed the five published packages into an empty project.
-`import("@viglet/turing-react-ui")` and `import("@viglet/turing-react-sdk")` fail under
-Node's own ESM loader: `dist/index.js` reads `from "./TuringHtmlSandbox"` and `from
-"./core/provider"`, with no `.js`. Both packages are `"type": "module"`, and Node
-resolves no extensionless relative specifier. The 2026.3.7 and 2026.3.8 tarballs are the
-same, so this is not new.
-
-**Why it matters.** A bundler (Vite, webpack, Next) resolves the specifiers, and a
-bundled smoke test loads both packages (35 and 153 exports). Anything that loads them
-without one does not: a Node script, a test runner in plain Node mode, or server
-rendering that keeps `node_modules` external.
-
-**What it should do.**
-- Emit relative specifiers with `.js`: TypeScript `moduleResolution: "nodenext"` (or
-  `"node16"`) in the two packages' build configs, which makes `tsc` require the extension
-  in the source, or an emit step that rewrites them.
-- Add the Node load to the publish gate: `scripts/check-package-contents.mjs`, or a new
-  gate, imports each packed entry point with plain `node` and fails on a resolution error.
-- Done when `node -e "import('@viglet/turing-react-sdk')"` loads the packed tarball.
-
 ### CLIII.4 The react-ui root loads an optional peer (T1215)
 
 **Where it showed.** The smoke test after the first `publish-npm.yml` run (T1142,

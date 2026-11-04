@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { TuringThinkingDots } from "../TuringThinkingDots";
-import { SkinShowcase, thinkingDotsClassNames } from "./skins";
+import { TuringThinkingDots } from "../TuringThinkingDots.js";
+import { SkinShowcase, thinkingDotsClassNames } from "./skins.js";
 
 /**
  * # TuringThinkingDots

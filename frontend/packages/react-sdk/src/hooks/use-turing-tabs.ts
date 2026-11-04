@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useSearchStore } from "../core/use-search-store";
-import type { ResolvedDocument, ResolvedGroup } from "../core/types";
+import { useSearchStore } from "../core/use-search-store.js";
+import type { ResolvedDocument, ResolvedGroup } from "../core/types.js";
 
 // ── Types ──
 

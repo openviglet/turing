@@ -18,7 +18,7 @@ import type {
   TuringAnalyticsEvent,
   TuringAnalyticsSink,
   TuringAnalyticsValue,
-} from "./analytics";
+} from "./analytics.js";
 
 /** GA4 `gtag` function shape (the slice we use). */
 type GtagFn = (command: "event", name: string, params?: Record<string, unknown>) => void;
