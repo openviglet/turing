@@ -186,7 +186,13 @@ const { state } = store( 'viglet-dumont/copilot', {
 				rank: citation.rank,
 				title: citation.title || citation.url,
 				url: siteUrl( citation.url, citation.id ),
-				productId: postIdOf( citation.id ),
+				// Turing names each citation's indexed type (T1212), the post type here: one
+				// it calls something other than a product stays a link, and the shop is not
+				// asked about it. A citation with no type is still the shop's to tell.
+				productId:
+					! citation.type || 'product' === citation.type
+						? postIdOf( citation.id )
+						: 0,
 				price: '',
 				regular: '',
 				buyable: false,

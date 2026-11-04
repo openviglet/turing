@@ -45,17 +45,28 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 						id: `localhost:post:${ rain }`,
 						title: 'Rain jacket',
 						url: `/?p=${ rain }`,
+						type: 'product',
 					},
 					{
 						rank: 2,
 						id: `localhost:post:${ guide }`,
 						title: 'A guide',
 						url: `/?p=${ guide }`,
+						type: 'post',
 					},
 				],
 				totalHits: 2,
 			},
 		} );
+	} );
+	// Turing types each citation (T1212): the shop is asked about the product alone.
+	const priced = [];
+	page.on( 'request', ( request ) => {
+		const include = new URL( request.url() ).searchParams.get( 'include' );
+		const url = decodeURIComponent( request.url() );
+		if ( url.includes( 'store/v1/products' ) && include ) {
+			priced.push( include );
+		}
 	} );
 
 	await page.goto( `/?page_id=${ pageId }` );
@@ -79,6 +90,7 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 	await expect(
 		cited.getByRole( 'button', { name: /^Add to cart/ } )
 	).toBeHidden();
+	expect( priced[ 0 ] ).toBe( String( rain ) );
 	expect( asked[ 0 ].messages ).toEqual( [
 		{ role: 'user', content: 'a waterproof jacket' },
 	] );

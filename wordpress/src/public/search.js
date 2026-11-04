@@ -392,7 +392,8 @@ export async function cartTotal() {
  * shop's currency (and the regular one when on sale) and whether it can be bought. One request
  * for every id (D288): the list answers with the products among them and leaves out the rest,
  * such as a cited guide, where asking for each by id would log a failed request per guide.
- * Turing's citations do not say which are products yet (T1212), so the shop is what tells.
+ * The copilot passes only the citations Turing does not type as something else (T1212); for
+ * the rest, and for a Turing too old to type them, the shop is what tells.
  *
  * @param {number[]} productIds Post ids, products or not.
  * @return {Promise<Map<number, {price: string, regular: string, buyable: boolean}>>} The
